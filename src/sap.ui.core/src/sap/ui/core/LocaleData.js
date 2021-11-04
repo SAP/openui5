@@ -301,6 +301,41 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
+		 * Get combined pattern with datetime and timezone for the given date and time style.
+		 *
+		 * @example
+		 * // locale de
+		 * oLocaleData.getCombinedDateTimeWithTimezonePattern("long", "long");
+		 * // "d. MMMM y 'um' HH:mm:ss z VV"
+		 *
+		 * // locale en_GB
+		 * oLocaleData.getCombinedDateTimeWithTimezonePattern("long", "long");
+		 * // "d MMMM y 'at' HH:mm:ss z VV"
+		 *
+		 * @param {string} sDateStyle The required style for the date part
+		 * @param {string} sTimeStyle The required style for the time part
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] The type of calendar. If it's not set,
+		 *   it falls back to the calendar type either set in the configuration or calculated from
+		 *   the locale.
+		 * @returns {string} the combined pattern with datetime and timezone
+		 */
+		getCombinedDateTimeWithTimezonePattern: function(sDateStyle, sTimeStyle, sCalendarType) {
+			assert(sDateStyle == "short" || sDateStyle == "medium" || sDateStyle == "long" || sDateStyle == "full", "sStyle must be short, medium, long or full");
+			assert(sTimeStyle == "short" || sTimeStyle == "medium" || sTimeStyle == "long" || sTimeStyle == "full", "sStyle must be short, medium, long or full");
+			var aPatterns = [this.getCombinedDateTimePattern(sDateStyle, sTimeStyle, sCalendarType)];
+			var aMissingTokens = [{
+				group: "Timezone",
+				length: 2,
+				field: "zone",
+				symbol: "V"
+
+			}];
+			this._appendItems(aPatterns, aMissingTokens);
+			return aPatterns[0];
+		},
+
+
+		/**
 		 * Get custom datetime pattern for a given skeleton format.
 		 *
 		 * The format string does contain pattern symbols (e.g. "yMMMd" or "Hms") and will be converted into the pattern in the used

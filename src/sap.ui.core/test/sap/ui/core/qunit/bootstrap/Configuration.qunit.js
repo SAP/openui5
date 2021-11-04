@@ -3,10 +3,11 @@ sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Core',
+	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/base/Log',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, Locale, Log) {
+], function(CalendarType, Configuration, Core, TimezoneUtil, Locale, Log) {
 	"use strict";
 
 	var browserUrl = {
@@ -27,6 +28,8 @@ sap.ui.define([
 	};
 
 	var AnimationMode = Configuration.AnimationMode;
+
+	var sLocalTimezone = TimezoneUtil.getLocalTimezone();
 
 	function getHtmlAttribute(sAttribute) {
 		return document.documentElement.getAttribute(sAttribute);
@@ -193,6 +196,26 @@ sap.ui.define([
 		assert.throws(function() {
 			that.oConfig.setLanguage({ toString : function() { return "en-GB"; }});
 		}, "setting anything that only looks like a string should throw error");
+	});
+
+	QUnit.test("setTimezone to the local timezone - noop", function(assert) {
+		this.oConfig.setTimezone(sLocalTimezone);
+		assert.equal(this.oConfig.getTimezone(), sLocalTimezone, "timezone still should be '" + sLocalTimezone + "'");
+		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
+	});
+
+	QUnit.test("setTimezone('America/New_York') - simple", function(assert) {
+		var sDifferentTimezone = sLocalTimezone === "Europe/Berlin" ? "America/New_York" : "Europe/Berlin";
+		this.oConfig.setTimezone(sDifferentTimezone);
+		assert.equal(this.oConfig.getTimezone(), sDifferentTimezone, "timezone should be '" + sDifferentTimezone + "'");
+		assert.equal(this.eventsReceived, 1, "one localizationChange event should have been fired");
+		assert.deepEqual(Object.keys(this.changes[0]), ['timezone'], "event should have reported 'timezone' as changed");
+	});
+
+	QUnit.test("setTimezone(null) - simple", function(assert) {
+		this.oConfig.setTimezone(null);
+		assert.equal(this.oConfig.getTimezone(), sLocalTimezone, "timezone still should be '" + sLocalTimezone + "'");
+		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
 	});
 
 	QUnit.test("setRTL(null) - noop", function(assert) {
@@ -604,6 +627,54 @@ sap.ui.define([
 			oConfig.destroy();
 
 		});
+	});
+
+	QUnit.module("Timezone", {
+		beforeEach: function(assert) {
+			window["sap-ui-config"].language = "en";
+		},
+		afterEach: function() {
+			browserUrl.reset();
+		}
+	});
+
+	QUnit.test("Read timezone from URL", function(assert) {
+		// setup
+		browserUrl.change('?sap-ui-timezone=America/Los_Angeles');
+
+		// call method under test
+		var oConfig = new Configuration();
+
+		// verify results
+		assert.equal(oConfig.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+
+		oConfig.destroy();
+	});
+
+	QUnit.test("Read timezone from URL sap-timezone", function(assert) {
+		// setup
+		browserUrl.change('?sap-timezone=America/Los_Angeles');
+
+		// call method under test
+		var oConfig = new Configuration();
+
+		// verify results
+		assert.equal(oConfig.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+
+		oConfig.destroy();
+	});
+
+	QUnit.test("Read invalid timezone from URL sap-timezone", function(assert) {
+		// setup
+		browserUrl.change('?sap-timezone=invalid');
+
+		// call method under test
+		var oConfig = new Configuration();
+
+		// verify results
+		assert.equal(oConfig.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
+
+		oConfig.destroy();
 	});
 
 	QUnit.module("SAP parameters", {

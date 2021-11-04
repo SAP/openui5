@@ -829,6 +829,13 @@ sap.ui.define([
 	// this assignment here is only kept as a reminder
 	// thisLib.CalendarType = CalendarType;
 
+	// Note: the imported module sap/ui/core/format/DateFormatTimezoneDisplay already defines the global sap.ui.core.format.DateFormatTimezoneDisplay,
+	// this assignment here is only kept as a reminder
+	// thisLib.format = thisLib.format || {};
+
+	// thisLib.format.DateFormatTimezoneDisplay;
+
+
 	/**
 	 * @classdesc A string type that represents CSS color values.
 	 *

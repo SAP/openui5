@@ -1,23 +1,36 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/ui/core/date/UniversalDate", "sap/ui/core/library"],
+sap.ui.define([
+		"sap/ui/core/format/DateFormat",
+		"sap/ui/core/Locale",
+		"sap/ui/core/LocaleData",
+		"sap/ui/core/date/UniversalDate",
+		"sap/ui/core/library"],
 	function (DateFormat, Locale, LocaleData, UniversalDate, library) {
 		"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
 		var CalendarType = library.CalendarType;
 
-		var oDateTime = new Date("Tue Sep 11 08:46:13 2001"),
+		var oDateTime = new Date("Tue Sep 11 06:46:13 2001 GMT+0000"),
 			oTZDateTime = new Date("Tue Sep 11 03:46:13 2001 GMT+0530"),
 			oDefaultDate = DateFormat.getInstance(),
 			oDefaultDateTime = DateFormat.getDateTimeInstance(),
 			oDefaultTime = DateFormat.getTimeInstance();
+
+		QUnit.module("DateFormat format", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
 
 		QUnit.test("format invalid date", function (assert) {
 			var oDate = new Date("");
 			assert.ok(isNaN(oDate.getTime()), "This is an invalid date");
 			assert.strictEqual(oDefaultDate.format(oDate), "", "Formatting an invalid date should return ''");
 		});
-
 
 		QUnit.test("format undefined date", function (assert) {
 			var oDate;
@@ -37,10 +50,6 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 		});
 
 		QUnit.test("format date with given style", function (assert) {
-			var oDateTime = new Date("Tue Sep 11 08:46:13 2001");
-			// Overwrite getTimezoneOffset to get reproducible results independent of the
-			// timezone where the test is run in
-			oDateTime.getTimezoneOffset = function () { return -120; };
 			assert.equal(DateFormat.getDateInstance({ style: "short" }).format(oDateTime), "9/11/01", "short date");
 			assert.equal(DateFormat.getDateInstance({ style: "medium" }).format(oDateTime), "Sep 11, 2001", "medium date");
 			assert.equal(DateFormat.getDateInstance({ style: "long" }).format(oDateTime), "September 11, 2001", "long date");
@@ -71,8 +80,17 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(DateFormat.getTimeInstance({ pattern: "hh:mm:ss a" }, oLocale).format(oDateTime), "08:46:13 AM", "datetime with custom pattern for given locale");
 		});
 
-		QUnit.test("format custom date", function (assert) {
-			var oDate = new Date("Wed Jul 4 12:08:56 2001"),
+		QUnit.module("format relative with timezone America/Los_Angeles", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("America/Los_Angeles");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("format custom date (UTC-7)", function (assert) {
+			var oDate = new Date(Date.UTC(2001, 6, 4, 19, 8, 56)), // Wed Jul 4 12:08:56 2001 (Los Angeles UTC-7)
 				sCustomPattern,
 				oCustomDate,
 				oCustomDatePatterns = {
@@ -88,25 +106,42 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 					"yyyy.MMMM.dd GGGG hh:mm aaa": "2001.July.04 Anno Domini 12:08 PM",
 					"yyyy.MMMM.dd GGGGG hh:mm:ss aaa": "2001.July.04 A 12:08:56 PM",
 					"yyyy.MMMMM.dd GGGGG hh:mm:ss aaa": "2001.J.04 A 12:08:56 PM",
-					"EEE, d MMM yyyy HH:mm:ss Z": "Wed, 4 Jul 2001 12:08:56 +0700",
-					"yyMMddHHmmssZ": "010704120856+0700",
-					"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235+0700",
-					"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": "2001-07-04T12:08:56.235+07:00",
+					"EEE, d MMM yyyy HH:mm:ss Z": "Wed, 4 Jul 2001 12:08:56 -0700",
+					"yyMMddHHmmssZ": "010704120856-0700",
+					"yyyy-MM-dd'T'HH:mm:ss.SSSZ": "2001-07-04T12:08:56.235-0700",
+					"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": "2001-07-04T12:08:56.235-07:00",
 					"YYYY-'W'ww-u": "2001-W27-4",
 					"'datetime'''yyyy-MM-dd'T'HH:mm:ss''": "datetime'2001-07-04T12:08:56'"
 				};
 
-			// Overwrite getTimezoneOffset to get reproducible results independent of the
-			// timezone where the test is run in, add additional information which
-			// is not provided by the standard JS Date object
-			oDate.getTimezoneOffset = function () { return -420; };
-			oDate.getTimezoneShort = function () { return "PDT"; };
-			oDate.getTimezoneLong = function () { return "Pacific Daylight Time"; };
+			// Simulate a time offset of -7h (America/Los_Angeles)
+			var oTimeZoneOffsetStub = this.stub(Date.prototype, "getTimezoneOffset").returns(7 * 60);
+			// eslint-disable-next-line no-extend-native
+			Date.prototype.getTimezoneShort = function() {};
+			var oGetTimezoneShortStub = this.stub(Date.prototype, "getTimezoneShort").returns("PDT");
+			// eslint-disable-next-line no-extend-native
+			Date.prototype.getTimezoneLong = function() {};
+			var oGetTimezoneLongStub = this.stub(Date.prototype, "getTimezoneLong").returns("Pacific Daylight Time");
 			oDate.setMilliseconds(235);
 
 			for (sCustomPattern in oCustomDatePatterns) {
 				oCustomDate = DateFormat.getDateTimeInstance({ pattern: sCustomPattern });
 				assert.equal(oCustomDate.format(oDate), oCustomDatePatterns[sCustomPattern], sCustomPattern);
+			}
+
+			delete Date.prototype.getTimezoneShort;
+			delete Date.prototype.getTimezoneLong;
+			oTimeZoneOffsetStub.restore();
+			oGetTimezoneShortStub.restore();
+			oGetTimezoneLongStub.restore();
+		});
+
+		QUnit.module("parse using pattern in UTC", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Etc/UTC");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
 			}
 		});
 
@@ -127,30 +162,42 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.ok(!oParsed, "result is not a date");
 		});
 
-		QUnit.test("format custom date UTC", function (assert) {
-			var oDate = new Date("Wed Jul 4 12:08:56 2001 UTC"),
-				oCustomDate;
+		QUnit.module("format Asia/Tokyo", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Asia/Tokyo");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
 
-			// Overwrite getTimezoneOffset to get reproducible results independent of the
-			// timezone where the test is run in, add additional information which
-			// is not provided by the standard JS Date object
-			oDate.getTimezoneOffset = function () { return 0; };
-			oDate.getTimezoneShort = function () { return "UTC"; };
-			oDate.getTimezoneLong = function () { return "Coordinated Universal Time"; };
-			oDate.setMilliseconds(235);
+		QUnit.test("timezone pattern", function (assert) {
+			var oDate = new Date("2001-07-04T12:08:56.235Z");
 
-			oCustomDate = DateFormat.getDateTimeInstance({ pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX" });
-			assert.equal(oCustomDate.format(oDate, true), "2001-07-04T12:08:56.235Z", "yyyy-MM-dd'T'HH:mm:ss.SSSX");
+			var oDateFormat = DateFormat.getDateTimeInstance({ pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX" });
+			assert.equal(oDateFormat.format(oDate, true), "2001-07-04T12:08:56.235Z", "pattern yyyy-MM-dd'T'HH:mm:ss.SSSX with utc");
+			assert.equal(oDateFormat.format(oDate), "2001-07-04T21:08:56.235+09", "pattern yyyy-MM-dd'T'HH:mm:ss.SSSX");
+
+			oDateFormat = DateFormat.getDateTimeInstance({ pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSz" });
+			assert.equal(oDateFormat.format(oDate, true), "2001-07-04T12:08:56.235GMTZ", "pattern yyyy-MM-dd'T'HH:mm:ss.SSSz with utc");
+			assert.equal(oDateFormat.format(oDate), "2001-07-04T21:08:56.235GMT+09:00", "pattern yyyy-MM-dd'T'HH:mm:ss.SSSz");
+		});
+
+		QUnit.module("format with timezone Etc/UTC", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Etc/UTC");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
 		});
 
 		QUnit.test("format custom date timezone UTC+0 (GMT)", function (assert) {
-			var oDate = new Date("Tue Oct 9 13:37:56 2018"),
+			var oDate = new Date(Date.UTC(2018, 9, 9, 13, 37, 56, 235)), // Tue Oct 9 13:37:56 2018 (Etc/UTC)
 				oCustomDateFormat, oFormatted;
 
-			// Overwrite getTimezoneOffset to get reproducible results independent of the
-			// timezone where the test is run in, add additional information which
-			// is not provided by the standard JS Date object
-			oDate.getTimezoneOffset = function () { return 0; };
+			// Simulate a time offset of 0h (Etc/UTC)
+			var oTimeZoneOffsetStub = this.stub(Date.prototype, "getTimezoneOffset").returns(0);
 			oDate.setMilliseconds(235);
 
 			[{
@@ -190,16 +237,21 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				assert.equal(oFormatted, oTestData.expected, oTestData.pattern);
 				assert.ok(oCustomDateFormat.parse(oFormatted, false, true) instanceof Date, "is a Date");
 			});
+			oTimeZoneOffsetStub.restore();
+		});
+
+		QUnit.module("format with timezone Europe/Berlin", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
 		});
 
 		QUnit.test("format custom date timezone UTC+2 (EET)", function (assert) {
-			var oDate = new Date("Tue Oct 9 13:37:56 2018"),
+			var oDate = new Date("Tue Oct 9 11:37:56 2018 GMT+0000"),
 				oCustomDateFormat, oFormatted;
-
-			// Overwrite getTimezoneOffset to get reproducible results independent of the
-			// timezone where the test is run in, add additional information which
-			// is not provided by the standard JS Date object
-			oDate.getTimezoneOffset = function () { return -120; };
 			oDate.setMilliseconds(235);
 
 			[{
@@ -241,15 +293,21 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			});
 		});
 
+		QUnit.module("format with timezone Asia/Calcutta", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Asia/Calcutta");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
 		QUnit.test("format custom date timezone UTC+5:30 (IST)", function (assert) {
-			var oDate = new Date("Tue Oct 9 13:37:56 2018"),
+			var oDate = new Date(Date.UTC(2018, 9, 9, 8, 7, 56, 235)), //UTC+5.5
 				oCustomDateFormat, oFormatted;
 
-			// Overwrite getTimezoneOffset to get reproducible results independent of the
-			// timezone where the test is run in, add additional information which
-			// is not provided by the standard JS Date object
-			oDate.getTimezoneOffset = function () { return -330; };
-			oDate.setMilliseconds(235);
+			// Simulate a time offset of 5.5h (Asia/Calcutta)
+			var oTimeZoneOffsetStub = this.stub(Date.prototype, "getTimezoneOffset").returns(-5.5 * 60);
 
 			[{
 				pattern:"yyyy-MM-dd'T'HH:mm:ss.SSSZ",
@@ -288,7 +346,10 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				assert.equal(oFormatted.toString(), oTestData.expected, oTestData.pattern);
 				assert.ok(oCustomDateFormat.parse(oFormatted, false, true) instanceof Date, "is a Date");
 			});
+			oTimeZoneOffsetStub.restore();
 		});
+
+		QUnit.module("format relative");
 
 
 		function getExpectedRelativeDate(iDiff, iTarget, oFormatOptions, sLocale) {
@@ -311,7 +372,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 		function doTestRelative(assert, bFormat, oFormatOptions, sLocale, sTestInfo) {
 			[undefined, 'wide', 'short', 'narrow'].forEach(function (sStyle) {
 				oFormatOptions.relativeStyle = sStyle;
-				var oFormat1 = DateFormat.getDateInstance(jQuery.extend({ relative: bFormat }, oFormatOptions), new Locale(sLocale)),
+				var oFormat1 = DateFormat.getDateInstance(jQuery.extend({ relative: true }, oFormatOptions), new Locale(sLocale)),
 					oFormat2 = DateFormat.getDateInstance(oFormatOptions, new Locale(sLocale)),
 					oToday = new Date(),
 					iToday = oToday.getTime(),
@@ -397,6 +458,143 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				var oDate = new Date(oFixture.inputDate);
 				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
 			});
+		});
+
+		QUnit.module("relative to '2021-03-22T23:30:00Z'", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				this.clock = sinon.useFakeTimers(new Date("2021-03-22T23:30:00Z").getTime());
+				// 28.03 - 0:30 (GMT+1)
+			},
+			afterEach: function () {
+				this.clock.restore();
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("format and parse 3:33", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021,2,21,3,33));
+
+			var sRelativeUTC = oDateFormat.format(oDate, true);
+			assert.equal(sRelativeUTC, "vorgestern");
+			var oExpectedUTC = new Date(Date.UTC(2021,2,20,23,30));
+			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
+
+			var sRelative = oDateFormat.format(oDate);
+			assert.equal(sRelative, "vorgestern");
+			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpectedUTC.getTime());
+		});
+
+		QUnit.test("format and parse 23:33", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021,2,21,23,33));
+
+			var sRelativeUTC = oDateFormat.format(oDate, true);
+			assert.equal(sRelativeUTC, "vorgestern");
+			var oExpectedUTC = new Date(Date.UTC(2021,2,20,23,30));
+			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
+
+			var sRelative = oDateFormat.format(oDate);
+			assert.equal(sRelative, "vor 1 Tag");
+			var oExpected = new Date(Date.UTC(2021,2,21,23,30));
+			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpected.getTime());
+		});
+
+		QUnit.module("relative to '2021-03-22T03:30:00Z'", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				this.clock = sinon.useFakeTimers(new Date("2021-03-22T03:30:00Z").getTime());
+				// 28.03 - 0:30 (GMT+1)
+			},
+			afterEach: function () {
+				this.clock.restore();
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("3:33", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021,2,21,3,33));
+
+			var sRelativeUTC = oDateFormat.format(oDate, true);
+			assert.equal(sRelativeUTC, "vor 1 Tag");
+			var oExpectedUTC = new Date(Date.UTC(2021,2,21,3,30));
+			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
+
+			var sRelative = oDateFormat.format(oDate);
+			assert.equal(sRelative, "vor 1 Tag");
+			var oExpected = new Date(Date.UTC(2021,2,21,3,30));
+			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpected.getTime());
+		});
+
+
+		QUnit.test("23:33", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021,2,21,23,33));
+
+			var sRelativeUTC = oDateFormat.format(oDate, true);
+			assert.equal(sRelativeUTC, "vor 1 Tag");
+			var oExpectedUTC = new Date(Date.UTC(2021,2,21,3,30));
+			assert.equal(oDateFormat.parse(sRelativeUTC, true).getTime(), oExpectedUTC.getTime());
+
+			var sRelative = oDateFormat.format(oDate);
+			assert.equal(sRelative, "heute");
+			var oExpected = new Date(Date.UTC(2021,2,22,3,30));
+			assert.equal(oDateFormat.parse(sRelative).getTime(), oExpected.getTime());
+		});
+
+		QUnit.module("German summer time 28.03.2021 (2h->3h) (offset: +2 -> +1)", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				this.clock = sinon.useFakeTimers(new Date("2021-03-27T23:30:00Z").getTime());
+				// 28.03 - 0:30 (GMT+1)
+			},
+			afterEach: function () {
+				this.clock.restore();
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("format date relative to summer time +23 h same day", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021,2,28,21,33));
+			// 28.03 - 0:30 (GMT+1)
+			// -
+			// 28.03 - 23:33 (GMT+2)
+			// => heute
+			var sRelative = oDateFormat.format(oDate);
+
+			assert.equal(sRelative, "heute");
+		});
+
+		QUnit.module("German winter time 31.10.2021 (3h->2h) (offset: +1 -> +2)", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				this.clock = sinon.useFakeTimers(new Date("2021-10-30T22:30:00Z").getTime());
+				// 31.10 - 0:30 (GMT+2)
+			},
+			afterEach: function () {
+				this.clock.restore();
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("format date relative to winter time +23 h same day", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021,9,31,22,59));
+			// 31.10 - 23:30 (GMT+1)
+
+			// today 0:30 - 23:30 => heute
+			var sRelative = oDateFormat.format(oDate);
+
+			assert.equal(sRelative, "heute");
 		});
 
 		QUnit.module("DateFormat relative date (jan 14th 2021)", {
@@ -690,6 +888,48 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			});
 		});
 
+		QUnit.module("DateFormat#parse custom patterns with timezone", {
+			beforeEach: function () {
+				// 2 digit years require the current year to be fixed
+				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
+				this.clock = sinon.useFakeTimers(Date.UTC(2018, 7, 2, 11, 37));
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+			},
+			afterEach: function () {
+				this.clock.restore();
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("parse custom date", function (assert) {
+
+			var oCustomDatePatterns = {
+				"yyyy.MM.dd 'at' HH:mm:ss z": ["2001.07.04 at 12:08:56 GMT+02:00", Date.UTC(2001, 6, 4, 10, 8, 56)],
+				"yyyy.MM.dd GGGG 'at' HH:mm:ss z": ["2001.07.04 Anno Domini at 12:08:56 GMT+02:00", Date.UTC(2001, 6, 4, 10, 8, 56)],
+				"EEE, MMM d, ''yy Z": ["Wed, Jul 4, '01 +0200", Date.UTC(2001, 6, 3, 22)],
+				"h:mm a z": ["12:08 PM GMT+01:00", Date.UTC(1970, 0, 1, 11, 8)],
+				"hh 'o''clock' a, X": ["12 o'clock PM, +01", Date.UTC(1970, 0, 1, 11)],
+				"hh 'o''clock' a, XX": ["12 o'clock PM, +0100", Date.UTC(1970, 0, 1, 11)],
+				"hh 'o''clock' a, XXX": ["12 o'clock PM, +01:00", Date.UTC(1970, 0, 1, 11)],
+				"K:mm a, z": ["0:08 PM, UTC+01:00", Date.UTC(1970, 0, 1, 11, 8)],
+
+				"yyyyy.MMMMM.dd hh:mm aaa": ["02001.July.04 12:08 PM", Date.UTC(2001, 6, 4, 10, 8)],
+				"EEE, d MMM yyyy HH:mm:ss": ["Wed, 4 Jul 2001 12:08:56", Date.UTC(2001, 6, 4, 10, 8, 56)],
+				"yyMMddHHmms": ["010704120856", Date.UTC(2001, 6, 4, 10, 8, 56)],
+				"yyyy-MM-dd'T'HH:mm:ss.SSS": ["2001-07-04T12:08:56.235", Date.UTC(2001, 6, 4, 10, 8, 56, 235)],
+				"yyyy-MM-dd GGG 'T'HH:mm:ss.SSSX": ["2001-07-04 AD T12:08:56.235+02", Date.UTC(2001, 6, 4, 10, 8, 56, 235)],
+				"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000+01", Date.UTC(2000, 0, 1, 15)],
+				"yyyy-MM-dd'T'HH:mm:ss.SSSXX": ["2000-01-01T16:00:00.000+0100", Date.UTC(2000, 0, 1, 15)],
+				"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": ["2000-01-01T16:00:00.000+01:00", Date.UTC(2000, 0, 1, 15)]
+			};
+
+			for (var sCustomPattern in oCustomDatePatterns) {
+				var oCustomDate = DateFormat.getDateTimeInstance({ pattern: sCustomPattern });
+				assert.equal(oCustomDate.parse(oCustomDatePatterns[sCustomPattern][0]).getTime(), oCustomDatePatterns[sCustomPattern][1], "Pattern: " + sCustomPattern);
+
+			}
+		});
+
 		QUnit.module("DateFormat#parse (anno 1978)", {
 			beforeEach: function () {
 				// 2 digit years require the current year to be fixed
@@ -711,12 +951,11 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oFormat.parse(twoDigitMinus71 + "-01-01").getFullYear(), 2007, "Year 2007");
 		});
 
-
 		QUnit.module("DateFormat#parse (anno 2018)", {
 			beforeEach: function () {
 				// 2 digit years require the current year to be fixed
 				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
-				this.clock = sinon.useFakeTimers(1533209820000); // Thu Aug 02 2018 13:37:00 GMT+0200
+				this.clock = sinon.useFakeTimers(Date.UTC(2018, 7, 2, 11, 37));
 			},
 			afterEach: function () {
 				this.clock.restore();
@@ -730,6 +969,20 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			doTestRelative(assert, false, { relativeRange: [-9, 0] }, "de", "default style, range [-9, 0], de");
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5] }, "en", "style long, range [1, 5], en");
 			doTestRelative(assert, false, { style: "long", relativeRange: [1, 5] }, "de", "style long, range [1, 5], de");
+		});
+
+		QUnit.test("parse default date UTC", function (assert) {
+			var oDate = oDefaultDate.parse("May 23, 2008", true);
+			assert.equal(oDate.getUTCFullYear(), 2008, "Year 2008");
+			assert.equal(oDate.getUTCMonth(), 4, "Month May");
+			assert.equal(oDate.getUTCDate(), 23, "Day 23rd");
+
+			oDate = oDefaultDateTime.parse("May 23, 2008, 5:23:00 PM", true);
+			assert.equal(oDate.getUTCFullYear(), 2008, "Year 2008");
+			assert.equal(oDate.getUTCMonth(), 4, "Month May");
+			assert.equal(oDate.getUTCDate(), 23, "Day 23rd");
+			assert.equal(oDate.getUTCHours(), 17, "Hours 17");
+			assert.equal(oDate.getUTCMinutes(), 23, "Minutes 23");
 		});
 
 		QUnit.test("parse default date", function (assert) {
@@ -814,40 +1067,6 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oDate.getUTCMinutes(), 23, "Minutes 23");
 		});
 
-		QUnit.test("parse custom date", function (assert) {
-
-			function inclTimezoneOffset(iTimestamp) {
-				return iTimestamp + (new Date(iTimestamp)).getTimezoneOffset() * 60 * 1000;
-			}
-
-			var oCustomDatePatterns = {
-				"yyyy.MM.dd 'at' HH:mm:ss z": ["2001.07.04 at 12:08:56 GMT+02:00", 994241336000],
-				"yyyy.MM.dd GGGG 'at' HH:mm:ss z": ["2001.07.04 Anno Domini at 12:08:56 GMT+02:00", 994241336000],
-				"EEE, MMM d, ''yy Z": ["Wed, Jul 4, '01 +0200", 994197600000],
-				"h:mm a z": ["12:08 PM Z", 43680000],
-				"hh 'o''clock' a, X": ["12 o'clock PM, +07", 18000000],
-				"hh 'o''clock' a, XX": ["12 o'clock PM, +0700", 18000000],
-				"hh 'o''clock' a, XXX": ["12 o'clock PM, +07:00", 18000000],
-				"K:mm a, z": ["0:08 PM, UTC+01:00", 40080000],
-
-				"yyyyy.MMMMM.dd hh:mm aaa": ["02001.July.04 12:08 PM", inclTimezoneOffset(994248480000)],
-				"EEE, d MMM yyyy HH:mm:ss": ["Wed, 4 Jul 2001 12:08:56", inclTimezoneOffset(994248536000)],
-				"yyMMddHHmms": ["010704120856", inclTimezoneOffset(994248536000)],
-				"yyyy-MM-dd'T'HH:mm:ss.SSS": ["2001-07-04T12:08:56.235", inclTimezoneOffset(994248536235)],
-				//"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235],
-				"yyyy-MM-dd GGG 'T'HH:mm:ss.SSSX": ["2001-07-04 AD T12:08:56.235Z", 994248536235],
-				"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09", 946774800000],
-				"yyyy-MM-dd'T'HH:mm:ss.SSSXX": ["2000-01-01T16:00:00.000-0900", 946774800000],
-				"yyyy-MM-dd'T'HH:mm:ss.SSSXXX": ["2000-01-01T16:00:00.000-09:00", 946774800000]
-			};
-
-			for (var sCustomPattern in oCustomDatePatterns) {
-				var oCustomDate = DateFormat.getDateTimeInstance({ pattern: sCustomPattern });
-				assert.equal(oCustomDate.parse(oCustomDatePatterns[sCustomPattern][0]).getTime(), oCustomDatePatterns[sCustomPattern][1], sCustomPattern);
-
-			}
-		});
-
 		QUnit.test("parse custom format", function (assert) {
 
 			var oCustomDateFormats = {
@@ -928,11 +1147,32 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oDate.getFullYear(), 2001, "Parsed as 2001");
 			sDate = oFormat.format(oDate);
 			assert.equal(sDate, "1/1/2001", "Formatted as 2001");
-			oDate = new Date();
-			oDate.setFullYear(1);
-			oDate.setMonth(0);
-			oDate.setDate(1);
+
+			// 1/1/1001
+			oDate = new Date(0);
+			oDate.setFullYear(1001, 0, 1);
+			assert.equal(oDate.getFullYear(), 1001, "Fullyear is 1001");
+			assert.equal(oDate.getMonth(), 0, "Month is 0");
+			sDate = oFormat.format(oDate);
+			assert.equal(sDate, "1/1/1001", "Formatted as 1001");
+			oDate = oFormat.parse(sDate);
+			assert.equal(oDate.getFullYear(), 1001, "Fullyear is still 1001");
+
+			// 1/1/0002
+			oDate = new Date(0);
+			oDate.setFullYear(2, 0, 1);
+			assert.equal(oDate.getFullYear(), 2, "Fullyear is 2");
+			assert.equal(oDate.getMonth(), 0, "Month is 0");
+			sDate = oFormat.format(oDate);
+			assert.equal(sDate, "1/1/0002", "Formatted as 0002");
+			oDate = oFormat.parse(sDate);
+			assert.equal(oDate.getFullYear(), 2, "Fullyear is still 2");
+
+			// 1/1/0001
+			oDate = new Date(0);
+			oDate.setFullYear(1, 0, 1);
 			assert.equal(oDate.getFullYear(), 1, "Fullyear is 1");
+			assert.equal(oDate.getMonth(), 0, "Month is 0");
 			sDate = oFormat.format(oDate);
 			assert.equal(sDate, "1/1/0001", "Formatted as 0001");
 			oDate = oFormat.parse(sDate);
@@ -1198,37 +1438,42 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "W1", "week format with pattern 'w'");
 			assert.ok(oDateFormat.parse("W1") instanceof Date, "Date can be correctly parsed");
+			assert.notOk(isNaN(oDateFormat.parse("W1").getTime()), "Date is valid and can be correctly parsed 'W1'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "'W'ww"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "W01", "week format with pattern 'ww'");
-			assert.ok(oDateFormat.parse("W01") instanceof Date, "Date can be correctly parsed");
+			assert.ok(oDateFormat.parse("W01") instanceof Date, "Date can be correctly parsed 'W01'");
+			assert.notOk(isNaN(oDateFormat.parse("W01").getTime()), "Date is valid and can be correctly parsed 'W01'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "www"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "CW 01", "week format with pattern 'www'");
-			assert.ok(oDateFormat.parse("CW 01") instanceof Date, "Date can be correctly parsed");
-			assert.notOk(isNaN(oDateFormat.parse("CW 01").getTime()), "Date is a valid JS Date");
+			assert.ok(oDateFormat.parse("CW 01") instanceof Date, "Date can be correctly parsed 'CW 01'");
+			assert.notOk(isNaN(oDateFormat.parse("CW 01").getTime()), "Date is valid and can be correctly parsed 'CW 01'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "wwww"
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week format with pattern 'wwww'");
-			assert.ok(oDateFormat.parse("Calendar Week 01") instanceof Date, "Date can be correctly parsed");
+			assert.ok(oDateFormat.parse("Calendar Week 01") instanceof Date, "Date can be correctly parsed 'Calendar Week 01'");
+			assert.notOk(isNaN(oDateFormat.parse("Calendar Week 01").getTime()), "Date is valid and can be correctly parsed 'Calendar Week 01'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "wwww",
 				calendarType: CalendarType.Islamic
 			});
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 11", "week number in Islamic calendar");
+			assert.notOk(isNaN(oDateFormat.parse("Calendar Week 11").getTime()), "Date can be correctly parsed in Islamic calendar 'Calendar Week 11'");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "wwww",
 				calendarType: CalendarType.Japanese
 			});
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week number in Japanese calendar");
+			assert.notOk(isNaN(oDateFormat.parse("Calendar Week 01").getTime()), "Date can be correctly parsed in Japanese calendar 'Calendar Week 01'");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern", function (assert) {
@@ -1422,7 +1667,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern");
 		});
 
-		QUnit.module("Scaling: Relative Time Formater", {
+		QUnit.module("Scaling: Relative Time Formatter", {
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers(1444724476000); // Tue Oct 13 2015 10:21:16 GMT+0200 (CEST)
 				var oDate = new Date();
@@ -1642,6 +1887,32 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			doTestRelative(assert, true, { style: "long", relativeRange: [1, 5], calendarType: CalendarType.Islamic }, "en", "style long, range [1, 5], en with calendar type Islamic");
 		});
 
+		QUnit.test("format date to Islamic type edge cases", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Islamic
+			}, new Locale("en"));
+			[{
+				timezone: "Europe/Berlin", // +1
+				date: Date.UTC(1999, 2, 18, 22, 12, 11)
+			}, {
+				timezone: "America/New_York", // -5
+				date: Date.UTC(1999, 2, 19, 4, 12, 11)
+			}].forEach(function(oFixture) {
+				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				var oDate = new Date(oFixture.date);
+
+				assert.equal(oDateFormat.format(oDate).toString(), "Dhuʻl-Q. 30, 1419 AH",
+					"current month in " + oFixture.timezone);
+
+				// add 1 hour to proceed with the next day when converting to the given timezone
+				oDate.setUTCHours(oDate.getUTCHours() + 1);
+
+				assert.equal(oDateFormat.format(oDate).toString(), "Dhuʻl-H. 1, 1419 AH",
+					"succeeding month in " + oFixture.timezone);
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			});
+		});
+
 		QUnit.test("parse date to Islamic type with locale en", function (assert) {
 			var oDateFormat = DateFormat.getDateInstance({
 				calendarType: CalendarType.Islamic
@@ -1715,6 +1986,32 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			}, new Locale("ja_JP"));
 
 			assert.equal(oDateFormat.format(this.oDate), "平成13年7月4日", "Date is formatted in Japanese calendar");
+		});
+
+		QUnit.test("format date to Japanese type - edge cases", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese
+			}, new Locale("ja_JP"));
+			[{
+				timezone: "Europe/Berlin",
+				date: Date.UTC(2019, 3, 30, 20, 12, 11)
+			}, {
+				timezone: "America/New_York",
+				date: Date.UTC(2019, 4, 1, 2, 12, 11)
+			}].forEach(function(oFixture) {
+				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+
+				// 2019-5-1 era change
+				var oDate1 = new Date(oFixture.date);
+
+				assert.equal(oDateFormat.format(oDate1), "平成31年4月30日", "old era in " + oFixture.timezone);
+
+				// add 2 hour
+				oDate1.setUTCHours(oDate1.getUTCHours() + 2);
+
+				assert.equal(oDateFormat.format(oDate1), "令和元年5月1日", "new era in " + oFixture.timezone);
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			});
 		});
 
 		QUnit.test("format/parse date with Gannen instead of Ichinen", function (assert) {
@@ -1916,6 +2213,33 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oDateFormat.format(this.oDate), "4 ก.ค. 2544", "Date is formatted in Buddhist calendar");
 		});
 
+		QUnit.test("format date to Buddhist type edge cases", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Buddhist
+			}, new Locale("th_TH"));
+			[{
+				timezone: "Europe/Berlin",
+				date: Date.UTC(1940, 2, 31, 22, 12, 11)
+			}, {
+				timezone: "America/New_York",
+				date: Date.UTC(1940, 3, 1, 4, 12, 11)
+			}].forEach(function(oFixture) {
+				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				var oDate1 = new Date(oFixture.date);
+
+				// Before 1941 new year started on 1st of April
+				assert.equal(oDateFormat.format(oDate1).toString(), "31 มี.ค. 2482",
+					"previous year in " + oFixture.timezone);
+
+				// add 1 hour
+				oDate1.setUTCHours(oDate1.getUTCHours() + 1);
+
+				assert.equal(oDateFormat.format(oDate1).toString(), "1 เม.ย. 2483",
+					"succeeding year in " + oFixture.timezone);
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			});
+		});
+
 		QUnit.test("format date to Buddhist type with relative", function (assert) {
 			doTestRelative(assert, true, { pattern: "yyyy-MM-dd", calendarType: CalendarType.Buddhist }, "th_TH", "yyyy-MM-dd, default range, en with calendar type Buddhist");
 			doTestRelative(assert, true, { relativeRange: [-9, 0], calendarType: CalendarType.Buddhist }, "th_TH", "default style, range [-9, 0], en with calendar type Buddhist");
@@ -2086,13 +2410,15 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				format: "yMd"
 			});
 
-			var oDate = UniversalDate.getInstance(new Date(2017, 3, 11), CalendarType.Gregorian);
+			// + 2 days
+			var oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)), CalendarType.Gregorian);
 			var oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 2 * 24 * 3600 * 1000), CalendarType.Gregorian);
 
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Day": true }, "correct diff returned");
 
+			// + 0.5 day
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 12 * 3600 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
 
@@ -2101,12 +2427,14 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				format: "Md"
 			});
 
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
-			oDate1 = UniversalDate.getInstance(new Date(2018, 4, 11));
+			// + 1 month and + 1 year
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
+			oDate1 = UniversalDate.getInstance(new Date(Date.UTC(2018, 4, 11)));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Year": true, "Month": true, "Week": true }, "correct diff returned");
 
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11), CalendarType.Gregorian);
-			oDate1 = UniversalDate.getInstance(new Date(2017, 6, 11), CalendarType.Gregorian);
+			// + 3 month
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)), CalendarType.Gregorian);
+			oDate1 = UniversalDate.getInstance(new Date(Date.UTC(2017, 6, 11)), CalendarType.Gregorian);
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Quarter": true, "Month": true, "Week": true }, "correct diff returned");
 		});
 
@@ -2115,14 +2443,14 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				interval: true,
 				format: "Hms"
 			});
-			var oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
+			var oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
 			var oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 5400 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
 
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
-			oDate1 = UniversalDate.getInstance(new Date(2017, 4, 11));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
+			oDate1 = UniversalDate.getInstance(new Date(Date.UTC(2017, 4, 11)));
 			assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
 
 			// if the diff field doesn't exist in the 'format' option, the default diff field is used.
@@ -2130,7 +2458,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				interval: true,
 				format: "yMd"
 			});
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 1800 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "the correct diff returned.");
 
@@ -2139,8 +2467,8 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				format: "h"
 			});
 
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11, 11));
-			oDate1 = UniversalDate.getInstance(new Date(2017, 4, 11, 12));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11, 11)));
+			oDate1 = UniversalDate.getInstance(new Date(Date.UTC(2017, 4, 11, 12)));
 
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "DayPeriod": true, "Hour": true }, "correct diff returned");
 
@@ -2149,8 +2477,8 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				format: "K"
 			});
 
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11, 11));
-			oDate1 = UniversalDate.getInstance(new Date(2017, 4, 11, 12));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11, 11)));
+			oDate1 = UniversalDate.getInstance(new Date(Date.UTC(2017, 4, 11, 12)));
 
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "DayPeriod": true, "Hour": true }, "correct diff returned");
 		});
@@ -2160,13 +2488,13 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				interval: true,
 				format: "Hms"
 			});
-			var oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
+			var oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
 			var oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 5400 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
 
 
 			// if two dates are identical on the fields which we compare, no diff field will be returned
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 999));
 			assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
 
@@ -2175,7 +2503,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				interval: true,
 				format: "yMd"
 			});
-			oDate = UniversalDate.getInstance(new Date(2017, 3, 11));
+			oDate = UniversalDate.getInstance(new Date(Date.UTC(2017, 3, 11)));
 			oDate1 = UniversalDate.getInstance(new Date(oDate.getTime() + 1800 * 1000));
 			assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "correct diff returned.");
 		});
@@ -2417,11 +2745,15 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				format: "yMd"
 			});
 
+			var oFormat = DateFormat.getDateInstance({
+				format: "yMd"
+			});
+
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			var oDate = new Date(2017, 3, 11);
 			var sResult = oIntervalFormat.format([oDate, oDate]);
 
-			assert.equal(sResult.toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+			assert.equal(sResult.toString(), oFormat.format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
 		});
 
@@ -2446,11 +2778,13 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 				interval: true
 			});
 
+			var oFormat = DateFormat.getDateInstance();
+
 			// if two dates are identical on the fields which we compare, no diff field will be returned
 			var oDate = new Date(2017, 3, 11);
 			var sResult = oIntervalFormat.format([oDate, oDate]);
 
-			assert.equal(sResult.toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+			assert.equal(sResult.toString(), oFormat.format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
 		});
 
@@ -2583,5 +2917,509 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 
 			var oDateParsed3 = oDateFormat3.parse("August 29, 2018");
 			assert.notOk(Array.isArray(oDateParsed3), "Parsed result shouldn't be an array.");
+		});
+
+		QUnit.module("Timezone pattern symbol VV", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("Format with pattern symbol non VV", function (assert) {
+			assert.equal(DateFormat.getDateTimeInstance({pattern: "V"}).format(oDateTime), "",
+				"No timezone is formatted for pattern 'V'");
+
+			assert.equal(DateFormat.getDateTimeInstance({pattern: "VVV"}).format(oDateTime), "",
+				"No timezone is formatted for pattern 'VVV'");
+		});
+
+		QUnit.test("Format with pattern symbol VV", function (assert) {
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "VV"
+				}).format(oDateTime, true), "",
+				"No timezone is formatted for utc");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "VV"
+				}).format(oDateTime), "Europe/Berlin",
+				"Only local timezone is formatted");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "z"
+				}).format(oDateTime).toString(), "GMT+02:00",
+				"Only local offset is formatted");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "yyyy-MM-dd'T'HH:mm:ss VV z"
+				}).format(oDateTime).toString(), "2001-09-11T08:46:13 Europe/Berlin GMT+02:00",
+				"Local timezone and offset is formatted");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "yyyy-MM-dd'T'HH:mm:ss z VV"
+				}).format(oDateTime).toString(), "2001-09-11T08:46:13 GMT+02:00 Europe/Berlin",
+				"Local offset and timezone is formatted");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "yyyy-MM-dd'T'HH:mm:ss VV"
+				}).format(oDateTime).toString(), "2001-09-11T08:46:13 Europe/Berlin",
+				"Local timezone is formatted");
+		});
+
+		QUnit.test("Parse with pattern symbol VV", function (assert) {
+			var oDate = new Date(Date.UTC(1970, 0, 1, 0, 0, 0));
+			oDate.setUTCHours(oDate.getUTCHours() - 1); // GMT+1 (Europe/Berlin)
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "VV"
+				}).parse("Europe/Berlin", false, true).getTime(), oDate.getTime(),
+				"Parsed the initial unix epoch date with pattern symbol VV.");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "z"
+				}).parse("GMT+01:00").getTime(), oDate.getTime(),
+				"Parsed the initial unix epoch date with pattern symbol z.");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "yyyy-MM-dd'T'HH:mm:ss VV z"
+				}).parse("2001-09-11T08:46:13 Europe/Berlin GMT+02:00").getTime(), oDateTime.getTime(),
+				"Parsed with pattern symbols VV and z.");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "yyyy-MM-dd'T'HH:mm:ss z VV"
+				}).parse("2001-09-11T08:46:13 GMT+02:00 Europe/Berlin").getTime(), oDateTime.getTime(),
+				"Parsed with pattern symbols z and VV.");
+			assert.equal(DateFormat.getDateTimeInstance({
+					pattern: "yyyy-MM-dd'T'HH:mm:ss VV"
+				}).parse("2001-09-11T08:46:13 Europe/Berlin").getTime(), oDateTime.getTime(),
+				"Parsed with pattern symbol VV.");
+		});
+
+		QUnit.module("DateFormat relative date with timezone America/New_York", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-10-09T02:37:00Z").getTime());
+				// Oct 8th 22:37 (New York -4 EDT)
+				sap.ui.getCore().getConfiguration().setTimezone("America/New_York");
+			},
+			afterEach: function () {
+				this.clock.restore();
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("format date relative date", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date(Date.UTC(2021, 9, 9, 7, 37));
+			// Oct 8th 22:37 (New York) -
+			// Oct 9th 3:37 (New York)
+
+			var sRelative = oDateFormat.format(oDate);
+
+			assert.equal(sRelative, "in 1 Tag");
+		});
+
+		QUnit.test("parse date relative date in 1 Tag", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({ relative: true }, new Locale("de"));
+
+			var oDate = new Date("2021-10-09T02:37:00Z");
+			oDate.setDate(oDate.getDate() + 1);
+
+			// Oct 8th 22:37 (New York) -
+			// Oct 9th 22:37 (New York)
+
+			var oRelative = oDateFormat.parse("in 1 Tag");
+			assert.equal(oDateFormat.parse("morgen").getTime(), oRelative.getTime());
+
+			assert.equal(oRelative.getTime(), oDate.getTime());
+		});
+
+		QUnit.module("DateFormat with timezone Australia/Sydney", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Australia/Sydney");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("integration: format and parse with pattern 'yyyy-MM-dd'T'HH:mm:ss.SSSXXX", function (assert) {
+			// Sydney
+			// 2018	Sun, 1 Apr, 03:00	AEDT → AEST
+			// from UTC+11h to UTC+10
+			var oDateFormat = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+			}, new Locale("de"));
+
+			// AEDT
+			var oDateAEDT = new Date("2018-03-31T13:00:00Z");
+			var sFormattedAEDT = oDateFormat.format(oDateAEDT);
+			assert.equal(sFormattedAEDT, "2018-04-01T00:00:00.000+11:00", "format AEDT");
+			assert.equal(oDateFormat.parse(sFormattedAEDT).getTime(), oDateAEDT.getTime(), "parse AEST");
+
+			// AEST
+			var oDateAEST = new Date("2018-03-31T18:00:00Z");
+			var sFormattedAEST = oDateFormat.format(oDateAEST);
+			assert.equal(sFormattedAEST, "2018-04-01T04:00:00.000+10:00", "format AEST");
+			assert.equal(oDateFormat.parse(sFormattedAEST).getTime(), oDateAEST.getTime(), "parse AEST");
+		});
+
+		QUnit.test("integration: format and parse", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
+			// Sydney
+			// 2018	Sun, 1 Apr, 03:00	AEDT → AEST
+			// 2018 Sun, 7 Oct, 02:00	AEST → AEDT
+			[
+				"31.03.2018, 17:00:00", // DST
+				"01.04.2018, 00:00:00", // still DST
+				"01.04.2018, 01:00:00", // still DST
+				"01.04.2018, 02:00:00", // twice (regular + "switch back")
+				"01.04.2018, 02:59:00", // shortly before "switch back" to standard time
+				"01.04.2018, 03:00:00", // standard time (discard time at "switch back")
+				"01.04.2018, 03:01:00", // standard time
+				"01.04.2018, 04:00:00", // standard time
+				"01.04.2018, 05:00:00", // standard time
+				"01.04.2018, 17:00:00", // standard time
+
+				"06.10.2018, 17:00:00", // standard time
+				"07.10.2018, 00:00:00", // still standard time
+				"07.10.2018, 01:00:00", // still standard time
+				"07.10.2018, 01:59:00", // still standard time
+				"07.10.2018, 02:00:00", // becomes 03:00 at "switch forward"
+				"07.10.2018, 02:01:00", // does not exist (as does 02:01 - 02:59)
+				"07.10.2018, 03:00:00", // DST (direct "switch forward" from 02:00)
+				"07.10.2018, 03:01:00", // DST
+				"07.10.2018, 08:00:00", // DST
+				"07.10.2018, 15:00:00"  // DST
+			].forEach(function (sFormatted) {
+				assert.deepEqual(oDateFormat.parse(sFormatted),
+					oDateFormat.parse(oDateFormat.format(oDateFormat.parse(sFormatted))), "check formats: " + sFormatted);
+			});
+
+			// does not exist (as does 02:01 - 02:59)
+			assert.deepEqual(oDateFormat.parse("07.10.2018, 03:01:00"), oDateFormat.parse("07.10.2018, 02:01:00"),
+				"parse to the same date/time, but formatted to: '07.10.2018, 02:01:00'");
+		});
+
+
+		QUnit.module("DateFormat with timezone Europe/Berlin", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("integration: format and parse", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
+			// Berlin
+			// 2018	Sun, 25 Mar, 02:00	CET → CEST	+1 hour (DST start)	UTC+2h
+			//  	Sun, 28 Oct, 03:00	CEST → CET	-1 hour (DST end)	UTC+1h
+			[
+				"24.03.2018, 20:00:00",
+				"24.03.2018, 23:00:00",
+				"25.03.2018, 00:00:00",
+				"25.03.2018, 01:00:00",
+				"25.03.2018, 02:00:00",
+				"25.03.2018, 02:30:00",
+				"25.03.2018, 03:00:00",
+				"25.03.2018, 03:30:00",
+				"25.03.2018, 04:00:00",
+				"25.03.2018, 10:00:00",
+				"25.03.2018, 20:00:00",
+
+				"27.10.2018, 20:00:00",
+				"27.10.2018, 23:00:00",
+				"28.10.2018, 00:00:00",
+				"28.10.2018, 01:00:00",
+				"28.10.2018, 02:00:00",
+				"28.10.2018, 03:00:00",
+				"28.10.2018, 04:00:00",
+				"28.10.2018, 10:00:00",
+				"28.10.2018, 20:00:00"
+			].forEach(function (sFormatted) {
+				assert.deepEqual(oDateFormat.parse(sFormatted),
+					oDateFormat.parse(oDateFormat.format(oDateFormat.parse(sFormatted))), "check formats: " + sFormatted);
+			});
+		});
+
+		QUnit.module("DateFormat with timezone America/Adak", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("America/Adak");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("integration: format and parse", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
+			// Adak
+			// Sun, 11 Mar, 02:00	HST → HDT	+1 hour (DST start)	UTC-9h
+			// Sun, 4 Nov, 02:00	HDT → HST	-1 hour (DST end)	UTC-10h
+			[
+				"10.03.2018, 10:00:00",
+				"10.03.2018, 20:00:00",
+				"11.03.2018, 00:00:00",
+				"11.03.2018, 01:00:00",
+				"11.03.2018, 02:00:00",
+				"11.03.2018, 02:30:00",
+				"11.03.2018, 03:00:00",
+				"11.03.2018, 03:30:00",
+				"11.03.2018, 04:00:00",
+				"11.03.2018, 10:00:00",
+				"11.03.2018, 20:00:00",
+
+				"03.11.2018, 10:00:00",
+				"03.11.2018, 20:00:00",
+				"04.11.2018, 00:00:00",
+				"04.11.2018, 01:00:00",
+				"04.11.2018, 02:00:00",
+				"04.11.2018, 03:00:00",
+				"04.11.2018, 04:00:00",
+				"04.11.2018, 10:00:00",
+				"04.11.2018, 20:00:00"
+			].forEach(function (sFormatted) {
+				assert.deepEqual(oDateFormat.parse(sFormatted),
+					oDateFormat.parse(oDateFormat.format(oDateFormat.parse(sFormatted))), "check formats: " + sFormatted);
+			});
+		});
+
+		QUnit.module("DateFormat with timezone Pacific/Kiritimati", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Pacific/Kiritimati");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("integration: format and parse", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
+			// Kiritimati
+			[
+				"01.01.2018, 14:00:00",
+				"02.02.2018, 14:00:00",
+				"03.03.2018, 14:00:00",
+				"04.04.2018, 14:00:00",
+				"05.05.2018, 14:00:00",
+				"06.06.2018, 14:00:00",
+				"07.07.2018, 14:00:00",
+				"08.08.2018, 14:00:00",
+				"09.09.2018, 14:00:00",
+				"10.10.2018, 14:00:00",
+				"11.11.2018, 14:00:00",
+				"12.12.2018, 14:00:00"
+			].forEach(function (sFormatted) {
+				assert.deepEqual(oDateFormat.parse(sFormatted),
+					oDateFormat.parse(oDateFormat.format(oDateFormat.parse(sFormatted))), "check formats: " + sFormatted);
+			});
+		});
+
+
+		QUnit.module("DateFormat with timezone America/New_York", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("America/New_York");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("integration: format and parse", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
+
+			var oDate = new Date("2021-10-09T02:37:00Z");
+
+			var sFormatted = oDateFormat.format(oDate);
+			assert.equal(sFormatted, "08.10.2021, 22:37:00");
+
+			var oParsedDate = oDateFormat.parse(sFormatted);
+			assert.equal(oParsedDate.getTime(), oDate.getTime());
+		});
+
+		QUnit.test("integration: format and parse for different locales", function (assert) {
+			var oDate = new Date("2021-10-09T02:37:00Z");
+			["ar", "sv", "fr", "en", "da", "tr", "ja", "ru"].forEach(function(sLocale) {
+				var oDateFormat = DateFormat.getDateTimeInstance(new Locale(sLocale));
+				var sFormatted = oDateFormat.format(oDate);
+
+				assert.ok(sFormatted, "formatted '" + sFormatted + "' correctly for locale " + sLocale);
+
+				var oParsedDate = oDateFormat.parse(sFormatted);
+
+				assert.equal(oParsedDate.getTime(), oDate.getTime(), "correctly parsed for locale " + sLocale);
+			});
+		});
+
+		QUnit.test("integration: format and parse for different timezones", function (assert) {
+			var oDate = new Date("2021-10-09T02:37:00Z");
+			[
+				{timezone: "Pacific/Niue",          expectedDate: "08.10.2021, 15:37:00"}, // -11:00
+				{timezone: "Pacific/Tahiti",        expectedDate: "08.10.2021, 16:37:00"}, // -10:00
+				{timezone: "Pacific/Marquesas",     expectedDate: "08.10.2021, 17:07:00"}, // -09:30
+				{timezone: "America/Adak",          expectedDate: "08.10.2021, 17:37:00"}, // -09:00
+				{timezone: "America/Boise",         expectedDate: "08.10.2021, 20:37:00"}, // -06:00
+				{timezone: "America/Bogota",        expectedDate: "08.10.2021, 21:37:00"}, // -05:00
+				{timezone: "America/Indiana/Knox",  expectedDate: "08.10.2021, 21:37:00"}, // -05:00
+				{timezone: "America/New_York",      expectedDate: "08.10.2021, 22:37:00"}, // -04:00
+				{timezone: "Atlantic/Azores",       expectedDate: "09.10.2021, 02:37:00"}, // +00:00
+				{timezone: "Europe/Berlin",         expectedDate: "09.10.2021, 04:37:00"}, // +02:00
+				{timezone: "Asia/Gaza",             expectedDate: "09.10.2021, 05:37:00"}, // +03:00
+				{timezone: "Europe/Athens",         expectedDate: "09.10.2021, 05:37:00"}, // +03:00
+				{timezone: "Europe/Saratov",        expectedDate: "09.10.2021, 06:37:00"}, // +04:00
+				{timezone: "Asia/Taipei",           expectedDate: "09.10.2021, 10:37:00"}, // +08:00
+				{timezone: "Antarctica/Casey",      expectedDate: "09.10.2021, 13:37:00"}, // +11:00
+				{timezone: "Pacific/Fiji",          expectedDate: "09.10.2021, 14:37:00"}, // +12:00
+				{timezone: "Pacific/Chatham",       expectedDate: "09.10.2021, 16:22:00"}  // +13:45
+			].forEach(function(oFixture) {
+				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
+				var sFormatted = oDateFormat.format(oDate);
+
+				assert.equal(sFormatted.toString(), oFixture.expectedDate,
+					"formatted '" + sFormatted + "' correctly for timezone " + oFixture.timezone);
+
+				var oParsedDate = oDateFormat.parse(sFormatted);
+
+				assert.equal(oParsedDate.getTime(), oDate.getTime(),
+					"correctly parsed for timezone " + oFixture.timezone);
+			});
+		});
+
+		QUnit.test("integration: format and parse with pattern 'yyyy-MM-dd'T'HH:mm:ss.SSSXXX'-'VV'", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSXXX'-'VV"
+			}, new Locale("de"));
+
+			var oDate = new Date("2021-10-09T02:37:00Z");
+
+			var sFormatted = oDateFormat.format(oDate);
+			assert.equal(sFormatted, "2021-10-08T22:37:00.000-04:00-America/New_York");
+
+			var oParsedDate = oDateFormat.parse(sFormatted);
+			assert.equal(oParsedDate.getTime(), oDate.getTime());
+		});
+
+		QUnit.test("integration: format and parse with pattern 'yyyy-MM-dd'T'HH:mm:ss.SSS'", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS"
+			}, new Locale("de"));
+
+			var oDate = new Date("2021-10-09T02:37:00Z");
+
+			var sFormatted = oDateFormat.format(oDate);
+			assert.equal(sFormatted, "2021-10-08T22:37:00.000");
+
+			var oParsedDate = oDateFormat.parse(sFormatted);
+			assert.equal(oParsedDate.getTime(), oDate.getTime());
+		});
+
+		// zulu timestamp coming from backend (e.g. for OData)
+		QUnit.test("parse: data conversion with pattern 'yyyy-MM-dd'T'HH:mm:ssXXX'", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ssXXX"
+			}, new Locale("de"));
+
+			var oDate = new Date("2021-10-09T02:37:00Z");
+
+			var oParsedDate = oDateFormat.parse("2021-10-09T02:37:00Z");
+			assert.equal(oParsedDate.getTime(), oDate.getTime(), "parse back to the the zulu timestamp from the input");
+
+			// utc
+			oParsedDate = oDateFormat.parse("2021-10-09T02:37:00Z", true);
+			assert.equal(oParsedDate.getTime(), oDate.getTime(), "parse back to the the zulu timestamp from the input");
+		});
+
+		QUnit.test("parse UTC: with pattern 'yyyy-MM-dd'T'HH:mm:ss'", function (assert) {
+			var oDateFormat = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss"
+			}, new Locale("de"));
+
+			var oDate = new Date("2021-10-09T02:37:00Z");
+
+			var oParsedDate = oDateFormat.parse("2021-10-09T02:37:00", true);
+			assert.equal(oParsedDate.getTime(), oDate.getTime(), "parse back to the the zulu timestamp from the input");
+		});
+
+		QUnit.module("DateFormat with timezone Europe/Berlin", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setTimezone(null);
+			}
+		});
+
+		QUnit.test("fallback instance with UTC format option inheritence", function (assert) {
+			var oDateFormatted = "2018-08-15T13:07:47.000Z";
+			var oFormatter = DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+				UTC: true
+			});
+
+			var oUTCDate = new Date("2018-08-15T13:07:47Z");
+			var oParsed = oFormatter.parse(oDateFormatted);
+			assert.deepEqual(oParsed, oUTCDate);
+			assert.deepEqual(oFormatter.format(oParsed), oDateFormatted);
+
+			// fallback
+			oDateFormatted = "Aug 15, 2018, 1:07:47 PM";
+			oParsed = oFormatter.parse(oDateFormatted);
+			assert.deepEqual(oParsed, oUTCDate);
+		});
+
+		QUnit.test("Historical timezones", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy'-'MM'-'dd'T'HH':'mm':'ss"
+			}, new Locale("de_DE"));
+
+			[
+				// 1893	Sat, 1 Apr, 00:00	LMT → CET (UTC+1)
+				{
+					inputDate: "1894-01-01T00:00:00Z",
+					formatted: "1894-01-01T01:00:00"
+				},
+				// Before: (UTC+0:53:28)
+				{
+					inputDate: "1893-01-01T00:00:00Z",
+					formatted: "1893-01-01T00:53:28"
+				},
+				{
+					inputDate: "1730-01-01T00:00:00Z",
+					formatted: "1730-01-01T00:53:28"
+				},
+				{
+					inputDate: "1730-01-01T00:00:02Z",
+					formatted: "1730-01-01T00:53:30"
+				},
+				{
+					inputDate: "1730-01-01T00:00:32Z",
+					formatted: "1730-01-01T00:54:00"
+				}
+			].forEach(function (oFixture) {
+				assert.deepEqual(oDateFormat.format(new Date(oFixture.inputDate)), oFixture.formatted, "Format '" + oFixture.formatted + "'");
+				assert.deepEqual(oDateFormat.parse(oFixture.formatted), new Date(oFixture.inputDate), "Parse '" + oFixture.formatted + "'");
+			});
+		});
+
+		QUnit.test("Historical timezones with timezone patterns", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "yyyy'-'z' 'Z' 'X' 'XX' 'XXX"
+			}, new Locale("de_DE"));
+
+			[
+				// 1893	Sat, 1 Apr, 00:00	LMT → CET (UTC+1)
+				{
+					inputDate: "1894-01-01T00:00:00Z",
+					formatted: "1894-GMT+01:00 +0100 +01 +0100 +01:00"
+				},
+				// Before: (UTC+0:53:28)
+				{
+					inputDate: "1893-01-01T00:00:00Z",
+					formatted: "1893-GMT+00:53 +0053 +0053 +0053 +00:53"
+				},
+				{
+					inputDate: "1730-01-01T00:00:00Z",
+					formatted: "1730-GMT+00:53 +0053 +0053 +0053 +00:53"
+				}
+			].forEach(function (oFixture) {
+				assert.deepEqual(oDateFormat.format(new Date(oFixture.inputDate)),
+					oFixture.formatted, "Format '" + oFixture.formatted + "'");
+			});
 		});
 	});

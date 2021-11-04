@@ -9,6 +9,7 @@ sap.ui.define([
 	'../base/Object',
 	'./CalendarType',
 	'./Locale',
+	"./format/TimezoneUtil",
 	'sap/ui/thirdparty/URI',
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
@@ -24,6 +25,7 @@ sap.ui.define([
 		BaseObject,
 		CalendarType,
 		Locale,
+		TimezoneUtil,
 		URI,
 		UriParameters,
 		deepEqual,
@@ -99,10 +101,10 @@ sap.ui.define([
 			var M_SETTINGS = {
 					"theme"                 : { type : "string",   defaultValue : "base" },
 					"language"              : { type : "Locale",   defaultValue : detectLanguage() },
+					"timezone"              : { type : "string",   defaultValue : TimezoneUtil.getLocalTimezone() },
 					"formatLocale"          : { type : "Locale",   defaultValue : null },
 					"calendarType"          : { type : "string",   defaultValue : null },
 					"trailingCurrencyCode"  : { type : "boolean",  defaultValue : true },
-					// "timezone"              : "UTC",
 					"accessibility"         : { type : "boolean",  defaultValue : true },
 					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
 					"animation"             : { type : "boolean",  defaultValue : true }, // deprecated, please use animationMode
@@ -368,6 +370,11 @@ sap.ui.define([
 					} else {
 						setValue('rtl', false);
 					}
+				}
+
+				if (oUriParams.has('sap-timezone')) {
+					// call #setTimezone to prevent invalid IANA timezone IDs
+					this.setTimezone(oUriParams.get('sap-timezone'));
 				}
 
 				if (oUriParams.has('sap-theme')) {
@@ -692,6 +699,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Retrieves the configured IANA timezone ID
+		 *
+		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
+		 * @public
+		 * @since 1.99.0
+		 */
+		getTimezone : function () {
+			return this.timezone;
+		},
+
+		/**
 		 * Sets a new language to be used from now on for language/region dependent
 		 * functionality (e.g. formatting, data types, translated texts, ...).
 		 *
@@ -774,6 +792,39 @@ sap.ui.define([
 				}
 				this._endCollect();
 			}
+			return this;
+		},
+
+		/**
+		 * Sets the timezone such that all date and time based calculations use this timezone.
+		 *
+		 * When the timezone has changed, the Core will fire its
+		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
+		 *
+		 * @param {string|null} [sTimezone] IANA timezone ID, e.g. "America/New_York". Use <code>null</code> to reset the timezone to the browser's local timezone.
+		 *   An invalid IANA timezone ID will fall back to the browser's timezone.
+		 * @public
+		 * @return {this} <code>this</code> to allow method chaining
+		 * @since 1.99.0
+		 */
+		setTimezone : function (sTimezone) {
+			check(sTimezone == null || typeof sTimezone === 'string',
+				"Configuration.setTimezone: sTimezone must be null or be a string", /* warn= */ true);
+
+			if (sTimezone == null) {
+				sTimezone = TimezoneUtil.getLocalTimezone();
+			} else if (!TimezoneUtil.isValidTimezone(sTimezone)) {
+				var sLocalTimezone = TimezoneUtil.getLocalTimezone();
+				Log.error("The provided timezone '" + sTimezone + "' is not a valid IANA timezone ID." +
+					" Falling back to browser's local timezone '" + sLocalTimezone + "'.");
+				sTimezone = sLocalTimezone;
+			}
+			if (this.timezone !== sTimezone) {
+				var mChanges = this._collect();
+				mChanges.timezone = sTimezone;
+				this._endCollect();
+			}
+			this.timezone = sTimezone;
 			return this;
 		},
 

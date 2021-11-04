@@ -34,6 +34,7 @@
 
 	var aSamples = [
 			{key: "custom", text: "Custom", type: "Date", sample: {} },
+			{key: "timezone", text: "Timezone", type: "DateTimeWithTimezone", sample: {showTimezone: "Show"} },
 			{key: "shortdate", text: "Short date", type: "Date", sample: {style: "short"} },
 			{key: "longdate", text: "Long date", type: "Date", sample: {style: "long"} },
 			{key: "shorttime", text: "Short time", type: "Time", sample: {style: "short"} },
@@ -87,6 +88,11 @@
 				values: ["wide", "short", "narrow"],
 				help: "Allowed values are \"wide\", \"short\" and \"narrow\""
 			},
+			showTimezone: {
+				type: "enum",
+				values: ["Hide", "Show", "Only"],
+				help: "Allowed values are \"Hide\", \"Show\" and \"Only\""
+			},
 			interval: {
 				type: "boolean",
 				help: "To enable interval formatting set to \"true\""
@@ -109,7 +115,25 @@
 		type: "Date",
 		locales: aLocales,
 		samples: aSamples,
-		sample: "custom"
+		sample: "custom",
+		timezone: "Europe/Berlin",
+		timezonesSuggestions: [
+			{name: "America/Indiana/Tell_City", diff: "-06:00"},
+			{name: "America/Jamaica", diff: "-05:00"},
+			{name: "America/New_York", diff: "-05:00"},
+			{name: "America/St_Johns", diff: "-03:30"},
+			{name: "Asia/Kabul", diff: "+04:30"},
+			{name: "Asia/Katmandu", diff: "+05:45"},
+			{name: "Asia/Tokyo", diff: "+09:00"},
+			{name: "Australia/Eucla", diff: "+08:45"},
+			{name: "Australia/Sydney", diff: "+10:00"},
+			{name: "Europe/Berlin", diff: "+01:00"},
+			{name: "Europe/Copenhagen", diff: "+01:00"},
+			{name: "Europe/London", diff: "+00:00"},
+			{name: "Indian/Christmas", diff: "+07:00"},
+			{name: "Pacific/Port_Moresby", diff: "+10:00"},
+			{name: "US/Hawaii", diff: "-10:00"}
+		]
 	});
 
 	sap.ui.getCore().attachInit(function() {
@@ -149,17 +173,50 @@
 											new sap.m.Label({
 												text: ""
 											}),
-											new sap.m.Text({
-												text: {
-													parts: ["/date", "/todate", "/type", "/formatOptions"],
-													formatter: function(oDate, oToDate, sType, oFormatOptions) {
+											new sap.m.Input({
+												value: {
+													parts: ["/date", "/todate", "/type", "/formatOptions", "/timezone"],
+													formatter: function(oDate, oToDate, sType, oFormatOptions, sTimezone) {
 														var sFunctionName = "get" + sType + "Instance",
-															oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions);
-														if (oFormatOptions.interval) {
-															return oDateFormat.format([oDate, oToDate]);
-														} else {
-															return oDateFormat.format(oDate);
+																oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions);
+														if (sType !== "DateTimeWithTimezone") {
+															sTimezone = undefined;
 														}
+														if (oFormatOptions.interval) {
+															return oDateFormat.format([oDate, oToDate], sTimezone);
+														} else {
+															return oDateFormat.format(oDate, sTimezone);
+														}
+													}
+												},
+												change: function(oEvent) {
+													var sValue = oEvent.getParameter("value");
+													var oFormatOptions = oModel.getProperty("/formatOptions");
+													var sType = oModel.getProperty("/type");
+													var sTimezone = oModel.getProperty("/timezone");
+													var sFunctionName = "get" + sType + "Instance";
+													var oOptions = jQuery.extend({}, oFormatOptions);
+													var oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oOptions);
+													if (sType !== "DateTimeWithTimezone") {
+														sTimezone = undefined;
+													}
+													var aParsed = oDateFormat.parse(sValue, sTimezone);
+													if (Array.isArray(aParsed) && sType === "DateTimeWithTimezone") {
+														if (aParsed[0] != null) {
+															oModel.setProperty("/date", aParsed[0]);
+														}
+														if (aParsed[1] != null) {
+															oModel.setProperty("/timezone", aParsed[1]);
+														}
+													} else if (Array.isArray(aParsed)) {
+														if (aParsed[0] != null) {
+															oModel.setProperty("/date", aParsed[0]);
+														}
+														if (aParsed[1] != null) {
+															oModel.setProperty("/todate", aParsed[1]);
+														}
+													} else if (aParsed) {
+														oModel.setProperty("/date", aParsed);
 													}
 												}
 											}).addStyleClass("large"),
@@ -198,7 +255,8 @@
 												items: [
 													new sap.ui.core.Item({key: "Date", text: "Date"}),
 													new sap.ui.core.Item({key: "Time", text: "Time"}),
-													new sap.ui.core.Item({key: "DateTime", text: "DateTime"})
+													new sap.ui.core.Item({key: "DateTime", text: "DateTime"}),
+													new sap.ui.core.Item({key: "DateTimeWithTimezone", text: "DateTimeWithTimezone"}),
 												],
 												change: function() {
 													oModel.setProperty("/sample", "custom");
@@ -221,7 +279,7 @@
 												}
 											}),
 											new sap.m.Label({
-												text: "Date/Time"
+												text: "Local Date/Time"
 											}),
 											new sap.m.Input({
 												value: {
@@ -230,6 +288,34 @@
 														calendarType: "Gregorian",
 														pattern: "yyyy-MM-dd HH:mm:ss"
 													})
+												}
+											}).addStyleClass("large largeinput"),
+											new sap.m.Label({
+												text: "Timezone",
+												visible: {
+													path: "/type",
+													formatter: function(sType) {
+														return sType === "DateTimeWithTimezone"
+													}
+												}
+											}),
+											new sap.m.Input({
+												value: {
+													path: "/timezone",
+													type: new sap.ui.model.type.String()
+												},
+												showSuggestion: true,
+												suggestionItems: {
+													path: "/timezonesSuggestions",
+													factory: function() {
+														return new sap.ui.core.ListItem({"additionalText": "{diff}", "text":"{name}"});
+													}
+												},
+												visible: {
+													path: "/type",
+													formatter: function(sType) {
+														return sType === "DateTimeWithTimezone"
+													}
 												}
 											}).addStyleClass("large largeinput"),
 											new sap.m.Label({
@@ -275,15 +361,18 @@
 											template: new LocaleListItem({
 												locale: "{}",
 												text: {
-													parts: ["/date", "/todate", "/formatOptions", "/type", ""],
-													formatter: function(oDate, oToDate, oFormatOptions, sType, sLocale) {
+													parts: ["/date", "/todate", "/formatOptions", "/type", "", "/timezone"],
+													formatter: function(oDate, oToDate, oFormatOptions, sType, sLocale, sTimezone) {
 														var oLocale = new sap.ui.core.Locale(sLocale),
 															sFunctionName = "get" + sType + "Instance",
 															oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions, oLocale);
+														if (sType !== "DateTimeWithTimezone") {
+															sTimezone = undefined;
+														}
 														if (oFormatOptions.interval) {
-															return oDateFormat.format([oDate, oToDate]);
+															return oDateFormat.format([oDate, oToDate], sTimezone);
 														} else {
-															return oDateFormat.format(oDate);
+															return oDateFormat.format(oDate, sTimezone);
 														}
 													}
 												}

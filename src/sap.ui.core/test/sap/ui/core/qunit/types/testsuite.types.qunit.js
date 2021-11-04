@@ -46,6 +46,12 @@ sap.ui.define(function () {
 				},
 				title: "QUnit Page for sap/ui/core/format/DateFormat"
 			},
+			DateFormatTimezones: {
+				coverage : {
+					only : "sap/ui/core/format/DateFormatTimezones"
+				},
+				title: "QUnit Page for sap/ui/core/format/DateFormatTimezones"
+			},
 			ListFormat: {
 				coverage : {
 					only : "sap/ui/core/format/ListFormat"
@@ -81,6 +87,12 @@ sap.ui.define(function () {
 					only : "sap/ui/model/SimpleType"
 				},
 				title: "QUnit Page for sap/ui/model/SimpleType"
+			},
+			TimezoneUtil: {
+				coverage : {
+					only : "sap/ui/core/format/TimezoneUtil"
+				},
+				title: "QUnit Page for sap/ui/core/format/TimezoneUtil"
 			},
 			Types: {
 				coverage : {

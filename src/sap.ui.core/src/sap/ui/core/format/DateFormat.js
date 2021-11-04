@@ -8,6 +8,8 @@ sap.ui.define([
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/format/TimezoneUtil',
+	'sap/ui/core/format/DateFormatTimezoneDisplay',
 	"sap/base/util/deepEqual",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
@@ -18,6 +20,8 @@ sap.ui.define([
 		Locale,
 		LocaleData,
 		UniversalDate,
+		TimezoneUtil,
+		DateFormatTimezoneDisplay,
 		deepEqual,
 		formatMessage,
 		Log,
@@ -46,10 +50,21 @@ sap.ui.define([
 		throw new Error();
 	};
 
+	/**
+	 * Internal enumeration to differentiate DateFormat types
+	 */
+	var mDateFormatTypes = {
+		DATE: "date",
+		TIME: "time",
+		DATETIME: "datetime",
+		DATETIME_WITH_TIMEZONE: "datetimeWithTimezone"
+	};
+
 	// Cache for parsed CLDR DatePattern
 	var mCldrDatePattern = {};
 
 	DateFormat.oDateInfo = {
+		type: mDateFormatTypes.DATE,
 		oDefaultFormatOptions: {
 			style: "medium",
 			relativeScale: "day",
@@ -75,6 +90,7 @@ sap.ui.define([
 	};
 
 	DateFormat.oDateTimeInfo = {
+		type: mDateFormatTypes.DATETIME,
 		oDefaultFormatOptions: {
 			style: "medium",
 			relativeScale: "auto",
@@ -104,7 +120,39 @@ sap.ui.define([
 		aIntervalCompareFields: ["Era", "FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
 	};
 
+	DateFormat.oDateTimeWithTimezoneInfo = Object.assign({}, DateFormat.oDateTimeInfo, {
+		type: mDateFormatTypes.DATETIME_WITH_TIMEZONE,
+		// This function is used to transform the pattern of the fallbackFormatOptions to a timezone pattern
+		// based on the showTimezone format option.
+		getTimezonePattern: function(sPattern, sShowTimezone) {
+			if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
+				return "VV";
+			} else if (sShowTimezone === DateFormatTimezoneDisplay.Hide) {
+				return sPattern;
+			} else {
+				return sPattern + " VV";
+			}
+		},
+		getPattern: function(oLocaleData, sStyle, sCalendarType, sShowTimezone) {
+			if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
+				return "VV";
+			}
+			if (sShowTimezone === DateFormatTimezoneDisplay.Hide) {
+				return DateFormat.oDateTimeInfo.getPattern(oLocaleData, sStyle, sCalendarType);
+			}
+
+			// If style is mixed ("medium/short") split it and pass both parts separately
+			var iSlashIndex = sStyle.indexOf("/");
+			if (iSlashIndex > 0) {
+				return oLocaleData.getCombinedDateTimeWithTimezonePattern(sStyle.substr(0, iSlashIndex), sStyle.substr(iSlashIndex + 1), sCalendarType);
+			} else {
+				return oLocaleData.getCombinedDateTimeWithTimezonePattern(sStyle, sStyle, sCalendarType);
+			}
+		}
+	});
+
 	DateFormat.oTimeInfo = {
+		type: mDateFormatTypes.TIME,
 		oDefaultFormatOptions: {
 			style: "medium",
 			relativeScale: "auto",
@@ -193,6 +241,149 @@ sap.ui.define([
 	};
 
 	/**
+	 * Interface for a timezone-specific DateFormat, which is able to format and parse a date
+	 * based on a given timezone. The timezone is used to convert the given date, and also for
+	 * timezone-related pattern symbols. The timezone is an IANA timezone ID, e.g. "America/New_York".
+	 *
+	 * @see sap.ui.core.format.DateFormat
+	 *
+	 * @author SAP SE
+	 * @since 1.99
+	 * @interface
+	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone
+	 * @public
+	 */
+
+	/**
+	 * Format a date object to a string according to the given timezone and format options.
+	 *
+	 * @example <caption>Format option showTimezone: Show (default)</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 *
+	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "Europe/Berlin");
+	 * // output: "Dec 24, 2021, 2:37:00 PM Europe/Berlin"
+	 *
+	 * DateFormat.getDateTimeWithTimezoneInstance().format(oDate, "America/New_York");
+	 * // output: "Dec 24, 2021, 8:37:00 AM America/New_York"
+	 *
+	 * @example <caption>Format option showTimezone: Hide</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"}).format(oDate, "America/New_York");
+	 * // output: "Dec 24, 2021, 8:37:00 AM"
+	 *
+	 * @example <caption>Format option showTimezone: Only</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"}).format(oDate, "America/New_York");
+	 * // output: "America/New_York"
+	 *
+	 * @param {Date} oJSDate The date to format
+	 * @param {string} sTimezone The IANA timezone ID in which the date will be calculated and
+	 *   formatted e.g. "America/New_York".
+	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
+	 * @throws {Error} If <code>sTimezone</code> is omitted.
+	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone.format
+	 * @function
+	 * @public
+	 * @since 1.99
+	 */
+
+	/**
+	 * Parse a string which is formatted according to the given format options to an array
+	 * containing a date object and the timezone.
+	 *
+	 * @example <caption>Format option showTimezone: Show (default)</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 *
+	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 2:37:00 PM Europe/Berlin", "Europe/Berlin");
+	 * // output: [oDate, "Europe/Berlin"]
+	 *
+	 * DateFormat.getDateTimeWithTimezoneInstance().parse("Dec 24, 2021, 8:37:00 AM America/New_York", "America/New_York");
+	 * // output: [oDate, "America/New_York"]
+	 *
+	 * @example <caption>Format option showTimezone: Hide</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"}).parse("Dec 24, 2021, 8:37:00 AM", "America/New_York");
+	 * // output: [oDate, undefined]
+	 *
+	 * @example <caption>Format option showTimezone: Only</caption>
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"}).parse("America/New_York", "America/New_York");
+	 * // output: [undefined, "America/New_York"]
+	 *
+	 * @param {string} sValue the string containing a formatted date/time value
+	 * @param {string} sTimezone The IANA timezone ID which should be used to convert the date
+	 *   e.g. "America/New_York".
+	 * @param {boolean} [bStrict] Whether to be strict with regards to the value ranges of date fields,
+	 * e.g. for a month pattern of <code>MM</code> and a value range of [1-12]
+	 * <code>strict</code> ensures that the value is within the range;
+	 * if it is larger than <code>12</code> it cannot be parsed and <code>null</code> is returned
+	 * @throws {Error} If <code>sTimezone</code> is omitted.
+	 * @return {Array} the parsed values
+	 * <ul>
+	 *   <li>An array containing datetime and timezone depending on the showTimezone option
+	 *     <ul>
+	 *         <li>"Show": [Date, string], e.g. [new Date("2021-11-13T13:22:33Z"), "America/New_York"]</li>
+	 *         <li>"Hide": [Date, undefined], e.g. [new Date("2021-11-13T13:22:33Z"), undefined]</li>
+	 *         <li>"Only": [undefined, string], e.g. [undefined, "America/New_York"]</li>
+	 *     </ul>
+	 *   </li>
+	 * </ul>
+	 *
+	 * @public
+	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone.parse
+	 * @function
+	 * @since 1.99
+	 */
+
+	/**
+	 * Get a datetimeWithTimezone instance of the DateFormat, which can be used for formatting.
+	 *
+	 * @example
+	 * // Timezone difference -5 hours, UTC Zulu
+	 * var sTimezone = "America/New_York";
+	 * var oDate = new Date("2021-11-13T13:22:33Z");
+	 *
+	 * // Show (default)
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Show"}).format(oDate, false, sTimezone);
+	 * // Result: "Nov 13, 2021, 8:22:33 AM America/New_York"
+	 *
+	 * // Hide
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Hide"}).format(oDate, false, sTimezone);
+	 * // Result: "Nov 13, 2021, 8:22:33 AM"
+	 *
+	 * // Only
+	 * DateFormat.getDateTimeWithTimezoneInstance({showTimezone: "Only"}).format(oDate, false, sTimezone);
+	 * // Result: "America/New_York"
+	 *
+	 * @param {object} [oFormatOptions] An object which defines the format options
+	 * @param {string} [oFormatOptions.format] A string containing pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into a pattern for the used locale that matches the wanted symbols best.
+	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
+	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
+	 * @param {string} [oFormatOptions.pattern] a datetime pattern in LDML format. It is not verified whether the pattern represents a full datetime.
+	 * @param {sap.ui.core.format.DateFormatTimezoneDisplay} [oFormatOptions.showTimezone="Show"] Specifies the display of the timezone:
+	 *   <ul>
+	 *     <li>"Show": display both datetime and timezone</li>
+	 *     <li>"Hide": display only datetime</li>
+	 *     <li>"Only": display only timezone</li>
+	 *   </ul>
+	 *   It is ignored for formatting when an options pattern or a format are supplied.
+	 * @param {string} [oFormatOptions.style] Can be either 'short, 'medium', 'long' or 'full'. For datetime you can also define mixed styles, separated with a slash, where the first part is the date style and the second part is the time style (e.g. "medium/short"). If no pattern is given, a locale-dependent default datetime pattern of that style from the LocaleData class is used.
+	 * @param {boolean} [oFormatOptions.strictParsing] Whether to check by parsing if the value is a valid datetime
+	 * @param {boolean} [oFormatOptions.relative] Whether the date is formatted relatively to today's date if it is within the given day range, e.g. "today", "yesterday", "in 5 days"
+	 * @param {int[]} [oFormatOptions.relativeRange] The day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to the default value 'day', the <code>relativeRange<code> is by default [-6, 6], which means that only the previous 6 and the following 6 days are formatted relatively. If <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
+	 * @param {string} [oFormatOptions.relativeScale="day"] If 'auto' is set, a new relative time format is switched on for all Date/Time instances.
+	 * @param {string} [oFormatOptions.relativeStyle="wide"] The style of the relative format. The valid values are "wide", "short", "narrow"
+	 * @param {sap.ui.core.CalendarType} [oFormatOptions.calendarType] The calendar type which is used to format and parse the date. This value is by default either set in the configuration or calculated based on the current locale.
+	 * @param {sap.ui.core.Locale} [oLocale] Locale to ask for locale-specific texts/settings
+	 * @return {sap.ui.core.format.DateFormat.DateTimeWithTimezone} dateTimeWithTimezone instance of the DateFormat
+	 * @static
+	 * @public
+	 * @since 1.99.0
+	 */
+	DateFormat.getDateTimeWithTimezoneInstance = function(oFormatOptions, oLocale) {
+		return this.createInstance(oFormatOptions, oLocale, this.oDateTimeWithTimezoneInfo);
+	};
+
+	/**
 	 * Get a time instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
@@ -258,6 +449,18 @@ sap.ui.define([
 		// from the LocaleData, in case it is not defined yet
 		oFormat.oFormatOptions = extend({}, oInfo.oDefaultFormatOptions, oFormatOptions);
 
+		// set unsupported properties to false/undefined
+		if (oInfo.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
+			oFormat.oFormatOptions.interval = false;
+			oFormat.oFormatOptions.singleIntervalValue = false;
+			oFormat.oFormatOptions.UTC = false;
+		} else {
+			oFormat.oFormatOptions.showTimezone = undefined;
+		}
+
+		// type cannot be changed and should be an instance property instead of a format option
+		oFormat.type = oInfo.type;
+
 		if (!oFormat.oFormatOptions.calendarType) {
 			oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
@@ -266,7 +469,7 @@ sap.ui.define([
 			if (oFormat.oFormatOptions.format) {
 				oFormat.oFormatOptions.pattern = oFormat.oLocaleData.getCustomDateTimePattern(oFormat.oFormatOptions.format, oFormat.oFormatOptions.calendarType);
 			} else {
-				oFormat.oFormatOptions.pattern = oInfo.getPattern(oFormat.oLocaleData, oFormat.oFormatOptions.style, oFormat.oFormatOptions.calendarType);
+				oFormat.oFormatOptions.pattern = oInfo.getPattern(oFormat.oLocaleData, oFormat.oFormatOptions.style, oFormat.oFormatOptions.calendarType, oFormat.oFormatOptions.showTimezone);
 			}
 		}
 
@@ -323,7 +526,7 @@ sap.ui.define([
 				aFallbackFormatOptions = oInfo.aFallbackFormatOptions;
 				// Add two fallback patterns for locale-dependent short format without delimiters
 				if (oInfo.bShortFallbackFormatOptions) {
-					sPattern = oInfo.getPattern(oFormat.oLocaleData, "short");
+					sPattern = oInfo.getPattern(oFormat.oLocaleData, "short", undefined, oFormat.oFormatOptions.showTimezone);
 					// add the options of fallback formats without delimiters to the fallback options array
 					aFallbackFormatOptions = aFallbackFormatOptions.concat(DateFormat._createFallbackOptionsWithoutDelimiter(sPattern));
 				}
@@ -334,7 +537,9 @@ sap.ui.define([
 					aFallbackFormatOptions = DateFormat._createFallbackOptionsWithoutDelimiter(oFormat.oFormatOptions.pattern).concat(aFallbackFormatOptions);
 				}
 
-				oFallbackFormats = DateFormat._createFallbackFormat(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval);
+				oFallbackFormats = DateFormat._createFallbackFormat(
+					aFallbackFormatOptions, sCalendarType, oLocale, oInfo, oFormat.oFormatOptions.interval, oFormat.oFormatOptions.showTimezone
+				);
 			}
 
 			oFormat.aFallbackFormats = oFallbackFormats;
@@ -387,20 +592,32 @@ sap.ui.define([
 	 * Creates DateFormat instances based on the given format options. The created
 	 * instances are used as fallback formats of another DateFormat instances.
 	 *
-	 * All fallback formats are marked with 'bIsFallback' to make it distinguishable
+	 * All fallback format instances are marked with 'bIsFallback' to make it distinguishable
 	 * from the normal DateFormat instances.
 	 *
 	 * @param {Object[]} aFallbackFormatOptions the options for creating the fallback DateFormat
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
 	 * @param {sap.ui.core.LocaleData} oLocale Locale to ask for locale specific texts/settings
 	 * @param {Object} oInfo The default info object of the current date type
+	 * @param {boolean} bInterval Is an interval
+	 * @param {sap.ui.core.format.DateFormatTimezoneDisplay} sShowTimezone The showTimezone format option
 	 * @return {sap.ui.core.DateFormat[]} an array of fallback DateFormat instances
 	 */
-	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, bInterval) {
+	DateFormat._createFallbackFormat = function(aFallbackFormatOptions, sCalendarType, oLocale, oInfo, bInterval, sShowTimezone) {
 		return aFallbackFormatOptions.map(function(oOptions) {
 			// The format options within the aFallbackFormatOptions array are static
 			// and shouldn't be manipulated. Hence, cloning each format option is required.
 			var oFormatOptions = Object.assign({}, oOptions);
+
+			// Pass the showTimezone format option to the fallback instance.
+			oFormatOptions.showTimezone = sShowTimezone;
+
+			// the timezone instance's fallback patterns depend on the showTimezone format option which means they cannot be static,
+			// therefore they are generated using the getTimezonePattern function
+			if (typeof oInfo.getTimezonePattern === "function" && oFormatOptions.pattern) {
+				oFormatOptions.pattern = oInfo.getTimezonePattern(oFormatOptions.pattern, sShowTimezone);
+			}
+
 			if (bInterval) {
 				oFormatOptions.interval = true;
 			}
@@ -485,7 +702,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sValue, e.g. "-0800", "-08:00", "-08"
 		 * @param {boolean} bColonSeparated whether or not the values are colon separated, e.g. "-08:00"
-		 * @returns {{tzDiff: number, length: number}}
+		 * @returns {{tzDiff: number, length: number}} object containing the timezone difference in seconds and the length of the parsed segment
 		 */
 		parseTZ: function (sValue, bColonSeparated) {
 			var iLength = 0;
@@ -511,7 +728,7 @@ sap.ui.define([
 
 			return {
 				length: iLength,
-				tzDiff: (iTZDiff + 60 * iTZDiffHour) * iTZFactor
+				tzDiff: (iTZDiff + 60 * iTZDiffHour) * 60 * iTZFactor
 			};
 		},
 
@@ -528,7 +745,7 @@ sap.ui.define([
 	DateFormat.prototype.oSymbols = {
 		"": {
 			name: "text",
-			format: function(oField, oDate, bUTC, oFormat) {
+			format: function(oField, oDate) {
 				return oField.value;
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
@@ -589,7 +806,7 @@ sap.ui.define([
 		"G": {
 			name: "era",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iEra = bUTC ? oDate.getUTCEra() : oDate.getEra();
+				var iEra = oDate.getUTCEra();
 				if (oField.digits <= 3) {
 					return oFormat.aErasAbbrev[iEra];
 				} else if (oField.digits === 4) {
@@ -620,7 +837,7 @@ sap.ui.define([
 		"y": {
 			name: "year",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iYear = bUTC ? oDate.getUTCFullYear() : oDate.getFullYear();
+				var iYear = oDate.getUTCFullYear();
 				var sYear = String(iYear);
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
 
@@ -666,7 +883,7 @@ sap.ui.define([
 				// 2018: 47 = 2047 (diff: 29)
 				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
-						iCurrentYear = oCurrentDate.getFullYear(),
+						iCurrentYear = oCurrentDate.getUTCFullYear(),
 						iCurrentCentury = Math.floor(iCurrentYear / 100),
 						iYearDiff = iCurrentCentury * 100 + iYear - iCurrentYear;
 					if (iYearDiff < -70) {
@@ -687,7 +904,7 @@ sap.ui.define([
 		"Y": {
 			name: "weekYear",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var oWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek();
+				var oWeek = oDate.getUTCWeek();
 				var iWeekYear = oWeek.year;
 				var sWeekYear = String(iWeekYear);
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
@@ -717,7 +934,7 @@ sap.ui.define([
 				// Find the right century for two-digit years
 				if (sCalendarType != CalendarType.Japanese && sPart.length <= 2) {
 					var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
-						iCurrentYear = oCurrentDate.getFullYear(),
+						iCurrentYear = oCurrentDate.getUTCFullYear(),
 						iCurrentCentury = Math.floor(iCurrentYear / 100),
 						iYearDiff = iCurrentCentury * 100 + iWeekYear - iCurrentYear;
 					if (iYearDiff < -70) {
@@ -739,7 +956,7 @@ sap.ui.define([
 		"M": {
 			name: "month",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth();
+				var iMonth = oDate.getUTCMonth();
 				if (oField.digits == 3) {
 					return oFormat.aMonthsAbbrev[iMonth];
 				} else if (oField.digits == 4) {
@@ -786,7 +1003,7 @@ sap.ui.define([
 		"L": {
 			name: "monthStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth();
+				var iMonth = oDate.getUTCMonth();
 				if (oField.digits == 3) {
 					return oFormat.aMonthsAbbrevSt[iMonth];
 				} else if (oField.digits == 4) {
@@ -833,7 +1050,7 @@ sap.ui.define([
 		"w": {
 			name: "weekInYear",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var oWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek();
+				var oWeek = oDate.getUTCWeek();
 				var iWeek = oWeek.week;
 				var sWeek = String(iWeek + 1);
 				if (oField.digits < 3) {
@@ -878,7 +1095,7 @@ sap.ui.define([
 		},
 		"W": {
 			name: "weekInMonth",
-			format: function(oField, oDate, bUTC, oFormat) {
+			format: function(oField, oDate) {
 				// not supported
 				return "";
 			},
@@ -888,7 +1105,7 @@ sap.ui.define([
 		},
 		"D": {
 			name: "dayInYear",
-			format: function(oField, oDate, bUTC, oFormat) {
+			format: function(oField, oDate) {
 
 			},
 			parse: function() {
@@ -897,8 +1114,8 @@ sap.ui.define([
 		},
 		"d": {
 			name: "day",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iDate = bUTC ? oDate.getUTCDate() : oDate.getDate();
+			format: function(oField, oDate) {
+				var iDate = oDate.getUTCDate();
 				return String(iDate).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
@@ -918,7 +1135,7 @@ sap.ui.define([
 		"Q": {
 			name: "quarter",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iQuarter = bUTC ? oDate.getUTCQuarter() : oDate.getQuarter();
+				var iQuarter = oDate.getUTCQuarter();
 				if (oField.digits == 3) {
 					return oFormat.aQuartersAbbrev[iQuarter];
 				} else if (oField.digits == 4) {
@@ -966,7 +1183,7 @@ sap.ui.define([
 		"q": {
 			name: "quarterStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iQuarter = bUTC ? oDate.getUTCQuarter() : oDate.getQuarter();
+				var iQuarter = oDate.getUTCQuarter();
 				if (oField.digits == 3) {
 					return oFormat.aQuartersAbbrevSt[iQuarter];
 				} else if (oField.digits == 4) {
@@ -1013,7 +1230,7 @@ sap.ui.define([
 		},
 		"F": {
 			name: "dayOfWeekInMonth",
-			format: function(oField, oDate, bUTC, oFormat) {
+			format: function(oField, oDate, oFormat) {
 				// not supported
 				return "";
 			},
@@ -1024,7 +1241,7 @@ sap.ui.define([
 		"E": {
 			name: "dayNameInWeek", //Day of week name, format style.
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
+				var iDay = oDate.getUTCDay();
 				if (oField.digits < 4) {
 					return oFormat.aDaysAbbrev[iDay];
 				} else if (oField.digits == 4) {
@@ -1054,7 +1271,7 @@ sap.ui.define([
 		"c": {
 			name: "dayNameInWeekStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
+				var iDay = oDate.getUTCDay();
 				if (oField.digits < 4) {
 					return oFormat.aDaysAbbrevSt[iDay];
 				} else if (oField.digits == 4) {
@@ -1083,7 +1300,7 @@ sap.ui.define([
 		"u": {
 			name: "dayNumberOfWeek",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
+				var iDay = oDate.getUTCDay();
 				return oFormat._adaptDayOfWeek(iDay);
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
@@ -1098,7 +1315,7 @@ sap.ui.define([
 		"a": {
 			name: "amPmMarker",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iDayPeriod = bUTC ? oDate.getUTCDayPeriod() : oDate.getDayPeriod();
+				var iDayPeriod = oDate.getUTCDayPeriod();
 
 				return oFormat.aDayPeriods[iDayPeriod];
 			},
@@ -1144,8 +1361,8 @@ sap.ui.define([
 		},
 		"H": {
 			name: "hour0_23",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
+			format: function(oField, oDate) {
+				var iHours = oDate.getUTCHours();
 				return String(iHours).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
@@ -1168,8 +1385,8 @@ sap.ui.define([
 		},
 		"k": {
 			name: "hour1_24",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
+			format: function(oField, oDate) {
+				var iHours = oDate.getUTCHours();
 				var sHours = (iHours === 0 ? "24" : String(iHours));
 
 				return sHours.padStart(oField.digits, "0");
@@ -1197,8 +1414,8 @@ sap.ui.define([
 		},
 		"K": {
 			name: "hour0_11",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
+			format: function(oField, oDate) {
+				var iHours = oDate.getUTCHours();
 				var sHours = String(iHours > 11 ? iHours - 12 : iHours);
 
 				return sHours.padStart(oField.digits, "0");
@@ -1223,8 +1440,8 @@ sap.ui.define([
 		},
 		"h": {
 			name: "hour1_12",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
+			format: function(oField, oDate) {
+				var iHours = oDate.getUTCHours();
 				var sHours;
 
 				if (iHours > 12) {
@@ -1264,8 +1481,8 @@ sap.ui.define([
 		},
 		"m": {
 			name: "minute",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iMinutes = bUTC ? oDate.getUTCMinutes() : oDate.getMinutes();
+			format: function(oField, oDate) {
+				var iMinutes = oDate.getUTCMinutes();
 				return String(iMinutes).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
@@ -1288,8 +1505,8 @@ sap.ui.define([
 		},
 		"s": {
 			name: "second",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iSeconds = bUTC ? oDate.getUTCSeconds() : oDate.getSeconds();
+			format: function(oField, oDate) {
+				var iSeconds = oDate.getUTCSeconds();
 				return String(iSeconds).padStart(oField.digits, "0");
 			},
 			parse: function(sValue, oPart, oFormat, oConfig) {
@@ -1312,8 +1529,8 @@ sap.ui.define([
 		},
 		"S": {
 			name: "fractionalsecond",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iMilliseconds = bUTC ? oDate.getUTCMilliseconds() : oDate.getMilliseconds();
+			format: function(oField, oDate) {
+				var iMilliseconds = oDate.getUTCMilliseconds();
 				var sMilliseconds = String(iMilliseconds);
 				var sFractionalseconds = sMilliseconds.padStart(3, "0");
 				sFractionalseconds = sFractionalseconds.substr(0, oField.digits);
@@ -1337,7 +1554,7 @@ sap.ui.define([
 		},
 		"z": {
 			name: "timezoneGeneral",
-			format: function(oField, oDate, bUTC, oFormat) {
+			format: function(oField, oDate, bUTC, oFormat, sTimezone) {
 				//TODO getTimezoneLong and getTimezoneShort does not exist on Date object
 				//-> this is a preparation for a future full timezone support (only used by unit test so far)
 				if (oField.digits > 3 && oDate.getTimezoneLong && oDate.getTimezoneLong()) {
@@ -1347,12 +1564,12 @@ sap.ui.define([
 				}
 
 				// valid for zzzz (fallback to OOOO)
-
+				var iTimezoneOffset = TimezoneUtil.calculateOffset(oDate, sTimezone);
 				var sTimeZone = "GMT";
-				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
-				var bPositiveOffset = oDate.getTimezoneOffset() > 0;
+				var iTZOffset = Math.abs(iTimezoneOffset / 60);
+				var bPositiveOffset = iTimezoneOffset > 0;
 				var iHourOffset = Math.floor(iTZOffset / 60);
-				var iMinuteOffset = iTZOffset % 60;
+				var iMinuteOffset = Math.floor(iTZOffset % 60);
 
 				if (!bUTC && iTZOffset != 0) {
 					sTimeZone += (bPositiveOffset ? "-" : "+");
@@ -1398,11 +1615,12 @@ sap.ui.define([
 		},
 		"Z": {
 			name: "timezoneRFC822",
-			format: function(oField, oDate, bUTC, oFormat) {
-				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
-				var bPositiveOffset = oDate.getTimezoneOffset() > 0;
+			format: function(oField, oDate, bUTC, oFormat, sTimezone) {
+				var iTimezoneOffset = TimezoneUtil.calculateOffset(oDate, sTimezone);
+				var iTZOffset = Math.abs(iTimezoneOffset / 60);
+				var bPositiveOffset = iTimezoneOffset > 0;
 				var iHourOffset = Math.floor(iTZOffset / 60);
-				var iMinuteOffset = iTZOffset % 60;
+				var iMinuteOffset = Math.floor(iTZOffset % 60);
 				var sTimeZone = "";
 
 				// valid for Z-ZZZ
@@ -1425,7 +1643,7 @@ sap.ui.define([
 		},
 		"X": {
 			name: "timezoneISO8601",
-			format: function(oField, oDate, bUTC, oFormat) {
+			format: function(oField, oDate, bUTC, oFormat, sTimezone) {
 				/*
 				 * Mountain Standard Time (MST, UTC-7)
 				 * X:           "-07"
@@ -1455,10 +1673,11 @@ sap.ui.define([
 				 */
 
 				// @see http://www.unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
-				var iTZOffset = Math.abs(oDate.getTimezoneOffset());
-				var bPositiveOffset = oDate.getTimezoneOffset() > 0;
+				var iTimezoneOffset = TimezoneUtil.calculateOffset(oDate, sTimezone);
+				var iTZOffset = Math.abs(iTimezoneOffset / 60);
+				var bPositiveOffset = iTimezoneOffset > 0;
 				var iHourOffset = Math.floor(iTZOffset / 60);
-				var iMinuteOffset = iTZOffset % 60;
+				var iMinuteOffset = Math.floor(iTZOffset % 60);
 
 				var sTimeZone = "";
 				if (!bUTC && iTZOffset != 0) {
@@ -1486,12 +1705,53 @@ sap.ui.define([
 					return oParseHelper.parseTZ(sValue, oPart.digits === 3 || oPart.digits === 5);
 				}
 			}
+		},
+		"V": {
+			name: "timezoneID",
+			format: function(oField, oDate, bUTC, oFormat, sTimezone) {
+				// Only VV is supported
+				// The IANA timezone ID
+				// e.g. America/New_York
+				// @see http://www.unicode.org/reports/tr35/tr35-dates.html#Date_Format_Patterns
+				if (!bUTC && oField.digits === 2) {
+					return sTimezone;
+				}
+				return "";
+			},
+			parse: function(sValue, oPart, oFormat, oConfig, sTimezone) {
+				var oTimezoneParsed = {
+					timezone: "",
+					length: 0
+				};
+
+				// VV - The long IANA timezone ID
+				if (oPart.digits === 2) {
+					if (sValue === sTimezone) {
+						oTimezoneParsed.timezone = sTimezone;
+						oTimezoneParsed.length = sTimezone.length;
+						return oTimezoneParsed;
+					}
+
+					// TODO: Support more pattern in regex like UTC or without the country part, checking for valid timezone
+					if (sValue) {
+						var rIanaTimezone = new RegExp("([A-Za-z_])+([\/][A-Za-z_]+)+");
+						var aResult = rIanaTimezone.exec(sValue);
+						if (aResult && aResult[0] && TimezoneUtil.isValidTimezone(aResult[0])) {
+							oTimezoneParsed.timezone = aResult[0];
+							oTimezoneParsed.length = aResult[0].length;
+							return oTimezoneParsed;
+						}
+					}
+				}
+
+				return oTimezoneParsed;
+			}
 		}
 	};
 
-	DateFormat.prototype._format = function(oJSDate, bUTC) {
+	DateFormat.prototype._format = function(oJSDate, bUTC, sTimezone) {
 		if (this.oFormatOptions.relative) {
-			var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange);
+			var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange, sTimezone);
 			if (sRes) { //Stop when relative formatting possible, else go on with standard formatting
 				return sRes;
 			}
@@ -1506,7 +1766,7 @@ sap.ui.define([
 			oPart = this.aFormatArray[i];
 			sSymbol = oPart.symbol || "";
 
-			aBuffer.push(this.oSymbols[sSymbol].format(oPart, oDate, bUTC, this));
+			aBuffer.push(this.oSymbols[sSymbol].format(oPart, oDate, bUTC, this, sTimezone));
 		}
 
 		sResult = aBuffer.join("");
@@ -1529,18 +1789,42 @@ sap.ui.define([
 	/**
 	 * Format a date according to the given format options.
 	 *
+	 * @example <caption>DateTime (with local timezone "Europe/Berlin")</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * DateFormat.getDateTimeInstance().format(oDate);
+	 * // output: "Dec 24, 2021, 2:37:00 PM"
+	 *
 	 * @param {Date|Date[]} vJSDate the value to format
 	 * @param {boolean} [bUTC=false] whether to use UTC
 	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
 	 * @public
 	 */
 	DateFormat.prototype.format = function(vJSDate, bUTC) {
+		var sTimezone;
+		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
+			if (typeof bUTC !== "string") {
+				throw new TypeError("The timezone must be specified");
+			}
+			// UTC and timezone are not supported at the same time, therefore set bUTC to false
+			sTimezone = bUTC;
+			bUTC = false;
+
+			// timezone is required to calculate the timezone offset therefore it must be a valid IANA timezone ID
+			if (!TimezoneUtil.isValidTimezone(sTimezone)) {
+				Log.error("The given timezone isn't valid.");
+				return "";
+			}
+		}
+
 		var sCalendarType = this.oFormatOptions.calendarType,
 			sResult;
 
 		if (bUTC === undefined) {
 			bUTC = this.oFormatOptions.UTC;
 		}
+
+		// default the timezone to the local timezone to always enforce the conversion
+		sTimezone = sTimezone || sap.ui.getCore().getConfiguration().getTimezone();
 
 		if (Array.isArray(vJSDate)) {
 			if (!this.oFormatOptions.interval) {
@@ -1552,6 +1836,12 @@ sap.ui.define([
 				Log.error("Interval DateFormat can only format with 2 date instances but " + vJSDate.length + " is given.");
 				return "";
 			}
+			vJSDate = vJSDate.map(function(oJSDate) {
+				if (oJSDate && !isNaN(oJSDate.getTime())) {
+					return convertToTimezone(oJSDate, sTimezone, bUTC);
+				}
+				return oJSDate;
+			});
 
 			if (this.oFormatOptions.singleIntervalValue) {
 				if (vJSDate[0] === null) {
@@ -1560,7 +1850,7 @@ sap.ui.define([
 				}
 
 				if (vJSDate[1] === null) {
-					sResult = this._format(vJSDate[0], bUTC);
+					sResult = this._format(vJSDate[0], bUTC, sTimezone);
 				}
 			}
 
@@ -1578,6 +1868,11 @@ sap.ui.define([
 			}
 		} else {
 			if (!vJSDate || isNaN(vJSDate.getTime())) {
+				// Although an invalid date was given, the DATETIME_WITH_TIMEZONE instance might
+				// have a pattern with the timezone (VV) inside then the IANA timezone ID is returned
+				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE && this.oFormatOptions.pattern.includes("VV")) {
+					return sTimezone;
+				}
 				Log.error("The given date instance isn't valid.");
 				return "";
 			}
@@ -1587,7 +1882,8 @@ sap.ui.define([
 				return "";
 			}
 
-			sResult = this._format(vJSDate, bUTC);
+			vJSDate = convertToTimezone(vJSDate, sTimezone, bUTC);
+			sResult = this._format(vJSDate, bUTC, sTimezone);
 		}
 
 		// Support Japanese Gannen instead of Ichinen for first year of the era
@@ -1609,7 +1905,7 @@ sap.ui.define([
 		var sPattern;
 		var aFormatArray = [];
 
-		var oDiffField = this._getGreatestDiffField([oFromDate, oToDate], bUTC);
+		var oDiffField = this._getGreatestDiffField([oFromDate, oToDate]);
 
 		if (!oDiffField) {
 			return this._format(aJSDates[0], bUTC);
@@ -1653,12 +1949,13 @@ sap.ui.define([
 		Seconds: "Second"
 	};
 
-	DateFormat.prototype._getGreatestDiffField = function(aDates, bUTC) {
+	// the expected dates are UTC and therefore their UTC functions are called, e.g. getUTCHours
+	DateFormat.prototype._getGreatestDiffField = function(aDates) {
 		var bDiffFound = false,
 			mDiff = {};
 
 		this.aIntervalCompareFields.forEach(function(sField) {
-			var sGetterPrefix = "get" + (bUTC ? "UTC" : ""),
+			var sGetterPrefix = "getUTC",
 				sMethodName = sGetterPrefix + sField,
 				sFieldGroup = mFieldToGroup[sField],
 				vFromValue = aDates[0][sMethodName].apply(aDates[0]),
@@ -1677,12 +1974,13 @@ sap.ui.define([
 		return null;
 	};
 
-	DateFormat.prototype._parse = function(sValue, aFormatArray, bUTC, bStrict) {
+	DateFormat.prototype._parse = function(sValue, aFormatArray, bUTC, bStrict, sTimezone) {
 		var iIndex = 0,
 			oPart, sSubValue, oResult;
 
 		var oDateValue = {
-			valid: true
+			valid: true,
+			lastTimezonePatternSymbol: ""
 		};
 
 		var oParseConf = {
@@ -1694,11 +1992,13 @@ sap.ui.define([
 		for (var i = 0; i < aFormatArray.length; i++) {
 			sSubValue = sValue.substr(iIndex);
 			oPart = aFormatArray[i];
-
 			oParseConf.index = i;
 
-			oResult = this.oSymbols[oPart.symbol || ""].parse(sSubValue, oPart, this, oParseConf) || {} ;
-
+			oResult = this.oSymbols[oPart.symbol || ""].parse(sSubValue, oPart, this, oParseConf, sTimezone) || {};
+			// Remember the last required timezone difference which needs to be calculated (V pattern) or applied (x and z pattern)
+			if (oResult.tzDiff !== undefined || oResult.timezone) {
+				oResult.lastTimezonePatternSymbol = oPart.symbol;
+			}
 			oDateValue = extend(oDateValue, oResult);
 
 			if (oResult.valid === false) {
@@ -1727,7 +2027,7 @@ sap.ui.define([
 		return oDateValue;
 	};
 
-	DateFormat.prototype._parseInterval = function(sValue, sCalendarType, bUTC, bStrict) {
+	DateFormat.prototype._parseInterval = function(sValue, sCalendarType, bUTC, bStrict, sTimezone) {
 		var aDateValues,
 			iRepeat,
 			oDateValue;
@@ -1747,7 +2047,7 @@ sap.ui.define([
 			}
 			if (iRepeat === undefined) {
 				// In case of standard date pattern, parse string as single date and put the same date twice into the aDateValues array
-				oDateValue = this._parse(sValue, aFormatArray, bUTC, bStrict);
+				oDateValue = this._parse(sValue, aFormatArray, bUTC, bStrict, sTimezone);
 
 				// If input value has not been completely parsed, mark it as invalid
 				if (oDateValue.index === 0 || oDateValue.index < sValue.length) {
@@ -1765,7 +2065,7 @@ sap.ui.define([
 				aDateValues = [];
 
 				// Call _parse function with start 0 and end index of repeated symbol
-				oDateValue = this._parse(sValue, aFormatArray.slice(0, iRepeat), bUTC, bStrict);
+				oDateValue = this._parse(sValue, aFormatArray.slice(0, iRepeat), bUTC, bStrict, sTimezone);
 
 				if (oDateValue.valid === false) {
 					return;
@@ -1775,7 +2075,7 @@ sap.ui.define([
 				var iLength = oDateValue.index;
 
 				// Call _parse function with start iRepeat and end of array
-				oDateValue = this._parse(sValue.substring(iLength), aFormatArray.slice(iRepeat), bUTC, bStrict);
+				oDateValue = this._parse(sValue.substring(iLength), aFormatArray.slice(iRepeat), bUTC, bStrict, sTimezone);
 
 				// If input value has not been completely parsed, mark it as invalid
 				if (oDateValue.index === 0 || oDateValue.index + iLength < sValue.length) {
@@ -1794,80 +2094,84 @@ sap.ui.define([
 		return aDateValues;
 	};
 
+	/**
+	 * Converts a given date to the given timezone if bUTC is false
+	 *
+	 * @param {Date} oJSDate The date which should be converted
+	 * @param {string} sTimezone target timezone
+	 * @param {boolean} bUTC whether it is utc
+	 * @returns {Date} the converted date
+	 */
+	var convertToTimezone = function(oJSDate, sTimezone, bUTC) {
+		// Convert to timezone if provided and a valid date is supplied
+		if (!bUTC
+			&& oJSDate && !isNaN(oJSDate.getTime())) {
+			// convert given date to a date in the target timezone
+			return TimezoneUtil.convertToTimezone(oJSDate, sTimezone);
+		}
+		return oJSDate;
+	};
+
 	// recreate javascript date object from the given oDateValues.
 	// In case of oDateValue.valid == false, null value will be returned
-	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict) {
+	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict, sTimezone) {
+		if (!oDateValue.valid) {
+			return null;
+		}
+
 		var oDate,
 			iYear = typeof oDateValue.year === "number" ? oDateValue.year : 1970;
 
-		if (oDateValue.valid) {
-			if (bUTC || oDateValue.tzDiff !== undefined) {
-				oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
-				oDate.setUTCEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
-				oDate.setUTCFullYear(iYear);
-				oDate.setUTCMonth(oDateValue.month || 0);
-				oDate.setUTCDate(oDateValue.day || 1);
-				oDate.setUTCHours(oDateValue.hour || 0);
-				oDate.setUTCMinutes(oDateValue.minute || 0);
-				oDate.setUTCSeconds(oDateValue.second || 0);
-				oDate.setUTCMilliseconds(oDateValue.millisecond || 0);
-				if (bStrict && (oDateValue.day || 1) !== oDate.getUTCDate()) {
-					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
-					oDateValue.valid = false;
-					oDate = undefined;
-				} else {
-					if (oDateValue.tzDiff) {
-						// Set TZDiff after checking for valid day, as it may switch the day as well
-						oDate.setUTCMinutes((oDateValue.minute || 0) + oDateValue.tzDiff);
-					}
-					if (oDateValue.week !== undefined  && (oDateValue.month === undefined || oDateValue.day === undefined)) {
-						//check that the week is only set if the day/month has not been set, because day/month have higher precedence than week
-						oDate.setUTCWeek({
-							year: oDateValue.weekYear || oDateValue.year,
-							week: oDateValue.week
-						});
+		oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
+		oDate.setUTCEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
+		oDate.setUTCFullYear(iYear);
+		oDate.setUTCMonth(oDateValue.month || 0);
+		oDate.setUTCDate(oDateValue.day || 1);
+		oDate.setUTCHours(oDateValue.hour || 0);
+		oDate.setUTCMinutes(oDateValue.minute || 0);
+		oDate.setUTCSeconds(oDateValue.second || 0);
+		oDate.setUTCMilliseconds(oDateValue.millisecond || 0);
+		if (bStrict && (oDateValue.day || 1) !== oDate.getUTCDate()) {
+			// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
+			return null;
+		}
+		if (oDateValue.week !== undefined  && (oDateValue.month === undefined || oDateValue.day === undefined)) {
+			//check that the week is only set if the day/month has not been set, because day/month have higher precedence than week
+			oDate.setUTCWeek({
+				year: oDateValue.weekYear || oDateValue.year,
+				week: oDateValue.week
+			});
 
-						//add the dayNumberOfWeek to the current day
-						if (oDateValue.dayNumberOfWeek !== undefined) {
-							oDate.setUTCDate(oDate.getUTCDate() + oDateValue.dayNumberOfWeek - 1);
-						}
-					}
-				}
-			} else {
-				oDate = UniversalDate.getInstance(new Date(1970, 0, 1, 0, 0, 0), sCalendarType);
-				oDate.setEra(oDateValue.era || UniversalDate.getCurrentEra(sCalendarType));
-				oDate.setFullYear(iYear);
-				oDate.setMonth(oDateValue.month || 0);
-				oDate.setDate(oDateValue.day || 1);
-				oDate.setHours(oDateValue.hour || 0);
-				oDate.setMinutes(oDateValue.minute || 0);
-				oDate.setSeconds(oDateValue.second || 0);
-				oDate.setMilliseconds(oDateValue.millisecond || 0);
-				if (bStrict && (oDateValue.day || 1) !== oDate.getDate()) {
-					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
-					oDateValue.valid = false;
-					oDate = undefined;
-				} else if (oDateValue.week !== undefined && (oDateValue.month === undefined || oDateValue.day === undefined)) {
-					//check that the week is only set if the day/month has not been set, because day/month have higher precedence than week
-					oDate.setWeek({
-						year: oDateValue.weekYear || oDateValue.year,
-						week: oDateValue.week
-					});
-
-					//add the dayNumberOfWeek to the current day
-					if (oDateValue.dayNumberOfWeek !== undefined) {
-						oDate.setDate(oDate.getDate() + oDateValue.dayNumberOfWeek - 1);
-					}
-				}
-			}
-
-			if (oDateValue.valid) {
-				oDate = oDate.getJSDate();
-				return oDate;
+			//add the dayNumberOfWeek to the current day
+			if (oDateValue.dayNumberOfWeek !== undefined) {
+				oDate.setUTCDate(oDate.getUTCDate() + oDateValue.dayNumberOfWeek - 1);
 			}
 		}
 
-		return null;
+		oDate = oDate.getJSDate();
+
+		// Set the tzDiff based on the timezone difference
+		if (!bUTC && (
+			(oDateValue.lastTimezonePatternSymbol === "V" && oDateValue.timezone)
+			|| oDateValue.tzDiff === undefined
+		)) {
+			// The last parsed timezone pattern will be considered. If this is the "V" pattern for the IANA timezone ID, it needs
+			// to be calculated here. The tzDiff cannot be determined in the parse method because we need the parsed parts to calculate it.
+			if (oDateValue.timezone) {
+				sTimezone = oDateValue.timezone;
+			}
+
+			if (sTimezone) {
+				oDateValue.tzDiff = TimezoneUtil.calculateOffset(oDate, sTimezone);
+			}
+		}
+		if (oDateValue.tzDiff) {
+			// tzDiff is in seconds for a higher precision (historical timezone might have differences in seconds)
+			// e.g. new Date(Date.UTC(1730, 0, 1))
+			// is in Berlin: Sun Jan 01 1730 00:53:28 GMT+0053 (Central European Standard Time)
+			oDate.setUTCSeconds((oDateValue.second || 0) + oDateValue.tzDiff);
+		}
+		return oDate;
 	};
 
 	// Copy the properties of object2 into object1 without
@@ -1906,21 +2210,47 @@ sap.ui.define([
 	/**
 	 * Parse a string which is formatted according to the given format options.
 	 *
+	 * @example <caption>DateTime (with local timezone "Europe/Berlin")</caption>
+	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
+	 * DateFormat.getDateTimeInstance().parse("Dec 24, 2021, 2:37:00 PM");
+	 * // output: oDate
+	 *
 	 * @param {string} sValue the string containing a formatted date/time value
 	 * @param {boolean} bUTC whether to use UTC, if no timezone is contained
-	 * @param {boolean} bStrict to use strict value check
+	 * @param {boolean} bStrict whether to use strict value check
 	 * @return {Date|Date[]} the parsed value(s)
 	 * @public
 	 */
 	DateFormat.prototype.parse = function(sValue, bUTC, bStrict) {
+		var sTimezone;
+		if (bUTC === undefined) {
+			bUTC = this.oFormatOptions.UTC;
+		}
+		// preserve UTC parameter for fallback instances (must inherit format option UTC from parent)
+		var bUTCInputParameter = bUTC;
+		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
+			if (typeof bUTC !== "string") {
+				throw new TypeError("The timezone must be specified");
+			}
+
+			// UTC and timezone are not supported at the same time, therefore set bUTC to false
+			sTimezone = bUTC;
+			bUTC = false;
+
+			// timezone is required to calculate the timezone offset therefore it must be a valid IANA timezone ID
+			if (!TimezoneUtil.isValidTimezone(sTimezone)) {
+				Log.error("The given timezone isn't valid.");
+				return null;
+			}
+		}
+
 		sValue = sValue == null ? "" : String(sValue).trim();
 
 		var oDateValue;
 		var sCalendarType = this.oFormatOptions.calendarType;
 
-		if (bUTC === undefined) {
-			bUTC = this.oFormatOptions.UTC;
-		}
+		// default the timezone to the local timezone to always enforce the conversion
+		sTimezone = sTimezone || sap.ui.getCore().getConfiguration().getTimezone();
 
 		if (bStrict === undefined) {
 			bStrict = this.oFormatOptions.strictParsing;
@@ -1937,29 +2267,38 @@ sap.ui.define([
 				return oJSDate;
 			}
 
-			oDateValue = this._parse(sValue, this.aFormatArray, bUTC, bStrict);
+			oDateValue = this._parse(sValue, this.aFormatArray, bUTC, bStrict, sTimezone);
 
 			// If input value has not been completely parsed, mark it as invalid
 			if (oDateValue.index === 0 || oDateValue.index < sValue.length) {
 				oDateValue.valid = false;
 			}
 
-			oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict);
+			oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict, sTimezone);
 
 			if (oJSDate) {
+				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
+					// fill fields according to showTimezone option and parsed values
+					if (this.oFormatOptions.showTimezone === DateFormatTimezoneDisplay.Hide) {
+						return [oJSDate, undefined];
+					} else if (this.oFormatOptions.showTimezone === DateFormatTimezoneDisplay.Only) {
+						return [undefined, oDateValue.timezone];
+					}
+					return [oJSDate, oDateValue.timezone || undefined];
+				}
 				return oJSDate;
 			}
 
 		} else {
-			var aDateValues = this._parseInterval(sValue, sCalendarType, bUTC, bStrict);
+			var aDateValues = this._parseInterval(sValue, sCalendarType, bUTC, bStrict, sTimezone);
 			var oJSDate1, oJSDate2;
 
 			if (aDateValues && aDateValues.length == 2) {
 				var oDateValue1 = mergeWithoutOverwrite(aDateValues[0], aDateValues[1]);
 				var oDateValue2 = mergeWithoutOverwrite(aDateValues[1], aDateValues[0]);
 
-				oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict);
-				oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict);
+				oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict, sTimezone);
+				oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict, sTimezone);
 
 				if (oJSDate1 && oJSDate2) {
 
@@ -1981,13 +2320,17 @@ sap.ui.define([
 			}
 		}
 
+		// this instance is not the fallback instance therefore we call the fallback instances (which have this flag set to true)
 		if (!this.bIsFallback) {
 			var vDate;
 
 			this.aFallbackFormats.every(function(oFallbackFormat) {
-				vDate = oFallbackFormat.parse(sValue, bUTC, bStrict);
+				vDate = oFallbackFormat.parse(sValue, bUTCInputParameter, bStrict);
 
 				if (Array.isArray(vDate)) {
+					if (oFallbackFormat.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
+						return false;
+					}
 					return !(vDate[0] && vDate[1]);
 				} else {
 					return !vDate;
@@ -2173,12 +2516,13 @@ sap.ui.define([
 	 *
 	 * @param {Date} oJSDate the value to format
 	 * @param {boolean} bUTC whether to use UTC
+	 * @param {number[]} aRange scale ranges
+	 * @param {string} sTimezone the IANA timezone ID
 	 * @return {string} the formatted output value or null if relative formatting not possible
 	 * @private
 	 */
-	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange) {
-
-		var oToday = new Date(), oDateUTC,
+	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange, sTimezone) {
+		var oToday = convertToTimezone(new Date(), sTimezone), oDateUTC,
 			sScale = this.oFormatOptions.relativeScale || "day",
 			iDiff, sPattern, iDiffSeconds;
 
@@ -2194,17 +2538,13 @@ sap.ui.define([
 
 		// For dates normalize to UTC to avoid issues with summer-/wintertime
 		if (sScale == "year" || sScale == "month" || sScale == "day") {
-			oToday = new Date(Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()));
+			oToday = new Date(Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate()));
 
 			oDateUTC = new Date(0);
 
-			if (bUTC) {
-				// The Date.UTC function doesn't accept years before 1900 (converts years before 100 into 1900 + years).
-				// Using setUTCFullYear to workaround this issue.
-				oDateUTC.setUTCFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
-			} else {
-				oDateUTC.setUTCFullYear(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
-			}
+			// The Date.UTC function doesn't accept years before 1900 (converts years before 100 into 1900 + years).
+			// Using setUTCFullYear to workaround this issue.
+			oDateUTC.setUTCFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
 
 			oJSDate = oDateUTC;
 		}
@@ -2265,7 +2605,7 @@ sap.ui.define([
 	// Fixes the scale for months/weeks
 	// when involved months do not have 30 days
 	function fixScaleForMonths(oJSDate, oToday, sScale, iDiffSeconds) {
-		var iMonthDiff = Math.abs(oJSDate.getMonth() - oToday.getMonth());
+		var iMonthDiff = Math.abs(oJSDate.getUTCMonth() - oToday.getUTCMonth());
 		if (sScale === "week" && iMonthDiff === 2) {
 			// 2 months diff
 			// e.g. March 1st - Jan 31st
@@ -2273,23 +2613,23 @@ sap.ui.define([
 		} else if (sScale === "week" && iMonthDiff === 1) {
 			// same day but different month
 			// e.g. March 1st - Feb 1st
-			if (oJSDate.getDate() === oToday.getDate()
+			if (oJSDate.getUTCDate() === oToday.getUTCDate()
 				// future date
 				// e.g. Feb 14th - 15. Mar 15th (29/30 days diff) => 1 month
-				|| (iDiffSeconds < 0 && oJSDate.getDate() < oToday.getDate())
+				|| (iDiffSeconds < 0 && oJSDate.getUTCDate() < oToday.getUTCDate())
 				// past date
 				// e.g. Mar 15th - Feb 14th (29/30 days diff) => 1 month
-				|| (iDiffSeconds > 0 && oJSDate.getDate() > oToday.getDate())
+				|| (iDiffSeconds > 0 && oJSDate.getUTCDate() > oToday.getUTCDate())
 			) {
 				return "month";
 			}
 		} else if (sScale === "month" && iMonthDiff === 1) {
 			// future date
 			// e.g. Mar 14th - Apr 13th (30 days diff)
-			if ((iDiffSeconds > 0 && oJSDate.getDate() < oToday.getDate())
+			if ((iDiffSeconds > 0 && oJSDate.getUTCDate() < oToday.getUTCDate())
 				// past date
 				// Feb 14th - Jan 15th (30 days diff)
-				|| (iDiffSeconds < 0 && oJSDate.getDate() > oToday.getDate())
+				|| (iDiffSeconds < 0 && oJSDate.getUTCDate() > oToday.getUTCDate())
 			) {
 				return "week";
 			}
@@ -2325,7 +2665,7 @@ sap.ui.define([
 		var oDateCopy = new Date(oDate.getTime());
 
 		for (var i = iStartIndex; i < aFields.length; i++) {
-			sMethodName = "set" + aFields[iStartIndex];
+			sMethodName = "setUTC" + aFields[iStartIndex];
 			oDateCopy[sMethodName].apply(oDateCopy, [0]);
 		}
 		return oDateCopy;
@@ -2333,14 +2673,14 @@ sap.ui.define([
 
 	var mRelativeDiffs = {
 		year: function(oFromDate, oToDate) {
-			return oToDate.getFullYear() - oFromDate.getFullYear();
+			return oToDate.getUTCFullYear() - oFromDate.getUTCFullYear();
 		},
 		month: function(oFromDate, oToDate) {
-			return oToDate.getMonth() - oFromDate.getMonth() + (this.year(oFromDate, oToDate) * 12);
+			return oToDate.getUTCMonth() - oFromDate.getUTCMonth() + (this.year(oFromDate, oToDate) * 12);
 		},
 		week: function(oFromDate, oToDate, oFormat) {
-			var iFromDay = oFormat._adaptDayOfWeek(oFromDate.getDay());
-			var iToDay = oFormat._adaptDayOfWeek(oToDate.getDay());
+			var iFromDay = oFormat._adaptDayOfWeek(oFromDate.getUTCDay());
+			var iToDay = oFormat._adaptDayOfWeek(oToDate.getUTCDay());
 
 			oFromDate = cutDateFields(oFromDate, 3);
 			oToDate = cutDateFields(oToDate, 3);
