@@ -155,6 +155,7 @@ sap.ui.define([
 		this._updateShowHideAllButton(false);
 
 		oHeaderDOM && oHeaderDOM.classList.toggle("sapUxAPObjectPageSectionHeaderHidden", !this._isTitleVisible());
+		oHeaderDOM && oHeaderDOM.setAttribute("aria-hidden", !this._isTitleVisible());
 
 		if (oObjectPage && this.getDomRef()) {
 			oObjectPage._requestAdjustLayout();
