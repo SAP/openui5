@@ -606,8 +606,7 @@ sap.ui.define([
 	 *    <li> a collection-valued parameter for an operation other than a V4 action is encountered,
 	 *    <li> <code>bIgnoreETag</code> is used for an operation other than a bound action,
 	 *    <li> <code>fnOnStrictHandlingFailed</code> is given but the given metadata is not an
-	 *         "Action",
-	 *    <li> <code>fnOnStrictHandlingFailed</code> is given and it does not return a promise.
+	 *         "Action"
 	 *   </ul>
 	 *
 	 * @private
@@ -854,6 +853,7 @@ sap.ui.define([
 	 *    <li> is used for an operation other than an action,
 	 *    <li> another request that applies the preference "handling=strict" exists in a different
 	 *      change set of the same $batch request,
+	 *    <li> it does not return a <code>Promise</code>,
 	 *    <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
 	 *      <code>oError.canceled === true</code>.
 	 *   </ul>
@@ -882,8 +882,6 @@ sap.ui.define([
 	 *     <li> deferred operation bindings are nested,
 	 *     <li> the OData resource path for a deferred operation binding's context cannot be
 	 *       determined,
-	 *     <li> <code>fnOnStrictHandlingFailed</code> is called and does not return a
-	 *       <code>Promise</code>,
 	 *     <li> <code>bReplaceWithRVC</code> is given, but this operation binding is not relative to
 	 *       a row context of a list binding which uses the <code>$$ownRequest</code> parameter (see
 	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}) and no data aggregation (see
