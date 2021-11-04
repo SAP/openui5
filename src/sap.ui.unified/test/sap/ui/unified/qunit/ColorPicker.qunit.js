@@ -897,6 +897,34 @@ sap.ui.define([
 			oAssert.strictEqual(this.oCP.getDisplayMode(), "Large", "The ColorPicker's displayMode is Large");
 		});
 
+		QUnit.test("in display mode Large, half the inputs are disabled", function(assert) {
+			// arrange
+			this.oCP.setDisplayMode(ColorPickerDisplayMode.Large);
+			this.oCP.placeAt("qunit-fixture");
+			applyChanges();
+
+			// assert
+			assert.equal(this.oCP.oRedField.getEnabled(), true, "red is enabled");
+			assert.equal(this.oCP.oRedField.getEnabled(), true, "green is enabled");
+			assert.equal(this.oCP.oRedField.getEnabled(), true, "blue is enabled");
+			assert.equal(this.oCP.oHueField.getEnabled(), false, "hue is disabled");
+			assert.equal(this.oCP.oSatField.getEnabled(), false, "sat is disabled");
+			assert.equal(this.oCP.oLitField.getEnabled(), false, "lit is disabled");
+
+			// act
+			this.oCP.oRGBorHSLRBUnifiedGroup.fireSelect({
+				selectedIndex : 1
+			});
+
+			//assert
+			assert.equal(this.oCP.oRedField.getEnabled(), false, "red is disabled");
+			assert.equal(this.oCP.oRedField.getEnabled(), false, "green is disabled");
+			assert.equal(this.oCP.oRedField.getEnabled(), false, "blue is disabled");
+			assert.equal(this.oCP.oHueField.getEnabled(), true, "hue is enabled");
+			assert.equal(this.oCP.oSatField.getEnabled(), true, "sat is enabled");
+			assert.equal(this.oCP.oLitField.getEnabled(), true, "lit is enabled");
+		});
+
 		QUnit.module("values conversions", {
 			beforeEach: function() {
 				this.oCP = new ColorPicker();
