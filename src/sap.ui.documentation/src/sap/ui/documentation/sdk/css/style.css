@@ -1089,6 +1089,21 @@ html:not(.sapUiTheme-sap_belize_hcw):not(.sapUiTheme-sap_belize_hcb):not(.sapUiT
 	}
 }
 
+.sapUiDemokit .videoWrapper {
+	position: relative;
+	padding-bottom: 56.25%;
+	height: 0;
+}
+
+.sapUiDemokit .videoWrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
 /* ==========================================================================
    Documentation Page Header styles
   ========================================================================== */
