@@ -2254,7 +2254,7 @@ sap.ui.define([
 	 *   The final overflow is the content which overflows when the table is scrolled to the last set of rows which can be rendered. The last row
 	 *   is always in the buffer, so there is always an overflow.
 	 *
-	 *   <i>Currently known limitations:</i>
+	 *   <i>Currently known restrictions:</i>
 	 *   - Experimental implementation!
 	 *   - Fixed rows are not supported.
 	 *   - Keyboard navigation is not fully supported.
@@ -2265,7 +2265,7 @@ sap.ui.define([
 	 *
 	 * <b>Enables horizontal scrolling.</b>
 	 *
-	 *  <i>Currently known limitations:</i>
+	 *  <i>Currently known restrictions:</i>
 	 *   - If the total width of all scrollable columns exceeds the maximum width of an element (limited by the browser), horizontal scrolling does
 	 *     no longer work.
 	 *
@@ -2278,7 +2278,7 @@ sap.ui.define([
 	 *   When variable row heights are enabled, full rows are scrolled when the delta is at least one default row height, otherwise the rows are
 	 *   partially scrolled.
 	 *
-	 *   <i>Currently known limitations:</i>
+	 *   <i>Currently known restrictions:</i>
 	 *   - For performance reasons, horizontal line and page scrolling is performed by the distance of one minimum column width, regardless of the
 	 *     number of lines or pages.
 	 *   - When variable row heights are enabled, the scroll distance can be irregular on the transition between the final overflow and the rest
