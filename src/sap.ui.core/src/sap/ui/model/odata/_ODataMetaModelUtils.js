@@ -700,11 +700,12 @@ sap.ui.define([
 			if (oSchema) {
 				aArray = oSchema[sArrayName];
 				if (aArray) {
-					aArray.forEach(function (oThing) {
+					aArray.some(function (oThing) {
 						if (oThing.name === sName) {
 							vResult = bAsPath ? oThing.$path : oThing;
-							return false; // break
+							return true;
 						}
+						return false;
 					});
 				}
 			}
@@ -729,11 +730,12 @@ sap.ui.define([
 					: vModel.getObject("/dataServices/schema");
 
 			if (aSchemas) {
-				aSchemas.forEach(function (o) {
+				aSchemas.some(function (o) {
 					if (o.namespace === sNamespace) {
 						oSchema = o;
-						return false; // break
+						return true;
 					}
+					return false;
 				});
 			}
 

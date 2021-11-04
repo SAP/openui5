@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/model/ValidateException"
 ], function (ParseException, ValidateException) {
 	"use strict";
-	/*global Map */
 
 	var mCodeList2CustomUnits = new Map(),
 		rDecimals = /\.(\d+)$/,

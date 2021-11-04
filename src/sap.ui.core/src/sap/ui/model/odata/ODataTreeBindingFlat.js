@@ -759,9 +759,6 @@ sap.ui.define([
 				aFilters = aFilters.concat(this.aApplicationFilters);
 			}
 
-			// TODO: Add additional filters to the read call, as soon as back-end implementations support it
-			// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
-
 			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
@@ -1055,8 +1052,6 @@ sap.ui.define([
 				aFilters = aFilters.concat(this.aApplicationFilters);
 			}
 
-			// TODO: Add additional filters to the read call, as soon as back-end implementations support it
-			// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
@@ -2016,7 +2011,7 @@ sap.ui.define([
 		return !(oNode && oNode.nodeState.isLeaf);
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding
 	 */
 	ODataTreeBindingFlat.prototype._hasChangedEntity = function (mChangedEntities) {
@@ -2985,9 +2980,6 @@ sap.ui.define([
 		}.bind(this);
 
 		mParameters.error = function (oEvent) {
-			// TODO: How to handle errors?
-			// What kind of errors? Timeout? Authentication failed? General 50x error?
-
 			// call original error handler
 			fnOrgError(oEvent);
 		};
@@ -3283,7 +3275,6 @@ sap.ui.define([
 		var aAddedNodes,
 			that = this;
 
-		// TODO: Add unit test for this function
 		aAddedNodes = oOptimizedChanges.added.slice();
 
 		aAddedNodes.sort(function(a, b) {
@@ -3329,7 +3320,6 @@ sap.ui.define([
 
 
 	ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave = function(oNode) {
-		// TODO: check whether the binding updates the property if the server returns 404 for this sub request
 		var bIsDeepOne = oNode.context.getProperty(this.oTreeProperties["hierarchy-preorder-rank-for"]) === undefined;
 
 		if (oNode.isDeepOne === undefined) {
@@ -3635,7 +3625,6 @@ sap.ui.define([
 
 			iPosition = oNode.context.getProperty(sPositionAnnot);
 			if (iPosition === undefined) {
-				// TODO: Throw error or compensate?
 				Log.warning("ODataTreeBindingFlat", "Missing " + sPositionAnnot + " value for node " + oNode.key);
 				break;
 			}
@@ -3918,7 +3907,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding#addContexts
 	 */
 	ODataTreeBindingFlat.prototype.addContexts = function (oParentContext, vContextHandles) {
@@ -4004,7 +3993,8 @@ sap.ui.define([
 					this._trackChangedNode(oNewHandle._oSubtreeRoot);
 				} else {
 					// Context is unknown to the binding  -->  new context
-					// TODO: What to do with contexts, which are not created by this binding?
+					// This relates to the unsupported use case of moving a context from one tree
+					// binding to another
 					Log.info("ODataTreeBindingFlat.addContexts(): Newly created context added.");
 
 					this._ensureHierarchyNodeIDForContext(oContext);
@@ -4038,10 +4028,6 @@ sap.ui.define([
 						_oNewParentNode: oNewParentNode
 					};
 				}
-
-				// update containing-server index for the newly added subtree
-				// TODO: Check if this information can be used productively, right now it's only used for debugging
-				oNewHandle._iContainingServerIndex = oNewParentNode.serverIndex || oNewParentNode.containingServerIndex;
 
 				// finally add the new subtree handle to the existing parent node's addedSubtree list
 				oNewParentNode.addedSubtrees.unshift(oNewHandle);
@@ -4079,7 +4065,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding#removeContext
 	 */
 	ODataTreeBindingFlat.prototype.removeContext = function (oContext) {
@@ -4109,7 +4095,7 @@ sap.ui.define([
 				if (iNewParentIndex != -1) {
 					oNodeForContext.parent.addedSubtrees.splice(iNewParentIndex, 1);
 					oNodeForContext.nodeState.reinserted = false;
-					//TODO: Is reseting the parent a correct way to remove the node/subtree from the whole tree?
+					// Reset the parent to remove the node/subtree from the whole tree
 					oNodeForContext.parent = null;
 				}
 			}
@@ -4126,7 +4112,6 @@ sap.ui.define([
 			this._fireChange({reason: ChangeReason.Remove});
 
 			// Internal Subtree Handle API
-			// TODO: Use HierarchyNode ID instead of path? oContext.getProperty(this.oTreeProperties["hierarchy-node-for"])
 			this._mSubtreeHandles[oContext.getPath()] = {
 				_removedFromVisualIndex: iIndex,
 				_isRemovedSubtree: true,
@@ -4143,7 +4128,6 @@ sap.ui.define([
 				getContext: function () {
 					return oContext;
 				},
-				// TODO: Maybe remove this
 				_restore: function () {
 					oNodeForContext.nodeState.removed = false;
 					var iNodeStateFound = that._aRemoved.indexOf(oNodeForContext);

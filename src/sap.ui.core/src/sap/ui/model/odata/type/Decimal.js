@@ -133,6 +133,8 @@ sap.ui.define([
 				}
 				logWarning(sValue, sName);
 			}
+
+			return undefined;
 		}
 
 		function validateBoolean(vValue, sName) {
@@ -142,6 +144,8 @@ sap.ui.define([
 			if (vValue !== undefined && vValue !== false && vValue !== "false") {
 				logWarning(vValue, sName);
 			}
+
+			return undefined;
 		}
 
 		function setConstraint(sName, vValue, vDefault) {

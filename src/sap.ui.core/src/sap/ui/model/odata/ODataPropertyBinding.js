@@ -74,7 +74,7 @@ sap.ui.define([
 		return this.oModel._getObject(this.sPath, this.oContext);
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	ODataPropertyBinding.prototype.setValue = function(oValue){
