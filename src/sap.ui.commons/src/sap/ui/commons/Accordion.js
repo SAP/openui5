@@ -890,7 +890,9 @@ sap.ui.define([
 
 		function adjustHeight() {
 			var oDomRef = that.getDomRef();
-			oDomRef.style.height = oDomRef.clientHeight - 7 + "px";
+			if (oDomRef) {
+				oDomRef.style.height = oDomRef.clientHeight - 7 + "px";
+			}
 		}
 
 		if (core.isThemeApplied()) {
