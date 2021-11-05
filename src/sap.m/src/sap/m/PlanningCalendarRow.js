@@ -3,11 +3,14 @@
  */
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
-sap.ui.define(['sap/ui/core/Element',
+sap.ui.define([
+				'sap/ui/core/Core',
+				'sap/ui/core/Element',
 				'sap/m/CustomListItem',
 				'sap/ui/unified/DateTypeRange',
 				'sap/ui/unified/library'
 			], function (
+				Core,
 				Element,
 				CustomListItem,
 				DateTypeRange,
@@ -360,7 +363,9 @@ sap.ui.define(['sap/ui/core/Element',
 	 */
 	PlanningCalendarRow.prototype._getPlanningCalendarCustomRowHeader = function() {
 		if (!this.oRowHeader) {
-			this.oRowHeader = new CustomListItem(this.getId() + "-CustomHead");
+			this.oRowHeader = new CustomListItem(this.getId() + "-CustomHead", {
+				accDescription: Core.getLibraryResourceBundle("sap.m").getText("PC_CUSTOM_ROW_HEADER_CONTENT_DESC")
+			});
 		}
 
 		return this.oRowHeader;

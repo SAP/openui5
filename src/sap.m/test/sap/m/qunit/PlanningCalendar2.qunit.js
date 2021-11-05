@@ -2987,6 +2987,7 @@ sap.ui.define([
 					})
 				}
 			}),
+			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oRowHead,
 			oRowCustomHead;
 
@@ -3004,6 +3005,7 @@ sap.ui.define([
 		// Assert
 		assert.equal(oRowHead, undefined, "when there's headerContent, it creates only '-CustomHead' instance");
 		assert.equal(oRowCustomHead.getContent()[0].getTitle(), "Alfonso", "when there's headerContent, the content is set accordingly");
+		assert.equal(oRowCustomHead.getAccDescription(), oRb.getText("PC_CUSTOM_ROW_HEADER_CONTENT_DESC"), "The headerContent has correct acc description");
 
 		// Destroy
 		oPC.destroy();
