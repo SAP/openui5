@@ -2883,6 +2883,32 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
+	QUnit.test("getAccessibilityInfo", function(assert) {
+		// Arrange
+		var SegmentedItem = new SegmentedButtonItem({
+				tooltip: "Tooltip",
+				icon: "sap-icon://save"
+			}),
+			oSegmentedButton = new SegmentedButton({
+				items : [ SegmentedItem ]
+			}),
+			oAccInfoSpy = this.spy(SegmentedItem.oButton, "getAccessibilityInfo"),
+			sDescription;
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		sDescription = oSegmentedButton.getAccessibilityInfo().description;
+
+		// Assert
+		assert.ok(oAccInfoSpy.calledOnce, "getAccessibilityInfo from sap.m.Button gets called");
+		assert.strictEqual(sDescription, SegmentedItem.getTooltip(), "Proper description is generated");
+
+		// Clean
+		oSegmentedButton.destroy();
+	});
+
 	/* Module Select Mode */
 
 	QUnit.module('Select Mode');

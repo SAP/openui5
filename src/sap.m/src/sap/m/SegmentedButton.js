@@ -29,8 +29,6 @@ function(
 	) {
 	"use strict";
 
-
-
 	/**
 	 * Constructor for a new <code>SegmentedButton</code>.
 	 *
@@ -919,6 +917,25 @@ function(
 		}, this);
 		oSelect.setSelectedKey(iSelectedKey.toString());
 	};
+
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {object} Current accessibility state of the control
+	 * @protected
+	 */
+	 SegmentedButton.prototype.getAccessibilityInfo = function() {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oSelectedItem = this.getItems().find(function(oItem) {
+				return oItem.getId() === this.getSelectedItem();
+			}.bind(this));
+
+		return {
+		  role: "listbox",
+		  type: oResourceBundle.getText("SEGMENTEDBUTTON_NAME"),
+		  description: oSelectedItem.oButton.getAccessibilityInfo().description,
+		  focusable: this.getEnabled()
+		};
+	 };
 
 	/**
 	 * To be called to make the control go to select mode.
