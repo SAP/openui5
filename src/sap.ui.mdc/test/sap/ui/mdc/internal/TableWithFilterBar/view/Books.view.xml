@@ -352,7 +352,7 @@
 										<mdcvc:MTable keyPath="code" descriptionPath="title">
 											<Table id="mTable1_classification" items='{path : "/Classification", length: 10}' width="30rem">
 												<columns>
-													<Column width="5rem">
+													<Column width="10rem">
 														<header>
 															<Text text="Code" />
 														</header>
@@ -380,7 +380,7 @@
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 											<Table id="mTable2_classification" items='{path : "/Classification"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
-													<Column width="5rem">
+													<Column width="10rem">
 														<header>
 															<Text text="Code" />
 														</header>
@@ -473,8 +473,8 @@
 													<vhfb:filterItems>
 														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" />
+														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
+														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" fieldHelp="FHGenre"/>
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -593,9 +593,9 @@
 													<vhfb:filterItems>
 														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Sub Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/subgenre_code}" />
+														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
+														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/genre_code}" display="Description" fieldHelp="FHGenre"/>
+														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Sub Genre" dataType= "Edm.String" conditions= "{$filters>/conditions/subgenre_code}" display="Description" fieldHelp="FHSubGenre"/>
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
@@ -999,7 +999,7 @@
 										<vhfb:filterItems>
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" fieldHelp="FHClassification"/>
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>

@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier) {
+	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay'
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay) {
 	"use strict";
 
 	var FilterBarBooksSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -32,7 +32,7 @@ sap.ui.define([
 				if (oPropertyInfo.name === "author_ID") {
 					oPropertyInfo.fieldHelp = "FH1";
 					oPropertyInfo.label = "Author ID";
-					oPropertyInfo.display = "Description";
+					oPropertyInfo.display = FieldDisplay.Description;
 					oPropertyInfo.formatOptions = {groupingEnabled: false};
 				}
 
@@ -62,21 +62,25 @@ sap.ui.define([
 				if (oPropertyInfo.name === "classification_code") {
 					oPropertyInfo.fieldHelp = "FHClassification";
 					oPropertyInfo.label = "Classification";
+					oPropertyInfo.display = FieldDisplay.Description;
 				}
 
 				if (oPropertyInfo.name === "genre_code") {
 					oPropertyInfo.fieldHelp = "FHGenre";
 					oPropertyInfo.label = "Genre";
+					oPropertyInfo.display = FieldDisplay.Description;
 				}
 
 				if (oPropertyInfo.name === "subgenre_code") {
 					oPropertyInfo.fieldHelp = "FHSubGenre";
 					oPropertyInfo.label = "Sub Genre";
+					oPropertyInfo.display = FieldDisplay.Description;
 				}
 
 				if (oPropertyInfo.name === "detailgenre_code") {
 					oPropertyInfo.fieldHelp = "FHDetailGenre";
 					oPropertyInfo.label = "Detail Genre";
+					oPropertyInfo.display = FieldDisplay.Description;
 				}
 
 				if (oPropertyInfo.name === "author/dateOfBirth") {
