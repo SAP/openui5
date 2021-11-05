@@ -50,7 +50,7 @@
 												delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
 												<mdc:typeahead>
 													<mdcv:Popover id="FH1-Popover" title="Author ID">
-														<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name">
+														<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
 															<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem">
 																<columns>
 																	<Column width="5rem">
@@ -196,7 +196,7 @@
 										</mdc:outParameters>
 										<mdc:typeahead>
 											<mdcv:Popover title="Genre">
-												<mdcvc:MTable keyPath="code" descriptionPath="title">
+												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 													<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem">
 														<columns>
 															<Column width="10rem">
@@ -275,7 +275,7 @@
 										</mdc:outParameters>
 										<mdc:typeahead>
 											<mdcv:Popover title="Sub Genre">
-												<mdcvc:MTable keyPath="code" descriptionPath="title">
+												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
 													<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10}' width="30rem">
 														<columns>
 															<Column width="10rem">

@@ -150,7 +150,7 @@
 						</mdc:outParameters>
 						<mdc:typeahead>
 							<mdcv:Popover>
-								<mdcvc:MTable keyPath="code" descriptionPath="text">
+								<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
 									<Table items="{path: '/Regions', length: 10}" width="30rem">
 										<columns>
 											<Column>
@@ -223,7 +223,7 @@
 						</mdc:outParameters>
 						<mdc:typeahead>
 							<mdcv:Popover>
-							<mdcvc:MTable keyPath="city" descriptionPath="text">
+							<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
 								<Table items="{path: '/Cities', length: 10}" width="30rem">
 									<columns>
 										<Column>
