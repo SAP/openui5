@@ -1,0 +1,82 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
+	height="100%"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:demo="sap.ui.core.sample.common"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:t="sap.ui.table">
+<App>
+	<Page id="page" showHeader="false">
+		<content>
+			<f:FlexibleColumnLayout id="layout" layout="{ui>/sLayout}">
+				<f:beginColumnPages>
+				<Table id="orders" growing="true" growingThreshold="20" items="{
+						path : '/Products',
+						parameters : {
+							$filter :
+								'IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null',
+							$$patchWithoutSideEffects : true,
+							$select : ['HasDraftEntity']
+						}
+					}" mode="SingleSelectMaster" selectionChange="onSelectProduct">
+					<columns>
+						<Column width="3em">
+							<Text text="ID"/>
+						</Column>
+						<Column width="3em">
+							<Text text="Draft"/>
+						</Column>
+						<Column width="12em">
+							<Text text="Name"/>
+						</Column>
+					</columns>
+					<ColumnListItem id="highlight">
+						<Text id="ID" text="{ID}"/>
+						<CheckBox editable="false" selected="{= !%{IsActiveEntity} }"/>
+						<Text id="name" text="{name}"/>
+					</ColumnListItem>
+				</Table>
+				</f:beginColumnPages>
+				<f:midColumnPages>
+					<t:Table id="parts" rows="{
+								path : '_Parts',
+								parameters : {$count : true, $$ownRequest : true}
+							}"
+							selectionMode="None"
+							visibleRowCount="20">
+						<t:columns>
+							<t:Column width="4em">
+								<Label text="ID" />
+								<t:template>
+									<Input value="{ID}" />
+								</t:template>
+							</t:Column>
+							<t:Column width="8em">
+								<Label text="Description" />
+								<t:template>
+									<Input value="{description}"/>
+								</t:template>
+							</t:Column>
+							<t:Column width="8em">
+								<Label text="Quantity" />
+								<t:template>
+									<Input textAlign="Right" value="{quantity}" />
+								</t:template>
+							</t:Column>
+							<t:Column width="3em">
+								<t:template>
+									<Button enabled="{= %{ID} !== null}"
+											icon="sap-icon://delete" press="onDelete"/>
+								</t:template>
+							</t:Column>
+						</t:columns>
+					</t:Table>
+				</f:midColumnPages>
+			</f:FlexibleColumnLayout>
+		</content>
+	</Page>
+</App>
+</mvc:View>
