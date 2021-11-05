@@ -266,7 +266,7 @@ sap.ui.define([
 
 			if (iLeftPosition < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconLeft", "sapUiCalendarAppArrowIcon"];
-				oRm.icon("sap-icon://arrow-left", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-left", aClasses, { title: null, role: "img" });
 			}
 
 			if (sIcon) {
@@ -275,6 +275,7 @@ sap.ui.define([
 
 				mAttributes["id"] = sId + "-Icon";
 				mAttributes["title"] = null;
+				mAttributes["role"] = "img";
 				oRm.icon(sIcon, aClasses, mAttributes);
 			}
 
@@ -288,7 +289,7 @@ sap.ui.define([
 
 			if (iRightPosition < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconRight", "sapUiCalendarAppArrowIcon"];
-				oRm.icon("sap-icon://arrow-right", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-right", aClasses, { title: null, role: "img" });
 			}
 
 			oRm.openStart("span", sId + "-Descr");
@@ -603,7 +604,7 @@ sap.ui.define([
 
 			if (bArrowLeft && iStartDayDiff < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconLeft", "sapUiCalendarAppArrowIcon"];
-				oRm.icon("sap-icon://arrow-left", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-left", aClasses, { title: null, role: "img" });
 			}
 
 			if (sIcon) {
@@ -612,6 +613,7 @@ sap.ui.define([
 
 				mAttributes["id"] = sId + "-Icon";
 				mAttributes["title"] = null;
+				mAttributes["role"] = "img";
 				oRm.icon(sIcon, aClasses, mAttributes);
 			}
 
@@ -640,7 +642,7 @@ sap.ui.define([
 
 			if (bArrowRight && iEndDayDiff < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconRight", "sapUiCalendarAppArrowIcon"];
-				oRm.icon("sap-icon://arrow-right", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-right", aClasses, { title: null, role: "img" });
 			}
 
 			// ARIA information about start and end

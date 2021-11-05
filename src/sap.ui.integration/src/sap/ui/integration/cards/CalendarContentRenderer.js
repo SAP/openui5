@@ -186,6 +186,7 @@ sap.ui.define([
 
 			mAttributes["id"] = sId + "-Icon";
 			mAttributes["title"] = null;
+			mAttributes["role"] = "img";
 			oRm.icon(sIcon, aClasses, mAttributes);
 		}
 

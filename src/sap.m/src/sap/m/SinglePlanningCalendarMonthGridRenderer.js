@@ -339,7 +339,7 @@ sap.ui.define([
 
 			if (app.hasPrevious < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconLeft", "sapUiCalendarAppArrowIcon"];
-				oRm.icon("sap-icon://arrow-left", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-left", aClasses, { title: null, role: "img" });
 			}
 
 			if (sIcon) {
@@ -348,6 +348,7 @@ sap.ui.define([
 
 				mAttributes["id"] = sId + "-Icon";
 				mAttributes["title"] = null;
+				mAttributes["role"] = "img";
 				oRm.icon(sIcon, aClasses, mAttributes);
 			}
 
@@ -361,7 +362,7 @@ sap.ui.define([
 
 			if (app.hasNext < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconRight", "sapUiCalendarAppArrowIcon"];
-				oRm.icon("sap-icon://arrow-right", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-right", aClasses, { title: null, role: "img" });
 			}
 
 			oRm.openStart("span", sId + "-Descr");
