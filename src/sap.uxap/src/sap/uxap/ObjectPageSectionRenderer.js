@@ -43,6 +43,7 @@ sap.ui.define(function () {
 		oRm.openStart("div", oControl.getId() + "-header")
 			.attr("role", "heading")
 			.attr("aria-level", oControl._getARIALevel())
+			.attr("aria-hidden", !bTitleVisible)
 			.class("sapUxAPObjectPageSectionHeader")
 			.class(bTitleVisible ? "" : "sapUxAPObjectPageSectionHeaderHidden")
 			.openEnd();

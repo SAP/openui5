@@ -28,6 +28,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		// By default title is not centered, CSS:0120061532 0001349139 2014
 		var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection");
 		assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "My first section title never visible");
+		assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").attr("aria-hidden"), "true", "My first section title is ignored by the screen reader");
 		// Test by finding own class
 		assert.strictEqual(oSectionWithTwoSubSection.$().find('.mysubsectiontotest').length == 2, true, "Section with two SubSections");
 
