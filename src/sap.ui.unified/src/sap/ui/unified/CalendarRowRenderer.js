@@ -637,23 +637,25 @@ sap.ui.define([
 			if (oArrowValues.appTimeUnitsDifRowEnd > 0) {
 				oRm.icon("sap-icon://arrow-right", ["sapUiCalendarAppArrowIconRight"], { title: null });
 			}
-			// ARIA information about start and end
-			var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getStartDate());
-			sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getEndDate());
-			if (oRow._getRelativeInfo && oRow._getRelativeInfo().bIsRelative) {
-				var oRelativeInfo = oRow._getRelativeInfo();
-				sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment.getStartDate()));
-				sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment.getEndDate()));
-			}
-			if (sType && sType != CalendarDayType.None) {
-				sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
-			}
-			oRm.openStart("span", sId + "-Descr");
-			oRm.class("sapUiInvisibleText");
-			oRm.openEnd();
-			oRm.text(sAriaText);
-			oRm.close("span");
 		}
+
+		// ARIA information about start and end
+		var sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getStartDate());
+		sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRow._oFormatAria.format(oAppointment.getEndDate());
+		if (oRow._getRelativeInfo && oRow._getRelativeInfo().bIsRelative) {
+			var oRelativeInfo = oRow._getRelativeInfo();
+			sAriaText = oRow._oRb.getText("CALENDAR_START_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment.getStartDate()));
+			sAriaText = sAriaText + "; " + oRow._oRb.getText("CALENDAR_END_TIME") + ": " + oRelativeInfo.intervalLabelFormatter(oRelativeInfo._getIndexFromDate(oAppointment.getEndDate()));
+		}
+		if (sType && sType != CalendarDayType.None) {
+			sAriaText = sAriaText + "; " + this.getAriaTextForType(sType, aTypes);
+		}
+		oRm.openStart("span", sId + "-Descr");
+		oRm.class("sapUiInvisibleText");
+		oRm.openEnd();
+		oRm.text(sAriaText);
+		oRm.close("span");
+
 		//app content
 		oRm.close("div");
 

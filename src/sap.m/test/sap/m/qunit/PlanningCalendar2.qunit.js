@@ -2041,6 +2041,38 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test('Appointment with custom content has correct acc output in the DOM', function(assert) {
+		// Prepare
+		var oApp = new CalendarAppointment("AppCustCont", {
+				startDate: new Date(2015, 0, 2, 8, 0),
+				endDate: new Date(2015, 0, 2, 10, 0),
+				title: "3",
+				customContent: [
+					new sap.m.Text({
+						text: "Custom text"
+					})
+				]
+			}),
+			oPC = new PlanningCalendar({
+				startDate: new Date(2015, 0, 2, 8, 0),
+				rows: [
+					new PlanningCalendarRow("row1", {
+						appointments: [
+							oApp
+						]
+					}
+				)]
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oApp.$().find("#AppCustCont-Descr").text(), "Start Time: Friday 02/01/2015 at 08:00:00; End Time: Friday 02/01/2015 at 10:00:00; Type 1", "Start and end date are included as description");
+
+		// Clean up
+		oPC.destroy();
+	});
+
 	QUnit.module('showDayNamesLine', {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar("OPC");
