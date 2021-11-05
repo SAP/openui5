@@ -611,6 +611,78 @@ sap.ui.define([
 		});
 	};
 
+	var iPersonalizeOldChartP13n = function(oControl, sChartType, aItems, oP13nDialog) {
+		this.waitFor({
+			controlType: "sap.m.P13nDimMeasurePanel",
+			matchers: new Ancestor(oP13nDialog, false),
+			success: function(aP13nDimMeasurePanels) {
+				var oP13nDimMeasurePanel = aP13nDimMeasurePanels[0];
+				this.waitFor({
+				controlType: "sap.m.OverflowToolbar",
+				matchers: new Ancestor(oP13nDimMeasurePanel, false),
+				success: function(aOverflowToolbars) {
+					var oOverflowToolbar = aOverflowToolbars[0];
+					this.waitFor({
+						controlType: "sap.m.ComboBox",
+						matchers: new Ancestor(oOverflowToolbar),
+						success: function(aComboBoxes) {
+							var oComboBox = aComboBoxes[0];
+							iChangeComboBoxSelection.call(this, oComboBox, sChartType, {
+								success: function() {
+									this.waitFor({
+										controlType: "sap.m.ColumnListItem",
+										matchers: [
+											new Ancestor(oP13nDialog, false)
+										],
+										actions: function(oColumnListItem) {
+											this.waitFor({
+												controlType: "sap.m.Text",
+												matchers: new Ancestor(oColumnListItem),
+												success: function(aTexts) {
+													var oText = aTexts[0];
+													var oItem = aItems.find(function(oItem) {
+														return oText.getText() === oItem.key;
+													});
+													var bItemIsPresent = !!oItem;
+
+													this.waitFor({
+														controlType: "sap.m.CheckBox",
+														matchers: new Ancestor(oColumnListItem),
+														actions: function(oCheckBox) {
+															if ((!oCheckBox.getSelected() && bItemIsPresent) ||
+																(oCheckBox.getSelected() && !bItemIsPresent)) {
+																new Press().executeOn(oCheckBox);
+															}
+														},
+														success: function() {
+															if (bItemIsPresent) {
+																this.waitFor({
+																	controlType: "sap.m.Select",
+																	matchers: new Ancestor(oColumnListItem),
+																	actions: function(oSelect) {
+																		iChangeSelectSelection.call(this, oSelect, oItem.role);
+																	}.bind(this)
+																});
+															}
+														}
+													});
+												}
+											});
+										}.bind(this),
+										success: function() {
+											iPressTheOKButtonOnTheDialog.call(this,oP13nDialog);
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+				});
+			}
+		});
+	};
+
     return {
 		iPressTheOKButtonOnTheDialog: function(oDialog, oSettings) {
 			return iPressTheOKButtonOnTheDialog.call(this, oDialog, oSettings);
@@ -618,14 +690,17 @@ sap.ui.define([
 		iOpenThePersonalizationDialog: function(oControl, oSettings) {
 			return iOpenThePersonalizationDialog.call(this, oControl, oSettings);
 		},
+
 		iPersonalizeChart: function(oControl, sChartType, aItems) {
 			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
 
-					if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true") {
-
+					//oP13nDialog.getContent()[0].getView("item") && oP13nDialog.getContent()[0].getView("item").getContent().isA("sap.ui.mdc.p13n.panels.ListView")
+					if (oP13nDialog.getContent()[0].getView("dimeasure").getContent().isA("sap.m.P13nDimMeasurePanel")){
+						iPersonalizeOldChartP13n.call(this, oControl, sChartType, aItems, oP13nDialog);
+					} else {
 						this.waitFor({
-							controlType: "sap.ui.mdc.p13n.panels.ChartItemPanelNew",
+							controlType: "sap.ui.mdc.p13n.panels.ChartItemPanel",
 							matchers: new Ancestor(oP13nDialog, false),
 							success: function(aItemPanels) {
 								//This is done in 3 steps
@@ -765,76 +840,6 @@ sap.ui.define([
 											fnAddAllItems.call(this, aItems[0], aItems, fnAssignRoles);
 										}
 									}
-								});
-							}
-						});
-					} else {
-						this.waitFor({
-							controlType: "sap.m.P13nDimMeasurePanel",
-							matchers: new Ancestor(oP13nDialog, false),
-							success: function(aP13nDimMeasurePanels) {
-								var oP13nDimMeasurePanel = aP13nDimMeasurePanels[0];
-								this.waitFor({
-								controlType: "sap.m.OverflowToolbar",
-								matchers: new Ancestor(oP13nDimMeasurePanel, false),
-								success: function(aOverflowToolbars) {
-									var oOverflowToolbar = aOverflowToolbars[0];
-									this.waitFor({
-										controlType: "sap.m.ComboBox",
-										matchers: new Ancestor(oOverflowToolbar),
-										success: function(aComboBoxes) {
-											var oComboBox = aComboBoxes[0];
-											iChangeComboBoxSelection.call(this, oComboBox, sChartType, {
-												success: function() {
-													this.waitFor({
-														controlType: "sap.m.ColumnListItem",
-														matchers: [
-															new Ancestor(oP13nDialog, false)
-														],
-														actions: function(oColumnListItem) {
-															this.waitFor({
-																controlType: "sap.m.Text",
-																matchers: new Ancestor(oColumnListItem),
-																success: function(aTexts) {
-																	var oText = aTexts[0];
-																	var oItem = aItems.find(function(oItem) {
-																		return oText.getText() === oItem.key;
-																	});
-																	var bItemIsPresent = !!oItem;
-
-																	this.waitFor({
-																		controlType: "sap.m.CheckBox",
-																		matchers: new Ancestor(oColumnListItem),
-																		actions: function(oCheckBox) {
-																			if ((!oCheckBox.getSelected() && bItemIsPresent) ||
-																				(oCheckBox.getSelected() && !bItemIsPresent)) {
-																				new Press().executeOn(oCheckBox);
-																			}
-																		},
-																		success: function() {
-																			if (bItemIsPresent) {
-																				this.waitFor({
-																					controlType: "sap.m.Select",
-																					matchers: new Ancestor(oColumnListItem),
-																					actions: function(oSelect) {
-																						iChangeSelectSelection.call(this, oSelect, oItem.role);
-																					}.bind(this)
-																				});
-																			}
-																		}
-																	});
-																}
-															});
-														}.bind(this),
-														success: function() {
-															iPressTheOKButtonOnTheDialog.call(this,oP13nDialog);
-														}
-													});
-												}
-											});
-										}
-									});
-								}
 								});
 							}
 						});

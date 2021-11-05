@@ -25,7 +25,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/SortController",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	'sap/ui/mdc/p13n/panels/ChartItemPanelNew'
+	'sap/ui/mdc/p13n/panels/ChartItemPanel'
 ],
 	function (
 		Core,

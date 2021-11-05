@@ -18,7 +18,7 @@ sap.ui.define([
     "sap/m/VBox",
     "sap/ui/base/ManagedObjectObserver",
     "sap/ui/core/ResizeHandler",
-    "sap/ui/mdc/p13n/panels/ChartItemPanelNew",
+    "sap/ui/mdc/p13n/panels/ChartItemPanel",
     "sap/m/MessageStrip"
 ], function (
     V4ChartDelegate,

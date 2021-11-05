@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
-	"sap/ui/mdc/integration/testlibrary/p13n/waitForPanelInP13n",
-	"sap/base/util/UriParameters"
-], function (Opa5, PropertyStrictEquals, Properties, Ancestor, Descendant, waitForPanelInP13n, UriParameters) {
+	"sap/ui/mdc/integration/testlibrary/p13n/waitForPanelInP13n"
+], function (Opa5, PropertyStrictEquals, Properties, Ancestor, Descendant, waitForPanelInP13n) {
 	"use strict";
 
 	/**
@@ -165,69 +164,78 @@ sap.ui.define([
 		 * @param {object} aItems - the array which is containing the items to be checked in the dialog as following: [{p13nItem: 'Country', selected: true}]
 		 * @private
 		 */
-		iShouldSeeP13nItems: function (vItems) {
+		 iShouldSeeP13nItems: function (vItems) {
 
-			if (UriParameters.fromQuery(window.location.search).get("newChartP13n") === "true"){
-
-				var aVisibleItems = [];
-				var aItemNamesSelected = vItems.filter(function(oItem){return oItem.selected;}).map(function(oItem){return oItem.p13nItem;});
-
+			vItems.forEach(function (oItem, iIndex) {
 				this.waitFor({
 					searchOpenDialogs: true,
-					controlType: "sap.m.ColumnListItem",
-					actions: function (oColumnListItem) {
+					controlType: "sap.m.Label",
+					matchers: new PropertyStrictEquals({
+						name: "text",
+						value: oItem.p13nItem
+					}),
+					success: function (aLabels) {
 						this.waitFor({
-							searchOpenDialogs: true,
-							controlType: "sap.m.ComboBox",
-							matchers: new Ancestor(oColumnListItem),
-							success: function (aComboBoxes) {
-								var oComboBox = aComboBoxes[0];
-								var sText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : undefined;
-
-								//Skip template rows
-								if (sText == undefined){
-									return;
-								}
-
-								aVisibleItems.push(sText);
-
-								if (aItemNamesSelected.indexOf(sText) != -1 ) {
-									Opa5.assert.ok(true, "Item does contain the correct text " + sText + " for the Label");
-								}
+							controlType: "sap.m.ColumnListItem",
+							matchers: new Descendant(aLabels[0]),
+							success: function (aColumnListItems) {
+								Opa5.assert.equal(aColumnListItems[0].getParent().getItems().indexOf(aColumnListItems[0]), iIndex, "Table item is on the correct index");
+								Opa5.assert.equal(aColumnListItems[0].getSelected(), oItem.selected, "The item is selected: " + oItem.selected);
+								Opa5.assert.equal(aLabels[0].getText(), oItem.p13nItem, "Item does contain the correct text " + oItem.p13nItem + " for the Label");
 							}
 						});
-					}.bind(this),
-					success: function() {
-						aVisibleItems.forEach(function(sItemName, iIndex) {
-							Opa5.assert.equal(aItemNamesSelected[iIndex], sItemName, "Table item is on the correct index");
-						});
-
-						Opa5.assert.ok(true, "Item selection is correct"); //Otherwise test would have failed earlier as arrays are compared
 					}
 				});
-			} else {
-				vItems.forEach(function (oItem, iIndex) {
+			}.bind(this));
+
+		},
+
+		/**
+		 * This method will check the text, selected status and index of a given array in a p13n dialog, which contains p13n items in a defined structure.
+		 * Note: the index of the p13n item in the array will also be checked, according to the index of the item in the dialog.
+		 *
+		 * @param {object} aItems - the array which is containing the items to be checked in the dialog as following: [{p13nItem: 'Country', selected: true}]
+		 * @private
+		 */
+		iShouldSeeChartP13nItems: function (vItems) {
+
+			var aVisibleItems = [];
+			var aItemNamesSelected = vItems.filter(function(oItem){return oItem.selected;}).map(function(oItem){return oItem.p13nItem;});
+
+			this.waitFor({
+				searchOpenDialogs: true,
+				controlType: "sap.m.ColumnListItem",
+				actions: function (oColumnListItem) {
 					this.waitFor({
 						searchOpenDialogs: true,
-						controlType: "sap.m.Label",
-						matchers: new PropertyStrictEquals({
-							name: "text",
-							value: oItem.p13nItem
-						}),
-						success: function (aLabels) {
-							this.waitFor({
-								controlType: "sap.m.ColumnListItem",
-								matchers: new Descendant(aLabels[0]),
-								success: function (aColumnListItems) {
-									Opa5.assert.equal(aColumnListItems[0].getParent().getItems().indexOf(aColumnListItems[0]), iIndex, "Table item is on the correct index");
-									Opa5.assert.equal(aColumnListItems[0].getSelected(), oItem.selected, "The item is selected: " + oItem.selected);
-									Opa5.assert.equal(aLabels[0].getText(), oItem.p13nItem, "Item does contain the correct text " + oItem.p13nItem + " for the Label");
-								}
-							});
+						controlType: "sap.m.ComboBox",
+						matchers: new Ancestor(oColumnListItem),
+						success: function (aComboBoxes) {
+							var oComboBox = aComboBoxes[0];
+							var sText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : undefined;
+
+							//Skip template rows
+							if (sText == undefined){
+								return;
+							}
+
+							aVisibleItems.push(sText);
+
+							if (aItemNamesSelected.indexOf(sText) != -1 ) {
+								Opa5.assert.ok(true, "Item does contain the correct text " + sText + " for the Label");
+							}
 						}
 					});
-				}.bind(this));
-			}
+				}.bind(this),
+				success: function() {
+					aVisibleItems.forEach(function(sItemName, iIndex) {
+						Opa5.assert.equal(aItemNamesSelected[iIndex], sItemName, "Table item is on the correct index");
+					});
+
+					Opa5.assert.ok(true, "Item selection is correct"); //Otherwise test would have failed earlier as arrays are compared
+				}
+			});
+
 
 		},
 

@@ -197,23 +197,7 @@ sap.ui.define([
 			var fSuccess = oSettings.success;
 
 			var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			var sPlaceholderName;
-
-			switch (sKind) {
-				case "Measure":
-					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE');
-					break;
-				case "Aggregation":
-					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_MEASURE');
-					break;
-				case "Dimension":
-					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION');
-					break;
-				case "Groupable":
-					sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_DIMENSION');
-					break;
-			}
-
+			var sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 			var aMatchers = [];
 
 			if (sPopoverTitle){
@@ -235,7 +219,11 @@ sap.ui.define([
 							value: sPlaceholderName
 						}),
 						success: function (aComboBox) {
-							fSuccess(aComboBox[0]);
+							if (sKind === "Dimension" || sKind === "Groupable"){
+								fSuccess(aComboBox[0]);
+							} else {
+								fSuccess(aComboBox[1]);
+							}
 						}
 					});
 				}
