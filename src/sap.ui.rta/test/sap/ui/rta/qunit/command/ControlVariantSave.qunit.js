@@ -2,10 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
-	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
@@ -14,15 +12,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	// needs to be included so that the ElementOverlay prototype is enhanced
 	"sap/ui/rta/plugin/ControlVariant"
-],
-function (
+], function(
 	Layer,
-	FlUtils,
 	FlLayerUtils,
 	Change,
-	Manifest,
 	CommandFactory,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
@@ -30,7 +26,8 @@ function (
 	VariantManagement,
 	VariantManagementState,
 	FlexTestAPI,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -53,33 +50,7 @@ function (
 				}
 			};
 
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-
-			this.oManifest = new Manifest(oManifestObj);
-
-			this.oMockedAppComponent = {
-				getLocalId: function() {},
-				getModel: function() {
-					return this.oModel;
-				}.bind(this),
-				getId: function() {
-					return "RTADemoAppMD";
-				},
-				getManifest: function() {
-					return this.oManifest;
-				}.bind(this)
-			};
-
-			this.oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-			this.oGetComponentClassNameStub = sinon.stub(FlUtils, "getComponentClassName").returns("Dummy.Component");
-
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 			return FlexTestAPI.createVariantModel({
 				data: oData,
 				appComponent: this.oMockedAppComponent
@@ -135,10 +106,8 @@ function (
 			}.bind(this));
 		},
 		after: function() {
-			this.oManifest.destroy();
 			this.oModel.destroy();
-			this.oGetAppComponentForControlStub.restore();
-			this.oGetComponentClassNameStub.restore();
+			this.oMockedAppComponent.destroy();
 			this.oGetCurrentLayerStub.restore();
 		},
 		beforeEach: function() {

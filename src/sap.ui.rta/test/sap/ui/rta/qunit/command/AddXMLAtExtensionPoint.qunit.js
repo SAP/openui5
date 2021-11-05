@@ -5,62 +5,31 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/ElementDesignTimeMetadata",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	CommandFactory,
 	AddXMLAtExtensionPoint,
 	ExtensionPointRegistryAPI,
 	AddXMLAtExtensionPointCommand,
-	ChangesController,
 	FlexController,
 	Layer,
-	Utils,
 	LayerUtils,
 	ElementDesignTimeMetadata,
+	RtaQunitUtils,
 	sinon
 ) {
 	"use strict";
 
-	var oMockedAppComponent = {
-		getId: function () {
-			return 'testcomponent';
-		},
-		getLocalId: function () {},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {},
-		createId: function(sId) {
-			return 'testcomponent---' + sId;
-		}
-	};
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AddXMLAtExtensionPoint command with a valid entry in the change registry,", {
 		beforeEach: function() {
+			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			var oXmlString =
 				'<mvc:View id="testapp---view" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -76,7 +45,6 @@ function (
 						'</content>' +
 					'</Panel>' +
 				'</mvc:View>';
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			return sap.ui.core.mvc.XMLView.create({id: "testapp---view", definition: oXmlString})
 				.then(function(oXMLView) {
 					this.oXMLView = oXMLView;
@@ -87,6 +55,7 @@ function (
 				}.bind(this));
 		},
 		afterEach: function() {
+			this.oComponent.destroy();
 			this.oXMLView.destroy();
 			sandbox.restore();
 		}
@@ -96,7 +65,6 @@ function (
 			var sFragment = "fragment";
 			var oApplyChangeStub = sandbox.stub(AddXMLAtExtensionPoint, "applyChange");
 			var oCompleteChangeContentSpy = sandbox.spy(AddXMLAtExtensionPoint, "completeChangeContent");
-			sandbox.stub(ChangesController, "getAppComponentForSelector").returns(oMockedAppComponent);
 			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
 			var oGetExtensionPointInfoSpy = sandbox.spy(ExtensionPointRegistryAPI, "getExtensionPointInfo");
 			var oPreloadSpy = sandbox.spy(sap.ui.require, "preload");

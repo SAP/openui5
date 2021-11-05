@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -16,6 +17,7 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	VariantUtils,
+	ManifestUtils,
 	ChangesController,
 	FlexControllerFactory,
 	Layer,
@@ -153,6 +155,17 @@ sap.ui.define([
 		 */
 		hasVariantManagement: function(mPropertyBag) {
 			return VariantUtils.belongsToVariantManagement(mPropertyBag.element);
+		},
+
+		/**
+		 * Returns the reference that is used for flexibility
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.base.ManagedObject} mPropertyBag.element - Element or component instance
+		 * @returns {string} Flex reference
+		 */
+		getFlexReference: function(mPropertyBag) {
+			return ManifestUtils.getFlexReferenceForControl(mPropertyBag.element);
 		}
 	};
 

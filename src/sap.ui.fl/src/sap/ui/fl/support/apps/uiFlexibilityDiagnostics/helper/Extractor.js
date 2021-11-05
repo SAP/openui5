@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/util/File",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/m/MessageBox",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(File, JsControlTreeModifier, MessageBox, Utils, jQuery) {
+], function(File, JsControlTreeModifier, MessageBox, ManifestUtils, jQuery) {
 	"use strict";
 
 	var Extractor = {};
@@ -53,7 +53,7 @@ sap.ui.define([
 			var oComponentContainer = sap.ui.getCore().byId(oComponentContainerDomRef.id);
 			var oAppComponent = oComponentContainer && oComponentContainer.getComponentInstance();
 
-			if (oAppComponent && Utils.getAppComponentClassNameForComponent(oAppComponent) === sComponentName) {
+			if (oAppComponent && ManifestUtils.getFlexReferenceForControl(oAppComponent) === sComponentName) {
 				oCorrectAppComponent = oAppComponent;
 				return true;
 			}

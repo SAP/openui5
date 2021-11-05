@@ -411,7 +411,7 @@ sap.ui.define([
 		QUnit.test("Save", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			sandbox.stub(Utils, "getAppIdFromManifest").returns("id");
-			sandbox.stub(Utils, "getComponentClassName").returns("name");
+			ManifestUtils.getFlexReferenceForControl.returns("name");
 			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
 			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
 			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oComponent);

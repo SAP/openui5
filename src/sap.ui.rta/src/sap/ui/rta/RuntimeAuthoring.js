@@ -4,87 +4,91 @@
 
 // Provides class sap.ui.rta.RuntimeAuthoring.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/rta/toolbar/Fiori",
-	"sap/ui/rta/toolbar/Standalone",
-	"sap/ui/rta/toolbar/Personalization",
-	"sap/ui/rta/toolbar/FioriLike",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/Overlay",
-	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/command/LREPSerializer",
-	"sap/ui/rta/Utils",
-	"sap/ui/dt/Util",
-	"sap/ui/dt/ElementUtil",
-	"sap/ui/fl/library",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/api/ReloadInfoAPI",
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/m/MessageBox",
-	"sap/m/MessageToast",
-	"sap/ui/rta/util/PluginManager",
-	"sap/ui/rta/util/PopupManager",
-	"sap/ui/core/BusyIndicator",
-	"sap/ui/dt/DOMUtil",
-	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/Device",
-	"sap/ui/rta/service/index",
-	"sap/ui/rta/util/ServiceEventBus",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/base/strings/capitalize",
 	"sap/base/util/UriParameters",
-	"sap/ui/performance/Measurement",
 	"sap/base/Log",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/ReloadInfoAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/library",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement",
+	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/service/index",
+	"sap/ui/rta/toolbar/Fiori",
+	"sap/ui/rta/toolbar/FioriLike",
+	"sap/ui/rta/toolbar/Personalization",
+	"sap/ui/rta/toolbar/Standalone",
+	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+	"sap/ui/rta/util/PluginManager",
+	"sap/ui/rta/util/PopupManager",
+	"sap/ui/rta/util/ServiceEventBus",
 	"sap/ui/rta/util/validateFlexEnabled",
-	"sap/ui/rta/util/changeVisualization/ChangeVisualization"
+	"sap/ui/rta/Utils",
+	"sap/ui/Device"
 ], function(
-	jQuery,
-	ManagedObject,
-	FioriToolbar,
-	StandaloneToolbar,
-	PersonalizationToolbar,
-	FioriLikeToolbar,
-	DesignTime,
-	Overlay,
-	CommandStack,
-	LREPSerializer,
-	Utils,
-	DtUtil,
-	ElementUtil,
-	flexLibrary,
-	FlexUtils,
-	LayerUtils,
-	Layer,
-	ReloadInfoAPI,
-	FeaturesAPI,
-	VersionsAPI,
-	PersistenceWriteAPI,
-	MessageBox,
-	MessageToast,
-	PluginManager,
-	PopupManager,
-	BusyIndicator,
-	DOMUtil,
-	RtaAppVariantFeature,
-	Device,
-	ServicesIndex,
-	ServiceEventBus,
-	OverlayRegistry,
 	capitalize,
 	UriParameters,
-	Measurement,
 	Log,
+	MessageBox,
+	MessageToast,
+	jQuery,
+	ManagedObject,
+	BusyIndicator,
+	DesignTime,
+	DOMUtil,
+	ElementUtil,
+	Overlay,
+	OverlayRegistry,
+	DtUtil,
 	KeyCodes,
+	FlexRuntimeInfoAPI,
+	SmartVariantManagementApplyAPI,
+	FeaturesAPI,
+	PersistenceWriteAPI,
+	ReloadInfoAPI,
+	VersionsAPI,
+	Layer,
+	LayerUtils,
+	flexLibrary,
+	FlexUtils,
 	JSONModel,
+	Measurement,
+	RtaAppVariantFeature,
+	LREPSerializer,
+	CommandStack,
+	ServicesIndex,
+	FioriToolbar,
+	FioriLikeToolbar,
+	PersonalizationToolbar,
+	StandaloneToolbar,
+	ChangeVisualization,
+	PluginManager,
+	PopupManager,
+	ServiceEventBus,
 	validateFlexEnabled,
-	ChangeVisualization
+	Utils,
+	Device
 ) {
 	"use strict";
 
@@ -1139,8 +1143,9 @@ sap.ui.define([
 		BusyIndicator.show(500);
 		return this._serializeToLrep().then(function () {
 			BusyIndicator.hide();
-			var bAppVariantRunning = FlexUtils.isApplicationVariant(this._oRootControl) && !FlexUtils.isVariantByStartupParameter(this._oRootControl);
-			return ((bAppVariantRunning) ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl) : Promise.resolve())
+			var bVariantByStartupParameter = FlexUtils.isVariantByStartupParameter(this._oRootControl);
+			var bAppVariantRunning = SmartVariantManagementApplyAPI.isApplicationVariant({control: this._oRootControl}) && !bVariantByStartupParameter;
+			return (bAppVariantRunning ? RtaAppVariantFeature.getAppVariantDescriptor(this._oRootControl) : Promise.resolve())
 				.then(function(oAppVariantDescriptor) {
 					var aAppVariantDescriptor = [];
 					if (oAppVariantDescriptor) {
@@ -1226,7 +1231,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @param {string} sLayer The active layer
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
 	 * @returns {boolean} Returns true if restart is needed
 	 */
 	RuntimeAuthoring.needsRestart = function(sLayer) {
@@ -1239,11 +1244,11 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @param {string} sLayer - The active layer
-	 * @param {sap.ui.core.Control} oRootControl - root control for which RTA was started
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
+	 * @param {sap.ui.core.Control} oRootControl - Root control for which RTA was started
 	 */
 	RuntimeAuthoring.enableRestart = function(sLayer, oRootControl) {
-		var sFlexReference = FlexUtils.getComponentClassName(oRootControl);
+		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oRootControl});
 		var vParameter = sFlexReference || true;
 		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, vParameter);
 	};
@@ -1253,7 +1258,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @static
-	 * @param {string} sLayer The active layer
+	 * @param {sap.ui.fl.Layer} sLayer - Active layer
 	 */
 	RuntimeAuthoring.disableRestart = function(sLayer) {
 		window.sessionStorage.removeItem("sap.ui.rta.restart." + sLayer);

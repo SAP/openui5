@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	ManifestUtils,
 	UI2PersonalizationState,
 	ChangesController,
 	UI2PersonalizationWriteAPI,
@@ -52,7 +54,7 @@ sap.ui.define([
 			this.oAppComponent = createAppComponent();
 			this.oSetPersonalizationStub = sandbox.stub(UI2PersonalizationState, "setPersonalization");
 			this.oDeletePersonalizationStub = sandbox.stub(UI2PersonalizationState, "deletePersonalization");
-			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "initialize").resolves();
 		},

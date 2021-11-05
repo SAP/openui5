@@ -45,7 +45,7 @@ sap.ui.define([
 	 * Checks if the parsed shell hash contains outdated variant parameters.
 	 *
 	 * @param {array} aNewHashParameters - Variant URL Parameters
-	 * @param {sap.ui.fl.Model} oModel - Variant model
+	 * @param {sap.ui.fl.variants.VariantModel} oModel - Variant model
 	 *
 	 * @returns {object} oIfUpdateIsRequiredWithCurrentVariants
 	 * @returns {boolean} oIfUpdateIsRequiredWithCurrentVariants.updateRequired - If update is required
@@ -174,7 +174,10 @@ sap.ui.define([
 		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
 
 		if (oParsedHash && oParsedHash.params) {
-			var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oModel.oAppComponent);
+			var mTechnicalParameters = oModel.oAppComponent
+				&& oModel.oAppComponent.getComponentData
+				&& oModel.oAppComponent.getComponentData()
+				&& oModel.oAppComponent.getComponentData().technicalParameters;
 			// if mTechnicalParameters are not available we write a warning and continue updating the hash
 			if (!mTechnicalParameters) {
 				Log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");

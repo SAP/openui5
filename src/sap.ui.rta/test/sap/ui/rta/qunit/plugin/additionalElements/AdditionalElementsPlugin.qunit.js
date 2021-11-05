@@ -18,18 +18,17 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
-	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
-], function (
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	includes,
 	isEmptyObject,
 	merge,
@@ -47,17 +46,16 @@ sap.ui.define([
 	FieldExtensibility,
 	ChangesWriteAPI,
 	Settings,
-	FlexUtils,
 	VerticalLayout,
 	JSONModel,
 	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
-	AddElementsDialog,
 	AdditionalElementsActionExtractor,
 	RTAPlugin,
 	RTAUtils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -106,35 +104,10 @@ sap.ui.define([
 			}
 		}
 	};
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "applicationId", DEFAULT_MANIFEST);
 
 	var sVariantManagementReference = "test-variant-management-reference";
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "mockedAppComponent";
-				}
-			};
-		},
-		getManifest: function () {
-			return DEFAULT_MANIFEST;
-		},
-		getModel: function (sModelName) {
-			if (sModelName === FlexUtils.VARIANT_MODEL_NAME) {
-				return { getCurrentVariantReference: function () {
-					return sVariantManagementReference;
-				}};
-			}
-			return undefined;
-		}
-	};
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function registerControlsForChanges() {
 		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -1495,20 +1468,16 @@ sap.ui.define([
 		});
 
 		function givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies() {
-			var oMockedAppComponentWithLibDependency = merge({}, oMockedAppComponent, {
-				getManifestEntry: function(sPath) {
-					if (sPath.indexOf("libs")) {
-						return merge(
-							{},
-							DEFAULT_MANIFEST["sap.ui5"].dependencies.libs,
-							DEFAULT_DELEGATE_REGISTRATION.requiredLibraries
-						);
-					}
-					return {};
+			sandbox.stub(oMockedAppComponent, "getManifestEntry").callsFake(function(sPath) {
+				if (sPath.indexOf("libs")) {
+					return merge(
+						{},
+						DEFAULT_MANIFEST["sap.ui5"].dependencies.libs,
+						DEFAULT_DELEGATE_REGISTRATION.requiredLibraries
+					);
 				}
+				return {};
 			});
-			FlexUtils.getAppComponentForControl.restore(); //assuming the default stub is always (re)set in beforeEach
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponentWithLibDependency);
 		}
 
 		QUnit.test("when the control's dt metadata has an add via delegate action on relevant container and default delegate is available, but library dependency already exists", function (assert) {
@@ -2030,8 +1999,6 @@ sap.ui.define([
 	//                 contentLeft                                        contentMiddle         contentRight
 	// [oSibling, <oUnsupportedInvisible>, <oInvisible1>, <oInvisible2>        EMPTY          oIrrelevantChild]
 	function givenSomeBoundControls() {
-		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
 		this.oSibling = new Button({id: "Sibling", visible: true});
 		this.oUnsupportedInvisible = new Input({id: "UnsupportedInvisible", visible: false});
 		this.oInvisible1 = new Button({id: "Invisible1", visible: false});

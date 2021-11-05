@@ -706,11 +706,11 @@ var oVariantMap = {
 				getLocalId: function() { return "VMId"; },
 				getModel: function() {
 					return oModel;
-				}
+				},
+				getComponentData: function() {}
 		};
 
 		sinon.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
-		sinon.stub(FlUtils, "getComponentClassName").returns(oComponent.name);
 		sinon.stub(URLHandler, "attachHandlers");
 		sinon.stub(FlexState, "getVariantsState").returns(oVariantMap);
 
@@ -814,7 +814,6 @@ var oVariantMap = {
 							sap.ui.mdc.FilterBar.prototype.triggerSearch.restore();
 							sap.ui.mdc.FilterBar.prototype._handleVariantSwitch = fOrigVariantSwitch;
 							FlUtils.getAppComponentForControl.restore();
-							FlUtils.getComponentClassName.restore();
 							URLHandler.attachHandlers.restore();
 							FlexState.getVariantsState.restore();
 							VariantManagementState.waitForInitialVariantChanges.restore();

@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	Component,
 	FlexState,
+	ManifestUtils,
 	ChangePersistence,
 	Utils,
 	ApplyStrategyFactory,
@@ -60,7 +62,7 @@ sap.ui.define([
 	 */
 	ChangePersistenceFactory.getChangePersistenceForControl = function(oControl) {
 		var sComponentId;
-		sComponentId = Utils.getComponentClassName(oControl);
+		sComponentId = ManifestUtils.getFlexReferenceForControl(oControl);
 		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentId);
 	};
 

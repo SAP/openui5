@@ -10,12 +10,12 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType"
-],
-function(
+], function(
 	PreprocessorImpl,
 	Component,
 	ComponentContainer,
@@ -25,6 +25,7 @@ function(
 	Utils,
 	Log,
 	VariantManagementState,
+	ManifestUtils,
 	sinon,
 	jQuery,
 	View,
@@ -45,7 +46,7 @@ function(
 		}
 	}, function() {
 		QUnit.test("When an sync view is processed", function(assert) {
-			sandbox.stub(Utils, "getAppComponentClassNameForComponent").returns("<sap-app-id> or <component name>");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("<sap-app-id> or <component name>");
 
 			//check sync case
 			var spy = sandbox.spy(Log, "warning");
@@ -147,7 +148,7 @@ function(
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(Utils, "getComponentName").returns(this.sControllerName);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.sControllerName);
 
 			var oCodeExtensionsPromise = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "<component ID>", true);
 
@@ -164,7 +165,7 @@ function(
 			var done1 = assert.async();
 			var done2 = assert.async();
 
-			sandbox.stub(Utils, "getAppComponentClassNameForComponent").returns("<sap-app-id> or <component name>");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("<sap-app-id> or <component name>");
 			sandbox.stub(Utils, "isApplication").returns(true);
 			ManagedObject._sOwnerId = "<component name>";
 

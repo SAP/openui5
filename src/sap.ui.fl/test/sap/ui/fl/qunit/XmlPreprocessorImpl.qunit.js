@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
@@ -10,8 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
-],
-function(
+], function(
+	ManifestUtils,
 	XmlPreprocessorImpl,
 	ChangePersistenceFactory,
 	ChangePersistence,
@@ -62,7 +63,7 @@ function(
 		});
 		sandbox.stub(Component, "get").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
+		sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sFlexReference);
 		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
@@ -99,7 +100,7 @@ function(
 		});
 		sandbox.stub(Component, "get").returns(oMockedComponent);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		sandbox.stub(Utils, "getComponentName").returns(sFlexReference);
+		sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sFlexReference);
 		sandbox.stub(Utils, "isApplication").returns(true);
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
@@ -124,7 +125,7 @@ function(
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		sandbox.stub(Component, "get");
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-		sandbox.stub(Utils, "getComponentName");
+		sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 		sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));
 

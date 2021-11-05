@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	Manifest,
 	FlexUtils,
 	FlexState,
+	ManifestUtils,
 	jQuery,
 	sinon
 ) {
@@ -52,7 +54,7 @@ sap.ui.define([
 			this.oAppComponent = createAppComponent();
 			this.oGetPersonalizationStub = sandbox.stub(UI2PersonalizationState, "getPersonalization");
 
-			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "initialize").resolves();
 		},

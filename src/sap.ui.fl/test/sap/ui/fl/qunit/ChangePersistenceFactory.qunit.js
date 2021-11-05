@@ -2,9 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
@@ -12,9 +11,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexState,
+	ManifestUtils,
 	ChangePersistenceFactory,
-	ChangePersistence,
-	Utils,
 	Control,
 	Manifest,
 	Applier,
@@ -46,7 +44,7 @@ sap.ui.define([
 		QUnit.test("shall create a new ChangePersistence for a given control", function(assert) {
 			var sComponentName = "AComponentForAControl";
 			var oControl = new Control();
-			sandbox.stub(Utils, "getComponentClassName").returns(sComponentName);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sComponentName);
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 

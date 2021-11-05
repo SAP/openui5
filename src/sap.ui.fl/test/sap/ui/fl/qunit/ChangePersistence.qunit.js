@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
@@ -34,6 +35,7 @@ sap.ui.define([
 	DependencyHandler,
 	VariantManagementState,
 	FlexState,
+	ManifestUtils,
 	StorageUtils,
 	Settings,
 	Condenser,
@@ -887,7 +889,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 			sandbox.spy(this.oChangePersistence, "_deleteChangeInMap");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
@@ -973,7 +975,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
 			var mPropertyBag = {
 				viewId: "componentId---viewId",
@@ -1019,7 +1021,7 @@ sap.ui.define([
 					changes: [oChange1View1, oChange1View2]
 				}
 			});
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oEmbeddedComponent).returns("embeddedComponentReference");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").callThrough().withArgs(oEmbeddedComponent).returns("embeddedComponentReference");
 
 			var mPropertyBag = {
 				viewId: "mockEmbeddedComponent---view1",
@@ -1123,7 +1125,7 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
 			var mPropertyBag = {
 				modifier: {
@@ -1198,7 +1200,7 @@ sap.ui.define([
 			var aExpectedChanges = [oChange0, oChange2];
 
 			sandbox.stub(this.oChangePersistence, "getChangesForComponent").resolves([oChange0, oChange1, oChange2]);
-			sandbox.stub(Utils, "getComponentName").callThrough().withArgs(oAppComponent).returns("appComponentReference");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").callThrough().withArgs(oAppComponent).returns("appComponentReference");
 
 			return this.oChangePersistence.loadChangesMapForComponent(oAppComponent, {})
 				.then(function() {

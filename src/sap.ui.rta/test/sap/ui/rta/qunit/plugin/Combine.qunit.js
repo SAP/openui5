@@ -9,11 +9,11 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
 	CheckBox,
@@ -23,47 +23,17 @@ sap.ui.define([
 	DesignTime,
 	OverlayRegistry,
 	ChangesWriteAPI,
-	FlUtils,
 	CommandFactory,
 	CombinePlugin,
 	Utils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var DEFAULT_DTM = "default";
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
-	});
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
 	var sandbox = sinon.sandbox.create();
 
@@ -472,6 +442,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

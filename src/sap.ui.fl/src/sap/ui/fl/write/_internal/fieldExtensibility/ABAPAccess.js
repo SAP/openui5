@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation"
 ], function(
 	Settings,
-	Utils,
+	ManifestUtils,
 	ABAPExtensibilityVariantFactory,
 	ServiceValidation
 ) {
@@ -59,7 +59,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	ABAPAccess.isExtensibilityEnabled = function(oControl) {
-		var sComponentName = Utils.getComponentClassName(oControl);
+		var sComponentName = ManifestUtils.getFlexReferenceForControl(oControl);
 		if (!sComponentName) {
 			return Promise.resolve(false);
 		}

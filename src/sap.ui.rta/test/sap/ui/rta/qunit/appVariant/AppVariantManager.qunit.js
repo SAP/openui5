@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/registry/Settings",
@@ -22,14 +23,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function (
 	jQuery,
 	AppVariantManager,
 	RtaAppVariantFeature,
 	AppVariantUtils,
 	Stack,
 	LREPSerializer,
+	FlexRuntimeInfoAPI,
 	AppVariantFactory,
 	WriteUtils,
 	Settings,
@@ -187,7 +188,7 @@ function (
 	}, function() {
 		QUnit.test("When createAllInlineChanges() method is called", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 

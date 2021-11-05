@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Layer,
 	flUtils,
@@ -21,7 +22,8 @@ sap.ui.define([
 	VariantManagement,
 	FlexTestAPI,
 	VariantManagementState,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -29,32 +31,7 @@ sap.ui.define([
 
 	QUnit.module("Given a variant management control ...", {
 		before: function() {
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-
-			this.oManifest = new Manifest(oManifestObj);
-
-			this.oMockedAppComponent = {
-				getLocalId: function() {},
-				getModel: function() {
-					return this.oModel;
-				}.bind(this),
-				getId: function() {
-					return "RTADemoAppMD";
-				},
-				getManifest: function() {
-					return this.oManifest;
-				}.bind(this)
-			};
-
-			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
 			var oData = {
 				variantMgmtId1: {
@@ -111,14 +88,13 @@ sap.ui.define([
 			}.bind(this));
 		},
 		after: function() {
-			this.oManifest.destroy();
+			this.oMockedAppComponent.destroy();
 			this.oModel.destroy();
-			this.oGetAppComponentForControlStub.restore();
-			this.oGetComponentClassNameStub.restore();
 		},
 		beforeEach: function() {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+			sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();

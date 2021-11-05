@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CreateContainer",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	uid,
 	XMLView,
@@ -33,7 +34,8 @@ sap.ui.define([
 	VerticalLayout,
 	CommandFactory,
 	CreateContainerPlugin,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -48,37 +50,11 @@ sap.ui.define([
 		QUnit.start();
 	});
 
-	var oMockedComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
 		beforeEach: function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -123,6 +99,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sandbox.restore();
+			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -440,7 +417,7 @@ sap.ui.define([
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
 		beforeEach: function(assert) {
 			var done = assert.async();
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -470,6 +447,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sandbox.restore();
+			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}

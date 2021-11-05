@@ -4,13 +4,15 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils",
 	"sap/base/Log"
 ], function(
 	Component,
-	Utils,
+	ManifestUtils,
 	ChangePersistenceFactory,
+	Utils,
 	Log
 ) {
 	"use strict";
@@ -68,7 +70,7 @@ sap.ui.define([
 				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
 				return Promise.resolve([]);
 			}
-			var sFlexReference = Utils.getComponentClassName(oAppComponent);
+			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
 			return oChangePersistence.getChangesForComponent().then(function(aChanges) {
