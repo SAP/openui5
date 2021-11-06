@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/uxap/library",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/NavContainer",
-	"sap/ui/core/HTML",
+	"sap/uxap/testblocks/GenericDiv",
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
@@ -40,7 +40,7 @@ function (
 	Page,
 	App,
 	NavContainer,
-	HTML,
+	GenericDiv,
 	Log,
 	Device,
 	XMLView,
@@ -82,11 +82,11 @@ function (
 			getObjectPageDynamicHeaderTitle: function () {
 				return new ObjectPageDynamicHeaderTitle({
 					content: [new Text({text: "some text"})],
-					expandedContent: [new HTML({content: "<div style='height:100px'>some content</div>"})]
+					expandedContent: [new GenericDiv({"height":"100px", text:"some content"})]
 				});
 			},
 			getHeaderContent: function() {
-				return new HTML({content: "<div style='height:100px'>some content</div>"});
+				return new GenericDiv({"height":"100px", text:"some content"});
 			},
 			getObjectPage: function () {
 				return new ObjectPageLayout();
@@ -174,36 +174,36 @@ function (
 				.removeClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
 				.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
 				.addClass("sapUxAPObjectPageLayout-Std-Phone");
-		sap.ui.Device.system.desktop = false;
-		sap.ui.Device.system.tablet = false;
-		sap.ui.Device.system.phone = true;
+		Device.system.desktop = false;
+		Device.system.tablet = false;
+		Device.system.phone = true;
 	},
 	toTabletMode: function (oObjectPage) {
 		oObjectPage.$().removeClass("sapUxAPObjectPageLayout-Std-Desktop")
 				.removeClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
 				.removeClass("sapUxAPObjectPageLayout-Std-Phone")
 				.addClass("sapUxAPObjectPageLayout-Std-Tablet");
-		sap.ui.Device.system.desktop = false;
-		sap.ui.Device.system.phone = false;
-		sap.ui.Device.system.tablet = true;
+		Device.system.desktop = false;
+		Device.system.phone = false;
+		Device.system.tablet = true;
 	},
 	toDesktopMode: function (oObjectPage) {
 		oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop")
 				.removeClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
 				.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
 				.removeClass("sapUxAPObjectPageLayout-Std-Phone");
-		sap.ui.Device.system.desktop = true;
-		sap.ui.Device.system.tablet = false;
-		sap.ui.Device.system.phone = false;
+		Device.system.desktop = true;
+		Device.system.tablet = false;
+		Device.system.phone = false;
 	},
 	toDesktopXLMode: function (oObjectPage) {
 		oObjectPage.$().addClass("sapUxAPObjectPageLayout-Std-Desktop-XL")
 				.removeClass("sapUxAPObjectPageLayout-Std-Desktop")
 				.removeClass("sapUxAPObjectPageLayout-Std-Tablet")
 				.removeClass("sapUxAPObjectPageLayout-Std-Phone");
-				sap.ui.Device.system.desktop = true;
-				sap.ui.Device.system.tablet = false;
-				sap.ui.Device.system.phone = false;
+				Device.system.desktop = true;
+				Device.system.tablet = false;
+				Device.system.phone = false;
 			},
 			exists: function (vObject) {
 				if (arguments.length === 1) {
@@ -484,7 +484,11 @@ function (
 		/* Arrange */
 		var oObjectPage = this.oObjectPage,
 			iNonIntegerHeaderContentHeight = 99.7, // header content height should not be an integer
-			oHeaderContent = new HTML({content: "<div style='height:" + iNonIntegerHeaderContentHeight + "px'>some content</div>"}),
+			oHeaderContent = new GenericDiv({
+				height: iNonIntegerHeaderContentHeight + "px",
+				margin: "0", // to suppress any margin imposed by the OP laoyut
+				padding: "0", // to suppress any padding imposed by the OP layout
+				text: "some content"}),
 			oExpected = {
 				oSelectedSection: this.oSecondSection,
 				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
@@ -544,9 +548,9 @@ function (
 			// Assert
 			sectionIsSelected(oObjectPage, assert, oExpected);
 
-			oAnchorBarRebuildSpy = sinon.spy(oObjectPage._oABHelper, "_buildAnchorBar");
-			oSubSectionVisibilityEventSpy = sinon.spy(oObjectPage, "_checkSubSectionVisibilityChange");
-			oSectionPreloadSpy = sinon.spy(oObjectPage, "_preloadSectionsOnBeforeScroll");
+			oAnchorBarRebuildSpy = this.spy(oObjectPage._oABHelper, "_buildAnchorBar");
+			oSubSectionVisibilityEventSpy = this.spy(oObjectPage, "_checkSubSectionVisibilityChange");
+			oSectionPreloadSpy = this.spy(oObjectPage, "_preloadSectionsOnBeforeScroll");
 
 			// Act: unset the currently selected section
 			oObjectPage.setSelectedSection(null);
@@ -565,7 +569,7 @@ function (
 
 			// Clean up
 			done();
-		}, this.iLoadingDelay);
+		}.bind(this), this.iLoadingDelay);
 
 		helpers.renderObject(this.oObjectPage);
 	});
@@ -596,7 +600,7 @@ function (
 				sectionIsSelected(oObjectPage, assert, oExpected);
 				assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
 
-				oAnchorBarRebuildSpy = sinon.spy(oObjectPage._oABHelper, "_buildAnchorBar");
+				oAnchorBarRebuildSpy = this.spy(oObjectPage._oABHelper, "_buildAnchorBar");
 
 				// Act: unset the currently selected section
 				oObjectPage.setSelectedSection(null);
@@ -616,8 +620,8 @@ function (
 					// Clean up
 					done();
 				}, 0);
-			}, this.iLoadingDelay);
-		});
+			}.bind(this), this.iLoadingDelay);
+		}.bind(this));
 
 		helpers.renderObject(this.oObjectPage);
 	});
@@ -636,12 +640,8 @@ function (
 
 		// ensure desktop mode
 		helpers.toDesktopMode(oObjectPage);
-		var oPhoneStub = this.stub(lib.Utilities, "isPhoneScenario", function() {
-			return false;
-		});
-		var oTabletStub =  this.stub(lib.Utilities, "isTabletScenario", function() {
-			return false;
-		});
+		this.stub(lib.Utilities, "isPhoneScenario").returns(false);
+		this.stub(lib.Utilities, "isTabletScenario").returns(false);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Act: unset the currently selected section
@@ -650,12 +650,10 @@ function (
 			// Check: the header is still expanded in the title
 			setTimeout(function() {
 				// Assert
-				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expanded");
 				assert.equal(oObjectPage._bHeaderInTitleArea, true, "Header is still in the title area");
 
 				// Clean up
-				oPhoneStub.restore();
-				oTabletStub.restore();
 				done();
 			}, 0);
 		});
@@ -667,7 +665,7 @@ function (
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oObjectPage.getSections()[0],
 			oSecondSection = this.oSecondSection,
-			oSpy = sinon.spy(oObjectPage, "_scrollTo"),
+			oSpy = this.spy(oObjectPage, "_scrollTo"),
 			sOrigDisplay,
 			oExpected,
 			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
@@ -689,7 +687,7 @@ function (
 
 			// Act
 			oObjectPage.getDomRef().style.display = "none";
-			oSpy.reset();
+			oSpy.resetHistory();
 			oObjectPage.setSelectedSection(null);
 
 			oObjectPage.getDomRef().style.display = sOrigDisplay;
@@ -883,12 +881,12 @@ function (
 			iBlockHeightBefore,
 			iBlockHeightAfter,
 			iHeightDiff = 40,
-			oAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
-			oUpdateSelectionSpy = sinon.spy(oObjectPage, "_updateSelectionOnScroll"),
+			oAdjustLayoutSpy = this.spy(oObjectPage, "_requestAdjustLayout"),
+			oUpdateSelectionSpy = this.spy(oObjectPage, "_updateSelectionOnScroll"),
 			done = assert.async();
 
 		// setup step1: add content with defined height
-		oHhtmBlock = new HTML("b1", { content: '<div class="innerDiv" style="height:300px"></div>'});
+		oHhtmBlock = new GenericDiv("b1", {height: "300px"}).addStyleClass("innerDiv");
 		oFirstSection.getSubSections()[0].addBlock(oHhtmBlock);
 
 		// setup step2
@@ -904,8 +902,8 @@ function (
 			iBlockHeightAfter = iBlockHeightBefore - iHeightDiff;
 			iScrollTopAfter = iScrollTopBefore - iHeightDiff;
 
-			oAdjustLayoutSpy.reset();
-			oUpdateSelectionSpy.reset();
+			oAdjustLayoutSpy.resetHistory();
+			oUpdateSelectionSpy.resetHistory();
 
 
 			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
@@ -953,20 +951,20 @@ function (
 		var oObjectPage = this.oObjectPage,
 			oHtmlBlock,
 			oFirstSection = oObjectPage.getSections()[0],
-			oSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights"),
+			oSpy = this.spy(oObjectPage, "_adjustHeaderHeights"),
 			done = assert.async();
 
 		assert.expect(1);
 
 		// setup step1: add content with defined height
-		oHtmlBlock = new HTML("b1", { content: '<div class="innerDiv" style="height:300px"></div>'});
+		oHtmlBlock = new GenericDiv("b1", {height: "300px"}).addStyleClass("innerDiv");
 		oFirstSection.getSubSections()[0].addBlock(oHtmlBlock);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 
 			// Act: change height without invalidating any control
 			Core.byId("b1").getDomRef().style.height = "250px";
-			oSpy.reset();
+			oSpy.resetHistory();
 			oObjectPage._onUpdateContentSize({ size: {}, oldSize: {} });
 
 			assert.equal(oSpy.callCount, 1, "recalculation of heights is called");
@@ -981,7 +979,7 @@ function (
 			done = assert.async(),
 			iWidth = 0;
 
-		this.stub(oObjectPage, "_getMediaContainerWidth", function() {
+		this.stub(oObjectPage, "_getMediaContainerWidth").callsFake(function() {
 			return iWidth;
 		});
 
@@ -1795,7 +1793,7 @@ function (
 	});
 
 	QUnit.test("Should destroy cloned _headerContent hidden aggregation", function (assert) {
-		var oDestroySpy = sinon.spy(ManagedObject.prototype, "destroy"),
+		var oDestroySpy = this.spy(ManagedObject.prototype, "destroy"),
 			aDestroyedObjectIds,
 			sHeaderContentId = this.oObjectPageClone.getHeaderContent()[0].getId();
 
@@ -2224,7 +2222,7 @@ function (
 			]
 		}),
 		done = assert.async(),
-		oSpy = sinon.spy(window, "clearTimeout");
+		oSpy = this.spy(window, "clearTimeout");
 
 		assert.expect(3);
 
@@ -2233,7 +2231,7 @@ function (
 
 			// clean up to avoid calling the same hook again
 			oObjectPage.removeDelegate(oDelegate);
-			oSpy.reset();
+			oSpy.resetHistory();
 
 			assert.ok(oObjectPage._iAfterRenderingDomReadyTimeout > 0, "the task is scheduled");
 
@@ -2245,9 +2243,8 @@ function (
 			assert.strictEqual(oObjectPage._iAfterRenderingDomReadyTimeout, null, "the field is cleared");
 
 			oObjectPage.destroy();
-			oSpy.restore();
 			done();
-			}};
+		}};
 
 		oObjectPage.addEventDelegate(oDelegate);
 		oObjectPage.placeAt("qunit-fixture");
@@ -2270,7 +2267,7 @@ function (
 							oFactory.getSubSection(4, [oFactory.getBlocks(), oFactory.getBlocks()], null)
 						])
 			}),
-			oObjectPageRenderSpy = sinon.spy(),
+			oObjectPageRenderSpy = this.spy(),
 			oAdjustHeaderHeightsSpy,
 			oRequestAdjustLayoutSpy,
 			oHeaderContentRenderSpy,
@@ -2285,10 +2282,10 @@ function (
 				onAfterRendering: oObjectPageRenderSpy
 			});
 
-			oAdjustHeaderHeightsSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights");
-			oRequestAdjustLayoutSpy = sinon.spy(oObjectPage, "_requestAdjustLayout");
-			oUpdateTitleVisualStateSpy = sinon.spy(oObjectPage, "_updateTitleVisualState");
-			oHeaderContentRenderSpy = sinon.spy(oObjectPage._getHeaderContent(), "invalidate");
+			oAdjustHeaderHeightsSpy = this.spy(oObjectPage, "_adjustHeaderHeights");
+			oRequestAdjustLayoutSpy = this.spy(oObjectPage, "_requestAdjustLayout");
+			oUpdateTitleVisualStateSpy = this.spy(oObjectPage, "_updateTitleVisualState");
+			oHeaderContentRenderSpy = this.spy(oObjectPage._getHeaderContent(), "invalidate");
 
 			// Act
 			oObjectPage.setShowHeaderContent(false);
@@ -2302,7 +2299,7 @@ function (
 				assert.equal(oRequestAdjustLayoutSpy.callCount, 1, "_requestAdjustLayout is called once");
 				assert.equal(oUpdateTitleVisualStateSpy.callCount, 1, "_updateTitleVisualState is called once when the showHeaderContent property is changed");
 
-				oUpdateTitleVisualStateSpy.reset();
+				oUpdateTitleVisualStateSpy.resetHistory();
 				oObjectPage.setShowHeaderContent(true);
 				Core.applyChanges();
 
@@ -2315,7 +2312,7 @@ function (
 					done();
 				}, 500);
 			}, 500);
-		});
+		}.bind(this));
 	});
 
 	QUnit.module("ObjectPage API: Header", {
@@ -2348,7 +2345,7 @@ function (
 			oHeaderTitle = new ObjectPageHeader({
 				objectTitle: "First Title"
 			}),
-			oSpy = sinon.spy(this.oObjectPageLayout, "_adjustHeaderHeights"),
+			oSpy = this.spy(this.oObjectPageLayout, "_adjustHeaderHeights"),
 			fnDone = assert.async();
 
 		assert.expect(2);
@@ -2357,7 +2354,7 @@ function (
 			oObjectPageLayout.setHeaderTitle(oHeaderTitle);
 			Core.applyChanges();
 
-			oSpy.reset();
+			oSpy.resetHistory();
 
 			// Act - already have a title, so changing its text should not affect height
 			oHeaderTitle.setObjectTitle("New Title");
@@ -2742,7 +2739,7 @@ function (
 			oObjectPage._expandHeader(true);
 			assert.ok(oObjectPage._bHeaderInTitleArea);
 
-			oSpy = sinon.spy(ObjectPageLayout.prototype, "invalidate");
+			oSpy = this.spy(ObjectPageLayout.prototype, "invalidate");
 
 			// act: resize and check if the page invalidates in the resize listener
 			oObjectPage._onUpdateScreenSize(oFakeEvent);
@@ -2751,7 +2748,7 @@ function (
 				assert.strictEqual(oSpy.called, false, "page was not invalidated during resize");
 				done();
 			}, iDelay);
-		});
+		}.bind(this));
 
 	});
 
@@ -2889,19 +2886,13 @@ function (
 				assert.equal(oHeaderContent.$().hasClass("sapUxAPObjectPageHeaderContentHidden"), false, "Header content is not hidden");
 
 				// Clean up
-				oPhoneStub.restore();
-				oTabletStub.restore();
 				done();
 			};
 
 			// ensure desktop mode
 			helpers.toDesktopMode(oObjectPage);
-			var oPhoneStub = this.stub(lib.Utilities, "isPhoneScenario", function() {
-				return false;
-			});
-			var oTabletStub =  this.stub(lib.Utilities, "isTabletScenario", function() {
-				return false;
-			});
+			this.stub(lib.Utilities, "isPhoneScenario").returns(false);
+			this.stub(lib.Utilities, "isTabletScenario").returns(false);
 
 			assert.expect(3);
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
@@ -2924,12 +2915,8 @@ function (
 			done = assert.async();
 
 		// mock tablet mode
-		this.stub(lib.Utilities, "isPhoneScenario", function() {
-			return false;
-		});
-		this.stub(lib.Utilities, "isTabletScenario", function() {
-			return true;
-		});
+		this.stub(lib.Utilities, "isPhoneScenario").returns(false);
+		this.stub(lib.Utilities, "isTabletScenario").returns(true);
 
 		assert.expect(2);
 
@@ -2941,9 +2928,7 @@ function (
 			assert.ok(!oObjectPage._bHeaderInTitleArea);
 
 			// act: resize and check if the page invalidates in the resize listener
-			sinon.stub(lib.Utilities, "isTabletScenario", function() {
-				return false;
-			});
+			lib.Utilities.isTabletScenario.returns(false);
 			oObjectPage._onUpdateScreenSize(oFakeEvent);
 
 			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
@@ -3060,8 +3045,7 @@ function (
 
 	QUnit.test("resize of empty page", function (assert) {
 		var oObjectPage = this.oObjectPage,
-			oSandbox = sinon.sandbox.create(),
-			oSelectSpy = oSandbox.spy(oObjectPage, "_selectFirstVisibleSection"),
+			oSelectSpy = this.spy(oObjectPage, "_selectFirstVisibleSection"),
 			done = assert.async();
 
 		// Setup
@@ -3069,7 +3053,7 @@ function (
 		this.oObjectPage.removeAllSections(); //ensure no first visible section
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			oSelectSpy.reset();
+			oSelectSpy.resetHistory();
 
 			// Act: update height from 0 to greater than 0
 			oObjectPage._onUpdateScreenSize({
@@ -3080,7 +3064,6 @@ function (
 			setTimeout(function() {
 				assert.equal(oSelectSpy.callCount, 1, "reset of selected section is called");
 				assert.ok(oSelectSpy.returned(undefined), "the function returned");
-				oSandbox.restore();
 				done();
 			}, oObjectPage._getDOMCalculationDelay());
 
@@ -3252,7 +3235,7 @@ function (
 		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
+		oCSSSpy = this.spy(oObjectPage._$opWrapper, "css");
 
 		// Act - render OP and call method
 		oObjectPage._obtainExpandedTitleHeight(false/* snap directly */);
@@ -3261,7 +3244,6 @@ function (
 		assert.notOk(oCSSSpy.calledWith("overflow-y", "hidden"), "no disabling of scrolling of the wrapper (BCP 002075129400005875712019)");
 
 		// Cleanup
-		oCSSSpy.restore();
 		oObjectPage.destroy();
 	});
 
@@ -3306,7 +3288,7 @@ function (
 		oObjectPage.setHeaderTitle(oFactory.getObjectPageDynamicHeaderTitle());
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
+		oCSSSpy = this.spy(oObjectPage._$opWrapper, "css");
 
 		// Act - render OP and call method
 		oObjectPage._obtainSnappedTitleHeight(false/* expand directly */);
@@ -3315,7 +3297,6 @@ function (
 		assert.notOk(oCSSSpy.calledWith("overflow-y", "hidden"), "no disabling of scrolling of the wrapper (BCP 002075129400005875712019)");
 
 		// Cleanup
-		oCSSSpy.restore();
 		oObjectPage.destroy();
 	});
 
@@ -3397,7 +3378,7 @@ function (
 
 		oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oGetBoundingClientRectSpy = sinon.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
+		oGetBoundingClientRectSpy = this.spy(oObjectPage.getDomRef(), "getBoundingClientRect");
 
 		// Act - call method
 		oObjectPage._getScrollableViewportHeight();
@@ -3406,14 +3387,13 @@ function (
 		assert.strictEqual(oGetBoundingClientRectSpy.callCount, 1, "Exact height is acquired using getBoundingClientRect");
 
 		// Cleanup
-		oGetBoundingClientRectSpy.restore();
 		oObjectPage.destroy();
 	});
 
 	QUnit.test("BCP:1870470695/1970034947 - check _updateMedia is called initially when ObjectPage has correct size", function (assert) {
 		var oObjectPage = new ObjectPageLayout({}),
-			oUpdateMediaSpy = sinon.spy(oObjectPage, "_updateMedia"),
-			oGetWidthSpy = sinon.spy(oObjectPage, "_getWidth"),
+			oUpdateMediaSpy = this.spy(oObjectPage, "_updateMedia"),
+			oGetWidthSpy = this.spy(oObjectPage, "_getWidth"),
 			done = assert.async();
 
 		assert.expect(2);
@@ -3431,7 +3411,7 @@ function (
     QUnit.test("ObjectPage _updateMedia: Call with falsy value should not take action", function (assert) {
         // setup
         var oObjectPage = new ObjectPageLayout({}),
-            oToggleStyleClassSpy = sinon.spy(oObjectPage, "toggleStyleClass");
+            oToggleStyleClassSpy = this.spy(oObjectPage, "toggleStyleClass");
 
         // act
         oObjectPage._updateMedia(0);
@@ -3508,8 +3488,8 @@ function (
 				objectTitle: "Title",
 				objectSubtitle: sLongText
 			}),
-			layoutCalcSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
-			headerCalcSpy = sinon.spy(oObjectPage, "_adjustHeaderHeights"),
+			layoutCalcSpy = this.spy(oObjectPage, "_requestAdjustLayout"),
+			headerCalcSpy = this.spy(oObjectPage, "_adjustHeaderHeights"),
 			done = assert.async();
 
 		assert.expect(2);
@@ -3517,8 +3497,8 @@ function (
 		oObjectPage.setHeaderTitle(oHeaderTitle);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			layoutCalcSpy.reset();
-			headerCalcSpy.reset();
+			layoutCalcSpy.resetHistory();
+			headerCalcSpy.resetHistory();
 
 			// Act: change size of title dom element [without control invalidation]
 			var $titleDescription = oObjectPage.getHeaderTitle().$().find('.sapUxAPObjectPageHeaderIdentifierDescription').get(0);
@@ -3539,7 +3519,7 @@ function (
 			oHeaderTitle = new ObjectPageHeader({
 				objectTitle: "Title"
 			}),
-			toggleTitleSpy = sinon.spy(oObjectPage, "_toggleHeaderTitle"),
+			toggleTitleSpy = this.spy(oObjectPage, "_toggleHeaderTitle"),
 			done = assert.async();
 
 		assert.expect(2);
@@ -3547,7 +3527,7 @@ function (
 		oObjectPage.setHeaderTitle(oHeaderTitle);
 
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			toggleTitleSpy.reset();
+			toggleTitleSpy.resetHistory();
 
 			// Act: scroll to position that does not require snap
 			oObjectPage._$opWrapper.scrollTop(20);
@@ -3667,7 +3647,7 @@ function (
 			assert.strictEqual(Object.keys(oVisibleSubSections).length, 3,
 				"Three visible subSections are reported when new visible subSection is added to the selected section");
 
-			oSpy = sinon.spy(this.oObjectPage, "fireEvent");
+			oSpy = this.spy(this.oObjectPage, "fireEvent");
 
 			// Act
 			this.oObjectPage.getSections()[1].addSubSection(oFactory.getSubSection(4, [oFactory.getBlocks()], null));

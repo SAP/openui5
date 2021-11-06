@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/core/mvc/XMLView",
 	"sap/base/Log",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
@@ -11,10 +12,12 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
-	"sap/m/Label",
+	"sap/m/App",
 	"sap/m/Button",
+	"sap/m/Label",
+	"sap/m/Panel",
 	"sap/m/Text"],
-function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, Label, Button, Text) {
+function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, App, Button, Label, Panel, Text) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -844,7 +847,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		assert.ok(oGridAddAggregationSpy.notCalled, "addAggregation is not called to inner Grid when visibility of the blocks is changed");
 
 		// Act - remove all blocks and change visibility again
-		oSpyObserverCallback.reset();
+		oSpyObserverCallback.resetHistory();
 		oSubSection.removeAllBlocks();
 		oBlock2.setVisible(true);
 
@@ -853,9 +856,6 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 
 		// Clean up
 		oSubSection.destroy();
-		oApplyLayoutSpy.restore();
-		oSpyObserverCallback.restore();
-		oGridAddAggregationSpy.restore();
 	});
 
 
@@ -892,25 +892,29 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 									'</uxap:ObjectPageSection>' +
 								'</uxap:sections>' +
 							'</uxap:ObjectPageLayout>' +
-						'</mvc:View>',
-			oView = sap.ui.xmlview({viewContent: sXmlView}),
-			oSubSection = oView.byId("subSection"),
-			oButton = oView.byId("buttonToRemove");
+						'</mvc:View>';
 
-		oView.placeAt("qunit-fixture");
-		Core.applyChanges();
+		return XMLView.create({
+			definition: sXmlView
+		}).then(function(oView) {
 
-		assert.strictEqual(oSubSection.getBlocks().length, 2, "subSection has two blocks");
+			var oSubSection = oView.byId("subSection"),
+				oButton = oView.byId("buttonToRemove");
 
-		// act
-		var oResult = oSubSection.removeAggregation("blocks", oButton);
+			oView.placeAt("qunit-fixture");
+			Core.applyChanges();
 
-		// assert
-		assert.strictEqual(oResult, oButton, "removeAggregation returns the removed control");
-		assert.strictEqual(oSubSection.getBlocks().length, 1, "subSection has only one block left");
+			assert.strictEqual(oSubSection.getBlocks().length, 2, "subSection has two blocks");
 
-		oSubSection.destroy();
-		oButton.destroy();
+			// act
+			var oResult = oSubSection.removeAggregation("blocks", oButton);
+
+			// assert
+			assert.strictEqual(oResult, oButton, "removeAggregation returns the removed control");
+			assert.strictEqual(oSubSection.getBlocks().length, 1, "subSection has only one block left");
+
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("addAggregation", function (assert) {
@@ -926,24 +930,22 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 					})
 				]
 			}),
-		oSandbox = sinon.sandbox.create(),
-		oSpy = oSandbox.spy(Log, "error"),
+		oSpy = this.spy(Log, "error"),
 		done = assert.async();
 
 		opl.addEventDelegate({
 			onAfterRendering: function() {
-				oSpy.reset();
+				oSpy.resetHistory();
 				oSubSection.addBlock(new BlockBase());
 				oSubSection._applyLayout(opl);
 				assert.equal(oSpy.callCount, 0, "no error on adding block");
 				done();
 				oSubSection.removeAllDependents();
 				opl.destroy();
-				oSandbox.restore();
 			}
 		});
 
-		new sap.m.App({pages: [opl]}).placeAt("qunit-fixture");
+		new App({pages: [opl]}).placeAt("qunit-fixture");
 		Core.applyChanges();
 	});
 
@@ -1148,7 +1150,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 					})
 				]
 			});
-			this.fnOnScrollSpy = sinon.spy(this.oObjectPageLayout, "_onScroll");
+			this.fnOnScrollSpy = this.spy(this.oObjectPageLayout, "_onScroll");
 			this.oObjectPageLayout.placeAt('qunit-fixture');
 			Core.applyChanges();
 		},
@@ -1160,8 +1162,8 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 	QUnit.test(".sapUxAPSubSectionSeeMoreContainer class is toggled correctly", function(assert) {
 		// Arrange
 		var oSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0],
-			oChildrenSpy = sinon.spy($.fn, "children"),
-			oSectionBaseSpy = sinon.spy(ObjectPageSectionBase.prototype, "_updateShowHideState");
+			oChildrenSpy = this.spy($.fn, "children"),
+			oSectionBaseSpy = this.spy(ObjectPageSectionBase.prototype, "_updateShowHideState");
 
 		// Act
 		oSubSection._updateShowHideState(true);
@@ -1171,7 +1173,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is toggled");
 		assert.ok(oSectionBaseSpy.calledWith(true), "_updateShowHideState method of ObjectPageSectionBase is called");
 
-		oChildrenSpy.reset();
+		oChildrenSpy.resetHistory();
 
 		// Act
 		oSubSection._updateShowHideState(true);
@@ -1266,12 +1268,14 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
-			this.ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
+			return XMLView.create({
+				id: "UxAP-13_objectPageSection",
 				viewName: "view.UxAP-13_ObjectPageSection"
-			});
-
-			this.ObjectPageSectionView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function(oView) {
+				this.ObjectPageSectionView = oView;
+				this.ObjectPageSectionView.placeAt('qunit-fixture');
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.ObjectPageSectionView.destroy();
@@ -1296,7 +1300,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 
 	QUnit.test("_initTitlePropagationSupport is called on init", function (assert) {
 		// Arrange
-		var oSpy = sinon.spy(ObjectPageSubSectionClass.prototype, "_initTitlePropagationSupport"),
+		var oSpy = this.spy(ObjectPageSubSectionClass.prototype, "_initTitlePropagationSupport"),
 			oControl;
 
 		// Act
@@ -1307,7 +1311,6 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		assert.ok(oSpy.calledOn(oControl), "The spy is called on the tested control instance");
 
 		// Cleanup
-		oSpy.restore();
 		oControl.destroy();
 	});
 
@@ -1345,7 +1348,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			this.oObjectPage = new ObjectPageLayout({
 				sections: [ new ObjectPageSection({
 					subSections: [new ObjectPageSubSectionClass({
-						blocks: [ new sap.m.Panel({ height: "100%" })]
+						blocks: [ new Panel({ height: "100%" })]
 					})]
 				})]
 			});
@@ -1387,7 +1390,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 
 		oPage.addSection(new ObjectPageSection({
 			subSections: new ObjectPageSubSectionClass({
-				blocks: new sap.m.Panel()
+				blocks: new Panel()
 			})
 		}));
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
@@ -1410,15 +1413,14 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		var oPage = this.oObjectPage,
 			oSection = oPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
-			done = assert.async(),
-			// ensure the achorBar is in the title area
-			stub = sinon.stub(oPage, "_shouldPreserveHeaderInTitleArea", function() {
-				return true;
-			});
+			done = assert.async();
+
+		// ensure the achorBar is in the title area
+		this.stub(oPage, "_shouldPreserveHeaderInTitleArea").returns(true);
 		// ensure there is anchorBar (page has more than one section)
 		oPage.addSection(new ObjectPageSection({
 			subSections: new ObjectPageSubSectionClass({
-				blocks: new sap.m.Panel()
+				blocks: new Panel()
 			})
 		}));
 		// ensure first subSection fits the container
@@ -1435,7 +1437,6 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 				iSubSectionHeight = Math.round(oSubSection.$().height());
 			assert.strictEqual(iSubSectionHeight, iExpectedSubSectionHeight, "the height is correct");
 			done();
-			stub.restore();
 		}, this);
 
 	});
@@ -1489,12 +1490,12 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
-			oSpy = sinon.spy(oPage, "_requestAdjustLayoutAndUxRules"),
+			oSpy = this.spy(oPage, "_requestAdjustLayoutAndUxRules"),
 			done = assert.async();
 
 		//setup
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			oSpy.reset();
+			oSpy.resetHistory();
 
 			//act
 			oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
@@ -1511,8 +1512,8 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			var oPage = this.oObjectPage,
 				oSection = this.oObjectPage.getSections()[0],
 				oSubSection = oSection.getSubSections()[0],
-				oToggleScrollingSpy = sinon.spy(oPage, "_toggleScrolling"),
-				oComputerSpacerHeightSpy = sinon.spy(oPage, "_computeSpacerHeight"),
+				oToggleScrollingSpy = this.spy(oPage, "_toggleScrolling"),
+				oComputerSpacerHeightSpy = this.spy(oPage, "_computeSpacerHeight"),
 				done = assert.async();
 
 			assert.expect(5);
@@ -1540,10 +1541,10 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			var oPage = this.oObjectPage,
 				oSection1 = this.oObjectPage.getSections()[0],
 				oSection1SubSection1 = oSection1.getSubSections()[0],
-				oSection2SubSection1 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
-				oSection2SubSection2 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
+				oSection2SubSection1 = new ObjectPageSubSectionClass({ blocks: [ new Panel({ height: "100px" })]}),
+				oSection2SubSection2 = new ObjectPageSubSectionClass({ blocks: [ new Panel({ height: "100px" })]}),
 				oSection2 = new ObjectPageSection({ subSections: [oSection2SubSection1, oSection2SubSection2]}),
-				oToggleScrollingSpy = sinon.spy(oPage, "_toggleScrolling"),
+				oToggleScrollingSpy = this.spy(oPage, "_toggleScrolling"),
 				iSnapPosition,
 				done = assert.async();
 
@@ -1578,10 +1579,10 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 			var oPage = this.oObjectPage,
 				oSection1 = this.oObjectPage.getSections()[0],
 				oSection1SubSection1 = oSection1.getSubSections()[0],
-				oSection2SubSection1 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
-				oSection2SubSection2 = new ObjectPageSubSectionClass({ blocks: [ new sap.m.Panel({ height: "100px" })]}),
+				oSection2SubSection1 = new ObjectPageSubSectionClass({ blocks: [ new Panel({ height: "100px" })]}),
+				oSection2SubSection2 = new ObjectPageSubSectionClass({ blocks: [ new Panel({ height: "100px" })]}),
 				oSection2 = new ObjectPageSection({ subSections: [oSection2SubSection1, oSection2SubSection2]}),
-				oToggleScrollingSpy = sinon.spy(oPage, "_toggleScrolling"),
+				oToggleScrollingSpy = this.spy(oPage, "_toggleScrolling"),
 				done = assert.async();
 
 			assert.expect(5);
@@ -1644,7 +1645,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 					subSections: [
 						new ObjectPageSubSectionClass({
 							title: "Title",
-							blocks: [new sap.m.Panel({ height: "100%" })]
+							blocks: [new Panel({ height: "100%" })]
 						})
 					]
 				})
@@ -1659,7 +1660,7 @@ function($, Core, coreLibrary, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPag
 
 		// Setup
 		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
-			oInvalidateSpy = sinon.spy(oSubSection, "invalidate"),
+			oInvalidateSpy = this.spy(oSubSection, "invalidate"),
 			done = assert.async();
 
 		assert.expect(1);

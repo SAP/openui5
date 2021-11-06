@@ -1,7 +1,8 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSubSection",
@@ -9,7 +10,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSectionBase",
 	"sap/m/Text",
 	"sap/m/Button"],
-function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, Button) {
+function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, Button) {
 	"use strict";
 	var Importance = library.Importance;
 
@@ -17,48 +18,50 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 	QUnit.test("ObjectPageSection", function (assert) {
 
-		var ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
+		return XMLView.create({
+			id: "UxAP-13_objectPageSection",
 			viewName: "view.UxAP-13_ObjectPageSection"
+		}).then(function(ObjectPageSectionView) {
+
+			ObjectPageSectionView.placeAt('qunit-fixture');
+			Core.applyChanges();
+
+			// get the object page section
+			// By default title is not centered, CSS:0120061532 0001349139 2014
+			var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection");
+			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "My first section title never visible");
+			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").attr("aria-hidden"), "true", "My first section title is ignored by the screen reader");
+			// Test by finding own class
+			assert.strictEqual(oSectionWithTwoSubSection.$().find('.mysubsectiontotest').length == 2, true, "Section with two SubSections");
+
+
+			var oSectionWithOneSubSection = ObjectPageSectionView.byId("SectionWithoneSubSection");
+			assert.strictEqual(oSectionWithOneSubSection.$().find(".sapUxAPObjectPageSectionTitle").text(), "My third subSection Title", "Section with one SubSections");
+			// Test by finding own class
+			assert.strictEqual(oSectionWithOneSubSection.$().find(".mysubsectiontotest").length == 1, true, "Section with one SubSections");
+
+
+			var oSectionWithoutSubSection = ObjectPageSectionView.byId("SectionWithoutSubSection");
+			assert.strictEqual(oSectionWithoutSubSection.$().find(".sapUxAPObjectPageSectionHeader").length, 0, "My third section title without subsection");
+			// Test by finding own class
+			assert.strictEqual(oSectionWithoutSubSection.$().find(".mysubsectiontotest").length == 0, true, "Section without SubSection");
+
+
+			// get the object page SubSection
+			var oSubsection = ObjectPageSectionView.byId("subsection1");
+			assert.strictEqual(oSubsection.getTitle(), "My first subSection Title", "My first subSection Title");
+
+			var oSubsection2 = ObjectPageSectionView.byId("subsection2");
+			assert.strictEqual(oSubsection2.getTitle(), "My second subSection Title", "My second subSection Title");
+
+			var oSubsection3 = ObjectPageSectionView.byId("subsection3");
+			assert.strictEqual(oSubsection3.$().find(".sapUxAPObjectPageSectionHeader").length, 0, "My third section without subsections");
+
+			ObjectPageSectionView.destroy();
 		});
-
-		ObjectPageSectionView.placeAt('qunit-fixture');
-		Core.applyChanges();
-
-		// get the object page section
-		// By default title is not centered, CSS:0120061532 0001349139 2014
-		var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection");
-		assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "My first section title never visible");
-		assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").attr("aria-hidden"), "true", "My first section title is ignored by the screen reader");
-		// Test by finding own class
-		assert.strictEqual(oSectionWithTwoSubSection.$().find('.mysubsectiontotest').length == 2, true, "Section with two SubSections");
-
-
-		var oSectionWithOneSubSection = ObjectPageSectionView.byId("SectionWithoneSubSection");
-		assert.strictEqual(oSectionWithOneSubSection.$().find(".sapUxAPObjectPageSectionTitle").text(), "My third subSection Title", "Section with one SubSections");
-		// Test by finding own class
-		assert.strictEqual(oSectionWithOneSubSection.$().find(".mysubsectiontotest").length == 1, true, "Section with one SubSections");
-
-
-		var oSectionWithoutSubSection = ObjectPageSectionView.byId("SectionWithoutSubSection");
-		assert.strictEqual(oSectionWithoutSubSection.$().find(".sapUxAPObjectPageSectionHeader").length, 0, "My third section title without subsection");
-		// Test by finding own class
-		assert.strictEqual(oSectionWithoutSubSection.$().find(".mysubsectiontotest").length == 0, true, "Section without SubSection");
-
-
-		// get the object page SubSection
-		var oSubsection = ObjectPageSectionView.byId("subsection1");
-		assert.strictEqual(oSubsection.getTitle(), "My first subSection Title", "My first subSection Title");
-
-		var oSubsection2 = ObjectPageSectionView.byId("subsection2");
-		assert.strictEqual(oSubsection2.getTitle(), "My second subSection Title", "My second subSection Title");
-
-		var oSubsection3 = ObjectPageSectionView.byId("subsection3");
-		assert.strictEqual(oSubsection3.$().find(".sapUxAPObjectPageSectionHeader").length, 0, "My third section without subsections");
-
-		ObjectPageSectionView.destroy();
 	});
 
-	QUnit.module("Section title visiblity");
+	QUnit.module("Section title visibility");
 
 	QUnit.test("Title visibility with one section", function (assert) {
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
@@ -191,7 +194,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		}),
 		oSection = oObjectPageLayout.getSections()[0];
 
-		this.stub(oSection, "_getCurrentMediaContainerRange", function() {
+		this.stub(oSection, "_getCurrentMediaContainerRange").callsFake(function() {
 			return {
 				name: "Tablet"
 			};
@@ -230,7 +233,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		}),
 		oSection = oObjectPageLayout.getSections()[0];
 
-		this.stub(oSection, "_getCurrentMediaContainerRange", function() {
+		this.stub(oSection, "_getCurrentMediaContainerRange").callsFake(function() {
 			return {
 				name: "Tablet"
 			};
@@ -271,7 +274,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 	QUnit.test("Default state for hiding/showing the content", function (assert) {
 		var oMockSection = {
-			getImportance: sinon.stub().returns(Importance.High)
+			getImportance: this.stub().returns(Importance.High)
 		};
 
 		SectionBasePrototype.init.call(oMockSection);
@@ -328,12 +331,14 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 	});
 
 	QUnit.test("Behavior with different importance levels", function (assert) {
-		var fnGenerateTest = function (sImportance, sCurrentImportanceLevel, bExpectToBeHidden, assert) {
+		var that = this;
+
+		function fnGenerateTest(sImportance, sCurrentImportanceLevel, bExpectToBeHidden, assert) {
 			var sShouldBeHidden = "The section should be hidden",
 				sShouldBeVisible = "The section should be visible",
 				oMockSection = {
 					setImportance: function (sImportance) {
-						this.getImportance = sinon.stub().returns(sImportance);
+						this.getImportance = that.stub().returns(sImportance);
 					}
 				};
 
@@ -344,7 +349,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 			assert.strictEqual(SectionBasePrototype._shouldBeHidden.call(oMockSection), bExpectToBeHidden,
 				bExpectToBeHidden ? sShouldBeHidden : sShouldBeVisible);
-		};
+		}
 
 		fnGenerateTest(Importance.Low, Importance.Low, false, assert);
 		fnGenerateTest(Importance.Medium, Importance.Low, false, assert);
@@ -377,14 +382,15 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		// Arrange
 		var oObjectPageLayout = new ObjectPageLayout(),
 			oObjectPageSection = new ObjectPageSection(),
-			oToggleSpy = sinon.spy(),
+			oToggleSpy = this.spy(),
 			jQueryObject = {
-				children: sinon.stub().returns({
+				children: this.stub().returns({
 					toggle: oToggleSpy
 				})
 			},
-			ojQueryStub = sinon.stub(oObjectPageSection, "$").returns(jQueryObject),
-			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout");
+			oRequestAdjustLayoutSpy = this.spy(oObjectPageLayout, "_requestAdjustLayout");
+
+		this.stub(oObjectPageSection, "$").returns(jQueryObject);
 
 		oObjectPageLayout.addSection(oObjectPageSection);
 
@@ -404,7 +410,6 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 		// Clean-up
 		oObjectPageSection.destroy();
-		ojQueryStub.restore();
 	});
 
 	QUnit.test("Updating visibility of SubSection DOM element", function(assert) {
@@ -414,14 +419,15 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 			oObjectPageSection = new ObjectPageSection({
 				subSections: [oObjectPageSubSection]
 			}),
-			oToggleSpy = sinon.spy(),
+			oToggleSpy = this.spy(),
 			jQueryObject = {
-				children: sinon.stub().returns({
+				children: this.stub().returns({
 					toggle: oToggleSpy
 				})
 			},
-			ojQueryStub = sinon.stub(oObjectPageSubSection, "$").returns(jQueryObject),
-			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout");
+			oRequestAdjustLayoutSpy = this.spy(oObjectPageLayout, "_requestAdjustLayout");
+
+		this.stub(oObjectPageSubSection, "$").returns(jQueryObject);
 
 		oObjectPageLayout.addSection(oObjectPageSection);
 
@@ -441,25 +447,24 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 		// Clean-up
 		oObjectPageSubSection.destroy();
-		ojQueryStub.restore();
 	});
 
 	QUnit.test("Updating the show/hide state", function (assert) {
-		var toggleSpy = sinon.spy(),
+		var toggleSpy = this.spy(),
 			jQueryObject = {
-				children: sinon.stub().returns({
+				children: this.stub().returns({
 					toggle: toggleSpy
 				})
 			},
 			oMockSection = {
-				_getObjectPageLayout: sinon.stub().returns(null),
+				_getObjectPageLayout: this.stub().returns(null),
 				_sContainerSelector: '.someClass',
-				_getIsHidden: sinon.stub().returns(this._isHidden),
+				_getIsHidden: this.stub().returns(this._isHidden),
 				setImportance: function (sImportance) {
-					this.getImportance = sinon.stub().returns(sImportance);
+					this.getImportance = this.stub().returns(sImportance);
 				},
-				_updateShowHideState: sinon.spy(),
-				$: sinon.stub().returns(jQueryObject)
+				_updateShowHideState: this.spy(),
+				$: this.stub().returns(jQueryObject)
 			};
 
 		SectionBasePrototype.init.call(this);
@@ -492,9 +497,9 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 			}),
 			sExpectedText = "someText",
 			oSectionStub = {
-				_getShowHideAllButton: sinon.stub().returns(oButton),
-				_getShouldDisplayShowHideAllButton: sinon.stub().returns(true),
-				_getShowHideAllButtonText: sinon.stub().returns(sExpectedText)
+				_getShowHideAllButton: this.stub().returns(oButton),
+				_getShouldDisplayShowHideAllButton: this.stub().returns(true),
+				_getShowHideAllButtonText: this.stub().returns(sExpectedText)
 			};
 
 		SectionPrototype._updateShowHideAllButton.call(oSectionStub, true);
@@ -502,7 +507,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		assert.ok(oButton.getText(sExpectedText));
 
 		oButton.setText("otherText");
-		oSectionStub._getShouldDisplayShowHideAllButton = sinon.stub().returns(false);
+		oSectionStub._getShouldDisplayShowHideAllButton = this.stub().returns(false);
 
 		SectionPrototype._updateShowHideAllButton.call(oSectionStub, false);
 		assert.ok(!oButton.getVisible());
@@ -518,9 +523,9 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 			}),
 			sExpectedText = "someText",
 			oSectionStub = {
-				_getShowHideButton: sinon.stub().returns(oButton),
-				_getShowHideButtonText: sinon.stub().returns(sExpectedText),
-				_shouldBeHidden: sinon.stub().returns(true)
+				_getShowHideButton: this.stub().returns(oButton),
+				_getShowHideButtonText: this.stub().returns(sExpectedText),
+				_shouldBeHidden: this.stub().returns(true)
 			};
 
 		SectionPrototype._updateShowHideButton.call(oSectionStub, true);
@@ -528,7 +533,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		assert.ok(oButton.getText(sExpectedText));
 
 		oButton.setText("otherText");
-		oSectionStub._shouldBeHidden = sinon.stub().returns(false);
+		oSectionStub._shouldBeHidden = this.stub().returns(false);
 
 		SectionPrototype._updateShowHideButton.call(oSectionStub, false);
 		assert.ok(!oButton.getVisible());
@@ -538,27 +543,31 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 	});
 
 	QUnit.test("Testing ObjectPageSubSection._getClosestSection", function (assert) {
-		var ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
-				viewName: "view.UxAP-13_ObjectPageSection"
-			}),
-			oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection"),
-			oFirstSubSection = oSectionWithTwoSubSection.getSubSections()[0],
-			fnGetClosestSection = ObjectPageSection._getClosestSection;
+		return XMLView.create({
+			id: "UxAP-13_objectPageSection",
+			viewName: "view.UxAP-13_ObjectPageSection"
+		}).then(function(ObjectPageSectionView) {
+			var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection"),
+				oFirstSubSection = oSectionWithTwoSubSection.getSubSections()[0],
+				fnGetClosestSection = ObjectPageSection._getClosestSection;
 
-		assert.equal(fnGetClosestSection(oFirstSubSection).getId(), oSectionWithTwoSubSection.getId());
-		assert.equal(fnGetClosestSection(oSectionWithTwoSubSection).getId(), oSectionWithTwoSubSection.getId());
+			assert.equal(fnGetClosestSection(oFirstSubSection).getId(), oSectionWithTwoSubSection.getId());
+			assert.equal(fnGetClosestSection(oSectionWithTwoSubSection).getId(), oSectionWithTwoSubSection.getId());
 
-		ObjectPageSectionView.destroy();
+			ObjectPageSectionView.destroy();
+		});
 	});
 
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
-			this.ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
+			return XMLView.create({
+				id: "UxAP-13_objectPageSection",
 				viewName: "view.UxAP-13_ObjectPageSection"
-			});
-
-			this.ObjectPageSectionView.placeAt('qunit-fixture');
-			Core.applyChanges();
+			}).then(function(oView) {
+				this.ObjectPageSectionView = oView;
+				this.ObjectPageSectionView.placeAt('qunit-fixture');
+				Core.applyChanges();
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.ObjectPageSectionView.destroy();
@@ -638,7 +647,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 		// Setup
 		var oSection = this.oObjectPageLayout.getSections()[0],
-		oInvalidateSpy = sinon.spy(oSection, "invalidate");
+		oInvalidateSpy = this.spy(oSection, "invalidate");
 
 		// Act
 		oSection.setVisible(false);
@@ -709,7 +718,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 
 		// Setup
 		var oSection = this.oObjectPageLayout.getSections()[0],
-			oInvalidateSpy = sinon.spy(oSection, "invalidate");
+			oInvalidateSpy = this.spy(oSection, "invalidate");
 
 		// Act: called setter with same value as current
 		oSection.setVisible(true);

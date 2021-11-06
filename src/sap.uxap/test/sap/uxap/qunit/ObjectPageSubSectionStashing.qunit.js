@@ -1,15 +1,12 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core",
 	"sap/ui/core/StashedControlSupport",
 	"sap/uxap/ObjectPageLazyLoader"],
-function (controller, XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
+function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 	"use strict";
-
-	controller.create({ name: "viewController" });
 
 	QUnit.module("Stashing Tests", {
 		beforeEach: function (assert) {

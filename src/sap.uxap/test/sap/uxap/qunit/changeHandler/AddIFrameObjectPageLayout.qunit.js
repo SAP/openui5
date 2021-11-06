@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/core/mvc/View",
 	"sap/uxap/ObjectPageLayout",
-	"sap/uxap/ObjectPageSection"
+	"sap/uxap/ObjectPageSection",
+	"sap/ui/util/XMLHelper"
 ], function(
 	jQuery,
 	AddIFrameObjectPageLayout,
@@ -17,7 +18,8 @@ sap.ui.define([
 	XmlTreeModifier,
 	View,
 	ObjectPageLayout,
-	ObjectPageSection
+	ObjectPageSection,
+	XMLHelper
 ) {
 	"use strict";
 
@@ -262,7 +264,7 @@ sap.ui.define([
 				'</sections>' +
 				'</ObjectPageLayout>' +
 				'</mvc:View>';
-			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
+			this.oXmlView = XMLHelper.parse(this.oXmlString).documentElement;
 			this.oObjectPageLayout = this.oXmlView.childNodes[0];
 
 			this.mPropertyBag = {

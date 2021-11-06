@@ -1,4 +1,4 @@
-/*global QUnit, sinon*/
+/*global QUnit, */
 sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
                "sap/ui/model/json/JSONModel",
@@ -179,7 +179,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 			oObjectPageLayout = oComponentContainer.getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
 			done = assert.async(),
-			oStub;
+			that = this;
 
 		_loadBlocksData(oData);
 
@@ -195,7 +195,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 				iSectionBeforeLastPositionTo = oObjectPageLayout._computeScrollPosition(oSectionBeforeLast);
 
 			// Setup: mock scrollTop of a section before the target section
-			oStub = sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
+			that.stub(oObjectPageLayout, "_getHeightRelatedParameters").callsFake(function() {
 				return {
 					// mock a scrollTop where an intermediate [before the target] section is in the viewport
 					iScrollTop: iSectionBeforeLastPositionTo,
@@ -212,7 +212,6 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 			// Check the intermediate [before the target] section is not loaded despite being in the viewport
 			assert.strictEqual(oSectionBeforeLast.getSubSections()[0].getBlocks()[0]._bConnected, false, "section above the target section is not loaded");
 			done();
-			oStub.restore();
 		}
 
 		if (oObjectPageLayout._bDomReady) {
@@ -251,7 +250,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 	QUnit.test("BCP: 1870326083 - _triggerVisibleSubSectionsEvents should force OP to recalculate", function (assert) {
 		// Arrange
 		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
-			oRequestAdjustLayoutSpy = sinon.spy(oObjectPageLayout, "_requestAdjustLayout");
+			oRequestAdjustLayoutSpy = this.spy(oObjectPageLayout, "_requestAdjustLayout");
 
 		// We have to render the OP as LazyLoading is initiated on onBeforeRendering
 		oObjectPageLayout.placeAt("qunit-fixture");
@@ -268,7 +267,6 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 			"Method should be called with 'true' as a parameter for immediate execution");
 
 		// Clean
-		oRequestAdjustLayoutSpy.restore();
 		oObjectPageLayout.destroy();
 	});
 
@@ -277,6 +275,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			iExpectedLazyLoadingDelay,
 			spy,
+			that = this,
 			done = assert.async();
 
 		assert.expect(1);
@@ -287,7 +286,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		oObjectPage.addEventDelegate({
 			"onBeforeRendering": function() {
-				spy = sinon.spy(oObjectPage._oLazyLoading, "lazyLoadDuringScroll");
+				spy = that.spy(oObjectPage._oLazyLoading, "lazyLoadDuringScroll");
 			},
 			"onAfterRendering": function() {
 				setTimeout(function() {
@@ -306,6 +305,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 	QUnit.test("Early lazyLoading onAfterRendering if already scheduled", function (assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
+			that = this,
 			spy,
 			done = assert.async();
 
@@ -313,12 +313,12 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		oObjectPage.addEventDelegate({
 			"onBeforeRendering": function() {
-				spy = sinon.spy(oObjectPage._oLazyLoading, "doLazyLoading");
+				spy = that.spy(oObjectPage._oLazyLoading, "doLazyLoading");
 			},
 			"onAfterRendering": function() {
 				oObjectPage._triggerVisibleSubSectionsEvents();
 				// Arrange: reset any earlier recorded calls
-				spy.reset();
+				spy.resetHistory();
 			}
 		}, this);
 
@@ -337,8 +337,9 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			iExpectedLazyLoadingDelay,
-			recalcSpy = sinon.spy(oObjectPage, "_requestAdjustLayout"),
+			recalcSpy = this.spy(oObjectPage, "_requestAdjustLayout"),
 			lazyLoadingSpy,
+			that = this,
 			done = assert.async();
 
 		assert.expect(2);
@@ -347,7 +348,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 				oObjectPage.addEventDelegate({
 					"onBeforeRendering": function() {
-						lazyLoadingSpy = sinon.spy(oObjectPage._oLazyLoading, "doLazyLoading");
+						lazyLoadingSpy = that.spy(oObjectPage._oLazyLoading, "doLazyLoading");
 					},
 					"onAfterRendering": function() {
 
@@ -355,8 +356,8 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 							// restore visibility
 							window["qunit-fixture"].style.display = "";
-							recalcSpy.reset();
-							lazyLoadingSpy.reset();
+							recalcSpy.resetHistory();
+							lazyLoadingSpy.resetHistory();
 							// call the resize listener explicitly in the test to avoid waiting for the ResizeHandler to react (would introduce extra delay in the test)
 							oObjectPage._onUpdateScreenSize({
 								size: {
@@ -417,7 +418,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		assert.expect(1);
 
 		// Setup: mock function result onBeforeRendering
-		sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
+		this.stub(oObjectPageLayout, "_getHeightRelatedParameters").callsFake(function() {
 			// return value is not important for this test
 			return {};
 		});
@@ -427,11 +428,11 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		// Setup: spy for repeated calls of <code>doLazyLoading</code>
 		oLazyLoading = oObjectPageLayout._oLazyLoading;
-		oLazyLoadingSpy = sinon.spy(oLazyLoading, "doLazyLoading");
+		oLazyLoadingSpy = this.spy(oLazyLoading, "doLazyLoading");
 
 		// Act: trigger lazyLoading
 		oLazyLoading.doLazyLoading(); // mock initial trigger from objectPage
-		oLazyLoadingSpy.reset(); // ensure we monitor only calls from this point on
+		oLazyLoadingSpy.resetHistory(); // ensure we monitor only calls from this point on
 
 		// Check
 		setTimeout(function() {
@@ -450,7 +451,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 		assert.expect(1);
 
 		// Setup: mock function result onBeforeRendering
-		sinon.stub(oObjectPageLayout, "_getHeightRelatedParameters", function() {
+		this.stub(oObjectPageLayout, "_getHeightRelatedParameters").callsFake(function() {
 			// return value is not important for this test
 			return {};
 		});
@@ -460,9 +461,9 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 
 		// Setup: spy for repeated calls of <code>doLazyLoading</code>
 		oLazyLoading = oObjectPageLayout._oLazyLoading;
-		oLazyLoadingSpy = sinon.spy(oLazyLoading, "doLazyLoading");
+		oLazyLoadingSpy = this.spy(oLazyLoading, "doLazyLoading");
 		oLazyLoading.doLazyLoading(); // mock initial call from objectPage
-		oLazyLoadingSpy.reset(); // ensure we monitor only calls from this point on
+		oLazyLoadingSpy.resetHistory(); // ensure we monitor only calls from this point on
 
 		// Act
 		oLazyLoading.destroy();

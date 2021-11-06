@@ -1,4 +1,7 @@
-sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
+sap.ui.define([
+	"sap/uxap/BlockBase",
+	"sap/base/Log"
+], function (BlockBase, Log) {
 	"use strict";
 	var myBlock = BlockBase.extend("sap.uxap.testblocks.freeform.FreeFormBlock", {
 		setMode: function (sMode) {
@@ -14,12 +17,11 @@ sap.ui.define(['sap/uxap/BlockBase'], function (BlockBase) {
 				this.addAggregation("_views", oNewView);
 				this.setAssociation("selectedView", oNewView);
 			} else {
-				jQuery.sap.log.error("BlockBase :: no view provided for mode " + sMode);
+				Log.error("BlockBase :: no view provided for mode " + sMode);
 			}
 
 			this.setProperty("mode", sMode);
 		}
 	});
 	return myBlock;
-}, true);
-
+});

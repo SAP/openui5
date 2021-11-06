@@ -47,7 +47,7 @@ function($, Core, XMLView, App) {
 
 
 	QUnit.test("ObjectPageId 1 created", function (assert) {
-		assert.notStrictEqual(this.referencedObjectPage1, undefined, "ObjectPageLayout 1 created successfuly");
+		assert.notStrictEqual(this.referencedObjectPage1, undefined, "ObjectPageLayout 1 created successfully");
 	});
 	QUnit.test("ObjectPageId 1: DynamicPageTitle titleClickEnabled class not applied", function (assert) {
 		assert.notOk(this.referencedObjectPage1.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class not applied");

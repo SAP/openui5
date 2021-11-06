@@ -5,9 +5,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
                 "sap/m/Text",
                 "sap/uxap/ObjectPageDynamicHeaderTitle",
                 "sap/uxap/ObjectPageLayout",
-                "sap/ui/core/HTML",
+                "sap/uxap/testblocks/GenericDiv",
                 "sap/ui/core/mvc/XMLView"],
-function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, HTML, XMLView) {
+function (jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, GenericDiv, XMLView) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -219,7 +219,7 @@ function ($, Core, Label, Text, ObjectPageDynamicHeaderTitle, ObjectPageLayout, 
 
 	QUnit.test("addHeaderContent", function (assert) {
 		var	oObjectPageLayout = this.contentView.byId("ObjectPageLayout"),
-		oResizableControl = new HTML({content: "<div style='height:100px'></div>"}),
+		oResizableControl = new GenericDiv({height: "100px"}),
 		done = assert.async(),
 		bResizeListenerCalled = false;
 

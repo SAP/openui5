@@ -32,13 +32,13 @@
 				</actions>
 				<breadcrumbs>
 					<m:Breadcrumbs currentLocationText="Object Page Example" id="breadcrumbsId">
-						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+						<m:Link text="Page 1 a very long link"/>
+						<m:Link text="Page 2 long link"/>
 					</m:Breadcrumbs>
 				</breadcrumbs>
 				<breadCrumbsLinks>
-					<m:Link text="Links in old aggregation" press="handleLink1Press"/>
-					<m:Link text="Don't appear in ObjectPageHeader" press="handleLink2Press"/>
+					<m:Link text="Links in old aggregation"/>
+					<m:Link text="Don't appear in ObjectPageHeader"/>
 				</breadCrumbsLinks>
 			</ObjectPageHeader>
 		</headerTitle>

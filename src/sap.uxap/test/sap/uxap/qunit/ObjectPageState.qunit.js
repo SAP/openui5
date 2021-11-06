@@ -156,7 +156,7 @@ function (
 		oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
 			toggleHidden(false); // hide page
 			oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
-				oSpy.reset();
+				oSpy.resetHistory();
 				toggleHidden(true); // show page
 				setTimeout(function() {
 					assert.ok(oSpy.called, "resize is detected");
@@ -176,8 +176,8 @@ function (
 		// Act
 		Core.applyChanges();
 
-		// Wrap the control in a element which apply's white-space
-		oOPL.$().wrap("<div style='white-space: nowrap;'></div>");
+		// Wrap the control in an element which apply's white-space
+		oOPL.$().wrap(jQuery("<div></div>").css("white-space", "nowrap"));
 
 		oComputedStyle = window.getComputedStyle(oOPL.getDomRef());
 		assert.strictEqual(oComputedStyle.whiteSpace, "normal",
@@ -584,8 +584,8 @@ function (
 			});
 
 			// Act
-			oCacheDomElementsSpy.reset();
-			oObtainLayoutSpy.reset();
+			oCacheDomElementsSpy.resetHistory();
+			oObtainLayoutSpy.resetHistory();
 			oObjectPage.rerender(); // after rerender the old cached references will no longer be valid
 		});
 	});
@@ -615,9 +615,6 @@ function (
 
 		assert.ok(oSpy.calledWith(true), "Handler method is called once with 'true'");
 		assert.ok(oSpy.calledWith(false), "Handler method is called once with 'false'");
-
-		// Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.test("Expand button handler method '_handleExpandButtonPressEventLifeCycle'", function (assert) {
@@ -634,7 +631,7 @@ function (
 		assert.strictEqual(oDetachSpy.callCount, 0, "detachPress method not called");
 
 		// Arrange
-		oAttachSpy.reset();
+		oAttachSpy.resetHistory();
 
 		// Act - call handler with bAttach = false
 		this.oObjectPage._handleExpandButtonPressEventLifeCycle(false);
@@ -642,10 +639,6 @@ function (
 		// Assert
 		assert.strictEqual(oAttachSpy.callCount, 0, "attachPress method not called");
 		assert.strictEqual(oDetachSpy.callCount, 1, "detachPress method called once");
-
-		// Cleanup
-		oAttachSpy.restore();
-		oDetachSpy.restore();
 	});
 
 	QUnit.test("this.iHeaderContentHeight is acquired in the correct way", function (assert) {
@@ -681,12 +674,12 @@ function (
 		this.oObjectPage.attachEvent("_snapChange", oSpy);
 		this.oObjectPage.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oSpy.reset();
+		oSpy.resetHistory();
 
 		this.oObjectPage._moveHeaderToTitleArea();
 		assert.strictEqual(oSpy.callCount, 1, "the event is fired");
 
-		oSpy.reset();
+		oSpy.resetHistory();
 		this.oObjectPage._moveHeaderToContentArea();
 		assert.strictEqual(oSpy.callCount, 1, "the event is fired");
 	});

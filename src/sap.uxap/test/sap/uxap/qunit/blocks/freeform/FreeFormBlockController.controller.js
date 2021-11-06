@@ -5,4 +5,4 @@ sap.ui.define(["sap/m/MessageToast", "sap/ui/core/mvc/Controller"], function (Me
 			MessageToast.show("button pressed");
 		}
 	});
-}, true);
+});

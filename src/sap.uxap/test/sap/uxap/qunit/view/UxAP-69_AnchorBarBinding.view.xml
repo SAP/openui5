@@ -41,7 +41,7 @@
 			<!-- no binding -->
 			<ObjectPageSection id="section3" title="Fixed">
 				<customAnchorBarButton>
-					<m:Button text="my third section" press=".handleAnchorBarPress"/>
+					<m:Button text="my third section"/>
 				</customAnchorBarButton>
 				<ObjectPageSubSection>
 					<html:div class="dummyBlockContentC"></html:div>

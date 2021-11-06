@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/events/F6Navigation",
-	"sap/ui/core/mvc/XMLView"],
-function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/uxap/AnchorBar"],
+function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -48,7 +49,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 					"The correct dom ref is given for starting point, skipping the sections of OP");
 
 				// Clean up
-				oF6NavigationStub.restore();
+				oF6NavigationStub.restore(); // restore explicitly and ignore further calls
 				done();
 			},
 			fnOnDomReady = function () {
@@ -63,7 +64,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 			};
 
 		// Arrange
-		oF6NavigationStub = sinon.stub(F6Navigation, "handleF6GroupNavigation", fnF6NavigationStub);
+		oF6NavigationStub = this.stub(F6Navigation, "handleF6GroupNavigation").callsFake(fnF6NavigationStub);
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 		this.oView.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -149,7 +150,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 	});
 
 	QUnit.test("TAB/SHIFT+TAB", function (assert) {
-		var aAnchors = $(sAnchorSelector),
+		var aAnchors = jQuery(sAnchorSelector),
 			oFirstAnchorButton = Core.byId(aAnchors[0].id),
 			oAnchor4Button = Core.byId(aAnchors[4].id),
 			aSections = this.oObjectPage.getSections(),
@@ -166,7 +167,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 
 
 	QUnit.test("RIGHT", function (assert) {
-		var aAnchors = $(sAnchorSelector),
+		var aAnchors = jQuery(sAnchorSelector),
 			iFirstAnchorId = aAnchors[0].id,
 			iSecondAnchorId = aAnchors[1].id;
 
@@ -178,7 +179,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 	});
 
 	QUnit.test("LEFT", function (assert) {
-		var aAnchors = $(sAnchorSelector),
+		var aAnchors = jQuery(sAnchorSelector),
 			iSecondAnchorId = aAnchors[1].id,
 			iThirdAnchorId = aAnchors[2].id;
 
@@ -214,7 +215,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 	});
 
 	QUnit.test("HOME/END", function (assert) {
-		var aAnchors = $(sAnchorSelector),
+		var aAnchors = jQuery(sAnchorSelector),
 			iFirstAnchorId = aAnchors[0].id,
 			iLastAnchorId = aAnchors[aAnchors.length - 1].id + "-internalSplitBtn";
 
@@ -623,8 +624,8 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 			}).then(function (oView) {
 				this.anchorBarView = oView;
 				this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-				this.oScrollSpy = sinon.spy(sap.uxap.AnchorBar.prototype, "onButtonPress");
-				this.oFocusSpy = sinon.spy(this.oObjectPage._oABHelper, "_moveFocusOnSection");
+				this.oScrollSpy = this.spy(AnchorBar.prototype, "onButtonPress");
+				this.oFocusSpy = this.spy(this.oObjectPage._oABHelper, "_moveFocusOnSection");
 				this.anchorBarView.placeAt("qunit-fixture");
 				Core.applyChanges();
 				done();
@@ -632,8 +633,6 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
-			this.oScrollSpy.restore();
-			this.oFocusSpy.restore();
 			this.oObjectPage = null;
 		}
 	});
@@ -646,8 +645,8 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 
 		// Setup
 		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
-		this.oScrollSpy.reset();
-		this.oFocusSpy.reset();
+		this.oScrollSpy.resetHistory();
+		this.oFocusSpy.resetHistory();
 
 		// Act
 		oSectionButton.firePress();
@@ -655,7 +654,7 @@ function($, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView
 		// Check
 		assert.strictEqual(this.oScrollSpy.called, true, "Scroll to section is called");
 		assert.strictEqual(this.oFocusSpy.called, true, "Section must be focused");
-		sinon.assert.callOrder(this.oFocusSpy, this.oScrollSpy);
+		assert.ok(this.oFocusSpy.calledBefore(this.oScrollSpy));
 
 		// restore state
 		Core.getConfiguration().setAnimationMode(oOrigAnimationMode);

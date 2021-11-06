@@ -5,14 +5,16 @@ sap.ui.define([
 	'./ObjectPageLayoutUtils',
 	"sap/ui/Device",
 	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/uxap/AnchorBar",
-	"sap/m/Button"
-], function ($, utils, Device, Core, XMLView, JSONModel, AnchorBar, Button) {
+	"sap/m/Button",
+	"sap/m/Text"
+], function (jQuery, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text) {
 	"use strict";
 
-	var iRenderingDelay = 2000,
+	var $ = jQuery, iRenderingDelay = 2000,
 		ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar",
 		HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect",
 		BREAK_POINTS = {
@@ -540,10 +542,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Assignment of _iREMSize, _iTolerance and _iOffset in onBeforeRendering method", function (assert) {
-		var iFontSize = 16,
-			fnCss = this.stub(jQuery, "css", function () {
-				return iFontSize;
-			});
+		var iFontSize = 16;
+
+		this.stub(jQuery, "css").returns(iFontSize);
 
 		// assert
 		assert.equal(this.anchorBar._iREMSize, 0, "Initial value of _iREMSize is 0");
@@ -557,9 +558,6 @@ sap.ui.define([
 		assert.equal(this.anchorBar._iREMSize, iFontSize, "After onBeforeRendering call the value of _iREMSize is changed to 16");
 		assert.equal(this.anchorBar._iTolerance, iFontSize, "After onBeforeRendering call the value of _iTolerance is changed to 16");
 		assert.equal(this.anchorBar._iOffset, iFontSize * 3, "After onBeforeRendering call the value of _iOffset is changed to 58");
-
-		// cleanup
-		fnCss.restore();
 	});
 
 	QUnit.module("Accessibility", {
@@ -616,7 +614,7 @@ sap.ui.define([
 	QUnit.test("ARIA role and role descrption of buttons", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
-			sInvTextId = sap.ui.core.InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION"),
+			sInvTextId = InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION"),
 			oCurrentButton,
 			iIndex;
 
@@ -731,12 +729,11 @@ sap.ui.define([
 				assert.equal(anchorBarStub.args[0][0], sectionId, "AnchorBar scrolled to correct section");
 
 				// Clean up
-				anchorBarStub.restore();
 				done();
 			},
 			fnOnDomReady = function() {
 				oAnchorBar = oPage.getAggregation("_anchorBar");
-				anchorBarStub = sinon.stub(oAnchorBar, "scrollToSection", fnScrollToStub);
+				anchorBarStub = this.stub(oAnchorBar, "scrollToSection").callsFake(fnScrollToStub);
 
 				//act
 				oPage.scrollToSection(sectionId, 0, null, true);
@@ -744,7 +741,7 @@ sap.ui.define([
 			};
 
 		assert.expect(2);
-		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
+		oPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady.bind(this));
 		this.oObjectPage.placeAt("qunit-fixture");
 	});
 
@@ -786,8 +783,8 @@ sap.ui.define([
 			done = assert.async(),
 			oAnchorBar,
 			fnOnInitRendering = function() {
-				oSubSection1 = utils.oFactory.getSubSection(1, [new sap.m.Text()]);
-				oSubSection2 = utils.oFactory.getSubSection(2, [new sap.m.Text()]);
+				oSubSection1 = utils.oFactory.getSubSection(1, [new Text()]);
+				oSubSection2 = utils.oFactory.getSubSection(2, [new Text()]);
 				oPage.addSection(utils.oFactory.getSection(2, "H2", [oSubSection1, oSubSection2]));
 				iTotalSections += 1;
 				iTotalSubSections += 2;
