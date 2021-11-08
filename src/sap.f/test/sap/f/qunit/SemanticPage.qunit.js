@@ -4,6 +4,9 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/f/semantic/DiscussInJamAction",
+	"sap/f/semantic/ShareInJamAction",
+	"sap/f/semantic/PrintAction",
 	"sap/ui/core/InvisibleText"
 ],
 function (
@@ -11,6 +14,9 @@ function (
 	ResourceModel,
 	Core,
 	DynamicPageAccessibleLandmarkInfo,
+	DiscussInJamAction,
+	ShareInJamAction,
+	PrintAction,
 	InvisibleText
 ) {
 	"use strict";
@@ -1081,6 +1087,52 @@ function (
 		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticAddType), false,
 			sSemanticAddType + " should not be preprocessed");
 	});
+
+	QUnit.test("test if a Share menu button is hidden when there are no visible actions in it", function (assert) {
+		// Arrange
+		var oPrintAction = new PrintAction({visible: false}),
+			oShareMenuButton;
+
+		this.oSemanticPage = oFactory.getSemanticPage({
+			discussInJamAction: new DiscussInJamAction({visible: false}),
+			shareInJamAction: new ShareInJamAction({visible: false}),
+			printAction: oPrintAction
+		});
+		oUtil.renderObject(this.oSemanticPage);
+		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), false, "Share menu button is hidden");
+
+		// Act
+		oPrintAction.setVisible(true);
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+	});
+
+	QUnit.test("test if a Share menu button is hidden when there are no actions in it", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oShareMenuButton;
+
+		this.oSemanticPage = oFactory.getSemanticPage();
+		oUtil.renderObject(this.oSemanticPage);
+		oShareMenuButton = this.oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Assert
+		assert.strictEqual(oShareMenuButton.getVisible(), false, "Share menu button is hidden");
+
+		// Act
+		this.oSemanticPage.setPrintAction(new PrintAction());
+
+		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
+			// Assert
+			assert.strictEqual(oShareMenuButton.getVisible(), true, "Share menu button is shown");
+			done();
+		}});
+	});
+
 
 	/* --------------------------- Accessibility -------------------------------------- */
 	QUnit.module("Accessibility");
