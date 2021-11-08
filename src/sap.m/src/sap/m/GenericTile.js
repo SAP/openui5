@@ -511,6 +511,7 @@ sap.ui.define([
 		if (this._isNavigateActionEnabled()) {
 			var sButtonText = this.getNavigationButtonText() ? this.getNavigationButtonText() : this._oRb.getText("ACTION_READ_MORE");
 			this._oNavigateAction.setText(sButtonText);
+			this._oNavigateAction.detachPress(this._navigateEventHandler, this);
 		}
 	};
 
@@ -552,11 +553,7 @@ sap.ui.define([
 
 		//Attach press event handler to Navigate Action Button
 		if (this._isNavigateActionEnabled()) {
-			this._oNavigateAction.attachPress(function (oEvent) {
-				oEvent.preventDefault();
-				var sURL = oEvent.getSource().getParent().getUrl();
-				URLHelper.redirect(sURL, true);
-			});
+			this._oNavigateAction.attachPress(this._navigateEventHandler, this);
 		}
 
 		this.onDragComplete();
@@ -1567,6 +1564,17 @@ sap.ui.define([
 	*/
 	GenericTile.prototype._getNavigateAction = function() {
 		return this._oNavigateAction;
+	};
+
+	/**
+	 * Event Handler for Navigate Action Button in Article Mode
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @private
+	 */
+	GenericTile.prototype._navigateEventHandler = function (oEvent) {
+		oEvent.preventDefault();
+		var sURL = oEvent.getSource().getParent().getUrl();
+		URLHelper.redirect(sURL, true);
 	};
 
 	/**
