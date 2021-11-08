@@ -57,6 +57,10 @@ sap.ui.define([
 				autostart: false
 			},
 
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
+
 			/* Control */
 			"Table": {
 				ui5: {

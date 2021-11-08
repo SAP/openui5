@@ -37,6 +37,10 @@ sap.ui.define([], function() {
 				}
 			},
 
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
+
 			"TopicDetailController": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/controller/TopicDetail.controller"]

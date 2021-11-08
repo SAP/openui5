@@ -406,6 +406,9 @@ sap.ui.define([
 					]
 				}
 			},
+			EnforceSemanticRendering: {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			"write/api/AppVariantWriteAPI": {
 				group: "Write API",
 				coverage: {

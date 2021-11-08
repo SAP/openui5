@@ -253,6 +253,9 @@ sap.ui.define(function() {
 				},
 				autostart: false
 			},
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			// Design Time & RTA Enabling
 			"Designtime-Library": {
 				group: "Designtime",

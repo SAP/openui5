@@ -141,6 +141,9 @@ sap.ui.define(function () {
 				}
 			},
 			"ManifestResolver": {},
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputText"]

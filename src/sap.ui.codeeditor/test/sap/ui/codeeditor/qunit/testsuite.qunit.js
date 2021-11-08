@@ -28,6 +28,9 @@ sap.ui.define(function() {
 				coverage: {
 					only: ["sap/ui/codeeditor/CodeEditor"]
 				}
+			},
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
 			}
 		}
 	};

@@ -368,6 +368,9 @@ sap.ui.define([
 				module: "./ExploredSamples.qunit",
 				autostart: false
 			},
+			EnforceSemanticRendering: {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			FacetFilter: {
 				title: "FacetFilter - sap.m",
 				ui5: {
