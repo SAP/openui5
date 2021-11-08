@@ -24,8 +24,11 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var UnitContent = Object.assign({}, DefaultContent, {
+		getEdit: function() {
+			return ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"];
+		},
 		getEditMultiValue: function() {
-			return ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token"];
+			return ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"];
 		},
 		getEditMultiLine: function() {
 			return [null];
@@ -36,9 +39,11 @@ sap.ui.define([
 		createEdit: function(oContentFactory, aControlClasses, sId) {
 			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
 			var Input = aControlClasses[0];
+			var InvisibleText = aControlClasses[1];
 			var oConditionsType = oContentFactory.getConditionsType();
 			this._adjustDataTypeForUnit(oContentFactory);
 
+			var sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
 			var aControls = [];
 			var oInput1 = new Input(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType },
@@ -56,13 +61,14 @@ sap.ui.define([
 				tooltip: "{$field>/tooltip}",
 				autocomplete: false,
 				fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
+				ariaDescribedBy: [sInvisibleTextId],
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange()
 			});
 			oInput1._setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oInput1);
 			aControls.push(oInput1);
-			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input);
+			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input, InvisibleText);
 
 			oContentFactory.setBoundProperty("value");
 
@@ -73,6 +79,7 @@ sap.ui.define([
 			var MultiInput = aControlClasses[0];
 			var Token = aControlClasses[2]; // is loaded by MultiInput
 			var Input = aControlClasses[1];
+			var InvisibleText = aControlClasses[3];
 			var oConditionType = oContentFactory.getConditionType();
 			this._adjustDataTypeForUnit(oContentFactory);
 
@@ -96,6 +103,7 @@ sap.ui.define([
 				}
 			});
 
+			var sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
 			var oMultiInput = new MultiInput(sId, {
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
@@ -109,6 +117,7 @@ sap.ui.define([
 				width: "70%",
 				tooltip: "{$field>/tooltip}",
 				fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
+				ariaDescribedBy: [sInvisibleTextId],
 				tokens: { path: "$field>/conditions", template: oToken, filters: [oFilter] },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
 				change: oContentFactory.getHandleContentChange(),
@@ -118,7 +127,7 @@ sap.ui.define([
 			oMultiInput._setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oMultiInput);
 			aControls.push(oMultiInput);
-			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input);
+			aControls = this._addUnitControl(oContentFactory, aControls, sId, Input, InvisibleText);
 
 			oContentFactory.setBoundProperty("value");
 
@@ -127,7 +136,7 @@ sap.ui.define([
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.UnitContent - createEditMultiLine not defined!");
 		},
-		_addUnitControl: function(oContentFactory, aControls, sId, Input) {
+		_addUnitControl: function(oContentFactory, aControls, sId, Input, InvisibleText) {
 			var oUnitConditionsType = oContentFactory.getUnitConditionsType();
 
 			if (oContentFactory.getField().getEditMode() === EditMode.EditableDisplay) {
@@ -135,6 +144,15 @@ sap.ui.define([
 				aControls[0].setWidth("100%");
 				aControls[0].setFieldWidth("70%");
 			} else {
+				var sInvisibleTextId;
+				var oType = oContentFactory.getUnitOriginalType();
+				var sName = oType && oType.getMetadata().getName();
+				if (sName && sName.indexOf("Currency") >= 0) { // TODO: better solution
+					sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.CURRENCY");
+				} else {
+					sInvisibleTextId = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
+				}
+
 				var oInput = new Input(sId + "-unit", {
 					value: { path: "$field>/conditions", type: oUnitConditionsType },
 					placeholder: "{$field>/placeholder}",
@@ -152,6 +170,7 @@ sap.ui.define([
 					tooltip: "{$field>/tooltip}",
 					autocomplete: false,
 					fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
+					ariaDescribedBy: [sInvisibleTextId],
 					change: oContentFactory.getHandleContentChange(),
 					liveChange: oContentFactory.getHandleContentLiveChange(),
 					valueHelpRequest: oContentFactory.getHandleValueHelpRequest()

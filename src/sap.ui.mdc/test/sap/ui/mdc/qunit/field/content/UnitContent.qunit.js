@@ -7,35 +7,43 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/m/Token",
-	"sap/m/DatePicker",
-	"sap/m/DateRangeSelection"
-], function(QUnit, UnitContent, Field, Text, FieldInput, FieldMultiInput, Token, DatePicker, DateRangeSelection) {
+	"sap/ui/core/InvisibleText"
+], function(QUnit, UnitContent, Field, Text, FieldInput, FieldMultiInput, Token, InvisibleText) {
 	"use strict";
+
+	var sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
+	var sInvisibleTextIdUnit = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
 
 	var oControlMap = {
 		"Display": {
 			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
 			instances: [Text],
-			createFunction: "createDisplay"
+			createFunction: "createDisplay",
+			createdInstances: [{control: Text, boundProperty: "text", type: "sap.ui.model.type.Unit", formatOptions: {preserveDecimals: true}}]
 		},
 		"Edit": {
 			getPathsFunction: "getEdit",
-			paths: ["sap/ui/mdc/field/FieldInput"],
-			instances: [FieldInput],
-			createFunction: "createEdit"
+			paths: ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"],
+			instances: [FieldInput, InvisibleText],
+			createFunction: "createEdit",
+			createdInstances: [{control: FieldInput, boundProperty: "value", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdNumber},
+								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdUnit}]
 		},
 		"EditMultiValue": {
 			getPathsFunction: "getEditMultiValue",
-			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token"],
-			instances: [FieldMultiInput, FieldInput, Token],
-			createFunction: "createEditMultiValue"
+			paths: ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"],
+			instances: [FieldMultiInput, FieldInput, Token, InvisibleText],
+			createFunction: "createEditMultiValue",
+			createdInstances: [{control: FieldMultiInput, boundAggregation: "tokens", boundProperty: "text", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdNumber},
+								{control: FieldInput, boundProperty: "value", type: "sap.ui.model.type.Unit", formatOptions: {showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true}, invisibleTextId: sInvisibleTextIdUnit}]
 		},
 		"EditMultiLine": {
 			getPathsFunction: "getEditMultiLine",
 			paths: [null],
 			instances: [null],
 			createFunction: "createEditMultiLine",
+			createdInstances: [],
 			throwsError: true
 		}
 	};
@@ -65,20 +73,20 @@ sap.ui.define([
 
 	QUnit.test("getControlNames", function(assert) {
 		/* no need to use oOperator here as there is no editOperator*/
-		assert.deepEqual(UnitContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode null");
-		assert.deepEqual(UnitContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode undefined");
-		assert.deepEqual(UnitContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for not specified ContentMode");
+		assert.deepEqual(UnitContent.getControlNames(null), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode null");
+		assert.deepEqual(UnitContent.getControlNames(undefined), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode undefined");
+		assert.deepEqual(UnitContent.getControlNames("idghsoidpgdfhkfokghkl"), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for not specified ContentMode");
 
-		assert.deepEqual(UnitContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode 'Edit'");
+		assert.deepEqual(UnitContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode 'Edit'");
 		assert.deepEqual(UnitContent.getControlNames("Display"), ["sap/m/Text"], "Correct controls returned for ContentMode 'Display'");
-		assert.deepEqual(UnitContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
+		assert.deepEqual(UnitContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/ui/mdc/field/FieldInput", "sap/m/Token", "sap/ui/core/InvisibleText"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(UnitContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(UnitContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
 	});
 
 	QUnit.module("Content creation", {
 		beforeEach: function() {
-			this.oField = new Field({});
+			this.oField = new Field({dataType: "sap.ui.model.type.Unit"});
 			this.aControls = [];
 		},
 		afterEach: function() {
@@ -155,10 +163,30 @@ sap.ui.define([
 				var done = assert.async();
 				var oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
-					var oInstance = oValue.instances[0];
+					var aCreatedInstances = oValue.createdInstances;
 					var aControls = UnitContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
+					assert.equal(aControls.length, aCreatedInstances.length, "number of created controls");
 
-					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
+					for (var i = 0; i < aControls.length; i++) {
+						assert.ok(aControls[i] instanceof aCreatedInstances[i].control, "Correct control created in " + oValue.createFunction);
+						if (aCreatedInstances[i].boundProperty || aCreatedInstances[i].boundAggregation) {
+							var oBindingInfo = aControls[i].getBindingInfo(aCreatedInstances[i].boundAggregation || aCreatedInstances[i].boundProperty);
+							assert.ok(oBindingInfo, "Control BindingInfo created");
+							var sPath = oBindingInfo.path || oBindingInfo.parts[0].path;
+							assert.equal(sPath, "/conditions", "BindingInfo path");
+							if (aCreatedInstances[i].boundAggregation) {
+								oBindingInfo = oBindingInfo.template.getBindingInfo(aCreatedInstances[i].boundProperty);
+							}
+							var oConditionType = oBindingInfo.type;
+							var oType = oConditionType.getFormatOptions().valueType;
+							var oFormatOptions = oType.getFormatOptions();
+							assert.equal(oType.getMetadata().getName(), aCreatedInstances[i].type, "Type of binding");
+							assert.deepEqual(oFormatOptions, aCreatedInstances[i].formatOptions, "FormatOptions");
+						}
+						if (aCreatedInstances[i].invisibleTextId) {
+							assert.ok(aControls[i].getAriaDescribedBy().indexOf(aCreatedInstances[i].invisibleTextId) >= 0, "InvisibleText set on ariaDescribedBy");
+						}
+					}
 					done();
 				});
 			});
