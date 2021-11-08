@@ -324,5 +324,32 @@
         ]
       }
     ]
+  },
+  "1.90.8": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "945158fa02ea7a363f7b8cfbbca0b6fe8f870d2b",
+        "type": "FIX",
+        "text": " base/ManagedObjectMetadata: #addAPIParentInfoEnd",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006162002021"
+          }
+        ]
+      },
+      {
+        "id": "f72ac8e6b5f5fda8e7be27f9f9baef1a260135cb",
+        "type": "FIX",
+        "text": " NumberFormat: Currency symbols should not be affected by trailingCurrencyCode option",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006756752021"
+          }
+        ]
+      }
+    ]
   }
 }

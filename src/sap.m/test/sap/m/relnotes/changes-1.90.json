@@ -224,5 +224,36 @@
         ]
       }
     ]
+  },
+  "1.90.8": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "f04e83b8e4ea1e4f495762c4a0cb9e6e2a86b05b",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Focus outline is now always shown while typing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170062558"
+          }
+        ]
+      },
+      {
+        "id": "795907954c17e9501124049f017126915daf8663",
+        "type": "FIX",
+        "text": " sap.m.Select: Correct focus on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006164082021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180201197"
+          }
+        ]
+      }
+    ]
   }
 }
