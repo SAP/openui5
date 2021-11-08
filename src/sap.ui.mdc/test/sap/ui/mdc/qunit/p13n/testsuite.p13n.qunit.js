@@ -210,33 +210,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"QueryPanel": {
-				group: "UI Panels",
-				module: "./panels/QueryPanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"SortQueryPanel": {
-				group: "UI Panels",
-				module: "./panels/SortQueryPanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"GroupPanel": {
-				group: "UI Panels",
-				module: "./panels/GroupPanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"SelectionPanel": {
 				group: "UI Panels",
 				module: "./SelectionPanel.qunit",
