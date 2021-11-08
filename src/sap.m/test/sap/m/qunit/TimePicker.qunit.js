@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/Locale",
 	"sap/m/Label",
+	"sap/m/Button",
 	"sap/ui/core/LocaleData",
 	"sap/m/MaskEnabler",
 	"sap/ui/model/odata/type/Time",
@@ -45,6 +46,7 @@ sap.ui.define([
 	InputBase,
 	Locale,
 	Label,
+	Button,
 	LocaleData,
 	MaskEnabler,
 	typeTime,
@@ -1094,6 +1096,34 @@ sap.ui.define([
 		//cleanup
 		tp._getPicker().close.restore();
 		tp.destroy();
+	});
+
+	QUnit.test("open TimePicker from button", function(assert) {
+		// Prepare
+		var oTP = new TimePicker("HTP", {
+				hideInput: true
+			}).placeAt("qunit-fixture"),
+			oButton = new Button({
+				icon: "sap-icon://appointment-2",
+				press: function() {
+					sap.ui.getCore().byId("HTP").openBy(this.getDomRef());
+				}
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oButton.firePress();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oTP.getAggregation("_picker"), oTP.getId() + ": picker exists");
+		assert.ok(jQuery("#" + oTP.getId() + "-RP"), "picker is rendered");
+		assert.ok(jQuery("#" + oTP.getId() + "-clocks")[0], "clocks are rendered");
+
+		// Clean
+		oTP.destroy();
+		oButton.destroy();
 	});
 
 	QUnit.module("data binding");
