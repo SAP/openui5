@@ -213,9 +213,9 @@ sap.ui.define([
 		this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
 		this.oMessagePopover.attachLongtextLoaded(function () {
-			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[4].getDescription().indexOf("h2") >= 1, true, "There should be an h2 tag");
-			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[4].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
-			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[4].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
+			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[1].getContent().indexOf("h2") >= 1, true, "There should be an h2 tag");
+			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[1].getContent().indexOf("<script"), -1, "There should be no script tag in the html");
+			assert.strictEqual(this.oMessagePopover._oMessageView._detailsPage.getContent()[1].getContent().indexOf("embed"), -1, "There should be no embed tag in the html");
 			doneLongtextLoaded();
 			assert.ok(this.oMessagePopover._oMessageView.getItems()[2].getDescription().indexOf("&") >= 0, "Item's description should not be sanitized");
 		}, this);

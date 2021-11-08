@@ -977,15 +977,22 @@ sap.ui.define([
 	 */
 	MessageView.prototype._setDescription = function (oMessageItem) {
 		var oLink = oMessageItem.getLink();
+		var sDescription = oMessageItem.getDescription();
+
+		if (oMessageItem.getMarkupDescription()) {
+			var tagPolicy = this._getTagPolicy();
+			/*global html*/
+			sDescription = html.sanitizeWithPolicy(sDescription, tagPolicy);
+		}
+
 		this._oLastSelectedItem = oMessageItem;
 		if (oMessageItem.getMarkupDescription()) {
-			// description is sanitized in MessageItem.setDescription()
 			this._oMessageDescriptionText = new HTML(this.getId() + "MarkupDescription", {
-				content: "<div class='sapMMsgViewDescriptionText'>" + ManagedObject.escapeSettingsValue(oMessageItem.getDescription()) + "</div>"
+				content: "<div class='sapMMsgViewDescriptionText'>" + ManagedObject.escapeSettingsValue(sDescription) + "</div>"
 			});
 		} else {
 			this._oMessageDescriptionText = new Text(this.getId() + "MessageDescriptionText", {
-				text: ManagedObject.escapeSettingsValue(oMessageItem.getDescription())
+				text: ManagedObject.escapeSettingsValue(sDescription)
 			}).addStyleClass("sapMMsgViewDescriptionText");
 		}
 
@@ -1158,24 +1165,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Perform description sanitization based on Caja HTML sanitizer
-	 * @param {sap.m.MessageItem} oMessageItem The item to be sanitized
-	 * @private
-	 */
-	MessageView.prototype._sanitizeDescription = function (oMessageItem) {
-		var sDescription = oMessageItem.getDescription();
-
-		if (oMessageItem.getMarkupDescription()) {
-			var tagPolicy = this._getTagPolicy();
-			/*global html*/
-			sDescription = html.sanitizeWithPolicy(sDescription, tagPolicy);
-		}
-
-		oMessageItem.setDescription(sDescription);
-		this._setDescription(oMessageItem);
-	};
-
-	/**
 	 * Handles click on a list item
 	 *
 	 * @param {sap.m.MessageListItem} oListItem ListItem that is pressed
@@ -1246,7 +1235,7 @@ sap.ui.define([
 
 	MessageView.prototype._navigateToDetails = function(oMessageItem, oListItem, sTransiotionName, bSuppressNavigate) {
 		this._setTitle(oMessageItem, oListItem);
-		this._sanitizeDescription(oMessageItem);
+		this._setDescription(oMessageItem);
 		this._setIcon(oMessageItem, oListItem);
 		this._detailsPage.invalidate();
 		this.fireLongtextLoaded();

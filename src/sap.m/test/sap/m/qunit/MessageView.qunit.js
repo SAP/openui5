@@ -164,9 +164,9 @@ sap.ui.define([
 				doneUrlValidated = [assert.async(), assert.async()];
 
 		this.oMessageView.attachLongtextLoaded(function () {
-			assert.strictEqual(this.oMessageView.getItems()[testItemIndex].getDescription().indexOf("h2") >= 1, true, "There should be an h2 tag");
-			assert.strictEqual(this.oMessageView.getItems()[testItemIndex].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
-			assert.strictEqual(this.oMessageView.getItems()[testItemIndex].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
+			assert.strictEqual(this.oMessageView._detailsPage.getContent()[1].getContent().indexOf("h2") >= 1, true, "There should be an h2 tag");
+			assert.strictEqual(this.oMessageView._detailsPage.getContent()[1].getContent().indexOf("<script"), -1, "There should be no script tag in the html");
+			assert.strictEqual(this.oMessageView._detailsPage.getContent()[1].getContent().indexOf("embed"), -1, "There should be no embed tag in the html");
 			doneLongtextLoaded();
 			assert.ok(this.oMessageView.getItems()[2].getDescription().indexOf("&") >= 0, "Item's description should not be sanitized");
 		}, this);
