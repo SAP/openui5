@@ -1552,6 +1552,10 @@ function(
 		}
 		}, this);
 
+		if (!this.getProperty("hasSelection") && this.getSelectedItems().length) {
+			this.setProperty("hasSelection", true);
+		}
+
 		this.setValue('');
 
 		if (mOptions.fireFinishEvent) {
@@ -1621,7 +1625,9 @@ function(
 			}
 		}, this);
 
-		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
+		if (this.getProperty("hasSelection") && !this.getSelectedItems().length) {
+			this.setProperty("hasSelection", false);
+		}
 
 		if (mOptions.fireFinishEvent) {
 			// Fire selectionFinish also if tokens are deleted directly in input field
@@ -2136,7 +2142,6 @@ function(
 		if (aItemsBeforeRemoval.length !== this.getSelectableItems()) {
 			!this.isPickerDialog() && !this.isFocusInTokenizer() && this.focus();
 			this.fireChangeEvent("");
-			this.setProperty("hasSelection", !!this.getSelectedItems().length);
 		}
 	};
 
@@ -3267,7 +3272,6 @@ function(
 		// ToDo: Remove. Just for backwards compatibility with the runtime layer. When this change merges, we'd need to adjust the code in the runtime
 		this._oTokenizer = this._createTokenizer();
 		this.setAggregation("tokenizer", this._oTokenizer);
-		this._oTokenizer.addDelegate({ onBeforeRendering: this._toggleTokenClass }, this);
 		this._aInitiallySelectedItems = [];
 
 		this._oRbM = core.getLibraryResourceBundle("sap.m");
@@ -3358,17 +3362,6 @@ function(
 	 */
 	MultiComboBox.prototype._clearTokenizer = function() {
 		this.getAggregation("tokenizer").destroyTokens();
-	};
-
-	/**
-	 * OnBeforeRendering event delegate for the tokenizer to toggle
-	 * sapMMultiComboBoxHasToken class depending on whether or not there are
-	 * any tokens.
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._toggleTokenClass = function() {
-		this.toggleStyleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 	};
 
 	MultiComboBox.prototype.exit = function() {
