@@ -1,5 +1,5 @@
 ---
-specVersion: "2.0"
+specVersion: "2.6"
 type: library
 metadata:
   name: sap.ui.integration
@@ -44,12 +44,14 @@ builder:
               - '!sap/ui/integration/editor/'
               - '!sap/viz/'
               - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
+              - sap/ui/core/support/Hotkeys.js
+              - '!sap/ui/integration/thirdparty/'
+              - '!sap/ui/integration/designtime/thirdparty/'
             resolve: true
             renderer: true
           - mode: require
             filters:
-              - sap/ui/integration/library-bootstrap
+              - sap/ui/integration/library-bootstrap.js
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -93,12 +95,14 @@ builder:
               - '!sap/ui/integration/editor/'
               - '!sap/viz/'
               - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
+              - sap/ui/core/support/Hotkeys.js
+              - '!sap/ui/integration/thirdparty/'
+              - '!sap/ui/integration/designtime/thirdparty/'
             resolve: true
             renderer: true
           - mode: require
             filters:
-              - sap/ui/integration/library-bootstrap
+              - sap/ui/integration/library-bootstrap.js
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -130,7 +134,9 @@ builder:
               - '!sap/ui/integration/editor/'
               - '!sap/viz/'
               - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
+              - sap/ui/core/support/Hotkeys.js
+              - '!sap/ui/integration/thirdparty/'
+              - '!sap/ui/integration/designtime/thirdparty/'
             resolve: true
             renderer: true
           - mode: preload
@@ -143,7 +149,7 @@ builder:
             renderer: true
           - mode: require
             filters:
-              - sap/ui/integration/customElements/CustomElementCardEditor
+              - sap/ui/integration/customElements/CustomElementCardEditor.js
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -173,7 +179,9 @@ builder:
               - '!sap/ui/integration/editor/'
               - '!sap/viz/'
               - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
+              - sap/ui/core/support/Hotkeys.js
+              - '!sap/ui/integration/thirdparty/'
+              - '!sap/ui/integration/designtime/thirdparty/'
             resolve: true
             renderer: true
           - mode: preload
@@ -213,7 +221,9 @@ builder:
               - '!sap/ui/integration/editor/'
               - '!sap/viz/'
               - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
+              - sap/ui/core/support/Hotkeys.js
+              - '!sap/ui/integration/thirdparty/'
+              - '!sap/ui/integration/designtime/thirdparty/'
             resolve: true
             renderer: true
           - mode: preload
@@ -225,7 +235,7 @@ builder:
             renderer: true
           - mode: require
             filters:
-              - sap/ui/integration/customElements/CustomElementEditor
+              - sap/ui/integration/customElements/CustomElementEditor.js
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -263,12 +273,14 @@ builder:
               - '!sap/ui/integration/editor/'
               - '!sap/viz/'
               - '!sap/suite/ui/commons/'
-              - sap/ui/core/support/Hotkeys
+              - sap/ui/core/support/Hotkeys.js
+              - '!sap/ui/integration/thirdparty/'
+              - '!sap/ui/integration/designtime/thirdparty/'
             resolve: true
             renderer: true
           - mode: require
             filters:
-              - sap/ui/integration/library-bootstrap
+              - sap/ui/integration/library-bootstrap.js
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -278,4 +290,13 @@ builder:
     excludes:
       - "sap/ui/integration/thirdparty/**"
       - "sap/ui/integration/designtime/thirdparty/**"
-      
+  minification:
+    excludes:
+      - sap-ui-integration.js
+      - sap-ui-integration-nojQuery.js
+      - sap-ui-integration-editor.js
+      - sap-ui-integration-card-editor.js
+      - sap-ui-integration-cardEditor.js
+      - sap-ui-integration-shell-toolkit.js
+      - sap/ui/integration/thirdparty/**
+      - sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js
