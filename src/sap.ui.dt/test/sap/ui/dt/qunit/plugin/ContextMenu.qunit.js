@@ -233,6 +233,20 @@ sap.ui.define([
 			this.clock.tick(50);
 		});
 
+		QUnit.test("Calling method 'open' after adding a not persisted menu item", function (assert) {
+			var oTestItem1 = {
+				id: "CTX_TEST_NOT_PERSISTED",
+				text: "test for not persisted item",
+				handler: sinon.spy(),
+				enabled: true,
+				group: "Test1"
+			};
+			this.oContextMenuPlugin.addMenuItem(oTestItem1, true);
+			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 9, "there are 9 items in the array for the menu items");
+			this.oContextMenuPlugin.open(this.oButton1Overlay, false, false, {});
+			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 8, "there is 1 item less in the array for the menu items");
+		});
+
 		QUnit.test("Calling method '_addMenuItemToGroup'", function (assert) {
 			var that = this;
 			var oTestItem = {

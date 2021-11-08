@@ -92,11 +92,13 @@ sap.ui.define([
 	 * @param {function} mMenuItem.enabled? function to determine if the menu entry should be enabled, the element for which the menu should be opened
 	 *        is passed, default true
 	 * @param {boolean} bRetrievedFromPlugin flag to mark if a menu item was retrieved from a plugin (in runtime)
+	 * @param {boolean} bPersistOneTime flag to mark that the Button persist the next Menu clearing
 	 */
-	ContextMenu.prototype.addMenuItem = function (mMenuItem, bRetrievedFromPlugin) {
+	ContextMenu.prototype.addMenuItem = function (mMenuItem, bRetrievedFromPlugin, bPersistOneTime) {
 		var mMenuItemEntry = {
 			menuItem: mMenuItem,
-			fromPlugin: !!bRetrievedFromPlugin
+			fromPlugin: !!bRetrievedFromPlugin,
+			bPersistOneTime: bPersistOneTime
 		};
 		this._aMenuItems.push(mMenuItemEntry);
 	};
@@ -161,7 +163,6 @@ sap.ui.define([
 			});
 		}
 
-		this._aMenuItems = [];
 		this._bContextMenu = !!bContextMenu;
 		if (this._bContextMenu) {
 			this.oContextMenuControl.removeStyleClass(miniMenuStyleClass);
@@ -187,7 +188,16 @@ sap.ui.define([
 		});
 		aSelectedOverlays.unshift(oOverlay);
 
-		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
+		// Keep all persisted menu items
+		this._aMenuItems = this._aMenuItems.filter(function (mMenuItemEntry) {
+			if (mMenuItemEntry.bPersistOneTime) {
+				mMenuItemEntry.bPersistOneTime = false;
+				return true;
+			}
+			return !mMenuItemEntry.fromPlugin;
+		});
+
+		// Remove all previous entries retrieved by plugins (the list should always be rebuilt)
 		this.oContextMenuControl.destroyItems();
 
 		var oPromise = Promise.resolve();
