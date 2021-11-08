@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "7ff1ca9d175b7ac3c18d11ae571131c21254e2c9",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments render propelry with all font sizes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170227747"
+          }
+        ]
+      },
+      {
         "id": "8f773d03e0a493263f1f38fcd86006ca4c0a9c3b",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Removed single section upper line",

@@ -3,6 +3,21 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "4c0c42818a5150343a7b02128cc5af77a42b629b",
+        "type": "FIX",
+        "text": " XMLView: Rendering of style attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170281098"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170290345"
+          }
+        ]
+      },
+      {
         "id": "ee3ba4b56d163982f3f2f8465de6c2f576385030",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.Context: setKeepAlive is not supported on bindings with $$sharedRequest"

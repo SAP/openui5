@@ -3,6 +3,39 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "9743b03290c7dfb7adb8117526971b36206992df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appoinment icons are read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266547"
+          }
+        ]
+      },
+      {
+        "id": "a965316ad55710e9cdba0fea05f4145fb9954737",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: busy state properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170304073"
+          }
+        ]
+      },
+      {
+        "id": "9216e140e66d4bdf3b87fa944b822a41e56ace90",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Disable the other mode input fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266545"
+          }
+        ]
+      },
+      {
         "id": "f659890211d410374b562777913fc3bd52f83ab8",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar, date-related pickers: Today button included in tab loop",

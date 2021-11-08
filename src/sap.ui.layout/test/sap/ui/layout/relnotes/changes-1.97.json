@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "f8e34b6d2e5a439c820b4bab01a7ecf2aaef1ed5",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Prevent endless resizing when not visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170254043"
+          }
+        ]
+      },
+      {
         "id": "b6a140518600c1156a5e660909abcf47cbfe5d60",
         "type": "FIX",
         "text": " ColumnLayout: one Container with LayoutData",

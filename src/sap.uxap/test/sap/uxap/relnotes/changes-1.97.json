@@ -3,6 +3,28 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "f68776618c2b4e182adc2338b141bfdb7fe1e301",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix tab-stops under Anchor bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170211846"
+          }
+        ]
+      },
+      {
+        "id": "d3a99c18202aa6fb24bdd59d42e1c17c9be26050",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected media update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272703"
+          }
+        ]
+      },
+      {
         "id": "86cdf33bc2b940a60af725221f5906cef7dea62b",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Fix focus issue",
