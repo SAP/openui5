@@ -2,12 +2,17 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
 	"sap/ui/table/CreationRow",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/unified/Menu"
-], function(TableQUnitUtils, Column, Table, CreationRow, JSONModel, Menu) {
+	"sap/ui/unified/Menu",
+	"sap/m/table/ColumnMenu",
+	"sap/m/table/QuickAction",
+	"sap/m/table/Item",
+	"sap/m/Text"
+], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Text) {
 	"use strict";
 
 	QUnit.module("Basics");
@@ -1141,5 +1146,48 @@ sap.ui.define([
 		this._oColumn22.destroy();
 		this._oColumn23.destroy();
 		this._oTable2.destroy();
+	});
+
+	QUnit.module("ColumnHeaderMenu Association", {
+		beforeEach: function() {
+			this.oMenu = new ColumnMenu({
+				quickActions: [new QuickAction({label: "Quick Action A", content: new sap.m.Button({text: "Execute"})})],
+				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new sap.m.Button({text: "Execute"})})]
+			});
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [TableQUnitUtils.createTextColumn().setAssociation("columnHeaderMenu", this.oMenu)]
+			});
+		},
+		afterEach: function() {
+			this.oMenu.destroy();
+			this.oTable.destroy();
+		},
+		/**
+		 * Triggers a mouse down event on the passed element simulating the specified button.
+		 *
+		 * @param {jQuery|HTMLElement} oElement The target of the event.
+		 * @param {int} iButton 0 = Left mouse button,
+		 *                      1 = Middle mouse button,
+		 *                      2 = Right mouse button
+		 */
+		 clickColumn: function(oElement, iButton) {
+			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, iButton);
+			qutils.triggerMouseEvent(oElement, "click");
+		}
+	});
+
+	QUnit.test("aria-haspopup", function (assert) {
+		assert.equal(this.oTable.getColumns()[0].$().attr("aria-haspopup"), "dialog", "aria-haspopup was set correctly");
+	});
+
+	QUnit.test("Open menu", function (assert) {
+		var oSpy = this.spy(this.oMenu, "openBy");
+
+		var oElem = this.oTable.qunit.getColumnHeaderCell(0);
+		oElem.focus();
+		this.clickColumn(oElem, 0);
+
+		assert.equal(oSpy.callCount, 1, "openBy called exactly once");
+		assert.ok(oSpy.calledWith(this.oTable.getColumns()[0]), "openBy called with correct column");
 	});
 });

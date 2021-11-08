@@ -8,8 +8,11 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/m/Label"
-], function(Core, Table, Device, Column, library, Page, ColumnListItem, Text, Label) {
+	"sap/m/Label",
+	"sap/m/table/ColumnMenu",
+	"sap/m/table/QuickAction",
+	"sap/m/table/Item"
+], function(Core, Table, Device, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item) {
 	"use strict";
 
 
@@ -629,5 +632,47 @@ sap.ui.define([
 		assert.equal(oSutDomRef.getAttribute("aria-sort"), "none", "Sorting removed");
 
 		parent.destroy();
+	});
+
+	QUnit.module("Column Menu Header", {
+		beforeEach: function () {
+			this.oMenu = new ColumnMenu({
+				quickActions: [new QuickAction({label: "Quick Action A", content: new sap.m.Button({text: "Execute"})})],
+				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new sap.m.Button({text: "Execute"})})]
+			});
+			this.sut = new Column({
+				hAlign: "Center",
+				header: new Label({text: "Column"})
+			});
+			this.parent = new Table({
+				columns : this.sut,
+				items: new ColumnListItem({
+					cells: new Text({text: "cell"})
+				})
+			});
+			this.sut.setAssociation("columnHeaderMenu", this.oMenu);
+
+			this.parent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oMenu.destroy();
+			this.sut.destroy();
+			this.parent.destroy();
+		}
+	});
+
+	QUnit.test("ARIA haspopup attribute set correctly column with menu", function (assert) {
+		assert.equal(this.sut.getFocusDomRef().getAttribute("aria-haspopup"), "dialog", "aria-haspopup value is dialog");
+	});
+
+	QUnit.test("Open menu", function (assert) {
+		var oSpy = this.spy(this.oMenu, "openBy");
+
+		this.sut.$().trigger("tap");
+		Core.applyChanges();
+
+		assert.equal(oSpy.callCount, 1, "openBy called exactly once");
+		assert.ok(oSpy.calledWith(this.sut), "openBy called with correct column");
 	});
 });

@@ -305,6 +305,15 @@
 		]
 	});
 
+	var oMenu = new sap.m.table.ColumnMenu({
+		quickActions: [
+			new sap.m.table.QuickAction({label: "Quick Action A", content: new sap.m.Button({text: "Execute"})})
+		],
+		items: [
+			new sap.m.table.Item({label: "Item A", icon: "sap-icon://sort", content: new sap.m.Button({text: "Execute"})})
+		]
+	});
+
 	var aColumns = [
 		new sap.m.Column({
 			header : new sap.m.Label({
@@ -380,6 +389,7 @@
 			demandPopin : true
 		})
 	];
+	aColumns[0].setAssociation("columnHeaderMenu", oMenu.getId());
 
 	var oTemplate = new sap.m.ColumnListItem({
 		vAlign: "Middle",

@@ -209,12 +209,13 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 					rm.openStart("div");
 					rm.class("sapMColumnHeader");
 
-					if (oTable.bActiveHeaders && !control.isA("sap.ui.core.InvisibleText")) {
+					var oMenu = oColumn.getColumnHeaderMenu();
+					if ((oTable.bActiveHeaders || oMenu)  && !control.isA("sap.ui.core.InvisibleText")) {
 						// add active header attributes and style class
 						rm.attr("tabindex", 0);
 						rm.attr("role", "button");
-						rm.attr("aria-haspopup", "dialog");
 						rm.class("sapMColumnHeaderActive");
+						rm.attr("aria-haspopup", oMenu ? oMenu.getAriaHasPopupType().toLowerCase() : "dialog");
 					} else if (oTable.bFocusableHeaders) {
 						rm.attr("tabindex", 0);
 						rm.class("sapMColumnHeaderFocusable");

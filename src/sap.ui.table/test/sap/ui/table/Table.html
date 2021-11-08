@@ -73,12 +73,21 @@
 	}));
 
 	// create columns
-	var oControl, oColumn;
+	var oControl, oColumn, oMenu;
 
 	// sap.m.Text
 	oControl = new sap.m.Text({text: "{lastName}", wrapping: false});
+	oMenu = new sap.m.table.ColumnMenu({
+		quickActions: [
+			new sap.m.table.QuickAction({label: "Quick Action A", content: new sap.m.Button({text: "Execute"})})
+		],
+		items: [
+			new sap.m.table.Item({label: "Item A", icon: "sap-icon://sort", content: new sap.m.Button({text: "Execute"})})
+		]
+	});
 	oColumn = new sap.ui.table.Column(
-			{label: new sap.m.Text({text: "m.Text"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "120px"});
+			{label: new sap.m.Text({text: "m.Text"}), template: oControl, width: "120px"});
+	oColumn.setAssociation("columnHeaderMenu", oMenu.getId());
 	oColumn.setCreationTemplate(new sap.m.Input({value: "{lastName}"}));
 	oTable.addColumn(oColumn);
 

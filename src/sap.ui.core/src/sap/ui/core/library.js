@@ -84,7 +84,8 @@ sap.ui.define([
 			"sap.ui.core.IDScope",
 			"sap.ui.core.ITitleContent",
 			"sap.ui.core.IAsyncContentCreation",
-			"sap.ui.core.IPlaceholderSupport"
+			"sap.ui.core.IPlaceholderSupport",
+			"sap.ui.core.IColumnHeaderMenu"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1723,6 +1724,42 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @since 1.92.0
+	 */
+
+	/**
+	 * Marker interface for controls that can serve as a menu for a table column header.
+	 *
+	 * Implementation of this interface implements the <code>openBy</code> and <code>getAriaHasPopupType</code> methods.
+	 *
+	 * @name sap.ui.core.IColumnHeaderMenu
+	 * @interface
+	 * @public
+	 * @experimental As of version 1.98
+	 * @since 1.98.0
+	 */
+
+	/**
+	 * Opens the menu using the column header.
+	 * @param {sap.ui.core.Control} oControl
+	 *   Specifies the control where the menu is placed.
+	 *
+	 * @public
+	 * @function
+	 * @experimental As of version 1.98
+	 * @since 1.98.0
+	 * @name sap.ui.core.IColumnHeaderMenu.openBy
+	 */
+
+	/**
+	 * Returns the <code>sap.ui.core.aria.HasPopup<\code> type of the menu.
+	 *
+	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup<\code> type of the menu
+	 *
+	 * @public
+	 * @function
+	 * @experimental As of version 1.98
+	 * @since 1.98.0
+	 * @name sap.ui.core.IColumnHeaderMenu.getAriaHasPopupType
 	 */
 
 	/**
