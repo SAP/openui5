@@ -19,11 +19,44 @@ sap.ui.define(function() {
 		tests: {
 			Core: {
 				title: "sap.ui.core.Core",
+				loader: {
+					paths: {
+						testlibs: "test-resources/sap/ui/core/qunit/testdata/libraries/"
+					}
+				},
+				ui5: {
+					theme: "test_theme",
+					themeRoots: {
+						"my_preconfigured_theme" : "http://preconfig.com/ui5-themes",
+						"my_second_preconfigured_theme" : {
+							"sap.m" : "http://mobile.preconfig.com/ui5-themes",
+							"" : "http://preconfig.com/ui5-themes",
+							"sap.ui.core" : "http://core.preconfig.com/ui5-themes"
+						},
+						"my_third_preconfigured_theme": "http://third.preconfig.com/ui5-themes"
+					}
+				}
+			},
+			/**
+			 * legacy-relevant
+			 * Test cases for:
+			 *   - Loading of library resource bundle (sync)
+			 *   - Loading of library resource bundle (mixture of sync and async)
+			 *   - Loading of library (sync)
+			 *   - Loading of library (mixture of sync and async)
+			 *   - Loading of library with library preload in JSON format
+			 */
+			Core_unavoidablyUsingEval: {
+				title: "sap.ui.core.Core - Tests using eval",
 				/**
-				 * Due to several tests (e.g. 'loadLibraries: multiple libraries (async, preloads are deactivated)') a separate HTML page is needed.
-				 * The root cause is related to async loading behavior via script tags of the ui5 loader.
+				 * Due to several tests using MockServer (e.g. 'loadLibraries: multiple libraries (async, preloads are
+				 * deactivated)') a separate HTML page is needed.
+				 *
+				 * Running with the central test runner without using a separate HTML page, ui5loader works in the async
+				 * mode where JavaScript dependencies are loaded with "script" tag which can't be intercepted by the
+				 * mock server. Therefore a separate HTML page with ui5loader working in sync mode is needed.
 				 */
-				page: "test-resources/sap/ui/core/qunit/Core.qunit.html"
+				page: "test-resources/sap/ui/core/qunit/Core_unavoidablyUsingEval.qunit.html"
 			},
 			CoreLock: {
 				title: "sap.ui.core.Core: Core unlocks unconditionally itself upon load/init",
