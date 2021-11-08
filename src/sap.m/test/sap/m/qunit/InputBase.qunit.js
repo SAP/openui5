@@ -1108,6 +1108,8 @@ sap.ui.define([
 			valueStateText: "Warning Message"
 		});
 
+		var fnSetErrorAnnounceSpy  = this.spy(oErrorInput, "setErrorMessageAnnouncementState");
+
 		// arrange
 		oErrorInput.placeAt("content");
 		oWarningInput.placeAt("content");
@@ -1116,6 +1118,8 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
+		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
+			"The error annoucement state should not be changed, when the control is on focus but no dynamic changes in the value state are made");
 		assert.ok(document.getElementById("errorinput-message"), "error message popup is open on focusin");
 		assert.equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
 
@@ -1141,6 +1145,7 @@ sap.ui.define([
 		assert.ok(!document.getElementById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
 
 		// cleanup
+		fnSetErrorAnnounceSpy.restore();
 		oErrorInput.destroy();
 		oWarningInput.destroy();
 	});
@@ -1181,6 +1186,7 @@ sap.ui.define([
 					}
 				});
 
+		var fnSetErrorAnnounceSpy  = this.spy(oValueStateInput, "setErrorMessageAnnouncementState");
 		oValueStateInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -1188,6 +1194,9 @@ sap.ui.define([
 		oValueStateInput.updateDomValue("1").focus();
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
+
+		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
+			"The error announcement state should not be changed, when the value state is not Error");
 		assert.strictEqual(oValueStateInput.getValueState(), "Warning");
 		assert.ok(document.getElementById("vsinput-message"), "warning message popup is open");
 		assert.strictEqual(jQuery("#vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
@@ -1207,6 +1216,9 @@ sap.ui.define([
 		qutils.triggerEvent("input", oValueStateInput.getFocusDomRef());
 		this.clock.tick(1000);
 		oValueStateInput.getValueState();
+
+		assert.ok(fnSetErrorAnnounceSpy.calledWith, true,
+			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
 		assert.strictEqual(oValueStateInput.getValueState(), "Error");
 		assert.ok(document.getElementById("vsinput-message"), "error message popup is open");
 		assert.strictEqual(jQuery("#vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
@@ -1231,6 +1243,7 @@ sap.ui.define([
 		assert.ok(!document.getElementById("vsinput-message"), "no message popup");
 
 		// cleanup
+		fnSetErrorAnnounceSpy.restore();
 		oValueStateInput.destroy();
 	});
 
@@ -1855,6 +1868,8 @@ sap.ui.define([
 	QUnit.test("DOM aria properties", function(assert) {
 
 		var oInput = new InputBase().placeAt("content");
+		var fnSetErrorAnnounceSpy  = this.spy(oInput, "setErrorMessageAnnouncementState");
+
 		sap.ui.getCore().applyChanges();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
@@ -1867,6 +1882,8 @@ sap.ui.define([
 		oInput.setValueState(ValueState.Warning);
 		sap.ui.getCore().applyChanges();
 
+		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
+			"The error announcement state should not be changed, when the value state is not Error");
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
 
 		oInput.setValueState(ValueState.Success);
@@ -1882,6 +1899,16 @@ sap.ui.define([
 		oInput.setValueState(ValueState.Error);
 		sap.ui.getCore().applyChanges();
 
+		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
+			"The error announcement state should not be changed, when the control is not focused");
+		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
+
+		oInput.focus();
+		oInput.setValueState(ValueState.Error);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(fnSetErrorAnnounceSpy.calledWith, true,
+			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
 		oInput.rerender();
@@ -1906,6 +1933,7 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
 
 		// cleanup
+		fnSetErrorAnnounceSpy.restore();
 		oInput.destroy();
 		oText.destroy();
 	});
