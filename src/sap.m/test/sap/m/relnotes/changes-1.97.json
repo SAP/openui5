@@ -3,6 +3,120 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "47ea815da7cbb9604a80126e140b3e8fea17cc6e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: acc description added to custom row header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266544"
+          }
+        ]
+      },
+      {
+        "id": "9743b03290c7dfb7adb8117526971b36206992df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appoinment icons are read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266547"
+          }
+        ]
+      },
+      {
+        "id": "d5a0fd6830c04dccc90d48876d4fbfba0371c75f",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: accessibility info is now available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180198390"
+          }
+        ]
+      },
+      {
+        "id": "1f05b1acfb6ca670c3e60ced9e422e9bd6002828",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarLegend: Default values are translatable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170282858"
+          }
+        ]
+      },
+      {
+        "id": "1432aa9162a20f6029d41670d595ba13e5efc449",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Focus inside the picker when it is open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170299136"
+          }
+        ]
+      },
+      {
+        "id": "a78e21ede1e166a94c580ae49576a8be5e758aa7",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: when there is no text or additional text, the icon gets non-decorative",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180274945"
+          }
+        ]
+      },
+      {
+        "id": "c07044dce21a6bf801cb22eecc61278d199e7dfb",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct positioning to the window element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180283652"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500007641772021"
+          }
+        ]
+      },
+      {
+        "id": "8462e116f275b8ffca5ffe32e3e1efcea7f52f79",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Stop infinite spin on Android",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007623142021"
+          }
+        ]
+      },
+      {
+        "id": "0408072b3507d63afcf50960c96cdf0aa1f49b23",
+        "type": "FIX",
+        "text": " sap.m.DateTimeInput: sample adapted to be visible on 320px width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266527"
+          }
+        ]
+      },
+      {
+        "id": "6e32d83d537aac26110230378ca84bbddc989b26",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: no extra output when letter-spacing is applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266521"
+          }
+        ]
+      },
+      {
         "id": "4102c39592034dac8bc867b45934c75fd54ce23f",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: scrollbar does not appear on 200% zoom",
@@ -10,6 +124,17 @@
           {
             "type": "BCP",
             "reference": "2170266513"
+          }
+        ]
+      },
+      {
+        "id": "ffe0442a890618fb64b27d87fa83036ebdd31a8c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Steps taller than viewport displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180339806"
           }
         ]
       },
@@ -32,6 +157,17 @@
           {
             "type": "BCP",
             "reference": "2170266530"
+          }
+        ]
+      },
+      {
+        "id": "7ff1ca9d175b7ac3c18d11ae571131c21254e2c9",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments render propelry with all font sizes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170227747"
           }
         ]
       },

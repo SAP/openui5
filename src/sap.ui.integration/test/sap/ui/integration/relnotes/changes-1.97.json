@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "9743b03290c7dfb7adb8117526971b36206992df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appoinment icons are read",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266547"
+          }
+        ]
+      },
+      {
         "id": "9f667f20e006e3ac2c40e43253b90cfbdf8dcdc0",
         "type": "FIX",
         "text": " sap.f.CalendarInCard: control adjusted on small screen widths or higher zoom factor",
