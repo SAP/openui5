@@ -137,7 +137,7 @@
 												delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 												<mdc:columns>
 													<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID" width="5rem">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" width="100%"/>
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display" width="100%"/>
@@ -149,7 +149,7 @@
 														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display" width="100%"/>
 													</mdc:table.Column>
 													<mdc:table.Column id="FH4--mdc--gridtable--genre" header="Genre" dataProperty="genre_code">
-														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display" width="100%"/>
+														<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display" width="100%" fieldHelp="FHGenre" display="Description"/>
 													</mdc:table.Column>
 												</mdc:columns>
 												<mdc:type>
