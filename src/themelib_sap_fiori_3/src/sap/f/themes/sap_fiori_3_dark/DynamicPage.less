@@ -47,19 +47,12 @@
 	}
 
 	// DynamicPageTitle and Toggle Header Visual Indicator hover state
-	&.sapFDynamicPageTitleClickEnabled {
-		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
-			.title-hover(@sapUiObjectHeaderBackground);
+	&.sapFDynamicPageTitleClickEnabled.sapFDynamicPageTitleForceHovered {
+		.sapFDynamicPageTitle,
+		.sapFDynamicPageTitleTranslucent,
+		.sapFDynamicPageTitleTransparent {
+			background-color: @sapUiObjectHeaderHoverBackground;
 		}
-
-		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitleTranslucent {
-			.title-hover(@sapUiObjectHeaderBackground);
-		}
-
-		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitleTransparent {
-			.title-hover(transparent);
-		}
-
 	}
 }
 
@@ -145,10 +138,6 @@ html[data-sap-ui-browser^="cr"] .sapFDynamicPageHeaderPinButton {
 	color: @sapUiPageFooterTextColor;
 	box-shadow: @sapUiShadowLevel1;
 	border: none;
-}
-
-.title-hover(@backgroundColor) {
-	background-color: lighten(@backgroundColor, 2);
 }
 
 /* Vertically align items in the table-like view with the items in the sap.m.Carousel control.
