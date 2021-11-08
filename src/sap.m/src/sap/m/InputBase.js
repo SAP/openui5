@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'./delegate/ValueStateMessage',
 	'sap/ui/core/message/MessageMixin',
+	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'./InputBaseRenderer',
@@ -29,6 +30,7 @@ function(
 	IconPool,
 	ValueStateMessage,
 	MessageMixin,
+	InvisibleMessage,
 	coreLibrary,
 	Device,
 	InputBaseRenderer,
@@ -298,6 +300,9 @@ function(
 		// handle composition events & validation of composition symbols
 		this._bIsComposingCharacter = false;
 
+		this.setLastValueStateText("");
+		this.setErrorMessageAnnouncementState(false);
+
 		this.fnCloseValueStateOnClick = function() {
 			this.closeValueStateMessage();
 		};
@@ -341,23 +346,39 @@ function(
 	};
 
 	InputBase.prototype.onBeforeRendering = function() {
+		var oFocusDomRef = this.getFocusDomRef();
 		var oFormattedVSText = this.getFormattedValueStateText();
-		var oFormattedVSTextContent = oFormattedVSText && oFormattedVSText.getHtmlText();
-		var oFormattedVSTextAcc = this.getAggregation("_invisibleFormattedValueStateText");
-		var oFormattedVSTextAccContent = oFormattedVSTextAcc && oFormattedVSTextAcc.getHtmlText();
+		var bFormattedValueStateUpdated;
+
+		if (!this._oInvisibleMessage) {
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
+		}
 
 		if (this._bCheckDomValue && !this.bRenderingPhase) {
-
 			// remember dom value in case of invalidation during keystrokes
 			// so the following should only be used onAfterRendering
 			if (this.isActive()) {
-                this._sDomValue = this._getInputValue();
-            } else {
-                this._bCheckDomValue = false;
-            }
+				this._sDomValue = this._getInputValue();
+			} else {
+				this._bCheckDomValue = false;
+			}
 		}
 
-		if (oFormattedVSText && oFormattedVSTextContent !== oFormattedVSTextAccContent) {
+		if (!oFormattedVSText) {
+			bFormattedValueStateUpdated = false;
+		} else {
+			var oFormattedVSTextAcc = this.getAggregation("_invisibleFormattedValueStateText");
+			bFormattedValueStateUpdated = oFormattedVSText.getHtmlText() !== (oFormattedVSTextAcc && oFormattedVSTextAcc.getHtmlText());
+		}
+
+		// The value state error should be announced, when there are dynamic changes
+		// to value state error or value state error message, due to user interaction
+		if (this.getValueState() === ValueState.Error && oFocusDomRef) {
+			var bValueStateUpdated = bFormattedValueStateUpdated || this.getValueStateText() !== this.getLastValueStateText();
+			this.setErrorMessageAnnouncementState(!oFocusDomRef.hasAttribute('aria-invalid') || bValueStateUpdated);
+		}
+
+		if (bFormattedValueStateUpdated) {
 			oFormattedVSTextAcc && oFormattedVSTextAcc.destroy();
 			this.setAggregation("_invisibleFormattedValueStateText", oFormattedVSText.clone());
 		}
@@ -370,6 +391,7 @@ function(
 		var sValueState = this.getValueState();
 		var bIsFocused = this.getFocusDomRef() === document.activeElement;
 		var bClosedValueState = sValueState === ValueState.None;
+		var sValueStateMessageHiddenText = document.getElementById(this.getValueStateMessageId() + '-sr');
 
 		// maybe control is invalidated on keystrokes and
 		// even the value property did not change
@@ -379,6 +401,12 @@ function(
 
 			// so we should keep the dom up-to-date
 			this.$("inner").val(this._sDomValue);
+		}
+
+		// Announce error value state update, only when the visual focus is in the input field
+		if (this.getErrorMessageAnnouncementState() && this.hasStyleClass("sapMFocus")) {
+			sValueStateMessageHiddenText && this._oInvisibleMessage.announce(sValueStateMessageHiddenText.textContent);
+			this.setErrorMessageAnnouncementState(false);
 		}
 
 		this.$("message").text(this.getValueStateText());
@@ -398,6 +426,8 @@ function(
 				oControl.getDomRef() && oControl.getDomRef().setAttribute("tabindex", -1);
 			});
 		}
+
+		this.setLastValueStateText(this.getValueStateText());
 	};
 
 	InputBase.prototype.exit = function() {
@@ -406,8 +436,12 @@ function(
 			this._oValueStateMessage.destroy();
 		}
 
+		if (this.oInvisibleMessage) {
+			this.oInvisibleMessage.destroy();
+			this.oInvisibleMessage = null;
+		}
+
 		this._oValueStateMessage = null;
-		this._oDomRefBeforeRendering = null;
 	};
 
 	/* =========================================================== */
@@ -948,6 +982,42 @@ function(
 	 */
 	InputBase.prototype.getValueStateMessageId = function() {
 		return this.getId() + "-message";
+	};
+
+	/**
+	 * Gets the state of the value state message announcemnt.
+	 *
+	 * @returns {boolean} True, if the error value state should be announced.
+	 */
+	InputBase.prototype.getErrorMessageAnnouncementState = function() {
+		return this._bErrorStateShouldBeAnnounced;
+	};
+
+	/**
+	 * Sets the state of the value state message announcemnt.
+	 *
+	 * @param {boolean} bAnnounce Determines, if the error value state message should be announced.
+	 */
+	InputBase.prototype.setErrorMessageAnnouncementState = function(bAnnounce) {
+		this._bErrorStateShouldBeAnnounced = bAnnounce;
+	};
+
+	/**
+	 * Sets the last value state text.
+	 *
+	 * @param {string} sValueStateText The Last Value State Text to be set
+	 */
+	InputBase.prototype.setLastValueStateText = function(sValueStateText) {
+		this._sLastValueStateText = sValueStateText;
+	};
+
+	/**
+	 * Gets the last stored value state text.
+	 *
+	 * @returns {string} The value state text
+	 */
+	InputBase.prototype.getLastValueStateText = function() {
+		return this._sLastValueStateText;
 	};
 
 	/**

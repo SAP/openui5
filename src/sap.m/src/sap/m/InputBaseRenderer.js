@@ -314,32 +314,20 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 */
 	InputBaseRenderer.renderValueStateAccDom = function(oRm, oControl) {
 		var sValueState = oControl.getValueState();
-
 		if (sValueState === ValueState.None || !oControl.getEditable() || !oControl.getEnabled()) {
 			return;
 		}
 
-		var bShouldBeLiveRegion = document.activeElement !== oControl.getFocusDomRef() || sValueState === ValueState.Error;
-		var sAccDomNodeId = oControl.getValueStateMessageId() + "-sr";
 		var oFormattedValueStateText = oControl.getAggregation("_invisibleFormattedValueStateText");
-		var sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
+		var sValueStateTypeText;
 
-		oRm.openStart("div", sAccDomNodeId).class("sapUiPseudoInvisibleText");
-		// Prevent double announcements for value state messages other than errors (referenced by aria-describedby),
-		// when value state is changed via user interaction
-		// Only make the acc DOM element an "assertive" "live region"when aria-errormessage is used, otherwise
-		// when the element is referenced by "aria-describedby" it is treated as "live region" by default
-		if (bShouldBeLiveRegion) {
-			oRm.attr("aria-live", "assertive");
-		}
 
-		// Tells screen readers to announce the live region as a whole even if only part of it is changed.
-		// This is needed because of the way semantic renderer works - it won't replace text content if it is the same -
-		// the so called in-place DOM patching - and the control will get rerendered when value state is not changed.
-		// For example if only the value state type is changed and not the text, if aria-atomic is not set to 'true'
-		// the value state text won't be announced.
-		oRm.attr("aria-atomic", "true")
-			.openEnd()
+		sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
+
+		oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
+			.class("sapUiPseudoInvisibleText");
+
+		oRm.openEnd()
 			.text(sValueStateTypeText).text(" ");
 
 		if (oFormattedValueStateText) {
