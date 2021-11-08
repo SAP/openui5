@@ -567,6 +567,7 @@ function(
 		var oPickerBtnDomRef = this._oPickerBtn.getDomRef();
 
 		this.fireCancel();
+		this._closeCalendarPickerPopup();
 		oPickerBtnDomRef && oPickerBtnDomRef.focus();
 	};
 
