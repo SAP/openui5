@@ -101,7 +101,12 @@ sap.ui.define([
 			"sap.ui.mdc.field.MultiValueFieldItem",
 			"sap.ui.mdc.ValueHelp",
 			"sap.ui.mdc.valuehelp.Popover",
-			"sap.ui.mdc.valuehelp.Dialog"
+			"sap.ui.mdc.valuehelp.Dialog",
+			"sap.ui.mdc.valuehelp.content.Bool",
+			"sap.ui.mdc.valuehelp.content.Conditions",
+			"sap.ui.mdc.valuehelp.content.FixedList",
+			"sap.ui.mdc.valuehelp.content.MDCTable",
+			"sap.ui.mdc.valuehelp.content.MTable"
 		],
 		extensions: {
 			flChangeHandlers: {
