@@ -27,6 +27,13 @@ sap.ui.define([
 						return "/";
 					}
 				};
+			},
+			getMetadata: function () {
+				return {
+					getDefaultAggregationName: function () {
+						return "items";
+					}
+				};
 			}
 		};
 	}
