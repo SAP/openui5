@@ -2207,8 +2207,6 @@ sap.ui.define([
 			vPreviousValue = aConditions[0] && aConditions[0].values[0];
 		}
 
-		this._bParseError = false; // last parsing result is obsolete if user starts typing
-
 		var oFieldHelp = _getFieldHelp.call(this);
 
 		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
