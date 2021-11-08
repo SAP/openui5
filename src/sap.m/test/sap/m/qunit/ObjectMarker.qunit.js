@@ -782,10 +782,35 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("aria-label of the icon", function (assert) {
+	QUnit.test("aria-label of the icon - IconOnly", function (assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 				visibility: ObjectMarkerVisibility.IconOnly
+			}),
+			oIcon,
+			sType;
+
+		oMarker.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		for (sType in ObjectMarkerType) {
+			// Act
+			oMarker.setType(sType);
+			oIcon = oMarker._getInnerControl()._getIconAggregation();
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.notOk(oIcon.getAlt(), "aria-label is correct for type " + sType);
+		}
+
+		// Cleanup
+		oMarker.destroy();
+	});
+
+	QUnit.test("aria-label of the icon - IconAndText", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker({
+				visibility: ObjectMarkerVisibility.IconAndText
 			}),
 			oIcon,
 			sType;
@@ -805,6 +830,84 @@ sap.ui.define([
 
 		// Cleanup
 		oMarker.destroy();
+	});
+
+	QUnit.test("aria-label of the active icon - IconOnly", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker("OM", {
+				visibility: ObjectMarkerVisibility.IconOnly,
+				press: function () {}
+			}),
+			oTable = new Table({
+				columns : [
+					new Column({
+						header : new Label("labelInTable", {
+							text : "Object Marker (active)"
+						})
+					})
+				],
+				items: [
+					new sap.m.ColumnListItem({
+						cells: [
+							oMarker
+						]
+					})
+				]
+			}).placeAt("qunit-fixture"),
+			sType;
+
+		sap.ui.getCore().applyChanges();
+
+		for (sType in ObjectMarkerType) {
+			// Act
+			oMarker.setType(sType);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oMarker.getDomRef().querySelectorAll("#OM-link")[0].getAttribute("aria-labelledby"), "labelInTable", "aria-labelledby is correct for type " + sType);
+		}
+
+		// Cleanup
+		oTable.destroy();
+	});
+
+	QUnit.test("aria-label of the active icon - IconAndText", function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker("OM", {
+				visibility: ObjectMarkerVisibility.IconAndText,
+				press: function () {}
+			}),
+			oTable = new Table({
+				columns : [
+					new Column({
+						header : new Label("labelInTable", {
+							text : "Object Marker (active)"
+						})
+					})
+				],
+				items: [
+					new sap.m.ColumnListItem({
+						cells: [
+							oMarker
+						]
+					})
+				]
+			}).placeAt("qunit-fixture"),
+			sType;
+
+		sap.ui.getCore().applyChanges();
+
+		for (sType in ObjectMarkerType) {
+			// Act
+			oMarker.setType(sType);
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oMarker.getDomRef().querySelectorAll("#OM-link")[0].getAttribute("aria-labelledby"), "labelInTable OM-link", "aria-labelledby is correct for type " + sType);
+		}
+
+		// Cleanup
+		oTable.destroy();
 	});
 
 	QUnit.test("Tooltips", function (assert) {

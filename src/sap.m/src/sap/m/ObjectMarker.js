@@ -401,7 +401,9 @@ sap.ui.define([
 		if (bIsIconVisible) {
 			oInnerControl.setIcon(oType.icon.src, bSuppressInvalidate);
 			oInnerIcon.setDecorative(!bIsIconOnly); // icon should be decorative if we have text
-			oInnerIcon.setAlt(sText);
+			if (bIsTextVisible) {
+				oInnerIcon.setAlt(sText);
+			}
 			oInnerIcon.setUseIconTooltip(false);
 			this.addStyleClass("sapMObjectMarkerIcon");
 		} else {
@@ -688,6 +690,21 @@ sap.ui.define([
 		}
 
 		return oIcon;
+	};
+
+	/*
+	 * Determines whether self-reference should be added.
+	 *
+	 * @returns {boolean}
+	 * @override
+	 * @private
+	 */
+	CustomLink.prototype._determineSelfReferencePresence = function () {
+		if (this.getIcon() && !this.getText()) {
+			return false;
+		} else {
+			return Link.prototype._determineSelfReferencePresence.apply(this, arguments);
+		}
 	};
 
 	return ObjectMarker;
