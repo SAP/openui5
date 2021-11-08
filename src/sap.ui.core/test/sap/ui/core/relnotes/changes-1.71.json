@@ -1215,5 +1215,21 @@
         ]
       }
     ]
+  },
+  "1.71.40": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "e883f1774f182705fe57f83a17d0b02bb76b04fb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#read: Store deep path w/o URL parameters to improve canonical URL cache performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007478172021"
+          }
+        ]
+      }
+    ]
   }
 }

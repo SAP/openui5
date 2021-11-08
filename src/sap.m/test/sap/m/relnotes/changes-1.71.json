@@ -2893,5 +2893,32 @@
         ]
       }
     ]
+  },
+  "1.71.40": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "bab1b62bf24f1b2711761f1ac9e5c8328913aa04",
+        "type": "FIX",
+        "text": " List: Add ARIA role option to No-Data entry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170185512"
+          }
+        ]
+      },
+      {
+        "id": "e927d84eb8df26bf59721b76ba0bb15efd5dc773",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: optimization of a failing test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170227346"
+          }
+        ]
+      }
+    ]
   }
 }
