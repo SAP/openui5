@@ -207,7 +207,7 @@ sap.ui.define([
 		}
 
 		var oControl = this._getControl();
-		var oTarget = oControl && oControl.getFocusElementForValueHelp && oControl.getFocusElementForValueHelp(this.isTypeahead());
+		var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
 
 		if (oTarget && oTarget.getDomRef()) {
 			oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");

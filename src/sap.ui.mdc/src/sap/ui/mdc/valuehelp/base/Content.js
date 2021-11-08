@@ -182,6 +182,8 @@ sap.ui.define([
 			properties: ["filterValue", "conditions", "config"]
 		});
 
+		this._oOperator = FilterOperatorUtil.getEQOperator(); // use as default if no configuartion
+
 	};
 
 	Content.prototype.exit = function() {
