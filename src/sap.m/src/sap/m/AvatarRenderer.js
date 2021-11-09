@@ -56,6 +56,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				oRm.class(sAvatarClass + "Focusable");
 				oRm.attr("role", "button");
 				oRm.attr("tabindex", 0);
+			} else if (oAvatar.getDecorative()) {
+				oRm.attr("role", "presentation");
+				oRm.attr("aria-hidden", "true");
 			} else {
 				oRm.attr("role", "img");
 			}
