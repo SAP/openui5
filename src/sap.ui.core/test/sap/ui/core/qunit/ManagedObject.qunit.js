@@ -2265,6 +2265,15 @@ sap.ui.define([
 		assert.strictEqual(oSpy.thisValues[0].getId(), oClone.getId());
 	});
 
+	QUnit.test("Clone Object: object property", function(assert) {
+		var obj = new TestManagedObject({objectValue: {ui5object: true, path:"somePathProperty"}});
+		var oSpy = sinon.spy(obj, "bindProperty");
+		var oClone = obj.clone();
+		assert.equal(oClone.getProperty("objectValue"), obj.getProperty("objectValue"));
+		assert.equal(oClone.getProperty("objectValue").path, "somePathProperty");
+		assert.equal(oSpy.callCount, 0);
+	});
+
 	QUnit.module("Invalidate");
 
 	QUnit.test("ShouldKnowIfInvalidateIsSuppressed", function(assert) {
