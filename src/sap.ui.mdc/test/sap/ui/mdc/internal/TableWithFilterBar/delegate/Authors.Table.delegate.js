@@ -1,8 +1,9 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/Field",
+	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, Field, Int32Type) {
+], function (ODataTableDelegate, Field, FieldDisplay, Int32Type) {
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
@@ -29,15 +30,18 @@ sap.ui.define([
 		var oCtrlProperties = { value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance}, editMode: "Display", multipleLines: false};
 
 		if (oProperty.name === "countryOfOrigin_code") {
-			oCtrlProperties.value = "{countryOfOrigin/descr}";
+			oCtrlProperties.additionalValue = "{countryOfOrigin/descr}";
+			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		if (oProperty.name === "regionOfOrigin_code") {
-			oCtrlProperties.value = "{regionOfOrigin/text}";
+			oCtrlProperties.additionalValue = "{regionOfOrigin/text}";
+			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		if (oProperty.name === "cityOfOrigin_city") {
-			oCtrlProperties.value = "{cityOfOrigin/text}";
+			oCtrlProperties.additionalValue = "{cityOfOrigin/text}";
+			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		return new Field(oCtrlProperties);
@@ -46,6 +50,12 @@ sap.ui.define([
 	AuthorsTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+
+			if (oProperty.name === "ID") {
+				oColumn.setWidth("5rem");
+			} else {
+				oColumn.setWidth("15rem");
+			}
 
 			// oColumn.getTemplate().destroy();
 			// if (oColumn._oTemplateClone) {

@@ -2,8 +2,9 @@ sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
+	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, Field, Link, Int32Type) {
+], function (ODataTableDelegate, Field, Link, FieldDisplay, Int32Type) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -33,8 +34,9 @@ sap.ui.define([
 					oProperty.caseSensitive = false;
 				}
 
-				if (oProperty.name === "ID") {
-					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false});
+				if (oProperty.name === "ID" || oProperty.name === "author_ID") {
+					oProperty.typeConfig.typeInstance = new Int32Type({groupingEnabled: false}, {nullable: false}); // needed for Field in table
+					oProperty.formatOptions = {groupingEnabled: false}; // needed for FilterField on settings-FilterBar
 				}
 
 			});
@@ -96,15 +98,25 @@ sap.ui.define([
 
 			return new Field({
 				id: "tFieldLinkAuthor",
-				value: "{author/name}",
-				additionalValue:"{author_ID}",
-				display: "ValueDescription",
+				value: {path: 'author_ID', type: new Int32Type({groupingEnabled: false}, {nullable: false})},
+				additionalValue:"{author/name}",
+				display: FieldDisplay.DescriptionValue,
 				editMode: "Display",
 				fieldInfo: new Link({
 					delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
 				})
 			});
 
+		}
+
+		if (oProperty.name === "classification_code") {
+			oCtrlProperties.additionalValue = "{classification/title}";
+			oCtrlProperties.display = FieldDisplay.Description;
+		}
+
+		if (oProperty.name === "detailgenre_code") {
+			oCtrlProperties.additionalValue = "{detailgenre/title}";
+			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		return new Field(oCtrlProperties);

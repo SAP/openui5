@@ -811,7 +811,7 @@
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" multipleLines="true" editMode="Display" />
 							</mdc:table.Column>
 							<mdc:table.Column id="id1" header="Author ID" dataProperty="author_ID" width="10rem">
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{author/name}" display="ValueDescription" additionalValue="{author_ID}"  editMode="Display" multipleLines="true">
+								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{path: 'author_ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" display="DescriptionValue" additionalValue="{author/name}"  editMode="Display" multipleLines="true">
 									<mdc:fieldInfo>
 										<mdc:Link delegate="{name: 'sap/ui/v4demo/delegate/Books.Link.delegate'}"></mdc:Link>
 									</mdc:fieldInfo>
