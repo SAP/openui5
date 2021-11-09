@@ -66,7 +66,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 		return this;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *
 	 */
@@ -75,7 +75,7 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 		return oBinding;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindList
 	 *
 	 */

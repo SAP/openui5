@@ -32,7 +32,7 @@ sap.ui.define([
 	 */
 	var JSONPropertyBinding = ClientPropertyBinding.extend("sap.ui.model.json.JSONPropertyBinding");
 
-	/**
+	/*
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	JSONPropertyBinding.prototype.setValue = function(oValue){

@@ -26,7 +26,7 @@ sap.ui.define([
 	 */
 	var XMLPropertyBinding = ClientPropertyBinding.extend("sap.ui.model.xml.XMLPropertyBinding");
 
-	/**
+	/*
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	XMLPropertyBinding.prototype.setValue = function(oValue){
