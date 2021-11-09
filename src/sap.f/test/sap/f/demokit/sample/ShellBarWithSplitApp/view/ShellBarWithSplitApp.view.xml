@@ -2,6 +2,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:f="sap.f"
+  	xmlns:core="sap.ui.core"
 	xmlns:tnt="sap.tnt" controllerName="sap.f.sample.ShellBarWithSplitApp.controller.ShellBarWithSplitApp">
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
@@ -29,20 +30,9 @@
 			</f:ShellBar>
 		</tnt:header>
 		<tnt:sideContent>
-			<tnt:SideNavigation expanded="true" selectedKey="{/selectedKey}" itemSelect="onItemSelect">
-				<tnt:NavigationList items="{path: '/navigation'}">
-					<tnt:NavigationListItem text="{title}" icon="{icon}" enabled="{enabled}" expanded="{expanded}" items="{items}" key="{key}">
-						<tnt:NavigationListItem text="{title}" key="{key}" enabled="{enabled}">
-						</tnt:NavigationListItem>
-					</tnt:NavigationListItem>
-				</tnt:NavigationList>
-				<tnt:fixedItem>
-					<tnt:NavigationList items="{path: '/fixedNavigation'}">
-						<tnt:NavigationListItem text="{title}" icon="{icon}">
-						</tnt:NavigationListItem>
-					</tnt:NavigationList>
-				</tnt:fixedItem>
-			</tnt:SideNavigation>
+			<core:Fragment
+					fragmentName="sap.f.sample.ShellBarWithSplitApp.view.SideNavigation"
+					type="XML" />
 		</tnt:sideContent>
 		<tnt:mainContents>
 			<NavContainer id="pageContainer" initialPage="page2">
