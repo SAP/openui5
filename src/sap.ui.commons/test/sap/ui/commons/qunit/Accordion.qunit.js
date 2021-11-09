@@ -181,14 +181,6 @@ sap.ui.define([
 		assert.strictEqual(aSections[0].getContent()[0].$().is(":focus"), true, "The first button is focused");
 	});
 
-	QUnit.test("API test - onThemeChanged", function(assert) {
-		var aSections = this.oAccordion1.getSections();
-		assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
-		aSections[0].onThemeChanged();
-
-		assert.strictEqual(aSections[0].$("hdrL").css("width"), "20px", "The width is 20px");
-	});
-
 	QUnit.test("API test - Enabled property", function(assert) {
 		var aSections = this.oAccordion1.getSections();
 		assert.strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
