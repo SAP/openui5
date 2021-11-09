@@ -3734,6 +3734,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		//Trigger press for Navigate Action Button
 		this.oGenericTile._getNavigateAction().firePress();
 		assert.ok(oButtonPressHandler.calledOnce, "Button press handler called on Button Press");
+		assert.ok(oButtonPressHandler.callCount === 1, "Button press handler called only once");
+		assert.ok(this.oGenericTile._getNavigateAction().mEventRegistry.press.length === 2, "Two event handlers are present");
 		assert.notOk(oTilePressHandler.calledOnce, "Generic Tile press handler is not called on Button Press");
 
 		oButtonPressHandler = sinon.spy();
