@@ -305,15 +305,10 @@ sap.ui.define([
 	/**
 	 * Fires event {@link #event:parseError parseError} to attached listeners.
 	 *
-	 * @param {object} [oParameters] Parameters to pass along with the event
-	 * @param {int} [oParameters.errorCode]
-	 * @param {string} [oParameters.url]
-	 * @param {string} [oParameters.reason]
-	 * @param {string} [oParameters.srcText]
-	 * @param {int} [oParameters.line]
-	 * @param {int} [oParameters.linepos]
-	 * @param {int} [oParameters.filepos]
-	 *
+	 * @param {object} [oParameters]
+	 *   Parameters to pass along with the event; May contain the following parameters:
+	 *   <code>errorCode</code>, <code>url</code>, <code>reason</code>, <code>srcText</code>,
+	 *   <code>line</code>, <code>linePos</code>, <code>filePos</code>
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */

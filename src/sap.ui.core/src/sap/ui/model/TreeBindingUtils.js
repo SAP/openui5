@@ -108,6 +108,8 @@ sap.ui.define(function() {
 		} else if (iNewSectionEndIndex <= oPendingRequest.iSkip || oNewRequest.iSkip >= iPendingSectionEndIndex) {
 			//old and new sections do not overlap, either the new section is completely left or right from the old one
 		}
+
+		return undefined;
 	};
 
 	return TreeBindingUtils;
