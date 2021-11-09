@@ -584,10 +584,7 @@ sap.ui.define([
 	}
 
 	function _determineOperator(aOperators) {
-		this._oOperator = undefined;
-		if (aOperators) {
-			this._oOperator = FilterOperatorUtil.getEQOperator(aOperators);
-		}
+		this._oOperator = FilterOperatorUtil.getEQOperator(aOperators); // if no operators provided use default EQ operator
 	}
 
 	function _getOperator() {
