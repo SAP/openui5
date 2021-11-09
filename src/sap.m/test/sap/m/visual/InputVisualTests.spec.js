@@ -171,15 +171,23 @@ describe("sap.m.InputVisualTests", function() {
 	});
 
 	it("Should visualize input with suggestion separators", function () {
-		var oInput = element(by.id("sugTableInput8"));
-		browser.executeScript("document.getElementById('sugTableInput8').scrollIntoView()").then(function () {
-			oInput.click();
+		var oInput = element(by.id("inputWithTabularSuggestionSeparators"));
 
-			oInput._setSeparateSuggestions(true);
+		browser.executeScript("document.getElementById('inputWithTabularSuggestionSeparators').scrollIntoView()").then(function () {
+			oInput.click();
 
 			// Should show suggestion separators
 			browser.actions().sendKeys("H").perform();
 			expect(takeScreenshot()).toLookAs("suggestion_separators_are_visible");
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+
+			// Disabling tabular suggestion separators
+			browser.executeScript('sap.ui.getCore().byId("inputWithTabularSuggestionSeparators")._setSeparateSuggestions(false)');
+
+			// Should not show suggestion separators
+			browser.actions().sendKeys("H").perform();
+			expect(takeScreenshot()).toLookAs("suggestion_separators_are_not_visible");
 		});
 	});
 });
