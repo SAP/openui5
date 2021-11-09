@@ -28,7 +28,6 @@
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
-        <raw-module name="sap/ui/thirdparty/es6-promise.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
@@ -132,7 +131,6 @@
         <!-- <exclude name="sap/ui/thirdparty/caja-html-sanitizer.js" /> -->
         <exclude name="sap/ui/thirdparty/d3.js" />
         <exclude name="sap/ui/thirdparty/datajs.js" />
-        <exclude name="sap/ui/thirdparty/es6-promise.js" />
         <exclude name="sap/ui/thirdparty/handlebars.js" />
         <!-- <exclude name="sap/ui/thirdparty/hasher.js" /> -->
         <exclude name="sap/ui/thirdparty/IPv6.js" />
@@ -483,7 +481,6 @@
             <pattern partial="true" otherContent="SAP" explanation="LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.">sap/ui/core/cache/LRUPersistentCache.js</pattern>
         </lib>
         <ignore>
-            <file pattern="sap/ui/thirdparty/es6-promise.js" />
             <file pattern="sap/ui/thirdparty/RequestRecorder.js" />
             <file pattern="sap/ui/thirdparty/sinon-ie.js" />
         </ignore>

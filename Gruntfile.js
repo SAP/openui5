@@ -69,7 +69,6 @@ module.exports = function(grunt) {
 						// configuration copied from sap/ui/core/.library
 
 						// files are already part of sap-ui-core.js
-						'!sap/ui/thirdparty/es6-promise.js',
 						'!ui5loader*.js',
 
 						// exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
