@@ -113,25 +113,24 @@
 }
 
 // Styles for compact mode only
-.sapUiSizeCompact {
-	.sapUiIntCard {
-		.sapMLIB.sapUiIntLCI {
-			padding: 0.5rem 1rem ~"calc(0.5rem - 1px)" 1rem;
+.sapUiSizeCompact .sapUiIntCard,
+.sapUiSizeCompact.sapUiIntCard {
+	.sapMLIB.sapUiIntLCI {
+		padding: 0.5rem 1rem ~"calc(0.5rem - 1px)" 1rem;
 
-			&.sapMSLIWithDescription {
-				&:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
-					.sapMLIBContent .sapMSLIDiv {
-						padding: 0.25rem 0; // increase the height of the inner div
-					}
+		&.sapMSLIWithDescription {
+			&:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
+				.sapMLIBContent .sapMSLIDiv {
+					padding: 0.25rem 0; // increase the height of the inner div
 				}
 			}
+		}
 
-			&.sapUiIntLCIIconSize {
-				&XS,
-				&S,
-				&M {
-					padding: 0 1rem 0 1rem;
-				}
+		&.sapUiIntLCIIconSize {
+			&XS,
+			&S,
+			&M {
+				padding: 0 1rem 0 1rem;
 			}
 		}
 	}
@@ -139,7 +138,8 @@
 
 // Shared styles for cozy & compact
 .sapUiIntCard,
-.sapUiSizeCompact .sapUiIntCard {
+.sapUiSizeCompact .sapUiIntCard,
+.sapUiSizeCompact.sapUiIntCard {
 	.sapMLIB.sapUiIntLCI {
 		&.sapMSLIThumbnail {
 			padding: 1.5rem 1rem ~"calc(1.5rem - 1px)" 1rem;
