@@ -15,9 +15,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/integration/util/loadCardEditor",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/integration/designtime/editor/CardEditor",
-	"sap/base/util/ObjectPath",
-	"sap/base/Log"
+	"sap/base/util/ObjectPath"
 ], function (
 	BaseController,
 	Constants,
@@ -35,9 +33,7 @@ sap.ui.define([
 	Device,
 	loadCardEditor,
 	_debounce,
-	CardEditor,
-	ObjectPath,
-	Log
+	ObjectPath
 ) {
 	"use strict";
 
@@ -186,7 +182,7 @@ sap.ui.define([
 				translation: "Translator"
 			}[sMode];
 
-			this._loadCardEditorBundle()
+			this._loadConfigurationEditor()
 				.then(this._cancelIfSampleChanged(function () {
 					return Promise.all([
 						Fragment.load({
@@ -222,16 +218,14 @@ sap.ui.define([
 		},
 
 		//In the translation mode, configuration card editor will be reloaded if user update the language
-		onSwitchLanguage: function (oSelect) {
-			var selectedLanguage = oSelect.getParameters().selectedItem.mProperties.key;
-			var oDialog = oSelect.oSource.getParent();
-			var dialogModel = oDialog.oModels.config;
-			var dialogModelData = dialogModel.getData();
-			dialogModelData.language = selectedLanguage;
-			dialogModel.refresh();
-
+		onSwitchLanguage: function (oEvent) {
+			var selectedLanguage = oEvent.getParameter("selectedItem").getKey();
+			var oDialog = oEvent.getSource().getParent();
+			var dialogModel = oDialog.getModel("config");
+			dialogModel.setProperty("/language", selectedLanguage);
 			var oContent = oDialog.getContent(),
-			oEditor;
+				oEditor;
+
 			for (var i = 0; i < oContent.length; i++) {
 				if (oContent[i].isA("sap.ui.integration.designtime.editor.CardEditor")) {
 					oEditor = oContent[i];
@@ -242,16 +236,19 @@ sap.ui.define([
 				oEditor.destroy();
 			}
 
-			var newEditor = new CardEditor({
-				id: "configurationCard11",
-				card: dialogModelData.cardId,
-				mode: dialogModelData.mode,
-				designtime: dialogModelData.designtime,
-				allowSettings: true,
-				allowDynamicValues: true,
-				language: dialogModelData.language
-			});
-			oDialog.addContent(newEditor);
+			this._loadConfigurationEditor()
+				.then(function (CardEditor) {
+					var newEditor = new CardEditor({
+						id: "configurationCard11",
+						card: dialogModel.getProperty("/cardId"),
+						mode: dialogModel.getProperty("/mode"),
+						designtime: dialogModel.getProperty("/designtime"),
+						allowSettings: true,
+						allowDynamicValues: true,
+						language: dialogModel.getProperty("/language")
+					});
+					oDialog.addContent(newEditor);
+				});
 		},
 
 		onChangeEditor: function (oEvent) {
@@ -402,6 +399,16 @@ sap.ui.define([
 			}
 
 			return this._pLoadCardEditor;
+		},
+
+		_loadConfigurationEditor: function () {
+			if (!this._pLoadConfigurationEditor) {
+				this._pLoadConfigurationEditor = new Promise(function (resolve, reject) {
+					sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], resolve, reject);
+				});
+			}
+
+			return this._pLoadConfigurationEditor;
 		},
 
 		_onCardError: function (oEvent) {
