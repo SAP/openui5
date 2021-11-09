@@ -1,11 +1,10 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Manifest",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Component",
 	"sap/base/Log",
-	"require"
-], function(jQuery, Manifest, URI, Component, Log, require) {
+	"sap/base/util/deepExtend"
+], function(Manifest, URI, Component, Log, deepExtend) {
 
 	"use strict";
 	/*global QUnit*/
@@ -30,11 +29,34 @@ sap.ui.define([
 
 	QUnit.dump.maxDepth = 10;
 
+	// helper
+	function getCompUrl(sComponentName) {
+		return sap.ui.require.toUrl(sComponentName.replace(/\./g, "/"));
+	}
+
 	/*
 	 * SHARED TEST CODE
 	 */
 
 	function moduleSetup(sComponentName, iMetadataVersion, bManifestFirst, bDefineComponentName) {
+
+		// add custom assertions
+		QUnit.assert.sameUrl = function assertSameUrl(actual, expected, message) {
+			this.pushResult({
+				result: new URI(actual).equals(new URI(expected)),
+				actual: actual,
+				expected: expected,
+				message: message
+			});
+		};
+		QUnit.assert.notSameUrl = function assertNotSameUrl(actual, expected, message) {
+			this.pushResult({
+				result: !new URI(actual).equals(new URI(expected)),
+				actual: actual,
+				expected: expected,
+				message: message
+			});
+		};
 
 		if (bManifestFirst) {
 			this.oComponent = sap.ui.getCore().createComponent({
@@ -276,7 +298,7 @@ sap.ui.define([
 			"foo": {}, // getEntry is not allowed for keys without a dot
 			"foo.bar": "string as entry value is not valid!"
 		};
-		this.oExpectedRawManifest = jQuery.extend(true, {}, this.oExpectedManifest);
+		this.oExpectedRawManifest = deepExtend({}, this.oExpectedManifest);
 		this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
 		this.oExpectedRawManifest["sap.app"]["description"] = "{{description}}";
 		this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]
@@ -294,6 +316,8 @@ sap.ui.define([
 		this.oComponent.destroy();
 		this.oComponent = undefined;
 
+		delete QUnit.assert.sameUrl;
+		delete QUnit.assert.notSameUrl;
 	}
 
 	function defineGenericTests() {
@@ -329,20 +353,24 @@ sap.ui.define([
 			if (this.iExpectedMetadataVersion === 1) {
 				assert.ok(true, "Metadata version 1 does not support 'resourceRoots'. Skipping tests...");
 			} else {
-				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
-					.equals(new URI(jQuery.sap.getModulePath("x.y.z"))),
-					"ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-				assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
-					.equals(new URI(jQuery.sap.getModulePath("foo.bar"))),
-					"ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
+				assert.sameUrl(
+					sap.ui.require.toUrl("x/y/z"),
+					getCompUrl(this.oMetadata.getComponentName()) + "/anypath",
+					"ResourceRoot 'x.y.z' registered (" + sap.ui.require.toUrl("x/y/z") + ")");
+				assert.sameUrl(
+					sap.ui.require.toUrl("foo/bar"),
+					getCompUrl(this.oMetadata.getComponentName()) + "/../../foo/bar",
+					"ResourceRoot 'foo.bar' registered (" + sap.ui.require.toUrl("foo/bar") + ")");
 
 				// (server-)absolute resource roots are not allowed and therefore won't be registered!
-				assert.ok(!new URI("http://absolute/uri")
-					.equals(new URI(jQuery.sap.getModulePath("absolute"))),
-					"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-				assert.ok(!new URI("/server/absolute/uri")
-					.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
-					"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
+				assert.notSameUrl(
+					sap.ui.require.toUrl("absolute"),
+					"http://absolute/uri",
+					"ResourceRoot 'absolute' not registered (" + sap.ui.require.toUrl("absolute") + ")");
+				assert.notSameUrl(
+					sap.ui.require.toUrl("server/absolute"),
+					"/server/absolute/uri",
+					"ResourceRoot 'server.absolute' not registered (" + sap.ui.require.toUrl("server/absolute") + ")");
 			}
 		});
 
@@ -541,18 +569,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/anypath"))
-			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
-			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
+		assert.sameUrl(
+			sap.ui.require.toUrl("x/y/z"),
+			getCompUrl(this.oMetadata.getComponentName()) + "/anypath",
+			"ResourceRoot 'x.y.z' registered (" + sap.ui.require.toUrl("x/y/z") + ")");
+		assert.sameUrl(
+			sap.ui.require.toUrl("foo/bar"),
+			getCompUrl(this.oMetadata.getComponentName()) + "/../../foo/bar",
+			"ResourceRoot 'foo.bar' registered (" + sap.ui.require.toUrl("foo/bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		assert.ok(!new URI("http://absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
-			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-		assert.ok(!new URI("/server/absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
-			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
+		assert.notSameUrl(
+			sap.ui.require.toUrl("absolute"),
+			"http://absolute/uri",
+			"ResourceRoot 'absolute' not registered (" + sap.ui.require.toUrl("absolute") + ")");
+		assert.notSameUrl(
+			sap.ui.require.toUrl("server/absolute"),
+			"/server/absolute/uri",
+			"ResourceRoot 'server.absolute' not registered (" + sap.ui.require.toUrl("server/absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
@@ -628,18 +662,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
-			.equals(new URI(jQuery.sap.getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + jQuery.sap.getModulePath("x.y.z") + ")");
-		assert.ok(new URI(jQuery.sap.getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
-			.equals(new URI(jQuery.sap.getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + jQuery.sap.getModulePath("foo.bar") + ")");
+		assert.sameUrl(
+			sap.ui.require.toUrl("x/y/z"),
+			getCompUrl(this.oMetadata.getParent().getComponentName()) + "/anypath",
+			"ResourceRoot 'x.y.z' registered (" + sap.ui.require.toUrl("x/y/z") + ")");
+		assert.sameUrl(
+			sap.ui.require.toUrl("foo/bar"),
+			getCompUrl(this.oMetadata.getComponentName()) + "/../../foo/bar",
+			"ResourceRoot 'foo.bar' registered (" + sap.ui.require.toUrl("foo/bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		assert.ok(!new URI("http://absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("absolute"))),
-			"ResourceRoot 'absolute' not registered (" + jQuery.sap.getModulePath("absolute") + ")");
-		assert.ok(!new URI("/server/absolute/uri")
-			.equals(new URI(jQuery.sap.getModulePath("server.absolute"))),
-			"ResourceRoot 'server.absolute' not registered (" + jQuery.sap.getModulePath("server.absolute") + ")");
+		assert.notSameUrl(
+			sap.ui.require.toUrl("absolute"),
+			"http://absolute/uri",
+			"ResourceRoot 'absolute' not registered (" + sap.ui.require.toUrl("absolute") + ")");
+		assert.notSameUrl(
+			sap.ui.require.toUrl("server/absolute"),
+			"/server/absolute/uri",
+			"ResourceRoot 'server.absolute' not registered (" + sap.ui.require.toUrl("server/absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {

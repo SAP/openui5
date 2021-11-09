@@ -1,10 +1,9 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/support/Support"
 ],
-function(jQuery, Support) {
+function(Support) {
 	"use strict";
 
 	QUnit.test("Load Support module and check App plugins", function(assert) {

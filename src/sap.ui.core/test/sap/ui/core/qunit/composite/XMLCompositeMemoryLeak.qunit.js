@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/qunit/utils/MemoryLeakCheck', 'composites/SimpleText', 'composites/TextToggleButtonNested', 'composites/ForwardText2', 'sap/m/Text'
-], function(jQuery, MemoryLeakCheck, SimpleText, TextToggleButtonNested, ForwardText2, Text) {
+	'sap/ui/qunit/utils/MemoryLeakCheck', 'composites/SimpleText', 'composites/TextToggleButtonNested', 'composites/ForwardText2', 'sap/m/Text'
+], function(MemoryLeakCheck, SimpleText, TextToggleButtonNested, ForwardText2, Text) {
 	"use strict";
 
 	MemoryLeakCheck.checkControl("XMLComposite: SimpleText", function() {

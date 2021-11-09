@@ -1,8 +1,7 @@
 /* global QUnit, sinon*/
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/VersionInfo"
-], function(jQuery, VersionInfo) {
+], function(VersionInfo) {
 	"use strict";
 
 

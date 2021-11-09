@@ -114,7 +114,6 @@ sap.ui.define([
 		}
 
 		function getPerformanceData(oSupportStub) {
-			//var bActive = jQuery.sap.measure.getActive();
 			var aMeasurements = Measurement.getAllMeasurements(true);
 
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements": aMeasurements});

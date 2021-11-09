@@ -558,9 +558,10 @@ sap.ui.define([
 	};
 
 	/**
-	* Returns the event type for a given touch event type base on the current touch event mode (jQuery.sap.touchEventMod).
+	* Returns the event type for a given touch event type, based on the current touch event mode
+	* (EventSimulation.touchEventMode).
 	*
-	 * @param {string} sType The touch event to convert
+	* @param {string} sType The touch event to convert
 	* @return {string} The converted event type.
 	* @private
 	*/

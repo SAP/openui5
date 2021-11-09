@@ -181,7 +181,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/util/
 	 *
 	 * A &lt;link&gt; tag will be added to the head of the HTML page, referring to the given
 	 * CSS resource. The URL of the resource is determined from the given resource name
-	 * by calling {@link jQuery.sap.getResourcePath}.
+	 * by calling {@link sap.ui.require.toUrl}.
 	 *
 	 * A plugin should call this method only when it is {@link #runsAsToolPlugin running inside the tool window}.
 	 *

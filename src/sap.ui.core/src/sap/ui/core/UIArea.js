@@ -1039,8 +1039,8 @@ sap.ui.define([
 	//	if (!this.getMetadata().sEvents) {
 	//
 	//		// shorten the access to the array of events and pseudo events
-	//		var aEv = jQuery.sap.ControlEvents;
-	//		var oPsEv = jQuery.sap.PseudoEvents;
+	//		var aEv = ControlEvents.events;
+	//		var oPsEv = PseudoEvents.events; // required from sap/ui/events/PseudoEvents
 	//
 	//		// create the data structures for the event handler registration
 	//		this.sEvents = "";

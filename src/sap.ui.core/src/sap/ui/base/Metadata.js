@@ -129,11 +129,9 @@ sap.ui.define([
 	Metadata.prototype.afterApplySettings = function() {
 		// create the flattened "all" view
 		if ( this._oParent ) {
-			//this._aAllInterfaces = jQuery.sap.unique(this._oParent._aAllInterfaces.concat(this._aInterfaces));
 			this._aAllPublicMethods = this._oParent._aAllPublicMethods.concat(this._aPublicMethods);
 			this._bInterfacesUnique = false;
 		} else {
-			//this._aAllInterfaces = this._aInterfaces;
 			this._aAllPublicMethods = this._aPublicMethods;
 		}
 

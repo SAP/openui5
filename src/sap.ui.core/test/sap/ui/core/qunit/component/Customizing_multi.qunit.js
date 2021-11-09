@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/ui/base/Event",
-	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/mvc/Controller',
@@ -8,7 +7,7 @@ sap.ui.define([
 	'sap/ui/core/mvc/XMLView',
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	'sap/ui/qunit/QUnitUtils'
-], function(Event, jQuery, Component, ComponentContainer, Controller, View, XMLView, createAndAppendDiv, qutils) {
+], function(Event, Component, ComponentContainer, Controller, View, XMLView, createAndAppendDiv, qutils) {
 
 	"use strict";
 	/*global QUnit, sinon */

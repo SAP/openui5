@@ -304,8 +304,8 @@ sap.ui.define([
 	/**
 	 * Returns the URL of a resource that belongs to the given library and has the given relative location within the library.
 	 * This is mainly meant for static resources like images that are inside the library.
-	 * It is NOT meant for access to JavaScript modules or anything for which a different URL has been registered with jQuery.sap.registerModulePath(). For
-	 * these cases use jQuery.sap.getModulePath().
+	 * It is NOT meant for access to JavaScript modules or anything for which a different URL has been registered with
+	 * sap.ui.loader.config({paths:...}). For these cases use sap.ui.require.toUrl().
 	 * It DOES work, however, when the given sResourcePath starts with "themes/" (= when it is a theme-dependent resource). Even when for this theme a different
 	 * location outside the normal library location is configured.
 	 *
@@ -335,8 +335,8 @@ sap.ui.define([
 	 * is assumed to represent an individual folder. In other words: when a resource name is
 	 * converted to a URL, any dots ('.') are converted to slashes ('/').
 	 *
-	 * <b>Limitation:</b> For the time being, the <b>application root folder</b> is assumed to be
-	 * the same as the folder where the current page resides in.
+	 * <b>Note:</b> The <b>application root folder</b> is assumed to be the same as the folder
+	 * where the current page resides in.
 	 *
 	 * Usage sample:
 	 * <pre>
@@ -352,16 +352,11 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * When applications need a more flexible mapping between resource names and their location,
-	 * they can use {@link jQuery.sap.registerModulePath}.
-	 *
-	 * It is intended to make this configuration obsolete in future releases, but for the time
-	 * being, applications must call this method when they want to store resources relative to
-	 * the assumed application root folder.
+	 * they can use {@link sap.ui.loader.config} with option <code>paths</code>.
 	 *
 	 * @param {string} sNamespace Namespace prefix for which to load resources relative to the application root folder
 	 * @public
 	 * @static
-	 * @see jQuery.sap.registerModulePath
 	 * @deprecated since 1.56, use <code>sap.ui.loader.config</code> instead.
 	 */
 	sap.ui.localResources = function(sNamespace) {

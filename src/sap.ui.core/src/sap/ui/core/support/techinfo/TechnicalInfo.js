@@ -75,7 +75,7 @@ sap.ui.define([
 				return;
 			}
 
-			// set module info passed in from jquery.sap.global
+			// set module info passed in by caller
 			this._oModuleSystemInfo = fnCallback() || {};
 
 			// create dialog lazily

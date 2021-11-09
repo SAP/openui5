@@ -517,11 +517,6 @@ sap.ui.define([
 		return this; // explicitly return 'this' to fix controls that override destroyAggregation wrongly
 	};
 
-
-	/// cyclic dependency
-	//jQuery.sap.require("sap.ui.core.TooltipBase"); /// cyclic dependency
-
-
 	/**
 	 * This triggers immediate rerendering of its parent and thus of itself and its children.
 	 *

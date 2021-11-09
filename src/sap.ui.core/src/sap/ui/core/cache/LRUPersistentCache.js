@@ -885,10 +885,12 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		}
 
 		/**
-		 * Logs a debug message related to certain measurement if log level is debug or higher
+		 * Logs a debug message related to a certain {@link module:sap/ui/performance/Measurement measurement}
+		 * if log level is debug or higher.
+		 *
 		 * @param {string} sMsg the message
 		 * @param {string} sKey the key to log message for
-		 * @param {string} sMsrId the measurementId to use for obtaining the jquery.sap.measure measurement
+		 * @param {string} sMsrId the measurementId to use for obtaining the measurement
 		 */
 		function debugMsr(sMsg, sKey, sMsrId) {
 			//avoid redundant string concatenation & getMeasurement call

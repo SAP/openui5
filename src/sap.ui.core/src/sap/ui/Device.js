@@ -38,7 +38,7 @@ if (typeof window.sap.ui !== "object") {
 	var Device = {};
 
 	////-------------------------- Logging -------------------------------------
-	/* since we cannot use the logging from jquery.sap.global.js, we need to come up with a separate
+	/* since we cannot use the logging from sap/base/Log.js, we need to come up with a separate
 	 * solution for the device API
 	 */
 

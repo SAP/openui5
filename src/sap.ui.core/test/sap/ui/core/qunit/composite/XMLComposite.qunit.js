@@ -1,5 +1,5 @@
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/qunit/QUnitUtils", "sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils", "sap/ui/core/Core",
 	"sap/ui/core/util/XMLPreprocessor", "sap/ui/core/XMLComposite", "sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel", "sap/ui/core/Item", "sap/m/Text", "composites/SimpleText",
 	"composites/SortedList", "composites/TextButton", "composites/TextList",
@@ -8,7 +8,7 @@ sap.ui.define([
 	"composites/TextToggleButtonNested", "composites/TextToggleButtonForwarded",
 	"composites/WrapperLayouter", "composites/TranslatableText", "composites/TranslatableTextLib",
 	"composites/TranslatableTextBundle"
-], function (jQuery, QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
+], function (QUnitUtils, Core, XMLPreprocessor, XMLComposite, Controller, JSONModel, Item,
 			 Text, SimpleText, SortedList, TextButton, TextList, ForwardText, Field, HiddenMetadata,
 			 TemplateTest, ChildOfAbstract, TextToggleButton, TextToggleButtonNested,
 			 TextToggleButtonForwarded, WrapperLayouter, TranslatableText, TranslatableTextLib,
@@ -426,7 +426,7 @@ sap.ui.define([
 			done();
 		});
 		// act: Click on ToggleButton
-		sap.ui.test.qunit.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[1].getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[1].getDomRef());
 		oXMLComposite.destroy();
 	});
 
@@ -437,7 +437,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act: Click on ToggleButton
-		sap.ui.test.qunit.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
 
 		// assert
 		assert.ok(fnFireTextChangedSpy.calledOnce);
@@ -458,7 +458,7 @@ sap.ui.define([
 		assert.equal(oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), false);
 
 		// prepare: Set ToggleButton to 'pressed'
-		sap.ui.test.qunit.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
 
 		assert.equal(oXMLComposite.getAggregation("_content").getItems()[0].getText(), "On", "property 'text' of XMLComposite control");
 		assert.equal(oXMLComposite.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[0].getText(), "On", "property 'text' of sap.m.Text");
@@ -473,7 +473,7 @@ sap.ui.define([
 		});
 
 		// act: Click on 'Refresh' button
-		sap.ui.test.qunit.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[1].getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[1].getDomRef());
 
 		oXMLComposite.destroy();
 	});
@@ -488,7 +488,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act: Click on ToggleButton
-		sap.ui.test.qunit.triggerTouchEvent("tap", oTextToggleButton.getAggregation("_content").getItems()[1].getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oTextToggleButton.getAggregation("_content").getItems()[1].getDomRef());
 
 		// assert
 		assert.ok(fnFireTextChangedSpy.calledOnce);
@@ -512,7 +512,7 @@ sap.ui.define([
 		assert.equal(oToggleButton.getPressed(), false);
 
 		// Click on ToggleButton
-		sap.ui.test.qunit.triggerTouchEvent("tap", oToggleButton.getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oToggleButton.getDomRef());
 
 		assert.equal(oTextToggleButton.getText(), "On");
 		assert.equal(oToggleButton.getPressed(), true);
@@ -524,7 +524,7 @@ sap.ui.define([
 		});
 
 		// Click on 'Refresh' button
-		sap.ui.test.qunit.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[1].getDomRef());
+		QUnitUtils.triggerTouchEvent("tap", oXMLComposite.getAggregation("_content").getItems()[1].getDomRef());
 
 		oXMLComposite.destroy();
 	});
@@ -616,13 +616,13 @@ sap.ui.define([
 			assert.ok(oText.getId().endsWith("myText"), "the text has the correct suffix");
 
 			//Eventing
-			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+			QUnitUtils.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
 			assert.equal(iCount, 1, "Event fired only once");
 			assert.equal(sId, oClone.getId(), "The event is really fired from the clone");
 
 			//To be sure fire from the template
 			oContent = oXMLComposite._getCompositeAggregation();
-			sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+			QUnitUtils.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
 			assert.equal(iCount, 2, "Event fired again");
 			assert.equal(sId, oXMLComposite.getId(), "The event is fired from the template");
 
@@ -1037,8 +1037,8 @@ sap.ui.define([
 	QUnit.test("accessibility", function(assert) {
 		var oField = this.content.getItems()[1];
 		assert.equal(oField.getFocusDomRef().id, "accessible--focus", "FocusDomRef");
-		assert.equal(jQuery("#label").attr("for"), "accessible--focus", "Label points to focusable DomRef");
-		assert.equal(jQuery("#accessible").attr("aria-labelledby"), "label additional", "The focusable dom ref is also labelled by the additional label");
+		assert.equal(document.getElementById("label").getAttribute("for"), "accessible--focus", "Label points to focusable DomRef");
+		assert.equal(document.getElementById("accessible").getAttribute("aria-labelledby"), "label additional", "The focusable dom ref is also labelled by the additional label");
 	});
 
 	QUnit.test("BCP: 002075129400001541162020", function (assert) {

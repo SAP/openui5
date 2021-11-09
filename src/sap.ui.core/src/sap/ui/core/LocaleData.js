@@ -1969,8 +1969,8 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		/*
 		 * Merge a CLDR delta file and a CLDR fallback file.
 		 *
-		 * Note: the contract of this method reg. null values differs from both,
-		 * jQuery.extend as well as jQuery.sap.extend.
+		 * Note: this function can't be replaced by sap/base/util/extend or sap/base/util/merge
+		 * as its contract for null values differs from those modules.
 		 */
 		function merge(obj, fallbackObj) {
 			var name, value, fallbackValue;

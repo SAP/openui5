@@ -1,10 +1,9 @@
 /*global QUnit */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function($, URI, Parameters, waitForThemeApplied) {
+], function(URI, Parameters, waitForThemeApplied) {
 	"use strict";
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
@@ -35,7 +34,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("library.css", function(assert) {
-		var oLink = $.sap.domById("sap-ui-theme-sap.ui.core");
+		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 		var sHref = oLink.getAttribute("href");
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
@@ -63,7 +62,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("custom.css", function(assert) {
-		var oLink = $.sap.domById("sap-ui-core-customcss");
+		var oLink = document.getElementById("sap-ui-core-customcss");
 
 		if (!mOptions.customcss) {
 			assert.ok(!oLink, "There should not be a custom.css resource if not enabled.");
@@ -86,8 +85,8 @@ sap.ui.define([
 		this.initFakeServer();
 
 		// prevent inline data-uri parameter usage and force a json request to test the request params
-		var oLink = $.sap.byId("sap-ui-theme-sap.ui.core");
-		oLink.attr("style", "background-image: none !important;");
+		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
+		oLink.style = "background-image: none !important;";
 
 		// trigger loading library-parameters.json files
 		Parameters.get();
@@ -130,7 +129,7 @@ sap.ui.define([
 		function fnThemeChanged() {
 			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
 
-			var oLink = $.sap.domById("sap-ui-theme-sap.ui.core");
+			var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 			var sHref = oLink.getAttribute("href");
 			var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
@@ -159,7 +158,7 @@ sap.ui.define([
 	QUnit.test("RTL Change", function(assert) {
 		sap.ui.getCore().getConfiguration().setRTL(true);
 
-		var oLink = $.sap.domById("sap-ui-theme-sap.ui.core");
+		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 		var sHref = oLink.getAttribute("href");
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 

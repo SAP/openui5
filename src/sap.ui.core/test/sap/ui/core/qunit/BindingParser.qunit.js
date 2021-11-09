@@ -2,8 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
-	"jquery.sap.strings",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/base/ManagedObject",
@@ -15,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/String",
 	"sap/base/Log"
-], function (jQuery, jQuery0, BindingParser, ExpressionParser, ManagedObject, InvisibleText, Filter,
+], function (BindingParser, ExpressionParser, ManagedObject, InvisibleText, Filter,
 	Sorter, JSONModel, Currency, Date, String, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */

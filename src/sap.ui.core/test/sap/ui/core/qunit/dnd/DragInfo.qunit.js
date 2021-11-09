@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	'./TestControl',
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/base/ManagedObject",
