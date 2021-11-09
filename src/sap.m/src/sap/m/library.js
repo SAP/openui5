@@ -3400,6 +3400,7 @@ sap.ui.define([
 		"FROM",
 		"TO",
 		"YEARTODATE",
+		"DATETOYEAR",
 		"LASTDAYS",
 		"LASTWEEKS",
 		"LASTMONTHS",

@@ -241,6 +241,26 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 		};
 
 		/**
+		 * Returns the year's end date based on a given universal date.
+		 *
+		 * If no date is given, today is used, represented in the session's default calendar.
+		 * If a date is given, the returned date will use the same calendar.
+		 * The time portion of the returned date will be set to the end of the day (23:59:59:999).
+		 *
+		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
+		 * @returns {sap.ui.core.date.UniversalDate} The year's end date for the given universal date
+		 * @private
+		 * @ui5-restricted sap.ui.comp
+		 */
+		UniversalDateUtils.getYearEndDate = function (oUniversalDate) {
+			oUniversalDate = oUniversalDate ? clone(oUniversalDate) : clone(UniversalDateUtils.createNewUniversalDate());
+			oUniversalDate.setFullYear(oUniversalDate.getFullYear() + 1);
+			oUniversalDate.setMonth(0);
+			oUniversalDate.setDate(0);
+			return UniversalDateUtils.resetEndTime(oUniversalDate);
+		};
+
+		/**
 		 * Returns a copy of the given date with the time portion set to 00:00:00.000.
 		 *
 		 * If no date is given, today will be used, represented in the session's default calendar.
@@ -524,6 +544,19 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 				return [
 					UniversalDateUtils.getYearStartDate(oToday),
 					UniversalDateUtils.resetEndTime(oToday)
+				];
+			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with today and end of the current year
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			dateToYear: function () {
+				var oToday = UniversalDateUtils.createNewUniversalDate();
+				return [
+					UniversalDateUtils.resetStartTime(oToday),
+					UniversalDateUtils.getYearEndDate(oToday)
 				];
 			}
 		};

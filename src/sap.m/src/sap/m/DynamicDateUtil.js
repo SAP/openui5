@@ -49,6 +49,7 @@ sap.ui.define([
 			"FROM": new StandardDynamicDateOption({ key: "FROM", valueTypes: ["date"] }),
 			"TO": new StandardDynamicDateOption({ key: "TO", valueTypes: ["date"] }),
 			"YEARTODATE": new StandardDynamicDateOption({ key: "YEARTODATE", valueTypes: [] }),
+			"DATETOYEAR": new StandardDynamicDateOption({ key: "DATETOYEAR", valueTypes: [] }),
 			"TODAYFROMTO": new StandardDynamicDateOption({ key: "TODAYFROMTO", valueTypes: ["int", "int"] }),
 			"QUARTER1": new StandardDynamicDateOption({ key: "QUARTER1", valueTypes: [] }),
 			"QUARTER2": new StandardDynamicDateOption({ key: "QUARTER2", valueTypes: [] }),
