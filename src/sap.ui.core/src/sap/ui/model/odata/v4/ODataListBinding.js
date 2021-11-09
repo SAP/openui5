@@ -221,13 +221,18 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding.
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
+	 *   unchanged
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity) {
+	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
+			bDoNotRequestCount) {
 		var bDestroy,
 			bFireChange = false,
 			sPath = oContext.iIndex === undefined
@@ -237,7 +242,7 @@ sap.ui.define([
 			bReadCount = false,
 			that = this;
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity,
+		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
 			function (iIndex, aEntities) {
 				var sContextPath, sPredicate, sResolvedPath, i$skipIndex, i;
 

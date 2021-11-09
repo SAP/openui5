@@ -2017,13 +2017,13 @@ sap.ui.define([
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity),
+				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity), "~bDoNotRequestCount~",
 				sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					oETagEntity, fnCallback).getResult(),
+					oETagEntity, "~bDoNotRequestCount~", fnCallback).getResult(),
 			oResult);
 	});
 
@@ -2055,12 +2055,12 @@ sap.ui.define([
 			.returns("~");
 		this.mock(oParentBinding).expects("deleteFromCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "EQUIPMENTS('3')", "~",
-				sinon.match.same(oETagEntity), sinon.match.same(fnCallback))
+				sinon.match.same(oETagEntity), "~bDoNotRequestCount~", sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.deleteFromCache(oGroupLock, "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					oETagEntity, fnCallback).getResult(),
+					oETagEntity, "~bDoNotRequestCount~", fnCallback).getResult(),
 			oResult);
 	});
 
@@ -2089,11 +2089,11 @@ sap.ui.define([
 		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "42",
-				sinon.match.same(oETagEntity), sinon.match.same(fnCallback))
+				sinon.match.same(oETagEntity), "~bDoNotRequestCount~", sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve());
 
 		return oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "42", oETagEntity,
-			fnCallback).then();
+			"~bDoNotRequestCount~", fnCallback).then();
 	});
 
 	//*********************************************************************************************

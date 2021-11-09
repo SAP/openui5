@@ -1,0 +1,12 @@
+{
+	"ID": 10,
+	"_Category": {
+		"ID": 1000,
+		"IsActiveEntity": true,
+		"name": "First category"
+	},
+	"DraftAdministrativeData": null,
+	"IsActiveEntity": true,
+	"HasActiveEntity": false,
+	"HasDraftEntity": false
+}

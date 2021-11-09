@@ -1,0 +1,167 @@
+/*!
+ * ${copyright}
+ */
+sap.ui.define([
+	"sap/f/library",
+	"sap/m/MessageBox",
+	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel"
+], function ( library, MessageBox, Controller, Filter, FilterOperator, Sorter, JSONModel) {
+	"use strict";
+
+	var LayoutType = library.LayoutType;
+
+	return Controller.extend("sap.ui.core.sample.odata.v4.Draft.Main", {
+		getNextSortOrder : function (bDescending) {
+			var sNewIcon;
+
+			// choose next sort order: no sort => ascending <-> descending
+			if (bDescending) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bDescending = false;
+			} else {
+				sNewIcon = "sap-icon://sort-descending";
+				bDescending = true;
+			}
+			return {bDescending : bDescending, sNewIcon : sNewIcon};
+		},
+
+		hasPendingChanges : function (vBindingOrContext, sVerb, bIgnoreKeptAlive) {
+			if (vBindingOrContext.hasPendingChanges(bIgnoreKeptAlive)) {
+				MessageBox.error(
+					"There are unsaved changes which will be lost; save or reset changes before "
+					+ sVerb);
+
+				return true;
+			}
+			return false;
+		},
+
+		onCancel : function () {
+			var oObjectPage = this.byId("objectPage"),
+				oDraftContext = oObjectPage.getBindingContext(),
+				oProductsTable = this.getView().byId("Products");
+
+			oDraftContext.replaceWith(this.oActiveContext);
+			oDraftContext.delete("$auto", true);
+
+			oProductsTable.setSelectedItem(
+				oProductsTable.getItems()[this.oActiveContext.getIndex()], true);
+			oObjectPage.setBindingContext(this.oActiveContext);
+			this.oActiveContext = null;
+		},
+
+		onEdit : function () {
+			this.toggleDraft("draftEdit");
+		},
+
+		onExit : function () {
+			this.oUIModel.destroy(); // avoid changes on UI elements if this view destroys
+			Controller.prototype.onExit.apply(this);
+		},
+
+		onFilterProducts : function (oEvent) {
+			var oBinding = this.byId("Products").getBinding("items"),
+				sQuery = oEvent.getParameter("query");
+
+			if (this.hasPendingChanges(oBinding, "filtering", true)) {
+				return;
+			}
+
+			oBinding.filter(sQuery ? new Filter("amount", FilterOperator.GT, sQuery) : null);
+		},
+
+		onInit : function () {
+			this.oUIModel = new JSONModel({
+					sLayout : LayoutType.OneColumn,
+					bSortProductIDDescending : undefined,
+					sSortProductIDIcon : ""
+				}
+			);
+			this.getView().setModel(this.oUIModel, "ui");
+			this.getView().setModel(this.getView().getModel(), "headerContext");
+			this.byId("productsTitle").setBindingContext(
+				this.byId("Products").getBinding("items").getHeaderContext(),
+				"headerContext");
+
+			this.oActiveContext = null; // the previous active context, while a draft is shown
+		},
+
+		onRefreshProduct : function () {
+			var oContext = this.byId("objectPage").getBindingContext();
+
+			if (this.hasPendingChanges(oContext, "refreshing")) {
+				return;
+			}
+			oContext.refresh(undefined, true);
+		},
+
+		onRefreshProducts : function () {
+			var oBinding = this.byId("Products").getBinding("items");
+
+			if (this.hasPendingChanges(oBinding, "refreshing")) {
+				return;
+			}
+			oBinding.refresh();
+		},
+
+		onProductSelect : function (oEvent) {
+			var oContext = oEvent.getParameters().listItem.getBindingContext(),
+				oObjectPage = this.byId("objectPage");
+
+			oContext.setKeepAlive(true);
+			if (oObjectPage.getBindingContext()) {
+				oObjectPage.getBindingContext().setKeepAlive(false);
+			}
+			oObjectPage.setBindingContext(oContext);
+
+			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
+		},
+
+		onSave : function () {
+			this.toggleDraft("draftActivate");
+			//TODO what to do with oDraftContext now?
+		},
+
+		onSortByProductID : function () {
+			var oBinding = this.byId("Products").getBinding("items"),
+				bDescending = this.oUIModel.getProperty("/bSortProductIDDescending"),
+				oSortOrder;
+
+			if (this.hasPendingChanges(oBinding, "sorting", true)) {
+				return;
+			}
+
+			oSortOrder = this.getNextSortOrder(bDescending);
+			oBinding.sort(oSortOrder.bDescending === undefined
+				? undefined
+				: new Sorter("ID", oSortOrder.bDescending)
+			);
+
+			this.oUIModel.setProperty("/bSortProductIDDescending", oSortOrder.bDescending);
+			this.oUIModel.setProperty("/sSortProductIDIcon", oSortOrder.sNewIcon);
+		},
+
+		toggleDraft : function (sAction) {
+			var oObjectPage = this.byId("objectPage"),
+				oActiveContext = oObjectPage.getBindingContext(),
+				oProductsTable = this.getView().byId("Products"),
+				that = this;
+
+			oActiveContext.getModel().bindContext("SampleService." + sAction + "(...)",
+				oActiveContext, {$$inheritExpandSelect : true})
+				.execute("$auto", false, null, true)
+				.then(function (oSiblingContext) {
+					that.oActiveContext = oSiblingContext.getProperty("IsActiveEntity")
+						? null
+						: oActiveContext;
+					oObjectPage.setBindingContext(oSiblingContext);
+					oProductsTable.setSelectedItem(
+						oProductsTable.getItems()[oSiblingContext.getIndex()], true);
+				});
+		}
+	});
+});

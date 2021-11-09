@@ -940,7 +940,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("lockGroup")
 			.withExactArgs(!sGroupId && bTransient ? "$direct" : sGroupId, true, true)
 			.returns(oGroupLock);
-		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
+		this.mock(oContext).expects("_delete")
+			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
 			.returns(oPromise);
 		oPromise.then(function () {
 			that.mock(oModel).expects("getAllBindings").withExactArgs().returns(aBindings);
@@ -953,7 +954,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		return oContext.delete(sGroupId).then(function () {
+		return oContext.delete(sGroupId, "~bDoNotRequestCount~").then(function () {
 			assert.ok(true);
 		}, function () {
 			assert.notOk(true);
@@ -985,7 +986,8 @@ sap.ui.define([
 			.returns(true);
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
 			.returns(oGroupLock);
-		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
+		this.mock(oContext).expects("_delete")
+			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
 			.returns(Promise.reject(oError));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(oModel).expects("reportError")
@@ -993,7 +995,7 @@ sap.ui.define([
 				oError);
 
 		// code under test
-		return oContext.delete("myGroup").then(function () {
+		return oContext.delete("myGroup", "~bDoNotRequestCount~").then(function () {
 			assert.notOk(true);
 		}, function (oError0) {
 			assert.ok(true);
@@ -1066,15 +1068,16 @@ sap.ui.define([
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				sinon.match.same(oContext), sinon.match.same(oETagEntity))
+				sinon.match.same(oContext), sinon.match.same(oETagEntity), "~bDoNotRequestCount~")
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext._delete(oGroupLock, oETagEntity).then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-			assert.strictEqual(oContext.oBinding, oBinding);
-			assert.strictEqual(oContext.oModel, oModel);
-		});
+		return oContext._delete(oGroupLock, oETagEntity, "~bDoNotRequestCount~")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+				assert.strictEqual(oContext.oBinding, oBinding);
+				assert.strictEqual(oContext.oModel, oModel);
+			});
 	});
 
 	//*********************************************************************************************
@@ -1088,11 +1091,12 @@ sap.ui.define([
 				new SyncPromise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), "n/a", sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oGroupLock), "n/a", sinon.match.same(oContext),
+				"~bDoNotRequestCount~")
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext._delete(oGroupLock, {}).then(function (oResult) {
+		return oContext._delete(oGroupLock, {}, "~bDoNotRequestCount~").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
@@ -1115,7 +1119,7 @@ sap.ui.define([
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				sinon.match.same(oContext), undefined)
+				sinon.match.same(oContext), undefined, undefined)
 			.returns(Promise.reject(oError));
 
 		// code under test
@@ -1288,6 +1292,88 @@ sap.ui.define([
 			sinon.assert.calledOnce(fnReporter);
 			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("replaceWith", function () {
+		var oBinding = {
+				checkSuspended : function () {},
+				doReplaceWith : function (/*oOldContext, oElement, sPredicate*/) {}
+			},
+			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oOtherContext = {
+				oBinding : oBinding,
+				iIndex : undefined,
+				getValue : function () {}
+			};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oOtherContext).expects("getValue").withExactArgs().returns("~value~");
+		this.mock(_Helper).expects("getPrivateAnnotation").withExactArgs("~value~", "predicate")
+			.returns("('23')");
+		this.mock(oBinding).expects("doReplaceWith").withExactArgs(oContext, "~value~", "('23')");
+
+		// code under test
+		oContext.replaceWith(oOtherContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("replaceWith: transient context", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
+				SyncPromise.resolve(Promise.resolve()));
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		// #toString calls #isTransient, mock neither of them
+
+		assert.throws(function () {
+			// code under test
+			oContext.replaceWith({/*oOtherContext*/});
+		}, new Error("Cannot replace a transient context: /EMPLOYEES($uid=1)[0|transient]"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("replaceWith: not the same list binding", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oOtherContext = {
+				oBinding : {/*not oBinding*/},
+				toString : function () { return "/TEAMS('1')"; }
+			};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.replaceWith(oOtherContext);
+		}, new Error("Cannot replace with /TEAMS('1')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("replaceWith: already in the collection", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oOtherContext = {
+				oBinding : oBinding,
+				iIndex : 0, // not undefined
+				toString : function () { return "/TEAMS('1')[0]"; }
+			};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.replaceWith(oOtherContext);
+		}, new Error("Cannot replace with /TEAMS('1')[0]"));
 	});
 
 	//*********************************************************************************************

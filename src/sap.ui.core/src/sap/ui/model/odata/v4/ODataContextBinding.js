@@ -232,7 +232,7 @@ sap.ui.define([
 			// deleteFromCache call below. In Context#delete the error is reported.
 		}
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, "", undefined, function () {
+		return this.deleteFromCache(oGroupLock, sEditUrl, "", null, false, function () {
 			oEmptyPathParentBinding._destroyContextAfterDelete();
 		});
 	};
