@@ -16,7 +16,7 @@ sap.ui.define(function() {
 			"jquery.sap.global": {
 				title: "QUnit Page for jquery.sap.global"
 			},
-			"jquery.sap.stubs-jquery-ui-core": {
+			"jquery.sap.stubs-jquery-ui-core_unavoidablySync": {
 				bootCore: false
 			},
 
