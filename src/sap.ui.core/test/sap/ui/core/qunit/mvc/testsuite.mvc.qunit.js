@@ -94,6 +94,14 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
+			XMLTemplateProcessorAsync_unavoidablyUsingInlineStyle: {
+				title: "QUnit Page for XMLTemplateProcessor (async, unavoidably using inline style)",
+				loader: {
+					paths: {
+						"testdata": "test-resources/sap/ui/core/qunit/testdata"
+					}
+				}
+			},
 			XMLTemplateProcessorRequireXML: {
 				title: "QUnit Page for XMLTemplateProcessor - Require in XML",
 				loader: {

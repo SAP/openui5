@@ -688,9 +688,28 @@ function(
 						sId = getId(oView, xmlNode);
 					}
 					if ( sLocalName === "style" ) {
+						// We need to remove the namespace prefix from style nodes
+						// otherwise the style element's content will be output as text and not evaluated as CSS
+						// We do this by manually 'cloning' the style without the NS prefix
+
+						// original node values
+						var aAttributes = xmlNode.attributes; // array-like 'NamedNodeMap'
+						var sTextContent = xmlNode.textContent;
+
+						// 'clone'
+						xmlNode = document.createElement(sLocalName);
+						xmlNode.textContent = sTextContent;
+
+						// copy all non-prefixed attributes
+						//    -> prefixed attributes are invalid HTML
+						for (var j = 0; j < aAttributes.length; j++) {
+							var oAttr = aAttributes[j];
+							if (!oAttr.prefix) {
+								xmlNode.setAttribute(oAttr.name, oAttr.value);
+							}
+						}
 						// avoid encoding of style content by writing the whole tag as unsafeHtml
 						// for compatibility reasons, apply the same ID rewriting as for other tags
-						xmlNode = xmlNode.cloneNode(true);
 						if ( sId != null ) {
 							xmlNode.setAttribute("id", sId);
 						}
