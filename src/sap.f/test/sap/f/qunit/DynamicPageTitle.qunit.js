@@ -1178,7 +1178,7 @@ function (
 				// Assert
 				assert.notOk(oToolbar._getOverflowButton().$().is(":visible"), "Overflow button is not visible when width is enough");
 				fnDone();
-			}, 600);
+			}, 1000);
 		}, 600);
 	});
 
