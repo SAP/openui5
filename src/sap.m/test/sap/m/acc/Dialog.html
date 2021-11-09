@@ -140,7 +140,24 @@
 						oSearchFieldDialog.close();
 					}
 				})
-			});
+			}),
+			oSubtitledDialog = new sap.m.Dialog({
+			subHeader: new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.Title({
+						text: "This is a subtitle",
+					})
+				]
+			}),
+			contentWidth: "40rem",
+			contentHeight: "250px",
+			beginButton: new sap.m.Button({
+				text: "Close",
+				press: function () {
+					oSubtitledDialog.close();
+				}
+			})
+		});
 
 		var page = new sap.m.Page("page", {
 			title: "Dialog Accessibility Test Page",
@@ -198,6 +215,15 @@
 					width: _buttonWidth,
 					press: function () {
 						oSearchFieldDialog.open();
+					}
+				}),
+				new sap.ui.core.HTML({content: "<br>"}),
+				new sap.m.Button('subtitleDialogButton', {
+					text: "subtitle in Dialog",
+					width: _buttonWidth,
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+					press: function () {
+						oSubtitledDialog.open();
 					}
 				})
 			]
