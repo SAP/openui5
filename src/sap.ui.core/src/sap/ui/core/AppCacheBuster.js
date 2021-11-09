@@ -22,8 +22,8 @@ sap.ui.define([
 
 	/*
 	 * The AppCacheBuster is only aware of resources which are relative to the
-	 * current application or have been registered via:
-	 *   - jQuery.sap.registerModulePath
+	 * current application or have been registered via resource mapping (e.g.
+	 * sap.ui.loader.config({paths...})}.
 	 */
 
 	// intercept function to avoid usage of cachebuster

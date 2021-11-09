@@ -1,5 +1,4 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/Component",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ComponentContainer",
@@ -7,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/core/mvc/View",
 	"sap/base/Log"
-], function(jQuery, Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, View, Log) {
+], function(Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, View, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -914,11 +913,11 @@ sap.ui.define([
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/ODataModel"]), "ODataModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
 
-					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/core/mvc/JSONView.js"), "JSONView type loaded");
-					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/model/resource/ResourceModel.js"), "ResourceModel loaded");
-					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/core/routing/Router.js"), "Router loaded");
-					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/model/odata/ODataModel.js"), "ODataModel loaded");
-					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/model/odata/v2/ODataModel.js"), "ODataModel v2 loaded");
+					assert.ok(sap.ui.require("sap/ui/core/mvc/JSONView"), "JSONView type loaded");
+					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
+					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");
+					assert.ok(sap.ui.require("sap/ui/model/odata/ODataModel"), "ODataModel loaded");
+					assert.ok(sap.ui.require("sap/ui/model/odata/v2/ODataModel"), "ODataModel v2 loaded");
 
 					UIComponent.apply(this, arguments);
 				}
@@ -965,7 +964,7 @@ sap.ui.define([
 				},
 				constructor: function() {
 					assert.ok(requireSpy.calledWith(["someCustomRouter"]), "Custom Router required");
-					assert.ok(jQuery.sap.isResourceLoaded("someCustomRouter.js"), "Custom Router loaded");
+					assert.ok(sap.ui.require("someCustomRouter"), "Custom Router loaded");
 					UIComponent.apply(this, arguments);
 				}
 			});
@@ -999,7 +998,7 @@ sap.ui.define([
 				},
 				constructor: function() {
 					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/XMLView"]), "XMLView type required");
-					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/core/mvc/XMLView.js"), "XMLView type loaded");
+					assert.ok(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView type loaded");
 					UIComponent.apply(this, arguments);
 				}
 			});

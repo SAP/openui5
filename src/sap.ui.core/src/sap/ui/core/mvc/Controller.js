@@ -862,7 +862,7 @@ sap.ui.define([
 		 *
 		 * <b>Example for a callback module definition (sync):</b>
 		 * <pre>
-		 * sap.ui.define("my/custom/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		 * sap.ui.define("my/custom/sync/ExtensionProvider", [], function() {
 		 *   var ExtensionProvider = function() {};
 		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
 		 *     if (!bAsync && sControllerName == "my.own.Controller") {
@@ -881,13 +881,13 @@ sap.ui.define([
 		 *     }];
 		 *   };
 		 *   return ExtensionProvider;
-		 * }, true);
+		 * });
 		 * </pre>
 		 *
 		 *
 		 * <b>Example for a callback module definition (async):</b>
 		 * <pre>
-		 * sap.ui.define("my/custom/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		 * sap.ui.define("my/custom/async/ExtensionProvider", [], function() {
 		 *   var ExtensionProvider = function() {};
 		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
 		 *     if (bAsync && sControllerName == "my.own.Controller") {
@@ -911,7 +911,7 @@ sap.ui.define([
 		 *     };
 		 *   };
 		 *   return ExtensionProvider;
-		 * }, true);
+		 * });
 		 * </pre>
 		 *
 		 *

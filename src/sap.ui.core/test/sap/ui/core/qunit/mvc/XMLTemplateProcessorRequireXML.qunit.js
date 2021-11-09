@@ -3,14 +3,13 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/UIComponent',
 	"sap/ui/core/XMLTemplateProcessor",
-	"jquery.sap.xml",
 	"sap/ui/core/mvc/View",
 	"sap/m/InstanceManager",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/XMLView"
-], function(Component, UIComponent, XMLTemplateProcessor, jQuery, View,
+], function(Component, UIComponent, XMLTemplateProcessor, View,
 	InstanceManager, Log, merge, JSONModel, XMLView) {
 	"use strict";
 

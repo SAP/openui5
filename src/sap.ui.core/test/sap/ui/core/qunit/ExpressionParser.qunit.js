@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/base/util/JSTokenizer",
 	"sap/ui/base/BindingParser",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/performance/Measurement",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, JSTokenizer, BindingParser, ExpressionParser, ManagedObject, Icon,
+], function (Log, JSTokenizer, BindingParser, ExpressionParser, ManagedObject, Icon,
 		InvisibleText, JSONModel, ODataUtils, Measurement, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -402,7 +401,7 @@ sap.ui.define([
 		{ binding: "{=[1 2]}", message: "Expected , but instead saw 2", token: "2"},
 		{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
 		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"},
-		// Note: jQuery.sap._createJSTokenizer()#string fails with at: length + 2
+		// Note: sap/base/util/JSTokenizer#string fails with at: length + 2
 		{ binding: "{= '}", message: "Bad string", at: 6}, // nud
 		{ binding: "{= 0 '}", message: "Bad string", at: 8} // led
 	].forEach(function (oFixture) {

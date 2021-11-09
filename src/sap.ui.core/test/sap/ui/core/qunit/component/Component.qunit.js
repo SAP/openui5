@@ -1,5 +1,4 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
@@ -9,9 +8,11 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/base/ManagedObjectRegistry',
 	'sap/base/Log',
+	'sap/base/util/deepExtend',
+	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest, ResourceBundle) {
+], function (Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -97,8 +98,8 @@ sap.ui.define([
 	QUnit.test("Simple Component Instance", function(assert){
 		sap.ui.getCore().applyChanges();
 		assert.ok(document.getElementById("CompCont1"));
-		var elem = jQuery("#buttonComponent---mybutn");
-		assert.equal(elem.text(), "Text changed through settings", "Settings applied");
+		var elem = document.getElementById("buttonComponent---mybutn");
+		assert.equal(elem.textContent, "Text changed through settings", "Settings applied");
 	});
 
 	QUnit.test("Nested Components", function(assert){
@@ -1293,7 +1294,7 @@ sap.ui.define([
 				asyncHints: {},
 				anything: "else"
 			};
-			var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+			var mSettings = deepExtend({}, mConfig.settings, { componentData: mConfig.componentData });
 			oComponent.createComponent(mConfig).then(function(oComponentUsage) {
 				assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 				assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
@@ -1534,7 +1535,7 @@ sap.ui.define([
 					asyncHints: {},
 					anything: "else"
 				};
-				var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+				var mSettings = deepExtend({}, mConfig.settings, { componentData: mConfig.componentData });
 				oComponent.createComponent(mConfig).then(function(oComponentUsage) {
 					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
@@ -1627,7 +1628,7 @@ sap.ui.define([
 				asyncHints: {},
 				anything: "else"
 			};
-			var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+			var mSettings = deepExtend({}, mConfig.settings, { componentData: mConfig.componentData });
 			var oComponentUsage = oComponent.createComponent(mConfig);
 			assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
@@ -1837,7 +1838,7 @@ sap.ui.define([
 		});
 
 		// Register final resourceRoot
-		jQuery.sap.registerModulePath("test.resourceRoots.component1", {
+		LoaderExtensions.registerResourcePath("test/resourceRoots/component1", {
 			"url": "/final/test/resourceRoots/component1",
 			"final": true
 		});
@@ -1873,7 +1874,7 @@ sap.ui.define([
 		});
 
 		// Register final resourceRoot
-		jQuery.sap.registerModulePath("test.resourceRoots.component2", {
+		LoaderExtensions.registerResourcePath("test/resourceRoots/component2", {
 			"url": "/final/test/resourceRoots/component2",
 			"final": true
 		});
@@ -2164,7 +2165,7 @@ sap.ui.define([
 		var oManifestJSONCopy;
 		Component._fnPreprocessManifest = function(oManifestJSON, oConfig) {
 			// Copy is required to check if this method is called with the correct raw manifest but not the modified one
-			oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+			oManifestJSONCopy = deepExtend({}, oManifestJSON);
 
 			// To test if the new app desc change is correctly passed back to the
 			// Component's manifest processing, we just add a new library as a new application dependency
@@ -2219,7 +2220,7 @@ sap.ui.define([
 		// register hook and modify the manifest
 		Component._fnPreprocessManifest = function(oManifestJSON) {
 			// Copy is required to check if it is called with the correct manifest but not the modified one
-			oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+			oManifestJSONCopy = deepExtend({}, oManifestJSON);
 
 			oManifestJSONClosure = oManifestJSON;
 
@@ -2280,7 +2281,7 @@ sap.ui.define([
 		// register hook and modify the manifest
 		Component._fnPreprocessManifest = function(oManifestJSON) {
 			// Copy is required to check if it is called with the correct manifest but not the modified one
-			var oManifestJSONCopy = jQuery.extend(true, {}, oManifestJSON);
+			var oManifestJSONCopy = deepExtend({}, oManifestJSON);
 
 			oManifestJSONClosure = oManifestJSON;
 

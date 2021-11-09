@@ -151,8 +151,8 @@ sap.ui.define([
 	/**
 	 * The SAPUI5 Core Runtime.
 	 *
-	 * Contains the UI5 jQuery plugins (jQuery.sap.*), the Core and all its components,
-	 * base classes for Controls, Components and the Model View Controller classes.
+	 * Contains the UI5 Core and all its components, base classes for Controls,
+	 * Components and the Model View Controller classes.
 	 *
 	 * @namespace
 	 * @alias sap.ui.core

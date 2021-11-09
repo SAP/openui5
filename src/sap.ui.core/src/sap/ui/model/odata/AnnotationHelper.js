@@ -44,7 +44,7 @@ sap.ui.define([
 		 * instructions in XML template views, e.g. <code>&lt;template:with path="meta>Value"
 		 * helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target"></code>.
 		 *
-		 * Since 1.31.0, you DO NOT need to {@link jQuery.sap.require} this module before use.
+		 * Since 1.31.0, you DO NOT need to {@link sap.ui.require} this module before use.
 		 *
 		 * @public
 		 * @since 1.27.0

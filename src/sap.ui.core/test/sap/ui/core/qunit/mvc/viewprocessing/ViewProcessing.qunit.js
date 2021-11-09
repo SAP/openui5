@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/UIArea",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/XMLProcessingMode",
 	"sap/ui/core/StashedControlSupport"
-], function(jQuery, JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, XMLProcessingMode, StashedControlSupport) {
+], function(JSONModel, View, UIArea, UIComponent, Component, ComponentContainer, Label, Panel, HBox, MyGlobal, SyncPromise, XMLView, XMLProcessingMode, StashedControlSupport) {
 
 	"use strict";
 
@@ -28,16 +27,19 @@ sap.ui.define([
 	/* factory shortcuts */
 
 	function testComponentFactory(sComponentName, fnViewFactory, fnViewLoadedCallback) {
-		jQuery.sap.declare(sComponentName + ".Component");
+		var sClassName = sComponentName + ".Component";
+		var sModuleName = sClassName.replace(/\./g, "/");
 
-		UIComponent.extend(sComponentName + ".Component", {
-			createContent: function() {
+		sap.ui.predefine(sModuleName, function() {
+			return UIComponent.extend(sClassName, {
+				createContent: function() {
 
-				var oView = fnViewFactory();
+					var oView = fnViewFactory();
 
-				oView.loaded().then(fnViewLoadedCallback.bind(null, oView, this));
-				return oView; //do it like fiori elements and add it later
-			}
+					oView.loaded().then(fnViewLoadedCallback.bind(null, oView, this));
+					return oView; //do it like fiori elements and add it later
+				}
+			});
 		});
 
 		return sap.ui.component({

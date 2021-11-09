@@ -8,8 +8,7 @@ sap.ui.define([
 	"./AnyViewAsync.qunit",
 	"sap/base/Log",
 	"sap/base/strings/hash",
-	"sap/base/util/LoaderExtensions",
-	"jquery.sap.script"
+	"sap/base/util/LoaderExtensions"
 ], function(
 	Cache,
 	Component,
@@ -19,8 +18,7 @@ sap.ui.define([
 	asyncTestsuite,
 	Log,
 	hash,
-	LoaderExtensions,
-	jQuery
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -342,7 +340,7 @@ sap.ui.define([
 				// inject the preprocessor, ugly, but has to be done to place the spy
 				View._mPreprocessors["XML"] = View._mPreprocessors["XML"] || {};
 				View._mPreprocessors["XML"]["xml"] = View._mPreprocessors["XML"]["xml"] || [];
-				View._mPreprocessors["XML"]["xml"].push({preprocessor: TestPreprocessor, _settings: {assert: jQuery.noop}});
+				View._mPreprocessors["XML"]["xml"].push({preprocessor: TestPreprocessor, _settings: {assert: function(){}}});
 				var oGetCacheKeySpy = sinon.spy(TestPreprocessor, "getCacheKey");
 				return viewFactory({keys: [sKey]}).loaded().then(function(oView) {
 					sinon.assert.calledOnce(oGetCacheKeySpy);

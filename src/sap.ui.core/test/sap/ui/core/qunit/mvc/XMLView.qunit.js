@@ -13,8 +13,8 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Panel',
 	'./AnyView.qunit',
-	'jquery.sap.sjax'
-], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite) {
+	'sap/ui/thirdparty/jquery'
+], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -38,6 +38,17 @@ sap.ui.define([
 		return document.getElementById(RenderManager.RenderPrefixes.Invisible + oControl.getId());
 	}
 
+	// load the XML without parsing
+	var sViewXML;
+	var pViewXMLLoaded = Promise.resolve(
+		jQuery.ajax({
+			url: sap.ui.require.toUrl("example/mvc/test.view.xml"),
+			dataType: "text"
+		})
+	).then(function(sResult) {
+		sViewXML = sResult;
+	});
+
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
 		idsToBeChecked : ["myPanel", "Button1", "localTableId"]
@@ -50,36 +61,36 @@ sap.ui.define([
 
 	// run the full testset for a view created from a string
 	testsuite(oConfig, "XMLView creation via XML string", function() {
-		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
-		// let the XMLView parse it
-		return sap.ui.xmlview({viewContent:xml});
-	});
-
-	// run the full testset for a view created from a XML document
-	testsuite(oConfig, "XMLView creation via XML document", function() {
-		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
-		// parse it and pass the XML document
+		// let the XMLView parse the XML string
 		return sap.ui.xmlview({
-			viewContent: XMLHelper.parse(xml)
+			viewContent: sViewXML
 		});
 	});
 
-	// run the full testset for a view created from a XML document
-	testsuite(oConfig, "XMLView creation via XML node", function() {
-		// load the XML without parsing
-		var xml = jQuery.sap.syncGetText(sap.ui.require.toUrl("example/mvc/test.view.xml"), null, undefined);
-		// parse it and pass the XML document
+	// run the full testset for a view created from an XML document
+	testsuite(oConfig, "XMLView creation via XML document", function() {
+		// parse the XML string and pass the XML document
 		return sap.ui.xmlview({
-			xmlNode: XMLHelper.parse(xml).documentElement
+			viewContent: XMLHelper.parse(sViewXML)
+		});
+	});
+
+	// run the full testset for a view created from the root element of an XML document
+	testsuite(oConfig, "XMLView creation via XML node", function() {
+		// parse the XML string and pass the XML root element
+		return sap.ui.xmlview({
+			xmlNode: XMLHelper.parse(sViewXML).documentElement
 		});
 	});
 
 	// run the full testset for a view created via the generic factory method
 	testsuite(oConfig, "XMLView creation using generic view factory", function() {
-		return sap.ui.view({type:ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
-	}, true);
+		return sap.ui.view({
+			type:ViewType.XML,
+			viewName:"example.mvc.test",
+			viewData:{test:"testdata"}
+		});
+	}, /* bCheckViewData = */ true);
 
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -1209,4 +1220,6 @@ sap.ui.define([
 		});
 	});
 
+	// let test starter wait for the XML to be loaded
+	return pViewXMLLoaded;
 });

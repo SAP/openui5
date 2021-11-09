@@ -94,7 +94,7 @@ sap.ui.define([
 			// Check if <link> element is missing (e.g. misconfigured library)
 			bNoLinkElement = !oStyle;
 
-			// Check if <link> element has finished loading (see jQuery.sap.includeStyleSheet)
+			// Check if <link> element has finished loading (see sap/ui/dom/includeStyleSheet)
 			bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
 
 			// Check for "sheet" object and if rules are available
@@ -142,7 +142,7 @@ sap.ui.define([
 		var aFailedLibs = [];
 
 		if (oThemeCheck._customCSSAdded && oThemeCheck._themeCheckedForCustom === sThemeName) {
-			// include custom style sheet here because it has already been added using jQuery.sap.includeStyleSheet
+			// include custom style sheet here because it has already been added using sap/ui/dom/includeStyleSheet
 			// hence, needs to be checked for successful inclusion, too
 			mLibs[oThemeCheck._CUSTOMID] = {};
 		}

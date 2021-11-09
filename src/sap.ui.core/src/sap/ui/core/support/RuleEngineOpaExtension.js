@@ -118,7 +118,6 @@ sap.ui.define([
 						metadata = options.metadata,
 						executionScope = options.executionScope;
 
-					// private API provided by jquery.sap.global
 					RuleAnalyzer.analyze(executionScope, rules || preset, metadata).then(function () {
 						var analysisHistory = RuleAnalyzer.getAnalysisHistory(),
 							lastAnalysis = { issues: [] };

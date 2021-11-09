@@ -81,8 +81,8 @@ sap.ui.define([
 				 * @SecSink {,XSS} The content of the 'content' property is rendered 1:1 to allow the full
 				 * flexibility of HTML in UI5 applications. Applications therefore must ensure, that they don't
 				 * set malicious content (e.g. derived from user input). UI5 does not provide an HTML validation
-				 * function. jQuery.sap.encodeHTML will encode any HTML relevant character, but this is in
-				 * nearly all cases not what applications want here.
+				 * function. {@link sap/base/security/encodeXML encodeXML} will encode any HTML relevant character,
+				 * but this is in nearly all cases not what applications want here.
 				 */
 				content : {type : "string", group : "Misc", defaultValue : null},
 

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/ui/core/dnd/DragDropInfo",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
