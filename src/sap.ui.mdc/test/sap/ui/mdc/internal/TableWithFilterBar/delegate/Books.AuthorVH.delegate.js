@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/ValueHelpDelegate",
+	"./ValueHelp.delegate",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/valuehelp/content/MTable",

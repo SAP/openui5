@@ -325,6 +325,8 @@ sap.ui.define([
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
 		sinon.spy(ValueHelpDelegateV4, "executeSearch"); //test V4 logic
+		sinon.stub(ValueHelpDelegateV4, "adjustSearch").withArgs({x: "X"}, true, "X").returns("x"); //test V4 logic
+		ValueHelpDelegateV4.adjustSearch.callThrough();
 
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
@@ -332,8 +334,10 @@ sap.ui.define([
 		sinon.spy(oListBinding, "changeParameters");
 		oListBinding.suspend(); // check for resuming
 
-		oMTable.setFilterValue("x");
+		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
+		assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
+		assert.ok(ValueHelpDelegateV4.adjustSearch.calledWith({x: "X"}, true, "X"), "ValueHelpDelegateV4.adjustSearch called parameters");
 		assert.ok(ValueHelpDelegateV4.executeSearch.called, "ValueHelpDelegateV4.executeSearch called");
 		assert.ok(ValueHelpDelegateV4.executeSearch.calledWith({x: "X"}, oListBinding, "x"), "ValueHelpDelegateV4.executeSearch called parameters");
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "x"}), "ListBinding.changeParameters called with search string");
@@ -342,6 +346,7 @@ sap.ui.define([
 		oContainer.getValueHelpDelegate.restore();
 		ValueHelpDelegateV4.isSearchSupported.restore();
 		ValueHelpDelegateV4.executeSearch.restore();
+		ValueHelpDelegateV4.adjustSearch.restore();
 
 	});
 
@@ -1211,6 +1216,8 @@ sap.ui.define([
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
 		sinon.spy(ValueHelpDelegateV4, "executeSearch"); //test V4 logic
+		sinon.stub(ValueHelpDelegateV4, "adjustSearch").withArgs({x: "X"}, false, "i").returns("I"); //test V4 logic
+		ValueHelpDelegateV4.adjustSearch.callThrough();
 
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
@@ -1221,13 +1228,15 @@ sap.ui.define([
 		var oFilterBar = new FilterBar("FB1");
 		oFilterBar.setInternalConditions({
 			additionalText: [Condition.createCondition("Contains", "2")],
-			$search: [Condition.createCondition("StartsWith", "I")]
+			$search: [Condition.createCondition("StartsWith", "i")]
 		});
 
 		oMTable.setFilterBar(oFilterBar);
 		oFilterBar.fireSearch();
 
 		assert.ok(ValueHelpDelegateV4.isSearchSupported.called, "ValueHelpDelegateV4.isSearchSupported called");
+		assert.ok(ValueHelpDelegateV4.adjustSearch.called, "ValueHelpDelegateV4.adjustSearch called");
+		assert.ok(ValueHelpDelegateV4.adjustSearch.calledWith({x: "X"}, false, "i"), "ValueHelpDelegateV4.adjustSearch called parameters");
 		assert.ok(ValueHelpDelegateV4.executeSearch.called, "ValueHelpDelegateV4.executeSearch called");
 		assert.ok(ValueHelpDelegateV4.executeSearch.calledWith({x: "X"}, oListBinding, "I"), "ValueHelpDelegateV4.executeSearch called parameters");
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "I"}), "ListBinding.changeParameters called with search string");
@@ -1244,6 +1253,7 @@ sap.ui.define([
 		oContainer.getValueHelpDelegate.restore();
 		ValueHelpDelegateV4.isSearchSupported.restore();
 		ValueHelpDelegateV4.executeSearch.restore();
+		ValueHelpDelegateV4.adjustSearch.restore();
 
 	});
 

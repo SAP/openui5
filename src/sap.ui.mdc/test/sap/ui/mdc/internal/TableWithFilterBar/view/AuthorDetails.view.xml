@@ -53,7 +53,7 @@
 									<Label text="Country"></Label>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
 										<mdc:dependents>
-											<mdc:ValueHelp id="IOFFVHCountry" title="Countries" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+											<mdc:ValueHelp id="IOFFVHCountry" title="Countries" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:typeahead>
 													<mdcv:Popover >
 														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
@@ -104,7 +104,7 @@
 									<Label text="Region"></Label>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
 										<mdc:dependents>
-											<mdc:ValueHelp id="IOFFVHRegion" title="Regions" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+											<mdc:ValueHelp id="IOFFVHRegion" title="Regions" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:inParameters>
 													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
 												</mdc:inParameters>
@@ -186,7 +186,7 @@
 									<Label text="City"></Label>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" additionalValue="{cityOfOrigin/text}" display="ValueDescription"  editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCity">
 										<mdc:dependents>
-											<mdc:ValueHelp id="IOFFVHCity" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+											<mdc:ValueHelp id="IOFFVHCity" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:inParameters>
 													<mdcf:InParameter id="IOFFVHCity_In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
 													<mdcf:InParameter id="IOFFVHCity_In-Region" value="{regionOfOrigin_code}" helpPath="region_code" />
@@ -269,7 +269,7 @@
 									<mdc:MultiValueField items="{genres}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" change="onMultiChange" display= "Description" fieldHelp="FHAuthorGenre">
 										<mdcf:MultiValueFieldItem key="{path: 'genre/code', type: 'sap.ui.model.odata.type.String'}" description="{genre_label}" />
 										<mdc:dependents>
-											<mdc:ValueHelp id="FHAuthorGenre" delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+											<mdc:ValueHelp id="FHAuthorGenre" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:typeahead>
 													<mdcv:Popover title="Genre">
 														<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">

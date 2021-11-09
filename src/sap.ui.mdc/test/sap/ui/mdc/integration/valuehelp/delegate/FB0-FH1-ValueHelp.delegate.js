@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/ValueHelpDelegate",
+	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/m/Table",

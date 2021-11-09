@@ -51,7 +51,7 @@
 					<mdc:dependents>
 
 						<mdc:ValueHelp id="FH1"
-							delegate="{name: 'sap/ui/mdc/odata/v4/ValueHelpDelegate', payload: {}}">
+							delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 							<mdc:typeahead>
 								<mdcv:Popover >
 									<mdcvc:MTable keyPath="OrderNo" filterFields="$search">
