@@ -23,10 +23,10 @@ sap.ui.define([
 
 		onInit: function () {
 			var oViewModel = new JSONModel({
-				welcomeCarouselShipping: 'sap/ui/demo/cart/img/ShopCarouselShipping.jpg',
-				welcomeCarouselInviteFriend: 'sap/ui/demo/cart/img/ShopCarouselInviteFriend.jpg',
-				welcomeCarouselTablet: 'sap/ui/demo/cart/img/ShopCarouselTablet.jpg',
-				welcomeCarouselCreditCard: 'sap/ui/demo/cart/img/ShopCarouselCreditCard.jpg',
+				welcomeCarouselShipping: 'sap/ui/demo/cart/img/Shipping_273087.jpg',
+				welcomeCarouselInviteFriend: 'sap/ui/demo/cart/img/InviteFriend_276352.jpg',
+				welcomeCarouselTablet: 'sap/ui/demo/cart/img/Tablet_275777.jpg',
+				welcomeCarouselCreditCard: 'sap/ui/demo/cart/img/CreditCard_277268.jpg',
 				Promoted: [],
 				Viewed: [],
 				Favorite: [],
