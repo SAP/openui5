@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/Device",
-	"sap/m/TimePickerSliders",
+	"sap/m/TimePickerClocks",
 	"sap/ui/core/Popup",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/jquery",
@@ -23,7 +23,7 @@ sap.ui.define([
 	DateTime,
 	ODataDateTime,
 	Device,
-	TimePickerSliders,
+	TimePickerClocks,
 	Popup,
 	DateFormat,
 	jQuery,
@@ -210,33 +210,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Time sliders are updated right after popup is open", function(assert) {
-		var done = assert.async();
-		//Prepare
-		var oDTP = new DateTimePicker().placeAt("uiArea1"),
-			oTPS,
-			oSpyUpdateSlidersFn;
-		sap.ui.getCore().applyChanges();
-
-		oDTP._createPopup();
-		oDTP._createPopupContent();
-		oTPS = oDTP._oPopup.getContent()[1].getTimeSliders();
-		oSpyUpdateSlidersFn = sinon.spy(oTPS, "_updateSlidersValues");
-
-		//Act
-		oDTP._openPopup();
-		setTimeout(function() {
-			//Assert
-			assert.equal(oSpyUpdateSlidersFn.callCount, 1, "Once picker is opened, function updateSlidersValues should be called");
-			assert.ok(!oTPS._getFirstSlider().getIsExpanded(), "Once picker is opened, the first slider is expanded");
-
-			//Cleanup
-			oSpyUpdateSlidersFn.restore();
-			oDTP.destroy();
-			done();
-		}, 400);
-	});
-
 	QUnit.test("_fillDateRange works with min date when the current date is out of range", function(assert) {
 		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
 			oNewMinDate = new Date(2014, 0, 1),
@@ -339,16 +312,16 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with initialFocusedDateValue if no value is set", function (assert) {
+	QUnit.test("_fillDateRange should call Calendar's focusDate method and clocks _setTimeValues with initialFocusedDateValue if no value is set", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
-		this.oDTp._oSliders = new TimePickerSliders(this.oDTp.getId() + "-Sliders", {
+		this.oDTp._oClocks = new TimePickerClocks(this.oDTp.getId() + "-clocks", {
 			displayFormat: "hh:mm:ss"
 		});
-		var oSetTimeValuesSpy = this.spy(this.oDTp._oSliders, "_setTimeValues");
+		var oSetTimeValuesSpy = this.spy(this.oDTp._oClocks, "_setTimeValues");
 
 		// act
 		this.oDTp.setInitialFocusedDateValue(oExpectedDateValue);
@@ -363,16 +336,16 @@ sap.ui.define([
 		oSetTimeValuesSpy.restore();
 	});
 
-	QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with currentDate if initialFocusedDateValue and value are not set", function (assert) {
+	QUnit.test("_fillDateRange should call Calendar's focusDate method and clocks _setTimeValues with currentDate if initialFocusedDateValue and value are not set", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {}, removeAllSelectedDates: function() {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
-		this.oDTp._oSliders = new TimePickerSliders(this.oDTp.getId() + "-Sliders", {
+		this.oDTp._oClocks = new TimePickerClocks(this.oDTp.getId() + "-Clocks", {
 			displayFormat: "hh:mm:ss"
 		});
-		var oSetTimeValuesSpy = this.spy(this.oDTp._oSliders, "_setTimeValues");
+		var oSetTimeValuesSpy = this.spy(this.oDTp._oClocks, "_setTimeValues");
 
 		// act
 		this.oDTp._fillDateRange();
@@ -386,17 +359,17 @@ sap.ui.define([
 		oSetTimeValuesSpy.restore();
 	});
 
-	QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with valueDate", function (assert) {
+	QUnit.test("_fillDateRange should call Calendar's focusDate method and clocks _setTimeValues with valueDate", function (assert) {
 		// prepare
 		var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
 			oGetDateValue = this.stub(this.oDTp, "getDateValue").callsFake(function () { return oExpectedDateValue; });
 		this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
 		this.oDTp._oOKButton = { setEnabled: function() {} };
 		this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
-		this.oDTp._oSliders = new TimePickerSliders(this.oDTp.getId() + "-Sliders", {
+		this.oDTp._oClocks = new TimePickerClocks(this.oDTp.getId() + "-Clocks", {
 			displayFormat: "hh:mm:ss"
 		});
-		var oSetTimeValuesSpy = this.spy(this.oDTp._oSliders, "_setTimeValues");
+		var oSetTimeValuesSpy = this.spy(this.oDTp._oClocks, "_setTimeValues");
 
 		// act
 		this.oDTp._fillDateRange();
@@ -444,12 +417,10 @@ sap.ui.define([
 
 	QUnit.test("change date using calendar - open", function(assert) {
 		var done = assert.async(),
-			oSliders,
+			oClocks,
 			aMonths,
 			aDays,
 			oDay,
-			aHours,
-			iIndex,
 			i;
 
 		sValue = "";
@@ -461,8 +432,8 @@ sap.ui.define([
 			assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 			assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
 
-			oSliders = sap.ui.getCore().byId("DTP3-Sliders");
-			assert.equal(oSliders.getAggregation("_columns").length, 3 , "DTP3: number of rendered sliders");
+			oClocks = sap.ui.getCore().byId("DTP3-Clocks");
+			assert.equal(oClocks.getAggregation("_buttons").length, 2 , "DTP3: number of rendered clocks");
 
 			aMonths = jQuery("#DTP3-cal-content").children(".sapUiCalMonthView");
 			aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
@@ -478,15 +449,10 @@ sap.ui.define([
 			// use ENTER to not run into itemNavigation
 			qutils.triggerKeyboardEvent(oDay, KeyCodes.ENTER, false, false, false);
 
-			aHours = jQuery("#DTP3-Sliders-listHours-content").find(".sapMTimePickerItem");
-			for ( iIndex = 0; iIndex < aHours.length; iIndex++) {
-				if (jQuery(aHours[iIndex]).hasClass("sapMTimePickerItemSelected")) {
-					break;
-				}
-			}
-
-			oDTP3._oSliders.getAggregation("_columns")[0].focus();
-			qutils.triggerKeyboardEvent(oDTP3._oSliders.getAggregation("_columns")[0].getDomRef(), KeyCodes.ARROW_DOWN, false, false, false);
+			oDTP3._oClocks.getAggregation("_buttons")[0].focus();
+			qutils.triggerKeyboardEvent(oDTP3._oClocks.getAggregation("_buttons")[0].getDomRef(), KeyCodes.ARROW_UP, false, false, false);
+			sap.ui.getCore().applyChanges();
+			assert.equal(jQuery("#DTP3-Clocks-clockH-selected").text(), "11" , "DTP3: correct hours set after keyboard navigation");
 
 			done();
 		});
@@ -501,7 +467,7 @@ sap.ui.define([
 
 		oDTP3._oPopup.attachEvent("afterClose", function() {
 			assert.ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
-			assert.ok(!jQuery("#DTP3-Sliders").is(":visible"), "Silder is invisible");
+			assert.ok(!jQuery("#DTP3-Clocks").is(":visible"), "Silder is invisible");
 			assert.equal(sId, "DTP3", "Change event fired");
 			assert.equal(sValue, "Feb 10, 2016, 11:11:00 AM", "Value in internal format priovided");
 			assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00 AM", "Value in internal format set");
@@ -586,7 +552,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("When tab is pressed on year button the focus should go to first slider", function(assert) {
+	QUnit.test("When tab is pressed on year button the focus should go to first clock", function(assert) {
 		//Prepare
 		var done = assert.async();
 
@@ -600,13 +566,13 @@ sap.ui.define([
 
 		setTimeout(function() {
 			var oYearButton = oDTP._oPopup.getContent()[1].getCalendar().getAggregation("header").getDomRef("B2"),
-				oHoursSlider = oDTP._oPopup.getContent()[1].getTimeSliders().getAggregation("_columns")[0];
+				oHoursClock = oDTP._oPopup.getContent()[1].getClocks().getAggregation("_buttons")[0];
 			oYearButton.focus();
 			sap.ui.getCore().applyChanges();
 			qutils.triggerKeydown(oYearButton, KeyCodes.TAB);
 			sap.ui.getCore().applyChanges();
 			// Assert
-			assert.strictEqual(oHoursSlider.getDomRef(), document.activeElement, "The slider's value is focused after a tap");
+			assert.strictEqual(oHoursClock.getDomRef(), document.activeElement, "The clock's value is focused after a tap");
 
 			oDTP.destroy();
 			done();
@@ -614,25 +580,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calendar and TimePicker");
-
-	QUnit.test("When the popover is initially opened and there is a tap on the hours slider it should gain focus", function(assert) {
-		//Prepare
-		var oDTP = new DateTimePicker().placeAt("uiArea7");
-
-		//Act
-		oDTP._createPopup();
-		oDTP._createPopupContent();
-		var oRenderSpy = this.spy(oDTP._oPopup.getContent()[1].getTimeSliders().getAggregation("_columns")[0], "focus");
-		sap.ui.getCore().applyChanges();
-		oDTP._openPopup();
-		oDTP._oPopup.getContent()[1].getTimeSliders().getAggregation("_columns")[0].fireTap({ setMarked:  jQuery.noop });
-
-		// Assert
-		assert.strictEqual(oRenderSpy.callCount, 1, "The slider's value is focused after a tap");
-
-		oRenderSpy.restore();
-		oDTP.destroy();
-	});
 
 	QUnit.test("Open picker on small screen", function(assert) {
 		//Prepare
@@ -673,7 +620,7 @@ sap.ui.define([
 						qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
 						sap.ui.getCore().applyChanges();
 						assert.strictEqual(jQuery("#DTP5-cal").css("display"), "none", "Calendar is not visible");
-						assert.strictEqual(jQuery("#DTP5-Sliders").css("display"), "block", "Sliders are visible");
+						assert.strictEqual(jQuery("#DTP5-Clocks").css("display"), "block", "Clocks are visible");
 						oDTP5.destroy();
 						jQuery("html").addClass("sapUiMedia-Std-Desktop");
 						jQuery("html").removeClass("sapUiMedia-Std-Phone");
@@ -804,7 +751,7 @@ sap.ui.define([
 		oDateTimePicker.destroy();
 	});
 
-	QUnit.test("setMinutesStep, setSecondsStep set the steps to the sliders", function(assert) {
+	QUnit.test("setMinutesStep, setSecondsStep set the steps to the clocks", function(assert) {
 		//arrange, act
 		var oDTP = new DateTimePicker({
 			minutesStep: 5,
@@ -818,8 +765,8 @@ sap.ui.define([
 		oDTP._openPopup();
 
 		//asert
-		assert.equal(oDTP._oSliders.getMinutesStep(), 5, "sliders has the correct minutes step");
-		assert.equal(oDTP._oSliders.getSecondsStep(), 4, "sliders has the correct seconds step");
+		assert.equal(oDTP._oClocks.getMinutesStep(), 5, "clocks have the correct minutes step");
+		assert.equal(oDTP._oClocks.getSecondsStep(), 4, "clocks have the correct seconds step");
 
 		//clean
 		oDTP.destroy();

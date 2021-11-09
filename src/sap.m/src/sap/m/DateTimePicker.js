@@ -15,7 +15,6 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/LocaleData',
 	'./DateTimePickerRenderer',
-	'./TimePickerSliders',
 	'./SegmentedButton',
 	'./SegmentedButtonItem',
 	'./ResponsivePopover',
@@ -34,7 +33,6 @@ sap.ui.define([
 	DateFormat,
 	LocaleData,
 	DateTimePickerRenderer,
-	TimePickerSliders,
 	SegmentedButton,
 	SegmentedButtonItem,
 	ResponsivePopover,
@@ -148,15 +146,15 @@ sap.ui.define([
 		library : "sap.m",
 		properties: {
 			/**
-			 * Sets the minutes slider step. If the step is less than 1, it will be automatically converted back to 1.
-			 * The minutes slider is populated only by multiples of the step.
+			 * Sets the minutes step. If the step is less than 1, it will be automatically converted back to 1.
+			 * The minutes clock is populated only by multiples of the step.
 			 * @since 1.56
 			 */
 			minutesStep: {type: "int", group: "Misc", defaultValue: 1 },
 
 			/**
-			 * Sets the seconds slider step. If the step is less than 1, it will be automatically converted back to 1.
-			 * The seconds slider is populated only by multiples of the step.
+			 * Sets the seconds step. If the step is less than 1, it will be automatically converted back to 1.
+			 * The seconds clock is populated only by multiples of the step.
 			 * @since 1.56
 			 */
 			secondsStep: {type: "int", group: "Misc", defaultValue: 1 }
@@ -179,7 +177,7 @@ sap.ui.define([
 			aggregations: {
 				_switcher  : {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 				calendar   : {type: "sap.ui.core.Control", multiple: false},
-				timeSliders: {type: "sap.ui.core.Control", multiple: false}
+				clocks: {type: "sap.ui.core.Control", multiple: false}
 			}
 		},
 
@@ -212,9 +210,9 @@ sap.ui.define([
 				oRm.openEnd();
 				oRm.close("div");
 
-				var oSliders = oPopup.getTimeSliders();
-				if (oSliders) {
-					oRm.renderControl(oSliders);
+				var oClocks = oPopup.getClocks();
+				if (oClocks) {
+					oRm.renderControl(oClocks);
 				}
 
 				oRm.close("div");
@@ -257,9 +255,6 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
-			if (this.getAggregation('timeSliders') && this.getAggregation('timeSliders').getAggregation("_columns")) {
-				this.getAggregation('timeSliders').getAggregation("_columns")[0].setIsExpanded(false);
-			}
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
@@ -275,21 +270,18 @@ sap.ui.define([
 		_switchVisibility: function(sKey) {
 
 			var oCalendar = this.getCalendar();
-			var oSliders = this.getTimeSliders();
+			var oClocks = this.getClocks();
 
-			if (!oCalendar || !oSliders) {
+			if (!oCalendar || !oClocks) {
 				return;
 			}
 
 			if (sKey == "Cal") {
 				oCalendar.$().css("display", "");
-				oSliders.$().css("display", "none");
+				oClocks.$().css("display", "none");
 			} else {
 				oCalendar.$().css("display", "none");
-				oSliders.$().css("display", "");
-				oSliders._updateSlidersValues();
-				oSliders._onOrientationChanged();
-				oSliders.openFirstSlider();
+				oClocks.$().css("display", "");
 			}
 
 		},
@@ -315,7 +307,7 @@ sap.ui.define([
 			if (bIsTabForward) {
 				if (oEvent.target.classList.contains('sapUiCalHeadToday')
 					|| (oEvent.target.classList.contains('sapUiCalHeadBLast') && !this._oDateTimePicker._oCalendar.getShowCurrentDateButton())) {
-					this.getAggregation('timeSliders').getDomRef().children[0].focus();
+					this.getAggregation('clocks').getDomRef().children[0].children[0].focus();
 				}
 			}
 			if (bIsTabBackward && oEvent.target.classList.contains('sapUiCalItem')) {
@@ -343,9 +335,9 @@ sap.ui.define([
 
 		DatePicker.prototype.exit.apply(this, arguments);
 
-		if (this._oSliders) {
-			this._oSliders.destroy();
-			delete this._oSliders;
+		if (this._oClocks) {
+			this._oClocks.destroy();
+			delete this._oClocks;
 		}
 
 		this._oPopupContent = undefined; // is destroyed via popup aggregation - just remove reference
@@ -356,8 +348,8 @@ sap.ui.define([
 
 		DatePicker.prototype.setDisplayFormat.apply(this, arguments);
 
-		if (this._oSliders) {
-			this._oSliders.setDisplayFormat(_getTimePattern.call(this));
+		if (this._oClocks) {
+			this._oClocks.setDisplayFormat(_getTimePattern.call(this));
 		}
 
 		return this;
@@ -368,8 +360,8 @@ sap.ui.define([
 
 		this.setProperty('minutesStep', iMinutesStep, true);
 
-		if (this._oSliders) {
-			this._oSliders.setMinutesStep(iMinutesStep);
+		if (this._oClocks) {
+			this._oClocks.setMinutesStep(iMinutesStep);
 		}
 
 		return this;
@@ -402,8 +394,8 @@ sap.ui.define([
 
 		this.setProperty('secondsStep', iSecondsStep, true);
 
-		if (this._oSliders) {
-			this._oSliders.setSecondsStep(iSecondsStep);
+		if (this._oClocks) {
+			this._oClocks.setSecondsStep(iSecondsStep);
 		}
 
 		return this;
@@ -583,11 +575,6 @@ sap.ui.define([
 		oPopover.oPopup.setAutoCloseAreas([this.getDomRef()]);
 
 		this._oPopup.openBy(this);
-
-		var oSliders = this._oPopup.getContent()[1] && this._oPopup.getContent()[1].getTimeSliders();
-		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
-			setTimeout(oSliders._updateSlidersValues.bind(oSliders), 0);
-		}
 	};
 
 	DateTimePicker.prototype._createPopupContent = function(){
@@ -601,14 +588,14 @@ sap.ui.define([
 			this._oCalendar.attachSelect(_handleCalendarSelect, this);
 		}
 
-		if (!this._oSliders) {
-			this._oSliders = new TimePickerSliders(this.getId() + "-Sliders", {
+		if (!this._oClocks) {
+			this._oClocks = new sap.m.TimePickerClocks(this.getId() + "-Clocks", {
 				minutesStep: this.getMinutesStep(),
 				secondsStep: this.getSecondsStep(),
 				displayFormat: _getTimePattern.call(this),
 				localeId: this.getLocaleId()
-			})._setShouldOpenSliderAfterRendering(true);
-			this._oPopupContent.setTimeSliders(this._oSliders);
+			});
+			this._oPopupContent.setClocks(this._oClocks);
 		}
 
 	};
@@ -653,7 +640,7 @@ sap.ui.define([
 			}
 		}
 
-		this._oSliders._setTimeValues(oDate);
+		this._oClocks._setTimeValues(oDate);
 
 	};
 
@@ -662,8 +649,8 @@ sap.ui.define([
 		var oDate = DatePicker.prototype._getSelectedDate.apply(this, arguments);
 
 		if (oDate) {
-			var oDateTime = this._oSliders.getTimeValues();
-			var sPattern = this._oSliders._getDisplayFormatPattern();
+			var oDateTime = this._oClocks.getTimeValues();
+			var sPattern = this._oClocks._getDisplayFormatPattern();
 			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
 				oDate.setHours(oDateTime.getHours());
 			}
@@ -719,7 +706,7 @@ sap.ui.define([
 	DateTimePicker.prototype._handleWindowResize = function(mParams) {
 		var oSwitcher = this.getAggregation("_popup").getContent()[1].getAggregation("_switcher"),
 			oCalendar = this.getAggregation("_popup").getContent()[1].getCalendar(),
-			oSliders = this.getAggregation("_popup").getContent()[1].getTimeSliders();
+			oClocks = this.getAggregation("_popup").getContent()[1].getClocks();
 
 		if (mParams.name === STANDART_PHONE_RANGESET) {
 			oSwitcher.setVisible(true);
@@ -727,7 +714,7 @@ sap.ui.define([
 			this.getAggregation("_popup").getContent()[1]._switchVisibility(oSwitcher.getSelectedKey());
 		} else {
 			oSwitcher.setVisible(false);
-			oSliders.$().css("display", "");
+			oClocks.$().css("display", "");
 			oCalendar.$().css("display", "");
 		}
 	};
@@ -735,7 +722,6 @@ sap.ui.define([
 	function _handleAfterOpen(oEvent){
 		this.$("inner").attr("aria-expanded", true);
 		this._oCalendar.focus();
-		this._oSliders._onOrientationChanged();
 
 		Device.media.attachHandler(this._handleWindowResize, this);
 	}
