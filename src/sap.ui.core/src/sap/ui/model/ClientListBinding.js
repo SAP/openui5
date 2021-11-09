@@ -101,6 +101,13 @@ sap.ui.define([
 		return aContexts;
 	};
 
+	/*
+	 * @see sap.ui.model.ListBinding#getAllCurrentContexts
+	 */
+	ClientListBinding.prototype.getAllCurrentContexts = function () {
+		return this._getContexts(0, Infinity);
+	};
+
 	/**
 	 * Setter for context
 	 * @param {Object} oContext the new context object
