@@ -47,7 +47,7 @@
 					filtersChanged="onFiltersChanged">
 					<mdc:dependents>
 
-							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH1" noDialog="false" keyPath="OrderNo" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH1" noDialog="false" keyPath="OrderNo" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Orders', key: 'OrderNo'}}">
 								<mdcf:suggestContent>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>

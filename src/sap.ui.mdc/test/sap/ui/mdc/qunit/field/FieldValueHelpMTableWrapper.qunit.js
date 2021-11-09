@@ -1324,6 +1324,8 @@ sap.ui.define([
 		sinon.stub(oValueHelp, "getControlDelegate").returns(FieldValueHelpDelegateV4);
 		sinon.spy(FieldValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
 		sinon.spy(FieldValueHelpDelegateV4, "executeSearch"); //test V4 logic
+		sinon.stub(FieldValueHelpDelegateV4, "adjustSearch").withArgs({}, true, "X").returns("x"); //test V4 logic
+		FieldValueHelpDelegateV4.adjustSearch.callThrough();
 		var oFilter = new Filter({path: "additionalText", operator: "EQ", value1: "Text 2"});
 		var oListBinding = oWrapper.getListBinding(); // just test the call of the ListBinding, we need not to test the table here
 
@@ -1348,23 +1350,36 @@ sap.ui.define([
 		oListBinding.filter.reset();
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
-		var oListBinding = oWrapper.getListBinding();
+		oListBinding = oWrapper.getListBinding();
 		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
 		sinon.spy(oListBinding, "changeParameters");
+		oWrapper._bSuggestion = true; // simulate opened for suggestion
 		oWrapper.applyFilters([oFilter], "X");
 		assert.ok(oListBinding.filter.calledWith([oFilter], "Application"), "ListBinding filtered");
 		assert.ok(FieldValueHelpDelegateV4.isSearchSupported.called, "FieldValueHelpDelegate.isSearchSupported called");
+		assert.ok(FieldValueHelpDelegateV4.adjustSearch.called, "FieldValueHelpDelegate.adjustSearch called");
+		assert.ok(FieldValueHelpDelegateV4.adjustSearch.calledWith({}, true, "X"), "FieldValueHelpDelegate.adjustSearch called parameters");
 		assert.ok(FieldValueHelpDelegateV4.executeSearch.called, "FieldValueHelpDelegate.executeSearch called");
-		assert.ok(FieldValueHelpDelegateV4.executeSearch.calledWith({}, oListBinding, "X"), "FieldValueHelpDelegate.executeSearch called parameters");
-		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
+		assert.ok(FieldValueHelpDelegateV4.executeSearch.calledWith({}, oListBinding, "x"), "FieldValueHelpDelegate.executeSearch called parameters");
+		assert.ok(oListBinding.changeParameters.calledWith({$search: "x"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 		oListBinding.filter.reset();
+		FieldValueHelpDelegateV4.isSearchSupported.resetHistory();
+		FieldValueHelpDelegateV4.adjustSearch.resetHistory();
+		FieldValueHelpDelegateV4.executeSearch.resetHistory();
 
+		oWrapper._bSuggestion = false; // simulate opened for dialog
 		oWrapper.applyFilters([oFilter], "");
+		assert.ok(FieldValueHelpDelegateV4.isSearchSupported.called, "FieldValueHelpDelegate.isSearchSupported called");
+		assert.ok(FieldValueHelpDelegateV4.adjustSearch.called, "FieldValueHelpDelegate.adjustSearch called");
+		assert.ok(FieldValueHelpDelegateV4.adjustSearch.calledWith({}, false, ""), "FieldValueHelpDelegate.adjustSearch called parameters");
+		assert.ok(FieldValueHelpDelegateV4.executeSearch.called, "FieldValueHelpDelegate.executeSearch called");
+		assert.ok(FieldValueHelpDelegateV4.executeSearch.calledWith({}, oListBinding, ""), "FieldValueHelpDelegate.executeSearch called parameters");
 		assert.ok(oListBinding.changeParameters.calledWith({$search: undefined}), "ListBinding.changeParameters called with no search string");
 		oListBinding.filter.reset();
 
 		FieldValueHelpDelegateV4.isSearchSupported.restore();
+		FieldValueHelpDelegateV4.adjustSearch.restore();
 		FieldValueHelpDelegateV4.executeSearch.restore();
 		oValueHelp.getDelegate.restore();
 		oValueHelp.getControlDelegate.restore();

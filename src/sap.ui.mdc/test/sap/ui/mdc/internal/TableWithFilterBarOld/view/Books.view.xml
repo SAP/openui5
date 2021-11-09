@@ -43,7 +43,7 @@
 						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 
-							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" caseSensitive="false">
+							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'title'}}" caseSensitive="false">
 								<mdcf:filterBar>
 									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
 									<vhfb:filterItems>
@@ -129,7 +129,7 @@
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" fieldHelp= "FH2">
 												<mdc:dependents>
-													<mdcf:FieldValueHelp filterFields="$search" title="Date of Birth" id="FH2" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
+													<mdcf:FieldValueHelp filterFields="$search" title="Date of Birth" id="FH2" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'dateOfBirth'}}" />
 												</mdc:dependents>
 											</mdc:FilterField>
 											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 2" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
@@ -181,11 +181,11 @@
 							</mdcf:FieldValueHelp>
 
 							<mdcf:FieldValueHelp title="Published" id="FHPublished"
-								noDialog="false" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
+								noDialog="false" showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'published'}}" />
 
 							<mdcf:FieldValueHelp title="Langugages" id="FHLanguage"
 								noDialog="false" keyPath="code" descriptionPath="name" showConditionPanel="true"
-								filterFields="$search" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+								filterFields="$search" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'code'}}">
 								<mdcf:suggestContent>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
@@ -258,7 +258,7 @@
 
 							<mdcf:FieldValueHelp filterFields="title" title="Classification" id="FHClassification"
 							noDialog="false" keyPath="code" descriptionPath="title" showConditionPanel="true"
-							delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+							delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'code'}}">
 							<mdcf:content>
 								<mdcf:FieldValueHelpMTableWrapper>
 									<mdcf:table>
@@ -289,7 +289,7 @@
 
 							<mdcf:FieldValueHelp title="Sub Genre" id="FHSubGenre" noDialog="false" keyPath="code"
 								descriptionPath="title" showConditionPanel="true"
-								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+								delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'code'}}">
 								<mdcf:inParameters>
 									<mdcf:InParameter id="IOFFVHSub-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHSub-In-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
@@ -392,7 +392,7 @@
 
 							<mdcf:FieldValueHelp title="Detail Genre" id="FHDetailGenre" noDialog="false"
 								keyPath="code" descriptionPath="title" showConditionPanel="true"
-								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+								delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'code'}}">
 								<mdcf:inParameters>
 									<mdcf:InParameter id="IOFFVHDetail-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHDetail-In-Genre" value="{$filters>/conditions/genre_code}" helpPath="genre_code" />
@@ -648,7 +648,7 @@
 						<mdc:dependents>
 							<mdcf:FieldValueHelp title="Sub Genre" id="FHSubGenreSingle" keyPath="code"
 								descriptionPath="title"
-								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+								delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'code'}}">
 								<mdcf:inParameters>
 									<mdcf:InParameter id="IOFFVHSub-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
 									<mdcf:InParameter id="IOFFVHSub-In-Genre-Single" value="{genre_code}" helpPath="genre_code" />
@@ -705,7 +705,7 @@
 			<f2:dependents>
 				<mdcf:FieldValueHelp open="onGenreVHOpen" dataRequested="onGenreVHOpen" filterFields="$search" title="GenreAAAA" id="FHGenre"
 					noDialog="false" keyPath="code" descriptionPath="title" showConditionPanel="true"
-					delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Books', key: 'code'}}">
 					<mdcf:inParameters>
 						<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
 					</mdcf:inParameters>

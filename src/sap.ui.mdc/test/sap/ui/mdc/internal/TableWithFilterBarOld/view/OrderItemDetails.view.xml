@@ -51,7 +51,7 @@
 								<Label text="Book"></Label>
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description">
 									<mdc:dependents>
-										<mdcf:FieldValueHelp filterFields="$search" title="Book" id="FH4" noDialog="false" keyPath="ID" descriptionPath="title" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+										<mdcf:FieldValueHelp filterFields="$search" title="Book" id="FH4" noDialog="false" keyPath="ID" descriptionPath="title" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Orders', key: 'ID'}}">
 										<mdcf:suggestContent>
 											<mdcf:FieldValueHelpMTableWrapper>
 												<mdcf:table>
@@ -102,7 +102,7 @@
 								<Label text="Parent ID"></Label>
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parent_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH5">
 									<mdc:dependents>
-										<mdcf:FieldValueHelp filterFields="$search" title="Parent ID" id="FH5" noDialog="false" keyPath="ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+										<mdcf:FieldValueHelp filterFields="$search" title="Parent ID" id="FH5" noDialog="false" keyPath="ID" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Orders', key: 'ID'}}">
 											<mdcf:content>
 												<mdcf:FieldValueHelpMTableWrapper>
 													<mdcf:table>

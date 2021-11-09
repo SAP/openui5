@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate",
+	"./FieldValueHelp.delegate",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/filterbar/vh/FilterBar"
 ], function (ODataFieldValueHelpDelegate, FilterField, FilterBar) {
