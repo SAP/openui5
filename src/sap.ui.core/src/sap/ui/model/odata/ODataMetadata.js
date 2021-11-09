@@ -775,7 +775,7 @@ sap.ui.define([
 		if (aParts[0].indexOf('.') > -1) {
 			return this._getV4AnnotationObject(oEntityType, oObject, aParts);
 		} else if (aParts.length > 1) {
-			//TODO:namespace handling
+			// Additional namespace handling cannot be done to keep compatibility
 			oNode = oNode[aParts[0]];
 			if (!oNode && oObject.extensions) {
 				for (i = 0; i < oObject.extensions.length; i++) {
