@@ -22668,6 +22668,7 @@ sap.ui.define([
 			]);
 		}).then(function (aResults) {
 			assert.ok(aResults[1] === oActiveArtistContext, "active context preserved");
+			assert.strictEqual(oActiveArtistContext.getIndex(), 0);
 			assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"), "inactivETag*");
 
 			// Note: oInactiveArtistContext.setKeepAlive(false); would be realistic, but we prefer

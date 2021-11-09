@@ -7972,12 +7972,8 @@ sap.ui.define([
 				assert.strictEqual(oExistingContext.iIndex, 42);
 				assert.strictEqual(oOldContext.iIndex, undefined);
 				assert.strictEqual(oBinding.aContexts[42], oExistingContext);
-				assert.deepEqual(oBinding.mPreviousContextsByPath, bKeepAlive ? {
-					"~header~context~path~('1')" : oExistingContext,
-					"~old~context~path~" : oOldContext
-				} : {
-					"~header~context~path~('1')" : oExistingContext
-				});
+				assert.deepEqual(oBinding.mPreviousContextsByPath,
+					bKeepAlive ? {"~old~context~path~" : oOldContext} : {});
 				assert.strictEqual(oBinding.mPreviousContextsByPath["~old~context~path~"],
 					bKeepAlive ? oOldContext : undefined);
 			});
