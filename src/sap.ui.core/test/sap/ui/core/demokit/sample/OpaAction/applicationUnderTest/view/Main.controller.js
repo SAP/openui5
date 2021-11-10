@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/test/actions/Press',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Popover',
-	'sap/m/Input'
-], function (Controller, Press, JSONModel, Popover, Input) {
+	'sap/m/Input',
+	'sap/m/Token'
+], function (Controller, Press, JSONModel, Popover, Input, Token) {
 	"use strict";
 
 	var sDndListContextPath = "/ProductCollection/";
@@ -36,6 +37,16 @@ sap.ui.define([
 				// Opa will wait until the button is not busy
 				oButton.setBusy(false);
 			}, 5000);
+
+			var oMultiInput1 = this.getView().byId("multiInput1");
+			oMultiInput1.setTokens([
+				new Token({text: "Token 1", key: "0001"}),
+				new Token({text: "Token 2", key: "0002"}),
+				new Token({text: "Token 3", key: "0003"}),
+				new Token({text: "Token 4", key: "0004"}),
+				new Token({text: "Token 5", key: "0005"}),
+				new Token({text: "Token 6", key: "0006"})
+			]);
 		},
 
 		onNavButtonPress: function () {

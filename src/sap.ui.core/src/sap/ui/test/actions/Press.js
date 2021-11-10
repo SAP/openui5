@@ -40,6 +40,29 @@ sap.ui.define([
 	var Press = Action.extend("sap.ui.test.actions.Press", /** @lends sap.ui.test.actions.Press.prototype */ {
 
 		metadata : {
+			properties: {
+				/**
+				 * If it is set to <code>true</code>, the Alt Key modifier will be used
+				 * @since 1.97
+				 */
+				altKey: {
+					type: "boolean"
+				},
+				/**
+				 * If it is set to <code>true</code>, the Shift Key modifier will be used
+				 * @since 1.97
+				 */
+				shiftKey: {
+					type: "boolean"
+				},
+				/**
+				 * If it is set to <code>true</code>, the Control Key modifier will be used
+				 * @since 1.97
+				 */
+				ctrlKey: {
+					type: "boolean"
+				}
+			},
 			publicMethods : [ "executeOn" ]
 		},
 
@@ -60,6 +83,10 @@ sap.ui.define([
 			var $ActionDomRef = this.$(oControl),
 				oActionDomRef = $ActionDomRef[0];
 
+			var bAltKey = this.getAltKey();
+			var bCtrlKey = this.getCtrlKey();
+			var bShiftKey = this.getShiftKey();
+
 			if ($ActionDomRef.length) {
 				this.oLogger.timestamp("opa.actions.press");
 				this.oLogger.debug("Pressed the control " + oControl);
@@ -70,7 +97,7 @@ sap.ui.define([
 				this._createAndDispatchMouseEvent("mousedown", oActionDomRef);
 				this.getUtils().triggerEvent("selectstart", oActionDomRef);
 				this._createAndDispatchMouseEvent("mouseup", oActionDomRef);
-				this._createAndDispatchMouseEvent("click", oActionDomRef);
+				this._createAndDispatchMouseEvent("click", oActionDomRef, bShiftKey, bAltKey, bCtrlKey);
 				//Focusout simulation removed in order to fix Press action behavior
 				//since in real scenario manual press action does not fire focusout event
 			}
