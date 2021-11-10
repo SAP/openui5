@@ -208,140 +208,7 @@ sap.ui.define([
 			}
 
 			oGroup.items.forEach(function (oItem) {
-
-				var vLabel = oItem.label,
-					vValue = oItem.value,
-					oLabel,
-					vVisible,
-					oControl,
-					vHref,
-					aBindingParts = [];
-
-				if (typeof oItem.visible == "string") {
-					vVisible = !Utils.hasFalsyValueAsString(oItem.visible);
-				} else {
-					vVisible = oItem.visible;
-				}
-
-				if (vLabel) {
-					// Checks if the label ends with ":" and if not we just add the ":"
-					vLabel = BindingHelper.formattedProperty(vLabel, function (sValue) {
-						return sValue && sValue[sValue.length - 1] === ":" ? sValue : sValue + ":";
-					});
-					oLabel = new Label({
-						text: vLabel,
-						visible: vVisible
-					}).addStyleClass("sapFCardObjectItemLabel");
-				}
-
-				if (vValue && oItem.actions) {
-					oControl = new Link({
-						text: vValue,
-						visible: BindingHelper.reuse(vVisible)
-					});
-					this._oActions.attach({
-						area: ActionArea.ContentItemDetail,
-						actions: oItem.actions,
-						control: this,
-						actionControl: oControl,
-						enabledPropertyName: "enabled"
-					});
-				}
-
-				if (vValue && !oItem.actions && oItem.type) {
-					Log.warning("Usage of Object Group Item property 'type' is deprecated. Use Card Actions for navigation.", null, "sap.ui.integration.widgets.Card");
-
-					switch (oItem.type) {
-						case 'link':
-							oControl = new Link({
-								href: oItem.url || vValue,
-								text: vValue,
-								target: oItem.target || '_blank',
-								visible: BindingHelper.reuse(vVisible)
-							});
-							break;
-						case 'email':
-							if (oItem.value) {
-								aBindingParts.push(oItem.value);
-							}
-							if (oItem.emailSubject) {
-								aBindingParts.push(oItem.emailSubject);
-							}
-
-							vHref = BindingHelper.formattedProperty(aBindingParts, function (sValue, sEmailSubject) {
-									if (sEmailSubject) {
-										return "mailto:" + sValue + "?subject=" + sEmailSubject;
-									} else {
-										return "mailto:" + sValue;
-									}
-								});
-
-							oControl = new Link({
-								href: vHref,
-								text: vValue,
-								visible: BindingHelper.reuse(vVisible)
-							});
-							break;
-						case 'phone':
-							vHref = BindingHelper.formattedProperty(vValue, function (sValue) {
-								return "tel:" + sValue;
-							});
-							oControl = new Link({
-								href: vHref,
-								text: vValue,
-								visible: BindingHelper.reuse(vVisible)
-							});
-							break;
-						default:
-					}
-				}
-
-				if (vValue && !oControl) {
-					oControl = new Text({
-						text: vValue,
-						visible: BindingHelper.reuse(vVisible)
-					});
-				}
-
-				if (oControl) {
-					oControl.addStyleClass("sapFCardObjectItemText");
-				}
-
-				if (oItem.icon) {
-					var vSrc = BindingHelper.formattedProperty(oItem.icon.src, function (sValue) {
-						return this._oIconFormatter.formatSrc(sValue);
-					}.bind(this));
-
-					var oAvatar = new Avatar({
-						displaySize: oItem.icon.size || AvatarSize.XS,
-						src: vSrc,
-						initials: oItem.icon.text,
-						displayShape: oItem.icon.shape,
-						tooltip: oItem.icon.alt,
-						backgroundColor: oItem.icon.backgroundColor || (oItem.icon.text ? undefined : AvatarColor.Transparent)
-					}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
-
-					var oVbox = new VBox({
-						renderType: FlexRendertype.Bare,
-						items: [
-							oLabel,
-							oControl
-						]
-					});
-					var oHBox = new HBox({
-						visible: vVisible,
-						renderType: FlexRendertype.Bare,
-						items: [
-							oAvatar,
-							oVbox
-						]
-					}).addStyleClass("sapFCardObjectItemLabel");
-
-					oGroupContainer.addItem(oHBox);
-				} else {
-					oGroupContainer.addItem(oLabel);
-					oGroupContainer.addItem(oControl);
-				}
+				this._createGroupItems(oItem).forEach(oGroupContainer.addItem, oGroupContainer);
 			}, this);
 			oContainer.addContent(oGroupContainer);
 		}, this);
@@ -351,6 +218,152 @@ sap.ui.define([
 			actions: oConfiguration.actions,
 			control: this
 		});
+	};
+
+	ObjectContent.prototype._createGroupItems = function (oItem) {
+		var vLabel = oItem.label,
+			vValue = oItem.value,
+			oLabel,
+			vVisible,
+			oControl,
+			vHref,
+			aBindingParts = [];
+
+		if (typeof oItem.visible == "string") {
+			vVisible = !Utils.hasFalsyValueAsString(oItem.visible);
+		} else {
+			vVisible = oItem.visible;
+		}
+
+		if (vLabel) {
+			// Checks if the label ends with ":" and if not we just add the ":"
+			vLabel = BindingHelper.formattedProperty(vLabel, function (sValue) {
+				return sValue && sValue[sValue.length - 1] === ":" ? sValue : sValue + ":";
+			});
+			oLabel = new Label({
+				text: vLabel,
+				visible: vVisible
+			}).addStyleClass("sapFCardObjectItemLabel");
+		}
+
+		if (vValue && oItem.actions) {
+			oControl = new Link({
+				text: vValue,
+				visible: BindingHelper.reuse(vVisible)
+			});
+
+			if (oLabel) {
+				oControl.addAriaLabelledBy(oLabel);
+			} else {
+				Log.warning("Missing label for Object group item with actions.", null, "sap.ui.integration.widgets.Card");
+			}
+
+			this._oActions.attach({
+				area: ActionArea.ContentItemDetail,
+				actions: oItem.actions,
+				control: this,
+				actionControl: oControl,
+				enabledPropertyName: "enabled"
+			});
+		}
+
+		// deprecated "type" property
+		if (vValue && !oItem.actions && oItem.type) {
+			Log.warning("Usage of Object Group Item property 'type' is deprecated. Use Card Actions for navigation.", null, "sap.ui.integration.widgets.Card");
+
+			switch (oItem.type) {
+				case 'link':
+					oControl = new Link({
+						href: oItem.url || vValue,
+						text: vValue,
+						target: oItem.target || '_blank',
+						visible: BindingHelper.reuse(vVisible)
+					});
+					break;
+				case 'email':
+					if (oItem.value) {
+						aBindingParts.push(oItem.value);
+					}
+					if (oItem.emailSubject) {
+						aBindingParts.push(oItem.emailSubject);
+					}
+
+					vHref = BindingHelper.formattedProperty(aBindingParts, function (sValue, sEmailSubject) {
+							if (sEmailSubject) {
+								return "mailto:" + sValue + "?subject=" + sEmailSubject;
+							} else {
+								return "mailto:" + sValue;
+							}
+						});
+
+					oControl = new Link({
+						href: vHref,
+						text: vValue,
+						visible: BindingHelper.reuse(vVisible)
+					});
+					break;
+				case 'phone':
+					vHref = BindingHelper.formattedProperty(vValue, function (sValue) {
+						return "tel:" + sValue;
+					});
+					oControl = new Link({
+						href: vHref,
+						text: vValue,
+						visible: BindingHelper.reuse(vVisible)
+					});
+					break;
+				default:
+			}
+		}
+
+		if (vValue && !oControl) {
+			oControl = new Text({
+				text: vValue,
+				visible: BindingHelper.reuse(vVisible)
+			});
+		}
+
+		if (oControl) {
+			oControl.addStyleClass("sapFCardObjectItemText");
+		}
+
+		if (oItem.icon) {
+			var oVbox = new VBox({
+				renderType: FlexRendertype.Bare,
+				items: [
+					oLabel,
+					oControl
+				]
+			});
+			var oHBox = new HBox({
+				visible: vVisible,
+				renderType: FlexRendertype.Bare,
+				items: [
+					this._createGroupItemAvatar(oItem.icon),
+					oVbox
+				]
+			}).addStyleClass("sapFCardObjectItemLabel");
+			return [oHBox];
+		} else {
+			return [oLabel, oControl];
+		}
+	};
+
+	ObjectContent.prototype._createGroupItemAvatar = function (oIconConfiguration) {
+		var vSrc = BindingHelper.formattedProperty(oIconConfiguration.src, function (sValue) {
+			return this._oIconFormatter.formatSrc(sValue);
+		}.bind(this));
+
+		var oAvatar = new Avatar({
+			displaySize: oIconConfiguration.size || AvatarSize.XS,
+			src: vSrc,
+			initials: oIconConfiguration.text,
+			displayShape: oIconConfiguration.shape,
+			tooltip: oIconConfiguration.alt,
+			backgroundColor: oIconConfiguration.backgroundColor || (oIconConfiguration.text ? undefined : AvatarColor.Transparent)
+		}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
+
+		return oAvatar;
 	};
 
 	return ObjectContent;

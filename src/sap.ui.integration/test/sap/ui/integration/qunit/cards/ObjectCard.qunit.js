@@ -1,10 +1,12 @@
-/* global QUnit*/
+/* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/library",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
 ], function (
+	Log,
 	mLibrary,
 	Card,
 	Core
@@ -576,7 +578,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest);
-		Core.applyChanges();
 	});
 
 	QUnit.test("Icon property", function (assert) {
@@ -781,8 +782,102 @@ sap.ui.define([
 				}
 			}
 		});
-		Core.applyChanges();
+	});
 
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Actionable elements should be labeled", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var oContent = this.oCard.getAggregation("_content").getAggregation("_content"),
+				oLabel = oContent.getContent()[0].getItems()[0],
+				oLink = oContent.getContent()[0].getItems()[1];
+
+			assert.ok(oLink.getAriaLabelledBy().length,"Link should be labeled");
+			assert.strictEqual(oLink.getAriaLabelledBy()[0], oLabel.getId(), "Link should be labeled by the correct label");
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"items": [{
+							"label": "Label",
+							"value": "Value",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "https://sap.com"
+									}
+								}
+							]
+						}]
+					}]
+				}
+			}
+		});
+	});
+
+	QUnit.test("Actionable elements with missing label", function (assert) {
+		var done = assert.async(),
+			oLogSpy = this.spy(Log, "warning");
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			assert.ok(oLogSpy.calledWithExactly(sinon.match.any, sinon.match.any, "sap.ui.integration.widgets.Card"), "Warning for missing label should be logged");
+			done();
+		});
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"items": [{
+							"value": "Value",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "https://sap.com"
+									}
+								}
+							]
+						}]
+					}]
+				}
+			}
+		});
 	});
 
 });
