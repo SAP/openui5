@@ -3,10 +3,10 @@
 /* Fiori 3 theme                    */
 /* ================================ */
 
-@_sap_m_Tokenizer_OutlineOffset: 5px;
+@_sap_m_Tokenizer_OutlineOffset: -0.1875rem;
 
 .sapMTokenizer {
-	padding-left: @_sap_m_Tokenizer_OutlineOffset;
+	padding-left: 0.3125rem;
 	position: relative;
 	display: inline-block;
 	white-space: nowrap;
@@ -21,8 +21,8 @@
 }
 
 html.sap-desktop .sapMTokenizer:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -@_sap_m_Tokenizer_OutlineOffset;
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: @_sap_m_Tokenizer_OutlineOffset;
 }
 
 /* editable tokens in read-only tokenizer */
