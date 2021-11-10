@@ -123,8 +123,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.attr("aria-roledescription", oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
 		}
 		if (sState !== LoadState.Disabled) {
-			if (!oControl.isInActionRemoveScope()) {
+			if (!oControl.isInActionRemoveScope() && oControl.getPressEnabled()) {
 				oRm.class("sapMPointer");
+			}
+			if (!oControl.getPressEnabled()) {
+				oRm.class("sapMAutoPointer");
 			}
 			oRm.attr("tabindex", "0");
 		}
