@@ -8,18 +8,13 @@ sap.ui.define([
 	return Controller.extend("sap.f.cardsdemo.controller.Main", {
 
 		onInit: function () {
+			this.oRouter = this.getOwnerComponent().getRouter();
 			var oView = this.getView();
 
-			this.oRouter = this.getOwnerComponent().getRouter();
-
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/examples.json"));
-			oView.setModel(oModel, "cardTypesExamples");
-
-			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/cardManifests.json"));
-			oView.setModel(oCardManifests, "manifests");
-
-			var oAnalyticalContentManifests = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/analyticalContentManifests.json"));
-			oView.setModel(oAnalyticalContentManifests, "analyticalContentManifests");
+			oView.setModel(new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/examples.json")), "cardTypesExamples");
+			oView.setModel(new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/cardManifests.json")), "manifests");
+			oView.setModel(new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/analyticalContentManifests.json")), "analyticalContentManifests");
+			oView.setModel(new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/model/listContentManifests.json")), "listContentManifests");
 		},
 
 		onAfterRendering: function () {

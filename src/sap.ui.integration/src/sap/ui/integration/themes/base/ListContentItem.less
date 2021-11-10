@@ -3,43 +3,34 @@
 /* Base theme                                                  */
 /* =========================================================== */
 
-@_sap_ui_integration_controls_ListContentItem_ChartHeight: 1rem;
-
 .sapUiIntCard {
-	.sapMLIB.sapMSLI.sapUiIntLCI {
-		height: auto;
-		padding: 1rem 1rem ~"calc(1rem - 1px)" 1rem;
-
-		.sapMSLIDiv {
-			padding: 0;
-		}
-	}
-
 	.sapMLIB.sapUiIntLCI {
 		flex-direction: column;
 		align-items: stretch;
+		height: auto;
+		padding: 0.8125rem 1rem ~"calc(0.8125rem - 1px)" 1rem;
 
-		&.sapUiIntLCIWithActionsStrip {
-			padding-bottom: ~"calc(0.5rem - 1px)";
-		}
-
-		&:not(.sapMSLIThumbnail):not(.sapUiIntLCIWithAttributes):not(.sapMSLIWithDescription) {
-			&.sapUiIntLCIIconSize {
-				&XS,
-				&S,
-				&M {
-					padding: 0.25rem 1rem ~"calc(0.25rem - 1px)" 1rem;
+		&.sapMSLIWithDescription {
+			&:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
+				.sapMLIBContent .sapMSLIDiv {
+					padding: 0.1875rem 0; // increase the height of the inner div
 				}
 			}
 		}
 
-		&.sapMSLIWithDescription:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
-			.sapMLIBContent {
-				padding: 0.3125rem 0;
+		&.sapUiIntLCIIconSize {
+			&XS,
+			&S,
+			&M {
+				padding: 0.375rem 1rem  ~"calc(0.375rem - 1px)" 1rem;
 			}
 		}
 
 		.sapMLIBContent {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
 			.sapMSLIDescription {
 				padding-top: 0.5rem;
 			}
@@ -47,10 +38,6 @@
 			.sapMSLIDescriptionText {
 				padding-bottom: 0;
 			}
-
-			display: flex;
-			flex-direction: row;
-			align-items: center;
 
 			.sapFCardIcon {
 				flex-shrink: 0;
@@ -121,6 +108,49 @@
 	&:not(.sapUiIntCardWithFooter) {
 		.sapMListItems li:last-child {
 			border-bottom: 1px solid transparent;
+		}
+	}
+}
+
+// Styles for compact mode only
+.sapUiSizeCompact {
+	.sapUiIntCard {
+		.sapMLIB.sapUiIntLCI {
+			padding: 0.5rem 1rem ~"calc(0.5rem - 1px)" 1rem;
+
+			&.sapMSLIWithDescription {
+				&:not(.sapMSLIThumbnail):not(.sapUiIntLCIIconSizeXS):not(.sapUiIntLCIIconSizeS):not(.sapUiIntLCIIconSizeM) {
+					.sapMLIBContent .sapMSLIDiv {
+						padding: 0.25rem 0; // increase the height of the inner div
+					}
+				}
+			}
+
+			&.sapUiIntLCIIconSize {
+				&XS,
+				&S,
+				&M {
+					padding: 0 1rem 0 1rem;
+				}
+			}
+		}
+	}
+}
+
+// Shared styles for cozy & compact
+.sapUiIntCard,
+.sapUiSizeCompact .sapUiIntCard {
+	.sapMLIB.sapUiIntLCI {
+		&.sapMSLIWithDescription {
+			padding: 1rem 1rem ~"calc(1rem - 1px)" 1rem;
+		}
+
+		&.sapUiIntLCIWithAttributes {
+			padding: 1rem 1rem ~"calc(1rem - 1px)" 1rem
+		}
+
+		&.sapUiIntLCIWithActionsStrip {
+			padding: 0.5rem 1rem ~"calc(0.5rem - 1px)" 1rem;
 		}
 	}
 }
