@@ -32,10 +32,13 @@
 					MessageToast.show(evt.getSource().getId() + " Pressed");
 				};
 
+				new sap.ui.core.InvisibleText("generic_tag_label", {text: "My label"}).toStatic();
+
 				var oNeutralGenericTag = new GenericTag({
 					text: "Text that truncates.",
 					design: GenericTagDesign.Full,
 					valueState: GenericTagValueState.None,
+					ariaLabelledBy: "generic_tag_label",
 					value: new ObjectNumber({
 						number: "956",
 						unit: "EUR",

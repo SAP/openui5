@@ -89,6 +89,14 @@ sap.ui.define([
 				valueState: {type : "sap.m.GenericTagValueState", defaultValue : GenericTagValueState.None }
 			},
 			defaultAggregation: "value",
+			associations : {
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledBy).
+				 * Note: This is a downported feature introduced in version 1.97.0.
+	 			 * @since 1.84.22
+				 */
+				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
 			aggregations: {
 				/**
 				 * Numeric value rendered by the control.
