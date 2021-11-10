@@ -5,6 +5,12 @@
 
 @_sap_m_ObjectAttribute_ListTextShadowColor: none;
 
+.sapMListTbl .sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMText,
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
 .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
 	position: relative;
 }
@@ -27,7 +33,7 @@
 
 .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
-	text-decoration: underline;
+	text-decoration: none;
 	color: @sapUiLinkHover;
 }
 
@@ -38,7 +44,7 @@
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
 .sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	text-decoration: underline;
+	text-decoration: none;
 	color: @sapUiLinkHover;
 }
 
@@ -48,7 +54,7 @@
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
-	text-decoration: underline;
+	text-decoration: none;
 	color: @sapUiLinkHover;
 }
 
