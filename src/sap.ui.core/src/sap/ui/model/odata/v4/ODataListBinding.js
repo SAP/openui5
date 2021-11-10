@@ -120,6 +120,14 @@ sap.ui.define([
 					? null
 					: Context.createNewContext(oModel, this, sPath);
 				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
+				// map<string,sap.ui.model.odata.v4.Context>
+				// Maps a string path to a v4.Context with that path. A context may either be
+				// - an element of this.aContexts (then it knows its index) or
+				// - a value of this.mPreviousContextsByPath.
+				// Contexts which have previously been part of this.aContexts are parked here for
+				// reuse (and thus still remember their index) and get destroyed by
+				// #destroyPreviousContexts after the next call to #createContexts.
+				// A kept-alive context may be parked here for a longer time, with undefined index.
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
 				this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
@@ -1108,6 +1116,7 @@ sap.ui.define([
 				throw new Error("Unexpected index: " + oResult);
 			}
 			oResult.iIndex = iIndex;
+			delete this.mPreviousContextsByPath[sPath];
 		} else {
 			oResult = Context.create(this.oModel, this, sPath, iIndex);
 			bNew = true;
