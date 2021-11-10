@@ -153,6 +153,7 @@ sap.ui.define([
 						text: this.getResourceText("p13nDialog.GROUPMODE_VISIBLE_ACTIVE")
 					})
 				],
+				tooltip: this.getResourceText("p13nDialog.QUICK_FILTER"),
 				change: this._onGroupModeChange.bind(this)
 			});
 		}
