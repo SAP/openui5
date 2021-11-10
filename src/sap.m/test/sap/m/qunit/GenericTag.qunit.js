@@ -680,6 +680,69 @@ sap.ui.define([
 		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sErrorIconId].join(" "));
 	});
 
+	QUnit.test(
+		"GenericTag has the correct ARIA state - status and ariaLabelledBy", function(assert){
+		//arrange
+		var $genericTag,
+			oText = new sap.ui.core.InvisibleText("generic_tag_label", {text: "My label"}).toStatic(),
+			sErrorIconId;
+
+		//act
+		this.oGenericTag.addAriaLabelledBy('generic_tag_label');
+		this.oGenericTag.setStatus(ValueState.Information);
+		this.oGenericTag.setDesign(GenericTagDesign.StatusIconHidden);
+		this.oGenericTag.setValueState(GenericTagValueState.Error);
+
+		//act
+		oCore.applyChanges();
+
+		$genericTag = this.oGenericTag.$();
+		sErrorIconId = this.oGenericTag.getAggregation("_errorIcon").getId();
+
+		//assert
+		assert.equal($genericTag.attr("aria-labelledby"), ["generic_tag_label", this.sStatusTextId, this.sTextId, sErrorIconId].join(" "));
+
+		//act
+		this.oGenericTag.removeAriaLabelledBy('generic_tag_label');
+
+		oCore.applyChanges();
+		$genericTag = this.oGenericTag.$();
+
+		//assert
+		assert.equal($genericTag.attr("aria-labelledby"), [this.sStatusTextId, this.sTextId, sErrorIconId].join(" "));
+
+		//clean
+		oText.destroy();
+	});
+
+	QUnit.test(
+		"GenericTag has the correct ARIA state - only ariaLabelledBy association", function(assert){
+		//arrange
+		var $genericTag,
+			oText = new sap.ui.core.InvisibleText("generic_tag_label", {text: "My label"}).toStatic();
+
+		//act
+		this.oGenericTag.addAriaLabelledBy('generic_tag_label');
+
+		oCore.applyChanges();
+		$genericTag = this.oGenericTag.$();
+
+		//assert
+		assert.strictEqual($genericTag.attr("aria-labelledby").indexOf("generic_tag_label") > -1, true, "GenericTag has the correct ARIA state");
+
+		//act
+		this.oGenericTag.removeAriaLabelledBy('generic_tag_label');
+
+		oCore.applyChanges();
+		$genericTag = this.oGenericTag.$();
+
+		//assert
+		assert.strictEqual($genericTag.attr("aria-labelledby").indexOf("generic_tag_label") === -1, true, "GenericTag has the correct ARIA state");
+
+		//clean
+		oText.destroy();
+	});
+
 	QUnit.module("Test behavior in overflow toolbar", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
