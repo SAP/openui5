@@ -5813,6 +5813,9 @@ sap.ui.define([
 	// * Delete a sales order
 	// * See that the count decreases
 	// The delete is used to change the count (to see that it is still updated)
+	//
+	// Call ODLB#sort with the same Sorter as before. This should not trigger a request.
+	// JIRA: CPOUI5ODATAV4-942
 	QUnit.test("ODLB: $count and sort()", function (assert) {
 		var oTable,
 			oTableBinding,
@@ -5853,6 +5856,7 @@ sap.ui.define([
 				.expectChange("id", ["0500000002", "0500000001"]);
 
 			// code under test
+			oTableBinding.sort(new Sorter("SalesOrderID", true));
 			oTableBinding.sort(new Sorter("SalesOrderID", true));
 
 			return that.waitForChanges(assert);
@@ -11959,6 +11963,9 @@ sap.ui.define([
 	// Scenario: Auto-$expand/$select: Absolute ODataListBinding considers $filter set via API,
 	// i.e. it changes the initially aggregated query options. Note: It is also possible to remove
 	// a filter which must lead to removal of the $filter option.
+	//
+	// Call ODLB#filter with the same Filter as before. this should not trigger a request.
+	// CPOUI5ODATAV4-942
 	QUnit.test("Absolute ODLB with auto-$expand/$select: filter via API", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oListBinding,
@@ -11996,6 +12003,7 @@ sap.ui.define([
 				.expectChange("text", [, "Peter Burke"]);
 
 			// code under test
+			oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
 			oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
 
 			return that.waitForChanges(assert);

@@ -1559,7 +1559,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Filters the list with the given filters.
+	 * Filters the list with the given filters. Since 1.97.0, if filters are unchanged, no request
+	 * is sent, regardless of pending changes.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
@@ -1615,17 +1616,25 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.ListBinding#filter
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
+		var aFilters = _Helper.toArray(vFilters);
+
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
+
+		if (sFilterType === FilterType.Control && _Helper.deepEqual(aFilters, this.aFilters)
+				|| _Helper.deepEqual(aFilters, this.aApplicationFilters)) {
+			return this;
+		}
+
 		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot filter due to pending changes");
 		}
 
 		if (sFilterType === FilterType.Control) {
-			this.aFilters = _Helper.toArray(vFilters);
+			this.aFilters = aFilters;
 		} else {
-			this.aApplicationFilters = _Helper.toArray(vFilters);
+			this.aApplicationFilters = aFilters;
 		}
 
 		if (this.isRootBindingSuspended()) {
@@ -3129,7 +3138,8 @@ sap.ui.define([
 	/**
 	 * Sort the entries represented by this list binding according to the given sorters.
 	 * The sorters are stored at this list binding and they are used for each following data
-	 * request.
+	 * request. Since 1.97.0, if sorters are unchanged, no request is sent, regardless of pending
+	 * changes.
 	 *
 	 * If there are pending changes that cannot be ignored, an error is thrown. Use
 	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
@@ -3156,14 +3166,21 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.ListBinding#sort
 	ODataListBinding.prototype.sort = function (vSorters) {
+		var aSorters = _Helper.toArray(vSorters);
+
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
+
+		if (_Helper.deepEqual(aSorters, this.aSorters)) {
+			return this;
+		}
+
 		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot sort due to pending changes");
 		}
 
-		this.aSorters = _Helper.toArray(vSorters);
+		this.aSorters = aSorters;
 
 		if (this.isRootBindingSuspended()) {
 			this.setResumeChangeReason(ChangeReason.Sort);

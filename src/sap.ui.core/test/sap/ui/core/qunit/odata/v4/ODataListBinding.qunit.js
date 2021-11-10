@@ -2904,6 +2904,7 @@ sap.ui.define([
 
 			QUnit.test("sort: " + sTitle, function (assert) {
 				var oBinding,
+					oHelperMock = this.mock(_Helper),
 					oModel = oFixture.oModel || this.oModel,
 					oContext = Context.createNewContext(oModel, oParentBinding, "/TEAMS", 1),
 					aSorters = [];
@@ -2914,9 +2915,12 @@ sap.ui.define([
 
 				this.mock(oBinding).expects("checkSuspended").never();
 				this.mock(oBinding).expects("hasPendingChanges").returns(false);
-				this.mock(_Helper).expects("toArray")
+				oHelperMock.expects("toArray")
 					.withExactArgs(sinon.match.same(oFixture.vSorters))
 					.returns(aSorters);
+				oHelperMock.expects("deepEqual")
+					.withExactArgs(sinon.match.same(aSorters), sinon.match.same(oBinding.aSorters))
+					.returns(false);
 				this.mock(oBinding).expects("isRootBindingSuspended").returns(bSuspended);
 				this.mock(oBinding).expects("setResumeChangeReason").exactly(bSuspended ? 1 : 0)
 					.withExactArgs(ChangeReason.Sort);
@@ -2950,6 +2954,8 @@ sap.ui.define([
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null,
 				{$$operationMode : OperationMode.Server});
 
+		oBinding.aSorters.push("~initial sorters~");
+
 		// code under test
 		oBinding.sort();
 	});
@@ -2959,15 +2965,19 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext;
 
+		// code under test
 		assert.throws(function () {
 			oBinding.sort([]);
 		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
+
+		// code under test
 		assert.throws(function () {
 			oBinding.sort();
 		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
 
 		oBinding = this.bindList("/EMPLOYEES", null, null, null,
 			{$$operationMode : OperationMode.Server});
+		oBinding.aSorters.push("~initial sorters~");
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 
 		// code under test
@@ -2983,12 +2993,39 @@ sap.ui.define([
 		oContext = Context.create(this.oModel, oParentBinding, "/TEAMS", 1);
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
 			{$$operationMode : OperationMode.Server});
+		oBinding.aSorters.push("~initial sorters~");
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 
 		// code under test
 		assert.throws(function () {
 			oBinding.sort();
 		}, new Error("Cannot sort due to pending changes"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("sort: same sorters skips processing", function (assert) {
+		var oBinding,
+			oBindingMock = this.mock(ODataListBinding.prototype),
+			oSorter = new Sorter("foo"),
+			aSorters = [oSorter];
+
+		oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+			$$operationMode : OperationMode.Server
+		});
+
+		oBinding.aSorters.push(oSorter);
+
+		this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oSorter))
+			.returns(aSorters);
+		this.mock(_Helper).expects("deepEqual").withExactArgs(sinon.match.same(aSorters),
+				sinon.match.same(oBinding.aSorters))
+			.returns(true);
+
+		oBindingMock.expects("hasPendingChanges").never();
+		oBindingMock.expects("reset").never();
+
+		// code under test
+		assert.strictEqual(oBinding.sort(oSorter), oBinding);
 	});
 
 	//*********************************************************************************************
@@ -3001,6 +3038,7 @@ sap.ui.define([
 					oBindingMock = this.mock(ODataListBinding.prototype),
 					oFilter = new Filter("Name", FilterOperator.Contains, "foo"),
 					aFilters = [oFilter],
+					oHelperMock = this.mock(_Helper),
 					sStaticFilter = "Age gt 18";
 
 				oBindingMock.expects("checkSuspended").never();
@@ -3010,8 +3048,15 @@ sap.ui.define([
 					$$operationMode : OperationMode.Server
 				});
 
-				this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
+				oHelperMock.expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
+				oHelperMock.expects("deepEqual").exactly(sFilterType === FilterType.Control ? 1 : 0)
+					.withExactArgs(sinon.match.same(aFilters), sinon.match.same(oBinding.aFilters))
+					.returns(false);
+				oHelperMock.expects("deepEqual").exactly(1)
+					.withExactArgs(sinon.match.same(aFilters),
+						sinon.match.same(oBinding.aApplicationFilters))
+					.returns(false);
 				oBindingMock.expects("hasPendingChanges").withExactArgs(true).returns(false);
 				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 				oBindingMock.expects("getGroupId").exactly(bSuspended ? 0 : 1)
@@ -3029,7 +3074,7 @@ sap.ui.define([
 				this.mock(oBinding.oHeaderContext).expects("checkUpdate")
 					.exactly(bSuspended ? 0 : 1).withExactArgs();
 
-				// Code under test
+				// code under test
 				assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
 
 				if (sFilterType === FilterType.Control) {
@@ -3044,10 +3089,47 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filter: removes caches and messages", function () {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+	[undefined, FilterType.Application, FilterType.Control].forEach(function (sFilterType) {
+		var sTitle = "filter: same filters skips processing; FilterType=" + sFilterType;
+
+		QUnit.test(sTitle, function (assert) {
+			var oBinding,
+				oBindingMock = this.mock(ODataListBinding.prototype),
+				oHelperMock = this.mock(_Helper),
+				aFilters = ["~filter~"];
+
+			oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$operationMode : OperationMode.Server
 			});
+
+			if (sFilterType === FilterType.Control) {
+				oBinding.aFilters.push("~filter~");
+			} else {
+				oBinding.aApplicationFilters.push("~filter~");
+			}
+
+			oHelperMock.expects("toArray").withExactArgs(sinon.match.same("~filter~"))
+				.returns(aFilters);
+			oHelperMock.expects("deepEqual").withExactArgs(sinon.match.same(aFilters),
+					sinon.match.same(sFilterType === FilterType.Control ?
+						oBinding.aFilters : oBinding.aApplicationFilters))
+				.returns(true);
+
+			oBindingMock.expects("hasPendingChanges").never();
+			oBindingMock.expects("reset").never();
+
+			// code under test
+			assert.strictEqual(oBinding.filter("~filter~", sFilterType), oBinding, "chaining");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: removes caches and messages", function () {
+		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+			$$operationMode : OperationMode.Server
+		});
+
+		oBinding.aApplicationFilters.push("~filter~");
 
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding).expects("fetchCache").withExactArgs(undefined);
@@ -3061,6 +3143,8 @@ sap.ui.define([
 		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null,
 				{$$operationMode : OperationMode.Server});
 
+		oBinding.aApplicationFilters.push("~filter~");
+
 		// code under test
 		oBinding.filter();
 	});
@@ -3069,6 +3153,9 @@ sap.ui.define([
 	QUnit.test("filter: check errors", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 
+		oBinding.aApplicationFilters.push("~filter~");
+
+		// code under test
 		assert.throws(function () {
 			oBinding.filter();
 		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
@@ -3076,6 +3163,10 @@ sap.ui.define([
 		oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
 			{ $$operationMode : OperationMode.Server });
 
+		this.mock(_Helper).expects("toArray").withExactArgs(undefined).returns([]);
+		this.mock(_Helper).expects("deepEqual")
+			.withExactArgs([], sinon.match.same(oBinding.aApplicationFilters))
+			.returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 
 		// code under test
