@@ -783,6 +783,13 @@ sap.ui.define([
 		return ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
+	SemanticPage.prototype.onBeforeRendering = function () {
+		var bHasVisibleActions = this._getActionSheet().getButtons().some(function (oButton) {
+			return oButton.getVisible();
+		});
+
+		this._getShareMenu()._getShareMenuButton().setVisible(bHasVisibleActions);
+	};
 
 	/**
 	* Proxies the <code>sap.f.semantic.SemanticPage</code> <code>content</code>
