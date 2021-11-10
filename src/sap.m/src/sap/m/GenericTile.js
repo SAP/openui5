@@ -166,6 +166,11 @@ sap.ui.define([
 				 * @experimental since 1.96
 				 */
 				enableNavigationButton: {type: "boolean", group: "Misc", defaultValue: false},
+				/**
+				 * Disables press event for the tile control.
+				 * @experimental since 1.96
+				 */
+				 pressEnabled: {type: "boolean", group: "Misc", defaultValue: true},
 				 /**
 				 * Text for navigate action button. Default Value is "Read More".
 				 * Works only in ArticleMode.
@@ -1488,6 +1493,8 @@ sap.ui.define([
 	 */
 	GenericTile.prototype.setPressEnabled = function (value) {
 		this._bTilePress = value;
+		this.setProperty("pressEnabled", value);
+		return this;
 	};
 
 	/**

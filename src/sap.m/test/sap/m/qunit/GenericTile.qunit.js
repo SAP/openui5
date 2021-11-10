@@ -2567,6 +2567,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("No press event when press event disabled", function(assert) {
+		var fnDone = assert.async();
+
 		//Arrange
 		var bEventNotTriggered = true;
 		this.oGenericTile.attachEvent("press", handlePress);
@@ -2581,6 +2583,10 @@ sap.ui.define([
 		}
 
 		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
+		setTimeout(function() {
+			this.oGenericTile.getDomRef().classList.contains("sapMAutoPointer");
+			fnDone();
+		}.bind(this), 0);
 	});
 
 	QUnit.test("Press event on 'tap' with correct parameters in Display scope", function(assert) {
