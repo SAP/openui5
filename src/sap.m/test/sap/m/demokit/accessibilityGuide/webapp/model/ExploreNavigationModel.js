@@ -306,7 +306,7 @@ sap.ui.define([
 					{
 						key: 'inputsDescription',
 						target: 'exploreSamples',
-						title: 'Input with aria-describedby',
+						title: 'Input with description',
 						useIFrame: true,
 						isApplication: true,
 						files: [
@@ -371,7 +371,7 @@ sap.ui.define([
 					{
 						key: 'popoverDescribedby',
 						target: 'exploreSamples',
-						title: 'Popover with aria-describedby',
+						title: 'Popover with description',
 						useIFrame: true,
 						isApplication: true,
 						files: [
