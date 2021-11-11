@@ -4390,7 +4390,7 @@ sap.ui.define([
 			sTitleText = oHeader ? oHeader.getTitleText() : null,
 			sAriaLabelText;
 
-		if (oHeader && sTitleText) {
+		if (oHeader && sTitleText && sElement !== "ROOT") {
 			sAriaLabelText = sTitleText + " " + ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITH_TITLE");
 		} else {
 			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText(sElement + "_ARIA_LABEL_WITHOUT_TITLE");
