@@ -69,6 +69,22 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 
 	// the 'abstract methods' to be implemented by child classes
 	/**
+	 * Returns all current contexts of this list binding in no special order. Just like
+	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
+	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
+	 * return the contexts as last requested by a control, but all that are currently available in
+	 * the binding.
+	 *
+	 * @returns {sap.ui.model.Context[]}
+	 *   All current contexts of this list binding, in no special order
+	 *
+	 * @function
+	 * @name sap.ui.model.ListBinding.prototype.getAllCurrentContexts
+	 * @public
+	 * @since 1.97.0
+	 */
+
+	/**
 	 * Returns an array of binding contexts for the bound target list.
 	 *
 	 * <h4>Extended Change Detection</h4>
@@ -166,13 +182,16 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 */
 
 	/**
-	 * Returns an array of currently used binding contexts of the bound control.
+	 * Returns the contexts of this list binding as last requested by the control and in the same
+	 * order the control has received them.
 	 *
-	 * This method does not trigger any data requests from the back end or a delta calculation, but
-	 * just returns the context array as last requested by the control. This can be used by the
-	 * application to get access to the data currently displayed by a list control.
+	 * This method does not request any data from a back end and does not change the binding's
+	 * state.
 	 *
-	 * @return {sap.ui.model.Context[]} The array of contexts for each row of the bound list
+	 * @return {sap.ui.model.Context[]}
+	 *   The contexts of this list binding as last requested by the control and in the same order
+	 *   the control has received them
+	 *
 	 * @since 1.28
 	 * @public
 	 */
