@@ -1772,7 +1772,7 @@ function(
 		var sLastValue = this.getLastValue();
 
 		if ([KeyCodes.BACKSPACE, KeyCodes.DELETE].indexOf(oEvent.which) !== -1 && !sValue) {
-			this.setSelectedKey(null);
+			this.getShowSuggestion() && this.setSelectedKey(null);
 			(sLastValue !== sValue) && this.setLastValue(sLastValue);
 		}
 

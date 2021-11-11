@@ -7132,6 +7132,33 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("setValue should not be called on BACKSPACE when suggestions are not used", function (assert) {
+		// Setup
+		var oInput = new Input({
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		this.clock.tick(300);
+		oInput.$().trigger("focusout");
+
+		var oInvalidationSpy = this.spy(oInput, "setValue");
+
+		// Act
+		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
+		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
+		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInvalidationSpy.callCount, 0, "setValue is not triggered on BACKSPACE");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+
 	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
 		// Arrange
 		var oInput = new Input({
