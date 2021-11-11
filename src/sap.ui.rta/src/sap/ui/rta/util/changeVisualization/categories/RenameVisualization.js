@@ -17,20 +17,21 @@ sap.ui.define([
 	 * @param {string} [mPayload.originalLabel] - Label before the change was applied
 	 * @param {object} [mPayload.newLabel] - Label after the change was applied
 	 * @param {string} sFallbackLabel - New label as a fallback if change handler provides no info
-	 * @returns {string} Localized description
+	 * @returns {object} Localized description
 	 */
 	RenameVisualization.getDescription = function (mPayload, sFallbackLabel) {
 		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sKey = mPayload.originalLabel
 			? "TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO"
 			: "TXT_CHANGEVISUALIZATION_CHANGE_RENAME_TO";
-		return oRtaResourceBundle.getText(
+		var sDescriptionText = oRtaResourceBundle.getText(
 			sKey,
 			[
 				mPayload.newLabel || sFallbackLabel,
 				mPayload.originalLabel
 			]
 		);
+		return {descriptionText: sDescriptionText};
 	};
 
 	return RenameVisualization;

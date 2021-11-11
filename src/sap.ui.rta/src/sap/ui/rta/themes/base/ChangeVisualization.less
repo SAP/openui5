@@ -8,6 +8,7 @@
 @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG: white;
 @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover: #0f648b;
 @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor: rgba(219,149,51,0.75);
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorTransparent: rgba(219,149,51,0);
 @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus: #a67026;
 @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid: rgb(219, 149, 51);
 @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover: #b67a26;
@@ -40,24 +41,24 @@
 }
 
 .sapUiRtaChangeIndicatorDependent{
-	border: 1px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
-	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 72%,@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 100%);
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+	box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
+	animation: fadeOut linear 1.5s;
+	animation-fill-mode: forwards;
 
-	&:focus{
-		border: 1px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus;
-		outline: none;
-	}
-
-	&:hover{
-		background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover 62%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 100%);
-	}
-}
-
-.sapUiRtaChangeIndicatorChangeSolid{
-	background: radial-gradient(circle, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid 72%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid 100%);
-
-	&:hover{
-		background: radial-gradient(circle, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover 62%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover 100%);
+	@keyframes fadeOut {
+		0% {
+			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+		}
+		66%{
+			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+		}
+		100% {
+			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorTransparent;
+		}
 	}
 }
 
@@ -75,19 +76,6 @@
 	align-items: center;
 	opacity: 0.8;
 	cursor: pointer;
-}
-
-.sapUiRtaChangeIndicatorIcon{
-	top: 0;
-	left: 0;
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	cursor: pointer;
-	color: @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid;
 }
 
 .sapUiRtaChangeIndicatorHovered {

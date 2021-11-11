@@ -219,7 +219,6 @@ sap.ui.define([
 		var sCommandCategoryText = this._getCommandCategoryButton(sSelectedCommandCategory);
 
 		this._updateVisualizationModel({
-			selectedChange: undefined,
 			commandCategory: sSelectedCommandCategory,
 			commandCategoryText: sCommandCategoryText
 		});
@@ -388,10 +387,15 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._selectChange = function (sChangeId) {
-		this._updateVisualizationModel({
-			selectedChange: sChangeId
+		var aDependentElements = this._oChangeIndicatorRegistry.getChange(sChangeId).visualizationInfo.dependentElementIds;
+		aDependentElements.forEach(function(sElementId) {
+			var oOverlayDomRef = OverlayRegistry.getOverlay(sElementId).getDomRef();
+			oOverlayDomRef.scrollIntoViewIfNeeded();
+			oOverlayDomRef.classList.add("sapUiRtaChangeIndicatorDependent");
+			oOverlayDomRef.addEventListener("animationend", function () {
+				oOverlayDomRef.classList.remove("sapUiRtaChangeIndicatorDependent");
+			}, {once: true});
 		});
-		this._updateChangeIndicators();
 	};
 
 	ChangeVisualization.prototype._updateVisualizationModel = function (oData) {
@@ -447,19 +451,10 @@ sap.ui.define([
 
 		return aChanges.filter(function (oChange) {
 			return (
-				// No change is selected and change is of proper category
-				(
-					!oRootData.selectedChange
-					&& !oChange.dependent
-					&& (
-						oRootData.commandCategory === 'all'
-						|| oRootData.commandCategory === oChange.commandCategory
-					)
-				)
-				// Dependent change for currently selected or currently selected
-				|| (
-					!!oRootData.selectedChange
-					&& oChange.id === oRootData.selectedChange
+				!oChange.dependent
+				&& (
+					oRootData.commandCategory === 'all'
+					|| oRootData.commandCategory === oChange.commandCategory
 				)
 			);
 		});
@@ -468,15 +463,6 @@ sap.ui.define([
 	ChangeVisualization.prototype._createChangeIndicator = function (oOverlay, sSelectorId) {
 		var oChangeIndicator = new ChangeIndicator({
 			changes: "{changes}",
-			mode: {
-				path: "changes",
-				formatter: function (aChanges) {
-					var sSelectedChange = this.getModel().getData().selectedChange;
-					return (sSelectedChange && (aChanges || []).some(function (oChange) {
-						return oChange.dependent;
-					})) ? "dependent" : "change";
-				}
-			},
 			posX: "{posX}",
 			posY: "{posY}",
 			visible: "{= ${/active} && (${changes} || []).length > 0}",
@@ -485,7 +471,6 @@ sap.ui.define([
 			selectChange: this.selectChange.bind(this),
 			keyPress: this._onIndicatorKeyPress.bind(this)
 		});
-
 		oChangeIndicator.setModel(this._oChangeVisualizationModel);
 		oChangeIndicator.bindElement("/content/" + sSelectorId);
 		oChangeIndicator.setModel(this.getModel("i18n"), "i18n");
@@ -493,7 +478,6 @@ sap.ui.define([
 		// Temporarily place the indicator in the static area
 		// It will move itself to the correct overlay after rendering
 		oChangeIndicator.placeAt(sap.ui.getCore().getStaticAreaRef());
-
 		this._oChangeIndicatorRegistry.registerChangeIndicator(sSelectorId, oChangeIndicator);
 	};
 

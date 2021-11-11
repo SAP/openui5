@@ -3,15 +3,16 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout">
 	<Popover
-		title="{= ${details>/}.length > 1 ? ${i18n>TIT_CHANGEVISUALIZATION_CHANGES} : ${details>/0/changeTitle}}"
+		showHeader="false"
 		placement="PreferredTopOrFlip"
 		class="sapUiRtaPopover">
+		<Label visible="false" text="Changes"/>
 		<Table
+			ariaLabelledBy="Changes"
 			items="{details>/}"
 			inset="false"
 			fixedLayout="false"
-			width="auto"
-			visible="{= ${details>/}.length > 1}">
+			width="auto">
 			<columns>
 				<Column
 					width="auto">
@@ -25,50 +26,27 @@
 					width="auto">
 					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DATE}" />
 				</Column>
-				<Column
-					width="auto">
-					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DETAILS}" />
-				</Column>
 			</columns>
 			<items>
 				<ColumnListItem>
 					<cells>
 						<Text
 							text="{details>changeTitle}" />
+						<HBox alignItems="Center">
+							<Text
+								text="{details>description}"/>
+							<Button
+								visible="{= !!${details>detailButtonText}}"
+								text="{details>detailButtonText}"
+								press="._showDependentElements"
+								class="sapUiTinyMarginBegin"/>
+						</HBox>
 						<Text
-							text="{details>description}" />
-						<Text
-							text="{details>date}" />
-						<Button
-							visible="{details>enableDetailButton}"
-							icon="sap-icon://display"
-							press="._showDependentElements"/>
+							text="{details>relativeDate}"
+							tooltip="{details>fullDate}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
 		</Table>
-		<l:VerticalLayout
-			visible="{= ${details>/}.length === 1}">
-			<Text
-				text="{details>/0/description}"
-				class="sapUiTinyMargin"/>
-			<Text
-				text="{details>/0/date}"
-				class="sapUiTinyMargin"/>
-		</l:VerticalLayout>
-		<footer>
-			<FlexBox
-				direction="RowReverse"
-				visible="{= ${details>/}.length === 1}">
-				<items>
-					<Button
-						visible="{details>/0/enableDetailButton}"
-						text="{i18n>TIT_CHANGEVISUALIZATION_DETAILS}"
-						icon="sap-icon://display"
-						press="._showDependentElements"
-						class="sapUiTinyMargin"/>
-				</items>
-			</FlexBox>
-		</footer>
 	</Popover>
 </core:FragmentDefinition>

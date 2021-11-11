@@ -785,6 +785,22 @@ sap.ui.define([
 						]
 					}
 				},
+				"util/changeVisualization/categories/MoveVisualization": {
+					group: "Change visualization",
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/categories/MoveVisualization"
+						]
+					}
+				},
+				"util/changeVisualization/categories/SplitVisualization": {
+					group: "Change visualization",
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/categories/SplitVisualization"
+						]
+					}
+				},
 
 				ContextMenu: { // Integration
 					ui5: {

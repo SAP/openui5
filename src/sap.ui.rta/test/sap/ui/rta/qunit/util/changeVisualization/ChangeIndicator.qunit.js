@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/includes"
+	"sap/ui/core/format/DateFormat"
 ],
 function(
 	sinon,
@@ -20,7 +20,7 @@ function(
 	OverlayRegistry,
 	Button,
 	JSONModel,
-	includes
+	DateFormat
 ) {
 	"use strict";
 
@@ -36,7 +36,6 @@ function(
 					return new Date();
 				}
 			},
-			dependent: false,
 			payload: mPayload,
 			affectedElementId: sAffectedElementId
 		};
@@ -104,10 +103,6 @@ function(
 				this.oChangeIndicator.getAggregation("_text").getVisible(),
 				"then the number of changes is not displayed"
 			);
-			assert.notOk(
-				this.oChangeIndicator.getAggregation("_icon").getVisible(),
-				"then the details icon is not visible"
-			);
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
@@ -117,30 +112,37 @@ function(
 						this.oChangeIndicator.getAggregation("_popover"),
 						"then the popover is opened on click"
 					);
-					assert.notOk(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
-						"then the changes table is hidden"
+					assert.ok(
+						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getVisible(),
+						"then the changes table is visible"
 					);
 					assert.ok(
 						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getVisible(),
 						"then the single change layout is visible"
 					);
-					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover").getFooter().getVisible(),
-						"then the footer is visible"
+					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[1].getItems();
+					assert.strictEqual(
+						aItems.length,
+						1,
+						"then the change is displayed"
+					);
+					assert.notOk(
+						aItems[0].getCells()[1].getItems()[1].getVisible(),
+						"then the show details button is not visible in the description column when no dependent selectors exist"
 					);
 					assert.strictEqual(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getContent()[0].getText(),
+						aItems[0].getCells()[1].getItems()[0].getText(),
 						oRtaResourceBundle.getText(
 							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
 							["AfterValue", "BeforeValue"]
 						),
 						"then a description for the change is displayed"
 					);
-					var sDate = this.oChangeIndicator.getAggregation("_popover").getContent()[1].getContent()[1].getText();
-					assert.notOk(
-						isNaN(new Date(sDate).getTime()),
-						"then a valid date string is displayed"
+					var sDate = aItems[0].getCells()[2].getText();
+					assert.strictEqual(
+						sDate,
+						DateFormat.getDateTimeInstance({relative: "true"}).format(this.oChangeIndicator.getChanges()[0].change.getCreation()),
+						"then a relative date string is displayed correctly"
 					);
 				}.bind(this));
 		});
@@ -164,7 +166,7 @@ function(
 			return oOpenPopoverPromise
 				.then(function () {
 					assert.strictEqual(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getContent()[1].getText(),
+						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getItems()[0].getCells()[2].getText(),
 						oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE"),
 						"then a fallback label for the date is displayed"
 					);
@@ -188,10 +190,6 @@ function(
 				"2",
 				"then the number of changes is displayed 2/2"
 			);
-			assert.notOk(
-				this.oChangeIndicator.getAggregation("_icon").getVisible(),
-				"then the details icon is not visible"
-			);
 
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
@@ -203,62 +201,24 @@ function(
 						"then the popover is opened on click"
 					);
 					assert.ok(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
+						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getVisible(),
 						"then the changes table is visible"
 					);
-					assert.notOk(
-						this.oChangeIndicator.getAggregation("_popover").getContent()[1].getVisible(),
-						"then the single change layout is hidden"
-					);
-					assert.notOk(
-						this.oChangeIndicator.getAggregation("_popover").getFooter().getVisible(),
-						"then the footer is hidden"
-					);
-					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[0].getItems();
+					var aItems = this.oChangeIndicator.getAggregation("_popover").getContent()[1].getItems();
 					assert.strictEqual(
 						aItems.length,
 						2,
 						"then both changes are displayed"
 					);
 					assert.ok(
-						aItems[0].getCells()[3].getVisible(),
+						aItems[0].getCells()[1].getItems()[1].getVisible(),
 						"then the show details button is visible when dependent selectors exist"
 					);
 					assert.notOk(
-						aItems[1].getCells()[3].getVisible(),
+						aItems[1].getCells()[1].getItems()[1].getVisible(),
 						"then the show details button is not visible when dependent selectors don't exist"
 					);
 				}.bind(this));
-		});
-
-		QUnit.test("when a dependent change indicator is created", function (assert) {
-			sap.ui.getCore().applyChanges();
-			assert.notOk(
-				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicatorDependent"),
-				"then by default the dependent style class is not added"
-			);
-			this.oChangeIndicator.setMode("dependent");
-			sap.ui.getCore().applyChanges();
-			assert.ok(
-				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicatorDependent"),
-				"then the appropriate style class is added"
-			);
-		});
-
-		QUnit.test("when a dependent change indicator is created", function (assert) {
-			this.oChangeIndicator.getModel().setData({
-				changes: [
-					createMockChange("someChangeId", this.oButton.getId(), "move")
-				]
-			});
-			this.oChangeIndicator.getModel().setData({
-				selectedChange: "someChangeId"
-			});
-			sap.ui.getCore().applyChanges();
-			assert.ok(
-				this.oChangeIndicator.getAggregation("_icon").getVisible(),
-				"then the indicator icon is visible"
-			);
 		});
 
 		QUnit.test("when a change indicator is focused before it is rendered", function (assert) {
@@ -281,7 +241,7 @@ function(
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
 				assert.deepEqual(mPayload, mPayloadParameter, "getDescription is called with the right payload");
 				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
-				return "Test Description";
+				return {descriptionText: "Test Description"};
 			});
 
 			this.oChangeIndicator.getModel().setData({
@@ -315,7 +275,7 @@ function(
 				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
 				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
 				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
-				return "Test Description";
+				return {descriptionText: "Test Description"};
 			});
 
 			this.oChangeIndicator.getModel().setData({
@@ -350,7 +310,7 @@ function(
 				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
 				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
 				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
-				return "Test Description";
+				return {descriptionText: "Test Description"};
 			});
 
 			this.oChangeIndicator.getModel().setData({
