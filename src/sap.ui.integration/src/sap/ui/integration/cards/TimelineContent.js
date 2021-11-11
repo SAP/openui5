@@ -156,7 +156,7 @@ sap.ui.define([
 	 */
 	TimelineContent.prototype._setItem = function (mItem) {
 		var mSettings = {
-			userNameClickable : false,
+			userNameClickable: false,
 			title: mItem.title && mItem.title.value,
 			text: mItem.description && mItem.description.value,
 			dateTime: mItem.dateTime && mItem.dateTime.value,
@@ -177,7 +177,8 @@ sap.ui.define([
 			area: ActionArea.ContentItem,
 			actions: mItem.actions,
 			control: this,
-			actionControl: this._oItemTemplate
+			actionControl: this._oTimeLineItemTemplate,
+			eventName: "select"
 		});
 
 		var oBindingInfo = {

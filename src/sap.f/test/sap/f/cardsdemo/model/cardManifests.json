@@ -767,7 +767,15 @@
 						},
 						"icon": {
 							"src": "{Icon}"
-						}
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "{JobTitle}"
+								}
+							}
+						]
 					}
 				}
 			}

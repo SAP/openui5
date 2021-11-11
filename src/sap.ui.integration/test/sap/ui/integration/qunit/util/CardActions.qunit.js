@@ -918,6 +918,69 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_TimelineCard_No_Request = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"id": "test.card.actions.card.timeline",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Timeline",
+				"header": {
+					"title": "Past Activities",
+					"subTitle": "For October"
+				},
+				"content": {
+					"maxItems": 3,
+					"data": {
+						"json": [
+							{
+								"Title": "Weekly sync: Marketplace / Design Stream",
+								"Description": "MRR WDF18 C3.2(GLASSBOX)",
+								"Icon": "sap-icon://appointment-2",
+								"Time": "2021-10-25T10:00:00.000Z",
+								"Url": "/activity1"
+							},
+							{
+								"Title": "Video Conference for FLP@SF, S4,Hybris",
+								"Icon": "sap-icon://my-view",
+								"Time": "2021-10-25T14:00:00.000Z",
+								"Url": "/activity2"
+							},
+							{
+								"Title": "Call 'Project Nimbus'",
+								"Icon": "sap-icon://outgoing-call",
+								"Time": "2021-10-25T16:00:00.000Z",
+								"Url": "/activity3"
+							}
+						]
+					},
+					"item": {
+						"dateTime": {
+							"value": "{Time}"
+						},
+						"description": {
+							"value": "{Description}"
+						},
+						"title": {
+							"value": "{Title}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "{Url}"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
@@ -1471,8 +1534,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-
-
 		QUnit.module("Navigation Action - Object Content", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1816,5 +1877,55 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
+		return Core.loadLibrary("sap.suite.ui.commons", { async: true }).then(function () {
+			QUnit.module("Navigation Action - Timeline Content", {
+				beforeEach: function () {
+					this.oCard = new Card({
+						width: "400px",
+						height: "600px"
+					});
+				},
+				afterEach: function () {
+					this.oCard.destroy();
+					this.oCard = null;
+				}
+			});
+
+			QUnit.test("Timeline should be actionable ", function (assert) {
+				var done = assert.async(),
+					oActionSpy = sinon.spy(CardActions, "fireAction"),
+					oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
+						Log.error(LOG_MESSAGE);
+					});
+
+				// Act
+				this.oCard.setManifest(oManifest_TimelineCard_No_Request);
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+
+				this.oCard.attachEvent("_ready", function () {
+					Core.applyChanges();
+
+					var oContentItems = this.oCard.getCardContent().getInnerList().getContent();
+
+					//Act
+					oContentItems[0].fireSelect();
+					Core.applyChanges();
+
+					// Assert
+					assert.ok(oActionSpy.callCount === 1, "Timeline item action is fired");
+
+					// Cleanup
+					oActionSpy.restore();
+					oStubOpenUrl.restore();
+					done();
+				}.bind(this));
+			});
+		}).catch(function () {
+			QUnit.module("Navigation Action - Timeline Content");
+			QUnit.test("Timeline not supported", function (assert) {
+				assert.ok(true, "Timeline content type is not available with this distribution.");
+			});
+		});
 	}
 );

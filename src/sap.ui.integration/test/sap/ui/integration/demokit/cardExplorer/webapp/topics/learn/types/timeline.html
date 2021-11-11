@@ -18,10 +18,40 @@
 				The Timeline Card is used to show time-related content.
 			</p>
 			<h2 id="properties">Properties</h2>
-			<p>The Timeline Card contains an array of timeline items.</p>
 
-			<h4>Timeline item properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>item</td>
+						<td><a href="#timelineItemProperties">TimelineItem</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>The item template from which all the items in the timeline will be created.</td>
+						<td>1.15.0.</td>
+						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>maxItems</td>
+						<td>int</td>
+						<td></td>
+						<td>No</td>
+						<td>The maximum number of items.</td>
+						<td>1.15.0</td>
+						<td>1.63</td>
+					</tr>
+				</table>
+			</div>
 
+			<h4 id="timelineItemProperties">TimelineItem properties</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -88,6 +118,14 @@
 						<td>The icon of the timeline item.</td>
 						<td>1.15.0</td>
 						<td>1.63</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
+						<td>No</td>
+						<td>Actions that are triggered when the item is pressed.</td>
+						<td>1.38.0</td>
+						<td>1.97</td>
 					</tr>
 				</table>
 			</div>

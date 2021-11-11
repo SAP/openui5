@@ -135,7 +135,8 @@ sap.ui.define([
 			return;
 		}
 
-		var oBindingInfo = this.getInnerList().getBinding("items"),
+		var oInnerList = this.getInnerList(),
+			oBindingInfo = oInnerList.getBinding(oInnerList.getMetadata().getDefaultAggregationName()),
 			oModel = oBindingInfo.getModel(),
 			sPath = oBindingInfo.getPath(),
 			aItems = oModel.getProperty(sPath),
