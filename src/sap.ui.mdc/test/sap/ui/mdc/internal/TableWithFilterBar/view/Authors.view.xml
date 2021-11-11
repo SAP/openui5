@@ -343,13 +343,13 @@
 							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{dateOfDeath}" editMode="Display" />
 						</mdc:table.Column>
 						<mdc:table.Column id="cCoO" header="Country of origin" dataProperty="countryOfOrigin_code" width="15rem">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin/descr}" editMode="Display" display="ValueDescription" />
+							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" additionalValue="{countryOfOrigin/descr}" editMode="Display" display="Description" />
 						</mdc:table.Column>
 						<mdc:table.Column id="cRoO" header="Region of origin" dataProperty="regionOfOrigin_code" width="15rem">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin/text}" editMode="Display" display="ValueDescription" />
+							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" additionalValue="{regionOfOrigin/text}" editMode="Display" display="Description" />
 						</mdc:table.Column>
 						<mdc:table.Column id="cCioO" header="City of origin" dataProperty="cityOfOrigin_city" width="15rem">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin/text}" editMode="Display" display="ValueDescription" />
+							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" additionalValue="{cityOfOrigin/text}" editMode="Display" display="Description" />
 						</mdc:table.Column>
 
 					</mdc:columns>
