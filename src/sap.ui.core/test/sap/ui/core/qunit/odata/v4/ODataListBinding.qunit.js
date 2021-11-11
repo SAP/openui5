@@ -8346,6 +8346,21 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.doReplaceWith(oOldContext, {}, "('1')"), oOldContext);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllCurrentContexts", function (assert) {
+		var oBinding = {
+				aContexts : ["~oContext1", "~oContext2", /* empty */, "~oContext3"],
+				mPreviousContextsByPath : {
+					"~sPath1" : "~oKeptContext1",
+					"~sPath2" : "~oKeptContext2"
+				}
+			};
+
+		// code under test
+		assert.deepEqual(ODataListBinding.prototype.getAllCurrentContexts.call(oBinding),
+			["~oContext1", "~oContext2", "~oContext3", "~oKeptContext1", "~oKeptContext2"]);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

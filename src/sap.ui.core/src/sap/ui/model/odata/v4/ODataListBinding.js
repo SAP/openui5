@@ -1736,6 +1736,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns all current contexts of this list binding in no special order. Just like
+	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
+	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
+	 * return those contexts that were last requested by a control, but all contexts that are
+	 * currently available in the binding, including kept-alive contexts. To filter out kept-alive
+	 * contexts that are not part of the list, you could check whether the index is
+	 * <code>undefined</code>, as described in {@link sap.ui.model.odata.v4.Context#getIndex}.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context[]}
+	 *   All current contexts of this list binding, in no special order
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.getAllCurrentContexts = function () {
+		return this.aContexts.filter(function (oContext) {
+				return oContext;
+			}).concat(Object.values(this.mPreviousContextsByPath));
+	};
+
+	/**
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
 	 * If at least one of the entities in the given range has not yet been loaded, fires a

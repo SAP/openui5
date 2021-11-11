@@ -7315,6 +7315,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Create multiple w/o refresh: (2) Create two new entities without save in between,
 	// save (CPOUI5UISERVICESV3-1759)
+	//
+	// Scenario: All contexts of a bound list available on the client are returned, including
+	// transient and created contexts.
+	// JIRA: CPOUI5MODELS-741
 	QUnit.test("Create multiple w/o refresh, with $count: (2)", function (assert) {
 		var oBinding,
 			oCreatedContext0,
@@ -7346,6 +7350,11 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
 
+			// code under test (CPOUI5MODELS-741)
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+				"/SalesOrderList('42')"
+			]);
+
 			assert.strictEqual(oBinding.getLength(), 1);
 
 			that.expectChange("count", "1");
@@ -7362,6 +7371,12 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.getLength(), 2);
 
+			// code under test (CPOUI5MODELS-741)
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+				oCreatedContext0.getPath(),
+				"/SalesOrderList('42')"
+			]);
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "3")
@@ -7371,6 +7386,13 @@ sap.ui.define([
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
 
 			assert.strictEqual(oBinding.getLength(), 3);
+
+			// code under test (CPOUI5MODELS-741)
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+				oCreatedContext1.getPath(),
+				oCreatedContext0.getPath(),
+				"/SalesOrderList('42')"
+			]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -31009,8 +31031,13 @@ sap.ui.define([
 	// Scenario: Server-driven paging with sap.ui.table.Table
 	// Read with server-driven paging in "gaps" does not remove elements behind the gap
 	// JIRA: CPOUI5UISERVICESV3-1908
+	//
+	// Scenario: All contexts of a bound list available on the client are returned without firing
+	// any request.
+	// JIRA: CPOUI5MODELS-741
 	QUnit.test("Server-driven paging with t:Table: no remove behind gap", function (assert) {
-		var oTable,
+		var oListBinding,
+			oTable,
 			sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
 	<Text id="text" text="{Name}"/>\
@@ -31033,6 +31060,14 @@ sap.ui.define([
 
 		return this.createView(assert, sView).then(function () {
 			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("rows");
+
+			// code under test (CPOUI5MODELS-741)
+			assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
+			]);
 
 			that.expectRequest("EMPLOYEES?$skip=7&$top=3", {
 					value : [
@@ -31055,6 +31090,16 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// code under test (CPOUI5MODELS-741)
+			assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('8')",
+				"/EMPLOYEES('9')",
+				"/EMPLOYEES('10')"
+			]);
+
 			that.expectRequest("EMPLOYEES?$skip=3&$top=3", {
 					value : [
 						{ID : "4", Name : "Alice Grey"},
@@ -33770,6 +33815,10 @@ sap.ui.define([
 	// collection. Via paging it becomes part of the collection, but the ETag was changed on the
 	// server.
 	// JIRA: CPOUI5ODATAV4-340
+	//
+	// Scenario: All contexts of a bound list available on the client are returned, including
+	// kept-alive contexts that are not in the collection.
+	// JIRA: CPOUI5MODELS-782
 	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive, update conflict", function (assert) {
 		var oKeptContext,
 			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
@@ -33803,6 +33852,10 @@ sap.ui.define([
 			oKeptContext.setKeepAlive(true);
 			that.oView.byId("objectPage").setBindingContext(oKeptContext);
 
+			// code under test (CPOUI5MODELS-782)
+			assert.deepEqual(oTableBinding.getAllCurrentContexts().map(getPath),
+				["/SalesOrderList('1')"]);
+
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=SalesOrderID&$orderby=SalesOrderID desc"
@@ -33815,6 +33868,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// code under test (CPOUI5MODELS-782)
+			assert.deepEqual(oTableBinding.getAllCurrentContexts().map(getPath),
+				["/SalesOrderList('2')", "/SalesOrderList('1')"]);
+
 			that.expectChange("buyerId", "42a");
 
 			that.oView.byId("buyerId").getBinding("value").setValue("42a");
