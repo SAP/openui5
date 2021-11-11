@@ -356,9 +356,10 @@ sap.ui.define([
 		var oTypeahead = this.getTypeahead();
 		var oDialog = this.getDialog();
 
-		if (oTypeahead && oTypeahead.isOpen()) {
+		// check for opening too as focus move sometimes to valuehelp before handleOpened finished
+		if (oTypeahead && (oTypeahead.isOpen() || oTypeahead.isOpening())) {
 			return oTypeahead.getDomRef();
-		} else if (oDialog && oDialog.isOpen()) {
+		} else if (oDialog && (oDialog.isOpen() || oDialog.isOpening())) {
 			return oDialog.getDomRef();
 		}
 

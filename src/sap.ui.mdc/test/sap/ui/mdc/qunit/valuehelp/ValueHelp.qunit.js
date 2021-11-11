@@ -519,10 +519,17 @@ sap.ui.define([
 		assert.notOk(oContainer.getDomRef.called, "Container getDomRef not called if closed");
 		assert.notOk(oDomRef, "no DomRef returned if closed");
 
+		sinon.stub(oContainer, "isOpening").returns(true);
+		oDomRef = oValueHelp.getDomRef();
+		assert.ok(oContainer.getDomRef.called, "Container getDomRef called");
+		assert.equal(oDomRef, oField.getDomRef(), "DomRef returned if opening");
+		oContainer.isOpening.reset();
+
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oDomRef = oValueHelp.getDomRef();
 		assert.ok(oContainer.getDomRef.called, "Container getDomRef called");
-		assert.equal(oDomRef, oField.getDomRef(), "no DomRef returned if closed");
+		assert.equal(oDomRef, oField.getDomRef(), "DomRef returned if open");
+		oContainer.isOpen.reset();
 
 		oContainer.getDomRef.reset();
 
@@ -955,10 +962,17 @@ sap.ui.define([
 		assert.notOk(oContainer.getDomRef.called, "Container getDomRef not called if closed");
 		assert.notOk(oDomRef, "no DomRef returned if closed");
 
+		sinon.stub(oContainer, "isOpening").returns(true);
+		oDomRef = oValueHelp.getDomRef();
+		assert.ok(oContainer.getDomRef.called, "Container getDomRef called");
+		assert.equal(oDomRef, oField.getDomRef(), "DomRef returned if opening");
+		oContainer.isOpening.reset();
+
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oDomRef = oValueHelp.getDomRef();
 		assert.ok(oContainer.getDomRef.called, "Container getDomRef called");
-		assert.equal(oDomRef, oField.getDomRef(), "no DomRef returned if closed");
+		assert.equal(oDomRef, oField.getDomRef(), "DomRef returned if open");
+		oContainer.isOpen.reset();
 
 		oContainer.getDomRef.reset();
 
