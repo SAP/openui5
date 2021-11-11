@@ -19,60 +19,60 @@ sap.ui.define([
 		},
 		properties: {
 			width: {
-				ignore: false
+				ignore: true
 			},
 			height: {
-				ignore: false
+				ignore: true
 			},
 			delegate: {
 				ignore: true
 			},
 			header: {
-				ignore: false
+				ignore: true
 			},
 			noDataText: {
-				ignore: false
+				ignore: true
 			},
 			p13nMode: {
-				ignore: false
+				ignore: true
 			},
 			legendVisible: {
-				ignore: false
+				ignore: true
 			},
 			ignoreToolbarActions: {
-				ignore: false
+				ignore: true
 			},
 			minWidth: {
-				ignore: false
+				ignore: true
 			},
 			minHeight: {
-				ignore: false
+				ignore: true
 			},
 			sortConditions: {
 				ignore: true
 			},
 			showChartTooltip: {
-				ignore: false
+				ignore: true
 			},
 			autoBindOnInit: {
-				ignore: false
+				ignore: true
 			},
 			chartType: {
-				ignore: false
+				ignore: true
 			},
 			showSelectionDetails: {
-				ignore: false
+				ignore: true
 			}
 		},
 		aggregations: {
 			items: {
-				ignore: false
+				ignore: true
 			},
 			actions: {
-				ignore: false
+				ignore: true
 			},
 			selectionDetailsActions: {
-				ignore: false
+				ignore: true
 			},
 			_toolbar: {
 				ignore: false
