@@ -221,10 +221,12 @@ sap.ui.define([], function () {
 	/**
 	 * Returns the current token and advances to the next one.
 	 *
-	 * @param {string} [sExpectedTokenId] The expected ID of the token or undefined to accept any
-	 *   token
-	 * @returns {object} The current token or undefined if all tokens have been read
-	 * @throws {SyntaxError} If the next token's ID is not as expected
+	 * @param {string} [sExpectedTokenId]
+	 *   The expected ID of the token or <code>undefined</code> to accept any token
+	 * @returns {object|undefined}
+	 *   The current token or <code>undefined</code> if all tokens have been read
+	 * @throws {SyntaxError}
+	 *   If the next token's ID is not as expected
 	 */
 	_Parser.prototype.advance = function (sExpectedTokenId) {
 		var oToken = this.current();
@@ -259,7 +261,9 @@ sap.ui.define([], function () {
 
 	/**
 	 * Returns the current token in the array of tokens, but does not advance.
-	 * @returns {object} - the current token or undefined if all tokens have been read
+	 *
+	 * @returns {object|undefined} The current token or <code>undefined</code> if all tokens have
+	 *   been read
 	 */
 	_Parser.prototype.current = function () {
 		return this.aTokens[this.iCurrentToken];
@@ -269,8 +273,8 @@ sap.ui.define([], function () {
 	 * Throws an error.
 	 *
 	 * @param {string} sMessage The error message
-	 * @param {object} [oToken] The token to report the error for or undefined to indicate end of
-	 *   input
+	 * @param {object} [oToken] The token to report the error for or <code>undefined</code> to
+	 *   indicate end of input
 	 * @throws {SyntaxError} With this error message
 	 */
 	_Parser.prototype.error = function (sMessage, oToken) {
@@ -290,7 +294,8 @@ sap.ui.define([], function () {
 	 * Throws an error that the token was not as expected.
 	 *
 	 * @param {string} sWhat A description what was expected
-	 * @param {object} [oToken] The unexpected token or undefined to indicate end of input
+	 * @param {object} [oToken] The unexpected token or <code>undefined</code> to indicate end of
+	 *   input
 	 * @throws {SyntaxError} An error that the token was not as expected
 	 */
 	_Parser.prototype.expected = function (sWhat, oToken) {

@@ -256,7 +256,7 @@ sap.ui.define([
 	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
 	 * @param {string} sMetaPath
 	 *   The meta path for the entity
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 * @private
 	 */
@@ -638,7 +638,7 @@ sap.ui.define([
 	 * @param {string} sMissingPropertyPath
 	 *   The path of the missing property relative to oResource; this property is returned so that
 	 *   drillDown can proceed
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise resolving with the missing property value or <code>undefined</code> if the
 	 *   requested property is not an expected late property; it rejects with an error if the GET
 	 *   request failed, or if the key predicate or the ETag has changed
@@ -1398,8 +1398,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
-	 * @returns {Promise}
-	 *   A promise that resolves if the count has been determined or undefined if no request needed
+	 * @returns {Promise|undefined}
+	 *   A promise that resolves if the count has been determined or <code>undefined</code> if no
+	 *   request needed
 	 *
 	 * @private
 	 */
@@ -2210,7 +2211,7 @@ sap.ui.define([
 	/**
 	 * Returns a filter that excludes all created entities in this cache's collection.
 	 *
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   The filter or <code>undefined</code> if there is no created entity.
 	 *
 	 * @private
@@ -2273,7 +2274,8 @@ sap.ui.define([
 	 *   The start index of the range
 	 * @param {number} iEnd
 	 *   The index after the last element
-	 * @returns {string} The resource path including the query string
+	 * @returns {string}
+	 *   The resource path including the query string
 	 * @throws {Error}
 	 *   If there are created elements inside the given range
 	 *
@@ -2478,7 +2480,7 @@ sap.ui.define([
 	 *   A lock for the group ID
 	 * @param {function} fnOnRemove
 	 *   A function which is called if a kept-alive element does no longer exist
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
 	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
 	 *

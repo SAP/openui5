@@ -666,7 +666,8 @@ sap.ui.define([
 	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 * @param {boolean} [bSortExpandSelect]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
-	 * @returns {object} The converted query options or undefined if there are no query options
+	 * @returns {object|undefined} The converted query options or <code>undefined</code> if there
+	 *   are no query options
 	 *
 	 * @private
 	 */

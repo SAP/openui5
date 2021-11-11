@@ -696,7 +696,7 @@ sap.ui.define([
 	 *   A map from meta paths to entity types (as delivered by {@link #fetchTypes})
 	 * @param {string} sMetaPath
 	 *   The meta path for the given element
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 *
 	 * @public

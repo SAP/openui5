@@ -547,7 +547,7 @@ sap.ui.define([
 			 * @param {sap.ui.model.Context} oDetails.context
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
-			 * @returns {string|Promise}
+			 * @returns {string|Promise|undefined}
 			 *   A data binding or a fixed text or a sequence thereof or <code>undefined</code>. If
 			 *   <code>oDetails.$$valueAsPromise</code> is <code>true</code> a <code>Promise</code>
 			 *   may be returned resolving with the value for the label.

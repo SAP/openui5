@@ -983,7 +983,7 @@ sap.ui.define([
 		 * @param {object} sName
 		 *   The name of the annotation without prefix "@" and namespace, e.g. ".ContentID" for a
 		 *   annotation "@Org.OData.Core.V1.ContentID"
-		 * @returns {any|undefined}
+		 * @returns {any}
 		 *   The value of the annotation, or <code>undefined</code> in case there is not exactly one
 		 *   such annotation (ignoring the alias)
 		 */
@@ -1055,7 +1055,7 @@ sap.ui.define([
 		 *   A list of key properties, either as a string or an object with one property (its name
 		 *   is the alias in the key predicate, its value is the path in the instance). If not
 		 *   given, the entity's key is used.
-		 * @returns {string}
+		 * @returns {string|undefined}
 		 *   A filter using key properties without URI encoding, e.g.
 		 *   "Sector eq 'A/B&C' and ID eq 42)", or <code>undefined</code>, if at least one key
 		 *   property is undefined
@@ -1095,7 +1095,7 @@ sap.ui.define([
 		 * @param {boolean} [bKeepSingleProperty]
 		 *   If true, the property name is not omitted if there is only one property
 		 *   (like "(ID='42')")
-		 * @returns {string}
+		 * @returns {string|undefined}
 		 *   The key predicate with proper URI encoding, e.g. "(Sector='A%2FB%26C',ID='42')" or
 		 *   "('42')", or <code>undefined</code>, if at least one key property is undefined
 		 * @throws {Error}
@@ -1136,7 +1136,7 @@ sap.ui.define([
 		 *   given, the entity's key is used
 		 * @param {boolean} [bReturnAlias]
 		 *   Whether to return the aliases instead of the keys
-		 * @returns {object}
+		 * @returns {object|undefined}
 		 *   The key properties map. For the metadata
 		 *   <Key>
 		 *    <PropertyRef Name="Info/ID" Alias="EntityInfoID"/>
@@ -2155,9 +2155,9 @@ sap.ui.define([
 		 * @param {function} fnFetchMetadata
 		 *   Function which fetches metadata for a given meta path
 		 *
-		 * @returns {object} The query options for the child binding or <code>undefined</code> in
-		 *   case the query options cannot be created, e.g. because $apply cannot be wrapped into
-		 *   $expand
+		 * @returns {object|undefined} The query options for the child binding or
+		 *   <code>undefined</code> in case the query options cannot be created, e.g. because $apply
+		 *   cannot be wrapped into $expand
 		 */
 		wrapChildQueryOptions : function (sBaseMetaPath, sChildMetaPath, mChildQueryOptions,
 				fnFetchMetadata) {

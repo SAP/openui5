@@ -258,7 +258,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._Cache} [oOldCache]
 	 *   The old cache, in case it may be reused
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
-	 *   The cache
+	 *   The cache or <code>null</code> if the binding is relative and the given context is
+	 *   transient
 	 *
 	 * @private
 	 */
@@ -677,7 +678,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   A path (absolute or relative to this binding)
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   The given path, if it is already relative; otherwise the path relative to the binding's
 	 *   resolved path or return value context path; <code>undefined</code> if the path does not
 	 *   start with either of these paths.
@@ -705,7 +706,7 @@ sap.ui.define([
 	 * Returns the "strongest" change reason that {@link #resume} would fire for this binding or any
 	 * of its dependents.
 	 *
-	 * @returns {sap.ui.model.ChangeReason}
+	 * @returns {sap.ui.model.ChangeReason|undefined}
 	 *   The "strongest" change reason, or <code>undefined</code>
 	 *
 	 * @private
@@ -730,7 +731,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise which resolves as soon as this binding is resumed.
 	 *
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   This binding's current promise for {@link sap.ui.model.odata.v4.ODataParentBinding#resume},
 	 *   or <code>undefined</code> in case it is not currently suspended.
 	 *
@@ -745,7 +746,8 @@ sap.ui.define([
 	 * Returns the root binding of this binding's hierarchy, see binding
 	 * {@link topic:54e0ddf695af4a6c978472cecb01c64d Initialization and Read Requests}.
 	 *
-	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|sap.ui.model.odata.v4.ODataPropertyBinding}
+	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|
+	 *      sap.ui.model.odata.v4.ODataPropertyBinding|undefined}
 	 *   The root binding or <code>undefined</code> if this binding is unresolved (see
 	 *   {@link sap.ui.model.Binding#isResolved}).
 	 *
@@ -886,11 +888,11 @@ sap.ui.define([
 	/**
 	 * Returns whether any dependent binding of this binding has pending changes
 	 *
-	 * @returns {boolean}
-	 *   <code>true</code> if this binding has pending changes
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
 	 *   relate to a context which is kept alive.
+	 * @returns {boolean}
+	 *   <code>true</code> if this binding has pending changes
 	 *
 	 * @abstract
 	 * @function
@@ -1082,7 +1084,7 @@ sap.ui.define([
 	 *   The effective group ID
 	 * @param {string[]} aAbsolutePaths
 	 *   The absolute paths to request side effects for
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails, or <code>undefined</code> if there is nothing to do
 	 *

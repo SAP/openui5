@@ -248,8 +248,8 @@ sap.ui.define([
 	 *   The term
 	 * @param {string} sExpectedTerm
 	 *   The expected term
-	 * @returns {string}
-	 *   The qualifier or undefined, if the term is not the expected term
+	 * @returns {string|undefined}
+	 *   The qualifier or <code>undefined</code>, if the term is not the expected term
 	 */
 	function getQualifier(sTerm, sExpectedTerm) {
 		if (sTerm === sExpectedTerm) {
@@ -266,8 +266,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sTerm
 	 *   The term
-	 * @returns {string}
-	 *   The qualifier or undefined, if the term is not as expected
+	 * @returns {string|undefined}
+	 *   The qualifier or <code>undefined</code>, if the term is not as expected
 	 */
 	function getValueListQualifier(sTerm) {
 		var sQualifier = getQualifier(sTerm, sValueListMapping);
@@ -2118,7 +2118,7 @@ sap.ui.define([
 	 *   The property
 	 * @param {string} sMetaPath
 	 *   The OData metadata model path corresponding to the given property
-	 * @returns {object}
+	 * @returns {object|undefined}
 	 *   The type constraints for the property or <code>undefined</code> if the property's type is
 	 *   not supported
 	 *
@@ -2164,7 +2164,7 @@ sap.ui.define([
 	 * Returns a snapshot of each $metadata or annotation file loaded so far, combined into a
 	 * single "JSON" object according to the streamlined OData V4 Metadata JSON Format.
 	 *
-	 * @returns {object}
+	 * @returns {object|undefined}
 	 *   The OData metadata as a "JSON" object, if it is already available, or
 	 *   <code>undefined</code>.
 	 *
@@ -2398,7 +2398,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   The path of the property's unit or currency relative to the property's entity, or
 	 *   <code>undefined</code> in case the property has no associated unit or currency
 	 *
@@ -3333,7 +3333,7 @@ sap.ui.define([
 	 *   A relative or absolute path within the metadata model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   Resolved path or <code>undefined</code>
 	 * @throws {Error}
 	 *   If relative path starts with a dot which is not followed by a forward slash

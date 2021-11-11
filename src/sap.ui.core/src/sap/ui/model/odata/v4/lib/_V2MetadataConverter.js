@@ -294,7 +294,7 @@ sap.ui.define([
 	 * logged for this name afterwards.
 	 *
 	 * @param {string} sName The name
-	 * @returns {string} The value or <code>undefined</code>
+	 * @returns {string|undefined} The value or <code>undefined</code>
 	 */
 	Annotatable.prototype.consume = function (sName) {
 		return this.oConverter.consumeSapAnnotation(sName);
@@ -353,7 +353,7 @@ sap.ui.define([
 	 * Returns the value of the SAP annotation for the given name.
 	 *
 	 * @param {string} sName The name
-	 * @returns {string} The value or <code>undefined</code>
+	 * @returns {string|undefined} The value or <code>undefined</code>
 	 */
 	Annotatable.prototype.peek = function (sName) {
 		return this.oConverter.mSapAnnotations[sName];
@@ -420,7 +420,7 @@ sap.ui.define([
 	 * Returns the value of the SAP annotation for the given name and removes it from the map.
 	 *
 	 * @param {string} sName The name
-	 * @returns {string} The value or <code>undefined</code>
+	 * @returns {string|undefined} The value or <code>undefined</code>
 	 */
 	_V2MetadataConverter.prototype.consumeSapAnnotation = function (sName) {
 		var sValue = this.mSapAnnotations[sName];

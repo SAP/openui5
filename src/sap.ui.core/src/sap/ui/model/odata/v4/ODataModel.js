@@ -1556,7 +1556,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
-	 * @returns {boolean|undefined} Whether it is an auto group
+	 * @returns {boolean} Whether it is an auto group
 	 *
 	 * @private
 	 */
@@ -1570,7 +1570,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
-	 * @returns {boolean|undefined} Whether it is a direct group
+	 * @returns {boolean} Whether it is a direct group
 	 *
 	 * @private
 	 */
@@ -1834,7 +1834,7 @@ sap.ui.define([
 	 * @param {string[]} aAbsolutePaths
 	 *   The absolute paths to request side effects for; each path must not start with the fully
 	 *   qualified container name.
-	 * @returns {sap.ui.base.SyncPromise}
+	 * @returns {sap.ui.base.SyncPromise|undefined}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails, or <code>undefined</code> if there is nothing to do
 	 *
@@ -1904,7 +1904,7 @@ sap.ui.define([
 	 *   A relative or absolute path within the data model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
-	 * @returns {string}
+	 * @returns {string|undefined}
 	 *   Resolved path or <code>undefined</code>
 	 *
 	 * @private
