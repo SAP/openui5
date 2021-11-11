@@ -1079,12 +1079,12 @@ sap.ui.define([
 		var fnHandler1 = function(){};
 		var fnHandler2 = function(){};
 
-		StateUtil.attachChange(fnHandler1);
-		StateUtil.attachChange(fnHandler2);
+		StateUtil.attachStateChange(fnHandler1);
+		StateUtil.attachStateChange(fnHandler2);
 		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 2, "Event listeners attached");
 
-		StateUtil.detachChange(fnHandler1);
-		StateUtil.detachChange(fnHandler2);
+		StateUtil.detachStateChange(fnHandler1);
+		StateUtil.detachStateChange(fnHandler2);
 		assert.notOk(this.stateHandlerRegistry.mEventRegistry.hasOwnProperty("stateChange"), "Event listeners detached");
 	});
 

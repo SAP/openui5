@@ -112,7 +112,7 @@ sap.ui.define([
 		 *
 		 * @param {function} fnListener fnFunction The handler function to call when the event occurs
 		 */
-		attachChange: function(fnListener) {
+		attachStateChange: function(fnListener) {
 			sap.ui.mdc.p13n.Engine.getInstance().stateHandlerRegistry.attachChange(fnListener);
 		},
 
@@ -122,7 +122,7 @@ sap.ui.define([
 		 *
 		 * @param {function} fnListener fnFunction The handler function to detach from the event
 		 */
-		detachChange: function(fnListener) {
+		detachStateChange: function(fnListener) {
 			sap.ui.mdc.p13n.Engine.getInstance().stateHandlerRegistry.detachChange(fnListener);
 		},
 
