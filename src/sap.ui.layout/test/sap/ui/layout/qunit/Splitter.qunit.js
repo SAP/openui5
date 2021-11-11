@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/layout/Splitter",
@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/RenderManager"
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/ResizeHandler"
 ], function (
 	Log,
 	Splitter,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Panel,
 	coreLibrary,
 	XMLView,
-	RenderManager
+	RenderManager,
+	ResizeHandler
 ) {
 	"use strict";
 
@@ -665,39 +667,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Splitter with Vertical orientation with parent with height 'auto'", function (assert) {
-		// Arrange
-		var oBtn1 = new Button({layoutData: new SplitterLayoutData({size: "300px"})}),
-			oBtn2 = new Button({layoutData: new SplitterLayoutData({size: "auto"})}),
-			oBtn3 = new Button({layoutData: new SplitterLayoutData({size: "auto"})});
-
-		var oSplitter = new Splitter({
-			orientation: "Vertical",
-			contentAreas: [oBtn1, oBtn2, oBtn3]
-		});
-
-		var oPanel = new Panel({
-			height: "auto",
-			content: [oSplitter]
-		});
-
-		var oResizeSpy = this.spy(oSplitter, "_resize");
-		var done = assert.async();
-
-		// Act
-		oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		setTimeout(function () {
-			// Assert
-			assert.strictEqual(oResizeSpy.callCount, 2, "Should not call resize infinite times.");
-
-			// Clean up
-			oPanel.destroy();
-			done();
-		}, 250);
-	});
-
 	QUnit.test("Size calculation when splitter is not displayed", function (assert) {
 		// Arrange
 		var oSplitter = new Splitter({
@@ -716,6 +685,55 @@ sap.ui.define([
 
 		// Clean up
 		oSplitter.destroy();
+	});
+
+	QUnit.module("Resize Handling with fake timers", {
+		before: function() {
+			sinon.config.useFakeTimers = true;
+		},
+		after: function() {
+			sinon.config.useFakeTimers = false;
+		}
+	});
+
+	QUnit.test("Splitter with Vertical orientation with parent with height 'auto'", function (assert) {
+		// Arrange
+		var fnTriggerResize;
+		this.stub(ResizeHandler, "register").callsFake(function (oControl, fnListener) {
+			fnTriggerResize = fnListener;
+		});
+
+		var oBtn1 = new Button({layoutData: new SplitterLayoutData({size: "300px"})}),
+			oBtn2 = new Button({layoutData: new SplitterLayoutData({size: "auto"})}),
+			oBtn3 = new Button({layoutData: new SplitterLayoutData({size: "auto"})}),
+			oResizeEventHandler = this.stub();
+
+		var oSplitter = new Splitter({
+			orientation: "Vertical",
+			contentAreas: [oBtn1, oBtn2, oBtn3],
+			resize: oResizeEventHandler
+		});
+
+		var oPanel = new Panel({
+			height: "auto",
+			content: [oSplitter]
+		});
+
+		// Act
+		oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		fnTriggerResize();
+		this.clock.runAll();
+		fnTriggerResize();
+		this.clock.runAll();
+		fnTriggerResize();
+		this.clock.runAll();
+
+		// Assert
+		assert.strictEqual(oResizeEventHandler.callCount, 1, "Resizing shouldn't happen infinite times.");
+
+		// Clean up
+		oPanel.destroy();
 	});
 
 	QUnit.module("Bars", {
