@@ -325,7 +325,16 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @param {sap.ui.core.Control} oControl Control to which the <code>FieldHelp</code> element is connected to
-	 * @param {object} oConfig Configuration object that holds needed data of the connected control
+	 * @param {object} [oConfig] Configuration object that holds required data of the connected control
+	 * @param {int} [oConfig.maxConditions=-1] Maximum number of allowed conditions
+	 * @param {sap.ui.model.Type} [oConfig.dataType] Type of the key (required for condition panel)
+	 * @param {string[]} [oConfig.operators] Possible operators to be used in the condition
+	 * @param {sap.ui.mdc.enum.FieldDisplay} [oConfig.display] Defines whether the value and/or description of the field is shown and in what order
+	 * @param {object} [oConfig.delegate] Field delegate to handle model-specific logic (required for condition panel)
+	 * @param {object} [oConfig.delegateName] Field delegate name to handle model-specific logic (required for condition panel)
+	 * @param {object} [oConfig.payload] Payload of the field delegate (required for condition panel)
+	 * @param {string} [oConfig.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one (required if used for {@link sap.ui.mdc.FilterField FilterField})
+	 * @param {string} [oConfig.defaultOperatorName] Name of the default <code>Operator</code> (required if used for {@link sap.ui.mdc.FilterField FilterField})
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -899,7 +908,7 @@ sap.ui.define([
 
 	ValueHelp.prototype.getMaxConditions = function() { // ?
 		var oConfig = this.getProperty("_config");
-		return oConfig && oConfig.maxConditions;
+		return (oConfig && oConfig.maxConditions) || -1;
 	};
 
 	ValueHelp.prototype.getDisplay = function() { // ? currently necessary to determine how to render the tokens in valuehelp
