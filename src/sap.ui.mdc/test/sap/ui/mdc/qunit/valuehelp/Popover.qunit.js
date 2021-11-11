@@ -400,6 +400,17 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isTypeaheadSupported", function(assert) {
+
+		var bSupported = oPopover.isTypeaheadSupported();
+		assert.notOk(bSupported, "not supported if content not supports search");
+
+		sinon.stub(oContent, "isSearchSupported").returns(true);
+		bSupported = oPopover.isTypeaheadSupported();
+		assert.ok(bSupported, "supported if content supports search");
+
+	});
+
 	QUnit.test("getUseAsValueHelp", function(assert) {
 
 		oContent.getUseAsValueHelp = function () {

@@ -426,6 +426,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isTypeaheadSupported", function(assert) {
+
+		var bSupported = oDialog.isTypeaheadSupported();
+		assert.notOk(bSupported, "not supported for dialog");
+
+	});
+
 	QUnit.test("select event", function(assert) {
 
 		var iSelect = 0;

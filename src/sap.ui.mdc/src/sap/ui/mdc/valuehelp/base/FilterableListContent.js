@@ -147,7 +147,9 @@ sap.ui.define([
 
 	FilterableListContent.prototype._handleFilterValueUpdate = function (oChanges) {
 		_addFilterValueToFilterBar.call(this, this._getPriorityFilterBar(), oChanges.current);
-		this.applyFilters(oChanges.current);
+		if (this.isContainerOpen()) { // TODO: only visible content if multiple contens on dialog
+			this.applyFilters(oChanges.current);
+		}
 	};
 
 	FilterableListContent.prototype.applyFilters = function (sSearch) {
@@ -421,7 +423,7 @@ sap.ui.define([
 				var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
 				if (oChanges.mutation === "insert") {
 					var sFilterFields =  this.getFilterFields();
-					if (!oExistingBasicSearchField && sFilterFields) {
+					if (!oExistingBasicSearchField && sFilterFields) { // TODO: use isSearchSupported but here Delegate needs to be loaded
 						return loadModules([
 							"sap/ui/mdc/FilterField"
 						]).then(function (aModules){
@@ -535,9 +537,11 @@ sap.ui.define([
 
 		if (oFilterBar && sFilterFields) {
 			var oConditions = oFilterBar.getInternalConditions();
-			var oCondition = Condition.createCondition("StartsWith", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated);
-			oConditions[sFilterFields] = [oCondition];
-			oFilterBar.setInternalConditions(oConditions);
+			if (!oConditions[sFilterFields] || oConditions[sFilterFields].length !== 1 || oConditions[sFilterFields][0].values[0] !== sFilterValue) {
+				var oCondition = Condition.createCondition("StartsWith", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated);
+				oConditions[sFilterFields] = [oCondition];
+				oFilterBar.setInternalConditions(oConditions);
+			}
 		}
 
 	}
@@ -558,6 +562,20 @@ sap.ui.define([
 		return sShortTitle;
 	};
 
+	FilterableListContent.prototype.isSearchSupported = function () {
+
+		var sFilterFields =  this.getFilterFields();
+		var bSearchSupported = !!sFilterFields;
+		if (sFilterFields === "$search") {
+			var oListBinding = this._getListBinding();
+			var oDelegate = this._getValueHelpDelegate();
+			var oDelegatePayload = this._getValueHelpDelegatePayload();
+			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, oListBinding);
+		}
+
+		return bSearchSupported;
+
+	};
 
 	return FilterableListContent;
 

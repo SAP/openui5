@@ -27,7 +27,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
 							<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem">
 								<columns>
 									<Column width="5rem">
@@ -116,7 +116,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-1-multicombo-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" useAsValueHelp="true">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
 							<Table id="mTable1-1-multicombo" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" width="20rem">
 								<columns>
 									<Column width="5rem">
@@ -159,7 +159,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-10-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' width="30rem">
 								<columns>
 									<Column width="5rem">
@@ -246,7 +246,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-11-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test2">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' width="30rem">
 								<columns>
 									<Column width="5rem">
@@ -426,6 +426,7 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
+						<mdcvc:Conditions label="Country"/>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -504,6 +505,7 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
+						<mdcvc:Conditions label="Region"/>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -590,6 +592,365 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
+						<mdcvc:Conditions label="City"/>
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+
+			<mdc:ValueHelp id="FH-Books1"
+				delegate="{name: 'sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate', payload: {filter: '$search'}}">
+				<mdc:typeahead>
+					<mdcv:Popover id="FH_Books1-Pop" title="Books">
+						<mdcvc:MTable id="FH_Books1-Typeahead" keyPath="ID" descriptionPath="title" filterFields="$search">
+							<Table id="FH_Books1-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+											<Text text="{title}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog id="FH_Books1-Dialog" title="Books">
+						<mdcvc:MDCTable id="FH_Books1-MDCTable" keyPath="ID" descriptionPath="title" filterFields="$search" title="mdcTable">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FH_Books1-MDCTable-FB" liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Description" conditions="{$filters>/conditions/descr}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<mdc:Table id="FH_Books1-MDCTable-table"
+								autoBindOnInit="true"
+								width="100%"
+								height="100%"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								p13nMode="Column,Sort"
+								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+								<mdc:columns>
+									<mdc:table.Column header="ID" dataProperty="ID" width="5rem">
+										<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Title" dataProperty="title">
+										<Text text="{title}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Description" dataProperty="descr">
+										<Text text="{descr}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Published" dataProperty="published" width="8rem">
+										<Text text="{published}"/>
+									</mdc:table.Column>
+								</mdc:columns>
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto"/>
+								</mdc:type>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+						<mdcvc:MTable id="FH_Books1-MTable" keyPath="ID" descriptionPath="title" filterFields="$search" title="mTable">
+							<mdcvc:filterBar id="FH_Books1-MTable-FB">
+								<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Description" conditions="{$filters>/conditions/descr}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<Table id="FH_Books1-MTable-table" items='{path : "/Books", length: 10}'>
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Description"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+											<Text text="{title}"/>
+											<Text text="{descr}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+						<mdcvc:Conditions label="Books"/>
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+			<mdc:ValueHelp id="FH-Books2"
+				delegate="{name: 'sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate', payload: {filter: '*title,descr*'}}">
+				<mdc:typeahead>
+					<mdcv:Popover id="FH_Books2-Pop" title="Books">
+						<mdcvc:MTable id="FH_Books2-Typeahead" keyPath="ID" descriptionPath="title" filterFields="*title,descr*">
+							<Table id="FH_Books2-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+											<Text text="{title}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog id="FH_Books2-Dialog" title="Books">
+						<mdcvc:MDCTable id="FH_Books2-MDCTable" keyPath="ID" descriptionPath="title" filterFields="*title,descr*" title="mdcTable">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FH_Books2-MDCTable-FB" liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Description" conditions="{$filters>/conditions/descr}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<mdc:Table id="FH_Books2-MDCTable-table"
+								autoBindOnInit="true"
+								width="100%"
+								height="100%"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								p13nMode="Column,Sort"
+								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+								<mdc:columns>
+									<mdc:table.Column header="ID" dataProperty="ID" width="5rem">
+										<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Title" dataProperty="title">
+										<Text text="{title}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Description" dataProperty="descr">
+										<Text text="{descr}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Published" dataProperty="published" width="8rem">
+										<Text text="{published}"/>
+									</mdc:table.Column>
+								</mdc:columns>
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto"/>
+								</mdc:type>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+						<mdcvc:MTable id="FH_Books2-MTable" keyPath="ID" descriptionPath="title" filterFields="*title,descr*" title="mTable">
+							<mdcvc:filterBar id="FH_Books2-MTable-FB">
+								<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Description" conditions="{$filters>/conditions/descr}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<Table id="FH_Books2-MTable-table" items='{path : "/Books", length: 10}'>
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Description"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+											<Text text="{title}"/>
+											<Text text="{descr}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+						<mdcvc:Conditions label="Books"/>
+					</mdcv:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+			<mdc:ValueHelp id="FH-Books3"
+				delegate="{name: 'sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate', payload: {filter: ''}}">
+				<mdc:typeahead>
+					<mdcv:Popover id="FH_Books3-Pop" title="Books">
+						<mdcvc:MTable id="FH_Books3-Typeahead" keyPath="ID" descriptionPath="title">
+							<Table id="FH_Books3-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem">
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+											<Text text="{title}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcv:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcv:Dialog id="FH_Books3-Dialog" title="Books">
+						<mdcvc:MDCTable id="FH_Books3-MDCTable" keyPath="ID" descriptionPath="title" title="mdcTable">
+							<mdcvc:filterBar>
+								<vhfb:FilterBar id="FH_Books3-MDCTable-FB" liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Description" conditions="{$filters>/conditions/descr}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<mdc:Table id="FH_Books3-MDCTable-table"
+								autoBindOnInit="true"
+								width="100%"
+								height="100%"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								p13nMode="Column,Sort"
+								delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+								<mdc:columns>
+									<mdc:table.Column header="ID" dataProperty="ID" width="5rem">
+										<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Title" dataProperty="title">
+										<Text text="{title}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Description" dataProperty="descr">
+										<Text text="{descr}"/>
+									</mdc:table.Column>
+									<mdc:table.Column header="Published" dataProperty="published" width="8rem">
+										<Text text="{published}"/>
+									</mdc:table.Column>
+								</mdc:columns>
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto"/>
+								</mdc:type>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+						<mdcvc:MTable id="FH_Books3-MTable" keyPath="ID" descriptionPath="title" title="mTable">
+							<mdcvc:filterBar id="FH_Books3-MTable-FB">
+								<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" conditions="{$filters>/conditions/ID}" dataType="Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}"/>
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+									</vhfb:filterItems>
+									<vhfb:filterItems>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Description" conditions="{$filters>/conditions/descr}" />
+									</vhfb:filterItems>
+								</vhfb:FilterBar>
+							</mdcvc:filterBar>
+							<Table id="FH_Books3-MTable-table" items='{path : "/Books", length: 10}'>
+								<columns>
+									<Column width="5rem">
+										<header>
+											<Text text="ID"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title"/>
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Description"/>
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"/>
+											<Text text="{title}"/>
+											<Text text="{descr}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+						<mdcvc:Conditions label="Books"/>
 					</mdcv:Dialog>
 				</mdc:dialog>
 			</mdc:ValueHelp>
@@ -699,6 +1060,33 @@
 				dataType="sap.ui.model.odata.type.String"
 				fieldHelp="FB0-FH-City"
 				display="ValueDescription"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF9"
+				label="Book ($search)"
+				conditions="{$filters>/conditions/ID}"
+				dataType="sap.ui.model.odata.type.Int32"
+				dataTypeFormatOptions="{groupingEnabled: false}"
+				fieldHelp="FH-Books1"
+				display="Description"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF10"
+				label="Book (FilterFields)"
+				conditions="{$filters>/conditions/ID}"
+				dataType="sap.ui.model.odata.type.Int32"
+				dataTypeFormatOptions="{groupingEnabled: false}"
+				fieldHelp="FH-Books2"
+				display="Description"
+				maxConditions="{settings>/maxConditions}"/>
+			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				id="FB0-FF11"
+				label="Book (no search)"
+				conditions="{$filters>/conditions/ID}"
+				dataType="sap.ui.model.odata.type.Int32"
+				dataTypeFormatOptions="{groupingEnabled: false}"
+				fieldHelp="FH-Books3"
+				display="Description"
 				maxConditions="{settings>/maxConditions}"/>
 		</mdc:filterItems>
 	</mdc:FilterBar>

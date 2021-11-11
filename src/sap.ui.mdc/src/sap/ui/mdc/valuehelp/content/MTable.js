@@ -4,7 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
+	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter',
+	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/util/loadModules',
 	'sap/m/library',
 	'sap/ui/model/FilterType',
@@ -18,7 +20,9 @@ sap.ui.define([
 	'sap/base/Log'
 ], function(
 	FilterableListContent,
+	Condition,
 	FilterConverter,
+	ConditionValidated,
 	loadModules,
 	library,
 	FilterType,
@@ -151,8 +155,16 @@ sap.ui.define([
 		var oDelegate = this._getValueHelpDelegate();
 		var oDelegatePayload = this._getValueHelpDelegatePayload();
 
+		var sFilterFields = this.getFilterFields();
 		var oFilterBar = this._getPriorityFilterBar();
 		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : this.getProperty("inConditions"); // use InParameter if no FilterBar
+
+		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
+			// add condition for Search value
+			var oCondition = Condition.createCondition("StartsWith", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
+			oConditions[sFilterFields] = [oCondition];
+		}
+
 		var oConditionTypes = oConditions && this._getTypesForConditions(oConditions);
 		var oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 		var aFilters = oFilter && [oFilter];
@@ -177,7 +189,7 @@ sap.ui.define([
 			bUseFilter = false;
 		}
 
-		if (oDelegate && oDelegate.isSearchSupported(oDelegatePayload, oListBinding)){
+		if (sFilterFields === "$search" && oDelegate && oDelegate.isSearchSupported(oDelegatePayload, oListBinding)){
 			if (!oListBinding.isSuspended() && bUseFilter) {
 				// as we trigger two changes this would result to two requests therefore we suspend the binding
 				oListBinding.suspend();

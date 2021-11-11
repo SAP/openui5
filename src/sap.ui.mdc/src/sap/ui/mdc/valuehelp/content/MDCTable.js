@@ -384,8 +384,13 @@ sap.ui.define([
 		}
 	};
 
-	var _handleSearch = function () {
-		return this.applyFilters(this.getFilterValue());
+	var _handleSearch = function (oEvent) {
+		var sFilterFields = this.getFilterFields();
+		var oFilterBar = oEvent.getSource();
+		var oConditions = oFilterBar.getInternalConditions();
+		var oCondition = oConditions[sFilterFields][0];
+		var sFilterValue = oCondition && oCondition.values[0];
+		this.setFilterValue(sFilterValue);
 	};
 
 	MDCTable.prototype._observeChanges = function (oChanges) {

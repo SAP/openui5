@@ -595,7 +595,11 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
 
-		return Promise.resolve(!!this.getTypeahead()); // TODO: need to check for search supported or should TypeAhead not be added at all if search is not supported?
+		var oDelegatePromise = this._getControlDelegatePromise();
+		return oDelegatePromise.then(function (oDelegateModule) {
+			var oTypeahead = this.getTypeahead(); // TODO: retrieve content here?
+			return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
+		}.bind(this));
 
 	};
 

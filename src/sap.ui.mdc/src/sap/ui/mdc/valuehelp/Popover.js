@@ -350,6 +350,13 @@ sap.ui.define([
 
 	};
 
+	Popover.prototype.isTypeaheadSupported = function () {
+
+		var oContent = this._getContent();
+		return oContent && oContent.isSearchSupported();
+
+	};
+
 	Popover.prototype.exit = function () {
 		if (this._oCurrentContent) {
 			if (!this._oCurrentContent.bIsDestroyed) {

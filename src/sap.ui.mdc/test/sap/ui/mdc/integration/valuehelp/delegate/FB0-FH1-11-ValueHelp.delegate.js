@@ -45,7 +45,7 @@ sap.ui.define([
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 
 			if (!oCurrentContent) {
-				oCurrentContent = new MTable(oValueHelp.getId() + "--MTable", {keyPath: "ID", descriptionPath: "name"});
+				oCurrentContent = new MTable(oValueHelp.getId() + "--MTable", {keyPath: "ID", descriptionPath: "name", filterFields: "$search"});
 				oContainer.addContent(oCurrentContent);
 			}
 
