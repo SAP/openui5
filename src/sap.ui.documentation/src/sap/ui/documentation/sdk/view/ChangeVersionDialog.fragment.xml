@@ -47,8 +47,7 @@
 					}]
 				}">
 			<StandardTreeItem
-					title="{path: 'version'}{= ${path: 'version'} === ${versionData>/latestVersion} ? ' (Latest)' : ''}"
-					type="{= ${path: 'path'} ? 'Active' : 'Inactive'}">
+					title="{path: 'version'}{= ${path: 'version'} === ${versionData>/latestVersion} ? ' (Latest)' : ''}">
 				<customData>
 					<core:CustomData key="path" value="{path: 'path'}" />
 				</customData>
