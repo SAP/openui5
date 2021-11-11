@@ -388,7 +388,7 @@ sap.ui.define([
 		var sFilterFields = this.getFilterFields();
 		var oFilterBar = oEvent.getSource();
 		var oConditions = oFilterBar.getInternalConditions();
-		var oCondition = oConditions[sFilterFields][0];
+		var oCondition = sFilterFields && oConditions[sFilterFields] && oConditions[sFilterFields][0];
 		var sFilterValue = oCondition && oCondition.values[0];
 		this.setFilterValue(sFilterValue);
 	};
