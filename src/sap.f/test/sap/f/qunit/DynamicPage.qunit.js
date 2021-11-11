@@ -2750,24 +2750,18 @@ function (
 	QUnit.test("DynamicPage Header has the correct Aria state", function (assert) {
 		var $header = this.oDynamicPage.getHeader().$(),
 			sRole = "region",
-			sAriaExpandedValue = "true",
 			sAriaLabelValue = oFactory.getResourceBundle().getText("EXPANDED_HEADER");
 		this.stub(this.oDynamicPage, "_shouldSnapOnScroll").returns(true);
 		this.stub(this.oDynamicPage, "_canSnapHeaderOnScroll").returns(true);
 
 		assert.equal($header.attr("role"), sRole,
 			"DynamicPage Header role 'region'");
-		assert.equal($header.attr("aria-expanded"), sAriaExpandedValue,
-			"DynamicPage Header aria-expanded 'true'");
 		assert.equal($header.attr("aria-label"), sAriaLabelValue,
 			"DynamicPage Header aria-label is 'Header expanded'");
 
-		sAriaExpandedValue = "false";
 		sAriaLabelValue = oFactory.getResourceBundle().getText("SNAPPED_HEADER");
 		this.oDynamicPage._toggleHeaderOnScroll();
 
-		assert.equal($header.attr("aria-expanded"), sAriaExpandedValue,
-			"DynamicPage Header aria-expanded 'true'");
 		assert.equal($header.attr("aria-label"), sAriaLabelValue,
 			"DynamicPage Header aria-label is 'Header expanded'");
 	});
