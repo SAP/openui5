@@ -33080,36 +33080,60 @@ sap.ui.define([
 	// Scenario: create at end w/ $count, before read is finished
 	// BCP: 2070486792
 	QUnit.test("ODLB: create at end w/ $count before read", function (assert) {
-		var sView = '\
-<Table id="table" items="{path : \'EMPLOYEES\', parameters : {$count : true}}">\
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" growing="true" growingThreshold="2"\
+		items="{path : \'EMPLOYEES\', parameters : {$count : true}}">\
 	<Text id="name" text="{Name}"/>\
 </Table>',
 			that = this;
 
 		this.expectChange("name", []);
 
-		return this.createView(assert, sView).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("items");
-
-			that.expectChange("name", ["John Doe"])
-				.expectRequest("EMPLOYEES?$count=true&$skip=0&$top=100", {
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES?$count=true&$select=ID,Name&$skip=0&$top=2", {
 					"@odata.count" : "1",
-					value : [{Name : "Frederic Fall"}]
+					value : [{ID : "1", Name : "Frederic Fall"}]
 				})
 				.expectRequest({
 					method : "POST",
 					url : "EMPLOYEES",
 					payload : {Name : "John Doe"}
-				}) // response does not matter here
+				}, {
+					ID : "new1",
+					Name : "John Doe"
+				})
+				.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {Name : "Jane Doe"}
+				}, {
+					ID : "new2",
+					Name : "Jane Doe"
+				})
 				.expectChange("name", ["Frederic Fall", "John Doe"]);
 
+			oBinding = that.oView.byId("table").getBinding("items");
 			oBinding.setContext(that.oModel.createBindingContext("/"));
 
+			// code under test
 			return Promise.all([
-				// code under test
-				oBinding.create({Name : "John Doe"}, true, true),
+				oBinding.create({Name : "John Doe"}, true, true).created(),
+				oBinding.create({Name : "Jane Doe"}, true, true).created(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			return oBinding.requestContexts(0, 10).then(function (aContexts) {
+				assert.strictEqual(aContexts[0].isTransient(), undefined);
+				assert.strictEqual(aContexts[1].isTransient(), false);
+				assert.strictEqual(aContexts[2].isTransient(), false);
+				assert.deepEqual(aContexts.map(getPath), [
+					"/EMPLOYEES('1')",
+					"/EMPLOYEES('new1')",
+					"/EMPLOYEES('new2')"
+				]);
+			});
 		});
 	});
 

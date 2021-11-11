@@ -1761,7 +1761,7 @@ sap.ui.define([
 							detailedReason : "RemoveVirtualContext",
 							reason : ChangeReason.Change
 						});
-						that.reset(ChangeReason.Refresh);
+						that.reset(ChangeReason.Refresh, true);
 					}
 					oVirtualContext.destroy();
 				});
@@ -2848,23 +2848,29 @@ sap.ui.define([
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
 	 *   as long as the binding is still empty.
+	 * @param {boolean} [bKeepCreated]
+	 *   Whether created contexts shall remain in aContexts
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason) {
+	ODataListBinding.prototype.reset = function (sChangeReason, bKeepCreated) {
 		var bEmpty = this.iCurrentEnd === 0,
 			that = this;
 
+		if (!bKeepCreated) {
+			this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+			// true if contexts have been created at the end, false if contexts have been created at
+			// the start, undefined if there are no created contexts
+			this.bCreatedAtEnd = undefined;
+		}
 		if (this.aContexts) { // allow initial call from c'tor via #applyParameters
-			this.aContexts.forEach(function (oContext) {
+			this.aContexts.slice(this.iCreatedContexts).forEach(function (oContext) {
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
+			this.aContexts.length = this.iCreatedContexts;
+		} else {
+			this.aContexts = [];
 		}
-		this.aContexts = [];
-		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
-		// true if contexts have been created at the end, false if contexts have been created at the
-		// start, undefined if there are no created contexts
-		this.bCreatedAtEnd = undefined;
 		// the range of array indices for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
 		// upper boundary for server-side list length (based on observations so far)

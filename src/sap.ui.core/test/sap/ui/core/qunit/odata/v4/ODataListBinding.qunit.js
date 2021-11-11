@@ -854,49 +854,67 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("reset", function (assert) {
+[undefined, true].forEach(function (bKeepCreated) {
+	QUnit.test("reset, bKeepCreated=" + bKeepCreated, function (assert) {
 		var oBinding,
-			oCreatedContext,
+			oCreatedContext1,
+			oCreatedContext2,
 			aPreviousContexts;
 
 		// code under test: reset called from ODLB constructor
 		oBinding = this.bindList("/EMPLOYEES");
-		oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
+		oCreatedContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
+			SyncPromise.resolve(Promise.resolve()));
+		oCreatedContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
 			SyncPromise.resolve(Promise.resolve()));
 
 		// set members which should be reset to arbitrary values
 		oBinding.createContexts(0, [{}, {}]);
 		oBinding.createContexts(3, [{}]);
 		aPreviousContexts = oBinding.aContexts.slice();
-		oBinding.aContexts.unshift(oCreatedContext);
+		oBinding.aContexts.unshift(oCreatedContext1);
+		oBinding.aContexts.unshift(oCreatedContext2);
 		oBinding.iCurrentBegin = 10;
 		oBinding.iCurrentEnd = 19;
 		oBinding.bLengthFinal = true;
 		oBinding.iMaxLength = 42;
-		oBinding.iCreatedContexts = 1;
+		oBinding.iCreatedContexts = 2;
+		oBinding.bCreatedAtEnd = "~bCreatedAtEnd~";
 
 		this.mock(oBinding).expects("_fireRefresh").never();
-		this.mock(oCreatedContext).expects("destroy").never();
+		this.mock(oCreatedContext1).expects("destroy").never();
 
 		// code under test
-		oBinding.reset();
+		oBinding.reset(undefined, bKeepCreated);
 
-		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 4);
+		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length,
+			bKeepCreated ? 3 : 5);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/0"], aPreviousContexts[0]);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/1"], aPreviousContexts[1]);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/3"], aPreviousContexts[3]);
-		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-23)"],
-			oCreatedContext);
-		assert.deepEqual(oBinding.aContexts, []);
+		if (!bKeepCreated) {
+			assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-23)"],
+				oCreatedContext1);
+			assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"],
+				oCreatedContext2);
+		}
+
+		assert.deepEqual(oBinding.aContexts, bKeepCreated
+			? [oCreatedContext2, oCreatedContext1]
+			: []);
 		assert.strictEqual(oBinding.iCurrentBegin, 0);
 		assert.strictEqual(oBinding.iCurrentEnd, 0);
 		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
-		assert.strictEqual(oBinding.iCreatedContexts, 0);
-		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
+		assert.strictEqual(oBinding.iCreatedContexts, bKeepCreated ? 2 : 0);
+		assert.strictEqual(oBinding.bCreatedAtEnd, bKeepCreated ? "~bCreatedAtEnd~" : undefined);
 
-		return oCreatedContext.created();
+		return Promise.all([
+			oCreatedContext1.created(),
+			oCreatedContext2.created()
+		]);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("reset with change reason", function (assert) {
@@ -1686,7 +1704,7 @@ sap.ui.define([
 						}).callsFake(function () {
 							assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
 						});
-					oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
+					oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh, true);
 				}
 			}
 			this.mock(oVirtualContext).expects("destroy").withExactArgs();
