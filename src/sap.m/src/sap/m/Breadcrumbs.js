@@ -599,7 +599,7 @@ sap.ui.define([
 				oItem.$().attr("tabindex", "0");
 			}
 			oItem.$().attr("tabindex", "-1");
-			aNavigationDomRefs.push(oItem.getDomRef());
+			aNavigationDomRefs.push(oItem.getFocusDomRef());
 		});
 
 		this.addDelegate(oItemNavigation);
