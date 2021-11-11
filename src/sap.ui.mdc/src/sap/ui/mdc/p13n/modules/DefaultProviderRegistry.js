@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @since 1.89
 	 * @alias sap.ui.mdc.p13n.DefaultProviderRegistry
 	 */
-	var DefaultProviderRegistry = BaseObject.extend("sap.ui.mdc.p13n.DefaultProviderRegistry", {
+	var DefaultProviderRegistry = BaseObject.extend("sap.ui.mdc.p13n.modules.DefaultProviderRegistry", {
 		constructor: function() {
 
 			if (oDefaultProviderRegistry) {

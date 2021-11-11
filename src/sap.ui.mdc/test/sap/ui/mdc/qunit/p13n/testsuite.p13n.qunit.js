@@ -68,7 +68,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"DefaultProviderRegistry": {
 				group: "Silent Persistence",
-				module: "./DefaultProviderRegistry.qunit",
+				module: "./modules/DefaultProviderRegistry.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"
@@ -273,8 +273,17 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"StateHandlerRegistry": {
+				group: "state handling",
+				module: "./modules/StateHandlerRegistry.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"StateUtil": {
-				group: "P13n logic",
+				group: "state handling",
 				module: "./StateUtil.qunit",
 				ui5: {
 					libs: [

@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
-], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry"
+], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry) {
 	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
@@ -1065,6 +1065,27 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.module("State event handling", {
+		beforeEach: function() {
+			this.stateHandlerRegistry = StateHandlerRegistry.getInstance();
+		},
+		afterEach: function() {
+			this.stateHandlerRegistry.destroy();
+		}
+	});
 
+	QUnit.test("Ceck attaching & detaching", function(assert) {
+
+		var fnHandler1 = function(){};
+		var fnHandler2 = function(){};
+
+		StateUtil.attachChange(fnHandler1);
+		StateUtil.attachChange(fnHandler2);
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 2, "Event listeners attached");
+
+		StateUtil.detachChange(fnHandler1);
+		StateUtil.detachChange(fnHandler2);
+		assert.notOk(this.stateHandlerRegistry.mEventRegistry.hasOwnProperty("stateChange"), "Event listeners detached");
+	});
 
 });

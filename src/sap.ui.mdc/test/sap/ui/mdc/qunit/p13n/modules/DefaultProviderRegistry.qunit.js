@@ -2,7 +2,7 @@
 sap.ui.define([
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/enum/PersistenceMode",
-	"sap/ui/mdc/p13n/DefaultProviderRegistry"
+	"sap/ui/mdc/p13n/modules/DefaultProviderRegistry"
 ], function (Control, PersistenceMode, DefaultProviderRegistry) {
 	"use strict";
 
@@ -12,7 +12,7 @@ sap.ui.define([
 
 		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
 		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
-		assert.ok(oFirstDefaultProviderRegistry.isA("sap.ui.mdc.p13n.DefaultProviderRegistry"), "getInstance() returns an instance of DefaultProviderRegistry");
+		assert.ok(oFirstDefaultProviderRegistry.isA("sap.ui.mdc.p13n.modules.DefaultProviderRegistry"), "getInstance() returns an instance of DefaultProviderRegistry");
 		assert.deepEqual(oFirstDefaultProviderRegistry, oSecondDefaultProviderRegistry, "There is only one 'DefaultProviderRegistry' instance per session");
 
 		assert.throws(

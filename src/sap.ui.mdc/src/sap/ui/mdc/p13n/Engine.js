@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/core/Element",
-	"sap/ui/mdc/p13n/DefaultProviderRegistry",
-	"sap/ui/mdc/p13n/UIManager"
-], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element, DefaultProviderRegistry, UIManager) {
+	"sap/ui/mdc/p13n/modules/DefaultProviderRegistry",
+	"sap/ui/mdc/p13n/UIManager",
+	"sap/ui/mdc/p13n/modules/StateHandlerRegistry"
+], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -54,12 +55,16 @@ sap.ui.define([
 			}
 
 			this._aRegistry = [];
+			this._aStateHandlers = [];
 
 			//Default Provider Registry to be used for internal PersistenceProvider functionality access
 			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance();
 
 			//UIManager to be used for p13n UI creation
 			this.uimanager = UIManager.getInstance(this);
+
+			//Default state Handler Registry to be used for state event handling
+			this.stateHandlerRegistry = StateHandlerRegistry.getInstance();
 		}
 	});
 
@@ -234,6 +239,9 @@ sap.ui.define([
 
 		var oModificationSetting = this._determineModification(oControl);
 		return oModificationSetting.handler.reset(oResetConfig, oModificationSetting.payload).then(function(){
+			//trigger statehandlerregistry notification
+			this.stateHandlerRegistry.fireChange(oControl);
+
 			//Re-Init housekeeping after update
 			return this.initAdaptation(oControl, aKeys).then(function(oPropertyHelper){
 				aKeys.forEach(function(sKey){
@@ -281,7 +289,11 @@ sap.ui.define([
 	Engine.prototype._processChanges = function(vControl, aChanges) {
 		if (aChanges instanceof Array && aChanges.length > 0) {
 			var oModificationSetting = this._determineModification(vControl);
-			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload);
+			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload)
+			.then(function(aChanges){
+				this.stateHandlerRegistry.fireChange(Engine.getControlInstance(vControl));
+				return aChanges;
+			}.bind(this));
 		} else {
 			return Promise.resolve([]);
 		}
@@ -317,7 +329,10 @@ sap.ui.define([
 			fResolveRTA = resolve;
 		});
 
-		oModificationHandler.processChanges = fResolveRTA;
+		oModificationHandler.processChanges = function(aChanges) {
+			fResolveRTA(aChanges);
+			return Promise.resolve(aChanges);
+		};
 
 		this._setModificationHandler(oControl, oModificationHandler);
 
@@ -996,11 +1011,17 @@ sap.ui.define([
 	 * This method can be used for debugging to retrieve the complete registry.
 	 */
 	Engine.prototype._getRegistry = function() {
-		var oRegistry = {};
+		var oRegistry = {
+			stateHandlerRegistry: this.stateHandlerRegistry,
+			defaultProviderRegistry: this.defaultProviderRegistry,
+			controlRegistry: {}
+		};
+
 		this._aRegistry.forEach(function(sKey){
 			var oControl = sap.ui.getCore().byId(sKey);
-			oRegistry[sKey] = _mRegistry.get(oControl);
+			oRegistry.controlRegistry[sKey] = _mRegistry.get(oControl);
 		});
+
 		return oRegistry;
 	};
 
@@ -1015,6 +1036,8 @@ sap.ui.define([
 		_mRegistry.delete(this);
 		this.defaultProviderRegistry.destroy();
 		this.defaultProviderRegistry = null;
+		this.stateHandlerRegistry.destroy();
+		this.stateHandlerRegistry = null;
 		this.uimanager.destroy();
 		this.uimanager = null;
 	};

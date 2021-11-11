@@ -106,6 +106,26 @@ sap.ui.define([
 			});
 		},
 
+		/**
+		 * Attaches an event handler to the <code>StateUtil</code>.
+		 * The event handler may be fired every time a user triggers a personalization change for a control instance during runtime.
+		 *
+		 * @param {function} fnListener fnFunction The handler function to call when the event occurs
+		 */
+		attachChange: function(fnListener) {
+			sap.ui.mdc.p13n.Engine.getInstance().stateHandlerRegistry.attachChange(fnListener);
+		},
+
+		/**
+		 * Removes a previously attached state change event handler from the <code>StateUtil</code> class.
+		 * The passed parameters must match those used for registration with {@link StateUtil#attachChange} beforehand.
+		 *
+		 * @param {function} fnListener fnFunction The handler function to detach from the event
+		 */
+		detachChange: function(fnListener) {
+			sap.ui.mdc.p13n.Engine.getInstance().stateHandlerRegistry.detachChange(fnListener);
+		},
+
 		_externalizeKeys: function(oInternalState) {
 			var mKeysForState = {
 				Sort: "sorters",

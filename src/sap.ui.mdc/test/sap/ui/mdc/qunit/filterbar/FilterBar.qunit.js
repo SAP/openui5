@@ -842,6 +842,7 @@ sap.ui.define([
 				oPromise.then(function (oFilterField) {
 					oFilterBar.getEngine().createChanges({
 						control: oFilterBar,
+						suppressAppliance: true,
 						key: "Filter",
 						state: {"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
 					}).then(function(aChanges){

@@ -55,6 +55,7 @@ sap.ui.define([
         sap.ui.getCore().applyChanges();
 
         var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+        oFMHStub.returns(Promise.resolve());
 
         this.oEngine._processChanges(this.oControl, [{
             selectorElement: this.oControl,
@@ -91,6 +92,7 @@ sap.ui.define([
         sap.ui.getCore().applyChanges();
 
         var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+        oFMHStub.returns(Promise.resolve());
 
         this.oEngine._processChanges(this.oControl, [{
             selectorElement: this.oControl,
@@ -114,6 +116,7 @@ sap.ui.define([
 
     QUnit.test("Change processing (_processChanges) only considered for calculated deltas, ignore non array types and empty arrays", function(assert){
         var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+        oFMHStub.returns(Promise.resolve());
 
         this.oEngine._processChanges(this.oControl, {});
         this.oEngine._processChanges(this.oControl, undefined);
@@ -629,8 +632,9 @@ sap.ui.define([
 
         var mRegistry = this.oEngine._getRegistry(this.oControl);
 
-        assert.ok(mRegistry[this.oControl.getId()], "The registry map includes the control instance");
-
+        assert.ok(mRegistry.controlRegistry[this.oControl.getId()], "The registry map includes the controlRegistry");
+        assert.ok(mRegistry.defaultProviderRegistry, "The registry map includes the defaultProviderRegistry");
+        assert.ok(mRegistry.stateHandlerRegistry, "The registry map includes the stateHandlerRegistry");
     });
 
     QUnit.test("Check 'getRTASettingsActionHandler' ", function(assert){
@@ -861,5 +865,45 @@ sap.ui.define([
         assert.ok(bHasAncestor, "Ancestor of type 'sap.m.HBox' found");
 
         oHBox.destroy();
+    });
+
+    QUnit.module("Check 'stateHandlerRegistry' integration", {
+		before: function() {
+            this.oControl = new Control("MyStateControl");
+            this.oEngine = Engine.getInstance();
+            this.fnHandler = function() {  };
+            this.oEngine.stateHandlerRegistry.attachChange(this.fnHandler);
+            this.oEngine.registerAdaptation(this.oControl, {
+                controller: {
+                    StateHandlerTest: Controller
+                }
+            });
+		},
+		after: function() {
+            this.fnHandler = null;
+            this.oControl.destroy();
+            this.oEngine.destroy();
+		}
+    });
+
+    QUnit.test("Check event firing on Engine change propagation", function(assert){
+
+        var oStateRegistryStub = sinon.stub(this.oEngine.stateHandlerRegistry, "fireChange");
+        var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+        oFMHStub.returns(Promise.resolve());
+
+        return this.oEngine._processChanges(this.oControl, [{
+            selectorElement: this.oControl,
+            changeSpecificData: {
+                changeType: "someTestChange",
+                content: {}
+            }
+        }])
+        .then(function(){
+            assert.equal(oStateRegistryStub.callCount, 1, "The event has been fired after changes have been processed");
+            this.oEngine.stateHandlerRegistry.fireChange.restore();
+            FlexModificationHandler.getInstance().processChanges.restore();
+        }.bind(this));
+
     });
 });
