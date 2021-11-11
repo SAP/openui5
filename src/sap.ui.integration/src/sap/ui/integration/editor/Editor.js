@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/Device",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
@@ -72,7 +71,6 @@ sap.ui.define([
 	Popup,
 	ResourceBundle,
 	URI,
-	Device,
 	includeStylesheet,
 	LoaderExtensions,
 	Parameters,
@@ -2885,10 +2883,6 @@ sap.ui.define([
 			Editor._appendThemeVars();
 		});
 		//}
-
-		if (Device.browser.firefox) {
-			document.body.style.setProperty("--sapUiIntegrationEditorPopupHeight", "-moz-fit-content");
-		}
 
 		var sCssURL = sap.ui.require.toUrl("sap.ui.integration.editor.css.Editor".replace(/\./g, "/") + ".css");
 		includeStylesheet(sCssURL);

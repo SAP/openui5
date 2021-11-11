@@ -521,6 +521,3 @@
 .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingBox {
 	max-width: 5rem;
 }
-.sapUiIntegrationEditorPopupHeight {
-	height: var(--sapUiIntegrationEditorPopupHeight, fit-content);
-}

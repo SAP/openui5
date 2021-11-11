@@ -158,8 +158,6 @@ sap.ui.define([
 			this.prepareFieldsInKey(oConfig);
 		}
 		if (oControl instanceof MultiComboBox) {
-			//fix DIGITALWORKPLACE-5156, set the min-height of the popover
-			oControl.onAfterOpen = this.onAfterOpenForMultiComboBox;
 			if (this.isFilterBackend()) {
 				this.onInputForMultiComboBox = _debounce(this.onInputForMultiComboBox, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
@@ -598,16 +596,6 @@ sap.ui.define([
 		oEvent.srcControl._getSuggestionsPopover()._sTypedInValue = sTerm;
 	};
 
-	ListField.prototype.onAfterOpenForMultiComboBox = function () {
-		MultiComboBox.prototype.onAfterOpen.apply(this, arguments);
-		var oPopover = this.getPicker();
-		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
-			oPopover.addStyleClass("sapUiIntegrationEditorPopupHeight");
-		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
-			oPopover.removeStyleClass("sapUiIntegrationEditorPopupHeight");
-		}
-	};
-
 	ListField.prototype.onInputForMultiInput = function (oEvent) {
 		var oControl = oEvent.srcControl;
 		MultiInput.prototype.oninput.apply(oControl, arguments);
@@ -623,20 +611,6 @@ sap.ui.define([
 		if (sSuggestValue !== sTerm.replaceAll("'", "\'\'")) {
 			oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
 			oSettingsModel.setProperty(sSettingspath + "/_loading", true);
-		}
-
-		//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
-		if (!oControl._bAttachChangeStyleOfPopover) {
-			oControl._getSuggestionsPopoverPopup().attachAfterOpen(oControl.getParent().changeStyleOfSuggestionsPopover);
-			oControl._bAttachChangeStyleOfPopover = true;
-		}
-	};
-
-	ListField.prototype.changeStyleOfSuggestionsPopover = function () {
-		if (this._oCalcedPos === "Bottom" && !this.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
-			this.addStyleClass("sapUiIntegrationEditorPopupBottom");
-		} else if (this._oCalcedPos !== "Bottom" &&  this.hasStyleClass("sapUiIntegrationEditorPopupBottom")) {
-			this.removeStyleClass("sapUiIntegrationEditorPopupBottom");
 		}
 	};
 

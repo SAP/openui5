@@ -50,25 +50,6 @@ sap.ui.define([
 			};
 		}
 		this._visualization = oVisualization;
-		this.attachAfterInit(this._afterInit);
-	};
-
-	DestinationField.prototype._afterInit = function () {
-		var oControl = this.getAggregation("_field");
-		if (oControl instanceof Select) {
-			//workaround for DIGITALWORKPLACE-5156, set the min-height of the popover
-			oControl.open = this.onOpen;
-		}
-	};
-
-	DestinationField.prototype.onOpen = function () {
-		Select.prototype.open.apply(this, arguments);
-		var oPopover = this.getPicker();
-		if (oPopover._oCalcedPos === "Bottom" && !oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
-			oPopover.addStyleClass("sapUiIntegrationEditorPopupHeight");
-		} else if (oPopover._oCalcedPos !== "Bottom" &&  oPopover.hasStyleClass("sapUiIntegrationEditorPopupHeight")) {
-			oPopover.removeStyleClass("sapUiIntegrationEditorPopupHeight");
-		}
 	};
 
 	return DestinationField;
