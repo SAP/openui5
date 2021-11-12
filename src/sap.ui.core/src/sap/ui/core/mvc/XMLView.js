@@ -467,7 +467,11 @@ sap.ui.define([
 		// we don't want to write the key into the cache
 		var sKey = mCacheInput.key;
 		delete mCacheInput.key;
+		var vAdditionalData = mCacheInput.additionalData;
 		mCacheInput.xml = XMLHelper.serialize(xContent);
+		if (vAdditionalData && vAdditionalData.setAdditionalCacheData && vAdditionalData.getAdditionalCacheData) {
+			mCacheInput.additionalData = vAdditionalData.getAdditionalCacheData();
+		}
 		return Cache.set(sKey, mCacheInput);
 	}
 
@@ -477,8 +481,14 @@ sap.ui.define([
 			if (mCacheOutput && mCacheOutput.componentManifest == mCacheInput.componentManifest) {
 				mCacheOutput.xml = XMLHelper.parse(mCacheOutput.xml, "application/xml").documentElement;
 				if (mCacheOutput.additionalData) {
-					// extend the additionalData which was passed into cache configuration dynamically
-					merge(mCacheInput.additionalData, mCacheOutput.additionalData);
+					var vAdditionalData = mCacheInput.additionalData;
+					if (vAdditionalData && vAdditionalData.setAdditionalCacheData && vAdditionalData.getAdditionalCacheData) {
+						vAdditionalData.setAdditionalCacheData(mCacheOutput.additionalData);
+					} else {
+						// extend the additionalData which was passed into cache configuration dynamically
+						Log.error("Deprecated: Don't use an object reference for caching additional Data! Use a CacheDataProvider instead!");
+						merge(mCacheInput.additionalData, mCacheOutput.additionalData);
+					}
 				}
 				return mCacheOutput;
 			}

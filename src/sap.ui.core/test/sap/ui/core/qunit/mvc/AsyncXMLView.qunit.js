@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/base/Object",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
 	"sap/ui/core/mvc/View",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/base/strings/hash",
 	"sap/base/util/LoaderExtensions"
 ], function(
+	BaseObject,
 	Cache,
 	Component,
 	View,
@@ -262,7 +264,7 @@ sap.ui.define([
 
 			QUnit.test("cache additional data", function(assert) {
 				var oSpy = this.oSpy, aAdditionalData = ["foo"];
-
+				var oLogSpy = sinon.spy(Log, "error");
 				function _viewFactory() {
 					return viewFactory({
 						keys: ["key"],
@@ -278,7 +280,7 @@ sap.ui.define([
 					}).loaded();
 				}
 
-				assert.expect(2);
+				assert.expect(3);
 				return _viewFactory()
 					.then(function(oView) {
 						// check preprocessor side effect
@@ -290,9 +292,71 @@ sap.ui.define([
 					.then(_viewFactory).then(function(oView) {
 						// check replacement from cache
 						assert.deepEqual(aAdditionalData, ["foo", "bar"]);
+						assert.ok(oLogSpy.callCount === 1, "Deprecation error using a object reference");
+						oLogSpy.restore();
 						oView.destroy();
 					});
 			});
+
+			QUnit.test("cache additional data provider", function(assert) {
+				var oLogSpy = sinon.spy(Log, "error");
+				var AdditionalDataClass = function() {
+					this.foo = true;
+				};
+				var oAdditionalData = new AdditionalDataClass();
+
+				var fnAdditionalDataProvider = {
+					setAdditionalCacheData: function(vData) {
+						oAdditionalData = vData[0];
+						assert.ok(true, "Provide set was called");
+					},
+					getAdditionalCacheData: function() {
+						assert.ok(true, "Provide get was called");
+						return [oAdditionalData];
+					}
+				};
+
+				function _viewFactory() {
+					return XMLView.create({
+						id: "myView",
+						cache: {
+							keys: ["key"],
+							additionalData: fnAdditionalDataProvider
+
+						},
+						viewName: "testdata.mvc.cache",
+						preprocessors: {
+							xml: [{
+								preprocessor: function(xml, oViewInfo, mSettings) {
+									mSettings.additionalData[0].bar = true;
+									return xml;
+								},
+								additionalData: [oAdditionalData]
+							}]
+						}
+					});
+				}
+
+				assert.expect(7);
+				return _viewFactory()
+					.then(function(oView) {
+						// check preprocessor side effect
+						assert.ok(oAdditionalData.bar, "additionalData enhanced correctly");
+						assert.ok(oAdditionalData.foo, "additionalData ok");
+						oView.destroy();
+						//reset data
+						oAdditionalData = new AdditionalDataClass();
+					})
+					.then(_viewFactory).then(function(oView) {
+						// check replacement from cache
+						assert.ok(oAdditionalData.bar, "additionalData enhanced correctly");
+						assert.ok(oAdditionalData.foo, "additionalData ok");
+						assert.ok(oLogSpy.callCount === 0, "No Deprecation error logged");
+						oLogSpy.restore();
+						oView.destroy();
+					});
+			});
+
 
 			QUnit.test("generic key parts", function(assert) {
 				var oSpy = this.oSpy;
