@@ -48,7 +48,8 @@ sap.ui.define([
 	function _checkAndAdjustChangeStatusSync(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
 		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 		var oModifier = mPropertyBag.modifier;
-		var bIsCurrentlyAppliedOnControl = FlexCustomData.sync.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier);
+		var bHasAppliedCustomData = !!FlexCustomData.sync.getAppliedCustomDataValue(mControl.control, oChange);
+		var bIsCurrentlyAppliedOnControl = bHasAppliedCustomData || FlexCustomData.sync.hasChangeApplyFinishedCustomData(mControl.control, oChange);
 		var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 			// if a change was already processed and is not applied anymore, then the control was destroyed and recreated.
@@ -58,9 +59,11 @@ sap.ui.define([
 			oChange.setInitialApplyState();
 		} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 			// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
-			// and the revert data fetched from the Custom Data
 			// scenario: viewCache
-			oChange.setRevertData(FlexCustomData.sync.getParsedRevertDataFromCustomData(oControl, oChange));
+			if (bHasAppliedCustomData) {
+				// if the change was applied, set the revert data fetched from the custom data
+				oChange.setRevertData(FlexCustomData.sync.getParsedRevertDataFromCustomData(oControl, oChange));
+			}
 			oChange.markFinished();
 		}
 	}
@@ -73,8 +76,20 @@ sap.ui.define([
 		var bXmlModifier = _isXmlModifier(mPropertyBag);
 		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 		var oModifier = mPropertyBag.modifier;
-		return FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier)
-			.then(function (bIsCurrentlyAppliedOnControl) {
+		return FlexCustomData.getAppliedCustomDataValue(mControl.control, oChange, oModifier)
+			.then(function(oAppliedCustomData) {
+				var bHasAppliedCustomData = !!oAppliedCustomData;
+				return Promise.all([
+					bHasAppliedCustomData,
+					(
+						bHasAppliedCustomData
+						|| FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier)
+					)
+				]);
+			})
+			.then(function(aCustomDataState) {
+				var bHasAppliedCustomData = aCustomDataState[0];
+				var bIsCurrentlyAppliedOnControl = aCustomDataState[1];
 				var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 				var oModifier = mPropertyBag.modifier;
 				var oAppComponent = mPropertyBag.appComponent;
@@ -91,13 +106,17 @@ sap.ui.define([
 					return oPromise.then(oChange.setInitialApplyState.bind(oChange));
 				} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 					// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
-					// and the revert data fetched from the Custom Data
 					// scenario: viewCache
-					return FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier)
-						.then(function (oParsedRevertDataFromCustomData) {
-							oChange.setRevertData(oParsedRevertDataFromCustomData);
-							oChange.markFinished();
-						});
+					if (bHasAppliedCustomData) {
+						// if the change was applied, set the revert data fetched from the custom data
+						return FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier)
+							.then(function (oParsedRevertDataFromCustomData) {
+								oChange.setRevertData(oParsedRevertDataFromCustomData);
+								oChange.markFinished();
+							});
+					}
+					oChange.markFinished();
+					return undefined;
 				} else if (bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 					// both the change instance and the UI Control are already applied, so the change can be directly marked as finished
 					oChange.markFinished();
