@@ -127,7 +127,8 @@ sap.ui.define([
 					aResultArr.push({
 						"groupTitle": sCurrGroupTitle,
 						"version": sCurrGroupTitle + " (" + iCounter + " versions)",
-						"nodes": aNodes
+						"nodes": aNodes,
+						"path": aNodes[0].path
 					});
 				}
 
