@@ -295,7 +295,7 @@ sap.ui.define([
 
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
-		oMTable.setFilterValue("x");
+		oMTable.setFilterValue("3");
 
 		// compare arguments of filter as Filter object is changed during filtering
 		assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
@@ -303,11 +303,11 @@ sap.ui.define([
 		assert.equal(oListBinding.filter.args[0][0].length, 1, "ListBinding filter is array with one filter");
 		assert.equal(oListBinding.filter.args[0][0][0].aFilters.length, 2, "ListBinding filter contains 2 Filters filter");
 		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sPath, "text", "ListBinding 1. filter path");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sOperator, FilterOperator.StartsWith, "ListBinding 1. filter operator");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].oValue1, "x", "ListBinding 1. filter value1");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].sOperator, FilterOperator.Contains, "ListBinding 1. filter operator");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[0].oValue1, "3", "ListBinding 1. filter value1");
 		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sPath, "additionalText", "ListBinding 2. filter path");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sOperator, FilterOperator.StartsWith, "ListBinding 2. filter operator");
-		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].oValue1, "x", "ListBinding 2. filter value1");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].sOperator, FilterOperator.Contains, "ListBinding 2. filter operator");
+		assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].oValue1, "3", "ListBinding 2. filter value1");
 		assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
 		var aItems = oTable.getItems();
 		assert.equal(aItems.length, 1, "number of items");

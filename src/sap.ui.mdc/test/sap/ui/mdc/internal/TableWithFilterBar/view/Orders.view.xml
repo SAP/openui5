@@ -54,25 +54,25 @@
 							delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 							<mdc:typeahead>
 								<mdcv:Popover >
-									<mdcvc:MTable keyPath="OrderNo" filterFields="$search">
+									<mdcvc:MTable keyPath="OrderNo" filterFields="*OrderNo*">
 										<Table items='{path : "/Orders", length: 10}' width="30rem">
 											<columns>
 												<Column>
 													<header>
-														<Text text="Order ID" />
+														<Text text="Order Number" />
 													</header>
 												</Column>
 												<Column>
 													<header>
-														<Text text="Order Number" />
+														<Text text="Order ID" />
 													</header>
 												</Column>
 											</columns>
 											<items>
 												<ColumnListItem type="Active">
 													<cells>
-														<Text text="{ID}" />
 														<Text text="{OrderNo}" />
+														<Text text="{ID}" />
 													</cells>
 												</ColumnListItem>
 											</items>
@@ -82,20 +82,11 @@
 							</mdc:typeahead>
 							<mdc:dialog>
 								<mdcv:Dialog title="Order Number">
-									<mdcvc:MTable keyPath="OrderNo" filterFields="$search">
+									<mdcvc:MTable keyPath="OrderNo" filterFields="">
 										<mdcvc:filterBar>
 											<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
-												<vhfb:basicSearchField>
-													<mdc:FilterField
-														delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
-														dataType= "Edm.String"
-														conditions= "{$filters>/conditions/$search}"
-														width="50%"
-														maxConditions="1"
-														placeholder="Search" />
-												</vhfb:basicSearchField>
 												<vhfb:filterItems>
-													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" />
+													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
 												</vhfb:filterItems>
 											</vhfb:FilterBar>
 										</mdcvc:filterBar>
@@ -103,40 +94,31 @@
 											<columns>
 												<Column>
 													<header>
-														<Text text="Order ID" />
+														<Text text="Order Number" />
 													</header>
 												</Column>
 												<Column>
 													<header>
-														<Text text="Order Number" />
+														<Text text="Order ID" />
 													</header>
 												</Column>
 											</columns>
 											<items>
 												<ColumnListItem type="Active">
 													<cells>
-														<Text text="{ID}" />
 														<Text text="{OrderNo}" />
+														<Text text="{ID}" />
 													</cells>
 												</ColumnListItem>
 											</items>
 										</Table>
 									</mdcvc:MTable>
 
-									<mdcvc:MDCTable keyPath="OrderNo" filterFields="$search">
+									<mdcvc:MDCTable keyPath="OrderNo" filterFields="">
 										<mdcvc:filterBar>
 											<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
-												<vhfb:basicSearchField>
-													<mdc:FilterField
-														delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
-														dataType= "Edm.String"
-														conditions= "{$filters>/conditions/$search}"
-														width="50%"
-														maxConditions="1"
-														placeholder="Search" />
-												</vhfb:basicSearchField>
 												<vhfb:filterItems>
-													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" />
+													<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
 												</vhfb:filterItems>
 											</vhfb:FilterBar>
 										</mdcvc:filterBar>
@@ -149,11 +131,11 @@
 											p13nMode="Column,Sort"
 											delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Orders'}}" threshold="50">
 											<mdc:columns>
-												<mdc:table.Column header="Order ID" dataProperty="ID">
-													<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
-												</mdc:table.Column>
 												<mdc:table.Column header="Order Number" dataProperty="OrderNo">
 													<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="Display"/>
+												</mdc:table.Column>
+												<mdc:table.Column header="Order ID" dataProperty="ID">
+													<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
 												</mdc:table.Column>
 											</mdc:columns>
 											<mdc:type>

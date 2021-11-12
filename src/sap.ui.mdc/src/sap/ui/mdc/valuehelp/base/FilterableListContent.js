@@ -538,7 +538,7 @@ sap.ui.define([
 		if (oFilterBar && sFilterFields) {
 			var oConditions = oFilterBar.getInternalConditions();
 			if (!oConditions[sFilterFields] || oConditions[sFilterFields].length !== 1 || oConditions[sFilterFields][0].values[0] !== sFilterValue) {
-				var oCondition = Condition.createCondition("StartsWith", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated);
+				var oCondition = Condition.createCondition("Contains", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated);
 				oConditions[sFilterFields] = [oCondition];
 				oFilterBar.setInternalConditions(oConditions);
 			}

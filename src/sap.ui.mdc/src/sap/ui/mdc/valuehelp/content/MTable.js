@@ -161,7 +161,7 @@ sap.ui.define([
 
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
-			var oCondition = Condition.createCondition("StartsWith", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
+			var oCondition = Condition.createCondition("Contains", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
 			oConditions[sFilterFields] = [oCondition];
 		}
 
