@@ -2653,7 +2653,7 @@ sap.ui.define([
 			var oItems = oSettings.form.items;
 			Object.keys(oConfiguration.parameters).forEach(function (n) {
 				oItems[n] = merge({
-					manifestpath: sBasePath + n + "/value",
+					manifestpath: sBasePath + "/" + n + "/value",
 					editable: (sMode !== "translation"),
 					_settingspath: "/form/items/" + n
 				}, oConfiguration.parameters[n]);
