@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	var sTestPageURL = sap.ui.require.toUrl("static/TechnicalInfoTestbench.html"),
-		sOpenUI5BetaKey = "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/";
+		sOpenUI5NightlyKey = "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/";
 
 	Opa5.extendConfig({
 		autoWait : true
@@ -482,7 +482,7 @@ sap.ui.define([
 		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
 
 		// Act
-		When.onTheConfigDialog.iSelectTheStandardBootstrapOption(sOpenUI5BetaKey);
+		When.onTheConfigDialog.iSelectTheStandardBootstrapOption(sOpenUI5NightlyKey);
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -495,7 +495,7 @@ sap.ui.define([
 		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
 
 		// Assert
-		Then.onTheConfigDialog.theStandardBootstrapOptionIsSelected(sOpenUI5BetaKey);
+		Then.onTheConfigDialog.theStandardBootstrapOptionIsSelected(sOpenUI5NightlyKey);
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -526,7 +526,7 @@ sap.ui.define([
 
 	opaTest("Should show error when a valid syntax's is provided", function(Given, When, Then) {
 		// Act
-		When.onTheConfigDialog.iEnterCustomBootstrapUrl(sOpenUI5BetaKey);
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl(sOpenUI5NightlyKey);
 
 		//Assert
 		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
