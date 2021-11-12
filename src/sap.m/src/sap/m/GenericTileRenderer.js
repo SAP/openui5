@@ -95,6 +95,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (bIsArticleMode) {
 			oRm.class("sapMGTArticleMode");
 		}
+		if (oControl._isIconMode()) {
+			oRm.class("sapMGTIconMode");
+		}
 		if (!bIsArticleMode && !bIsActionMode && frameType === frameTypes.OneByOne && oControl.getSystemInfo() || oControl.getAppShortcut()) {
 			oRm.class("tileWithAppInfo");
 		}
