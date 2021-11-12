@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"description": "Description",
 						"type": "boolean",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",

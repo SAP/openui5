@@ -10,7 +10,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/.../integer/value",
 						"type": "integer",
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/.../boolean/value",
 						"type": "boolean",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",

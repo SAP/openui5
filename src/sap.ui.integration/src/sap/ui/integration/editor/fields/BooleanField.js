@@ -38,6 +38,8 @@ sap.ui.define([
 				}
 			};
 			oConfig.withLabel = true;
+		} else if (oVisualization.type === "Switch") {
+			oVisualization.type = "sap/m/Switch";
 		}
 		this._visualization = oVisualization;
 	};

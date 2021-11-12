@@ -26,6 +26,7 @@ sap.ui.define([
 		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
+
 	IntegerField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
 		var oFormatter = oConfig.formatter;
@@ -42,6 +43,8 @@ sap.ui.define([
 					type: "Number"
 				}
 			};
+		} else if (oVisualization.type === "Slider") {
+			oVisualization.type = "sap/m/Slider";
 		}
 		this._visualization = oVisualization;
 	};
