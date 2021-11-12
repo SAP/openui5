@@ -6777,7 +6777,19 @@ sap.ui.define([
 				deepPath: sDeepPath
 			};
 			pCreate = new SyncPromise(function (resolve, reject) {
-				fnCreatedPromiseResolve = resolve;
+				fnCreatedPromiseResolve = function () {
+					if (!that.oCreatedContextsCache.getCacheInfo(oCreatedContext)) {
+						// If ODataModel#createEntry is called by ODataListBinding#create, the
+						// created context is added to the created contexts cache and has to keep
+						// the create promise until the context gets removed from the cache, see
+						// sap.ui.model.odata.v2._CreatedContextsCache#removePersistedContexts.
+						// If the context is not in the cache ODataModel#createEntry has been called
+						// directly and the create promise has to be reset after successful
+						// creation.
+						oCreatedContext.resetCreatedPromise();
+					}
+					resolve();
+				};
 				oEntity.__metadata.created.abort = reject;
 			});
 			pCreate.catch(function () {

@@ -111,7 +111,27 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("findAndRemoveContext:", function (assert) {
+	QUnit.test("findAndRemoveContext", function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			oCacheMock = this.mock(oCache);
+
+		oCacheMock.expects("getCacheInfo").withExactArgs({/*unknown context*/}).returns(undefined);
+		oCacheMock.expects("removeContext").never();
+
+		// code under test
+		oCache.findAndRemoveContext({/*unknown context*/});
+
+		oCacheMock.expects("getCacheInfo")
+			.withExactArgs("~oContext")
+			.returns({cachePath : "~sCachePath", listID : "~sListID"});
+		oCacheMock.expects("removeContext").withExactArgs("~oContext", "~sCachePath", "~sListID");
+
+		// code under test
+		oCache.findAndRemoveContext("~oContext");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCacheInfo", function (assert) {
 		var oCache = new _CreatedContextsCache(),
 			oCacheMock = this.mock(oCache),
 			oContext = {};
@@ -127,13 +147,10 @@ sap.ui.define([
 		oCacheMock.expects("removeContext").never();
 
 		// code under test
-		oCache.findAndRemoveContext({/*unknown context*/});
-
-		oCacheMock.expects("removeContext")
-			.withExactArgs(sinon.match.same(oContext), "/bar", "qux");
+		assert.strictEqual(oCache.getCacheInfo({/*unknown context*/}), undefined);
 
 		// code under test
-		oCache.findAndRemoveContext(oContext);
+		assert.deepEqual(oCache.getCacheInfo(oContext), {cachePath : "/bar", listID : "qux"});
 	});
 
 	//*********************************************************************************************

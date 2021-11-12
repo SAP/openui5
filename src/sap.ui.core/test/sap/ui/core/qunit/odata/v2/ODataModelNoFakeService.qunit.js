@@ -2364,9 +2364,11 @@ sap.ui.define([
 	[true, false].forEach(function (bWithCallbackHandlers) {
 		(!sExpand
 		? [ // successful creation without expand
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				assert.ok(pCreate.isPending());
 
+				fnExpectResetCreatePromise();
 				oEventHandlersMock.expects("fnSuccess")
 					.exactly(bWithCallbackHandlers ? 1 : 0)
 					.withExactArgs("~oData", "~oCreateResponse");
@@ -2381,8 +2383,12 @@ sap.ui.define([
 				});
 			},
 			// aborted creation without expand
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				assert.ok(pCreate.isPending());
+
+				// resetting the create promise is done only in success cases; do not call
+				// fnExpectResetCreatePromise
 
 				// code under test
 				fnAbort("~oError");
@@ -2394,7 +2400,8 @@ sap.ui.define([
 		]
 		: [
 			// POST and GET succeed
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				var oDataGET = {GET : true},
 					oDataPOST = {POST : true},
 					oResponseGET = "~oResponseGET",
@@ -2404,6 +2411,8 @@ sap.ui.define([
 				fnSuccess(oDataPOST, oResponsePOST);
 
 				assert.ok(pCreate.isPending());
+
+				fnExpectResetCreatePromise();
 				oEventHandlersMock.expects("fnSuccess")
 					.exactly(bWithCallbackHandlers ? 1 : 0)
 					.withExactArgs({GET : true, POST : true}, oResponsePOST);
@@ -2418,7 +2427,8 @@ sap.ui.define([
 				});
 			},
 			// POST and GET fail; after retrying the creation both requests succeed
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				var oDataGET = {GET : true},
 					oDataPOST = {POST : true},
 					oErrorGET = {},
@@ -2449,6 +2459,8 @@ sap.ui.define([
 
 				assert.ok(pCreate.isPending());
 
+				fnExpectResetCreatePromise();
+
 				// code under test - GET request succeeds
 				fnSuccess(oDataGET, oResponseGET);
 
@@ -2459,7 +2471,8 @@ sap.ui.define([
 				});
 			},
 			// POST succeeds and GET fails
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				var oDataPOST = "~oDataPOST",
 					oErrorGET = {},
 					oResponsePOST = {};
@@ -2469,6 +2482,7 @@ sap.ui.define([
 
 				assert.ok(pCreate.isPending());
 
+				fnExpectResetCreatePromise();
 				this.oLogMock.expects("error")
 					.withExactArgs("Entity creation was successful but expansion of navigation"
 						+ " properties failed",
@@ -2491,7 +2505,8 @@ sap.ui.define([
 				});
 			},
 			// POST and GET fail; after retrying the creation both requests fail again
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				var oErrorGET0 = {},
 					oErrorGET1 = {},
 					oErrorPOST0 = {},
@@ -2515,6 +2530,9 @@ sap.ui.define([
 					.exactly(bWithCallbackHandlers ? 1 : 0)
 					.withExactArgs(sinon.match.same(oErrorPOST1));
 
+				// resetting the create promise is done only in success cases; do not call
+				// fnExpectResetCreatePromise
+
 				// code under test - POST request fails again
 				fnError(oErrorPOST1);
 
@@ -2527,7 +2545,8 @@ sap.ui.define([
 				assert.ok(pCreate.isPending());
 			},
 			// POST and GET fail; after retrying the creation POST succeeds and GET fails
-			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate) {
+			function (assert, oEventHandlersMock, fnAbort, fnError, fnSuccess, pCreate,
+					fnExpectResetCreatePromise) {
 				var oDataPOST = "~oDataPOST",
 					oErrorGET0 = {},
 					oErrorGET1 = {},
@@ -2552,6 +2571,7 @@ sap.ui.define([
 				// code under test - POST request succeeds
 				fnSuccess(oDataPOST, oResponsePOST);
 
+				fnExpectResetCreatePromise();
 				this.oLogMock.expects("error")
 					.withExactArgs("Entity creation was successful but expansion of navigation"
 						+ " properties failed",
@@ -2574,13 +2594,18 @@ sap.ui.define([
 				});
 			}
 		]).forEach(function (fnTestEventHandlers, i) {
-	var sTitle = "createEntry: expand = " + sExpand + ", "
+			[true, false].forEach(function (bFromODLBcreate) {
+		var sTitle = "createEntry: called "
+			+ (bFromODLBcreate ? "from ODataListBinding#create" : "directly")
+			+ "; expand = " + sExpand + ", "
 			+ (bWithCallbackHandlers ? "with" : "without") + " callback handlers, i = " + i;
 
 	QUnit.test(sTitle, function (assert) {
 		var fnAbort, fnAfterMetadataLoaded, pCreate, oEntity, fnError, mHeaders, oRequestHandle,
 			oResult, fnSuccess, sUid,
-			oCreatedContext = {/*sap.ui.model.odata.v2.Context*/},
+			oCreatedContext = {resetCreatedPromise : function () {}},
+			oCreatedContextCache = {getCacheInfo : function () {}},
+			oCreatedContextCacheMock = this.mock(oCreatedContextCache),
 			oEntityMetadata = {entityType : "~entityType"},
 			oEventHandlers = {
 				fnError : function () {},
@@ -2591,6 +2616,7 @@ sap.ui.define([
 			mHeadersInput = {input : true},
 			oModel = {
 				mChangedEntities : {},
+				oCreatedContextsCache : oCreatedContextCache,
 				mDeferredGroups : {},
 				oMetadata : {
 					_getEntitySetByType : function () {},
@@ -2617,10 +2643,12 @@ sap.ui.define([
 			},
 			oMetadataMock = this.mock(oModel.oMetadata),
 			oModelMock = this.mock(oModel),
-			oRequest = {};
+			oRequest = {},
+			that = this;
 
 		oEventHandlersMock.expects("fnError").never();
 		oEventHandlersMock.expects("fnSuccess").never();
+		oCreatedContextCacheMock.expects("getCacheInfo").never();
 		oModelMock.expects("_isCanonicalRequestNeeded")
 			.withExactArgs("~canonicalRequest")
 			.returns("~bCanonical");
@@ -2801,9 +2829,18 @@ sap.ui.define([
 			assert.strictEqual(oRequest.expandRequest._aborted, true);
 		}
 
+		function fnExpectResetCreatePromise() {
+			oCreatedContextCacheMock.expects("getCacheInfo")
+				.withExactArgs(oCreatedContext)
+				.returns(bFromODLBcreate ? {/*cache info*/} : undefined);
+			that.mock(oCreatedContext).expects("resetCreatedPromise")
+				.withExactArgs()
+				.exactly(bFromODLBcreate ? 0 : 1);
+		}
 		return fnTestEventHandlers.call(this, assert, oEventHandlersMock, fnAbort, fnError,
-			fnSuccess, pCreate);
+			fnSuccess, pCreate, fnExpectResetCreatePromise);
 	});
+			});
 		});
 	});
 });

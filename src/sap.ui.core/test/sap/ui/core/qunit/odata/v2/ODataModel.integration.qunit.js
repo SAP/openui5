@@ -4984,7 +4984,7 @@ usePreliminaryContext : false}}">\
 	sTitle : "Create 2 entities with error response"
 }].forEach(function (oFixture) {
 	QUnit.test("ODataModel#createEntry: " + oFixture.sTitle, function (assert) {
-		var oContext,
+		var oContext, oCreatedPromise,
 			oModel = createSalesOrdersModelMessageScope({canonicalRequests : true}),
 			bWithError = oFixture.aExpectedMessages.length > 0,
 			that = this;
@@ -5044,6 +5044,10 @@ usePreliminaryContext : false}}">\
 
 			assert.strictEqual(oContext.isTransient(), true);
 
+			oCreatedPromise = oContext.created();
+
+			assert.ok(oCreatedPromise);
+
 			// code under test
 			oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {properties : {}});
 
@@ -5053,7 +5057,8 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(oContext.isTransient(), bWithError ? true : false);
+			assert.strictEqual(oContext.isTransient(), bWithError ? true : undefined);
+			assert.strictEqual(oContext.created(),  bWithError ? oCreatedPromise : undefined);
 		});
 	});
 });
