@@ -64,6 +64,13 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"]
 				}
 			},
+			"Table-RTL": {
+				ui5: {
+					// Test has dependencies to sap.ui.unified and sap.m modules
+					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"],
+					rtl: true
+				}
+			},
 			"Table with ODataV2": {
 				module: "./Table.ODataV2.qunit"
 			},
@@ -170,6 +177,13 @@ sap.ui.define([
 			"Scrolling": {
 				group: "Extensions",
 				module: "./extensions/{name}.qunit"
+			},
+			"Scrolling-RTL": {
+				group: "Extensions",
+				module: "./extensions/{name}.qunit",
+				ui5: {
+					rtl: true
+				}
 			},
 			"ScrollingIOS": {
 				group: "Extensions",
