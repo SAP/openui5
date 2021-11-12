@@ -28,6 +28,7 @@ function (
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var AvatarColor = mLibrary.AvatarColor;
+	var ValueColor = mLibrary.ValueColor;
 
 	function createCard(HeaderType) {
 		var oCard = new Card("somecard", {
@@ -315,6 +316,31 @@ function (
 		assert.strictEqual($header.attr("role"), "button" , "Header role is correct.");
 		assert.ok($header.hasClass("sapFCardClickable"), "sapFCardClickable class is set");
 
+		oCard.destroy();
+	});
+
+	QUnit.test("Numeric Header with number set a bit later", function (assert) {
+
+		// Arrange
+		var oCard = createCard(CardNumericHeader);
+		oCard.getCardHeader().setState(ValueColor.Error);
+		oCard.getCardHeader().addSideIndicator(new CardNumericSideIndicator({
+			number: "5",
+			state: "Error"
+		}));
+		Core.applyChanges();
+
+		// Assert
+		assert.equal(oCard.getCardHeader().$().attr("aria-labelledby").indexOf("mainIndicator"), -1, "'aria-labelledby' does not contain main indicator id");
+
+		// Act
+		oCard.getCardHeader().setNumber("22");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oCard.getCardHeader().$().attr("aria-labelledby").indexOf("mainIndicator") > -1, "'aria-labelledby' contains main indicator id");
+
+		// Clean up
 		oCard.destroy();
 	});
 

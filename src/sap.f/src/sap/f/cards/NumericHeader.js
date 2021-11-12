@@ -229,7 +229,7 @@ sap.ui.define([
 	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setNumber = function(sValue) {
-		this.setProperty("number", sValue, true);
+		this.setProperty("number", sValue);
 		this._getMainIndicator().setValue(sValue);
 		return this;
 	};
