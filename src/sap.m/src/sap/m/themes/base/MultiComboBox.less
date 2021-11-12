@@ -83,13 +83,13 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 
 .sapMMultiComboBoxPicker {
 	.sapMFocusable:focus {
-		outline: 1px dotted @sapUiContentFocusColor;
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 		outline-offset: -0.125rem;
 	}
 
-	}
 	.sapMSLITitleOnly {
 		font-size: 0.875rem;
+	}
 }
 
 /* Compact size */
@@ -130,7 +130,7 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 .sapMMultiComboBoxSelectAll.sapMTB.sapMIBar {
 	padding: 0;
 	&.sapMMultiComboBoxSelectAllFocused {
-		outline: 1px dotted @sapUiContentFocusColor;
+		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 		outline-offset: -0.125rem;
 	}
 
