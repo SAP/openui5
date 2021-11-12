@@ -14,7 +14,7 @@ sap.ui.define([
             new LinkItem({
                 key: "link_book",
                 text: "Manage book",
-                href: self.location.pathname + (self.location.search && self.location.search) + "#/Books/{id}",
+                href: self.location.pathname + (self.location.search && self.location.search) + "#/Books/{ID}",
                 target: "_blank",
 				initiallyVisible: true
             }),
