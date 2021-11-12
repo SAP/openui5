@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Utils"
 ], function (
 	Card,
+	BindingHelper,
 	BindingResolver,
 	Utils
 ) {
@@ -81,8 +83,10 @@ sap.ui.define([
 			}
 
 			if (oSubConfig.data) {
-				oSubConfig = BindingResolver.resolveValue(oSubConfig, oContext, oSubConfig.data.path);
+				var sDataPath = oSubConfig.data.path;
 				delete oSubConfig.data;
+				oSubConfig = BindingHelper.createBindingInfos(oSubConfig, oCard.getBindingNamespaces());
+				oSubConfig = BindingResolver.resolveValue(oSubConfig, oContext, sDataPath);
 			}
 
 			Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);

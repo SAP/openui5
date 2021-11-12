@@ -202,15 +202,14 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.setConfiguration = function (oConfiguration, sType) {
 		this._oConfiguration = oConfiguration;
-		this._oParsedConfiguration = this._createBindingInfos(oConfiguration);
 		this.awaitEvent("_dataReady");
 		this.awaitEvent("_actionContentReady");
 
-		if (!this._oParsedConfiguration) {
+		if (!oConfiguration) {
 			return this;
 		}
 
-		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(this._oParsedConfiguration, sType, this.getCardInstance());
+		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType, this.getCardInstance());
 		this._setDataConfiguration(oConfiguration.data);
 
 		return this;
@@ -221,11 +220,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Parses the configuration. As binding infos are modified when used once,
+	 * new object is returned every time.
 	 * @protected
 	 * @returns {object} Parsed configuration - with binding infos
 	 */
 	BaseContent.prototype.getParsedConfiguration = function () {
-		return this._oParsedConfiguration;
+		var oResult = merge({}, this._oConfiguration),
+			oDataSettings = oResult.data;
+
+		// do not create binding info for data
+		delete oResult.data;
+		oResult = BindingHelper.createBindingInfos(oResult, this.getCardInstance().getBindingNamespaces());
+
+		if (oDataSettings) {
+			oResult.data = oDataSettings;
+		}
+
+		return oResult;
 	};
 
 	/**
@@ -275,8 +287,12 @@ sap.ui.define([
 		}
 
 		oModel.attachEvent("change", function () {
-			this.onDataChanged();
-			this.onDataRequestComplete();
+			// It is possible to receive change event after the content is destroyed
+			// TO DO: unsubscribe from all events upon exit and remove this check
+			if (!this.isDestroyed()) {
+				this.onDataChanged();
+				this.onDataRequestComplete();
+			}
 		}.bind(this));
 
 		if (this._oDataProvider) {
@@ -517,20 +533,6 @@ sap.ui.define([
 
 	BaseContent.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());
-	};
-
-	BaseContent.prototype._createBindingInfos = function (oConfiguration) {
-		var oResult = merge({}, oConfiguration),
-			oDataSettings = oResult.data;
-
-		// do not create binding info for data
-		delete oResult.data;
-		oResult = BindingHelper.createBindingInfos(oResult, this.getCardInstance().getBindingNamespaces());
-		if (oDataSettings) {
-			oResult.data = oDataSettings;
-		}
-
-		return oResult;
 	};
 
 	return BaseContent;
