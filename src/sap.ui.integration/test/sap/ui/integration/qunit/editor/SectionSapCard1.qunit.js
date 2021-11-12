@@ -357,6 +357,73 @@ sap.ui.define([
 		};
 	}
 
+	QUnit.module("Create an editor based on old manifest without dt", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("1 string parameter", function (assert) {
+			this.oEditor.setSection("sap.card1");
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card1": {
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value",
+									"label": "string Parameter",
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oLabel.getText() === "string Parameter", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value", "Field: String Value");
+					var oCurrentSettings = this.oEditor.getCurrentSettings();
+					assert.ok(oCurrentSettings["/sap.card1/configuration/parameters/stringParameter/value"] === "stringParameter Value", "Field: manifestpath Value");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("Create an editor based on json with designtime module", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
