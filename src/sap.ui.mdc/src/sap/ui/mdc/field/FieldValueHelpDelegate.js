@@ -74,20 +74,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes the search String
+	 * Changes the search string.
 	 *
-	 * If <code>$search</code> is used, depending on the backend, the search string might need to be escaped.
+	 * If <code>$search</code> is used, depending on which back-end service is used, the search string might need to be escaped.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {boolean} bTypeahead True if the search is called for a typeahed
+	 * @param {boolean} bTypeahead <code>true</code> if the search is called for a type-ahead
 	 * @param {string} sSearch Search string
-	 * @returns {string} search string to use
-	 * @since: 1.97.0
+	 * @returns {string} Search string to use
+	 * @since 1.97.0
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	FieldValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
+	 FieldValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
 
 		return sSearch;
 
