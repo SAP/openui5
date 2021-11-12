@@ -470,12 +470,13 @@ sap.ui.define([
 	 */
 	Table.prototype._checkLastColumnWidth = function() {
 		var $this = this.$();
+		var oTableDomRef = this.getTableDomRef();
 
-		if (!$this.length) {
+		if (!$this.length || !oTableDomRef) {
 			return;
 		}
 
-		if ($this[0].clientWidth < this.getTableDomRef().clientWidth) {
+		if ($this[0].clientWidth < oTableDomRef.clientWidth) {
 			$this.find(".sapMListTblCell:visible").eq(0).addClass("sapMTableLastColumn").width("");
 		}
 
