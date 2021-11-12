@@ -106,6 +106,9 @@ sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper
 		isLanguageAware() {
 			return !!this.metadata.languageAware;
 		}
+		 isThemeAware() {
+			return !!this.metadata.themeAware;
+		}
 		shouldInvalidateOnChildChange(slotName, type, name) {
 			const config = this.getSlots()[slotName].invalidateOnChildChange;
 			if (config === undefined) {

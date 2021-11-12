@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/folder-full', './v4/folder-full'], function (Theme, folderFull$2, folderFull$1) { 'use strict';
 
-	const name = "folder-full";
-	const pathData = "M480 64q11 0 18 5t10 11q4 7 4 16v352q0 12-5 18.5t-11 9.5q-7 4-16 4H32q-9 0-16-4-6-3-11-9.5T0 448V64q0-9 4-16 3-6 9.5-11T32 32h187l28 32h233z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? folderFull$1 : folderFull$2;
 	var folderFull = { pathData };
 
 	return folderFull;

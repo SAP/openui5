@@ -78,7 +78,8 @@ sap.ui.define(['exports', './EventProvider', './RenderQueue', './CustomElementsR
 			const tag = element.constructor.getMetadata().getTag();
 			const rtlAware = RTLAwareRegistry.isRtlAware(element.constructor);
 			const languageAware = element.constructor.getMetadata().isLanguageAware();
-			if (!filters || (filters.tag === tag) || (filters.rtlAware && rtlAware) || (filters.languageAware && languageAware)) {
+			const themeAware = element.constructor.getMetadata().isThemeAware();
+			if (!filters || (filters.tag === tag) || (filters.rtlAware && rtlAware) || (filters.languageAware && languageAware) || (filters.themeAware && themeAware)) {
 				renderDeferred(element);
 			}
 		});

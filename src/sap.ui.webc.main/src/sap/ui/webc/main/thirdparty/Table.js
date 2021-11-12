@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Device, Keys, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './CheckBox', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Device, Keys, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, CheckBox, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -115,7 +115,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return TableTemplate_lit;
 		}
 		static get dependencies() {
-			return [BusyIndicator];
+			return [BusyIndicator, CheckBox];
 		}
 		static async onDefine() {
 			Table.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");

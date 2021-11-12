@@ -116,9 +116,17 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true
 				}
-			}
+			},
+			methods: ["getTabInStripDomRef"]
 		}
 	});
+
+	/**
+	 * Returns the DOM reference of the tab that is placed in the header. <b>Note:</b> If you need a DOM ref to the tab content please use the <code>getDomRef</code> method.
+	 * @public
+	 * @name sap.ui.webc.main.Tab#getTabInStripDomRef
+	 * @function
+	 */
 
 	return Tab;
 });

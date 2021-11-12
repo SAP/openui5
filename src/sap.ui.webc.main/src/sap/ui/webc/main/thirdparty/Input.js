@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/Caret', 'sap/ui/webc/common/thirdparty/icons/decline', './types/InputType', './Popover', './generated/templates/InputTemplate.lit', './generated/templates/InputPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Input.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, Device, ValueState, FeaturesRegistry, Keys, Integer, i18nBundle, AriaLabelHelper, Caret, decline, InputType, Popover, InputTemplate_lit, InputPopoverTemplate_lit, i18nDefaults, Input_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/Caret', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', './types/InputType', './Popover', './generated/templates/InputTemplate.lit', './generated/templates/InputPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Input.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, Device, ValueState, FeaturesRegistry, Keys, Integer, i18nBundle, AriaLabelHelper, Caret, decline, notEditable, InputType, Popover, InputTemplate_lit, InputPopoverTemplate_lit, i18nDefaults, Input_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -72,6 +72,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				defaultValue: "",
 			},
 			focused: {
+				type: Boolean,
+			},
+			_isValueStateFocused: {
 				type: Boolean,
 			},
 			open: {
@@ -218,7 +221,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._selectedText = window.getSelection().toString();
 			}
 			if (this.showSuggestions) {
-				this.Suggestions._deselectItems();
+				this._clearPopoverFocusAndSelection();
 			}
 			this._keyDown = true;
 		}
@@ -251,18 +254,27 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (!itemPressed) {
 				this.fireEventByAction(this.ACTION_ENTER);
 				this.lastConfirmedValue = this.value;
+				return;
 			}
+			this.focused = true;
 		}
 		_handleEscape() {
-			if (this.showSuggestions && this.Suggestions && this.Suggestions._isItemOnTarget()) {
+			const hasSuggestions = this.showSuggestions && !!this.Suggestions;
+			const isOpen = hasSuggestions && this.open;
+			if (!isOpen) {
+				this.value = this.lastConfirmedValue ? this.lastConfirmedValue : this.previousValue;
+				return;
+			}
+			if (hasSuggestions && isOpen && this.Suggestions._isItemOnTarget()) {
 				this.value = this.valueBeforeItemPreview;
 				this.suggestionSelectionCanceled = true;
-				this.open = false;
-			} else if (this.Suggestions && this.Suggestions.isOpened()) {
-				this.closePopover();
-			} else {
-				this.value = this.lastConfirmedValue ? this.lastConfirmedValue : this.previousValue;
+				this.focused = true;
 			}
+			if (this._isValueStateFocused) {
+				this._isValueStateFocused = false;
+				this.focused = true;
+			}
+			this.open = false;
 		}
 		async _onfocusin(event) {
 			await this.getInputDOMRef();
@@ -283,10 +295,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			this.closePopover();
+			this._clearPopoverFocusAndSelection();
 			this.previousValue = "";
 			this.lastConfirmedValue = "";
 			this.focused = false;
 			this.open = false;
+		}
+		_clearPopoverFocusAndSelection() {
+			if (!this.showSuggestions || !this.Suggestions) {
+				return;
+			}
+			this._isValueStateFocused = false;
+			this.hasSuggestionItemSelected = false;
+			this.Suggestions._deselectItems();
+			this.Suggestions._clearItemFocus();
 		}
 		_click(event) {
 			if (Device.isPhone() && !this.readonly && this.Suggestions) {
@@ -326,11 +348,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				}
 			}
 			if (event.target === inputDomRef) {
+				this.focused = true;
 				event.stopImmediatePropagation();
 			}
 			const skipFiring = (inputDomRef.value === this.value) && Device.isIE() && !this._keyDown && !!this.placeholder;
 			!skipFiring && this.fireEventByAction(this.ACTION_USER_INPUT);
 			this.hasSuggestionItemSelected = false;
+			this._isValueStateFocused = false;
 			if (this.Suggestions) {
 				this.Suggestions.updateSelectedItemPosition(null);
 				if (!this._isPhone) {
@@ -385,13 +409,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				throw new Error(`You have to import "@ui5/webcomponents/dist/features/InputSuggestions.js" module to use ui5-input suggestions`);
 			}
 		}
-		shouldOpenSuggestions() {
-			return !!(this.suggestionItems.length
-				&& this.focused
-				&& this.showSuggestions
-				&& !this.hasSuggestionItemSelected
-				&& !this.suggestionSelectionCanceled);
-		}
 		selectSuggestion(item, keyboardUsed) {
 			if (item.group) {
 				return;
@@ -420,7 +437,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		updateValueOnPreview(item) {
 			const noPreview = item.type === "Inactive" || item.group;
-			const itemValue = noPreview ? "" : (item.effectiveTitle || item.textContent);
+			const itemValue = noPreview ? this.valueBeforeItemPreview : (item.effectiveTitle || item.textContent);
 			this.value = itemValue;
 		}
 		get previewItem() {
@@ -603,7 +620,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				popoverValueState: {
 					"ui5-valuestatemessage-root": true,
 					"ui5-valuestatemessage-header": true,
-					"ui5-responsive-popover-header": !this.isValueStateOpened(),
 					"ui5-valuestatemessage--success": this.valueState === ValueState__default.Success,
 					"ui5-valuestatemessage--error": this.valueState === ValueState__default.Error,
 					"ui5-valuestatemessage--warning": this.valueState === ValueState__default.Warning,
@@ -693,6 +709,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		</svg>
 		`;
 			return this.valueState !== ValueState__default.None ? result : "";
+		}
+		get _valueStateMessageInputIcon() {
+			const iconPerValueState = {
+				Error: "error",
+				Warning: "alert",
+				Success: "sys-enter-2",
+				Information: "information",
+			};
+			return this.valueState !== ValueState__default.None ? iconPerValueState[this.valueState] : "";
 		}
 		getCaretPosition() {
 			return Caret.getCaretPosition(this.nativeInput);

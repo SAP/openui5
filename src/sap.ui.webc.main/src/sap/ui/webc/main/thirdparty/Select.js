@@ -114,6 +114,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					this._listWidth = this.responsivePopover.offsetWidth;
 				}
 			}
+			this._attachRealDomRefs();
 		}
 		_onfocusin() {
 			this.focused = true;
@@ -142,6 +143,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			} else {
 				this.responsivePopover.showAt(this);
 			}
+		}
+		async _attachRealDomRefs() {
+			this.responsivePopover = await this._respPopover();
+			this.options.forEach(option => {
+				option._getRealDomRef = () => this.responsivePopover.querySelector(`*[data-ui5-stable=${option.stableDomRef}]`);
+			});
 		}
 		_syncSelection() {
 			let lastSelectedOptionIndex = -1,
@@ -384,6 +391,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			|| (this.responsivePopover
 			&& this.responsivePopover.opened) ? "-1" : "0";
 		}
+		get _valueStateMessageInputIcon() {
+			const iconPerValueState = {
+				Error: "error",
+				Warning: "alert",
+				Success: "sys-enter-2",
+				Information: "information",
+			};
+			return this.valueState !== ValueState__default.None ? iconPerValueState[this.valueState] : "";
+		}
 		get classes() {
 			return {
 				popoverValueState: {
@@ -392,6 +408,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"ui5-valuestatemessage--error": this.valueState === ValueState__default.Error,
 					"ui5-valuestatemessage--warning": this.valueState === ValueState__default.Warning,
 					"ui5-valuestatemessage--information": this.valueState === ValueState__default.Information,
+				},
+				popover: {
+					"ui5-valuestatemessage-popover": this.hasValueState,
 				},
 			};
 		}

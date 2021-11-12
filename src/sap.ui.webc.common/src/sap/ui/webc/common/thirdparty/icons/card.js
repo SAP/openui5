@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/card', './v4/card'], function (Theme, card$2, card$1) { 'use strict';
 
-	const name = "card";
-	const pathData = "M393 96q0-23 16-39t39-16 39 16 16 39-16 39-39 16-39-16-16-39zm119 329L366 202l-78 109 78 114h146zm-146 55H0l173-278z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? card$1 : card$2;
 	var card = { pathData };
 
 	return card;

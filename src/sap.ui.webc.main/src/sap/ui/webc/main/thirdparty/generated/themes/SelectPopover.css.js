@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sa
 
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theming", "sap_fiori_3", () => defaultThemeBase__default);
 	Themes.registerThemePropertiesLoader("@ui5/webcomponents", "sap_fiori_3", () => parametersBundle_css);
-	var SelectPopoverCss = {packageName:"@ui5/webcomponents",fileName:"themes/SelectPopover.css",content:".ui5-select-value-state-popover-padding{padding:.5625rem 1rem}.ui5-select-value-state-dialog-header.row{padding:.5625rem 1rem;height:auto;display:inline-block}"};
+	var SelectPopoverCss = {packageName:"@ui5/webcomponents",fileName:"themes/SelectPopover.css",content:".ui5-select-popover:not(.ui5-valuestatemessage-popover) [ui5-li]:first-child::part(native-li):after{border-top-left-radius:var(--_ui5_select_option_focus_border_radius);border-top-right-radius:var(--_ui5_select_option_focus_border_radius)}.ui5-select-popover [ui5-li]:last-child::part(native-li):after{border-bottom-left-radius:var(--_ui5_select_option_focus_border_radius);border-bottom-right-radius:var(--_ui5_select_option_focus_border_radius)}"};
 
 	return SelectPopoverCss;
 

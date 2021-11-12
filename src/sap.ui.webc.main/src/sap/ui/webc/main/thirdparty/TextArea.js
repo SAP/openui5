@@ -322,6 +322,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return this.valueStateTextMappings()[this.valueState];
 		}
+		get _valueStateMessageIcon() {
+			const iconPerValueState = {
+				Error: "error",
+				Warning: "alert",
+				Success: "sys-enter-2",
+				Information: "information",
+			};
+			return this.valueState !== ValueState__default.None ? iconPerValueState[this.valueState] : "";
+		}
 		valueStateTextMappings() {
 			return {
 				"Information": TextArea.i18nBundle.getText(i18nDefaults.VALUE_STATE_INFORMATION),

@@ -320,6 +320,9 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			return this._domRefReadyPromise;
 		}
 		getDomRef() {
+			if (typeof this._getRealDomRef === "function") {
+				return this._getRealDomRef();
+			}
 			if (!this.shadowRoot || this.shadowRoot.children.length === 0) {
 				return;
 			}
@@ -339,10 +342,6 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 		async getFocusDomRefAsync() {
 			await this._waitForDomRef();
 			return this.getFocusDomRef();
-		}
-		getStableDomRef(refName) {
-			const staticAreaResult = this.staticAreaItem && this.staticAreaItem.getStableDomRef(refName);
-			return staticAreaResult || this.getDomRef().querySelector(`[data-ui5-stable=${refName}]`);
 		}
 		async focus() {
 			await this._waitForDomRef();

@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/to-be-reviewed', './v4/to-be-reviewed'], function (Theme, toBeReviewed$2, toBeReviewed$1) { 'use strict';
 
-	const name = "to-be-reviewed";
-	const pathData = "M511.5 256l-256 254-254-254 254-255zm-256 199l200-199-200-200-199 200z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? toBeReviewed$1 : toBeReviewed$2;
 	var toBeReviewed = { pathData };
 
 	return toBeReviewed;

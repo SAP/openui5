@@ -84,9 +84,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
-			if (this._canUseNativeFormSupport) {
-				this._internals = this.attachInternals();
-			}
+			this._internals = this.attachInternals && this.attachInternals();
 		}
 		_onmouseover() {
 			this.content.forEach(item => {
@@ -209,7 +207,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return FileUploader.i18nBundle.getText(i18nDefaults.FILEUPLOADER_TITLE);
 		}
 		get _canUseNativeFormSupport() {
-			return !!this.attachInternals;
+			return this._internals && this._internals.setFormValue;
 		}
 		get _keepInputInShadowDOM() {
 			return this._canUseNativeFormSupport || !this.name;
@@ -245,6 +243,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get shouldOpenValueStateMessagePopover() {
 			return this.focused && this.hasValueStateText && !this.hideInput;
+		}
+		get _valueStateMessageInputIcon() {
+			const iconPerValueState = {
+				Error: "error",
+				Warning: "alert",
+				Success: "sys-enter-2",
+				Information: "information",
+			};
+			return this.valueState !== ValueState__default.None ? iconPerValueState[this.valueState] : "";
 		}
 		get classes() {
 			return {

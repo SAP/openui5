@@ -18,9 +18,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			 accessibleName: {
 				type: String,
 			},
-			stableDomRef: {
-				type: String,
-			},
 		},
 		slots:  {
 			"default": {
@@ -32,6 +29,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 	class BreadcrumbsItem extends UI5Element__default {
 		static get metadata() {
 			return metadata;
+		}
+		get stableDomRef() {
+			return `${this._id}-stable-dom-ref`;
 		}
 	}
 	BreadcrumbsItem.define();

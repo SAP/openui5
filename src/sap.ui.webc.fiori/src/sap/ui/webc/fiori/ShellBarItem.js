@@ -70,7 +70,7 @@ sap.ui.define([
 				/**
 				 * Fired, when the item is pressed.
 				 */
-				itemClick: {
+				click: {
 					allowPreventDefault: true,
 					parameters: {
 						/**

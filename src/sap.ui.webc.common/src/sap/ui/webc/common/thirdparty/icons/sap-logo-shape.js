@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sap-logo-shape', './v4/sap-logo-shape'], function (Theme, sapLogoShape$2, sapLogoShape$1) { 'use strict';
 
-	const name = "sap-logo-shape";
-	const pathData = "M270.363 415.472H0V145.109h512z";
-	const ltr = true;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? sapLogoShape$1 : sapLogoShape$2;
 	var sapLogoShape = { pathData };
 
 	return sapLogoShape;

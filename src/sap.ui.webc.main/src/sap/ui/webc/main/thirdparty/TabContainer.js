@@ -131,6 +131,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					return this.getDomRef().querySelector(`#${item._id}`);
 				};
 				item._itemSelectCallback = this._onItemSelect.bind(this);
+				item._getRealDomRef = () => this.getDomRef().querySelector(`*[data-ui5-stable=${item.stableDomRef}]`);
 			});
 			if (!this._animationRunning) {
 				this._contentCollapsed = this.collapsed;
@@ -139,6 +140,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		onAfterRendering() {
 			this._scrollEnablement.scrollContainer = this._getHeaderScrollContainer();
 			this._updateScrolling();
+			this.items.forEach(item => {
+				item._getTabInStripDomRef = this.getDomRef().querySelector(`*[data-ui5-stable="${item.stableDomRef}"]`);
+			});
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this._getHeader(), this._handleResize);
@@ -261,7 +265,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return slideUp__default({ element }).promise();
 		}
 		async _onOverflowButtonClick(event) {
-			const button = this.overflowButton[0] || this.getDomRef().querySelector(".ui-tc__overflowButton > ui5-button");
+			const button = this.overflowButton[0] || this.getDomRef().querySelector(".ui-tc__overflowButton > [ui5-button]");
 			if (event.target !== button) {
 				return;
 			}

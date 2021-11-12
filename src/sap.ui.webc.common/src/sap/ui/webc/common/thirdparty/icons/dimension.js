@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/dimension', './v4/dimension'], function (Theme, dimension$2, dimension$1) { 'use strict';
 
-	const name = "dimension";
-	const pathData = "M494.5 146v220l-256 146V292zm-219-52l-184 105v125l-72 42V146l256-146v94zm110 72l-184 105v126l-73 41V220l257-147v93z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? dimension$1 : dimension$2;
 	var dimension = { pathData };
 
 	return dimension;

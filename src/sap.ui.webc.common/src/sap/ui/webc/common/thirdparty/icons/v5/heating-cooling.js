@@ -1,0 +1,13 @@
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+
+	const name = "heating-cooling";
+	const pathData = "M487 230c15 0 25 10 25 26 0 15-10 25-25 25h-93l59 59c11 10 11 26 0 36-10 10-25 10-35 0l-95-95h-41v41l95 95c10 10 10 25 0 36-11 10-26 10-36 0l-59-59v92c0 15-10 26-26 26-15 0-25-11-25-26v-79c-72-13-128-77-128-151 0-75 56-139 128-151V25c0-15 10-25 25-25 16 0 26 10 26 25v92l59-59c10-10 25-10 36 0 10 11 10 26 0 36l-95 95v41h41l95-95c10-10 25-10 35 0 11 10 11 26 0 36l-59 59h93zm-333 26c0 48 33 87 77 99V156c-44 13-77 51-77 100zM51 281H26c-16 0-26-10-26-25 0-16 10-26 26-26h25c16 0 26 10 26 26 0 15-10 25-26 25zm34 110c10-10 25-10 36 0 10 10 10 26 0 36l-26 26c-10 10-26 10-36 0-10-11-10-26 0-36zm0-271L59 94c-10-10-10-25 0-36 10-10 26-10 36 0l26 26c10 10 10 26 0 36-11 10-26 10-36 0zm-46 20c14 0 25 12 25 26s-11 26-25 26c-15 0-26-12-26-26s11-26 26-26zm0 180c14 0 25 11 25 25s-11 26-25 26c-15 0-26-12-26-26s11-25 26-25zm128 128c14 0 25 11 25 25s-11 26-25 26c-15 0-26-12-26-26s11-25 26-25zm0-436c14 0 25 12 25 26s-11 26-25 26c-15 0-26-12-26-26s11-26 26-26z";
+	const ltr = false;
+	const collection = "SAP-icons-v5";
+	const packageName = "@ui5/webcomponents-icons";
+	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	var pathDataV4 = { pathData };
+
+	return pathDataV4;
+
+});

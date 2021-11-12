@@ -21,9 +21,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			value: {
 				type: String,
 			},
-			stableDomRef: {
-				type: String,
-			},
 			_focused: {
 				type: Boolean,
 			},
@@ -38,6 +35,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 	class Option extends UI5Element__default {
 		static get metadata() {
 			return metadata;
+		}
+		get stableDomRef() {
+			return `${this._id}-stable-dom-ref`;
 		}
 	}
 	Option.define();

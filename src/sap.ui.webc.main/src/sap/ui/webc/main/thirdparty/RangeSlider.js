@@ -332,7 +332,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 		get styles() {
 			return {
 				progress: {
-					"transform": `scaleX(${this._selectedRange})`,
+					"width": `${this._selectedRange * 100}%`,
 					"transform-origin": `${this.directionStart} top`,
 					[this.directionStart]: `${this._firstHandlePositionFromStart}%`,
 				},

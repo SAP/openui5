@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/isLegacyBrowser', 'sap/ui/webc/common/thirdparty/base/Keys', './Button', './generated/templates/ToggleButtonTemplate.lit', './generated/themes/ToggleButton.css', './generated/themes/ToggleButton.ie11.css'], function (isLegacyBrowser, Keys, Button, ToggleButtonTemplate_lit, ToggleButton_css, ToggleButton_ie11_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/isLegacyBrowser', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', './Button', './generated/templates/ToggleButtonTemplate.lit', './generated/themes/ToggleButton.css', './generated/themes/ToggleButton.ie11.css'], function (isLegacyBrowser, Keys, Device, Button, ToggleButtonTemplate_lit, ToggleButton_css, ToggleButton_ie11_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -25,6 +25,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/isLegacyBrowser', 'sap/ui/web
 		}
 		_onclick() {
 			this.pressed = !this.pressed;
+			if (Device.isSafari()) {
+				this.getDomRef().focus();
+			}
 		}
 		_onkeyup(event) {
 			if (Keys.isSpaceShift(event)) {

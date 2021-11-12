@@ -6,7 +6,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
 
 	const metadata = {
-		tag: "ui5-messagestrip",
+		tag: "ui5-message-strip",
+		altTag: "ui5-messagestrip",
 		languageAware: true,
 		properties:  {
 			design: {
@@ -63,10 +64,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		static designClassesMappings() {
 			return {
-				"Information": "ui5-messagestrip-root--info",
-				"Positive": "ui5-messagestrip-root--positive",
-				"Negative": "ui5-messagestrip-root--negative",
-				"Warning": "ui5-messagestrip-root--warning",
+				"Information": "ui5-message-strip-root--info",
+				"Positive": "ui5-message-strip-root--positive",
+				"Negative": "ui5-message-strip-root--negative",
+				"Warning": "ui5-message-strip-root--warning",
 			};
 		}
 		static iconMappings() {
@@ -86,9 +87,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get classes() {
 			return {
 				root: {
-					"ui5-messagestrip-root": true,
-					"ui5-messagestrip-root-hide-icon": this.hideIcon,
-					"ui5-messagestrip-root-hide-close-button": this.hideCloseButton,
+					"ui5-message-strip-root": true,
+					"ui5-message-strip-root-hide-icon": this.hideIcon,
+					"ui5-message-strip-root-hide-close-button": this.hideCloseButton,
 					[this.designClasses]: true,
 				},
 			};

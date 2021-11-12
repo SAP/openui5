@@ -1,13 +1,7 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', './generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/add', './v4/add'], function (Theme, add$2, add$1) { 'use strict';
 
-	const name = "add";
-	const pathData = "M32 240q0-7 5-11.5t11-4.5h176V48q0-7 5-11.5t11-4.5h32q16 0 16 16v176h176q16 0 16 16v32q0 16-16 16H288v176q0 16-16 16h-32q-6 0-11-4.5t-5-11.5V288H48q-6 0-11-4.5T32 272v-32z";
-	const ltr = false;
-	const accData = i18nDefaults.ICON_ADD;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, accData, collection, packageName });
-	var add = { pathData, accData };
+	const pathData = Theme.isTheme("sap_horizon") ? add$1 : add$2;
+	var add = { pathData };
 
 	return add;
 

@@ -28,10 +28,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		tag: "ui5-wizard",
 		managedSlots: true,
 		properties:  {
-			accessibleName: {
-				type: String,
-				defaultValue: undefined,
-			},
 			width: {
 				type: Float__default,
 			},
@@ -438,7 +434,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_STEP_INACTIVE);
 		}
 		get ariaLabelText() {
-			return this.accessibleName || Wizard.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
+			return Wizard.i18nBundle.getText(i18nDefaults.WIZARD_NAV_ARIA_ROLE_DESCRIPTION);
 		}
 		get effectiveStepSwitchThreshold() {
 			return clamp__default(this.stepSwitchThreshold, STEP_SWITCH_THRESHOLDS.MIN, STEP_SWITCH_THRESHOLDS.MAX);

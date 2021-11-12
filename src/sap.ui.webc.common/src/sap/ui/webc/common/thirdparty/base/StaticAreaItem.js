@@ -43,9 +43,6 @@ sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffe
 			await Render.renderFinished();
 			return this.shadowRoot;
 		}
-		getStableDomRef(refName) {
-			return this.shadowRoot.querySelector(`[data-ui5-stable=${refName}]`);
-		}
 		static getTag() {
 			const pureTag = "ui5-static-area-item";
 			const suffix = CustomElementsScope.getEffectiveScopingSuffixForTag(pureTag);

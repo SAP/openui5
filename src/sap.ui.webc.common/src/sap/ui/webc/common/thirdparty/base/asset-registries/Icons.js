@@ -1,10 +1,9 @@
-sap.ui.define(['exports', '../getSharedResource'], function (exports, getSharedResource) { 'use strict';
+sap.ui.define(['exports', '../getSharedResource', '../assets-meta/IconCollectionsAlias', '../config/Theme'], function (exports, getSharedResource, IconCollectionsAlias, Theme) { 'use strict';
 
 	const loaders = new Map();
 	const registry = getSharedResource("SVGIcons.registry", new Map());
 	const iconCollectionPromises = getSharedResource("SVGIcons.promises", new Map());
 	const ICON_NOT_FOUND = "ICON_NOT_FOUND";
-	const DEFAULT_COLLECTION = "SAP-icons";
 	const registerIconBundle = async (collectionName, bundleData) => {
 		throw new Error("This method has been removed. Use `registerIconLoader` instead.");
 	};
@@ -35,7 +34,7 @@ sap.ui.define(['exports', '../getSharedResource'], function (exports, getSharedR
 	};
 	const registerIcon = (name, { pathData, ltr, accData, collection, packageName } = {}) => {
 		if (!collection) {
-			collection = DEFAULT_COLLECTION;
+			collection = _getDefaultCollection();
 		}
 		const key = `${collection}/${name}`;
 		registry.set(key, {
@@ -51,14 +50,9 @@ sap.ui.define(['exports', '../getSharedResource'], function (exports, getSharedR
 		}
 		let collection;
 		[name, collection] = name.split("/").reverse();
-		collection = collection || DEFAULT_COLLECTION;
-		if (collection === "SAP-icons-TNT") {
-			collection = "tnt";
-		}
-		if (collection === "BusinessSuiteInAppSymbols") {
-			collection = "business-suite";
-			name = name.replace("icon-", "");
-		}
+		collection = collection || _getDefaultCollection();
+		collection = _normalizeCollection(collection);
+		name = name.replace("icon-", "");
 		const registryKey = `${collection}/${name}`;
 		return { name, collection, registryKey };
 	};
@@ -87,6 +81,15 @@ sap.ui.define(['exports', '../getSharedResource'], function (exports, getSharedR
 		await getIconData("tnt/arrow");
 		await getIconData("business-suite/3d");
 		return Array.from(registry.keys());
+	};
+	const _getDefaultCollection = () => {
+		return Theme.isTheme("sap_horizon") ? "SAP-icons-v5" : "SAP-icons";
+	};
+	const _normalizeCollection = collectionName => {
+		if (IconCollectionsAlias[collectionName]) {
+			return IconCollectionsAlias[collectionName];
+		}
+		return collectionName;
 	};
 
 	exports._getRegisteredNames = _getRegisteredNames;

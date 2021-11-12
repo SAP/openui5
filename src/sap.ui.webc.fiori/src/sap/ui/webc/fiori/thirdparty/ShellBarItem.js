@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/ShellBarItemTemplate.lit'], function (UI5Element, litRender, ShellBarItemTemplate_lit) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (UI5Element, litRender) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -17,12 +17,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			count: {
 				type: String,
 			},
-			stableDomRef: {
-				type: String,
-			},
 		},
 		events:  {
-			"item-click": {
+			"click": {
 				detail: {
 					targetRef: { type: HTMLElement },
 				},
@@ -36,8 +33,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get render() {
 			return litRender__default;
 		}
-		static get template() {
-			return ShellBarItemTemplate_lit;
+		get stableDomRef() {
+			return `${this._id}-stable-dom-ref`;
 		}
 	}
 	ShellBarItem.define();

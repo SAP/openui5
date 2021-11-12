@@ -261,21 +261,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const nextElementIndex = this._currentElementIndex - 1;
 			this._selectElementByIndex(nextElementIndex);
 		}
-		_onkeydown(е) {
+		_onkeydown(e) {
 			if (!this.expanded) {
 				return;
 			}
-			if (Keys.isUp(е)) {
-				this._onArrowUp(е);
+			if (Keys.isUp(e)) {
+				this._onArrowUp(e);
 			}
-			if (Keys.isDown(е)) {
-				this._onArrowDown(е);
+			if (Keys.isDown(e)) {
+				this._onArrowDown(e);
 			}
-			if (Keys.isPageDown(е)) {
-				this._selectLimitCell(е, false);
+			if (Keys.isPageDown(e)) {
+				this._selectLimitCell(e, false);
 			}
-			if (Keys.isPageUp(е)) {
-				this._selectLimitCell(е, true);
+			if (Keys.isPageUp(e)) {
+				this._selectLimitCell(e, true);
 			}
 		}
 		_selectLimitCell(event, isMax) {

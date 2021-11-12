@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/drop-down-list', './v4/drop-down-list'], function (Theme, dropDownList$2, dropDownList$1) { 'use strict';
 
-	const name = "drop-down-list";
-	const pathData = "M321 355q11-12 23 0 11 11 0 22l-65 61q-10 9-23 9t-22-9l-65-58q-12-11 0-23 11-11 23 0l59 53q5 6 11 0zm111-195q6 0 11 4.5t5 11.5-5 11.5-11 4.5H80q-16 0-16-16t16-16h352zm0 96q6 0 11 4.5t5 11.5-5 11.5-11 4.5H80q-16 0-16-16t16-16h352zm0-192q6 0 11 4.5t5 11.5-5 11.5-11 4.5H80q-16 0-16-16t16-16h352z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? dropDownList$1 : dropDownList$2;
 	var dropDownList = { pathData };
 
 	return dropDownList;

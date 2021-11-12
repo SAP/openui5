@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/scatter-chart', './v4/scatter-chart'], function (Theme, scatterChart$2, scatterChart$1) { 'use strict';
 
-	const name = "scatter-chart";
-	const pathData = "M80 224h190V33h36v191h126v-32h-32v-32h32v-32h32v32h32v32h-32v32h32v31H306v162h-36V255h-62v33h32v32h-32v32h-32v-32h-32v-32h32v-33H80v-31zM17 480V32h31v416h448v32H17zm94-416h33V32h32v32h32v32h-32v32h-32V96h-33V64zm257 256h32v-32h32v32h32v32h-32v32h-32v-32h-32v-32zm0-255V33h32v32h32v32h-32v32h-32V97h-32V65h32z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? scatterChart$1 : scatterChart$2;
 	var scatterChart = { pathData };
 
 	return scatterChart;

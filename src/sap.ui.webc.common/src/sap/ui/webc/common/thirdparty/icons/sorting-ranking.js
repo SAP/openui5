@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sorting-ranking', './v4/sorting-ranking'], function (Theme, sortingRanking$2, sortingRanking$1) { 'use strict';
 
-	const name = "sorting-ranking";
-	const pathData = "M256.5 0l219 224h-439zm0 46l-144 146h287zm0 466l-220-224h439zm0-46l143-146h-287z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? sortingRanking$1 : sortingRanking$2;
 	var sortingRanking = { pathData };
 
 	return sortingRanking;

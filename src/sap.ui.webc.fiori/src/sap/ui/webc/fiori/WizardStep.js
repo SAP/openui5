@@ -54,22 +54,6 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Sets the accessible aria name of the component.
-				 */
-				accessibleName: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
-				 * Defines the aria-labelledby of the step.
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * When <code>branching</code> is enabled a dashed line would be displayed after the step, meant to indicate that the next step is not yet known and depends on user choice in the current step. <br>
 				 * <br>
 				 *

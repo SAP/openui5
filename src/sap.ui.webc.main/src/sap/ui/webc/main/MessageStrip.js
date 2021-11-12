@@ -42,7 +42,7 @@ sap.ui.define([
 	var MessageStrip = WebComponent.extend("sap.ui.webc.main.MessageStrip", {
 		metadata: {
 			library: "sap.ui.webc.main",
-			tag: "ui5-messagestrip-ui5",
+			tag: "ui5-message-strip-ui5",
 			properties: {
 
 				/**

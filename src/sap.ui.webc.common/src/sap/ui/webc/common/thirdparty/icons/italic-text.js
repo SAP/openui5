@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/italic-text', './v4/italic-text'], function (Theme, italicText$2, italicText$1) { 'use strict';
 
-	const name = "italic-text";
-	const pathData = "M160 448L288 64h-64V32h192v32h-64L224 448h64v32H96v-32h64z";
-	const ltr = true;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? italicText$1 : italicText$2;
 	var italicText = { pathData };
 
 	return italicText;

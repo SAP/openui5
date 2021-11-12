@@ -4,14 +4,14 @@ sap.ui.define(['./ComboBoxItem'], function (ComboBoxItem) { 'use strict';
 		tag: "ui5-mcb-item",
 		properties:  {
 			selected: { type: Boolean },
-			stableDomRef: {
-				type: String,
-			},
 		},
 	};
 	class MultiComboBoxItem extends ComboBoxItem {
 		static get metadata() {
 			return metadata;
+		}
+		get stableDomRef() {
+			return `${this._id}-stable-dom-ref`;
 		}
 	}
 	MultiComboBoxItem.define();

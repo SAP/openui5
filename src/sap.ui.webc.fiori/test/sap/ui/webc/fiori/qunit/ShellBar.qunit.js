@@ -26,22 +26,22 @@ sap.ui.define([
 					new ShellBarItem({
 						icon: "employee",
 						text: "Some text...",
-						itemClick: function(oEvent) {
-							// console.log("Event itemClick fired for ShellBarItem with parameters: ", oEvent.getParameters());
+						click: function(oEvent) {
+							// console.log("Event click fired for ShellBarItem with parameters: ", oEvent.getParameters());
 						}
 					}),
 					new ShellBarItem({
 						icon: "employee",
 						text: "Some text...",
-						itemClick: function(oEvent) {
-							// console.log("Event itemClick fired for ShellBarItem with parameters: ", oEvent.getParameters());
+						click: function(oEvent) {
+							// console.log("Event click fired for ShellBarItem with parameters: ", oEvent.getParameters());
 						}
 					}),
 					new ShellBarItem({
 						icon: "employee",
 						text: "Some text...",
-						itemClick: function(oEvent) {
-							// console.log("Event itemClick fired for ShellBarItem with parameters: ", oEvent.getParameters());
+						click: function(oEvent) {
+							// console.log("Event click fired for ShellBarItem with parameters: ", oEvent.getParameters());
 						}
 					})
 				],
