@@ -2054,7 +2054,7 @@ sap.ui.define([
 								"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 								"type": "boolean",
 								"visualization": {
-									"type": "sap/m/Switch",
+									"type": "Switch",
 									"settings": {
 										"busy": "{currentSettings>_loading}",
 										"state": "{currentSettings>value}",
@@ -2150,7 +2150,7 @@ sap.ui.define([
 								"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 								"type": "boolean",
 								"visualization": {
-									"type": "sap/m/Switch",
+									"type": "Switch",
 									"settings": {
 										"busy": "{currentSettings>_loading}",
 										"state": "{currentSettings>value}",

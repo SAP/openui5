@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": 1,
 						"type": "integer",
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,

@@ -150,7 +150,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"type": "integer",
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -193,7 +193,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "long long long long long long long long long long label",
 						"type": "boolean",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -417,7 +417,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"type": "integer",
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -475,7 +475,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"description": "description for boolean validation",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"busy": "{currentSettings>_loading}",
 								"state": "{currentSettings>value}",
@@ -812,7 +812,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"description": "Description",
 						"label": "long long long long long long long long long long label",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -830,7 +830,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/content/maxItems",
 						"type": "integer",
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -907,7 +907,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"label": "long long long long long long long long long long label",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -1333,7 +1333,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"description": "bbb",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",

@@ -4726,6 +4726,12 @@ sap.ui.define([
 								},
 								"booleanVisualization": {
 									"value": true
+								},
+								"integerVisualization1": {
+									"value": 4
+								},
+								"booleanVisualization1": {
+									"value": false
 								}
 							}
 						}
@@ -4761,6 +4767,20 @@ sap.ui.define([
 					assert.ok(oField3.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField3.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField3.getAggregation("_field").getState() === true, "Field: Value correct");
+					var oLabel4 = this.oEditor.getAggregation("_formContent")[9];
+					var oField4 = this.oEditor.getAggregation("_formContent")[10];
+					assert.ok(oLabel4.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
+					assert.ok(oLabel4.getText() === "Integer Label using sap/m/Slider", "Label: Has label text");
+					assert.ok(oField4.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
+					assert.ok(oField4.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
+					assert.ok(oField4.getAggregation("_field").getValue() === 4, "Field: Value correct");
+					var oLabel5 = this.oEditor.getAggregation("_formContent")[11];
+					var oField5 = this.oEditor.getAggregation("_formContent")[12];
+					assert.ok(oLabel5.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
+					assert.ok(oLabel5.getText() === "Boolean Label using sap/m/Switch", "Label: Has label text");
+					assert.ok(oField5.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
+					assert.ok(oField5.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
+					assert.ok(oField5.getAggregation("_field").getState() === false, "Field: Value correct");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -5141,7 +5161,7 @@ sap.ui.define([
 							"defaultValue": 1,
 							"type": "integer",
 							"visualization": {
-								"type": "sap/m/Slider", //NO CLASS ANYMORE
+								"type": "Slider", //NO CLASS ANYMORE
 								"settings": {
 									"value": "{currentSettings>value}",
 									"min": 0,
@@ -5180,7 +5200,7 @@ sap.ui.define([
 									"defaultValue": 1,
 									"type": "integer",
 									"visualization": {
-										"type": "sap/m/Slider", //NO CLASS ANYMORE
+										"type": "Slider", //NO CLASS ANYMORE
 										"settings": {
 											"value": "{currentSettings>value}",
 											"min": 0,

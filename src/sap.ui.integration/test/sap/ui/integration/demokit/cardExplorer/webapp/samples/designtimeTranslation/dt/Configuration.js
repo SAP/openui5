@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowSettings": false,
 						"translatable": false,
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,

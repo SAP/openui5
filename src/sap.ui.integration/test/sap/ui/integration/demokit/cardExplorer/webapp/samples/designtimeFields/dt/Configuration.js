@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "integer",
 						"label": "Integer with Slider",
 						"visualization": {
-							"type": "sap/m/Slider",
+							"type": "Slider",
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
@@ -111,7 +111,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Boolean with Switch",
 						"type": "boolean",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
@@ -338,7 +338,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "boolean",
 						"label": "Boolean",
 						"visualization": {
-							"type": "sap/m/Switch",
+							"type": "Switch",
 							"settings": {
 								"state": "{currentSettings>value}",
 								"customTextOn": "Yes",
