@@ -127,10 +127,9 @@ sap.ui.define([
 			return oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
 				aInitiallyVisibleProperties.forEach(function(sPropertyName) {
 					var oProperty = oPropertyHelper.getProperty(sPropertyName);
-					var oUnitProperty = oPropertyHelper.getUnitProperty(sPropertyName);
-					if (!oProperty.isComplex() && oProperty && oUnitProperty) {
-						this.createColumnWithUnitTemplate(oTable, oProperty, oUnitProperty);
-					} else if (!oProperty.isComplex() && oProperty && !oUnitProperty) {
+					if (!oProperty.isComplex() && oProperty && oProperty.unitProperty) {
+						this.createColumnWithUnitTemplate(oTable, oProperty, oProperty.unitProperty);
+					} else if (!oProperty.isComplex() && oProperty && !oProperty.unitProperty) {
 						this.createSimpleColumn(oTable, oProperty);
 					} else if (oProperty.isComplex() && oProperty) {
 						this.createComplexColumn(oTable, oProperty, oPropertyHelper);
@@ -144,16 +143,16 @@ sap.ui.define([
 
 		createColumnWithUnitTemplate: function(oTable, oProperty, oUnitProperty) {
 			var oColumn = new Column({
-				id: "id" + oProperty.getName(),
-				dataProperty: oProperty.getName(),
-				header: oProperty.getLabel(),
+				id: "id" + oProperty.name,
+				dataProperty: oProperty.name,
+				header: oProperty.label,
 				hAlign: "End",
 				template: new Text({
 					text: {
 						parts: [{
-							path: oProperty.getPath()
+							path: oProperty.path
 						}, {
-							path: oUnitProperty.getPath()
+							path: oUnitProperty.path
 						}],
 						formatter: function(sProperty, sUnit) {
 							return sProperty + '\u2007' + sUnit;
@@ -167,12 +166,12 @@ sap.ui.define([
 
 		createSimpleColumn: function(oTable, oProperty) {
 			var oColumn = new Column({
-				id: "id" + oProperty.getName(),
-				dataProperty: oProperty.getName(),
-				header: oProperty.getLabel(),
+				id: "id" + oProperty.name,
+				dataProperty: oProperty.name,
+				header: oProperty.label,
 				template: new Text({
 					text: {
-						path: oProperty.getPath()
+						path: oProperty.path
 					}
 				})
 			});
@@ -189,7 +188,7 @@ sap.ui.define([
 			aReferencedProperties.forEach(function(oReferencedProperty) {
 				var oText = new Text({
 					text: {
-						path: oReferencedProperty.getPath(),
+						path: oReferencedProperty.path,
 						formatter: function(sValue) {
 							return sValue + '\u2007';
 						}
@@ -199,8 +198,8 @@ sap.ui.define([
 			});
 
 			var oColumn = new Column({
-				header: oProperty.getLabel(),
-				dataProperty: oProperty.getName(),
+				header: oProperty.label,
+				dataProperty: oProperty.name,
 				template: oHBox
 			});
 
