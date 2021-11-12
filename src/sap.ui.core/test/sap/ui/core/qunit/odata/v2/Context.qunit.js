@@ -201,4 +201,15 @@ sap.ui.define([
 				assert.strictEqual(oError, "~oError");
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("resetCreatedPromise", function (assert) {
+		var oContext = {oCreatePromise : "~pCreate", oSyncCreatePromise : "~pSyncCreate"};
+
+		// code under test
+		Context.prototype.resetCreatedPromise.call(oContext);
+
+		assert.strictEqual(oContext.oCreatePromise, undefined);
+		assert.strictEqual(oContext.oSyncCreatePromise, undefined);
+	});
 });

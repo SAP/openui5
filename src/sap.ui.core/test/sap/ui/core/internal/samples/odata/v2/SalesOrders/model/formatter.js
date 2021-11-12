@@ -35,26 +35,20 @@ sap.ui.define([], function () {
 		},
 
 		formatStatusIcon : function () {
-			var oContext = this.getBinding("src").getContext(),
-				bIsTransient = oContext && oContext.isTransient();
+			var oContext = this.getBinding("src").getContext();
 
-			if (bIsTransient) {
+			if (oContext && oContext.isTransient()) {
 				return "sap-icon://alert";
-			} else if (bIsTransient === false) {
-				return "sap-icon://complete";
 			}
 
 			return "sap-icon://cloud";
 		},
 
 		formatStatusToolTip : function () {
-			var oContext = this.getBinding("src").getContext(),
-				bIsTransient = oContext && oContext.isTransient();
+			var oContext = this.getBinding("src").getContext();
 
-			if (bIsTransient) {
+			if (oContext && oContext.isTransient()) {
 				return "Transient";
-			} else if (bIsTransient === false) {
-				return "Persisted";
 			}
 
 			return "From Server";

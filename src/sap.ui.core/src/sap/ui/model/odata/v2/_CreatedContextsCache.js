@@ -123,5 +123,33 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Removes all persisted contexts from the list of contexts for created entities for the given
+	 * path and list ID.
+	 *
+	 * @param {sPath} sPath
+	 *   The resolved binding path
+	 * @param {string} sListID
+	 *   The identifier for the list showing the data
+	 * @returns {sap.ui.model.odata.v2.Context[]}
+	 *   An array of persisted contexts that have been removed from the cache
+	 *
+	 * @private
+	 */
+	_CreatedContextsCache.prototype.removePersistedContexts = function (sPath, sListID) {
+		var aCreatedPersistedContexts = this.getContexts(sPath, sListID)
+				.filter(function (oContext) {
+					return oContext.isTransient() === false;
+				}),
+			that = this;
+
+		aCreatedPersistedContexts.forEach(function (oContext) {
+			oContext.resetCreatedPromise();
+			that.removeContext(oContext, sPath, sListID);
+		});
+
+		return aCreatedPersistedContexts;
+	};
+
 	return _CreatedContextsCache;
 }, /* bExport= */ false);

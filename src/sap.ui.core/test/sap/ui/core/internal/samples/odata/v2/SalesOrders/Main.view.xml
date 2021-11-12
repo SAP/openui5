@@ -43,7 +43,7 @@
 						],
 						parameters : {
 							countMode : 'Request',
-							select : 'CurrencyCode,GrossAmount,Note,SalesOrderID'
+							select : 'CurrencyCode,CustomerName,GrossAmount,Note,SalesOrderID'
 						},
 						sorter : [{path : 'SalesOrderID', descending : true}]
 					}"
@@ -63,22 +63,37 @@
 							<Button icon="sap-icon://synchronize"
 								id="refresh::SalesOrderSet" press="onRefreshSalesOrders"
 								tooltip="Refresh the sales order list" />
-							<Label text="Sort: "/>
+							<Label text="Sort: ">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Label>
 							<Select change="onSortSalesOrdersTable">
 								<core:Item key="desc" text="Descending" />
 								<core:Item key="asc" text="Ascending" />
 							</Select>
+							<Label text="Filter:">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false" />
+								</layoutData>
+							</Label>
+							<Input submit="onFilterSalesOrdersTable" value="{ui>/salesOrdersFilter}"
+								width="12em" />
+							<Button press="onFilterSalesOrdersTable" text="Go" type="Emphasized" />
 							<ToolbarSpacer />
 							<Button id="showSalesOrderInput" press="onShowTable" text="Use Input"
-								tooltip="Show sales order input field" type="Emphasized" />
+								tooltip="Show sales order input field" />
 						</Toolbar>
 					</headerToolbar>
 					<columns>
-						<Column width="6em">
+						<Column width="4em">
 							<Text text="Status" />
 						</Column>
-						<Column width="12em">
+						<Column width="10em">
 							<Text text="Sales Order ID" />
+						</Column>
+						<Column width="16em">
+							<Text text="Customer Name" />
 						</Column>
 						<Column width="12em">
 							<Text text="Gross Amount" />
@@ -102,6 +117,7 @@
 										path : 'SalesOrders>SalesOrderID'
 									}" />
 								<Input editable="false" value="{SalesOrders>SalesOrderID}" />
+								<Input editable="false" value="{SalesOrders>CustomerName}" />
 								<Input editable="false" value="{
 										parts : [{
 											constraints : {precision : 16, scale : 3},
@@ -222,7 +238,7 @@
 						</t:RowAction>
 					</t:rowActionTemplate>
 					<t:columns>
-						<t:Column width="3em">
+						<t:Column width="4em">
 							<Label text="Status" />
 							<t:template>
 								<core:Icon decorative="false"
@@ -299,7 +315,7 @@
 								}" />
 							</t:template>
 						</t:Column>
-						<t:Column width="10em">
+						<t:Column filterProperty="GrossAmount" width="10em">
 							<Label text="Gross Amount" />
 							<t:template>
 								<Input textAlign="Right" value="{

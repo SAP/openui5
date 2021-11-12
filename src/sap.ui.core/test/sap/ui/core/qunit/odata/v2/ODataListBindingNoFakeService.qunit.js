@@ -7,13 +7,14 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, ChangeReason, Context, Filter, FilterOperator, CountMode, ODataUtils,
-		OperationMode, ODataListBinding, TestUtils) {
+], function (Log, ChangeReason, Context, Filter, FilterOperator, FilterProcessor, CountMode,
+		ODataUtils, OperationMode, ODataListBinding, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
@@ -37,23 +38,32 @@ sap.ui.define([
 	{transitionMessagesOnly : false, headers : undefined}
 ].forEach(function (oFixture, i) {
 	QUnit.test("loadData calls read w/ parameters refresh, headers, " + i, function (assert) {
-		var oBinding,
+		var oBinding, oRemoveExpectation, oResetDataExpectation,
 			oContext = {},
 			oModel = {
-				read : function () {},
 				checkFilterOperation : function () {},
 				createCustomParams : function () {},
+				read : function () {},
 				resolveDeep : function () {}
 			},
 			bRefresh = "{boolean} bRefresh";
 
 		this.mock(oModel).expects("createCustomParams").withExactArgs(undefined).returns("~custom");
-		this.mock(oModel).expects("resolveDeep").withExactArgs("path", sinon.match.same(oContext))
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("path", sinon.match.same(oContext))
 			.returns("~deep");
 		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
 		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs();
 
+		oRemoveExpectation = this.mock(ODataListBinding.prototype)
+			.expects("_removePersistedCreatedContexts")
+			.withExactArgs();
+		oResetDataExpectation = this.mock(ODataListBinding.prototype).expects("resetData")
+			.withExactArgs();
+
 		oBinding = new ODataListBinding(oModel, "path", oContext);
+
+		assert.ok(oResetDataExpectation.calledImmediatelyAfter(oRemoveExpectation));
 
 		this.mock(oBinding).expects("_addFilterQueryOption").withExactArgs([], true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
@@ -196,6 +206,29 @@ sap.ui.define([
 		assert.strictEqual(oBinding.bTransitionMessagesOnly, oFixture.expected);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("constructor: remove persisted created contexts without expanded list",
+			function (assert) {
+		var oModel = {
+				checkFilterOperation : function () {},
+				createCustomParams : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oModel).expects("createCustomParams").withExactArgs(undefined).returns("~custom");
+		this.mock(oModel).expects("resolveDeep").withExactArgs("path", "context").returns("~deep");
+		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
+		this.mock(ODataListBinding.prototype).expects("checkExpandedList")
+			.withExactArgs()
+			.returns(false);
+		this.mock(ODataListBinding.prototype).expects("_removePersistedCreatedContexts")
+			.withExactArgs();
+		this.mock(ODataListBinding.prototype).expects("resetData").withExactArgs();
+
+		// code under test
+		assert.ok(new ODataListBinding(oModel, "path", "context"));
+	});
 
 	//*********************************************************************************************
 [
@@ -607,7 +640,8 @@ sap.ui.define([
 			+ " use V2 context: " + bV2Context;
 
 	QUnit.test(sTitle, function (assert) {
-		var oModel = {resolveDeep : function () {}},
+		var oRefreshExpectation, oRemoveExpectation,
+			oModel = {resolveDeep : function () {}},
 			oBinding = {
 				oContext : "~oContext",
 				bInitial : false,
@@ -617,6 +651,7 @@ sap.ui.define([
 				_getCreatedContexts : function () {},
 				_initSortersFilters : function () {},
 				_refresh : function () {},
+				_removePersistedCreatedContexts : function () {},
 				checkDataState : function () {},
 				checkExpandedList : function () {},
 				getResolvedPath : function () {},
@@ -646,12 +681,15 @@ sap.ui.define([
 		oBindingMock.expects("checkDataState").withExactArgs();
 		oBindingMock.expects("_initSortersFilters").withExactArgs();
 		oBindingMock.expects("checkExpandedList").withExactArgs().returns(false);
-		oBindingMock.expects("_refresh").withExactArgs();
+		oRemoveExpectation = oBindingMock.expects("_removePersistedCreatedContexts")
+			.withExactArgs();
+		oRefreshExpectation = oBindingMock.expects("_refresh").withExactArgs();
 
 		// code under test
 		ODataListBinding.prototype.setContext.call(oBinding, oNewContext);
 
 		assert.strictEqual(oBinding.oContext, oNewContext);
+		assert.ok(oRefreshExpectation.calledImmediatelyAfter(oRemoveExpectation));
 	});
 });
 
@@ -754,16 +792,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("setContext: set updated context while there are transient entities",
 			function (assert) {
-		var oContext = {
+		var oRefreshExpectation, oRemoveExpectation,
+			oContext = {
 				isPreliminary : function () {},
 				isRefreshForced : function () {},
 				isTransient : function () {},
 				isUpdated : function () {}
 			},
-			oModel = {
-				_getCreatedContextsCache : function () {},
-				resolveDeep : function () {}
-			},
+			oModel = {resolveDeep : function () {}},
 			oBinding = {
 				oContext : oContext,
 				oModel : oModel,
@@ -771,6 +807,7 @@ sap.ui.define([
 				_checkPathType : function () {},
 				_initSortersFilters : function () {},
 				_refresh : function () {},
+				_removePersistedCreatedContexts : function () {},
 				checkDataState : function () {},
 				checkExpandedList : function () {},
 				getResolvedPath : function () {},
@@ -793,10 +830,14 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
 		this.mock(oBinding).expects("checkExpandedList").withExactArgs().returns(false);
-		this.mock(oBinding).expects("_refresh").withExactArgs();
+		oRemoveExpectation = this.mock(oBinding).expects("_removePersistedCreatedContexts")
+			.withExactArgs();
+		oRefreshExpectation = this.mock(oBinding).expects("_refresh").withExactArgs();
 
 		// code under test
 		ODataListBinding.prototype.setContext.call(oBinding, oContext);
+
+		assert.ok(oRefreshExpectation.calledImmediatelyAfter(oRemoveExpectation));
 	});
 
 	//*********************************************************************************************
@@ -1730,4 +1771,164 @@ sap.ui.define([
 		assert.deepEqual(aURLParams, oFixture.result);
 	});
 });
+
+	//*********************************************************************************************
+[{
+	bForceUpdate : true,
+	sGroupId : "~sGroupId",
+	expectedForceUpdate : true,
+	expectedRefreshGroupId : "~sGroupId"
+}, {
+	bForceUpdate : false,
+	sGroupId : "~sGroupId",
+	expectedForceUpdate : false,
+	expectedRefreshGroupId : "~sGroupId"
+}, {
+	bForceUpdate : "~sGroupId",
+	sGroupId : "~sGroupId2",
+	expectedForceUpdate : false,
+	expectedRefreshGroupId : "~sGroupId"
+}, {
+	bForceUpdate : "~sGroupId",
+	expectedForceUpdate : false,
+	expectedRefreshGroupId : "~sGroupId"
+}, {
+	expectedForceUpdate : undefined,
+	expectedRefreshGroupId : undefined
+}].forEach(function (oFixture, i) {
+	QUnit.test("refresh: #" + i, function (assert) {
+		var oRefreshExpectation, oRemoveExpectation,
+			oBinding = {
+				sRefreshGroupId : "~foo",
+				_refresh : function () {},
+				_removePersistedCreatedContexts : function () {}
+			};
+
+		oRemoveExpectation = this.mock(oBinding).expects("_removePersistedCreatedContexts")
+			.withExactArgs();
+		oRefreshExpectation = this.mock(oBinding).expects("_refresh")
+			.withExactArgs(oFixture.expectedForceUpdate)
+			.callsFake(function () {
+				assert.strictEqual(oBinding.sRefreshGroupId, oFixture.expectedRefreshGroupId);
+			});
+
+		// code under test
+		ODataListBinding.prototype.refresh.call(oBinding, oFixture.bForceUpdate, oFixture.sGroupId);
+
+		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
+		assert.strictEqual(oBinding.sRefreshGroupId, undefined);
+		assert.ok(oRefreshExpectation.calledImmediatelyAfter(oRemoveExpectation));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("sort: removes persisted created entries", function (assert) {
+		var oModel = {resolveDeep : function () {}},
+			oBinding = {
+				aKeys : "~aKeys",
+				bInitial : false,
+				iLength : 42,
+				oModel : oModel,
+				_fireRefresh : function () {},
+				_fireSort : function () {},
+				_removePersistedCreatedContexts : function () {},
+				abortPendingRequest : function () {},
+				addComparators : function () {},
+				createSortParams : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("useClientMode").withExactArgs().twice().returns(false);
+		this.mock(oBinding).expects("createSortParams").withExactArgs([]);
+		this.mock(oBinding).expects("addComparators").withExactArgs([], true);
+		this.mock(oBinding).expects("_removePersistedCreatedContexts")
+			.withExactArgs()
+			.callsFake(function () {
+				assert.strictEqual(oBinding.aKeys, "~aKeys");
+			})
+			.returns(["~persistedContext"]);
+		this.mock(oBinding).expects("abortPendingRequest").withExactArgs(false);
+		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Sort});
+		this.mock(oBinding).expects("_fireSort").withExactArgs({sorter : []});
+
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.sort.call(oBinding), oBinding);
+		assert.strictEqual(oBinding.iLength, 43);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: removes persisted created entries", function (assert) {
+		var oRemoveExpectation, oResetDataExpectation,
+			aApplicationFilters = [],
+			oBinding = {
+				aApplicationFilters : aApplicationFilters,
+				bInitial : false,
+				oModel : {checkFilterOperation : function () {}},
+				_fireFilter : function () {},
+				_fireRefresh : function () {},
+				_removePersistedCreatedContexts : function () {},
+				addComparators : function () {},
+				abortPendingRequest : function () {},
+				convertFilters : function () {},
+				createFilterParams : function () {},
+				resetData : function () {},
+				useClientMode : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			aFilters = [];
+
+		this.mock(oBinding.oModel).expects("checkFilterOperation")
+			.withExactArgs(sinon.match.same(aFilters));
+		oBindingMock.expects("convertFilters").withExactArgs();
+		this.mock(FilterProcessor).expects("combineFilters")
+			.withExactArgs(sinon.match.same(aFilters), sinon.match.same(aApplicationFilters))
+			.returns("~oCombinedFilter");
+		oBindingMock.expects("useClientMode").withExactArgs().twice().returns(false);
+		oBindingMock.expects("createFilterParams").withExactArgs("~oCombinedFilter");
+		oBindingMock.expects("addComparators").withExactArgs(sinon.match.same(aFilters));
+		oBindingMock.expects("addComparators").withExactArgs(sinon.match.same(aApplicationFilters));
+		oRemoveExpectation = oBindingMock.expects("_removePersistedCreatedContexts")
+			.withExactArgs();
+		oResetDataExpectation = oBindingMock.expects("resetData").withExactArgs();
+		oBindingMock.expects("abortPendingRequest").withExactArgs(true);
+		oBindingMock.expects("_fireRefresh").withExactArgs({reason : ChangeReason.Filter});
+		oBindingMock.expects("_fireFilter").withExactArgs({filters : sinon.match.same(aFilters)});
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.filter.call(oBinding, aFilters), oBinding);
+
+		assert.strictEqual(oBinding.aFilters, aFilters);
+		assert.strictEqual(oBinding.oCombinedFilter, "~oCombinedFilter");
+		assert.ok(oResetDataExpectation.calledImmediatelyAfter(oRemoveExpectation));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_removePersistedCreatedContexts", function (assert) {
+		var oCreatedContextCache = {
+				removePersistedContexts : function () {}
+			},
+			oModel = {
+				_getCreatedContextsCache : function () {},
+				_updateBindingsForChangedContexts : function () {}
+			},
+			oBinding = {
+				sCreatedEntitiesKey : "~sCreatedEntitiesKey",
+				oModel : oModel,
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oModel).expects("_getCreatedContextsCache")
+			.withExactArgs()
+			.returns(oCreatedContextCache);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oCreatedContextCache).expects("removePersistedContexts")
+			.withExactArgs("~resolvedPath", "~sCreatedEntitiesKey")
+			.returns("~aRemovedContexts");
+
+		// code under test
+		assert.strictEqual(
+			ODataListBinding.prototype._removePersistedCreatedContexts.call(oBinding),
+			"~aRemovedContexts");
+	});
 });

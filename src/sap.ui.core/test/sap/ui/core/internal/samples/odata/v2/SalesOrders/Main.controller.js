@@ -198,6 +198,7 @@ sap.ui.define([
 					return;
 				}
 
+				that.getView().byId("objectPage").unbindElement();
 				if (oContext.isTransient()) {
 					oContext.getModel().resetChanges([oContext.getPath()], undefined, true);
 					that.updateCount();
@@ -250,6 +251,17 @@ sap.ui.define([
 			}
 		},
 
+		onFilterSalesOrdersTable : function (oEvent) {
+			var oView = this.getView(),
+				sFilterValue = oView.getModel("ui").getProperty("/salesOrdersFilter"),
+				aFilter = sFilterValue
+					? [new Filter("CustomerName", FilterOperator.Contains, sFilterValue)]
+					: [];
+
+			// use FilterType.Control to combine it with the filters defined in the Main.view.xml
+			oView.byId("SalesOrderSet").getBinding("items").filter(aFilter);
+		},
+
 		onFixAllQuantities : function (oEvent) {
 			var oView = this.getView(),
 				oModel = oView.getModel(),
@@ -280,6 +292,10 @@ sap.ui.define([
 				oModel = this.getView().getModel(),
 				sSalesOrderID = oBindingContext.getProperty("SalesOrderID");
 
+			if (oBindingContext.isTransient()) {
+				MessageToast.show("Cannot fix quantity as item is not yet persisted");
+				return;
+			}
 			oModel.callFunction("/SalesOrderItem_FixQuantity", {
 				groupId : "FixQuantity",
 				method : "POST",

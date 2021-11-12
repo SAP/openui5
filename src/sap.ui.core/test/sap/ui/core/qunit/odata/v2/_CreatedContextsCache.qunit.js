@@ -212,4 +212,56 @@ sap.ui.define([
 		assert.deepEqual(oCache.getContexts("/foo", sListID), []);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("removePersistedContexts: no created contexts", function (assert) {
+		var oCache = new _CreatedContextsCache();
+
+		this.mock(oCache).expects("getContexts").withExactArgs("~sPath", "~sListID").returns([]);
+
+		// code under test
+		assert.deepEqual(oCache.removePersistedContexts("~sPath", "~sListID"), []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("removePersistedContexts: only transient contexts", function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			oContext0 = {isTransient : function () {}},
+			oContext1 = {isTransient : function () {}};
+
+		this.mock(oCache).expects("getContexts")
+			.withExactArgs("~sPath", "~sListID")
+			.returns([oContext0, oContext1]);
+		this.mock(oContext0).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(true);
+
+		// code under test
+		assert.deepEqual(oCache.removePersistedContexts("~sPath", "~sListID"), []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("removePersistedContexts: transient and non-transient contexts", function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			oCacheMock = this.mock(oCache),
+			oContext0 = {isTransient : function () {}, resetCreatedPromise : function () {}},
+			oContext1 = {isTransient : function () {}},
+			oContext2 = {isTransient : function () {}, resetCreatedPromise : function () {}};
+
+		oCacheMock.expects("getContexts")
+			.withExactArgs("~sPath", "~sListID")
+			.returns([oContext0, oContext1, oContext2]);
+		this.mock(oContext0).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext0).expects("resetCreatedPromise").withExactArgs();
+		oCacheMock.expects("removeContext")
+			.withExactArgs(sinon.match.same(oContext0), "~sPath", "~sListID");
+		this.mock(oContext1).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext2).expects("resetCreatedPromise").withExactArgs();
+		oCacheMock.expects("removeContext")
+			.withExactArgs(sinon.match.same(oContext2), "~sPath", "~sListID");
+
+		// code under test
+		assert.deepEqual(oCache.removePersistedContexts("~sPath", "~sListID"),
+			[oContext0, oContext2]);
+	});
 });

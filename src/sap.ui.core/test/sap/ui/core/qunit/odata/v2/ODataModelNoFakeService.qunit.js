@@ -3955,14 +3955,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getDeepPathForCanonicalPath", function (assert) {
-		var oModel = {
+		var oCreatedContextsCache = {removePersistedContexts : function () {}},
+			oModel = {
 				// used by ODataListBinding and ODataTreeBinding
+				_getCreatedContextsCache : function () {},
 				checkFilterOperation : function () {},
 				createCustomParams : function () { return {}; }, // used by ODataListBinding
 				resolveDeep : function () {},
 				resolveFromCache : function () {}
 			},
 			oModelMock = this.mock(oModel),
+			// use real objects since instanceof checks are performed
 			oContextBinding = new ODataContextBinding(oModel, "path/to/entity", "~oContext0"),
 			oListBinding,
 			oPropertyBinding,
@@ -3973,6 +3976,14 @@ sap.ui.define([
 			.returns("/deep/path/to/collection");
 		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs()
 			.returns(false);
+		this.mock(ODataListBinding.prototype).expects("getResolvedPath")
+			.withExactArgs()
+			.returns("~resolvedPath");
+		this.mock(oModel).expects("_getCreatedContextsCache")
+			.withExactArgs()
+			.returns(oCreatedContextsCache);
+		this.mock(oCreatedContextsCache).expects("removePersistedContexts")
+			.withExactArgs("~resolvedPath", "");
 		oListBinding = new ODataListBinding(oModel, "path/to/collection", "~oContext1");
 
 		this.mock(ODataPropertyBinding.prototype).expects("_getValue").withExactArgs()
