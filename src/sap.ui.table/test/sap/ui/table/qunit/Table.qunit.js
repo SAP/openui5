@@ -5941,35 +5941,25 @@ sap.ui.define([
 
 			for (var i = 0; i < aRows.length; i++) {
 				var oRow = aRows[i];
-				var bRTL = this.oTable._bRtlMode;
 				var mRowDomRefs = oRow.getDomRefs();
 				var oRowHeader = mRowDomRefs.rowHeaderPart;
 				var oFirstCellContentInRow = mRowDomRefs.rowScrollPart.querySelector("td.sapUiTableCellFirst > .sapUiTableCellInner");
-				var sMessagePrefix = (bRTL ? "RTL - " : "") + "Indentation"
-									 + "; " + oRow.getTitle()
-									 + "; Level " + oRow.getLevel()
-									 + "; Index " + oRow.getIndex() + ": ";
+				var sMessagePrefix = "Indentation; " + oRow.getTitle() + "; Level " + oRow.getLevel() + "; Index " + oRow.getIndex() + ": ";
 
 				if (TableUtils.Grouping.isInGroupMode(this.oTable)) {
 					var oGroupShield = oRowHeader.querySelector(".sapUiTableGroupShield");
 
-					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
-						sMessagePrefix + "Row header");
-					assert.equal(oGroupShield.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(-aIndentations[i]),
-						sMessagePrefix + "Group shield");
-					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
-						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
+					assert.equal(oRowHeader.style["left"], getCSSPixelSize(aIndentations[i]), sMessagePrefix + "Row header");
+					assert.equal(oGroupShield.style["marginLeft"], getCSSPixelSize(-aIndentations[i]), sMessagePrefix + "Group shield");
+					assert.equal(oFirstCellContentInRow.style["paddingLeft"], getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
 						sMessagePrefix + "Content of first cell");
 				} else if (TableUtils.Grouping.isInTreeMode(this.oTable)) {
 					var oTreeIcon = mRowDomRefs.rowScrollPart.querySelector(".sapUiTableTreeIcon");
 
-					assert.equal(oTreeIcon.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(aIndentations[i]),
-						sMessagePrefix + "Tree icon");
+					assert.equal(oTreeIcon.style["marginLeft"], getCSSPixelSize(aIndentations[i]), sMessagePrefix + "Tree icon");
 				} else {
-					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
-						sMessagePrefix + "Row header");
-					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
-						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
+					assert.equal(oRowHeader.style["left"], getCSSPixelSize(aIndentations[i]), sMessagePrefix + "Row header");
+					assert.equal(oFirstCellContentInRow.style["paddingLeft"], getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
 						sMessagePrefix + "Content of first cell");
 				}
 			}
@@ -6069,9 +6059,7 @@ sap.ui.define([
 				that.RowType.Summary,
 				that.RowType.Summary
 			]));
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			that.assertRowIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(false));
+		});
 	});
 
 	QUnit.test(TableUtils.Grouping.HierarchyMode.Tree, function(assert) {
@@ -6096,9 +6084,7 @@ sap.ui.define([
 				that.RowType.Summary,
 				that.RowType.Summary
 			]);
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			that.assertRowIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(false));
+		});
 	});
 
 	QUnit.test(TableUtils.Grouping.HierarchyMode.GroupedTree, function(assert) {
@@ -6118,9 +6104,7 @@ sap.ui.define([
 				that.RowType.Summary,
 				that.RowType.Summary
 			]));
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
-			that.assertRowIndentation(assert, aExpectedIndentations);
-		}).then(TableQUnitUtils.$changeTextDirection(false));
+		});
 	});
 
 	QUnit.module("Hide content", {

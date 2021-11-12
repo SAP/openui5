@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/Table",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/FixedRowMode",
@@ -14,10 +13,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Context",
-	"sap/ui/model/ChangeReason",
-	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, Table, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column,
-			Control, JSONModel, Context, ChangeReason, jQuery) {
+	"sap/ui/model/ChangeReason"
+], function(TableQUnitUtils, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column,
+			Control, JSONModel, Context, ChangeReason) {
 	"use strict";
 
 	// mapping of global function calls
@@ -139,18 +137,6 @@ sap.ui.define([
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "88px", "Fixed columns and row actions: Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "107px", "Fixed columns and row actions: Right margin");
 		assert.strictEqual(oHSbContentComputedStyle.width, "500px", "Fixed columns and row actions: Scroll range");
-
-		return TableQUnitUtils.changeTextDirection(true).then(function() {
-			oTable.setFixedColumnCount(0);
-			oTable.getColumns()[0].destroy();
-			oTable.rerender();
-		}).then(oTable.qunit.whenRenderingFinished()).then(function() {
-			oHSbComputedStyle = window.getComputedStyle(oScrollExtension.getHorizontalScrollbar());
-			oHSbContentComputedStyle = window.getComputedStyle(oTable.getDomRef("hsb-content"));
-			assert.strictEqual(oHSbComputedStyle.marginLeft, "107px", "RTL: Left margin");
-			assert.strictEqual(oHSbComputedStyle.marginRight, "48px", "RTL: Right margin");
-			assert.strictEqual(oHSbContentComputedStyle.width, "500px", "RTL: Scroll range");
-		}).finally(TableQUnitUtils.$changeTextDirection(false));
 	});
 
 	QUnit.test("Vertical scrollbar visibility", function(assert) {
@@ -901,14 +887,13 @@ sap.ui.define([
 	QUnit.test("Focus", function(assert) {
 		var oTable = this.oTable;
 
-		function getScrollLeft(bRTL) {
-			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
-			return bRTL ? jQuery(oHSb).scrollLeftRTL() : oHSb.scrollLeft;
+		function getScrollLeft() {
+			return oTable._getScrollExtension().getHorizontalScrollbar().scrollLeft;
 		}
 
-		function isScrolledIntoView(oCell, bRTL) {
+		function isScrolledIntoView(oCell) {
 			var oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
-			var iScrollLeft = getScrollLeft(bRTL);
+			var iScrollLeft = getScrollLeft();
 			var iRowContainerWidth = oRowContainer.clientWidth;
 			var iCellLeft = oCell.offsetLeft;
 			var iCellRight = iCellLeft + oCell.offsetWidth;
@@ -919,19 +904,17 @@ sap.ui.define([
 		}
 
 		function test(sTestTitle, oDomElementToFocus, iInitialScrollLeft, bScrollPositionShouldChange) {
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
 			document.body.focus();
 
 			return oTable.qunit.scrollHSbTo(iInitialScrollLeft).then(oTable.qunit.$focus(oDomElementToFocus)).then(function() {
 				if (bScrollPositionShouldChange) {
 					return oTable.qunit.whenHSbScrolled().then(function() {
-						assert.notStrictEqual(getScrollLeft(bRTL), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did change");
-						assert.ok(isScrolledIntoView(oDomElementToFocus, bRTL), sTestTitle + ": The focused cell is fully visible");
+						assert.notStrictEqual(getScrollLeft(), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did change");
+						assert.ok(isScrolledIntoView(oDomElementToFocus), sTestTitle + ": The focused cell is fully visible");
 					});
 				} else {
 					return TableQUnitUtils.wait(50).then(function() {
-						assert.strictEqual(getScrollLeft(bRTL), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did not change");
+						assert.strictEqual(getScrollLeft(), iInitialScrollLeft, sTestTitle + ": The horizontal scroll position did not change");
 					});
 				}
 			});
@@ -983,52 +966,7 @@ sap.ui.define([
 			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 1150, false);
 		}).then(function() {
 			return test("Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 1150, false);
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(function(){
-			oTable.getColumns()[1].setWidth("800px");
-			oTable.getColumns()[2].setWidth("100px");
-			oTable.getColumns()[3].setWidth("800px");
-			oTable.getColumns()[4].setWidth("100px");
-			sap.ui.getCore().applyChanges();
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			return test("RTL: Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 950, true);
-		}).then(function() {
-			return test("RTL: Focus header cell in column 1 (fixed column)", oTable.qunit.getColumnHeaderCell(0), 880, false);
-		}).then(function() {
-			return test("RTL: Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 880, true);
-		}).then(function() {
-			return test("RTL: Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 100, true);
-		}).then(function() {
-			return test("RTL: Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 750, true);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 950, true);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 1, row 1 (fixed column)", oTable.qunit.getDataCell(0, 0), 880, false);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 880, true);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 100, true);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 750, true);
-		}).then(function() {
-			oTable.getColumns()[1].setWidth("1000px");
-			oTable.getColumns()[2].setWidth("100px");
-			oTable.getColumns()[3].setWidth("1000px");
-			oTable.getColumns()[4].setWidth("100px");
-			sap.ui.getCore().applyChanges();
-			return oTable.qunit.whenRenderingFinished();
-		}).then(function() {
-			return test("RTL: Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 1250, false);
-		}).then(function() {
-			return test("RTL: Focus header cell in column 4 (scrollable column)", oTable.qunit.getColumnHeaderCell(3), 150, false);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 2, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 1), 1250, false);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 2, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 1), 1250, false);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 150, false);
-		}).then(function() {
-			return test("RTL: Focus data cell in column 4, row 2 (scrollable column)", oTable.qunit.getDataCell(1, 3), 150, false);
-		}).finally(TableQUnitUtils.$changeTextDirection(false));
+		});
 	});
 
 	QUnit.test("Restoration of the scroll position", function(assert) {
@@ -5659,13 +5597,7 @@ sap.ui.define([
 			return oTable.qunit.focus(oCellContent).then(function() {
 				var $InnerCellElement = TableUtils.getCell(oTable, oCellContent).find(".sapUiTableCellInner");
 
-				if (oTable._bRtlMode) {
-					assert.strictEqual($InnerCellElement.scrollLeftRTL(), $InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth,
-						sTitle + ": The cell content is not scrolled horizontally");
-				} else {
-					assert.strictEqual($InnerCellElement[0].scrollLeft, 0, sTitle + ": The cell content is not scrolled horizontally");
-				}
-
+				assert.strictEqual($InnerCellElement[0].scrollLeft, 0, sTitle + ": The cell content is not scrolled horizontally");
 				assert.strictEqual($InnerCellElement[0].scrollTop, 0, sTitle + ": The cell content is not scrolled vertically");
 			});
 		}
@@ -5674,13 +5606,7 @@ sap.ui.define([
 			return test("Fixed column", 0);
 		}).then(function() {
 			return test("Scrollable column", 1);
-		}).then(TableQUnitUtils.$changeTextDirection(true)).then(oTable.qunit.whenRenderingFinished).then(function() {
-			return test("Fixed column (RTL)", 0);
-		}).then(function() {
-			return test("Scrollable column (RTL)", 1);
-		}).then(function() {
-			oTable.destroy();
-		}).finally(TableQUnitUtils.$changeTextDirection(false));
+		});
 	});
 
 	QUnit.module("Leave action mode on scrolling", {

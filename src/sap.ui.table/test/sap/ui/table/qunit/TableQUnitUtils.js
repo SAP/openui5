@@ -1194,32 +1194,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes the text direction.
-	 *
-	 * @param {boolean} bRTL Whether to set the direction to RTL. If <code>false</code>, the direction is set to LTR.
-	 * @return {Promise} A Promise that resolves after text direction is changed.
-	 */
-	TableQUnitUtils.changeTextDirection = function(bRTL) {
-		sap.ui.getCore().getConfiguration().setRTL(bRTL);
-		sap.ui.getCore().applyChanges();
-
-		// Give the text direction change enough time, otherwise the UI might not be ready when the tests start.
-		return TableQUnitUtils.wait(1000).then(TableQUnitUtils.wait);
-	};
-
-	/**
-	 * Wrapper around {@link #changeTextDirection} for easier promise chaining. Returns a function that returns a promise.
-	 *
-	 * @param {boolean} bRTL Whether to set the direction to RTL. If <code>false</code>, the direction is set to LTR.
-	 * @returns {function(): Promise} Wrapper function.
-	 */
-	TableQUnitUtils.$changeTextDirection = function(bRTL) {
-		return function() {
-			return TableQUnitUtils.changeTextDirection(bRTL);
-		};
-	};
-
-	/**
 	 * Sets the content density.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
@@ -1259,7 +1233,7 @@ sap.ui.define([
 	TableQUnitUtils.assertNoDataVisible = function(assert, oTable, bVisible, sTitle) {
 		var sTestTitle = sTitle == null ? "" : sTitle + ": ";
 
-		assert.equal(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible, sTestTitle + "NoData visible");
+		assert.strictEqual(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible, sTestTitle + "NoData visible");
 
 		if (!bVisible) {
 			// If the NoData element is not visible, the table must have focusable elements (cells).
@@ -1285,9 +1259,9 @@ sap.ui.define([
 		var iScrollableTopRowCount = oScrollableRowContainer ? oScrollableRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
 		var iFixedBottomRowCount = oFixedBottomRowContainer ? oFixedBottomRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
 
-		assert.equal(iFixedTopRowCount, iFixedTop, "Fixed top row count");
-		assert.equal(iScrollableTopRowCount, iScrollable, "Scrollable row count");
-		assert.equal(iFixedBottomRowCount, iFixedBottom, "Fixed bottom row count");
+		assert.strictEqual(iFixedTopRowCount, iFixedTop, "Fixed top row count");
+		assert.strictEqual(iScrollableTopRowCount, iScrollable, "Scrollable row count");
+		assert.strictEqual(iFixedBottomRowCount, iFixedBottom, "Fixed bottom row count");
 	};
 
 	/**
@@ -1295,14 +1269,10 @@ sap.ui.define([
 	 *
 	 * @param {object} assert QUnit assert object.
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {object} mTestSettings
-	 *     Test settings.
-	 * @param {string} mTestSettings.density
-	 *     Current content density.
-	 * @param {string} mTestSettings.title
-	 *     Title for the assertion.
-	 * @param {number} mTestSettings.expectedHeight
-	 *     Expected row height.
+	 * @param {object} mTestSettings Test settings.
+	 * @param {string} mTestSettings.density Current content density.
+	 * @param {string} mTestSettings.title Title for the assertion.
+	 * @param {number} mTestSettings.expectedHeight Expected row height.
 	 */
 	TableQUnitUtils.assertRowHeights = function(assert, oTable, mTestSettings) {
 		var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
@@ -1324,14 +1294,10 @@ sap.ui.define([
 	 *
 	 * @param {object} assert QUnit assert object.
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {object} mTestSettings
-	 *     Test settings.
-	 * @param {string} mTestSettings.density
-	 *     Current content density.
-	 * @param {string} mTestSettings.title
-	 *     Title for the assertion.
-	 * @param {number} mTestSettings.expectedHeight
-	 *     Expected column header height.
+	 * @param {object} mTestSettings Test settings.
+	 * @param {string} mTestSettings.density Current content density.
+	 * @param {string} mTestSettings.title Title for the assertion.
+	 * @param {number} mTestSettings.expectedHeight Expected column header height.
 	 */
 	TableQUnitUtils.assertColumnHeaderHeights = function(assert, oTable, mTestSettings) {
 		var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
