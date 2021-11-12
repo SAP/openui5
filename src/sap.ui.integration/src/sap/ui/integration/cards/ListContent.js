@@ -149,7 +149,7 @@ sap.ui.define([
 		}
 
 		if (oConfiguration.item) {
-			this._setItem(oConfiguration.item);
+			this._setItem(oConfiguration);
 		}
 
 		return this;
@@ -159,8 +159,8 @@ sap.ui.define([
 	 * @override
 	 */
 	ListContent.prototype.getStaticConfiguration = function () {
-		var oConfiguration = this.getConfiguration();
-		var sPath = this._sContentBindingPath;
+		var oConfiguration = this.getParsedConfiguration();
+		var sPath = this._sContentBindingPath || "/";
 		var aItems = this.getModel().getProperty(sPath);
 		var aResolvedItems = [];
 		var maxIndex = oConfiguration.maxItems || aItems.length;
@@ -214,9 +214,10 @@ sap.ui.define([
 	 * Attaches all required actions.
 	 *
 	 * @private
-	 * @param {Object} mItem The item template of the configuration object.
+	 * @param {Object} oConfiguration Parsed configuration object.
 	 */
-	ListContent.prototype._setItem = function (mItem) {
+	ListContent.prototype._setItem = function (oConfiguration) {
+		var mItem = oConfiguration.item;
 		var oList = this._getList(),
 			mSettings = {
 				iconDensityAware: false,
@@ -282,7 +283,7 @@ sap.ui.define([
 			disabledPropertyValue: ListType.Inactive
 		});
 
-		var oGroup = this.getParsedConfiguration().group;
+		var oGroup = oConfiguration.group;
 
 		if (oGroup) {
 			this._oSorter = this._getGroupSorter(oGroup);

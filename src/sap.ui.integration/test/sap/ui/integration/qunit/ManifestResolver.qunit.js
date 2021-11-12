@@ -327,4 +327,81 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.module("Resolving formatters");
+
+	QUnit.test("Predefined formatters", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"total": "5"
+					}
+				},
+				"header": {
+					"title": "{= format.text('Header: showing {0} of {1} items', ['2', ${/total}]) }"
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "{= format.text('Content: showing {0} of {1} items', ['2', ${/total}]) }",
+							"items": [
+								{
+									"label": "First name"
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+
+		// Act
+		return ManifestResolver.resolve(oManifest, "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/")
+			.then(JSON.parse)
+			.then(function (oRes) {
+				// Assert
+				assert.strictEqual(oRes["sap.card"].header.title, "Header: showing 2 of 5 items", "Should have correctly resolved predefined formatter");
+				assert.strictEqual(oRes["sap.card"].content.groups[0].title, "Content: showing 2 of 5 items", "Should have correctly resolved predefined formatter");
+			});
+	});
+
+	QUnit.test("Predefined formatters in list item template", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": [
+						{
+							"training": "Scrum"
+						}
+					]
+				},
+				"content": {
+					"item": {
+						"title": "{= format.text('Training: {0}', [${training}]) }"
+					}
+				}
+			}
+		};
+
+		// Act
+		return ManifestResolver.resolve(oManifest, "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/")
+			.then(JSON.parse)
+			.then(function (oRes) {
+				// Assert
+				assert.strictEqual(oRes["sap.card"].content.items[0].title, "Training: Scrum", "Should have correctly resolved predefined formatter");
+			});
+	});
+
 });

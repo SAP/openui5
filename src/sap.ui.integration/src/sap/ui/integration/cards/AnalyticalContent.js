@@ -167,20 +167,19 @@ sap.ui.define([
 			width: "100%",
 			vizType: ChartTypes[oResolvedConfiguration.chartType] || oResolvedConfiguration.chartType,
 			vizProperties: this._getVizProperties(oResolvedConfiguration),
-			dataset: this._getDataset(oResolvedConfiguration),
+			dataset: this._getDataset(oConfiguration, oResolvedConfiguration),
 			feeds: this._getFeeds(oResolvedConfiguration)
 		});
 
 		this.setAggregation("_content", oChart);
-		this._attachActions();
+		this._attachActions(oConfiguration);
 
 		if (oResolvedConfiguration.popover && oResolvedConfiguration.popover.active) {
 			this._attachPopover();
 		}
 	};
 
-	AnalyticalContent.prototype._attachActions = function () {
-		var oConfiguration = this.getParsedConfiguration();
+	AnalyticalContent.prototype._attachActions = function (oConfiguration) {
 		var oActionConfig = {
 			area: ActionArea.Content,
 			actions: oConfiguration.actions,
@@ -296,11 +295,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {object} oConfiguration Parsed manifest configuration
 	 * @param {object} oResolvedConfiguration Manifest configuration with resolved bindings
 	 * @returns {sap.viz.ui5.data.FlattenedDataset} The data set for the VizFrame
 	 */
-	AnalyticalContent.prototype._getDataset = function (oResolvedConfiguration) {
-		var oConfiguration = this.getParsedConfiguration();
+	AnalyticalContent.prototype._getDataset = function (oConfiguration, oResolvedConfiguration) {
 		var aMeasures, aDimensions;
 
 		if (oConfiguration.dimensions) {
