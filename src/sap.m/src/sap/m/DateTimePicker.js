@@ -784,8 +784,12 @@ sap.ui.define([
 	}
 
 	function _handleCalendarSelect(oEvent) {
-		this._oOKButton.setEnabled(true);
-		this._oPopupContent.switchToTime();
+		this._oPopupContent.getCalendar().getAggregation("month")[0].addEventDelegate({
+			onAfterRendering: function () {
+				this._oOKButton.setEnabled(true);
+				this._oPopupContent.switchToTime();
+			}
+		}, this);
 	}
 
 	return DateTimePicker;

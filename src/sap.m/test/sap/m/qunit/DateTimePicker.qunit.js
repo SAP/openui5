@@ -659,6 +659,46 @@ sap.ui.define([
 		}, 400);
 	});
 
+	QUnit.test("Calendar hides when date is selected (on small screen)", function(assert) {
+		var oDTP5 = new DateTimePicker("DTP5", {
+				dateValue: new Date(2021, 10, 11)
+			}),
+			oCalendar,
+			oAfterRenderingDelegate = {
+				onAfterRendering: function() {
+					oCalendar.removeDelegate(oAfterRenderingDelegate);
+					setTimeout(function() {
+						var $selectedDate = jQuery("#DTP5-cal--Month0-20211101");
+						$selectedDate.trigger("focus");
+						qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
+						sap.ui.getCore().applyChanges();
+						assert.strictEqual(jQuery("#DTP5-cal").css("display"), "none", "Calendar is not visible");
+						assert.strictEqual(jQuery("#DTP5-Sliders").css("display"), "block", "Sliders are visible");
+						oDTP5.destroy();
+						jQuery("html").addClass("sapUiMedia-Std-Desktop");
+						jQuery("html").removeClass("sapUiMedia-Std-Phone");
+						done();
+					}, 0);
+				}
+			},
+			done = assert.async();
+
+		//Prepare
+		jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+		jQuery("html").addClass("sapUiMedia-Std-Phone");
+
+		oDTP5.placeAt("uiArea5");
+		oDTP5._createPopup();
+		oDTP5._createPopupContent();
+		oCalendar = oDTP5._getCalendar();
+		oCalendar.addDelegate(oAfterRenderingDelegate);
+		sap.ui.getCore().applyChanges();
+
+		oDTP5.focus();
+		qutils.triggerEvent("click", "DTP5-icon");
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.test("data binding with sap.ui.model.odata.type.DateTime", function(assert) {
 		var oDate = new Date(2019, 5, 6, 3, 40, 46),
 			oModel = new JSONModel({
