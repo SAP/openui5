@@ -19,7 +19,7 @@ sap.ui.define([
                 key: 'applicationDeveloper',
                 items: [
                     {
-                        title: 'Labeling',
+                        title: 'Labeling and Description',
                         target: 'overview',
                         key: 'labeling'
                     },
@@ -59,9 +59,9 @@ sap.ui.define([
                         key: 'textSizeFonts'
                     },
                     {
-                        title: 'Error Handling',
+                        title: 'Message Handling',
                         target: 'overview',
-                        key: 'errorHandling'
+                        key: 'messageHandling'
                     }
                 ]
 			},

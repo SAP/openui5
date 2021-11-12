@@ -9,7 +9,9 @@
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
-			<h1 id="features">Description</h1>
+			<h1 id="features">Overview</h1>
+
+			<h2>UI5 Landmarks API</h2>
 			<p>
 				The purpose of this technique is to provide programmatic access to sections of a web page.
 				Landmark roles (or "landmarks") programmatically identify sections of a page.
@@ -21,7 +23,7 @@
 				landmarks can be used to skip over it and navigate from one section to another.
 			</p>
 
-			<h2>UI5 Landmarks API</h2>
+
 			<p>Support for landmark roles in UI5 is provided for:</p>
 			<ul>
 				<li>sap.f.DynamicPage</li>
@@ -33,88 +35,7 @@
 			<p>Before seeing how a landmark is set to these controls you must understand what landmark roles we can use.</p>
 			<p>Supported landmark roles in UI5 are stored in enum <a href="https://openui5.hana.ondemand.com/api/sap.ui.core.AccessibleLandmarkRole" target="_blank">sap.ui.core.AccessibleLandmarkRole</a>.</p>
 
-			<h2>When to use what?</h2>
-
-			<p>We will take a look at all values of the enum and see for which part of the web page each of them is appropriate.</p>
-			<h3 id="usecase">sap.ui.core.AccessibleLandmarkRole:</h3>
-			<ul>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Banner:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#banner" target="_blank">role banner</a>.</i>
-						<br>
-						A region that contains the prime heading or internal title of a page.
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Complementary:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#complementary" target="_blank">role complementary</a>.</i>
-						<br>
-						Any section of the document that supports the main content, yet is separate and meaningful on its own.
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.ContentInfo:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#complementary" target="_blank">role complementary</a>.</i>
-						<br>
-						A region that contains information about the parent document such as copyrights and links to privacy statements.
-						<br>
-						<a>Example</a>
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Form:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#form" target="_blank">role form</a>.</i>
-						<br>
-						A region of the document that represents a collection of form-associated elements, some of which can represent editable values that can be submitted to a server for processing.
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Main:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#main" target="_blank">role main</a>.</i>
-						<br>
-						Main content in a document. In almost all cases a page will have only one role="main".
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Navigation:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#navigation" target="_blank">role navigation</a>.</i>
-						<br>
-						A collection of links suitable for use when navigating the document or related documents.
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Region:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#region" target="_blank">role region</a>.</i>
-						<br>
-						A collection of links suitable for use when navigating the document or related documents.
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.Search:</b>
-						<i>Represents the ARIA <a href="https://www.w3.org/TR/wai-aria/#search" target="_blank">role search</a>.</i>
-						<br>
-						The search tool of a web document.
-					</p>
-				</li>
-				<li>
-					<p>
-						<b>sap.ui.core.AccessibleLandmarkRole.None:</b>
-						No explicit role is applicable.
-						<br>
-						The interpretation of this value depends on the control / element which defines a property with this type. Normally this value means that no accessible landmark should be written.
-					</p>
-				</li>
-			</ul>
-
-			<h2>sap.f.DynamicPage</h2>
+			<h3>sap.f.DynamicPage</h3>
 			<p>To add a landmark to the DynamicPage you must use <code>landmarkInfo</code> aggregation with value <a href="https://openui5.hana.ondemand.com/api/sap.f.DynamicPageAccessibleLandmarkInfo" target="_blank">sap.f.DynamicPageAccessibleLandmarkInfo</a>. Depending on your use case you should choose a value from <a href="#usecase">AccessibleLandmarkRole</a>.</p>
 			<pre class="lang-xml">
 &lt;landmarkInfo&gt;
@@ -130,7 +51,7 @@
 &lt;/landmarkInfo&gt;</pre>
 			<a class="try-button" href="../../../index.html#/explore/dynamicPage" target="_parent">See Example</a>
 
-			<h2>sap.m.Page</h2>
+			<h3>sap.m.Page</h3>
 			<p>To add a landmark to the Page you must use <code>landmarkInfo</code> aggregation with value <a href="https://openui5.hana.ondemand.com/api/sap.m.PageAccessibleLandmarkInfo" target="_blank">sap.m.PageAccessibleLandmarkInfo</a>. Depending on your use case you should choose a value from <a href="#usecase">AccessibleLandmarkRole</a>.</p>
 				<pre class="lang-xml">
 &lt;landmarkInfo&gt;

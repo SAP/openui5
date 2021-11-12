@@ -10,11 +10,18 @@
 				backgroundDesign="Solid">
 				<content>
 					<VBox class="sapUiSmallMargin">
-							<Text text="The input below is connected to an invisible text with the aria-describedby attribute. This is done via the ariaDescribedBy association of the control."/>
+							<Text text="The input below has description added via the 'description' property."/>
 							<Input
 								value="Notebook 17"
-								ariaDescribedBy="descriptionNodeId"
 								description="IT Laptops"
+								width="400px"
+								fieldWidth="75%"
+								class="sapUiSmallMarginBottom" />
+
+							<Text text="In addition, the ariaDescribedBy association of the control allows to enhance the calculated accessible name. The next control is connected to an invisible text node, using it."/>
+							<Input
+								value="I am invisible"
+								ariaDescribedBy="descriptionNodeId"
 								width="400px"
 								fieldWidth="75%"
 								class="sapUiSmallMarginBottom" />
