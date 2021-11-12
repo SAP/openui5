@@ -191,6 +191,7 @@ sap.ui.define([
 				});
 			};
 			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
+			sandbox.stub(FlexCustomData.sync, "getAppliedCustomDataValue").returns(true);
 			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(true);
 			sandbox.stub(FlexCustomData.sync, "getParsedRevertDataFromCustomData").returns(oRevertData);
 			var oMarkFinishedSpy0 = sandbox.spy(oChange0, "markFinished");
@@ -208,6 +209,35 @@ sap.ui.define([
 				assert.deepEqual(oChange0.getRevertData(), oRevertData, "the revert data is saved in the change");
 				assert.deepEqual(oChange1.getRevertData(), oRevertData, "the revert data is saved in the change");
 			}.bind(this));
+		});
+
+		QUnit.test("updates change status if change is not applicable (viewCache)", function(assert) {
+			var oChange = new Change(getLabelChangeContent("a"));
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange]
+					}
+				});
+			};
+			var oSetRevertDataSpy = sandbox.spy(oChange, "setRevertData");
+
+			return FlexCustomData.addFailedCustomData(
+				this.oControl,
+				oChange,
+				{
+					modifier: JsControlTreeModifier,
+					appComponent: this.oAppComponent
+				},
+				FlexCustomData.notApplicableChangesCustomDataKey
+			)
+				.then(function() {
+					return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl)
+						.then(function() {
+							assert.ok(oChange.isApplyProcessFinished(), "the status is APPLY_FINISHED");
+							assert.ok(oSetRevertDataSpy.notCalled, "then no revert data is set on the unapplied change");
+						});
+				}.bind(this));
 		});
 
 		QUnit.test("when applyAllChangesForControl is called with app component and a control belonging to an embedded component", function(assert) {
@@ -1140,6 +1170,28 @@ sap.ui.define([
 			}.bind(this)).then(function() {
 				assert.strictEqual(oMarkFinishedSpy.callCount, 2, "the change was marked as finished again");
 			});
+		});
+
+		QUnit.test("the same view gets created twice with unapplicable changes", function(assert) {
+			var oSetRevertDataSpy = sandbox.spy(this.oChange, "setRevertData");
+			sandbox.stub(FlexCustomData, "hasChangeApplyFinishedCustomData").returns(true);
+
+			return FlexCustomData.addFailedCustomData(
+				this.oControl,
+				this.oChange,
+				{
+					modifier: JsControlTreeModifier,
+					appComponent: this.oAppComponent
+				},
+				FlexCustomData.failedChangesCustomDataKeyXml
+			)
+				.then(function() {
+					return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange])
+						.then(function() {
+							assert.ok(oSetRevertDataSpy.notCalled, "then no revert data is set on the unapplied change");
+							assert.ok(this.oChange.isApplyProcessFinished(), "then the status is APPLY_FINISHED");
+						}.bind(this));
+				}.bind(this));
 		});
 
 		QUnit.test("when change for an extension point can be applied", function(assert) {
