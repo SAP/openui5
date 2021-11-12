@@ -45,6 +45,7 @@
 	width: 100%;
 	position: absolute;
 	outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+	outline-offset: -3px;
 	box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
 	animation: fadeOut linear 1.5s;
 	animation-fill-mode: forwards;
@@ -52,12 +53,16 @@
 	@keyframes fadeOut {
 		0% {
 			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+			outline-offset: -3px;
 		}
 		66%{
 			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+			outline-offset: -3px;
 		}
 		100% {
 			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorTransparent;
+			outline-offset: -3px;
+			box-shadow: none;
 		}
 	}
 }
