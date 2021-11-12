@@ -118,14 +118,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for configuring a <code>sap.ui.integration.cards.TableContent</code>.
-	 *
-	 * @public
-	 * @param {Object} oConfiguration Configuration object used to create the internal table.
-	 * @returns {this} Pointer to the control instance to allow method chaining.
+	 * @override
 	 */
 	TableContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseListContent.prototype.setConfiguration.apply(this, arguments);
+		oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
 			return this;
@@ -147,7 +144,7 @@ sap.ui.define([
 	 * Handler for when data is changed.
 	 */
 	TableContent.prototype.onDataChanged = function () {
-		this._checkHiddenNavigationItems(this.getConfiguration().row);
+		this._checkHiddenNavigationItems(this.getParsedConfiguration().row);
 	};
 
 	/**
@@ -187,7 +184,7 @@ sap.ui.define([
 			disabledPropertyValue: ListType.Inactive
 		});
 
-		var oGroup = this.getConfiguration().group;
+		var oGroup = this.getParsedConfiguration().group;
 
 		if (oGroup) {
 			this._oSorter = this._getGroupSorter(oGroup);

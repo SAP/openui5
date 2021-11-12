@@ -140,6 +140,7 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"ManifestResolver": {},
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputText"]
@@ -322,9 +323,6 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/RequestDataProvider",
 						"sap/ui/integration/util/ServiceDataProvider"
 					]
-				},
-				sinon: {
-					version: "edge"
 				}
 			},
 			"util/CacheAndRequestDataProvider": {
@@ -334,7 +332,6 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: {
-					version: "edge",
 					useFakeTimers: true
 				}
 			},

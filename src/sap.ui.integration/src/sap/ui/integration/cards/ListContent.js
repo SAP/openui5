@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/ObjectStatus",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/controls/Microchart",
 	"sap/ui/integration/controls/MicrochartLegend",
 	"sap/ui/integration/controls/ListContentItem",
@@ -23,6 +24,7 @@ sap.ui.define([
 	ObjectStatus,
 	library,
 	BindingHelper,
+	BindingResolver,
 	Microchart,
 	MicrochartLegend,
 	ListContentItem,
@@ -131,14 +133,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for configuring a <code>sap.ui.integration.cards.ListContent</code>.
-	 *
-	 * @public
-	 * @param {Object} oConfiguration Configuration object used to create the internal list.
-	 * @returns {this} Pointer to the control instance to allow method chaining.
+	 * @override
 	 */
 	ListContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseListContent.prototype.setConfiguration.apply(this, arguments);
+		oConfiguration = this.getParsedConfiguration();
 
 		if (!oConfiguration) {
 			return this;
@@ -157,10 +156,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	ListContent.prototype.getStaticConfiguration = function () {
+		var oConfiguration = this.getConfiguration();
+		var sPath = this._sContentBindingPath;
+		var aItems = this.getModel().getProperty(sPath);
+		var aResolvedItems = [];
+		var maxIndex = oConfiguration.maxItems || aItems.length;
+
+		for (var iIndex = 0; iIndex < maxIndex; iIndex++) {
+			if (sPath === "/") {
+				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + iIndex));
+			} else {
+				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + "/" + iIndex));
+			}
+		}
+
+		var oStaticConfiguration = Object.assign({}, oConfiguration);
+		delete oStaticConfiguration.item;
+		oStaticConfiguration.items = aResolvedItems;
+
+		return oStaticConfiguration;
+	};
+
+	/**
 	 * Handler for when data is changed.
 	 */
 	ListContent.prototype.onDataChanged = function () {
-		this._checkHiddenNavigationItems(this.getConfiguration().item);
+		this._checkHiddenNavigationItems(this.getParsedConfiguration().item);
 	};
 
 	/**
@@ -258,7 +282,7 @@ sap.ui.define([
 			disabledPropertyValue: ListType.Inactive
 		});
 
-		var oGroup = this.getConfiguration().group;
+		var oGroup = this.getParsedConfiguration().group;
 
 		if (oGroup) {
 			this._oSorter = this._getGroupSorter(oGroup);

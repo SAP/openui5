@@ -10,14 +10,20 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/integration/util/LoadingProvider"
+	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/integration/util/BindingHelper",
+	"sap/base/util/merge"
 ], function (
 	BaseContentRenderer,
 	Core,
 	Control,
 	ObservableModel,
 	ManagedObjectObserver,
-	LoadingProvider
+	BindingResolver,
+	LoadingProvider,
+	BindingHelper,
+	merge
 ) {
 	"use strict";
 
@@ -188,16 +194,23 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * @public
+	 * @param {object} oConfiguration Content configuration from the manifest
+	 * @param {string} sType The type of the content
+	 * @returns {this} Pointer to the control instance to allow method chaining
+	 */
 	BaseContent.prototype.setConfiguration = function (oConfiguration, sType) {
 		this._oConfiguration = oConfiguration;
+		this._oParsedConfiguration = this._createBindingInfos(oConfiguration);
 		this.awaitEvent("_dataReady");
 		this.awaitEvent("_actionContentReady");
 
-		if (!oConfiguration) {
+		if (!this._oParsedConfiguration) {
 			return this;
 		}
 
-		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType, this.getCardInstance());
+		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(this._oParsedConfiguration, sType, this.getCardInstance());
 		this._setDataConfiguration(oConfiguration.data);
 
 		return this;
@@ -205,6 +218,22 @@ sap.ui.define([
 
 	BaseContent.prototype.getConfiguration = function () {
 		return this._oConfiguration;
+	};
+
+	/**
+	 * @protected
+	 * @returns {object} Parsed configuration - with binding infos
+	 */
+	BaseContent.prototype.getParsedConfiguration = function () {
+		return this._oParsedConfiguration;
+	};
+
+	/**
+	 * @protected
+	 * @returns {object} Content configuration with static items
+	 */
+	BaseContent.prototype.getStaticConfiguration = function () {
+		return this.getConfiguration();
 	};
 
 	/**
@@ -488,6 +517,20 @@ sap.ui.define([
 
 	BaseContent.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());
+	};
+
+	BaseContent.prototype._createBindingInfos = function (oConfiguration) {
+		var oResult = merge({}, oConfiguration),
+			oDataSettings = oResult.data;
+
+		// do not create binding info for data
+		delete oResult.data;
+		oResult = BindingHelper.createBindingInfos(oResult, this.getCardInstance().getBindingNamespaces());
+		if (oDataSettings) {
+			oResult.data = oDataSettings;
+		}
+
+		return oResult;
 	};
 
 	return BaseContent;

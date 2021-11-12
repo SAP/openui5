@@ -85,14 +85,10 @@ sap.ui.define([
 					oContent.setDataProviderFactory(mConfig.dataProviderFactory);
 					oContent.setIconFormatter(mConfig.iconFormatter);
 					oContent.setActions(oActions);
+					oContent.setConfiguration(mConfig.contentManifest, sType);
 
-					if (sType.toLowerCase() !== "adaptivecard") {
-						oContent.setConfiguration(this.createBindingInfos(mConfig.contentManifest), sType);
-					} else {
-						oContent.setConfiguration(mConfig.contentManifest);
-					}
 					resolve(oContent);
-				}.bind(this))
+				})
 				.catch(function (sError) {
 					reject(sError);
 				});

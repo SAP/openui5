@@ -1215,6 +1215,9 @@ sap.ui.define([
 		sinon.stub(oListContent, "getCardInstance").returns({
 			getBindingContext: function () {
 				return undefined;
+			},
+			getBindingNamespaces: function () {
+				return {};
 			}
 		});
 

@@ -198,5 +198,11 @@
 		"description": "Card Parameters",
 		"route": "parameters",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Manifest Resolver",
+		"description": "Play around with manifest resolving",
+		"route": "manifestResolver",
+		"group": "Other Card Examples"
 	}
 ]
