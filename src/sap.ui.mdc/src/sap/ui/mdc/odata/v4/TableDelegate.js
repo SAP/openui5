@@ -123,14 +123,14 @@ sap.ui.define([
 		});
 	};
 
-	Delegate.validateState = function(oControl, oState, sKey) {
+	Delegate.validateState = function(oTable, oState, sKey) {
 		var oBaseStates = TableDelegate.validateState.apply(this, arguments);
 		var oValidation;
 
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 		if (sKey == "Sort" && oState.sorters) {
-			if (!checkForValidity(oControl, oState.items, oState.sorters)) {
+			if (isAnalyticsEnabled(oTable) && !checkForValidity(oTable, oState.items, oState.sorters)) {
 				oValidation = {
 					validation: coreLibrary.MessageType.Information,
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
@@ -141,7 +141,7 @@ sap.ui.define([
 			var aAggregateGroupableProperties = [];
 			var oListFormat = ListFormat.getInstance();
 			aAggregateProperties.forEach(function(sProperty) {
-				var oProperty = oControl.getPropertyHelper().getProperty(sProperty);
+				var oProperty = oTable.getPropertyHelper().getProperty(sProperty);
 				if (oProperty && oProperty.groupable) {
 					aAggregateGroupableProperties.push(sProperty);
 				}
@@ -157,11 +157,11 @@ sap.ui.define([
 			var sMessage;
 			var aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 
-			if (!checkForValidity(oControl, oState.items, aAggregateProperties)) {
+			if (!checkForValidity(oTable, oState.items, aAggregateProperties)) {
 				sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
 			}
 
-			if (!checkForValidity(oControl, oState.items, oState.sorters)) {
+			if (isAnalyticsEnabled(oTable) && !checkForValidity(oTable, oState.items, oState.sorters)) {
 				sMessage = sMessage ? sMessage + "\n" + oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 					: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
 			}
