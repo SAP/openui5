@@ -3,14 +3,15 @@ sap.ui.define([
 	'sap/ui/mdc/table/RowSettings',
 	'sap/ui/core/Fragment',
 	'sap/ui/mdc/p13n/StateUtil',
-	'sap/m/MessageBox'
-], function(Controller, RowSettings, Fragment, StateUtil, MessageBox) {
+	'sap/m/MessageBox',
+	'sap/m/MessageToast'
+], function(Controller, RowSettings, Fragment, StateUtil, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
 
 		onInit: function() {
-
+			StateUtil.attachStateChange(this._onStateChange.bind(this));
 		},
 
 		onBeforeExport: function (oEvt) {
@@ -247,6 +248,18 @@ sap.ui.define([
 		onPaste: function(oEvent) {
 			var strData = oEvent.getParameter("data").map(function(row) {return row.join(", ");}).join("\n");
 			MessageBox.information("Paste data:\n" + strData);
+		},
+
+		_onStateChange: function(oEvent) {
+			var oMdcControl = oEvent.getParameter("control");
+			MessageToast.show("stateChange event fired for " + oMdcControl.getMetadata().getName() + " - " + oMdcControl.getId());
+
+			StateUtil.retrieveExternalState(oMdcControl).then(function(oState) {
+				var oOutput = this.getView().byId("CEretrieveTableState");
+				if (oOutput) {
+					oOutput.setValue(JSON.stringify(oState, null, "  "));
+				}
+			}.bind(this));
 		}
 	});
 }, true);
