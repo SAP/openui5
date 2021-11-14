@@ -749,13 +749,13 @@ sap.ui.define([
 		this._iConditionPageSize = 10;
 
 		this._oInvisibleTextField = new InvisibleText({
-			text: this._oRb.getText("CONDITIONPANEL_FIELD_ARIA_LABEL")
+			text: this._oRb.getText("CONDITIONPANEL_FIELD_LABEL")
 		});
 		this._oInvisibleTextOperatorInputValue = new InvisibleText({
 			text: this._oRb.getText("CONDITIONPANEL_FIELD_VALUE_ARIA_LABEL")
 		});
 		this._oInvisibleTextOperator = new InvisibleText({
-			text: this._oRb.getText("CONDITIONPANEL_OPERATOR_LABEL")
+			text: this._oRb.getText("CONDITIONPANEL_OPERATOR_ARIA_LABEL")
 		});
 		this._oInvisibleTextOperatorAddButton = new InvisibleText({
 			text: this._oRb.getText("CONDITIONPANEL_ADD_SCREENREADER_DESCRIPTION")
