@@ -726,52 +726,58 @@ sap.ui.define([
 		var oTable = this.oTable;
 
 		return oTable._fullyInitialized().then(function() {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var oState, oValidationState;
+			var sMessage = Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
+			var oState;
+			var oValidationState;
 
-			oState = {
-				items: [{name: "Name"}, {name: "name_country"}]
-			};
+			oState = {items: [{name: "Name"}, {name: "name_country"}]};
 			oValidationState = oTable.validateState(oState, "Sort");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
-				"No message because oState.sorters is undefined");
-			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None, "No sorted properties: Validation result");
+			assert.strictEqual(oValidationState.message, undefined, "No sorted properties: Message text");
 
-			oState = {
-				sorters: [{name: "Name"}, {name: "Country"}]
-			};
+			oState = {sorters: [{name: "Name"}, {name: "Country"}]};
 			oValidationState = oTable.validateState(oState, "Sort");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Warning message, oState.items is undefined");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION"),
-				"Message text is correct");
+			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.Information,
+				"Sorted properties and no visible columns: Validation result");
+			assert.strictEqual(oValidationState.message, sMessage,
+				"Sorted properties and no visible columns: Message text");
 
 			oState = {
 				items: [{name: "Name"}, {name: "Country"}, {name: "name_country"}],
 				sorters: [{name: "Name"}, {name: "Country"}]
 			};
 			oValidationState = oTable.validateState(oState, "Sort");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
-			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None, "All sorted properties visible: Validation result");
+			assert.strictEqual(oValidationState.message, undefined, "All sorted properties visible: Message text");
 
 			oState = {
 				items: [{name: "Name"}],
 				sorters: [{name: "Country"}]
 			};
 			oValidationState = oTable.validateState(oState, "Sort");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.Information,
-				"Warning message, sorted a not visible property");
-			assert.equal(oValidationState.message, oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION"),
-				"Message text is correct");
+			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.Information, "Sorted property invisible: Validation result");
+			assert.strictEqual(oValidationState.message, sMessage, "Sorted property invisible: Message text");
 
 			oState = {
 				items: [{name: "Name"}, {name: "name_country"}],
 				sorters: [{name: "Country"}]
 			};
 			oValidationState = oTable.validateState(oState, "Sort");
-			assert.equal(oValidationState.validation, coreLibrary.MessageType.None,
-				"No message, the sorted property is not visible but part of a visible complex property");
-			assert.equal(oValidationState.message, undefined, "Message text is undefined");
+			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None,
+				"Sorted property is part of a visible complex property: Validation result");
+			assert.strictEqual(oValidationState.message, undefined,
+				"Sorted property is part of a visible complex property: Message text");
+
+			oTable.setP13nMode();
+			oState = {
+				items: [{name: "Name"}],
+				sorters: [{name: "Country"}]
+			};
+			oValidationState = oTable.validateState(oState, "Sort");
+			assert.strictEqual(oValidationState.validation, coreLibrary.MessageType.None,
+				"Sorted property invisible and analytical features not enabled: Validation result");
+			assert.strictEqual(oValidationState.message, undefined,
+				"Sorted property invisible and analytical features not enabled: Message text");
 		});
 	});
 
