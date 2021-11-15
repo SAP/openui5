@@ -221,6 +221,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
 				autostart: false
 			},
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			// "ExploredSamples": {
 			// 	runAfterLoader: "sap/ui/demo/mock/qunit/SampleTesterErrorHandler",
 			// 	sinon: {

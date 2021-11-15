@@ -82,6 +82,9 @@ sap.ui.define(function () {
 				},
 				autostart: false
 			},
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			"ObjectPageAPICreation": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageAPICreation"]

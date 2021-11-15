@@ -89,6 +89,9 @@ sap.ui.define(function () {
 				},
 				autostart: false
 			},
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
 			"FlexibleColumnLayout": {
 				coverage: {
 					only: ["sap/f/FlexibleColumnLayout"]

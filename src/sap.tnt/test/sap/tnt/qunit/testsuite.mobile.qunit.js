@@ -93,6 +93,10 @@ sap.ui.define(function () {
 				autostart: false
 			},
 
+			"EnforceSemanticRendering": {
+				title: "QUnit Page for Semantic Rendering Coverage"
+			},
+
 			// -------------------------------------------------------------------------------
 			// Designtime tests:
 			// -------------------------------------------------------------------------------
