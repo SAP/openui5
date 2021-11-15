@@ -34,21 +34,21 @@ sap.ui.define([
 			FilterBarDelegate.fetchProperties(oFilterBar).then(function(aProperties) {
 				var bSearchExists = false;
 				aProperties.forEach(function(oProperty) {
+					if (oProperty.name.indexOf("/") >= 0) {
+						oProperty.hiddenFilter = true;
+					}
 
 					if (oProperty.name === "$search") {
 						bSearchExists = true;
+					} else if (oProperty.name === "dateOfBirth") {
+						oProperty.fieldHelp = "FH2";
+						// oProperty.maxConditions = 1;
 					}
 
-					if (oProperty.maxConditions === -1) {
+					if (oProperty.maxConditions === -1 && !oProperty.fieldHelp) {
 						oProperty.fieldHelp = "FVH_Generic_Multi";
 					}
 				});
-
-				var oProperty = FilterBarBooksAuthorsVHSampleDelegate._getProperty(aProperties, "dateOfBirth");
-				if (oProperty) {
-					oProperty.fieldHelp = "FH2";
-					// oProperty.maxConditions = 1;
-				}
 
 				if (!bSearchExists) {
 					aProperties.push({
