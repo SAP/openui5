@@ -596,11 +596,14 @@ sap.ui.define([
 	 */
 	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
 
-		var oDelegatePromise = this._getControlDelegatePromise();
-		return oDelegatePromise.then(function (oDelegateModule) {
-			var oTypeahead = this.getTypeahead(); // TODO: retrieve content here?
-			return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
-		}.bind(this));
+		var oTypeahead = this.getTypeahead();
+		if (oTypeahead) {
+			return this._retrieveDelegateContent(oTypeahead).then(function () {
+				return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
+			});
+		} else {
+			return Promise.resolve(false);
+		}
 
 	};
 

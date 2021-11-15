@@ -400,6 +400,7 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported - not supported(default)", function(assert) {
 
+		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		var oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
@@ -407,9 +408,12 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, false, "TypeAhead not supported");
+				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
+				ValueHelpDelegate.retrieveContent.restore();
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
+				ValueHelpDelegate.retrieveContent.restore();
 				fnDone();
 			});
 		}
@@ -418,6 +422,7 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported - supported", function(assert) {
 
+		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		sinon.stub(oContainer, "isTypeaheadSupported").returns(true);
 		var oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
@@ -426,9 +431,12 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, true, "TypeAhead supported");
+				assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
+				ValueHelpDelegate.retrieveContent.restore();
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
+				ValueHelpDelegate.retrieveContent.restore();
 				fnDone();
 			});
 		}
@@ -909,6 +917,7 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported", function(assert) {
 
+		sinon.spy(ValueHelpDelegate, "retrieveContent");
 		var oPromise = oValueHelp.isTypeaheadSupported();
 		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
 
@@ -916,9 +925,12 @@ sap.ui.define([
 			var fnDone = assert.async();
 			oPromise.then(function(bSupported) {
 				assert.strictEqual(bSupported, false, "TypeAhead not supported");
+				assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called for dialog");
+				ValueHelpDelegate.retrieveContent.restore();
 				fnDone();
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called");
+				ValueHelpDelegate.retrieveContent.restore();
 				fnDone();
 			});
 		}
