@@ -2238,7 +2238,7 @@ sap.ui.define([
 		oInfo = this.multiInput1.getAccessibilityInfo();
 
 		// assert
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.description, oResourceBundle.getText("INPUTBASE_VALUE_EMPTY"), "Description - Empty when there are no tokens and no value");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");

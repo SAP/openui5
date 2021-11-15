@@ -1080,11 +1080,21 @@ function(
 		return {
 			role: oRenderer.getAriaRole(this),
 			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"),
-			description: [this.getValue() || "", oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim(),
+			description: [this.getValueDescriptionInfo(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim(),
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled(),
 			editable: this.getEnabled() && this.getEditable()
 		};
+	};
+
+	/**
+	 * Gets the value of the accessibility description info field.
+	 *
+	 * @protected
+	 * @returns {string} The value of the accessibility description info
+	 */
+	InputBase.prototype.getValueDescriptionInfo = function () {
+		return this.getValue() || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
 	};
 
 	/**

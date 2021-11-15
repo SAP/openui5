@@ -3444,8 +3444,22 @@ function(
 
 		var oInfo = ComboBoxBase.prototype.getAccessibilityInfo.apply(this, arguments);
 		oInfo.type = core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
-		oInfo.description = ((oInfo.description || "") + " " + sText).trim();
+		oInfo.description = (this.getValueDescriptionInfo() + " " + sText).trim();
 		return oInfo;
+	};
+
+	/**
+	 * Gets the value of the accessibility description info field.
+	 *
+	 * @protected
+	 * @override
+	 * @returns {string} The value of the accessibility description info
+	 */
+	MultiComboBox.prototype.getValueDescriptionInfo = function () {
+		if (this.getValue()) {
+			return this.getValue();
+		}
+		return this._hasTokens() ? "" : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
 	};
 
 	/**
