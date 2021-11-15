@@ -23,7 +23,9 @@ sap.ui.define([
 	"sap/ui/dt/SelectionMode",
 	"sap/base/util/includes",
 	"sap/ui/dt/DesignTimeStatus",
-	"sap/base/util/restricted/_curry"
+	"sap/base/util/restricted/_curry",
+	"sap/base/util/restricted/_difference",
+	"sap/base/util/isEmptyObject"
 ],
 function (
 	ManagedObject,
@@ -46,7 +48,9 @@ function (
 	SelectionMode,
 	includes,
 	DesignTimeStatus,
-	_curry
+	_curry,
+	_difference,
+	isEmptyObject
 ) {
 	"use strict";
 
@@ -700,6 +704,7 @@ function (
 	 * @property {boolean} [root="true"] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
 	 * @property {object} [parentMetadata] - Map with metadata from the parent
 	 * @property {boolean} [visible] - Proxy for "visible" property of sap.ui.dt.ElementOverlay constructor
+	 * @property {boolean} [isTemplate] - marker that overlay is part of template
 	 * @private
 	 */
 
@@ -745,7 +750,7 @@ function (
 			.then(
 				// Fulfilled
 				function (oElementOverlay) {
-					return this._createChildren(oElementOverlay, mParams.parentMetadata)
+					return this._createChildren(oElementOverlay, mParams)
 						.then(function () {
 							// Remove overlay promise from the map only when it is "officially" available
 							// and registered everywhere (OverlayRegistry, Plugins, etc)
@@ -927,24 +932,45 @@ function (
 	}
 
 	/**
-	 * Create children for specified ElementOverlay
+	 * Create children for specified ElementOverlay.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - ElementOverlay to create children for
-	 * @param {object} [mParentAggregationMetadata] - Since children are being created for certain aggregation, this is an aggregation metadata.
-	 * @returns {Promise} - resolves when whole hierarchy of children for specified ElementOverlay is created
+	 * @param {object} mParams - Property bag
+	 * @param {object} [mParams.parentMetadata] - Parent aggregation metadata
+	 * @param {boolean} [mParams.isTemplate] - Whether the overlay is part of an aggregation binding template
+	 * @returns {Promise} Resolves when whole hierarchy of children for specified ElementOverlay is created
 	 * @private
 	 */
-	DesignTime.prototype._createChildren = function (oElementOverlay, mParentAggregationMetadata) {
+	DesignTime.prototype._createChildren = function (oElementOverlay, mParams) {
 		var aAggregationNames = oElementOverlay.getAggregationNames();
+		var mParentAggregationMetadata = mParams.parentMetadata;
 		var mAggregationBindingTemplates = getAggregationBindingTemplates(oElementOverlay, aAggregationNames);
 		var aTemplateAggregationNames = Object.keys(mAggregationBindingTemplates);
-		return Promise.all([
-			this._createChildrenOverlays(oElementOverlay, mParentAggregationMetadata, aTemplateAggregationNames, mAggregationBindingTemplates),
-			this._createChildrenOverlays(oElementOverlay, mParentAggregationMetadata, aAggregationNames)
-		]);
+
+		// Consider each aggregation binding template which is not nested inside an existing template structure as a root template
+		// Separate root templates and their children from the instances of the root template as well as all nested template instances
+		var bEncounteredTemplate = mParams.isTemplate !== undefined;
+		var bHasTemplateAggregation = !isEmptyObject(mAggregationBindingTemplates);
+		var bIsRootTemplate = bHasTemplateAggregation && !bEncounteredTemplate;
+		var bIsTemplate = bIsRootTemplate ? true : mParams.isTemplate;
+		// Whether cloned instances are nested deeply in the root template structure
+		var bIsCloneInsideTemplate = bIsRootTemplate ? false : mParams.isTemplate;
+
+		// Avoid creating aggregation overlays for cloned template instances inside the template structure
+		if (bHasTemplateAggregation && bIsTemplate && !bIsRootTemplate) {
+			aAggregationNames = _difference(aAggregationNames, aTemplateAggregationNames);
+		}
+
+		return this._createChildrenOverlays(oElementOverlay, mParentAggregationMetadata, aTemplateAggregationNames, bIsTemplate, mAggregationBindingTemplates)
+			.then(this._createChildrenOverlays.bind(this, oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsCloneInsideTemplate));
 	};
 
-	DesignTime.prototype._createChildrenOverlays = function (oElementOverlay, mParentAggregationMetadata, aAggregationNames, mAggregationBindingTemplates) {
-		var bIsTemplateAggregation = !!mAggregationBindingTemplates;
+	DesignTime.prototype._createChildrenOverlays = function (oElementOverlay, mParentAggregationMetadata, aAggregationNames, bIsTemplate, mAggregationBindingTemplates) {
+		var bIsTemplateAggregation = !isEmptyObject(mAggregationBindingTemplates);
+		// Nested template inside a clone of another template
+		if (bIsTemplateAggregation && !bIsTemplate) {
+			return Promise.resolve();
+		}
+
 		return Promise.all(
 			aAggregationNames.map(function (sAggregationName) {
 				var oElement = oElementOverlay.getElement();
@@ -973,7 +999,8 @@ function (
 						return this.createOverlay({
 							element: oElement,
 							root: false,
-							parentMetadata: mAggregationMetadata
+							parentMetadata: mAggregationMetadata,
+							isTemplate: bIsTemplate
 						})
 							// If creation of one of the children is aborted, we still continue our execution
 							.catch(function (oError) {
@@ -987,6 +1014,7 @@ function (
 						if (
 							oChildElementOverlay instanceof ElementOverlay
 							&& !oChildElementOverlay.bIsDestroyed
+							&& !oChildElementOverlay.getParent()
 						) {
 							oAggregationOverlay.addChild(oChildElementOverlay, true);
 						}
