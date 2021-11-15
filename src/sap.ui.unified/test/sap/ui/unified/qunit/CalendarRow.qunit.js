@@ -857,6 +857,27 @@ sap.ui.define([
 		sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
 		assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is still rendered");
 		assert.equal(sDomRefId, "App3", "sDomRefId returns the right ID of the appointment");
+
+		oRow1.setMultipleAppointmentsSelection(true);
+
+		qutils.triggerEvent("tap", "App1");
+		assert.equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
+		assert.ok(bMultiSelect, "Appointment 1: multiple selection");
+		assert.ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected property set");
+		assert.ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
+		assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
+		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
+		assert.ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
+		sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
+		sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
+		sAriaLabel3 = jQuery("#App3").attr("aria-labelledby");
+		assert.ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
+		assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
+		assert.ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
+		assert.equal(sDomRefId, "App1", "sDomRefId returns the right ID of the appointment");
+
+		oRow1.setMultipleAppointmentsSelection(false);
 	});
 
 	QUnit.test("click on interval", function(assert) {

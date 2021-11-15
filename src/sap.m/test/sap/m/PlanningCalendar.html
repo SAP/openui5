@@ -348,6 +348,23 @@
 			}
 		});
 
+		var oMultiAppsSelectButton = new sap.m.ToggleButton("MultiSelect", {
+			icon: "sap-icon://multi-select",
+			tooltip: "Enable multiple appointments selection",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: "NeverOverflow"
+			}),
+			press: function (oEvent) {
+				var oPC = sap.ui.getCore().byId("PC1");
+				oPC.setMultipleAppointmentsSelection(!oPC.getMultipleAppointmentsSelection());
+				if (oEvent.getParameter("pressed")) {
+					this.setTooltip("Disable multiple appointments selection");
+				} else {
+					this.setTooltip("Enable multiple appointments selection");
+				}
+			}
+		});
+
 		var oButton1 = new sap.m.Button("B1", {
 			icon: "sap-icon://sap-ui5",
 			type: sap.m.ButtonType.Transparent,
@@ -1206,6 +1223,7 @@
 			toolbarContent: [
 				oTitle,
 				oSearchField,
+				oMultiAppsSelectButton,
 				oButton1,
 				oButton2,
 				oButtonAddAppointment,

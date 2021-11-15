@@ -387,7 +387,16 @@ sap.ui.define([
 				 *
 				 * @since 1.94
 				 */
-				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
+				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1},
+
+				/**
+				 * Determines whether the selection of multiple appointments is enabled.
+				 *
+				 * Note: selection of multiple appointments is possible using CTRL key regardless of the value of this property.
+				 *
+				 * @since 1.97
+				 */
+				multipleAppointmentsSelection : {type : "boolean", group : "Data", defaultValue : false}
 			},
 			aggregations : {
 
@@ -3077,7 +3086,7 @@ sap.ui.define([
 	function handleAppointmentSelect(oEvent) {
 
 		var oAppointment = oEvent.getParameter("appointment"),
-			bMultiSelect = oEvent.getParameter("multiSelect"),
+			bMultiSelect = oEvent.getParameter("multiSelect") || this.getMultipleAppointmentsSelection(),
 			aAppointments = oEvent.getParameter("appointments"),
 			sGroupAppointmentDomRef = oEvent.getParameter("domRefId"),
 			oEventParam,
@@ -3310,6 +3319,13 @@ sap.ui.define([
 		});
 
 		return this.setProperty("width", sWidth);
+	};
+
+	PlanningCalendar.prototype.setMultipleAppointmentsSelection = function (bMultiSelect) {
+		this.getRows().forEach(function (oRow) {
+			getRowTimeline(oRow).setMultipleAppointmentsSelection(bMultiSelect);
+		});
+		return this.setProperty("multipleAppointmentsSelection", bMultiSelect);
 	};
 
 	/**
