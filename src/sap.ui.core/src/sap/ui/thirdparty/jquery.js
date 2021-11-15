@@ -8161,7 +8161,7 @@ jQuery.extend( {
 				// elem.removeAttribute( name );
 				if ( name === "style" ) {
 					elem.style = "";
-				} else {
+				} else {
 					elem.removeAttribute( name );
 				}
 				// ##### END: MODIFIED BY SAP
