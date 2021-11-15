@@ -303,7 +303,6 @@ html.sap-desktop .sapMGT:hover:not(.sapMGTPressActive) {
 }
 
 html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapMGTFocusDiv, html.sap-desktop .sapMGT:focus .sapMGTFocusDiv, html.sap-desktop .sapMGT:active .sapMGTFocusDiv, html.sap-desktop .sapMGTLineModePress .sapMGTFocusDiv {
-	border: none;
 	border-radius: @sapElement_BorderCornerRadius;
 	box-shadow: inset 0 0 0 0.063rem @sapContent_ContrastFocusColor, 0 0 0 @sapContent_FocusWidth @sapContent_FocusColor;
 }
@@ -349,5 +348,14 @@ html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv:after, html
 		.sapMGTTInfo {
 			background-color: @sapTile_Active_Background;
 		}
+	}
+}
+
+.TwoByOne.sapMGTActionMode {
+	width: 20rem;
+	height: 10.875rem;
+	border-radius: 1.25rem;
+	.sapMGTFocusDiv {
+		border-radius: 1.25rem !important;
 	}
 }
