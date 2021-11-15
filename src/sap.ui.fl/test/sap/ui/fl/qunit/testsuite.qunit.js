@@ -113,13 +113,13 @@ sap.ui.define([
 			"apply/api/FlexRuntimeInfoAPI": {
 				group: "Apply API",
 				coverage: {
-					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"]
 				}
 			},
 			"apply/api/ControlVariantApplyAPI": {
 				group: "Apply API",
 				coverage: {
-					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI"]
 				}
 			},
 			"apply/api/SmartVariantManagementApplyAPI": {
@@ -427,7 +427,7 @@ sap.ui.define([
 			"write/api/ControlPersonalizationWriteAPI": {
 				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
+					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI"]
 				}
 			},
 			"write/api/ExtensionPointRegistryAPI": {

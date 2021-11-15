@@ -4,10 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Variant"
+	"sap/ui/core/Core",
+	"sap/ui/fl/Variant",
+	"sap/ui/fl/Utils"
 ], function(
 	JsControlTreeModifier,
-	Variant
+	Core,
+	Variant,
+	Utils
 ) {
 	"use strict";
 
@@ -20,6 +24,21 @@ sap.ui.define([
 			return oControl.getId();
 		}
 		return getAssociatedControlId(aAssociatedControlIds, oControl.getParent());
+	}
+
+	function getVariantManagementControlIds(oControl, bUseStaticArea) {
+		var oAppComponent = Utils.getAppComponentForControl(oControl);
+		var oRootControl = oAppComponent.getRootControl();
+		var aVMControls = [];
+		if (!bUseStaticArea && oRootControl.getDomRef()) {
+			aVMControls = Array.from(oRootControl.getDomRef().querySelectorAll(".sapUiFlVarMngmt"));
+		}
+		if (bUseStaticArea || aVMControls.length === 0) {
+			aVMControls = Array.from(Core.getStaticAreaRef().querySelectorAll(".sapUiFlVarMngmt"));
+		}
+		return aVMControls.map(function (oVariantManagementNode) {
+			return oVariantManagementNode.id;
+		});
 	}
 
 	var VariantsApplyUtil = {
@@ -83,13 +102,17 @@ sap.ui.define([
 		 * A prerequisite for this to work is that the variant management control is reachable via the <code>getParent</code> function.
 		 *
 		 * @param {sap.ui.core.Control} oControl - Control instance
-		 * @param {string[]} aVMControlIds - Array of variant management control IDs
+		 * @param {string[]} [aVMControlIds] - Array of variant management control IDs. If not given the IDs are derived from the DOM structure.
+		 * @param {boolean} [bUseStaticArea=false] - If flag is set to true then the static area is used to determine the variant management control
 		 * @returns {string} The ID of the responsible variant management control
 		 */
-		getRelevantVariantManagementControlId: function(oControl, aVMControlIds) {
+		getRelevantVariantManagementControlId: function(oControl, aVMControlIds, bUseStaticArea) {
 			var oAssociatedControls = {};
+			if (!aVMControlIds || !aVMControlIds.length) {
+				aVMControlIds = getVariantManagementControlIds(oControl, bUseStaticArea);
+			}
 			var aAssociatedControlIds = aVMControlIds.reduce(function(aCurrentControlIds, sVMControlId) {
-				var oVMControl = sap.ui.getCore().byId(sVMControlId);
+				var oVMControl = Core.byId(sVMControlId);
 				var aForControls = oVMControl.getFor();
 				aForControls.forEach(function(sControlId) {
 					oAssociatedControls[sControlId] = sVMControlId;
@@ -99,6 +122,15 @@ sap.ui.define([
 
 			var sAssociatedVMControlId = getAssociatedControlId(aAssociatedControlIds, oControl);
 			return oAssociatedControls[sAssociatedVMControlId];
+		},
+
+		belongsToVariantManagement: function(oElement) {
+			var aVMControlIds = getVariantManagementControlIds(oElement);
+			return !!VariantsApplyUtil.getRelevantVariantManagementControlId(oElement, aVMControlIds);
+		},
+
+		getAllVariantManagementControlIds: function(oElement) {
+			return getVariantManagementControlIds(oElement);
 		}
 	};
 

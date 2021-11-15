@@ -160,7 +160,7 @@ sap.ui.define([
 			this.oCompContainer.destroy();
 		}
 	}, function() {
-		QUnit.test("when getRelevantVariantManagementControlId is called with various controls", function(assert) {
+		QUnit.test("when getRelevantVariantManagementControlId / belongsToVariantManagement is called with various controls", function(assert) {
 			var aVMControlIds = [
 				"testComponent2---mockview--VariantManagement1",
 				"testComponent2---mockview--VariantManagement2",
@@ -173,14 +173,16 @@ sap.ui.define([
 			assertVMControlFound("hbox2InnerButton1", "VariantManagement3", aVMControlIds, assert);
 			assertVMControlFound("hbox1Button1", "VariantManagement3", aVMControlIds, assert);
 
+			assertNoVMControlFound("ObjectPageSubSection3", ["testComponent2---mockview--VariantManagement3"], assert);
+			assertNoVMControlFound("ObjectPageSubSection1", ["testComponent2---mockview--VariantManagement2"], assert);
 			assertNoVMControlFound("Button", aVMControlIds, assert);
-		});
 
-		QUnit.test("when getRelevantVariantManagementControlId is called with various controls without list of VMControl Ids", function(assert) {
-			var aVMControlIds = [];
-			assertNoVMControlFound("ObjectPageSubSection1", aVMControlIds, assert);
-			assertNoVMControlFound("ObjectPageSubSection3", aVMControlIds, assert);
-			assertNoVMControlFound("hbox2InnerButton1", aVMControlIds, assert);
+			var bBelongsToVM1 = VariantUtils.belongsToVariantManagement(sap.ui.getCore().byId("testComponent2---mockview--ObjectPageLayout"));
+			var bBelongsToVM2 = VariantUtils.belongsToVariantManagement(sap.ui.getCore().byId("testComponent2---mockview--TextTitle1"));
+			var bBelongsToVM3 = VariantUtils.belongsToVariantManagement(sap.ui.getCore().byId("testComponent2---mockview--Button"));
+			assert.strictEqual(bBelongsToVM1, true, "true is returned for the first variant management control");
+			assert.strictEqual(bBelongsToVM2, true, "true is returned for the second variant management control");
+			assert.strictEqual(bBelongsToVM3, false, "false is returned for the control not belonging to a variant management control");
 		});
 	});
 

@@ -1,34 +1,28 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/m/App",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/mvc/XMLView",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	App,
-	ComponentContainer,
 	Control,
 	UIComponent,
-	XMLView,
+	VariantUtils,
+	VariantManagementState,
+	FlexState,
+	ChangesController,
+	FlexRuntimeInfoAPI,
 	Cache,
 	Layer,
 	Utils,
-	FlexRuntimeInfoAPI,
-	VariantModel,
-	ChangesController,
-	FlexState,
-	VariantManagementState,
 	sinon
 ) {
 	"use strict";
@@ -341,74 +335,18 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given an instance of VariantModel", {
-		beforeEach: function(assert) {
-			var done = assert.async();
-
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null, function(viewContent) {
-				var oViewPromise;
-				var MockComponent = UIComponent.extend("MockController", {
-					metadata: {
-						manifest: {
-							"sap.app": {
-								applicationVersion: {
-									version: "1.2.3"
-								}
-							}
-						}
-					},
-					createContent: function() {
-						var oApp = new App(this.createId("mockapp"));
-						oViewPromise = XMLView.create({
-							id: this.createId("mockview"),
-							definition: viewContent
-						}).then(function(oView) {
-							oApp.addPage(oView);
-							return oView.loaded();
-						});
-						return oApp;
-					}
-				});
-				this.oComp = new MockComponent("testComponent");
-
-				oViewPromise.then(function() {
-					this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
-					var oVariantModel = new VariantModel({
-						variantManagement: {
-							variants: []
-						}
-					}, {
-						flexController: this.oFlexController,
-						appComponent: this.oComp
-					});
-					return oVariantModel.initialize()
-						.then(function() {
-							this.oComp.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
-							this.oCompContainer = new ComponentContainer({
-								component: this.oComp
-							}).placeAt("qunit-fixture");
-
-							done();
-						}.bind(this));
-				}.bind(this));
-			}.bind(this));
-		},
+	QUnit.module("hasVariantManagement", {
 		afterEach: function() {
 			sandbox.restore();
-			this.oCompContainer.destroy();
-			this.oComp.destroy();
 		}
 	}, function() {
-		QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
-			var bVariantManagementReference1 = FlexRuntimeInfoAPI.hasVariantManagement({element: sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout")});
-			var bVariantManagementReference2 = FlexRuntimeInfoAPI.hasVariantManagement({element: sap.ui.getCore().byId("testComponent---mockview--TextTitle1")});
-			assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
-			assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
-		});
+		QUnit.test("when called with an object", function(assert) {
+			var oBelongsToVMStub = sandbox.stub(VariantUtils, "belongsToVariantManagement").returns("foo");
 
-		QUnit.test("when calling 'hasVariantManagement' with a control that doesn't belong to a variant management control", function(assert) {
-			var bVariantManagementReference = FlexRuntimeInfoAPI.hasVariantManagement({element: sap.ui.getCore().byId("testComponent---mockview--Button")});
-			assert.notOk(bVariantManagementReference, "false is returned");
+			var sResult = FlexRuntimeInfoAPI.hasVariantManagement({element: "element"});
+			assert.strictEqual(oBelongsToVMStub.callCount, 1, "the Util was called once");
+			assert.strictEqual(oBelongsToVMStub.firstCall.args[0], "element", "the Util was called with the correct property");
+			assert.strictEqual(sResult, "foo", "the function returns whatever the Util returns");
 		});
 	});
 

@@ -4,11 +4,19 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/core/Component",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
-	OldControlPersonalizationAPI,
+	Component,
+	Core,
+	Element,
+	URLHandler,
+	VariantManagement,
 	Utils
 ) {
 	"use strict";
@@ -36,7 +44,33 @@ sap.ui.define([
 		 * @public
 		 */
 		clearVariantParameterInURL: function (mPropertyBag) {
-			OldControlPersonalizationAPI.clearVariantParameterInURL(mPropertyBag.control);
+			var aUpdatedVariantParameters;
+			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
+			var oVariantModel = oAppComponent && oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			if (!oVariantModel) {
+				//technical parameters are not updated, only URL hash is updated
+				Log.error("Variant model could not be found on the provided control");
+				return;
+			}
+
+			//check if variant for the passed variant management control is present
+			if (mPropertyBag.control instanceof VariantManagement) {
+				var sVariantManagementReference = oVariantModel.getLocalId(mPropertyBag.control.getId(), oAppComponent);
+				var mCleansedParametersWithIndex = URLHandler.removeURLParameterForVariantManagement({
+					model: oVariantModel,
+					vmReference: sVariantManagementReference
+				});
+				aUpdatedVariantParameters = mCleansedParametersWithIndex.parameters;
+			}
+
+			//both technical parameters and URL hash updated
+			URLHandler.update({
+				parameters: aUpdatedVariantParameters || [],
+				updateURL: true,
+				updateHashEntry: !!oVariantModel,
+				model: oVariantModel || {},
+				silent: !oVariantModel
+			});
 		},
 
 		/**
@@ -47,12 +81,58 @@ sap.ui.define([
 		 * @param {sap.ui.base.ManagedObject|string} mPropertyBag.element - Component or control (instance or ID) on which the <code>variantModel</code> is set
 		 * @param {string} mPropertyBag.variantReference - Reference to the variant that needs to be activated
 		 *
-		 * @returns {Promise} Promise that resolves after the variant is updated, or is rejected if an error occurs
+		 * @returns {Promise} Resolves after the variant is activated or rejects if an error occurs
 		 *
 		 * @public
 		 */
 		activateVariant: function(mPropertyBag) {
-			return OldControlPersonalizationAPI.activateVariant(mPropertyBag.element, mPropertyBag.variantReference);
+			function logAndReject(oError) {
+				Log.error(oError);
+				return Promise.reject(oError);
+			}
+
+			var oElement;
+			if (typeof mPropertyBag.element === "string") {
+				oElement = Component.get(mPropertyBag.element);
+				if (!(oElement instanceof Component)) {
+					oElement = Core.byId(mPropertyBag.element);
+
+					if (!(oElement instanceof Element)) {
+						return logAndReject(Error("No valid component or control found for the provided ID"));
+					}
+				}
+			} else if (mPropertyBag.element instanceof Component || mPropertyBag.element instanceof Element) {
+				oElement = mPropertyBag.element;
+			}
+
+			var oAppComponent = Utils.getAppComponentForControl(oElement);
+			if (!oAppComponent) {
+				return logAndReject(Error("A valid variant management control or component (instance or ID) should be passed as parameter"));
+			}
+
+			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			if (!oVariantModel) {
+				return logAndReject(Error("No variant management model found for the passed control or application component"));
+			}
+			var sVariantManagementReference = oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference;
+			if (!sVariantManagementReference) {
+				return logAndReject(Error("A valid control or component, and a valid variant/ID combination are required"));
+			}
+
+			// sap/fe is using this API very early during app start, sometimes before FlexState is initialized
+			return oVariantModel.waitForVMControlInit(sVariantManagementReference)
+
+			.then(function() {
+				return oVariantModel.updateCurrentVariant({
+					variantManagementReference: sVariantManagementReference,
+					newVariantReference: mPropertyBag.variantReference,
+					appComponent: oAppComponent
+				});
+			})
+			.catch(function(oError) {
+				Log.error(oError);
+				throw oError;
+			});
 		},
 
 		/**
