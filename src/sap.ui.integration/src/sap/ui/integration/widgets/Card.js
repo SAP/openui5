@@ -81,6 +81,7 @@ sap.ui.define([
 		APP_TYPE: "/sap.app/type",
 		PARAMS: "/sap.card/configuration/parameters",
 		DESTINATIONS: "/sap.card/configuration/destinations",
+		CSRF_TOKENS: "/sap.card/configuration/csrfTokens",
 		FILTERS: "/sap.card/configuration/filters"
 	};
 
@@ -407,6 +408,7 @@ sap.ui.define([
 		this.setModel(new JSONModel()); // always create a default model to isolate the card from a propagated default model
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
+		// this.setModel(new JSONModel(), "csrfTokens");
 		this.setModel(new ContextModel(), "context");
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
@@ -617,6 +619,10 @@ sap.ui.define([
 
 		if (this._oDestinations) {
 			this._oDestinations.setHost(oHostInstance);
+		}
+
+		if (this._oDataProviderFactory) {
+			this._oDataProviderFactory.setHost(oHostInstance);
 		}
 
 		if (oHostInstance && oHostInstance.bUseExperimentalCaching) {
@@ -977,6 +983,7 @@ sap.ui.define([
 			this._oTemporaryContent.destroy();
 			this._oTemporaryContent = null;
 		}
+
 		if (this._oDestinations) {
 			this._oDestinations.destroy();
 			this._oDestinations = null;
@@ -1001,6 +1008,7 @@ sap.ui.define([
 
 		this.getModel("filters").setData({});
 		this.getModel("parameters").setData({});
+		// this.getModel("csrfTokens").setData({});
 
 		this._oContextParameters = null;
 
@@ -1262,7 +1270,13 @@ sap.ui.define([
 			card: this
 		});
 
-		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, oExtension, this);
+		this._oDataProviderFactory = new DataProviderFactory({
+			host: this.getHostInstance(),
+			destinations: this._oDestinations,
+			extension: oExtension,
+			csrfTokensConfig: this._oCardManifest.get(MANIFEST_PATHS.CSRF_TOKENS),
+			card: this
+		});
 
 		this._registerCustomModels();
 

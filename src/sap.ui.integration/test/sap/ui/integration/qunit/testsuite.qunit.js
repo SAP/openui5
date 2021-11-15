@@ -340,6 +340,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/integration/util/Destinations"]
 				}
 			},
+			"util/CsrfTokenHandler": {
+				coverage: {
+					only: ["sap/ui/integration/util/CsrfTokenHandler"]
+				}
+			},
 			"util/ServiceManager": {
 				coverage: {
 					only: [

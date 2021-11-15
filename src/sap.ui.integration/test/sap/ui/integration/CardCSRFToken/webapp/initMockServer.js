@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/CardsCaching/localService/mockserver",
+	"sap/ui/CardCSRFToken/localService/mockserver",
 	"sap/m/MessageBox"
 ], function (mockserver, MessageBox) {
 	"use strict";

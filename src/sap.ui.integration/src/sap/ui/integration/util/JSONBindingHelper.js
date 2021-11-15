@@ -68,7 +68,7 @@ sap.ui.define([
 			}
 
 			return vValue;
-		  }.bind(this));
+		}.bind(this));
 
 		sResult = this._escape(sResult);
 

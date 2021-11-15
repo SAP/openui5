@@ -1,0 +1,76 @@
+{
+	"_version": "1.36.0",
+	"sap.app": {
+		"id": "card.explorer.data.csrf.card",
+		"type": "card",
+		"title": "Sample for Data usage in Cards",
+		"subTitle": "Sample for Data usage in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration": {
+			"destinations": {
+				"ProductsMockServer": {
+					"name": "ProductsMockServer",
+					"label": "Products Mock",
+					"defaultUrl": "/SEPMRA_PROD_MAN/"
+				}
+			},
+			"csrfTokens": {
+				"token1": {
+					"data": {
+						"request": {
+							"url": "{{destinations.ProductsMockServer}}/",
+							"method": "HEAD",
+							"headers": {
+								"X-CSRF-Token": "Fetch"
+							}
+						}
+					}
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.ProductsMockServer}}/SEPMRA_C_PD_Product",
+				"parameters": {
+					"$format": "json"
+				},
+				"method": "GET",
+				"headers": {
+					"X-CSRF-Token": "{{csrfTokens.token1}}"
+				}
+			},
+			"path": "/d/results"
+		},
+		"header": {
+			"title": "Products",
+			"subTitle": "Weight Information",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{Name}",
+				"info": {
+					"value": "{= format.unit(${Weight}, ${WeightUnit})}"
+				}
+			},
+			"maxItems": 5
+		}
+	}
+}

@@ -45,7 +45,9 @@ sap.ui.define([
 	QUnit.module("DataProviderFactory", {
 		beforeEach: function () {
 			this.oCard = new Card();
-			this.oDataProviderFactory = new DataProviderFactory(null, null, this.oCard);
+			this.oDataProviderFactory = new DataProviderFactory({
+				card: this.oCard
+			});
 			sinon.stub(DataProvider.prototype, "setSettings");
 		},
 		afterEach: function () {

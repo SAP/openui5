@@ -54,7 +54,9 @@ sap.ui.define([
 			this.oHost.useExperimentalCaching();
 
 			this.oCard = new Card({ host: this.oHost });
-			this.oDataProviderFactory = new DataProviderFactory(null, null, this.oCard);
+			this.oDataProviderFactory = new DataProviderFactory({
+				card: this.oCard
+			});
 
 			this.oServer = sinon.createFakeServer({
 				autoRespond: true
@@ -360,7 +362,9 @@ sap.ui.define([
 			this.oHost = new Host();
 			this.oHost.useExperimentalCaching();
 
-			this.oDataProviderFactory = new DataProviderFactory(null, null, null, null, this.oHost);
+			this.oDataProviderFactory = new DataProviderFactory({
+				host: this.oHost
+			});
 
 			this.oServer = sinon.createFakeServer({
 				autoRespond: true

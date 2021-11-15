@@ -1961,7 +1961,7 @@ sap.ui
 
 				// helper to handle xsrf token
 				var fnHandleXsrfTokenHeader = function(oXhr, mHeaders) {
-					if (oXhr.requestHeaders["x-csrf-token"] === "Fetch") {
+					if (oXhr.requestHeaders["x-csrf-token"] === "Fetch" || oXhr.requestHeaders["X-CSRF-Token"] === "Fetch") {
 						mHeaders["X-CSRF-Token"] = "42424242424242424242424242424242";
 					}
 				};

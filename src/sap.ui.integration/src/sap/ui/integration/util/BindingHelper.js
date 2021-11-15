@@ -165,7 +165,7 @@ sap.ui.define([
 
 	/**
 	 * Escapes the cards placeholders with double braces, so that the binding parser does not consider it as a binding.
-	 * The string "{{destinations.myDestination}}" will become "\\{\\{destinations.myDestination\\}\\}".
+	 * The string "{{destinations.myDestination}}" will become "\{\{destinations.myDestination\}\}".
 	 *
 	 * @param {any} vValue The value to escape.
 	 * @returns {string} The escaped value.
