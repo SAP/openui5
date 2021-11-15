@@ -21,7 +21,7 @@
 				<ToggleButton
 					id="MultiSelect"
 					icon="sap-icon://multi-select"
-					tooltip="Enable multi selection"
+					tooltip="Enable multiple appointments selection"
 					press=".onPress">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
