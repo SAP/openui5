@@ -193,7 +193,8 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						success : function (oTable) {
-							var oNewContext = oTable.getBinding("items").create({
+							var oBinding = oTable.getBinding("items"),
+								oNewContext = oBinding.create({
 								"SalesOrderID" : "",
 								// properties
 								"BuyerID" : "0100000000",
@@ -209,8 +210,14 @@ sap.ui.define([
 								"SO_2_BP" : null
 							});
 						oNewContext.created().then(function () {
-							MessageBox.success("SalesOrder created: " +
-								oNewContext.getProperty("SalesOrderID"));
+							var sSalesOrderID = oNewContext.getProperty("SalesOrderID");
+
+							Opa5.assert.ok(true, "Sales order created (via API): " + sSalesOrderID);
+							oBinding.filter(
+								new Filter("SalesOrderID", FilterOperator.EQ, sSalesOrderID)
+							);
+							Opa5.assert.ok(true, "Filter for the new sales order: "
+								+ sSalesOrderID);
 							});
 						},
 						viewName : sViewName

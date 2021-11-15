@@ -38,11 +38,15 @@ sap.ui.define([
 			When.onTheMainPage.createInvalidSalesOrderViaAPI();
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.changeNoteInSalesOrders(0, "My Note");
-			When.onTheSuccessInfo.confirm();
+			// after successful creation the table is filtered (see #createInvalidSalesOrderViaAPI)
+			// to contain only the created sales order in order to get rid of other messages
+			Then.onTheMainPage.checkTableLength(1, "SalesOrderList");
 			Then.onTheMainPage.checkNote(0, "My Note");
 
 			// Test: update of SalesOrder note -> error, restart after note corrected
 			When.onTheMainPage.changeNoteInSalesOrders(0, "RAISE_ERROR");
+			// selectMessage() still needed because of the unbound messages caused by filtering
+			When.onTheMessagePopover.selectMessage(sRaiseErrorMessage);
 			Then.onTheMessagePopover.checkMessageHasTechnicalDetails({
 				originalMessage : {
 					code : "OO/000",
@@ -89,7 +93,7 @@ sap.ui.define([
 
 			// CleanUp: delete created SalesOrder again via given group ID
 			When.onTheMainPage.deleteSelectedSalesOrderViaGroupId(sGroupId);
-			Then.onTheMainPage.checkID(0);
+			Then.onTheMainPage.checkTableLength(0, "SalesOrderList");
 
 			Then.onAnyPage.checkLog(aExpectedLogs);
 			Then.iTeardownMyUIComponent();
