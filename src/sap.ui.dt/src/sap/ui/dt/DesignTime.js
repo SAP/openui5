@@ -704,7 +704,7 @@ function (
 	 * @property {boolean} [root="true"] - Proxy for "isRoot" property of sap.ui.dt.ElementOverlay constructor
 	 * @property {object} [parentMetadata] - Map with metadata from the parent
 	 * @property {boolean} [visible] - Proxy for "visible" property of sap.ui.dt.ElementOverlay constructor
-	 * @property {boolean} [isTemplate] - marker that overlay is part of template
+	 * @property {boolean} [isTemplate] - Marker that overlay is part of template
 	 * @private
 	 */
 
@@ -932,7 +932,7 @@ function (
 	}
 
 	/**
-	 * Create children for specified ElementOverlay.
+	 * Creates children for specified ElementOverlay.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - ElementOverlay to create children for
 	 * @param {object} mParams - Property bag
 	 * @param {object} [mParams.parentMetadata] - Parent aggregation metadata

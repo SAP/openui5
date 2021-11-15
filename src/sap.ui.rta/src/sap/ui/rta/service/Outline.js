@@ -67,7 +67,7 @@ sap.ui.define([
 	 * @property {string} [name] - Singular name from node's design time metadata
 	 * @property {string} technicalName - Class type for element nodes/aggregation name for aggregation nodes
 	 * @property {boolean} editable - Indicates whether the node is editable
-	 * @property {string} [templateReference] - Element ID referncing corresponding template
+	 * @property {string} [templateReference] - Element ID referencing corresponding template
 	 * @property {string} [icon] - Icon path for the node
 	 * @property {string} type - Type of node
 	 * @property {boolean} [visible] - Visibility of node of type <code>element</code>
