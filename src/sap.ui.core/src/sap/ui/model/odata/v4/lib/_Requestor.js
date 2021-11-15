@@ -932,7 +932,7 @@ sap.ui.define([
 				}
 			}
 			sPath += "(" + aArguments.join(",") + ")";
-		} else { // Action
+		} else { // Action (or NavigationProperty, then mName2Parameter is empty!)
 			for (sName in mParameters) {
 				if (!(sName in mName2Parameter)) {
 					delete mParameters[sName]; // remove invalid parameter

@@ -271,12 +271,9 @@ sap.ui.define([
 	 *   replaced with the operation's return value context (see below) and that new list context is
 	 *   returned instead. Since 1.97.0.
 	 * @returns {Promise}
-	 *   A promise that is resolved without data or a return value context when the operation call
-	 *   succeeded, or rejected with an instance of <code>Error</code> in case of failure. A return
-	 *   value context is a {@link sap.ui.model.odata.v4.Context} which represents a bound operation
-	 *   response. It is created only if the operation is bound and has a single entity return
-	 *   value from the same entity set as the operation's binding parameter and has a parent
-	 *   context which points to an entity from an entity set.
+	 *   A promise that is resolved without data or with a return value context when the operation
+	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case
+	 *   of failure.
 	 *
 	 * @private
 	 * @see #execute for details
@@ -287,6 +284,7 @@ sap.ui.define([
 			oOperationMetadata,
 			oPromise,
 			sResolvedPath = this.getResolvedPathWithReplacedTransientPredicates(),
+			sResolvedMetaPath = _Helper.getMetaPath(sResolvedPath),
 			that = this;
 
 		/*
@@ -298,23 +296,27 @@ sap.ui.define([
 			return that.refreshDependentBindings("", oGroupLock.getGroupId(), true);
 		}
 
-		oPromise = oMetaModel.fetchObject(_Helper.getMetaPath(sResolvedPath) + "/@$ui5.overload")
+		oPromise = oMetaModel.fetchObject(sResolvedMetaPath + "/@$ui5.overload")
 			.then(function (aOperationMetadata) {
 				var fnGetEntity, iIndex, sPath;
 
 				if (!aOperationMetadata) {
-					throw new Error("Unknown operation: " + sResolvedPath);
-				}
-				if (aOperationMetadata.length !== 1) {
+					oOperationMetadata = oMetaModel.getObject(sResolvedMetaPath);
+					if (!oOperationMetadata || oOperationMetadata.$kind !== "NavigationProperty"
+							|| !bReplaceWithRVC) {
+						throw new Error("Unknown operation: " + sResolvedPath);
+					}
+				} else if (aOperationMetadata.length !== 1) {
 					throw new Error("Expected a single overload, but found "
 						+ aOperationMetadata.length + " for " + sResolvedPath);
+				} else {
+					oOperationMetadata = aOperationMetadata[0];
 				}
 				if (that.bRelative && that.oContext.getBinding) {
 					iIndex = that.sPath.lastIndexOf("/");
 					sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
 					fnGetEntity = that.oContext.getValue.bind(that.oContext, sPath);
 				}
-				oOperationMetadata = aOperationMetadata[0];
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
 					mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed);
 			}).then(function (oResponseEntity) {
@@ -602,11 +604,13 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If
 	 *   <ul>
-	 *    <li> the given metadata is neither an "Action" nor a "Function",
+	 *    <li> the given metadata is neither an "Action" nor a "Function" nor a
+	 *      "NavigationProperty",
 	 *    <li> a collection-valued parameter for an operation other than a V4 action is encountered,
 	 *    <li> <code>bIgnoreETag</code> is used for an operation other than a bound action,
 	 *    <li> <code>fnOnStrictHandlingFailed</code> is given but the given metadata is not an
-	 *         "Action"
+	 *         "Action",
+	 *    <li> a navigation property is used with operation parameters
 	 *   </ul>
 	 *
 	 * @private
@@ -617,7 +621,7 @@ sap.ui.define([
 			oCache,
 			vEntity = fnGetEntity,
 			oModel = this.oModel,
-			sMetaPath = _Helper.getMetaPath(sPath) + "/@$ui5.overload/0/$ReturnType",
+			sMetaPath = _Helper.getMetaPath(sPath),
 			sOriginalResourcePath = sPath.slice(1),
 			oRequestor = oModel.oRequestor,
 			that = this;
@@ -672,7 +676,8 @@ sap.ui.define([
 		if (fnOnStrictHandlingFailed && oOperationMetadata.$kind !== "Action") {
 			throw new Error("Not an action: " + sPath);
 		}
-		if (!bAction && oOperationMetadata.$kind !== "Function") {
+		if (!bAction && oOperationMetadata.$kind !== "Function"
+				&& oOperationMetadata.$kind !== "NavigationProperty") {
 			throw new Error("Not an operation: " + sPath);
 		}
 		if (bAction && fnGetEntity) {
@@ -685,17 +690,23 @@ sap.ui.define([
 			&& !this.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 			throw new Error("Must not set parameter $$inheritExpandSelect on this binding");
 		}
+		if (oOperationMetadata.$kind !== "NavigationProperty") {
+			 sMetaPath += "/@$ui5.overload/0/$ReturnType";
+			if (oOperationMetadata.$ReturnType
+					&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm.")) {
+				sMetaPath += "/$Type";
+			}
+		} else if (Object.keys(mParameters).length) {
+			throw new Error("Unsupported parameters for navigation property");
+		}
 
 		this.oOperation.bAction = bAction;
 		this.oOperation.mRefreshParameters = mParameters;
 		mParameters = Object.assign({}, mParameters);
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
+		// Note: in case of NavigationProperty, this just removes "(...)"
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
-		if (oOperationMetadata.$ReturnType
-				&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm.")) {
-			sMetaPath += "/$Type";
-		}
 		oCache = _Cache.createSingle(oRequestor, sPath, this.mCacheQueryOptions,
 			oModel.bAutoExpandSelect, oModel.bSharedRequests, getOriginalResourcePath, bAction,
 			sMetaPath);
@@ -808,6 +819,15 @@ sap.ui.define([
 	 * type, bind a control to the path "value", for example
 	 * <code>&lt;Text text="{value}"/></code>. If the result has a complex or entity type, you
 	 * can bind properties as usual, for example <code>&lt;Text text="{street}"/></code>.
+	 *
+	 * Since 1.98.0, a single-valued navigation property can be treated like a function if
+	 * <ul>
+	 *   <li> it has the same type as the operation binding's parent context,
+	 *   <li> that parent context belongs to a top-level entity set,
+	 *   <li> there is a navigation property binding which points to that same entity set,
+	 *   <li> no operation parameters have been set,
+	 *   <li> the <code>bReplaceWithRVC</code> parameter is used.
+	 * </ul>
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
@@ -1190,14 +1210,37 @@ sap.ui.define([
 	 * 4. Operation binding has
 	 *    (a) a V4 parent context.
 	 *
+	 * For a navigation property, the criteria are intentionally similar.
+	 *
 	 * @param {object} oMetadata The operation metadata
 	 * @returns {boolean} Whether operation's return value is like its binding parameter
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.isReturnValueLikeBindingParameter = function (oMetadata) {
+		var oParentMetaData, sParentMetaPath;
+
 		if (!(this.bRelative && this.oContext && this.oContext.getBinding)) { // case 4a
 			return false;
+		}
+
+		if (oMetadata.$kind === "NavigationProperty") {
+			if (oMetadata.$isCollection || this.sPath.includes("/")) {
+				return false;
+			}
+
+			sParentMetaPath = _Helper.getMetaPath(this.oContext.getPath());
+			if (sParentMetaPath.lastIndexOf("/") > 0) {
+				return false;
+			}
+
+			oParentMetaData = this.oModel.getMetaModel().getObject(sParentMetaPath);
+
+			return oParentMetaData.$kind === "EntitySet"
+				&& oParentMetaData.$Type === oMetadata.$Type
+				&& oParentMetaData.$NavigationPropertyBinding
+				&& oParentMetaData.$NavigationPropertyBinding[this.sPath.slice(0, /*"(...)"*/-5)]
+					=== sParentMetaPath.slice(1);
 		}
 
 		return oMetadata.$IsBound // case 1

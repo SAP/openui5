@@ -1,0 +1,14 @@
+{
+	"DraftAdministrativeData" : {
+		"CreationDateTime" : "2021-11-10T15:00:00.000Z",
+		"DraftUUID" : "6aa1b201-cd82-472f-a042-cd46fe64d32d",
+		"LastChangeDateTime" : "2021-11-10T15:00:00.000Z"
+	},
+	"HasActiveEntity" : true,
+	"HasDraftEntity" : false,
+	"_Category" : {
+		"ID" : 2000,
+		"IsActiveEntity" : false,
+		"name" : "Second category"
+	}
+}

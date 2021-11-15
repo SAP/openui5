@@ -1414,7 +1414,23 @@ sap.ui.define([
 		path : "/Unknown(...)",
 		request : "/Unknown/@$ui5.overload",
 		metadata : undefined,
+		request2 : "/Unknown",
+		metadata2 : undefined,
 		error : "Unknown operation: /Unknown(...)"
+	}, {
+		path : "/Unknown(...)",
+		request : "/Unknown/@$ui5.overload",
+		metadata : undefined,
+		request2 : "/Unknown",
+		metadata2 : {$kind : "Property"},
+		error : "Unknown operation: /Unknown(...)"
+	}, {
+		path : "/Unknown(...)",
+		request : "/Unknown/@$ui5.overload",
+		metadata : undefined,
+		request2 : "/Unknown",
+		metadata2 : {$kind : "NavigationProperty"},
+		error : "Unknown operation: /Unknown(...)" // Note: missing bReplaceWithRVC
 	}, {
 		path : "/EntitySet(ID='1')/schema.EmptyOverloads(...)",
 		request : "/EntitySet/schema.EmptyOverloads/@$ui5.overload",
@@ -1427,22 +1443,26 @@ sap.ui.define([
 		metadata : [{$kind : "Function"}, {$kind : "Function"}],
 		error : "Expected a single overload, but found 2 for"
 			+ " /EntitySet(ID='1')/schema.OverloadedFunction(...)"
-	}].forEach(function (oFixture) {
-		QUnit.test("_execute: " + oFixture.error, function (assert) {
+	}].forEach(function (oFixture, i) {
+		QUnit.test("_execute: #" + i + " - " + oFixture.error, function (assert) {
 			var oGroupLock = {
 					getGroupId :  function () {},
 					unlock : function () {}
-				};
+				},
+				oMetaModelMock = this.mock(this.oModel.getMetaModel());
 
-			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
-				.withExactArgs(oFixture.request)
-				.returns(Promise.resolve(oFixture.metadata));
+			oMetaModelMock.expects("fetchObject").withExactArgs(oFixture.request)
+				.returns(SyncPromise.resolve(Promise.resolve(oFixture.metadata)));
+			if (oFixture.request2) {
+				oMetaModelMock.expects("fetchObject").withExactArgs(oFixture.request2)
+					.returns(SyncPromise.resolve(oFixture.metadata2));
+			}
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to execute " + oFixture.path, sClassName, sinon.match.instanceOf(Error));
 			this.mock(_Helper).expects("adjustTargetsInError")
-				.withExactArgs(sinon.match.instanceOf(Error), undefined,
+				.withExactArgs(sinon.match.instanceOf(Error), oFixture.metadata2,
 					oFixture.path + "/$Parameter", undefined);
 
 			return this.bindContext(oFixture.path)
@@ -1831,40 +1851,52 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSamePredicate) {
-	QUnit.test("_execute: bReplaceWithRVC, bSamePredicate=" + bSamePredicate, function (assert) {
+	[false, true].forEach(function (bNavigationProperty) {
+		var sTitle = "_execute: bReplaceWithRVC, bSamePredicate=" + bSamePredicate
+				+ ", bNavigationProperty=" + bNavigationProperty;
+
+	QUnit.test(sTitle, function (assert) {
 		var oGroupLock = {
 				getGroupId : function () {}
 			},
+			oMetaModelMock = this.mock(this.oModel.getMetaModel()),
+			oOperationMetadata = bNavigationProperty ? {
+				$kind : "NavigationProperty"
+			} : "~oOperationMetadata~",
 			oParentEntity = {},
+			sPath = bNavigationProperty ? "ToTwin" : "name.space.Operation",
 			oResponseEntity = {},
 			oRootBinding = {
 				doReplaceWith : function () {}
 			},
 			oParentContext = Context.create(this.oModel, oRootBinding, "/TEAMS('42')"),
-			oBinding = this.bindContext("name.space.Operation(...)", oParentContext);
+			oBinding = this.bindContext(sPath + "(...)", oParentContext);
 
 		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
 		_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
 			bSamePredicate ? "('42')" : "('77')");
-		this.mock(this.oModel.getMetaModel()).expects("fetchObject")
-			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
-			.returns(SyncPromise.resolve(["~oOperationMetadata~"]));
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs("/TEAMS/" + sPath + "/@$ui5.overload")
+			.returns(SyncPromise.resolve(Promise.resolve(
+				bNavigationProperty ? undefined : [oOperationMetadata])));
+		oMetaModelMock.expects("fetchObject").exactly(bNavigationProperty ? 1 : 0)
+			.withExactArgs("/TEAMS/ToTwin").returns(SyncPromise.resolve(oOperationMetadata));
 		this.mock(oBinding).expects("createCacheAndRequest")
-			.withExactArgs(sinon.match.same(oGroupLock), "/TEAMS('42')/name.space.Operation(...)",
-				"~oOperationMetadata~", "~mParameters~", sinon.match.func, "~bIgnoreETag~",
-				"~fnOnStrictHandlingFailed~")
+			.withExactArgs(sinon.match.same(oGroupLock), "/TEAMS('42')/" + sPath + "(...)",
+				sinon.match.same(oOperationMetadata), "~mParameters~", sinon.match.func,
+				"~bIgnoreETag~", "~fnOnStrictHandlingFailed~")
 			.returns(Promise.resolve(oResponseEntity));
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oBinding).expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 			.resolves();
 		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
-			.withExactArgs("~oOperationMetadata~").returns(true);
+			.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
 		this.mock(oParentContext).expects("getValue").withExactArgs().returns(oParentEntity);
 		this.mock(oParentContext).expects("patch").exactly(bSamePredicate ? 1 : 0)
 			.withExactArgs(sinon.match.same(oResponseEntity));
-		this.mock(oBinding).expects("hasReturnValueContext").withExactArgs("~oOperationMetadata~")
-			.returns(true);
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
 		this.mock(Context).expects("createNewContext").never();
 		this.mock(oRootBinding).expects("doReplaceWith").exactly(bSamePredicate ? 0 : 1)
 			.withExactArgs(sinon.match.same(oParentContext), sinon.match.same(oResponseEntity),
@@ -1879,6 +1911,8 @@ sap.ui.define([
 			assert.strictEqual(oBinding.oCache, null);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		});
+	});
+
 	});
 });
 
@@ -2336,6 +2370,89 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oExpectation.args[0][5](), sPath.slice(1));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheAndRequest: NavigationProperty w/ parameters", function (assert) {
+		var oBinding = this.bindContext("n/a(...)", null, {$$inheritExpandSelect : true}),
+			oGroupLock = {},
+			oOperationMetadata = {$kind : "NavigationProperty"};
+
+		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(true);
+		this.mock(Object).expects("assign").never();
+		this.mock(oBinding).expects("computeOperationQueryOptions").never();
+		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions").never();
+		this.mock(_Cache).expects("createSingle").never();
+		assert.deepEqual(oBinding.oOperation, {
+				bAction : undefined,
+				mChangeListeners : {},
+				mParameters : {},
+				sResourcePath : undefined
+			});
+
+		assert.throws(function () {
+			// code under test
+			oBinding.createCacheAndRequest(oGroupLock, "/Entity('0815')/ToTwin(...)",
+				oOperationMetadata, {foo : "bar"});
+		}, new Error("Unsupported parameters for navigation property"));
+
+		assert.deepEqual(oBinding.oOperation, {
+				bAction : undefined,
+				mChangeListeners : {},
+				mParameters : {},
+				sResourcePath : undefined
+			}, "unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheAndRequest: NavigationProperty", function (assert) {
+		var oBinding = this.bindContext("n/a(...)", null, {$$inheritExpandSelect : true}),
+			oExpectation,
+			oOperationMetadata = {$kind : "NavigationProperty"},
+			sPath = "/Entity('1')/ToTwin(...)",
+			oResponseEntity = {},
+			oSingleCache = {
+				fetchValue : function () {}
+			};
+
+		this.oModel.bAutoExpandSelect = "~bAutoExpandSelect~";
+		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('2')");
+		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
+			.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
+		this.mock(Object).expects("assign").withExactArgs({}, {}).returns("~mParametersCopy~");
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
+			.returns("~mQueryOptions~");
+		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
+			.withExactArgs(sPath, sinon.match.same(oOperationMetadata), "~mParametersCopy~",
+				"~mQueryOptions~", "~fnGetEntity~")
+			.returns("~sResourcePath~");
+		oExpectation = this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "~sResourcePath~",
+				"~mQueryOptions~", "~bAutoExpandSelect~",
+				sinon.match.same(this.oModel.bSharedRequests), sinon.match.func, false,
+				"/Entity/ToTwin")
+			.returns(oSingleCache);
+		this.mock(oSingleCache).expects("fetchValue").withExactArgs("~oGroupLock~")
+			.returns("~oPromise~");
+
+		assert.strictEqual(
+			// code under test
+			oBinding.createCacheAndRequest("~oGroupLock~", sPath, oOperationMetadata,
+				{/*mParameters*/}, /*do not call!*/"~fnGetEntity~"),
+			"~oPromise~");
+		assert.strictEqual(oBinding.oCache, oSingleCache);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
+		assert.strictEqual(oBinding.mCacheQueryOptions, "~mQueryOptions~");
+		assert.strictEqual(oBinding.oOperation.bAction, false);
+		assert.deepEqual(oBinding.oOperation.mRefreshParameters, {/*mParameters*/});
+
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
+
+		// code under test
+		assert.strictEqual(oExpectation.args[0][5](oResponseEntity), "Entity('2')");
 	});
 
 	//*********************************************************************************************
@@ -3799,21 +3916,135 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{ // operation binding must have a context
-		binding : "TEAMS('42')/name.space.Operation(...)"
-	}, { // operation binding must be relative
-		binding : "/TEAMS('42')/name.space.Operation(...)"
-	}].forEach(function (oFixture, i) {
+	[
+		"name.space.Operation(...)", // operation binding must have a context
+		"/name.space.Operation(...)" // operation binding must be relative
+	].forEach(function (sPath, i) {
 		var sTitle = "isReturnValueLikeBindingParameter returns false due to ..., " + i;
 
 		QUnit.test(sTitle, function (assert) {
-			var oContext = oFixture.context && Context.create(this.oModel, {}, oFixture.context),
-				oBinding = this.bindContext("name.space.Operation(...)", oContext);
-
-			assert.notOk(
-				// code under test
-				oBinding.isReturnValueLikeBindingParameter(/*oOperationMetadata not used*/));
+			// code under test
+			assert.notOk(this.bindContext(sPath).isReturnValueLikeBindingParameter());
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isReturnValueLikeBindingParameter: NavigationProperty, $isCollection",
+			function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindContext("ToTwin(...)", oContext),
+			oOperationMetadata = {
+				$kind : "NavigationProperty",
+				$isCollection : true
+			};
+
+		// code under test
+		assert.notOk(oBinding.isReturnValueLikeBindingParameter(oOperationMetadata));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isReturnValueLikeBindingParameter: NavigationProperty, too many segments #1",
+			function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindContext("ToHere/ToThere(...)", oContext),
+			oOperationMetadata = {
+				$kind : "NavigationProperty"
+			};
+
+		this.mock(this.oModel.getMetaModel()).expects("getObject").never();
+
+		// code under test
+		assert.notOk(oBinding.isReturnValueLikeBindingParameter(oOperationMetadata));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isReturnValueLikeBindingParameter: NavigationProperty, too many segments #2",
+			function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')/TEAM_2_EMPLOYEES"),
+			oBinding = this.bindContext("ToTwin(...)", oContext),
+			oOperationMetadata = {
+				$kind : "NavigationProperty"
+			};
+
+		this.mock(this.oModel.getMetaModel()).expects("getObject").never();
+
+		// code under test
+		assert.notOk(oBinding.isReturnValueLikeBindingParameter(oOperationMetadata));
+	});
+	// Note: bReplaceWithRVC triggers #checkKeepAlive which requires a "row context", thus
+	// this.sPath = "(...)" cannot work; also v4.ODataModel#resolve would add a slash in between!
+
+	//*********************************************************************************************
+[{
+	oParentMetaData : {
+		$kind : "EntitySet",
+		$NavigationPropertyBinding : {
+			ToTwin : "TEAMS"
+		},
+		$Type : "wrong.Type"
+	},
+	sTitle : "wrong $Type"
+}, {
+	oParentMetaData : {
+		$kind : "EntitySet",
+		$Type : "some.Type"
+	},
+	sTitle : "no $NavigationPropertyBinding map"
+}, {
+	oParentMetaData : {
+		$kind : "EntitySet",
+		$NavigationPropertyBinding : {},
+		$Type : "some.Type"
+	},
+	sTitle : "no $NavigationPropertyBinding entry"
+}, {
+	oParentMetaData : {
+		$kind : "Singleton", // Note: sure, "/TEAMS('42')" is unrealistic in this case - simplicity!
+		$NavigationPropertyBinding : {
+			ToTwin : "TEAMS"
+		},
+		$Type : "some.Type"
+	},
+	sTitle : "Singleton"
+}].forEach(function (oFixture) {
+	var sTitle = "isReturnValueLikeBindingParameter: NavigationProperty, " + oFixture.sTitle;
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindContext("ToTwin(...)", oContext),
+			oOperationMetadata = {
+				$kind : "NavigationProperty",
+				$Type : "some.Type"
+			};
+
+		this.mock(this.oModel.getMetaModel()).expects("getObject").withExactArgs("/TEAMS")
+			.returns(oFixture.oParentMetaData);
+
+		// code under test
+		assert.notOk(oBinding.isReturnValueLikeBindingParameter(oOperationMetadata));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("isReturnValueLikeBindingParameter: NavigationProperty, OK", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindContext("ToTwin(...)", oContext),
+			oOperationMetadata = {
+				$kind : "NavigationProperty",
+				$Type : "some.Type"
+			};
+
+		this.mock(this.oModel.getMetaModel()).expects("getObject").withExactArgs("/TEAMS")
+			.returns({
+				$kind : "EntitySet",
+				$NavigationPropertyBinding : {
+					ToTwin : "TEAMS"
+				},
+				$Type : "some.Type"
+			});
+
+		// code under test
+		assert.ok(oBinding.isReturnValueLikeBindingParameter(oOperationMetadata));
 	});
 
 	//*********************************************************************************************

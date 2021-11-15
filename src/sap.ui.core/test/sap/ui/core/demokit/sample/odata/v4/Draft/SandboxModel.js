@@ -11,15 +11,19 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/MyProducts/",
 			mFixture : {
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"Products?$count=true&$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=ID,IsActiveEntity,amount,categoryID,name&$skip=0&$top=5" : {
 					source : "Products.json"
 				},
 				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_true.json"
+				},
+				"Products(ID=20,IsActiveEntity=false)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+					source : "Products_20_false.json"
+				},
+				"Products(ID=20,IsActiveEntity=false)/SiblingEntity?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+					source : "Products_20_true.json"
 				},
 				"POST Products(ID=10,IsActiveEntity=true)/SampleService.draftEdit?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_false.json"
@@ -30,7 +34,12 @@ sap.ui.define([
 					source : "Products_10_true_PATCHed.json"
 				}
 			},
-			sFilterBase : "/MyProducts/",
+			aRegExps : [{
+				regExp : /^GET \/MyProducts\/\$metadata\?sap-language=..$/,
+				response : {
+					source : "metadata.xml"
+				}
+			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/Draft/data"
 	};
 
