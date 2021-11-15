@@ -4,8 +4,8 @@
 /**
  * Defines support rules related to the view.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/base/util/isEmptyObject", "sap/ui/base/DataType"],
-	function(SupportLib, Element, jQuery, isEmptyObject, DataType) {
+sap.ui.define(["sap/base/Log", "sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/base/util/isEmptyObject", "sap/ui/base/DataType"],
+	function(Log, SupportLib, Element, jQuery, isEmptyObject, DataType) {
 	"use strict";
 
 	// shortcuts
@@ -101,52 +101,20 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdpar
 		title: "Control tag in XML view starts with lower case",
 		description: "Control tags with lower case cannot be loaded in Linux-based systems",
 		resolution: "Start the Control tag with upper case",
-		resolutionurls: [],
+		resolutionurls: [{
+			text: "Documentation: SAPUI5 Control Development Guidelines",
+			href: "https://sapui5.hana.ondemand.com/#/topic/4549da61e2d949d6a3d20ad8a9d17a6f"
+		}],
 		check: function (oIssueManager, oCoreFacade, oScope) {
-
-			//get all aggregations of each element
-			var aAggregationsOfElements = oScope.getElements().map(
-					function (oElement) {
-						return Object.keys(oElement.getMetadata().getAllAggregations());
-					}
-			);
-			//flatten array of arrays and filter duplicates
-			var aAggregations = aAggregationsOfElements.reduce(
-				function(a, b) {
-					return a.concat(b);
-				}).filter(
-					function (x, i, a) {
-						return a.indexOf(x) === i;
-					});
-
-			var aXMLViews = oScope.getElements().filter(function (oControl) {
-				return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView";
+			var aRelevantLogMessages = Log.getLogEntries().filter(function(oEntry) {
+				return oEntry.component === "sap.ui.core.XMLTemplateProcessor#lowerCase";
 			});
-
-			aXMLViews.forEach(function (oXMLView) {
-				var aLocalName = [];
-				var _getTags = function (oXcontent) {
-					aLocalName.push(oXcontent.localName);
-					for (var i = 0; i < oXcontent.children.length; i++) {
-						_getTags(oXcontent.children[i]);
-					}
-				};
-
-				_getTags(oXMLView._xContent);
-				aLocalName = jQuery.uniqueSort(aLocalName);
-
-				aLocalName.forEach(function (sTag) 	{
-					var sFirstLetter = sTag.charAt(0);
-					// check for lowercase, aggregations are excluded
-					if ((sFirstLetter.toLowerCase() === sFirstLetter) && !aAggregations.includes(sTag)) {
-						var sViewName = oXMLView.getViewName().split("\.").pop();
-						oIssueManager.addIssue({
-							severity: Severity.High,
-							details: "View '" + sViewName + "' (" + oXMLView.getId() + ") contains a Control tag that starts with lower case '" + sTag + "'",
-							context: {
-								id: oXMLView.getId()
-							}
-						});
+			aRelevantLogMessages.forEach(function(oMessage) {
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oMessage.message,
+					context: {
+						id: oMessage.details
 					}
 				});
 			});
