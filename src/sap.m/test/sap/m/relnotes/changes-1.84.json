@@ -967,5 +967,99 @@
         ]
       }
     ]
+  },
+  "1.84.20": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "d5833265b2545bd7d704514578753f84ffb80221",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Heading level is now announced only once by screen readers and references in aria-labelledBy are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018876752021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170009554"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170285545"
+          }
+        ]
+      },
+      {
+        "id": "94b0fe0a3cd61fbb102e77c4dc3ada731c5ee49a",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: hasSelection now toggled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170302260"
+          }
+        ]
+      },
+      {
+        "id": "973f0f5f1064b29e7fb2c5edd9a694b1bb1b0e03",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Acc enhancements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170231572"
+          }
+        ]
+      },
+      {
+        "id": "1e42623634371170e925bf17151b1ccb6ec4a07b",
+        "type": "FIX",
+        "text": " sap.m.Button: ARIA attributes adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080354744"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170240632"
+          }
+        ]
+      },
+      {
+        "id": "b9429c4d50c74a7a1d00d15d6f73e4edaa1e7fc0",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Focus outline is now always shown while typing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170062558"
+          }
+        ]
+      },
+      {
+        "id": "fb6f3644c43e4a64ef6020b9728a4dca59f0e2b6",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: added 'remove' action for UI Adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007056162021"
+          }
+        ]
+      },
+      {
+        "id": "870d55dc320c92641f162813531dcb18e45e36f8",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: aria-labelledby added on Filter By list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170208845"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -178,5 +178,21 @@
         ]
       }
     ]
+  },
+  "1.84.20": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "b70490dd1fb8e8f8c9a5bf3e933dd462088e0524",
+        "type": "FIX",
+        "text": " sap.f.semantic.SemanticPage: Fix empty Share menu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180224277"
+          }
+        ]
+      }
+    ]
   }
 }
