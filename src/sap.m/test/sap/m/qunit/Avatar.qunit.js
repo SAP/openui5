@@ -627,6 +627,12 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
+
+		this.oAvatar.setDecorative(true);
+		oCore.applyChanges();
+
+		assert.strictEqual($oAvatar.attr("aria-hidden"), "true", "Aria-hidden should be set to default avatars");
+		assert.strictEqual($oAvatar.attr("role"), "presentation", "Aria role should be 'img' on decorative avatars");
 	});
 
 	QUnit.module("Avatar backgroundColor API", {
