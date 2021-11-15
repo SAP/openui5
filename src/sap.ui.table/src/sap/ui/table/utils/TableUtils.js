@@ -197,12 +197,6 @@ sap.ui.define([
 	 */
 	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
 
-	function hasSelectableText(oElement) {
-		// Text selection is only supported for <input type="text|password|search|tel|url">
-		// In Chrome text selection could also be supported for other input types, but to have a consistent behavior we don't do that.
-		return oElement != null && oElement instanceof window.HTMLInputElement && /^(text|password|search|tel|url)$/.test(oElement.type);
-	}
-
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
 	 *
@@ -1424,28 +1418,6 @@ sap.ui.define([
 			mThemeParameters.deleteIcon = mParams["_sap_ui_table_DeleteIcon"];
 			mThemeParameters.clearSelectionIcon = mParams["_sap_ui_table_ClearSelectionIcon"];
 			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
-		},
-
-		/**
-		 * Selects the text of an HTMLElement that supports text selection.
-		 *
-		 * @param {HTMLElement} oElement The element whose text to select.
-		 */
-		selectElementText: function(oElement) {
-			if (hasSelectableText(oElement)) {
-				oElement.select();
-			}
-		},
-
-		/**
-		 * Deselects the text of an HTMLElement that supports text selection.
-		 *
-		 * @param {HTMLElement} oElement The element whose text to deselect.
-		 */
-		deselectElementText: function(oElement) {
-			if (hasSelectableText(oElement)) {
-				oElement.setSelectionRange(0, 0);
-			}
 		},
 
 		/**
