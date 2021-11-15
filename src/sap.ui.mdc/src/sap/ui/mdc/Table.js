@@ -1981,6 +1981,10 @@ sap.ui.define([
 	};
 
 	Table.prototype._onColumnPress = function(oColumn) {
+		if (this._bSuppressOpenMenu) {
+			return;
+		}
+
 		var oParent = oColumn.getParent(),
 			iIndex = oParent.indexOfColumn(oColumn),
 			oMDCColumn = this.getColumns()[iIndex],
@@ -2050,7 +2054,15 @@ sap.ui.define([
 			aHeaderItems.forEach(function(oItem) {
 				this._createPopover(oItem, oColumn);
 			}, this);
-			this._oPopover && this._oPopover.openBy(oColumn);
+
+			if (this._oPopover) {
+				this._oPopover.openBy(oColumn);
+				this._oPopover.getAggregation("_popover").attachAfterClose(function() {
+					this._bSuppressOpenMenu = false;
+				}, this);
+				this._bSuppressOpenMenu = true;
+			}
+
 		}.bind(this));
 	};
 

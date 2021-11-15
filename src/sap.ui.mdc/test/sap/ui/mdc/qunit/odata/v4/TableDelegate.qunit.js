@@ -431,10 +431,17 @@ sap.ui.define([
 			assert.strictEqual(oTable._oPopover.getItems()[1].getLabel(), oResourceBundle.getText("table.SETTINGS_TOTALS"),
 				"The first column has aggregate menu item");
 
-			oTable._oTable.fireEvent("columnSelect", {
-				column: oThirdInnerColumn
+			return new Promise(function(resolve) {
+				oTable._oPopover.getAggregation("_popover").attachAfterClose(function() {
+					oTable._oTable.fireEvent("columnSelect", {
+						column: oThirdInnerColumn
+					});
+					resolve();
+				});
+				oTable._oPopover.getAggregation("_popover").close();
+			}).then(function() {
+				return oTable._fullyInitialized();
 			});
-			return oTable._fullyInitialized();
 		}).then(function() {
 			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
 			assert.strictEqual(oTable._oPopover.getItems()[0].getItems().length,2, "The last column has complex property with list of two items");
@@ -607,11 +614,18 @@ sap.ui.define([
 					fColumnPressSpy.restore();
 					fSetAggregationSpy.restore();
 					oDelegate.rebindTable = fnRebindTable;
-					oTable._oTable.fireEvent("columnSelect", {
-						column: oInnerSecondColumn
-					});
 
-					oTable._fullyInitialized().then(function() {
+					new Promise(function(resolve) {
+						oTable._oPopover.getAggregation("_popover").attachAfterClose(function() {
+							oTable._oTable.fireEvent("columnSelect", {
+								column: oInnerSecondColumn
+							});
+							resolve();
+						});
+						oTable._oPopover.getAggregation("_popover").close();
+					}).then(function() {
+						return oTable._fullyInitialized();
+					}).then(function() {
 						var oDelegate = oTable.getControlDelegate();
 						var oPlugin = oTable._oTable.getDependents()[0];
 						var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
