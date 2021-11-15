@@ -7,8 +7,9 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FilterBarDelegate"
-], function(FilterBarDelegate) {
+	"sap/ui/mdc/odata/v4/FilterBarDelegate",
+	'sap/ui/mdc/enum/FieldDisplay'
+], function(FilterBarDelegate, FieldDisplay) {
 	"use strict";
 
 	var FilterBarAuthorsSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -58,14 +59,17 @@ sap.ui.define([
 				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "countryOfOrigin_code");
 				if (oProperty) {
 					oProperty.fieldHelp = "IOFFVHCountry";
+					oProperty.display = FieldDisplay.ValueDescription;
 				}
 				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "regionOfOrigin_code");
 				if (oProperty) {
 					oProperty.fieldHelp = "IOFFVHRegion";
+					oProperty.display = FieldDisplay.ValueDescription;
 				}
 				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "cityOfOrigin_city");
 				if (oProperty) {
 					oProperty.fieldHelp = "IOFFVHCity";
+					oProperty.display = FieldDisplay.ValueDescription;
 				}
 
 				if (!bSearchExists) {

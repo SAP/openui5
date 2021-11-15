@@ -151,7 +151,7 @@
 						<mdc:typeahead>
 							<mdcv:Popover>
 								<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
-									<Table items="{path: '/Regions', length: 10}" width="30rem">
+									<Table items="{path: '/Regions', length: 10, parameters: {$select: 'country_code'}}" width="30rem">
 										<columns>
 											<Column>
 												<Label text="Region"></Label>
@@ -167,7 +167,7 @@
 											<ColumnListItem type="Active">
 												<Text text="{code}"></Text>
 												<Text text="{text}"></Text>
-												<Text text="{country_code}"></Text>
+												<Text text="{country/descr}"></Text>
 											</ColumnListItem>
 										</items>
 									</Table>
@@ -179,12 +179,12 @@
 								<mdcvc:MTable  keyPath="code" descriptionPath="text" filterFields="$search">
 									<mdcvc:filterBar>
 										<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" >
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" fieldHelp="IOFFVHCountry">
 											</mdc:FilterField>
 										</vhfb:FilterBar>
 									</mdcvc:filterBar>
 
-									<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+									<Table items="{path: '/Regions', parameters: {$select: 'country_code'}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 										<columns>
 											<Column>
 												<Label text="Region"></Label>
@@ -200,7 +200,7 @@
 											<ColumnListItem type="Active">
 												<Text text="{code}"></Text>
 												<Text text="{text}"></Text>
-												<Text text="{country_code}"></Text>
+												<Text text="{country/descr}"></Text>
 											</ColumnListItem>
 										</items>
 									</Table>
@@ -208,6 +208,43 @@
 								<mdcvc:Conditions label="Regions"/>
 							</mdcv:Dialog>
 						</mdc:dialog>
+					</mdc:ValueHelp>
+
+					<mdc:ValueHelp
+						id="IOFFVHRegionFH"
+						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+						<mdc:inParameters>
+							<mdcf:InParameter id="IOFFVHRegionFH-In-Country" value="{$filters>/conditions/country_code}" helpPath="country_code"/>
+						</mdc:inParameters>
+						<mdc:outParameters>
+							<mdcf:OutParameter id="IOFFVHRegionFH-Out-Country" value="{$filters>/conditions/country_code}" helpPath="country_code"/>
+						</mdc:outParameters>
+						<mdc:typeahead>
+							<mdcv:Popover>
+								<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
+									<Table items="{path: '/Regions', length: 10, parameters: {$select: 'country_code'}}" width="30rem">
+										<columns>
+											<Column>
+												<Label text="Region"/>
+											</Column>
+											<Column>
+												<Label text="Name"/>
+											</Column>
+											<Column>
+												<Label text="Country"/>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem type="Active">
+												<Text text="{code}"/>
+												<Text text="{text}"/>
+												<Text text="{country/descr}"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</mdcvc:MTable>
+							</mdcv:Popover>
+						</mdc:typeahead>
 					</mdc:ValueHelp>
 
 					<mdc:ValueHelp
@@ -224,7 +261,7 @@
 						<mdc:typeahead>
 							<mdcv:Popover>
 							<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
-								<Table items="{path: '/Cities', length: 10}" width="30rem">
+								<Table items="{path: '/Cities', length: 10, parameters: {$select: ['country_code', 'region_code']}}" width="30rem">
 									<columns>
 										<Column>
 											<Label text="City"></Label>
@@ -243,8 +280,8 @@
 										<ColumnListItem type="Active">
 											<Text text="{city}"></Text>
 											<Text text="{text}"></Text>
-											<Text text="{country_code}"></Text>
-											<Text text="{region_code}"></Text>
+											<Text text="{country/descr}"></Text>
+											<Text text="{region/text}"></Text>
 										</ColumnListItem>
 									</items>
 								</Table>
@@ -256,12 +293,12 @@
 							<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
-										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" />
-										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" />
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry2" label="Country" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" fieldHelp="IOFFVHCountry"/>
+										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" fieldHelp="IOFFVHRegionFH"/>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+								<Table items="{path: '/Cities', parameters: {$select: ['country_code', 'region_code']}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 									<columns>
 										<Column>
 											<Label text="City"></Label>
@@ -280,8 +317,8 @@
 										<ColumnListItem type="Active">
 											<Text text="{city}"></Text>
 											<Text text="{text}"></Text>
-											<Text text="{country_code}"></Text>
-											<Text text="{region_code}"></Text>
+											<Text text="{country/descr}"></Text>
+											<Text text="{region/text}"></Text>
 										</ColumnListItem>
 									</items>
 								</Table>
@@ -303,9 +340,9 @@
 					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff2" label="Name" conditions="{$filters>/conditions/name}" fieldHelp="fhName" dataType="sap.ui.model.odata.type.String" defaultOperator="StartsWith" />
 					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff3" label="Date of birth" operators="RENAISSANCE,MEDIEVAL,MODERN" conditions="{$filters>/conditions/dateOfBirth}" fieldHelp="fhAdob" dataType="sap.ui.model.odata.type.Date" />
 					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff1" label="Date of death" conditions="{$filters>/conditions/dateOfDeath}" maxConditions="1" dataType="sap.ui.model.odata.type.Date" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="Country of origin" conditions="{$filters>/conditions/countryOfOrigin_code}" fieldHelp="IOFFVHCountry" dataType="sap.ui.model.odata.type.String" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Region of origin" conditions="{$filters>/conditions/regionOfOrigin_code}" fieldHelp="IOFFVHRegion" dataType="sap.ui.model.odata.type.String" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff6" label="City of origin" conditions="{$filters>/conditions/cityOfOrigin_city}" fieldHelp="IOFFVHCity" dataType="sap.ui.model.odata.type.String" />
+					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="Country of origin" conditions="{$filters>/conditions/countryOfOrigin_code}" fieldHelp="IOFFVHCountry" display="ValueDescription" dataType="sap.ui.model.odata.type.String" />
+					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Region of origin" conditions="{$filters>/conditions/regionOfOrigin_code}" fieldHelp="IOFFVHRegion" display="ValueDescription" dataType="sap.ui.model.odata.type.String" />
+					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff6" label="City of origin" conditions="{$filters>/conditions/cityOfOrigin_city}" fieldHelp="IOFFVHCity" display="ValueDescription" dataType="sap.ui.model.odata.type.String" />
 				</mdc:filterItems>
 
 			</mdc:FilterBar>
