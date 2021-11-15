@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "0b3abd7f6595b00ac1e5f76c0eb782ede342436d",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: has correct acc description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266549"
+          }
+        ]
+      },
+      {
         "id": "9743b03290c7dfb7adb8117526971b36206992df",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Appoinment icons are read",

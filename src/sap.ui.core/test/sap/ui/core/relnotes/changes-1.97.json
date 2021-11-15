@@ -3,6 +3,11 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "98219cc211fb4821cf24519f4f6b930b0a2d2002",
+        "type": "FEATURE",
+        "text": " PressAction: support key modifiers"
+      },
+      {
         "id": "4c0c42818a5150343a7b02128cc5af77a42b629b",
         "type": "FIX",
         "text": " XMLView: Rendering of style attributes",

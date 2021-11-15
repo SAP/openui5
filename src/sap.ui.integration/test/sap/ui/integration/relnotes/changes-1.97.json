@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "735fc463cffc152ea73f3ec8457829e2b00f4a70",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Links in Object card are now labeled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170303742"
+          }
+        ]
+      },
+      {
         "id": "9743b03290c7dfb7adb8117526971b36206992df",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Appoinment icons are read",

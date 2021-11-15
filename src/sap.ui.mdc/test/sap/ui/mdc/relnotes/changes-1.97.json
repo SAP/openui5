@@ -3,6 +3,27 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "9c9b27646cb09129a4651e1d3988919b863f7c56",
+        "type": "FEATURE",
+        "text": " ValueHelp: allow to modify search string"
+      },
+      {
+        "id": "e9996df09e063b5a5e29bf30c73261e53b1461aa",
+        "type": "FEATURE",
+        "text": " FieldValueHelp: allow to modify search string"
+      },
+      {
+        "id": "6a3a70b2fa505319f4246bbc35113e61da892e4d",
+        "type": "FIX",
+        "text": " FilterField: parsing error not removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170288108"
+          }
+        ]
+      },
+      {
         "id": "077c4952ecb20ec2d2a77bf848c73742d9cab9a6",
         "type": "FIX",
         "text": " Field: readonly field can be changed using arrow keys",

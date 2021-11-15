@@ -3,6 +3,28 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "c539b23534cde9e381220a509dcf8452afcdf004",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: focus in HCB/HCW themes has correct width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170312696"
+          }
+        ]
+      },
+      {
+        "id": "89974ffe7666172eb5915e72e632e1bfa25a81ff",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: corret link color is used on high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170266520"
+          }
+        ]
+      },
+      {
         "id": "7ff1ca9d175b7ac3c18d11ae571131c21254e2c9",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendar: appointments render propelry with all font sizes",
