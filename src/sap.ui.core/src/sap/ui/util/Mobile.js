@@ -87,7 +87,8 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			}, options);
 
 			// en-/disable automatic link generation for phone numbers
-			if (Device.os.ios && options.preventPhoneNumberDetection) {
+			if (options.preventPhoneNumberDetection) {
+				// iOS specific meta tag
 				$head.append(jQuery('<meta name="format-detection" content="telephone=no">')); // this only works
 																							   // for all DOM
 																							   // created
@@ -109,31 +110,13 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 				}
 			}
 
-
-			if (options.mobileWebAppCapable === "default") {
-				if (Device.os.ios) {
-					// keep the old behavior for compatibility
-					// enable fullscreen mode only when runs on iOS devices
-					$head.append(jQuery('<meta name="apple-mobile-web-app-capable" content="yes">')); // since iOS
-																									  // 2.1
-				}
-			}
-
-			if (Device.os.ios) {
-				// set the status bar style on Apple devices
-				$head.append(jQuery('<meta name="apple-mobile-web-app-status-bar-style" content="' + options.statusBar + '">')); // "default" or "black" or "black-translucent", since iOS 2.1
-
-				// splash screen
-				//<link rel="apple-touch-startup-image" href="/startup.png">
-			}
-
 			if (options.useFullScreenHeight) {
 				jQuery(function() {
 					document.documentElement.style.height = "100%"; // set html root tag to 100% height
 				});
 			}
 
-			if (options.preventScroll && Device.os.ios) {
+			if (options.preventScroll && (Device.os.ios || (Device.os.mac && Device.browser.mobile))) {
 				jQuery(function() {
 					document.documentElement.style.position = "fixed";
 					document.documentElement.style.overflow = "hidden";
@@ -143,27 +126,29 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 			}
 		}
 
-		if (options && options.homeIcon) {
-			var oIcons;
+		if (options) {
+			if (options.homeIcon) {
+				var oIcons;
 
-			if (typeof options.homeIcon === "string") {
-				oIcons = {
-					phone: options.homeIcon,
-					favicon: options.homeIcon
-				};
-			} else {
-				oIcons = jQuery.extend({}, options.homeIcon);
-				oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
-				oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
-				oIcons.icon = undefined;
+				if (typeof options.homeIcon === "string") {
+					oIcons = {
+						phone: options.homeIcon,
+						favicon: options.homeIcon
+					};
+				} else {
+					oIcons = jQuery.extend({}, options.homeIcon);
+					oIcons.phone = options.homeIcon.phone || options.homeIcon.icon || oIcons.favicon;
+					oIcons.favicon = oIcons.favicon || options.homeIcon.icon || options.homeIcon.phone;
+					oIcons.icon = undefined;
+				}
+
+				oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
+				Mobile.setIcons(oIcons);
 			}
 
-			oIcons.precomposed = options.homeIconPrecomposed || oIcons.precomposed;
-			Mobile.setIcons(oIcons);
-		}
-
-		if (options && options.mobileWebAppCapable !== "default") {
-			Mobile.setWebAppCapable(options.mobileWebAppCapable);
+			if (options.hasOwnProperty("mobileWebAppCapable")) {
+				Mobile.setWebAppCapable(options.mobileWebAppCapable, options.statusBar);
+			}
 		}
 	};
 
@@ -284,7 +269,7 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 	 * @static
 	 * @public
 	 */
-	Mobile.setWebAppCapable = function(bValue) {
+	Mobile.setWebAppCapable = function(bValue, sAppleStatusBarStyle) {
 		if (!Device.system.tablet && !Device.system.phone) {
 			return;
 		}
@@ -302,6 +287,10 @@ sap.ui.define(['sap/ui/Device', 'sap/base/Log', "sap/ui/thirdparty/jquery"], fun
 				$WebAppMeta.attr("content", sContent);
 			} else {
 				$Head.append(jQuery('<meta name="' + sName + '" content="' + sContent + '">'));
+				if (aPrefixes[i] === "apple") {
+					// iOS specific meta tag should be added only first time the corresponding apple-mobile-web-app-capable is added
+					$Head.append(jQuery('<meta name="apple-mobile-web-app-status-bar-style" content="' + (sAppleStatusBarStyle ? sAppleStatusBarStyle : 'default') + '">'));
+				}
 			}
 		}
 	};
