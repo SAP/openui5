@@ -1068,7 +1068,9 @@ sap.ui.define([
 
             this._oTitle.setProperty("maxLines", 2, true);
 
-        } else if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
+		} else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
+			this._oTitle.setProperty("maxLines", 2, true);
+		} else if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
 			this._oTitle.setProperty("maxLines", 2, true);
 		} else {
 			if (bSubheader) {
@@ -1111,6 +1113,12 @@ sap.ui.define([
 					}
 					this._oTitle.setProperty("maxLines", 2, true);
 				}
+			} else {
+				this._oTitle.setProperty("maxLines", 2, true);
+			}
+		} else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
+			if (bSubheader) {
+				this._oTitle.setProperty("maxLines", 1, true);
 			} else {
 				this._oTitle.setProperty("maxLines", 2, true);
 			}
