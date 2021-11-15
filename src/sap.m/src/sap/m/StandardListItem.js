@@ -143,6 +143,17 @@ sap.ui.define([
 			 */
 			wrapCharLimit : {type : "int", group : "Behavior", defaultValue : 0}
 		},
+		aggregations : {
+			/**
+			 * A <code>sap.m.Avatar</code> control instance that, if set, is used instead of an icon or image.
+			 *
+			 * The size of the <code>Avatar</code> control depends on the <code>insetIcon</code> property of <code>StandardListItem</code>.
+			 * The <code>displaySize</code> property of the <code>Avatar</code> control is not supported. If the <code>insetIcon</code> property of <code>StandardListItem</code> is set to <code>true</code>, the size of the <code>Avatar</code> control is set to XS; if the <code>insetIcon</code> property of <code>StandardListItem</code> is set to <code>false</code>, the size of the <code>Avatar</code> control is set to "S".
+			 *
+			 * @since 1.98
+			 */
+			avatar: {type: 'sap.m.Avatar', multiple: false}
+	},
 		designtime: "sap/m/designtime/StandardListItem.designtime"
 	}});
 
@@ -163,6 +174,20 @@ sap.ui.define([
 			this._oImage.destroy("KeepDom");
 			this._oImage = undefined;
 		}
+
+		return this;
+	};
+
+	// overwrite setter of Avatar to control it's display size
+	StandardListItem.prototype.setAvatar = function(oAvatar) {
+		if (this.getAvatar() === oAvatar) {
+			return this;
+		}
+		if (oAvatar) {
+			oAvatar.addStyleClass("sapMSLIAvatar");
+			oAvatar.setDisplaySize = function(){return this;};
+		}
+		this.setAggregation("avatar", oAvatar);
 
 		return this;
 	};
@@ -207,6 +232,14 @@ sap.ui.define([
 
 		this._oImage = oImage;
 		return this._oImage;
+	};
+
+	// overwrite base method to hook into the inactive handling
+	StandardListItem.prototype._getAvatar = function() {
+		var oAvatar = this.getAvatar();
+		var sSize = this.getIconInset() ? library.AvatarSize.XS : library.AvatarSize.S;
+		oAvatar.constructor.prototype.setDisplaySize.call(oAvatar, sSize);
+		return oAvatar;
 	};
 
 	// overwrite base method to hook into the active handling

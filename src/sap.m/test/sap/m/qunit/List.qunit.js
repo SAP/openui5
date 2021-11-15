@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/m/Avatar",
 	"sap/m/Button",
 	"sap/m/Bar",
 	"sap/m/List",
@@ -26,7 +27,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/ListItemBase",
 	"sap/base/Log"
-], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
+], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -2005,6 +2006,70 @@ sap.ui.define([
 
 		assert.ok($titleText.innerText.length < oStdLI.getTitle().length, "Collapsed text is rendered which has less characters than the provided title text");
 		assert.equal($titleText.innerText.length, 100, "Desktop limit for collapsed text in wrapping behavior is set correctly to 100 characters");
+
+		oList.destroy();
+	});
+
+	QUnit.test("StandardListItem Avatar Rendering and size)", function(assert) {
+
+		var oAvatar1 = new sap.m.Avatar({
+			id: "sliavatar1",
+			displaySize: "XL",
+			imageFitType: "Cover",
+			src: IMAGE_PATH + "travel_expend.png"
+		});
+
+		var oAvatar2 = new sap.m.Avatar({
+			id: "sliavatar2",
+			displaySize: "L",
+			imageFitType: "Contain",
+			src: IMAGE_PATH + "travel_expend.png"
+		});
+
+		var oStdLI1 = new StandardListItem({
+			title: "This is the Title Text",
+			info: "Success",
+			iconInset: false,
+			avatar: oAvatar1
+		});
+
+		var oStdLI2 = new StandardListItem({
+			title: "This is the Title Text",
+			info: "Success",
+			iconInset: true,
+			avatar: oAvatar2
+		});
+
+		var oList = new List({
+			items : [oStdLI1, oStdLI2]
+		});
+
+		oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.ok(document.getElementById("sliavatar1"), "Avatar should be in DOM");
+		assert.ok(oStdLI2.getAvatar(), "Avatar should be in the aggregation");
+		assert.ok(oStdLI1.getAvatar().getDomRef().classList.contains("sapMSLIAvatar"), "Style class for Avatar added");
+		assert.strictEqual(oAvatar1.getDisplaySize(), "S", "Size of the Avatar1 should be S");
+		assert.strictEqual(oAvatar2.getDisplaySize(), "XS", "Size of the Avatar2 should be XS");
+
+		// Check the size is not propagated and stays "S" or "XS"
+		oAvatar1.setDisplaySize("XL");
+		Core.applyChanges();
+
+		assert.strictEqual(oAvatar1.getDisplaySize(), "S", "Size of the Avatar1 should stay S");
+
+		oStdLI1.setIconInset(true);
+		Core.applyChanges();
+
+		assert.strictEqual(oAvatar1.getDisplaySize(), "XS", "Size of the Avatar1 should be XS now");
+
+		// Set empty avatar
+		oStdLI2.setAvatar();
+		Core.applyChanges();
+
+		assert.notOk(oStdLI2.getAvatar(), "Avatar should be removed from the aggregation");
+		assert.notOk(document.getElementById("sliavatar2"), "Avatar should be removed from the DOM");
 
 		oList.destroy();
 	});

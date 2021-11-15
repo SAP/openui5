@@ -1302,6 +1302,7 @@
 			"sap.m.sample.StandardListItemTitle",
 			"sap.m.sample.StandardListItemDescription",
 			"sap.m.sample.StandardListItemIcon",
+			"sap.m.sample.StandardListItemAvatar",
 			"sap.m.sample.StandardListItemInfo",
 			"sap.m.sample.StandardListItemInfoStateInverted",
 			"sap.m.sample.StandardListItemWrapping",
@@ -3064,6 +3065,11 @@
 		  "name": "Standard List Item - Icon",
 		  "description": "This list item offers a standardized user interface for list content with title, description and icon."
 		},
+		{
+			"id": "sap.m.sample.StandardListItemAvatar",
+			"name": "Standard List Item - Avatar",
+			"description": "This list item offers a standardized user interface for list content with title, description and avatar."
+		  },
 		{
 		  "id": "sap.m.sample.StandardListItemInfo",
 		  "name": "Standard List Item - Info",

@@ -65,8 +65,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 			bAdaptTitleSize = oLI.getAdaptTitleSize(),
 			bShouldRenderInfoWithoutTitle = !sTitle && sInfo;
 
-		// render image
-		if (oLI.getIcon()) {
+		// render image or avatar control
+		if (oLI.getAvatar()) {
+			rm.renderControl(oLI._getAvatar());
+		} else if (oLI.getIcon()) {
 			rm.renderControl(oLI._getImage());
 		}
 

@@ -15,7 +15,11 @@ sap.ui.define([],
 						return oControl.$().find(".sapMLIBContent > .sapMSLIDiv > .sapMSLITitleOnly")[0] || oControl.$().find(".sapMLIBContent > .sapMSLIDiv > .sapMSLITitle")[0];
 					}
 				}
+			},
+			aggregations: {
+				avatar: {
+					ignore: true
+				}
 			}
 		};
-
 	});

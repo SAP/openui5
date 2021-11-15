@@ -1,0 +1,60 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemTitle.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="ShortProductList"
+		headerText="Products">
+		<items>
+			<StandardListItem
+				title="{0/Name}"
+				description="{0/ProductId}"
+				iconDensityAware="false"
+				iconInset="false"
+				adaptTitleSize="false" >
+				<avatar>
+					<Avatar
+						src="{0/ProductPicUrl}"
+						displayShape="Square"
+						imageFitType="Cover"
+						showBorder="true"
+						press="onPress" />
+					</avatar>
+			</StandardListItem>
+			<!-- set this item's description be empty -->
+			<StandardListItem
+				title="{1/Name}"
+				description=""
+				iconInset="false"
+				adaptTitleSize="false" >
+				<avatar>
+					<Avatar
+						src="{1/ProductPicUrl}"
+						showBorder="true"
+						press="onPress"/>
+				</avatar>
+			</StandardListItem>
+			<StandardListItem
+				title="{2/Name}"
+				description="{2/ProductId}"
+				iconDensityAware="false"
+				iconInset="true"
+				adaptTitleSize="false" >
+				<avatar>
+					<Avatar
+						src="{2/ProductPicUrl}"
+						displayShape="Square"
+						showBorder="true"
+						press="onPress"/>
+				</avatar>
+			</StandardListItem>
+			<!-- don't specify a description for this item -->
+			<StandardListItem
+				title="{3/Name}"
+				icon="{3/ProductPicUrl}"
+				iconDensityAware="false"
+				iconInset="false"
+				adaptTitleSize="false" />
+		</items>
+	</List>
+</mvc:View>

@@ -429,6 +429,57 @@ html[dir=rtl] .SmallPaddingBegin {
 		})
 	});
 
+	var standardListAvatar = new sap.m.Page("standardListAvatar", {
+		title : "Standard List with Avatar",
+		titleLevel: "H1",
+		showNavButton : true,
+		navButtonText : "Back",
+		navButtonPress : function() {
+			app.back();
+		},
+		footer : new sap.m.OverflowToolbar({
+			content : [
+				new sap.m.ToolbarSpacer(),
+				addFioriButton(),
+				addDialogButton(),
+				new sap.m.Button({
+					text : "Embedded",
+					press : switchStyle
+				}),
+				new sap.m.Button({
+					text : "None",
+					press : function() {switchModeNone(oListStandardAvatar) }
+				}),
+				new sap.m.Button({
+					text : "Single",
+					press : function() {switchModeSingle(oListStandardAvatar) }
+				}),
+				new sap.m.Button({
+					text : "SingleMaster",
+					press : function() {switchModeSingleMaster(oListStandardAvatar) }
+				}),
+				new sap.m.Button({
+					text : "Multi",
+					press : function() {switchModeMulti(oListStandardAvatar) }
+				}),
+				new sap.m.Button({
+					text : "Delete",
+					press : function() {switchModeDelete(oListStandardAvatar) }
+				}),
+				new sap.m.Button({
+					text : "Swipe",
+					press : function() {switchToSwipe(oListStandardAvatar) }
+				}),
+				new sap.m.Button({
+					text : "Switch Mode Interaction",
+					press : function() {switchModeInteraction(oListStandardAvatar) }
+				}),
+				new sap.m.ToolbarSpacer()
+			]
+		})
+	});
+
+
 	var displayList = new sap.m.Page("displayList", {
 		title : "Display list",
 		titleLevel: "H1",
@@ -961,6 +1012,10 @@ html[dir=rtl] .SmallPaddingBegin {
 			type : "Navigation",
 			press : 'standardListNoImage'
 		}, {
+			title : "Standard List with Avatar",
+			type : "Navigation",
+			press : 'standardListAvatar'
+		}, {
 			title : "Display List",
 			type : "Navigation",
 			press : 'displayList'
@@ -1219,8 +1274,8 @@ html[dir=rtl] .SmallPaddingBegin {
 				iconInset : true,
 				type : "DetailAndActive",
 				unread: true,
-				press: "Content pressed",
-				detailPress : 'detailPage'
+				press: "Content pressed",detailPress : 'detailPage'
+				
 			}, {
 				title : "Travel Settings",
 				description : "Change your travel workflow settings",
@@ -1275,6 +1330,114 @@ html[dir=rtl] .SmallPaddingBegin {
 				unread: true,
 				press: "detailPage"
 			} ]
+		};
+
+		// Data for Avatar in StandardListItem
+		var dataAvatar = {
+			navigation : [ 
+				{
+					title : "Avatar no Inset",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					displaySize: "L", //for test only, do not play a role as it will be overrwritten
+					badgeIcon: "sap-icon://camera",
+					src: "images/Woman_avatar_01.png",
+					displayShape: "Circle",
+					press: function(){alert();},
+					unread : true,
+					iconInset: false,
+					imageFitType: "Cover",
+					counter: 1,
+					detailPress : 'detailPage'
+			},
+			{
+					title : "Avatar with Inset",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					displaySize: "L", //for test only, do not play a role as it will be overrwritten
+					displayShape: "Circle",
+					imageFitType: "Cover",
+					src: "images/Woman_avatar_01.png",
+					unread : true,
+					iconInset: true,
+					counter: 2,
+					detailPress : 'detailPage'
+			}, 
+			{
+					title : "Avatar no Inset and cover fit of the image",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					displaySize: "M",
+					displayShape: "Square",
+					imageFitType: "Cover",
+					src: "images/Lamp_avatar_01.jpg",
+					displayShape: "Square",
+					unread : true,
+					iconInset: false,
+					counter: 3
+			}, 
+			{
+					title : "Avatar no Inset and contain fit of the image",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					displaySize: "S",
+					imageFitType: "Contain",
+					src: "images/Lamp_avatar_01.jpg",
+					displayShape: "Square",
+					unread : true,
+					iconInset: false,
+					counter: 3
+				
+			},
+			{
+					title : "Avatar with Inset and cover fit of the image",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					imageFitType: "Cover",
+					src: "images/Lamp_avatar_01.jpg",
+					displayShape: "Square",
+					unread : true,
+					iconInset: true,
+					counter: 4
+			}
+			,{
+					title : "Avatar with Inset and contain fit of the image",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					displaySize: "L",
+					displayShape: "Square",
+					imageFitType: "Contain",
+					src: "images/Lamp_avatar_01.jpg",
+					displayShape: "Square",
+					unread : true,
+					iconInset: true,
+					counter: 4
+			},
+			{
+					title : "Avatar with Inset",
+					description : "Mouse, Headphone, Keyboard",
+					info: "+ 359 234 567",
+					infoTextDirection: sap.ui.core.TextDirection.LTR,
+					infoState: "Warning",
+					src: "sap-icon://lab",
+					unread : true,
+					iconInset: true,
+					counter: 5,
+					badgeIcon: "sap-icon://zoom-in"
+			}
+		 ]
 		};
 
 
@@ -1335,6 +1498,26 @@ html[dir=rtl] .SmallPaddingBegin {
 		title : "{title}",
 		description : "{description}",
 		type : "{type}",
+		unread: "{unread}",
+		press : handlePress
+	});
+
+	var oItemTemplateStandardAvatar = new sap.m.StandardListItem({
+		title : "{title}",
+		info : "{info}",
+		icon : "{icon}",
+		iconInset : "{iconInset}",
+		infoState: "{infoState}",
+		activeIcon: "{activeIcon}",
+		counter: "{counter}",
+		avatar: new sap.m.Avatar({
+			displaySize: "{displaySize}",
+			displayShape: "{displayShape}",
+			badgeIcon: "{badgeIcon}",
+			imageFitType: "{imageFitType}",
+			src: "{src}",
+			press: function(){alert();}
+		}),
 		unread: "{unread}",
 		press : handlePress
 	});
@@ -1466,6 +1649,15 @@ html[dir=rtl] .SmallPaddingBegin {
 				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
 			});
 
+	var oListStandardAvatar = new sap.m.List(
+			{
+				inset : false,
+				//showUnread: true,
+				'delete': deleteItem,
+				headerText : "Travel [StandardListAvatar]",
+				footerText : "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services."
+			});
+
 	var oListDisplay = new sap.m.List(
 			{
 				inset : false,
@@ -1530,6 +1722,12 @@ html[dir=rtl] .SmallPaddingBegin {
 				inset : false
 			});
 
+	var oListStandardAvatarNoHeader = new sap.m.List(
+			{
+				showUnread: true,
+				inset : false
+			});
+
 	var oListDisplayNoHeader = new sap.m.List(
 			{
 				showUnread: true,
@@ -1583,6 +1781,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	var oListStandardIconDAGroup = oListStandardIconDA.clone();
 	var oListStandardTitleGroup = oListStandardTitle.clone();
 	var oListStandardNoImageGroup = oListStandardNoImage.clone();
+	var oListStandardAvatarGroup = oListStandardAvatar.clone();
 	var oListDisplayGroup = oListDisplay.clone();
 	var oListInputGroup = oListInput.clone();
 	var oListCustomGroup = oListCustom.clone();
@@ -1599,6 +1798,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	bindListData(dataDetailDA, oItemTemplateStandardIcon, oListStandardIconDA);
 	bindListData(dataNavigation, oItemTemplateStandardTitle, oListStandardTitle);
 	bindListData(dataNavigation, oItemTemplateStandardNoImage, oListStandardNoImage);
+	bindListData(dataAvatar, oItemTemplateStandardAvatar, oListStandardAvatar);
 	bindListData(dataNavigation, oItemTemplateDisplay, oListDisplay);
 	bindListData(dataNavigation, oItemTemplateInput, oListInput);
 	bindListData(dataNavigation, oItemTemplateCustom, oListCustom);
@@ -1611,6 +1811,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	bindListData(dataDetailDA, oItemTemplateStandardIcon, oListStandardIconDAGroup);
 	bindListData(dataNavigation, oItemTemplateStandardTitle, oListStandardTitleGroup);
 	bindListData(dataNavigation, oItemTemplateStandardNoImage, oListStandardNoImageGroup);
+	bindListData(dataAvatar, oItemTemplateStandardAvatar, oListStandardAvatarGroup);
 	bindListData(dataNavigation, oItemTemplateDisplay, oListDisplayGroup);
 	bindListData(dataNavigation, oItemTemplateInput, oListInputGroup);
 	bindListData(dataNavigation, oItemTemplateCustom, oListCustomGroup);
@@ -1623,6 +1824,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	bindListData(dataDetailDA, oItemTemplateStandardIcon, oListStandardIconDANoHeader);
 	bindListData(dataNavigation, oItemTemplateStandardTitle, oListStandardTitleNoHeader);
 	bindListData(dataNavigation, oItemTemplateStandardNoImage, oListStandardNoImageNoHeader);
+	bindListData(dataAvatar, oItemTemplateStandardAvatar, oListStandardAvatarNoHeader);
 	bindListData(dataNavigation, oItemTemplateDisplay, oListDisplayNoHeader);
 	bindListData(dataNavigation, oItemTemplateInput, oListInputNoHeader);
 	bindListData(dataNavigation, oItemTemplateCustom, oListCustomNoHeader);
@@ -1678,6 +1880,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	standardListIconDA.addContent(oListStandardIconDA);
 	standardListTitle.addContent(oListStandardTitle);
 	standardListNoImage.addContent(oListStandardNoImage);
+	standardListAvatar.addContent(oListStandardAvatar);
 	displayList.addContent(oListDisplay);
 	inputList.addContent(oListInput);
 	customList.addContent(oListCustom);
@@ -1690,6 +1893,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	groupedList.addContent(oListStandardIconDAGroup);
 	groupedList.addContent(oListStandardTitleGroup);
 	groupedList.addContent(oListStandardNoImageGroup);
+	groupedList.addContent(oListStandardAvatarGroup);
 	groupedList.addContent(oListDisplayGroup);
 	groupedList.addContent(oListInputGroup);
 	groupedList.addContent(oListCustomGroup);
@@ -1699,7 +1903,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	groupedNoHeaderList.addContent(oListStandardIconANoHeader);
 	groupedNoHeaderList.addContent(oListStandardIconDANoHeader);
 	groupedNoHeaderList.addContent(oListStandardTitleNoHeader);
-	groupedNoHeaderList.addContent(oListStandardNoImageNoHeader);
+	groupedNoHeaderList.addContent(oListStandardAvatarNoHeader);
 	groupedNoHeaderList.addContent(oListDisplayNoHeader);
 	groupedNoHeaderList.addContent(oListInputNoHeader);
 	groupedNoHeaderList.addContent(oListCustomNoHeader);
@@ -1988,7 +2192,7 @@ html[dir=rtl] .SmallPaddingBegin {
 	// ================================================================================
 
 		app.addPage(listOverview).addPage(detailPage).addPage(standardListThumb).addPage(standardListIcon).addPage(standardListIconA).addPage(standardListIconDA).addPage(standardListTitle).addPage(standardListNoImage)
-			.addPage(displayList).addPage(inputList).addPage(customList).addPage(groupedList).addPage(groupedNoHeaderList).addPage(selectionList).addPage(htmlList).addPage(noDataList).addPage(swipeAction);
+		.addPage(standardListAvatar).addPage(displayList).addPage(inputList).addPage(customList).addPage(groupedList).addPage(groupedNoHeaderList).addPage(selectionList).addPage(htmlList).addPage(noDataList).addPage(swipeAction);
 	app.setInitialPage("listOverview");
 	app.placeAt("body");
 </script>
