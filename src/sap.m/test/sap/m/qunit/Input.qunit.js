@@ -4354,33 +4354,6 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
-	QUnit.test("When value state is error and is updated dynamically by user input the accessibility element should have aria-live=assertive attribute", function(assert) {
-		//Arrange
-		var oInputWithValueState = new Input({
-			valueState: "Information"
-		});
-		var oAccDomRef;
-
-		oInputWithValueState.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		oInputWithValueState.openValueStateMessage();
-		this.clock.tick();
-
-		// Act
-		// Simulate dynamic update of the value state by the user by changing the value state while focused
-		oInputWithValueState.focus();
-		oInputWithValueState.setValueState("Error");
-		sap.ui.getCore().applyChanges();
-		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
-
-		//Assert
-		assert.strictEqual(oAccDomRef.getAttribute("aria-live"), "assertive", "The accessibility live-region is correctly set to 'assertive'");
-
-		//Clean up
-		oInputWithValueState.destroy();
-	});
-
 	QUnit.module("Input clone", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();

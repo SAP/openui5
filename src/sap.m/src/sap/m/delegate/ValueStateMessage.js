@@ -274,8 +274,10 @@ sap.ui.define([
 			}
 
 			oMessageDomRef.id = sID;
-			oMessageDomRef.setAttribute("role", "tooltip");
-			oMessageDomRef.setAttribute("aria-live", "off");
+
+			// This element should be hidden from the accessibility tree, since it has only presentation role
+			// The value state announcement is present via hidden span, referenced via aria-describedby/aria-errormessage
+			oMessageDomRef.setAttribute("role", "presentation");
 			oMessageDomRef.setAttribute("aria-hidden", "true");
 
 			return oMessageDomRef;
