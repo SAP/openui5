@@ -62,12 +62,12 @@ html.sap-desktop .sapMToken {
 }
 
 html.sap-desktop .sapMToken:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -3px;
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:focus {
-	outline: 1px dotted @sapUiContentContrastFocusColor;
+	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentContrastFocusColor;
 }
 
 .sapUiSizeCompact .sapMTokenIcon {
