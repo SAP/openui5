@@ -69,6 +69,14 @@ sap.ui.define(function () {
 			"app/deprecatedJSViewUsage": {
 				title: "QUnit Tests for 'deprecated JSView usage' rule"
 			},
+			"app/lowerCaseControlsInViews": {
+				title: "QUnit Tests for 'xmlViewLowerCaseControl' rule",
+				loader: {
+					paths: {
+						"testdata": "test-resources/sap/ui/core/qunit/rule/testdata"
+					}
+				}
+			},
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			},
