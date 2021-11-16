@@ -40,10 +40,6 @@
     font-weight: bold;
 }
 
-.Stretch .sapMNwCSbh{
-	max-width: none;
-}
-
 .Stretch{
 	.sapMTileCnt.News .sapMNwC{
 		.sapMNwCCTxt .sapMText {
@@ -56,6 +52,14 @@
 		}
 		.sapMNwCSbh{
 			color: @sapUiText;
+			max-width: none;
+			padding-top: 0.25rem;
+
+			.sapMFT{
+				word-wrap: break-word;
+				white-space: normal;
+				height: 2rem;
+			}
 		}
 	}
 }
