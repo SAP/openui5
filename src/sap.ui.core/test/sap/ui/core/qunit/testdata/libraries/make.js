@@ -204,6 +204,9 @@ function makeComponent(options) {
 		}
 	};
 
+	if (options.embeddedBy) {
+		manifest["sap.app"]["embeddedBy"] = options.embeddedBy;
+	}
 
 	code = code.join('\n');
 	options.code = code;
@@ -452,3 +455,12 @@ makeLibWith("lib8", {js:true}, ['lib6']);
 makeLibWith("lib10", {js:true});
 makeVersionInfo();
 makeLibWith("lib9", {js:true}, ['lib10']); // not in version-info
+
+// embeddedBy: Component is embedded in library
+scenario("scenario16");
+makeComponent({
+	name: "embeddedComponent",
+	owner: "embeddingLib",
+	embeddedBy: "../"
+});
+makeLibWith("embeddingLib", {js: true});

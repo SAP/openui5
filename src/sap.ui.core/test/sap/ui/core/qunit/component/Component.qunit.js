@@ -1667,7 +1667,7 @@ sap.ui.define([
 			oComponent = oPreloadComponent;
 
 			//console.log(oSpy.calls);
-			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js", true), "Only the non-lazy component usage should be preloaded!");
+			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js"), "Only the non-lazy component usage should be preloaded!");
 
 			done();
 

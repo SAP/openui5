@@ -104,8 +104,40 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdpa
 		}
 	};
 
+	/**
+	 * Checks if the corresponding Component or Library of a Component is already loaded in case the Component is embeddedBy a resource.
+	 */
+	var oMissingEmbeddedByLibrary = {
+		id: "embeddedByLibNotLoaded",
+		audiences: [Audiences.Application],
+		categories: [Categories.Performance],
+		enabled: true,
+		minversion: "1.97",
+		title: "Embedding Component or Library not loaded",
+		description: "Checks if the corresponding Component or Library of a Component is already loaded in case the Component is embedded by a resource.",
+		resolution: "Before using a Component embedded by a Library or another Component, it's necessary to load the embedding Library or Component in advance. " +
+			"The 'sap.app/embeddedBy' property must be relative path inside th e deployment unit (library or component).",
+		resolutionurls: [],
+		check: function(oIssueManager) {
+			var aRelevantLogMessages = Log.getLogEntries().filter(function(oEntry) {
+				return oEntry.component === "sap.ui.core.Component#embeddedBy";
+			});
+			aRelevantLogMessages.forEach(function(oMessage) {
+				var oRegexGetComponentName = /^Component '([a-zA-Z0-9\.]*)'.*$/;
+				oIssueManager.addIssue({
+					severity: Severity.High,
+					details: oMessage.details,
+					context: {
+						id: oRegexGetComponentName.exec(oMessage.message)[1]
+					}
+				});
+			});
+		}
+	};
+
 	return [
 		oEventBusLogs,
-		oErrorLogs
+		oErrorLogs,
+		oMissingEmbeddedByLibrary
 	];
 }, true);

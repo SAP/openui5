@@ -738,9 +738,13 @@ sap.ui.define([
 		beforeEach: function() {
 			// Register test module path
 			sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
+
+			this.oLogSpy = this.spy(Log, "warning");
 		},
 		afterEach: function() {
 			unloadResources();
+
+			this.oLogSpy.restore();
 		}
 	});
 
@@ -765,13 +769,56 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload (embeddedBy check)", function(assert) {
+	QUnit.module("embeddedBy", {
+		beforeEach: function() {
+			this.oLogSpy = this.spy(Log, "warning");
+
+			sap.ui.loader.config({
+				paths: {
+					"testlibs": "test-resources/sap/ui/core/qunit/testdata/libraries"
+				}
+			});
+		},
+		afterEach: function() {
+			this.oLogSpy.restore();
+
+			sap.ui.loader._.unloadResources('testlibs/scenario16/embeddingLib/library-preload.js', true, true, true);
+		}
+	});
+
+	QUnit.test("[library IS NOT loaded]: NO 'Component-preload.js' is loaded, AND warning is logged", function(assert) {
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+
 		return Component.create({
-			name: "sap.ui.test.embedded"
+			name: "testlibs.scenario16.embeddingLib.embeddedComponent"
 		}).then(function(oComponent) {
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
-		});
+
+			assert.ok(this.oLogSpy.calledWith(
+				"Component 'testlibs.scenario16.embeddingLib.embeddedComponent' is defined to be embedded in a library or another component",
+				"The relatively given preload for the embedding resource was not loaded before hand. Please make sure to load the embedding resource containing this Component before instantiating.",
+				"sap.ui.core.Component#embeddedBy"
+			), "Warning log was issued");
+		}.bind(this));
+	});
+
+	QUnit.test("[library IS loaded]: NO 'Component-preload.js' is loaded, NO warning is logged", function(assert) {
+		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
+
+		return sap.ui.getCore().loadLibrary("testlibs.scenario16.embeddingLib", { async: true }).then(function() {
+			return Component.create({
+				name: "testlibs.scenario16.embeddingLib.embeddedComponent"
+			}).then(function(oComponent) {
+				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
+
+				assert.ok(this.oLogSpy.neverCalledWith(
+					"Component 'testlibs.scenario16.embeddingLib.embeddedComponent' is defined to be embedded in a library or another component",
+					"The relatively given preload for the embedding resource was not loaded before hand. Please make sure to load the embedding resource containing this Component before instantiating.",
+					"sap.ui.core.Component#embeddedBy"
+				), "Warning log was NOT issued");
+			}.bind(this));
+		}.bind(this));
+
 	});
 
 });
