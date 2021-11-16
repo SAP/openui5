@@ -95,6 +95,9 @@ sap.ui.define([
 	 * the entity for this context has been stored in the back end, {@link #created} returns
 	 * <code>undefined</code> after the data has been re-read from the back end and inserted at the
 	 * right position based on the list binding's filters and sorters.
+	 * If the context has been created via {@link sap.ui.model.odata.v2.ODataModel#createEntry} and
+	 * the entity for this context has been stored in the back end, {@link #created} returns
+	 * <code>undefined</code>.
 	 *
 	 * @returns {Promise}
 	 *   A promise for a context which has been created via
@@ -178,10 +181,17 @@ sap.ui.define([
 	 * the back end.
 	 *
 	 * @returns {boolean}
-	 *   Whether this context is transient if it has been created using
-	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
-	 *   {@link sap.ui.model.odata.v2.ODataListBinding#create}; returns <code>undefined</code>
-	 *   otherwise
+	 *   <ul>
+	 *   <li><code>true</code>: if the context has been created via
+	 *     {@link sap.ui.model.odata.v2.ODataModel#createEntry} or
+	 *     {@link sap.ui.model.odata.v2.ODataListBinding#create} and is not yet persisted in the
+	 *     back end,</li>
+	 *   <li><code>false</code>: if the context has been created via
+	 *     {@link sap.ui.model.odata.v2.ODataListBinding#create}, data has been successfully
+	 *     persisted in the back end and the data is still displayed in the area of the inline
+	 *     creation rows, and</li>
+	 *   <li><code>undefined</code>: otherwise</li>
+	 *   </ul>
 	 *
 	 * @public
 	 * @since 1.94.0

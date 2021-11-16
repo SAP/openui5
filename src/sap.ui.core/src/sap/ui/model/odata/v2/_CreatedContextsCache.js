@@ -58,7 +58,27 @@ sap.ui.define([
 	 * @private
 	 */
 	_CreatedContextsCache.prototype.findAndRemoveContext = function (oCreatedContext) {
-		var that = this;
+		var oResult = this.getCacheInfo(oCreatedContext);
+
+		if (oResult) {
+			this.removeContext(oCreatedContext, oResult.cachePath, oResult.listID);
+		}
+	};
+
+	/**
+	 * Checks whether a given context is contained in the the list of contexts for created entities
+	 * and returns the path and list ID.
+	 *
+	 * @param {sap.ui.model.odata.v2.Context} oCreatedContext
+	 *   The context to be searched in the cache
+	 * @returns {{cachePath : string, listID : string}|undefined}
+	 *   An object containing the cache path and the list ID if the given context is contained in
+	 *   the cache, <code>undefined</code> otherwise
+	 *
+	 * @private
+	 */
+	 _CreatedContextsCache.prototype.getCacheInfo = function (oCreatedContext) {
+		var oResult, that = this;
 
 		Object.keys(this.mCache).some(function (sCachePath) {
 			var mListIDToContexts = that.mCache[sCachePath];
@@ -67,7 +87,7 @@ sap.ui.define([
 				var aContexts = that.mCache[sCachePath][sListID];
 
 				if (aContexts.includes(oCreatedContext)) {
-					that.removeContext(oCreatedContext, sCachePath, sListID);
+					oResult = {cachePath : sCachePath, listID : sListID};
 
 					return true;
 				}
@@ -75,6 +95,8 @@ sap.ui.define([
 				return false;
 			});
 		});
+
+		return oResult;
 	};
 
 	/**
