@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Base delegate class for <code>sap.ui.mdc.Table</code>.
+	 * Base delegate for {@link sap.ui.mdc.Table}.
 	 *
 	 * @author SAP SE
 	 * @namespace
@@ -29,7 +29,7 @@ sap.ui.define([
 	/**
 	 * Provides a hook to update the binding info object that is used to bind the table to the model.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
 	 * @param {object} oDelegatePayload The delegate payload
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @protected
@@ -51,7 +51,7 @@ sap.ui.define([
 	 * The default implementation rebinds the table, but model-specific subclasses must call dedicated binding methods to update the binding instead
 	 * of using {@link #rebindTable}.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @param {sap.ui.model.ListBinding} [oBinding] The binding instance of the table
 	 * @protected
@@ -75,7 +75,7 @@ sap.ui.define([
 	/**
 	 * Rebinds the table.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @protected
 	 */
@@ -86,9 +86,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the filter delegate of the table that provides basic filter functionality such as adding filter fields.
-	 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a <code>FilterBarDelegate</code> to enable the
-	 * table for inbuilt filtering.
+	 * Returns the filter delegate of the table that provides basic filter functionality, such as adding filter fields.
+	 * <b>Note:</b> The functionality provided in this delegate acts as a subset of a <code>FilterBarDelegate</code> to enable the table for inbuilt
+	 * filtering.
 	 *
 	 * @example <caption>Example usage of <code>getFilterDelegate</code></caption>
 	 * oFilterDelegate = {
@@ -107,7 +107,7 @@ sap.ui.define([
 			 *
 			 * @param {string} sPropertyName The property name
 			 * @param {sap.ui.mdc.Table} oTable Instance of the table
-			 * @returns {Promise<sap.ui.mdc.FilterField>} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
+			 * @returns {Promise<sap.ui.mdc.FilterField>} <code>Promise</code> that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
 			 * @see sap.ui.mdc.AggregationBaseDelegate#addItem
 			 */
 			addItem: function(sPropertyName, oTable) {

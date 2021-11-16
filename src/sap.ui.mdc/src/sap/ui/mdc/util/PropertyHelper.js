@@ -19,6 +19,37 @@ sap.ui.define([
 
 	/*global Set, WeakMap */
 
+	/**
+	 * @typedef {object} sap.ui.mdc.util.PropertyInfo
+	 *
+	 * @property {string} name
+	 *   Unique, stable key for the property. It must only contain characters allowed for IDs, see {@link sap.ui.core.ID}. Does not have to be an
+	 *   existing attribute in the data model or the technical name of an attribute in the data model.
+	 * @property {string} [path]
+	 *   The technical path for a data source property.
+	 * @property {string} label
+	 *   Translatable text that labels the property.
+	 * @property {boolean} [visible=true]
+	 *   Whether the property is or can be visible to a user.
+	 * @property {string[]} [propertyInfos]
+	 *   The availability of this property makes <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related properties
+	 *   (by name).
+	 *   These related properties must be no complex <code>PropertyInfo</code> to avoid deep nesting.
+	 * @property {object} [typeConfig]
+	 *   Object which contains type-specific information about the property, especially the type instance (for example, for model filter creation in
+	 *   Table <code>rebind</code>).
+	 * @property {object} [extension]
+	 *   Reserved attribute. Must not be provided by the delegate directly as part of the <code>PropertyInfo</code>, but separately in
+	 *   the <code>fetchPropertyExtensions</code> method of the delegate. The <code>PropertyInfoExtension</code> is a key-value map where the key is
+	 *   the property name and the value is the additional information. The structure of the additional information depends on the delegate.
+	 *   Used to add model-specific information. For example, for analytics in OData, see sap.ui.mdc.odata.v4.TableDelegate.
+	 *
+	 * @private
+	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	 */
+
 	/*
 	 * Key-value map to define the characteristics of a property attribute, where the key is the name of the attribute.
 	 *
@@ -152,7 +183,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * The methods listed in this map are added to every property info object.
+	 * The methods listed in this map are added to every <code>PropertyInfo</code> object.
 	 */
 	var mPropertyMethods = {
 		/**
@@ -175,7 +206,7 @@ sap.ui.define([
 			return this.propertyInfosProperties || [];
 		},
 		/**
-		 * Gets all sortable properties referenced by the property, including the property itself if it is non-complex.
+		 * Gets all sortable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
 		 * @returns {object[]} The sortable properties
@@ -186,7 +217,7 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * Gets all filterable properties referenced by the property, including the property itself if it is non-complex.
+		 * Gets all filterable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
 		 * @returns {object[]} The filterable properties
@@ -197,7 +228,7 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * Gets all groupable properties referenced by the property, including the property itself if it is non-complex.
+		 * Gets all groupable properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
 		 * @returns {object[]} The groupable properties
@@ -208,7 +239,7 @@ sap.ui.define([
 			});
 		},
 		/**
-		 * Gets all visible properties referenced by the property, including the property itself if it is non-complex.
+		 * Gets all visible properties referenced by the property, including the property itself if it is not complex.
 		 *
 		 * @this PropertyInfo
 		 * @returns {object[]} The visible properties
@@ -455,14 +486,14 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject} [oParent]
 	 *     A reference to an instance that will act as the parent of this helper
      * @param {string[]} [aAllowedAttributes]
-	 *     List of attributes the property infos may contain.
+	 *     List of attributes that the <code>PropertyInfo</code> may contain.
 	 *     The following common attributes are always allowed:
 	 *     name, label, visible, path, typeConfig, maxConditions, group, groupLabel
 	 * @param {object} [mExtensionAttributeMetadata]
 	 *     The attribute metadata for the model-specific property extension
 	 *
 	 * @class
-	 * Property helpers give this library a consistent and standardized view on properties and their attributes.
+	 * Property helpers in this SAPUI5 library provide a consistent and standardized structure of properties and their attributes.
 	 * Validates the given properties, sets defaults, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
@@ -580,7 +611,7 @@ sap.ui.define([
 	 * Validates a property. The entire array of properties needs to be provided for validation of a complex property.
 	 *
 	 * <b>Note for classes that override this method:</b>
-	 * No other method of the helper may be called from here. The properties are not yet stored in the helper, and therefore
+	 * No other method of the helper must be called from here. The properties are not yet stored in the helper, and therefore
 	 * any method that tries to access them might not work as expected.
 	 *
 	 * @param {object} oProperty The property to validate
@@ -761,9 +792,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether a property is a complex property. Works with any property info, even if unknown to the property helper.
+	 * Checks whether a property is a complex property. Works with any <code>PropertyInfo</code>, even if unknown to the property helper.
 	 *
-	 * @param {object} oProperty A property info object
+	 * @param {object} oProperty A <code>PropertyInfo</code> object
 	 * @returns {boolean} Whether the property is complex
 	 * @protected
 	 * @static

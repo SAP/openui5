@@ -109,14 +109,13 @@ sap.ui.define([
 	 * Constructor for a new <code>MDCTable</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new control; generated automatically if no non-empty ID is given
-	 * <b>Note:</b> this can be omitted, no matter whether <code>mSettings</code> will be given or not.
+	 * <b>Note:</b> The optional ID can be omitted, no matter whether <code>mSettings</code> is given or not.
 	 * @param {object} [mSettings] Object with initial settings for the new control
 	 * @class
-	 * <p>
-	 *     A metadata-driven table to simplify the usage of existing tables, such as the <code>ResponsiveTable</code> and <code>GridTable</code>
-	 *     controls. The metadata needs to be provided via the {@link sap.ui.mdc.TableDelegate TableDelegate} implementation in the form of a
-	 *     <code>PropertyInfo</code>.
-	 * </p>
+	 * A metadata-driven table to simplify the usage of existing tables, such as the <code>ResponsiveTable</code> and <code>GridTable</code>
+	 * controls. The metadata needs to be provided via the {@link sap.ui.mdc.TableDelegate TableDelegate} implementation as
+	 * {@link sap.ui.mdc.table.PropertyInfo}.
+	 *
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
 	 * @private
@@ -265,7 +264,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines the text shown when the table has no data.
+				 * Determines the text shown if the table has no data.
 				 *
 				 * @since 1.63
 				 */
@@ -274,10 +273,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sort conditions.
+				 * Defines the sort conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
+				 * <b>Note:</b> This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.73
 				 */
@@ -286,10 +285,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Filter conditions.
+				 * Defines the filter conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
+				 * <b>Note:</b> This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.80.0
 				 */
@@ -299,10 +298,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Group conditions.
+				 * Defines the group conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
+				 * <b>Note:</b> This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -311,10 +310,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Aggregate conditions.
+				 * Defines the aggregate conditions.
 				 *
 				 * <b>Note</b>: This property must not be bound.<br>
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
+				 * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes.
 				 *
 				 * @since 1.87
 				 */
@@ -323,7 +322,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether table data export is enabled.
+				 * Determines whether the table data export is enabled.
 				 *
 				 * @since 1.75
 				 */
@@ -386,12 +385,14 @@ sap.ui.define([
 				/**
 				 * Enables automatic column width calculation based on metadata information if set to <code>true</code>.
 				 * The column width calculation takes the type, column label, referenced properties, and many other metadata parameters into account.
-				 * Providing a more precise <code>maxLength</code> value for the <code>String</code> type or <code>precision</code> value for numeric types can help this algorithm to produce better results.
+				 * Providing a more precise <code>maxLength</code> value for the <code>String</code> type or <code>precision</code> value for numeric
+				 * types can help this algorithm to produce better results.
 				 * The calculated column widths can have a minimum of 3rem and a maximum of 20rem.
 				 *
-				 * <b>Note:</b> To customize the automatic column width calculation the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> can be used.
-				 * To avoid the heuristic column width calculation for a particular column, the <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> must be set to <code>null</code>.
-				 * This feature has no effect if the <code>width</code> property of the column is bound or its value is set.
+				 * <b>Note:</b> To customize the automatic column width calculation, the <code>visualSettings.widthSettings</code> key of the
+				 * <code>PropertyInfo</code> can be used. To avoid the heuristic column width calculation for a particular column, the
+				 * <code>visualSettings.widthSettings</code> key of the <code>PropertyInfo</code> must be set to <code>null</code>. This feature has
+				 * no effect if the <code>width</code> property of the column is bound or its value is set.
 				 *
 				 * @since 1.95
 				 */
@@ -427,7 +428,7 @@ sap.ui.define([
 
 				/**
 				 * This row can be used for user input to create new data if {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>".
-				 * <b>Note:</b> Once the binding implements support for creating transient records, this aggregation will be removed.
+				 * <b>Note:</b> Once the binding supports creating transient records, this aggregation will be removed.
 				 */
 				creationRow: {
 					type: "sap.ui.mdc.table.CreationRow",
@@ -473,9 +474,9 @@ sap.ui.define([
 				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
 				 *
-				 * <b>Note:</b> The message filtering is not yet supported for this control therefore
-				 * {@link sap.m.plugins.DataStateIndicator#getEnableFiltering enableFiltering} property of the <code>DataStateIndicator</code> must
-				 * not be set to <code>true</code>.
+				 * <b>Note:</b> The message filtering is not yet supported for this control. Therefore the
+				 * {@link sap.m.plugins.DataStateIndicator#getEnableFiltering enableFiltering} property of the <code>DataStateIndicator</code> plugin
+				 * must not be set to <code>true</code>.
 				 *
 				 * @since 1.89
 				 */
@@ -496,7 +497,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired when a row in the table is pressed.
+				 * This event is fired when a row in the table is pressed.
 				 */
 				rowPress: {
 					parameters: {
@@ -509,7 +510,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Fired when the selection in the table is changed.
+				 * This event is fired when the selection in the table is changed.
 				 */
 				selectionChange: {
 					parameters: {
@@ -526,7 +527,7 @@ sap.ui.define([
 							type: "boolean"
 						},
 						/**
-						 * Identifies whether selectAll was pressed
+						 * Identifies whether the Select All checkbox was pressed
 						 */
 						selectAll: {
 							type: "boolean"
@@ -534,7 +535,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Fired right before the export is triggered.
+				 * This event is fired right before the export is triggered.
 				 *
 				 * For more information about the export settings, see {@link sap.ui.export.Spreadsheet} or
 				 * {@link topic:7e12e6b9154a4607be9d6072c72d609c Spreadsheet Export Configuration}.
@@ -561,7 +562,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Fired when the user pastes content from the clipboard to the table.
+				 * This event is fired when the user pastes content from the clipboard to the table.
 				 */
 				paste: {
 					parameters: {
@@ -1494,7 +1495,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current filter conditions present on the table
+	 * Returns the current filter conditions present on the table.
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
@@ -2605,7 +2606,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the row count of the table
+	 * Gets the row count of the table.
 	 *
 	 * @private
 	 * @returns {int} the row count
@@ -2744,7 +2745,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Termination of the <code>MDCTable</code> control
+	 * Terminates the <code>MDCTable</code> control.
 	 * @private
 	 */
 	Table.prototype.exit = function() {
