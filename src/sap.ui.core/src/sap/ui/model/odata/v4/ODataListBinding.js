@@ -733,22 +733,34 @@ sap.ui.define([
 	 * @param {boolean} [bAtEnd]
 	 *   Whether the entity is inserted at the end of the list. When creating multiple entities,
 	 *   this parameter must have the same value for each entity. Supported since 1.66.0
+	 * @param {boolean} [bInactive]
+	 *   Create an inactive context. Such a context will only be sent to the server after the first
+	 *   property update. From then on it behaves like any other created context. This parameter is
+	 *   experimental and its implementation may still change. Do not use it in productive code yet.
+	 *   Supported since 1.97.0
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity; its method
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, if a relative binding is unresolved, if
-	 *   entities are created both at the start and at the end, or if <code>bAtEnd</code> is
-	 *   <code>true</code> and the binding does not know the final length.
-	 *
+	 *   If
+	 *   <ul>
+	 *     <li> the binding's root binding is suspended,
+	 *     <li> a relative binding is unresolved,
+	 *     <li> entities are created both at the start and at the end,
+	 *     <li> <code>bAtEnd</code> is <code>true</code> and the binding does not know the final
+	 *       length,
+	 *     <li> <code>bInactive</code> is <code>true</code> and the update group ID does not have
+	 *       {@link sap.ui.model.odata.v4.SubmitMode.Auto}.
+	 *   </ul>
 	 * @public
 	 * @since 1.43.0
 	 */
-	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd) {
+	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd, bInactive) {
 		var oContext,
 			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
+			sGroupId = this.getUpdateGroupId(),
 			oGroupLock,
 			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + uid() + ")",
@@ -771,8 +783,16 @@ sap.ui.define([
 		}
 		this.bCreatedAtEnd = bAtEnd;
 
+		if (bInactive) {
+			if (!this.oModel.isAutoGroup(sGroupId)) {
+				throw new Error("bInactive only supported for update group with SubmitMode.Auto: "
+					+ this);
+			}
+			sGroupId = "$inactive." + sGroupId;
+		}
+
 		// only for createInCache
-		oGroupLock = this.lockGroup(undefined, true, true, function () {
+		oGroupLock = this.lockGroup(sGroupId, true, true, function () {
 			that.destroyCreated(oContext, true);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts

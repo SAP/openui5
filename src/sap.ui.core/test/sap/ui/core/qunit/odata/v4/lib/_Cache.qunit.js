@@ -7245,13 +7245,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	//TODO move to _Cache!
-	["$direct", "$auto", "myAuto", "myDirect"].forEach(function (sUpdateGroupId) {
-		QUnit.test("CollectionCache#create: relocate on failed POST for " + sUpdateGroupId,
+	[
+		{createGroupId : "$direct"},
+		{createGroupId : "$auto"},
+		{createGroupId : "myAuto"},
+		{createGroupId : "myDirect"},
+		{createGroupId : "$inactive.$auto", updateGroupId : "$auto", parkedGroupId : "$parked.$auto"}
+	].forEach(function (oFixture) {
+		// createGroupId is used in the group lock of the create()
+		// updateGroupId is the corresponding ID for POSTs and PATCHes (default is createGroupId)
+		// parkedGroupId is used when parking the request (default is "$parked." + updategroupId)
+		QUnit.test("CollectionCache#create: relocate on failed POST for " + oFixture.createGroupId,
 				function (assert) {
 			var oCache = this.createCache("Employees"),
 				oCreateGroupLock = {getGroupId : function () {}},
 				oFailedPostPromise = SyncPromise.reject(new Error()),
 				oFetchTypesPromise = SyncPromise.resolve({}),
+				sParkedGroupId = oFixture.parkedGroupId || "$parked." + oFixture.createGroupId,
 				oParkedGroupLock = {getGroupId : function () {}},
 				mGroups = {
 					"$direct" : "Direct",
@@ -7260,10 +7270,11 @@ sap.ui.define([
 					"myDirect" : "Direct"
 				},
 				sTransientPredicate = "($uid=id-1-23)",
+				sUpdateGroupId = oFixture.updateGroupId || oFixture.createGroupId,
 				that = this;
 
 			this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs()
-				.returns(sUpdateGroupId);
+				.returns(oFixture.createGroupId);
 			this.mock(oCache).expects("fetchTypes")
 				.exactly(2 /*create*/ + 1 /*catch handler*/)
 				.returns(oFetchTypesPromise);
@@ -7278,10 +7289,10 @@ sap.ui.define([
 				.returns(oFailedPostPromise);
 
 			this.oRequestorMock.expects("lockGroup")
-				.withExactArgs("$parked." + sUpdateGroupId, sinon.match.same(oCache), true, true)
+				.withExactArgs(sParkedGroupId, sinon.match.same(oCache), true, true)
 				.returns(oParkedGroupLock);
 			this.mock(oParkedGroupLock).expects("getGroupId").withExactArgs()
-				.returns("$parked." + sUpdateGroupId);
+				.returns(sParkedGroupId);
 			this.oRequestorMock.expects("request")
 				.withExactArgs("POST", "Employees", sinon.match.same(oParkedGroupLock), null,
 					sinon.match.object, sinon.match.func, sinon.match.func, undefined,
@@ -7297,8 +7308,9 @@ sap.ui.define([
 				});
 
 			// code under test
-			oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-				{Name : null}, function fnErrorCallback() {}, function fnSubmitCallback() {});
+			oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
+				sTransientPredicate, {Name : null}, function fnErrorCallback() {},
+				function fnSubmitCallback() {});
 
 			return oFailedPostPromise.then(undefined, function () {
 				var oGroupLock0 = {getGroupId : function () {}},
@@ -7327,8 +7339,7 @@ sap.ui.define([
 					.returns(sUpdateGroupId);
 				that.mock(oGroupLock1).expects("unlock").withExactArgs();
 				that.oRequestorMock.expects("relocate")
-					.withExactArgs("$parked." + sUpdateGroupId, sinon.match.same(oPostBody),
-						sUpdateGroupId);
+					.withExactArgs(sParkedGroupId, sinon.match.same(oPostBody), sUpdateGroupId);
 
 				// code under test - first update -> relocate
 				aPromises.push(oCache.update(oGroupLock1, "Name", "John Doe", that.spy(), "n/a",
@@ -7349,7 +7360,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	//TODO move to _Cache!
-	QUnit.test("CollectionCache: create entity without initial data", function (assert) {
+[false, true].forEach(function (bInactive) {
+	var sTitle = "CollectionCache: create entity without initial data, bInactive=" + bInactive;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees"),
 			oCreateGroupLock = {getGroupId : function () {}},
 			oPromise,
@@ -7359,7 +7373,8 @@ sap.ui.define([
 				unlock : function () {}
 			};
 
-		this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
+		this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs()
+			.returns(bInactive ? "$inactive.updateGroup" : "updateGroup");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees", sinon.match.same(oCreateGroupLock), null,
 				sinon.match.object, sinon.match.func, sinon.match.func, undefined,
@@ -7381,22 +7396,27 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements[0], {
 			"@$ui5._" : {
 				postBody : {},
-				"transient" : "updateGroup",
+				"transient" : bInactive ? "$inactive.updateGroup" : "updateGroup",
 				transientPredicate : sTransientPredicate
 			},
 			"@$ui5.context.isTransient" : true
 		});
 
 		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
+		this.oRequestorMock.expects("relocate").exactly(bInactive ? 1 : 0)
+			.withExactArgs("$inactive.updateGroup",
+				sinon.match.same(oCache.aElements[0]["@$ui5._"].postBody), "updateGroup");
 		this.mock(oUpdateGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
 		oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined, sTransientPredicate);
 
 		assert.strictEqual(oCache.aElements[0].Name, "foo");
+		assert.strictEqual(oCache.aElements[0]["@$ui5._"].transient, "updateGroup");
 
 		return oPromise;
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: create entity, canceled", function (assert) {

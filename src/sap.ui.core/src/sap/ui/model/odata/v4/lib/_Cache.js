@@ -19,6 +19,7 @@ sap.ui.define([
 		//   EMPLOYEE($uid=id-1550828854217-16) -> aMatches[0] === "($uid=id-1550828854217-16)"
 		//   @see sap.base.util.uid
 		rEndsWithTransientPredicate = /\(\$uid=[-\w]+\)$/,
+		rInactive = /^\$inactive\./,
 		sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
 		rNumber = /^-?\d+$/,
 		// Matches two cases:  segment with predicate or simply predicate:
@@ -399,6 +400,7 @@ sap.ui.define([
 				if (that.fetchTypes().isRejected()) {
 					throw oError;
 				}
+				sPostGroupId = sPostGroupId.replace(rInactive, "");
 				return request(sPostPath, that.oRequestor.lockGroup(
 					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
 						sPostGroupId : "$parked." + sPostGroupId, that, true, true));
@@ -1778,9 +1780,10 @@ sap.ui.define([
 				if (sTransientGroup === true) {
 					throw new Error("No 'update' allowed while waiting for server response");
 				}
-				if (sTransientGroup.startsWith("$parked.")) {
+				if (sTransientGroup.startsWith("$parked.")
+						|| sTransientGroup.startsWith("$inactive.")) {
 					sParkedGroup = sTransientGroup;
-					sTransientGroup = sTransientGroup.slice(8);
+					sTransientGroup = sTransientGroup.slice(sTransientGroup.indexOf(".") + 1);
 				}
 				if (sTransientGroup !== sGroupId) {
 					throw new Error("The entity will be created via group '" + sTransientGroup

@@ -33221,6 +33221,166 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Multiple creation rows, grid table
+	// (1) create three creation rows immediately after setContext
+	// (2) set note in first creation row -> failed POST, context still transient
+	// (3) call submitBatch("$auto") -> successful POST only for the first creation row, its context
+	//     not transient any more
+	// (4) delete second creation row while still inactive
+	// (5) set note in third creation row -> successful POST, context not transient any more
+	//
+	// JIRA: CPOUI5ODATAV4-1264
+	QUnit.test("Multiple creation rows, grid table", function (assert) {
+		var oBinding,
+			oContext1,
+			oContext2,
+			oContext3,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table id="table" rows="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
+	<Text id="position" text="{ItemPosition}"/>\
+	<Input id="note" value="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectChange("count")
+			.expectChange("position", [])
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("position", ["", "", ""])
+				.expectChange("note", ["default note", "", ""])
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$count=true"
+					+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
+					"@odata.count" : "1",
+					value : [{ItemPosition : "0010", Note : "Note 10", SalesOrderID : "42"}]
+				})
+				.expectChange("count", "4") // TODO: not the final state, should be 1!
+				.expectChange("position", ["0010",,, ""])
+				.expectChange("note", ["Note 10", "default note",, ""]);
+
+			oBinding = that.oView.byId("table").getBinding("rows");
+			oBinding.setContext(oModel.createBindingContext("/SalesOrderList('42')"));
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			// code under test (oInitialData, bSkipRefresh, bAtEnd, bInactive)
+			oContext1 = oBinding.create({Note : "default note"}, true, true, true);
+			oContext2 = oBinding.create({}, true, true, true);
+			oContext3 = oBinding.create({}, true, true, true);
+
+			assert.strictEqual(oModel.hasPendingChanges(), true); // TODO: not the final state!
+			assert.strictEqual(oModel.hasPendingChanges("$auto"), false);
+			assert.strictEqual(oBinding.hasPendingChanges(), true); // TODO: not the final state!
+			assert.strictEqual(oContext1.isTransient(), true);
+			assert.strictEqual(oContext2.isTransient(), true);
+			assert.strictEqual(oContext3.isTransient(), true);
+
+			return that.waitForChanges(assert, "(1)");
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 4);
+			assert.strictEqual(oBinding.getCount(), 4); // TODO: not the final state, should be 1!
+
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
+					+ "will be repeated automatically",
+					sinon.match("Request intentionally failed"),
+					"sap.ui.model.odata.v4.ODataListBinding");
+			that.expectChange("note", [, "Note 1"])
+				//.expectChange("count", "2") // TODO: not the final state
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {Note : "Note 1"}
+				}, createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			// code under test
+			oContext1.setProperty("Note", "Note 1");
+
+			assert.strictEqual(oBinding.getLength(), 4);
+			assert.strictEqual(oBinding.getCount(), 4); // TODO: not the final state, should be 2!
+			assert.strictEqual(oContext1.hasPendingChanges(), true);
+			assert.strictEqual(oContext1.isTransient(), true);
+
+			return that.waitForChanges(assert, "(2)");
+		}).then(function () {
+			assert.strictEqual(oContext1.hasPendingChanges(), true);
+			assert.strictEqual(oContext1.isTransient(), true);
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {Note : "Note 1"}
+				}, {
+					SalesOrderID : "42",
+					ItemPosition : "0020",
+					Note : "Note 1"
+				})
+				.expectChange("position", [, "0020"]);
+
+			return Promise.all([
+				// code under test
+				oModel.submitBatch("$auto"),
+				oContext1.created(),
+				that.waitForChanges(assert, "(3)")
+			]);
+		}).then(function () {
+			assert.strictEqual(oContext1.hasPendingChanges(), false);
+			assert.strictEqual(oContext1.isTransient(), false);
+
+			that.expectChange("count", "3") // TODO: not the final state, should be "2"
+				.expectChange("note", null, null) // from the deleted row
+				.expectChange("position", null, null);
+
+			// code under test
+			oContext2.delete();
+
+			return Promise.all([
+				checkCanceled(assert, oContext2.created()),
+				that.waitForChanges(assert, "(4)")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 3);
+			assert.strictEqual(oBinding.getCount(), 3); // TODO: not the final state, should be 2!
+
+			that.expectChange("note", [,, "Note 3"])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('42')/SO_2_SOITEM",
+					payload : {Note : "Note 3"}
+				}, {
+					SalesOrderID : "42",
+					ItemPosition : "0020",
+					Note : "Note 3"
+				})
+				.expectChange("position", [,, "0020"]);
+
+			// code under test
+			oContext3.setProperty("Note", "Note 3");
+
+			assert.strictEqual(oContext3.hasPendingChanges(), true);
+			assert.strictEqual(oContext3.isTransient(), true);
+
+			return Promise.all([
+				oContext3.created(),
+				that.waitForChanges(assert, "(5)")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 3);
+			assert.strictEqual(oBinding.getCount(), 3);
+			assert.strictEqual(oContext3.hasPendingChanges(), false);
+			assert.strictEqual(oContext3.isTransient(), false);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a model with metadataUrlParams. See that the main $metadata request contains
 	// sap-context-token, sap-language, and sap-client -> see this.useFakeServer() below.
 	// Further requests for $metadata references must not use sap-context-token.
