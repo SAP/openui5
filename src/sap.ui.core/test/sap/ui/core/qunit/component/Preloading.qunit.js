@@ -795,8 +795,9 @@ sap.ui.define([
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
 
 			assert.ok(this.oLogSpy.calledWith(
-				"Component 'testlibs.scenario16.embeddingLib.embeddedComponent' is defined to be embedded in a library or another component",
+				"Component 'testlibs.scenario16.embeddingLib.embeddedComponent' is defined to be embedded in a library or another component" +
 				"The relatively given preload for the embedding resource was not loaded before hand. Please make sure to load the embedding resource containing this Component before instantiating.",
+				undefined,
 				"sap.ui.core.Component#embeddedBy"
 			), "Warning log was issued");
 		}.bind(this));
@@ -812,8 +813,9 @@ sap.ui.define([
 				sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/Component-preload\.js$/));
 
 				assert.ok(this.oLogSpy.neverCalledWith(
-					"Component 'testlibs.scenario16.embeddingLib.embeddedComponent' is defined to be embedded in a library or another component",
+					"Component 'testlibs.scenario16.embeddingLib.embeddedComponent' is defined to be embedded in a library or another component" +
 					"The relatively given preload for the embedding resource was not loaded before hand. Please make sure to load the embedding resource containing this Component before instantiating.",
+					undefined,
 					"sap.ui.core.Component#embeddedBy"
 				), "Warning log was NOT issued");
 			}.bind(this));

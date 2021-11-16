@@ -116,22 +116,40 @@ sap.ui.define(["sap/ui/support/library", "./CoreHelper.support", "sap/ui/thirdpa
 		title: "Embedding Component or Library not loaded",
 		description: "Checks if the corresponding Component or Library of a Component is already loaded in case the Component is embedded by a resource.",
 		resolution: "Before using a Component embedded by a Library or another Component, it's necessary to load the embedding Library or Component in advance. " +
-			"The 'sap.app/embeddedBy' property must be relative path inside th e deployment unit (library or component).",
+			"The 'sap.app/embeddedBy' property must be relative path inside the deployment unit (library or component).",
 		resolutionurls: [],
 		check: function(oIssueManager) {
-			var aRelevantLogMessages = Log.getLogEntries().filter(function(oEntry) {
-				return oEntry.component === "sap.ui.core.Component#embeddedBy";
-			});
-			aRelevantLogMessages.forEach(function(oMessage) {
+			var oRegisteredComponents = {}, sComponentName;
+			var filterComponents = function (sComponentName) {
+				return function (oComponent) {
+					return oComponent.getManifestObject().getEntry("/sap.app/id") === sComponentName;
+				};
+			};
+			var createIssue = function (oComponentWithMissingEmbeddedBy) {
+				return function (oComponent) {
+					oIssueManager.addIssue({
+						severity: Severity.High,
+						details: oComponentWithMissingEmbeddedBy.message,
+						context: {
+							id: oComponent.getId()
+						}
+					});
+				};
+			};
+
+			Log.getLogEntries().forEach(function(oLogEntry) {
 				var oRegexGetComponentName = /^Component '([a-zA-Z0-9\.]*)'.*$/;
-				oIssueManager.addIssue({
-					severity: Severity.High,
-					details: oMessage.details,
-					context: {
-						id: oRegexGetComponentName.exec(oMessage.message)[1]
-					}
-				});
+				if (oLogEntry.component === "sap.ui.core.Component#embeddedBy") {
+					oRegisteredComponents[oRegexGetComponentName.exec(oLogEntry.message)[1]] = oLogEntry;
+				}
 			});
+
+			for (sComponentName in oRegisteredComponents) {
+				if (Object.hasOwnProperty.call(oRegisteredComponents, sComponentName)) {
+					var aComponents = sap.ui.core.Component.registry.filter(filterComponents(sComponentName));
+					aComponents.forEach(createIssue(oRegisteredComponents[sComponentName]));
+				}
+			}
 		}
 	};
 

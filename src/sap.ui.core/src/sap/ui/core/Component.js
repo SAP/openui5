@@ -3177,9 +3177,10 @@ sap.ui.define([
 						pPreload = preload(sComponentName, true);
 					} else if (!sap.ui.loader._.getModuleState(getControllerModuleName() + ".js")) {
 						Log.warning(
-							"Component '" + sComponentName + "' is defined to be embedded in a library or another component",
+							"Component '" + sComponentName + "' is defined to be embedded in a library or another component" +
 							"The relatively given preload for the embedding resource was not loaded before hand. " +
 							"Please make sure to load the embedding resource containing this Component before instantiating.",
+							undefined,
 							"sap.ui.core.Component#embeddedBy"
 						);
 					}
