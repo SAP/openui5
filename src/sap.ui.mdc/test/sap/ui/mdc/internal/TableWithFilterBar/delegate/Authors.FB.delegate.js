@@ -35,42 +35,33 @@ sap.ui.define([
 			FilterBarDelegate.fetchProperties(oFilterBar).then(function(aProperties) {
 				aProperties.forEach(function(oProperty) {
 
+					if (oProperty.name.indexOf("/") >= 0) {
+						oProperty.hiddenFilter = true;
+					}
+
 					if (oProperty.name === "$search") {
 						bSearchExists = true;
-					}
-
-					if (oProperty.name === "ID") {
+					} else if (oProperty.name === "ID") {
 						oProperty.formatOptions = {groupingEnabled: false};
+					} else if (oProperty.name === "dateOfBirth") {
+						oProperty.fieldHelp = "fhAdob";
+					} else if (oProperty.name === "dateOfDeath") {
+						oProperty.fieldHelp = "fhAdod";
+					} else if (oProperty.name === "countryOfOrigin_code") {
+						oProperty.fieldHelp = "IOFFVHCountry";
+						oProperty.display = FieldDisplay.ValueDescription;
+					} else if (oProperty.name === "regionOfOrigin_code") {
+						oProperty.fieldHelp = "IOFFVHRegion";
+						oProperty.display = FieldDisplay.ValueDescription;
+					} else if (oProperty.name === "cityOfOrigin_city") {
+						oProperty.fieldHelp = "IOFFVHCity";
+						oProperty.display = FieldDisplay.ValueDescription;
 					}
 
-					if (oProperty.maxConditions === -1) {
+					if (oProperty.maxConditions === -1 && !oProperty.fieldHelp) {
 						oProperty.fieldHelp = "FVH_Generic_Multi";
 					}
 				});
-
-				var oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "dateOfBirth");
-				if (oProperty) {
-					oProperty.fieldHelp = "fhAdob";
-				}
-				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "dateOfDeath");
-				if (oProperty) {
-					oProperty.fieldHelp = "fhAdod";
-				}
-				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "countryOfOrigin_code");
-				if (oProperty) {
-					oProperty.fieldHelp = "IOFFVHCountry";
-					oProperty.display = FieldDisplay.ValueDescription;
-				}
-				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "regionOfOrigin_code");
-				if (oProperty) {
-					oProperty.fieldHelp = "IOFFVHRegion";
-					oProperty.display = FieldDisplay.ValueDescription;
-				}
-				oProperty = FilterBarAuthorsSampleDelegate._getProperty(aProperties, "cityOfOrigin_city");
-				if (oProperty) {
-					oProperty.fieldHelp = "IOFFVHCity";
-					oProperty.display = FieldDisplay.ValueDescription;
-				}
 
 				if (!bSearchExists) {
 					aProperties.push({

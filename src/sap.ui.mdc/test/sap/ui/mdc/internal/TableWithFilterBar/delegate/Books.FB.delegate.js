@@ -21,74 +21,54 @@ sap.ui.define([
 		return oFetchPropertiesPromise.then(function (aProperties) {
 			aProperties.forEach(function(oPropertyInfo){
 
+				if (oPropertyInfo.name.indexOf("/") >= 0) {
+					oPropertyInfo.hiddenFilter = true;
+				}
+
 				if (oPropertyInfo.name === "$search") {
 					bSearchExists = true;
-				}
-
-				if (oPropertyInfo.name === "ID") {
+				} else if (oPropertyInfo.name === "ID") {
 					oPropertyInfo.formatOptions = {groupingEnabled: false};
-				}
-
-				if (oPropertyInfo.name === "author_ID") {
+				} else if (oPropertyInfo.name === "author_ID") {
 					oPropertyInfo.fieldHelp = "FH1";
 					oPropertyInfo.label = "Author ID";
 					oPropertyInfo.display = FieldDisplay.Description;
 					oPropertyInfo.formatOptions = {groupingEnabled: false};
-				}
-
-				if (oPropertyInfo.name === "title") {
+				} else if (oPropertyInfo.name === "title") {
 					oPropertyInfo.fieldHelp = "FH4";
 					oPropertyInfo.label = "Title";
 					oPropertyInfo.caseSensitive = false;
-				}
-
-				if (oPropertyInfo.name === "published") {
+				} else if (oPropertyInfo.name === "published") {
 					oPropertyInfo.fieldHelp = "FHPublished";
 					oPropertyInfo.label = "Published";
 					oPropertyInfo.filterOperators = ["MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR"];
-				}
-
-				if (oPropertyInfo.name === "language") {
+				} else if (oPropertyInfo.name === "language") {
 					oPropertyInfo.fieldHelp = "FHLanguage";
 					oPropertyInfo.label = "Language";
-				}
-
-				if (oPropertyInfo.name === "stock") {
+				} else if (oPropertyInfo.name === "stock") {
 					oPropertyInfo.label = "Stock range";
 					oPropertyInfo.maxConditions = 1;
 					oPropertyInfo.filterOperators = ["BT"];
-				}
-
-				if (oPropertyInfo.name === "classification_code") {
+				} else if (oPropertyInfo.name === "classification_code") {
 					oPropertyInfo.fieldHelp = "FHClassification";
 					oPropertyInfo.label = "Classification";
 					oPropertyInfo.display = FieldDisplay.Description;
-				}
-
-				if (oPropertyInfo.name === "genre_code") {
+				} else if (oPropertyInfo.name === "genre_code") {
 					oPropertyInfo.fieldHelp = "FHGenre";
 					oPropertyInfo.label = "Genre";
 					oPropertyInfo.display = FieldDisplay.Description;
-				}
-
-				if (oPropertyInfo.name === "subgenre_code") {
+				} else if (oPropertyInfo.name === "subgenre_code") {
 					oPropertyInfo.fieldHelp = "FHSubGenre";
 					oPropertyInfo.label = "Sub Genre";
 					oPropertyInfo.display = FieldDisplay.Description;
-				}
-
-				if (oPropertyInfo.name === "detailgenre_code") {
+				} else if (oPropertyInfo.name === "detailgenre_code") {
 					oPropertyInfo.fieldHelp = "FHDetailGenre";
 					oPropertyInfo.label = "Detail Genre";
 					oPropertyInfo.display = FieldDisplay.Description;
-				}
-
-				if (oPropertyInfo.name === "author/dateOfBirth") {
+				} else if (oPropertyInfo.name === "author/dateOfBirth") {
 					// oPropertyInfo.fieldHelp = "fhAdob";
 					oPropertyInfo.maxConditions = 1;
-				}
-
-				if (oPropertyInfo.name === "author/dateOfDeath") {
+				} else if (oPropertyInfo.name === "author/dateOfDeath") {
 					oPropertyInfo.fieldHelp = "fhAdod";
 					oPropertyInfo.maxConditions = 1;
 				}
