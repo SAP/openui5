@@ -12,17 +12,17 @@ sap.ui.define([
 	var RowAction = library.RowAction;
 
 	/**
-	 * Constructor for a new GridTableType.
+	 * Constructor for a new <code>GridTableType</code>.
 	 *
-	 * @param {string} [sId] ID for the new object, generated automatically if no ID is given
+	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The table type info base class for the metadata driven table.
-	 *        <h3><b>Note:</b></h3>
-	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 * @extends sap.ui.mdc.table.TableTypeBase
 	 * @author SAP SE
 	 * @private
 	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.GridTableType
 	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
@@ -34,16 +34,16 @@ sap.ui.define([
 			properties: {
 				/**
 				 * See sap.ui.mdc.RowCountMode for the options.<br>
-				 * Defaults to Auto --> meaning table adjusts it's height based on the parent container
+				 * Defaults to Auto - meaning table adjusts its height based on the parent container
 				 */
 				rowCountMode: {
 					type: "sap.ui.mdc.RowCountMode",
 					defaultValue: RowCountMode.Auto
 				},
 				/**
-				 * RowCount of the inner table.<br>
-				 * When sap.ui.mdc.RowCountMode.Auto is used - this property specifies the minAutoRowCount.<br>
-				 * When sap.ui.mdc.RowCountMode.Fixed is used - this property specifies the visibleRowCount.
+				 * Row count of the inner table.<br>
+				 * When <code>sap.ui.mdc.RowCountMode.Auto</code> is used - this property specifies the <code>minAutoRowCount</code>.<br>
+				 * When <code>sap.ui.mdc.RowCountMode.Fixed</code> is used - this property specifies the <code>visibleRowCount</code>.
 				 */
 				rowCount: {
 					type: "int",
@@ -51,14 +51,15 @@ sap.ui.define([
 				},
 				/**
 				 * Number of indices which can be selected in a range.
-				 * Accepts positive integer values. If set to 0, the selection limit is disabled, and the Select All checkbox appears instead of the Deselect All button.
+				 * Accepts positive integer values. If set to 0, the selection limit is disabled, and the Select All checkbox appears instead of the
+				 * Deselect All button.
 				 */
 				selectionLimit : {
 					type : "int",
 					defaultValue : 200
 				},
 				/**
-				 * Show header selector.
+				 * Determines whether the header selector is shown.
 				 */
 				showHeaderSelector : {
 					type : "boolean",

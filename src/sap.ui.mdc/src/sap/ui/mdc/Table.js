@@ -83,7 +83,6 @@ sap.ui.define([
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
 	var MultiSelectMode = library.MultiSelectMode;
-	var sFilterInterface = "sap.ui.mdc.IFilter";
 	var internalMap = new window.WeakMap();
 	var internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -104,26 +103,26 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a new Table.
+	 * Constructor for a new <code>MDCTable</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new control; generated automatically if no non-empty ID is given
+	 * <b>Note:</b> this can be omitted, no matter whether <code>mSettings</code> will be given or not.
 	 * @param {object} [mSettings] Object with initial settings for the new control
-	 * @class A metadata-driven table to simplify the usage of existing tables, such as the <code>sap.m.Table</code> and <code>sap.ui.table</code>
-	 *        controls.
-	 *        <h3>Overview</h3>
-	 *        The <code>Table</code> control creates a <code>ResponsiveTable</code> or <code>GridTable</code> based on the configuration
-	 *        specified.
-	 *        <h3>Structure</h3>
-	 *        The <code>columns</code> aggregation must be specified with the columns you require, along with with the template for the cell. The
-	 *        cell template can also be created lazily via the {@link #getDelegate table delegate}.<br>
-	 *        <b>Note:</b> The control is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
+	 * @class
+	 * <p>
+	 *     A metadata-driven table to simplify the usage of existing tables, such as the <code>ResponsiveTable</code> and <code>GridTable</code>
+	 *     controls. The metadata needs to be provided via the {@link sap.ui.mdc.TableDelegate TableDelegate} implementation in the form of a
+	 *     <code>PropertyInfo</code>.
+	 * </p>
 	 * @extends sap.ui.mdc.Control
 	 * @author SAP SE
 	 * @private
 	 * @experimental
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	var Table = Control.extend("sap.ui.mdc.Table", {
 		metadata: {
@@ -154,7 +153,7 @@ sap.ui.define([
 					invalidate: true
 				},
 				/**
-				 * Specifies the actions available for a table row.
+				 * Actions available for a table row.
 				 *
 				 * @since 1.60
 				 */
@@ -163,7 +162,7 @@ sap.ui.define([
 					defaultValue: []
 				},
 				/**
-				 * Specifies the personalization options for the table.<br>
+				 * Personalization options for the table.<br>
 				 * <b>Note:</b> The order of the options does not influence the position on the UI.
 				 *
 				 * @since 1.62
@@ -187,8 +186,9 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Defines the semantic level of the header.
+				 * Semantic level of the header.
 				 * For more information, see {@link sap.m.Title#setLevel}.
+				 *
 				 * @since 1.84
 				 */
 				headerLevel: {
@@ -197,8 +197,7 @@ sap.ui.define([
 					defaultValue: sap.ui.core.TitleLevel.Auto
 				},
 				/**
-				 * Binds the table automatically after the initial creation or re-creation of the table using the relevant <code>metadataInfo</code>
-				 * and <code>rowBindingInfo</code>.
+				 * Determines whether to bind the table automatically after the initial creation or re-creation of the table.
 				 */
 				autoBindOnInit: {
 					type: "boolean",
@@ -206,7 +205,7 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Specifies the header text that is shown in the table.
+				 * Header text that is shown in the table.
 				 */
 				header: {
 					type: "string",
@@ -214,8 +213,8 @@ sap.ui.define([
 					defaultValue: null
 				},
 				/**
-				 * Determines whether the header text is shown in the table. Even when set to <code>false</code>, the given header text is used to
-				 * label the table correctly for accessibility purposes.
+				 * Determines whether the header text is shown in the table. Regardless of its value, the given header text is used to label the table
+				 * correctly for accessibility purposes.
 				 *
 				 * @since 1.63
 				 */
@@ -225,19 +224,19 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Selection mode of the Table. This property controls whether single or multiple rows can be selected and how the selection can be
-				 * extended. It may also influence the visual appearance.
+				 * Selection mode of the table. Specifies whether single or multiple rows can be selected and how the selection can be extended. It
+				 * may also influence the visual appearance.
 				 */
 				selectionMode: {
 					type: "sap.ui.mdc.SelectionMode",
 					defaultValue: SelectionMode.None
 				},
 				/**
-				 * If set to <code>true</code> (default), the number of rows is shown along with the header text.<br>
-				 * If set to <code>false</code>, the number of rows is not shown on the user interface.<br>
+				 * Determines whether the number of rows is shown along with the header text. If set to <code>false</code>, the number of rows is not
+				 * shown on the user interface.<br>
 				 * <b>Note:</b><br>
-				 * To improve the performance of your application, you do not want to send dedicated OData requests. Therefore, you must configure the
-				 * count mode either in the model or in the binding of the table.<br>
+				 * For better performance dedicated OData requests should not be sent. The count mode must be configured either in the model or in the
+				 * binding of the table.<br>
 				 * This property can only be used if the back-end service supports row count.
 				 */
 				showRowCount: {
@@ -247,10 +246,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the number of records to be requested from the model. If the <code>type</code> property is set to
-				 * <code>ResponsiveTable</code>, then this property refers to the {@link sap.m.ListBase#getGrowingThreshold growingThreshold}
-				 * property of <code>sap.m.Table</code> If the <code>type</code> property is set to the <code>Table</code>, then this property
-				 * refers to the {@link sap.ui.table.Table#getThreshold threshold} property of <code>sap.ui.table.Table</code><br>
+				 * Number of records to be requested from the model. If the <code>type</code> property is set to <code>ResponsiveTable</code>, then it
+				 * refers to the {@link sap.m.ListBase#getGrowingThreshold growingThreshold} property of <code>ResponsiveTable</code>. If the
+				 * <code>type</code> property is set to <code>Table</code>, then it refers to the {@link sap.ui.table.Table#getThreshold threshold}
+				 * property of <code>GridTable</code>.<br>
 				 * <b>Note:</b> This property only takes effect if it is set to a positive integer value. Otherwise the table uses the default value
 				 * of the corresponding table types.
 				 *
@@ -263,7 +262,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the no data text shown in the table.
+				 * Determines the text shown when the table has no data.
 				 *
 				 * @since 1.63
 				 */
@@ -272,9 +271,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the sort conditions.
+				 * Sort conditions.
 				 *
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
 				 *
 				 * @since 1.73
 				 */
@@ -283,9 +283,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the filter conditions.
+				 * Filter conditions.
 				 *
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
 				 *
 				 * @since 1.80.0
 				 */
@@ -295,9 +296,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the group conditions.
+				 * Group conditions.
 				 *
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
 				 *
 				 * @since 1.87
 				 */
@@ -306,9 +308,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the aggregate conditions.
+				 * Aggregate conditions.
 				 *
-				 * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note:</b> This property is exclusively used for handling flexibility changes.
 				 *
 				 * @since 1.87
 				 */
@@ -317,7 +320,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Enables table data export.
+				 * Determines whether table data export is enabled.
 				 *
 				 * @since 1.75
 				 */
@@ -334,7 +337,7 @@ sap.ui.define([
 					defaultValue: 100
 				},
 				/**
-				 * Enables column resizing for all supported table types.
+				 * Determines whether column resizing is enabled.
 				 *
 				 * @since 1.90
 				 */
@@ -344,7 +347,7 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Controls the visibility of the Paste button.
+				 * Determines whether the Paste button is visible.
 				 *
 				 * @since 1.91
 				 */
@@ -365,13 +368,13 @@ sap.ui.define([
 				},
 				/**
 				 * Defines the multi-selection mode for the control.
-				 * If this property is set to the <code>Default</code> value, the <code>ResponsiveTable</code> type control renders
-				 * the Select All checkbox in the column header, otherwise the Deselect All icon is rendered.
+				 * If this property is set to the <code>Default</code> value, the <code>ResponsiveTable</code> type control renders the Select All
+				 * checkbox in the column header, otherwise the Deselect All icon is rendered.
 				 *
 				 * This property is used with the <code>selectionMode="Multi"</code>.
 				 * @since 1.93
 				 */
-				 multiSelectMode : {
+				multiSelectMode : {
 					type: "sap.ui.mdc.MultiSelectMode",
 					group: "Behavior",
 					defaultValue: MultiSelectMode.Default
@@ -421,6 +424,7 @@ sap.ui.define([
 
 				/**
 				 * This row can be used for user input to create new data if {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>".
+				 * <b>Note:</b> Once the binding implements support for creating transient records, this aggregation will be removed.
 				 */
 				creationRow: {
 					type: "sap.ui.mdc.table.CreationRow",
@@ -448,7 +452,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Additional Filter for the table.
+				 * Additional <code>Filter</code> for the table.
 				 */
 				quickFilter: {
 					type: "sap.ui.core.Control",
@@ -457,15 +461,18 @@ sap.ui.define([
 
 				/**
 				 * Settings for the table rows.
-				 * Each time the properties of the settings are changed, they have to be applied again via
-				 * <code>setRowSettings</code> for the changes to take effect.
 				 *
+				 * <b>Note:</b> Each time the properties of the settings are changed, they have to be applied again via <code>setRowSettings</code>
+				 * for the changes to take effect.
 				 */
 				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
 
 				/**
-				 * Defines an aggregation for the <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
-				 * The message filtering is not yet supported for this control therefore {@link sap.m.plugins.DataStateIndicator#getEnableFiltering enableFiltering} property of the <code>DataStateIndicator</code> must not be set to <code>true</code>.
+				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
+				 *
+				 * <b>Note:</b> The message filtering is not yet supported for this control therefore
+				 * {@link sap.m.plugins.DataStateIndicator#getEnableFiltering enableFiltering} property of the <code>DataStateIndicator</code> must
+				 * not be set to <code>true</code>.
 				 *
 				 * @since 1.89
 				 */
@@ -480,39 +487,51 @@ sap.ui.define([
 				 * {@link sap.ui.mdc.IFilter}.
 				 */
 				filter: {
-					type: sFilterInterface,
+					type: "sap.ui.mdc.IFilter",
 					multiple: false
 				}
 			},
 			events: {
 				/**
-				 * This event is fired when a row in the table is pressed.
+				 * Fired when a row in the table is pressed.
 				 */
 				rowPress: {
 					parameters: {
+						/**
+						 * The binding context
+						 */
 						bindingContext: {
 							type: "sap.ui.model.Context"
 						}
 					}
 				},
 				/**
-				 * This event is fired when the selection in the table is changed.
+				 * Fired when the selection in the table is changed.
 				 */
 				selectionChange: {
 					parameters: {
+						/**
+						 * The binding context of the pressed row
+						 */
 						bindingContext: {
 							type: "sap.ui.model.Context"
 						},
+						/**
+						 * The new selection state of the item
+						 */
 						selected: {
 							type: "boolean"
 						},
+						/**
+						 * Identifies whether selectAll was pressed
+						 */
 						selectAll: {
 							type: "boolean"
 						}
 					}
 				},
 				/**
-				 * This event is fired right before the export is triggered.
+				 * Fired right before the export is triggered.
 				 *
 				 * For more information about the export settings, see {@link sap.ui.export.Spreadsheet} or
 				 * {@link topic:7e12e6b9154a4607be9d6072c72d609c Spreadsheet Export Configuration}.
@@ -539,7 +558,7 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * This event is fired when the user pastes content from the clipboard to the table.
+				 * Fired when the user pastes content from the clipboard to the table.
 				 */
 				paste: {
 					parameters: {
@@ -582,9 +601,9 @@ sap.ui.define([
 	FilterIntegrationMixin.call(Table.prototype);
 
 	/**
-		* Create setter and getter for aggregation that are passed to ToolBar aggregation named "Between"
-		* Several different Table aggregations are passed to the same ToolBar aggregation (Between)
-	**/
+	 * Create setter and getter for aggregation that are passed to ToolBar aggregation named "Between"
+	 * Several different Table aggregations are passed to the same ToolBar aggregation (Between)
+	 **/
 	aToolBarBetweenAggregations.forEach(function(sAggregationName) {
 		var sCapAggregationName = capitalize(sAggregationName),
 			sPropertyName = "_o" + sCapAggregationName,
@@ -619,6 +638,9 @@ sap.ui.define([
 		};
 	});
 
+	/**
+	 * @inheritDoc
+	 */
 	Table.prototype.init = function() {
 
 		Control.prototype.init.apply(this, arguments);
@@ -633,6 +655,9 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Table.prototype.applySettings = function() {
 		Control.prototype.applySettings.apply(this, arguments);
 		this.initControlDelegate();
@@ -647,11 +672,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a <code>Promise</code> that resolves once the table has been initialized after the creation and
-	 * changing of its type.
+	 * Returns a <code>Promise</code> that resolves once the table has been initialized after the creation and changing of its type.
 	 *
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table has been initialized
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.initialized = function() {
 		return this._oTableReady.promise;
@@ -684,7 +710,7 @@ sap.ui.define([
 	 * This gets called from the DataStateIndicator plugin when data state message filter is applied
 	 * @private
 	 */
-	 Table.prototype._onApplyMessageFilter = function(oEvent) {
+	Table.prototype._onApplyMessageFilter = function(oEvent) {
 		this._oMessageFilter = oEvent.getParameter("filter");
 		oEvent.preventDefault();
 		this.rebind();
@@ -735,15 +761,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Scrolls the table to the row with the given index. Depending on the table type, this might cause
-	 * additional requests. If the given index is -1, it will scroll to the end of the table. Scrolling to the end
-	 * of the table is based on the length of the underlying binding. If the length is not final, it will only scroll
-	 * to the end of the current binding and might trigger a request for additional entries. This also applies in case
-	 * of a responsive table with growing enabled.
+	 * Scrolls the table to the row with the given index. Depending on the table type, this might cause additional requests. If the given index is -1,
+	 * it will scroll to the end of the table based on the length of the underlying binding. If the length is not final, it will only scroll to the
+	 * end of the current binding and might trigger a request for additional entries. This also applies in case of a responsive table with growing
+	 * enabled.
 	 *
 	 * @param {number} iIndex The index of the row that should be scrolled into the visible area
 	 * @since 1.76
 	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.scrollToIndex = function(iIndex) {
 		return new Promise(function(resolve, reject) {
@@ -774,18 +802,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the focus on the row. If <code>bFirstInteractiveElement</code> is <code>true</code>, and there are
-	 * interactive elements inside the row, sets the focus on the first interactive element. Otherwise the
-	 * focus is on the first data cell, if the type is <code>GridTableType</code>, and on the entire row, if
-	 * the type is <code>ResponsiveTableType</code>.
-	 * If the given index is not visible, the table scrolls to it automatically. In this case the same rules
-	 * apply as in {@link #scrollToIndex}.
+	 * Sets the focus on the row. If <code>bFirstInteractiveElement</code> is <code>true</code>, and there are interactive elements inside the row,
+	 * sets the focus on the first interactive element. Otherwise sets the focus on the first data cell, if the type is <code>GridTableType</code>,
+	 * and on the entire row, if the type is <code>ResponsiveTableType</code>.
+	 * If the given index is not visible, the table scrolls to it automatically. In this case the same rules apply as in {@link #scrollToIndex}.
 	 *
 	 * @param {number} iIndex The index of the row that is to be focused
-	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first
-	 * interactive element inside the row
+	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first interactive element inside the row
 	 * @since 1.86
 	 * @returns {Promise} A <code>Promise</code> that resolves after the focus has been set
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.focusRow = function(iIndex, bFirstInteractiveElement) {
 		return this.scrollToIndex(iIndex).then(function() {
@@ -852,10 +880,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Sets the value for the <code>headerLevel</code> property.
-	 * @param {string} sLevel - The level that is set to the header
-	 */
 	Table.prototype.setHeaderLevel = function(sLevel) {
 		if (this.getHeaderLevel() === sLevel) {
 			return this;
@@ -874,13 +898,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Sets the busy state on the inner table. The busy state will not be
-	 * applied to the sap.ui.mdc.Table itself.
-	 *
-	 * @param {boolean} bBusy Busy state that is applied to the inner table
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 */
 	Table.prototype.setBusy = function(bBusy) {
 		this.setProperty('busy', bBusy, true);
 
@@ -891,12 +908,6 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Sets the delay in milliseconds, after which the busy indicator will show up for the inner table.
-	 *
-	 * @param {int} iDelay the delay in milliseconds
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 */
 	Table.prototype.setBusyIndicatorDelay = function(iDelay) {
 		this.setProperty('busyIndicatorDelay', iDelay, true);
 
@@ -1067,10 +1078,6 @@ sap.ui.define([
 		updateFilterInfoBar(oTable);
 	}
 
-	/**
-	 * Overwrite public setter to rerout filterconditions to inner FilterBar
-	 *
-	 */
 	Table.prototype.setFilterConditions = function(mConditions) {
 		this.setProperty("filterConditions", mConditions, true);
 
@@ -1484,7 +1491,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for the current filter conditions present on the Table
+	 * Returns the current filter conditions present on the table
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
@@ -1587,11 +1594,11 @@ sap.ui.define([
 	};
 
 	/**
-	* Checks whether group personalization is enabled.
-	*
-	* @protected
-	* @returns {boolean} Whether group personalization is enabled
-	*/
+	 * Checks whether aggregation personalization is enabled.
+	 *
+	 * @protected
+	 * @returns {boolean} Whether aggregation personalization is enabled
+	 */
 	Table.prototype.isAggregationEnabled = function () {
 		return this.getP13nMode().indexOf("Aggregate") > -1;
 	};
@@ -1809,6 +1816,11 @@ sap.ui.define([
 		return this._oExportLibLoadPromise;
 	};
 
+	/**
+	 * Event handler for <code>keydown</code>.
+	 * @param {object} oEvent The event object
+	 * @private
+	 */
 	Table.prototype.onkeydown = function(oEvent) {
 		if (oEvent.isMarked()) {
 			return;
@@ -2428,13 +2440,22 @@ sap.ui.define([
 		}, this);
 	};
 
+	/**
+	 * Checks whether the table is bound.
+	 *
+	 * @returns {boolean} Whether the table is bound
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	 */
 	Table.prototype.isTableBound = function() {
 		return this._oTable ? this._oTable.isBound(this._bMobileTable ? "items" : "rows") : false;
 	};
 
 	/**
 	 * Defines the rows/items aggregation binding
-	 * @returns {Promise} Returns a <code>Promise</code>
+	 *
+	 * @returns {Promise} A <code>Promise</code> that resolves when the rows are bound
 	 * @private
 	 */
 	Table.prototype.bindRows = function() {
@@ -2528,7 +2549,8 @@ sap.ui.define([
 	/**
 	 * Provides an additional announcement for the screen reader to inform the user that the table
 	 * has been updated.
-	 * @param {int} iRowCount number of total rows
+	 *
+	 * @param {int} iRowCount Number of total rows
 	 * @private
 	 */
 	Table.prototype._announceTableUpdate = function(iRowCount) {
@@ -2580,7 +2602,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * gets table's row count
+	 * Gets the row count of the table
 	 *
 	 * @private
 	 * @returns {int} the row count
@@ -2670,6 +2692,9 @@ sap.ui.define([
 		this.rebind();
 	};
 
+	/**
+	 * Rebinds the table rows.
+	 */
 	Table.prototype.rebind = function() {
 		// Bind the rows/items of the table, only once it is initialized.
 		if (this._bFullyInitialized) {
@@ -2715,6 +2740,10 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Termination of the <code>MDCTable</code> control
+	 * @private
+	 */
 	Table.prototype.exit = function() {
 		// Always destroy the template
 		if (this._oTemplate) {

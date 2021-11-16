@@ -10,17 +10,20 @@ sap.ui.define([
 	/**
 	 * Constructor for new RowSettings.
 	 *
-	 * @param {string} [sId] ID for the new element, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The <code>RowSettings</code> control allows you to configure a row.
-	 * You can only use this control in the context of the <code>sap.ui.mdc.Table</code> control to define row settings.
+	 * The <code>RowSettings</code> control allows configuring a row.
+	 * This control can only be used in the context of <code>sap.ui.mdc.Table</code> control to define row settings.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
 	 * @constructor
+	 * @experimental
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @alias sap.ui.mdc.table.RowSettings
 	 */
 
@@ -46,7 +49,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the semantics of the {@link sap.ui.mdc.table.RowSettings#setHighlight highlight} property for accessibility purposes.
-				 *
 				 */
 				highlightText : {type : "string", group : "Misc", defaultValue : ""},
 

@@ -11,17 +11,17 @@ sap.ui.define([
 	var GrowingMode = library.GrowingMode;
 	var RowAction = library.RowAction;
 	/**
-	 * Constructor for a new ResponsiveTableType.
+	 * Constructor for a new <code>ResponsiveTableType</code>.
 	 *
-	 * @param {string} [sId] ID for the new object, generated automatically if no ID is given
+	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The table type info base class for the metadata driven table.
-	 *        <h3><b>Note:</b></h3>
-	 *        The control is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
 	 * @extends sap.ui.mdc.table.TableTypeBase
 	 * @author SAP SE
 	 * @private
 	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.ResponsiveTableType
 	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
@@ -32,21 +32,21 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties: {
 				/**
-				 * See sap.ui.mdc.GrowingMode<br>
-				 * Defaults to Basic --> meaning only growing is enabled on ResponsiveTable
+				 * See <code>sap.ui.mdc.GrowingMode</code><br>
+				 * Defaults to Basic - meaning only growing is enabled on <code>ResponsiveTable</code>
 				 */
 				growingMode: {
 					type: "sap.ui.mdc.GrowingMode",
 					defaultValue: GrowingMode.Basic
 				},
 				/**
-				 * Controls the visibility of the Show / Hide Details button for the <code>ResponsiveTable</code> scenario.
+				 * Specifies whether the Show / Hide Details button for the <code>ResponsiveTable</code> scenario is shown.
 				 *
-				 * If the available screen space gets too narrow, the columns configured with <code>High</code> and <code>Medium</code>
-				 * importance move to the pop-in area while the columns with <code>Low</code> importance are hidden.
-				 * On mobile phones, the columns with <code>Medium</code> importance are also hidden.
-				 * As soon as the first column is hidden, this button appears in the table toolbar and gives the user
-				 * the possibility to toggle the visibility of the hidden columns in the pop-in area.
+				 * If the available screen space gets too narrow, the columns configured with <code>High</code> and <code>Medium</code> importance
+				 * move to the pop-in area, while the columns with <code>Low</code> importance are hidden.<br>
+				 * On mobile phones, the columns with <code>Medium</code> importance are also hidden.<br>
+				 * As soon as the first column is hidden, this button appears in the table toolbar and gives the user the possibility to toggle the
+				 * visibility of the hidden columns in the pop-in area.
 				 *
 				 * @since 1.79
 				 */
@@ -56,12 +56,11 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * Defines which columns should be hidden instead of moved into the pop-in area
-				 * depending on their importance.
+				 * Defines which columns should be hidden instead of moved into the pop-in area depending on their importance.
 				 * See {@link sap.m.Column#getImportance} and {@link sap.m.Table#getHiddenInPopin} for more details.
 				 *
-				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>showDetailsButton="true"</code>.
-				 * If no priority is given, the default configuration of {@link sap.ui.mdc.table.ResponsiveTableType#getShowDetailsButton} is used.
+				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>showDetailsButton="true"</code>.<br>
+				 * If no priority is given, the default configuration of {@link sap.ui.mdc.table.ResponsiveTableType#getShowDetailsButton} is used.<br>
 				 * If this property is changed after the <code>MDCTable</code> has been initialized, the new changes take effect only when the
 				 * Show / Hide Details button is pressed a second time.
 				 *
@@ -235,11 +234,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set property 'hiddenInPopin' on the inner ResponsiveTable to hide columns based on MDCTable configuration
-	 * of 'showDetailsButton' and 'detailsButtonSetting' if {@param bValue} is set to {true}.
+	 * Toggles the visibility of the Show Details button.<br>
+	 * If {@param bValue} is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code> to
+	 * hide columns based on <code>MDCTable</code> configuration (<code>showDetailsButton</code> and <code>detailsButtonSetting</code> properties).
 	 * Otherwise an empty array is set to show all columns.
 	 *
-	 * @param {boolean} bValue - indicator to hide details or not
+	 * @param {boolean} bValue - Whether to hide details and display the Show Details button
 	 * @private
 	 */
 	ResponsiveTableType.prototype._toggleShowDetails = function(bValue) {
@@ -272,10 +272,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Helper function to get the importance of the columns that should be hidden based on
-	 * MDCTable configuration.
+	 * Helper function to get the importance of the columns that should be hidden based on <code>MDCTable</code> configuration.
 	 *
-	 * @returns {array} sap.ui.core.Priority[]
+	 * @returns {array} sap.ui.core.Priority[] Array of column priorities
 	 * @private
 	 */
 	ResponsiveTableType.prototype._getImportanceToHide = function() {
@@ -292,9 +291,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Event handler when the table pop-in has changed.
+	 * Event handler called when the table pop-in has changed.
 	 *
-	 * @param {sap.ui.base.Event} oEvent - fired event object
+	 * @param {sap.ui.base.Event} oEvent - Event object
 	 * @private
 	 */
 	ResponsiveTableType.prototype._onPopinChanged = function(oEvent) {

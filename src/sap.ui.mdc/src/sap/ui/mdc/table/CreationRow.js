@@ -12,18 +12,18 @@ sap.ui.define([
 	/**
 	 * Constructor for a new CreationRow.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Allows to enter data in a row shaped form, if the table's {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>". The form
-	 *        elements are aligned with the columns of the table, and are created automatically based on the
-	 *        {@link sap.ui.mdc.table.Column#getCreationTemplate creationTemplate} aggregation of the {@link sap.ui.mdc.table.Column}. <b>Note:</b> This control
-	 *        is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
+	 * elements are aligned with the columns of the table, and are created automatically based on the
+	 * {@link sap.ui.mdc.table.Column#getCreationTemplate creationTemplate} aggregation of the {@link sap.ui.mdc.table.Column}.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @private
 	 * @experimental
+	 * @private
+	 * @ui5-restricted sap.fe
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.CreationRow
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -42,7 +42,7 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Determines whether the <code>sap.ui.mdc.table.CreationRow</code> and its inner control are in a busy state.
+				 * Determines whether the <code>sap.ui.mdc.table.CreationRow</code> and its inner control are in a busy state
 				 */
 				busy: {
 					type: "boolean",
@@ -50,7 +50,7 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * Visibility of this control.
+				 * Visibility of the <code>CreationRow</code>
 				 */
 				visible: {
 					type: "boolean",
@@ -60,7 +60,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired when the corresponding keyboard shortcut or the apply button of the toolbar are pressed.
+				 * Fired when the corresponding keyboard shortcut or the apply button of the toolbar are pressed
 				 */
 				apply: {
 					allowPreventDefault: true
@@ -89,6 +89,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bBusy Busy state that is applied to the inner control
 	 * @returns {this}  Returns <code>this</code> to allow method chaining
+	 * @private
 	 */
 	CreationRow.prototype.setBusy = function(bBusy) {
 		this.setProperty('busy', bBusy, true);
@@ -142,10 +143,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the row based on the configuration of the table this row is inside.
+	 * Updates the row based on the configuration of the table this row is inside of.
 	 *
-	 * @private
 	 * @returns {Promise} Promise that resolves once the inner <code>CreationRow</code> control is updated
+	 * @private
 	 */
 	CreationRow.prototype.update = function() {
 		return this._updateInnerCreationRow();
@@ -228,7 +229,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets the table this row is inside.
+	 * Gets the table this row is inside of.
 	 *
 	 * @return {sap.ui.mdc.Table|null} The instance of the table or <code>null</code>, if this row is not inside a table.
 	 * @private
