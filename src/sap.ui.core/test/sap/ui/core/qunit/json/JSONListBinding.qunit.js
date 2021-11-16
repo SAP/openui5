@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -7,6 +8,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/base/util/deepEqual"
 ], function(
+	JSONListBinding,
 	JSONModel,
 	Filter,
 	FilterOperator,
@@ -1515,5 +1517,19 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(oBinding._getContexts(1, 1), ["~context"]);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getAllCurrentContexts: Returns contexts", function (assert) {
+		var oBinding = {
+				_getContexts : function () {}
+			};
+
+		this.mock(oBinding).expects("_getContexts").withExactArgs(0, Infinity)
+			.returns("~aContexts");
+
+		// code under test
+		assert.strictEqual(JSONListBinding.prototype.getAllCurrentContexts.call(oBinding),
+			"~aContexts");
 	});
 });
