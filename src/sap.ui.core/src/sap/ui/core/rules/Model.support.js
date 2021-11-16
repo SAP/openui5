@@ -7,19 +7,18 @@
 sap.ui.define([
 	"sap/ui/support/library",
 	"sap/ui/support/supportRules/util/StringAnalyzer",
+	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataMetadata",
-	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/PropertyBinding"
+	"sap/ui/model/odata/ODataMetadata"
 ],
 	function(
 		SupportLib,
 		StringAnalyzer,
+		CompositeBinding,
 		ListBinding,
 		JSONModel,
-		ODataMetadata,
-		CompositeBinding
+		ODataMetadata
 	) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
@@ -41,6 +40,52 @@ sap.ui.define([
 		});
 		return sJsonModelBestMatch;
 	}
+
+	//**********************************************************
+	// Check Functions
+	//**********************************************************
+
+	var fnCheckSelect = function (oIssueManager, oCoreFacade, oScope) {
+		oScope.getElements().forEach(function (oElement) {
+			var mBindingInfos = oElement.mBindingInfos;
+
+			Object.keys(mBindingInfos).forEach(function (sName) {
+				var oBinding = mBindingInfos[sName].binding,
+					sDetails;
+
+				if (!oBinding) {
+					return;
+				}
+
+				if (oBinding.isA("sap.ui.model.odata.v2.ODataListBinding") &&
+						(!oBinding.mParameters || !oBinding.mParameters.select)) {
+					sDetails = "The aggregation '" + sName + "' of element " + oElement.getId()
+						+ " with binding path '" + oBinding.getPath() + "' is bound against a "
+						+ "collection, yet no binding parameter 'select' is used. Using 'select' "
+						+ "may improve performance.";
+				} else if (oBinding.isA("sap.ui.model.odata.v4.ODataListBinding")
+						&& !oBinding.getModel().bAutoExpandSelect
+						&& (!oBinding.mParameters || !oBinding.mParameters.$select)) {
+					sDetails = "The aggregation '" + sName + "' of element "
+						+ oElement.getId() + " with binding path '" + oBinding.getPath() + "' is "
+						+ "bound against a collection, yet no OData query option '$select' is used."
+						+ " Using '$select' may improve performance. Alternatively, enable the "
+						+ "automatic generation of '$select' and '$expand' in the model using the "
+						+ "'autoExpandSelect' parameter";
+				}
+
+				if (sDetails) {
+					oIssueManager.addIssue({
+						context : {
+							id : oElement.getId()
+						},
+						details : sDetails,
+						severity : Severity.Low
+					});
+				}
+			});
+		});
+	};
 
 	//**********************************************************
 	// Rule Definitions
@@ -150,7 +195,36 @@ sap.ui.define([
 		}
 	};
 
-	return [
-		oBindingPathSyntaxValidation
-	];
+	/**
+	 * Checks whether the select(v2)/$select(v4) parameter is used when binding against an
+	 * aggregation.
+	 */
+	var oSelectUsedInAggregation = {
+			audiences : [Audiences.Application],
+			categories : [Categories.Bindings, Categories.Performance],
+			description : "Using $select allows the back end to send only necessary properties",
+			enabled : true,
+			id : "selectUsedInBoundAggregation",
+			minversion : "1.38",
+			resolution : "Use the '$select' binding parameter when binding an aggregation against "
+				+ "an OData V4 model, or 'select' in case of an OData V2 model",
+			resolutionurls : [{
+				href : "https://sapui5.hana.ondemand.com/#/topic/408b40efed3c416681e1bd8cdd8910d4.html#loio408b40efed3c416681e1bd8cdd8910d4/section_useSelectQuery",
+				text : "Documentation: Performance: Speed Up Your App"
+			}, {
+				href : "https://sapui5.hana.ondemand.com/#/topic/10ca58b701414f7f93cd97156f898f80",
+				text : "OData V4 only: Automatic determination of $expand and $select"
+			}, {
+				href : "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.odata.v4.ODataModel%23methods/bindList",
+				text : "Documentation: v4.ODataModel#bindList"
+			}, {
+				href : "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.odata.v2.ODataModel%23methods/bindList",
+				text : "Documentation: v2.ODataModel#bindList"
+			}],
+			title : "Model: Use the $select/select binding parameter when binding aggregations to "
+				+ "improve performance",
+			check : fnCheckSelect
+		};
+
+	return [oBindingPathSyntaxValidation, oSelectUsedInAggregation];
 }, true);

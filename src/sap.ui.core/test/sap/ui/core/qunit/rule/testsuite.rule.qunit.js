@@ -80,8 +80,8 @@ sap.ui.define(function () {
 			"misc/silentEventBus": {
 				title: "QUnit Tests for 'silent event bus usage' rules"
 			},
-			"model/bindingPathSyntaxValidation": {
-				title: "QUnit Tests for 'bindingPathSyntaxValidation' rules"
+			"model/modelSupport": {
+				title: "QUnit Tests for model rules"
 			}
 		}
 	};

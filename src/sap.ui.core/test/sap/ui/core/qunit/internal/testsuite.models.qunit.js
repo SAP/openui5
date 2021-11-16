@@ -288,15 +288,15 @@ sap.ui.define(function() {
 			},
 
 			// *************************************************************************
-			// Test for support assistant rule 'bindingPathSyntaxValidation'
+			// Test for model support assistant rules
 			// *************************************************************************
 			// contained in testsuite.rule.qunit.js
-			bindingPathSyntaxValidation : {
+			"Model.support" : {
 				// not in 1RingModels.qunit because usage of sap.ui.table library in
 				// ODataModel.integration.qunit leads to a console error
 				title : "sap.ui.core.rules.Model.support",
-				module : ["test-resources/sap/ui/core/qunit/rule/model/"
-					+ "bindingPathSyntaxValidation.qunit"]
+				module : ["test-resources/sap/ui/core/qunit/rule/model/modelSupport.qunit"],
+				qunit : {testTimeout : 15000}
 			}
 		}
 	};
