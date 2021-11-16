@@ -42,6 +42,14 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			"YESTERDAY": "YESTERDAY",
 			"TOMORROW": "TOMORROW",
 			"SPECIFICMONTH": "SPECIFICMONTH",
+			"FIRSTDAYWEEK": "FIRSTDAYWEEK",
+			"LASTDAYWEEK": "LASTDAYWEEK",
+			"FIRSTDAYMONTH":"FIRSTDAYMONTH",
+			"LASTDAYMONTH":"LASTDAYMONTH",
+			"FIRSTDAYQUARTER":"FIRSTDAYQUARTER",
+			"LASTDAYQUARTER":"LASTDAYQUARTER",
+			"FIRSTDAYYEAR":"FIRSTDAYYEAR",
+			"LASTDAYYEAR":"LASTDAYYEAR",
 			"THISWEEK": "THISWEEK",
 			"THISMONTH": "THISMONTH",
 			"THISQUARTER": "THISQUARTER",
@@ -91,6 +99,14 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			"YESTERDAY": _Groups.SingleDates,
 			"TOMORROW": _Groups.SingleDates,
 			"SPECIFICMONTH": _Groups.Months,
+			"FIRSTDAYWEEK": _Groups.SingleDates,
+			"LASTDAYWEEK": _Groups.SingleDates,
+			"FIRSTDAYMONTH":_Groups.SingleDates,
+			"LASTDAYMONTH":_Groups.SingleDates,
+			"FIRSTDAYQUARTER":_Groups.SingleDates,
+			"LASTDAYQUARTER":_Groups.SingleDates,
+			"FIRSTDAYYEAR":_Groups.SingleDates,
+			"LASTDAYYEAR":_Groups.SingleDates,
 			"THISWEEK": _Groups.Weeks,
 			"THISMONTH": _Groups.Months,
 			"THISQUARTER": _Groups.Quarters,
@@ -186,6 +202,14 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 					case Keys.TODAY:
 					case Keys.YESTERDAY:
 					case Keys.TOMORROW:
+					case Keys.FIRSTDAYWEEK:
+					case Keys.LASTDAYWEEK:
+					case Keys.FIRSTDAYMONTH:
+					case Keys.LASTDAYMONTH:
+					case Keys.FIRSTDAYQUARTER:
+					case Keys.LASTDAYQUARTER:
+					case Keys.FIRSTDAYYEAR:
+					case Keys.LASTDAYYEAR:
 					case Keys.THISWEEK:
 					case Keys.THISMONTH:
 					case Keys.THISQUARTER:
@@ -530,6 +554,22 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 					return UniversalDateUtils.ranges.yesterday();
 				case "TOMORROW":
 					return UniversalDateUtils.ranges.tomorrow();
+				case "FIRSTDAYWEEK":
+					return UniversalDateUtils.ranges.firstDayOfWeek();
+				case "LASTDAYWEEK":
+					return UniversalDateUtils.ranges.lastDayOfWeek();
+				case "FIRSTDAYMONTH":
+					return UniversalDateUtils.ranges.firstDayOfMonth();
+				case "LASTDAYMONTH":
+					return UniversalDateUtils.ranges.lastDayOfMonth();
+				case "FIRSTDAYQUARTER":
+					return UniversalDateUtils.ranges.firstDayOfQuarter();
+				case "LASTDAYQUARTER":
+					return UniversalDateUtils.ranges.lastDayOfQuarter();
+				case "FIRSTDAYYEAR":
+					return UniversalDateUtils.ranges.firstDayOfYear();
+				case "LASTDAYYEAR":
+					return UniversalDateUtils.ranges.lastDayOfYear();
 				case "THISWEEK":
 					return UniversalDateUtils.ranges.currentWeek();
 				case "THISMONTH":
@@ -615,6 +655,14 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 				case "TODAY":
 				case "YESTERDAY":
 				case "TOMORROW":
+				case "FIRSTDAYWEEK":
+				case "LASTDAYWEEK":
+				case "FIRSTDAYMONTH":
+				case "LASTDAYMONTH":
+				case "FIRSTDAYQUARTER":
+				case "LASTDAYQUARTER":
+				case "FIRSTDAYYEAR":
+				case "LASTDAYYEAR":
 				case "THISWEEK":
 				case "THISMONTH":
 				case "THISQUARTER":
