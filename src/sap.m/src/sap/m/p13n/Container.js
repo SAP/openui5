@@ -55,7 +55,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				listLayout: {
-					type: "Boolean",
+					type: "boolean",
 					defaultValue: false
 				}
 			}

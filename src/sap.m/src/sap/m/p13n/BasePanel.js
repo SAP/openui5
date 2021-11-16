@@ -251,12 +251,7 @@ sap.ui.define([
 				tooltip: this._getResourceText("p13n.MOVE_TO_TOP"),
 				icon: "sap-icon://collapse-group",
 				press: [this._onPressButtonMoveToTop, this],
-				visible: false,
-				layoutData: new OverflowToolbarLayoutData({
-					moveToOverflow: true,
-					priority: "Low",
-					group: 2
-				})
+				visible: false
 			});
 			this.addDependent(this._oMoveTopBtn);
 		}
@@ -271,12 +266,7 @@ sap.ui.define([
 				tooltip: this._getResourceText("p13n.MOVE_UP"),
 				icon: "sap-icon://navigation-up-arrow",
 				press: [this._onPressButtonMoveUp, this],
-				visible: false,
-				layoutData: new OverflowToolbarLayoutData({
-					moveToOverflow: true,
-					priority: "High",
-					group: 1
-				})
+				visible: false
 			});
 			this.addDependent(this._oMoveUpButton);
 		}
@@ -291,12 +281,7 @@ sap.ui.define([
 				tooltip: this._getResourceText("p13n.MOVE_DOWN"),
 				icon: "sap-icon://navigation-down-arrow",
 				press: [this._onPressButtonMoveDown, this],
-				visible: false,
-				layoutData: new OverflowToolbarLayoutData({
-					moveToOverflow: true,
-					priority: "High",
-					group: 1
-				})
+				visible: false
 			});
 			this.addDependent(this._oMoveDownButton);
 		}
@@ -311,12 +296,7 @@ sap.ui.define([
 				tooltip: this._getResourceText("p13n.MOVE_TO_BOTTOM"),
 				icon: "sap-icon://expand-group",
 				press: [this._onPressButtonMoveToBottom, this],
-				visible: false,
-				layoutData: new OverflowToolbarLayoutData({
-					moveToOverflow: true,
-					priority: "Low",
-					group: 2
-				})
+				visible: false
 			});
 			this.addDependent(this._oMoveBottomButton);
 		}
