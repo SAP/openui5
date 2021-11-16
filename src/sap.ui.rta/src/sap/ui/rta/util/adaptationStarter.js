@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/core/UIComponent",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/m/MessageBox"
 ], function(
 	RuntimeAuthoring,
 	Control,
@@ -16,7 +18,9 @@ sap.ui.define([
 	Layer,
 	FeaturesAPI,
 	UIComponent,
-	Log
+	Log,
+	PersistenceWriteAPI,
+	MessageBox
 ) {
 	"use strict";
 
@@ -75,6 +79,36 @@ sap.ui.define([
 				return oRta.start();
 			})
 			.then(function() {
+				if (mOptions.flexSettings.layer === "CUSTOMER") {
+					var mPropertyBag = {
+						oComponent: mOptions.rootControl,
+						selector: mOptions.rootControl,
+						invalidateCache: false,
+						includeVariants: true,
+						includeCtrlVariants: true,
+						currentLayer: Layer.CUSTOMER
+					};
+
+					PersistenceWriteAPI.getChangesWarning(mPropertyBag)
+						.then(function(oWarningMessage) {
+							if (oWarningMessage.showWarning) {
+								var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+								var oMessageProps = oWarningMessage.warningType === "mixedChangesWarning"
+									? {
+										text: "MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING",
+										title: "TIT_ADAPTATION_STARTER_MIXED_CHANGES_TITLE"
+									}
+									: {
+										text: "MSG_ADAPTATION_STARTER_NO_CHANGES_IN_P_WARNING",
+										title: "TIT_ADAPTATION_STARTER_NO_CHANGES_IN_P_TITLE"
+									};
+
+								MessageBox.warning(oRtaResourceBundle.getText(oMessageProps.text), {
+									title: oRtaResourceBundle.getText(oMessageProps.title)
+								});
+							}
+						});
+				}
 				return oRta;
 			})
 			.catch(function(vError) {

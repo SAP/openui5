@@ -148,7 +148,7 @@ sap.ui.define([
 			assert.equal(this.oRta.getToolbar().getControl("redo").getEnabled(), false, "then the redo Button is enabled");
 			assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Restore Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl("restore").getEnabled(), false, "then the Restore Button is disabled");
-			assert.equal(this.oRta.getToolbar().getControl("publish").getVisible(), false, "then the Publish Button is invisible");
+			assert.equal(this.oRta.getToolbar().getControl("publish").getVisible(), true, "then the Publish Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl("publish").getEnabled(), false, "then the Publish Button is disabled");
 			assert.equal(this.oRta.getToolbar().getControl("manageApps").getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl("manageApps").getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
