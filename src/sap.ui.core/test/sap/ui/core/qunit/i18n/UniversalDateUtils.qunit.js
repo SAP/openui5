@@ -426,6 +426,11 @@ sap.ui.define([
 		testDate(assert, aRange[0].oDate, 0, "YEAR", 2000, 0, 1, 0,0,0,0);
 		testDate(assert, aRange[1].oDate, 0, "YEAR", 2000, 4, 25, 23,59,59,999);
 
+		//dateToYear
+		aRange = UniversalDateUtils.ranges.dateToYear();
+		testDate(assert, aRange[0].oDate, 0, "YEAR", 2000, 4, 25, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 0, "YEAR", 2000, 11, 31, 23,59,59,999);
+
 		oUniversalDateUtilsStub.restore();
 	});
 
@@ -469,6 +474,14 @@ sap.ui.define([
 				"getYearStartDate: returned date must not be the same object as the input date");
 			assert.equal(oOutput.getCalendarType(), sCalendarType,
 				"getYearStartDate: returned calendar type must be the same as the input calendar type");
+
+			// getYearEndDate
+			oOutput = UniversalDateUtils.getYearEndDate(oInput);
+			assert.equal(oInput.getTime(), fFixedDateTime, "getYearEndDate: input date has not been modified");
+			assert.ok(oOutput !== oInput,
+				"getYearEndDate: returned date must not be the same object as the input date");
+			assert.equal(oOutput.getCalendarType(), sCalendarType,
+				"getYearEndDate: returned calendar type must be the same as the input calendar type");
 
 			// resetStartTime
 			oOutput = UniversalDateUtils.resetStartTime(oInput);

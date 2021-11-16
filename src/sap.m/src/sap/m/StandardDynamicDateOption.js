@@ -67,6 +67,7 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			"FROM": "FROM",
 			"TO": "TO",
 			"YEARTODATE": "YEARTODATE",
+			"DATETOYEAR":"DATETOYEAR",
 			"TODAYFROMTO": "TODAYFROMTO",
 			"QUARTER1": "QUARTER1",
 			"QUARTER2": "QUARTER2",
@@ -115,6 +116,7 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 			"FROM": _Groups.DateRanges,
 			"TO": _Groups.DateRanges,
 			"YEARTODATE": _Groups.DateRanges,
+			"DATETOYEAR": _Groups.DateRanges,
 			"TODAYFROMTO": _Groups.DateRanges,
 			"QUARTER1": _Groups.Quarters,
 			"QUARTER2": _Groups.Quarters,
@@ -197,6 +199,7 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 					case Keys.NEXTQUARTER:
 					case Keys.NEXTYEAR:
 					case Keys.YEARTODATE:
+					case Keys.DATETOYEAR:
 					case Keys.QUARTER1:
 					case Keys.QUARTER2:
 					case Keys.QUARTER3:
@@ -577,6 +580,8 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 					return [oValue.values[0], oValue.values[0]];
 				case "YEARTODATE":
 					return UniversalDateUtils.ranges.yearToDate();
+				case "DATETOYEAR":
+					return UniversalDateUtils.ranges.dateToYear();
 				case "TODAYFROMTO":
 					if (oValue.values.length !== 2) {
 						return [];
@@ -623,6 +628,7 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 				case "NEXTQUARTER":
 				case "NEXTYEAR":
 				case "YEARTODATE":
+				case "DATETOYEAR":
 				case "QUARTER1":
 				case "QUARTER2":
 				case "QUARTER3":
