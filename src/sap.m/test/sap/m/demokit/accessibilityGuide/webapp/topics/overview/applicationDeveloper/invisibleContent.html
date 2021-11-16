@@ -9,9 +9,9 @@
 <body class="sapUiBody topicBody">
 	<div class="topic">
 		<div class="content">
-			<h1>Overview</h1>
+			<h1 id="overview">Overview</h1>
 
-			<h2>Invisible Messaging</h2>
+			<h2 id="invisible-messageing">Invisible Messaging</h2>
 			<p>The invisible message provides a hidden message that can be used by screen readers, when the UI content changes dynamically (for example, when a page is refreshed).</p>
 
 			<p>In the <code>init</code> method, we need to get the instance of the Invisible Messaging service:</p>
@@ -35,7 +35,7 @@ fnHandler: function () {
 			</pre>
 			<a class="try-button" href="../../../index.html#/explore/invisibleMessaging" target="_parent">See Example</a>
 
-			<h2>Invisible Text</h2>
+			<h2 id="invisible-text">Invisible Text</h2>
 			<p>The invisible text provides a hidden text that can be used by screen readers to provide contextual information. The hidden text can for example be referenced in the <code>ariaLabelledBy</code> or <code>ariaDescribedBy</code> associations of other controls.</p>
 			<pre class="lang-xml">
 &lt;form:SimpleForm
@@ -56,6 +56,12 @@ fnHandler: function () {
 <mark>&lt;core:InvisibleText id="city" text="City" /&gt;</mark>
 			</pre>
 			<a class="try-button" href="../../../index.html#/explore/invisibleText" target="_parent">See Example</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#invisible-messageing">Invisible Messaging</a></div>
+			<div><a href="#invisible-text">Invisible Text</a></div>
 		</div>
 	</div>
 </body>
