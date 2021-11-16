@@ -31,7 +31,8 @@
         "1.19.0",
         "1.20.0",
         "1.21.0",
-        "1.22.0"
+        "1.22.0",
+        "1.23.0"
       ]
     },
     "designtime": {
@@ -72,6 +73,13 @@
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/Configuration.Destinations"
+          }
+        },
+        "csrfTokens": {
+          "description": "Describes the CSRF tokens used by the card",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Configuration.CSRFToken"
           }
         },
         "actionHandlers": {
@@ -1036,6 +1044,13 @@
         "icon": {
           "description": "The icon of the timeline item",
           "$ref": "#/definitions/simpleIcon"
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the item level",
+          "type": "array",
+          "items": {
+              "$ref": "#/definitions/action"
+          }
         }
       }
     },
@@ -2375,6 +2390,16 @@
         "defaultUrl": {
           "description": "A default url which will be used if there is no Host associated with the card",
           "type": "string"
+        }
+      }
+    },
+    "Configuration.CSRFToken": {
+      "description": "Represents a configuration for a CSRF token",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/data"
         }
       }
     },
