@@ -1,0 +1,22 @@
+{
+	"@odata.count": "3",
+	"value": [{
+		"ID": 10,
+		"amount": "100",
+		"categoryID": 1000,
+		"name": "Product 1",
+		"IsActiveEntity": true
+	}, {
+		"ID": 20,
+		"amount": "200",
+		"categoryID": 2000,
+		"name": "Product 2",
+		"IsActiveEntity": true
+	}, {
+		"ID": 30,
+		"amount": "1000",
+		"categoryID": 3000,
+		"name": "third product",
+		"IsActiveEntity": true
+	}]
+}

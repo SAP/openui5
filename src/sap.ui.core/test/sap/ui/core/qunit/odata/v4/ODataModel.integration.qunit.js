@@ -22539,16 +22539,26 @@ sap.ui.define([
 	// Scenario: List report shows active version which is kept alive and shows messages.
 	// (Object page does not matter here.)
 	// "EditAction" or "GetDraft" function returns draft version which replaces the active one.
+	//
 	// PATCH and "ActivationAction" are sent in the same $batch (change set does not matter here).
 	// Refresh destroys both the draft and the active version (unrealistic) and calls
 	// <code>fnOnBeforeDestroy</code>.
 	// JIRA: CPOUI5ODATAV4-347
+	//
+	// An invalid value is entered.
+	// Editing is canceled via v4.Context#replaceWith.
+	// JIRA: CPOUI5ODATAV4-1271
 ["EditAction", "GetDraft"].forEach(function (sDraftOperation) {
-	QUnit.test("CPOUI5ODATAV4-347: draft operation = " + sDraftOperation, function (assert) {
+	[false, true].forEach(function (bCancel) {
+		var sTitle = "CPOUI5ODATAV4-347: draft operation = " + sDraftOperation + ", cancel = "
+				+ bCancel;
+
+	QUnit.test(sTitle, function (assert) {
 		var oActivationAction,
 			oActiveArtistContext,
 			oDraftOperation,
 			oInactiveArtistContext,
+			oInput,
 			oListBinding,
 			sMessage1 = "It sure feels fine to see one's name in print",
 			sMessage2 = "A book's a book, though there's naught in 't",
@@ -22572,8 +22582,10 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("artistID", ["42"])
-			.expectChange("isActiveEntity", ["Yes"])
-			.expectChange("name", ["Missy Eliot"]);
+			.expectChange("isActiveEntity", ["Yes"]);
+		if (!bCancel) {
+			this.expectChange("name", ["Missy Eliot"]);
+		}
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Messages", {
@@ -22594,7 +22606,7 @@ sap.ui.define([
 			oListBinding = oTable.getBinding("items");
 			oActiveArtistContext = oListBinding.getCurrentContexts()[0];
 			oActiveArtistContext
-				.setKeepAlive(true, fnOnBeforeDestroy.bind(this), /*bRequestMessages*/true);
+				.setKeepAlive(true, fnOnBeforeDestroy.bind(that), /*bRequestMessages*/true);
 
 			return that.waitForChanges(assert, "setKeepAlive, bRequestMessages");
 		}).then(function () {
@@ -22658,90 +22670,161 @@ sap.ui.define([
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[2], "Success",
 					sMessage2);
 		}).then(function () {
-			oActivationAction = that.oModel.bindContext("special.cases.ActivationAction(...)",
-				oInactiveArtistContext, {$$inheritExpandSelect : true});
+			var sMessage = "Enter a text with a maximum of 255 characters and spaces",
+				sValue = "*".repeat(256);
 
-			that.expectChange("name", ["Mrs Eliot"])
-				.expectRequest({
-					batchNo : 4,
-					headers : {
-						"If-Match" : "inactivETag",
-						Prefer : "return=minimal"
-					},
-					method : "PATCH",
-					payload : {Name : "Mrs Eliot"},
-					url : "Artists(ArtistID='42',IsActiveEntity=false)"
-				}, null, {ETag : "inactivETag*"}) // 204 No Content
-				.expectRequest({
-					batchNo : 4,
-					headers : {
-						"If-Match": "inactivETag"
-					},
-					method : "POST",
-					url : "Artists(ArtistID='42',IsActiveEntity=false)"
-						+ "/special.cases.ActivationAction"
-						+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
-					payload : {}
-				}, {
-					"@odata.etag" : "activETag*",
-					ArtistID : "42",
-					IsActiveEntity : true,
-					Messages : [],
-					Name : "Mrs. Eliot" // "auto correction"
-				})
-				.expectChange("isActiveEntity", ["Yes"])
-				.expectChange("name", ["Mrs. Eliot"])
-				.expectMessages([{
-					message : sMessage2,
-					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
-					type : "Success"
-				}]); //TODO how to get rid of message for draft?
+			if (!bCancel) {
+				oActivationAction = that.oModel.bindContext("special.cases.ActivationAction(...)",
+					oInactiveArtistContext, {$$inheritExpandSelect : true});
 
-			return Promise.all([
-				// code under test
-				oInactiveArtistContext.setProperty("Name", "Mrs Eliot"),
-				// code under test
-				oActivationAction.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
-					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
-				that.waitForChanges(assert, "PATCH Name & POST ActivationAction")
-			]);
-		}).then(function (aResults) {
-			assert.ok(aResults[1] === oActiveArtistContext, "active context preserved");
-			assert.strictEqual(oActiveArtistContext.getIndex(), 0);
-			assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"), "inactivETag*");
+				that.expectChange("name", ["Mrs Eliot"])
+					.expectRequest({
+						batchNo : 4,
+						headers : {
+							"If-Match" : "inactivETag",
+							Prefer : "return=minimal"
+						},
+						method : "PATCH",
+						payload : {Name : "Mrs Eliot"},
+						url : "Artists(ArtistID='42',IsActiveEntity=false)"
+					}, null, {ETag : "inactivETag*"}) // 204 No Content
+					.expectRequest({
+						batchNo : 4,
+						headers : {
+							"If-Match": "inactivETag"
+						},
+						method : "POST",
+						url : "Artists(ArtistID='42',IsActiveEntity=false)"
+							+ "/special.cases.ActivationAction"
+							+ "?$select=ArtistID,IsActiveEntity,Messages,Name",
+						payload : {}
+					}, {
+						"@odata.etag" : "activETag*",
+						ArtistID : "42",
+						IsActiveEntity : true,
+						Messages : [],
+						Name : "Mrs. Eliot" // "auto correction"
+					})
+					.expectChange("isActiveEntity", ["Yes"])
+					.expectChange("name", ["Mrs. Eliot"])
+					.expectMessages([{
+						message : sMessage2,
+						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+						type : "Success"
+					}]); //TODO how to get rid of message for draft?
 
-			// Note: oInactiveArtistContext.setKeepAlive(false); would be realistic, but we prefer
-			// to check fnOnBeforeDestroy in this test
+				return Promise.all([
+					// code under test
+					oInactiveArtistContext.setProperty("Name", "Mrs Eliot"),
+					// code under test
+					oActivationAction.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+						/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+					that.waitForChanges(assert, "PATCH Name & POST ActivationAction")
+				]).then(function (aResults) {
+					assert.ok(aResults[1] === oActiveArtistContext, "active context preserved");
+					assert.strictEqual(oActiveArtistContext.getIndex(), 0);
+					assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"),
+						"inactivETag*");
 
-			// Note: draft operation is relative to ODLB and function would be refreshed, too
-			oDraftOperation.setContext(null);
+					// Note: oInactiveArtistContext.setKeepAlive(false); would be realistic, but we
+					// prefer to check fnOnBeforeDestroy in this test
 
-			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name"
-					+ "&$filter=ArtistID eq '42' and IsActiveEntity eq false"
-					+ " or ArtistID eq '42' and IsActiveEntity eq true&$top=2", {
-					value : []
-				})
-				.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name&$skip=0&$top=100", {
-					value : []
-				})
-				.expectChange("artistID", [])
-				.expectChange("isActiveEntity", [])
-				.expectChange("name", [])
-				.expectMessages([]);
+					// Note: draft operation is relative to ODLB and function is refreshed, too
+					oDraftOperation.setContext(null);
 
-			return Promise.all([
-				// code under test
-				oListBinding.requestRefresh(),
-				that.waitForChanges(assert, "refresh")
-			]);
-		}).then(function () {
-			assert.strictEqual(fnOnBeforeDestroy.callCount, 2);
-			assert.ok(fnOnBeforeDestroy.alwaysCalledOn(this), "Function#bind still works");
-			assert.ok(fnOnBeforeDestroy.calledWithExactly(), "still no args here");
-			assert.ok(
-				fnOnBeforeDestroy.calledWithExactly(sinon.match.same(oInactiveArtistContext)),
-				"for the 'clone', we need the context to distinguish");
+					that.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Messages,Name"
+							+ "&$filter=ArtistID eq '42' and IsActiveEntity eq false"
+							+ " or ArtistID eq '42' and IsActiveEntity eq true&$top=2", {
+							value : []
+						})
+						.expectRequest("Artists?$select=ArtistID,IsActiveEntity,Name&$skip=0"
+							+ "&$top=100", {
+							value : []
+						})
+						.expectChange("artistID", [])
+						.expectChange("isActiveEntity", [])
+						.expectChange("name", [])
+						.expectMessages([]);
+
+					return Promise.all([
+						// code under test
+						oListBinding.requestRefresh(),
+						that.waitForChanges(assert, "refresh")
+					]);
+				}).then(function () {
+					assert.strictEqual(fnOnBeforeDestroy.callCount, 2);
+					assert.ok(fnOnBeforeDestroy.alwaysCalledOn(that), "Function#bind still works");
+					assert.ok(fnOnBeforeDestroy.calledWithExactly(), "still no args here");
+					assert.ok(
+						fnOnBeforeDestroy.calledWithExactly(
+							sinon.match.same(oInactiveArtistContext)),
+						"for the 'clone', we need the context to distinguish");
+				});
+			} else {
+				oInput = oTable.getItems()[0].getCells()[2];
+
+				that.expectMessages([{
+						message : sMessage1,
+						target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+						type : "Success"
+					}, {
+						message : sMessage2,
+						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+						type : "Success"
+					}, {
+						message : sMessage,
+						persistent : false,
+						target : oInput.getId() + "/value",
+						technical : false,
+						type : "Error"
+					}]);
+
+				// Note: Because the invalid value has to be set via control, changes for that
+				// control cannot be observed via expectChange
+				oInput.setValue(sValue);
+
+				assert.strictEqual(oInput.getValue(), sValue);
+				assert.strictEqual(oInput.getBinding("value").getValue(), "Missy Eliot");
+
+				return Promise.all([
+					that.checkValueState(assert, oInput, "Error", sMessage),
+					that.waitForChanges(assert)
+				]).then(function () {
+					that.expectChange("isActiveEntity", ["Yes"]);
+
+					// code under test
+					oInactiveArtistContext.replaceWith(oActiveArtistContext);
+
+					that.expectRequest({
+							headers : {
+								"If-Match" : "inactivETag"
+							},
+							method : "DELETE",
+							url : "Artists(ArtistID='42',IsActiveEntity=false)"
+						}) // 204 No Content
+						.expectMessages([{
+							message : sMessage1,
+							target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+							type : "Success"
+						}]);
+
+					return Promise.all([
+						// code under test
+						oInactiveArtistContext.delete("$auto", /*bDoNotRequestCount*/true),
+						that.waitForChanges(assert, "replaceWith")
+					]);
+				}).then(function () {
+					assert.strictEqual(oInput.getValue(), "Missy Eliot");
+
+					return Promise.all([
+						that.checkValueState(assert, oInput, "Success", sMessage1),
+						that.waitForChanges(assert)
+					]);
+				});
+			}
 		});
+	});
+
 	});
 });
 

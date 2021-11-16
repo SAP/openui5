@@ -1,0 +1,122 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Draft.Main"
+	xmlns="sap.m" xmlns:f="sap.f" xmlns:form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.m.plugins">
+	<App>
+	<Page floatingFooter="true" id="page" showHeader="false">
+	<f:FlexibleColumnLayout id="layout" layout="{ui>/sLayout}">
+		<f:beginColumnPages>
+			<VBox id="listReport">
+				<Table growing="true" growingThreshold="5" id="Products"
+					items="{path : '/Products', parameters : {
+						$count : true,
+						$filter :
+							'IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null',
+						$$patchWithoutSideEffects : true
+					}}"
+					mode="SingleSelectMaster" selectionChange="onProductSelect">
+					<headerToolbar>
+						<Toolbar id="productsToolbar">
+							<Title id="productsTitle" level="H2"
+								text="{headerContext>$count} Products">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false"/>
+								</layoutData>
+							</Title>
+							<SearchField id="filterAmount" search="onFilterProducts"
+									placeholder="Amount greater than" width="50%">
+								<layoutData>
+									<ToolbarLayoutData shrinkable="false"/>
+								</layoutData>
+							</SearchField>
+							<Button enabled="true" icon="sap-icon://refresh"
+								id="refreshProducts" press="onRefreshProducts"
+								tooltip="Refresh Product List"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column hAlign="Right" width="9em">
+							<Button iconFirst="false" icon="{ui>/sSortProductIDIcon}"
+								id="sortByProductId" press="onSortByProductID"
+								text="Product ID"/>
+						</Column>
+						<Column demandPopin="true">
+							<Text text="Is Active Entity"/>
+						</Column>
+						<Column demandPopin="true">
+							<Text text="Name"/>
+						</Column>
+						<Column demandPopin="true" hAlign="Right">
+							<Text text="Amount"/>
+						</Column>
+						<Column demandPopin="true">
+							<Text text="Category ID"/>
+						</Column>
+					</columns>
+					<ColumnListItem type="Navigation">
+						<Text id="productId" text="{ID}"/>
+						<Text id="isActiveEntity" text="{IsActiveEntity}"/>
+						<Text id="productName" text="{name}"/>
+						<Text id="amount" text="{amount}"/>
+						<Text id="categoryID" text="{categoryID}"/>
+					</ColumnListItem>
+				</Table>
+			</VBox>
+		</f:beginColumnPages>
+		<f:midColumnPages>
+			<VBox id="objectPage">
+				<form:SimpleForm ariaLabelledBy="objectPageTitle" backgroundDesign="Transparent"
+					editable="true" id="Products::detail" layout="ColumnLayout">
+					<form:toolbar>
+						<Toolbar design="Transparent">
+							<Title id="objectPageTitle" level="H2" text="Product Details"/>
+							<Button enabled="{= %{IsActiveEntity} }"
+								icon="sap-icon://edit" id="edit" press="onEdit" text="Edit"
+								tooltip="Start editing"/>
+							<Button enabled="{= !%{IsActiveEntity} }"
+								icon="sap-icon://save" id="save" press="onSave" text="Save"
+								tooltip="Save changes"/>
+							<Button enabled="{= !%{IsActiveEntity} }"
+								icon="sap-icon://sys-cancel-2" id="cancel" press="onCancel"
+								text="Cancel" tooltip="Cancel changes"/>
+							<Button icon="sap-icon://refresh" id="refreshProduct"
+								press="onRefreshProduct" tooltip="Refresh Product"/>
+						</Toolbar>
+					</form:toolbar>
+					<Label labelFor="Product::ID" text="Product ID"/>
+					<Input editable="false" id="Product::ID" value="{ID}"/>
+					<Label labelFor="Product::name" text="Name"/>
+					<Input editable="{= !%{IsActiveEntity} }" id="Product::name" value="{name}"/>
+					<Label labelFor="Product::amount" text="Amount"/>
+					<Input editable="{= !%{IsActiveEntity} }" id="Product::amount"
+						value="{amount}"/>
+					<Label labelFor="Product::categoryID" text="Category ID"/>
+					<Input editable="{= !%{IsActiveEntity} }" id="Product::categoryID"
+						value="{categoryID}"/>
+					<Label labelFor="Product::_Category::name" text="Category Name"/>
+					<Input editable="{= !%{IsActiveEntity} }" id="Product::_Category::name"
+						value="{_Category/name}"/>
+					<Label labelFor="Product::IsActiveEntity" text="Is Active Entity"/>
+					<Input editable="false" id="Product::IsActiveEntity" value="{IsActiveEntity}"/>
+					<Label labelFor="Product::HasActiveEntity" text="Has Active Entity"/>
+					<Input editable="false" id="Product::HasActiveEntity"
+						value="{HasActiveEntity}"/>
+					<Label labelFor="Product::HasDraftEntity" text="Has Draft Entity"/>
+					<Input editable="false" id="Product::HasDraftEntity" value="{HasDraftEntity}"/>
+					<Label labelFor="Product::DraftAdministrativeData::CreationDateTime"
+						text="Created At"/>
+					<Input editable="false" id="Product::DraftAdministrativeData::CreationDateTime"
+						value="{DraftAdministrativeData/CreationDateTime}"/>
+					<Label labelFor="Product::DraftAdministrativeData::LastChangeDateTime"
+						text="Last Changed At"/>
+					<Input editable="false"
+						id="Product::DraftAdministrativeData::LastChangeDateTime"
+						value="{DraftAdministrativeData/LastChangeDateTime}"/>
+				</form:SimpleForm>
+			</VBox>
+		</f:midColumnPages>
+	</f:FlexibleColumnLayout>
+	</Page>
+	</App>
+</mvc:View>

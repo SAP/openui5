@@ -2888,9 +2888,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding.oElementContext))
 			.returns(oContext);
 		this.mock(oBinding).expects("deleteFromCache")
-			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrders('42')", "", undefined,
+			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrders('42')", "", null, false,
 				sinon.match.func)
-			.callsArg(4).returns(oResult);
+			.callsArg(5).returns(oResult);
 		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParent);
 		this.mock(oParent).expects("_destroyContextAfterDelete").withExactArgs();
 
@@ -2937,9 +2937,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding.oElementContext))
 			.returns(oBinding.oElementContext);
 		this.mock(oBinding).expects("deleteFromCache")
-			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrders('42')", "", undefined,
+			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrders('42')", "", null, false,
 				sinon.match.func)
-			.callsArg(4).returns(oResult);
+			.callsArg(5).returns(oResult);
 		this.mock(oBinding).expects("_destroyContextAfterDelete");
 
 		// code under test
@@ -2976,8 +2976,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oBinding.oElementContext))
 				.returns(oBinding.oElementContext);
 			this.mock(oBinding).expects("deleteFromCache")
-				.withExactArgs("myGroup", "EMPLOYEES('42')", "", undefined, sinon.match.func)
-				.callsArg(4).returns(oPromise);
+				.withExactArgs("myGroup", "EMPLOYEES('42')", "", null, false, sinon.match.func)
+				.callsArg(5).returns(oPromise);
 			oBinding.attachChange(fnOnRemove);
 			this.spy(oElementContext, "destroy");
 			if (oReturnValueContext) {

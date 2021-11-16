@@ -420,7 +420,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache._delete(oGroupLock, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1",
-				oFixture.oEntity, fnCallback)
+				oFixture.oEntity, false, fnCallback)
 			.then(function (oResult) {
 				assert.notStrictEqual(oFixture.iStatus, 500, "unexpected success");
 				assert.deepEqual(oResult, [undefined, false, undefined]);
@@ -509,7 +509,7 @@ sap.ui.define([
 
 		// code under test
 		return oCache._delete(oGroupLock, "TEAMS('23')", "EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
-				undefined, fnCallback)
+				null, false, fnCallback)
 			.then(function (oResult) {
 				assert.deepEqual(oResult, [undefined, undefined, undefined]);
 				sinon.assert.calledOnce(fnCallback);
@@ -518,7 +518,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#_delete: kept-alive context not in collection", function (assert) {
+[false, true].forEach(function (bDoNotRequestCount) {
+	var sTitle = "_Cache#_delete: kept-alive context not in collection, bDoNotRequestCount="
+			+ bDoNotRequestCount;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [],
 			fnCallback = this.spy(),
@@ -548,20 +552,26 @@ sap.ui.define([
 					.withExactArgs(oCache.sResourcePath, [], ["('1')"]);
 				bDeleted = true;
 			}));
-		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLock))
-			.resolves("~count~done~");
+		this.mock(oCache).expects("requestCount").exactly(bDoNotRequestCount ? 0 : 1)
+			.withExactArgs(sinon.match.same(oGroupLock)).resolves("~count~done~");
 		this.mock(oCache).expects("removeElement").withExactArgs(aCacheData, undefined, "('1')", "")
 			.returns("iIndex");
 
 		// code under test
-		return oCache._delete(oGroupLock, "EMPLOYEES('1')", "('1')", "etag", fnCallback)
+		return oCache._delete(oGroupLock, "EMPLOYEES('1')", "('1')", "etag", bDoNotRequestCount,
+				fnCallback)
 			.then(function (oResult) {
 				assert.strictEqual(bDeleted, true);
-				assert.deepEqual(oResult, [undefined, "~count~done~", undefined]);
+				assert.deepEqual(oResult, [
+					undefined,
+					bDoNotRequestCount ? false : "~count~done~",
+					undefined
+				]);
 				sinon.assert.calledOnce(fnCallback);
 				sinon.assert.calledWithExactly(fnCallback, "iIndex", aCacheData);
 			});
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bCreated) {
@@ -5021,10 +5031,12 @@ sap.ui.define([
 
 			// code under test
 			return Promise.all([
-				oCache._delete(oDeleteGroupLock0, "Employees('b')", "1", undefined, function () {}),
-				oCache._delete(oDeleteGroupLock1, "Employees('c')", "2", undefined, function () {}),
-				oCache._delete(oDeleteGroupLock2, "Employees('d')", "3", undefined, function () {})
-					.catch(function () {}),
+				oCache._delete(oDeleteGroupLock0, "Employees('b')", "1", null, false,
+					function () {}),
+				oCache._delete(oDeleteGroupLock1, "Employees('c')", "2", null, false,
+					function () {}),
+				oCache._delete(oDeleteGroupLock2, "Employees('d')", "3", null, false,
+					function () {}).catch(function () {}),
 				oCache.read(3, 6, 0, oGroupLock)
 			]);
 		});
@@ -6469,7 +6481,7 @@ sap.ui.define([
 					.withArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLockCopy))
 					.resolves();
 				that.spy(_Helper, "updateExisting");
-				return oCache._delete(oDeleteGroupLock, "Employees('42')", "3", undefined,
+				return oCache._delete(oDeleteGroupLock, "Employees('42')", "3", null, false,
 						function () {})
 					.then(function () {
 						var oReadGroupLock = {unlock : function () {}};
@@ -6520,7 +6532,7 @@ sap.ui.define([
 				.withArgs("DELETE", "Employees('b')", sinon.match.same(oDeleteGroupLockCopy))
 				.resolves();
 			that.spy(_Helper, "updateExisting");
-			return oCache._delete(oDeleteGroupLock, "Employees('b')", "0/list/1", undefined,
+			return oCache._delete(oDeleteGroupLock, "Employees('b')", "0/list/1", null, false,
 					function () {})
 				.then(function () {
 					var oFetchValueGroupLock = {unlock : function () {}};
@@ -6785,7 +6797,7 @@ sap.ui.define([
 		// code under test
 		oCache._delete(oDeleteGroupLock, "TEAMS('0')/TEAM_2_EMPLOYEES",
 			sPathInCache + "/-1", //TODO sPathInCache + sTransientPredicate
-			undefined, fnDeleteCallback);
+			null, false, fnDeleteCallback);
 
 		assert.strictEqual(aCollection.$count, 41);
 		assert.strictEqual(aCollection.$created, 1);
@@ -7644,7 +7656,7 @@ sap.ui.define([
 
 		// code under test
 		oDeletePromise = oCache._delete(oDeleteGroupLock, "n/a",
-			/*TODO sTransientPredicate*/"-1", function () {
+			/*TODO sTransientPredicate*/"-1", null, false, function () {
 				throw new Error();
 			});
 
@@ -7726,7 +7738,7 @@ sap.ui.define([
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, sEditUrl, /*TODO sTransientPredicate*/"-1",
-					undefined, fnCallback)
+					null, false, fnCallback)
 				.then(function () {
 					sinon.assert.calledOnce(fnCallback);
 					assert.strictEqual(oCache.aElements.length, 0);
@@ -9028,7 +9040,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oDeleteGroupLock));
 
 			// code under test
-			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", undefined, fnCallback)
+			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, false, fnCallback)
 				.then(function (oResult) {
 					var oGroupLock = {unlock : function () {}};
 

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Flexible Column Layout - Replace-with Scenario</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Flexible Column Layout - Replace-with Scenario</h1>
+		<h2>DESCRIPTION</h2>
+		This demo application is used to demonstrate how to synchronize data between a list report
+		(left column) and an object page (middle column) by using the
+		<code>Context#setKeepAlive</code> API method. It also demonstrates how to replace an
+		active version with a draft and vice versa.
+		<h2>PREPARATION</h2>
+			To check console errors open the developer tools before starting the application and
+			check at each step that there are no errors and warnings.
+		<h3>Testing with mock data</h3>
+		Start the Draft application URL (adjust host and port if necessary):
+			<ul>
+				<li> local:
+					<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
+						http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
+					</a>
+				</li>
+			</ul>
+		<h2>REALIZE and CHECK</h2>
+		<h3>Edit & Cancel</h3>
+		<ol>
+			<li>Select the first product in the list report.</li>
+			<li><b>Check:</b> An object page for the product appears, no input field is editable,
+			only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
+			<li>Press the <code>Edit</code> button.</li>
+			<li><b>Check:</b> Some input fields are now editable, all buttons but <code>Edit</code>
+			are enabled, and the list report shows that the first product is not an active entity.
+			</li>
+			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
+			<li><b>Check:</b> The list report shows the new name of the first product.</li>
+			<li>Press the <code>Cancel</code> button.</li>
+			<li><b>Check:</b> No input field is editable, only the <code>Edit</code> and
+			<code>Refresh</code> buttons are enabled, and the list report shows that the first
+			product is an active entity with its original name.
+			</li>
+		</ol>
+		<h3>Edit & Activate</h3>
+		<ol>
+			<li>Press the <code>Edit</code> button.</li>
+			<li><b>Check:</b> Some input fields are now editable, all buttons but <code>Edit</code>
+			are enabled, and the list report shows that the first product is not an active entity.
+			</li>
+			<li>Enter 'Test' into the input field <code>Name</code> of the object page.</li>
+			<li><b>Check:</b> The list report shows the new name of the first product.</li>
+			<li>Press the <code>Save</code> button.</li>
+			<li><b>Check:</b> No input field is editable, only the <code>Edit</code> and
+			<code>Refresh</code> buttons are enabled, and the list report shows that the first
+			product is an active entity with a new name.
+			</li>
+		</ol>
+	</body>
+</html>

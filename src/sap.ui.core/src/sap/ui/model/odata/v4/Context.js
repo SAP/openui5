@@ -129,6 +129,9 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding.
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link #replaceWith} where it is known that the count remains unchanged
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
@@ -136,14 +139,15 @@ sap.ui.define([
 	 * @private
 	 * @see sap.ui.model.odata.v4.Context#delete
 	 */
-	Context.prototype._delete = function (oGroupLock, oETagEntity) {
+	Context.prototype._delete = function (oGroupLock, oETagEntity, bDoNotRequestCount) {
 		var that = this;
 
 		if (this.isTransient()) {
-			return this.oBinding._delete(oGroupLock, "n/a", this);
+			return this.oBinding._delete(oGroupLock, "n/a", this, bDoNotRequestCount);
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
-			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity);
+			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity,
+				bDoNotRequestCount);
 		});
 	};
 
@@ -251,6 +255,9 @@ sap.ui.define([
 	 *   the context's binding is used, see {@link #getUpdateGroupId}; the resulting group ID must
 	 *   not have {@link sap.ui.model.odata.v4.SubmitMode.API}. Since 1.81, if this context is
 	 *   transient (see {@link #isTransient}), no group ID needs to be specified.
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link #replaceWith} where it is known that the count remains unchanged (since 1.97.0)
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, e.g. if the given context does not point
@@ -271,7 +278,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.41.0
 	 */
-	Context.prototype.delete = function (sGroupId) {
+	Context.prototype.delete = function (sGroupId, bDoNotRequestCount) {
 		var oGroupLock,
 			oModel = this.oModel,
 			that = this;
@@ -285,7 +292,7 @@ sap.ui.define([
 		}
 		oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 
-		return this._delete(oGroupLock).then(function () {
+		return this._delete(oGroupLock, /*oETagEntity*/null, bDoNotRequestCount).then(function () {
 			var sResourcePathPrefix = that.sPath.slice(1);
 
 			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
@@ -894,6 +901,38 @@ sap.ui.define([
 					bCheckUpdate, bKeepCacheOnError);
 			})
 		);
+	};
+
+	/**
+	 * Replaces this context with the given other context. You probably want to delete this context
+	 * afterwards without requesting the new count from the server, see the
+	 * <code>bDoNotRequestCount</code> parameter of {@link #delete}.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oOtherContext - The other context
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> this context's root binding is suspended,
+	 *     <li> this context is transient (see {@link #isTransient}),
+	 *     <li> the given other context does not belong to the same list binding as this context, or
+	 *       is already in the collection (has an index, see {@link #getIndex}).
+	 *   </ul>
+	 *
+	 * @public
+	 * @since 1.97.0
+	 */
+	Context.prototype.replaceWith = function (oOtherContext) {
+		var oElement;
+
+		this.oBinding.checkSuspended();
+		if (this.isTransient()) {
+			throw new Error("Cannot replace a transient context: " + this);
+		}
+		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined) {
+			throw new Error("Cannot replace with " + oOtherContext);
+		}
+		oElement = oOtherContext.getValue();
+		this.oBinding.doReplaceWith(this, oElement,
+			_Helper.getPrivateAnnotation(oElement, "predicate"));
 	};
 
 	/**

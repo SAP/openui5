@@ -138,6 +138,10 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding.
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
+	 *   unchanged
 	 * @param {function} fnCallback
 	 *   A function which is called after a transient entity has been deleted from the cache or
 	 *   after the entity has been deleted from the server and from the cache; the index of the
@@ -148,7 +152,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
+	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity,
+			bDoNotRequestCount, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			iIndex = rNumber.test(vDeleteProperty) ? Number(vDeleteProperty) : undefined,
@@ -212,6 +217,7 @@ sap.ui.define([
 							[], [sEntityPath]);
 					}),
 				iIndex === undefined // single element or kept-alive not in list
+					&& !bDoNotRequestCount
 					&& that.requestCount(oGroupLock),
 				oGroupLock.unlock() // unlock when all requests have been queued
 			]);

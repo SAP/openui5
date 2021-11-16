@@ -1,0 +1,19 @@
+{
+	"ID": 10,
+	"_Category": {
+		"ID": 1000,
+		"IsActiveEntity": false,
+		"name": "First category"
+	},
+	"name": "Product 1",
+	"amount": "100",
+	"categoryID": 1000,
+	"DraftAdministrativeData": {
+		"DraftUUID": "6aa1b201-cd82-472f-a042-cd46fe64d32d",
+		"CreationDateTime": "2021-11-10T14:56:08.298Z",
+		"LastChangeDateTime": "2021-11-10T14:56:08.298Z"
+	},
+	"HasDraftEntity": false,
+	"HasActiveEntity": true,
+	"IsActiveEntity": false
+}

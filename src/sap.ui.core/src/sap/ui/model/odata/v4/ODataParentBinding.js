@@ -574,6 +574,10 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding.
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
+	 *   unchanged
 	 * @param {function} fnCallback
 	 *   A function which is called after the entity has been deleted from the server and from the
 	 *   cache; the index of the entity is passed as parameter
@@ -587,7 +591,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
-			oETagEntity, fnCallback) {
+			oETagEntity, bDoNotRequestCount, fnCallback) {
 		var sGroupId;
 
 		if (this.oCache === undefined) {
@@ -599,10 +603,12 @@ sap.ui.define([
 			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
-			return this.oCache._delete(oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback);
+			return this.oCache._delete(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
+				fnCallback);
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
-			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), oETagEntity, fnCallback);
+			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), oETagEntity,
+			bDoNotRequestCount, fnCallback);
 	};
 
 	/**

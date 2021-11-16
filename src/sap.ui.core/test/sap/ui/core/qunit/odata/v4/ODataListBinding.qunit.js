@@ -3809,8 +3809,8 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 7);
 			this.mock(oBinding).expects("deleteFromCache")
 				.withExactArgs("myGroup", "EMPLOYEES('2')", "2", sinon.match.same(oETagEntity),
-					sinon.match.func)
-				.callsArgWith(4, 2, aData)
+					"~bDoNotRequestCount~", sinon.match.func)
+				.callsArgWith(5, 2, aData)
 				.resolves();
 			this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 			oBinding.aContexts.forEach(function (oContext) {
@@ -3830,7 +3830,7 @@ sap.ui.define([
 
 			// code under test
 			return oBinding._delete("myGroup", "EMPLOYEES('2')", oBinding.aContexts[3],
-					oETagEntity)
+					oETagEntity, "~bDoNotRequestCount~")
 				.then(function () {
 					assert.strictEqual(oBinding.iCreatedContexts, 1);
 					assert.strictEqual(oBinding.getLength(), 6);
@@ -3881,8 +3881,8 @@ sap.ui.define([
 
 		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "-1"/*TODO transientPredicate*/,
-				sinon.match.same(oETagEntity), sinon.match.func)
-			.callsArgWith(4)
+				sinon.match.same(oETagEntity), "~bDoNotRequestCount~", sinon.match.func)
+			.callsArgWith(5)
 			.resolves();
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 		this.stub(oContext0, "toString"); // called by SinonJS, would call #isTransient
@@ -3890,7 +3890,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext0), true);
 
 		// code under test
-		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0, oETagEntity)
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0, oETagEntity,
+				"~bDoNotRequestCount~")
 			.then(function () {
 				assert.strictEqual(oBinding.iMaxLength, 42, "iMaxLength has not been reduced");
 			});
@@ -3933,8 +3934,8 @@ sap.ui.define([
 			.withExactArgs("~contextPath~", "/EMPLOYEES").returns("~predicate~");
 		oBindingMock.expects("deleteFromCache")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", "~predicate~", "oETagEntity",
-				sinon.match.func)
-			.callsArgWith(4, undefined, [/*unused*/])
+				"~bDoNotRequestCount~", sinon.match.func)
+			.callsArgWith(5, undefined, [/*unused*/])
 			.returns(Promise.resolve().then(function () {
 				that.mock(oBinding).expects("fetchValue")
 					.exactly(oFixture.lengthFinal ? 1 : 0)
@@ -3950,7 +3951,8 @@ sap.ui.define([
 			.withExactArgs();
 
 		// code under test
-		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity")
+		return oBinding._delete("myGroup", "EMPLOYEES('1')", oKeptAliveContext, "oETagEntity",
+				"~bDoNotRequestCount~")
 			.then(function () {
 				assert.deepEqual(oBinding.mPreviousContextsByPath, bFireChange
 						? {
@@ -4586,7 +4588,7 @@ sap.ui.define([
 		oContext2 = oBinding.create(undefined);
 
 		oBindingMock.expects("deleteFromCache")
-			.callsArgWith(4, 0) // the cancel callback
+			.callsArgWith(5, 0) // the cancel callback
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -4598,7 +4600,7 @@ sap.ui.define([
 		}, new Error("Creating entities at the start and at the end is not supported."));
 
 		oBindingMock.expects("deleteFromCache")
-			.callsArgWith(4, 0) // the cancel callback
+			.callsArgWith(5, 0) // the cancel callback
 			.returns(SyncPromise.resolve());
 
 		// code under test
