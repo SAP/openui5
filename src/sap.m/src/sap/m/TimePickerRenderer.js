@@ -27,6 +27,10 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 */
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
 			oRm.class(TimePickerRenderer.CSS_CLASS);
+			if (oControl.getHideInput()) {
+				oRm.class("sapMTimePickerHiddenInput");
+			}
+			InputBaseRenderer.addOuterClasses.apply(this, arguments);
 		};
 
 		/**

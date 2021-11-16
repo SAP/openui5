@@ -1402,7 +1402,7 @@
 		"name": "Time Picker",
 		"category": "User Input",
 		"since": "1.32",
-		"samples": ["sap.m.sample.TimePicker", "sap.m.sample.TimePickerValueState"]
+		"samples": ["sap.m.sample.TimePicker", "sap.m.sample.TimePickerValueState", "sap.m.sample.TimePickerHidden"]
 	  },
 		{
 		  "id": "sap.m.Title",
@@ -3344,6 +3344,11 @@
 		"id": "sap.m.sample.TimePickerValueState",
 		"name": "Time Picker - Value States",
 		"description": "This example shows different TimePicker value states."
+		},
+		{
+		"id": "sap.m.sample.TimePickerHidden",
+		"name": "Time Picker - Open by Another Control",
+		"description": "This example demonstrates the Time Picker that is opened by another control."
 		},
 		{
 		"id": "sap.m.sample.TimePickerSliders",
