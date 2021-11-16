@@ -1,9 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"jquery.sap.events",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
-	"sap/ui/qunit/QUnitUtils"
-], function(Device, Control, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"jquery.sap.keycodes" // provides jQuery.sap.keyCodes
+], function(jQuery, Device, Control, qutils) {
 	"use strict";
 
 	// Initialization

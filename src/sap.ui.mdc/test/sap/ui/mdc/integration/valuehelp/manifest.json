@@ -4,8 +4,8 @@
 		"_version": "0.1.0",
 		"id": "sap.ui.v4demo",
 		"type": "application",
-		"title": "{{appTitle}}",
-		"description": "{{appDescription}}",
+		"title": "Table ValueHelp Examples",
+		"description": "Table ValueHelp Examples",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},

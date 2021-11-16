@@ -7,7 +7,11 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 	QUnit.module("sap.ui.dom.includeStylesheet", {
 		beforeEach: function() {
 			// create test area for stylsheets
-			this.oTestArea = jQuery('<div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest" style="width:100px;height:100px">Test area for includeStyleSheet</div>');
+			this.oTestArea = jQuery('<div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest">Test area for includeStyleSheet</div>')
+				.css({
+					width: "100px",
+					height: "100px"
+				});
 			jQuery("#qunit-fixture").append(this.oTestArea);
 
 			// pre-include a stylesheet

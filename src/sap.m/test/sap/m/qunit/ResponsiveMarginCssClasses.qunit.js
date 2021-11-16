@@ -1,7 +1,5 @@
 /*global QUnit */
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/base/util/UriParameters",
@@ -127,10 +125,6 @@ sap.ui.require([
 			// Clean up
 			oComponentContainer.destroy();
 		});
-	});
-
-	sap.ui.getCore().attachInit(function() {
-		QUnit.start();
 	});
 
 });

@@ -88,6 +88,8 @@ function(Press,
 	// and emptied after each test
 	var aControlsToClean = [];
 
+	$("#qunit-fixture").css("position", "static");
+
 	QUnit.module("positive tests",{
 		beforeEach: function() {
 			this.oSpy = sinon.spy(Log, "debug");
@@ -476,7 +478,7 @@ function(Press,
 
 	QUnit.module("Press - interact with ObjectIdentifier", {
 		beforeEach: function() {
-			this.oObjectIdentifier = new ObjectIdentifier({active: true});
+			this.oObjectIdentifier = new ObjectIdentifier();
 			this.oObjectIdentifier.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},

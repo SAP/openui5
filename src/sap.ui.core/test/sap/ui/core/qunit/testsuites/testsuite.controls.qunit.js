@@ -20,8 +20,7 @@ sap.ui.define(function() {
 			FieldGroup: {
 				title: "QUnit page for FieldGroup",
 				ui5: {
-					libs: "sap.ui.layout,sap.ui.commons",
-					theme: "sap_bluecrystal"
+					libs: "sap.ui.layout,sap.m"
 				}
 			},
 			HTML: {

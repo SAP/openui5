@@ -28,7 +28,7 @@ sap.ui.define([
 				text: "Text 2"
 			});
 			this.oHtml3 = new HTML("html3", {
-				content: "<div style='background-color:red; width:64px;height:64px;'></div>"
+				content: "<div></div>"
 			});
 		},
 		after: function () {
