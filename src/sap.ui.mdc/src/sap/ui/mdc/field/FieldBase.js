@@ -2704,6 +2704,11 @@ sap.ui.define([
 
 		_setAriaAttributes.call(this, false);
 
+		// sync conditions with FieldHelp as we cannot e sure that it still is in sync
+		var oFieldHelp = oEvent.getSource();
+		var aConditions = this.getConditions();
+		_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
+
 	}
 
 	function _handleFieldSwitchToValueHelp(oEvent) {
