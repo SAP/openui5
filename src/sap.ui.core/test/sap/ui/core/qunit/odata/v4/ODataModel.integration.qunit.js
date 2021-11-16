@@ -25882,9 +25882,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Request side effects on a context binding without an own cache, relative to a list
-	// binding with a cache.
+	// Scenario 1: Request side effects on a context binding without an own cache, relative to a
+	// list binding with a cache.
 	// CPOUI5UISERVICESV3-1707
+	//
+	// Scenario 2: Two GET requests for side effects are merged. One is expecting changes for
+	// structural properties only ("*") and fails if a key predicate changes. The other allows that
+	// a complete navigation property changes; it does not fail if a key predicate changes. Make
+	// sure that the check for unexpected changes of key predicates does not fail due to this
+	// merging.
+	// BCP: 2170263464
 	QUnit.test("requestSideEffects: relative to a list binding", function (assert) {
 		var oBestFriendBox,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -25910,7 +25917,7 @@ sap.ui.define([
 						ArtistID : "43",
 						BestPublication : {
 							CurrencyCode : "GBP",
-							PublicationID : "13"
+							PublicationID : "43-0"
 						},
 						IsActiveEntity : true,
 						Name : "Best Friend of 23"
@@ -25922,7 +25929,7 @@ sap.ui.define([
 						ArtistID : "44",
 						BestPublication : {
 							CurrencyCode : "JPY",
-							PublicationID : "14"
+							PublicationID : "44-0"
 						},
 						IsActiveEntity : true,
 						Name : "Best Friend of 24"
@@ -25946,7 +25953,7 @@ sap.ui.define([
 							ArtistID : "44",
 							BestPublication : {
 								CurrencyCode : "JPY2",
-								PublicationID : "14"
+								PublicationID : "44-0"
 							},
 							IsActiveEntity : true,
 							Name : "New Best Friend of 24"
@@ -25964,7 +25971,7 @@ sap.ui.define([
 				}, {
 					$PropertyPath : "Name"
 				}]),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "Scenario 1")
 			]);
 		}).then(function () {
 			var oBestPublicationBox = oBestFriendBox.getItems()[1];
@@ -25979,7 +25986,7 @@ sap.ui.define([
 							ArtistID : "44",
 							BestPublication : {
 								CurrencyCode : "JPY3",
-								PublicationID : "14"
+								PublicationID : "44-0"
 							},
 							IsActiveEntity : true
 						},
@@ -25991,7 +25998,53 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oBestPublicationBox.getBindingContext().requestSideEffects(["CurrencyCode"]),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "Scenario 1")
+			]);
+		}).then(function () {
+			var oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name"
+						+ ";$expand=BestPublication($select=CurrencyCode,PublicationID))"
+					+ "&$filter=ArtistID eq '23' and IsActiveEntity eq true"
+						+ " or ArtistID eq '24' and IsActiveEntity eq true"
+					+ "&$top=2", {
+					value : [{
+						ArtistID : "23",
+						BestFriend : {
+							ArtistID : "63", // this change must not result in an error
+							BestPublication : {
+								CurrencyCode : "GBP4",
+								PublicationID : "44-0"
+							},
+							IsActiveEntity : true,
+							Name : "New best Friend of 23"
+						},
+						IsActiveEntity : true
+					}, {
+						ArtistID : "24",
+						BestFriend : {
+							ArtistID : "64", // this change must not result in an error
+							BestPublication : {
+								CurrencyCode : "JPY4",
+								PublicationID : "43-0"
+							},
+							IsActiveEntity : true,
+							Name : "New best Friend of 24"
+						},
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("currency", "GBP4")
+				.expectChange("name", "New best Friend of 23")
+				.expectChange("currency", "JPY4")
+				.expectChange("name", "New best Friend of 24");
+
+			return Promise.all([
+				// code under test (BCP: 2170263464)
+				oHeaderContext.requestSideEffects(["BestFriend/BestPublication/*"]),
+				oHeaderContext.requestSideEffects(["BestFriend"]),
+				that.waitForChanges(assert, "Scenario 2")
 			]);
 		});
 	});
@@ -31629,6 +31682,13 @@ sap.ui.define([
 	//
 	// Note: Key properties are omitted from response data to improve readability.
 	// BCP: 2070022577
+	//
+	// Scenario 2: Two GET requests for side effects are merged. One is expecting changes for
+	// structural properties only ("*") and fails if a key predicate changes. The other allows that
+	// a complete navigation property changes; it does not fail if a key predicate changes. Make
+	// sure that the check for unexpected changes of key predicates does not fail due to this
+	// merging.
+	// BCP: 2170263464
 	QUnit.test("requestSideEffects: {$PropertyPath : '*'}", function (assert) {
 		var oContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -31681,15 +31741,17 @@ sap.ui.define([
 					BestFriend : {
 						ArtistID : "24",
 						BestPublication : {
-							Price : "8.88"
+							Price : "8.88",
+							PublicationID : "24-0"
 						},
-						Name : "Best Friend",
-						IsActiveEntity : true
+						IsActiveEntity : true,
+						Name : "Best Friend"
 					},
 					IsActiveEntity : true
 				},
 				BestPublication : {
-					Price : "9.99"
+					Price : "9.99",
+					PublicationID : "42-0"
 				},
 				IsActiveEntity : true,
 				Name : "Hour Frustrated"
@@ -31814,6 +31876,41 @@ sap.ui.define([
 				// code under test
 				oHeaderContext.requestSideEffects([{$PropertyPath : "*"}]),
 				that.waitForChanges(assert, "* (@ _Publication)")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=BestFriend,BestPublication"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name"
+							+ ";$expand=BestPublication($select=Price,PublicationID)))"
+					+ ",BestPublication($select=Price,PublicationID)", {
+					BestFriend : {
+						ArtistID : "23",
+						BestFriend : {
+							ArtistID : "42", // this change must not result in an error
+							BestPublication : {
+								Price : "2.22",
+								PublicationID : "42-0"
+							},
+							IsActiveEntity : true,
+							Name : "Princess"
+						},
+						IsActiveEntity : true
+					},
+					BestPublication : {
+						Price : "-2.22", // unrealistic but useful, should be 2.22: see pub. "42-0"
+						PublicationID : "42-0"
+					}
+				})
+				.expectChange("price1", "2.22")
+				.expectChange("friend", "Princess")
+				.expectChange("price0", "-2.22");
+
+			return Promise.all([
+				// code under test (BCP: 2170263464)
+				oContext.requestSideEffects(["BestPublication/*"]),
+				oContext.requestSideEffects(["BestFriend"]),
+				that.waitForChanges(assert, "Scenario 2")
 			]);
 		});
 	});
