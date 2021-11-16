@@ -26035,10 +26035,8 @@ sap.ui.define([
 						IsActiveEntity : true
 					}]
 				})
-				.expectChange("currency", "GBP4")
-				.expectChange("name", "New best Friend of 23")
-				.expectChange("currency", "JPY4")
-				.expectChange("name", "New best Friend of 24");
+				.expectChange("currency", ["GBP4", "JPY4"])
+				.expectChange("name", ["New best Friend of 23", "New best Friend of 24"]);
 
 			return Promise.all([
 				// code under test (BCP: 2170263464)
