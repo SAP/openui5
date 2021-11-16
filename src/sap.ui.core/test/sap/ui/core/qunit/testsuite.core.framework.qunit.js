@@ -38,7 +38,7 @@ sap.ui.define(function() {
 			 */
 			Core_libraryPreloadFiles: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both",
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none",
 				loader: {
 					paths: {
 						testlibs: "testdata/libraries/"
@@ -47,32 +47,55 @@ sap.ui.define(function() {
 			},
 			Core_libraryPreloadFiles2: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js"
-			},
-			Core_libraryPreloadFiles3: {
-				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib4:none,testlibs.scenario8.lib4:none,testlibs.scenario7.lib5:none,testlibs.scenario8.lib5:none"
-			},
-			Core_libraryPreloadFiles4: {
-				title: "sap.ui.core: library preload with libraryPreloadFiles=",
 				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js"
 			},
-			Core_libraryPreloadFiles5: {
+			/**
+			 * legacy-relevant:
+			 * The following tests covers the different combinations of the legacy configuration to allow libraries to
+			 * configure whether they use the JS or JSON format for their library preload.
+			 *
+			 * The tests for the preload files all share the same test configuration.
+			 * There is only one HTML test page, which is opened with different URL parameters.
+			 * The HTML test page then points to this general configuration.
+			 */
+			Core_libraryPreloadFiles_unavoidablyUsingEval: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=js,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:none,testlibs.scenario8.lib3:none"
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=both",
+				loader: {
+					paths: {
+						testlibs: "testdata/libraries/"
+					}
+				}
 			},
-			Core_libraryPreloadFiles6: {
+			Core_libraryPreloadFiles2_unavoidablyUsingEval: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=json"
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js"
 			},
-			Core_libraryPreloadFiles7: {
+			Core_libraryPreloadFiles3_unavoidablyUsingEval: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=json,testlibs.scenario7.lib2:none,testlibs.scenario8.lib2:none,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js"
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=both,testlibs.scenario7.lib4:none,testlibs.scenario8.lib4:none,testlibs.scenario7.lib5:none,testlibs.scenario8.lib5:none"
 			},
-			Core_libraryPreloadFiles8: {
+			Core_libraryPreloadFiles4_unavoidablyUsingEval: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
-				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles.qunit.html?sap-ui-xx-libraryPreloadFiles=none"
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=js"
 			},
+			Core_libraryPreloadFiles5_unavoidablyUsingEval: {
+				title: "sap.ui.core: library preload with libraryPreloadFiles=",
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=js,testlibs.scenario7.lib2:json,testlibs.scenario8.lib2:json,testlibs.scenario7.lib3:none,testlibs.scenario8.lib3:none"
+			},
+			Core_libraryPreloadFiles6_unavoidablyUsingEval: {
+				title: "sap.ui.core: library preload with libraryPreloadFiles=",
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=json"
+			},
+			Core_libraryPreloadFiles7_unavoidablyUsingEval: {
+				title: "sap.ui.core: library preload with libraryPreloadFiles=",
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=json,testlibs.scenario7.lib2:none,testlibs.scenario8.lib2:none,testlibs.scenario7.lib3:js,testlibs.scenario8.lib3:js"
+			},
+			Core_libraryPreloadFiles8_unavoidablyUsingEval: {
+				title: "sap.ui.core: library preload with libraryPreloadFiles=",
+				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=none"
+			},
+
 			Core_repeatedExecution: {
 				title: "sap.ui.core.Core: Repeated execution",
 				bootCore: false
