@@ -715,4 +715,65 @@ function(
 				});
 		});
 	});
+
+	QUnit.module("Given the 'instantiateFragment' function is called...", {
+		beforeEach: function () {
+			this.sNamespace = 'fragment-id-prefix';
+			var oXmlString = "<mvc:View id='testComponent---myView' xmlns:mvc='sap.ui.core.mvc'></mvc:View>";
+			return XMLView.create({id: "testapp---view", definition: oXmlString})
+				.then(function(oXmlView) {
+					this.oXmlView = oXmlView;
+				}.bind(this));
+		},
+		afterEach: function () {
+			this.oXmlView.destroy();
+		}
+	}, function () {
+		QUnit.test("when it is called with valid fragment including content", function (assert) {
+			var sButtonId = "button1";
+			var sFragment = "<core:FragmentDefinition xmlns:core='sap.ui.core' xmlns='sap.m'>"
+				+ "<Button id='" + sButtonId + "' text='my button' />"
+				+ "</core:FragmentDefinition>";
+			return JsControlTreeModifier.instantiateFragment(sFragment, this.sNamespace, this.oXmlView)
+				.then(function (aNewControls) {
+					assert.strictEqual(aNewControls.length, 1, "then one control is created");
+					assert.strictEqual(aNewControls[0].getId(),
+						this.oXmlView.getId() + "--" + this.sNamespace + "." + sButtonId,
+						"then the control inside fragment is created"
+					);
+				}.bind(this));
+		});
+		QUnit.test("when it is called with valid fragment without content", function (assert) {
+			var sFragment = "<core:FragmentDefinition xmlns:core='sap.ui.core' xmlns='sap.m'></core:FragmentDefinition>";
+			return JsControlTreeModifier.instantiateFragment(sFragment, this.sNamespace, this.oXmlView)
+				.then(function (aNewControls) {
+					assert.strictEqual(aNewControls.length, 0, "then an empty array is returned");
+				});
+		});
+		QUnit.test("when it is called with content inside fragment without stable id", function (assert) {
+			var sFragment = "<core:FragmentDefinition xmlns:core='sap.ui.core' xmlns='sap.m'>"
+				+ "<Button text='my button' />"
+				+ "</core:FragmentDefinition>";
+			return JsControlTreeModifier.instantiateFragment(sFragment, this.sNamespace, this.oXmlView)
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("At least one control does not have a stable ID") > -1,
+						"then an exception is thrown");
+				});
+		});
+		QUnit.test("when it is called without fragment", function (assert) {
+			return JsControlTreeModifier.instantiateFragment(undefined, this.sNamespace, this.oXmlView)
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("Document is empty") > -1,
+						"then an exception is thrown");
+				});
+		});
+		QUnit.test("when it is called without view", function (assert) {
+			var sFragment = "<core:FragmentDefinition xmlns:core='sap.ui.core' xmlns='sap.m'></core:FragmentDefinition>";
+			return JsControlTreeModifier.instantiateFragment(sFragment, this.sNamespace, undefined)
+				.catch(function (vError) {
+					assert.ok(vError.message.indexOf("Cannot read properties of undefined") > -1,
+						"then an exception is thrown");
+				});
+		});
+	});
 });

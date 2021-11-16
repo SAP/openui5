@@ -455,11 +455,11 @@ sap.ui.define([
 						sId: oView && oView.getId(),
 						controller: oView.getController()
 					});
-				}).then(function(aNewControls) {
-					if (!Array.isArray(aNewControls)) {
-						aNewControls = [aNewControls];
+				}).then(function(vNewControls) {
+					if (vNewControls && !Array.isArray(vNewControls)) {
+						vNewControls = [vNewControls];
 					}
-					return aNewControls;
+					return vNewControls || [];
 				});
 		},
 
