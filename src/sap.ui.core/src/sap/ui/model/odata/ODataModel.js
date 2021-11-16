@@ -1127,7 +1127,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 */
 	ODataModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
@@ -1171,7 +1171,7 @@ sap.ui.define([
 		return oBinding;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindTree
 	 */
 	ODataModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
@@ -1179,7 +1179,7 @@ sap.ui.define([
 		return oBinding;
 	};
 
-	/**
+	/*
 	 * Creates a binding context for the given path
 	 * If the data of the context is not yet available, it can not be created, but first the
 	 * entity needs to be fetched from the server asynchronously. In case no callback function
@@ -1352,7 +1352,6 @@ sap.ui.define([
 				}
 			} else if (oData[navProp] === undefined
 					|| (oData[navProp] && oData[navProp].__deferred)) {
-				//@TODO: why 'undefined'? Old compatibility issue?
 				//only one single Part, e.g. "Orders"
 				return true;
 			}
@@ -1388,7 +1387,7 @@ sap.ui.define([
 		return false;
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.destroyBindingContext
 	 */
 	ODataModel.prototype.destroyBindingContext = function(oContext) {
@@ -1429,7 +1428,7 @@ sap.ui.define([
 		return aCustomParams.join("&");
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.Model.prototype.bindContext
 	 */
 	ODataModel.prototype.bindContext = function(sPath, oContext, mParameters) {
@@ -2562,7 +2561,7 @@ sap.ui.define([
 
 		if (oFunctionMetadata) {
 			sUrl = this._createRequestUrl(sFunctionName, oContext, null,  this.bUseBatch);
-			var sUrlURI = URI(sUrl);
+			var sUrlURI = new URI(sUrl);
 			if (oFunctionMetadata.parameter != null) {
 				each(oParameters, function (sParameterName, oParameterValue) {
 					var matchingParameters = oFunctionMetadata.parameter.filter(function (oParameter) {

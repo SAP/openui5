@@ -469,7 +469,6 @@ sap.ui.define([
 			sPath =  "toupper(" + sPath + ")";
 		}
 
-		// TODO embed 2nd value
 		switch (sOperator) {
 			case "EQ":
 			case "NE":

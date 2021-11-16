@@ -88,7 +88,7 @@ sap.ui.define([
 			 * Example:
 			 * <pre>
 			 * function myRootFormatter(oValue1, oValue2, sFullName, sGreeting, iAnswer) {
-			 *     return ...; //TODO compute something useful from the given values
+			 *     return ...;
 			 * }
 			 *
 			 * oSupplierContext = oMetaModel.getMetaContext("/ProductSet('HT-1021')/ToSupplier");
