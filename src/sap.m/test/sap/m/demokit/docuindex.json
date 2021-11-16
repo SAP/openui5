@@ -358,7 +358,7 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "formFactors": "SML",
-		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit", "sap.m.sample.DatePickerValueState"]
+		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit", "sap.m.sample.DatePickerValueState", "sap.m.sample.DatePickerHidden"]
 		},
 		{
 		  "id": "sap.m.DateRangeSelection",
@@ -366,7 +366,7 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.DateRangeSelection", "sap.m.sample.DateRangeSelectionValueState"]
+		  "samples": ["sap.m.sample.DateRangeSelection", "sap.m.sample.DateRangeSelectionValueState", "sap.m.sample.DateRangeSelectionHidden"]
 		},
 		{
 		  "id": "sap.m.DateTimeInput",
@@ -382,7 +382,7 @@
 		  "category": "User Input",
 		  "since": "1.38",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.DateTimePicker", "sap.m.sample.DateTimePickerValueState"]
+		  "samples": ["sap.m.sample.DateTimePicker", "sap.m.sample.DateTimePickerValueState", "sap.m.sample.DateTimePickerHidden"]
 		},
 		{
 		  "id": "sap.m.TimePickerSliders",
@@ -1748,6 +1748,11 @@
 		"description": "This example shows different DateRangeSelection value states."
 		},
 		{
+			"id": "sap.m.sample.DateRangeSelectionHidden",
+			"name": "Date Range Selection - Open by Another Control",
+			"description": "This example shows Date Range Selection which is opened by another control."
+		},
+		{
 		  "id": "sap.m.sample.ToolbarVsBar",
 		  "name": "Toolbar vs Bar vs OverflowToolbar",
 		  "description": "Toolbar handles overflow by shrinking items. OverflowToolbar provides an overflow menu. Bar is able to perfectly center a text if nothing overflows."
@@ -2323,9 +2328,14 @@
 		  "description": "Using calendar in a dialog for changing dates in mass editing scenario."
 		},
 		{
-		"id": "sap.m.sample.DatePickerValueState",
-		"name": "Date Picker - Value States",
-		"description": "This example shows different DatePicker value states."
+			"id": "sap.m.sample.DatePickerValueState",
+			"name": "Date Picker - Value States",
+			"description": "This example shows different DatePicker value states."
+		},
+		{
+			"id": "sap.m.sample.DatePickerHidden",
+			"name": "Date Picker - Open by Another Control",
+			"description": "This example shows Date Picker which is opened by another control."
 		},
 		{
 		  "id": "sap.m.sample.DateTimeInput",
@@ -2341,6 +2351,11 @@
 		"id": "sap.m.sample.DateTimePickerValueState",
 		"name": "Date Time Picker - Value States",
 		"description": "This example shows different DateTimePicker value states."
+		},
+		{
+		  "id": "sap.m.sample.DateTimePickerHidden",
+		  "name": "Date Time Picker - Open by Another Control",
+		  "description": "This example shows Date Time Picker which is opened by another control."
 		},
 		{
 		  "id": "sap.m.sample.RadioButton",

@@ -63,6 +63,19 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		return mAccessibilityState;
 	};
 
+	/**
+	 * Adds specific class to hide the <code>DatePicker</code> input field when the <code>hideInput</code> property is set to <code>true</code>.
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	 DatePickerRenderer.addOuterClasses = function(oRm, oControl) {
+		if (oControl.getHideInput()) {
+			oRm.class("sapMDatePickerHiddenInput");
+		}
+		InputBaseRenderer.addOuterClasses.apply(this, arguments);
+	};
+
 	return DatePickerRenderer;
 
 }, /* bExport= */ true);

@@ -564,17 +564,20 @@ sap.ui.define([
 
 	};
 
-	DateTimePicker.prototype._openPopup = function(){
+	DateTimePicker.prototype._openPopup = function(oDomRef){
 
 		if (!this._oPopup) {
 			return;
 		}
+		if (!oDomRef) {
+			oDomRef = this.getDomRef();
+		}
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 
 		var oPopover = this._oPopup.getAggregation("_popup");
-		oPopover.oPopup.setAutoCloseAreas([this.getDomRef()]);
+		oPopover.oPopup.setAutoCloseAreas([oDomRef]);
 
-		this._oPopup.openBy(this);
+		this._oPopup.openBy(oDomRef || this);
 	};
 
 	DateTimePicker.prototype._createPopupContent = function(){
