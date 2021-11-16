@@ -285,8 +285,10 @@ function(
 		this.setAggregation("_calendarPicker", oCalendarPicker);
 		this._oCalendarAfterRenderDelegate = {
 			onAfterRendering: function() {
-				oCalendarPicker.focus();
-			}
+				if (this._oPopup && this._oPopup.isOpen()) {
+					oCalendarPicker.focus();
+				}
+			}.bind(this)
 		};
 		oCalendarPicker.addDelegate(this._oCalendarAfterRenderDelegate);
 		this._oCalendar = oCalendarPicker;
