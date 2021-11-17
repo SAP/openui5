@@ -3,6 +3,11 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "fef0810a2037f4e45e55ff294adef19e86f299b1",
+        "type": "FEATURE",
+        "text": " Integration cards: Implemented support for requesting CSRF tokens"
+      },
+      {
         "id": "735fc463cffc152ea73f3ec8457829e2b00f4a70",
         "type": "FIX",
         "text": " sap.ui.integration.widgets.Card: Links in Object card are now labeled",

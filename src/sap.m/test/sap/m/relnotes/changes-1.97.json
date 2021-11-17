@@ -3,6 +3,64 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "d3dbebb68e522d7f9e47865f08ade4af522e8189",
+        "type": "FEATURE",
+        "text": " sap.m.GenericTag: Introduce new association ariaLabelledBy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180318069"
+          }
+        ]
+      },
+      {
+        "id": "539f65a31ca4f526b5e6e713edecd7c5f4ed2e2a",
+        "type": "FEATURE",
+        "text": " Demo Kit: News section implemented"
+      },
+      {
+        "id": "6e950fc8117d580ea91ec84b4574baceda82ec42",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: Open TimePicker from another control (no visible input field)"
+      },
+      {
+        "id": "385fc73da952479c03d8f3374b4d85a88386ec9a",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker, sap.m.DateRangeSelection: Controls can be opened by another control (no visible input field)"
+      },
+      {
+        "id": "f2a7cee990d60b8a49f9c0baad1dcd7a7695f569",
+        "type": "FEATURE",
+        "text": " sap.m.DateTimePicker: implements the new TimePicker look"
+      },
+      {
+        "id": "f4e0a5fb6472a92c849d11156d92d514e4f07401",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add new option for Date to Year"
+      },
+      {
+        "id": "e79b517202f33f661983d693c36a8dbea92af13e",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Correct invisible text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305447"
+          }
+        ]
+      },
+      {
+        "id": "86b2f7cdf4d98d08852bdf8ab5c08cc8d046e17d",
+        "type": "FIX",
+        "text": " P13nDialog: IconTabBar items border fix - update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180308710"
+          }
+        ]
+      },
+      {
         "id": "f5ac771c6781c446d34f562207dcc513353d8bf8",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: Calendar part is hidden after selecting a date on mobile or small screen width",
@@ -34,6 +92,16 @@
             "reference": "002075129500008020832021"
           }
         ]
+      },
+      {
+        "id": "5076d9df4670e236222862e9333ab288ad9d4d20",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: Introduce new decorative property"
+      },
+      {
+        "id": "786c24d04fdf01e1f9253302639c1f11cd9704bd",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: selection of multiple appointments is possible across all devices"
       },
       {
         "id": "fe87df25e190126e24fb35d2cca145e9e0b71d65",
