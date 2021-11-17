@@ -3,23 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<base href="../../../../">
-
-	<title>QUnit Page for sap.m Margin CSS Classes</title>
-	<script src="test-resources/sap/m/shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-			data-sap-ui-noConflict="true"
-			src="resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.layout,sap.ui.unified,sap.m"
-			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-async="true"
-			data-sap-ui-resourceroots='{
-				"sap.ui.demo.mock": "test-resources/sap/ui/documentation/sdk/"
-			}' >
-	</script>
-	<link  href="resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" />
-	<script src="resources/sap/ui/thirdparty/qunit-2.js"></script>
-	<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="resources/sap/ui/test/starter/runTest.js" 
+			data-sap-ui-testsuite="test-resources/sap/m/qunit/testsuite.mobile.qunit"
+			data-sap-ui-test="ResponsiveMarginCssClasses"></script>
 
 	<script id="marginQUnitView" type="sapui5/xmlview">
 <mvc:View
@@ -144,8 +130,6 @@
 	</Page>
 </mvc:View>
 	</script>
-
-	<script src="test-resources/sap/m/qunit/ResponsiveMarginCssClasses.qunit.js"></script>
 	</head>
 	<body>
 		<div id="qunit"></div>

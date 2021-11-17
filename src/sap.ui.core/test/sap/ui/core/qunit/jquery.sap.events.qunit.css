@@ -1,0 +1,25 @@
+#uiArea {
+	height:200px;
+	border: 1px solid black;
+	padding: 3px;
+}
+
+.testCtrl {
+	display: inline-block;
+	background-color: blue;
+	position: relative;
+	width: 50%;
+	height: 90%;
+	border: 2px solid green;
+	margin: 3px;
+}
+
+.testCtrlInner {
+	display: inline-block;
+	background-color: red;
+	position: absolute;
+	left: 20px;
+	right: 20px;
+	top: 20px;
+	bottom: 20px;
+}

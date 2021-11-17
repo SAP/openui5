@@ -3,6 +3,7 @@
 	<head>
 		<title>QUnit Page for sap.ui.core.tmpl.Template</title>
 		<base href="../../../../../../">
+		<link rel="stylesheet" href="test-resources/sap/ui/core/qunit/tmpl/Template.qunit.css">
 		<script id="sap-ui-bootstrap"
 			src="resources/sap/ui/test/starter/runTest.js"
 			data-sap-ui-testsuite="test-resources/sap/ui/core/qunit/tmpl/testsuite.tmpl.qunit"
@@ -20,20 +21,20 @@
 	<body>
 		<div id="qunit"></div>
 		<div id="main"></div>
-		<div id="theEmbeddedTemplate" data-type="text/x-handlebars-template" style="display: none;">
+		<div id="theEmbeddedTemplate" data-type="text/x-handlebars-template" class="invisible">
 			<code>Hello {{value}}</code>
 		</div>
-		<div id="theSecondEmbeddedTemplate" data-type="text/x-unknown-template" style="display: none;">
+		<div id="theSecondEmbeddedTemplate" data-type="text/x-unknown-template" class="invisible">
 			<code>Hello {{value}}</code>
 		</div>
-		<div id="theThirdEmbeddedTemplate" style="display: none;">
+		<div id="theThirdEmbeddedTemplate" class="invisible">
 			<code>Hello {{value}}</code>
 		</div>
 
-		<div id="templateWithBinding" style="display: none;">
+		<div id="templateWithBinding" class="invisible">
 		</div>
 
-		<div id="templateWithListBinding" style="display: none;">
+		<div id="templateWithListBinding" class="invisible">
 			<b>{{text path="/value"}}</b>
 			<ul>
 				{{#each path="/subvalues"}}
@@ -42,7 +43,7 @@
 			</ul>
 		</div>
 
-		<div id="templateWithListBindingAndControls" style="display: none;">
+		<div id="templateWithListBindingAndControls" class="invisible">
 			<ul>
 			{{#each path="other>/subvalues"}}
 				{{#if path="other>visible"}}

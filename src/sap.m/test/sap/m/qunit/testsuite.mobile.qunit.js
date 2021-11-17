@@ -1033,6 +1033,25 @@ sap.ui.define([
 			RatingIndicator: {
 				title: "Test Page for sap.m.RatingIndicator"
 			},
+			ResponsiveMarginCssClasses: {
+				/*
+				 * Note: this test is executed multiple times by the QUnitCompositesUsingIFrames test
+				 *       with varying iframe sizes (width / height).
+				 *       It is listed here to benefit from the async behavior of the test starter,
+				 *       but it shall not be executed directly by the mobile testsuite.
+				 *       Therefore setting 'skip' to true.
+				 */
+				skip: true,
+				title: "QUnit Page for sap.m Margin CSS Classes",
+				loader: {
+					paths: {
+						"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+					}
+				},
+				ui5: {
+					libs: ["sap.ui.layout", "sap.ui.unified", "sap.m"]
+				}
+			},
 			ResponsivePopover: {
 				title: "QUnit Page for sap.m.ResponsivePopover",
 				sinon: {
