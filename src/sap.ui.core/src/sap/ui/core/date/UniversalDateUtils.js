@@ -169,7 +169,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 		 *
 		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
 		 * @param {string} [sLocale=format locale] An optional locale identifier, as BCP language tag;
-		 *   defaults to the current format local of UI5
+		 *   defaults to the current format localе of UI5
 		 * @returns {sap.ui.core.date.UniversalDate} First day of the week
 		 * @private
 		 * @ui5-restricted sap.ui.comp
@@ -182,6 +182,29 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			oUniversalDate = oUniversalDate ? clone(oUniversalDate) : clone(UniversalDateUtils.createNewUniversalDate());
 			oUniversalDate.setDate(oUniversalDate.getDate() - oUniversalDate.getDay() + iFirstDayOfWeek);
 			return UniversalDateUtils.resetStartTime(oUniversalDate);
+		};
+
+		/**
+		 * Returns the last day of the week for the given date.
+		 *
+		 * The interpretation of 'last day of the week' depends on the given locale or, if none is given,
+		 * on the current {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale UI5 format locale}.
+		 *
+		 * If no date is given, today is used, represented in the session's default calendar.
+		 * If a date is given, the returned date will use the same calendar.
+		 * The time portion of the returned date will be set to the start of the day (00:00:00:000).
+		 *
+		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
+		 * @param {string} [sLocale=format locale] An optional locale identifier, as BCP language tag;
+		 *   defaults to the current format localе of UI5
+		 * @returns {sap.ui.core.date.UniversalDate} Last day of the week
+		 * @private
+		 * @ui5-restricted sap.ui.comp
+		 */
+		UniversalDateUtils.getWeekLastDate = function (oUniversalDate, sLocale) {
+			var oEndDate = UniversalDateUtils.getWeekStartDate(oUniversalDate, sLocale);
+			oEndDate.setDate(oEndDate.getDate() + 6);
+			return UniversalDateUtils.resetStartTime(oEndDate);
 		};
 
 		/**
@@ -203,6 +226,25 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 		};
 
 		/**
+		 * Returns the last day of the month for the given date.
+		 *
+		 * If no date is given, today is used, represented in the session's default calendar.
+		 * If a date is given, the returned date will use the same calendar.
+		 * The time portion of the returned date will be set to the start of the day (00:00:00:000).
+		 *
+		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
+		 * @returns {sap.ui.core.date.UniversalDate} Last day of the month
+		 * @private
+		 * @ui5-restricted sap.ui.comp
+		 */
+		UniversalDateUtils.getMonthEndDate = function (oUniversalDate) {
+			var oEndDate = UniversalDateUtils.getMonthStartDate(oUniversalDate);
+			oEndDate.setMonth(oEndDate.getMonth() + 1);
+			oEndDate.setDate(0);
+			return UniversalDateUtils.resetStartTime(oEndDate);
+		};
+
+		/**
 		 * Returns the first day of the quarter of the year of the given date.
 		 *
 		 * If no date is given, today is used, represented in the session's default calendar.
@@ -219,6 +261,25 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			oUniversalDate.setMonth(3 * Math.floor(oUniversalDate.getMonth() / 3));
 			oUniversalDate.setDate(1);
 			return UniversalDateUtils.resetStartTime(oUniversalDate);
+		};
+
+		/**
+		 * Returns the last day of the quarter of the year for the given date.
+		 *
+		 * If no date is given, today is used, represented in the session's default calendar.
+		 * If a date is given, the returned date will use the same calendar.
+		 * The time portion of the returned date will be set to the start of the day (00:00:00:000).
+		 *
+		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
+		 * @returns {sap.ui.core.date.UniversalDate} Last day of the quarter of the year
+		 * @private
+		 * @ui5-restricted sap.ui.comp
+		 */
+		UniversalDateUtils.getQuarterEndDate = function (oUniversalDate) {
+			var oEndDate = UniversalDateUtils.getQuarterStartDate(oUniversalDate);
+			oEndDate.setMonth(oEndDate.getMonth() + 3);
+			oEndDate.setDate(0);
+			return UniversalDateUtils.resetStartTime(oEndDate);
 		};
 
 		/**
@@ -245,7 +306,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 		 *
 		 * If no date is given, today is used, represented in the session's default calendar.
 		 * If a date is given, the returned date will use the same calendar.
-		 * The time portion of the returned date will be set to the end of the day (23:59:59:999).
+		 * The time portion of the returned date will be set to the start of the day (00:00:00:000).
 		 *
 		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
 		 * @returns {sap.ui.core.date.UniversalDate} The year's end date for the given universal date
@@ -257,7 +318,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			oUniversalDate.setFullYear(oUniversalDate.getFullYear() + 1);
 			oUniversalDate.setMonth(0);
 			oUniversalDate.setDate(0);
-			return UniversalDateUtils.resetEndTime(oUniversalDate);
+			return UniversalDateUtils.resetStartTime(oUniversalDate);
 		};
 
 		/**
@@ -371,6 +432,33 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			currentWeek: function () {
 				return UniversalDateUtils.getRange(0, "WEEK");
 			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of the first day of the current week
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			firstDayOfWeek: function () {
+				var oStartDate = UniversalDateUtils.getWeekStartDate();
+				return [
+					oStartDate,
+					UniversalDateUtils.resetEndTime(oStartDate)
+				];
+			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of the the last day of the current week
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			lastDayOfWeek: function () {
+				var oEndDate = UniversalDateUtils.getWeekLastDate();
+				return [
+					oEndDate,
+					UniversalDateUtils.resetEndTime(oEndDate)
+				];
+			},
+
 			/**
 			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of next week's
 			 * @private
@@ -407,13 +495,40 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 				return UniversalDateUtils.getRange(-1, "MONTH");
 			},
 			/**
-			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of current month's
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of current month
 			 * @private
 			 * @ui5-restricted sap.ui.comp
 			 */
 			currentMonth: function () {
 				return UniversalDateUtils.getRange(0, "MONTH");
 			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of first day of the current month
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			firstDayOfMonth: function () {
+				var oStartDate = UniversalDateUtils.getMonthStartDate();
+				return [
+					oStartDate,
+					UniversalDateUtils.resetEndTime(oStartDate)
+				];
+			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of last day of the current month
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			lastDayOfMonth: function () {
+				var oEndDate = UniversalDateUtils.getMonthEndDate();
+				return [
+					oEndDate,
+					UniversalDateUtils.resetEndTime(oEndDate)
+				];
+			},
+
 			/**
 			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of next month's
 			 * @private
@@ -449,6 +564,33 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			lastQuarter: function () {
 				return UniversalDateUtils.getRange(-1, "QUARTER");
 			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of first day of the current quarter
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			firstDayOfQuarter: function () {
+				var oStartDate = UniversalDateUtils.getQuarterStartDate();
+				return [
+					oStartDate,
+					UniversalDateUtils.resetEndTime(oStartDate)
+				];
+			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of last day of the current quarter
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			lastDayOfQuarter: function () {
+				var oEndDate = UniversalDateUtils.getQuarterEndDate();
+				return [
+					oEndDate,
+					UniversalDateUtils.resetEndTime(oEndDate)
+				];
+			},
+
 			/**
 			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of current quarter
 			 * @private
@@ -508,6 +650,34 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 			lastYear: function () {
 				return UniversalDateUtils.getRange(-1, "YEAR");
 			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of first day of the current year
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			firstDayOfYear: function () {
+				var oStartDate = UniversalDateUtils.getYearStartDate();
+				return [
+					oStartDate,
+					UniversalDateUtils.resetEndTime(oStartDate)
+				];
+			},
+
+			/**
+			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of last day of the current year
+			 * @private
+			 * @ui5-restricted sap.ui.comp
+			 */
+			lastDayOfYear: function () {
+				var oEndDate = UniversalDateUtils.getYearEndDate();
+
+				return [
+					oEndDate,
+					UniversalDateUtils.resetEndTime(oEndDate)
+				];
+			},
+
 			/**
 			 * @returns {sap.ui.core.date.UniversalDate[]} Array with start and end date of current year
 			 * @private
@@ -556,7 +726,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/core/Locale', 'sap/ui/c
 				var oToday = UniversalDateUtils.createNewUniversalDate();
 				return [
 					UniversalDateUtils.resetStartTime(oToday),
-					UniversalDateUtils.getYearEndDate(oToday)
+					UniversalDateUtils.resetEndTime(UniversalDateUtils.getYearEndDate(oToday))
 				];
 			}
 		};

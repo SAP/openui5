@@ -263,6 +263,16 @@ sap.ui.define([
 		testDate(assert, aRange[0].oDate, -2, "WEEK", 1999, 11, 12, 0,0,0,0);
 		testDate(assert, aRange[1].oDate, -2, "WEEK", 1999, 11, 25, 23,59,59,999);
 
+		//startDate current Week
+		aRange = UniversalDateUtils.ranges.firstDayOfWeek();
+		testDate(assert, aRange[0].oDate, 1, "WEEK", 1999, 11, 26, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "WEEK", 1999, 11, 26, 23,59,59,999);
+
+		//lastDate current Week
+		aRange = UniversalDateUtils.ranges.lastDayOfWeek();
+		testDate(assert, aRange[0].oDate, 1, "WEEK", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "WEEK", 2000, 0, 1, 23,59,59,999);
+
 		//lastWeek
 		aRange = UniversalDateUtils.ranges.lastWeek();
 		testDate(assert, aRange[0].oDate, -1, "WEEK", 1999, 11, 19, 0,0,0,0);
@@ -301,6 +311,16 @@ sap.ui.define([
 		aRange = UniversalDateUtils.ranges.lastMonth();
 		testDate(assert, aRange[0].oDate, -1, "MONTH", 1999, 11, 1, 0,0,0,0);
 		testDate(assert, aRange[1].oDate, -1, "MONTH", 1999, 11, 31, 23,59,59,999);
+
+		//startDate current Month
+		aRange = UniversalDateUtils.ranges.firstDayOfMonth();
+		testDate(assert, aRange[0].oDate, 1, "MONTH", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "MONTH", 2000, 0, 1, 23,59,59,999);
+
+		//lastDate current Month
+		aRange = UniversalDateUtils.ranges.lastDayOfMonth();
+		testDate(assert, aRange[0].oDate, 1, "MONTH", 2000, 0, 31, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "MONTH", 2000, 0, 31, 23,59,59,999);
 
 		//currentMonth
 		aRange = UniversalDateUtils.ranges.currentMonth();
@@ -356,6 +376,15 @@ sap.ui.define([
 		testDate(assert, aRange[1].oDate, 5, "QUARTER", 2001, 5, 30, 23,59,59,999);
 
 
+		//firstDay current Quarter
+		aRange = UniversalDateUtils.ranges.firstDayOfQuarter();
+		testDate(assert, aRange[0].oDate, 1, "QUARTER", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "QUARTER", 2000, 0, 1, 23,59,59,999);
+
+		//endDay current Quarter
+		aRange = UniversalDateUtils.ranges.lastDayOfQuarter();
+		testDate(assert, aRange[0].oDate, 1, "QUARTER", 2000, 2, 31, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "QUARTER", 2000, 2, 31, 23,59,59,999);
 
 		//1 Quarter
 		aRange = UniversalDateUtils.ranges.quarter(1);
@@ -396,6 +425,16 @@ sap.ui.define([
 		aRange = UniversalDateUtils.ranges.currentYear();
 		testDate(assert, aRange[0].oDate, 0, "YEAR", 2000, 0, 1, 0,0,0,0);
 		testDate(assert, aRange[1].oDate, 0, "YEAR", 2000, 11, 31, 23,59,59,999);
+
+		//startDate current Year
+		aRange = UniversalDateUtils.ranges.firstDayOfYear();
+		testDate(assert, aRange[0].oDate, 1, "YEAR", 2000, 0, 1, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "YEAR", 2000, 0, 1, 23,59,59,999);
+
+		//lastDate current Year
+		aRange = UniversalDateUtils.ranges.lastDayOfYear();
+		testDate(assert, aRange[0].oDate, 1, "YEAR", 2000, 11, 31, 0,0,0,0);
+		testDate(assert, aRange[1].oDate, 1, "YEAR", 2000, 11, 31, 23,59,59,999);
 
 		//nextYear
 		aRange = UniversalDateUtils.ranges.nextYear();
@@ -459,6 +498,13 @@ sap.ui.define([
 			assert.equal(oOutput.getCalendarType(), sCalendarType,
 				"getWeekStartDate: returned calendar type must be the same as the input calendar type");
 
+			// getWeekLastDate
+			oOutput = UniversalDateUtils.getWeekLastDate(oInput);
+			assert.ok(oOutput !== oInput,
+				"getWeekLastDate: returned date must not be the same as the input date");
+			assert.equal(oOutput.getCalendarType(), sCalendarType,
+				"getWeekLastDate: returned calendar type must be the same as the input calendar type");
+
 			// getMonthStartDate
 			oOutput = UniversalDateUtils.getMonthStartDate(oInput);
 			assert.equal(oInput.getTime(), fFixedDateTime, "getMonthStartDate: input date has not been modified");
@@ -466,6 +512,14 @@ sap.ui.define([
 				"getMonthStartDate: returned date must not be the same as the input date");
 			assert.equal(oOutput.getCalendarType(), sCalendarType,
 				"getMonthStartDate: returned calendar type must be the same as the input calendar type");
+
+			// getMonthEndDate
+			oOutput = UniversalDateUtils.getMonthEndDate(oInput);
+			assert.equal(oInput.getTime(), fFixedDateTime, "getMonthEndDate: input date has not been modified");
+			assert.ok(oOutput !== oInput,
+				"getMonthEndDate: returned date must not be the same as the input date");
+			assert.equal(oOutput.getCalendarType(), sCalendarType,
+				"getMonthEndDate: returned calendar type must be the same as the input calendar type");
 
 			// getYearStartDate
 			oOutput = UniversalDateUtils.getYearStartDate(oInput);
