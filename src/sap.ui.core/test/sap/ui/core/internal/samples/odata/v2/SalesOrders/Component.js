@@ -60,6 +60,7 @@ sap.ui.define([
 				itemSelected : false,
 				messageCount : 0,
 				salesOrderID : "0500000005",
+				salesOrderItemsCount : 0,
 				salesOrdersCount : 0,
 				salesOrderSelected : false,
 				salesOrdersFilter : "",

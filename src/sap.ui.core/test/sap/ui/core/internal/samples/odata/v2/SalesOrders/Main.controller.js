@@ -151,7 +151,6 @@ sap.ui.define([
 			}, function (oError) {
 				MessageToast.show("Deleted transient sales order");
 			});
-			this.updateCount();
 		},
 
 		onDeleteItem : function () {
@@ -201,12 +200,10 @@ sap.ui.define([
 				that.getView().byId("objectPage").unbindElement();
 				if (oContext.isTransient()) {
 					oContext.getModel().resetChanges([oContext.getPath()], undefined, true);
-					that.updateCount();
 				} else {
 					oContext.getModel().remove("", {
 						context : oContext,
 						success : function () {
-							that.updateCount();
 							MessageToast.show("Deleted sales order " + sSalesOrderID);
 						}
 					});
@@ -319,7 +316,6 @@ sap.ui.define([
 				oModel = this.getView().getModel();
 
 			oModel.attachMessageChange(this.handleMessageChange, this);
-			oModel.attachRequestCompleted(this.updateCount.bind(this));
 
 			// adding the formatter dynamically is a prerequisite that it is called with the control
 			// as 'this'
@@ -427,6 +423,7 @@ sap.ui.define([
 			}
 
 			oView.byId("objectPage").bindElement(sContextPath, {createPreliminaryContext : true});
+			this.readSalesOrder(); // ensure that messages get updated
 			oTable.clearSelection();
 			oView.byId("messagePopover").getBinding("items")
 				.filter([
@@ -466,18 +463,47 @@ sap.ui.define([
 		},
 
 		onTransitionMessagesOnly : function (oEvent) {
-			var oView = this.getView();
+			var bTransitionMessagesOnly = oEvent.getSource().getPressed();
 
-			// first unbind element to ensure request order; header data need to be read before
-			// item data to show different behaviour based on transitionMessagesOnly
-			oView.byId("objectPage").unbindElement();
-			oView.byId("ToLineItems").bindRows({
+			this.getView().byId("ToLineItems").bindRows({
+				events : {change : this.onUpdateSalesOrderItemsCount.bind(this)},
 				parameters : {
-					transitionMessagesOnly : oEvent.getSource().getPressed()
+					transitionMessagesOnly : bTransitionMessagesOnly,
+					usePreliminaryContext : true
 				},
 				path : "ToLineItems"
 			});
-			this.onSelectSalesOrder();
+			if (bTransitionMessagesOnly) {
+				// the order of the calls for the object page and the list are not deterministic;
+				// if only transition messages shall be returned with table requests, refresh the
+				// object page to get all messages; in the other case object page must not be
+				// refreshed
+				this.onSelectSalesOrder();
+			}
+		},
+
+		onUpdateSalesOrderItemsCount : function () {
+			var iCount,
+				oSalesOrderItemsBinding = this.byId("ToLineItems").getBinding("rows"),
+				oUIModel = this.getView().getModel("ui");
+
+			if (oSalesOrderItemsBinding) {
+				iCount = oSalesOrderItemsBinding.getCount();
+				// we don't support .../$count property bindings
+				oUIModel.setProperty("/salesOrderItemsCount", iCount === undefined ? "??" : iCount);
+			}
+		},
+
+		onUpdateSalesOrdersCount : function () {
+			var iCount,
+				oSalesOrdersBinding = this.byId("SalesOrderSet").getBinding("items"),
+				oUIModel = this.getView().getModel("ui");
+
+			if (oSalesOrdersBinding) {
+				iCount = oSalesOrdersBinding.getCount();
+				// we don't support .../$count property bindings
+				oUIModel.setProperty("/salesOrdersCount", iCount === undefined ? "??" : iCount);
+			}
 		},
 
 		readSalesOrder : function (sGroupId) {
@@ -520,16 +546,6 @@ sap.ui.define([
 			}
 
 			return undefined;
-		},
-
-		updateCount : function () {
-			var oSalesOrdersBinding = this.byId("SalesOrderSet").getBinding("items"),
-				oUIModel = this.getView().getModel("ui");
-
-			if (oSalesOrdersBinding) {
-				// we don't support .../$count property bindings
-				oUIModel.setProperty("/salesOrdersCount", oSalesOrdersBinding.getCount() || 0);
-			}
 		},
 
 		updateMessageCount : function () {

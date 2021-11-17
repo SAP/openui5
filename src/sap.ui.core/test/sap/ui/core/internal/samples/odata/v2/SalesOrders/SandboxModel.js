@@ -9,11 +9,15 @@
  */
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/base/util/UriParameters",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"
-], function (merge, JSONModel, ODataModel, TestUtils, sinon) {
+], function (merge, UriParameters, JSONModel, CountMode, OperationMode, ODataModel, TestUtils,
+		sinon) {
 	"use strict";
 
 	var mMessageKey2MessageData = {
@@ -873,7 +877,7 @@ sap.ui.define([
 
 	return ODataModel.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.SandboxModel", {
 		constructor : function (mParameters) {
-			var oMockServerFixtures, oModel, oSandbox;
+			var oMockServerFixtures, oModel, sParameter, oSandbox, oUriParameters;
 
 			if (!TestUtils.isRealOData()) {
 				oMockServerFixtures = getMockServerFixtures();
@@ -885,6 +889,15 @@ sap.ui.define([
 				mParameters = Object.assign({}, mParameters, {
 					serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
 				});
+				oUriParameters = UriParameters.fromQuery(window.location.search);
+				sParameter = OperationMode[oUriParameters.get("operationMode")];
+				if (sParameter) {
+					mParameters.defaultOperationMode = sParameter;
+				}
+				sParameter = CountMode[oUriParameters.get("countMode")];
+				if (sParameter) {
+					mParameters.defaultCountMode = sParameter;
+				}
 			}
 
 			oModel = new ODataModel(mParameters);
