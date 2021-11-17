@@ -1,0 +1,15 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	height="100%">
+	<f:Card width="300px" class="sapUiSmallMarginBegin sapUiSmallMarginTop">
+		<f:header>
+			<card:Header title="Inbox" />
+		</f:header>
+		<f:content>
+			<IllustratedMessage illustrationType="sapIllus-NoMail" />
+		</f:content>
+	</f:Card>
+</mvc:View>

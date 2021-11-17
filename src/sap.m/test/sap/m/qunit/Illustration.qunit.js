@@ -1,8 +1,8 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
-	"sap/f/Illustration",
-	"sap/f/IllustrationPool",
+	"sap/m/Illustration",
+	"sap/m/IllustrationPool",
 	"sap/ui/core/Core"
 ],
 function (

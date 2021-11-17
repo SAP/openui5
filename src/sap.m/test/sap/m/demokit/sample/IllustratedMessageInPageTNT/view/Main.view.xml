@@ -1,0 +1,33 @@
+<mvc:View
+	controllerName="sap.m.sample.IllustratedMessageInPageTNT.controller.Main"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	height="100%">
+	<Page>
+		<form:SimpleForm editable="true" width="420px">
+			<VBox>
+				<Label text="Illustration Size:"/>
+				<Select change="onSelectSize" items="{/sizeTypes}">
+					<core:Item key="{key}" text="{text}"/>
+				</Select>
+				<Text text="{= ${/sSelectedSize} === 'Auto' ? 'IllustratedMessage will chose its size automatically according to its parent container width.' : 'Forced State. IllustratedMessage will keep its size even if the parent container width is changed.'}" />
+			</VBox>
+			<Label text="Illustration Type"/>
+			<Select change="onSelectType" items="{/typeTypes}">
+				<core:Item key="{key}" text="{text}"/>
+			</Select>
+		</form:SimpleForm>
+
+		<IllustratedMessage
+			title="Sample Title"
+			description="Sample Description"
+			illustrationSize="{/sSelectedSize}"
+			illustrationType="{/sSelectedType}">
+			<additionalContent>
+				<Button text="Action (optional)" />
+			</additionalContent>
+		</IllustratedMessage>
+	</Page>
+</mvc:View>

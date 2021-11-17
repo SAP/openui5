@@ -1,0 +1,21 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	controllerName="sap.m.sample.IllustratedMessageSessionTimeout.controller.Main"
+	height="100%">
+	<VBox>
+		<VBox class="sapUiSmallMargin" >
+			<Label text="Seconds until session expiration" />
+			<StepInput
+				id="expirationInput"
+				value="3"
+				min="2"
+				max="9"
+				width="3rem" />
+		</VBox>
+		<Button
+			press="handleOpenDialog"
+			text="Open Dialog"
+			class="sapUiSmallMarginBegin" />
+	</VBox>
+</mvc:View>

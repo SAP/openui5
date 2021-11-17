@@ -11,6 +11,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	"sap/m/AvatarType",
 	"sap/m/AvatarColor",
 	"sap/m/AvatarImageFitType",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize",
 	"sap/m/library", // library dependency
 	"sap/ui/Global",
 	"sap/ui/core/library",
@@ -20,7 +22,9 @@ sap.ui.define(["sap/ui/base/DataType",
 			 AvatarSize,
 			 AvatarType,
 			 AvatarColor,
-			 AvatarImageFitType) {
+			 AvatarImageFitType,
+			 IllustratedMessageType,
+			 IllustratedMessageSize) {
 
 	"use strict";
 
@@ -601,132 +605,31 @@ sap.ui.define(["sap/ui/base/DataType",
 		Right: "Right"
 	};
 
-	/** Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
+	/**
+	 * Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
 	 *
-	 * @enum {string}
-	 * @experimental Since 1.88 This enum is experimental. Its properties may change.
+	 * This is an alias for {@link sap.m.IllustratedMessageType} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.IllustratedMessageType}
 	 * @public
+	 * @deprecated as of version 1.98. Use the {@link sap.m.IllustratedMessageType} instead.
+	 * @since 1.88
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.IllustratedMessageType = {
-
-		/**
-		 * "Before Search" illustration type.
-		 * @public
-		 */
-		BeforeSearch: "sapIllus-BeforeSearch",
-
-		/**
-		 * "No Activities" illustration type.
-		 * @public
-		 */
-		NoActivities: "sapIllus-NoActivities",
-
-		/**
-		 * "No Data" illustration type.
-		 * @public
-		 */
-		NoData: "sapIllus-NoData",
-
-		/**
-		 * "No Email" illustration type.
-		 * @public
-		 */
-		NoMail: "sapIllus-NoMail",
-
-		/**
-		 * "No Entries" illustration type.
-		 * @public
-		 */
-		NoEntries: "sapIllus-NoEntries",
-
-		/**
-		 * "No Notifications" illustration type.
-		 * @public
-		 */
-		NoNotifications: "sapIllus-NoNotifications",
-
-		/**
-		 * "No Saved Items" illustration type.
-		 * @public
-		 */
-		NoSavedItems: "sapIllus-NoSavedItems",
-
-		/**
-		 * "No Search Results" illustration type.
-		 * @public
-		 */
-		NoSearchResults: "sapIllus-NoSearchResults",
-
-		/**
-		 * "No Tasks" illustration type.
-		 * @public
-		 */
-		NoTasks: "sapIllus-NoTasks",
-
-		/**
-		 * "Unable To Load" illustration type.
-		 * @public
-		 */
-		UnableToLoad: "sapIllus-UnableToLoad",
-
-		/**
-		 * "Unable To Upload" illustration type.
-		 * @public
-		 */
-		UnableToUpload: "sapIllus-UnableToUpload"
-	};
+	thisLib.IllustratedMessageType = IllustratedMessageType;
 
 	/**
 	 * Available <code>Illustration</code> sizes for the {@link sap.f.IllustratedMessage} control.
 	 *
-	 * @enum {string}
-	 * @experimental Since 1.88 This enum is experimental. Its properties may change.
+	 * This is an alias for {@link sap.m.IllustratedMessageSize} and only kept for compatibility reasons.
+	 *
+	 * @typedef {sap.m.IllustratedMessageSize}
 	 * @public
+	 * @deprecated as of version 1.98. Use the {@link sap.m.IllustratedMessageSize} instead.
+	 * @since 1.88
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.IllustratedMessageSize = {
-
-		/**
-		 * Automatically decides the <code>Illustration</code> size (<code>Base</code>, <code>Spot</code>,
-		 * <code>Dialog</code>, or <code>Scene</code>) depending on the <code>IllustratedMessage</code> container width.
-		 *
-		 * <b>Note:</b> <code>Auto</code> is the only option where the illustration size is changed according to
-		 * the available container width. If any other <code>IllustratedMessageSize</code> is chosen, it remains
-		 * until changed by the app developer.
-		 *
-		 * @public
-		 */
-		Auto : "Auto",
-
-		/**
-		 * Base <code>Illustration</code> size (XS breakpoint). Suitable for cards (two columns).
-		 *
-		 * <b>Note:</b> When <code>Base</code> is in use, no illustration is displayed.
-		 *
-		 * @public
-		 */
-		Base : "Base",
-
-		/**
-		 * Spot <code>Illustration</code> size (S breakpoint). Suitable for cards (four columns).
-		 * @public
-		 */
-		Spot : "Spot",
-
-		/**
-		 * Dialog <code>Illustration</code> size (M breakpoint). Suitable for dialogs.
-		 * @public
-		 */
-		Dialog : "Dialog",
-
-		/**
-		 * Scene <code>Illustration</code> size (L breakpoint). Suitable for a <code>Page</code> or a table.
-		 * @public
-		 */
-		Scene : "Scene"
-
-	};
+	thisLib.IllustratedMessageSize = IllustratedMessageSize;
 
 	return thisLib;
 

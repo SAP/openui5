@@ -167,21 +167,6 @@ sap.ui.define(function () {
 					only: ["sap/f/GridNavigationMatrix"]
 				}
 			},
-			"IllustratedMessage": {
-				coverage: {
-					only: ["sap/f/IllustratedMessage"]
-				}
-			},
-			"Illustration": {
-				coverage: {
-					only: ["sap/f/Illustration"]
-				}
-			},
-			"IllustrationPool": {
-				coverage: {
-					only: ["sap/f/IllustrationPool"]
-				}
-			},
 			"ProductSwitchItem": {
 				coverage: {
 					only: ["sap/f/ProductSwitchItem"]
