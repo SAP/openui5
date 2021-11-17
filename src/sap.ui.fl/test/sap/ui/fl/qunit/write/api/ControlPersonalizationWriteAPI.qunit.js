@@ -7,11 +7,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/FlexControllerFactory",
@@ -25,11 +28,14 @@ sap.ui.define([
 	XMLView,
 	ComponentContainer,
 	Control,
+	Core,
 	Element,
 	UIComponent,
+	VariantUtils,
 	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
 	Settings,
+	VariantManagement,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
 	FlexControllerFactory,
@@ -355,6 +361,27 @@ sap.ui.define([
 				assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
 				assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
 				assert.deepEqual(oCheckStub.lastCall.args[0], aReferences, "the variant references were passed to the VariantModel");
+			});
+		});
+
+		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", function(assert) {
+			var sChangesSaved = "changesSaved";
+			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
+			var aReferences = [];
+			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
+			var oCheckStub = sandbox.stub(this.oVariantModel, "checkDirtyStateForControlModels");
+			var aVMControl = new VariantManagement({modelName: Utils.VARIANT_MODEL_NAME}).placeAt(Core.getStaticAreaRef());
+			sandbox.stub(VariantUtils, "getAllVariantManagementControlIds").returns([aVMControl.getId()]);
+			Core.applyChanges();
+
+			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
+
+			.then(function (vResponse) {
+				assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
+				assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
+				assert.deepEqual(oCheckStub.lastCall.args[0], aReferences, "the variant references were passed to the VariantModel");
+
+				aVMControl.destroy();
 			});
 		});
 
