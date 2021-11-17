@@ -2421,6 +2421,93 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Refreshing data - invalid response", {
+			beforeEach: function () {
+				this.oServer = sinon.fakeServer.create();
+				this.oServer.autoRespond = true;
+				this.oServer.xhr.useFilters = true;
+				this.oServer.xhr.addFilter(function (method, url) {
+					return !url.startsWith("/GetSales");
+				});
+
+				this.bError = true;
+
+				// Endpoints
+				this.oServer.respondWith("/GetSalesSuccess", function (xhr) {
+
+					var iResult = 500;
+					var mResponseJSON = "";
+
+					if (!this.bError) {
+						iResult = 200;
+						mResponseJSON = {items: [{title: "Title 1"}]};
+					}
+
+					this.bError = !this.bError;
+
+					xhr.respond(iResult, {"Content-Type": "application/json"}, JSON.stringify(mResponseJSON));
+				}.bind(this));
+
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+
+				this.oServer.reset();
+				this.oServer = null;
+			}
+		});
+
+		QUnit.test("Initially invalid response, valid second response", function (assert) {
+			// Arrange
+			var done = assert.async(2);
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				var oContent = this.oCard.getCardContent();
+				assert.notOk(oContent.isA("sap.ui.integration.cards.BaseContent"), "Error is displayed.");
+
+				this.oCard.refreshData();
+
+				this.oCard.attachEventOnce("_contentReady", function () {
+					Core.applyChanges();
+
+					var oContent = this.oCard.getCardContent();
+					assert.ok(oContent.isA("sap.ui.integration.cards.BaseContent"), "Content is displayed correctly.");
+
+					done();
+				}.bind(this));
+
+				done();
+			}.bind(this));
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.refreshing.card1"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Sales Report"
+					},
+					"content": {
+						"data": {
+							"request": {
+								"url": "/GetSalesSuccess"
+							},
+							"path": "/items"
+						},
+						"item": {
+							"title": "{title}"
+						},
+						"maxItems": "5"
+					}
+				}
+			});
+		});
+
 		QUnit.module("Data mode", {
 			beforeEach: function () {
 				this.oCard = new Card();
