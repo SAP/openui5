@@ -296,13 +296,12 @@ sap.ui.define([
 		this._media = oMedia;
 		this._media.matches = !!oMedia.from;
 
-		// make sure that the column is visible
-		if (!this.getVisible()) {
-			return;
-		}
-
 		// inform parent delayed
 		setTimeout(function() {
+			// make sure that the column is visible
+			if (!this.getVisible()) {
+				return;
+			}
 			this.fireEvent("media", this);
 			this.informTable("Resize");
 		}.bind(this), 0);
