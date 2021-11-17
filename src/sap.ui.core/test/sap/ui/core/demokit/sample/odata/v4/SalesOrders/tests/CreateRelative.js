@@ -158,6 +158,12 @@ sap.ui.define([
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 3");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 
+				When.onTheMainPage.increaseSalesOrderItemsQuantity();
+				Then.onTheMainPage.checkNote(0, "1 item's quantity increased by: 1", true);
+				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Item quantity increased by: 1");
+				Then.onTheMainPage.checkSalesOrderLineItemGrossAmount(0, "3,412.92");
+				Then.onTheMainPage.checkSalesOrderLineItemQuantity(0, "3.000");
+
 				// delete persisted sales order item
 				When.onTheMainPage.deleteSelectedSalesOrderLineItem();
 				When.onTheSalesOrderLineItemDeletionConfirmation.confirm();

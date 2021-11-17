@@ -367,6 +367,9 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				increaseSalesOrderItemsQuantity : function () {
+					Helper.pressButton(this, sViewName, "increaseSalesOrderItemsQuantity");
+				},
 				modifyCompanyName : function () {
 					this.waitFor({
 						controlType : "sap.m.Input",
@@ -915,6 +918,9 @@ sap.ui.define([
 				checkSalesOrderItemsCount : function (iExpectedCount) {
 					checkCount(this, iExpectedCount, "lineItemsTitle");
 				},
+				checkSalesOrderLineItemGrossAmount : function (iRow, sValue) {
+					Helper.checkTextValue(this, sViewName, /SO_2_SOITEM:GrossAmount/, sValue, iRow);
+				},
 				checkSalesOrderLineItemNote : function (iRow, sNoteValue) {
 					this.waitFor({
 						controlType : "sap.m.Table",
@@ -928,6 +934,9 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				checkSalesOrderLineItemQuantity : function (iRow, sValue) {
+					Helper.checkInputValue(this, sViewName, /SO_2_SOITEM:Quantity/, sValue, iRow);
 				},
 				checkProductNameInLineItem : function (iRow, sProductName) {
 					this.waitFor({
