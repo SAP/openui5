@@ -123,7 +123,9 @@ sap.ui.define([
 
 		if (oInteractiveElement) {
 			oInteractiveElement.focus();
-			TableUtils.selectElementText(oInteractiveElement);
+			if (oInteractiveElement instanceof window.HTMLInputElement) {
+				oInteractiveElement.select();
+			}
 			return true;
 		}
 
@@ -333,7 +335,9 @@ sap.ui.define([
 
 		if ($InteractiveElements) {
 			$InteractiveElements[0].focus();
-			TableUtils.selectElementText($InteractiveElements[0]);
+			if ($InteractiveElements[0] instanceof window.HTMLInputElement) {
+				$InteractiveElements[0].select();
+			}
 			return true;
 		}
 

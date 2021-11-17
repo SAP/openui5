@@ -589,15 +589,15 @@ sap.ui.define([
 			bSilentFocus = false;
 		}
 
-		TableUtils.deselectElementText(document.activeElement);
-
 		if (bSilentFocus) {
 			oTable._getKeyboardExtension().setSilentFocus(oElement);
 		} else {
 			oElement.focus();
 		}
 
-		TableUtils.selectElementText(oElement);
+		if (oElement instanceof window.HTMLInputElement) {
+			oElement.select();
+		}
 	};
 
 	/**

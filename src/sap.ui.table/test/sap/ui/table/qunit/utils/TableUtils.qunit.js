@@ -1668,22 +1668,6 @@ sap.ui.define([
 		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
 	});
 
-	QUnit.test("selectElementText/deselectElementText", function(assert) {
-		TableQUnitUtils.addColumn(oTable, "Input", "inputvalue" /* will be "inputvalue1" */, true);
-		sap.ui.getCore().applyChanges();
-
-		var oCell = getCell(0, oTable.columnCount - 1);
-		var oInput = _getFirstInteractiveElement(oCell);
-
-		TableUtils.selectElementText(oInput);
-		assert.strictEqual(oInput.selectionStart, 0, "The selection starts from index 0");
-		assert.strictEqual(oInput.selectionEnd, 11, "The selection end as index 10");
-
-		TableUtils.deselectElementText(oInput);
-		assert.strictEqual(oInput.selectionStart, 0, "The selection starts from index 0");
-		assert.strictEqual(oInput.selectionEnd, 0, "The selection end as index 0");
-	});
-
 	QUnit.module("Throttle", {
 		before: function() {
 			this.oClock = sinon.useFakeTimers();
