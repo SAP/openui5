@@ -3,6 +3,32 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "bf351f5887ee940076e2cfc5242fbf570e667084",
+        "type": "FIX",
+        "text": " sap.ui.core: remove irreg. whitespace, make testrunner use utf8",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321198"
+          }
+        ]
+      },
+      {
+        "id": "f4e0a5fb6472a92c849d11156d92d514e4f07401",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Add new option for Date to Year"
+      },
+      {
+        "id": "fef0810a2037f4e45e55ff294adef19e86f299b1",
+        "type": "FEATURE",
+        "text": " Integration cards: Implemented support for requesting CSRF tokens"
+      },
+      {
+        "id": "434ef5430f658cf809ef1e69e0c81facd696057e",
+        "type": "FIX",
+        "text": " Remove/adjust usage of sap.ui.Device.os.ios indicator"
+      },
+      {
         "id": "98219cc211fb4821cf24519f4f6b930b0a2d2002",
         "type": "FEATURE",
         "text": " PressAction: support key modifiers"

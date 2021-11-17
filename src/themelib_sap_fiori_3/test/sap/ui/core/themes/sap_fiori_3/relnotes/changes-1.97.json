@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "05983d22507a341052aea987e18e7a986492d477",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: busy state now properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170304073"
+          }
+        ]
+      },
+      {
         "id": "c539b23534cde9e381220a509dcf8452afcdf004",
         "type": "FIX",
         "text": " sap.m.ObjectAttribute: focus in HCB/HCW themes has correct width",
