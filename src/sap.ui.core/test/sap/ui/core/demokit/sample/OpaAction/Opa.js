@@ -109,6 +109,22 @@ sap.ui.require([
 		});
 	});
 
+	opaTest("Should use click coordinates on Slider", function (Given, When, Then) {
+		When.waitFor({
+			controlType: "sap.m.Slider",
+			id: "slider",
+			actions: new Press({
+				idSuffix: "inner",
+				xPercentage: 80
+			}),
+			success: function(oSlider){
+
+				Opa5.assert.ok(oSlider.mProperties.value === 80, "Slider has value of 80");
+			},
+			errorMessage: "Failed to select all tokens"
+		});
+	});
+
 	QUnit.module("Entering text in Controls");
 
 	opaTest("Should enter text in form inputs", function (Given, When, Then) {
