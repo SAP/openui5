@@ -253,7 +253,9 @@ sap.ui.define([
 		bParsed = /^blob:/.test(sTarget)
 			|| /^https?:\/\//.test(sTarget)
 			|| /^test-resources\//.test(sTarget)
-			|| /^resources\//.test(sTarget);
+			|| /^resources\//.test(sTarget)
+			|| /^tel:/.test(sTarget)
+			|| /^mailto:/.test(sTarget);
 
 		// If we have no target by here we give up
 		if (sTarget && !bParsed) {
