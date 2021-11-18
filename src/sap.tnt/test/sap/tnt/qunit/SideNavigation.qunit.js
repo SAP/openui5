@@ -450,4 +450,16 @@ sap.ui.define([
 			assert.strictEqual(item.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, 'aria-roledescription is as expected');
 		});
 	});
+
+	QUnit.test("Aria attributes - aria-label", function (assert) {
+
+		var label = "Side navigation menu with options";
+
+		assert.notOk(this.sideNavigation.$().attr('aria-label'),  'aria-label is not set initially');
+
+		this.sideNavigation.setAriaLabel(label);
+		Core.applyChanges();
+
+		assert.strictEqual(this.sideNavigation.$().attr('aria-label'), label, 'aria-label is as expected');
+	});
 });
