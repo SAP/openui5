@@ -1298,16 +1298,57 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling removeDirtyChanges without generator, selector IDs and change types specified", function(assert) {
-			sandbox.stub(Log, "error");
-			return this.oChangePersistence.removeDirtyChanges(Layer.VENDOR)
-			.then(function() {
-				assert.ok(false, "should never go here");
-			})
-			.catch(function(vError) {
-				var sError = "The selectorId must be provided";
-				assert.equal(vError, sError, "the correct error is thrown");
-				assert.ok(Log.error.calledWith(sError), "then Log.error() is called with an error");
+			var oVendorChange = new Change({
+				layer: Layer.VENDOR,
+				fileName: "1"
 			});
+			var oCustomerChange = new Change({
+				layer: Layer.CUSTOMER,
+				fileName: "2"
+			});
+			this.oChangePersistence.addDirtyChange(oVendorChange);
+			this.oChangePersistence.addDirtyChange(oCustomerChange);
+
+			return this.oChangePersistence.removeDirtyChanges(Layer.VENDOR)
+				.then(function(aChangesToBeRemoved) {
+					assert.strictEqual(aChangesToBeRemoved.length, 1, "one change is removed");
+					assert.strictEqual(aChangesToBeRemoved[0], oVendorChange, "the removed change is on the specified layer");
+					assert.strictEqual(
+						this.oChangePersistence.getDirtyChanges().length,
+						1,
+						"only one change remains in the ChangePersistence"
+					);
+				}.bind(this));
+		});
+
+		QUnit.test("when calling removeDirtyChanges with multiple layers", function(assert) {
+			var oVendorChange = new Change({
+				layer: Layer.VENDOR,
+				fileName: "1"
+			});
+			var oUserChange = new Change({
+				layer: Layer.USER,
+				fileName: "2"
+			});
+			var oCustomerChange = new Change({
+				layer: Layer.CUSTOMER,
+				fileName: "2"
+			});
+			this.oChangePersistence.addDirtyChange(oVendorChange);
+			this.oChangePersistence.addDirtyChange(oUserChange);
+			this.oChangePersistence.addDirtyChange(oCustomerChange);
+
+			return this.oChangePersistence.removeDirtyChanges([Layer.VENDOR, Layer.USER])
+				.then(function(aChangesToBeRemoved) {
+					assert.strictEqual(aChangesToBeRemoved.length, 2, "two changes are removed");
+					assert.ok(aChangesToBeRemoved.includes(oVendorChange), "the VENDOR change is removed");
+					assert.ok(aChangesToBeRemoved.includes(oUserChange), "the USER change is removed");
+					assert.strictEqual(
+						this.oChangePersistence.getDirtyChanges().length,
+						1,
+						"only one change remains in the ChangePersistence"
+					);
+				}.bind(this));
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer", function(assert) {

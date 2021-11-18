@@ -116,8 +116,31 @@ sap.ui.define([
 
 		QUnit.test("when saveAll is called with skipping the cache", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			this.oFlexController.saveAll(oComponent, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component and the flag were passed");
+			return this.oFlexController.saveAll(oComponent, true)
+				.then(function() {
+					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component and the flag were passed");
+				});
+		});
+
+		QUnit.test("when saveAll is called with a layer and bRemoveOtherLayerChanges", function(assert) {
+			var oComp = {
+				name: "testComp",
+				getModel: function() {
+					return {
+						id: "variantModel"
+					};
+				}
+			};
+			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
+			var oRemoveStub = sandbox.stub(this.oFlexController._oChangePersistence, "removeDirtyChanges").resolves([]);
+			var oUrlHandlerStub = sandbox.stub(URLHandler, "update");
+			return this.oFlexController.saveAll(oComp, true, false, Layer.CUSTOMER, true)
+				.then(function() {
+					var aLayersToReset = oRemoveStub.firstCall.args[0];
+					assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
+					assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
+					assert.ok(oUrlHandlerStub.notCalled, "then the page is not reloaded");
+				});
 		});
 
 		QUnit.test("when saveAll is called for a draft", function(assert) {
@@ -125,8 +148,10 @@ sap.ui.define([
 				persistedVersion: sap.ui.fl.Versions.Draft
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			this.oFlexController.saveAll(oComponent, undefined, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft));
+			return this.oFlexController.saveAll(oComponent, undefined, true)
+				.then(function() {
+					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft));
+				});
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache and for draft", function(assert) {
@@ -134,8 +159,10 @@ sap.ui.define([
 				persistedVersion: sap.ui.fl.Versions.Original
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			this.oFlexController.saveAll(oComponent, true, true);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, sap.ui.fl.Versions.Original));
+			return this.oFlexController.saveAll(oComponent, true, true)
+				.then(function() {
+					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, sap.ui.fl.Versions.Original));
+				});
 		});
 
 		function _runSaveAllAndAssumeVersionsCall(assert, vResponse, nParentVersion, nCallCount) {
