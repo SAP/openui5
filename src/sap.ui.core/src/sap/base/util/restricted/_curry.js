@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#curry}
+ * See {@link https://lodash.com/docs/4.17.21#curry}
  *
  * @function
  * @alias sap/base/util/restricted/_curry

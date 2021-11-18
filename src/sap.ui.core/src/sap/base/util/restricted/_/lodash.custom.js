@@ -1,14 +1,15 @@
 /*!
  * @license
  * Lodash (Custom Build) <https://lodash.com/>
- * Build: `lodash strict include="omit,uniq,uniqBy,uniqWith,intersection,intersectionBy,intersectionWith,pick,pickBy,debounce,throttle,max,min,castArray,curry,merge,mergeWith"`
+ * Build: `lodash strict include="castArray,curry,debounce,intersection,intersectionBy,intersectionWith,max,merge,mergeWith,min,omit,pick,pickBy,throttle,uniq,uniqBy,uniqWith"`
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
  * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Modifications SAP SE or an SAP affiliate company and OpenUI5 contributors. All rights reserved.
  */
-/* global exports,module,global,ArrayBuffer */
 // ##### BEGIN: MODIFIED BY SAP
+/* global exports,module,global,ArrayBuffer */
 // We don't want to export lodash as global function, but just make it available to UI5 loader.
 sap.ui.define(function() {
 // ;(function() {
@@ -19,7 +20,7 @@ sap.ui.define(function() {
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.15';
+  var VERSION = '4.17.21';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
@@ -128,8 +129,11 @@ sap.ui.define(function() {
    */
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 
-  /** Used to match leading and trailing whitespace. */
-  var reTrim = /^\s+|\s+$/g;
+  /** Used to match leading whitespace. */
+  var reTrimStart = /^\s+/;
+
+  /** Used to match a single whitespace character. */
+  var reWhitespace = /\s/;
 
   /** Used to match wrap detail comments. */
   var reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/,
@@ -478,6 +482,19 @@ sap.ui.define(function() {
   }
 
   /**
+   * The base implementation of `_.trim`.
+   *
+   * @private
+   * @param {string} string The string to trim.
+   * @returns {string} Returns the trimmed string.
+   */
+  function baseTrim(string) {
+    return string
+      ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
+      : string;
+  }
+
+  /**
    * The base implementation of `_.unary` without support for storing metadata.
    *
    * @private
@@ -627,6 +644,21 @@ sap.ui.define(function() {
       }
     }
     return -1;
+  }
+
+  /**
+   * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
+   * character of `string`.
+   *
+   * @private
+   * @param {string} string The string to inspect.
+   * @returns {number} Returns the index of the last non-whitespace character.
+   */
+  function trimmedEndIndex(string) {
+    var index = string.length;
+
+    while (index-- && reWhitespace.test(string.charAt(index))) {}
+    return index;
   }
 
   /*--------------------------------------------------------------------------*/
@@ -2337,6 +2369,10 @@ sap.ui.define(function() {
       var key = toKey(path[index]),
           newValue = value;
 
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return object;
+      }
+
       if (index != lastIndex) {
         var objValue = nested[key];
         newValue = customizer ? customizer(objValue, key, nested) : undefined;
@@ -3194,10 +3230,11 @@ sap.ui.define(function() {
     if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
       return false;
     }
-    // Assume cyclic values are equal.
-    var stacked = stack.get(array);
-    if (stacked && stack.get(other)) {
-      return stacked == other;
+    // Check that cyclic values are equal.
+    var arrStacked = stack.get(array);
+    var othStacked = stack.get(other);
+    if (arrStacked && othStacked) {
+      return arrStacked == other && othStacked == array;
     }
     var index = -1,
         result = true,
@@ -3359,10 +3396,11 @@ sap.ui.define(function() {
         return false;
       }
     }
-    // Assume cyclic values are equal.
-    var stacked = stack.get(object);
-    if (stacked && stack.get(other)) {
-      return stacked == other;
+    // Check that cyclic values are equal.
+    var objStacked = stack.get(object);
+    var othStacked = stack.get(other);
+    if (objStacked && othStacked) {
+      return objStacked == other && othStacked == object;
     }
     var result = true;
     stack.set(object, other);
@@ -5431,7 +5469,7 @@ sap.ui.define(function() {
     if (typeof value != 'string') {
       return value === 0 ? value : +value;
     }
-    value = value.replace(reTrim, '');
+    value = baseTrim(value);
     var isBinary = reIsBinary.test(value);
     return (isBinary || reIsOctal.test(value))
       ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
@@ -6102,10 +6140,7 @@ sap.ui.define(function() {
   //   // Export to the global object.
   //   root._ = lodash;
   // }
-  // ##### END: MODIFIED BY SAP
-
-// ##### BEGIN: MODIFIED BY SAP
 // }.call(this));
-	return lodash;
+  return lodash;
 });
 // ##### END: MODIFIED BY SAP
