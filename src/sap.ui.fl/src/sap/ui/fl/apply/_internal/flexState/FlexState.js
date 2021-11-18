@@ -81,6 +81,8 @@ sap.ui.define([
 	var _mInitPromises = {};
 	var _oShellNavigationService;
 	var _oURLParsingService;
+	var _oChangePersistenceFactory;
+	var _oFlexControllerFactory;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
 			prepareFunction: prepareAppDescriptorMap,
@@ -292,6 +294,22 @@ sap.ui.define([
 		return undefined;
 	}
 
+	// TODO: get rid of the following module dependencies as far as the change state
+	//       is migrated from changePersistenceFactory to the FlexState
+	function lazyLoadModules() {
+		return Promise.all([
+			Utils.requireAsync("sap/ui/fl/ChangePersistenceFactory"),
+			Utils.requireAsync("sap/ui/fl/FlexControllerFactory")
+		])
+			.then(function(aModules) {
+				_oChangePersistenceFactory = aModules[0];
+				_oFlexControllerFactory = aModules[1];
+			})
+			.catch(function(oError) {
+				Log.error("Error loading modules: " + oError.message);
+			});
+	}
+
 	/**
 	 * Initializes the FlexState for a given reference. A request for the flex data is sent to the Loader and the response is saved.
 	 * The FlexState can only be initialized once, every subsequent init call will just resolve as soon as it is initialized.
@@ -308,7 +326,10 @@ sap.ui.define([
 	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = function(mPropertyBag) {
-		return loadUShellServices()
+		return Promise.all([
+			loadUShellServices(),
+			lazyLoadModules()
+		])
 			.then(function() {
 				enhancePropertyBag(mPropertyBag);
 				var sFlexReference = mPropertyBag.reference;
@@ -360,6 +381,14 @@ sap.ui.define([
 			deRegisterMaxLayerHandler(sReference);
 			delete _mInstances[sReference];
 			delete _mInitPromises[sReference];
+			// TODO: get rid of the following deletes as far as the change state
+			//       is migrated from changePersistenceFactory to the FlexState
+			if (_oChangePersistenceFactory && _oChangePersistenceFactory._instanceCache) {
+				delete _oChangePersistenceFactory._instanceCache[sReference];
+			}
+			if (_oFlexControllerFactory && _oFlexControllerFactory._instanceCache) {
+				delete _oFlexControllerFactory._instanceCache[sReference];
+			}
 		} else {
 			Object.keys(_mInstances).forEach(function(sReference) {
 				deRegisterMaxLayerHandler(sReference);
@@ -459,6 +488,7 @@ sap.ui.define([
 				return _mInstances[sReference].unfilteredStorageResponse;
 			});
 		}
+		return undefined;
 	};
 	// temporary function until the maps are ready
 	FlexState.getFlexObjectsFromStorageResponse = function(sReference) {
