@@ -37,9 +37,14 @@ sap.ui.define(['sap/ui/core/Element'],
 					type: { type: "string" },
 
 					/**
-					 * A text for an additional label describing the interactive UI.
+					 * A text for an additional label that describes the interactive UI and is placed before the UI element.
 					 */
 					text: { type: "string" },
+
+					/**
+					 * A text for an additional label that describes the interactive UI and is placed after the UI element.
+					 */
+					additionalText: { type: "string" },
 
 					/**
 					 * Describes the options in a radio button group.

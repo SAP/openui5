@@ -3,9 +3,40 @@
  */
 
 // Provides control sap.m.StandardDynamicDateOption.
-sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepInput', './RadioButton', './RadioButtonGroup', 'sap/ui/unified/Calendar', 'sap/ui/unified/calendar/MonthPicker', 'sap/ui/core/format/DateFormat', 'sap/ui/core/date/UniversalDateUtils', 'sap/ui/core/date/UniversalDate', 'sap/m/DynamicDateValueHelpUIType', './library'],
-	function(Element, DynamicDateOption, Label, StepInput, RadioButton, RadioButtonGroup, Calendar, MonthPicker, DateFormat, UniversalDateUtils, UniversalDate, DynamicDateValueHelpUIType, library) {
+sap.ui.define([
+		'sap/ui/core/library',
+		'sap/ui/core/Element',
+		'./DynamicDateOption',
+		'./Label',
+		'./StepInput',
+		'./RadioButton',
+		'./RadioButtonGroup',
+		'sap/ui/unified/Calendar',
+		'sap/ui/unified/calendar/MonthPicker',
+		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/date/UniversalDateUtils',
+		'sap/ui/core/date/UniversalDate',
+		'sap/m/DynamicDateValueHelpUIType',
+		'./library'],
+	function(
+		coreLibrary,
+		Element,
+		DynamicDateOption,
+		Label,
+		StepInput,
+		RadioButton,
+		RadioButtonGroup,
+		Calendar,
+		MonthPicker,
+		DateFormat,
+		UniversalDateUtils,
+		UniversalDate,
+		DynamicDateValueHelpUIType,
+		library) {
 		"use strict";
+
+		// shortcut for sap.ui.core.VerticalAlign
+		var VerticalAlign = coreLibrary.VerticalAlign;
 
 		/**
 		 * Constructor for a new StandardDynamicDateOption.
@@ -270,11 +301,13 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 						this.aValueHelpUITypes = [
 							new DynamicDateValueHelpUIType({
 								text: _resourceBundle.getText("DDR_TODAYFROMTO_FROM_LABEL"),
-								type: "int"
+								type: "int",
+								additionalText: _resourceBundle.getText("DDR_TODAYFROMTO_TO_ADDITIONAL_LABEL")
 							}),
 							new DynamicDateValueHelpUIType({
 								text: _resourceBundle.getText("DDR_TODAYFROMTO_TO_LABEL"),
-								type: "int"
+								type: "int",
+								additionalText: _resourceBundle.getText("DDR_TODAYFROMTO_TO_ADDITIONAL_LABEL")
 							})];
 						break;
 				}
@@ -348,6 +381,15 @@ sap.ui.define(['sap/ui/core/Element', './DynamicDateOption', './Label', './StepI
 				}
 
 				aControls.push(oInputControl);
+
+				if (aParams[iIndex].getAdditionalText()) {
+					aControls.push(
+						new Label({
+							vAlign: VerticalAlign.Bottom,
+							text: aParams[iIndex].getAdditionalText()
+						}).addStyleClass("sapMDDRAdditionalLabel")
+					);
+				}
 				oControl.aControlsByParameters[this.getKey()].push(oInputControl);
 			}
 
