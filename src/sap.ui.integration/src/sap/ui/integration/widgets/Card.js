@@ -902,8 +902,11 @@ sap.ui.define([
 			oHeader.refreshData();
 		}
 
-		if (oContent) {
+		if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
 			oContent.refreshData();
+		} else {
+			this.destroyAggregation("_content");
+			this._applyContentManifestSettings();
 		}
 
 		if (oFilterBar) {
