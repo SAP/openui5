@@ -431,7 +431,7 @@ sap.ui.define([
 			"$SRID" : "42"
 		}, "4.0");
 		testExpression(assert, '<Cast Type="Edm.Decimal"/>',
-			{"$Cast" : undefined, "$Type" : "Edm.Decimal"});  // do not crash
+			{"$Cast" : undefined, "$Type" : "Edm.Decimal"}); // do not crash
 		testExpression(assert, '<IsOf Type="Collection(f.Type)"><Path>Average</Path></IsOf>', {
 			"$IsOf" : {"$Path" : "Average"},
 			"$Type" : "foo.Type",
@@ -446,7 +446,7 @@ sap.ui.define([
 			"$Scale" : 2
 		});
 		testExpression(assert, '<IsOf Type="Edm.Decimal"/>',
-			{"$IsOf" : undefined, "$Type" : "Edm.Decimal"});  // do not crash
+			{"$IsOf" : undefined, "$Type" : "Edm.Decimal"}); // do not crash
 	});
 
 	//*********************************************************************************************

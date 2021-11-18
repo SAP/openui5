@@ -438,7 +438,7 @@ sap.ui.define([
 			oContext0 = {isKeepAlive : function () {}},
 			oContext1 = {isKeepAlive : function () {}};
 
-		oBinding.mPreviousContextsByPath  = {foo : oContext0, bar : oContext1};
+		oBinding.mPreviousContextsByPath = {foo : oContext0, bar : oContext1};
 
 		this.mock(oContext0).expects("isKeepAlive").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
@@ -1795,7 +1795,7 @@ sap.ui.define([
 			oFetchContextsCall.args[0][5]();
 		}
 
-		return oFetchContextsPromise.catch(function () {/* avoid "Uncaught (in promise)"*/});
+		return oFetchContextsPromise.catch(function () { /* avoid "Uncaught (in promise)"*/ });
 	});
 });
 
@@ -1828,7 +1828,7 @@ sap.ui.define([
 		// code under test
 		oBinding.getContexts(0, 10, 100);
 
-		return oFetchContextsPromise.catch(function () {/* avoid "Uncaught (in promise)"*/});
+		return oFetchContextsPromise.catch(function () { /* avoid "Uncaught (in promise)"*/ });
 	});
 
 	//*********************************************************************************************
@@ -3180,7 +3180,7 @@ sap.ui.define([
 		}, new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server"));
 
 		oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
-			{ $$operationMode : OperationMode.Server });
+			{$$operationMode : OperationMode.Server});
 
 		this.mock(_Helper).expects("toArray").withExactArgs(undefined).returns([]);
 		this.mock(_Helper).expects("deepEqual")
@@ -3947,7 +3947,7 @@ sap.ui.define([
 			.then(function () {
 				assert.deepEqual(oBinding.mPreviousContextsByPath, bFireChange
 						? {
-							"~contextPath~" : oKeptAliveContext,// deleted in prerendering task
+							"~contextPath~" : oKeptAliveContext, // deleted in prerendering task
 							"~otherContext~" : {}
 						}
 						: {
@@ -4249,7 +4249,7 @@ sap.ui.define([
 
 			oBindingMock.expects("getUpdateGroupId").withExactArgs().returns("~update~");
 			oBindingMock.expects("lockGroup")
-				.withExactArgs("~update~", true, true,  sinon.match.func)
+				.withExactArgs("~update~", true, true, sinon.match.func)
 				.returns(oGroupLock0);
 			oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
 			oBindingMock.expects("createInCache")
@@ -4462,7 +4462,7 @@ sap.ui.define([
 
 		return oContext.created().then(function () {
 			assert.ok(false);
-		},function (oError0) {
+		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
 		});
 	});
@@ -4954,7 +4954,7 @@ sap.ui.define([
 		{filters : [], result : undefined},
 		{filters : ["path0", "path1"], result : "path0 eq path0Value and path1 eq path1Value"},
 		{ // "grouping": or conjunction for filters with same path
-			filters : [{ p : "path0", v : "foo" }, "path1", { p : "path0", v : "bar" }],
+			filters : [{p : "path0", v : "foo"}, "path1", {p : "path0", v : "bar"}],
 			result : "(path0 eq foo or path0 eq bar) and path1 eq path1Value"
 		}
 	].forEach(function (oFixture) {
@@ -6032,7 +6032,7 @@ sap.ui.define([
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/EMPLOYEES('2')");
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns("~keep~alive~");
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs().returns("/EMPLOYEES");
-		this.mock(_Helper).expects("getRelativePath").withExactArgs("/EMPLOYEES('2')","/EMPLOYEES")
+		this.mock(_Helper).expects("getRelativePath").withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
 			.returns("~key~predicate~");
 		this.mock(oContext).expects("getModelIndex").withExactArgs().returns(42);
 		oRefreshSingleExpectation = this.mock(oCache).expects("refreshSingle")
@@ -6184,7 +6184,7 @@ sap.ui.define([
 				this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 					.returns("/EMPLOYEES");
 				this.mock(_Helper).expects("getRelativePath")
-					.withExactArgs("/EMPLOYEES('2')","/EMPLOYEES")
+					.withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
 					.returns("~key~predicate~");
 				oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
 					.withExactArgs(sinon.match.same(oGroupLock), "path/in/cache", 42,
@@ -6269,7 +6269,7 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.aContexts.length, 1);
 			assert.notOk(1 in oBinding.aContexts);
-			assert.strictEqual(oBinding.iMaxLength,oFixture.index ? 41 : 42);
+			assert.strictEqual(oBinding.iMaxLength, oFixture.index ? 41 : 42);
 
 			if (oFixture.stillAlive) {
 				assert.strictEqual(oBinding.mPreviousContextsByPath["~context~path~"], oContext);
@@ -6284,7 +6284,7 @@ sap.ui.define([
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 			.returns("~header~context~path~");
 		this.mock(_Helper).expects("getRelativePath")
-			.withExactArgs("~context~path~","~header~context~path~")
+			.withExactArgs("~context~path~", "~header~context~path~")
 			.returns("~key~predicate~");
 		oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
 			.withExactArgs(sinon.match.same(oGroupLock), "path/in/cache", oFixture.index,
@@ -6330,7 +6330,7 @@ sap.ui.define([
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().returns("~keep~alive~");
 		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs().returns("/EMPLOYEES");
 		this.mock(_Helper).expects("getRelativePath")
-			.withExactArgs("/EMPLOYEES('2')","/EMPLOYEES")
+			.withExactArgs("/EMPLOYEES('2')", "/EMPLOYEES")
 			.returns("~key~predicate~");
 		this.mock(oCache).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oGroupLock), "", 42, "~key~predicate~", "~keep~alive~",
@@ -6368,12 +6368,12 @@ sap.ui.define([
 			this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
 				.returns("/EMPLOYEES");
 			this.mock(_Helper).expects("getRelativePath")
-				.withExactArgs("/EMPLOYEES('1')","/EMPLOYEES")
+				.withExactArgs("/EMPLOYEES('1')", "/EMPLOYEES")
 				.returns("~key~predicate~");
 			this.mock(oContext).expects("getModelIndex").withExactArgs().returns(42);
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(sinon.match.same(oGroupLock), "", 42, "~key~predicate~",
-					"~keep~alive~",sinon.match.func)
+					"~keep~alive~", sinon.match.func)
 				.returns(Promise.reject(oError));
 			if (bDataRequested) {
 				oExpectation.callsArg(5);
@@ -6786,7 +6786,7 @@ sap.ui.define([
 			oCanceledError = new Error(),
 			oContext = bHeader
 				? oBinding.getHeaderContext()
-				: { getPath : function () { return "/Set('foo')"; } },
+				: {getPath : function () { return "/Set('foo')"; }},
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {},
@@ -6826,11 +6826,11 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("lockGroup").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sGroupId).returns(oGroupLock);
-		this.mock(oPreviousContext6).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
+		this.mock(oPreviousContext6).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
 			.returns(true);
-		this.mock(oPreviousContext7).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
+		this.mock(oPreviousContext7).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
 			.returns(false);
-		this.mock(oPreviousContext8).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
+		this.mock(oPreviousContext8).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
 			.returns(true);
 		oCacheMock.expects("requestSideEffects").exactly(bHasCache ? 1 : 0)
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
@@ -7641,36 +7641,36 @@ sap.ui.define([
 	messages : [], predicates : []
 }, {
 	messages : [{
-		getTargets : function () {return ["/TEAMS('1')/foo"];}
+		getTargets : function () { return ["/TEAMS('1')/foo"]; }
 	}, {
-		getTargets : function () {return ["/TEAMS('1')/bar"];}
+		getTargets : function () { return ["/TEAMS('1')/bar"]; }
 	}, {
-		getTargets : function () {return ["/TEAMS"];}
+		getTargets : function () { return ["/TEAMS"]; }
 	}],
 	predicates : ["('1')"]
 }, {
 	messages : [{
-		getTargets : function () {return ["/TEAMS('1')/foo", "/TEAMS('1')/bar"];}
+		getTargets : function () { return ["/TEAMS('1')/foo", "/TEAMS('1')/bar"]; }
 	}, {
-		getTargets : function () {return ["/TEAMS('2')/bar"];}
+		getTargets : function () { return ["/TEAMS('2')/bar"]; }
 	}, {
-		getTargets : function () {return ["/TEAMS($uid='xyz')"];}
+		getTargets : function () { return ["/TEAMS($uid='xyz')"]; }
 	}],
 	predicates : ["('1')", "('2')"]
 }, {
 	callbackReturns : true,
 	messages : [{
-		getTargets : function () {return ["/TEAMS('1')/foo"];}
+		getTargets : function () { return ["/TEAMS('1')/foo"]; }
 	}, {
-		getTargets : function () {return ["/TEAMS('2')/bar"];}
+		getTargets : function () { return ["/TEAMS('2')/bar"]; }
 	}],
 	predicates : ["('1')", "('2')"]
 }, {
 	callbackReturns : false,
 	messages : [{
-		getTargets : function () {return ["/TEAMS('1')/foo"];}
+		getTargets : function () { return ["/TEAMS('1')/foo"]; }
 	}, {
-		getTargets : function () {return ["/TEAMS('2')/bar"];}
+		getTargets : function () { return ["/TEAMS('2')/bar"]; }
 	}],
 	predicates : []
 }].forEach(function (oFixture) {
@@ -7856,8 +7856,8 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				checkUpdate: function() {},
-				fetchValue: function() {},
+				checkUpdate: function () {},
+				fetchValue: function () {},
 				getBinding: function () {
 					return oEntityBinding;
 				},
@@ -7967,7 +7967,7 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				fetchValue: function() {},
+				fetchValue: function () {},
 				getBinding: function () {
 					return oEntityBinding;
 				},
@@ -8011,7 +8011,7 @@ sap.ui.define([
 				toString : function () { return "~entity~binding~"; }
 			},
 			oEntityContext = {
-				fetchValue: function() {},
+				fetchValue: function () {},
 				getBinding: function () {
 					return oEntityBinding;
 				},
@@ -8049,7 +8049,7 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				fetchValue: function() {},
+				fetchValue: function () {},
 				getBinding: function () {
 					return oEntityBinding;
 				},

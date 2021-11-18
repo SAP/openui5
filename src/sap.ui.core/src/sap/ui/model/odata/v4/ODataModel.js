@@ -850,7 +850,7 @@ sap.ui.define([
 		 * @param {string[]} aAllowed The allowed system query options
 		 * @throws {error} If the given query option name is not allowed
 		 */
-		function parseAndValidateSystemQueryOption (mOptions, sOptionName, aAllowed) {
+		function parseAndValidateSystemQueryOption(mOptions, sOptionName, aAllowed) {
 			var sExpandOptionName,
 				mExpandOptions,
 				sExpandPath,
@@ -877,7 +877,7 @@ sap.ui.define([
 					}
 				}
 			} else if (sOptionName === "$count") {
-				if (typeof vValue  === "boolean") {
+				if (typeof vValue === "boolean") {
 					if (!vValue) {
 						delete mOptions.$count;
 					}

@@ -585,7 +585,7 @@ sap.ui.define([
 		precision : 6
 	}, {
 		input : "/Date(1395752399000)/", // DateTime in V2
-		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+		output : "2014-03-25T12:59:59Z" // must be interpreted as UTC
 	}, {
 		input : "/Date(-327628800000)/", // DateTime in V2 before 1970
 		output : "1959-08-15T00:00:00Z"
@@ -1397,11 +1397,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "2.0" },
+		mHeaders : {"DataServiceVersion" : "2.0"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "2.0;fooBar" },
+		mHeaders : {"DataServiceVersion" : "2.0;fooBar"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 2,
@@ -1413,11 +1413,11 @@ sap.ui.define([
 		bVersionOptional : false
 	}, {
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "1.0" },
+		mHeaders : {"DataServiceVersion" : "1.0"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 1,
-		mHeaders : { "DataServiceVersion" : "1.0;fooBar" },
+		mHeaders : {"DataServiceVersion" : "1.0;fooBar"},
 		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
@@ -1442,15 +1442,15 @@ sap.ui.define([
 	[{
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
-		mHeaders : { "DataServiceVersion" : "foo" }
+		mHeaders : {"DataServiceVersion" : "foo"}
 	}, {
 		iCallCount : 1,
 		sError : "value '1.00' in response for /Foo('42')/Bar",
-		mHeaders : { "DataServiceVersion" : "1.00" }
+		mHeaders : {"DataServiceVersion" : "1.00"}
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
-		mHeaders : { "OData-Version" : "baz" }
+		mHeaders : {"OData-Version" : "baz"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0"),

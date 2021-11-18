@@ -1397,24 +1397,24 @@ sap.ui.define([
 		bSapAllowed : false // always allowed
 	}, {
 		mParameters : {
-			$expand : { "TEAM_2_MANAGER" : {} },
+			$expand : {"TEAM_2_MANAGER" : {}},
 			$select : "bar"
 		},
 		bSystemQueryOptionsAllowed : true,
 		expected : {
-			$expand : { "TEAM_2_MANAGER" : {} },
+			$expand : {"TEAM_2_MANAGER" : {}},
 			$select : ["bar"]
 		}
 	}, {
 		mParameters : {
-			$expand : { "TEAM_2_MANAGER" : {
+			$expand : {"TEAM_2_MANAGER" : {
 				$expand : "TEAM_2_EMPLOYEES($select=Name)",
 				$select : "Team_Id"
 			}}
 		},
 		bSystemQueryOptionsAllowed : true,
 		expected : {
-			$expand : { "TEAM_2_MANAGER" : {
+			$expand : {"TEAM_2_MANAGER" : {
 				$expand : {
 					TEAM_2_EMPLOYEES : {
 						$select : ["Name"]
@@ -1946,7 +1946,7 @@ sap.ui.define([
 		var fnCancel = {},
 			sGroupId = {/*string*/},
 			oGroupLock = {},
-			bLocked  = {/*boolean*/},
+			bLocked = {/*boolean*/},
 			oModel = this.createModel(),
 			bModifying = {/*boolean*/},
 			oOwner = {};
@@ -2280,15 +2280,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects", function (assert) {
 		var oBinding1 = {
-				isRoot : function () { return  true; },
+				isRoot : function () { return true; },
 				requestAbsoluteSideEffects : function () {}
 			},
 			oBinding2 = {
-				isRoot : function () { return  false; },
+				isRoot : function () { return false; },
 				requestAbsoluteSideEffects : function () {}
 			},
 			oBinding3 = {
-				isRoot : function () { return  true; },
+				isRoot : function () { return true; },
 				requestAbsoluteSideEffects : function () {}
 			},
 			oModel = this.createModel(),
@@ -2314,7 +2314,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: nothing to do", function (assert) {
 		var oBinding = {
-				isRoot : function () { return  true; },
+				isRoot : function () { return true; },
 				requestAbsoluteSideEffects : function () {}
 			},
 			oModel = this.createModel();
@@ -2372,7 +2372,7 @@ sap.ui.define([
 		oPromise2.catch(oModel.getReporter());
 
 		return Promise.all([oPromise1, oPromise2])
-			.catch(function () {/* avoid that the test fails */});
+			.catch(function () { /* avoid that the test fails */ });
 	});
 });
 
@@ -2429,7 +2429,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, "target"].forEach(function(sTarget) {
+[undefined, "target"].forEach(function (sTarget) {
 	QUnit.test("createUI5Message: longtextUrl, target: " + sTarget, function (assert) {
 		var oRawMessage = {
 				longtextUrl : "longtextUrl",

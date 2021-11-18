@@ -831,7 +831,7 @@ sap.ui.define([
 		// catch the error, but keep the rejected promise
 		this.oCachePromise.catch(function (oError) {
 			that.oModel.reportError(that + ": Failed to enhance query options for "
-				+ "auto-$expand/$select for child " + sChildPath,  sClassName, oError);
+				+ "auto-$expand/$select for child " + sChildPath, sClassName, oError);
 		});
 		return oCanUseCachePromise;
 	};
@@ -1129,7 +1129,7 @@ sap.ui.define([
 	ODataParentBinding.prototype.refreshSuspended = function (sGroupId) {
 		if (sGroupId && sGroupId !== this.getGroupId()) {
 			throw new Error(this + ": Cannot refresh a suspended binding with group ID '"
-				+ sGroupId  + "' (own group ID is '" + this.getGroupId() + "')");
+				+ sGroupId + "' (own group ID is '" + this.getGroupId() + "')");
 		}
 		this.setResumeChangeReason(ChangeReason.Refresh);
 	};

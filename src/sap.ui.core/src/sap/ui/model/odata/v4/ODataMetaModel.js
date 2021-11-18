@@ -479,7 +479,7 @@ sap.ui.define([
 				return Object.keys(oResult).filter(function (sKey) {
 					// always filter technical properties;
 					// filter annotations iff not iterating them
-					return sKey[0] !== "$" &&  bIterateAnnotations !== (sKey[0] !== "@");
+					return sKey[0] !== "$" && bIterateAnnotations !== (sKey[0] !== "@");
 				}).map(function (sKey) {
 					return new BaseContext(that.oModel, sResolvedPath + sKey);
 				});
@@ -1659,26 +1659,27 @@ sap.ui.define([
 			throw oError;
 		}
 
-		// First fetch the complete metapath to ensure that everything is in mScope
+		// First fetch the complete meta path to ensure that everything is in mScope
 		// This also ensures that the metadata is valid
 		return this.fetchObject(_Helper.getMetaPath(sResolvedPath)).then(function () {
 			// Then fetch mScope
 			return that.fetchEntityContainer();
 		}).then(function (mScope) {
-			var aEditUrl,        // The edit URL as array of segments (encoded)
+			var aEditUrl, // The edit URL as array of segments (encoded)
 				oEntityContainer = mScope[mScope.$EntityContainer],
-				sEntityPath,     // The absolute path to the entity for the PATCH (encoded)
-				oEntitySet,      // The entity set that starts the edit URL
-				sEntitySetName,  // The name of this entity set (decoded)
+				sEntityPath, // The absolute path to the entity for the PATCH (encoded)
+				oEntitySet, // The entity set that starts the edit URL
+				sEntitySetName, // The name of this entity set (decoded)
 				sFirstSegment,
 				bInsideAnnotation = false,
-				sInstancePath,   // The absolute path to the instance currently in evaluation
-								// (encoded; re-builds sResolvedPath)
+				// The absolute path to the instance currently in evaluation (encoded; re-builds
+				// sResolvedPath)
+				sInstancePath,
 				sNavigationPath, // The relative meta path starting from oEntitySet (decoded)
-				//sPropertyPath, // The relative path following sEntityPath (parameter re-used -
-								// encoded)
-				aSegments,       // The resource path split in segments (encoded)
-				oType;           // The type of the data at sInstancePath
+				// The relative path following sEntityPath (parameter re-used - encoded)
+				//sPropertyPath,
+				aSegments, // The resource path split in segments (encoded)
+				oType; // The type of the data at sInstancePath
 
 			// Determines the predicate from a segment (empty string if there is none)
 			function predicate(sSegment) {
@@ -1848,7 +1849,7 @@ sap.ui.define([
 		 *
 		 * @returns {string} The annotation target
 		 */
-		function getOverloadTarget () {
+		function getOverloadTarget() {
 			var oOverload = aOverloads[0],
 				sSignature = "";
 

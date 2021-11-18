@@ -1287,7 +1287,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
 		var sAnnotationUri = "my/annotation.xml",
-			aAnnotationUris = [ sAnnotationUri, "uri2.xml"],
+			aAnnotationUris = [sAnnotationUri, "uri2.xml"],
 			oModel = {},
 			oMetadataRequestor = this.oMetaModel.oRequestor,
 			sUrl = "/~/$metadata",
@@ -4738,7 +4738,7 @@ sap.ui.define([
 					"existing." : {"/B/v1/$metadata" : true}
 				};
 				if (bSupportReferences) {
-					oError =  new Error(sUrl + ": " + sMessage);
+					oError = new Error(sUrl + ": " + sMessage);
 					this.mock(this.oMetaModel.oModel).expects("reportError")
 						.withExactArgs(sMessage, sODataMetaModel, sinon.match({
 								message : oError.message,
@@ -6545,11 +6545,11 @@ sap.ui.define([
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
 				sinon.match.same(oProperty), undefined)
-			.returns(new Promise(function (resolve) {fnResolve1 = resolve;}));
+			.returns(new Promise(function (resolve) { fnResolve1 = resolve; }));
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample.Product",
 				sinon.match.same(oProperty), undefined)
-			.returns(new Promise(function (resolve) {fnResolve2 = resolve;}));
+			.returns(new Promise(function (resolve) { fnResolve2 = resolve; }));
 
 		// code under test
 		oResultPromise = oModel.getMetaModel().requestValueListInfo(sPropertyPath, true)

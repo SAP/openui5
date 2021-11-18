@@ -239,7 +239,7 @@ sap.ui.define([
 						// "round" to millis: "HH:mm:ss.SSS"
 						sTimeOfDay = sTimeOfDay.slice(0, 12);
 					}
-					oTimeOfDay =  oTimeFormatter.parse(sTimeOfDay);
+					oTimeOfDay = oTimeFormatter.parse(sTimeOfDay);
 				}
 				if (!oTimeOfDay) {
 					throw new Error("Not a valid Edm.TimeOfDay value: " + sTimeOfDay);

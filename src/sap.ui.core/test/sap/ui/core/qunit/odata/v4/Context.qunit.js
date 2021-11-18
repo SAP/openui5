@@ -860,7 +860,7 @@ sap.ui.define([
 	QUnit.test("getCanonicalPath: failure", function (assert) {
 		var oContext = Context.create(null, null, "/EMPLOYEES/42"),
 			oError = new Error("Intentionally failed"),
-			oSyncPromise = SyncPromise.resolve().then(function () {throw oError;});
+			oSyncPromise = SyncPromise.resolve().then(function () { throw oError; });
 
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs().returns(oSyncPromise);
 
@@ -2499,7 +2499,7 @@ sap.ui.define([
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
 			.exactly(i === 1 ? 1 : 0).returns("~bKeepAlive~");
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
-			"some/relative/path",  /*bSync*/false, /*bWithOrWithoutCache*/true)
+			"some/relative/path", /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.callsFake(function (fnProcessor) {
 				var oCache = {
 						update : function () {}
@@ -2831,7 +2831,7 @@ sap.ui.define([
 			that = this;
 
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.func, "/some/absolute/path",  /*bSync*/false,
+			.withExactArgs(sinon.match.func, "/some/absolute/path", /*bSync*/false,
 				/*bWithOrWithoutCache*/true)
 			.callsFake(function (fnProcessor) {
 				var oCache = {
@@ -3171,7 +3171,7 @@ sap.ui.define([
 		oContext.resetKeepAlive();
 
 		assert.strictEqual(oContext.bKeepAlive, false);
-		assert.strictEqual(oContext.fnOnBeforeDestroy , "fnOnBeforeDestroy");
+		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
 	});
 
 	//*********************************************************************************************

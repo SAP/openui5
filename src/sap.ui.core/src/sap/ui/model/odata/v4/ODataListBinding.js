@@ -1427,32 +1427,32 @@ sap.ui.define([
 			sValue = setCase(_Helper.formatLiteral(oFilter.oValue1, sEdmType));
 
 			switch (oFilter.sOperator) {
-				case FilterOperator.BT :
+				case FilterOperator.BT:
 					sFilter = sFilterPath + " ge " + sValue + " and " + sFilterPath + " le "
 						+ setCase(_Helper.formatLiteral(oFilter.oValue2, sEdmType));
 					break;
-				case FilterOperator.NB :
+				case FilterOperator.NB:
 					sFilter = wrap(sFilterPath + " lt " + sValue + " or " + sFilterPath + " gt "
 						+ setCase(_Helper.formatLiteral(oFilter.oValue2, sEdmType)), bWithinAnd);
 					break;
-				case FilterOperator.EQ :
-				case FilterOperator.GE :
-				case FilterOperator.GT :
-				case FilterOperator.LE :
-				case FilterOperator.LT :
-				case FilterOperator.NE :
+				case FilterOperator.EQ:
+				case FilterOperator.GE:
+				case FilterOperator.GT:
+				case FilterOperator.LE:
+				case FilterOperator.LT:
+				case FilterOperator.NE:
 					sFilter = sFilterPath + " " + oFilter.sOperator.toLowerCase() + " " + sValue;
 					break;
-				case FilterOperator.Contains :
-				case FilterOperator.EndsWith :
-				case FilterOperator.NotContains :
-				case FilterOperator.NotEndsWith :
-				case FilterOperator.NotStartsWith :
-				case FilterOperator.StartsWith :
+				case FilterOperator.Contains:
+				case FilterOperator.EndsWith:
+				case FilterOperator.NotContains:
+				case FilterOperator.NotEndsWith:
+				case FilterOperator.NotStartsWith:
+				case FilterOperator.StartsWith:
 					sFilter = oFilter.sOperator.toLowerCase().replace("not", "not ")
 						+ "(" + sFilterPath + "," + sValue + ")";
 					break;
-				default :
+				default:
 					throw new Error("Unsupported operator: " + oFilter.sOperator);
 			}
 			return sFilter;
@@ -2424,7 +2424,7 @@ sap.ui.define([
 			oCache.addKeptElement(oEntity);
 			// setKeepAlive looks into the cache, so this had to wait
 			oEntityContext.setKeepAlive(true);
-			oEntityContext.checkUpdate();  // create listeners in this binding's cache
+			oEntityContext.checkUpdate(); // create listeners in this binding's cache
 		});
 	};
 

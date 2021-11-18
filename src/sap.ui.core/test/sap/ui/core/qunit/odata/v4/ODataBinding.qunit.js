@@ -1306,7 +1306,7 @@ sap.ui.define([
 				sPath : "relative",
 				mParameters : {"$$canonicalPath" : true},
 				bRelative : true,
-				toString : function () {return "MyBinding";}
+				toString : function () { return "MyBinding"; }
 			}),
 			oBindingMock = this.mock(oBinding),
 			oNewCache = {},
@@ -1388,7 +1388,7 @@ sap.ui.define([
 					mUriParameters : {}
 				},
 				bRelative : true,
-				toString : function () {return "MyBinding";}
+				toString : function () { return "MyBinding"; }
 			}),
 			oBindingMock = this.mock(oBinding),
 			oContext = {},
@@ -2203,7 +2203,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.toString(), sClassName + ": undefined|Employee_2_Team",
 			"relative, unresolved");
 
-		oBinding.oContext = {toString : function () {return "/Employees(ID='1')";}};
+		oBinding.oContext = {toString : function () { return "/Employees(ID='1')"; }};
 
 		// code under test
 		assert.strictEqual(oBinding.toString(), sClassName
@@ -2239,7 +2239,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkSuspended: suspended", function (assert) {
 		var oBinding = new ODataBinding({
-				toString : function () {return "/Foo";}
+				toString : function () { return "/Foo"; }
 			}),
 			oRootBinding = new ODataBinding();
 
@@ -2257,7 +2257,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkSuspended: suspended, but never mind", function () {
 		var oBinding = new ODataBinding({
-				toString : function () {return "/Foo";}
+				toString : function () { return "/Foo"; }
 			}),
 			oRootBinding = new ODataBinding();
 
@@ -2273,7 +2273,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkSuspended: suspended w/ resume change reason", function (assert) {
 		var oBinding = new ODataBinding({
-				toString : function () {return "/Foo";}
+				toString : function () { return "/Foo"; }
 			}),
 			oRootBinding = new ODataBinding();
 
@@ -2291,7 +2291,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkSuspended: suspended root", function (assert) {
 		var oBinding = new ODataBinding({
-				toString : function () {return "/Foo";}
+				toString : function () { return "/Foo"; }
 			}),
 			oRootBinding = new ODataBinding();
 

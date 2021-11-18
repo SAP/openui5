@@ -821,7 +821,7 @@ sap.ui.define([
 		}
 
 		if (mQueryOptions.$$filterBeforeAggregate) {
-			mQueryOptions.$apply = "filter(" +  mQueryOptions.$$filterBeforeAggregate + ")/"
+			mQueryOptions.$apply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/"
 				+ mQueryOptions.$apply;
 			delete mQueryOptions.$$filterBeforeAggregate;
 		}

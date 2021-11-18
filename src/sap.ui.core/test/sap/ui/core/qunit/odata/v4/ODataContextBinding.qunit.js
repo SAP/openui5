@@ -413,7 +413,7 @@ sap.ui.define([
 	oReturnValueContext : null
 }, {
 	oParameterContext : null,
-	oReturnValueContext : { destroy : function () {}}
+	oReturnValueContext : {destroy : function () {}}
 }].forEach(function (oFixture, i) {
 	QUnit.test("setContext, relative path, " + i, function (assert) {
 		var oBinding,
@@ -1023,7 +1023,7 @@ sap.ui.define([
 	QUnit.test("fetchValue: relative binding w/o cache, bCached = " + bCached, function (assert) {
 		var oContext = {
 				fetchValue : function () {},
-				getPath : function () {return "/absolute";}
+				getPath : function () { return "/absolute"; }
 			},
 			oListener = {},
 			sPath = "/absolute/navigation/bar",
@@ -1051,7 +1051,7 @@ sap.ui.define([
 			oBinding,
 			oContext = {
 				fetchValue : function () {},
-				getPath : function () {return "/absolute";}
+				getPath : function () { return "/absolute"; }
 			},
 			oListener = {},
 			sPath = "/absolute/bar",
@@ -1265,7 +1265,7 @@ sap.ui.define([
 				oBinding = this.bindContext("schema.Operation(...)", oContext),
 				oGroupLock = {},
 				mParameters = {},
-				oParentBinding =  {
+				oParentBinding = {
 					checkKeepAlive : function () {}
 				},
 				oPromise = {};
@@ -1309,7 +1309,7 @@ sap.ui.define([
 			},
 			oBinding = this.bindContext("schema.Operation(...)", oContext),
 			oError = new Error("This call intentionally failed"),
-			oParentBinding =  {
+			oParentBinding = {
 				checkKeepAlive : function () {}
 			};
 
@@ -1403,8 +1403,8 @@ sap.ui.define([
 	QUnit.test("execute: relative binding on transient context", function (assert) {
 		var oBinding,
 			oContext = {
-				isTransient : function () { return true;},
-				getPath : function () { return "/Employees($uid=id-1-23)";}
+				isTransient : function () { return true; },
+				getPath : function () { return "/Employees($uid=id-1-23)"; }
 			};
 
 		oBinding = this.bindContext("schema.Operation(...)", oContext);
@@ -2780,7 +2780,7 @@ sap.ui.define([
 			// code under test
 			oBinding.createCacheAndRequest({/*oGroupLock*/}, "/Foo(...)", oOperationMetadata,
 				{/*mParameters*/}, {/*fnGetEntity*/}, {/*bIgnoreEtag*/},
-				function() {/* fnOnStrictHandlingFailed*/});
+				function () { /* fnOnStrictHandlingFailed*/ });
 		}, new Error("Not an action: /Foo(...)"));
 	});
 
@@ -4247,7 +4247,7 @@ sap.ui.define([
 			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(oFixture.sPath);
 
 			if (oFixture.aFetchValues) {
-				oFixture.aFetchValues.forEach(function (oFetchValue){
+				oFixture.aFetchValues.forEach(function (oFetchValue) {
 					oContextMock.expects("getValue").withExactArgs(oFetchValue.sPath)
 						.returns(oFetchValue.oEntity);
 					oHelperMock.expects("getPrivateAnnotation")

@@ -1817,7 +1817,7 @@ sap.ui.define([
 		oGroupNode["@$ui5._"].spliced[200000] = {
 			"@$ui5._" : {predicate : "('D')"}
 		};
-		aSpliced = oGroupNode["@$ui5._" ].spliced.slice();
+		aSpliced = oGroupNode["@$ui5._"].spliced.slice();
 		aElements = [{}, oGroupNode, {}, {}];
 		oCache.aElements = aElements.slice();
 		oCache.aElements.$byPredicate = {};

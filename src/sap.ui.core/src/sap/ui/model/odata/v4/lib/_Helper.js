@@ -1338,11 +1338,11 @@ sap.ui.define([
 			} else {
 				// must fire null to guarantee that a property binding has not
 				// this.vValue === undefined, see ODataPropertyBinding.setValue
-				_Helper.fireChange(mChangeListeners, sPath,  vNew === undefined ? null : vNew);
+				_Helper.fireChange(mChangeListeners, sPath, vNew === undefined ? null : vNew);
 				vNew = {};
 			}
 
-			if (vOld && typeof  vOld === "object") {
+			if (vOld && typeof vOld === "object") {
 				Object.keys(vOld).forEach(function (sProperty) {
 					// not covered in the new value
 					if (!vNew.hasOwnProperty(sProperty)) {

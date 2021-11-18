@@ -647,7 +647,7 @@ sap.ui.define([
 		{t : "Edm.String", v : null, l : "null"},
 		{t : "Edm.TimeOfDay", v : "18:59:59.999"}
 	].forEach(function (oFixture) {
-		var sTitle = "formatLiteral/parseLiteral: " + oFixture.t + " " +  oFixture.v;
+		var sTitle = "formatLiteral/parseLiteral: " + oFixture.t + " " + oFixture.v;
 		QUnit.test(sTitle, function (assert) {
 			var sLiteral = oFixture.l || oFixture.v;
 
@@ -700,7 +700,7 @@ sap.ui.define([
 		{t : "Edm.Single", l : "Pi"},
 		{t : "Edm.Single", l : "-Infinity"}
 	].forEach(function (oFixture) {
-		QUnit.test("parseLiteral: error: " + oFixture.t + " " +  oFixture.l, function (assert) {
+		QUnit.test("parseLiteral: error: " + oFixture.t + " " + oFixture.l, function (assert) {
 			assert.throws(function () {
 				_Helper.parseLiteral(oFixture.l, oFixture.t, "path/to/property");
 			}, new Error("path/to/property: Not a valid " + oFixture.t + " literal: "
@@ -1059,7 +1059,7 @@ sap.ui.define([
 
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
-				, { method : "GET"}
+				, {method : "GET"}
 			).then(function (oData) {
 				assert.strictEqual(oData.value[0].CompanyName, "Becker Berlin");
 				done();
@@ -1077,7 +1077,7 @@ sap.ui.define([
 		mKeyProperties : {"ID" : "'4/2'"}
 	}, {
 		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
-		mKeyProperties : {"Bar" : "42","Fo=o" : "'Walter\"s Win''s'"}
+		mKeyProperties : {"Bar" : "42", "Fo=o" : "'Walter\"s Win''s'"}
 	}, {
 		sKeyPredicate : undefined,
 		mKeyProperties : undefined
@@ -1433,7 +1433,7 @@ sap.ui.define([
 		oCacheAfter = {CompanyName : "SAP"};
 
 		// code under test (without predicate)
-		_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {CompanyName : "SAP" },
+		_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {CompanyName : "SAP"},
 			["CompanyName"]);
 
 		assert.deepEqual(oCacheBefore, oCacheAfter);
@@ -1913,7 +1913,7 @@ sap.ui.define([
 		dataPath : "/Foo/" + Date.now() + "/bar",
 		metaPath : "/Foo/bar"
 	}, { // global removal needed
-		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
+		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/" + Date.now(),
 		metaPath : "/Foo/bar"
 	}, { // transient entity
 		dataPath : "/Foo($uid=id-1-23)/bar",
@@ -2735,7 +2735,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("intersectQueryOptions: * inside $select", function (assert) {
 		this.mock(_Helper);
-		var  mCacheQueryOptions = {
+		var mCacheQueryOptions = {
 				$expand : {"n/a" : null},
 				$select : ["A", "*", "Z"],
 				"sap-client" : "123"
@@ -3205,7 +3205,7 @@ sap.ui.define([
 	mQueryOptionsForPath : {
 		$select : ["Bar", "Baz"]
 	}
-}, {// $expand(FooSet=$expand(BarSet=$select(Baz)))
+}, { // $expand(FooSet=$expand(BarSet=$select(Baz)))
 	mQueryOptions : {
 		$expand : {
 			FooSet : {
@@ -3374,7 +3374,7 @@ sap.ui.define([
 	$kind : "NavigationProperty"
 }].forEach(function (oFixture, i) {
 	QUnit.test("fetchPropertyAndType: " + i, function (assert) {
-		var oExpectedResult = oFixture.$kind ? { $kind : oFixture.$kind } : undefined,
+		var oExpectedResult = oFixture.$kind ? {$kind : oFixture.$kind} : undefined,
 			oMetaModel = {
 				fetchObject : function () {}
 			},

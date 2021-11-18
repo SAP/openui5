@@ -1367,7 +1367,7 @@ sap.ui.define([
 			mTypeForMetaPath, sPath) {
 		var oOldElement, sTransientPredicate;
 
-		if (iIndex === undefined) {// kept-alive element not in the list
+		if (iIndex === undefined) { // kept-alive element not in the list
 			aElements.$byPredicate[sPredicate] = oElement;
 		} else {
 			// the element might have moved due to parallel insert/delete
@@ -2195,7 +2195,7 @@ sap.ui.define([
 		for (i = iStart; i < iEnd; i += 1) {
 			this.aElements[i] = oPromise;
 		}
-		this.oSyncPromiseAll = undefined;  // from now on, fetchValue has to wait again
+		this.oSyncPromiseAll = undefined; // from now on, fetchValue has to wait again
 	};
 
 	/**

@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, SyncPromise,_Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
+], function (jQuery, Log, SyncPromise, _Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",
@@ -367,10 +367,10 @@ sap.ui.define([
 					getResponseHeader : function (sName) {
 						// Note: getResponseHeader treats sName case insensitive!
 						switch (sName) {
-							case "SAP-ContextId" : return null;
-							case "SAP-Err-Id" : return null;
-							case "SAP-Http-Session-Timeout" : return null;
-							case "X-CSRF-Token" : return o.sRequired;
+							case "SAP-ContextId": return null;
+							case "SAP-Err-Id": return null;
+							case "SAP-Http-Session-Timeout": return null;
+							case "X-CSRF-Token": return o.sRequired;
 							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
@@ -588,9 +588,9 @@ sap.ui.define([
 				jqXHRMock.reject({
 					getResponseHeader : function (sName) {
 						switch (sName) {
-							case "SAP-ContextId" : return null;
-							case "X-CSRF-Token" : return null;
-							default : assert.ok(false, "unexpected header " + sName);
+							case "SAP-ContextId": return null;
+							case "X-CSRF-Token": return null;
+							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
 					"status" : 500
@@ -639,8 +639,8 @@ sap.ui.define([
 						switch (sName) {
 							case "SAP-ContextId": return "abc123";
 							case "SAP-Http-Session-Timeout": return "42";
-							case "X-CSRF-Token" : return null;
-							default : assert.ok(false, "unexpected header " + sName);
+							case "X-CSRF-Token": return null;
+							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
 					"status" : 500
@@ -1370,15 +1370,15 @@ sap.ui.define([
 	QUnit.test("processSecurityTokenHandlers: ", function (assert) {
 		var oRequestor;
 
-		function securityTokenHandler0 () {
+		function securityTokenHandler0() {
 			return undefined;
 		}
 
-		function securityTokenHandler1 () {
+		function securityTokenHandler1() {
 			return Promise.resolve(oFixture.headers);
 		}
 
-		function securityTokenHandler2 () {
+		function securityTokenHandler2() {
 			return Promise.resolve({"This should change" : "nothing!"});
 		}
 
@@ -1405,7 +1405,7 @@ sap.ui.define([
 	QUnit.test("processSecurityTokenHandler: handler rejects", function (assert) {
 		var oRequestor;
 
-		function securityTokenHandler () {
+		function securityTokenHandler() {
 			return Promise.reject("foo");
 		}
 
@@ -1414,12 +1414,12 @@ sap.ui.define([
 			.returns([securityTokenHandler]);
 		this.oLogMock.expects("error")
 			.withExactArgs("An error occurred within security token handler: "
-				+ securityTokenHandler, "foo" , sClassName);
+				+ securityTokenHandler, "foo", sClassName);
 
 		// code under test
 		oRequestor = _Requestor.create();
 
-		return oRequestor.oSecurityTokenPromise.then(function() {
+		return oRequestor.oSecurityTokenPromise.then(function () {
 			assert.notOk(true);
 			assert.strictEqual(oRequestor.oSecurityTokenPromise, null);
 		}, function (oError0) {
@@ -1433,7 +1433,7 @@ sap.ui.define([
 			oRequestor,
 			mNotAllowedHeaders = {};
 
-		function securityTokenHandler () {
+		function securityTokenHandler() {
 			return Promise.resolve(mNotAllowedHeaders);
 		}
 
@@ -1446,7 +1446,7 @@ sap.ui.define([
 
 		this.oLogMock.expects("error")
 			.withExactArgs("An error occurred within security token handler: "
-				+ securityTokenHandler, oError , sClassName);
+				+ securityTokenHandler, oError, sClassName);
 
 		// code under test
 		oRequestor = _Requestor.create();
@@ -1594,7 +1594,7 @@ sap.ui.define([
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
 			.returns("~Products('23')");
 		aPromises.push(oRequestor.request("GET", "Products('23')", this.createGroupLock(sGroupId),
-				{Foo : "bar",  Accept : "application/json;odata.metadata=full"}, "~payload~",
+				{Foo : "bar", Accept : "application/json;odata.metadata=full"}, "~payload~",
 				fnSubmit, "~cancel~", "~metaPath~", "~sOriginalResourcePath~", undefined,
 				"~queryOptions~", "~mergeRequests~")
 			.then(function (oResult) {
@@ -2063,7 +2063,7 @@ sap.ui.define([
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		function unexpected () {
+		function unexpected() {
 			assert.ok(false);
 		}
 
@@ -2544,11 +2544,11 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
 				{"sap-client" : "123"});
 
-		function unexpected () {
+		function unexpected() {
 			assert.ok(false);
 		}
 
-		function rejected (iOrder, oError) {
+		function rejected(iOrder, oError) {
 			assert.strictEqual(oError.canceled, true);
 			assert.strictEqual(iCount, iOrder);
 			iCount += 1;
@@ -2617,11 +2617,11 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
 				{"sap-client" : "123"});
 
-		function unexpected () {
+		function unexpected() {
 			assert.ok(false);
 		}
 
-		function rejected (oError) {
+		function rejected(oError) {
 			assert.strictEqual(oError.canceled, true);
 		}
 
@@ -2778,7 +2778,7 @@ sap.ui.define([
 			aPromises,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		function unexpected () {
+		function unexpected() {
 			assert.ok(false);
 		}
 
@@ -3122,7 +3122,7 @@ sap.ui.define([
 		assert.throws(function () {
 			//code under test
 			oRequestor.request("GET", "/FOO", oGroupLock);
-		},  function (oError) {
+		}, function (oError) {
 			assert.strictEqual(oError.message, "Unexpected request: GET /FOO");
 			assert.strictEqual(oError.$cached, true);
 			return oError instanceof Error;
@@ -3412,7 +3412,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		iCallCount : 1,
-		mHeaders : { "OData-Version" : "4.0" }
+		mHeaders : {"OData-Version" : "4.0"}
 	}, {
 		iCallCount : 2,
 		mHeaders : {}
@@ -3438,7 +3438,7 @@ sap.ui.define([
 	[{
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
-		mHeaders : { "OData-Version" : "foo" }
+		mHeaders : {"OData-Version" : "foo"}
 	}, {
 		iCallCount : 2,
 		sError : "value 'undefined' in response for /Foo('42')/Bar",
@@ -3446,7 +3446,7 @@ sap.ui.define([
 	}, {
 		iCallCount : 2,
 		sError : "'DataServiceVersion' header with value 'baz' in response for /Foo('42')/Bar",
-		mHeaders : { "DataServiceVersion" : "baz" }
+		mHeaders : {"DataServiceVersion" : "baz"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/"),
@@ -3644,7 +3644,7 @@ sap.ui.define([
 		oRequestorMock.expects("formatPropertyAsLiteral")
 			.withExactArgs("bãr'1", oOperationMetadata.$Parameter[0]).returns("'bãr''1'");
 		oRequestorMock.expects("formatPropertyAsLiteral")
-			.withExactArgs(42,  oOperationMetadata.$Parameter[1]).returns("42");
+			.withExactArgs(42, oOperationMetadata.$Parameter[1]).returns("42");
 
 		assert.strictEqual(
 			// code under test
@@ -4647,7 +4647,7 @@ sap.ui.define([
 		oRequestorMock.expects("getOrCreateBatchQueue").withExactArgs("groupId")
 			.returns(aRequests);
 		oRequestorMock.expects("checkConflictingStrictRequest")
-			.withExactArgs(sinon.match(oExpectedRequest),sinon.match.same(aRequests), 0)
+			.withExactArgs(sinon.match(oExpectedRequest), sinon.match.same(aRequests), 0)
 			.throws(oConflictError);
 
 		// code under test - conflict case
