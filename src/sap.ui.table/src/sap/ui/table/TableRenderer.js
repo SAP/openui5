@@ -276,11 +276,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 		this.renderTabElement(rm, "sapUiTableCtrlAfter", bHasRows ? "0" : "-1");
 		this.renderTabElement(rm, null, "-1", oTable.getId() + "-focusDummy");
 
-		if (!oTable._getScrollExtension().isVerticalScrollbarExternal()) {
-			this.renderVSbBackground(rm, oTable);
-			this.renderVSb(rm, oTable);
-		}
-
 		var oCreationRow = oTable.getCreationRow();
 		if (!oCreationRow || !oCreationRow.getVisible()) {
 			this.renderHSbBackground(rm, oTable);
@@ -292,6 +287,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
 		this.renderRowActions(rm, oTable);
+
+		if (!oTable._getScrollExtension().isVerticalScrollbarExternal()) {
+			this.renderVSb(rm, oTable);
+		}
 
 		rm.openStart("div", oTable.getId() + "-noDataCnt");
 		rm.class("sapUiTableCtrlEmpty");
@@ -1202,37 +1201,38 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 	};
 
 	TableRenderer.renderVSb = function(rm, oTable, mConfig) {
-		mConfig = Object.assign({
-			cssClass: "sapUiTableVSb",
-			tabIndex: true,
-			hidden: true
-		}, mConfig);
-		mConfig.id = oTable.getId() + "-vsb";
-
 		var oScrollExtension = oTable._getScrollExtension();
+		var mRowCounts = oTable._getRowCounts();
 
-		rm.openStart("div", mConfig.id);
-		rm.class(mConfig.cssClass);
-		if (mConfig.hidden) {
+		mConfig = Object.assign({
+			tabIndex: true
+		}, mConfig);
+
+		rm.openStart("div");
+		rm.class("sapUiTableVSbContainer");
+		if (!oScrollExtension.isVerticalScrollbarRequired()) {
 			rm.class("sapUiTableHidden");
 		}
-		if (mConfig.tabIndex) {
-			rm.attr("tabindex", "-1"); // Avoid focusing of the scrollbar in Firefox with tab.
-		}
-		rm.style("max-height", oScrollExtension.getVerticalScrollbarHeight() + "px");
-
-		var mRowCounts = oTable._getRowCounts();
-		if (mRowCounts.fixedTop > 0) {
-			oTable._iVsbTop = mRowCounts.fixedTop * oTable._getBaseRowHeight() - 1;
-			rm.style("top", oTable._iVsbTop  + 'px');
-		}
-
+		rm.class(mConfig.cssClass);
 		rm.openEnd();
 
-		rm.openStart("div", mConfig.id + "-content");
+		rm.openStart("div", oTable.getId() + "-vsb");
+		rm.class("sapUiTableVSb");
+		rm.style("max-height", oScrollExtension.getVerticalScrollbarHeight() + "px");
+		if (mRowCounts.fixedTop > 0) {
+			rm.style("top", mRowCounts.fixedTop * oTable._getBaseRowHeight() - 1  + "px");
+		}
+		if (mConfig.tabIndex) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=1069739
+			// Avoid focusing of the scrollbar in Firefox with tab.
+			rm.attr("tabindex", "-1");
+		}
+		rm.openEnd();
+		rm.openStart("div");
 		rm.class("sapUiTableVSbContent");
 		rm.style("height", oScrollExtension.getVerticalScrollHeight() + "px");
 		rm.openEnd();
+		rm.close("div");
 		rm.close("div");
 
 		rm.close("div");
@@ -1240,25 +1240,13 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/Device', './library', "./Column", 
 
 	TableRenderer.renderVSbExternal = function(rm, oTable) {
 		if (ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization")) {
-			rm.openStart("div");
-			rm.style("position", "relative");
-			rm.openEnd();
-
 			this.renderVSb(rm, oTable, {
 				cssClass: "sapUiTableVSbExternal",
 				tabIndex: false
 			});
-
-			rm.close("div");
 		} else {
 			Log.error("This method can only be used with synchronization enabled.", oTable, "TableRenderer.renderVSbExternal");
 		}
-	};
-
-	TableRenderer.renderVSbBackground = function(rm, oTable) {
-		rm.openStart("div", oTable.getId() + "-vsb-bg");
-		rm.class("sapUiTableVSbBg");
-		rm.openEnd().close("div");
 	};
 
 	TableRenderer.renderHSb = function(rm, oTable, mConfig) {

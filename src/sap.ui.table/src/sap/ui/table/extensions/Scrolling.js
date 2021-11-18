@@ -1690,32 +1690,8 @@ sap.ui.define([
 		 * @private
 		 */
 		onUpdateTableSizes: function(sReason) {
-			VerticalScrollingHelper.updateScrollbarPosition(this);
 			VerticalScrollingHelper.updateScrollbarVisibility(this);
 			HorizontalScrollingHelper.updateScrollbar(this);
-		},
-
-		updateScrollbarPosition: function(oTable) {
-			var oScrollExtension = oTable._getScrollExtension();
-			var oVSb = oScrollExtension.getVerticalScrollbar();
-			var oTableCCnt = oTable.getDomRef("tableCCnt");
-
-			if (!oVSb || !oTableCCnt) {
-				return;
-			}
-
-			var iTop = oTableCCnt.offsetTop;
-
-			var oVSbBg = oTable.getDomRef("vsb-bg");
-			if (oVSbBg) {
-				oVSbBg.style.top = iTop + "px";
-			}
-
-			if (oTable._getRowCounts().fixedTop > 0) {
-				iTop += oTable._iVsbTop;
-			}
-
-			oVSb.style.top = iTop + "px";
 		},
 
 		updateScrollbarVisibility: function(oTable) {
@@ -1729,19 +1705,8 @@ sap.ui.define([
 
 			var bVerticalScrollbarRequired = oScrollExtension.isVerticalScrollbarRequired();
 
-			// Show the currently invisible scrollbar.
-			if (bVerticalScrollbarRequired && !oScrollExtension.isVerticalScrollbarVisible()) {
-				if (!oScrollExtension.isVerticalScrollbarExternal()) {
-					oTableElement.classList.add("sapUiTableVScr");
-				}
-				oVSb.classList.remove("sapUiTableHidden");
-			}
-
-			// Hide the currently visible scrollbar.
-			if (!bVerticalScrollbarRequired && oScrollExtension.isVerticalScrollbarVisible()) {
-				oTableElement.classList.remove("sapUiTableVScr");
-				oVSb.classList.add("sapUiTableHidden");
-			}
+			oTableElement.classList.toggle("sapUiTableVScr", bVerticalScrollbarRequired && !oScrollExtension.isVerticalScrollbarExternal());
+			oVSb.parentElement.classList.toggle("sapUiTableHidden", !bVerticalScrollbarRequired);
 		},
 
 		/**
@@ -2452,12 +2417,9 @@ sap.ui.define([
 	/**
 	 * Gets DOM reference of the vertical scrollbar.
 	 *
-	 * @param {boolean} [bIgnoreDOMConnection=false] Whether the scrollbar should also be returned if it is not connected with the DOM. This can
-	 *                                               happen if the table's DOM is removed without notifying the table. For example, if the parent
-	 *                                               of the table is made invisible.
 	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
 	 */
-	ScrollExtension.prototype.getVerticalScrollbar = function(bIgnoreDOMConnection) {
+	ScrollExtension.prototype.getVerticalScrollbar = function() {
 		var oTable = this.getTable();
 		var bIsExternal = this.isVerticalScrollbarExternal();
 
@@ -2466,8 +2428,9 @@ sap.ui.define([
 		}
 
 		if (!oTable._bInvalid && !_private(oTable).oVerticalScrollbar) {
-			// If the table is invalid and about to be (re-)rendered, the scrollbar element will be removed from DOM. The reference to the new
-			// scrollbar element can be obtained only after rendering.
+			// The scrollbar element might not yet be in the DOM, for example if it is initially rendered, or going to be re-rendered as a child
+			// of a control that is still using the old string-based rendering engine. In these cases, the reference to the new scrollbar element
+			// can be obtained only after rendering.
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
 			_private(oTable).oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
 
@@ -2478,7 +2441,7 @@ sap.ui.define([
 
 		var oScrollbar = _private(oTable).oVerticalScrollbar;
 
-		if (oScrollbar && !bIsExternal && !bIgnoreDOMConnection && !oScrollbar.isConnected) {
+		if (oScrollbar && !bIsExternal && !oScrollbar.isConnected) {
 			// The internal scrollbar was removed from DOM without notifying the table.
 			// This can be the case, for example, if the parent of the table was made invisible.
 			return null;
@@ -2504,7 +2467,7 @@ sap.ui.define([
 	 */
 	ScrollExtension.prototype.isVerticalScrollbarVisible = function() {
 		var oVSb = this.getVerticalScrollbar();
-		return oVSb != null && !oVSb.classList.contains("sapUiTableHidden");
+		return oVSb != null && !oVSb.parentElement.classList.contains("sapUiTableHidden");
 	};
 
 	/**

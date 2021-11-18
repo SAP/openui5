@@ -11,9 +11,7 @@ sap.ui.define([
 
 	var ExtensionDelegate = {
 		onAfterRendering: function() {
-			var oScrollIOSExtension = this._getScrollIOSExtension();
-			oScrollIOSExtension.attachScrollbar();
-			oScrollIOSExtension.updateVerticalScrollbar();
+			this.attachScrollbar();
 		}
 	};
 
@@ -39,13 +37,8 @@ sap.ui.define([
 		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable) {
-			TableUtils.addDelegate(oTable, ExtensionDelegate, oTable);
-			oTable.addStyleClass("sapUiTableVSbIOSActive");
-
-			if (this.attachScrollbar()) {
-				this.updateVerticalScrollbar();
-			}
-
+			TableUtils.addDelegate(oTable, ExtensionDelegate, this);
+			this.attachScrollbar();
 			return "ScrollIOSExtension";
 		},
 
@@ -57,7 +50,6 @@ sap.ui.define([
 			var oTable = this.getTable();
 
 			TableUtils.removeDelegate(oTable, ExtensionDelegate);
-			oTable.removeStyleClass("sapUiTableVSbIOSActive");
 			clearTimeout(this._iUpdateDefaultScrollbarPositionTimeoutId);
 			ExtensionBase.prototype.destroy.apply(this, arguments);
 		},
@@ -104,20 +96,16 @@ sap.ui.define([
 	});
 
 	ScrollIOSExtension.prototype.onUpdateTableSizes = function() {
-		this.updateVerticalScrollbarVisibility();
 		this.updateVerticalScrollbarThumbHeight();
 		this.updateVerticalScrollbarThumbPosition();
 	};
 
 	ScrollIOSExtension.prototype.onTotalRowCountChanged = function() {
-		this.updateVerticalScrollbarVisibility();
 		this.updateVerticalScrollbarThumbHeight();
 	};
 
 	/**
 	 * Inserts the scrollbar into the DOM if it does not yet exist.
-	 *
-	 * @returns {boolean} Whether the scrollbar was attached.
 	 */
 	ScrollIOSExtension.prototype.attachScrollbar = function() {
 		var oTable = this.getTable();
@@ -126,7 +114,7 @@ sap.ui.define([
 		var oVSbThumb = this.getVerticalScrollbarThumb();
 
 		if (!oVSb) {
-			return false; // Cannot attach
+			return;
 		}
 
 		// Render scrollbar
@@ -152,7 +140,7 @@ sap.ui.define([
 			oVSb.addEventListener("scroll", this._onVerticalScrollEventHandler);
 		}
 
-		return true;
+		this.updateVerticalScrollbar();
 	};
 
 	/**
@@ -176,57 +164,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the vertical scrollbar is visible.
-	 *
-	 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is visible.
-	 */
-	ScrollIOSExtension.prototype.isVerticalScrollbarVisible = function() {
-		var oVSbIOS = this.getVerticalScrollbar();
-		return oVSbIOS ? !oVSbIOS.classList.contains("sapUiTableHidden") : false;
-	};
-
-	/**
 	 * Performs a full update of the vertical scrollbar.
 	 */
 	ScrollIOSExtension.prototype.updateVerticalScrollbar = function() {
 		var oTable = this.getTable();
-		var oTableCCnt = oTable.getDomRef("tableCCnt");
-		var oScrollExtension = oTable._getScrollExtension();
-
 		var oVSbIOS = this.getVerticalScrollbar();
-		var iTop = oScrollExtension.isVerticalScrollbarExternal() ? 0 : oTableCCnt.offsetTop;
 
-		if (oTable._getRowCounts().fixedTop > 0) {
-			iTop += oTable._iVsbTop;
-		}
+		oVSbIOS.style.height = oTable._getScrollExtension().getVerticalScrollbarHeight() + "px";
+		oVSbIOS.style.top = Math.max(0, oTable._getRowCounts().fixedTop * oTable._getBaseRowHeight() - 1) + "px";
 
-		oVSbIOS.style.height = oScrollExtension.getVerticalScrollbarHeight() + "px";
-		oVSbIOS.style.top = iTop + "px";
-
-		this.updateVerticalScrollbarVisibility();
-		this.updateVerticalScrollbarThumbHeight();
 		this.updateVerticalScrollbarThumbPosition();
-	};
-
-	/**
-	 * Updates the visibility of the vertical scrollbar.
-	 */
-	ScrollIOSExtension.prototype.updateVerticalScrollbarVisibility = function() {
-		var oTable = this.getTable();
-		var oScrollExtension = oTable._getScrollExtension();
-		var oVSbIOS = this.getVerticalScrollbar();
-
-		if (!oVSbIOS) {
-			return;
-		}
-
-		if (oScrollExtension.isVerticalScrollbarRequired() && !this.isVerticalScrollbarVisible()) {
-			// Show the currently invisible scrollbar.
-			oVSbIOS.classList.remove("sapUiTableHidden");
-		} else if (!oScrollExtension.isVerticalScrollbarRequired() && this.isVerticalScrollbarVisible()) {
-			// Hide the currently visible scrollbar.
-			oVSbIOS.classList.add("sapUiTableHidden");
-		}
+		this.updateVerticalScrollbarThumbHeight();
 	};
 
 	/**
@@ -302,6 +250,7 @@ sap.ui.define([
 		var iOffset = Math.min(oScrollExtension.getVerticalScrollbarHeight() - iThumbHeight, Math.max(0, iTop));
 
 		oEvent.preventDefault();
+		oEvent.stopPropagation();
 		oVSbThumb.style.top = iOffset + "px";
 
 		clearTimeout(this._iUpdateDefaultScrollbarPositionTimeoutId);
@@ -324,6 +273,9 @@ sap.ui.define([
 		var iThumbHeight = this.getCalculateThumbHeight();
 		var iTop = oVSbThumb.offsetTop + oEvent.clientY - iThumbTop - iThumbHeight / 2;
 		var iOffset = Math.min(oScrollExtension.getVerticalScrollbarHeight() - iThumbHeight, Math.max(0, iTop));
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
 
 		oVSbThumb.style.top = iOffset + "px";
 		this.updateDefaultScrollbarPosition(iOffset, iThumbHeight);

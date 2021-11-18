@@ -183,13 +183,12 @@ sap.ui.define([
 
 		this.oTable.setColumnHeaderHeight(78);
 		this.oTable.rerender();
-		assert.strictEqual(oVSbComputedStyle.top, this.oTable.getDomRef("tableCCnt").offsetTop + "px", "Top position");
+		assert.strictEqual(oVSbComputedStyle.top, "0px", "Top position");
 
 		this.oTable.setVisibleRowCount(2);
 		this.oTable.setFixedRowCount(1);
 		this.oTable.rerender();
-		assert.strictEqual(oVSbComputedStyle.top, this.oTable.getDomRef("tableCCnt").offsetTop + TableUtils.BaseSize.sapUiSizeCozy + "px",
-			"Fixed rows: Top position");
+		assert.strictEqual(oVSbComputedStyle.top,  TableUtils.BaseSize.sapUiSizeCozy + "px", "Fixed rows: Top position");
 	});
 
 	QUnit.test("Vertical scrollbar height if variable row heights enabled", function(assert) {
@@ -381,8 +380,6 @@ sap.ui.define([
 		oScrollbarParent.removeChild(oScrollbar);
 		assert.strictEqual(oScrollExtension.getVerticalScrollbar(), null,
 			"Returned null: The scrollbar was removed from DOM");
-		assert.strictEqual(oScrollExtension.getVerticalScrollbar(true), oScrollbar,
-			"Returned the vertical scrollbar: The scrollbar was removed from DOM, but the connection to the DOM is ignored");
 
 		oScrollbarParent.appendChild(oScrollbar);
 		assert.strictEqual(oScrollExtension.getVerticalScrollbar(), oScrollbar,

@@ -74,7 +74,7 @@ sap.ui.define([
 				oTable.invalidate();
 			} else {
 				// To avoid table invalidation on every call of this method, the scrollbar that is still in memory is inserted back into the DOM.
-				oHTMLElement.appendChild(oScrollExtension.getVerticalScrollbar());
+				oHTMLElement.appendChild(oScrollExtension.getVerticalScrollbar().parentElement);
 
 				// If an element is removed from DOM and is inserted again, the scroll position is reset to 0 and needs to be restored.
 				oScrollExtension.restoreVerticalScrollPosition();
