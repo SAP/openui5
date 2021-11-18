@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/unified/MenuItem",
 	"sap/ui/unified/MenuTextFieldItem",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log, waitForThemeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Core"
+], function(qutils, Menu, MenuItem, MenuTextFieldItem, Log, waitForThemeApplied, Core) {
 	"use strict";
 
 	try {
@@ -1072,6 +1073,25 @@ sap.ui.define([
 		assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
 	});
 
+	QUnit.test("_fnInvisibleCountInformationFactory", function(assert) {
+		// arrange
+		// act
+		var oLanguageStub = this.stub(Core.getConfiguration(), "getLanguage", function() {
+				return "en-US";
+			}),
+			oInvisibleCountInformation = new MenuTextFieldItem()
+			._fnInvisibleCountInformationFactory({
+				iItemNo: 1,
+				iTotalItems: 3
+			});
+
+		// assert
+		assert.strictEqual(oInvisibleCountInformation.getText(), "1 of 3", "Proper count information is created");
+
+		// clean up
+		oLanguageStub.restore();
+	});
+
 	QUnit.module("Aria");
 
 	QUnit.test("Root element is clear of any ARIA labelling", function(assert) {
@@ -1154,6 +1174,29 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	QUnit.test("MenuTextFieldItem input field has count information referenced", function(assert) {
+		// arrange
+		var oLanguageStub = this.stub(Core.getConfiguration(), "getLanguage"),
+			oInputFields, sCountDescriptionOne, sCountDescriptionTwo,
+			oMenu = new Menu({
+				items: [new MenuTextFieldItem(), new MenuTextFieldItem()]
+			}).placeAt("qunit-fixture");
+
+		// act
+		oMenu.open();
+		oInputFields = oMenu.getDomRef().querySelectorAll("input");
+		sCountDescriptionOne = document.getElementById(oInputFields[0].getAttribute("aria-describedby").split(" ")[1]).innerText;
+		sCountDescriptionTwo = document.getElementById(oInputFields[1].getAttribute("aria-describedby").split(" ")[1]).innerText;
+
+		// assert
+		assert.strictEqual(sCountDescriptionOne, "1 of 2", "Count information is refered");
+		assert.strictEqual(sCountDescriptionTwo, "2 of 2", "Count information is refered");
+
+		// clean up
+		oMenu.destroy();
+		oLanguageStub.restore();
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("Destruction", function(assert) {
@@ -1161,8 +1204,8 @@ sap.ui.define([
 		var sSubId = oSubMenu.getId();
 		var bHasPopup = !!oRootMenu.oPopup;
 		oRootMenu.destroy();
-		assert.ok(!sap.ui.getCore().byId(sId), "No Menu registered in the Core anymore");
-		assert.ok(!sap.ui.getCore().byId(sSubId), "No Submenu registered in the Core anymore");
+		assert.ok(!Core.byId(sId), "No Menu registered in the Core anymore");
+		assert.ok(!Core.byId(sSubId), "No Submenu registered in the Core anymore");
 		assert.ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
 	});
 
