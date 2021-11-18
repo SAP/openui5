@@ -36,6 +36,7 @@
 			<VBox class="sapUiSmallMargin" id="listPage" visible="{ui>/useTable}">
 				<Table growing="true" growingThreshold="4" id="SalesOrderSet"
 					items="{
+						events : {change : '.onUpdateSalesOrdersCount'},
 						path : 'SalesOrders>/SalesOrderSet',
 						filters : [
 							{path : 'SalesOrderID', operator : 'GE', value1 : '0500000000'},
@@ -43,7 +44,8 @@
 						],
 						parameters : {
 							countMode : 'Request',
-							select : 'CurrencyCode,CustomerName,GrossAmount,Note,SalesOrderID'
+							select : 'CurrencyCode,CustomerName,GrossAmount,LifecycleStatus,Note,SalesOrderID',
+							transitionMessagesOnly : true
 						},
 						sorter : [{path : 'SalesOrderID', descending : true}]
 					}"
@@ -180,7 +182,8 @@
 						}" width="12em" />
 				</form:SimpleForm>
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{
-						parameters : {usePreliminaryContext : true, transitionMessagesOnly : true},
+						events : {change : '.onUpdateSalesOrderItemsCount'},
+						parameters : {transitionMessagesOnly : true, usePreliminaryContext : true},
 						path : 'ToLineItems'
 					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0"
 					visibleRowCount="4">
@@ -189,7 +192,7 @@
 					</t:dependents>
 					<t:extension>
 						<Toolbar design="Transparent">
-							<Title level="H2" text="Sales Order Items">
+							<Title level="H2" text="{ui>/salesOrderItemsCount} Sales Order Items">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
