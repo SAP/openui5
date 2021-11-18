@@ -233,10 +233,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 	 * @private
 	 */
 	GenericTileLineModeRenderer._updateHoverStyle = function() {
-		var $StyleHelper = this.$("styleHelper"),
-			oLine,
-			i = 0,
-			sHelpers = "";
+		var $StyleHelper = this.$("styleHelper");
 
 		//empty the style helper even if there is no style data available in order to guarantee a clean display without artifacts
 		$StyleHelper.empty();
@@ -251,9 +248,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			$StyleHelper.css("left", -this._oStyleData.positionLeft);
 		}
 
-		for (i; i < this._oStyleData.lines.length; i++) {
-			oLine = this._oStyleData.lines[i];
-
+		this._oStyleData.lines.forEach(function(oLine) {
 			var $Rect = jQuery("<div class='sapMGTLineStyleHelper'><div class='sapMGTLineStyleHelperInner'></div></div>");
 			if (this._oStyleData.rtl) {
 				$Rect.css("right", oLine.offset.x + "px");
@@ -264,11 +259,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 				top: oLine.offset.y + "px",
 				width: oLine.width + "px"
 			});
-
-			sHelpers += $Rect.get(0).outerHTML.trim();
-		}
-
-		$StyleHelper.html(sHelpers);
+			$StyleHelper.append($Rect);
+		}, this);
 	};
 
 	/**
