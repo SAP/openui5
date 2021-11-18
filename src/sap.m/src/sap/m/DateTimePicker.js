@@ -349,6 +349,7 @@ sap.ui.define([
 		DatePicker.prototype.setDisplayFormat.apply(this, arguments);
 
 		if (this._oClocks) {
+			this._oClocks.setValueFormat(_getTimePattern.call(this));
 			this._oClocks.setDisplayFormat(_getTimePattern.call(this));
 		}
 
@@ -595,6 +596,7 @@ sap.ui.define([
 			this._oClocks = new sap.m.TimePickerClocks(this.getId() + "-Clocks", {
 				minutesStep: this.getMinutesStep(),
 				secondsStep: this.getSecondsStep(),
+				valueFormat: _getTimePattern.call(this),
 				displayFormat: _getTimePattern.call(this),
 				localeId: this.getLocaleId()
 			});
