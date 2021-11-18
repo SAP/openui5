@@ -589,7 +589,10 @@ function (
 			return false;
 		}
 		var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
-		if (this.oRtaRootAppComponent === oPopupAppComponent || this._isComponentInsidePopup(oPopupElement)) {
+		if (
+			(oPopupAppComponent && this.oRtaRootAppComponent === oPopupAppComponent)
+			|| this._isComponentInsidePopup(oPopupElement)
+		) {
 			return checkPopupAncestorsAdaptation(oPopupElement.getParent());
 		}
 		return false;

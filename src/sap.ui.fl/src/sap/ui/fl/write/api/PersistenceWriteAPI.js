@@ -125,6 +125,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport in onPremise system
 		 * @param {string} [mPropertyBag.layer=CUSTOMER] - Proposed layer (might be overwritten by the backend) when creating a new app variant - Smart Business must pass the layer
 		 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
+		 * @param {boolean} [mPropertyBag.removeOtherLayerChanges=false] - Whether to remove changes on other layers before saving
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
 		 *
@@ -139,7 +140,7 @@ sap.ui.define([
 			mPropertyBag.invalidateCache = true;
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			mPropertyBag.componentId = oAppComponent.getId();
-			return oFlexController.saveAll(oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft, oAppComponent)
+			return oFlexController.saveAll(oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft, mPropertyBag.layer, mPropertyBag.removeOtherLayerChanges)
 				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft))
 				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));
 		},
