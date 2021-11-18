@@ -101,8 +101,21 @@ sap.ui.define([
 		var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 		var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 
-		return oFlexController.saveAll(oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft)
-			.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft));
+		return oFlexController.saveAll(
+			oAppComponent,
+			mPropertyBag.skipUpdateCache,
+			mPropertyBag.draft,
+			mPropertyBag.layer,
+			mPropertyBag.removeOtherLayerChanges
+		)
+			.then(oDescriptorFlexController.saveAll.bind(
+				oDescriptorFlexController,
+				oAppComponent,
+				mPropertyBag.skipUpdateCache,
+				mPropertyBag.draft,
+				mPropertyBag.layer,
+				mPropertyBag.removeOtherLayerChanges
+			));
 	}
 
 	/**
@@ -131,11 +144,13 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the associated flex persistence
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
-	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
+	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading and saving changes
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes are to be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants are to be included
 	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
+	 * @param {boolean} [mPropertyBag.removeOtherLayerChanges=false] - Whether to remove changes on other layers before saving
+	 * @returns {Promise<sap.ui.fl.Change[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectState.saveFlexObjects = function(mPropertyBag) {
 		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
