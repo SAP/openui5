@@ -2409,6 +2409,7 @@ sap.ui.define([
 
 	function _handleDialogAfterClose(oEvent) {
 
+		var aConditions = this.getConditions(); // get conditions here as they might be modified in a close handler
 		this._bDialogOpen = false;
 		this._aOldConditions = undefined;
 
@@ -2417,7 +2418,6 @@ sap.ui.define([
 		if (this._bOK) {
 			// fire select event after Dialog is closed because inside applyFocusInfo is called
 			// that might reset cursor and selection of field -> update it after this
-			var aConditions = this.getConditions();
 			this.fireSelect({conditions: aConditions, add: false, close: true});
 		}
 		this._bOK = undefined;
