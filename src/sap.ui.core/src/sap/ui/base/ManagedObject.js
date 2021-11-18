@@ -658,14 +658,13 @@ sap.ui.define([
 	 * <li><code>byValue: <i>boolean</i></code> (either can be omitted or set to the boolean value <code>true</code>)
 	 *     If set to <code>true</code>, the property value will be {@link module:sap/base/util/deepClone deep cloned}
 	 *     on write and read operations to ensure that the internal value can't be modified by the outside. The property
-	 *     <code>byValue</code> is currently limited to a <code>boolean</code> value. Other types are reserved for future
+	 *     <code>byValue</code> is currently restricted to a <code>boolean</code> value. Other types are reserved for future
 	 *     use. Class definitions must only use boolean values for the flag (or omit it), but readers of ManagedObject
 	 *     metadata should handle any truthy value as <code>true</code> to be future safe.
 	 *     Note that using <code>byValue:true</code> has a performance impact on property access and therefore should be
 	 *     used carefully. It also doesn't make sense to set this option for properties with a primitive type (they have
-	 *     value semantic anyhow) or for properties with arrays of primitive types (they have been cloned already in the
-	 *     past with a cheaper implementation). Future versions of UI5 might encourage this as a limitation during class
-	 *     definition.
+	 *     value semantic anyhow) or for properties with arrays of primitive types (they are already cloned
+	 *     with a less expensive implementation).
 	 * <li><code>group:<i>string</i></code> a semantic grouping of the properties, intended to be used in design time tools.
 	 *     Allowed values are (case sensitive): Accessibility, Appearance, Behavior, Data, Designtime, Dimension, Identification, Misc</li>
 	 * <li><code>defaultValue: <i>any</i></code> the default value for the property or null if there is no defaultValue.</li>
