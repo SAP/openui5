@@ -44,11 +44,18 @@ sap.ui.define([
 		var itemAggregation = control.getAggregation('item');
 		var fixedItemAggregation = control.getAggregation('fixedItem');
 		var isExpanded = control.getExpanded();
+		var sAriaLabel = control.getAriaLabel();
 
 		rm.openStart('div', control);
 
 		rm.attr("role", 'navigation');
 		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION"));
+
+		if (sAriaLabel) {
+			rm.accessibilityState(control, {
+				label: sAriaLabel
+			});
+		}
 
 		rm.class('sapTntSideNavigation');
 		rm.class("sapContrast");
