@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/LocaleData',
+	'./TimePickerClocks',
 	'./DateTimePickerRenderer',
 	'./SegmentedButton',
 	'./SegmentedButtonItem',
@@ -32,6 +33,7 @@ sap.ui.define([
 	Device,
 	DateFormat,
 	LocaleData,
+	TimePickerClocks,
 	DateTimePickerRenderer,
 	SegmentedButton,
 	SegmentedButtonItem,
@@ -157,7 +159,14 @@ sap.ui.define([
 			 * The seconds clock is populated only by multiples of the step.
 			 * @since 1.56
 			 */
-			secondsStep: {type: "int", group: "Misc", defaultValue: 1 }
+			secondsStep: {type: "int", group: "Misc", defaultValue: 1 },
+
+			/**
+			 * Determines whether there is a shortcut navigation to current time.
+			 *
+			 * @since 1.98
+			 */
+			showCurrentTimeButton : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		designtime: "sap/m/designtime/DateTimePicker.designtime",
 		dnd: { draggable: false, droppable: true }
@@ -403,6 +412,14 @@ sap.ui.define([
 
 	};
 
+	DateTimePicker.prototype.setShowCurrentTimeButton = function(bShow) {
+		var oClocks = this._oClocks;
+
+		oClocks && oClocks.setShowCurrentTimeButton(bShow);
+
+		return this.setProperty("showCurrentTimeButton", bShow);
+	};
+
 	DateTimePicker.prototype._getFormatInstance = function(oArguments, bDisplayFormat){
 
 		var oMyArguments = jQuery.extend({}, oArguments);
@@ -593,12 +610,13 @@ sap.ui.define([
 		}
 
 		if (!this._oClocks) {
-			this._oClocks = new sap.m.TimePickerClocks(this.getId() + "-Clocks", {
+			this._oClocks = new TimePickerClocks(this.getId() + "-Clocks", {
 				minutesStep: this.getMinutesStep(),
 				secondsStep: this.getSecondsStep(),
 				valueFormat: _getTimePattern.call(this),
 				displayFormat: _getTimePattern.call(this),
-				localeId: this.getLocaleId()
+				localeId: this.getLocaleId(),
+				showCurrentTimeButton: this.getShowCurrentTimeButton()
 			});
 			this._oPopupContent.setClocks(this._oClocks);
 		}

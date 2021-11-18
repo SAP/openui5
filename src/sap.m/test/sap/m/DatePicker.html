@@ -135,7 +135,7 @@
 				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
 				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
-				new sap.m.Label({text: "DatePicker with given DateValue and Formatter and with shortcut for today", labelFor: "DP3", width: "100%"}),
+				new sap.m.Label({text: "DatePicker with given DateValue, Formatter, and with a shortcut for current date", labelFor: "DP3", width: "100%"}),
 				new sap.m.DatePicker("DP3", { dateValue: new Date("2014", "02", "26"), displayFormat: "short", showCurrentDateButton: true, change: handleChange }),
 				new sap.m.Label({text: "DatePicker for month and year in compact mode:", labelFor: "DP14"}),
 				new sap.m.DatePicker("DP14", {

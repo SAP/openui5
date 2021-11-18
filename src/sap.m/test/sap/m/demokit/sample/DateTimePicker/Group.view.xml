@@ -18,10 +18,11 @@
 			placeholder="Enter Date"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>
-		<Label text="DateTimePicker with given Value and Formatter and with shortcut for today" labelFor="DTP2"/>
+		<Label text="DateTimePicker with given Value, Formatter, and with shortcuts for current date and current time" labelFor="DTP2"/>
 		<DateTimePicker
 			id="DTP2"
 			showCurrentDateButton="true"
+			showCurrentTimeButton="true"
 			value="2016-02-18-10-32-30" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long"
 			change="handleChange"
 			class="sapUiSmallMarginBottom"/>

@@ -325,6 +325,17 @@ sap.ui.define([
 		oTimePicker.destroy();
 	});
 
+	QUnit.test("showCurrentTimeButton - button existence", function(assert) {
+		// Prepare
+		this.oTimePicker.setShowCurrentTimeButton(true);
+		sap.ui.getCore().applyChanges();
+		this.oTimePicker.toggleOpen();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(this.oTimePicker._getClocks().getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
+	});
+
 	QUnit.module("Placeholder", {
 		beforeEach: function () {
 			// SUT
