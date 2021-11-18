@@ -92,6 +92,11 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"]
 			},
+			"OPA.MultipleInlineCreationRowsGrid" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/Opa.qunit"],
+				realOData : false // requires stable test data
+			},
 			"OPA.Products" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"],
