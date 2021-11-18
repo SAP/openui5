@@ -49,8 +49,6 @@ sap.ui.define([
 			var oSegmentedButton = oControl.getAggregation("_segmentedbutton");
 			oRm.openStart("div");
 			oRm.addClass("sapUiIntegrationShapeSelect");
-			oRm.writeClasses();
-			oRm.writeStyles();
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
 			oRm.renderControl(oSegmentedButton);

@@ -521,3 +521,25 @@
 .sapUiIntegrationEditorItem .sapUiIntegrationEditorSettingBox {
 	max-width: 5rem;
 }
+
+/* Color Select */
+.sapUiIntegrationColorSelect.noColorValueOrTransparentValue .sapUiIcon::before {
+	opacity: 0.5;
+	color: transparent;
+	background-size: 10px 10px;
+	background-position: 0px 0px, 0px 10px, 10px -10px, -10px 10px;
+	border: 1px dashed #808080;
+	padding: 0px 0px;
+	background-image: linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%);
+}
+
+.sapUiIntegrationColorSelect.hasColorValue .sapUiIcon::before {
+	text-shadow: unset;
+	opacity: unset;
+	background-size: unset;
+	background-position: unset;
+	border: unset;
+	padding: unset;
+	background-image: unset;
+	color: var(--colorValue);
+}

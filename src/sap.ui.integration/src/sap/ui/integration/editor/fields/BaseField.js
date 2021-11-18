@@ -104,13 +104,10 @@ sap.ui.define([
 			if (!oControl.getVisible()) {
 				oRm.addStyle("display", "none");
 			}
-			oRm.writeClasses();
-			oRm.writeStyles();
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
 			if (oControl.getVisible()) {
 				oRm.openStart("span");
-				oRm.writeClasses();
 				oRm.openEnd();
 				oRm.openStart("span");
 				oRm.addClass("sapUiIntegrationEditorEditor");
@@ -120,8 +117,6 @@ sap.ui.define([
 				} else {
 					oRm.addStyle("width", "100%");
 				}
-				oRm.writeStyles();
-				oRm.writeClasses();
 				oRm.openEnd();
 				oRm.renderControl(oField);
 				oRm.close("span");
@@ -129,14 +124,11 @@ sap.ui.define([
 				if (oControl._hasDynamicValue()) {
 					oRm.openStart("span");
 					oRm.addClass("sapUiIntegrationEditorSettings");
-					oRm.writeClasses();
 					oRm.openEnd();
 					oRm.openStart("span");
 					oRm.addClass("sapUiIntegrationEditorSettingsField");
 					oRm.addStyle("width", "100%");
 					oRm.addStyle("opacity", "1");
-					oRm.writeClasses();
-					oRm.writeStyles();
 					oRm.openEnd();
 					oRm.renderControl(oDynamicField);
 					oRm.close("span");
@@ -144,7 +136,6 @@ sap.ui.define([
 				oRm.openStart("div");
 				oRm.writeAttribute("id", oControl.getId() + "-ms");
 				oRm.addStyle("height", "0");
-				oRm.writeStyles();
 				oRm.openEnd();
 				oRm.close("div");
 			}

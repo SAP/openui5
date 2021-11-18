@@ -65,8 +65,6 @@ sap.ui.define([
 			if (oSelect && oControl.getWidth) {
 				oRm.addStyle("width", oSelect.getWidth());
 			}
-			oRm.writeClasses();
-			oRm.writeStyles();
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
 			oRm.renderControl(oSelect);

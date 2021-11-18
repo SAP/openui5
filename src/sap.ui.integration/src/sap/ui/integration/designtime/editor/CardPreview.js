@@ -68,14 +68,12 @@ sap.ui.define([
 					oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom");
 				}
 			}
-			oRm.writeClasses();
 			oRm.openEnd();
 			oRm.openStart("div");
 			oRm.addClass("before");
 			oRm.writeAttribute("tabindex", "0");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-before");
 			oRm.addStyle("z-index", oControl.getParent()._iZIndex + 1);
-			oRm.writeStyles();
 			oRm.openEnd();
 			oRm.close("div");
 			oRm.renderControl(oControl._getCardPreview());

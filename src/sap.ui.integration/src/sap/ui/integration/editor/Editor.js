@@ -255,8 +255,6 @@ sap.ui.define([
 				if (oControl.getMode() !== "translation") {
 					oRm.addClass("settingsButtonSpace");
 				}
-
-				oRm.writeClasses();
 				oRm.openEnd();
 				if (oControl.getMode() !== "translation") {
 					oRm.renderControl(oControl.getAggregation("_messageStrip"));

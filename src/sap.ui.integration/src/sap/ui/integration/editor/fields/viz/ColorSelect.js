@@ -70,8 +70,14 @@ sap.ui.define([
 			var oButton = oControl.getAggregation("_button");
 			oRm.openStart("div");
 			oRm.addClass("sapUiIntegrationColorSelect");
-			oRm.writeClasses();
-			oRm.writeStyles();
+			if (!oControl._colorValue || oControl._colorValue === "transparent") {
+				oRm.addClass("noColorValueOrTransparentValue");
+			} else {
+				oRm.addClass("hasColorValue");
+			}
+			if (oControl._colorValue) {
+				oRm.addStyle("--colorValue", oControl._colorValue);
+			}
 			oRm.writeElementData(oControl);
 			oRm.openEnd();
 			oRm.renderControl(oButton);
@@ -145,32 +151,6 @@ sap.ui.define([
 		});
 		this._colorValue = "transparent";
 		this.setAggregation("_button", this._oButton);
-	};
-	ColorSelect.prototype.onBeforeRendering = function () {
-		if (!this._oStyle) {
-			this._oStyle = document.createElement("style");
-			this._oStyle.innerHTML = "#" + this.getId() + " .sapUiIcon::before { color: " + this._colorValue + " !important}";
-			document.body.appendChild(this._oStyle);
-		}
-		var oRule = this._oStyle.sheet.rules[0];
-		if (!this._colorValue || this._colorValue === "transparent") {
-			oRule.style.opacity = "0.5";
-			oRule.style.color = "transparent";
-			oRule.style.backgroundSize = "10px 10px";
-			oRule.style.backgroundPosition = "0px 0px, 0px 10px, 10px -10px, -10px 10px";
-			oRule.style.border = "1px dashed #808080";
-			oRule.style.padding = "0px 0px";
-			oRule.style.backgroundImage = "linear-gradient(45deg, #ddd 25%, transparent 25%), linear-gradient(-45deg, #ddd 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ddd 75%), linear-gradient(-45deg, transparent 75%, #ddd 75%)";
-		} else {
-			oRule.style.textShadow = "unset";
-			oRule.style.opacity = "unset";
-			oRule.style.backgroundSize = "unset";
-			oRule.style.backgroundPosition = "unset";
-			oRule.style.border = "unset";
-			oRule.style.padding = "unset";
-			oRule.style.backgroundImage = "unset";
-			oRule.style.color = this._colorValue;
-		}
 	};
 
 	ColorSelect.prototype._openPalette = function () {
