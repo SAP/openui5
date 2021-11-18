@@ -554,6 +554,9 @@ sap.ui.define([
 
 	}, /* Metadata constructor */ ManagedObjectMetadata);
 
+	// Marker to not 'forget' ui5Objects
+	var sUI5ObjectMarker = Symbol("ui5object");
+
 	/**
 	 * Returns the metadata for the ManagedObject class.
 	 *
@@ -2932,6 +2935,9 @@ sap.ui.define([
 			if (oValue.Type) {
 				// if value contains the 'Type' property (capital 'T'), this is not a binding info.
 				return undefined;
+			} else if (oValue[sUI5ObjectMarker]) {
+				// no bindingInfo, delete marker
+				delete oValue[sUI5ObjectMarker];
 			} else if (oValue.ui5object) {
 				// if value contains ui5object property, this is not a binding info,
 				// remove it and not check for path or parts property
@@ -5080,6 +5086,7 @@ sap.ui.define([
 
 		// Clone properties (only those with non-default value)
 		var aKeys = Object.keys(mProps);
+		var vValue;
 		i = aKeys.length;
 		while ( i > 0 ) {
 			sKey = aKeys[--i];
@@ -5090,7 +5097,12 @@ sap.ui.define([
 				if (typeof mProps[sKey] === "string") {
 					mSettings[sKey] = escape(mProps[sKey]);
 				} else {
-					mSettings[sKey] = oProperty.byValue ? deepClone(mProps[sKey]) : mProps[sKey];
+					vValue = oProperty.byValue ? deepClone(mProps[sKey]) : mProps[sKey];
+					if (vValue && typeof vValue === "object" && !Object.isFrozen(vValue)) {
+						//mark objects to not interpret it as bindingInfos
+						vValue[sUI5ObjectMarker] = true;
+					}
+					mSettings[sKey] = vValue;
 				}
 			}
 		}
