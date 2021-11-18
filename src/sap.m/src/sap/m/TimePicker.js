@@ -529,7 +529,8 @@ function(
 		 * @returns {boolean} true if the icon is clicked.
 		 */
 		 TimePicker.prototype._isIconClicked = function (oEvent) {
-			return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer");
+			return jQuery(oEvent.target).hasClass("sapUiIcon") || jQuery(oEvent.target).hasClass("sapMInputBaseIconContainer")
+				 || jQuery(oEvent.target).hasClass("sapUiIconTitle");
 		};
 
 		/**
