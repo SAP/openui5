@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.synctestlib</name>
+  <vendor>SAP SE</vendor>
+  <copyright>Insert Copyright here</copyright>
+  <version>0.0.1</version>
+
+  <documentation>SAPUI5 Test library using legacy module APIs</documentation>
+
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+  </dependencies>
+
+</library>

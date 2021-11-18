@@ -1,11 +1,12 @@
-/*global QUnit, URI*/
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
-	"sap/m/Bar"
-], function(Parameters, Control, Element, Icon, Bar) {
+	"sap/m/Bar",
+	"sap/ui/thirdparty/URI"
+], function(Parameters, Control, Element, Icon, Bar, URI) {
 	"use strict";
 
 	QUnit.module("Parmeters.get");

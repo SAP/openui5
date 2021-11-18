@@ -43,13 +43,13 @@ sap.ui.define(function() {
 				qunit: {
 					reorder: false // tests are depending on each other
 				},
-				ui5: {
-					libs: "sap.m"
-				},
 				loader: {
 					paths: {
-						"testdata/core": "test-resources/sap/ui/core/qunit/"
+						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
 					}
+				},
+				ui5: {
+					libs: "sap.m"
 				}
 			},
 			ControlRenderer: {
@@ -57,15 +57,14 @@ sap.ui.define(function() {
 			},
 			CustomStyleClassSupport: {
 				title: "sap.ui.core.CustomStyleClassSupport",
-				ui5: {
-					libs: "sap.ui.testlib,sap.ui.legacy.testlib",
-					theme: "sap_hcb"
-				},
 				loader: {
 					paths: {
-						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/",
-						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib/"
+						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
 					}
+				},
+				ui5: {
+					libs: "sap.ui.testlib", // only required to establish a CSS scope 'sapTestScope'
+					theme: "sap_hcb"
 				}
 			},
 			Element: {

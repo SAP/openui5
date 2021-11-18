@@ -391,7 +391,7 @@ sap.ui.define([
 
 
 	QUnit.test("LibraryChanged Event", function(assert) {
-		var events = [];
+		var events = [], oClass;
 
 		function onlibchange(oEvent) {
 			events.push(oEvent.getParameters());
@@ -407,21 +407,22 @@ sap.ui.define([
 		sap.ui.getCore().attachLibraryChanged(onlibchange);
 
 		// create new class
-		var oClass = Control.extend("my.lib.TestControl1", {});
+		oClass = Control.extend("my.lib.TestControl1", {});
 		assert.equal(events.length, 1, "one event should have been received");
 		equalEvent(events[0], "my.lib.TestControl1", "control", oClass.getMetadata());
 
-		var oClass = Element.extend("my.lib.TestElement1", {});
+		oClass = Element.extend("my.lib.TestElement1", {});
 		assert.equal(events.length, 2, "one event should have been received");
 		equalEvent(events[1], "my.lib.TestElement1", "element", oClass.getMetadata());
 
-		sap.ui.getCore().loadLibrary("sap.ui.testlib", sap.ui.require.toUrl("testdata/core/testdata/uilib"));
-		assert.equal(events.length, 3, "one event should have been received");
-		equalEvent(events[2], "sap.ui.testlib", "library", sap.ui.getCore().getLoadedLibraries()["sap.ui.testlib"]);
-		sap.ui.getCore().detachLibraryChanged(onlibchange);
+		return sap.ui.getCore().loadLibrary("sap.ui.testlib", {async: true}).then(function() {
+			assert.equal(events.length, 3, "one event should have been received");
+			equalEvent(events[2], "sap.ui.testlib", "library", sap.ui.getCore().getLoadedLibraries()["sap.ui.testlib"]);
+			sap.ui.getCore().detachLibraryChanged(onlibchange);
 
-		var oClass = Control.extend("my.lib.TestControl1", {});
-		assert.equal(events.length, 3, "no more event should have been received after detach");
+			Control.extend("my.lib.TestControl1", {});
+			assert.equal(events.length, 3, "no more event should have been received after detach");
+		});
 	});
 
 

@@ -296,7 +296,7 @@ sap.ui.define([
 	QUnit.test("error", function(assert) {
 		var done = assert.async();
 
-		this.oLibraryInfo._getReleaseNotes("foo/bar/baz", "1.2.3-SNAPSHOT", function(oData) {
+		this.oLibraryInfo._getReleaseNotes("foo/bar/baz", "4.5.6", function(oData) {
 			assert.deepEqual(oData, {}, "No release notes");
 			done();
 		});
