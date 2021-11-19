@@ -701,8 +701,13 @@ sap.ui.define([
 						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
 					}
 
-					if (!bHasColSpan && oColumn && oColumn._menuHasItems()) {
-						mAttributes["aria-haspopup"] = "menu";
+					if (!bHasColSpan && oColumn) {
+						var oPopover = oColumn.getColumnHeaderMenu();
+						if (oPopover) {
+							mAttributes["aria-haspopup"] = oPopover.getAriaHasPopupType().toLowerCase();
+						} else if (oColumn._menuHasItems()) {
+							mAttributes["aria-haspopup"] = "menu";
+						}
 					}
 					break;
 

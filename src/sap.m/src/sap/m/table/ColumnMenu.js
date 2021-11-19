@@ -3,44 +3,30 @@
  */
 sap.ui.define([
 	"sap/m/ResponsivePopover",
-	"sap/m/List",
-	"sap/m/StandardListItem",
 	"sap/m/Button",
-	"sap/m/Title",
-	"sap/m/VBox",
 	"sap/m/Toolbar",
-	"sap/m/OverflowToolbar",
 	"sap/m/ToolbarSpacer",
-	"sap/m/ScrollContainer",
-	"sap/m/table/ColumnMenuRenderer",
 	"sap/m/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/strings/capitalize",
 	"sap/m/p13n/AbstractContainerItem",
-	"sap/ui/core/Element",
-	"sap/m/p13n/Container"
+	"sap/m/p13n/Container",
+	"sap/m/table/ColumnMenuRenderer"
 ], function (
 	ResponsivePopover,
-	List,
-	StandardListItem,
 	Button,
-	Title,
-	VBox,
 	Toolbar,
-	OverflowToolbar,
 	ToolbarSpacer,
-	ScrollContainer,
-	ColumnMenuRenderer,
 	library,
 	Control,
 	Core,
 	jQuery,
 	capitalize,
 	AbstractContainerItem,
-	Element,
-	Container
+	Container,
+	ColumnMenuRenderer
 ) {
 	"use strict";
 
@@ -74,6 +60,7 @@ sap.ui.define([
 	var ColumnMenu = Control.extend("sap.m.table.ColumnMenu", {
 		metadata: {
 			library: "sap.m",
+			interfaces: ["sap.ui.core.IColumnHeaderMenu"],
 			aggregations: {
 				quickActions: { type: "sap.m.table.QuickActionBase" },
 				items: { type: "sap.m.table.ItemBase" },
@@ -84,6 +71,7 @@ sap.ui.define([
 	});
 
 	var DEFAULT_KEY = "$default";
+	var ARIA_POPUP_TYPE = sap.ui.core.aria.HasPopup.Dialog;
 
 	ColumnMenu.prototype.applySettings = function (mSettings) {
 		// Only works in JS views, but that's fine. This is only convenience for controls.
@@ -109,6 +97,17 @@ sap.ui.define([
 			this._initItemsContainer();
 		}
 		this._oPopover.openBy(oControl);
+	};
+
+	/**
+	 * Returns the <code>sap.ui.core.aria.HasPopup<\code> type of the menu.
+	 *
+	 * @returns {sap.ui.core.aria.HasPopup} <code>sap.ui.core.aria.HasPopup<\code> type of the menu
+	 * @public
+	 * @since 1.98.0
+	 */
+	ColumnMenu.prototype.getAriaHasPopupType = function () {
+		return ARIA_POPUP_TYPE;
 	};
 
 	/**

@@ -686,7 +686,9 @@ sap.ui.define([
 	};
 
 	Table.prototype.onColumnPress = function(oColumn) {
-		this.bActiveHeaders && this.fireEvent("columnPress", {
+		var oMenu = oColumn.getColumnHeaderMenu();
+		oMenu && oMenu.openBy(oColumn);
+		(this.bActiveHeaders || oMenu) && this.fireEvent("columnPress", {
 			column: oColumn
 		});
 	};

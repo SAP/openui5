@@ -321,7 +321,14 @@ sap.ui.define([
 			 */
 			menu : {type : "sap.ui.unified.Menu", multiple : false}
 		},
-
+		associations: {
+			/**
+			 * Provides a menu that is used by the column and replaces the menu aggregation when set.
+			 * The given menu has to follow the same pattern as the <code>sap.ui.core.IColumnHeaderMenu</code> interface.
+			 * @since 1.98.0
+			 */
+			columnHeaderMenu: {type: "sap.ui.core.IColumnHeaderMenu", multiple: false, visibility: "hidden"}
+		},
 		events : {
 			/**
 			 * Fires before the column menu is opened.
@@ -1286,6 +1293,17 @@ sap.ui.define([
 	 */
 	Column.prototype._getCellContentVisibilitySettings = function() {
 		return _private(this).mCellContentVisibilitySettings;
+	};
+
+	/**
+	 * Returns the <code>sap.ui.core.IColumnHeaderMenu<\code>, which is the current target of the association <code>columnHeaderMenu</code>, or null.
+	 *
+	 * @returns {sap.ui.core.IColumnHeaderMenu}
+	 * @since 1.98.0
+	 * @public
+	 */
+	Column.prototype.getColumnHeaderMenu = function () {
+		return sap.ui.getCore().byId(this.getAssociation("columnHeaderMenu"));
 	};
 
 	function validateCellContentVisibilitySettings(mSettings) {

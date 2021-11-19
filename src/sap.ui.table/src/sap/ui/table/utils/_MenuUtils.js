@@ -93,13 +93,19 @@ sap.ui.define([
 
 				if (Device.system.desktop || bCellHasMenuButton) {
 					MenuUtils._removeColumnHeaderCellMenu(oTable);
-					bExecuteDefault = oTable.fireColumnSelect({
-						column: oTable.getColumns()[iColumnIndex]
-					});
 
-					if (bExecuteDefault) {
-						return MenuUtils._openColumnContextMenu(oTable, oCell);
+					var oColumn = oTable.getColumns()[iColumnIndex];
+					var oPopover = oColumn.getColumnHeaderMenu();
+					if (oPopover) {
+						oPopover.openBy(oColumn);
 					} else {
+						bExecuteDefault = oTable.fireColumnSelect({
+							column: oColumn
+						});
+
+						if (bExecuteDefault) {
+							return MenuUtils._openColumnContextMenu(oTable, oCell);
+						}
 						return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
 					}
 				} else {
