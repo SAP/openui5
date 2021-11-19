@@ -386,6 +386,60 @@ sap.ui.define([
 		this.deferred.reject(null, null, "Some error message.");
 	});
 
+	QUnit.module("RequestDataProvider - Available Methods", {
+		beforeEach: function () {
+			this.oDataProviderFactory = new DataProviderFactory();
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+		},
+		afterEach: function () {
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("Test all methods", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			aMethods = ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			sExpectedMethod,
+			iIndex = 0,
+			fnTest;
+
+		assert.expect(aMethods.length);
+
+		this.oServer.respondWith(function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.method, sExpectedMethod, "Request is done with method " + sExpectedMethod);
+
+			oXhr.respond(200, { "Content-Type": "application/json" }, "{}");
+		});
+
+		fnTest = function () {
+			sExpectedMethod = aMethods[iIndex];
+
+			var oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/data/provider/test/url",
+					method: sExpectedMethod
+				}
+			});
+
+			// Act
+			oDataProvider.getData().then(function () {
+				if (iIndex === aMethods.length - 1) {
+					done();
+					return;
+				}
+
+				iIndex++;
+				fnTest();
+			});
+		}.bind(this);
+
+		fnTest();
+	});
+
 	QUnit.module("RequestDataProvider - Content encoding", {
 		beforeEach: function () {
 			this.oDataProvider = new RequestDataProvider();

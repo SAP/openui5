@@ -16,7 +16,7 @@ sap.ui.define([
 	var RETRY_STATUS_CODES = [429, 503];
 
 	var aModes = ["no-cors", "same-origin", "cors"];
-	var aMethods = ["GET", "POST", "HEAD"];
+	var aMethods = ["GET", "POST", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"];
 
 	/**
 	 * Constructor for a new <code>RequestDataProvider</code>.
