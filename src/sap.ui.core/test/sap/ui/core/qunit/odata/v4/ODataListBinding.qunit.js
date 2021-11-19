@@ -7654,6 +7654,8 @@ sap.ui.define([
 		getTargets : function () {return ["/TEAMS('1')/foo"];}
 	}, {
 		getTargets : function () {return ["/TEAMS('1')/bar"];}
+	}, {
+		getTargets : function () {return ["/TEAMS"];}
 	}],
 	predicates : ["('1')"]
 }, {

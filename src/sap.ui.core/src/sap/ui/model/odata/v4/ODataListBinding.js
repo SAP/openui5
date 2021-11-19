@@ -2754,7 +2754,7 @@ sap.ui.define([
 				oMessage.getTargets().forEach(function (sTarget) {
 					var sPredicate = sTarget.slice(sResolvedPath.length).split("/")[0];
 
-					if (!sPredicate.startsWith("($uid=")) {
+					if (sPredicate && !sPredicate.startsWith("($uid=")) {
 						mPredicates[sPredicate] = true;
 					}
 				});
