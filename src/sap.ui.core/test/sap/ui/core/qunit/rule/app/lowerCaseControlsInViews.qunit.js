@@ -11,8 +11,9 @@ sap.ui.define(["sap/base/Log",
 
 	QUnit.module("Tests for control tags in XML views that starts with lower case", {
 		beforeEach: function() {
-			var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">'
+			var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:ui="sap.ui">'
 				+ '          <button text="Press me"/>                     '
+				+ '          <ui:core.Icon src="sap-icon://search" />      ' // should not cause an issue!
 				+ '    </mvc:View>                                         ';
 
 			return Promise.all([
@@ -20,7 +21,7 @@ sap.ui.define(["sap/base/Log",
 					viewName: 'testdata/XMLViewWithLowerCaseControl'
 				}),
 				Fragment.load({
-					name: "testdata/XMLFragment"
+					name: "testdata/XMLFragmentWithLowerCaseControl"
 				}),
 				XMLView.create({
 					id: "xmlDefinition",

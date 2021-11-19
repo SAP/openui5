@@ -989,17 +989,24 @@ function(
 
 			} else {
 				// a plain and simple regular UI5 control
-
-				// Check, whether control class name in view starts with lower case
 				var sLocalName = localName(node);
-				if (/^[a-z].*/.test(sLocalName)) {
+
+				// [SUPPORT-RULE]: Check, whether the control class name starts with a lower case letter
+				//                 Local tag names might be in dot-notation, e.g. "<lib:table.Column />"
+				var sControlName = sLocalName;
+				var iControlNameStart = sLocalName.lastIndexOf(".");
+				if (iControlNameStart >= 0) {
+					sControlName = sLocalName.substring(iControlNameStart + 1, sLocalName.length);
+				}
+				if (/^[a-z].*/.test(sControlName)) {
 					var sNameOrId = oView.sViewName || oView._sFragmentName || oView.getId();
 					// View or Fragment
-					Log.error("View or Fragment '" + sNameOrId + "' contains a Control tag that starts with lower case '" + sLocalName + "'",
+					Log.warning("View or Fragment '" + sNameOrId + "' contains a Control tag that starts with lower case '" + sControlName + "'",
 						oView.getId(),
 						"sap.ui.core.XMLTemplateProcessor#lowerCase"
 					);
 				}
+				// [/SUPPORT-RULE]
 
 				var vClass = findControlClass(node.namespaceURI, sLocalName);
 				if (vClass && typeof vClass.then === 'function') {
