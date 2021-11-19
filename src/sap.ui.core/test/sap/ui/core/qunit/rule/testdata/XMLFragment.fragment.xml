@@ -1,3 +1,0 @@
-<layout:HorizontalLayout xmlns:layout="sap.ui.layout" xmlns="sap.m">
-	<button id="btnInXmlFragment" text="Press me" />
-</layout:HorizontalLayout>
