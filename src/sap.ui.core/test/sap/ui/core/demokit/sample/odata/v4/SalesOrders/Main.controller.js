@@ -192,6 +192,41 @@ sap.ui.define([
 			});
 		},
 
+		onIncreaseSalesOrderItemsQuantity : function () {
+			var oContext = this.byId("objectPage").getBindingContext(),
+				oView = this.getView(),
+				oAction = oView.getModel().bindContext("com.sap.gateway.default.zui5_epm_sample"
+					+ ".v0002.SalesOrderIncreaseItemsQuantity(...)", oContext);
+
+			if (oContext.hasPendingChanges()) {
+				MessageBox.information("Cannot invoke action due to unsaved changes");
+				return;
+			}
+
+			oView.setBusy(true);
+			oAction.execute().then(function () {
+				MessageToast.show("All items' quantities increased by 1, "
+					+ "sales order gross amount is now: "
+					+ oAction.getBoundContext().getProperty("GrossAmount"));
+			}, function (oError) {
+				MessageToast.show(oError.message);
+			});
+
+			oContext.requestSideEffects([
+					"ChangedAt",
+					"GrossAmount",
+					"Note",
+					"Quantity",
+					"SO_2_SOITEM/GrossAmount",
+					"SO_2_SOITEM/Note",
+					"SO_2_SOITEM/Quantity"
+				], "$auto")
+				.catch(function () {/*may fail because of previous requests*/})
+				.finally(function () {
+					oView.setBusy(false);
+				});
+		},
+
 		onDataEvents : function (oEvent) {
 			var aSalesOrderIDs = [],
 				oSource = oEvent.getSource();

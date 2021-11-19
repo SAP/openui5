@@ -422,6 +422,10 @@
 							id="deleteSalesOrderLineItem" press="onDeleteSalesOrderLineItem"
 							tooltip="Delete sales order line item"/>
 						<ToolbarSpacer/>
+						<Button enabled="{ui>/bRealOData}" icon="sap-icon://trend-up"
+							id="increaseSalesOrderItemsQuantity"
+							press="onIncreaseSalesOrderItemsQuantity"
+							tooltip="Increase all Sales Order Items' Quantities by 1"/>
 						<Label labelFor="itemFilter" text="Filter"/>
 						<Select change="onFilterMessages" id="itemFilter"
 							items="{ui>/itemFilter}" selectedKey="Show all">
@@ -485,7 +489,7 @@
 					<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
 					<Input id="SO_2_SOITEM:Quantity" value="{Quantity}" textAlign="Right"/>
 					<Input value="{QuantityUnit}"/>
-					<Text text="{GrossAmount}"/>
+					<Text id="SO_2_SOITEM:GrossAmount" text="{GrossAmount}"/>
 					<Text text="{DeliveryDate}"/>
 					<Input id="SO_2_SOITEM:Note" value="{Note}"/>
 				</ColumnListItem>
