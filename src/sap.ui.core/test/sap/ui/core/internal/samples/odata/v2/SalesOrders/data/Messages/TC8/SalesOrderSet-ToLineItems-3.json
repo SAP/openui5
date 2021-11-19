@@ -1,5 +1,6 @@
 {
 	"d" : {
+		"__count" : "1",
 		"results" : [{
 			"__metadata" : {
 				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='108',ItemPosition='010')",

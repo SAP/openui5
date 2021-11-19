@@ -148,17 +148,23 @@ sap.ui.define([
 
 	/**
 	 * Gets the line items from the response, applies the <code>$skip</code> and <code>$top</code>
-	 * parameters from the url and stores it back in the response.
+	 * parameters from the url and stores it back in the response. If the parameter
+	 * <code>$inlinecount=allpages</code> is not part of the url, the count will be removed from the
+	 * response.
 	 *
 	 * @param {object[]} aMatch The match array from the matching URL
 	 * @param {object} oResponse The response which will be sent to the client
 	 */
-	function applySkipTop(aMatch, oResponse) {
-		var oResponseBody = JSON.parse(oResponse.message),
+	function applySkipTopCount(aMatch, oResponse) {
+		var bCount = !!aMatch[3],
+			oResponseBody = JSON.parse(oResponse.message),
 			aLineItems = oResponseBody.d.results,
 			iSkip = parseInt(aMatch[1]),
 			iTop = parseInt(aMatch[2]);
 
+		if (!bCount) {
+			delete oResponseBody.d.__count;
+		}
 		oResponseBody.d.results = aLineItems.slice(iSkip, iSkip + iTop);
 		oResponse.message = JSON.stringify(oResponseBody);
 	}
@@ -244,7 +250,7 @@ sap.ui.define([
 					},
 					source : "Messages/TC1/SalesOrderSet.json"
 				},
-				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC1/SalesOrderSet-ToLineItems.json",
 						function (aItems) {
@@ -347,7 +353,7 @@ sap.ui.define([
 					},
 					source : "Messages/TC2/SalesOrderSet.json"
 				},
-				"SalesOrderSet('102')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('102')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems.json",
 						function (aItems) {
@@ -405,7 +411,7 @@ sap.ui.define([
 						return true;
 					}
 				},
-				"SalesOrderSet('102.2')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('102.2')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC2/SalesOrderSet-ToLineItems-2.json",
 						function (aItems) {
@@ -497,18 +503,18 @@ sap.ui.define([
 					},
 					source : "Messages/TC5/SalesOrderSet.json"
 				},
-				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4" : {
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
 					source : "Messages/TC5/SalesOrderSet-ToLineItems.json"
 				},
-				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27)%20or%20(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27)" : {
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27)%20or%20(SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27)&$inlinecount=allpages" : {
 					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
 						undefined, 1, 2)
 				},
-				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27" : {
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27020%27&$inlinecount=allpages" : {
 					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
 						undefined, 1, 1)
 				},
-				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27" : {
+				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$filter=SalesOrderID%20eq%20%27105%27%20and%20ItemPosition%20eq%20%27030%27&$inlinecount=allpages" : {
 					message : getLineItems("Messages/TC5/SalesOrderSet-ToLineItems.json",
 						undefined, 2, 1)
 				},
@@ -522,20 +528,15 @@ sap.ui.define([
 					},
 					source : "Messages/TC6/SalesOrderSet.json"
 				},
-				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4" : [{
-					message : getLineItems("Messages/TC6/SalesOrderSet-ToLineItems.json",
-						undefined, 0, 2)
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
+					source : "Messages/TC6/SalesOrderSet-ToLineItems-2.json"
 				}],
-				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3" : [{
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 3),
 					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
 				}],
-				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3&$filter=not(SalesOrderID%20eq%20%27106%27%20and%20ItemPosition%20eq%20%27030%27)" : [{
-					ifMatch : ithCall.bind(null, 3),
-					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
-				}, {
-					message : getLineItems("Messages/TC6/SalesOrderSet-ToLineItems.json",
-						undefined, 0, 2)
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3&$filter=not(SalesOrderID%20eq%20%27106%27%20and%20ItemPosition%20eq%20%27030%27)&$inlinecount=allpages" : [{
+					source : "Messages/TC6/SalesOrderSet-ToLineItems-2.json"
 				}],
 				"SalesOrderSet('106')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
 					source : "Messages/TC6/SalesOrderSet.json"
@@ -563,7 +564,7 @@ sap.ui.define([
 						oCurrentMessages.reset().add("system", undefined)),
 					source : "Messages/TC7/SalesOrderSet.json"
 				},
-				"SalesOrderSet('107')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('107')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					source : "Messages/TC7/SalesOrderSet-ToLineItems.json"
 				}],
 
@@ -575,7 +576,7 @@ sap.ui.define([
 					},
 					source : "Messages/TC8/SalesOrderSet.json"
 				},
-				"SalesOrderSet('108')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('108')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
 					source : "Messages/TC8/SalesOrderSet-ToLineItems-1.json"
 				}, {
@@ -620,7 +621,7 @@ sap.ui.define([
 				}, {
 					source : "Messages/TC9/SalesOrderSet.json"
 				}],
-				"SalesOrderSet('109')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('109')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC9/SalesOrderSet-ToLineItems.json",
 						function (aItems) { aItems[0].Quantity = "1"; })
@@ -649,7 +650,7 @@ sap.ui.define([
 							"ToLineItems(SalesOrderID='110',ItemPosition='010')/CurrencyCode")),
 					source : "Messages/TC10/SalesOrderSet.json"
 				},
-				"SalesOrderSet('110')/ToLineItems?$skip=0&$top=4" : {
+				"SalesOrderSet('110')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
 					source : "Messages/TC10/SalesOrderSet-ToLineItems.json"
 				},
 
@@ -666,7 +667,7 @@ sap.ui.define([
 							"ToLineItems(SalesOrderID='111',ItemPosition='010')/Quantity")),
 					source : "Messages/TC11/SalesOrderSet.json"
 				},
-				"SalesOrderSet('111')/ToLineItems?$skip=0&$top=4" : [{
+				"SalesOrderSet('111')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 111),
 					source : "Messages/TC11/SalesOrderSet-ToLineItems-2.json"
 				}, {
@@ -686,33 +687,33 @@ sap.ui.define([
 
 				/* Test Case III */
 				regExp :
-					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
+					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(&\$inlinecount=allpages)?/,
 				response : [{
 					buildResponse : function (aMatch, oResponse) {
-						applySkipTop(aMatch, oResponse);
+						applySkipTopCount(aMatch, oResponse);
 					},
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC3/SalesOrderSet-ToLineItems.json",
 						function (aItems) { aItems[4].Quantity = "2"; })
 				}, {
 					buildResponse : function (aMatch, oResponse) {
-						applySkipTop(aMatch, oResponse);
+						applySkipTopCount(aMatch, oResponse);
 					},
 					source : "Messages/TC3/SalesOrderSet-ToLineItems.json"
 				}]
 			}, {
 				regExp : /GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=[5-9]&\$top=\d/,
 				response : {
-					message : { "d" : { "results" : []}}
+					message : { "d" : {"__count" : "0", "results" : []}}
 				}
 			}, {
 
 				/* Test Case IV */
 				regExp :
-					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
+					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(&\$inlinecount=allpages)?/,
 				response : [{
 					buildResponse : function (aMatch, oResponse) {
-						applySkipTop(aMatch, oResponse);
+						applySkipTopCount(aMatch, oResponse);
 					},
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC4/SalesOrderSet-ToLineItems.json",
@@ -732,7 +733,7 @@ sap.ui.define([
 							oResponse["headers"]["sap-message"] = JSON.stringify(oMessages);
 						}
 
-						applySkipTop(aMatch, oResponse);
+						applySkipTopCount(aMatch, oResponse);
 					},
 					headers : getMessageHeader(undefined, oCurrentMessages.reset()
 								.add("error", "(SalesOrderID='104',ItemPosition='010')/Note")
@@ -749,7 +750,7 @@ sap.ui.define([
 						})
 				}, {
 					buildResponse : function (aMatch, oResponse) {
-						applySkipTop(aMatch, oResponse);
+						applySkipTopCount(aMatch, oResponse);
 					},
 					ifMatch : function (request) {
 						var transientOnly =
@@ -763,7 +764,7 @@ sap.ui.define([
 						})
 				}, {
 					buildResponse : function (aMatch, oResponse) {
-						applySkipTop(aMatch, oResponse);
+						applySkipTopCount(aMatch, oResponse);
 					},
 					source : "Messages/TC4/SalesOrderSet-ToLineItems.json"
 				}]
