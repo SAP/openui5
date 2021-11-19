@@ -771,7 +771,7 @@ sap.ui.define([
 
 		var oFakeEvent = { keyCode: 13};
 
-		this.sut.onkeydown(oFakeEvent);
+		this.sut.handleKeydown(oFakeEvent);
 
 		assert.strictEqual(this.sut._bPopupOpen, false, "The Menu was closed");
 
