@@ -140,7 +140,6 @@ sap.ui.define(function () {
 					]
 				}
 			},
-			"ManifestResolver": {},
 			"EnforceSemanticRendering": {
 				title: "QUnit Page for Semantic Rendering Coverage"
 			},
@@ -301,6 +300,8 @@ sap.ui.define(function () {
 				}
 			},
 			"util/ContentFactory": {},
+			"util/ManifestResolver": {},
+			"util/SkeletonCard": {},
 			"model/ContextModel": {
 				coverage: {
 					only: [

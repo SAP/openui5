@@ -37,7 +37,7 @@
 						id="output"
 						type="json">
 					</editor:CodeEditor>
-					<Button text="Prettify" press=".onPrettifyOutput"></Button>
+					<MessageStrip id="error" type="Error" visible="false" />
 					<layoutData>
 						<FlexItemData growFactor="1"></FlexItemData>
 					</layoutData>

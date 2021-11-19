@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/integration/ManifestResolver"
-], function (Controller, ManifestResolver) {
+	"sap/ui/integration/util/SkeletonCard"
+], function (Controller, SkeletonCard) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.ManifestResolver", {
@@ -29,17 +29,32 @@ sap.ui.define([
 		},
 
 		resolveManifest: function () {
-			ManifestResolver.resolve(
-				JSON.parse(this.byId("editor").getValue()),
-				this._sBaseUrl
-			)
-				.then(function (sRes) {
-					this.byId("output").setValue(sRes);
-				}.bind(this));
-		},
+			var oCard = new SkeletonCard({
+					manifest: JSON.parse(this.byId("editor").getValue()),
+					baseUrl: this._sBaseUrl
+				}),
+				errorOutput = this.byId("error"),
+				output = this.byId("output");
 
-		onPrettifyOutput: function () {
-			this.byId("output").setValue(JSON.stringify(JSON.parse(this.byId("output").getValue()), null, "\t"));
+			errorOutput.setVisible(false);
+			output.setValue("");
+
+			oCard.resolveManifest()
+				.then(function (sRes) {
+					output.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
+				})
+				.catch(function (sError) {
+					output.setValue("");
+					errorOutput
+						.setVisible(true)
+						.setText("Fundamental error: " + sError);
+				});
+
+			oCard.attachEvent("_error", function (oEvent) {
+				errorOutput
+					.setVisible(true)
+					.setText(oEvent.getParameter("message"));
+			});
 		}
 
 	});

@@ -980,6 +980,28 @@ sap.ui.define([
 			oModel.destroy();
 		});
 
+		QUnit.test("Fundamental errors are logged", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = new Card();
+
+			oCard.attachEvent("_ready", function () {
+				var aErrors = oCard.getFundamentalErrors();
+
+				// Assert
+				assert.ok(aErrors.length, "Error that the section 'sap.card' is missing is logged.");
+
+				// Clean up
+				oCard.destroy();
+
+				done();
+			});
+
+			// Act
+			oCard.setManifest({});
+			oCard.startManifestProcessing();
+		});
+
 		QUnit.module("Methods", {
 			beforeEach: function () {
 				this.oCard = new Card({

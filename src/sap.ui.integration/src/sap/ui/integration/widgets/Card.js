@@ -413,6 +413,7 @@ sap.ui.define([
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
 		this._bFirstRendering = true;
+		this._aFundamentalErrors = [];
 
 		if (this.getProperty("dataMode") === CardDataMode.Auto) {
 			this._oCardObserver.createObserver(this);
@@ -675,7 +676,10 @@ sap.ui.define([
 			.catch(function (e) {
 				if (e.message !== CARD_DESTROYED_ERROR) {
 					this._applyManifest();
+					return;
 				}
+
+				this._logFundamentalError(e.message);
 			}.bind(this));
 	};
 
@@ -700,10 +704,30 @@ sap.ui.define([
 
 				resolve();
 			}.bind(this), function (vErr) {
-				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
+				this._logFundamentalError("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
 				reject(vErr);
 			});
 		}.bind(this));
+	};
+
+	/**
+	 * Logs an error which does not allow the card to be rendered.
+	 * Use <code>getFundamentalErrors()</code> method to retrieve a list of such errors.
+	 * @param {string} sMessage The error message.
+	 */
+	Card.prototype._logFundamentalError = function (sMessage) {
+		Log.error(sMessage);
+		this._aFundamentalErrors.push(sMessage);
+	};
+
+	/**
+	 * Retrieves a list of fundamental errors which appeared during card initialization.
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {array} A list of fundamental errors if there are any. Empty array otherwise.
+	 */
+	Card.prototype.getFundamentalErrors = function () {
+		return this._aFundamentalErrors;
 	};
 
 	/**
@@ -711,6 +735,10 @@ sap.ui.define([
 	 */
 	Card.prototype._applyManifest = function () {
 		var oCardManifest = this._oCardManifest;
+
+		if (!oCardManifest.get("/sap.card")) {
+			this._logFundamentalError("There must be a 'sap.card' section in the manifest.");
+		}
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
 			this._enhanceI18nModel(oCardManifest.getResourceBundle());
@@ -1030,7 +1058,7 @@ sap.ui.define([
 		if (this._sAppId) {
 			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl() || "/");
 		} else {
-			Log.error("Card sap.app/id entry in the manifest is mandatory");
+			this._logFundamentalError("Card sap.app/id entry in the manifest is mandatory");
 		}
 	};
 
@@ -1606,7 +1634,7 @@ sap.ui.define([
 			bHasContent = !!oContentManifest;
 
 		if (bHasContent && !sCardType) {
-			Log.error("Card type property is mandatory!");
+			this._logFundamentalError("Card type property is mandatory!");
 			return null;
 		}
 
