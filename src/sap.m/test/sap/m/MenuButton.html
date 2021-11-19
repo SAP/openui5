@@ -37,7 +37,7 @@
                             items: [
                                 new sap.m.MenuItem({
                                     icon: "sap-icon://factory",
-                                    text: "factory"
+                                    text: "factory",
                                 }),
                                 new sap.m.MenuItem({
                                     icon: "sap-icon://flag",
@@ -283,15 +283,18 @@ var oMenu22 = new sap.m.Menu({
             items: [
                 new sap.m.MenuItem({
                     text: "Send the response now",
-                    icon: "sap-icon://accept"
+                    icon: "sap-icon://accept",
+                                    enabled: false
                 }),
                 new sap.m.MenuItem({
                     text: "Edit the response before sending",
-                    icon: "sap-icon://accept"
+                    icon: "sap-icon://accept",
+                                    enabled: false
                 }),
                 new sap.m.MenuItem({
                     text: "Do not send a response",
-                    icon: "sap-icon://accept"
+                    icon: "sap-icon://accept",
+                                    enabled: false
                 })
             ]
         });
