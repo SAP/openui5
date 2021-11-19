@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	Log,
 	JsControlTreeModifier,
+	Core,
 	Element,
 	VariantUtils,
 	ChangeHandlerStorage,
@@ -64,12 +66,17 @@ sap.ui.define([
 
 	function getAllVariantManagementReferences(oAppComponent) {
 		var aVMControlIds = VariantUtils.getAllVariantManagementControlIds(oAppComponent);
-		return aVMControlIds.map(function(sVMControlId) {
-			return JsControlTreeModifier.getSelector(sVMControlId, oAppComponent).id;
-		});
+		return aVMControlIds.reduce(function(aValidIds, sVMControlId) {
+			var oForControls = Core.byId(sVMControlId).getFor();
+			// without any referenced controls the VM control is not active and should be ignored
+			if (oForControls.length) {
+				aValidIds.push(JsControlTreeModifier.getSelector(sVMControlId, oAppComponent).id);
+			}
+			return aValidIds;
+		}, []);
 	}
 
-	function logAndreject(sMessage) {
+	function logAndReject(sMessage) {
 		Log.error(sMessage);
 		return Promise.reject(sMessage);
 	}
@@ -157,12 +164,12 @@ sap.ui.define([
 		 */
 		reset: function(mPropertyBag) {
 			if (!mPropertyBag.selectors || mPropertyBag.selectors.length === 0) {
-				return logAndreject("At least one control ID has to be provided as a parameter");
+				return logAndReject("At least one control ID has to be provided as a parameter");
 			}
 
 			var oAppComponent = mPropertyBag.selectors[0].appComponent || Utils.getAppComponentForControl(mPropertyBag.selectors[0]);
 			if (!oAppComponent) {
-				return logAndreject("App Component could not be determined");
+				return logAndReject("App Component could not be determined");
 			}
 
 			var aSelectorIds = mPropertyBag.selectors.map(function (vControl) {
@@ -219,7 +226,7 @@ sap.ui.define([
 		save: function(mPropertyBag) {
 			var oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(mPropertyBag.selector);
 			if (!oAppComponent) {
-				return logAndreject("App Component could not be determined");
+				return logAndReject("App Component could not be determined");
 			}
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
