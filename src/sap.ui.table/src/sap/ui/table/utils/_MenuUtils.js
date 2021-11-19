@@ -105,8 +105,9 @@ sap.ui.define([
 
 						if (bExecuteDefault) {
 							return MenuUtils._openColumnContextMenu(oTable, oCell);
+						} else {
+							return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
 						}
-						return true; // We do not know whether the event handler opens a context menu or not, so we just assume it is done.
 					}
 				} else {
 					return MenuUtils._applyColumnHeaderCellMenu(oTable, oCell);
