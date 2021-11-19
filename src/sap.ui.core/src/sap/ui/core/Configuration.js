@@ -161,7 +161,6 @@ sap.ui.define([
 					"xx-waitForTheme"       : { type : "string",  defaultValue : ""}, // rendering|init
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
 					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
-					// TODO: check and remove "xx-cssVariables" value after tooling also support CSS variables if possible
 					"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css_variables.css in addition)
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
