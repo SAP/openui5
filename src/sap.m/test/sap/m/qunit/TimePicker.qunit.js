@@ -1242,7 +1242,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("slider interactions", {
+	QUnit.module("picker interactions", {
 		beforeEach: function() {
 			this.clock = sinon.useFakeTimers();
 
@@ -2813,6 +2813,10 @@ sap.ui.define([
 		afterEach: function () {
 			this.oTp.destroy();
 			this.oTp = null;
+		},
+
+		getFormatter: function(sPattern) {
+			return DateFormat.getTimeInstance({ pattern: sPattern });
 		}
 	});
 
@@ -2886,21 +2890,22 @@ sap.ui.define([
 			oGetDateValue = this.stub(this.oTp, "getDateValue").callsFake(function () { return oExpectedDateValue; }),
 			oShouldSetInitialFocusedDateValueStub = this.stub(this.oTp, "_shouldSetInitialFocusedDateValue").callsFake(function () { return false; }),
 			oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return oInitialFocusedDateValue; }),
-			oGetSlidersStub = this.stub(this.oTp, "_getClocks").callsFake(function () { return oTimePickerClocks; }),
+			oGetClocksStub = this.stub(this.oTp, "_getClocks").callsFake(function () { return oTimePickerClocks; }),
 			oIsValidValue = this.stub(this.oTp, "_isValidValue").callsFake(function () { return true; }),
-			oSetTimeValuesSpy = this.spy(oTimePickerClocks, "_setTimeValues");
+			oSetTimeValuesSpy = this.spy(oTimePickerClocks, "_setTimeValues"),
+			oTimeFormatter = this.getFormatter("HH:mm:ss");
 
 		// act
 		this.oTp.onBeforeOpen();
 
-		assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "sliders value should be set to the getDateValue");
-		assert.equal(oSetTimeValuesSpy.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "_setTimeValues should be called with " + oExpectedDateValue);
+		assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "clocks value should be set to the getDateValue");
+		assert.equal(oTimeFormatter.format(oSetTimeValuesSpy.getCall(0).args[0]), oTimeFormatter.format(oExpectedDateValue), "_setTimeValues should be called with " + oExpectedDateValue);
 
 		// cleanup
 		oGetDateValue.restore();
 		oShouldSetInitialFocusedDateValueStub.restore();
 		oGetInitialFocusedDateValueStub.restore();
-		oGetSlidersStub.restore();
+		oGetClocksStub.restore();
 		oSetTimeValuesSpy.restore();
 		oIsValidValue.restore();
 		oTimePickerClocks.destroy();
@@ -2917,23 +2922,48 @@ sap.ui.define([
 			}),
 			oGetDateValue = this.stub(this.oTp, "getDateValue").callsFake(function () { return null; }),
 			oGetInitialFocusedDateValueStub = this.stub(this.oTp, "getInitialFocusedDateValue").callsFake(function () { return oExpectedDateValue; }),
-			oGetSlidersStub = this.stub(this.oTp, "_getClocks").callsFake(function () { return oTimePickerClocks; }),
+			oGetClocksStub = this.stub(this.oTp, "_getClocks").callsFake(function () { return oTimePickerClocks; }),
 			oIsValidValue = this.stub(this.oTp, "_isValidValue").callsFake(function () { return true; }),
 			oSetTimeValuesSpy = this.spy(oTimePickerClocks, "_setTimeValues");
 
 		// act
 		this.oTp.onBeforeOpen();
 
-		assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "sliders value should be set to the initialFocusedDateValue");
+		assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "clocks value should be set to the initialFocusedDateValue");
 		assert.equal(oSetTimeValuesSpy.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "_setTimeValues should be called with " + oExpectedDateValue);
 
 		// cleanup
 		oGetDateValue.restore();
 		oGetInitialFocusedDateValueStub.restore();
-		oGetSlidersStub.restore();
+		oGetClocksStub.restore();
 		oSetTimeValuesSpy.restore();
 		oIsValidValue.restore();
 		oTimePickerClocks.destroy();
+	});
+
+	QUnit.test("The picker UI is created with the display format, its value is received in the same format", function(assert) {
+		var oTP = new TimePicker({
+				value: "15:00:00",
+				displayFormat: "h:mm:ss a",
+				valueFormat: "HH:mm:ss"
+			}),
+			oClocks;
+
+		// arrange
+		oTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oTP._openPicker();
+		oClocks = oTP._getClocks();
+
+		// assert
+		assert.strictEqual("h:mm:ss a", oClocks.getValueFormat(), "the picker UI uses the display format as value format");
+		assert.strictEqual("h:mm:ss a", oClocks.getDisplayFormat(), "the picker UI uses only one format");
+		assert.strictEqual(oClocks.getValue(), "3:00:00 PM", "the picker UI has the value formatted correctly");
+
+		// clean
+		oTP.destroy();
 	});
 
 	QUnit.module("events and event handlers", {

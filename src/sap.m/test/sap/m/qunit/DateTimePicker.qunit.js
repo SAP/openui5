@@ -759,6 +759,33 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("The time picker UI part is created using the display format", function(assert) {
+		var oDTP = new DateTimePicker({
+			value: "14/09/2021 15:00:00",
+			displayFormat: "dd/MM/yyyy h:mm:ss a",
+			valueFormat: "dd/MM/yyyy HH:mm:ss"
+		}),
+		oClocks;
+
+		// arrange
+		oDTP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oDTP._createPopup();
+		oDTP._createPopupContent();
+		sap.ui.getCore().applyChanges();
+		oDTP._openPopup();
+		oClocks = oDTP._oClocks;
+
+		// assert
+		assert.strictEqual("dd/MM/yyyy h:mm:ss a", oClocks.getValueFormat(), "the time picker UI part uses the display format as value format");
+		assert.strictEqual("dd/MM/yyyy h:mm:ss a", oClocks.getDisplayFormat(), "the time picker UI part uses only one format");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Private");
 
 	QUnit.test("_selectFocusedDateValue should remove all selectedDates from the calendar and select the focused date", function (assert) {
