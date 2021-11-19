@@ -67,11 +67,14 @@ sap.ui.define([
 	 * @property {string} [name] - Singular name from node's design time metadata
 	 * @property {string} technicalName - Class type for element nodes/aggregation name for aggregation nodes
 	 * @property {boolean} editable - Indicates whether the node is editable
-	 * @property {string} [templateReference] - Element ID referencing corresponding template
+	 * @property {string} [templateReference]
+	 *  - ID of the template that the element was cloned from; can be used for filtering out clones or
+	 *  showing the template element in the outline for a clone selected in the UI
 	 * @property {string} [icon] - Icon path for the node
 	 * @property {string} type - Type of node
 	 * @property {boolean} [visible] - Visibility of node of type <code>element</code>
-	 * @property {sap.ui.rta.service.Outline.ExtensionPointInfo} [extensionPointInfo] - In case of an extension point additional extension point information is given.
+	 * @property {sap.ui.rta.service.Outline.ExtensionPointInfo} [extensionPointInfo]
+	 *  - In case of an extension point additional extension point information is given.
 	 * @property {sap.ui.rta.service.Outline.OutlineObject[]} elements - Outline data for child nodes
 	 */
 
