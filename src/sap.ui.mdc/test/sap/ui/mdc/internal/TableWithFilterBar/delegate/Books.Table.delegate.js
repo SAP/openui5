@@ -1,5 +1,5 @@
 sap.ui.define([
-	"delegates/odata/v4/TableDelegate",
+	"./GridTable.delegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
