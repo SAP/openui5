@@ -25,8 +25,7 @@ sap.ui.define([
 			function createEmptyRow() {
 				var oContext = oBinding.create({}, true, true, /*bInactive*/true);
 
-				// TODO react on the "unparked" event once it has been implemented
-				oContext.created().then(createEmptyRow, function (oError) {
+				oContext.created().catch(function (oError) {
 					if (!oError.canceled) {
 						throw oError; // unexpected error
 					}
@@ -38,26 +37,27 @@ sap.ui.define([
 			}
 		},
 
-		onCancel : function () {
-			this.getView().getModel().resetChanges();
-			this.createEmptyRows(iEmptyRowCount);
+		onActivate : function () {
+			this.createEmptyRows(1);
 		},
 
 		onDelete : function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext(),
-				iPartNo = oContext.getProperty("ID");
+				iPartNo = oContext.getProperty("ID"),
+				oView = this.getView();
 
-			if (iPartNo !== null) { // TODO oContext.isInitial()?
-				MessageBox.confirm(
-					"Do you really want to delete part " + iPartNo + "?",
-					function (sCode) {
-						if (sCode === "OK") {
-							oContext.delete("$auto");
-						}
-					},
-					"Delete Row"
-				);
-			}
+			MessageBox.confirm(
+				"Do you really want to delete part " + iPartNo + "?",
+				function (sCode) {
+					if (sCode === "OK") {
+						oView.setBusy(true);
+						oContext.delete().finally(function () {
+							oView.setBusy(false);
+						});
+					}
+				},
+				"Confirm Deletion"
+			);
 		},
 
 		onExit : function () {
@@ -67,21 +67,26 @@ sap.ui.define([
 		},
 
 		onInit : function () {
+			var oPartsBinding,
+				oProductsBinding,
+				oView = this.getView();
+
 			this.initMessagePopover("showMessages");
 			this.oUIModel = new JSONModel({
+				sActivity : "",
 				sLayout : LayoutType.OneColumn,
 				iMessages : 0
 			});
-			this.getView().setModel(this.oUIModel, "ui");
-		},
-
-		onSave : function () {
-			var oView = this.getView();
-
-			oView.setBusy(true);
-			return oView.getModel().submitBatch("UpdateGroup").finally(function () {
-				oView.setBusy(false);
-			});
+			oView.setModel(this.oUIModel, "ui");
+			oProductsBinding = oView.byId("products").getBinding("items");
+			oProductsBinding.attachDataRequested(this.showLoading, this);
+			oProductsBinding.attachDataReceived(this.showNothing, this);
+			oPartsBinding = oView.byId("parts").getBinding("rows");
+			oPartsBinding.attachDataRequested(this.showLoading, this);
+			oPartsBinding.attachDataReceived(this.showNothing, this);
+			oPartsBinding.attachCreateActivate(this.onActivate, this);
+			oPartsBinding.attachCreateSent(this.showSaving, this);
+			oPartsBinding.attachCreateCompleted(this.showNothing, this);
 		},
 
 		onSelectProduct : function (oEvent) {
@@ -101,14 +106,18 @@ sap.ui.define([
 		},
 
 		createAndSetDraft : function (oContext) {
-			var that = this;
+			var oView = this.getView(),
+				that = this;
 
-			this.getView().getModel()
+			oView.setBusy(true);
+			oView.getModel()
 				.bindContext("SampleService.draftEdit(...)", oContext,
 					{$$inheritExpandSelect : true})
 				.execute(undefined, false, false, true)
 				.then(function (oReturnValueContext) {
 					that.setPartsContext(oReturnValueContext);
+				}).finally(function () {
+					oView.setBusy(false);
 				});
 		},
 
@@ -120,13 +129,26 @@ sap.ui.define([
 		},
 
 		setPartsContext : function (oContext) {
-			// TODO this is needed as long as the creation rows still are transient and thus pending
-			//  changes; as soon as we introduce the initial state these creation rows are no
-			//  pending changes anymore
 			this.resetChanges();
 			this.getView().byId("parts").setBindingContext(oContext);
 			this.createEmptyRows(iEmptyRowCount);
 			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
+		},
+
+		showActivity : function (sActivity) {
+			this.oUIModel.setProperty("/sActivity", sActivity);
+		},
+
+		showLoading : function () {
+			this.showActivity("Loading");
+		},
+
+		showNothing : function () {
+			this.showActivity("");
+		},
+
+		showSaving : function () {
+			this.showActivity("Saving");
 		}
 	});
 });

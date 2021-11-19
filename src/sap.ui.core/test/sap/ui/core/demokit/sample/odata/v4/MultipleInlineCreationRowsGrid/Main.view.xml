@@ -3,12 +3,14 @@
 	controllerName="sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
 	height="100%"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:t="sap.ui.table">
 <App>
 	<Page id="page" showHeader="false">
 		<Toolbar>
+			<Text id="activity" text="{ui>/sActivity}"/>
 			<ToolbarSpacer/>
 			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press="onToggleMessagePopover" text="{ui>/iMessages}"
@@ -54,6 +56,23 @@
 							selectionMode="None"
 							visibleRowCount="20">
 						<t:columns>
+							<t:Column width="4em" hAlign="Center">
+								<Label text="State" />
+								<t:template>
+									<core:Icon
+										src="{= %{@$ui5.context.isInactive}
+											? 'sys-minus'
+											: (%{@$ui5.context.isTransient}
+												? 'sap-icon://sys-add'
+												: 'sap-icon://sys-enter')}"
+										tooltip="{= %{@$ui5.context.isInactive}
+											? 'inactive'
+											: (%{@$ui5.context.isTransient}
+												? 'transient'
+												: 'persisted')}"
+										/>
+								</t:template>
+							</t:Column>
 							<t:Column width="4em">
 								<Label text="ID" />
 								<t:template>
@@ -74,7 +93,8 @@
 							</t:Column>
 							<t:Column width="3em">
 								<t:template>
-									<Button id="partDelete" enabled="{= %{ID} !== null}"
+									<Button id="partDelete"
+										enabled="{= !%{@$ui5.context.isInactive} }"
 										icon="sap-icon://delete" press="onDelete"
 										tooltip="Delete part"/>
 								</t:template>

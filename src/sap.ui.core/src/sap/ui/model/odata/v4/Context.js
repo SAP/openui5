@@ -71,7 +71,10 @@ sap.ui.define([
 	 *   {@link #created}
 	 * @param {number} [iGeneration=0]
 	 *   The unique number for this context's generation, which can be retrieved via
-	 *   {@link #getGeneration}.
+	 *   {@link #getGeneration}
+	 * @param {boolean} [bInactive]
+	 *   Whether this context is inactive and will only be sent to the server after the first
+	 *   property update
 	 * @throws {Error}
 	 *   If an invalid path is given
 	 *
@@ -99,7 +102,8 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
-			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise, iGeneration) {
+			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise, iGeneration,
+					bInactive) {
 				if (sPath[0] !== "/") {
 					throw new Error("Not an absolute path: " + sPath);
 				}
@@ -113,6 +117,7 @@ sap.ui.define([
 					&& Promise.resolve(oCreatePromise).then(function () {});
 				this.oSyncCreatePromise = oCreatePromise;
 				this.iGeneration = iGeneration || 0;
+				this.bInactive = bInactive || undefined; // be in sync with the annotation
 				this.iIndex = iIndex;
 				this.bKeepAlive = false;
 				this.fnOnBeforeDestroy = undefined;
@@ -409,6 +414,11 @@ sap.ui.define([
 
 					if (!oGroupLock) {
 						return oCache.setProperty(oResult.propertyPath, vValue, sEntityPath);
+					}
+
+					if (that.isInactive()) {
+						oBinding.fireEvent("createActivate");
+						that.bInactive = false;
 					}
 
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
@@ -793,6 +803,23 @@ sap.ui.define([
 	 */
 	Context.prototype.isExpanded = function () {
 		return this.getProperty("@$ui5.node.isExpanded");
+	};
+
+	/**
+	 * Returns whether this context is inactive. The result of this function can also be accessed
+	 * via instance annotation "@$ui5.context.isInactive" at the entity.
+	 *
+	 * @returns {boolean} <code>true</code> if this context is inactive, <code>false</code> if it
+	 *   was created in an inactive state and has been activated, and <code>undefined</code>
+	 *   otherwise.
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataListBinding#create
+	 * @see sap.ui.model.odata.v4.ODataListBinding#event:createActivate
+	 * @since 1.98.0
+	 */
+	Context.prototype.isInactive = function () {
+		return this.bInactive;
 	};
 
 	/**
@@ -1576,6 +1603,9 @@ sap.ui.define([
 		 *   A promise which is resolved with the created entity when the POST request has been
 		 *   successfully sent and the entity has been marked as non-transient; used as base for
 		 *   {@link #created}
+		 * @param {boolean} [bInactive]
+		 *   Whether this context is inactive and will only be sent to the server after the first
+		 *   property update
 		 * @returns {sap.ui.model.odata.v4.Context}
 		 *   A context for an OData V4 model
 		 * @throws {Error}
@@ -1583,8 +1613,8 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		create : function (oModel, oBinding, sPath, iIndex, oCreatePromise) {
-			return new Context(oModel, oBinding, sPath, iIndex, oCreatePromise);
+		create : function (oModel, oBinding, sPath, iIndex, oCreatePromise, bInactive) {
+			return new Context(oModel, oBinding, sPath, iIndex, oCreatePromise, 0, bInactive);
 		},
 
 		/**

@@ -2869,6 +2869,7 @@ sap.ui.define([
 		[
 			"AggregatedDataStateChange",
 			"change",
+			"createActivate",
 			"createCompleted",
 			"createSent",
 			"dataReceived",
@@ -4122,6 +4123,7 @@ sap.ui.define([
 				assert.strictEqual(oCreatedContext.getBinding(), oBinding);
 				assert.ok(/^\/EMPLOYEES\(\$uid=.+\)$/, "path with uid");
 				assert.strictEqual(oCreatedContext.getModelIndex(), 0);
+				assert.strictEqual(oCreatedContext.isInactive(), oFixture.bInactive);
 				assert.strictEqual(oCreatedContext.isTransient(), true);
 				assert.strictEqual(oBinding.iMaxLength, 42, "transient contexts are not counted");
 				assert.strictEqual(oBinding.aContexts[0], oCreatedContext, "Transient context");
@@ -7070,6 +7072,23 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getModelIndex(0), 0);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("attachCreateActivate/detachCreateActivate", function () {
+		var oBinding = this.bindList("/Set");
+
+		this.mock(oBinding).expects("attachEvent")
+			.withExactArgs("createActivate", "~function~", "~listener~");
+
+		// code under test
+		oBinding.attachCreateActivate("~function~", "~listener~");
+
+		this.mock(oBinding).expects("detachEvent")
+			.withExactArgs("createActivate", "~function~", "~listener~");
+
+		// code under test
+		oBinding.detachCreateActivate("~function~", "~listener~");
 	});
 
 	//*********************************************************************************************
