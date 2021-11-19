@@ -128,7 +128,7 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 			sFirstLineText,
 			sSecondLineText,
 			oCurrentDayStart = new Date(oCurrentlyDisplayedDate.getFullYear(), oCurrentlyDisplayedDate.getMonth(), oCurrentlyDisplayedDate.getDate(), 0, 0, 0),
-			oNextDayStart = new Date(oCurrentDayStart.getTime() + 24 * 60 * 60 * 1000),
+			oNextDayStart = new Date(oCurrentDayStart.getFullYear(), oCurrentDayStart.getMonth(), oCurrentDayStart.getDate() + 1),
 			oTimeFormat = DateFormat.getTimeInstance({pattern: "HH:mm"}),
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
@@ -140,9 +140,9 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 			iHour, iMinute, sHour, sMinute;
 
 		//have no intersection with the given day
-		if (oStartDate.getTime() > oNextDayStart.getTime() || oEndDate.getTime() < oCurrentDayStart.getTime()) {
+		if (oStartDate.getTime() >= oNextDayStart.getTime() || oEndDate.getTime() <= oCurrentDayStart.getTime()) {
 			sFirstLineText = "";
-		} else if (oStartDate.getTime() < oCurrentDayStart.getTime() && oEndDate.getTime() > oNextDayStart.getTime()) {
+		} else if (oStartDate.getTime() <= oCurrentDayStart.getTime() && oEndDate.getTime() >= oNextDayStart.getTime()) {
 			sFirstLineText = oResourceBundle.getText("PLANNINGCALENDAR_ALLDAY");
 		} else if (oStartDate.getTime() < oCurrentDayStart.getTime()) {
 			sFirstLineText = oResourceBundle.getText("PLANNINGCALENDAR_UNTIL");

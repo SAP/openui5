@@ -274,8 +274,8 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype._setParameters = function (oEvent, oDate) {
 			var oCurrentDate,
-				oStartOfDay,
-				oEndOfDay,
+				iStartOfDay,
+				iEndOfDay,
 				aBoundAppointments,
 				aAppointmentsCurrentDay;
 
@@ -287,19 +287,17 @@ sap.ui.define([
 				oCurrentDate = this._oCalendar.getStartDate();
 			}
 
-			oStartOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
-			oEndOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
-
-			oEndOfDay.setDate(oEndOfDay.getDate() + 1);
+			iStartOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate()).getTime();
+			iEndOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate() + 1).getTime();
 
 			aBoundAppointments = this.getAppointments();
 			if (aBoundAppointments) {
 				aAppointmentsCurrentDay	= aBoundAppointments.filter(function (oApp) {
 					var iStart = oApp.getStartDate().getTime(),
 						iEnd = oApp.getEndDate().getTime();
-					if ((iStart >= oStartOfDay.getTime() && iStart < oEndOfDay.getTime()) ||
-						(iEnd >= oStartOfDay.getTime() && iEnd < oEndOfDay.getTime()) ||
-						(iStart <= oStartOfDay.getTime() && iEnd > oEndOfDay.getTime())) {
+					if ((iStart >=  iStartOfDay && iStart < iEndOfDay) ||
+						(iEnd > iStartOfDay && iEnd <= iEndOfDay) ||
+						(iStart < iStartOfDay && iEnd > iEndOfDay)) {
 						return oApp;
 					}
 				});
