@@ -261,6 +261,8 @@ builder:
               - sap/ui/core/date/Gregorian.js
               - sap/m/IconTabBar.js
               - sap/m/GenericTile.js
+              - sap/m/TileContent.js
+              - sap/m/ImageContent.js
               - '!sap/ui/integration/sap-ui-integration-config.js'
               - '!sap/ui/integration/customElements/CustomElementCardEditor.js'
               - '!sap/ui/integration/customElements/CustomElementEditor.js'
