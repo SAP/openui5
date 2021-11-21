@@ -1675,6 +1675,36 @@ sap.ui.define([
 		});
 	};
 
+	_Requestor.prototype.sendEarliestBatch = function () {
+		var bOptimistic$batch = !!localStorage.getItem("optimistic$batch"),
+			sLastFirstBatch,
+			oFirstBatch,
+			that = this;
+
+
+		if (!bOptimistic$batch) {
+			return; // feature off
+		}
+		sLastFirstBatch  = localStorage.getItem(this.sServiceUrl);
+		if (sLastFirstBatch) {
+			this.oFirstBatch = oFirstBatch = JSON.parse(sLastFirstBatch);
+			that.oFirstBatchResult = this.oSecurityTokenPromise.then(function () {
+				var oPromise;
+
+				// replace old X-CSRF-Token and remember first $batch
+				oFirstBatch.sPayload = oFirstBatch.sPayload.replace(/(X-CSRF-Token:)([\w==]+\r\n)/,
+					"$1" + that.mHeaders["X-CSRF-Token"] + "\r\n");
+				oPromise = that.sendRequest(oFirstBatch.sMethod, oFirstBatch.sResourcePath,
+					oFirstBatch.mHeaders, oFirstBatch.sPayload, oFirstBatch.sOriginalResourcePath);
+				that.bOptimistic$batch = true; // next "regular" first $batch should consume promise
+				Log.info("optimistic$batch: send", undefined, sClassName);
+				return oPromise;
+			});
+		} else {
+			that.bOptimistic$batch = true;
+		}
+	};
+
 	/**
 	 * Sends the request. Fetches a new security token and resends the request once when the
 	 * security token is missing or rejected.
@@ -1698,11 +1728,48 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
+	var rbatchId = /(batch_id-)([\w-]+\r\n)/g;
+
 	_Requestor.prototype.sendRequest = function (sMethod, sResourcePath, mHeaders, sPayload,
 			sOriginalResourcePath) {
-		var sRequestUrl = this.sServiceUrl + sResourcePath,
+		var oPromise,
+		    sRequestUrl = this.sServiceUrl + sResourcePath,
 			that = this;
 
+		if (this.bOptimistic$batch && sResourcePath.startsWith("$batch")) {
+			var oFirstBatch = this.oFirstBatch,
+				oFirstBatchResult = this.oFirstBatchResult;
+
+			// only process it once
+			delete this.oFirstBatch;
+			delete this.oFirstBatchResult;
+
+			if (!oFirstBatchResult) { // we are in the 1st app start
+				localStorage.setItem(this.sServiceUrl, JSON.stringify({
+					sMethod : sMethod,
+					sResourcePath : sResourcePath,
+					mHeaders : mHeaders,
+					sPayload : sPayload,
+					sOriginalResourcePath : sOriginalResourcePath
+				}));
+				Log.info("optimistic$batch: first app start, $batch payload saved", undefined,
+					sClassName);
+			} else { // 2nd app start
+				if ( oFirstBatch.sPayload.replace(rbatchId, "$1" + "doesNotMatter\r\n") ===
+						sPayload.replace(rbatchId, "$1" + "doesNotMatter\r\n") ) {
+					oPromise = oFirstBatchResult; //matched $batch -> return early result
+					this.bOptimistic$batch = false; // bOptimistic$batch processing stops here
+					Log.info("optimistic$batch: success, response consumed",
+						undefined, sClassName);
+					return oPromise;
+				} else {
+					localStorage.removeItem(this.sServiceUrl); // clear invalid $batch payload
+					Log.warning("optimistic$batch: failed, response skipped", undefined,
+						sClassName);
+				}
+			}
+			this.bOptimistic$batch = false; // bOptimistic$batch processing stops here
+		}
 		return new Promise(function (fnResolve, fnReject) {
 
 			function send(bIsFreshToken) {
