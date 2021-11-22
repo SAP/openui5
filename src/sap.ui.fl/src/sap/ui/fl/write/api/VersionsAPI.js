@@ -146,7 +146,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector for which the request is done
 	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
-	 * @param {number} [mPropertyBag.version] - Version number to be loaded
+	 * @param {string} [mPropertyBag.version] - Version to be loaded
 	 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted contexts
 	 *
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.

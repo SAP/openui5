@@ -111,17 +111,17 @@ function(
 		oButton.setIcon(sIcon || "");
 	}
 
-	Adaptation.prototype.formatDiscardDraftVisible = function (nDisplayedVersion, bVersioningEnabled) {
-		return nDisplayedVersion === sap.ui.fl.Versions.Draft && bVersioningEnabled;
+	Adaptation.prototype.formatDiscardDraftVisible = function (sDisplayedVersion, bVersioningEnabled) {
+		return sDisplayedVersion === Versions.Draft && bVersioningEnabled;
 	};
 
-	Adaptation.prototype.formatVersionButtonText = function (aVersions, nDisplayedVersion) {
+	Adaptation.prototype.formatVersionButtonText = function (aVersions, sDisplayedVersion) {
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sText = "";
 		var sType = "Active";
 		aVersions = aVersions || [];
 
-		if (nDisplayedVersion === undefined || nDisplayedVersion === Versions.Original) {
+		if (sDisplayedVersion === undefined || sDisplayedVersion === Versions.Original) {
 			sText = oTextResources.getText("TIT_ORIGINAL_APP");
 			sType = "inactive";
 			if (aVersions.length === 0 || (aVersions.length === 1 && aVersions[0].type === "draft")) {
@@ -129,11 +129,11 @@ function(
 			}
 		} else {
 			var oDisplayedVersion = aVersions.find(function (oVersion) {
-				return oVersion.version === nDisplayedVersion;
+				return oVersion.version === sDisplayedVersion;
 			});
 			if (oDisplayedVersion) {
 				sType = oDisplayedVersion.type;
-				if (nDisplayedVersion === Versions.Draft) {
+				if (sDisplayedVersion === Versions.Draft) {
 					sText = oTextResources.getText("TIT_DRAFT");
 				} else {
 					sText = oDisplayedVersion.title || oTextResources.getText("TIT_VERSION_1");
@@ -210,14 +210,14 @@ function(
 
 	Adaptation.prototype.versionSelected = function (oEvent) {
 		var oVersionsBindingContext = oEvent.getSource().getBindingContext("versions");
-		var nVersion = Versions.Original;
+		var sVersion = Versions.Original;
 
 		if (oVersionsBindingContext) {
 			// the original Version does not have a version binding Context
-			nVersion = oVersionsBindingContext.getProperty("version");
+			sVersion = oVersionsBindingContext.getProperty("version");
 		}
 
-		this.fireEvent("switchVersion", {version: nVersion});
+		this.fireEvent("switchVersion", {version: sVersion});
 	};
 
 	Adaptation.prototype.showVersionHistory = function (oEvent) {
@@ -396,7 +396,7 @@ function(
 		return sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
 	};
 
-	Adaptation.prototype._openVersionTitleDialog = function (nDisplayedVersion) {
+	Adaptation.prototype._openVersionTitleDialog = function (sDisplayedVersion) {
 		var oDialogPromise;
 
 		if (this._oDialog) {
@@ -408,7 +408,7 @@ function(
 		return oDialogPromise.then(function () {
 			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var sTitle = oTextResources.getText("TIT_VERSION_TITLE_DIALOG");
-			if (nDisplayedVersion !== Versions.Draft) {
+			if (sDisplayedVersion !== Versions.Draft) {
 				sTitle = oTextResources.getText("TIT_REACTIVATE_VERSION_TITLE_DIALOG");
 			}
 			this._oDialog.setTitle(sTitle);

@@ -463,13 +463,13 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft, sLayer, bRemoveOtherLayerChanges) {
-		var nParentVersion = bDraft ? Versions.getVersionsModel({
+		var sParentVersion = bDraft ? Versions.getVersionsModel({
 			reference: Utils.normalizeReference(this._sComponentName),
 			layer: Layer.CUSTOMER // only the customer layer has draft active
 		}).getProperty("/persistedVersion") : undefined;
 
 		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)
-			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, nParentVersion))
+			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion))
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;

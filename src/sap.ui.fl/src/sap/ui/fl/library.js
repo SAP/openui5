@@ -186,8 +186,8 @@ sap.ui.define([
 	 * @enum {string}
 	 */
 	sap.ui.fl.Versions = {
-		Original: -1,
-		Draft: 0,
+		Original: "-1",
+		Draft: "0",
 		UrlParameter: "sap-ui-fl-version"
 	};
 

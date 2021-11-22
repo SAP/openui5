@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @param {object[]} [mPropertyBag.flexObjects] - Objects to be written (i.e. change definitions, variant definitions etc.)
 	 * @param {object} [mPropertyBag.flexObject] - Object to be updated
 	 * @param {string} mPropertyBag.url Configured - url for the connector
-	 * @param {number} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
+	 * @param {string} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */
 	function _doWrite(mPropertyBag) {
@@ -120,7 +120,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {object[]} mPropertyBag.flexObjects - Objects to be written (i.e. change definitions, variant definitions etc.)
 		 * @param {string} mPropertyBag.url - Configured url for the connector
-		 * @param {number} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
+		 * @param {string} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
 		write: function (mPropertyBag) {
