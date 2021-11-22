@@ -30,7 +30,9 @@
 					<Button id="showSalesOrderTable" press="onShowTable" text="Use Table"
 						tooltip="Show the sales order table" type="Emphasized" />
 					<Link href="test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/MIT.SalesOrders(V2).Messages.html"
-						target="_blank" text="Test Cases" />
+						target="_blank" text="Test Messages" />
+					<Link href="test-resources/sap/ui/core/internal/samples/odata/v2/SalesOrders/MIT.SalesOrders(V2).ODLB.create.html"
+						target="_blank" text="Test ODataListBinding#create" />
 				</Toolbar>
 			</VBox>
 			<VBox class="sapUiSmallMargin" id="listPage" visible="{ui>/useTable}">
@@ -60,10 +62,10 @@
 								press="onCreateSalesOrder" tooltip="Create sales order" />
 							<Button enabled="{ui>/salesOrderSelected}" icon="sap-icon://delete"
 								id="delete::SalesOrderList" press="onDeleteSalesOrder"
-								tooltip="Delete the selected sales order"/>
+								tooltip="Delete selected sales order"/>
 							<Button icon="sap-icon://synchronize"
 								id="refresh::SalesOrderSet" press="onRefreshSalesOrders"
-								tooltip="Refresh the sales order list" />
+								tooltip="Refresh sales order list" />
 							<Label text="Sort: ">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
