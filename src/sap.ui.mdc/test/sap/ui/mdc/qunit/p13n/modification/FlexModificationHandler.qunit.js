@@ -136,4 +136,119 @@ sap.ui.define([
         this.oHandler.reset({selector: this.oControl}, this.oPayload);
     });
 
+    QUnit.module("Reset based on PersistenceMode", {
+		before: function(){
+            this.oHandler = FlexModificationHandler.getInstance();
+            this.oControl = new MDCControl();
+            this.mPropertyBag = {
+                selector: this.oControl
+            };
+		},
+		after: function(){
+            this.oHandler.destroy();
+            this.oHandler = null;
+		}
+	});
+
+    QUnit.test("VM: false, PP: false, mode: Auto", function(assert){
+
+        var oResetSpy = sinon.spy(FlexUtil, "reset");
+        var oRestoreSpy = sinon.spy(FlexUtil, "restore");
+
+        var oModificationPayload = {
+            hasVM: false,
+            hasPP: false,
+            mode: PersistenceMode.Auto
+        };
+
+        //Standard case --> reset should only discard dirty changes
+        this.oHandler.reset(this.mPropertyBag, oModificationPayload);
+        assert.ok(oResetSpy.callCount === 0);
+        assert.ok(oRestoreSpy.callCount === 1);
+        FlexUtil.reset.restore();
+        FlexUtil.restore.restore();
+
+    });
+
+    QUnit.test("VM: false, PP: true, mode: Auto", function(assert){
+
+        var oResetSpy = sinon.spy(FlexUtil, "reset");
+        var oRestoreSpy = sinon.spy(FlexUtil, "restore");
+
+        var oModificationPayload = {
+            hasVM: false,
+            hasPP: true,
+            mode: PersistenceMode.Auto
+        };
+
+        this.oHandler.reset(this.mPropertyBag, oModificationPayload);
+
+        //No VM but PP --> reset should delete persisted changes
+        assert.ok(oResetSpy.callCount === 1);
+        assert.ok(oRestoreSpy.callCount === 0);
+        FlexUtil.reset.restore();
+        FlexUtil.restore.restore();
+
+    });
+
+    QUnit.test("VM: true, PP: true, mode: Auto", function(assert){
+
+        var oResetSpy = sinon.spy(FlexUtil, "reset");
+        var oRestoreSpy = sinon.spy(FlexUtil, "restore");
+
+        var oModificationPayload = {
+            hasVM: true,
+            hasPP: true,
+            mode: PersistenceMode.Auto
+        };
+
+        //If both exists, VM will be used --> only discard dirty changes
+        this.oHandler.reset(this.mPropertyBag, oModificationPayload);
+        assert.ok(oResetSpy.callCount === 0);
+        assert.ok(oRestoreSpy.callCount === 1);
+        FlexUtil.reset.restore();
+        FlexUtil.restore.restore();
+
+    });
+
+    QUnit.test("mode: Transient --> only discard dirty changes (independent of VM and PP)", function(assert){
+
+        var oResetSpy = sinon.spy(FlexUtil, "reset");
+        var oRestoreSpy = sinon.spy(FlexUtil, "restore");
+
+        var oModificationPayload = {
+            hasVM: true,
+            hasPP: true,
+            mode: PersistenceMode.Transient
+        };
+
+        //If both exists, VM will be used --> only discard dirty changes
+        this.oHandler.reset(this.mPropertyBag, oModificationPayload);
+        assert.ok(oResetSpy.callCount === 0);
+        assert.ok(oRestoreSpy.callCount === 1);
+        FlexUtil.reset.restore();
+        FlexUtil.restore.restore();
+
+    });
+
+    QUnit.test("mode: Global --> reset persisted changes (independent of VM and PP)", function(assert){
+
+        var oResetSpy = sinon.spy(FlexUtil, "reset");
+        var oRestoreSpy = sinon.spy(FlexUtil, "restore");
+
+        var oModificationPayload = {
+            hasVM: true,
+            hasPP: true,
+            mode: PersistenceMode.Global
+        };
+
+        //If both exists, VM will be used --> only discard dirty changes
+        this.oHandler.reset(this.mPropertyBag, oModificationPayload);
+        assert.ok(oResetSpy.callCount === 1);
+        assert.ok(oRestoreSpy.callCount === 0);
+        FlexUtil.reset.restore();
+        FlexUtil.restore.restore();
+
+    });
+
 });
