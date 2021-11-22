@@ -355,7 +355,7 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Sub Genre">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-											<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10}' width="30rem">
+											<Table id="mTable1_subgenre" items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -381,10 +381,10 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{genre_code}" />
-															<Text text="{classification_code}" />
+															<Text text="{code}"/>
+															<Text text="{title}"/>
+															<Text text="{genre/title}"/>
+															<Text text="{classification/title}"/>
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -414,7 +414,7 @@
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
-											<Table id="mTable2_subgenre" items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table id="mTable2_subgenre" items='{path: "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -440,10 +440,10 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{genre_code}" />
-															<Text text="{classification_code}" />
+															<Text text="{code}"/>
+															<Text text="{title}"/>
+															<Text text="{genre/title}"/>
+															<Text text="{classification/title}"/>
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -469,7 +469,7 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Detail Genre">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-											<Table id="mTable1_detailgenre" items='{path : "/DetailGenres", length: 10}' width="30rem">
+											<Table id="mTable1_detailgenre" items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="30rem">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -500,11 +500,11 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{classification_code}" />
-															<Text text="{genre_code}" />
-															<Text text="{subgenre_code}" />
+															<Text text="{code}"/>
+															<Text text="{title}"/>
+															<Text text="{classification/title}"/>
+															<Text text="{genre/title}"/>
+															<Text text="{subgenre/title}"/>
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -535,7 +535,7 @@
 													</vhfb:filterItems>
 												</vhfb:FilterBar>
 											</mdcvc:filterBar>
-											<Table id="mTable2_detailgenre" items='{path : "/DetailGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table id="mTable2_detailgenre" items='{path: "/DetailGenres", parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -566,11 +566,11 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{classification_code}" />
-															<Text text="{genre_code}" />
-															<Text text="{subgenre_code}" />
+															<Text text="{code}"/>
+															<Text text="{title}"/>
+															<Text text="{classification/title}"/>
+															<Text text="{genre/title}"/>
+															<Text text="{subgenre/title}"/>
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -789,7 +789,7 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Sub Genre">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
-											<Table items='{path : "/SubGenres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column>
 														<header>
@@ -815,10 +815,10 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{classification_code}" />
-															<Text text="{genre_code}" />
+															<Text text="{code}"/>
+															<Text text="{title}"/>
+															<Text text="{classification/title}"/>
+															<Text text="{genre/title}"/>
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -838,7 +838,7 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Genre">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
-											<Table items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/Genres", parameters: {$select: "classification_code"}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
 													<Column>
 														<header>
@@ -859,9 +859,9 @@
 												<items>
 													<ColumnListItem type="Active">
 														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{classification_code}" />
+															<Text text="{code}"/>
+															<Text text="{title}"/>
+															<Text text="{classification/title}"/>
 														</cells>
 													</ColumnListItem>
 												</items>
@@ -887,7 +887,7 @@
 					<mdc:typeahead>
 						<mdcv:Popover title="Genre">
 							<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-								<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem">
+								<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}' width="30rem">
 									<columns>
 										<Column width="10rem">
 											<header>
@@ -908,9 +908,9 @@
 									<items>
 										<ColumnListItem type="Active">
 											<cells>
-												<Text text="{code}" />
-												<Text text="{title}" />
-												<Text text="{classification_code}" />
+												<Text text="{code}"/>
+												<Text text="{title}"/>
+												<Text text="{classification/title}"/>
 											</cells>
 										</ColumnListItem>
 									</items>
@@ -939,7 +939,7 @@
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
-								<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+								<Table id="mTable2_genre" items='{path : "/Genres", parameters: {$select: "classification_code"}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
 									<columns>
 										<Column width="10rem">
 											<header>
@@ -960,9 +960,9 @@
 									<items>
 										<ColumnListItem type="Active">
 											<cells>
-												<Text text="{code}" />
-												<Text text="{title}" />
-												<Text text="{classification_code}" />
+												<Text text="{code}"/>
+												<Text text="{title}"/>
+												<Text text="{classification/title}"/>
 											</cells>
 										</ColumnListItem>
 									</items>
