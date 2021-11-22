@@ -97,18 +97,6 @@
 	}
 }
 
-/* Android 4.1 to 4.3 focus fix */
-html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"],
-html[data-sap-ui-os^="Android4.2"][data-sap-ui-browser^="an"],
-html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
-	.sapMSegBBtn:not(.sapMSegBBtnSel):focus .sapMSegBBtnInner {
-		background-color: transparent;
-	}
-	.sapMSegBBtnSel:focus .sapMSegBBtnInner {
-		background-color: @sapUiSegmentedButtonSelectedBackground;
-	}
-}
-
 /* Compact size */
 .sapUiSizeCompact {
 	.sapMSegBBtn:not(.sapMSegBIcons) .sapMSegBBtnInner {
@@ -146,12 +134,5 @@ html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
 		.sapUiIcon {
 			margin-right: 0.5rem;
 		}
-	}
-}
-
-/* Android size compact fix */
-html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"] {
-	.sapUiSizeCompact .sapMSegBBtn img {
-		padding-bottom: 0.256rem;
 	}
 }
