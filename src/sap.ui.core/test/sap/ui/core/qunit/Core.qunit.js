@@ -117,7 +117,7 @@ sap.ui.define([
 	QUnit.test("testGetElementById", function(assert) {
 		var oButton = new TestButton("test3Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea3");
-		sap.ui.getCore().setRoot("uiArea3", oButton);
+		oButton.placeAt("uiArea3");
 		var oButtonCheck = sap.ui.getCore().getElementById("test3Button");
 		assert.ok(oButtonCheck, "Button must be returned");
 		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
@@ -152,7 +152,7 @@ sap.ui.define([
 	QUnit.test("testGetControl", function(assert) {
 		var oButton = new TestButton("test4Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea4");
-		sap.ui.getCore().setRoot("uiArea4", oButton);
+		oButton.placeAt("uiArea4");
 		var oButtonCheck = sap.ui.getCore().getControl("test4Button");
 		assert.ok(oButtonCheck, "Button must be returned");
 		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");

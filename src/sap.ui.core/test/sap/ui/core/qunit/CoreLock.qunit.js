@@ -19,7 +19,7 @@ sap.ui.define([
 	/*
 	 * the following is a workaround that applications can implement
 
-	sap.ui.getCore().attachInitEvent(function() {
+	sap.ui.getCore().attachInit(function() {
 		// we have to use setTimeout as the unanted unlock happens just after init events have been processed
 		setTimeout(function() {
 			sap.ui.getCore().lock();

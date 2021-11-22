@@ -213,9 +213,13 @@ sap.ui.define([
 		assert.strictEqual(rm.getConfiguration(), sap.ui.getCore().getConfiguration(), "getConfiguration should return the same like Core.getConfiguration");
 	});
 
-	QUnit.test("Core.getRenderManager/createRenderManager", function(assert) {
+	QUnit.test("Core.getRenderManager", function(assert) {
 		var c = sap.ui.getCore();
 		assert.notStrictEqual(c.getRenderManager(), c.getRenderManager(), "Core.getRenderManager should always returns a new RenderManager instance");
+	});
+
+	QUnit.test("Core.createRenderManager", function(assert) {
+		var c = sap.ui.getCore();
 		assert.notStrictEqual(c.createRenderManager(), c.createRenderManager(), "Core.createRenderManager should always return a new RenderManager instance");
 	});
 

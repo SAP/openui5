@@ -65,37 +65,37 @@ sap.ui.define([
 
 	var t1 = new Text("Text1");
 	t1.setText("This is a simple Text.");
-	sap.ui.setRoot("content1", t1);
+	t1.placeAt("content1");
 
 	var t2 = new Text("Text2");
 	t2.setText("This is a multiline long Text to test wrapping.\n This is the second line. \n This is the third line.");
 	t2.setWidth("155px");
-	sap.ui.setRoot("content2", t2);
+	t2.placeAt("content2");
 
 	var t3 = new Text("Text3");
 	t3.setText("This Text should NOT be visible.");
 	t3.setVisible(false);
-	sap.ui.setRoot("content3", t3);
+	t3.placeAt("content3");
 
 	var t4 = new Text("Text4");
 	t4.setText("This text is not wrapping.\n Line breaks cannot make it wrap");
 	t4.setWrapping(false);
-	sap.ui.setRoot("content4", t4);
+	t4.placeAt("content4");
 
 	var t5 = new Text("Text5");
 	t5.setText(new Array(100).join("This is a very long Text "));
 	t5.setMaxLines(3);
 	t5.setWidth("400px");
-	sap.ui.setRoot("content5", t5);
+	t5.placeAt("content5");
 
 	var t6 = new Text("Text6", {text:""});
-	sap.ui.setRoot("content6", t6);
+	t6.placeAt("content6");
 
 	var t8 = new Text("Text8", {text: "pneumonoultramicroscopicsilicovolcanoconiosis"}); // longest word in English
 		t8.setWidth("400px");
 		t8.setWrapping(true);
 		t8.setWrappingType("Hyphenated");
-		sap.ui.setRoot("content8", t8);
+		t8.placeAt("content8");
 
 	// run tests
 	// =========
@@ -236,7 +236,7 @@ sap.ui.define([
 		oModel.setData(oData);
 
 		var t65 = new Text("Text65", {text: "{/text}", renderWhitespace: true}).setModel(oModel);
-		sap.ui.setRoot("content65", t65);
+		t65.placeAt("content65");
 		oCore.applyChanges();
 		assert.equal(countLines(t65), 2, "Text should be in 2 lines");
 	});
@@ -245,28 +245,28 @@ sap.ui.define([
 		//test normalization \r\n \r \n\r
 		var txt66 = "test\r\ntest\rtest\n\rtest";
 		var t66 = new Text("Text66", {text: txt66});
-		sap.ui.setRoot("content66", t66);
+		t66.placeAt("content66");
 		oCore.applyChanges();
 		assert.equal(countLines(t66), 4, "Text should be in 4 lines");
 
 		//test \n
 		var txt67 = "C:\Temp\next.exe";
 		var t67 = new Text("Text67", {text: txt67});
-		sap.ui.setRoot("content67", t67);
+		t67.placeAt("content67");
 		oCore.applyChanges();
 		assert.equal(countLines(t67), 2, "Text should be in 2 lines");
 
 		//test \\n
 		var txt68 = "C:\\Temp\\next.exe";
 		var t68 = new Text("Text68", {text: txt68});
-		sap.ui.setRoot("content68", t68);
+		t68.placeAt("content68");
 		oCore.applyChanges();
 		assert.equal(countLines(t68), 1, "Text should be in 1 line");
 
 		//test \n\n\n
 		var txt69 = "test\n\n\ntest";
 		var t69 = new Text("Text69", {text: txt69});
-		sap.ui.setRoot("content69", t69);
+		t69.placeAt("content69");
 		oCore.applyChanges();
 		assert.equal(countLines(t69), 4, "Text should be in 4 lines");
 	});

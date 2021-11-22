@@ -59,7 +59,8 @@ sap.ui.define([
 		beforeEach : function() {
 			var oDiv = document.createElement("div");
 			oUIAreas.appendChild(oDiv);
-			this.uiArea = sap.ui.getCore().createUIArea(oDiv);
+			new Control().placeAt(oDiv).destroy();
+			this.uiArea = sap.ui.getCore().getUIArea(oDiv);
 
 			this.mPropagationInfo = {};
 
@@ -148,7 +149,8 @@ sap.ui.define([
 		beforeEach : function() {
 			var oDiv = document.createElement("div");
 			oUIAreas.appendChild(oDiv);
-			this.uiArea = sap.ui.getCore().createUIArea(oDiv);
+			new Control().placeAt(oDiv).destroy();
+			this.uiArea = sap.ui.getCore().getUIArea(oDiv);
 
 			this.mPropagationInfo = {};
 
@@ -565,7 +567,8 @@ sap.ui.define([
 	QUnit.module("More Complex Updates", {
 		beforeEach : function() {
 			sap.ui.getCore().setModel(oModel1);
-			this.uiArea = sap.ui.getCore().createUIArea("content");
+			new Control().placeAt("content").destroy();
+			this.uiArea = sap.ui.getCore().getUIArea("content");
 			this.uiArea.setModel(null);
 			this.child = new TestControl({
 				value : { parts : [ "/value", "m2>/value" ], formatter : function(a,b) { return a + ":" + b; } },
@@ -685,7 +688,8 @@ sap.ui.define([
 					 this.mPropagationInfo[oEvent.getSource().getId()] = 1;
 				 }
 			}.bind(this);
-			this.uiArea = sap.ui.getCore().createUIArea("content");
+			new Control().placeAt("content").destroy();
+			this.uiArea = sap.ui.getCore().getUIArea("content");
 			this.uiArea.attachModelContextChange(this.fnChange);
 
 			sap.ui.getCore().setModel(oModel4);

@@ -2608,7 +2608,7 @@ sap.ui.define([
 				if ($ContentRef.length > 0) {
 					RenderManager.preserveContent($ContentRef[0], /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
 				}
-				sap.ui.getCore().getRenderManager().render(this.oContent, sap.ui.getCore().getStaticAreaRef());
+				sap.ui.getCore().createRenderManager().render(this.oContent, sap.ui.getCore().getStaticAreaRef());
 				$ContentRef = this.oContent.$();
 			}
 		} else if (this.oContent instanceof Element) {

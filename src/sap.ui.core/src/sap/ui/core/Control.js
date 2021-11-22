@@ -681,7 +681,7 @@ sap.ui.define([
 		} else {
 			// core not yet initialized, defer execution
 			var that = this;
-			oCore.attachInitEvent(function () {
+			oCore.attachInit(function () {
 				that.placeAt(oRef, vPosition);
 			});
 		}

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/NumericContent",
 	"sap/m/ImageContent",
 	"sap/ui/Device",
+	"sap/ui/core/IntervalTrigger",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/GenericTileLineModeRenderer",
 	"sap/m/Button",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
-], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, ResizeHandler, GenericTileLineModeRenderer,
+], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
             Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, Core, isEmptyObject, KeyCodes) {
 	"use strict";
 
@@ -1149,14 +1150,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		sap.ui.getCore().attachIntervalTimer(checkAssertions);
+		IntervalTrigger.addListener(checkAssertions);
 
 		function checkAssertions() {
 			oClock.tick(11);
 			assert.ok(GenericTileLineModeRenderer._updateHoverStyle.called, "Renderer function _updateHoverStyle is called once.");
 
 			//Cleanup
-			sap.ui.getCore().detachIntervalTimer(checkAssertions);
+			IntervalTrigger.removeListener(checkAssertions);
 			oClock.restore();
 
 			done();

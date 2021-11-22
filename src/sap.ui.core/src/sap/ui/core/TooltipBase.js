@@ -134,7 +134,7 @@ sap.ui.define([
 			var oPopup = this._getPopup();
 			if (!(oPopup.isOpen() && oPopup.getContent() == this)) {
 				// Update Tooltip or create a new span with texts.
-				sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
+				sap.ui.getCore().createRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
 			}
 
 			// Attach accessibility info to the control oSC

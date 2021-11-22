@@ -28,7 +28,7 @@ sap.ui.define([
 		checkPublicMethods(assert, sap.ui.getCore(), sap.ui.core.Core);
 	});
 
-	QUnit.test("GetRenderManager", function(assert) {
+	QUnit.test("CreateRenderManager", function(assert) {
 		var oCore = sap.ui.getCore();
 
 		var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering"];
@@ -44,9 +44,13 @@ sap.ui.define([
 
 		var aInterfaceMethods = aCommonMethods.concat(aStringRendererMethods, aDomRendererMethods, aNonRendererFunctions);
 
-		assert.notStrictEqual(oCore.getRenderManager, undefined, "function getRenderManager on sap.ui.core.Core instance must be defined");
-		assert.ok(typeof oCore.getRenderManager() === 'object', "calling getRenderManager on Core instance must deliver the RenderManager interface");
-		checkMethods(assert, oCore.getRenderManager(), aInterfaceMethods);
+		assert.notStrictEqual(oCore.createRenderManager, undefined, "function createRenderManager on sap.ui.core.Core instance must be defined");
+
+		// act
+		var oRm = oCore.createRenderManager();
+		assert.ok(typeof oRm === 'object', "calling createRenderManager on Core instance must deliver the RenderManager interface");
+		checkMethods(assert, oRm, aInterfaceMethods);
+		oRm.destroy();
 	});
 
 	QUnit.test("GetConfiguration", function(assert) {

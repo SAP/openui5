@@ -23,7 +23,7 @@
 			throw(e);
 		}
 
-    	sap.ui.getCore().attachInitEvent(doIt);
+    	sap.ui.getCore().attachInit(doIt);
 
     	var oModel = new sap.ui.model.json.JSONModel();
     	oModel.setData({

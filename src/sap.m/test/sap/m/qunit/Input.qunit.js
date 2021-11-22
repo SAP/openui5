@@ -143,12 +143,12 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			i1 = sap.ui.getCore().getControl("i1");
-			i2 = sap.ui.getCore().getControl("i2");
-			i3 = sap.ui.getCore().getControl("i3");
-			i4 = sap.ui.getCore().getControl("i4");
-			i5 = sap.ui.getCore().getControl("i5");
-			i8 = sap.ui.getCore().getControl("i8");
+			i1 = sap.ui.getCore().byId("i1");
+			i2 = sap.ui.getCore().byId("i2");
+			i3 = sap.ui.getCore().byId("i3");
+			i4 = sap.ui.getCore().byId("i4");
+			i5 = sap.ui.getCore().byId("i5");
+			i8 = sap.ui.getCore().byId("i8");
 		},
 		afterEach : function() {
 			i1 = null;
