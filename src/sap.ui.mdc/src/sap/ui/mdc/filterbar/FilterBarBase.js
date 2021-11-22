@@ -4,7 +4,6 @@
 sap.ui.define([
 	'sap/ui/mdc/p13n/subcontroller/FilterController',
 	'sap/ui/core/library',
-	'sap/ui/mdc/p13n/FlexUtil',
 	'sap/ui/Device',
 	'sap/ui/mdc/Control',
 	'sap/base/Log',
@@ -15,8 +14,6 @@ sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/util/IdentifierUtil',
 	'sap/ui/mdc/condition/ConditionConverter',
-	"sap/ui/mdc/p13n/StateUtil",
-	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/filterbar/PropertyHelper",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
@@ -27,7 +24,6 @@ sap.ui.define([
 	function(
 		FilterController,
 		coreLibrary,
-		FlexUtil,
 		Device,
 		Control,
 		Log,
@@ -38,8 +34,6 @@ sap.ui.define([
 		Condition,
 		IdentifierUtil,
 		ConditionConverter,
-		StateUtil,
-		FilterConverter,
 		FilterUtil,
 		PropertyHelper,
 		ControlVariantApplyAPI,
@@ -145,6 +139,18 @@ sap.ui.define([
 				filterConditions: {
 					type: "object",
 					defaultValue: {}
+				},
+
+				/**
+				 * Specifies the filter metadata.<br>
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility. Do not use it otherwise.
+				 *
+				 * @since 1.97
+				 */
+				propertyInfo: {
+					type: "object",
+					defaultValue: []
 				},
 
 				/**
@@ -361,14 +367,28 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype.applySettings = function(mSettings, oScope) {
+		this._applySettings(mSettings, oScope);
+		this._initControlDelegate();
+	};
+
+	FilterBarBase.prototype._applySettings = function(mSettings, oScope) {
 		Control.prototype.applySettings.apply(this, arguments);
 
 		this._createConditionModel();
 
 		this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
+	};
 
-		//this._retrieveMetadata();
-		this._retrieveMetadata().then(function() {
+	FilterBarBase.prototype._initControlDelegate = function() {
+		this.initControlDelegate().then(function() {
+			if (!this._bIsBeingDestroyed) {
+				this._applyInitialFilterConditions();
+			}
+		}.bind(this));
+	};
+
+	FilterBarBase.prototype._waitForMetadata = function() {
+		return this._retrieveMetadata().then(function() {
 			this._applyInitialFilterConditions();
 		}.bind(this));
 	};
@@ -429,38 +449,31 @@ sap.ui.define([
 	 * @returns {object} object containing the current status of the FilterBarBase
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
-		//return this.initialized().then(function() {
+		var mFilters = {};
+		var oState = {};
 
-			var oState = {};
-
-			if (this._bPersistValues) {
-				var aIgnoreFieldNames = [];
-				var mConditions = merge({}, this.getFilterConditions());
-				for (var sKey in mConditions) {
-					if (!this._getPropertyByName(sKey)) {
-						aIgnoreFieldNames.push(sKey);
-					}
+		if (this._bPersistValues) {
+			var mConditions = merge({}, this.getFilterConditions());
+			for (var sKey in mConditions) {
+				if (this._getPropertyByName(sKey)) {
+					mFilters[sKey] = mConditions[sKey];
+					//mMetadata[sKey] = mConditions[sKey].metadata;
 				}
-
-				aIgnoreFieldNames.forEach(function(sKey) {
-					delete mConditions[sKey];
-				});
-
-				oState.filter = mConditions;
 			}
+			oState.filter = mFilters;
+		}
 
-			var aFilterItems = this.getFilterItems();
-			var aItems = [];
-			aFilterItems.forEach(function(oFilterField, iIndex){
-				aItems.push({
-					name: oFilterField.getFieldPath()
-				});
+		var aFilterItems = this.getFilterItems();
+		var aItems = [];
+		aFilterItems.forEach(function(oFilterField, iIndex){
+			aItems.push({
+				name: oFilterField.getFieldPath()
 			});
+		});
 
-			oState.items = aItems;
+		oState.items = aItems;
 
-			return oState;
-		//}.bind(this));
+		return oState;
 	};
 
 	/**
@@ -603,6 +616,111 @@ sap.ui.define([
 		return this.getEngine().isModificationSupported(this);
 	};
 
+	FilterBarBase.prototype._hasPropertyInfo = function(sFieldName) {
+		var aPropertyInfo = this.getPropertyInfo();
+		var nIdx = aPropertyInfo.findIndex(function(oEntry) {
+			return oEntry.name === sFieldName;
+		});
+
+		return (nIdx >= 0);
+	};
+
+	FilterBarBase.prototype._getPropertyByName = function(sName) {
+		return FilterUtil.getPropertyByKey(this.getPropertyInfoSet(), sName);
+	};
+
+	FilterBarBase.prototype.getPropertyInfoSet = function() {
+		var oTypeUtil, aProperties = [];
+
+		if (this._hasPropertyHelper()) {
+			return this.getPropertyHelper().getProperties();
+		}
+
+		var aPropertyInfo = this.getPropertyInfo();
+		if (aPropertyInfo && (aPropertyInfo.length > 0)) {
+			oTypeUtil = this.getTypeUtil();
+
+			for (var i = 0; i < aPropertyInfo.length; i++) {
+				var oPropertyInfo = aPropertyInfo[i];
+				if (oPropertyInfo) {
+					var oTypeConfig = oTypeUtil.getTypeConfig(oPropertyInfo.dataType, oPropertyInfo.formatOptions, oPropertyInfo.constraints);
+					aProperties.push({
+						name: oPropertyInfo.name,
+						typeConfig: oTypeConfig,
+						maxConditions: oPropertyInfo.maxConditions,
+						constraints: oPropertyInfo.constraints,
+						formatOptions: oPropertyInfo.formatOptions,
+						required: oPropertyInfo.required,
+						caseSensitive: oPropertyInfo.caseSensitive,
+						display: oPropertyInfo.display
+					});
+				}
+			}
+		}
+
+		return aProperties;
+	};
+
+	FilterBarBase.prototype._hasPropertyHelper = function() {
+		try {
+			this.getPropertyHelper();
+			return true;
+		} catch (ex) {
+			return false;
+		}
+	};
+
+
+	FilterBarBase.prototype._createPropertyInfoChange = function(oProperty) {
+		return {
+			changeSpecificData: {
+				changeType: "addPropertyInfo",
+				content: {
+					name: oProperty.name,
+					dataType: oProperty.typeConfig.className,
+					maxConditions: oProperty.maxConditions,
+					constraints: oProperty.constraints,
+					formatOption: oProperty.formatOptions,
+					required: oProperty.required,
+					caseSensitive: oProperty.caseSensitive,
+					display: oProperty.display
+				}
+			},
+			selectorElement: this
+		};
+	};
+
+	FilterBarBase.prototype.createPropertyInfoChanges = function(sFieldPath) {
+		var oProperty, oChange, aChanges = [];
+
+		if (!this._hasPropertyInfo(sFieldPath)) {
+			oProperty = this._getPropertyByName(sFieldPath);
+			if (oProperty) {
+				oChange = this._createPropertyInfoChange(oProperty);
+				aChanges.push(oChange);
+			}
+		}
+
+		return aChanges;
+	};
+
+
+	FilterBarBase.prototype._addConditionChange = function(mOrigConditions, sFieldPath) {
+
+		var oChangePromise = this.getEngine().createChanges({
+			control: this,
+			key: "Filter",
+			//prependChanges: fCreateTypeInfoCallback,
+			state: mOrigConditions
+		});
+
+		if (!this._aCollectedChangePromises) {
+			this._aCollectedChangePromises = [];
+		}
+		this._aCollectedChangePromises.push(oChangePromise);
+	};
+
+
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
 		if (!this._bIgnoreChanges) {
@@ -614,21 +732,12 @@ sap.ui.define([
 
 				if (this._bPersistValues && this._isPersistenceSupported()) {
 					var mOrigConditions = {};
-					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], oEvent.getParameter("value")));
+
+					var aConditions = oEvent.getParameter("value");
+					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], aConditions));
 					this._cleanupConditions(mOrigConditions[sFieldPath]);
 
-					var oChangePromise = this.getEngine().createChanges({
-						control: this,
-						key: "Filter",
-						state: mOrigConditions
-					});
-
-					if (!this._aCollectedChangePromises) {
-						this._aCollectedChangePromises = [];
-					}
-
-					this._aCollectedChangePromises.push(oChangePromise);
-
+					this._addConditionChange(mOrigConditions, sFieldPath);
 				} else {
 					this._reportModelChange(false);
 				}
@@ -728,32 +837,26 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._handleAssignedFilterNames = function(bFiltersAggregationChanged, bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch) {
-		if (!this._oMetadataAppliedPromise) {
-			return;  // may occure when filterItems are added during pre processing.
+		if (this._bIsBeingDestroyed) {
+			return;
 		}
 
-		this._oMetadataAppliedPromise.then(function() {
-
-			if (this._bIsBeingDestroyed) {
-				return;
+		if (!bFiltersAggregationChanged) {
+			if (this._btnAdapt) {
+				var aFilterNames = this.getAssignedFilterNames();
+				this.setProperty("_filterCount", this._oRb.getText(aFilterNames.length ? "filterbar.ADAPT_NONZERO" : "filterbar.ADAPT", aFilterNames.length), false);
 			}
+		}
 
-			if (!bFiltersAggregationChanged) {
-				if (this._btnAdapt) {
-					var aFilterNames = this.getAssignedFilterNames();
-					this.setProperty("_filterCount", this._oRb.getText(aFilterNames.length ? "filterbar.ADAPT_NONZERO" : "filterbar.ADAPT", aFilterNames.length), false);
-				}
-			}
-
-			var mTexts = this._getAssignedFiltersText();
-			var oObj = {
+		var mTexts = this._getAssignedFiltersText();
+		var oObj = {
 				conditionsBased: (!bFiltersAggregationChanged && !bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch),
 				filtersText: mTexts.filtersText,
 				filtersTextExpanded: mTexts.filtersTextExpanded
-			};
+		};
 
-			this.fireFiltersChanged(oObj);
-		}.bind(this));
+		this.fireFiltersChanged(oObj);
+
 	};
 
 	FilterBarBase.prototype.onReset = function(oEvent) {
@@ -1138,75 +1241,148 @@ sap.ui.define([
 		}.bind(this) : undefined;
 	};
 
+
+	FilterBarBase.prototype._isPathKnown = function(sFieldPath, oXCondition) {
+		var sKey, sName;
+
+		if (!this._getPropertyByName(sFieldPath)) {
+			return false;
+		}
+
+		for (sKey in oXCondition["inParameters"]) {
+			sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
+			if (!this._getPropertyByName(sName)) {
+				return false;
+			}
+		}
+		for (sKey in oXCondition["outParameters"]) {
+			sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
+			if (!this._getPropertyByName(sName)) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	FilterBarBase.prototype._removeCondition = function(sFieldPath, oXCondition, oCM) {
+		var oProperty = this._getPropertyByName(sFieldPath);
+		if (oProperty) {
+			var oCondition = this._toInternal(oProperty, oXCondition);
+			if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) >= 0) {
+				oCM.removeCondition(sFieldPath, oCondition);
+			}
+		}
+	};
+
 	FilterBarBase.prototype.removeCondition = function(sFieldPath, oXCondition) {
 		return this.initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
-				var oProperty = this._getPropertyByName(sFieldPath);
-				if (oProperty) {
-					var oCondition = this._toInternal(oProperty, oXCondition);
-					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) >= 0) {
-						oCM.removeCondition(sFieldPath, oCondition);
-					}
+				if (!this._hasPropertyHelper() && !this._isPathKnown(sFieldPath, oXCondition)) {
+					return this._retrieveMetadata().then(function() {
+						this._removeCondition(sFieldPath, oXCondition, oCM);
+					}.bind(this));
+				} else {
+					this._removeCondition(sFieldPath, oXCondition, oCM);
 				}
 			}
 		}.bind(this));
+	};
+
+	FilterBarBase.prototype._addCondition = function(sFieldPath, oXCondition, oCM) {
+		var oProperty = this._getPropertyByName(sFieldPath);
+		if (oProperty) {
+			var oCondition = this._toInternal(oProperty, oXCondition);
+			if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
+				var mCondition = {};
+				mCondition[sFieldPath] = [oCondition];
+				FilterController.checkConditionOperatorSanity(mCondition); //check if the single condition's operator is valid
+				var aConditions = mCondition[sFieldPath];
+				if (aConditions && aConditions.length > 0){
+					this._cleanUpFilterFieldInErrorStateByName(sFieldPath);
+					oCM.addCondition(sFieldPath, oCondition);
+				}
+			}
+		}
 	};
 
 	FilterBarBase.prototype.addCondition = function(sFieldPath, oXCondition) {
 		return this.initialized().then(function() {
 			var oCM = this._getConditionModel();
 			if (oCM) {
-				var oProperty = this._getPropertyByName(sFieldPath);
-				if (oProperty) {
-					var oCondition = this._toInternal(oProperty, oXCondition);
-					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
-						var mCondition = {};
-						mCondition[sFieldPath] = [oCondition];
-						FilterController.checkConditionOperatorSanity(mCondition); //check if the single condition's operator is valid
-						var aConditions = mCondition[sFieldPath];
-						if (aConditions && aConditions.length > 0){
-							this._cleanUpFilterFieldInErrorStateByName(sFieldPath);
-							oCM.addCondition(sFieldPath, oCondition);
-						}
-					}
+
+				if (!this._hasPropertyHelper() && !this._isPathKnown(sFieldPath, oXCondition)) {
+					return this._retrieveMetadata().then(function() {
+						this._addCondition(sFieldPath, oXCondition, oCM);
+					}.bind(this));
+				} else {
+					this._addCondition(sFieldPath, oXCondition, oCM);
 				}
 			}
 		}.bind(this));
 
 	};
 
-	FilterBarBase.prototype._setXConditions = function(aConditionsData, bRemoveBeforeApplying) {
-		var oProperty, aConditions, oConditionModel = this._getConditionModel();
+	FilterBarBase.prototype._setXConditions = function(mConditionsData, bRemoveBeforeApplying) {
+		var sFieldPath, oProperty, aConditions, oConditionModel = this._getConditionModel();
 
-		if (bRemoveBeforeApplying) {
-			oConditionModel.removeAllConditions();
-		}
+		var fPromiseResolve = null;
+		var oPromise = new Promise(function(resolve, reject) {
+			fPromiseResolve = resolve;
+		});
 
-		if (aConditionsData) {
-			for ( var sFieldPath in aConditionsData) {
-				aConditions = aConditionsData[sFieldPath];
-
+		var fApplyConditions = function(mConditionsData) {
+			for ( sFieldPath in mConditionsData) {
+				aConditions = mConditionsData[sFieldPath];
 				oProperty = this._getPropertyByName(sFieldPath);
 				if (oProperty) {
 
 					if (aConditions.length === 0) {
 						oConditionModel.removeAllConditions(sFieldPath);
 					} else {
+						if (oProperty.maxConditions !== -1) {
+							oConditionModel.removeAllConditions(sFieldPath);
+						}
+
 						/* eslint-disable no-loop-func */
 						aConditions.forEach(function(oCondition) {
-							if (oProperty.maxConditions !== -1) {
-								oConditionModel.removeAllConditions(sFieldPath);
-							}
-
-							var oNewCondition = this._toInternal(oProperty, oCondition);
-							oConditionModel.addCondition(sFieldPath, oNewCondition);
+							this._addCondition(sFieldPath, oCondition, oConditionModel);
 						}.bind(this));
 						/* eslint-enabled no-loop-func */
 					}
 				}
 			}
+
+			fPromiseResolve();
+		}.bind(this);
+
+		if (bRemoveBeforeApplying) {
+			oConditionModel.removeAllConditions();
 		}
+
+		if (mConditionsData) {
+
+			var bAllPropertiesKnown = true;
+			for ( sFieldPath in mConditionsData) {
+				aConditions = mConditionsData[sFieldPath];
+
+				if (!this._isPathKnown(sFieldPath, aConditions)) {
+					bAllPropertiesKnown = false;
+					break;
+				}
+			}
+
+			if (!bAllPropertiesKnown && !this._hasPropertyHelper()) {
+				this._retrieveMetadata().then(function() {
+					fApplyConditions(mConditionsData);
+				});
+			} else {
+				fApplyConditions(mConditionsData);
+			}
+		}
+
+		return oPromise;
 	};
 
 	FilterBarBase.prototype._getXConditions = function () {
@@ -1450,15 +1626,6 @@ sap.ui.define([
 	};
 
 
-	FilterBarBase.prototype.getPropertyInfoSet = function() {
-		try {
-			var oPropertyHelper = this.getPropertyHelper();
-			return oPropertyHelper ? oPropertyHelper.getProperties() : [];
-		} catch (ex) {
-			return [];
-		}
-	};
-
 	FilterBarBase.prototype._getNonHiddenPropertyInfoSet = function() {
 		var aVisibleProperties = [];
 		this.getPropertyInfoSet().every(function(oProperty) {
@@ -1489,9 +1656,6 @@ sap.ui.define([
 		return oProperty;
 	};
 
-	FilterBarBase.prototype._getPropertyByName = function(sName) {
-		return FilterUtil.getPropertyByKey(this.getPropertyInfoSet(), sName);
-	};
 
 	FilterBarBase.prototype._cleanUpFilterFieldInErrorStateByName = function(sFieldName) {
 		var oFilterField = null;
@@ -1587,25 +1751,26 @@ sap.ui.define([
 
 		this._bIgnoreChanges = true;
 
-		this._applyFilterConditionsChanges();
+		this._applyFilterConditionsChanges().then(function() {
 
-		this._changesApplied();
-
-		this._bInitialFiltersApplied = true;
-		this._fResolveInitialFiltersApplied();
-		this._fResolveInitialFiltersApplied = null;
+			this._changesApplied();
+			this._bInitialFiltersApplied = true;
+			this._fResolveInitialFiltersApplied();
+			this._fResolveInitialFiltersApplied = null;
+		}.bind(this));
 	};
 
 	FilterBarBase.prototype._applyFilterConditionsChanges = function() {
 
-		var aConditionsData;
+		var mSettings, mConditionsData;
 
-		var mSettings = this.getProperty("filterConditions");
+		mSettings = this.getProperty("filterConditions");
 		if (Object.keys(mSettings).length > 0) {
-
-			aConditionsData = merge([], mSettings);
-			this._setXConditions(aConditionsData, true, true);
+			mConditionsData = merge({}, mSettings);
+			return this._setXConditions(mConditionsData, true);
 		}
+
+		return Promise.resolve();
 	};
 
 	FilterBarBase.prototype.setVariantBackreference = function(oVariant) {

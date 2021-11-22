@@ -191,7 +191,14 @@ sap.ui.define([
 					Log.warning("property '" + sFieldPath + "' not supported");
 					continue;
 				}
-				aConditionChanges = aConditionChanges.concat(FlexUtil._diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl));
+
+				var aFilterConditionChanges = FlexUtil._diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl);
+
+				if (oAdaptationControl && oAdaptationControl.createPropertyInfoChanges && (aFilterConditionChanges.length > 0)) {
+					aFilterConditionChanges = oAdaptationControl.createPropertyInfoChanges(sFieldPath).concat(aFilterConditionChanges);
+				}
+
+				aConditionChanges = aConditionChanges.concat(aFilterConditionChanges);
 			}
 
 			return aConditionChanges;

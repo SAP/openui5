@@ -42,7 +42,7 @@ sap.ui.define([
               ]
         });
 
-        sinon.stub(this.oFilterBarBase, "_applyFilterConditionsChanges");
+        sinon.stub(this.oFilterBarBase, "_applyFilterConditionsChanges").returns(Promise.resolve());
         this.oFilterBarBase.initialized().then(function(){
             sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeUtil().getTypeConfig("sap.ui.model.type.String")});
 
@@ -201,9 +201,7 @@ sap.ui.define([
 
         var done = assert.async();
 
-        var oMetadataPromise = this.oFilterBarBase._oMetadataAppliedPromise;
-
-        oMetadataPromise.then(function(){
+        this.oFilterBarBase._waitForMetadata().then(function(){
             assert.ok(!this.oFilterBarBase._fResolveMetadataApplied, "Metadata resolve has been cleaned up");
 
             done();

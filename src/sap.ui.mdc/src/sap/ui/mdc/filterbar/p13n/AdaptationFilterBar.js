@@ -50,6 +50,12 @@ sap.ui.define([
 		this._bPersistValues = true;
 	};
 
+	AdaptationFilterBar.prototype._initControlDelegate = function() {
+		this._retrieveMetadata().then(function() {
+			this._applyInitialFilterConditions();
+		}.bind(this));
+	};
+
 	AdaptationFilterBar.prototype.setMessageStrip = function(oStrip) {
 		this._oFilterBarLayout.setMessageStrip(oStrip);
 	};

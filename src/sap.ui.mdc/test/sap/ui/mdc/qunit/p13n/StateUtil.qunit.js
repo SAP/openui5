@@ -58,6 +58,7 @@ sap.ui.define([
 		},
 		beforeEach: function(){
 			this.oFilterBar = this.oView.byId('myFilterBar');
+			this.oFilterBar.setPropertyInfo([]);
 			this.oFilterBar.removeAllFilterItems([]);
 			sinon.stub(this.oFilterBar, "_toInternal").callsFake(function(oProperty, oXCondition) {
 				return oXCondition;
@@ -92,8 +93,8 @@ sap.ui.define([
 		//we expect one change and the other conditions to be unaffected by the change
 		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
 
-			//an existing value has been changed --> removeCondition + addCondition
-			assert.equal(aDirtyChanges.length, 2, "The correct amount of changes has been created");
+			//an existing value has been changed --> removeCondition + addCondition + 2x addMetadata
+			assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
 
 			StateUtil.retrieveExternalState(this.oFilterBar).then(function(oState){
 
@@ -139,13 +140,17 @@ sap.ui.define([
 		};
 
 		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
-			assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
+			assert.equal(aDirtyChanges.length, 8, "The correct amount of changes has been created");
 
 			//check if the changes hold the correct content
-			assert.equal(aDirtyChanges[0].getContent().condition, oExternalState.filter.String[0], "The correct 'addCondition' change has been created");
-			assert.equal(aDirtyChanges[1].getContent().condition, oExternalState.filter.Boolean[0], "The correct 'addCondition' change has been created");
-			assert.equal(aDirtyChanges[2].getContent().condition, oExternalState.filter.Decimal[0], "The correct 'addCondition' change has been created");
-			assert.equal(aDirtyChanges[3].getContent().condition, oExternalState.filter.Date[0], "The correct 'addCondition' change has been created");
+			assert.equal(aDirtyChanges[0].getDefinition().changeType, "addPropertyInfo");
+			assert.equal(aDirtyChanges[1].getContent().condition, oExternalState.filter.String[0], "The correct 'addCondition' change has been created");
+			assert.equal(aDirtyChanges[2].getDefinition().changeType, "addPropertyInfo");
+			assert.equal(aDirtyChanges[3].getContent().condition, oExternalState.filter.Boolean[0], "The correct 'addCondition' change has been created");
+			assert.equal(aDirtyChanges[4].getDefinition().changeType, "addPropertyInfo");
+			assert.equal(aDirtyChanges[5].getContent().condition, oExternalState.filter.Decimal[0], "The correct 'addCondition' change has been created");
+			assert.equal(aDirtyChanges[6].getDefinition().changeType, "addPropertyInfo");
+			assert.equal(aDirtyChanges[7].getContent().condition, oExternalState.filter.Date[0], "The correct 'addCondition' change has been created");
 
 			StateUtil.retrieveExternalState(this.oFilterBar).then(function(oRetrievedState){
 
@@ -219,11 +224,13 @@ sap.ui.define([
 		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
 
 			//an existing value has been changed --> removeCondition + addCondition
-			assert.equal(aDirtyChanges.length, 2, "The correct amount of changes has been created");
-			assert.equal(aDirtyChanges[0].getChangeType(), "removeCondition", "The condition change for remove has been created");
+			assert.equal(aDirtyChanges.length, 3, "The correct amount of changes has been created");
+			assert.equal(aDirtyChanges[0].getChangeType(), "addPropertyInfo", "The condition change for remove has been created");
 			assert.equal(aDirtyChanges[0].getContent().name, "Boolean", "The correct property is affected");
-			assert.equal(aDirtyChanges[1].getChangeType(), "addCondition", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[1].getChangeType(), "removeCondition", "The condition change for remove has been created");
 			assert.equal(aDirtyChanges[1].getContent().name, "Boolean", "The correct property is affected");
+			assert.equal(aDirtyChanges[2].getChangeType(), "addCondition", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[2].getContent().name, "Boolean", "The correct property is affected");
 
 			//we expect the retrieved staste to match the latest changes
 			StateUtil.retrieveExternalState(this.oFilterBar).then(function(oRetrievedState){
@@ -253,16 +260,24 @@ sap.ui.define([
 		//we expect one change and the other conditions to be unaffected by the change
 		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
 
-			//an existing value has been changed --> removeCondition + addCondition
-			assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
-			assert.equal(aDirtyChanges[0].getChangeType(), "addCondition", "The condition change for add has been created");
+			//an existing value has been changed --> removeCondition + addCondition + addPropertyInfo
+			assert.equal(aDirtyChanges.length, 8, "The correct amount of changes has been created");
+			assert.equal(aDirtyChanges[0].getChangeType(), "addPropertyInfo", "The condition change for add has been created");
 			assert.equal(aDirtyChanges[0].getContent().name, "String", "The correct property is affected");
 			assert.equal(aDirtyChanges[1].getChangeType(), "addCondition", "The condition change for add has been created");
-			assert.equal(aDirtyChanges[1].getContent().name, "Boolean", "The correct property is affected");
-			assert.equal(aDirtyChanges[2].getChangeType(), "addCondition", "The condition change for add has been created");
-			assert.equal(aDirtyChanges[2].getContent().name, "Decimal", "The correct property is affected");
+			assert.equal(aDirtyChanges[1].getContent().name, "String", "The correct property is affected");
+			assert.equal(aDirtyChanges[2].getChangeType(), "addPropertyInfo", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[2].getContent().name, "Boolean", "The correct property is affected");
 			assert.equal(aDirtyChanges[3].getChangeType(), "addCondition", "The condition change for add has been created");
-			assert.equal(aDirtyChanges[3].getContent().name, "Date", "The correct property is affected");
+			assert.equal(aDirtyChanges[3].getContent().name, "Boolean", "The correct property is affected");
+			assert.equal(aDirtyChanges[4].getChangeType(), "addPropertyInfo", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[4].getContent().name, "Decimal", "The correct property is affected");
+			assert.equal(aDirtyChanges[5].getChangeType(), "addCondition", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[5].getContent().name, "Decimal", "The correct property is affected");
+			assert.equal(aDirtyChanges[6].getChangeType(), "addPropertyInfo", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[6].getContent().name, "Date", "The correct property is affected");
+			assert.equal(aDirtyChanges[7].getChangeType(), "addCondition", "The condition change for add has been created");
+			assert.equal(aDirtyChanges[7].getContent().name, "Date", "The correct property is affected");
 
 			//the second time there should not be any changes
 			StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
@@ -292,7 +307,23 @@ sap.ui.define([
 			StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
 
 				//an existing value has been changed --> removeCondition + addCondition
-				assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
+				assert.equal(aDirtyChanges.length, 8, "The correct amount of changes has been created");
+				assert.equal(aDirtyChanges[0].getChangeType(), "addPropertyInfo", "The condition change for prop info has been created");
+				assert.equal(aDirtyChanges[0].getContent().name, "String", "The correct property is affected");
+				assert.equal(aDirtyChanges[1].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[1].getContent().name, "String", "The correct property is affected");
+				assert.equal(aDirtyChanges[2].getChangeType(), "addPropertyInfo", "The condition change for prop info has been created");
+				assert.equal(aDirtyChanges[2].getContent().name, "Boolean", "The correct property is affected");
+				assert.equal(aDirtyChanges[3].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[3].getContent().name, "Boolean", "The correct property is affected");
+				assert.equal(aDirtyChanges[4].getChangeType(), "addPropertyInfo", "The condition change for prop info has been created");
+				assert.equal(aDirtyChanges[4].getContent().name, "Decimal", "The correct property is affected");
+				assert.equal(aDirtyChanges[5].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[5].getContent().name, "Decimal", "The correct property is affected");
+				assert.equal(aDirtyChanges[6].getChangeType(), "addPropertyInfo", "The condition change for prop info has been created");
+				assert.equal(aDirtyChanges[6].getContent().name, "Date", "The correct property is affected");
+				assert.equal(aDirtyChanges[7].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[7].getContent().name, "Date", "The correct property is affected");
 
 				//the second time there should not be any changes
 				var oResetState = {

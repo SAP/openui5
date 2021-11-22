@@ -767,7 +767,7 @@ var oVariantMap = {
 				delegate: { name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate", payload: { modelName: undefined, collectionName: "test" } }
 
 			});
-			return oFB._oMetadataAppliedPromise;
+			return oFB._waitForMetadata();
 		})
 		.then(function () {
 

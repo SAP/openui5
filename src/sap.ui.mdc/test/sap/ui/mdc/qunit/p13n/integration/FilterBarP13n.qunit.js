@@ -15,16 +15,20 @@ sap.ui.define([
 			this.aPropertyInfos = [
 				{
 					"name": "item1",
-					"label": "item1"
+					"label": "item1",
+					"typeConfig": { className: "Edm.String"}
 				}, {
 					"name": "item2",
-					"label": "item2"
+					"label": "item2",
+					"typeConfig": { className: "Edm.String"}
 				}, {
 					"name": "item3",
 					"label": "item3",
+					"typeConfig": { className: "Edm.String"},
 					"required": true
 				}, {
-					"name": "$search"
+					"name": "$search",
+					"typeConfig": { className: "Edm.String"}
 				},{
 					"name": "someHiddenProperty",
 					"hiddenFilter": true
@@ -211,10 +215,13 @@ sap.ui.define([
             state: mConditions
         }).then(function(aChanges){
             assert.ok(aChanges, "changes created");
-            assert.equal(aChanges.length, 3, "three changes created");
-            assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition", "one condition change created");
+            assert.equal(aChanges.length, 6, "six changes created");
+            assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
             assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
-            assert.equal(aChanges[2].changeSpecificData.changeType, "addCondition", "one condition change created");
+            assert.equal(aChanges[2].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
+            assert.equal(aChanges[3].changeSpecificData.changeType, "addCondition", "one condition change created");
+            assert.equal(aChanges[4].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
+            assert.equal(aChanges[5].changeSpecificData.changeType, "addCondition", "one condition change created");
             done();
         });
 
@@ -259,9 +266,11 @@ sap.ui.define([
             state: mConditions
         }).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 2, "three changes created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition", "one condition change created");
-			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
+			assert.equal(aChanges.length, 4, "four changes created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item1
+			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created"); // item2
+			assert.equal(aChanges[2].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");  // item3
+			assert.equal(aChanges[3].changeSpecificData.changeType, "addCondition", "one condition change created"); // item3
 			done();
         });
 
@@ -285,10 +294,13 @@ sap.ui.define([
             state: mConditions
         }).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 3, "three changes created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "removeCondition", "one condition change created");
-			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
-			assert.equal(aChanges[2].changeSpecificData.changeType, "addCondition", "one condition change created");
+			assert.equal(aChanges.length, 6, "six changes created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item1
+			assert.equal(aChanges[1].changeSpecificData.changeType, "removeCondition", "one condition change created");
+			assert.equal(aChanges[2].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item2
+			assert.equal(aChanges[3].changeSpecificData.changeType, "addCondition", "one condition change created");
+			assert.equal(aChanges[4].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item3
+			assert.equal(aChanges[5].changeSpecificData.changeType, "addCondition", "one condition change created");
 			done();
         });
 
@@ -310,8 +322,9 @@ sap.ui.define([
             state: mConditions
         }).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 1, "three changes created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition", "one condition change created");
+			assert.equal(aChanges.length, 2, "two changes created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
+			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
 			done();
         });
 

@@ -21,6 +21,9 @@ sap.ui.define([], function() {
 			filterConditions: {
 				ignore: true
 			},
+			propertyInfo: {
+				ignore: true
+			},
 			suspendSelection: {
 				ignore: true
 			}
