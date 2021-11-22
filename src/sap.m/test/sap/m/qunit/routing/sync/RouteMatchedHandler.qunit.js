@@ -105,7 +105,7 @@ sap.ui.define([
 		assert.strictEqual(oNavigateStub.callCount, 1, "did call navigate");
 		var oDirectionInfo = oNavigateStub.firstCall.args[0];
 
-		assert.strictEqual(oEvent.config.viewLevel, oDirectionInfo.viewLevel, "did have the correct viewlevel");
+		assert.strictEqual(oEvent.config.viewLevel, oDirectionInfo.level, "did have the correct viewlevel");
 		assert.ok(oDirectionInfo.askHistory, "did ask the history");
 
 		oRouter.destroy();

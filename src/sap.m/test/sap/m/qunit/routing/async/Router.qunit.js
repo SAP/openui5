@@ -170,7 +170,7 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(oNavigateSpy, {
 				askHistory: true,
 				navigationIdentifier: "myTarget",
-				viewLevel: 5
+				level: 5
 			});
 			oToSpy.restore();
 			oNavigateSpy.restore();

@@ -76,7 +76,7 @@ sap.ui.define([
 			assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
 			sinon.assert.calledWithExactly(oNavigateSpy, {
 				navigationIdentifier: "myTarget",
-				viewLevel: 5,
+				level: 5,
 				askHistory: true
 			});
 			oToSpy.restore();

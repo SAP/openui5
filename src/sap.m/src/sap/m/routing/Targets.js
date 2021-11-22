@@ -14,7 +14,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * The mobile extension of <code>Targets</code> also handles the triggering
 		 * of page navigation when the target control is an <code>{@link sap.m.SplitContainer}</code>,
 		 * an <code>{@link sap.m.NavContainer}</code> or a control which extends one of these.
-		 * Other controls are also allowed, but the extra parameters <code>viewLevel</code>,
+		 * Other controls are also allowed, but the extra parameters <code>level</code>,
 		 * <code>transition</code> and <code>transitionParameters</code> are ignored and it behaves
 		 * as <code>{@link sap.ui.core.routing.Targets}</code>.
 		 *
@@ -252,27 +252,28 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * So a parent will always be created before the target referencing it.
 		 *
 		 *
-		 * @param {int} [oOptions.targets.anyName.viewLevel]
+		 * @param {int} [oOptions.targets.anyName.level]
 		 * If you are having an application that has a logical order of views (eg: a create account process, first provide user data, then review and confirm them).
 		 * You always want to show a backwards transition if a navigation from the confirm to the userData page takes place.
-		 * Therefore you may use the viewLevel. The viewLevel has to be an integer. The user data page should have a lower number than the confirm page.
+		 * Therefore you may use the <code>level</code>. The <code>level</code> has to be an integer. The user data page should have a lower number than the confirm page.
 		 * These levels should represent the user process of your application and they do not have to match the container structure of your Targets.
-		 * If the user navigates between views with the same viewLevel, a forward transition is taken. If you pass a direction into the display function, the viewLevel will be ignored.<br/>
+		 * If the user navigates between targets with the same <code>level</code>, a forward transition is taken.
+		 * If you pass a direction into the display function, the <code>level</code> will be ignored.<br/>
 		 * <b>Example:</b></br>
 		 * <pre>
 		 * <code>
 		 *     {
 		 *         targets: {
 		 *             startPage: {
-		 *                 viewLevel: 0
+		 *                 level: 0
 		 *                 // more properties
 		 *             },
 		 *             userData: {
-		 *                 viewLevel: 1
+		 *                 level: 1
 		 *                 // more properties
 		 *             },
 		 *             confirmRegistration: {
-		 *                 viewLevel: 2
+		 *                 level: 2
 		 *                 // more properties
 		 *             },
 		 *             settings: {
@@ -286,13 +287,13 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * Currently the 'userData' target is displayed.
 		 * <ul>
 		 *     <li>
-		 *         If we navigate to 'startPage' the navContainer will show a backwards navigation, since the viewLevel is lower.
+		 *         If we navigate to 'startPage' the navContainer will show a backwards navigation, since the <code>level</code> is lower.
 		 *     </li>
 		 *     <li>
-		 *         If we navigate to 'userData' the navContainer will show a forwards navigation, since the viewLevel is higher.
+		 *         If we navigate to 'userData' the navContainer will show a forwards navigation, since the <code>level</code> is higher.
 		 *     </li>
 		 *     <li>
-		 *         If we navigate to 'settings' the navContainer will show a forwards navigation, since the viewLevel is not defined and cannot be compared.
+		 *         If we navigate to 'settings' the navContainer will show a forwards navigation, since the <code>level</code> is not defined and cannot be compared.
 		 *     </li>
 		 * </ul>
 		 *
@@ -377,17 +378,17 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 			 * @return {number} The view level
 			 * @private
 			 */
-			_getViewLevel : function (oTarget) {
-				var iViewLevel;
+			_getLevel : function (oTarget) {
+				var iLevel;
 				do {
-					iViewLevel = oTarget._oOptions.viewLevel;
-					if (iViewLevel !== undefined) {
-						return iViewLevel;
+					iLevel = oTarget._oOptions.hasOwnProperty("level") ? oTarget._oOptions.level : oTarget._oOptions.viewLevel;
+					if (iLevel !== undefined) {
+						return iLevel;
 					}
 					oTarget = oTarget._oParent;
 				} while (oTarget);
 
-				return iViewLevel;
+				return iLevel;
 			}
 		});
 
