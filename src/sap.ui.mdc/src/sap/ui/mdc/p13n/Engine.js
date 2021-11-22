@@ -234,6 +234,7 @@ sap.ui.define([
 		aKeys = aKeys instanceof Array ? aKeys : [aKeys];
 
 		var oResetConfig = {
+			selectors: [oControl],
 			selector: oControl
 		};
 
