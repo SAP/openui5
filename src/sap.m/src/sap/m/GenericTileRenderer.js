@@ -240,7 +240,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				}
 				oRm.openEnd();
 				if (oControl.getTileIcon()) {
-					oRm.renderControl(oControl._renderTileIcon(oControl.getTileIcon()));
+					var sAggregation = oControl._generateIconAggregation(oControl.getTileIcon());
+					if (sAggregation) {
+						oRm.renderControl(oControl.getAggregation(sAggregation));
+					}
 				}
 				oRm.close("div");
 			}
