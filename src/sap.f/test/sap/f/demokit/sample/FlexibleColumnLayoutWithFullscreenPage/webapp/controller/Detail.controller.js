@@ -18,7 +18,7 @@ sap.ui.define([
 			this.oRouter.getRoute("detailDetailDetail").attachPatternMatched(this._onCategoryMatched, this);
 		},
 		onListItemPress: function (oEvent) {
-			var productPath = oEvent.getSource().getBindingContext("products").getPath(),
+			var productPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				product = productPath.split("/").slice(-1).pop();
 
 			this.oRouter.navTo("detailDetail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, category: this._category, product: product});
@@ -55,11 +55,15 @@ sap.ui.define([
 		},
 
 		_onCategoryMatched: function (oEvent) {
-			var oTableSearchState;
+			var oTableSearchState,
+				oTable = this.getView().byId("productsTable"),
+				oTableBindingItems = oTable.getBinding("items"),
+				oEventArgs = oEvent.getParameter("arguments");
 
-			this._category = oEvent.getParameter("arguments").category || this._category;
+			this._category = oEventArgs.category || this._category;
 			oTableSearchState = [new Filter("Category", FilterOperator.Contains, this._category)];
-			this.getView().byId("productsTable").getBinding("items").filter(oTableSearchState, "Application");
+			oTableBindingItems.filter(oTableSearchState, "Application");
+			oTable.getItems()[oTableBindingItems.aIndices.indexOf(+oEventArgs.product)].setSelected(true);
 		}
 	});
 });

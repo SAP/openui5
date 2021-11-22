@@ -111,13 +111,16 @@
 				<subSections>
 					<ObjectPageSubSection>
 						<blocks>
-							<m:Table id="suppliersTable"
-									 items="{path : 'products>/ProductCollectionStats/Filters/1/values'}">
+							<m:Table
+								id="suppliersTable"
+								mode="SingleSelectMaster"
+								itemPress="handleItemPress"
+								items="{path : 'products>/ProductCollectionStats/Filters/1/values'}">
 								<m:columns>
 									<m:Column />
 								</m:columns>
 								<m:items>
-									<m:ColumnListItem type="Navigation" press="handleItemPress">
+									<m:ColumnListItem type="Navigation">
 										<m:cells>
 											<m:ObjectIdentifier text="{products>text}" />
 										</m:cells>

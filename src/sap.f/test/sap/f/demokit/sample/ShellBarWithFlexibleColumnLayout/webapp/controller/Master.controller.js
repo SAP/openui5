@@ -15,7 +15,7 @@ sap.ui.define([
 		},
 		onListItemPress: function (oEvent) {
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1),
-				productPath = oEvent.getSource().getBindingContext("products").getPath(),
+				productPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				product = productPath.split("/").slice(-1).pop();
 
 			this.oRouter.navTo("detail", {layout: oNextUIState.layout, product: product});

@@ -28,7 +28,7 @@ sap.ui.define([
 			}, this);
 		},
 		handleItemPress: function (oEvent) {
-			var supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
+			var supplierPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop();
 
 			this.oRouter.navTo("detailDetailDetail", {layout: sap.f.LayoutType.ThreeColumnsMidExpanded, category: this._category, product: this._product, supplier: supplier});
