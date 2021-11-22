@@ -274,7 +274,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.attachSuggest(function(){
-			for (i = 0 ; i < aNames.length ; i++){
+			for (i = 0; i < aNames.length; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
@@ -4547,33 +4547,6 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(oAccDomRef.getAttribute("aria-live"), null, "Acc live-region is correctly removed to avoid double speech output on user changed state");
-
-		//Clean up
-		oInputWithValueState.destroy();
-	});
-
-	QUnit.test("Value State - When value state is error and is updated dynamically by user input the accessibility element should have aria-live=assertive attribute", function(assert) {
-		//Arrange
-		var oInputWithValueState = new Input({
-			valueState: "Information"
-		});
-		var oAccDomRef;
-
-		oInputWithValueState.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		oInputWithValueState.openValueStateMessage();
-		this.clock.tick();
-
-		// Act
-		// Simulate dynamic update of the value state by the user by changing the value state while focused
-		oInputWithValueState.focus();
-		oInputWithValueState.setValueState("Error");
-		sap.ui.getCore().applyChanges();
-		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
-
-		//Assert
-		assert.strictEqual(oAccDomRef.getAttribute("aria-live"), "assertive", "The accessibility live-region is correctly set to 'assertive'");
 
 		//Clean up
 		oInputWithValueState.destroy();
