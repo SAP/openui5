@@ -434,7 +434,7 @@ sap.ui.define([
 
 		this.ddr._createInfoDatesFooter();
 		this.ddr._oSelectedOption = oOptionToday;
-		oStepInput = aControls[3];
+		oStepInput = aControls[4];
 
 		oStepInput.setValue(7000);
 		//simulate input interaction
