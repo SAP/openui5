@@ -1085,22 +1085,22 @@ sap.ui.define([
 		var oBinding = {
 				_delete : function () {}
 			},
-			oGroupLock = {},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				new SyncPromise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), "n/a", sinon.match.same(oContext),
-				"~bDoNotRequestCount~")
+			.withExactArgs("~oGroupLock~", "n/a", sinon.match.same(oContext),
+				"~oETagEntity~", "~bDoNotRequestCount~")
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext._delete(oGroupLock, {}, "~bDoNotRequestCount~").then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-			assert.strictEqual(oContext.oBinding, oBinding);
-			assert.strictEqual(oContext.oModel, oModel);
-		});
+		return oContext._delete("~oGroupLock~", "~oETagEntity~", "~bDoNotRequestCount~")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+				assert.strictEqual(oContext.oBinding, oBinding);
+				assert.strictEqual(oContext.oModel, oModel);
+			});
 	});
 
 	//*********************************************************************************************
