@@ -114,13 +114,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if context sharing is enbaled.
+		 * Checks if context sharing is enabled.
 		 *
 		 * @param {string} sLayer - Layer to get correct connector
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if context sharing is enabled
 		 * @public
 		 */
 		isContextSharingEnabled: function (sLayer) {
+			if (sLayer !== Layer.CUSTOMER) {
+				return Promise.resolve(false);
+			}
 			return Storage.isContextSharingEnabled({layer: sLayer});
 		}
 	};
