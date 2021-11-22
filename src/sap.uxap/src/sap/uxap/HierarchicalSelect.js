@@ -58,6 +58,17 @@ sap.ui.define([
 
 		Select.prototype.onAfterRenderingPicker.call(this);
 
+		this._applyHierarchyLevelClasses();
+	};
+
+	HierarchicalSelect.prototype.onAfterRenderingList = function() {
+
+		Select.prototype.onAfterRenderingList.call(this);
+
+		this._applyHierarchyLevelClasses();
+	};
+
+	HierarchicalSelect.prototype._applyHierarchyLevelClasses = function () {
 		var aItems = this.getItems() || [];
 
 		aItems.forEach(function (oItem) {
@@ -66,7 +77,6 @@ sap.ui.define([
 			oItem.$().addClass(sClass);
 		}, this);
 	};
-
 
 	HierarchicalSelect.prototype.setUpperCase = function (bValue, bSuppressInvalidate) {
 
