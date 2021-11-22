@@ -199,64 +199,6 @@
 												<core:Item text="Default" key="default"/>
 												<core:Item text="with Country" key="template1"/>
 											</mdcvc:collectiveSearchItems>
-
-											<mdcvc:filterBar>
-												<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
-													<vhfb:basicSearchField>
-														<mdc:FilterField
-															delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
-															dataType= "Edm.String"
-															conditions= "{$filters>/conditions/$search}"
-															width="50%"
-															maxConditions="1"
-															placeholder="Search" />
-													</vhfb:basicSearchField>
-													<vhfb:filterItems>
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" dataTypeFormatOptions="{groupingEnabled: false}" conditions= "{$filters>/conditions/ID}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
-														<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" fieldHelp= "FH2">
-															<mdc:dependents>
-																<mdc:ValueHelp id="FH2"
-																	delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
-																	<mdc:dialog>
-																		<mdcv:Dialog title="Date of Birth">
-																			<mdcvc:Conditions label="Date of Birth"/>
-																		</mdcv:Dialog>
-																	</mdc:dialog>
-																</mdc:ValueHelp>
-															</mdc:dependents>
-														</mdc:FilterField>
-													</vhfb:filterItems>
-												</vhfb:FilterBar>
-											</mdcvc:filterBar>
-											<Table id="mTable2" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
-												<columns>
-													<Column width="5rem">
-														<header>
-															<Text text="ID" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Name" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Date of birth" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text id="mTable2-authorId" text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
-															<Text text="{name}" />
-															<Text text="{dateOfBirth}" />
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
 										</mdcvc:MTable>
 										<mdcvc:Conditions label="Author ID"/>
 									</mdcv:Dialog>

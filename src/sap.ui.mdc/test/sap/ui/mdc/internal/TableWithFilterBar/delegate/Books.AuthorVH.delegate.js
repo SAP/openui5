@@ -11,96 +11,55 @@ sap.ui.define([
 
 	Delegate.retrieveContent = function (oPayload, oContainer) {
 		var oValueHelp = oContainer && oContainer.getParent();
-
-		// var oParams = UriParameters.fromQuery(location.search);
-		// var oParamSuspended = oParams.get("suspended");
-		var bSuspended = false; // oParamSuspended ? oParamSuspended === "true" : false;
-
+		var bSuspended = false;
 		var aCurrentContent = oContainer && oContainer.getContent();
 		var oCurrentContent = aCurrentContent && aCurrentContent[0];
-
 		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
-
-		// if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-
-		// 	if (!oCurrentContent) {
-		// 		oCurrentContent = new MTable({keyPath: "ID", descriptionPath: "name"});
-		// 		oContainer.addContent(oCurrentContent);
-		// 	}
-
-		// 	if (!oCurrentContent.getTable()) {
-		// 		oCurrentContent.setTable(new Table("mTable1", {
-		// 			width: "30rem",
-		// 			mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
-		// 			columns: [
-		// 				new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-		// 				new sap.m.Column({header: new sap.m.Text({text : "Name"})})
-		// 			],
-		// 			items: {
-		// 				path : "/Authors",
-		// 				length: 10,
-		// 				suspended: bSuspended,
-		// 				template : new sap.m.ColumnListItem({
-		// 					type: "Active",
-		// 					cells: [
-		// 						new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-		// 						new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
-		// 					]
-		// 				})
-		// 			}
-		// 		}));
-		// 	}
-		// }
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog")) {
 
-			// if (!oCurrentContent) {
-
-			// 	oCurrentContent = new MTable({keyPath: "ID", descriptionPath: "name", collectiveSearchItems: [
-			// 		new sap.ui.core.Item({text: "Default Search Template", key: "default"}),
-			// 		new sap.ui.core.Item({text: "Search Template 1", key: "template1"})
-			// 	]});
-
-			// 	oContainer.addContent(oCurrentContent);
-
-			// 	// var oAdditionalContent = new Conditions({
-			// 	// 	label:"Label of Field"
-			// 	// });
-			// 	// oContainer.addContent(oAdditionalContent);
-
-			// }
-
 			var oCurrentTable = oCurrentContent.getTable();
 			if (oCurrentTable) {
+				oCurrentContent.setTable(null);
 				oCurrentTable.destroy();
 			}
+			var oCurrentFilterBar = oCurrentContent.getFilterBar();
+			if (oCurrentFilterBar) {
+				if (oCurrentFilterBar.getCollectiveSearch()) {
+					oCurrentFilterBar.setCollectiveSearch(null);
+				}
+				oCurrentContent.setFilterBar(null);
+				oCurrentFilterBar.destroy();
+			}
 
-			var oCollectiveSearchContent;
+			var oTable;
 
 			switch (oCurrentContent.getCollectiveSearchKey()) {
 				case "template1":
 
-					oCurrentContent.setFilterBar(
-						new FilterBar(oCurrentContent.getId() + "--" +  "template1-FB",{
-							liveMode: false,
-							delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
-							basicSearchField: new FilterField({
-								delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
-								dataType: "Edm.String",
-								conditions: "{$filters>/conditions/$search}",
-								width: "50%",
-								maxConditions: 1,
-								placeholder: "Search"
-							}),
-							filterItems: [
-								new FilterField(oCurrentContent.getId() + "--" +  "template1-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
-								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country of Origin", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})
-							]
-						})
-					);
+					if (!oCurrentContent.getFilterBar()) {
+						oCurrentContent.setFilterBar(
+							new FilterBar(oCurrentContent.getId() + "--" +  "template1-FB",{
+								liveMode: false,
+								delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
+								basicSearchField: new FilterField({
+									delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+									dataType: "Edm.String",
+									conditions: "{$filters>/conditions/$search}",
+									width: "50%",
+									maxConditions: 1,
+									placeholder: "Search"
+								}),
+								filterItems: [
+									new FilterField(oCurrentContent.getId() + "--" +  "template1-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
+									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country of Origin", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})
+								]
+							})
+						);
+					}
 
-					oCollectiveSearchContent = new Table(oCurrentContent.getId() + "--" +  "template1", {
+					oTable = new Table(oCurrentContent.getId() + "--" +  "template1", {
 						width: "100%",
 						growing: true,
 						growingScrollToLoad: true,
@@ -114,10 +73,11 @@ sap.ui.define([
 						items: {
 							path : "/Authors",
 							suspended: bSuspended,
+							templateShareable: false,
 							template : new sap.m.ColumnListItem({
 								type: "Active",
 								cells: [
-									new sap.m.Text(oCurrentContent.getId() + "--" +  "template1-AuthoId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
+									new sap.m.Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
 									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
 									new sap.m.Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})
 								]
@@ -128,27 +88,29 @@ sap.ui.define([
 
 				default:
 
-					oCurrentContent.setFilterBar(
-						new FilterBar(oCurrentContent.getId() + "--" +  "default-FB", {
-							liveMode: false,
-							delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
-							basicSearchField: new FilterField({
-								delegate: {	name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
-								dataType: "Edm.String",
-								conditions: "{$filters>/conditions/$search}",
-								width: "50%",
-								maxConditions: 1,
-								placeholder: "Search"
-							}),
-							filterItems: [
-								new FilterField(oCurrentContent.getId() + "--" +  "default-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
-								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-								new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Date of Birth", maxConditions:-1, dataType:"Edm.Date", conditions:"{$filters>/conditions/dateOfBirth}"})
-							]
-						})
-					);
+					if (!oCurrentContent.getFilterBar()) {
+						oCurrentContent.setFilterBar(
+							new FilterBar(oCurrentContent.getId() + "--" +  "default-FB", {
+								liveMode: false,
+								delegate: {name: "sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate", payload: {}},
+								basicSearchField: new FilterField({
+									delegate: {	name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+									dataType: "Edm.String",
+									conditions: "{$filters>/conditions/$search}",
+									width: "50%",
+									maxConditions: 1,
+									placeholder: "Search"
+								}),
+								filterItems: [
+									new FilterField(oCurrentContent.getId() + "--" +  "default-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
+									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Date of Birth", maxConditions:-1, dataType:"Edm.Date", conditions:"{$filters>/conditions/dateOfBirth}"})
+								]
+							})
+						);
+					}
 
-					oCollectiveSearchContent = new Table(oCurrentContent.getId() + "--" +  "default", {
+					oTable = new Table(oCurrentContent.getId() + "--" +  "default", {
 						width: "100%",
 						growing: true,
 						growingScrollToLoad: true,
@@ -162,6 +124,7 @@ sap.ui.define([
 						items: {
 							path : "/Authors",
 							suspended: bSuspended,
+							templateShareable: false,
 							template : new sap.m.ColumnListItem({
 								type: "Active",
 								cells: [
@@ -174,7 +137,7 @@ sap.ui.define([
 					});
 					break;
 			}
-			oCurrentContent.setTable(oCollectiveSearchContent);
+			oCurrentContent.setTable(oTable);
 		}
 
 		return Promise.resolve();
