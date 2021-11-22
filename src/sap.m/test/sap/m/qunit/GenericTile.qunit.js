@@ -3578,6 +3578,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 1, "Icon Container Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 1, "Text Container Created.");
+				assert.ok(this.oGenericTile.getAggregation("_tileIcon"), "Icon Aggregation has a valid value");
 				this.oGenericTile.setTileIcon(IMAGE_PATH + "female_BaySu.jpg");
 				sap.ui.getCore().applyChanges();
 				setTimeout(function(){
@@ -3594,6 +3595,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 1, "Icon Container Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 1, "Text Container Created.");
+					assert.ok(this.oGenericTile.getAggregation("_tileIconImage"), "Icon Image Aggregation has a valid value");
 					this.oGenericTile.setState("Loading");
 					sap.ui.getCore().applyChanges();
 					setTimeout(function(){

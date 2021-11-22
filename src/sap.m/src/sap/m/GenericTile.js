@@ -235,7 +235,19 @@ sap.ui.define([
 				/**
 				 * The hidden aggregation for the message in the failed state.
 				 */
-				_failedMessageText: {type: "sap.m.Text", multiple: false, visibility: "hidden"}
+				_failedMessageText: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
+				/**
+				 * The hidden aggregation for the Tile Icon Works only in IconMode.
+				 * @experimental since 1.96
+				 * @private
+				 */
+				_tileIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
+				 /**
+				 * The hidden aggregation for the Tile Icon Image. Works only in IconMode.
+				 * @experimental since 1.96
+				 * @private
+				 */
+				_tileIconImage: {type: "sap.m.Image", multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -1520,11 +1532,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the icon to be rendered for IconMode
+	 * Set and return aggregation of Icon to be rendered in IconMode
 	 * @param {*} oIcon Icon to be displayed on the GenericTile.
+	 * @returns {String} Returns the icon hidden aggregation
 	 * @private
 	 */
-	 GenericTile.prototype._renderTileIcon = function (oIcon) {
+	 GenericTile.prototype._generateIconAggregation = function (oIcon) {
+		var sAggregation = "";
 		this._oIcon = IconPool.createControlByURI({
 			size: this.getFrameType() === FrameType.OneByOne ? "2rem" : "1.25rem",
 			useIconTooltip: false,
@@ -1539,7 +1553,19 @@ sap.ui.define([
 			}, Image).addStyleClass("sapMPointer").addStyleClass("sapMGTTileIcon");
 		}
 		this._oIcon.addStyleClass("sapMPointer").addStyleClass("sapMGTTileIcon");
-		return this._oIcon;
+
+		//Add Icon or Image as hidden Aggregation
+		if (this._oIcon instanceof Image) {
+			sAggregation = "_tileIconImage";
+		} else if (this._oIcon instanceof Icon) {
+			sAggregation = "_tileIcon";
+		}
+
+		if (sAggregation) {
+			this.setAggregation(sAggregation, this._oIcon);
+		}
+
+		return sAggregation;
 	};
 
 	/**
