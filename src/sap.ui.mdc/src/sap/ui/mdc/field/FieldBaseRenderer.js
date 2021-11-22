@@ -13,9 +13,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// initialize the Icon Pool
-	IconPool.insertFontFaceStyle();
-
 	/**
 	 * FieldBase renderer.
 	 * @namespace
