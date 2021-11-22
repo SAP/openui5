@@ -217,5 +217,21 @@
         ]
       }
     ]
+  },
+  "1.93.3": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "9918d70efa205259f85837ff2d3df973ce9b599c",
+        "type": "FIX",
+        "text": " base/ManagedObjectMetadata: #addAPIParentInfoEnd",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006162002021"
+          }
+        ]
+      }
+    ]
   }
 }

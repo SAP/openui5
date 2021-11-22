@@ -444,5 +444,21 @@
         ]
       }
     ]
+  },
+  "1.93.3": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "67eb630df8526ce8863431e3cf33500b20d450a6",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: prevent endless rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170263676"
+          }
+        ]
+      }
+    ]
   }
 }

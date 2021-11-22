@@ -41,5 +41,21 @@
         ]
       }
     ]
+  },
+  "1.93.3": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "352af7d518edc3ad1f25cf7c73eefd125213ab3d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed single section upper line",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170230576"
+          }
+        ]
+      }
+    ]
   }
 }
