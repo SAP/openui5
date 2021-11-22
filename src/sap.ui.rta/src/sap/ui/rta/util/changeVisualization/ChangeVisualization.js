@@ -480,8 +480,7 @@ sap.ui.define([
 			visible: "{= ${/active} && (${changes} || []).length > 0}",
 			overlayId: oOverlay.getId(),
 			selectorId: sSelectorId,
-			selectChange: this.selectChange.bind(this),
-			keyPress: this._onIndicatorKeyPress.bind(this)
+			selectChange: this.selectChange.bind(this)
 		});
 		oChangeIndicator.setModel(this._oChangeVisualizationModel);
 		oChangeIndicator.bindElement("/content/" + sSelectorId);
@@ -493,32 +492,12 @@ sap.ui.define([
 		this._oChangeIndicatorRegistry.registerChangeIndicator(sSelectorId, oChangeIndicator);
 	};
 
-	ChangeVisualization.prototype._onIndicatorKeyPress = function (oEvent) {
-		var oOriginalEvent = oEvent.getParameter("originalEvent");
-		var iKeyCode = oOriginalEvent.keyCode;
-		var oIndicator = oEvent.getSource();
-		if (
-			iKeyCode === KeyCodes.ARROW_UP
-			|| iKeyCode === KeyCodes.ARROW_LEFT
-			|| (iKeyCode === KeyCodes.TAB && oOriginalEvent.shiftKey)
-		) {
-			oOriginalEvent.stopPropagation();
-			oOriginalEvent.preventDefault();
-			this._setFocusedIndicator(oIndicator, -1);
-		} else if (
-			iKeyCode === KeyCodes.ARROW_DOWN
-			|| iKeyCode === KeyCodes.ARROW_RIGHT
-			|| iKeyCode === KeyCodes.TAB
-		) {
-			oOriginalEvent.stopPropagation();
-			oOriginalEvent.preventDefault();
-			this._setFocusedIndicator(oIndicator, 1);
-		}
-	};
+	ChangeVisualization.prototype._setFocusedIndicator = function () {
+		// Sort the Indicators according XY-Position
+		// Set the tabindex according the sorting
+		// Focus the first visible indicator
+		sap.ui.getCore().applyChanges();
 
-	ChangeVisualization.prototype._setFocusedIndicator = function (oSelectedIndicator, iDirection) {
-		// Focus the next visible change indicator in the given direction
-		// If none is focused yet, focus the first visible indicator
 		var aVisibleIndicators = this._oChangeIndicatorRegistry.getChangeIndicators()
 			.filter(function (oIndicator) {
 				return oIndicator.getVisible();
@@ -533,15 +512,10 @@ sap.ui.define([
 		if (aVisibleIndicators.length === 0) {
 			return;
 		}
-
-		var iIndexToSelect = oSelectedIndicator
-			? (
-				aVisibleIndicators.length
-				+ aVisibleIndicators.indexOf(oSelectedIndicator)
-				+ iDirection
-			) % aVisibleIndicators.length
-			: 0;
-		aVisibleIndicators[iIndexToSelect].focus();
+		aVisibleIndicators.forEach(function(oIndicator, iIndex) {
+			oIndicator.getDomRef().tabIndex = iIndex + 2;
+		});
+		aVisibleIndicators[0].focus();
 	};
 
 	/**

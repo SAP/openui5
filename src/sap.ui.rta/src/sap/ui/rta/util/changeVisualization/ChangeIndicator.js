@@ -132,12 +132,14 @@ sap.ui.define([
 	});
 
 	ChangeIndicator.prototype.init = function () {
+		this._iOldTabIndex = 0;
 		this.setAggregation("_text", new Text({
 			text: "{= (${changes} || []).length}",
 			visible: "{= (${changes} || []).length > 1}"
 		}).addStyleClass("sapUiRtaChangeIndicatorText"));
 
 		this.attachBrowserEvent("click", this._onSelect, this);
+		this.attachBrowserEvent("tap", this._onSelect, this);
 		this.attachBrowserEvent("keydown", this._onKeyDown, this);
 		this.attachBrowserEvent("mouseleave", function() {this._toggleHoverStyleClasses(false); }, this);
 		this.attachBrowserEvent("focusout", function() {this._toggleHoverStyleClasses(false); }, this);
@@ -164,8 +166,8 @@ sap.ui.define([
 		// Attach to the overlay
 		var oOverlay = document.getElementById(this.getOverlayId());
 		oOverlay.appendChild(this.getDomRef());
-		// Set default tab index of 0 to enable tab navigation for the element
-		this.getDomRef().tabIndex = 0;
+		// Restore the Tabindex if stored before; set to 0 as default
+		this.getDomRef().tabIndex = this._iOldTabIndex;
 
 		if (this._bScheduledForFocus) {
 			// Element was supposed to be focused before rendering
@@ -257,6 +259,8 @@ sap.ui.define([
 
 	ChangeIndicator.prototype._openDetailPopover = function () {
 		if (!this.getAggregation("_popover")) {
+			//store the tabindex (tabindex will be removed on opening the popover)
+			this._iOldTabIndex = this.getDomRef().getAttribute("tabindex");
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorPopover",
 				controller: this
