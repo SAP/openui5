@@ -330,7 +330,6 @@ sap.ui.define([
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
 						this.initializeSecurityToken();
-						this.oRequestor.sendEarliestBatch();
 					}
 
 					this.aAllBindings = [];
