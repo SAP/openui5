@@ -1,4 +1,7 @@
-sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
+sap.ui.define([
+	"sap/ui/integration/Extension",
+	"sap/ui/core/format/DateFormat"
+], function(Extension, DateFormat) {
 	"use strict";
 
 	var SampleExtension = Extension.extend("card.explorer.calendar.extensionSample.SampleExtension");
@@ -36,63 +39,78 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		}, 3000); // simulate delay
 	};
 
-	SampleExtension.prototype._generateAppointmentsData = function (oSelectedDate) {
-		var oFormatter = sap.ui.core.format.DateFormat.getDateInstance({
-				pattern: "YYYY-MM-dd"
+	SampleExtension.prototype._generateAppointmentsData = function(oSelectedDate) {
+		var oFormatter = DateFormat.getDateTimeInstance({
+				pattern: "YYYY-MM-ddTHH:mm"
 			}),
-			sDummyDate = oFormatter.format(oSelectedDate);
+			oStartDate = new Date(oSelectedDate),
+			oEndDate = new Date(oSelectedDate),
+			aAppointmentDates = [];
+
+		// format as UTC dates, this is how all the dates are fed in the model
+
+		oStartDate.setHours(9, 0, 0, 0);
+		oEndDate.setHours(9, 30, 0, 0);
+
+		aAppointmentDates.push({
+			"start": oFormatter.format(oStartDate, true),
+			"end": oFormatter.format(oEndDate, true),
+			"title": "Daily meeting",
+			"text": "repetitive meeting",
+			"icon": "sap-icon://repost",
+			"type": "Type08"
+		});
+
+		oStartDate.setHours(12, 0);
+		oEndDate.setHours(13, 0);
+
+		aAppointmentDates.push({
+			"start": oFormatter.format(oStartDate, true),
+			"end": oFormatter.format(oEndDate, true),
+			"title": "Lunch",
+			"text": "out of office",
+			"icon": "sap-icon://meal",
+			"type": "Type06"
+		});
+
+		oStartDate.setHours(18, 0);
+		oEndDate.setHours(18, 30);
+
+		aAppointmentDates.push({
+			"start": oFormatter.format(oStartDate, true),
+			"end": oFormatter.format(oEndDate, true),
+			"title": "Private appointment",
+			"icon": "sap-icon://locked",
+			"type": "Type13"
+		});
 
 		return {
-			"item": [
-				{
-					"start": sDummyDate + "T07:00",
-					"end":  sDummyDate + "T07:30",
-					"title": "Daily meeting for " +  oSelectedDate.toDateString(),
-					"text": "repetitive meeting",
-					"icon": "sap-icon://repost",
-					"type": "Type08"
-				},
-				{
-					"start": sDummyDate + "T09:00",
-					"end":  sDummyDate + "T10:00",
-					"title": "Lunch for " +  oSelectedDate.toDateString(),
-					"text": "out of office",
-					"icon": "sap-icon://meal",
-					"type": "Type06"
-				},
-				{
-					"start": sDummyDate + "T16:00",
-					"end":  sDummyDate + "T16:30",
-					"title": "Private appointment for " +  oSelectedDate.toDateString(),
-					"icon": "sap-icon://locked",
-					"type": "Type13"
-				}
-			]
+			"item": aAppointmentDates
 		};
 	};
 
 	SampleExtension.prototype._generateMonthData = function (oStartDate, oEndDate) {
-		var oFormatter = sap.ui.core.format.DateFormat.getDateInstance({
-				pattern: "YYYY-MM-dd"
+		var oFormatter = DateFormat.getDateTimeInstance({
+				pattern: "YYYY-MM-ddTHH:mm"
 			}),
 			oDateInDisplayedMonth = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + 8),
 			iRandomDate = Math.floor(Math.random() * (28 - 1) + 1),
 			iSecondRandomDate = Math.floor(Math.random() * (28 - 1) + 1),
 			iRandomTypeNumber = Math.floor(Math.random() * (9 - 1) + 1),
 			iSecondRandomTypeNumber = Math.floor(Math.random() * (20 - 10) + 10),
-			oFirstSpecialDate = new Date(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iRandomDate),
-			oSecondSpecialDate = new Date(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iSecondRandomDate),
-			sDummyStartDate = oFormatter.format(oFirstSpecialDate),
-			sDummyEndDate = oFormatter.format(oSecondSpecialDate);
+			oFirstSpecialDate = new Date(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iRandomDate, 12),
+			oSecondSpecialDate = new Date(oDateInDisplayedMonth.getFullYear(), oDateInDisplayedMonth.getMonth(), iSecondRandomDate, 12),
+			sDummyDate1 = oFormatter.format(oFirstSpecialDate),
+			sDummyDate2 = oFormatter.format(oSecondSpecialDate);
 
 		return {
 			"specialDates": [
 				{
-					"start": sDummyStartDate + "T12:00",
+					"start": sDummyDate1,
 					"type": "Type0" + iRandomTypeNumber
 				},
 				{
-					"start": sDummyEndDate + "T12:00",
+					"start": sDummyDate2,
 					"type": "Type" + iSecondRandomTypeNumber
 				}
 			],

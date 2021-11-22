@@ -14,6 +14,8 @@ sap.ui.define([
 	) {
 		"use strict";
 
+		var oFormatter = DateFormat.getDateTimeInstance({ pattern: "YYYY-MM-ddTHH:mm" });
+
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
 		var oManifest = {
@@ -755,6 +757,14 @@ sap.ui.define([
 								"text": "working",
 								"icon": "sap-icon://desktop-mobile",
 								"type": "Type06"
+							},
+							{
+								"start": oFormatter.format(new Date(2021, 10, 19), true),
+								"end": oFormatter.format(new Date(2021, 10, 22), true),
+								"title": "3 whole days",
+								"text": "sleeping",
+								"icon": "sap-icon://bed",
+								"type": "Type02"
 							}
 						]
 					}
@@ -1169,6 +1179,18 @@ sap.ui.define([
 			},
 			afterEach: function () {
 				this.oCard.destroy();
+			},
+			selectDate: function(oDate) {
+				var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0];
+
+				oCalendar.getSelectedDates()[0].setStartDate(oDate);
+				oCalendar.fireSelect({
+					getSource: function () {
+						return this.oCard;
+					}.bind(this),
+					startDate: oDate
+				});
+				Core.applyChanges();
 			}
 		});
 
@@ -1267,6 +1289,34 @@ sap.ui.define([
 
 				// Assert
 				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("all day appointments display", function (assert) {
+			// arrange
+			var done = assert.async();
+			this.oCard.setManifest(oManifest_DateSelect);
+
+			this.oCard.attachEvent("_ready", function () {
+				// act
+				this.selectDate(new Date(2021, 10, 19));
+
+				// assert
+				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
+
+				// act
+				this.selectDate(new Date(2021, 10, 20));
+
+				// assert
+				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
+
+				// act
+				this.selectDate(new Date(2021, 10, 21));
+
+				// assert
+				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 1, "there is 1 visible appointment");
 
 				done();
 			}.bind(this));
