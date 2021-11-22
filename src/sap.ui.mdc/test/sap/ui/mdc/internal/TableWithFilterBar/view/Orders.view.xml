@@ -176,7 +176,7 @@
 						header="Orders"
 						filter="ordersFilterBar"
 						p13nMode="Sort,Column"
-						delegate='{"name": "delegates/odata/v4/TableDelegate", "payload": { "collectionName": "Orders" } }'
+						delegate='{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": { "collectionName": "Orders" } }'
 						showRowCount="true"
 						rowPress="onRowPress"
 						threshold="50"
