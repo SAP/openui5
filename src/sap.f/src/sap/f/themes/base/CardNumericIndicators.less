@@ -1,0 +1,38 @@
+/* ============================================= */
+/* CSS for control sap.f.cards/NumericIndicators */
+/* Base theme                                    */
+/* ============================================= */
+
+.sapFCardNumericIndicators {
+	display: flex;
+	align-items: flex-start;
+
+	&.sapFCardNumericIndicatorsSideAlignBegin .sapFCardNumericIndicatorsGap {
+		max-width: 3rem;
+	}
+
+	.sapFCardNumericIndicatorsMain .sapMNC.WithoutMargin {
+		height: 100%;
+
+		.sapMNCInner.WithoutMargin {
+			position: relative;	
+		}
+	}
+
+	.sapFCardNumericIndicatorsGap {
+		flex: 1 0 1rem;
+	}
+
+	.sapFCardNumericIndicatorsSide {
+		min-width: 0; // allows items to shrink and truncate the content inside
+		display: flex;
+
+		.sapFCardHeaderSideIndicator {
+			margin-right: 1rem;
+			position: relative;
+		}
+		.sapFCardHeaderSideIndicator:last-child {
+			margin-right: 0;
+		}
+	}
+}

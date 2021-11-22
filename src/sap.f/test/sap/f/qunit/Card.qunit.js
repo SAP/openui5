@@ -240,16 +240,18 @@ function (
 	QUnit.test("Numeric Header's \"sideIndicatorsAlignment\" property ", function (assert) {
 		// Arrange
 		var oHeader = new CardNumericHeader({
-			sideIndicatorsAlignment: "End"
+			sideIndicatorsAlignment: "End",
+			number: 5
 		});
+		var oNumericIndicators = oHeader._getNumericIndicators();
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(oHeader.getDomRef().classList.contains("sapFCardNumericHeaderSideIndicatorsAlignEnd"), "Numeric header has the right class for alignment applied");
-		assert.notOk(oHeader.getDomRef().classList.contains("sapFCardNumericHeaderSideIndicatorsAlignBegin"), "Numeric header has the right class for alignment applied");
+		assert.ok(oNumericIndicators.getDomRef().classList.contains("sapFCardNumericIndicatorsSideAlignEnd"), "Numeric header has the right class for alignment applied");
+		assert.notOk(oNumericIndicators.getDomRef().classList.contains("sapFCardNumericIndicatorsSideAlignBegin"), "Numeric header has the right class for alignment applied");
 
 		// Clean up
 		oHeader.destroy();

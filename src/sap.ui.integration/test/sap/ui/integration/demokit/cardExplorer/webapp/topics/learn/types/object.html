@@ -21,15 +21,42 @@
 				requests.
 			</p>
 			<h2 id="properties">Properties</h2>
-			<p>The Object Card contains an array of groups.</p>
-
-			<h4>Object Group properties</h4>
-
 			<div class="tableWrapper">
 				<table>
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>groups</td>
+						<td><a href="#objectGroupProperties">ObjectGroup[]</a></td>
+						<td>Yes</td>
+						<td>An array of groups.</td>
+						<td>1.15.0</td>
+						<td>1.64</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
+						<td>No</td>
+						<td>Actions that are triggered when the content is pressed.</td>
+						<td>1.15.0</td>
+						<td>1.64</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="objectGroupProperties">ObjectGroup Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -38,14 +65,16 @@
 					<tr>
 						<td>title</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
-						<td>Defines language-dependent title of the object group.</td>
+						<td>The title of the object group.</td>
 						<td>1.15.0</td>
 						<td>1.64</td>
 					</tr>
 					<tr>
 						<td>items</td>
 						<td><a href="#objectGroupItemProperties">ObjectGroupItem[]</a></td>
+						<td></td>
 						<td>Yes</td>
 						<td>Represents items of information.</td>
 						<td>1.15.0</td>
@@ -54,16 +83,92 @@
 					<tr>
 						<td>visible</td>
 						<td>boolean</td>
+						<td>true</td>
 						<td>No</td>
 						<td>Determines the visibility of the group.</td>
+						<td>1.25.0</td>
+						<td>1.81</td>
+					</tr>
+					<tr>
+						<td>alignment</td>
+						<td>string</td>
+						<td>"Default"</td>
+						<td>No</td>
+						<td>
+							The alignment of the group. Possible values are:
+							<ul>
+								<li>"Stretch" - the group stretches to the full width of the card</li>
+								<li>"Default" - group takes flexible width, aligned with the other non-stretched groups</li>
+							</ul>
+							<br>
+							<b>Note:</b> This property is experimental and may change!<br>
+						</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="objectGroupItemProperties">ObjectGroupItem Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>"Default</td>
+						<td>No</td>
+						<td>
+							Type of the item. Based on it additional properties of the item are available.
+							Possible values are:
+							<ul>
+								<li>"Default"- see <a href="#defaultProperties">Additional Properties for ObjectGroupItem of type Default</a></li>
+								<li>"NumericData" (experimental since 1.98) - see <a href="#numericDataProperties">Additional Properties for ObjectGroupItem of type NumericData</a></li>
+								<li>"Status" (experimental since 1.98) - see <a href="#statusProperties">Additional Properties for ObjectGroupItem of type Status</a></li>
+							</ul>
+						</td>
+						<td>1.15.0</td>
+						<td>1.64</td>
+					</tr>
+					<tr>
+						<td>icon</td>
+						<td><a href="#iconApi">Icon</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the icon of the item.</td>
+						<td>1.15.0</td>
+						<td>1.64</td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Label for the item. When the item has actions it should be set.</td>
+						<td>1.15.0</td>
+						<td>1.64</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>Determines the visibility of the item.</td>
 						<td>1.25.0</td>
 						<td>1.81</td>
 					</tr>
 				</table>
 			</div>
 
-			<h4 id="objectGroupItemProperties">ObjectGroupItem properties</h4>
-
+			<h4 id="defaultProperties">Additional Properties for ObjectGroupItem of type Default</h4>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -73,22 +178,6 @@
 						<th>Description</th>
 						<th>Schema Version</th>
 						<th>Since</th>
-					</tr>
-					<tr>
-						<td>icon</td>
-						<td><a href="#iconApi">Icon</a></td>
-						<td>No</td>
-						<td>Defines the icon of the item.</td>
-						<td>1.15.0</td>
-						<td>1.64</td>
-					</tr>
-					<tr>
-						<td>label</td>
-						<td>string</td>
-						<td>Yes</td>
-						<td>Label for the item. When the item has actions it should be set.</td>
-						<td>1.15.0</td>
-						<td>1.64</td>
 					</tr>
 					<tr>
 						<td>value</td>
@@ -99,20 +188,108 @@
 						<td>1.64</td>
 					</tr>
 					<tr>
-						<td>visible</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>Determines the visibility of the item.</td>
-						<td>1.25.0</td>
-						<td>1.81</td>
-					</tr>
-					<tr>
 						<td>actions</td>
 						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
 						<td>No</td>
-						<td>Actions that are triggered when the content area is pressed.</td>
+						<td>Actions that are triggered when the item is pressed.</td>
 						<td>1.31.0</td>
 						<td>1.87</td>
+					</tr>
+					<tr>
+						<td>maxLines</td>
+						<td>int</td>
+						<td>No</td>
+						<td>
+							Limits the number of lines for wrapping texts.
+							<br>
+							<b>Note:</b> This property is experimental and may change!
+							<br>
+							<b>Note:</b> This property cannot be used together with <code>actions</code>.
+						</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="numericDataProperties">Additional Properties for ObjectGroupItem of type NumericData</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>mainIndicator</td>
+						<td><a href="#mainIndicatorProperties">MainIndicator</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Numeric indicator.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>sideIndicators</td>
+						<td><a href="../../../index.html#/learn/headers/numeric/sideIndicatorProperties" target="_parent">SideIndicator[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Side indicators that relate to the main numeric indicator. You can have a maximum of two
+							side indicators.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>sideIndicatorsAlignment</td>
+						<td><a data-demokit-href="#/api/sap.f.cards.NumericHeaderSideIndicatorsAlignment" target="_blank">sap.f.cards.NumericHeaderSideIndicatorsAlignment</a></td>
+						<td>"Begin"</td>
+						<td>No</td>
+						<td>The alignment of the side indicators in the numeric header.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>details</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Additional information about the numeric data. The text overflows with ellipsis after the first line.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="statusProperties">Additional Properties for ObjectGroupItem of type Status</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>string</td>
+						<td>Yes</td>
+						<td>The status.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td><a data-demokit-href="#/api/sap.ui.core.ValueState">sap.ui.core.ValueState</a></td>
+						<td>No</td>
+						<td>The semantic state of the status.</td>
+						<td>1.38</td>
+						<td>1.98</td>
 					</tr>
 				</table>
 			</div>
@@ -173,6 +350,66 @@
 						</td>
 						<td>1.27.0</td>
 						<td>1.83</td>
+					</tr>
+				</table>
+			</div>
+
+			<h4 id="mainIndicatorProperties">MainIndicator Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>number</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The value of the main indicator.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>unit</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The unit of measurement of the main indicator.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>trend</td>
+						<td><a data-demokit-href="#/api/sap.m.DeviationIndicator" target="_blank">sap.m.DeviationIndicator</a></td>
+						<td>"None"</td>
+						<td>No</td>
+						<td>The trend indicator (direction).</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>state</td>
+						<td><a data-demokit-href="#/api/sap.m.ValueColor" target="_blank">sap.m.ValueColor</a></td>
+						<td>"Neutral"</td>
+						<td>No</td>
+						<td>The semantic state color of the main indicator.</td>
+						<td>1.38</td>
+						<td>1.98</td>
+					</tr>
+					<tr>
+						<td>size</td>
+						<td>string</td>
+						<td>"L"</td>
+						<td>No</td>
+						<td>The size of the main indicator. Possible values are "S" and "L".</td>
+						<td>1.38</td>
+						<td>1.98</td>
 					</tr>
 				</table>
 			</div>

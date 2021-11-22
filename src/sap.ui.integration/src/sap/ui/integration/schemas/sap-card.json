@@ -1100,6 +1100,14 @@
         "visible": {
           "description": "Represents the visibility state of the group",
           "$ref": "#/definitions/visibility"
+        },
+        "alignment": {
+          "description": "[Experimental] Alignment of the group",
+          "enum": [
+            "Default",
+            "Stretch"
+          ],
+          "default": "Default"
         }
       }
     },
@@ -1121,17 +1129,20 @@
           "type": "string"
         },
         "type": {
-          "description": "[Deprecated] Defines the type of the displayed information",
+          "description": "Defines the type of the displayed information. Some of the types are deprecated.",
           "type": "string",
           "oneOf": [
             {
               "enum": [
+                "Default",
+                "NumericData",
+                "Status",
                 "phone",
                 "email",
                 "link",
                 "text"
               ],
-              "default": "text"
+              "default": "Default"
             },
             {
               "$ref": "#/definitions/simpleBinding"
@@ -1167,6 +1178,112 @@
         "visible": {
           "description": "Represents the visibility state of the item",
           "$ref": "#/definitions/visibility"
+        },
+        "mainIndicator": {
+          "description": "[Experimental]",
+          "$ref": "#/definitions/ContentType.Object.Item.MainIndicator"
+        },
+        "sideIndicators": {
+          "description": "[Experimental] Multiple side indicators that relate to the main numeric indicator",
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/HeaderType.Numeric.SideIndicator"
+          }
+        },
+        "sideIndicatorsAlignment": {
+          "description": "[Experimental] The alignment of the side indicators",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "Begin",
+                "End"
+              ],
+              "default": "Begin"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "maxLines": {
+          "description": "Maximum number of lines",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "details": {
+          "description": "Represents additional information about the numeric indicators",
+          "type": "string"
+        },
+        "state": {
+          "description": "The state color of the item",
+          "$ref": "#/definitions/state"
+        }
+      }
+    },
+    "ContentType.Object.Item.MainIndicator": {
+      "description": "Represents the main numeric indicator of the NumericData",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "number": {
+          "description": "The value of the main indicator",
+          "type": "string"
+        },
+        "unit": {
+          "description": "The unit of the main indicator",
+          "type": "string"
+        },
+        "trend": {
+          "description": "The trend indicator (direction)",
+          "type": "string",
+          "oneOf": [
+            {
+              "enum": [
+                "Down",
+                "None",
+                "Up"
+              ],
+              "default": "None"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "state": {
+          "description": "The state color of the main indicator",
+          "type": "string",
+          "oneOf": [
+            {
+              "description": "The state color of the main indicator",
+              "$ref": "#/definitions/Enums.ValueColor"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "size": {
+          "oneOf": [
+            {
+              "enum": [
+                "S",
+                "L"
+              ],
+              "default": "Default"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

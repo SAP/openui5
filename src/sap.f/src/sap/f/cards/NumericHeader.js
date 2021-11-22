@@ -280,6 +280,12 @@ sap.ui.define([
 		return this;
 	};
 
+	NumericHeader.prototype.setSideIndicatorsAlignment = function(sValue) {
+		this.setProperty("sideIndicatorsAlignment", sValue, true);
+		this._getNumericIndicators().setSideIndicatorsAlignment(sValue);
+		return this;
+	};
+
 	/**
 	 * Lazily create a title and return it.
 	 *

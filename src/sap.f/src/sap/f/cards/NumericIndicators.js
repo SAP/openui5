@@ -44,6 +44,11 @@ sap.ui.define([
 				number: { "type": "string", group : "Data" },
 
 				/**
+				 * The size of the of the main indicator. Possible values are "S" and "L".
+				 */
+				numberSize: { "type": "string", group : "Appearance", defaultValue: "L" },
+
+				/**
 				 * Defines the unit of measurement (scaling prefix) for the main indicator.
 				 * Financial characters can be used for currencies and counters. The International System of Units (SI) prefixes can be used.
 				 * If the unit contains more than three characters, only the first three characters are displayed.

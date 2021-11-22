@@ -275,7 +275,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 
-				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getContent()[0].getItems()[1].getItems()[0];
+				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
 
 				// Assert
 				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
@@ -424,7 +424,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 
-				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getContent()[0].getItems()[1].getItems()[0];
+				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
 
 				// Assert
 				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");

@@ -19,25 +19,32 @@ sap.ui.define([], function () {
 			oSideIndicators = oNumericIndicators.getSideIndicators();
 
 		oRm.openStart("div", oNumericIndicators)
-			.class("sapFCardHeaderIndicators")
-			.openEnd();
+			.class("sapFCardNumericIndicators")
+			.class("sapFCardNumericIndicatorsSideAlign" + oNumericIndicators.getSideIndicatorsAlignment());
+
+		if (oNumericIndicators.getNumberSize() === "S") {
+			// TODO: replace this temporary solution for small numeric data with permanent one
+			oRm.class("sapMTileSmallPhone");
+		}
+
+		oRm.openEnd();
 
 		if (oMainIndicator) {
 			oRm.openStart("div")
-				.class("sapFCardHeaderMainIndicator")
+				.class("sapFCardNumericIndicatorsMain")
 				.openEnd()
 				.renderControl(oMainIndicator)
 				.close("div");
 
 			oRm.openStart("div")
-				.class("sapFCardHeaderIndicatorsGap")
+				.class("sapFCardNumericIndicatorsGap")
 				.openEnd()
 				.close("div");
 		}
 
 		if (oSideIndicators.length !== 0) {
 			oRm.openStart("div")
-				.class("sapFCardHeaderSideIndicators")
+				.class("sapFCardNumericIndicatorsSide")
 				.openEnd();
 
 			// TODO min-width for side indicator. Now it starts to truncate too early

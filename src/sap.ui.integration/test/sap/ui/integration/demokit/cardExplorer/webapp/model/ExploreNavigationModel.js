@@ -711,6 +711,34 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'To Do Card',
+								key: 'todoCard',
+								settings: {
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/object/todo/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Additional Object Details',
+								key: 'additionalObjectDetails',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/object/additionalObjectDetails.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

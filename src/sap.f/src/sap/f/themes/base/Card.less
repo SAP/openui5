@@ -220,42 +220,18 @@
 		color: @sapUiTileTextColor;
 	}
 
-	.sapFCardHeaderIndicators {
+	.sapFCardNumericIndicators {
 		margin-top: 0.25rem;
-		display: flex;
-		align-items: flex-start;
 
-		.sapFCardHeaderMainIndicator .sapMNC.WithoutMargin {
-			height: 100%;
-
-			.sapMNCInner.WithoutMargin {
-				position: relative;
-			}
-
+		.sapFCardHeaderSideIndicator .sapFCardHeaderSITitle,
+		.sapFCardHeaderSINumber,
+		.sapFCardHeaderSINumber .sapMText {
+			font-size: @sapMFontSmallSize;
 		}
 
-		.sapFCardHeaderIndicatorsGap {
-			flex: 1 0 1rem;
-		}
-
-		.sapFCardHeaderSideIndicators {
-			min-width: 0; // allows items to shrink and truncate the content inside
-			display: flex;
-			align-items: flex-end;
+		.sapFCardNumericIndicatorsSide {
 			padding: 0.5rem 0;
-
-			.sapFCardHeaderSideIndicator {
-				margin-right: 1rem;
-				position: relative;
-			}
-			.sapFCardHeaderSideIndicator:last-child {
-				margin-right: 0;
-			}
 		}
-	}
-
-	&.sapFCardNumericHeaderSideIndicatorsAlignBegin .sapFCardHeaderIndicatorsGap {
-		max-width: 3rem;
 	}
 
 	.sapFCardHeaderDetailsWrapper {
@@ -283,14 +259,12 @@
 	align-items: flex-end;
 	min-width: 0; // allows items to shrink and truncate the content inside
 	.sapFCardHeaderSITitle {
-		font-size: @sapMFontSmallSize;
 		color: @sapUiTileTextColor;
 		padding-bottom: 0.25rem;
 		position: relative;
 	}
 	.sapFCardHeaderSINumber,
 	.sapFCardHeaderSINumber .sapMText {
-		font-size: @sapMFontSmallSize;
 		color: @sapUiTileTitleTextColor;
 		position: relative;
 	}
