@@ -532,8 +532,15 @@ sap.ui.define([
 					aInParameters.push(oConfig.inParameters.sPath);
 				} else {
 					for (var i = 0; i < oConfig.inParameters.aFilters.length; i++) {
-						if (aInParameters.indexOf(oConfig.inParameters.aFilters[i].sPath) < 0) {
-							aInParameters.push(oConfig.inParameters.aFilters[i].sPath);
+						var oInFilter = oConfig.inParameters.aFilters[i];
+						if (oInFilter.aFilters) {
+							for (var j = 0; j < oInFilter.aFilters.length; j++) {
+								if (oInFilter.aFilters[j].sPath && aInParameters.indexOf(oInFilter.aFilters[j].sPath) < 0) {
+									aInParameters.push(oInFilter.aFilters[j].sPath);
+								}
+							}
+						} else if (oInFilter.sPath && aInParameters.indexOf(oInFilter.sPath) < 0) {
+							aInParameters.push(oInFilter.sPath);
 						}
 					}
 				}
