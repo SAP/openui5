@@ -43,7 +43,6 @@
 							{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}
 						],
 						parameters : {
-							countMode : 'Request',
 							select : 'CurrencyCode,CustomerName,GrossAmount,LifecycleStatus,Note,SalesOrderID',
 							transitionMessagesOnly : true
 						},

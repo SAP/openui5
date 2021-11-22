@@ -48,7 +48,7 @@
 				"settings" : {
 					"canonicalRequests" : true,
 					"defaultBindingMode" : "TwoWay",
-					"defaultCountMode" : "None",
+					"defaultCountMode" : "Inline",
 					"earlyTokenRequest" : true,
 					"persistTechnicalMessages" : true
 				},
