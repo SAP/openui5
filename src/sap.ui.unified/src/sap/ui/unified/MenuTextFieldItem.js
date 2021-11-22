@@ -12,6 +12,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/base/Log',
 	'sap/ui/events/PseudoEvents',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/Core',
 	'sap/ui/dom/jquery/cursorPos' // jQuery Plugin "cursorPos"
 ],
 	function(
@@ -22,7 +24,9 @@ sap.ui.define([
 		coreLibrary,
 		Device,
 		Log,
-		PseudoEvents
+		PseudoEvents,
+		InvisibleText,
+		Core
 	) {
 	"use strict";
 
@@ -134,7 +138,9 @@ sap.ui.define([
 		rm.openStart("div", itemId + "-str").class("sapUiMnuTfItmStretch").openEnd().close("div"); // Helper to strech the width if needed
 		rm.openStart("div").class("sapUiMnuTfItemWrppr").openEnd();
 		rm.voidStart("input", itemId + "-tf").attr("tabindex", "-1");
-		rm.attr("value", oItem.getValue());
+		if (oItem.getValue()) {
+			rm.attr("value", oItem.getValue());
+		}
 		rm.class("sapUiMnuTfItemTf").class(bIsEnabled ? "sapUiMnuTfItemTfEnbl" : "sapUiMnuTfItemTfDsbl");
 		if (!bIsEnabled) {
 			rm.attr("disabled", "disabled");
@@ -145,7 +151,7 @@ sap.ui.define([
 				disabled: null, // Prevent aria-disabled as a disabled attribute is enough
 				multiline: false,
 				autocomplete: "none",
-				labelledby: {value: /*oMenu.getId() + "-label " + */itemId + "-lbl", append: true}
+				describedby: itemId + "-lbl " + oItem._fnInvisibleCountInformationFactory(oInfo).getId()
 			});
 		}
 		rm.voidEnd().close("div").close("div");
@@ -156,6 +162,12 @@ sap.ui.define([
 		rm.close("li");
 	};
 
+	MenuTextFieldItem.prototype.exit = function() {
+		if (this._invisibleCountInformation) {
+			this._fnInvisibleCountInformationFactory().destroy();
+			this._invisibleCountInformation = null;
+		}
+	};
 
 	MenuTextFieldItem.prototype.hover = function(bHovered, oMenu){
 		this.$().toggleClass("sapUiMnuItmHov", bHovered);
@@ -306,7 +318,9 @@ sap.ui.define([
 		$tf.toggleClass("sapUiMnuTfItemTfErr", sValueState == ValueState.Error);
 		$tf.toggleClass("sapUiMnuTfItemTfWarn", sValueState == ValueState.Warning);
 		var sTooltip = ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
-		this.$().attr("title", sTooltip ? sTooltip : "");
+		if (sTooltip) {
+			this.$().attr("title", sTooltip);
+		}
 		return this;
 	};
 
@@ -325,7 +339,7 @@ sap.ui.define([
 		var $lbl = this.$("lbl");
 		var offsetLeft = $lbl.length ? $lbl.get(0).offsetLeft : 0;
 
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (Core.getConfiguration().getRTL()) {
 			$tf.parent().css({"width": "auto", "right": (this.$().outerWidth(true) - offsetLeft + ($lbl.outerWidth(true) - $lbl.outerWidth())) + "px"});
 		} else {
 			$tf.parent().css({"width": "auto", "left": (offsetLeft + $lbl.outerWidth(true)) + "px"});
@@ -348,6 +362,18 @@ sap.ui.define([
 		return true;
 	};
 
+	MenuTextFieldItem.prototype._fnInvisibleCountInformationFactory = function(oInfo) {
+		if (!this._invisibleCountInformation) {
+			this._invisibleCountInformation = new InvisibleText({
+				text: Core.getLibraryResourceBundle("sap.ui.unified").getText("UNIFIED_MENU_ITEM_COUNT_TEXT", [
+					oInfo.iItemNo,
+					oInfo.iTotalItems
+				])
+			}).toStatic();
+		}
+
+		return this._invisibleCountInformation;
+	};
 
 	}());
 
