@@ -21113,9 +21113,8 @@ sap.ui.define([
 	// CPOUI5ODATAV4-764
 [
 	{hiddenBinding : true, title : "relative hidden binding"},
-	{title : "use row context directly; absolute hidden binding for 'deep links'"}
-	// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
-	//{keepAlive : true, title : "use kept-alive context and replace in list"}
+	{title : "use row context directly; absolute hidden binding for 'deep links'"},
+	{keepAlive : true, title : "use kept-alive context and replace in list"}
 ].forEach(function (oFixture) {
 	var sTitle = "bound operation: switching between active and inactive entity, " + oFixture.title;
 
@@ -21183,7 +21182,7 @@ sap.ui.define([
 		 * @param {string} [sName] - The resulting artist's name if it differs from the default
 		 * @returns {Promise} - A promise that waits for the expected changes
 		 */
-		function action(sAction, sId, sName, bPublicationAlreadyCached) {
+		function action(sAction, sId, sName) {
 			var bIsActive = sAction === "ActivationAction", // The resulting artist's bIsActive
 				// TODO The object page's parent context may be the return value context of the
 				//   previous operation. By using it as parent for the new operation we build a long
@@ -21191,7 +21190,8 @@ sap.ui.define([
 				//   active entity. -> CPOUI5UISERVICESV3-1746
 				oEntityContext = oObjectPage.getBindingContext(),
 				oAction = that.oModel.bindContext("special.cases." + sAction + "(...)",
-					oEntityContext, {$$inheritExpandSelect : true});
+					oEntityContext, {$$inheritExpandSelect : true}),
+				bReplaceWithRVC = sId === "42" && oFixture.keepAlive;
 
 			that.expectRequest({
 					method : "POST",
@@ -21203,23 +21203,20 @@ sap.ui.define([
 					IsActiveEntity : bIsActive,
 					Name : sName || mNames[sId]
 				});
+			if (bReplaceWithRVC) {
+				that.expectChange("listIsActive", [bIsActive ? "Yes" : "No"]);
+			}
 
 			// code under test
 			return Promise.all([
-				oAction.execute(),
+				oAction.execute(undefined, undefined, undefined, bReplaceWithRVC),
 				that.waitForChanges(assert)
 			]).then(function (aPromiseResults) {
-				var oContext = aPromiseResults[0], // the return value context
-					sIsActive = bIsActive ? "Yes" : "No";
+				var oContext = aPromiseResults[0]; // the return value context
 
-				that.expectChange("isActive", sIsActive);
-				expectPublicationRequest(sId, bIsActive, bPublicationAlreadyCached);
+				that.expectChange("isActive", bIsActive ? "Yes" : "No");
+				expectPublicationRequest(sId, bIsActive);
 
-				if (sId === "42" && oFixture.keepAlive) {
-					that.expectChange("listIsActive", [sIsActive]);
-
-					oRowContext = oContext = oRowContext.replaceWith(oContext);
-				}
 				return bindObjectPage(oContext, false);
 			});
 		}
@@ -21339,7 +21336,7 @@ sap.ui.define([
 			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
 			return that.waitForChanges(assert, "PATCH");
 		}).then(function () {
-			return action("ActivationAction", "42", "The Beatles (modified)", oFixture.keepAlive);
+			return action("ActivationAction", "42", "The Beatles (modified)");
 		}).then(function () {
 			expectArtistRequest("23", false);
 			expectPublicationRequest("23", false);
@@ -35417,7 +35414,7 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oActionBinding.execute(),
+				oActionBinding.execute(undefined, undefined, undefined, /*bReplaceWithRVC*/true),
 				that.waitForChanges(assert)
 			]);
 		}).then(function (aResults) {
@@ -35436,8 +35433,7 @@ sap.ui.define([
 			return that.checkValueState(assert, "channel", "Information", "Draft message");
 		}).then(function () {
 			that.expectChange("channel", "Channel 3")
-				// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
-				//.expectChange("listChannel", ["Channel 3"])
+				.expectChange("listChannel", ["Channel 3"])
 				.expectRequest({
 					batchNo : 5,
 					headers : {
@@ -35452,20 +35448,23 @@ sap.ui.define([
 				}) // no need to update the ETag when requesting side effects
 				.expectRequest({
 					batchNo : 5,
-					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
-						+ "?$select=Messages,defaultChannel"
+					url : "Artists?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
+						+ "&$filter=ArtistID eq 'A1' and IsActiveEntity eq false"
 				}, {
-					"@odata.etag" : "etag.draft2",
-					Messages : [{
-						message : "Updated message",
-						numericSeverity : 2,
-						target : "defaultChannel"
-					}],
-					defaultChannel : "Channel 3*"
+					value : [{
+						"@odata.etag" : "etag.draft2",
+						ArtistID : "A1",
+						IsActiveEntity : false,
+						Messages : [{
+							message : "Updated message",
+							numericSeverity : 2,
+							target : "defaultChannel"
+						}],
+						defaultChannel : "Channel 3*"
+					}]
 				})
 				.expectChange("channel", "Channel 3*")
-				// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
-				// .expectChange("listChannel", ["Channel 3*"])
+				.expectChange("listChannel", ["Channel 3*"])
 				.expectMessages([{
 					message : "Active message",
 					type : "Information",
