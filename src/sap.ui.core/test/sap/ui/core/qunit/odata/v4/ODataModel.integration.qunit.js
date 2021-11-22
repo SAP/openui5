@@ -6793,6 +6793,11 @@ sap.ui.define([
 					message : "Enter a minimum quantity of 2",
 					numericSeverity : 3,
 					target : "SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')/Quantity"
+				}, {
+					code : "1",
+					message : "Some message for the whole item collection",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM"
 				}],
 				SalesOrderID : "42"
 			})
@@ -6813,10 +6818,13 @@ sap.ui.define([
 			.expectMessages([{
 				code : "23",
 				message : "Enter a minimum quantity of 2",
-				persistent : false,
 				target : "/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')"
 					+ "/Quantity",
-				technical : false,
+				type : "Warning"
+			}, {
+				code : "1",
+				message : "Some message for the whole item collection",
+				target : "/SalesOrderList('42')/SO_2_SOITEM",
 				type : "Warning"
 			}]);
 
