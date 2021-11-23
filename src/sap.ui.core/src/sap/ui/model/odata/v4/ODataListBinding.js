@@ -1123,7 +1123,8 @@ sap.ui.define([
 	 * @param {object} oElement - The element data
 	 * @param {string} sPredicate - The key predicate
 	 * @returns {sap.ui.model.odata.v4.Context} - The new context
-	 * @throws {Error} If a reused context is already part of the collection (has an index)
+	 * @throws {Error} If a reused context is already part of the collection (has an index), except
+	 *   if it is the same instance as the given old context
 	 *
 	 * @private
 	 */
@@ -1137,6 +1138,9 @@ sap.ui.define([
 			oResult = this.mPreviousContextsByPath[sPath];
 
 		if (oResult) {
+			if (oResult === oOldContext) {
+				return oResult; // shortcut
+			}
 			if (oResult.iIndex !== undefined) {
 				throw new Error("Unexpected index: " + oResult);
 			}

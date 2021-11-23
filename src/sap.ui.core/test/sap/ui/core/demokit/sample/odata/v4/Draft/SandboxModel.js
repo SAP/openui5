@@ -10,7 +10,8 @@ sap.ui.define([
 ], function (SandboxModelHelper, ODataModel) {
 	"use strict";
 
-	var oMockData = {
+	var bActivated,
+		oMockData = {
 			sFilterBase : "/MyProducts/",
 			mFixture : {
 				"Products?$count=true&$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=ID,IsActiveEntity,amount,categoryID,name&$skip=0&$top=5" : {
@@ -19,11 +20,28 @@ sap.ui.define([
 				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_true.json"
 				},
+				"Products(ID=10,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : [{
+					ifMatch : function () {
+						return bActivated;
+					},
+					source : "Products_10_true_Parts_PATCHed.json"
+				}, {
+					source : "Products_10_true_Parts.json"
+				}],
+				"Products(ID=10,IsActiveEntity=false)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
+					source : "Products_10_false_Parts.json"
+				},
 				"Products(ID=20,IsActiveEntity=false)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_20_false.json"
 				},
 				"Products(ID=20,IsActiveEntity=false)/SiblingEntity?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_20_true.json"
+				},
+				"Products(ID=20,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
+					source : "Products_20_true_Parts.json"
+				},
+				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : {
+					source : "Products_20_false_Parts.json"
 				},
 				"POST Products(ID=10,IsActiveEntity=true)/SampleService.draftEdit?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_false.json"
@@ -31,6 +49,10 @@ sap.ui.define([
 				// "PATCH Products(ID=10,IsActiveEntity=false)"
 				// "DELETE Products(ID=10,IsActiveEntity=false)"
 				"POST Products(ID=10,IsActiveEntity=false)/SampleService.draftActivate?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+					ifMatch : function () {
+						bActivated = true;
+						return true;
+					},
 					source : "Products_10_true_PATCHed.json"
 				}
 			},

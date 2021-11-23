@@ -22541,14 +22541,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: List report shows active version which is kept alive and shows messages.
-	// (Object page does not matter here.)
+	// Scenario: List report shows active version which is kept alive and shows messages. Object
+	// page shows an "items" table sending own requests.
 	// "EditAction" or "GetDraft" function returns draft version which replaces the active one.
 	//
 	// - PATCH and "ActivationAction" are sent in the same $batch (change set does not matter here).
 	// Refresh destroys both the draft and the active version (unrealistic) and calls
 	// <code>fnOnBeforeDestroy</code>.
 	// JIRA: CPOUI5ODATAV4-347
+	// The "items" table is refreshed after activation (JIRA: CPOUI5ODATAV4-1355)
 	//
 	// - An invalid value is entered. Editing is canceled via v4.Context#replaceWith with a known
 	// active version. The draft is DELETEd afterwards.
@@ -22584,6 +22585,9 @@ sap.ui.define([
 	<Text id="artistID" text="{ArtistID}"/>\
 	<Text id="isActiveEntity" text="{IsActiveEntity}"/>\
 	<Input id="name" value="{Name}"/>\
+</Table>\
+<Table id="items" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+	<Text id="price" text="{Price}"/>\
 </Table>',
 			that = this;
 
@@ -22600,6 +22604,7 @@ sap.ui.define([
 		if (!bCancel) {
 			this.expectChange("name", ["Missy Eliot"]);
 		}
+		this.expectChange("price", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Messages", {
@@ -22626,6 +22631,19 @@ sap.ui.define([
 		}).then(function () {
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[2], "Success",
 					sMessage1);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						Price : "9.99",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price", ["9.99"]);
+
+			that.oView.byId("items").setBindingContext(oActiveArtistContext);
+
+			return that.waitForChanges(assert, "items for active");
 		}).then(function () {
 			var bAction = sDraftOperation === "EditAction";
 
@@ -22684,6 +22702,19 @@ sap.ui.define([
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[2], "Success",
 					sMessage2);
 		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+					value : [{
+						Price : "10.99",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectChange("price", ["10.99"]);
+
+			that.oView.byId("items").setBindingContext(oInactiveArtistContext);
+
+			return that.waitForChanges(assert, "items for draft");
+		}).then(function () {
 			var oActivationAction,
 				sMessage = "Enter a text with a maximum of 255 characters and spaces",
 				sValue = "*".repeat(256);
@@ -22694,7 +22725,7 @@ sap.ui.define([
 
 				that.expectChange("name", ["Mrs Eliot"])
 					.expectRequest({
-						batchNo : 4,
+						batchNo : 6,
 						headers : {
 							"If-Match" : "inactivETag",
 							Prefer : "return=minimal"
@@ -22704,7 +22735,7 @@ sap.ui.define([
 						url : "Artists(ArtistID='42',IsActiveEntity=false)"
 					}, null, {ETag : "inactivETag*"}) // 204 No Content
 					.expectRequest({
-						batchNo : 4,
+						batchNo : 6,
 						headers : {
 							"If-Match": "inactivETag"
 						},
@@ -22741,6 +22772,19 @@ sap.ui.define([
 					assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"),
 						"inactivETag*");
 
+					that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+							+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+							value : [{
+								Price : "11.99",
+								PublicationID : "42-0"
+							}]
+						})
+						.expectChange("price", ["11.99"]);
+
+					that.oView.byId("items").setBindingContext(oActiveArtistContext);
+
+					return that.waitForChanges(assert, "items for new active");
+				}).then(function () {
 					// Note: oInactiveArtistContext.setKeepAlive(false); would be realistic, but we
 					// prefer to check fnOnBeforeDestroy in this test
 
@@ -22756,9 +22800,17 @@ sap.ui.define([
 							+ "&$top=100", {
 							value : []
 						})
+						.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+							+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+							value : [{
+								Price : "12.99",
+								PublicationID : "42-0"
+							}]
+						})
 						.expectChange("artistID", [])
 						.expectChange("isActiveEntity", [])
 						.expectChange("name", [])
+						.expectChange("price", ["12.99"])
 						.expectMessages([]);
 
 					return Promise.all([
@@ -22849,6 +22901,22 @@ sap.ui.define([
 							/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
 						that.waitForChanges(assert, "SiblingEntity")
 					]);
+				}).then(function (aResults) {
+					if (!bWithActive) {
+						that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+								+ "?$select=Price,PublicationID&$skip=0&$top=100", {
+								value : [{
+									Price : "13.99",
+									PublicationID : "42-0"
+								}]
+							});
+					}
+					that.expectChange("price", [bWithActive ? "9.99" : "13.99"]);
+
+					that.oView.byId("items").setBindingContext(
+						bWithActive ? oActiveArtistContext : aResults[0]);
+
+					return that.waitForChanges(assert, "items for old active");
 				}).then(function () {
 					assert.strictEqual(oInput.getValue(), "Missy Eliot");
 

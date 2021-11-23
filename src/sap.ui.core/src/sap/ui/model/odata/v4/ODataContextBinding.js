@@ -320,9 +320,9 @@ sap.ui.define([
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
 					mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed);
 			}).then(function (oResponseEntity) {
-				var sContextPredicate, oOldValue, sResponsePredicate;
-
 				return fireChangeAndRefreshDependentBindings().then(function () {
+					var sContextPredicate, oOldValue, sResponsePredicate, oResult;
+
 					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 						oOldValue = that.oContext.getValue();
 						sContextPredicate = oOldValue &&
@@ -344,11 +344,11 @@ sap.ui.define([
 						if (bReplaceWithRVC) {
 							that.oCache = null;
 							that.oCachePromise = SyncPromise.resolve(null);
+							oResult = that.oContext.getBinding().doReplaceWith(that.oContext,
+								oResponseEntity, sResponsePredicate);
+							oResult.setNewGeneration();
 
-							return sContextPredicate === sResponsePredicate
-								? that.oContext
-								: that.oContext.getBinding().doReplaceWith(that.oContext,
-									oResponseEntity, sResponsePredicate);
+							return oResult;
 						}
 
 						that.oReturnValueContext = Context.createNewContext(that.oModel,
@@ -823,7 +823,9 @@ sap.ui.define([
 	 * Since 1.98.0, a single-valued navigation property can be treated like a function if
 	 * <ul>
 	 *   <li> it has the same type as the operation binding's parent context,
-	 *   <li> that parent context belongs to a top-level entity set,
+	 *   <li> that parent context is in the collection (has an index, see
+	 *     {@link sap.ui.model.odata.v4.Context#getIndex}) of a list binding for a top-level entity
+	 *     set,
 	 *   <li> there is a navigation property binding which points to that same entity set,
 	 *   <li> no operation parameters have been set,
 	 *   <li> the <code>bReplaceWithRVC</code> parameter is used.
@@ -931,8 +933,8 @@ sap.ui.define([
 					+ sResolvedPath);
 			}
 			if (bReplaceWithRVC) {
-				if (!this.oContext.getBinding) {
-					throw new Error("Cannot replace when parent context is not a V4 context");
+				if (!this.oContext.getBinding || this.oContext.iIndex === undefined) {
+					throw new Error("Cannot replace this parent context: " + this.oContext);
 				}
 				this.oContext.getBinding().checkKeepAlive(this.oContext);
 			}

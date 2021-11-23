@@ -114,6 +114,38 @@
 						id="Product::DraftAdministrativeData::LastChangeDateTime"
 						value="{DraftAdministrativeData/LastChangeDateTime}"/>
 				</form:SimpleForm>
+				<Table growing="true" growingThreshold="5" id="_Parts" items="{
+						parameters : {
+							$count : true,
+							$orderby : 'ID',
+							$$ownRequest : true
+						},
+						path : '_Parts',
+						templateShareable : false
+					}">
+					<headerToolbar>
+						<Toolbar>
+							<Title level="H2" text="Parts"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column>
+							<Text text="Part ID"/>
+						</Column>
+						<Column>
+							<Text text="Description"/>
+						</Column>
+						<Column hAlign="Right">
+							<Text text="Quantity"/>
+						</Column>
+					</columns>
+					<ColumnListItem>
+						<Text id="_Parts::ID" text="{ID}"/>
+						<Text id="_Parts::description" text="{description}"/>
+						<Input editable="{= !%{_Product/IsActiveEntity} }" id="_Parts::quantity"
+							textAlign="Right" value="{quantity}"/>
+					</ColumnListItem>
+				</Table>
 			</VBox>
 		</f:midColumnPages>
 	</f:FlexibleColumnLayout>
