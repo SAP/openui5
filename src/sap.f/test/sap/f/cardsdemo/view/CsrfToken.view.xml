@@ -1,30 +1,30 @@
 <mvc:View
-	controllerName="sap.ui.CardCSRFToken.CardCSRFToken"
+	controllerName="sap.f.cardsdemo.controller.CsrfToken"
 	xmlns:w="sap.ui.integration.widgets"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
 	<f:GridContainer>
-		<w:Card id="card1" manifest="./cardManifest.json">
+		<w:Card id="card1" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifest.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card2" manifest="./cardManifestTokenPath.json">
+		<w:Card id="card2" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestTokenPath.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card3" manifest="./cardManifestExpiringToken.json">
+		<w:Card id="card3" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestExpiringToken.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card4" manifest="./cardManifestHost.json">
+		<w:Card id="card4" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestHost.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card5" manifest="./cardManifestHostInvalidTokenURL.json">
+		<w:Card id="card5" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestHostInvalidTokenURL.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>

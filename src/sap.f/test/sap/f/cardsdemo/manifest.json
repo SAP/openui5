@@ -15,6 +15,11 @@
 		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"dataSources": {
+			"getActivities": {
+				"uri": "/getData/"
+			}
 		}
 	},
 	"sap.ui5": {
@@ -250,6 +255,11 @@
 					"pattern": "manifestResolver",
 					"name": "manifestResolver",
 					"target": "manifestResolver"
+				},
+				{
+					"pattern": "csrfToken",
+					"name": "csrfToken",
+					"target": "csrfToken"
 				}
 			],
 			"targets": {
@@ -436,6 +446,11 @@
 				"manifestResolver": {
 					"viewId": "manifestResolver",
 					"viewName": "ManifestResolver",
+					"viewLevel": 1
+				},
+				"csrfToken": {
+					"viewId": "csrfToken",
+					"viewName": "CsrfToken",
 					"viewLevel": 1
 				}
 			}

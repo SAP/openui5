@@ -2,11 +2,13 @@ sap.ui.define([
 	"./SEPMRA_PROD_MAN/mockServer",
 	"./graphql/mockServer",
 	"./activities/mockServer",
+	"./csrf/mockServer",
 	"sap/ui/core/util/MockServer"
 ], function (
 	SEPMRA_PROD_MAN_mockServer,
 	graphql_mockServer,
 	timeline_mockServer,
+	csrf_mockServer,
 	MockServer
 ) {
 	"use strict";
@@ -22,7 +24,8 @@ sap.ui.define([
 	MockServerManager._aMockServers = [
 		SEPMRA_PROD_MAN_mockServer,
 		graphql_mockServer,
-		timeline_mockServer
+		timeline_mockServer,
+		csrf_mockServer
 	];
 
 	MockServerManager.initAll = function (bSampleUsesMockServer) {

@@ -204,5 +204,11 @@
 		"description": "Play around with manifest resolving",
 		"route": "manifestResolver",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "CSRF Tokens",
+		"description": "Play around with CSRF tokens",
+		"route": "csrfToken",
+		"group": "Other Card Examples"
 	}
 ]

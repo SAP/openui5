@@ -1,6 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent"
-], function (UIComponent) {
+	"sap/ui/core/UIComponent",
+	"sap/f/cardsdemo/localService/mockserver"
+], function (UIComponent,
+			 mockserver) {
 	"use strict";
 
 	return UIComponent.extend("sap.f.cardsdemo.Component", {
@@ -15,7 +17,8 @@ sap.ui.define([
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
-		}
 
+			mockserver.init();
+		}
 	});
 });

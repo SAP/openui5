@@ -1,8 +1,6 @@
 sap.ui.define([
-	"sap/ui/core/util/MockServer",
-	"sap/ui/model/json/JSONModel",
-	"sap/base/Log"
-], function (MockServer, JSONModel, Log) {
+	"sap/ui/core/util/MockServer"
+], function (MockServer) {
 	"use strict";
 
 	var activities = {
@@ -30,7 +28,6 @@ sap.ui.define([
 	return {
 
 		init: function () {
-
 			// create
 			var oMockServer = new MockServer({
 				rootUri: "/getData"
