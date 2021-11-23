@@ -1,51 +1,56 @@
-sap.ui.define(function() {
-
+sap.ui.define([
+	"sap/ui/test/generic/GenericTestCollection"
+], function(GenericTestCollection) {
 	"use strict";
-	return {
-		name: "TestSuite for sap.ui.core: GTP testcase CORE/GENERIC",
-		defaults: {
-			qunit: {
-				version: 2,
-				reorder: false
-			}
-		},
-		tests: {
-			ControlIterator: {
-				title: "QUnit Page for sap.ui.qunit.utils.ControlIterator",
-				ui5: {
-					"xx-supportedLanguages": "en"
-				},
-				// tests are created async with the ControlIterator, so the test has to start QUnit
-				autostart: false
+
+	var oConfig = GenericTestCollection.createTestsuiteConfig({
+		library: "sap.ui.core",
+		objectCapabilities: {
+			"sap.ui.core.ComponentContainer": {
+				create: false
 			},
-			ControlIteratorExample: {
-				title: "QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 1: one test per control)",
-				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
-				autostart: false
+			"sap.ui.core.UIComponent": {
+				create: false
 			},
-			ControlIteratorExample2: {
-				title: "QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 2: all controls within one test)"
+			"sap.ui.core.XMLComposite": {
+				create: false
 			},
-			ControlMemoryLeaks: {
-				title: "QUnit Page for memory leak detection in UI5 controls"
+			"sap.ui.core.mvc.HTMLView": {
+				create: false,
+				apiVersion: 1
 			},
-			ControlRenderer: {
-				title: "QUnit Page for memory leak detection in UI5 controls"
+			"sap.ui.core.mvc.JSONView": {
+				create: false
 			},
-			ControlMemoryLeaksUsingIterator: {
-				title: "QUnit Page for memory leak detection in UI5 controls",
-				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
-				autostart: false
+			"sap.ui.core.mvc.JSView": {
+				create: false
 			},
-			DuplicateIdCheck: {
-				title: "QUnit Page for duplicate ID issues detection in UI5 controls"
+			"sap.ui.core.mvc.XMLView": {
+				create: function (XMLView, mParameters) {
+					var mParams = mParameters || {};
+					mParams.definition = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:ui="sap.ui">'
+					+ '          <Button text="Press me"/>                     '
+					+ '    </mvc:View>                                         ';
+					return XMLView.create(mParams);
+				}
 			},
-			EnforceSemanticRendering: {
-				title: "QUnit Page for Semantic Rendering Coverage"
+			"sap.ui.core.mvc.TemplateView": {
+				create: false
 			},
-			SettersContextReturn: {
-				title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
+			"sap.ui.core.mvc.XMLAfterRenderingNotifier": {
+				moduleName: "sap.ui.core.mvc.XMLView"
+			},
+			"sap.ui.core.mvc.View": {
+				create: false
+			},
+			"sap.ui.core.tmpl.Template": {
+				create: false
+			},
+			"sap.ui.core.tmpl.TemplateControl": {
+				apiVersion: 1
 			}
 		}
-	};
+	});
+
+	return oConfig;
 });
