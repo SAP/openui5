@@ -1,0 +1,77 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.DynamicDateRangeWithCustomOptions.DynamicDateRangeWithCustomOptions"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+
+	<Table id="orders-table"
+		items="{
+			path: '/orders'
+		}">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title text="Orders" level="H2"/>
+				<ToolbarSpacer/>
+
+				<Label visible="false" text="Order date" labelFor="dynamic-range"/>
+				<DynamicDateRange
+					id="dynamic-range"
+					change=".onChange"
+					options="{/dynamicDateFilterKeys}"
+					width="{env>/filterInputWidth}"/>
+			</OverflowToolbar>
+		</headerToolbar>
+		<infoToolbar>
+			<OverflowToolbar>
+				<Label text="List of orders"/>
+			</OverflowToolbar>
+		</infoToolbar>
+		<columns>
+			<Column>
+				<Text text="Order date" />
+			</Column>
+			<Column>
+				<Text text="Product name" />
+			</Column>
+			<Column>
+				<Text text="Product Quantity" />
+			</Column>
+			<Column>
+				<Text text="Price" />
+			</Column>
+			<Column>
+				<Text text="Total Price" />
+			</Column>
+		</columns>
+		<items>
+		<ColumnListItem>
+				<cells>
+					<Text
+						text="{ path: 'orderTime', formatter: '._dateFormatter'}" />
+					<Text
+						text="{productType}" />
+					<Text
+						text="{productQuantity}" />
+					<ObjectNumber
+							number="{
+								parts:[{path:'productPrice'},{path:'currency'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{currency}" />
+					<ObjectNumber
+							number="{
+								parts:[{path:'totalPrice'} ,{path:'currency'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{currency}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>
+
+

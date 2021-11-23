@@ -349,8 +349,8 @@
 			"name": "Dynamic Date Range",
 			"category": "User Input",
 			"since": "1.92",
-			"formFactors": "-",
-			"samples": ["sap.m.sample.DynamicDateRange"]
+			"formFactors": "M",
+			"samples": ["sap.m.sample.DynamicDateRange", "sap.m.sample.DynamicDateRangeWithCustomOptions"]
 		},
 		{
 		  "id": "sap.m.DatePicker",
@@ -2316,6 +2316,11 @@
 			"id": "sap.m.sample.DynamicDateRange",
 			"name": "Dynamic Date Range (Experimental)",
 			"description": "The dynamic date range is a control that offers a choice of absolute and relative dates, using different offset from the current date. The list of values offered must be defined by the application."
+		},
+		{
+			"id": "sap.m.sample.DynamicDateRangeWithCustomOptions",
+			"name": "Dynamic Date Range With Custom Options (Experimental)",
+			"description": "This example shows the Dynamic Date Range control with custom options for interval or date selection."
 		},
 		{
 		  "id": "sap.m.sample.DatePicker",
