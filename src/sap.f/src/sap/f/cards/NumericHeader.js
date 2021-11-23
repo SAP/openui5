@@ -3,13 +3,13 @@
  */
 sap.ui.define([
 	"./BaseHeader",
-	"sap/m/NumericContent",
+	"./NumericIndicators",
 	"sap/m/Text",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/ui/core/Core"
 ], function (
 	BaseHeader,
-	NumericContent,
+	NumericIndicators,
 	Text,
 	NumericHeaderRenderer,
 	Core
@@ -106,14 +106,21 @@ sap.ui.define([
 				/**
 				 * The alignment of the side indicators.
 				 */
-				 sideIndicatorsAlignment: { "type": "sap.f.cards.NumericHeaderSideIndicatorsAlignment", group: "Appearance", defaultValue : "Begin" }
+				sideIndicatorsAlignment: { "type": "sap.f.cards.NumericHeaderSideIndicatorsAlignment", group: "Appearance", defaultValue : "Begin" }
 			},
 			aggregations: {
 
 				/**
 				 * Additional side number indicators. For example "Deviation" and "Target". Not more than two side indicators should be used.
 				 */
-				sideIndicators: { type: "sap.f.cards.NumericSideIndicator", multiple: true },
+				sideIndicators: {
+					type: "sap.f.cards.NumericSideIndicator",
+					multiple: true,
+					forwarding: {
+						getter: "_getNumericIndicators",
+						aggregation: "sideIndicators"
+					}
+				},
 
 				/**
 				 * Used to display title text
@@ -136,9 +143,9 @@ sap.ui.define([
 				_details: { type: "sap.m.Text", multiple: false, visibility: "hidden" },
 
 				/**
-				 * Displays the main number indicator
+				 * Displays the main and side indicators
 				 */
-				_mainIndicator: { type: "sap.m.NumericContent", multiple: false, visibility: "hidden" }
+				_numericIndicators: { type: "sap.f.cards.NumericIndicators", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -230,7 +237,7 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype.setNumber = function(sValue) {
 		this.setProperty("number", sValue);
-		this._getMainIndicator().setValue(sValue);
+		this._getNumericIndicators().setNumber(sValue);
 		return this;
 	};
 
@@ -243,7 +250,7 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype.setScale = function(sValue) {
 		this.setProperty("scale", sValue, true);
-		this._getMainIndicator().setScale(sValue);
+		this._getNumericIndicators().setScale(sValue);
 		return this;
 	};
 
@@ -256,7 +263,7 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype.setTrend = function(sValue) {
 		this.setProperty("trend", sValue, true);
-		this._getMainIndicator().setIndicator(sValue);
+		this._getNumericIndicators().setTrend(sValue);
 		return this;
 	};
 
@@ -269,7 +276,7 @@ sap.ui.define([
 	 */
 	NumericHeader.prototype.setState = function(sValue) {
 		this.setProperty("state", sValue, true);
-		this._getMainIndicator().setValueColor(sValue);
+		this._getNumericIndicators().setState(sValue);
 		return this;
 	};
 
@@ -361,18 +368,12 @@ sap.ui.define([
 	 * @private
 	 * @return {sap.m.NumericContent} The main indicator aggregation
 	 */
-	NumericHeader.prototype._getMainIndicator = function () {
-		var oControl = this.getAggregation("_mainIndicator");
+	NumericHeader.prototype._getNumericIndicators = function () {
+		var oControl = this.getAggregation("_numericIndicators");
 
 		if (!oControl) {
-			oControl = new NumericContent({
-				id: this.getId() + "-mainIndicator",
-				withMargin: false,
-				nullifyValue: false,
-				animateTextChange: false,
-				truncateValueTo: 100
-			});
-			this.setAggregation("_mainIndicator", oControl);
+			oControl = new NumericIndicators();
+			this.setAggregation("_numericIndicators", oControl);
 		}
 
 		return oControl;
@@ -435,7 +436,7 @@ sap.ui.define([
 		}
 
 		if (this.getNumber() || this.getScale()) {
-			sMainIndicatorId = this._getMainIndicator().getId();
+			sMainIndicatorId = this._getNumericIndicators()._getMainIndicator().getId();
 		}
 
 		sIds = sCardTypeId + " " + sTitleId + " " + sSubtitleId + " " + sStatusTextId + " " + sUnitOfMeasureId + " " + sMainIndicatorId + " " + sSideIndicatorsIds + " " + sDetailsId;
