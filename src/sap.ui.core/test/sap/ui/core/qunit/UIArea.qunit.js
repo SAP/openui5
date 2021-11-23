@@ -269,8 +269,9 @@ sap.ui.define([
 
 	QUnit.module("Dependents", {
 		beforeEach: function() {
+			new Control().placeAt("uiArea1").destroy();
 			var oControl = new Control();
-			oCore.createUIArea("uiArea1").addDependent(oControl);
+			oCore.getUIArea("uiArea1").addDependent(oControl);
 			this.uiArea = oControl.getUIArea();
 			this.uiArea.addDependent(new Control());
 			this.spy(this.uiArea, "invalidate");

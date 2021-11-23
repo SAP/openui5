@@ -845,14 +845,14 @@ sap.ui.define([
 
 		assert.equal(pageRenderCounter, 0, "no rendering should have happened yet");
 
-		Core.getControl("page2").rerender();
+		Core.byId("page2").rerender();
 		assert.equal(pageRenderCounter, 1, "one page rendering should have happened");
 
-		Core.getControl("page2").addContent(new Button({text:"Button p2"}));
+		Core.byId("page2").addContent(new Button({text:"Button p2"}));
 		Core.applyChanges();
 		assert.equal(pageRenderCounter, 2, "two page renderings should have happened");
 
-		Core.getControl("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
+		Core.byId("page3").addContent(new Button({text:"Button p3"})); // invisible page - should cause NO re-rendering!
 		Core.applyChanges();
 		assert.equal(pageRenderCounter, 2, "still, only two page renderings should have happened");
 

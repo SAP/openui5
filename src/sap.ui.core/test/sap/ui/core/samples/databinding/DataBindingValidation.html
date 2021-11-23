@@ -33,7 +33,7 @@
 	    }
 
     	var oCore = sap.ui.getCore();
-    	oCore.attachInitEvent(function() {
+    	oCore.attachInit(function() {
     		var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
     		if (logger)
     			logger.style.display = "none";

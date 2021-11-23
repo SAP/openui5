@@ -107,8 +107,8 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function(assert) {
-			l1 = sap.ui.getCore().getControl("l1");
-			l2 = sap.ui.getCore().getControl("l2");
+			l1 = sap.ui.getCore().byId("l1");
+			l2 = sap.ui.getCore().byId("l2");
 
 			l1.setDesign(oStandardDesign);
 			l1.setTextDirection(oTextDirectionDefault);

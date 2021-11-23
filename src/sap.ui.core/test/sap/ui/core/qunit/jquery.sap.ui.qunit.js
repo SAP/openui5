@@ -39,8 +39,8 @@ sap.ui.define(["sap/ui/core/Control"], function(Control){
 	}});
 
 
-	sap.ui.setRoot("uiAreaPreSetup1", new TestControl("preSetupCtrl1", {marker: "presetup"}));
-	sap.ui.setRoot("uiAreaPreSetup2", new TestControl("preSetupCtrl2", {marker: "presetup"}));
+	new TestControl("preSetupCtrl1", {marker: "presetup"}).placeAt("uiAreaPreSetup1");
+	new TestControl("preSetupCtrl2", {marker: "presetup"}).placeAt("uiAreaPreSetup2");
 	sap.ui.getCore().applyChanges();
 
 	/**

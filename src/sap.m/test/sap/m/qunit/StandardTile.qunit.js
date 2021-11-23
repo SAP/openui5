@@ -164,7 +164,7 @@ sap.ui.define([
 
 	QUnit.module("Events", {
 		beforeEach : function() {
-			tileBasic = sap.ui.getCore().getControl(tileBasicId);
+			tileBasic = sap.ui.getCore().byId(tileBasicId);
 		},
 		afterEach : function() {
 			tileBasic = null;

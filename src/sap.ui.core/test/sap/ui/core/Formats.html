@@ -212,7 +212,7 @@
 
 		oLabel.placeAt("settings");
 		oSelect.placeAt("settings");
-		sap.ui.getCore().attachInitEvent(function() {
+		sap.ui.getCore().attachInit(function() {
 			oSelect.setSelectedKey(sInitialValue);
 		});
 		return oSelect;

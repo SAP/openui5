@@ -31,7 +31,7 @@
 			}
 
 			var oCore = sap.ui.getCore();
-			oCore.attachInitEvent(function() {
+			oCore.attachInit(function() {
 				var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
 				if (logger)
 					logger.style.display = "none";
@@ -56,7 +56,6 @@
 				oModel.setData(mdData);
 				sap.ui.getCore().setModel(oModel);
 
-				var tableArea1 = oCore.createUIArea("tableArea1");
 				var oTable = new sap.ui.table.Table({
 					title : "Clients Table1",
 					width : "100%",
@@ -91,9 +90,8 @@
 				}));
 
 				oTable.bindRows("/clients");
-				tableArea1.setRootControl(oTable);
+				oTable.placeAt("tableArea1");
 
-				var tableArea2 = oCore.createUIArea("tableArea2");
 				oTable = new sap.ui.table.Table({
 					title : "Clients Table2",
 					width : "100%",
@@ -128,7 +126,7 @@
 				}));
 
 				oTable.bindRows("/clients");
-				tableArea2.setRootControl(oTable);
+				oTable.placeAt("tableArea2");
 
 			});
 		</script>

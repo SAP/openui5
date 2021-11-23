@@ -24,7 +24,7 @@
 			throw(e);
 		}
     	jQuery.sap.require("sap.ui.model.json.JSONModel");
-    	sap.ui.getCore().attachInitEvent(doIt);
+    	sap.ui.getCore().attachInit(doIt);
     	var oModel;
     	function doIt(){
     		oModel = new sap.ui.model.json.JSONModel();

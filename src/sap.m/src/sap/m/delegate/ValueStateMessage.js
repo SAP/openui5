@@ -262,7 +262,7 @@ sap.ui.define([
 				oTextDomRef.appendChild(document.createTextNode(vValueStateMessageText));
 				oMessageDomRef.appendChild(oTextDomRef);
 			} else {
-				Core.getRenderManager().render(vValueStateMessageText, oMessageDomRef);
+				Core.createRenderManager().render(vValueStateMessageText, oMessageDomRef);
 				oMessageDomRef.lastElementChild.setAttribute("id", sID + "-text");
 			}
 

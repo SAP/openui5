@@ -22,10 +22,10 @@
 			jQuery.sap.require("sap/base/security/URLListValidator");
 			var URLListValidator = sap.ui.require("sap/base/security/URLListValidator");
 
-			oCore.attachInitEvent(function () {
+			oCore.attachInit(function () {
 
 				function onChange(oEvent){
-					var oInput = oCore.getControl("Input1");
+					var oInput = oCore.byId("Input1");
 					var sUrl = oInput.getValue();
 					var sValid = URLListValidator.validate(sUrl);
 
@@ -47,7 +47,7 @@
 
 				function fillListBox(){
 					var aAllowlist = URLListValidator.entries();
-					var oListBox = oCore.getControl("ListBox1");
+					var oListBox = oCore.byId("ListBox1");
 					oListBox.removeAllItems();
 
 					if (aAllowlist instanceof Array && aAllowlist.length > 0){
@@ -60,11 +60,11 @@
 				}
 
 				function addToAllowlist(oEvent){
-					var oProtocol = oCore.getControl("Protocol");
-					var oHost = oCore.getControl("Host");
-					var oPort = oCore.getControl("Port");
-					var oPath = oCore.getControl("Path");
-					var oListBox = oCore.getControl("ListBox1");
+					var oProtocol = oCore.byId("Protocol");
+					var oHost = oCore.byId("Host");
+					var oPort = oCore.byId("Port");
+					var oPath = oCore.byId("Path");
+					var oListBox = oCore.byId("ListBox1");
 					var sNewUrl = oProtocol.getValue() +"|"+ oHost.getValue() +"|"+ oPort.getValue() +"|"+ oPath.getValue();
 					oListBox.addItem(new sap.ui.core.ListItem({text: sNewUrl}));
 					URLListValidator.add(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
@@ -76,7 +76,7 @@
 				}
 
 				function removeFromAllowlist(oEvent){
-					var oListBox = oCore.getControl("ListBox1");
+					var oListBox = oCore.byId("ListBox1");
 					var iIndex = oListBox.getSelectedIndex();
 					var oItem = oListBox.getSelectedItem();
 					oListBox.removeItem(oItem);
@@ -86,7 +86,7 @@
 				}
 
 				function clearAllowlist(oEvent){
-					var oListBox = oCore.getControl("ListBox1");
+					var oListBox = oCore.byId("ListBox1");
 					URLListValidator.clear();
 					oListBox.destroyItems();
 					onChange(oEvent)

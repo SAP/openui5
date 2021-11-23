@@ -135,7 +135,7 @@ sap.ui.define([
 			this.oSelectedContentModel.setData(oModelData);
 			var oCore = sap.ui.getCore();
 			var sIconTabBarId = this.getView().createId("contentDetailsIconTabBar");
-			var oIconTabBar = oCore.getElementById(sIconTabBarId);
+			var oIconTabBar = oCore.byId(sIconTabBarId);
 			if (oIconTabBar) {
 				var oFirstIconTabBarItem = oIconTabBar.getItems()[0];
 				if (oIconTabBar.getSelectedKey() !== oFirstIconTabBarItem.getId()) {

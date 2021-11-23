@@ -224,7 +224,7 @@ sap.ui.define([
 
 			assert.ok(
 				elements.length >= 4,
-				"atleast 4 elements should be in this context"
+				"at least 4 elements should be in this context"
 			);
 			assert.ok(
 				elements.length < elementsInCore.length,
