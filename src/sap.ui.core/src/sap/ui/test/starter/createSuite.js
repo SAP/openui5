@@ -196,7 +196,8 @@
 	window.suite = function() {
 
 		function createSuite(oSuiteConfig) {
-			var sContextPath = "/" + window.location.pathname.split("/")[1] + "/";
+			var sContextPath = new URL(sap.ui.require.toUrl("") + "/../", document.baseURI).pathname;
+
 			var oSuite = new JSUnitSuite();
 			oSuiteConfig.sortedTests.forEach(function(oTestConfig) {
 				if (!oTestConfig.skip) {
