@@ -1047,7 +1047,7 @@ sap.ui.define([
         this._setState(oMDCChart, oState);
         var oBindingInfo = this._getBindingInfo(oMDCChart);
         this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
-        this.rebindChart(oMDCChart, oBindingInfo);
+        this.rebindChart(oMDCChart, oBindingInfo); //TODO: Change this to rebind method on delegate once FE is ready
     };
 
     ChartDelegate._calculateInnerChartHeight = function(oMDCChart) {
@@ -1175,8 +1175,19 @@ sap.ui.define([
      *
      * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
      * @param {object} oBindingInfo The bindingInfo of the chart
+     * @deprecated as of 1.98; use rebind instead
      */
-    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+         ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+            this.rebind(oMDCChart, oBindingInfo);
+        };
+
+    /**
+     * Checks the binding of the table and rebinds it if required.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
+     * @param {object} oBindingInfo The bindingInfo of the chart
+     */
+    ChartDelegate.rebind = function (oMDCChart, oBindingInfo) {
         if (oMDCChart && oBindingInfo && this._getChart(oMDCChart)) {
             //TODO: bindData sap.chart.Chart specific and therefore needs to be changed to a general API.
             this._addBindingListener(oBindingInfo, "dataReceived", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));

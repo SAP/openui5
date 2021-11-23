@@ -118,13 +118,13 @@ sap.ui.define([
 	 * Updates the binding info with the relevant path and model from the metadata.
 	 *
 	 * @param {Object} oMDCTable The MDC table instance
-	 * @param {Object} oMetadataInfo The metadataInfo set on the table
 	 * @param {Object} oBindingInfo The bindingInfo of the table
 	 */
-	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
 		if (!oMDCTable) {
 			return;
 		}
+		var oMetadataInfo = oMDCTable.getPayload();
 
 		if (oMetadataInfo && oBindingInfo) {
 			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;

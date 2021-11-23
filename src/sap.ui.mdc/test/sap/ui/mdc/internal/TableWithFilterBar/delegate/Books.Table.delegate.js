@@ -219,7 +219,7 @@ sap.ui.define([
 		});
 	};
 
-	BooksTableDelegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) {
+	BooksTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		ODataTableDelegate.updateBindingInfo.apply(this, arguments);
 
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)

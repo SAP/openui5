@@ -207,14 +207,13 @@ sap.ui.define([
 	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code>. For more information, see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {object} oDelegatePayload The delegate payload
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @function
 	 * @name sap.ui.mdc.odata.v4.TableDelegate.updateBindingInfo
 	 * @abstract
 	 */
-	//Delegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) { };
+	//Delegate.updateBindingInfo = function(oTable, oBindingInfo) { };
 
 	/**
 	 * Updates the row binding of the table if possible, rebinds otherwise.
@@ -268,7 +267,7 @@ sap.ui.define([
 	 * @override
 	 * @inheritDoc
 	 */
-	Delegate.rebindTable = function (oTable, oBindingInfo) {
+	Delegate.rebind = function (oTable, oBindingInfo) {
 		setAggregation(oTable, oBindingInfo);
 		TableDelegate.rebindTable(oTable, oBindingInfo);
 	};

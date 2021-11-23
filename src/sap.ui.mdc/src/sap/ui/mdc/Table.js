@@ -717,7 +717,7 @@ sap.ui.define([
 	Table.prototype._onApplyMessageFilter = function(oEvent) {
 		this._oMessageFilter = oEvent.getParameter("filter");
 		oEvent.preventDefault();
-		this.rebind();
+		this._rebind();
 	};
 
 	/**
@@ -727,7 +727,7 @@ sap.ui.define([
 	Table.prototype._onClearMessageFilter = function(oEvent) {
 		this._oMessageFilter = null;
 		oEvent.preventDefault();
-		this.rebind();
+		this._rebind();
 	};
 
 	// ----Type----
@@ -878,7 +878,7 @@ sap.ui.define([
 			}
 
 			this._bForceRebind = true;
-			this.checkAndRebind();
+			this._rebind();
 		}
 
 		return this;
@@ -1373,7 +1373,7 @@ sap.ui.define([
 			}
 
 			if (this.getAutoBindOnInit()) {
-				this.checkAndRebind();
+				this.rebind();
 			}
 
 			return this.awaitPropertyHelper();
@@ -2440,7 +2440,7 @@ sap.ui.define([
 
 	Table.prototype._registerInnerFilter = function(oFilter) {
 		oFilter.attachSearch(function() {
-			this.rebind();
+			this._rebind();
 		}, this);
 	};
 
@@ -2469,7 +2469,7 @@ sap.ui.define([
 
 		var oBindingInfo = {};
 
-		this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
+		this.getControlDelegate().updateBindingInfo(this, oBindingInfo, oBindingInfo);
 
 		if (oBindingInfo.path) {
 			this._oTable.setShowOverlay(false);
@@ -2692,19 +2692,19 @@ sap.ui.define([
 	};
 
 	// TODO: Delete!
-	Table.prototype.rebindTable = function() {
-		this.rebind();
+	Table.prototype.rebindTable = function () {
+		this._rebind();
 	};
 
 	/**
 	 * Rebinds the table rows.
 	 */
-	Table.prototype.rebind = function() {
+	Table.prototype._rebind = function() {
 		// Bind the rows/items of the table, only once it is initialized.
 		if (this._bFullyInitialized) {
 			this.bindRows();
 		} else {
-			this._fullyInitialized().then(this.rebind.bind(this));
+			this._fullyInitialized().then(this._rebind.bind(this));
 		}
 	};
 

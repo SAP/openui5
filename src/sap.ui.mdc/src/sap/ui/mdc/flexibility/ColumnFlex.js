@@ -15,7 +15,7 @@ sap.ui.define([
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;
 				Engine.getInstance().waitForChanges(oControl).then(function() {
-					oControl.checkAndRebind();
+					oControl.rebind();
 					delete oControl._bWaitForBindChanges;
 				});
 

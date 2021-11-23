@@ -33,7 +33,7 @@ sap.ui.define([
 	], function(TableDelegate) {
 		var TestDelegate = Object.assign({}, TableDelegate);
 
-		TestDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+		TestDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
 			TableDelegate.updateBindingInfo.apply(this, arguments);
 			oBindingInfo.path = "/ProductList";
 		};
@@ -100,7 +100,6 @@ sap.ui.define([
 			return oInnerTable && oInnerTable.getBindingInfo(oTable._getStringType() === "Table" ? "rows" : "items");
 		}, iTimeout);
 	}
-
 
 	QUnit.module("Initialization", {
 		afterEach: function() {
@@ -1032,7 +1031,7 @@ sap.ui.define([
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
 				assert.ok(fTableGroupSpy.calledOnce, "Column group triggered");
 				if (!fTableGroupSpy.calledOnce) {
-					done();	// rebindTable won't be called in this case, so we need to end the test here
+					done();	// rebind won't be called in this case, so we need to end the test here
 				}
 			});
 		});
@@ -1263,8 +1262,8 @@ sap.ui.define([
 
 		return oTable._fullyInitialized().then(function() {
 			var fnOriginalUpdateBindingInfo = oTable.getControlDelegate().updateBindingInfo;
-			oTable.getControlDelegate().updateBindingInfo = function(oTable, oPayload, oBindingInfo) {
-				fnOriginalUpdateBindingInfo(oTable, oPayload, oBindingInfo);
+			oTable.getControlDelegate().updateBindingInfo = function(oTable, oBindingInfo) {
+				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
 				oBindingInfo.parameters["$search"] = "Name";
 			};
 			return waitForBindingInfo(oTable);
@@ -1352,13 +1351,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sort", function(assert) {
-		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: false }] }).rebind();
+		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: false }] })._rebind();
 		assert.ok(this.oSortSpy.firstCall.calledWithExactly(this.oTable._getSorters()));
 
-		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: true }] }).rebind();
+		this.oTable.setSortConditions({ sorters: [{ name: "Name", descending: true }] })._rebind();
 		assert.ok(this.oSortSpy.secondCall.calledWithExactly(this.oTable._getSorters()));
 
-		this.oTable.setSortConditions().rebind();
+		this.oTable.setSortConditions()._rebind();
 		assert.equal(this.oSortSpy.callCount, 3);
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 	});
@@ -1366,39 +1365,39 @@ sap.ui.define([
 	QUnit.test("Filter", function(assert) {
 		var aFilters = [new Filter("Name", "EQ", "a")];
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
-
-        oUpdateBindingInfoStub.callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+        oUpdateBindingInfoStub.callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
+			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
 			oBindingInfo.filters = aFilters;
         });
 
-		this.oTable.rebind();
+		this.oTable._rebind();
 		assert.ok(this.oFilterSpy.firstCall.calledWithExactly(aFilters, "Application"));
 
 		oUpdateBindingInfoStub.restore();
-		this.oTable.rebind();
+		this.oTable._rebind();
 		assert.ok(this.oFilterSpy.secondCall.calledWithExactly([], "Application"));
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 	});
 
 	QUnit.test("Group", function(assert) {
-		this.oTable.setGroupConditions({ groupLevels: [{ name: "Name" }] }).rebind();
+		this.oTable.setGroupConditions({ groupLevels: [{ name: "Name" }] })._rebind();
 		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({ groupLevels: [ "Name" ] }));
 
-		this.oTable.setGroupConditions().rebind();
+		this.oTable.setGroupConditions()._rebind();
 		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { groupLevels: [] }));
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 	});
 
-	QUnit.test("Aggregate", function(assert) {
-		this.oTable.setAggregateConditions({ Name: {} }).rebind();
+	QUnit.test("Aggregates", function(assert) {
+		this.oTable.setAggregateConditions({ Name: {} })._rebind();
 		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({
 		    grandTotal: [ "Name" ],
 		    subtotals: [ "Name" ]
 		}));
 
-		this.oTable.setAggregateConditions().rebind();
+		this.oTable.setAggregateConditions()._rebind();
 		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { grandTotal: [], subtotals: [] }));
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 	});
@@ -1406,29 +1405,32 @@ sap.ui.define([
 	QUnit.test("Parameters", function(assert) {
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
-        oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+        oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
+			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
             oBindingInfo.parameters.$search = "x";
         });
-		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
+			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
             oBindingInfo.parameters.$search = undefined;
         });
-		oUpdateBindingInfoStub.onCall(2).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+		oUpdateBindingInfoStub.onCall(2).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
+			var oMetadataInfo = oMDCTable.getPayload();
 			oBindingInfo.path = oMetadataInfo.collectionPath;
             oBindingInfo.parameters.$$canonicalPath = true;
         });
 
-		this.oTable.rebind();
+		this.oTable._rebind();
 		assert.equal(this.oChangeParametersSpy.callCount, 1);
-		this.oTable.rebind();
+		this.oTable._rebind();
 		assert.equal(this.oChangeParametersSpy.callCount, 2);
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 
-		this.oTable.rebind();
+		this.oTable._rebind();
 		assert.equal(this.oRebindTableSpy.callCount, 1);
 
 		oUpdateBindingInfoStub.restore();
@@ -1436,7 +1438,7 @@ sap.ui.define([
 
 	QUnit.test("Add Column", function(assert) {
 		this.oTable.insertColumn(new Column());
-		this.oTable.rebind();
+		this.oTable._rebind();
 
 		assert.equal(this.oChangeParametersSpy.callCount, 0);
 		assert.equal(this.oFilterSpy.callCount, 0);
@@ -1448,16 +1450,16 @@ sap.ui.define([
 	QUnit.test("Change path", function(assert) {
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
-		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = oBindingInfo.path + "something_else";
 		});
 
-		this.oTable.rebind();
+		this.oTable._rebind();
 		this.oRebindTableSpy.resetHistory();
-		this.oTable.rebind();
-		assert.equal(this.oRebindTableSpy.callCount, 1, "Changing the path forces a rebind");
+		this.oTable._rebind();
 
+		assert.equal(this.oRebindTableSpy.callCount, 1, "Changing the path forces a rebind");
 		oUpdateBindingInfoStub.restore();
 	});
 });
