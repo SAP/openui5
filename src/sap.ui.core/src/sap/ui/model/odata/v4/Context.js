@@ -143,7 +143,7 @@ sap.ui.define([
 		var that = this;
 
 		if (this.isTransient()) {
-			return this.oBinding._delete(oGroupLock, "n/a", this, bDoNotRequestCount);
+			return this.oBinding._delete(oGroupLock, "n/a", this, oETagEntity, bDoNotRequestCount);
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(oGroupLock, sCanonicalPath.slice(1), that, oETagEntity,
