@@ -83,10 +83,10 @@ sap.ui.define([
 	 * the <code>CSSGrid</code> and configure how it will look in different breakpoints (S, M, L, XL).</li>
 	 * </ul>
 	 *
-	 * <h3>Current Limitations</h3>
+	 * <h3>Out of current scope:</h3>
 	 * <ul>
-	 * <li>No alignment and ordering</li>
-	 * <li>No Named grid areas and lines</li>
+	 * <li>Alignment and ordering</li>
+	 * <li>Named grid areas and lines</li>
 	 * </ul>
 	 *
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}

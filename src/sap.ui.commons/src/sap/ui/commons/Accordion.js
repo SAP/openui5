@@ -183,7 +183,6 @@ sap.ui.define([
 
 	/**
 	 * PAGE DOWN key behavior
-	 * Limitation: This key combination is used by Firefox 3.6 to navigate between the opened tabs in the browser.
 	 * Opens the next section and focuses on the header
 	 * @param {jQuery.Event} oEvent Browser event
 	 * @private
@@ -220,7 +219,6 @@ sap.ui.define([
 
 	/**
 	 * PAGE UP key behavior
-	 * Limitation: This key combination is used by Firefox 3.6 to navigate between the opened TABS in the browser.
 	 * Opens the previous section and focuses on the header
 	 * @param {jQuery.Event} oEvent Browser event
 	 * @private
