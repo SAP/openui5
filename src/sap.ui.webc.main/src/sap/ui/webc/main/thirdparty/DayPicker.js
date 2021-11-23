@@ -133,6 +133,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/we
 				if (isDisabled) {
 					day.classes += " ui5-dp-item--disabled";
 				}
+				if (this.hasSecondaryCalendarType) {
+					day.classes += " ui5-dp-item--withsecondtype";
+				}
 				week.push(day);
 				if (dayOfTheWeek === DAYS_IN_WEEK - 1) {
 					week.unshift({

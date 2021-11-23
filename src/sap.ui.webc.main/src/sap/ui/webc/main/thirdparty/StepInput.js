@@ -65,9 +65,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Boolean,
 				noAttribute: true,
 			},
-			_focused: {
+			focused: {
 				type: Boolean,
-				noAttribute: true,
 			},
 			_inputFocused: {
 				type: Boolean,
@@ -166,7 +165,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return !this._incIconDisabled && !this.readonly && !this.disabled;
 		}
 		get _isFocused() {
-			return this._focused;
+			return this.focused;
 		}
 		get _valuePrecisioned() {
 			return this.value.toFixed(this.valuePrecision);
@@ -253,7 +252,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.value = value;
 				this._validate();
 				this._setButtonState();
-				this._focused = true;
+				this.focused = true;
 				this.inputOuter.setAttribute("focused", "");
 				if (fireChangeEvent) {
 					this._fireChangeEvent();
@@ -287,10 +286,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_onfocusin() {
-			this._focused = true;
+			this.focused = true;
 		}
 		_onfocusout() {
-			this._focused = false;
+			this.focused = false;
 		}
 		_onkeydown(event) {
 			let preventDefault = true;

@@ -14,6 +14,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			readonly: { type: Boolean },
 			overflows: { type: Boolean },
 			selected: { type: Boolean },
+			focused: { type: Boolean },
 			_tabIndex: { type: String, defaultValue: "-1", noAttribute: true },
 		},
 		slots:  {
@@ -48,6 +49,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.selected = !this.selected;
 			this.fireEvent("select");
 		}
+		_focusin() {
+			this.focused = true;
+		}
+		_focusout() {
+			this.focused = !this.focused;
+		}
 		 _delete() {
 			this.fireEvent("delete");
 		 }
@@ -70,7 +77,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Token.i18nBundle.getText(i18nDefaults.TOKEN_ARIA_DELETABLE);
 		}
 		get iconURI() {
-			return Theme.getTheme() === "sap_fiori_3" ? "decline" : "sys-cancel";
+			if (Theme.getTheme().includes("sap_belize")) {
+				return "sys-cancel";
+			}
+			return "decline";
 		}
 		static get dependencies() {
 			return [Icon];

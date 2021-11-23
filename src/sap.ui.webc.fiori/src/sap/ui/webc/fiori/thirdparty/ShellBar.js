@@ -359,9 +359,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const newItems = this._handleActionsOverflow();
 			this._updateItemsInfo(newItems);
 		}
-		_toggleActionPopover() {
+		async _toggleActionPopover() {
 			const overflowButton = this.shadowRoot.querySelector(".ui5-shellbar-overflow-button");
-			this.overflowPopover.showAt(overflowButton);
+			const overflowPopover = await this._getOverflowPopover();
+			overflowPopover.showAt(overflowButton);
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this, this._handleResize);
@@ -391,9 +392,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const refItemId = event.target.getAttribute("data-ui5-external-action-item-id");
 			if (refItemId) {
 				const shellbarItem = this.items.find(item => {
-					return item.shadowRoot.querySelector(`#${refItemId}`);
+					return item._id === refItemId;
 				});
-				const prevented = !shellbarItem.fireEvent("item-click", { targetRef: event.target }, true);
+				const prevented = !shellbarItem.fireEvent("click", { targetRef: event.target }, true);
 				this._defaultItemPressPrevented = prevented;
 			}
 		}
@@ -420,6 +421,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				targetRef: buttonRef.classList.contains("ui5-shellbar-hidden-button") ? event.target : buttonRef,
 			}, true);
 		}
+		get logoDomRef() {
+			return this.shadowRoot.querySelector(`*[data-ui5-stable="logo"]`);
+		}
+		get copilotDomRef() {
+			return this.shadowRoot.querySelector(`*[data-ui5-stable="copilot"]`);
+		}
+		get notificationsDomRef() {
+			return this.shadowRoot.querySelector(`*[data-ui5-stable="notifications"]`);
+		}
+		get overflowDomRef() {
+			return this.shadowRoot.querySelector(`*[data-ui5-stable="overflow"]`);
+		}
+		get profileDomRef() {
+			return this.shadowRoot.querySelector(`*[data-ui5-stable="profile"]`);
+		}
+		get productSwitchDomRef() {
+			return this.shadowRoot.querySelector(`*[data-ui5-stable="product-switch"]`);
+		}
 		_getAllItems(showOverflowButton) {
 			let domOrder = -1;
 			const items = [
@@ -437,6 +456,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					show: !!this.searchField.length,
 				},
 				...this.items.map((item, index) => {
+					item._getRealDomRef = () => this.getDomRef().querySelector(`*[data-ui5-stable=${item.stableDomRef}]`);
 					return {
 						icon: item.icon,
 						id: item._id,
@@ -541,6 +561,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.overflowPopover = staticAreaItem.querySelector(".ui5-shellbar-overflow-popover");
 			this.menuPopover = staticAreaItem.querySelector(".ui5-shellbar-menu-popover");
 		}
+		async _getOverflowPopover() {
+			const staticAreaItem = await this.getStaticAreaItemDomRef();
+			return staticAreaItem.querySelector(".ui5-shellbar-overflow-popover");
+		}
 		async _getMenuPopover() {
 			const staticAreaItem = await this.getStaticAreaItemDomRef();
 			return staticAreaItem.querySelector(".ui5-shellbar-menu-popover");
@@ -557,7 +581,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				wrapper: {
 					"ui5-shellbar-root": true,
 					"ui5-shellbar-with-searchfield": this.searchField.length,
-					"ui5-shellbar-with-coPilot": this.showCoPilot,
 				},
 				button: {
 					"ui5-shellbar-menu-button--interactive": this.hasMenuItems,

@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/status-in-process', './v4/status-in-process'], function (Theme, statusInProcess$2, statusInProcess$1) { 'use strict';
 
-	const name = "status-in-process";
-	const pathData = "M511 450q1 2 1 10t-5.5 14-14.5 6H22q-10 0-16-6t-6-14q0-2 2-10L237 12q7-12 19-12 11 0 19 12zm-89-34L256 117 91 416h331z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? statusInProcess$1 : statusInProcess$2;
 	var statusInProcess = { pathData };
 
 	return statusInProcess;

@@ -35,16 +35,6 @@ sap.ui.define([
 	 *     <li>[END] - Navigates to the last option</li>
 	 * </ul> <br>
 	 *
-	 *
-	 * <h3>Stable DOM Refs</h3>
-	 *
-	 * In the context of <code>sap.ui.webc.main.Select</code>, you can provide a custom stable DOM ref for:
-	 * <ul>
-	 *     <li>Every <code>sap.ui.webc.main.Option</code> that you provide. Example: <code>
-	 *             <ui5-option stable-dom-ref="option1"></ui5-option>
-	 *         </code></li>
-	 * </ul>
-	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

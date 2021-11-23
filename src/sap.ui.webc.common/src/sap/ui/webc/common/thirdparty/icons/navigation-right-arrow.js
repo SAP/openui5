@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/navigation-right-arrow', './v4/navigation-right-arrow'], function (Theme, navigationRightArrow$2, navigationRightArrow$1) { 'use strict';
 
-	const name = "navigation-right-arrow";
-	const pathData = "M296 268q11-12 0-23L139 86q-10-10-10-23t10-22q9-10 22-10t23 10l191 193q9 9 9 22.5t-9 22.5L183 471q-10 10-23 10t-23-10q-9-9-9-22.5t9-22.5z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? navigationRightArrow$1 : navigationRightArrow$2;
 	var navigationRightArrow = { pathData };
 
 	return navigationRightArrow;

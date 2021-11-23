@@ -33,15 +33,6 @@ sap.ui.define([
 	 *     <li><code>sap.ui.webc.main.TabSeparator</code> - used to separate tabs with a vertical line</li>
 	 * </ul>
 	 *
-	 * <h3>Stable DOM Refs</h3>
-	 *
-	 * In the context of <code>sap.ui.webc.main.TabContainer</code>, you can provide a custom stable DOM refs for:
-	 * <ul>
-	 *     <li>Each <code>sap.ui.webc.main.Tab</code> Example: <code>
-	 *             <ui5-tab stable-dom-ref="in-stock"></ui5-tab>
-	 *         </code></li>
-	 * </ul>
-	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

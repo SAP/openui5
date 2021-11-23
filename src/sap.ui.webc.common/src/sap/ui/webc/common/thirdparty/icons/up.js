@@ -1,13 +1,7 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', './generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/up', './v4/up'], function (Theme, up$2, up$1) { 'use strict';
 
-	const name = "up";
-	const pathData = "M256 32l256 448H0zm0 64L64 448h384z";
-	const ltr = false;
-	const accData = i18nDefaults.ICON_UP;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, accData, collection, packageName });
-	var up = { pathData, accData };
+	const pathData = Theme.isTheme("sap_horizon") ? up$1 : up$2;
+	var up = { pathData };
 
 	return up;
 

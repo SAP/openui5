@@ -214,7 +214,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return ids.length ? ids.join(" ") : undefined;
 		}
-		get ariaLabelТxt() {
+		get ariaLabelTxt() {
 			return AriaLabelHelper.getEffectiveAriaLabelText(this);
 		}
 		get ariaLabelModeText() {

@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/column-chart-dual-axis', './v4/column-chart-dual-axis'], function (Theme, columnChartDualAxis$2, columnChartDualAxis$1) { 'use strict';
 
-	const name = "column-chart-dual-axis";
-	const pathData = "M32 32h32v416h384V32h32v448H32V32zm288 40q0-8 8-8h48q8 0 8 8v336q0 8-8 8h-48q-8 0-8-8V72zm-88 88h48q8 0 8 8v240q0 8-8 8h-48q-8 0-8-8V168q0-8 8-8zm-96 64h48q8 0 8 8v176q0 8-8 8h-48q-8 0-8-8V232q0-8 8-8z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? columnChartDualAxis$1 : columnChartDualAxis$2;
 	var columnChartDualAxis = { pathData };
 
 	return columnChartDualAxis;

@@ -147,7 +147,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get shouldPopin() {
 			return this._columnsInfo.filter(el => {
-				return el.demandPopin;
+				return el.demandPopin || !el.visible;
 			}).length;
 		}
 		get allColumnsPoppedIn() {

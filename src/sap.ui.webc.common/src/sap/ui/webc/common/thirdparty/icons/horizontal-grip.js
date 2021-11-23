@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/horizontal-grip', './v4/horizontal-grip'], function (Theme, horizontalGrip$2, horizontalGrip$1) { 'use strict';
 
-	const name = "horizontal-grip";
-	const pathData = "M96 224v64H32v-64h64zm256 0v64h-64v-64h64zm-192 0h64v64h-64v-64zm320 0v64h-64v-64h64z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? horizontalGrip$1 : horizontalGrip$2;
 	var horizontalGrip = { pathData };
 
 	return horizontalGrip;

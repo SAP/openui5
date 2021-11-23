@@ -94,6 +94,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			this.toggle();
 		}
 		_onmousedown() {
+			if (this.readonly || this.disabled) {
+				return;
+			}
 			this.active = true;
 			activeCb = this;
 		}

@@ -37,13 +37,6 @@ sap.ui.define([
 	 *     <li>product-switch</li>
 	 * </ul>
 	 *
-	 * In the context of <code>sap.ui.webc.fiori.ShellBar</code>, you can provide a custom stable DOM refs for:
-	 * <ul>
-	 *     <li>Every <code>sap.ui.webc.fiori.ShellBarItem</code> that you provide. Example: <code>
-	 *             <ui5-shellbar-item stable-dom-ref="messages"></ui5-shellbar-item>
-	 *         </code></li>
-	 * </ul>
-	 *
 	 * <h3>CSS Shadow Parts</h3>
 	 *
 	 * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM. <br>
@@ -271,7 +264,8 @@ sap.ui.define([
 					}
 				}
 			},
-			methods: ["closeOverflow"]
+			methods: ["closeOverflow"],
+			getters: ["copilotDomRef", "logoDomRef", "notificationsDomRef", "overflowDomRef", "productSwitchDomRef", "profileDomRef"]
 		}
 	});
 
@@ -279,6 +273,48 @@ sap.ui.define([
 	 * Closes the overflow area. Useful to manually close the overflow after having suppressed automatic closing with preventDefault() of ShellbarItem's press event
 	 * @public
 	 * @name sap.ui.webc.fiori.ShellBar#closeOverflow
+	 * @function
+	 */
+
+	/**
+	 * Returns the <code>copilot</code> DOM ref.
+	 * @public
+	 * @name sap.ui.webc.fiori.ShellBar#getCopilotDomRef
+	 * @function
+	 */
+
+	/**
+	 * Returns the <code>logo</code> DOM ref.
+	 * @public
+	 * @name sap.ui.webc.fiori.ShellBar#getLogoDomRef
+	 * @function
+	 */
+
+	/**
+	 * Returns the <code>notifications</code> icon DOM ref.
+	 * @public
+	 * @name sap.ui.webc.fiori.ShellBar#getNotificationsDomRef
+	 * @function
+	 */
+
+	/**
+	 * Returns the <code>overflow</code> icon DOM ref.
+	 * @public
+	 * @name sap.ui.webc.fiori.ShellBar#getOverflowDomRef
+	 * @function
+	 */
+
+	/**
+	 * Returns the <code>product-switch</code> icon DOM ref.
+	 * @public
+	 * @name sap.ui.webc.fiori.ShellBar#getProductSwitchDomRef
+	 * @function
+	 */
+
+	/**
+	 * Returns the <code>profile</code> icon DOM ref.
+	 * @public
+	 * @name sap.ui.webc.fiori.ShellBar#getProfileDomRef
 	 * @function
 	 */
 

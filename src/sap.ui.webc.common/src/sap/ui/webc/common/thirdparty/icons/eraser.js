@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/eraser', './v4/eraser'], function (Theme, eraser$2, eraser$1) { 'use strict';
 
-	const name = "eraser";
-	const pathData = "M155 448h325v32H116q-7 0-11-4l-69-69q-5-5-5-11.5t5-11.5L362 59q4-4 8-4l110-23-22 110q0 3-1 5t-3 4zm3-140l46 45 223-222h1l-46-46z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? eraser$1 : eraser$2;
 	var eraser = { pathData };
 
 	return eraser;

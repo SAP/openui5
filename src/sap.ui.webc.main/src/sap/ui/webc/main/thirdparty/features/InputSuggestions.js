@@ -1,4 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', '../List', '../ResponsivePopover', '../SuggestionItem', '../SuggestionGroupItem', '../Button', '../GroupHeaderListItem', '../SuggestionListItem', '../generated/i18n/i18n-defaults'], function (FeaturesRegistry, i18nBundle, List, ResponsivePopover, SuggestionItem, SuggestionGroupItem, Button, GroupHeaderListItem, SuggestionListItem, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/base/security/encodeXML', 'sap/ui/webc/common/thirdparty/base/util/generateHighlightedMarkup', '../List', '../ResponsivePopover', '../SuggestionItem', '../SuggestionGroupItem', '../Button', '../GroupHeaderListItem', '../SuggestionListItem', '../generated/i18n/i18n-defaults'], function (FeaturesRegistry, i18nBundle, encodeXML, generateHighlightedMarkup, List, ResponsivePopover, SuggestionItem, SuggestionGroupItem, Button, GroupHeaderListItem, SuggestionListItem, i18nDefaults) { 'use strict';
+
+	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+
+	var encodeXML__default = /*#__PURE__*/_interopDefaultLegacy(encodeXML);
+	var generateHighlightedMarkup__default = /*#__PURE__*/_interopDefaultLegacy(generateHighlightedMarkup);
 
 	class Suggestions {
 		constructor(component, slotName, highlight, handleFocus) {
@@ -54,6 +59,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return false;
 		}
 		onEnter(event) {
+			if (this._isGroupOrInactiveItem) {
+				event.preventDefault();
+				return false;
+			}
 			if (this._isItemOnTarget()) {
 				this.onItemSelected(null, true );
 				return true;
@@ -85,9 +94,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this.responsivePopover.showAt(this._getComponent());
 		}
 		async close(preventFocusRestore = false) {
+			const selectedItem = this._getItems() && this._getItems()[this.selectedItemIndex];
 			this._getComponent().open = false;
 			this.responsivePopover = await this._getSuggestionPopover();
 			this.responsivePopover.close(false, false, preventFocusRestore);
+			if (selectedItem && selectedItem.focused) {
+				selectedItem.focused = false;
+			}
 		}
 		updateSelectedItemPosition(pos) {
 			this.selectedItemIndex = pos;
@@ -110,10 +123,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				listSize: allItems.length,
 				itemText: item.textContent,
 			};
-			if (item.type === "Inactive") {
-				return;
-			}
-			if (item.group) {
+			if (item.type === "Inactive" || item.group) {
 				return;
 			}
 			this._getComponent().onItemSelected(this._getRealItems()[this.selectedItemIndex], keyboardUsed);
@@ -168,7 +178,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 		}
 		_isItemOnTarget() {
-			return this.isOpened() && this.selectedItemIndex !== null;
+			return this.isOpened() && this.selectedItemIndex !== null && this.selectedItemIndex !== -1 && !this._isGroupOrInactiveItem;
+		}
+		get _isGroupOrInactiveItem() {
+			const items = this._getItems();
+			if (!items || !items[this.selectedItemIndex]) {
+				return false;
+			}
+			return (items[this.selectedItemIndex].group || items[this.selectedItemIndex].type === "Inactive");
 		}
 		isOpened() {
 			return !!(this.responsivePopover && this.responsivePopover.opened);
@@ -186,23 +203,62 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		_selectNextItem() {
 			const itemsCount = this._getItems().length;
 			const previousSelectedIdx = this.selectedItemIndex;
-			if ((this.selectedItemIndex === null) || (++this.selectedItemIndex > itemsCount - 1)) {
-				this.selectedItemIndex = 0;
+			const hasValueState = this.component.hasValueStateMessage;
+			if (hasValueState && previousSelectedIdx === null && !this.component._isValueStateFocused) {
+				this.component._isValueStateFocused = true;
+				this.component.focused = false;
+				this.component.hasSuggestionItemSelected = false;
+				this.selectedItemIndex = null;
+				return;
 			}
-			this._moveItemSelection(previousSelectedIdx, this.selectedItemIndex);
+			if ((previousSelectedIdx === null && !hasValueState) || this.component._isValueStateFocused) {
+				this.component._isValueStateFocused = false;
+				--this.selectedItemIndex;
+			}
+			if (previousSelectedIdx !== null && previousSelectedIdx + 1 > itemsCount - 1) {
+				return;
+			}
+			this._moveItemSelection(previousSelectedIdx, ++this.selectedItemIndex);
 		}
 		_selectPreviousItem() {
-			const itemsCount = this._getItems().length;
+			const items = this._getItems();
 			const previousSelectedIdx = this.selectedItemIndex;
-			if ((this.selectedItemIndex === null) || (--this.selectedItemIndex < 0)) {
-				this.selectedItemIndex = itemsCount - 1;
+			const hasValueState = this.component.hasValueStateMessage;
+			if (hasValueState && previousSelectedIdx === 0 && !this.component._isValueStateFocused) {
+				this.component.hasSuggestionItemSelected = false;
+				this.component._isValueStateFocused = true;
+				this.selectedItemIndex = null;
+				items[0].focused = false;
+				items[0].selected = false;
+				return;
 			}
-			this._moveItemSelection(previousSelectedIdx, this.selectedItemIndex);
+			if (this.component._isValueStateFocused) {
+				this.component.focused = true;
+				this.component._isValueStateFocused = false;
+				this.selectedItemIndex = null;
+				return;
+			}
+			if (previousSelectedIdx === -1 || previousSelectedIdx === null) {
+				return;
+			}
+			if (previousSelectedIdx - 1 < 0) {
+				items[previousSelectedIdx].selected = false;
+				items[previousSelectedIdx].focused = false;
+				this.component.focused = true;
+				this.component.hasSuggestionItemSelected = false;
+				this.selectedItemIndex -= 1;
+				return;
+			}
+			this._moveItemSelection(previousSelectedIdx, --this.selectedItemIndex);
 		}
 		_moveItemSelection(previousIdx, nextIdx) {
 			const items = this._getItems();
 			const currentItem = items[nextIdx];
 			const previousItem = items[previousIdx];
+			if (!currentItem) {
+				return;
+			}
+			this.component.focused = false;
 			this.accInfo = {
 				currentPos: nextIdx + 1,
 				listSize: items.length,
@@ -213,12 +269,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				previousItem.focused = false;
 			}
 			if (currentItem) {
-				currentItem.selected = true;
 				currentItem.focused = true;
+				if (currentItem.type === "Active") {
+					currentItem.selected = true;
+				}
 				if (this.handleFocus) {
 					currentItem.focus();
 				}
 			}
+			this.component.hasSuggestionItemSelected = true;
 			this.onItemPreviewed(currentItem);
 			if (!this._isItemIntoView(currentItem)) {
 				this._scrollItemIntoView(currentItem);
@@ -230,6 +289,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				item.selected = false;
 				item.focused = false;
 			});
+		}
+		_clearItemFocus() {
+			const focusedItem = this._getItems().find(item => item.focused);
+			if (focusedItem) {
+				focusedItem.focused = false;
+			}
 		}
 		_isItemIntoView(item) {
 			const rectItem = item.getDomRef().getBoundingClientRect();
@@ -250,7 +315,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			return this._scrollContainer;
 		}
 		_getItems() {
-			return [...this.responsivePopover.querySelector("[ui5-list]").children];
+			return !!this.responsivePopover && [...this.responsivePopover.querySelector("[ui5-list]").children];
 		}
 		_getComponent() {
 			return this.component;
@@ -288,25 +353,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 		}
 		getHighlightedText(suggestion, input) {
-			let text = suggestion.text || suggestion.textContent;
-			text = this.sanitizeText(text);
+			const text = suggestion.text || suggestion.textContent;
 			return this.hightlightInput(text, input);
 		}
 		getHighlightedDesc(suggestion, input) {
-			let text = suggestion.description;
-			text = this.sanitizeText(text);
+			const text = suggestion.description || "";
 			return this.hightlightInput(text, input);
 		}
 		hightlightInput(text, input) {
-			if (!text) {
-				return text;
-			}
-			const inputEscaped = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-			const regEx = new RegExp(inputEscaped, "ig");
-			return text.replace(regEx, match => `<b>${match}</b>`);
+			return generateHighlightedMarkup__default(text, input);
 		}
 		sanitizeText(text) {
-			return text && text.replace("<", "&lt");
+			return encodeXML__default(text);
 		}
 		static get dependencies() {
 			return [

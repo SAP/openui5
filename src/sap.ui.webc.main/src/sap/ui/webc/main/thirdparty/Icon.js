@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-icon",
 		languageAware: true,
+		themeAware: true,
 		properties:  {
 			interactive: {
 				type: Boolean,

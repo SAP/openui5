@@ -82,7 +82,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				sap_belize: "#bfbfbf",
 				sap_belize_hcw: "#000000",
 				sap_belize_hcb: "#ffffff",
-				sap_horizon: "#d5dadd",
+				sap_horizon: "#89919a",
 			};
 		}
 		static get UP_EVENTS() {

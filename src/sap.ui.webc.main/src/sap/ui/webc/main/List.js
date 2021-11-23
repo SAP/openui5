@@ -27,7 +27,7 @@ sap.ui.define([
 	 *
 	 * The <code>sap.ui.webc.main.List</code> component allows displaying a list of items, advanced keyboard handling support for navigating between items, and predefined modes to improve the development efficiency. <br>
 	 * <br>
-	 * The <code>sap.ui.webc.main.List</code> is а container for the available list items:
+	 * The <code>sap.ui.webc.main.List</code> is a container for the available list items:
 	 * <ul>
 	 *     <li><code>sap.ui.webc.main.StandardListItem</code></li>
 	 *     <li><code>sap.ui.webc.main.CustomListItem</code></li>

@@ -126,6 +126,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (FormSupport) {
 				FormSupport.triggerFormSubmit(this);
 			}
+			if (Device.isSafari()) {
+				this.getDomRef().focus();
+			}
 		}
 		_onmousedown(event) {
 			if (this.nonInteractive || this._isTouch) {

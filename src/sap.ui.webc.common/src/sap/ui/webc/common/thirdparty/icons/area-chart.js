@@ -1,11 +1,6 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/area-chart', './v4/area-chart'], function (Theme, areaChart$2, areaChart$1) { 'use strict';
 
-	const name = "area-chart";
-	const pathData = "M237 315l110 37 149-65v128H91v-72zM91 269l146-129 110 19L496 0v110L347 252l-110-37-146 65v-11zM50 31v416h446v33H17V31h33zm41 286v-11l146-64 110 37 149-139v122l-149 64-110-37z";
-	const ltr = false;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
+	const pathData = Theme.isTheme("sap_horizon") ? areaChart$1 : areaChart$2;
 	var areaChart = { pathData };
 
 	return areaChart;

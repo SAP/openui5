@@ -49,6 +49,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get metadata() {
 			return metadata;
 		}
+		static get staticAreaStyles() {
+			return [SideNavigation_css];
+		}
 		static get render() {
 			return litRender__default;
 		}

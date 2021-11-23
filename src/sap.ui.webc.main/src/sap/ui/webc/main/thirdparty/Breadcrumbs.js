@@ -90,6 +90,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 				}
 			}
 		}
+		onBeforeRendering() {
+			this._preprocessItems();
+		}
 		onAfterRendering() {
 			this._cacheWidths();
 			this._updateOverflow();
@@ -241,6 +244,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 		}
 		_hasVisibleContent(item) {
 			return item.innerText || Array.from(item.children).some(child => !child.hidden);
+		}
+		_preprocessItems() {
+			this.items.forEach(item => {
+				item._getRealDomRef = () => this.getDomRef().querySelector(`[data-ui5-stable*=${item.stableDomRef}]`);
+			});
 		}
 		getCurrentLocationLabelWrapper() {
 			return this.shadowRoot.querySelector(".ui5-breadcrumbs-current-location > span");

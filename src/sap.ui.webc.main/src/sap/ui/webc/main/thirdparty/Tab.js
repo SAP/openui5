@@ -30,9 +30,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: SemanticColor,
 				defaultValue: SemanticColor.Default,
 			},
-			stableDomRef: {
-				type: String,
-			},
 			selected: {
 				type: Boolean,
 			},
@@ -85,6 +82,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get overflowPresentation() {
 			return executeTemplate__default(this.constructor.overflowTemplate, this);
+		}
+		get stableDomRef() {
+			return `${this._id}-stable-dom-ref`;
+		}
+		getTabInStripDomRef() {
+			return this._getTabInStripDomRef;
 		}
 		getFocusDomRef() {
 			let focusedDomRef = super.getFocusDomRef();
