@@ -723,6 +723,14 @@ sap.ui.define([
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
+		var fAddConditionChange = function(sFieldPath, aConditions) {
+			var mOrigConditions = {};
+			mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], aConditions));
+			this._cleanupConditions(mOrigConditions[sFieldPath]);
+
+			this._addConditionChange(mOrigConditions, sFieldPath);
+		}.bind(this);
+
 		if (!this._bIgnoreChanges) {
 
 			var sPath = oEvent.getParameter("path");
@@ -731,13 +739,17 @@ sap.ui.define([
 				var sFieldPath = sPath.substring("/conditions/".length);
 
 				if (this._bPersistValues && this._isPersistenceSupported()) {
-					var mOrigConditions = {};
 
 					var aConditions = oEvent.getParameter("value");
-					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], aConditions));
-					this._cleanupConditions(mOrigConditions[sFieldPath]);
 
-					this._addConditionChange(mOrigConditions, sFieldPath);
+					if (this._hasPropertyHelper() || this._getPropertyByName(sFieldPath)) {
+						fAddConditionChange(sFieldPath, aConditions);
+					} else {
+						this._retrieveMetadata().then(function() {
+							fAddConditionChange(sFieldPath, aConditions);
+						});
+					}
+
 				} else {
 					this._reportModelChange(false);
 				}

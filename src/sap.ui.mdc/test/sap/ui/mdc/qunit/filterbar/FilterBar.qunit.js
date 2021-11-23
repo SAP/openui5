@@ -1327,7 +1327,7 @@ sap.ui.define([
 
 		sinon.stub(oFilterBar, "_getP13nModeValue").returns(true);
 		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
-		sinon.stub(oFilterBar, "_stringifyConditions");
+		sinon.stub(oFilterBar, "_getPropertyByName").returns({});
 		oFilterBar.setP13nMode(["Value"]);
 		sinon.stub(oFilterBar.getEngine(), "createChanges").callsFake(function(mConfig) {
 			oCondition = mConfig.state;
