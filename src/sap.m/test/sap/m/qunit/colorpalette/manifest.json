@@ -101,8 +101,9 @@
 				"async": true,
 				"routerClass": "sap.m.routing.Router",
 				"homeRoute": "main",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "cp.opa.test.app.views",
+				"path": "cp.opa.test.app.views",
 				"controlId": "rootApp",
 				"controlAggregation": "pages",
 				"bypassed": {
@@ -118,14 +119,14 @@
 			],
 			"targets": {
 				"home": {
-				  "viewName": "Home",
-				  "viewId": "myHomeView",
-				  "viewLevel": 1
+					"name": "Home",
+					"id": "myHomeView",
+					"level": 1
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFoundPage",
-					"viewLevel": 1
+					"name": "NotFound",
+					"id": "notFoundPage",
+					"level": 1
 				}
 			}
 		}

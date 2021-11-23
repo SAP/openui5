@@ -14,7 +14,8 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
-				"viewPath": "sap.m.sample.ComparisonPattern.app.view",
+				"type": "View",
+				"path": "sap.m.sample.ComparisonPattern.app.view",
 				"controlId": "rootControl",
 				"controlAggregation": "pages",
 				"viewType": "XML",
@@ -34,12 +35,12 @@
 			],
 			"targets": {
 				"page1": {
-					"viewName": "Main",
-					"viewLevel": 0
+					"name": "Main",
+					"level": 0
 				},
 				"page2": {
-					"viewName": "Comparison",
-					"viewLevel": 1
+					"name": "Comparison",
+					"level": 1
 				}
 			}
 		}

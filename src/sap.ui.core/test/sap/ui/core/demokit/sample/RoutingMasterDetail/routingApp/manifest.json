@@ -14,8 +14,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
-				"viewPath": "sap.ui.core.sample.RoutingMasterDetail.routingApp.view",
+				"path": "sap.ui.core.sample.RoutingMasterDetail.routingApp.view",
 				"controlId": "rootControl",
+				"type": "View",
 				"viewType": "XML",
 				"async": true
 			},
@@ -46,12 +47,12 @@
 			],
 			"targets": {
 				"master": {
-					"viewName": "Master",
+					"name": "Master",
 					"controlAggregation": "masterPages",
-					"viewLevel": 0
+					"level": 0
 				},
 				"orderDetails": {
-					"viewName": "Detail1",
+					"name": "Detail1",
 					"controlAggregation": "detailPages",
 					"title": {
 						"parts": [
@@ -59,10 +60,10 @@
 						],
 						"formatter": "jQuery.sap.formatMessage"
 					},
-					"viewLevel": 1
+					"level": 1
 				},
 				"productDetails": {
-					"viewName": "Detail2",
+					"name": "Detail2",
 					"controlAggregation": "detailPages",
 					"title": {
 						"parts": [
@@ -70,7 +71,7 @@
 						],
 						"formatter": "jQuery.sap.formatMessage"
 					},
-					"viewLevel": 2
+					"level": 2
 				}
 			}
 		}

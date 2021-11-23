@@ -81,8 +81,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.orderbrowser.view",
+				"path": "sap.ui.demo.orderbrowser.view",
 				"controlId": "layout",
 				"controlAggregation": "beginColumnPages",
 				"bypassed": {
@@ -107,33 +108,33 @@
 			],
 			"targets": {
 				"master": {
-					"viewName": "Master",
-					"viewLevel": 1,
-					"viewId": "master"
+					"name": "Master",
+					"level": 1,
+					"id": "master"
 				},
 				"object": {
-					"viewName": "Detail",
-					"viewId": "detail",
-					"viewLevel": 1,
+					"name": "Detail",
+					"id": "detail",
+					"level": 1,
 					"controlAggregation": "midColumnPages"
 				},
 				"detailObjectNotFound": {
-					"viewName": "DetailObjectNotFound",
-					"viewId": "detailObjectNotFound",
+					"name": "DetailObjectNotFound",
+					"id": "detailObjectNotFound",
 					"controlAggregation": "midColumnPages"
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				},
 				"shipping": {
-					"viewName": "Shipping",
+					"name": "Shipping",
 					"parent": "object",
 					"controlId": "iconTabFilterShipping",
 					"controlAggregation": "content"
 				},
 				"processor": {
-					"viewName": "Processor",
+					"name": "Processor",
 					"parent": "object",
 					"controlId": "iconTabFilterProcessor",
 					"controlAggregation": "content"

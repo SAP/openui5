@@ -90,8 +90,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.theming.view",
+				"path": "sap.ui.demo.theming.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
@@ -110,13 +111,13 @@
 
 			"targets": {
 				"overview": {
-					"viewName": "Overview",
-					"viewId": "overview",
-					"viewLevel": 1
+					"name": "Overview",
+					"id": "overview",
+					"level": 1
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}

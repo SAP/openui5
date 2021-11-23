@@ -22,8 +22,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.f.FlexibleColumnLayoutWithFullscreenPage.view",
+				"path": "sap.f.FlexibleColumnLayoutWithFullscreenPage.view",
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
@@ -65,19 +66,19 @@
 			],
 			"targets": {
 				"master": {
-					"viewName": "Master",
+					"name": "Master",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detail": {
-					"viewName": "Detail",
+					"name": "Detail",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detailDetail": {
-					"viewName": "DetailDetail",
+					"name": "DetailDetail",
 					"controlAggregation": "midColumnPages"
 				},
 				"detailDetailDetail": {
-					"viewName": "DetailDetailDetail",
+					"name": "DetailDetailDetail",
 					"controlAggregation": "endColumnPages"
 				}
 			}

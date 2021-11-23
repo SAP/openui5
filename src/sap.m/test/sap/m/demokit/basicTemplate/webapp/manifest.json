@@ -75,8 +75,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.basicTemplate.view",
+				"path": "sap.ui.demo.basicTemplate.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"async": true
@@ -90,9 +91,9 @@
 			],
 			"targets": {
 				"home": {
-					"viewName": "Home",
-					"viewId": "home",
-					"viewLevel": 1,
+					"name": "Home",
+					"id": "home",
+					"level": 1,
 					"title": "{i18n>title}"
 				}
 			}

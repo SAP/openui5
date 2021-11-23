@@ -78,8 +78,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.accessibilityGuide.view",
+				"path": "sap.ui.demo.accessibilityGuide.view",
 				"controlId": "navContainer",
 				"controlAggregation": "pages",
 				"async": true
@@ -108,23 +109,23 @@
 			],
 			"targets": {
 				"overview": {
-					"viewName": "Overview",
-					"viewId": "overview",
-					"viewLevel": 2
+					"name": "Overview",
+					"id": "overview",
+					"level": 2
 				},
 				"exploreSamples": {
-					"viewName": "ExploreSamples",
-					"viewId": "exploreSamples",
-					"viewLevel": 2
+					"name": "ExploreSamples",
+					"id": "exploreSamples",
+					"level": 2
 				},
 				"exploreOverview": {
-					"viewName": "ExploreOverview",
-					"viewId": "exploreOverview",
-					"viewLevel": 2
+					"name": "ExploreOverview",
+					"id": "exploreOverview",
+					"level": 2
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}

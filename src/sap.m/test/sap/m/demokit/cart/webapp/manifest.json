@@ -77,8 +77,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.cart.view",
+				"path": "sap.ui.demo.cart.view",
 				"controlId": "layout",
 				"controlAggregation": "midColumnPages",
 				"bypassed": {
@@ -171,24 +172,24 @@
 			],
 			"targets": {
 				"product": {
-					"viewName": "Product",
-					"viewLevel": 3,
-					"viewId": "product",
+					"name": "Product",
+					"level": 3,
+					"id": "product",
 					"controlAggregation": "midColumnPages",
 					"title":"{Name}"
 				},
 				"comparison": {
-				  "viewName": "Comparison",
-				  "viewLevel": 3,
-				  "viewId": "comparison",
+				  "name": "Comparison",
+				  "level": 3,
+				  "id": "comparison",
 				  "controlAggregation": "midColumnPages",
 				  "title":"{Name}"
 				},
 				"category": {
-					"viewName": "Category",
-					"viewLevel": 2,
+					"name": "Category",
+					"level": 2,
 					"controlAggregation": "beginColumnPages",
-					"viewId": "category",
+					"id": "category",
 					"title": {
 						"parts": [
 							"i18n>tabTitle",
@@ -197,29 +198,29 @@
 					}
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewLevel": 3,
+					"name": "NotFound",
+					"level": 3,
 					"controlAggregation": "midColumnPages",
-					"viewId": "notFoundView",
+					"id": "notFoundView",
 					"title": "{i18n>categoryNoData}"
 				},
 				"welcome": {
-					"viewName": "Welcome",
-					"viewLevel": 0,
-					"viewId": "welcomeView",
+					"name": "Welcome",
+					"level": 0,
+					"id": "welcomeView",
 					"controlAggregation": "midColumnPages"
 				},
 				"home": {
-					"viewName": "Home",
-					"viewLevel": 1,
+					"name": "Home",
+					"level": 1,
 					"controlAggregation": "beginColumnPages",
-					"viewId": "homeView",
+					"id": "homeView",
 					"title": "{i18n>appTitle}"
 				},
 				"cart": {
-					"viewName": "Cart",
+					"name": "Cart",
 					"controlAggregation": "endColumnPages",
-					"viewId": "cartView",
+					"id": "cartView",
 					"title": {
 						"parts": [
 							"i18n>tabTitle",
@@ -228,17 +229,17 @@
 					}
 				},
 				"checkout": {
-					"viewName": "Checkout",
+					"name": "Checkout",
 					"controlAggregation": "beginColumnPages",
-					"viewLevel": 1,
+					"level": 1,
 					"title": "{i18n>checkoutTitle}",
-					"viewId": "checkoutView"
+					"id": "checkoutView"
 				},
 				"ordercompleted": {
-					"viewName": "OrderCompleted",
+					"name": "OrderCompleted",
 					"controlAggregation": "beginColumnPages",
-					"viewLevel": 2,
-					"viewId": "orderCompletedView",
+					"level": 2,
+					"id": "orderCompletedView",
 					"title": "{i18n>orderCompletedTitle}"
 				}
 			}

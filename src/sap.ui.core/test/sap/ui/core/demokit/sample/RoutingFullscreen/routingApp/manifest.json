@@ -14,9 +14,10 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
-				"viewPath": "sap.ui.core.sample.RoutingFullscreen.routingApp.view",
+				"path": "sap.ui.core.sample.RoutingFullscreen.routingApp.view",
 				"controlId": "rootControl",
 				"controlAggregation": "pages",
+				"type": "View",
 				"viewType": "XML",
 				"async": true
 			},
@@ -34,12 +35,12 @@
 			],
 			"targets": {
 				"page1": {
-					"viewName": "View1",
-					"viewLevel": 0
+					"name": "View1",
+					"level": 0
 				},
 				"page2": {
-					"viewName": "View2",
-					"viewLevel": 1
+					"name": "View2",
+					"level": 1
 				}
 			}
 		}
