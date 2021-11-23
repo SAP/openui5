@@ -84,6 +84,25 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkName("Test");
 				Then.onTheListReport.checkProduct(0, "10", true, "Test");
 
+				// Cancel Without Edit
+				When.onTheListReport.selectProduct(1);
+				Then.onTheObjectPage.checkProductID("20");
+				Then.onTheObjectPage.checkIsActiveEntity(false);
+				Then.onTheObjectPage.checkName("Product 2 (draft)");
+				Then.onTheListReport.checkProduct(1, "20", false, "Product 2 (draft)");
+
+				When.onTheObjectPage.changeName("Test");
+
+				Then.onTheObjectPage.checkName("Test");
+				Then.onTheListReport.checkProduct(1, "20", false, "Test");
+
+				When.onTheObjectPage.pressCancel();
+
+				Then.onTheObjectPage.checkProductID("20");
+				Then.onTheObjectPage.checkIsActiveEntity(true);
+				Then.onTheObjectPage.checkName("Product 2");
+				Then.onTheListReport.checkProduct(1, "20", true, "Product 2");
+
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();
 				Then.iTeardownMyUIComponent();

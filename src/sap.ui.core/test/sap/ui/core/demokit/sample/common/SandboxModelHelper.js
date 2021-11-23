@@ -63,6 +63,8 @@ sap.ui.define([
 			 * @param {string} oMockData.sFilterBase
 			 *   The base path for relative filter URLs in <code>oMockData.mFixture</code>, see
 			 *   {@link sap.ui.test.TestUtils.setupODataV4Server}
+			 * @param {object[]} [oMockData.aRegExps]
+			 *   The regular expression array for {@link sap.ui.test.TestUtils.setupODataV4Server}
 			 * @param {string} oMockData.sSourceBase
 			 *   The base path for <code>source</code> values in the <code>oMockData.mFixture</code>
 			 *   , see {@link sap.ui.test.TestUtils.setupODataV4Server}
@@ -76,7 +78,7 @@ sap.ui.define([
 				if (!TestUtils.isRealOData()) {
 					oSandbox = sinon.sandbox.create();
 					TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture,
-						oMockData.sSourceBase, oMockData.sFilterBase);
+						oMockData.sSourceBase, oMockData.sFilterBase, oMockData.aRegExps);
 				}
 				oModel = new ODataModel(mModelParameters);
 				if (oSandbox) {

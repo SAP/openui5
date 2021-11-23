@@ -22548,22 +22548,31 @@ sap.ui.define([
 	// (Object page does not matter here.)
 	// "EditAction" or "GetDraft" function returns draft version which replaces the active one.
 	//
-	// PATCH and "ActivationAction" are sent in the same $batch (change set does not matter here).
+	// - PATCH and "ActivationAction" are sent in the same $batch (change set does not matter here).
 	// Refresh destroys both the draft and the active version (unrealistic) and calls
 	// <code>fnOnBeforeDestroy</code>.
 	// JIRA: CPOUI5ODATAV4-347
 	//
-	// An invalid value is entered.
-	// Editing is canceled via v4.Context#replaceWith.
+	// - An invalid value is entered. Editing is canceled via v4.Context#replaceWith with a known
+	// active version. The draft is DELETEd afterwards.
 	// JIRA: CPOUI5ODATAV4-1271
+	//
+	// - An invalid value is entered. Editing is canceled, but the active version is unknown and
+	// first needs to be retrieved via execution of "SiblingEntity(...)" navigation propery. The
+	// draft is DELETEd afterwards.
+	// JIRA: CPOUI5ODATAV4-1272
 ["EditAction", "GetDraft"].forEach(function (sDraftOperation) {
 	[false, true].forEach(function (bCancel) {
-		var sTitle = "CPOUI5ODATAV4-347: draft operation = " + sDraftOperation + ", cancel = "
-				+ bCancel;
+		[false, true].forEach(function (bWithActive) {
+			var sTitle = "CPOUI5ODATAV4-347: draft operation = " + sDraftOperation + ", cancel = "
+					+ bCancel + ", known active version = " + bWithActive;
+
+			if (!bCancel && !bWithActive) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
-		var oActivationAction,
-			oActiveArtistContext,
+		var oActiveArtistContext,
 			oDraftOperation,
 			oInactiveArtistContext,
 			oInput,
@@ -22678,7 +22687,8 @@ sap.ui.define([
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[2], "Success",
 					sMessage2);
 		}).then(function () {
-			var sMessage = "Enter a text with a maximum of 255 characters and spaces",
+			var oActivationAction,
+				sMessage = "Enter a text with a maximum of 255 characters and spaces",
 				sValue = "*".repeat(256);
 
 			if (!bCancel) {
@@ -22768,7 +22778,7 @@ sap.ui.define([
 							sinon.match.same(oInactiveArtistContext)),
 						"for the 'clone', we need the context to distinguish");
 				});
-			} else {
+			} else { // cancel
 				oInput = oTable.getItems()[0].getCells()[2];
 
 				that.expectMessages([{
@@ -22798,11 +22808,58 @@ sap.ui.define([
 					that.checkValueState(assert, oInput, "Error", sMessage),
 					that.waitForChanges(assert)
 				]).then(function () {
-					that.expectChange("isActiveEntity", ["Yes"]);
+					var oSiblingEntity;
 
-					// code under test
-					oInactiveArtistContext.replaceWith(oActiveArtistContext);
+					that.expectMessages([{
+						message : sMessage1,
+						target : "/Artists(ArtistID='42',IsActiveEntity=true)/Name",
+						type : "Success"
+					}, {
+						message : sMessage2,
+						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
+						type : "Success"
+					}]);
 
+					if (bWithActive) {
+						that.expectChange("isActiveEntity", ["Yes"]);
+
+						// code under test
+						oInactiveArtistContext.replaceWith(oActiveArtistContext);
+
+						return that.waitForChanges(assert, "replaceWith");
+					}
+
+					oSiblingEntity = that.oModel.bindContext("SiblingEntity(...)",
+						oInactiveArtistContext, {$$inheritExpandSelect : true});
+
+					that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
+						+ "/SiblingEntity?$select=ArtistID,IsActiveEntity,Messages,Name", {
+						"@odata.etag" : "activETag*",
+						ArtistID : "42",
+						IsActiveEntity : true,
+						Messages : [{
+							message : sMessage1,
+							numericSeverity : 1,
+							target : "Name"
+						}],
+						Name : "Missy Eliot"
+					})
+					.expectChange("isActiveEntity", ["Yes"]);
+
+					return Promise.all([
+						// code under test
+						oSiblingEntity.execute("$auto", /*bIgnoreETag*/false,
+							/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+						that.waitForChanges(assert, "SiblingEntity")
+					]);
+				}).then(function () {
+					assert.strictEqual(oInput.getValue(), "Missy Eliot");
+
+					return Promise.all([
+						that.checkValueState(assert, oInput, "Success", sMessage1),
+						that.waitForChanges(assert)
+					]);
+				}).then(function () {
 					that.expectRequest({
 							headers : {
 								"If-Match" : "inactivETag"
@@ -22819,20 +22876,14 @@ sap.ui.define([
 					return Promise.all([
 						// code under test
 						oInactiveArtistContext.delete("$auto", /*bDoNotRequestCount*/true),
-						that.waitForChanges(assert, "replaceWith")
-					]);
-				}).then(function () {
-					assert.strictEqual(oInput.getValue(), "Missy Eliot");
-
-					return Promise.all([
-						that.checkValueState(assert, oInput, "Success", sMessage1),
-						that.waitForChanges(assert)
+						that.waitForChanges(assert, "DELETE")
 					]);
 				});
 			}
 		});
 	});
 
+		});
 	});
 });
 

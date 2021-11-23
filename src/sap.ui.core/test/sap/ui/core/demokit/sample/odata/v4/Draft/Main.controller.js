@@ -43,15 +43,25 @@ sap.ui.define([
 		onCancel : function () {
 			var oObjectPage = this.byId("objectPage"),
 				oDraftContext = oObjectPage.getBindingContext(),
-				oProductsTable = this.getView().byId("Products");
+				oProductsTable = this.getView().byId("Products"),
+				that = this;
 
-			oDraftContext.replaceWith(this.oActiveContext);
-			oDraftContext.delete("$auto", true);
+			function gotoActiveContext(oActiveContext) {
+				oProductsTable.setSelectedItem(
+					oProductsTable.getItems()[oActiveContext.getIndex()], true);
+				oObjectPage.setBindingContext(oActiveContext);
+				that.oActiveContext = null; // not needed anymore
+				oDraftContext.delete("$auto", true);
+			}
 
-			oProductsTable.setSelectedItem(
-				oProductsTable.getItems()[this.oActiveContext.getIndex()], true);
-			oObjectPage.setBindingContext(this.oActiveContext);
-			this.oActiveContext = null;
+			if (this.oActiveContext) {
+				oDraftContext.replaceWith(this.oActiveContext);
+				gotoActiveContext(this.oActiveContext);
+			} else {
+				oDraftContext.getModel().bindContext("SiblingEntity(...)", oDraftContext,
+						{$$inheritExpandSelect : true})
+					.execute("$auto", false, null, true).then(gotoActiveContext);
+			}
 		},
 
 		onEdit : function () {
@@ -147,17 +157,17 @@ sap.ui.define([
 
 		toggleDraft : function (sAction) {
 			var oObjectPage = this.byId("objectPage"),
-				oActiveContext = oObjectPage.getBindingContext(),
+				oContext = oObjectPage.getBindingContext(),
 				oProductsTable = this.getView().byId("Products"),
 				that = this;
 
-			oActiveContext.getModel().bindContext("SampleService." + sAction + "(...)",
-				oActiveContext, {$$inheritExpandSelect : true})
+			oContext.getModel().bindContext("SampleService." + sAction + "(...)",
+				oContext, {$$inheritExpandSelect : true})
 				.execute("$auto", false, null, true)
 				.then(function (oSiblingContext) {
 					that.oActiveContext = oSiblingContext.getProperty("IsActiveEntity")
 						? null
-						: oActiveContext;
+						: oContext;
 					oObjectPage.setBindingContext(oSiblingContext);
 					oProductsTable.setSelectedItem(
 						oProductsTable.getItems()[oSiblingContext.getIndex()], true);

@@ -9,6 +9,8 @@
 				</Key>
 				<Property Name="Address" Type="special.cases.Address"/>
 				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
+				<Property Name="HasActiveEntity" Type="Edm.Boolean" />
+				<Property Name="HasDraftEntity" Type="Edm.Boolean" />
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
 				<Property Name="Messages" Type="Collection(special.cases.Message)" />
@@ -17,6 +19,7 @@
 				<Property Name="sendsAutographs" Type="Edm.Boolean" />
 				<Annotation Term="com.sap.vocabularies.Common.v1.Messages" Path="Messages" />
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+				<NavigationProperty Name="SiblingEntity" Type="special.cases.ArtistsType" />
 				<NavigationProperty Name="BestPublication" Type="special.cases.PublicationsType" />
 				<NavigationProperty Name="_Publication" Type="Collection(special.cases.PublicationsType)" Partner="_Artist"/>
 				<NavigationProperty Name="BestFriend" Type="special.cases.ArtistsType" />
@@ -165,6 +168,7 @@
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
 				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType">
 					<NavigationPropertyBinding Path="BestFriend" Target="Artists"/>
+					<NavigationPropertyBinding Path="SiblingEntity" Target="Artists" />
 				</EntitySet>
 				<EntitySet Name="As" EntityType="special.cases.A">
 					<NavigationPropertyBinding Path="AtoEntityWithComplexKey"
