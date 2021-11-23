@@ -39,12 +39,8 @@
 				"path": "/"
 			},
 			"item": {
-				"title": {
-					"value": "{Name}"
-				},
-				"description": {
-					"value": "{Description}"
-				}
+				"title": "{Name}",
+				"description": "{Description}"
 			}
 		}
 	}

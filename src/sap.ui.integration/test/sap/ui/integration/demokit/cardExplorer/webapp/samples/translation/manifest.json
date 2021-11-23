@@ -59,12 +59,8 @@
 			},
 			"maxItems": 2,
 			"item": {
-				"title": {
-					"value": "{name}"
-				},
-				"description": {
-					"value": "{description}"
-				}
+				"title": "{name}",
+				"description": "{description}"
 			}
 		}
 	}
