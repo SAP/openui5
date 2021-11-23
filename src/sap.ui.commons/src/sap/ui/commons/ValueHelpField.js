@@ -5,12 +5,9 @@
 // Provides control sap.ui.commons.ValueHelpField.
 sap.ui.define([
     './TextField',
-    './library',
-    'sap/ui/core/IconPool',
-    'sap/ui/core/theming/Parameters',
     './ValueHelpFieldRenderer'
 ],
-	function(TextField, library, IconPool, Parameters, ValueHelpFieldRenderer) {
+	function(TextField, ValueHelpFieldRenderer) {
 	"use strict";
 
 

@@ -206,11 +206,24 @@ function(
 			return sText;
 		};
 
+		var mParams = Object.assign({
+			// add base styles as default
+			"_sap_m_Switch_OnPosition": -32,
+			"_sap_m_Switch_OffPosition": 0
+		}, Parameters.get({
+			name: ["_sap_m_Switch_OnPosition", "_sap_m_Switch_OffPosition"],
+			callback: function (_mParams) {
+				Switch._ONPOSITION = Number(_mParams["_sap_m_Switch_OnPosition"]);
+				Switch._OFFPOSITION = Number(_mParams["_sap_m_Switch_OffPosition"]);
+				Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);
+			}
+		}));
+
 		// the position of the inner HTML element whether the switch is "ON"
-		Switch._ONPOSITION = Number(Parameters.get("_sap_m_Switch_OnPosition"));
+		Switch._ONPOSITION = Number(mParams["_sap_m_Switch_OnPosition"]);
 
 		// the position of the inner HTML element whether the switch is "OFF"
-		Switch._OFFPOSITION = Number(Parameters.get("_sap_m_Switch_OffPosition"));
+		Switch._OFFPOSITION = Number(mParams["_sap_m_Switch_OffPosition"]);
 
 		// swap point
 		Switch._SWAPPOINT = Math.abs((Switch._ONPOSITION - Switch._OFFPOSITION) / 2);

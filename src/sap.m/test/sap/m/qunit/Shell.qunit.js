@@ -95,20 +95,13 @@ sap.ui.define([
 
 
 	if (window.getComputedStyle) {
-		var sBgVariant = Parameters.get("sapUiGlobalBackgroundVariant");
-
 		// bg image std
 		QUnit.test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function(assert) {
 			var bgDiv = oShell.$("BG"),
 				style = window.getComputedStyle(bgDiv[0]);
 
 			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
-			if (sBgVariant == "Variant1"){
-				assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
-			} else {
-				assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
-			}
-
+			assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 			assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
 		});
 
@@ -144,11 +137,7 @@ sap.ui.define([
 				style = window.getComputedStyle(bgDiv[0]);
 
 			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
-			if (sBgVariant == "Variant1"){
-				assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
-			} else {
-				assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
-			}
+			assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 			assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
 			assert.equal(style.opacity, "1", "Background opacity should be set");
 		});

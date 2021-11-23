@@ -488,11 +488,22 @@ sap.ui.define([
 	 * @private
 	 */
 	Shell.prototype._updateThemeVariables = function() {
-		Shell.SIDE_BAR_BASE_WIDTH = parseInt(
-			Parameters.get("sapUiUx3ShellSideBarBaseWidth"));
+		var mParams = Object.assign({
+			// add base styles as default
+			"sapUiUx3ShellSideBarBaseWidth": "40px",
+			"sapUiUx3ShellPaneOverflowButtonHeight": "40px"
+		}, Parameters.get({
+			name: ["sapUiUx3ShellSideBarBaseWidth", "sapUiUx3ShellPaneOverflowButtonHeight"],
+			callback: function (_mParams) {
+				Shell.SIDE_BAR_BASE_WIDTH = parseInt(_mParams["sapUiUx3ShellSideBarBaseWidth"]);
+				Shell.PANE_OVERFLOW_BUTTON_HEIGHT = parseInt(_mParams["sapUiUx3ShellPaneOverflowButtonHeight"]);
+			}
+		}));
 
-		Shell.PANE_OVERFLOW_BUTTON_HEIGHT = parseInt(
-			Parameters.get("sapUiUx3ShellPaneOverflowButtonHeight"));
+		Shell.SIDE_BAR_BASE_WIDTH = parseInt(mParams["sapUiUx3ShellSideBarBaseWidth"]);
+
+		Shell.PANE_OVERFLOW_BUTTON_HEIGHT = parseInt(mParams["sapUiUx3ShellPaneOverflowButtonHeight"]);
+
 		// Save the original button height to be referenced as maximum height
 		Shell.PANE_OVERFLOW_BUTTON_MAX_HEIGHT = Shell.PANE_OVERFLOW_BUTTON_HEIGHT;
 	};

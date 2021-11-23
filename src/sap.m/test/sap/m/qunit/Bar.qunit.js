@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
@@ -25,7 +24,6 @@ sap.ui.define([
 	mobileLibrary,
 	Device,
 	ResizeHandler,
-	Parameters,
 	InvisibleText,
 	jQuery,
 	oCore
