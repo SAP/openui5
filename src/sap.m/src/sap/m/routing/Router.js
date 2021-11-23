@@ -154,7 +154,8 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     {
 		 *          //same name as in the config.bypassed.target
 		 *          notFound: {
-		 *              viewName: "notFound",
+		 *              type: "View"
+		 *              name: "notFound",
 		 *              ...
 		 *              // more properties to place the view in the correct container
 		 *          }
@@ -185,7 +186,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *     ],
 		 *     // Default values shared by routes and Targets
 		 *     {
-		 *         viewNamespace: "my.application.namespace",
+		 *         path: "my.application.namespace",
 		 *         viewType: "XML"
 		 *     },
 		 *     // You should only use this constructor when you are not using a router with a component.
@@ -197,7 +198,8 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *          //same name as in the route called 'startRoute'
 		 *          welcome: {
 		 *              // All properties for creating and placing a view go here or in the config
-		 *              viewName: "Welcome",
+		 *              type: "View",
+		 *              name: "Welcome",
 		 *              controlId: "app",
 		 *              controlAggregation: "pages"
 		 *          }

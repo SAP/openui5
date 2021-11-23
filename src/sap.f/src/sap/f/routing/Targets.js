@@ -22,9 +22,8 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 *
 		 * @extends sap.ui.core.routing.Targets
 		 * @param {object} oOptions
-		 * @param {sap.ui.core.routing.Views} oOptions.views The views instance will create the
-		 * views of all the targets defined, so if 2 targets have the same viewName, the same
-		 * instance of the view will be displayed.
+		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the views of all the targets
+		 * defined, so if 2 targets have the same name, the same instance of the view will be displayed.
 		 * @param {object} [oOptions.config] This config allows all the values oOptions.targets.anyName allows,
 		 * these will be the default values for properties used in the target.
 		 *
@@ -96,13 +95,15 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * {
 		 *     targets: {
 		 *         welcome: {
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
 		 *             viewType: "XML",
 		 *             ....
 		 *             // Other target parameters
 		 *         },
 		 *         goodbye: {
-		 *             viewName: "Bye",
+		 *             type: "View",
+		 *             name: "Bye",
 		 *             viewType: "JS",
 		 *             ....
 		 *             // Other target parameters
@@ -115,23 +116,28 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * This creates two targets named 'welcome' and 'goodbye'. You can display both of them
 		 * or one of them using the <code>{@link #display}</code> function.
 		 *
-		 * @param {string} oOptions.targets.anyName.viewName The name of a view that will be created.
-		 * To place the view into a Control use the <code>controlAggregation</code> and
-		 * <code>controlId</code>. Views are only created once per <code>viewName</code>.
+		 * @param {string} oOptions.targets.anyName.type Defines whether the target creates an instance of 'View' or 'Component'.
+		 * @param {string} [oOptions.targets.anyName.name] Defines the name of the View or Component that will be
+		 * created. For type 'Component', use option <code>usage</code> instead if an owner component exists.
+		 * To place the view or component into a Control, use the options <code>controlAggregation</code> and
+		 * <code>controlId</code>. Instance of View or Component will only be created once per <code>name</code> or
+		 * <code>usage</code> combined with <code>id</code>.
 		 * <pre>
 		 * <code>
 		 * {
 		 *     targets: {
 		 *         // If display("masterWelcome") is called, the master view will be placed in the 'MasterPages' of a control with the id splitContainter
 		 *         masterWelcome: {
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "masterPages"
 		 *         },
 		 *         // If display("detailWelcome") is called after the masterWelcome, the view will be removed from the master pages and added to the detail pages, since the same instance is used. Also the controls inside of the view will have the same state.
 		 *         detailWelcome: {
 		 *             // same view here, that's why the same instance is used
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "detailPages"
 		 *         }
@@ -140,26 +146,26 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * </code>
 		 * </pre>
 		 *
-		 * If you want to have a second instance of the welcome view you can use the following:
+		 * If you want to have a second instance of the welcome view you can assign the targets with different ids:
 		 *
 		 * <pre>
 		 * <code>
-		 * // Some code you execute before you display the target named 'detailWelcome':
-		 * var oView = sap.ui.view(({ viewName : "Welcome", type : sap.ui.core.mvc.ViewType.XML});
-		 * oTargets.getViews().setView("WelcomeWithAlias", oView)
-		 *
 		 * {
 		 *     targets: {
-		 *         // If display("masterWelcome") is called, the master viewName will be placed in the 'MasterPages' of a control with the id splitContainter
+		 *         // If display("masterWelcome") is called, the "masterWelcome" view will be placed in the 'MasterPages' of a control with the id splitContainter
 		 *         masterWelcome: {
-		 *             viewName: "Welcome",
+		 *             type: "View",
+		 *             name: "Welcome",
+		 *             id: "masterWelcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "masterPages"
 		 *         },
-		 *         // If display("detailWelcome") is called after the masterWelcome, a second instance with an own controller instance will be added in the detail pages.
+		 *         // If display("detailWelcome") is called after the "masterWelcome", a second instance with an own controller instance will be added in the detail pages.
 		 *         detailWelcome: {
-		 *             // same viewName here, that's why the same instance is used
-		 *             viewName: "WelcomeWithAlias",
+		 *             type: "View",
+		 *             name: "Welcome",
+		 *             // another instance will be created because a different id is used
+		 *             id: "detailWelcome",
 		 *             controlId: "splitContainer",
 		 *             controlAggregation: "detailPages"
 		 *         }
@@ -169,15 +175,16 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * </pre>
 		 *
 		 *
+		 * @param {string} [oOptions.targets.anyName.usage] Defines the 'usage' name for 'Component' target which refers to the '/sap.ui5/componentUsages' entry in the owner component's manifest.
 		 * @param {string} [oOptions.targets.anyName.viewType=oOptions.config.viewType] The type of the view that is going to be created. These are the supported types: {@link sap.ui.core.mvc.ViewType}.
 		 * You always have to provide a viewType except if <code>oOptions.config.viewType</code> is set or when using {@link sap.ui.core.routing.Views#setView}.
 		 *
-		 * @param {string} [oOptions.targets.anyName.viewPath]
-		 * A prefix that is prepended in front of the <code>viewName</code>.
+		 * @param {string} [oOptions.targets.anyName.path]
+		 * A prefix that is prepended in front of the <code>name</code>.
 		 *
-		 * <b>Example:</b> <code>viewName</code> is set to "myView" and <code>viewPath</code> is set to "myApp" - the created viewName will be "myApp.myView".
+		 * <b>Example:</b> <code>name</code> is set to "myView" and <code>path</code> is set to "myApp" - the created view's name will be "myApp.myView".
 		 *
-		 * @param {string} [oOptions.targets.anyName.viewId] The ID of the created view.
+		 * @param {string} [oOptions.targets.anyName.id] The ID of the created view or component.
 		 * This is is prefixed with the ID of the component set to the views instance provided in <code>oOptions.views</code>.
 		 * For details, see <code>{@link sap.ui.core.routing.Views#getView}</code>.
 		 *
@@ -256,11 +263,13 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 *             // a reference to the app control in the rootView created by our UIComponent
 		 *             controlId: 'myApp',
 		 *             // An app has a pages aggregation where the views need to be put into
-		 *             controlAggregation: 'pages'
+		 *             controlAggregation: 'pages',
+		 *             // all targets have type "View"
+		 *             type: "View"
 		 *         },
 		 *         targets: {
 		 *             detail: {
-		 *                 viewName: 'Detail'
+		 *                 name: 'Detail'
 		 *             },
 		 *             secondTabContent: {
 		 *                 // A reference to the detail target defined above
@@ -270,7 +279,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 *                 // An IconTabFilter has an aggregation called content so we need to overwrite the pages set in the config as default.
 		 *                 controlAggregation: 'content',
 		 *                 // A view containing the content
-		 *                 viewName: 'SecondTabContent'
+		 *                 name: 'SecondTabContent'
 		 *             }
 		 *         }
 		 *     });

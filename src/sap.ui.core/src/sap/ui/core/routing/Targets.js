@@ -23,7 +23,8 @@ sap.ui.define([
 		 * If you are using the mobile library, please use {@link sap.m.routing.Targets} instead of this class.
 		 * @extends sap.ui.base.EventProvider
 		 * @param {object} oOptions
-		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the views of all the targets defined, so if 2 targets have the same viewName, the same instance of the view will be displayed.
+		 * @param {sap.ui.core.routing.Views} oOptions.views the views instance will create the instances of all the targets defined, so if 2 targets have the same
+		 *  <code>type</code> and <code>name</code> set, the same instance of the target will be displayed.
 		 * @param {object} [oOptions.config] this config allows all the values oOptions.targets.anyName allows, these will be the default values for properties used in the target.<br/>
 		 * For example if you are only using xmlViews in your app you can specify viewType="XML" so you don't have to repeat this in every target.<br/>
 		 * If a target specifies viewType="JS", the JS will be stronger than the XML here is an example.
@@ -124,9 +125,11 @@ sap.ui.define([
 		 * </pre>
 		 *
 		 * @param {string} oOptions.targets.anyName.type Defines whether the target creates an instance of 'View' or 'Component'.
-		 * @param {string} [oOptions.targets.anyName.name] Defines the name of the View or Component that will be created. For type 'Component', use option 'usage' instead if an owner component exists.
-		 * To place the view or component into a Control, use the options 'controlAggregation' and 'controlId'. Instance of View or Component will only be created once per 'name' or 'usage' combined
-		 * with 'id'.
+		 * @param {string} [oOptions.targets.anyName.name] Defines the name of the View or Component that will be
+		 * created. For type 'Component', use option 'usage' instead if an owner component exists.
+		 * To place the view or component into a Control, use the options <code>controlAggregation</code> and
+		 * <code>controlId</code>. Instance of View or Component will only be created once per <code>name</code> or
+		 * <code>usage</code> combined with <code>id</code>.
 		 * <pre>
 		 * <code>
 		 * {
@@ -158,21 +161,22 @@ sap.ui.define([
 		 * <code>
 		 * {
 		 *     targets: {
-		 *         // If display("masterWelcome") is called, the master viewName will be placed in the 'MasterPages' of a control with the id splitContainter
+		 *         // If display("masterWelcome") is called, the view with name "Welcome" will be placed in the 'MasterPages' of a control with the id splitContainter
 		 *         masterWelcome: {
 		 *             type: "View",
 		 *             name: "Welcome",
-		 *             controlId: "splitContainer",
-		 *             controlAggregation: "masterPages",
 		 *             id: "masterWelcome",
+		 *             controlId: "splitContainer",
+		 *             controlAggregation: "masterPages"
 		 *         },
-		 *         // If display("detailWelcome") is called after the masterWelcome, a second instance with an own controller instance will be added in the detail pages.
+		 *         // If display("detailWelcome") is called after the "masterWelcome" target, a second instance of the same view with its own controller instance will be added in the detail pages.
 		 *         detailWelcome: {
 		 *             type: "View",
-		 *             name: "WelcomeWithAlias",
+		 *             name: "Welcome",
+		 *             // another instance will be created because a different id is used
+		 *             id: "detailWelcome",
 		 *             controlId: "splitContainer",
-		 *             controlAggregation: "detailPages",
-		 *             id: "detailWelcome"
+		 *             controlAggregation: "detailPages"
 		 *         }
 		 *     }
 		 * }
@@ -184,8 +188,8 @@ sap.ui.define([
 		 * @param {string} [oOptions.targets.anyName.viewType=oOptions.config.viewType] The type of the view that is going to be created. These are the supported types: {@link sap.ui.core.mvc.ViewType}.
 		 * You always have to provide a viewType except if <code>oOptions.config.viewType</code> is set or when using {@link sap.ui.core.routing.Views#setView}.
 		 * @param {string} [oOptions.targets.anyName.path]
-		 * A prefix that will be prepended in front of the name.<br/>
-		 * <b>Example:</b> name is set to "myView" and path is set to "myApp" - the created view name will be "myApp.myView".
+		 * A prefix that will be prepended in front of the <code>name</code>.<br/>
+		 * <b>Example:</b> <code>name</code> is set to "myView" and <code>path</code> is set to "myApp" - the created view's name will be "myApp.myView".
 		 * @param {string} [oOptions.targets.anyName.id] The ID of the created instance.
 		 * This is will be prefixed with the id of the component set to the views instance provided in oOptions.views. For details see {@link sap.ui.core.routing.Views#getView}.
 		 * @param {string} [oOptions.targets.anyName.targetParent]
