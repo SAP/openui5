@@ -23,6 +23,9 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 	/**
 	 * Constructor for a new <code>ObjectAttribute</code>.
 	 *
@@ -73,7 +76,21 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			 * Determines the direction of the text.
 			 * Available options for the text direction are LTR (left-to-right), RTL (right-to-left), or Inherit. By default the control inherits the text direction from its parent control.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+			/**
+			 * Specifies the value of the <code>aria-haspopup</code> attribute
+			 *
+			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
+			 *
+			 * NOTE: Use this property only when an <code>sap.m.ObjectAttribute</code> instance is active and related to a popover/popup.
+			 * The value needs to be equal to the main/root role of the popup - e.g. dialog,
+			 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
+			 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of modal dialogs.
+			 *
+			 * @since 1.97.0
+			 */
+			 ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 		},
 		aggregations : {
 
@@ -290,25 +307,13 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 	};
 
 	ObjectAttribute.prototype.setCustomContent = function(oCustomContent) {
-		var oCurrentCustomContent = this.getCustomContent(),
-			fnGetTabIndex = function() {
-				return "-1";
-			};
-
-		//for the cases where the original custom content is rendered
-		if (oCustomContent && oCustomContent.isA('sap.m.Link')) {
-			oCustomContent._getTabindex = fnGetTabIndex;
-		}
+		var oCurrentCustomContent = this.getCustomContent();
 
 		// clone the new aggregation, but first destroy the previous cloning
 		if (this._oCustomContentCloning) {
 			this._oCustomContentCloning.destroy();
 		}
 		this._oCustomContentCloning = oCustomContent && oCustomContent.clone();
-
-		if (this._oCustomContentCloning && this._oCustomContentCloning.isA('sap.m.Link')) {
-			this._oCustomContentCloning._getTabindex = fnGetTabIndex;
-		}
 
 		if (!this._oCustomContentObserver) {
 			this._oCustomContentObserver = new ManagedObjectObserver(function() {
