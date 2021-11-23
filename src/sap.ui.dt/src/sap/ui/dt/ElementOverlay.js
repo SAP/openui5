@@ -704,6 +704,7 @@ sap.ui.define([
 						} else if (!bLastStackEntry) {
 							highlightTemplateCloneElements(mAggregationBindingInfo, oChildElementOverlay, iStackIndex - 1);
 						}
+						return undefined;
 					});
 				}
 			});
@@ -876,6 +877,7 @@ sap.ui.define([
 		if (oParentAggregationOverlay) {
 			return oParentAggregationOverlay.getParent();
 		}
+		return undefined;
 	};
 
 	/**

@@ -190,6 +190,7 @@ function(
 			this.addStyleClass('sapUiDtAggregationOverlay');
 			return Overlay.prototype.render.apply(this, arguments);
 		}
+		return undefined;
 	};
 
 	/**

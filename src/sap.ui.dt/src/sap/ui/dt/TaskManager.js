@@ -63,7 +63,7 @@ function(
 		_iTaskCounter: 0
 	});
 
-	TaskManager.prototype._validateTask = function(mTask) {
+	function validateTask(mTask) {
 		if (
 			!isPlainObject(mTask)
 			|| !mTask.type
@@ -71,33 +71,48 @@ function(
 		) {
 			throw new Error("Invalid task specified");
 		}
-	};
+	}
 
-	TaskManager.prototype._removeOutdatedTasks = function(mTask, vDoubleIdentifier) {
-		if (vDoubleIdentifier) {
-			var fnDoubleIdentifier;
-			if (typeof vDoubleIdentifier === "string") {
-				fnDoubleIdentifier = function (mTask) { return mTask[vDoubleIdentifier]; };
-			} else if (typeof vDoubleIdentifier === "function") {
-				fnDoubleIdentifier = vDoubleIdentifier;
-			} else {
-				throw new Error("Validator needs to be a function or a string");
-			}
-			var aTaskList = this._mQueuedTasks[mTask.type];
-			var sNewTaskIdentifier = fnDoubleIdentifier(mTask);
-			if (
-				aTaskList
-				&& sNewTaskIdentifier
-			) {
-				this._mQueuedTasks[mTask.type] = aTaskList.filter(function (oTask) {
-					if (fnDoubleIdentifier(oTask) === sNewTaskIdentifier) {
-						this._iTaskCounter--;
-						return false;
-					}
-					return true;
-				}.bind(this));
+	function getTaskIdentifierFunction(vTaskIdentifier) {
+		var fnTaskIdentifier;
+		if (typeof vTaskIdentifier === "string") {
+			fnTaskIdentifier = function (mTask) { return mTask[vTaskIdentifier]; };
+		} else if (typeof vTaskIdentifier === "function") {
+			fnTaskIdentifier = vTaskIdentifier;
+		} else {
+			throw new Error("Validator needs to be a function or a string");
+		}
+		return fnTaskIdentifier;
+	}
+
+	function filterTasks(fnTaskIdentifier, sNewTaskIdentifier, oTask) {
+		if (fnTaskIdentifier(oTask) === sNewTaskIdentifier) {
+			this._iTaskCounter--;
+			return false;
+		}
+		return true;
+	}
+
+	TaskManager.prototype._removeTasksByIdentifier = function(mTask, vTaskIdentifier, sListName) {
+		if (vTaskIdentifier) {
+			var fnTaskIdentifier = getTaskIdentifierFunction(vTaskIdentifier);
+			var sNewTaskIdentifier = fnTaskIdentifier(mTask);
+			if (this[sListName][mTask.type] && sNewTaskIdentifier) {
+				this[sListName][mTask.type] = this[sListName][mTask.type].filter(filterTasks.bind(this, fnTaskIdentifier, sNewTaskIdentifier));
 			}
 		}
+	};
+
+	TaskManager.prototype._removeTaskById = function (iTaskId, sListName) {
+		Object.keys(this[sListName]).forEach(function (sTypeName) {
+			this[sListName][sTypeName] = this[sListName][sTypeName].filter(function (mTask) {
+				if (mTask.id === iTaskId) {
+					this._iTaskCounter--;
+					return false;
+				}
+				return true;
+			}.bind(this));
+		}, this);
 	};
 
 	TaskManager.prototype._addTask = function(mTask) {
@@ -125,21 +140,9 @@ function(
 	 * @return {number} Task ID
 	 */
 	TaskManager.prototype.add = function (mTask, vDoubleIdentifier) {
-		this._validateTask(mTask);
-		this._removeOutdatedTasks(mTask, vDoubleIdentifier);
+		validateTask(mTask);
+		this._removeTasksByIdentifier(mTask, vDoubleIdentifier, "_mQueuedTasks");
 		return this._addTask(mTask);
-	};
-
-	TaskManager.prototype._removeTaskById = function (iTaskId, sListName) {
-		Object.keys(this[sListName]).forEach(function (sTypeName) {
-			this[sListName][sTypeName] = this[sListName][sTypeName].filter(function (mTask) {
-				if (mTask.id === iTaskId) {
-					this._iTaskCounter--;
-					return false;
-				}
-				return true;
-			}.bind(this));
-		}, this);
 	};
 
 	/**
@@ -147,7 +150,6 @@ function(
 	 * @param {number} iTaskId - Task ID
 	 */
 	TaskManager.prototype.complete = function (iTaskId) {
-		// TODO: performance improvements?
 		this._removeTaskById(iTaskId, "_mQueuedTasks");
 		this._removeTaskById(iTaskId, "_mPendingTasks");
 		if (!this.getSuppressEvents()) {
@@ -164,7 +166,7 @@ function(
 	 * @param {object} mTask.type - Task type
 	 */
 	TaskManager.prototype.completeBy = function (mTask) {
-		this._validateTask(mTask);
+		validateTask(mTask);
 		var aCompledTaskIds = [];
 		// TODO: get rid of filtering other task parameters then type for performance reasons
 		var _removeTasksByDefinition = function (aTasks) {
@@ -195,6 +197,19 @@ function(
 	 */
 	TaskManager.prototype.cancel = function (iTaskId) {
 		this.complete(iTaskId);
+	};
+
+	/**
+	 * Cancels the task typespecific by its parameters defined by the callbackfunction
+	 *
+	 * @param {object} mTask - Task definition map
+	 * @param {string} mTask.type - Task type
+	 * @param {string} sTaskIdentifier - Identifier for tasks in <code>TaskManager</code> related to the specific task type.
+	 *  The existing tasks that are identified by <code>sTaskIdentifier</code> are removed
+	 */
+	TaskManager.prototype.cancelBy = function (mTask, sTaskIdentifier) {
+		this._removeTasksByIdentifier(mTask, sTaskIdentifier, "_mQueuedTasks");
+		this._removeTasksByIdentifier(mTask, sTaskIdentifier, "_mPendingTasks");
 	};
 
 	/**

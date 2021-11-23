@@ -57,9 +57,10 @@ function(
 	TaskRunner.prototype._observe = function (oEvent) {
 		this._oTaskPromise = this._oTaskPromise.then(function() {
 			if (this._shouldObserveBreak()) {
-				return this.stop();
+				this.stop();
+			} else {
+				this._runTasksFromManager(oEvent);
 			}
-			this._runTasksFromManager(oEvent);
 		}.bind(this));
 	};
 
@@ -71,19 +72,18 @@ function(
 	};
 
 	TaskRunner.prototype._runTasks = function (aTasks) {
-		var aTaskPromises = [];
-		for (var i = 0, n = aTasks.length; i < n; i++) {
-			if (aTasks[i].callbackFn) {
-				try {
-					aTaskPromises.push(
-						aTasks[i].callbackFn()
-							.then(this._oTaskManager.complete.bind(this._oTaskManager, aTasks[i].id))
-					);
-				} catch (vError) {
-					BaseLog.error(DtUtil.errorToString(vError));
-				}
+		aTasks.forEach(function (oTask) {
+			if (oTask.callbackFn) {
+				oTask.callbackFn()
+					.then(function () {
+						this._oTaskManager.complete(oTask.id);
+					}.bind(this))
+					.catch(function (vError) {
+						this._oTaskManager.complete(oTask.id);
+						BaseLog.error(DtUtil.errorToString(vError) + " / related task: " + JSON.stringify(oTask));
+					}.bind(this));
 			}
-		}
+		}.bind(this));
 	};
 
 	TaskRunner.prototype.run = function (sTaskType) {
