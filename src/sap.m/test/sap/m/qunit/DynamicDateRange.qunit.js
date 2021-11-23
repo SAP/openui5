@@ -137,17 +137,19 @@ sap.ui.define([
 					new DynamicDateValueHelpUIType({ type: "date" }),
 					new DynamicDateValueHelpUIType({ type: "daterange" }),
 					new DynamicDateValueHelpUIType({ type: "month" }),
+					new DynamicDateValueHelpUIType({ type: "custommonth" }),
 					new DynamicDateValueHelpUIType({ type: "int" })];
 			}
 		});
 
 		var aControls = oOption.createValueHelpUI(this.ddr);
 
-		assert.strictEqual(aControls.length, 4, "created the correct number of controls");
+		assert.strictEqual(aControls.length, 5, "created the correct number of controls");
 		assert.ok(aControls[0].isA("sap.ui.unified.Calendar"), "created the correct control");
 		assert.ok(aControls[1].isA("sap.ui.unified.Calendar"), "created the correct control");
 		assert.ok(aControls[2].isA("sap.ui.unified.calendar.MonthPicker"), "created the correct control");
-		assert.ok(aControls[3].isA("sap.m.StepInput"), "created the correct control");
+		assert.ok(aControls[3].isA("sap.ui.unified.internal.CustomMonthPicker"), "created the correct control");
+		assert.ok(aControls[4].isA("sap.m.StepInput"), "created the correct control");
 
 		assert.strictEqual(aControls[0].getIntervalSelection(), false, "interval selection is off for the date UI");
 		assert.strictEqual(aControls[1].getIntervalSelection(), true, "interval selection is on for the daterange UI");

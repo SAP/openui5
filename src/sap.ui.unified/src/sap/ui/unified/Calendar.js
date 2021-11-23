@@ -1291,7 +1291,9 @@ sap.ui.define([
 		// remove Tabindex from day, month, year - to break cycle
 		for (i = 0; i < aMonths.length; i++) {
 			oMonth = aMonths[i];
-			oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()].setAttribute("tabindex", "-1");
+			if (oMonth._oItemNavigation) {
+				oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()].setAttribute("tabindex", "-1");
+			}
 		}
 		if (!this._getSucessorsPickerPopup()) {
 			if (oMonthPicker.getDomRef()) {

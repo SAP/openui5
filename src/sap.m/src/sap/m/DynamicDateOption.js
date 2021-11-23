@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/DateRange',
 	'sap/m/DateTimePicker',
-	'sap/ui/unified/calendar/MonthPicker'],
+	'sap/ui/unified/calendar/MonthPicker',
+	'sap/ui/unified/calendar/CustomMonthPicker'],
 	function(
 		Element,
 		Label,
@@ -18,7 +19,8 @@ sap.ui.define([
 		Calendar,
 		DateRange,
 		DateTimePicker,
-		MonthPicker) {
+		MonthPicker,
+		CustomMonthPicker) {
 		"use strict";
 
 		/**
@@ -149,11 +151,14 @@ sap.ui.define([
 						}
 						break;
 					case "month":
+					case "custommonth":
 					case "date":
 					case "daterange":
 						if (!oInputControl.getSelectedDates() || oInputControl.getSelectedDates().length == 0) {
 							return false;
 						}
+						break;
+					default:
 						break;
 				}
 			}
@@ -192,6 +197,13 @@ sap.ui.define([
 						}
 
 						vOutput = oInputControl.getSelectedDates()[0].getStartDate();
+					break;
+					case "custommonth":
+						if (!oInputControl.getSelectedDates() || !oInputControl.getSelectedDates().length) {
+							return null;
+						}
+
+						vOutput = [oInputControl.getSelectedDates()[0].getStartDate().getMonth(), oInputControl.getSelectedDates()[0].getStartDate().getFullYear()];
 						break;
 					case "daterange":
 						if (!oInputControl.getSelectedDates().length) {
@@ -200,6 +212,8 @@ sap.ui.define([
 
 						var oEndDate = oInputControl.getSelectedDates()[0].getEndDate() || oInputControl.getSelectedDates()[0].getStartDate();
 						vOutput = [oInputControl.getSelectedDates()[0].getStartDate(), oEndDate];
+						break;
+					default:
 						break;
 				}
 
@@ -303,6 +317,11 @@ sap.ui.define([
 					break;
 				case "month":
 					oInputControl = this._createMonthControl(oValue, iIndex, fnControlsUpdated);
+					break;
+				case "custommonth":
+					oInputControl = this._createCustomMonthControl(oValue, iIndex, fnControlsUpdated);
+					break;
+				default:
 					break;
 			}
 
@@ -423,6 +442,28 @@ sap.ui.define([
 				iMonth = (oValue && this.getKey() === oValue.operator) ? oValue.values[iIndex] : oDate.getMonth();
 
 			oControl.setMonth(iMonth);
+			oControl.addSelectedDate(new DateRange({
+				startDate: oDate
+			}));
+
+			if (fnControlsUpdated instanceof Function) {
+				oControl.attachSelect(function() {
+					fnControlsUpdated(this);
+				}, this);
+			}
+
+			return oControl;
+		};
+
+		DynamicDateOption.prototype._createCustomMonthControl = function(oValue, iIndex, fnControlsUpdated) {
+			var oControl = new CustomMonthPicker(),
+				oDate = new Date(),
+				iMonth = (oValue && iIndex >= 0 && this.getKey() === oValue.operator) ? oValue.values[iIndex] : oDate.getMonth(),
+				iYear = (oValue  && iIndex >= 0 && this.getKey() === oValue.operator) ? oValue.values[iIndex + 1] : oDate.getFullYear();
+
+			oDate.setDate(1);
+			oDate.setMonth(iMonth);
+			oDate.setYear(iYear);
 			oControl.addSelectedDate(new DateRange({
 				startDate: oDate
 			}));

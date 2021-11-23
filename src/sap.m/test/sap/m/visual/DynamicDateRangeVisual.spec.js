@@ -105,14 +105,30 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui_selected");
 
 		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
-		aListItems.get(4).click(); // select "month" option
+		aListItems.get(5).click(); // select "month" option
 		expect(takeScreenshot(oPopover)).toLookAs("month_ui");
 
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPopover)).toLookAs("month_ui_selected");
 
-		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		element(by.css("#DDR2-RP-popover .sapMBtnBack")).click(); // get back to suggestions popover
+		aListItems.get(4).click(); // select "month in year" option
+		expect(takeScreenshot(oPopover)).toLookAs("monthinyear_ui");
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		expect(takeScreenshot(element(by.css("body")))).toLookAs("monthinyear_ui_selected");
 	}, iDefaultTimeout);
 
 	it("Relative date and date range", function() {

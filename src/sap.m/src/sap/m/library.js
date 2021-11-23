@@ -3599,6 +3599,12 @@ sap.ui.define([
 		SPECIFICMONTH : "SPECIFICMONTH",
 
 		/**
+		 * The range will contain a month in exact year selected from a MonthPicker.
+		 * @public
+		 */
+		SPECIFICMONTHINYEAR : "SPECIFICMONTHINYEAR",
+
+		/**
 		 * The range will contain the days in the current month.
 		 * @public
 		 */
