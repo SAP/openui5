@@ -5059,6 +5059,90 @@ usePreliminaryContext : false}}">\
 });
 
 	//*********************************************************************************************
+	// Scenario: Ensure that 'refreshAfterChange' flag given to ODataModel#createEntry is also
+	// considered if the first creation attempt failed and the creation is retried. Use default
+	// deferred group ID 'changes'.
+	QUnit.test("ODataModel#createEntry: consider refreshAfterChange when retrying the creation; "
+			+ " use deferred group ID", function (assert) {
+		var oContext,
+			oModel = createSalesOrdersModelMessageScope(),
+			sView = '\
+<Table items="{/SalesOrderSet(\'1\')/ToLineItems}">\
+	<Text text="{ItemPosition}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=100", {results : []});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata :  {type : "gwsample_basic.SalesOrderLineItem"}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, createErrorResponse())
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					message : "Internal Server Error",
+					persistent : false,
+					target : "/SalesOrderLineItemSet('~key~')",
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 500: "
+						+ "POST SalesOrderSet('1')/ToLineItems",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+			// code under test
+			oContext = oModel.createEntry("/SalesOrderSet('1')/ToLineItems", {
+				properties : {},
+				refreshAfterChange : false
+			});
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {
+							type : "gwsample_basic.SalesOrderLineItem"
+						}
+					},
+					deepPath : "/SalesOrderSet('1')/ToLineItems('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet('1')/ToLineItems"
+				}, {
+					data : {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						SalesOrderID : "1"
+					},
+					statusCode : 201
+				})
+				.expectMessages([]);
+
+			// code under test - retry
+			oModel.submitChanges();
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a new entity and call resetChanges either immediately or after a failed
 	// attempt to submit the creation. The created entity is deleted if bDeleteCreatedEntities is
 	// set and no request is sent after deletion.

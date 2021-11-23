@@ -5810,11 +5810,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
-			oRequestHandle, vRequestHandleInternal,
-			bAborted = false, sMethod, mChangedEntities,
+		var mChangedEntities, fnError, sGroupId, sMethod, oRequestHandle, vRequestHandleInternal,
+			fnSuccess,
+			bAborted = false,
 			bRefreshAfterChange = this.bRefreshAfterChange,
-			mParams,
 			that = this;
 
 		if (mParameters) {
@@ -5834,28 +5833,37 @@ sap.ui.define([
 		mChangedEntities = merge({}, that.mChangedEntities);
 
 		this.oMetadata.loaded().then(function() {
+			var oChange, aChanges, sChangeSetId, i, sRequestGroupId, oRequestGroup;
+
 			each(mChangedEntities, function(sKey, oData) {
-				oGroupInfo = that._resolveGroup(sKey);
+				var oCreatedInfo, oRequest, oRequestHandle0,
+					oGroupInfo = that._resolveGroup(sKey);
+
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
 					//get params for created entries: could contain success/error handler
-					mParams = oData.__metadata && oData.__metadata.created ? oData.__metadata.created : {};
-					var oRequestHandle = {
+					oCreatedInfo = oData.__metadata && oData.__metadata.created
+						? oData.__metadata.created
+						: {};
+					oRequestHandle0 = {
 						abort: function() {
 							oRequest._aborted = true;
 						}
 					};
 					if (oGroupInfo.groupId in that.mDeferredGroups) {
-						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId, oGroupInfo.changeSetId,
-							oRequest, mParams.success, mParams.error, oRequestHandle, bRefreshAfterChange);
+						that._pushToRequestQueue(that.mDeferredRequests, oGroupInfo.groupId,
+							oGroupInfo.changeSetId, oRequest, oCreatedInfo.success,
+							oCreatedInfo.error, oRequestHandle0,
+							oCreatedInfo.refreshAfterChange === undefined
+								? bRefreshAfterChange
+								: oCreatedInfo.refreshAfterChange);
 					}
 				}
 			});
 
 			// Set undefined refreshAfterChange flags
 			// If undefined => overwrite with current global refreshAfterChange state
-			var sRequestGroupId, sChangeSetId, oRequestGroup, aChanges, oChange, i;
 			for (sRequestGroupId in that.mDeferredRequests) {
 				oRequestGroup = that.mDeferredRequests[sRequestGroupId];
 				for (sChangeSetId in oRequestGroup.changes) {
@@ -6740,19 +6748,20 @@ sap.ui.define([
 				};
 			}
 			oEntity.__metadata = {
-				type: "" + oEntityMetadata.entityType,
-				uri: that.sServiceUrl + '/' + sKey,
-				created: {
-					key: sNormalizedPath.substring(1), //store path for later POST
-					success: fnSuccess,
-					error: fnError,
-					headers: mHeaders,
-					urlParameters: mUrlParams,
-					groupId: sGroupId,
-					changeSetId: sChangeSetId,
-					eTag: sETag
+				type : "" + oEntityMetadata.entityType,
+				uri : that.sServiceUrl + '/' + sKey,
+				created : {
+					changeSetId : sChangeSetId,
+					error : fnError,
+					eTag : sETag,
+					groupId : sGroupId,
+					headers : mHeaders,
+					key : sNormalizedPath.substring(1), //store path for later POST
+					refreshAfterChange : bRefreshAfterChange,
+					success : fnSuccess,
+					urlParameters : mUrlParams
 				},
-				deepPath: sDeepPath
+				deepPath : sDeepPath
 			};
 			pCreate = new SyncPromise(function (resolve, reject) {
 				fnCreatedPromiseResolve = resolve;

@@ -63,8 +63,7 @@ sap.ui.define([
 
 			Then.onMainPage.checkDialogOpen("Success");
 			When.onMainPage.closeDialog("Success");
-			//TODO: temporaryly increased by 2 until created entities can be filtered out
-			Then.onMainPage.checkItemCountChangedBy(2);
+			Then.onMainPage.checkItemCountChangedBy(1);
 			Then.onMainPage.checkSalesOrderDetailsUpdated();
 
 			When.onMainPage.toggleMessagePopover();
@@ -91,8 +90,7 @@ sap.ui.define([
 			/* Step 13 */
 			When.onMainPage.confirmDialog();
 			Then.onMainPage.checkMessageToast();
-			//TODO: temporaryly decreased by 2 until created entities can be filtered out
-			Then.onMainPage.checkItemCountChangedBy(-2);
+			Then.onMainPage.checkItemCountChangedBy(-1);
 			Then.onMainPage.checkSalesOrderDetailsUpdated();
 
 			When.onMainPage.toggleMessagePopover();

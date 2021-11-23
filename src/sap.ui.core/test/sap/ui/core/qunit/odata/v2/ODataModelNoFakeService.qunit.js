@@ -2711,6 +2711,7 @@ sap.ui.define([
 							groupId : "~groupId",
 							headers : mHeaders,
 							key : "~sNormalizedPath",
+							refreshAfterChange : "~bRefreshAfterChange",
 							success : fnSuccess,
 							urlParameters : "~urlParameters"
 						},
@@ -5204,4 +5205,88 @@ sap.ui.define([
 		assert.strictEqual(ODataModel.prototype._getCreatedContextsCache.call(oModel),
 			"~oCreatedContextsCache");
 	});
+
+	//*********************************************************************************************
+[{
+	oData : {
+		__metadata : {
+			created : {
+				error : "~fnError",
+				refreshAfterChange : "~refreshAfterChange",
+				success : "~fnSuccess"
+			}
+		}
+	},
+	expectedError : "~fnError",
+	expectedRefreshAfterChange : "~refreshAfterChange",
+	expectedSuccess : "~fnSuccess"
+}, {
+	oData : {
+		__metadata : {
+			created : {
+				error : "~fnError",
+				success : "~fnSuccess"
+			}
+		}
+	},
+	expectedError : "~fnError",
+	expectedRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+	expectedSuccess : "~fnSuccess"
+}, {
+	oData : {
+		__metadata : {}
+	},
+	expectedError : undefined,
+	expectedRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+	expectedSuccess : undefined
+}, {
+	oData : {},
+	expectedError : undefined,
+	expectedRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+	expectedSuccess : undefined
+}].forEach(function (oFixture, i) {
+	QUnit.test("submitChanges: restore parameters for created entities; #" + i, function (assert) {
+		var oGroupInfo = {changeSetId : "~changeSetId", groupId : "~groupId"},
+			oMetadataPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {
+					"~sKey" : oFixture.oData
+				},
+				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
+				mDeferredGroups : {"~groupId" : "~groupId"},
+				mDeferredRequests : {},
+				oMetadata : {
+					loaded : function () {}
+				},
+				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
+				_processChange : function () {},
+				_processRequestQueue : function () {},
+				_pushToRequestQueue : function () {},
+				_resolveGroup : function () {}
+			},
+			oRequest = {};
+
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
+
+		// code under test
+		ODataModel.prototype.submitChanges.call(oModel);
+
+		// async, after metadata loaded promise is resolved
+		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(oGroupInfo);
+		this.mock(oModel).expects("_processChange")
+			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~sDefaultUpdateMethod")
+			.returns(oRequest);
+		this.mock(oModel).expects("_pushToRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), "~groupId", "~changeSetId",
+				sinon.match.same(oRequest), oFixture.expectedSuccess, oFixture.expectedError,
+				/*oRequestHandle*/sinon.match.object, oFixture.expectedRefreshAfterChange);
+		this.mock(oModel).expects("_processRequestQueue")
+			.withExactArgs(sinon.match.same(oModel.mDeferredRequests), undefined, undefined,
+				undefined);
+
+		return oMetadataPromise.then(function () {
+			assert.strictEqual(oRequest.key, "~sKey");
+		});
+	});
+});
 });
