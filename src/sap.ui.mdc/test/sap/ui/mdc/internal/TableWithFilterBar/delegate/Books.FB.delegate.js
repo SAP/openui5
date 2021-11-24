@@ -41,7 +41,7 @@ sap.ui.define([
 				} else if (oPropertyInfo.name === "published") {
 					oPropertyInfo.fieldHelp = "FHPublished";
 					oPropertyInfo.label = "Published";
-					oPropertyInfo.filterOperators = ["MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR"];
+					oPropertyInfo.filterOperators = ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"];
 				} else if (oPropertyInfo.name === "language") {
 					oPropertyInfo.fieldHelp = "FHLanguage";
 					oPropertyInfo.label = "Language";

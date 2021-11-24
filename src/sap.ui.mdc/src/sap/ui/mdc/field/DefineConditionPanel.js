@@ -786,7 +786,7 @@ sap.ui.define([
 			// default operator not valid -> cannot use -> use first include-operator which requires some values
 			for (var i = 0; i < aOperators.length; i++) {
 				oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
-				if (oOperator.exclude || !oOperator.hasRequiredValues()) {
+				if (!oOperator || oOperator.exclude || !oOperator.hasRequiredValues()) {
 					oOperator = undefined;
 				} else {
 					break;
