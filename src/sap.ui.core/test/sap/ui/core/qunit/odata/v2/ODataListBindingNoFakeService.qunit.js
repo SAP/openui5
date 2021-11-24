@@ -1590,9 +1590,9 @@ sap.ui.define([
 }, {
 	iCreated : 4, iLength : 10, iStartIndex : 6, oResult : {skip : 2, top : 10}
 }, {
-	iCreated : 6, iLength : 10, iStartIndex : 4, oResult : {skip : 0, top : 8}
+	iCreated : 6, iLength : 10, iStartIndex : 4, oResult : {skip : 0, top : 10}
 }, {
-	iCreated : 20, iLength : 5, iStartIndex : 4, oResult : {skip : 0, top : 0}
+	iCreated : 20, iLength : 5, iStartIndex : 4, oResult : {skip : 0, top : 5}
 }].forEach(function (oFixture, i) {
 	QUnit.test("_getSkipAndTop: #" + i, function (assert) {
 		var oBinding = {_getCreatedContexts : function () {}};
