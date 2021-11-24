@@ -2929,9 +2929,43 @@ sap.ui.define([
 		assert.strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 	});
 
+	// BCP: 2170308086
+	QUnit.test("scroll when an arrow is clicked", function(assert) {
+		// arrange
+		var oFF = new FacetFilter({
+			lists: oSCHelper.createLists(20)
+		}).placeAt("content"),
+			oScrollSpy = this.spy(oFF, "_scroll");
+
+		sap.ui.getCore().applyChanges();
+		var oEvent = {
+			target: document.querySelector("#" + oFF.getId() + "-arrowScrollRight .sapUiIconTitle"),
+			preventDefault: function() { }
+		};
+
+		// act
+		oFF.onclick(oEvent);
+
+		// assert
+		assert.ok(oScrollSpy.calledOnce, "scrolled");
+
+		// clean
+		oFF.destroy();
+	});
+
 	// Helper functions
 
 	var oSCHelper = {
+
+		// creates the requested amount of title-only lists
+		createLists: function(iCount) {
+			var aLists = [];
+			for (var i = 0; i < iCount; i++) {
+				aLists.push(new FacetFilterList({ title: "the quick brown fox jumps over the lazy dog" }));
+			}
+
+			return aLists;
+		},
 
 		createFFWithBinding : function(iLists, bSkipGrowing) {
 			iLists = iLists == undefined ? 1 : iLists;
