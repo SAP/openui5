@@ -318,12 +318,12 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					module: "./v4server/V4ServerTest.qunit",
 					sinon: false
 				},
-
+				/* TO-Do: Check whether this is still needed with new MDC Chart
 				"Integration Testsuite": {
 					title: "Integration Testsuite",
 					group: "Testsuite",
 					page: "test-resources/sap/ui/mdc/integration/testsuite.qunit.html"
-				},
+				},*/
 				"Chart": {
 					group: "Chart",
 					module: "./chart/Chart.qunit",
@@ -332,16 +332,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 							"sap.ui.fl", "sap.ui.mdc"
 						]
 					}
-				},
-				"ChartNew": {
-					group: "ChartNew",
-					module: "./chartNew/ChartNew.qunit",
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					}
-				},
+				},/* TO-Do: Check whether this is still needed with new MDC Chart
 				"ChartFlex": {
 					group: "Chart",
 					module: "./chart/ChartFlex.qunit",
@@ -359,39 +350,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 						only: "[sap/ui/mdc]",
 						never: "[sap/ui/mdc/qunit]"
 					}
-				},
-				"ChartToolbarHandler": {
-					group: "Chart",
-					module: "./chart/ToolbarHandler.qunit",
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					},
-					coverage: {
-						only: "[sap/ui/mdc]",
-						never: "[sap/ui/mdc/qunit]"
-					}
-				},
-				"DrillStackHandler": {
-					group: "Chart",
-					module: "./chart/DrillStackHandler.qunit",
-					loader: {
-						paths: {
-							"sap/ui/mdc/qunit/chart/Helper": "test-resources/sap/ui/mdc/qunit/chart/Helper"
-						}
-					},
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					},
-					coverage: {
-						only: "[sap/ui/mdc]",
-						never: "[sap/ui/mdc/qunit]"
-					},
-					sinon: true
-				},
+				},*/
 				"P13n Testsuite": {
 					group: "p13n",
 					page: "test-resources/sap/ui/mdc/qunit/p13n/testsuite.p13n.qunit.html"

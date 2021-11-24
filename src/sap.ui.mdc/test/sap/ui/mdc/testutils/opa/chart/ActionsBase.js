@@ -11,10 +11,10 @@ sap.ui.define([
     var waitForMDCChartWithId = function(sId, oSettings) {
         return this.waitFor({
             id: sId,
-            controlType: "sap.ui.mdc.ChartNew",
-            success: function(oMDCChartNew) {
+            controlType: "sap.ui.mdc.Chart",
+            success: function(oMDCChart) {
                 if (oSettings && typeof oSettings.success === "function") {
-                    oSettings.success.call(this, oMDCChartNew);
+                    oSettings.success.call(this, oMDCChart);
                 }
             },
             actions: oSettings.actions ? oSettings.actions : []

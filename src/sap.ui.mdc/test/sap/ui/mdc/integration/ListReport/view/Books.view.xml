@@ -148,7 +148,7 @@
 				data="{path: '/Books'}"
 				p13nMode="Item,Sort,Type"
 				delegate="{
-					'name': 'sap/ui/mdc/odata/v4/ChartDelegate',
+					'name': 'sap/ui/v4demo/delegate/Books.Chart.delegate',
 					'payload': {
 						collectionName: 'Books'
 					}
@@ -158,8 +158,8 @@
 				height="400px"
 				width="100%">
 				<mdc:items>
-					<mdcc:DimensionItem  id="dim1" key="language_code" role="category" label="Languages"/>
-					<mdcc:MeasureItem  id="meas1" key="averagemetricsWords" role="axis1" label="Words (avg)"/>
+					<mdcc:Item  id="dim1" name="language_code" role="category" label="Languages" type="groupable"/>
+					<mdcc:Item  id="meas1" name="averagemetricsWords" role="axis1" label="Words (avg)" type="aggregatable"/>
 				</mdc:items>
 
 

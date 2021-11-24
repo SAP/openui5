@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.PropertyHelper
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chartNew.PropertyHelperNew");
+    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper");
 
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);

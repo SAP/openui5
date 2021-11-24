@@ -95,7 +95,7 @@ sap.ui.define([
 			var oCM = new ConditionModel();
 
 			this.getView().setModel(oCM, "cm");
-			this.getView().setModel(new JSONModel({ routeName: "books" }), "app");
+			this.getView().setModel(new JSONModel({ routeName: "chart" }), "app");
 
 			var oRouter = UIComponent.getRouterFor(this);
 			oRouter.attachRouteMatched(this.onRouteMatched.bind(this));
@@ -121,16 +121,12 @@ sap.ui.define([
 
 			switch (sRouteName) {
 				case "":
-				case "chartNew":
-					sRouteName = "chartNew";
-					break;
-
 				case "chart":
 					sRouteName = "chart";
 					break;
 
 				default:
-					sRouteName = "chartNew";
+					sRouteName = "chart";
 					break;
 			}
 

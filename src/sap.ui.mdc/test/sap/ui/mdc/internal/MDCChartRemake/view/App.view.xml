@@ -5,8 +5,7 @@
 	<tnt:ToolHeader>
 		<IconTabHeader selectedKey="{app>/routeName}" id="iconTabHeader" select=".onNavigate">
 			<items>
-				<IconTabFilter key="chartNew" text="Remake" />
-				<IconTabFilter key="chart" text="Old Chart" />
+				<IconTabFilter key="chart" text="Remake" />
 			</items>
 		</IconTabHeader>
 		<ToolbarSpacer />

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-    "../ChartDelegateNew",
+    "../ChartDelegate",
     "../../../util/loadModules",
     "sap/ui/core/Core",
     "sap/m/Text",
@@ -12,8 +12,8 @@ sap.ui.define([
     "sap/base/Log",
     'sap/ui/mdc/util/FilterUtil',
     'sap/ui/mdc/odata/v4/util/DelegateUtil',
-    "sap/ui/mdc/chartNew/ChartTypeButtonNew",
-    "sap/ui/mdc/chartNew/ItemNew",
+    "sap/ui/mdc/chart/ChartTypeButton",
+    "sap/ui/mdc/chart/Item",
     "sap/ui/model/Sorter",
     "sap/m/VBox",
     "sap/ui/base/ManagedObjectObserver",
@@ -41,14 +41,14 @@ sap.ui.define([
 ) {
     "use strict";
     /**
-     * Delegate class for sap.ui.mdc.ChartNew and ODataV4.
+     * Delegate class for sap.ui.mdc.Chart and ODataV4.
      * Enables additional analytical capabilities.
      * <b>Note:</b> The class is experimental and the API/behavior is not finalized.
      *
      * @author SAP SE
      * @private
      * @since 1.88
-     * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegateNew
+     * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegate
      */
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
 
@@ -361,7 +361,7 @@ sap.ui.define([
 
     /**
      * Creates a Sorter for given Property
-     * @param {sap.ui.mdc.ChartNew.ItemNew} oMDCItem the MDC Item to create a Sorter for
+     * @param {sap.ui.mdc.Chart.Item} oMDCItem the MDC Item to create a Sorter for
      * @param {object} oSortProperty the sorting information
      */
     ChartDelegate.getSorterForItem = function (oMDCItem, oSortProperty) {
@@ -380,7 +380,7 @@ sap.ui.define([
     /**
      * Inserts an MDC Chart Item (in case of sap.chart.Chart a Measure/Dimension) on the inner chart
      * This function is called by MDC Chart on a change of the <code>Items</code> aggregation
-     * @param {sap.ui.mdc.chartNew-ItemNew} oMDCChartItem the MDC CHart Item to insert into the inner chart
+     * @param {sap.ui.mdc.chart-Item} oMDCChartItem the MDC CHart Item to insert into the inner chart
      * @param {int} iIndex the index to insert into
      */
     ChartDelegate.insertItemToInnerChart = function (oMDCChart, oMDCChartItem, iIndex) {
@@ -421,7 +421,7 @@ sap.ui.define([
     /**
      * Removes an Item (in case of sap.chart.Chart a Measure/Dimension) from the inner chart
      * This function is called by MDC Chart on a change of the <code>Items</code> aggregation
-     * @param {sap.ui.mdc.chartNew.ItemNew} oMDCChartItem The Item to remove from the inner chart
+     * @param {sap.ui.mdc.chart.Item} oMDCChartItem The Item to remove from the inner chart
      */
     ChartDelegate.removeItemFromInnerChart = function (oMDCChart, oMDCChartItem) {
         if (oMDCChartItem.getType() === "groupable" && this._getChart(oMDCChart).getVisibleDimensions().includes(oMDCChartItem.getName())) {
@@ -458,7 +458,7 @@ sap.ui.define([
      * (Does NOT add the MDC CHart Item to the Item aggregation of the MDC Chart)
      * Called by p13n
      * @param {string} sPropertyName the name of the property added
-     * @param {sap.ui.mdc.ChartNew} oMDCChart reference to the MDC Chart to add the property to
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart to add the property to
      * @returns {Promise} Promise that resolves with new MDC Chart Item as parameter
      */
     ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
@@ -538,7 +538,7 @@ sap.ui.define([
 
     /**
      * Creates initial content for the chart, while metadata has not been retrieved yet
-     * @param {sap.ui.mdc.chartNew} oMDCChart the MDC Chart
+     * @param {sap.ui.mdc.chart} oMDCChart the MDC Chart
      */
     ChartDelegate.createInitialChartContent = function(oMDCChart) {
         //Not relevant for sap.chart.Chart
@@ -973,7 +973,7 @@ sap.ui.define([
      * Determines which MDC Items are Drillable and returns them
      * Used by breadcrumbs
      *
-     * @param {sap.ui.mdc.ChartNew} oMDCChart the MDC Chart to get the Items from
+     * @param {sap.ui.mdc.Chart} oMDCChart the MDC Chart to get the Items from
      * @returns {array} Array of MDC Items which are drillable
      *
      */
@@ -1164,7 +1164,7 @@ sap.ui.define([
     /**
      * Checks the binding of the table and rebinds it if required.
      *
-     * @param {sap.ui.mdc.ChartNew} oMDCChart The MDC chart instance
+     * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
      * @param {object} oBindingInfo The bindingInfo of the chart
      */
     ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
@@ -1382,7 +1382,7 @@ sap.ui.define([
     /**
      * Initializes a new table property helper for V4 analytics with the property extensions merged into the property infos.
      *
-     * @param {sap.ui.mdc.ChartNew} oMDCChart reference to the MDC Chart
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
      * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A promise that resolves with the property helper.
      * @private
      * @ui5-restricted sap.ui.mdc
@@ -1391,7 +1391,7 @@ sap.ui.define([
         // TODO: Do this in the DelegateMixin, or provide a function in the base delegate to merge properties and extensions
         return Promise.all([
             this.fetchProperties(oMDCChart),
-            loadModules("sap/ui/mdc/odata/v4/ChartPropertyHelperNew")
+            loadModules("sap/ui/mdc/odata/v4/ChartPropertyHelper")
         ]).then(function (aResult) {
             return Promise.all(aResult.concat(this.fetchPropertyExtensions(oMDCChart, aResult[0])));
         }.bind(this)).then(function (aResult) {
@@ -1421,7 +1421,7 @@ sap.ui.define([
     /**
      * Returns the relevant propery infos based on the metadata used with the MDC Chart instance.
      *
-     * @param {sap.ui.mdc.ChartNew} oMDCChart reference to the MDC Chart
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
      * @returns {array} Array of the property infos to be used within MDC Chart
      */
     ChartDelegate.fetchProperties = function (oMDCChart) {

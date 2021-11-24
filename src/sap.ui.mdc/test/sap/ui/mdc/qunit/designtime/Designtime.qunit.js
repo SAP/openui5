@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/ChartNew",
+	"sap/ui/mdc/Chart",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",

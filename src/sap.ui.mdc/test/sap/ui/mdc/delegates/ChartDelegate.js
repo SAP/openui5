@@ -5,7 +5,7 @@
 sap.ui.define([
     "sap/ui/mdc/AggregationBaseDelegate",
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/odata/v4/ChartPropertyHelperNew"
+    "sap/ui/mdc/odata/v4/ChartPropertyHelper"
 ], function (
     V4ChartDelegate,
     ODataMetaModelUtil,
@@ -155,7 +155,7 @@ sap.ui.define([
     /**
      * Checks the binding of the table and rebinds it if required.
      *
-     * @param {sap.ui.mdc.ChartNew} oMDCChart The MDC chart instance
+     * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
      * @param {object} oBindingInfo The bindingInfo of the chart
      */
     ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
@@ -181,7 +181,7 @@ sap.ui.define([
     /**
      * Updates the binding info with the relevant path and model from the metadata.
      *
-     * @param {sap.ui.mdc.ChartNew} oMDCChart The MDC chart instance
+     * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
      * @param {object} oMetadataInfo The metadataInfo set on the chart
      * @param {object} oBindingInfo The bindingInfo of the chart
      */

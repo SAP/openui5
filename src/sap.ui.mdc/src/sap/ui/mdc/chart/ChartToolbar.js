@@ -11,9 +11,9 @@ sap.ui.define([
         "sap/m/OverflowToolbarToggleButton",
         "sap/m/Title",
         "sap/ui/mdc/library",
-        "sap/ui/mdc/chartNew/ChartTypeButtonNew",
+        "sap/ui/mdc/chart/ChartTypeButton",
         "sap/ui/mdc/chart/ChartSettings",
-        "./ChartSelectionDetailsNew"
+        "./ChartSelectionDetails"
     ],
     function (
         Core,
@@ -26,17 +26,17 @@ sap.ui.define([
         MDCLib,
         ChartTypeButton,
         ChartSettings,
-        ChartSelectionDetailsNew
+        ChartSelectionDetails
     ) {
         "use strict";
 
         /**
          /**
-         * Constructor for a new ChartToolbarNew.
+         * Constructor for a new ChartToolbar.
          *
          * @param {string} [sId] id for the new control, generated automatically if no id is given
          * @param {object} [mSettings] initial settings for the new control
-         * @class The ChartToolbarNew control creates a sap.m.OverflowToolbar based on metadata and the configuration specified.
+         * @class The ChartToolbar control creates a sap.m.OverflowToolbar based on metadata and the configuration specified.
          * @extends sap.m.OverflowToolbar
          * @author SAP SE
          * @version ${version}
@@ -44,10 +44,10 @@ sap.ui.define([
          * @experimental As of version ...
          * @private
          * @since 1.88
-         * @alias sap.ui.mdc.chartNew.ChartToolbarNew
+         * @alias sap.ui.mdc.chart.ChartToolbar
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
-        var ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chartNew.ChartToolbarNew", /** @lends sap.ui.mdc.chartNew.ChartToolbarNew.prototype */ {
+        var ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chart.ChartToolbar", /** @lends sap.ui.mdc.chart.ChartToolbar.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
                 interfaces: [],
@@ -83,7 +83,7 @@ sap.ui.define([
             this.addBegin(title);
 
             /**add end **/
-            this._oChartSelectionDetails = new ChartSelectionDetailsNew(oMDCChart.getId() + "-selectionDetails", {});
+            this._oChartSelectionDetails = new ChartSelectionDetails(oMDCChart.getId() + "-selectionDetails", {});
             this._oChartSelectionDetails.attachBeforeOpen(function (oEvent) {
                 this._updateSelectionDetailsActions(oMDCChart);
             }.bind(this));

@@ -5,7 +5,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 	"use strict";
 	var fRebindControl = function (oControl) {
 		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
-		var bExecuteRebindForChart = oControl && oControl.isA && (oControl.isA("sap.ui.mdc.Chart") || oControl.isA("sap.ui.mdc.ChartNew"));
+		var bExecuteRebindForChart = oControl && oControl.isA && (oControl.isA("sap.ui.mdc.Chart"));
 		if (bExecuteRebindForTable || bExecuteRebindForChart) {
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;

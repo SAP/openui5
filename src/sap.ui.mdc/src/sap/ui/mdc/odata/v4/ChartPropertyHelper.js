@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/chartNew/PropertyHelperNew"
+	"sap/ui/mdc/chart/PropertyHelper"
 ], function(
 	PropertyHelperBase
 ) {
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * Validates the given properties, sets defaults, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
-	 * @extends sap.ui.mdc.chartNew.PropertyHelperNew
+	 * @extends sap.ui.mdc.chart.PropertyHelper
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.PropertyHelper
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.odata.v4.ChartPropertyHelperNew");
+    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.odata.v4.ChartPropertyHelper");
 
     return PropertyHelper;
 },true);

@@ -11,14 +11,14 @@ sap.ui.define([
 ) {
     "use strict";
     /**
-     * Delegate class for sap.ui.mdc.ChartNew and ODataV4.
+     * Delegate class for sap.ui.mdc.Chart and ODataV4.
      * Enables additional analytical capabilities.
      * <b>Note:</b> The class is experimental and the API/behavior is not finalized.
      *
      * @author SAP SE
      * @private
      * @since 1.88
-     * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegateNew
+     * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegate
      */
     var DrillBreadcrumbs = Breadcrumbs.extend("sap/m/Breadcrumbs", {});
 
