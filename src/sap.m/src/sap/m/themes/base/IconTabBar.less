@@ -51,7 +51,6 @@
 
 // Filter icon
 @_sap_m_IconTabBar_FilterIconHeight: 3rem;
-@_sap_m_IconTabBar_FilterIconLineHeight: 2.75rem;
 @_sap_m_IconTabBar_FilterIconWidth: 3rem;
 
 // Filter text
@@ -747,10 +746,12 @@
 	"border-top-left-radius" */
 	border-top-right-radius: 3rem;
 	box-sizing: border-box;
-	display: inline-block;
 	font-size: 1.5rem;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 	height: @_sap_m_IconTabBar_FilterIconHeight;
-	line-height: @_sap_m_IconTabBar_FilterIconLineHeight;
 	overflow: hidden;
 	width: @_sap_m_IconTabBar_FilterIconWidth;
 	-moz-user-select: none;
