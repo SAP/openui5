@@ -173,10 +173,14 @@ sap.ui.define([
 		 * @private
 		 */
 		_destroySampleComponent: function () {
-			var oComponent = this._getOwnerComponent()._oCurrentOpenedSample;
-			if (oComponent) {
-				oComponent.destroy();
-				oComponent = null;
+			var oSample = this._getOwnerComponent()._oCurrentOpenedSample;
+			if (oSample) {
+				oSample.getDomRef().contentWindow.postMessage({
+					type: "EXIT",
+					data: {
+						"msg": "Destroy the container"
+					}
+				}, this._getOwnerComponent()._sSampleIframeOrigin);
 			}
 		}
 
