@@ -21328,13 +21328,13 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "BCP: 2170181227, reset filter");
 		}).then(function () {
-			that.expectRequest({
+			that.expectChange("name", "The Beatles (modified)")
+				.expectRequest({
 					headers : {Prefer : "return=minimal"},
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)",
 					payload : {Name : "The Beatles (modified)"}
-				}) // 204 No Content
-				.expectChange("name", "The Beatles (modified)");
+				}); // 204 No Content
 
 			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
 			return that.waitForChanges(assert, "PATCH");
@@ -21544,8 +21544,8 @@ sap.ui.define([
 					payload : {Name : "The Beatles (modified)"}
 				}, {
 					ArtistID : "42",
-					IsActiveEntity : true,
-					Name : "The Beatles"
+					IsActiveEntity : false,
+					Name : "$$patchWithoutSideEffects ignores this"
 				});
 
 			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
@@ -21560,7 +21560,7 @@ sap.ui.define([
 					method : "PATCH",
 					url : "Artists(ArtistID='23',IsActiveEntity=true)",
 					payload : {Name : "Sgt. Pepper (modified)"}
-				});
+				}); // 204 No Content
 
 			that.oView.byId("bestFriend").getBinding("value").setValue("Sgt. Pepper (modified)");
 
@@ -24640,12 +24640,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {NetAmount : "200"}
-				}, {
-					"@odata.etag" : "ETag1",
-					GrossAmount : "238.00", // side effect
-					NetAmount : "200.00", // "side effect": decimal places added
-					SalesOrderID : "42"
-				});
+				}, null, {ETag : "ETag1"}); // 204 No Content
 
 			that.oView.byId("netAmount").getBinding("value").setValue("200");
 
@@ -24675,15 +24670,17 @@ sap.ui.define([
 					batchNo : 3,
 					method : "PATCH",
 					url : "SalesOrderList('42')?sap-client=123",
-					headers : {"If-Match" : "ETag1", Prefer : "return=minimal"},// new ETag is used!
+					headers : {
+						"If-Match" : "ETag1", // new ETag is used!
+						Prefer : "return=minimal"
+					},
 					payload : {NetAmount : "0"}
 				}, {
 //					"@odata.etag" : "ETag2", // not ignored, but unused by the rest of this test
-					GrossAmount : "0.00", // side effect
-					NetAmount : "0.00", // "side effect": decimal places added
-					Messages : [{ // "side effect": ignored by $$patchWithoutSideEffects
+					NetAmount : "$$patchWithoutSideEffects ignores this",
+					Messages : [{
 						code : "n/a",
-						message : "n/a",
+						message : "$$patchWithoutSideEffects ignores this",
 						numericSeverity : 3,
 						target : "NetAmount"
 					}],
@@ -24763,11 +24760,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {Note : "Note (entered)"}
-				}, {
-					"@odata.etag" : "ETag1",
-					Note : "Note (from server)", // side effect
-					SalesOrderID : "42"
-				});
+				}); // 204 No Content
 
 			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("Note (entered)");
 
@@ -24792,11 +24785,7 @@ sap.ui.define([
 					url : "SalesOrderList('42')",
 					headers : {"If-Match" : "ETag1", Prefer : "return=minimal"},
 					payload : {Note : "Note (entered)"}
-				}, {
-					"@odata.etag" : "ETag2",
-					Note : "Note (from server)", // side effect
-					SalesOrderID : "42"
-				});
+				}); // 204 No Content
 
 			that.oView.byId("formNote").getBinding("value").setValue("Note (entered)");
 
@@ -35500,7 +35489,7 @@ sap.ui.define([
 						defaultChannel : "Channel 3"
 					},
 					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
-				}) // no need to update the ETag when requesting side effects
+				}) // 204 No Content - no need to update the ETag when requesting side effects
 				.expectRequest({
 					batchNo : 5,
 					url : "Artists(ArtistID='A1',IsActiveEntity=false)"
