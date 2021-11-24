@@ -139,16 +139,10 @@ sap.ui.define(
 		};
 
 		FilterBar.prototype.applySettings = function(mSettings, oScope) {
-			FilterBarBase.prototype.applySettings.apply(this, arguments);
-			this._retrieveMetadata().then(function() {
-				this._applyInitialFilterConditions();
-			}.bind(this));
+			this._applySettings(mSettings, oScope);
+			this._waitForMetadata();
 		};
 
-		FilterBar.prototype._handleAssignedFilterNames = function(bFiltersAggregationChanged, bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch) {
-			// do nothing whenever the sap.mdc.filterbar.FilterBarBase internal logic executed this function;
-			// not required in the vh scenario
-		};
 
 		FilterBar.prototype.exit = function() {
 			FilterBarBase.prototype.exit.apply(this, arguments);
