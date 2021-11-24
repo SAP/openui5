@@ -22,17 +22,17 @@ sap.ui.define([
 
 	/*
 	 Firefox:
-	 - restriction that the pushState/replaceState API can't be used more than 200 times in 10 seconds
+	 - restriction that the pushState/replaceState API can't be used more than 80 times in 10 seconds
 	 - decrease the limit to be safe
 	*/
 	mPushStateRateLimit[Device.browser.BROWSER.FIREFOX] = {
 		timeout: 10000,
-		limit: 120
+		limit: 80
 	};
 
 	/*
 	 Chrome:
-	 - restriction that the pushState/replaceState API can't be used more than 200 times in 10 seconds
+	 - restriction that the pushState/replaceState API can't be used more than 140 times in 10 seconds
 	 - decrease the limit to be safe
 	*/
 	mPushStateRateLimit[Device.browser.BROWSER.CHROME] = {
