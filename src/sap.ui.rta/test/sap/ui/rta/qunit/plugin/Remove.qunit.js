@@ -7,13 +7,13 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
 	Button,
@@ -21,44 +21,19 @@ sap.ui.define([
 	OverlayRegistry,
 	KeyCodes,
 	ChangesWriteAPI,
-	FlUtils,
 	VerticalLayout,
 	CommandFactory,
 	QUnitUtils,
 	RemovePlugin,
 	Utils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
 		beforeEach: function(assert) {
@@ -492,7 +467,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

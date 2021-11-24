@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/includes",
 	"sap/base/util/uid",
-	"sap/m/Button"
+	"sap/m/Button",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	XMLView,
 	Utils,
@@ -35,7 +36,8 @@ sap.ui.define([
 	sinon,
 	includes,
 	uid,
-	Button
+	Button,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -51,37 +53,11 @@ sap.ui.define([
 		QUnit.start();
 	});
 
-	var oMockedComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and addIFrame plugin are instantiated for an ObjectPageLayout", {
 		beforeEach: function(assert) {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function () {
 				return Promise.resolve({
@@ -137,6 +113,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			sandbox.restore();
+			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}

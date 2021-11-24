@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/jquery"
-],
-function (
+], function (
 	DtUtil,
 	OverlayRegistry,
 	FlexUtils,
+	FlexRuntimeInfoAPI,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	jQuery
@@ -88,7 +89,7 @@ function (
 					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
 					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
 					//Calculate moduleName for code extension
-					var sReference = FlexUtils.getComponentClassName(oAppComponent);
+					var sReference = FlexRuntimeInfoAPI.getFlexReference({element: oAppComponent});
 					var sModuleName = sReference.replace(/\.Component/g, "").replace(/\./g, "/");
 					sModuleName += "/changes/";
 					sModuleName += sCodeRef.replace(/\.js/g, "");

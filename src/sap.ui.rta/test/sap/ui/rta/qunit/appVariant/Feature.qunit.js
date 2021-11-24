@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/m/MessageBox"
@@ -35,6 +36,7 @@ sap.ui.define([
 	Log,
 	UriParameters,
 	Manifest,
+	FlexRuntimeInfoAPI,
 	AppVariantWriteAPI,
 	ChangesWriteAPI,
 	MessageBox
@@ -466,7 +468,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
 
 			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
@@ -525,7 +527,7 @@ sap.ui.define([
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
 			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
@@ -581,7 +583,7 @@ sap.ui.define([
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
 			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
@@ -640,7 +642,7 @@ sap.ui.define([
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 
 			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
@@ -721,7 +723,7 @@ sap.ui.define([
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
 			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
@@ -783,7 +785,7 @@ sap.ui.define([
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
 			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
 			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 

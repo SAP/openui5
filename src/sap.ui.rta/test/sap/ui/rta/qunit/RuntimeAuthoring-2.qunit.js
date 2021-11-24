@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
 	"qunit/RtaQunitUtils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -34,6 +35,7 @@ sap.ui.define([
 	CommandFactory,
 	Remove,
 	RtaQunitUtils,
+	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	VersionsAPI,
 	FeaturesAPI,
@@ -380,7 +382,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when not all context is provided and no personalized changes are available and _determineReload() is called", function(assert) {
-			var sFlexReference = FlexUtils.getComponentClassName(this.oRta.getRootControlInstance());
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: this.oRta.getRootControlInstance()});
 			cleanUpFlexSession(sFlexReference);
 			whenNoHigherLayerChangesExist();
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -401,7 +403,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when not all context is provided and personalized changes are available and _determineReload() is called", function(assert) {
-			var sFlexReference = FlexUtils.getComponentClassName(this.oRta.getRootControlInstance());
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: this.oRta.getRootControlInstance()});
 			cleanUpFlexSession(sFlexReference);
 			whenHigherLayerChangesExist();
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -1044,7 +1046,7 @@ sap.ui.define([
 
 		QUnit.test("when _deleteChanges() is called", function(assert) {
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
-			var sFlexReference = FlexUtils.getComponentClassName(this.oRta.getRootControlInstance());
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: this.oRta.getRootControlInstance()});
 			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.fnHandleParametersOnExitStub.callCount, 1, "then _handleParameterOnExit is called");

@@ -224,6 +224,21 @@ sap.ui.define([
 			});
 	}
 
+	function getODataServiceUriFromManifest(oManifest) {
+		var sUri = "";
+		if (oManifest) {
+			var oSapApp = oManifest.getEntry ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+			if (
+				oSapApp && oSapApp.dataSources
+				&& oSapApp.dataSources.mainService
+				&& oSapApp.dataSources.mainService.uri
+			) {
+				sUri = oSapApp.dataSources.mainService.uri;
+			}
+		}
+		return sUri;
+	}
+
 	function createAddViaDelegateCommand(mPropertyBag, oParentAggregationDTMetadata) {
 		var oSelectedElement = mPropertyBag.selectedElement;
 		var mParents = mPropertyBag.parents;
@@ -238,7 +253,7 @@ sap.ui.define([
 		var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
 		var sCommandName = "addDelegateProperty";
 		var oManifest = FlUtils.getAppComponentForControl(mParents.parent).getManifest();
-		var sServiceUri = FlUtils.getODataServiceUriFromManifest(oManifest);
+		var sServiceUri = getODataServiceUriFromManifest(oManifest);
 
 		return oPlugin.getCommandFactory().getCommandFor(mParents.parent, sCommandName, {
 			newControlId: Utils.createFieldLabelId(oParent, oSelectedElement.entityType, oSelectedElement.bindingPath),

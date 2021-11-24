@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/Log"
 ], function(
 	Component,
+	ManifestUtils,
 	FlexControllerFactory,
 	Utils,
 	ChangePersistenceFactory,
@@ -64,7 +66,7 @@ sap.ui.define([
 				return Promise.resolve(oView);
 			}
 
-			var sFlexReference = Utils.getComponentClassName(oAppComponent);
+			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 			var oFlexController = FlexControllerFactory.create(sFlexReference);
 
 			return oFlexController.processXmlView(oView, mProperties)
@@ -103,7 +105,7 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 
-		var sFlexReference = Utils.getComponentClassName(oAppComponent);
+		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
 		return oChangePersistence.getCacheKey(oAppComponent);
 	};

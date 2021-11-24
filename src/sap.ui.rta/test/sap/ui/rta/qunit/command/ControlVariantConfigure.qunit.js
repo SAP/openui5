@@ -3,26 +3,25 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/thirdparty/sinon-4"
-],
-function(
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	Layer,
 	flUtils,
-	Manifest,
 	CommandFactory,
 	ElementDesignTimeMetadata,
 	OverlayRegistry,
 	VariantManagement,
 	FlexTestAPI,
 	VariantManagementState,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -33,35 +32,10 @@ function(
 			assert.equal(oChange.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
 		});
 	}
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
 	QUnit.module("Given a variant management control ...", {
 		before: function() {
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-
-			this.oManifest = new Manifest(oManifestObj);
-
-			this.oMockedAppComponent = {
-				getLocalId: function() {},
-				getModel: function() {
-					return this.oModel;
-				}.bind(this),
-				getId: function() {
-					return "RTADemoAppMD";
-				},
-				getManifest: function() {
-					return this.oManifest;
-				}.bind(this)
-			};
-
-			this.oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
-			this.oGetComponentClassNameStub = sinon.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			sinon.stub(VariantManagementState, "getContent").returns({});
 
 			this.oData = {
@@ -100,18 +74,16 @@ function(
 
 			return FlexTestAPI.createVariantModel({
 				data: this.oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: oMockedAppComponent
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 			}.bind(this));
 		},
 		after: function() {
-			this.oGetAppComponentForControlStub.restore();
-			this.oGetComponentClassNameStub.restore();
 			this.oModel.destroy();
-			this.oManifest.destroy();
 		},
 		beforeEach: function() {
+			sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 
@@ -136,7 +108,7 @@ function(
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
 			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oTitleChange = {
-				appComponent: this.oMockedAppComponent,
+				appComponent: oMockedAppComponent,
 				changeType: "setTitle",
 				layer: Layer.CUSTOMER,
 				originalTitle: "variant A",
@@ -144,7 +116,7 @@ function(
 				variantReference: "variant0"
 			};
 			var oFavoriteChange = {
-				appComponent: this.oMockedAppComponent,
+				appComponent: oMockedAppComponent,
 				changeType: "setFavorite",
 				favorite: false,
 				layer: Layer.CUSTOMER,
@@ -152,14 +124,14 @@ function(
 				variantReference: "variant0"
 			};
 			var oVisibleChange = {
-				appComponent: this.oMockedAppComponent,
+				appComponent: oMockedAppComponent,
 				changeType: "setVisible",
 				layer: Layer.CUSTOMER,
 				variantReference: "variant0",
 				visible: false
 			};
 			var oContextsChange = {
-				appComponent: this.oMockedAppComponent,
+				appComponent: oMockedAppComponent,
 				changeType: "setContexts",
 				layer: Layer.CUSTOMER,
 				variantReference: "variant0",
@@ -190,7 +162,7 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
 					assert.deepEqual(this.oData["variantMgmtId1"].variants[1].contexts, oContextsChange.contexts, "then the contexts are correctly set in model");
-					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 4, "then there are four dirty changes in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
 				}.bind(this))
@@ -201,7 +173,7 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
 					assert.deepEqual(this.oData["variantMgmtId1"].variants[1].contexts, oContextsChange.originalContexts, "then the contexts are correctly reverted in model");
-					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
 				.catch(function(oError) {
@@ -216,7 +188,7 @@ function(
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
 			var mFlexSettings = {layer: Layer.CUSTOMER};
 			var oDefaultChange = {
-				appComponent: this.oMockedAppComponent,
+				appComponent: oMockedAppComponent,
 				changeType: "setDefault",
 				defaultVariant: "variantMgmtId1",
 				layer: Layer.CUSTOMER,
@@ -240,17 +212,17 @@ function(
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-					var aDirtyChanges = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent});
+					var aDirtyChanges = FlexTestAPI.getDirtyChanges({selector: oMockedAppComponent});
 					checkGeneratorInChanges(aDirtyChanges, assert);
 					assert.strictEqual(aDirtyChanges.length, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
-				}.bind(this))
+				})
 				.then(function() {
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
-				}.bind(this))
+				})
 				.catch(function(oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
@@ -258,6 +230,7 @@ function(
 	});
 
 	QUnit.done(function() {
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

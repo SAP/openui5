@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
@@ -44,6 +45,7 @@ sap.ui.define([
 	Switcher,
 	VariantManagementState,
 	FlexState,
+	ManifestUtils,
 	ChangesController,
 	Settings,
 	VariantManagement,
@@ -100,7 +102,7 @@ sap.ui.define([
 				getLocalId: function() {}
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
-			sandbox.stub(Utils, "getComponentClassName").returns(this.oComponent.name);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oComponent.name);
 			sandbox.stub(URLHandler, "attachHandlers");
 			sandbox.stub(FlexState, "getVariantsState").returns({});
 
@@ -2239,7 +2241,7 @@ sap.ui.define([
 				}.bind(this)
 			};
 
-			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("MyComponent");
 			sandbox.stub(FlexState, "getVariantsState").returns({});
 			this.fnGetAppComponentForControlStub = sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
@@ -2530,7 +2532,8 @@ sap.ui.define([
 							"sap.app": {
 								applicationVersion: {
 									version: "1.2.3"
-								}
+								},
+								id: "MockController"
 							}
 						}
 					},

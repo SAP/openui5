@@ -12,9 +12,9 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/Button",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
-], function (
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	jQuery,
 	QUnitUtils,
 	DesignTime,
@@ -26,42 +26,13 @@ sap.ui.define([
 	ObjectPageSubSection,
 	Button,
 	ChangesWriteAPI,
-	FlUtils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
-	});
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated", {
 		beforeEach: function(assert) {
@@ -195,6 +166,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	sinon,
+	ManifestUtils,
 	LocalResetAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
@@ -190,7 +192,7 @@ sap.ui.define([
 				name: "MyComponent"
 			};
 			this.oChangePersistence = new ChangePersistence(oComponent);
-			sandbox.stub(FlUtils, "getComponentClassName").returns(oComponent.name);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(oComponent.name);
 		},
 		afterEach: function () {
 			sandbox.restore();

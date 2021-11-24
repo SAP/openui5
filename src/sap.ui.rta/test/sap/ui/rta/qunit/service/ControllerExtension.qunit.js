@@ -1,6 +1,7 @@
 /* global QUnit*/
 
 sap.ui.define([
+	"sap/m/App",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
@@ -10,8 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
+	App,
 	RuntimeAuthoring,
 	OverlayRegistry,
 	FlexUtils,
@@ -29,36 +30,41 @@ function(
 
 	function before() {
 		QUnit.config.fixture = null;
-		return XMLView.create({
-			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"></mvc:View>'
-		}).then(function(oView) {
-			this.oView = oView;
-			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
-				metadata: {
-					manifest: {
-						"sap.app": {
-							id: "fixture.application"
-						}
+		var oViewContent = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"><Button text="foo" /></mvc:View>';
+		var oView;
+		var oViewPromise;
+		var FixtureComponent = UIComponent.extend("sap.ui.rta.service.controllerExtension", {
+			metadata: {
+				manifest: {
+					"sap.app": {
+						id: "sap.ui.rta.service.controllerExtension"
 					}
-				},
-				createContent: function() {
-					return this.oView;
-				}.bind(this)
-			});
-
-			this.oComponent = new FixtureComponent('Comp');
-			this.oComponentContainer = new ComponentContainer('CompCont', {
+				}
+			},
+			createContent: function() {
+				var oApp = new App(this.createId("mockapp"));
+				oViewPromise = XMLView.create({
+					id: this.createId("mockview"),
+					definition: oViewContent
+				}).then(function(oCreatedView) {
+					oView = oCreatedView;
+					oApp.addPage(oCreatedView);
+					return oCreatedView.loaded();
+				});
+				return oApp;
+			}
+		});
+		this.oComponent = new FixtureComponent("sap.ui.rta.service.controllerExtension");
+		return oViewPromise.then(function() {
+			this.oView = oView;
+			this.oComponentContainer = new ComponentContainer("CompCont", {
 				component: this.oComponent
-			});
-			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			}).placeAt("qunit-fixture");
 		}.bind(this));
 	}
 
 	function after() {
 		QUnit.config.fixture = '';
-		this.oView.destroy();
-		// this.oComponent.destroy();
 		this.oComponentContainer.destroy();
 	}
 
@@ -85,7 +91,6 @@ function(
 			sandbox.stub(PersistenceWriteAPI, "add").callsFake(function() {
 				this.iAddChangeCounter++;
 			}.bind(this));
-			sandbox.stub(FlexUtils, "getComponentClassName").returns("sap.ui.rta.service.controllerExtension.Component");
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
 				isPublishEnabled: true

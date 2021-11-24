@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	Button,
 	Input,
@@ -55,7 +56,8 @@ sap.ui.define([
 	JSONModel,
 	flUtils,
 	flLayerUtils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -67,34 +69,8 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 	sinon.stub(flLayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
-
-	var oMockedAppComponent = {
-		getLocalId: sandbox.stub(),
-		getManifestObject: sandbox.stub(),
-		getManifestEntry: sandbox.stub(),
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					type: "application",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {},
-		createId: function(sId) {
-			return "testcomponent---" + sId;
-		}
-	};
 
 	function prepareAndExecute(oFlexCommand) {
 		return Promise.resolve()
@@ -105,10 +81,6 @@ sap.ui.define([
 	QUnit.module("Given a command factory", {
 		beforeEach: function() {
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
-			sandbox.stub(flUtils, "_getComponentForControl")
-				.callThrough()
-				.withArgs(this.oButton)
-				.returns(oMockedAppComponent);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -177,7 +149,6 @@ sap.ui.define([
 
 	QUnit.module("Given a flex command", {
 		beforeEach: function() {
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button("mockButton");
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
@@ -218,7 +189,6 @@ sap.ui.define([
 	QUnit.module("Given a command stack", {
 		beforeEach: function() {
 			this.stack = new Stack();
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
 			this.failingCommand.execute = function() {
@@ -412,7 +382,6 @@ sap.ui.define([
 				developerMode: true,
 				layer: Layer.VENDOR
 			};
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.OLD_VALUE = "2px";
 			this.NEW_VALUE = "5px";
 			this.oControl = new Column(oMockedAppComponent.createId("control"), {
@@ -468,7 +437,6 @@ sap.ui.define([
 				developerMode: true,
 				layer: Layer.VENDOR
 			};
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.OLD_BOOLEAN_VALUE = false;
 			this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS = "{= ( ${/field1} === 'critical' ) &&  ( ${/field2} > 100 ) }";
 			this.NEW_BOOLEAN_VALUE = true;
@@ -591,7 +559,6 @@ sap.ui.define([
 
 	QUnit.module("Given remove command", {
 		beforeEach: function() {
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 
 			return CommandFactory.getCommandFor(this.oButton, "Remove", {
@@ -622,7 +589,7 @@ sap.ui.define([
 					assert.deepEqual(this.oCommand.getSelector(), {
 						appComponent: oMockedAppComponent,
 						controlType: "sap.m.Button",
-						id: "testcomponent---button"
+						id: "someName---button"
 					}, "then selector is properly set for remove command");
 					assert.ok(this.oCommand.getPreparedChange(), "then change is successfully prepared");
 				}.bind(this));
@@ -633,13 +600,12 @@ sap.ui.define([
 		beforeEach: function () {
 			var sVariantManagementReference = "dummyVariantManagementReference";
 			this.sCurrentVariantReference = "dummyVariantReference";
-			this.oFLexSettings = {
+			this.oFlexSettings = {
 				layer: Layer.VENDOR,
 				developerMode: false
 			};
 
-			this.fnOriginalGetModel = oMockedAppComponent.getModel;
-			oMockedAppComponent.getModel = function (sModelName) {
+			sandbox.stub(oMockedAppComponent, "getModel").callsFake(function (sModelName) {
 				if (sModelName === flUtils.VARIANT_MODEL_NAME) {
 					return {
 						getCurrentVariantReference: function (sVariantManagementRef) {
@@ -649,15 +615,14 @@ sap.ui.define([
 						}.bind(this)
 					};
 				}
-			}.bind(this);
+			}.bind(this));
 
-			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			sandbox.spy(FlexCommand.prototype, "prepare");
 
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 
 			this.oCommandFactory = new CommandFactory({
-				flexSettings: this.oFLexSettings
+				flexSettings: this.oFlexSettings
 			});
 
 			return oCommandFactory.getCommandFor(this.oButton, "Rename", {
@@ -680,23 +645,21 @@ sap.ui.define([
 			this.oCommand.destroy();
 			this.oButton.destroy();
 			this.oCommandFactory.destroy();
-			oMockedAppComponent.getModel = this.fnOriginalGetModel;
 			delete this.fnOriginalGetModel;
-			delete this.oFLexSettings;
+			delete this.oFlexSettings;
 			delete this.sCurrentVariantReference;
 		}
 	}, function () {
 		QUnit.test("when prepare() of remove command is called", function (assert) {
 			assert.ok(FlexCommand.prototype.prepare.calledOnce, "then FlexCommand.prepare() called once");
 			assert.strictEqual(this.oCommand.getPreparedChange().getVariantReference(), this.sCurrentVariantReference, "then correct variant reference set to the prepared change");
-			assert.strictEqual(this.oCommand.getPreparedChange().getLayer(), this.oFLexSettings.layer, "then correct layer was set to the prepared change");
-			assert.deepEqual(this.oCommandFactory.getFlexSettings(), this.oFLexSettings, "then correct flex settings were set to the commandfactory");
+			assert.strictEqual(this.oCommand.getPreparedChange().getLayer(), this.oFlexSettings.layer, "then correct layer was set to the prepared change");
+			assert.deepEqual(this.oCommandFactory.getFlexSettings(), this.oFlexSettings, "then correct flex settings were set to the commandfactory");
 		});
 	});
 
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach: function(assert) {
-			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.renamedButton = new Button();
 			this.stack = new Stack();
 			this.command = new BaseCommand();
@@ -1601,6 +1564,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

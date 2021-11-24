@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -15,6 +16,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	ComponentContainer,
 	Component,
+	UIComponent,
 	KeyCodes,
 	Layer,
 	flUtils,
@@ -212,6 +214,27 @@ sap.ui.define([
 					resolve(iItemCount);
 				});
 		}.bind(this));
+	};
+
+	RtaQunitUtils.createAndStubAppComponent = function(sandbox, sId, oManifest, oContent) {
+		sId = sId || "someName";
+		oManifest = oManifest || {
+			"sap.app": {
+				id: sId
+			}
+		};
+		var Component = UIComponent.extend("component", {
+			metadata: {
+				manifest: oManifest
+			},
+			createContent: function() {
+				return oContent;
+			}
+		});
+
+		var oComponent = new Component(sId);
+		sandbox.stub(flUtils, "getAppComponentForControl").returns(oComponent);
+		return oComponent;
 	};
 
 	return RtaQunitUtils;

@@ -1,8 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Component",
-	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/rta/command/LREPSerializer",
@@ -19,8 +17,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Component,
-	Manifest,
 	CommandFactory,
 	DesignTimeMetadata,
 	CommandSerializer,
@@ -39,55 +35,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var COMPONENT_NAME = "someName";
-	var oRawManifest = {
-		"sap.app": {
-			applicationVersion: {
-				version: "1.2.3"
-			},
-			id: COMPONENT_NAME
-		}
-	};
-	var oManifest = new Manifest(oRawManifest);
-	var oModel;
-	var oMockedAppComponent = {
-		getLocalId: function() {
-			return undefined;
-		},
-		addPropagationListener: function() {},
-		getPropagationListeners: function() {
-			return [];
-		},
-		getManifestEntry: function() {
-			return {};
-		},
-		getMetadata: function() {
-			return {
-				getName: function() {
-					return COMPONENT_NAME;
-				}
-			};
-		},
-		getManifest: function() {
-			return oRawManifest;
-		},
-		getComponentData: function() {},
-		getId: function() {
-			return "componentId";
-		},
-		getManifestObject: function() {
-			return oManifest;
-		},
-		getModel: function() {
-			return oModel;
-		}
-	};
-	var oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-	sinon.stub(Component, "get")
-		.callThrough()
-		.withArgs("componentId")
-		.returns(oMockedAppComponent);
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	var oData = {
 		variantMgmtId1: {
@@ -131,15 +81,15 @@ sap.ui.define([
 		before: function() {
 			return FlexTestAPI.createVariantModel({
 				data: oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: oMockedAppComponent
 			}).then(function(oInitializedModel) {
-				oModel = oInitializedModel;
-			});
+				this.oModel = oInitializedModel;
+			}.bind(this));
 		},
-
 		beforeEach: function() {
 			return RtaQunitUtils.clear(oMockedAppComponent)
 			.then(function() {
+				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 				this.oCommandStack = new CommandStack();
 				this.oInput1 = new Input("input1");
@@ -178,7 +128,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		after: function() {
-			oModel.destroy();
+			this.oModel.destroy();
 		}
 	}, function() {
 		QUnit.test("when two commands get undone, redone and saved while the element of one command is not available", function(assert) {
@@ -755,6 +705,7 @@ sap.ui.define([
 					oRemoveCommand2 = oCommand;
 					sandbox.stub(oRemoveCommand1.getPreparedChange(), "getVariantReference").returns("test-variant");
 					sandbox.stub(oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
+					oMockedAppComponent.getModel.restore();
 					sandbox.stub(oMockedAppComponent, "getModel").returns({
 						removeChange: function() {},
 						addChange: function() {},
@@ -845,23 +796,20 @@ sap.ui.define([
 		before: function() {
 			return FlexTestAPI.createVariantModel({
 				data: oData,
-				appComponent: this.oMockedAppComponent
+				appComponent: oMockedAppComponent
 			}).then(function(oInitializedModel) {
-				oModel = oInitializedModel;
-			});
+				this.oModel = oInitializedModel;
+			}.bind(this));
 		},
-
 		beforeEach: function() {
 			this.oCommandStack = new CommandStack();
 
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oDesignTimeMetadata = new DesignTimeMetadata({data: {}});
-			oModel._bDesignTimeMode = true;
+			this.oModel._bDesignTimeMode = true;
 
-			oMockedAppComponent.getModel = function() {
-				return oModel;
-			};
+			sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 
 			this.oSerializer = new CommandSerializer({
 				commandStack: this.oCommandStack,
@@ -880,7 +828,7 @@ sap.ui.define([
 				},
 				controlChanges: []
 			};
-			sandbox.stub(oModel, "getVariant").returns(oVariant);
+			sandbox.stub(this.oModel, "getVariant").returns(oVariant);
 			sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
 			sandbox.stub(VariantManagementState, "addVariantToVariantManagement");
@@ -897,7 +845,7 @@ sap.ui.define([
 			return RtaQunitUtils.clear(oMockedAppComponent);
 		},
 		after: function() {
-			oModel.destroy();
+			this.oModel.destroy();
 		}
 	}, function() {
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
@@ -957,7 +905,7 @@ sap.ui.define([
 					oControlVariantSwitchCommand = oCommand;
 					return CommandFactory.getCommandFor(this.oVariantManagement, "saveAs", {
 						sourceVariantReference: "variant0",
-						model: oModel
+						model: this.oModel
 					}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
 				}.bind(this))
 
@@ -1011,7 +959,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
-		oGetAppComponentForControlStub.restore();
 	});
 });

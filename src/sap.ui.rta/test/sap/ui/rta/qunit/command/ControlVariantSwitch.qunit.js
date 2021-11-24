@@ -2,15 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/variants/VariantManagement",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	CommandFactory,
-	Utils,
 	VariantManagement,
 	FlexTestAPI,
+	RtaQunitUtils,
 	sinon
 ) {
 	"use strict";
@@ -18,50 +18,22 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a VariantManagement control and its designtime metadata are created...", {
-		before: function () {
-			this.fnGetMockedAppComponent = function() {
-				return {
-					getLocalId: function () {},
-					getManifestEntry: function () {
-						return {};
-					},
-					getMetadata: function () {
-						return {
-							getName: function () {
-								return "someName";
-							}
-						};
-					},
-					getManifest: function () {
-						return {
-							"sap.app": {
-								applicationVersion: {
-									version: "1.2.3"
-								}
-							}
-						};
-					},
-					getModel: function () {
-						return this.oModel;
-					}.bind(this)
-				};
-			};
-		},
 		beforeEach: function () {
 			this.sVariantManagementReference = "variantManagementReference-1";
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
-			this.oMockedAppComponent = this.fnGetMockedAppComponent();
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			return FlexTestAPI.createVariantModel({
 				data: {variantManagementReference: {variants: []}},
 				appComponent: this.oMockedAppComponent
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
+				sandbox.stub(this.oMockedAppComponent, "getModel").returns(oInitializedModel);
 				this.fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
 			}.bind(this));
 		},
 		afterEach: function () {
+			this.oMockedAppComponent.destroy();
 			this.oVariantManagement.destroy();
 			sandbox.restore();
 		}

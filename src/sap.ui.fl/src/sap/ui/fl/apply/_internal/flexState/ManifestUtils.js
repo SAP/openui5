@@ -47,7 +47,7 @@ function(
 		 */
 		getFlexReferenceForControl: function (oControl) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			return ManifestUtils.getFlexReference({
+			return oAppComponent && ManifestUtils.getFlexReference({
 				manifest: oAppComponent.getManifest(),
 				componentData: oAppComponent.getComponentData()
 			});

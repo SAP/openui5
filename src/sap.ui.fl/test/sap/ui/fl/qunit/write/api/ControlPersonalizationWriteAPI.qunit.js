@@ -67,7 +67,8 @@ sap.ui.define([
 							"sap.app": {
 								applicationVersion: {
 									version: "1.2.3"
-								}
+								},
+								id: "MockController"
 							}
 						}
 					},
@@ -412,7 +413,8 @@ sap.ui.define([
 							"sap.app": {
 								applicationVersion: {
 									version: "1.2.3"
-								}
+								},
+								id: "MockController"
 							}
 						}
 					},

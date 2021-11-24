@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
@@ -15,6 +16,7 @@ sap.ui.define([
 	XMLView,
 	FlexUtils,
 	Settings,
+	ManifestUtils,
 	ExtUtils,
 	ABAPAccess,
 	ABAPExtensibilityVariantFactory,
@@ -136,7 +138,7 @@ sap.ui.define([
 
 		QUnit.test("isExtensibilityEnabled with empty string as component class name", function(assert) {
 			var done = assert.async();
-			oSandbox.stub(FlexUtils, "getComponentClassName").returns("");
+			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("");
 
 			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
 				assert.equal(bExtensibilityEnabled, false, "the return value is false");
@@ -146,7 +148,7 @@ sap.ui.define([
 
 		QUnit.test("isExtensibilityEnabled with undefined as component class name", function(assert) {
 			var done = assert.async();
-			oSandbox.stub(FlexUtils, "getComponentClassName").returns();
+			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns();
 
 			return ABAPAccess.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
 				assert.equal(bExtensibilityEnabled, false, "the return value is false");
@@ -156,7 +158,7 @@ sap.ui.define([
 
 		QUnit.test("isExtensibilityEnabled with undefined as component class name", function(assert) {
 			var done = assert.async();
-			oSandbox.stub(FlexUtils, "getComponentClassName").returns("name");
+			oSandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("name");
 			oSandbox.stub(Settings, "getInstance").resolves({
 				isModelS: function() {
 					return true;

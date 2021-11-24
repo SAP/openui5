@@ -53,6 +53,13 @@ sap.ui.define([
 		});
 	}
 
+	function appendComponentToString(sComponentName) {
+		if (sComponentName.length > 0 && sComponentName.indexOf(".Component") < 0) {
+			sComponentName += ".Component";
+		}
+		return sComponentName;
+	}
+
 	/**
 	 * Object containing data for a SmartVariantManagement control.
 	 *
@@ -123,7 +130,11 @@ sap.ui.define([
 		 */
 		isApplicationVariant: function(mPropertyBag) {
 			var oControl = mPropertyBag.control;
-			if (Utils.isApplicationVariant(oControl)) {
+			var oAppComponent = Utils.getAppComponentForControl(oControl);
+			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+			var sAppId = appendComponentToString(Utils.getAppIdFromManifest(oAppComponent.getManifest()));
+
+			if (sFlexReference !== sAppId) {
 				return true;
 			}
 

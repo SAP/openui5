@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement"
@@ -17,6 +18,7 @@ sap.ui.define([
 	Layer,
 	Applier,
 	FlexState,
+	ManifestUtils,
 	VariantModel,
 	Log,
 	Measurement
@@ -71,7 +73,7 @@ sap.ui.define([
 	FlexControllerFactory.createForControl = function(oControl) {
 		try {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var sComponentName = Utils.getComponentClassName(oAppComponent || oControl);
+			var sComponentName = ManifestUtils.getFlexReferenceForControl(oAppComponent || oControl);
 			return FlexControllerFactory.create(sComponentName);
 		} catch (oError) {
 			Log.error(oError.message, undefined, "sap.ui.fl.FlexControllerFactory");
@@ -95,7 +97,7 @@ sap.ui.define([
 
 		var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
 		if (sRestartingComponent) {
-			var sComponentId = Utils.getComponentClassName(oComponent);
+			var sComponentId = ManifestUtils.getFlexReferenceForControl(oComponent);
 			if (sRestartingComponent !== sComponentId && sRestartingComponent !== "true") {
 				Log.error("an application component was started " +
 					"which does not match the component for which the restart was triggered:\n" +

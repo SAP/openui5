@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistence",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	Component,
 	FlexState,
+	ManifestUtils,
 	Applier,
 	FlexControllerFactory,
 	ChangePersistence,
@@ -74,7 +76,7 @@ sap.ui.define([
 			};
 
 			var oAddPropagationListenerStub = sandbox.stub(oComponent, "addPropagationListener");
-			sandbox.stub(Utils, "getComponentClassName")
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.callThrough()
 				.withArgs(oComponent)
 				.returns("mockName");
@@ -112,7 +114,7 @@ sap.ui.define([
 				return mDeterminedChanges;
 			}));
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
-			sandbox.stub(Utils, "getComponentClassName")
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.callThrough()
 				.withArgs(oComponent)
 				.returns("mockName");
@@ -236,7 +238,7 @@ sap.ui.define([
 			assert.expect(4);
 			var oAppComponent = new Component();
 			sandbox.stub(Utils, "isApplication").returns(true);
-			sandbox.stub(Utils, "getComponentClassName")
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.callThrough()
 				.withArgs(oAppComponent)
 				.returns("mockName");
@@ -272,7 +274,7 @@ sap.ui.define([
 
 		QUnit.test("when getChangesForPropagate() is called for an embedded component with a component not of type application", function(assert) {
 			var oAppComponent = new Component();
-			sandbox.stub(Utils, "getComponentClassName")
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.callThrough()
 				.withArgs(oAppComponent)
 				.returns("mockName");
@@ -313,7 +315,7 @@ sap.ui.define([
 			var sMockComponentName = "MockCompName";
 
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oMockControl).returns(oAppComponent);
-			sandbox.stub(Utils, "getComponentClassName")
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.withArgs(oAppComponent)
 				.returns(sMockComponentName);
 
@@ -354,7 +356,7 @@ sap.ui.define([
 			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
-			sandbox.stub(Utils, "getComponentClassName")
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
 				.returns(sMockComponentName);
 			FlexControllerFactory._instanceCache[sMockComponentName] = {
 				_oChangePersistence: {

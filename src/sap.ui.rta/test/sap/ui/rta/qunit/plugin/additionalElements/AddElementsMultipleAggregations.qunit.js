@@ -11,14 +11,14 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/thirdparty/sinon-4"
-], function (
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	Bar,
 	Button,
 	Page,
@@ -29,36 +29,18 @@ sap.ui.define([
 	DesignTime,
 	OverlayRegistry,
 	ElementUtil,
-	FlexUtils,
 	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
 	RTAPlugin,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
-
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "mockedAppComponent";
-				}
-			};
-		},
-		getModel: function () {
-			return {};
-		}
-	};
+	var sandbox = sinon.createSandbox();
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	// PseudoPublicParent (VerticalLayout)
 	// 	oBar (Bar)
@@ -69,8 +51,6 @@ sap.ui.define([
 	//      contentRight
 	// 			[oVisibleRightButton, oInvisibleRightButton]
 	function givenBarWithButtons() {
-		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
 		this.oVisibleLeftButton = new Button({id: "VisibleLeftButton", visible: true, text: "VisibleLeft"});
 		this.oInvisibleLeftButton = new Button({id: "InvisibleLeftButton", visible: false, text: "InvisibleLeft"});
 		this.oVisibleMiddleButton1 = new Button({id: "VisibleMiddleButton1", visible: true, text: "VisibleMiddle1"});
@@ -290,8 +270,6 @@ sap.ui.define([
 	//			ObjectPageSection - invisible
 	//			ObjectPageSection - visible
 	function givenObjectPageWithHeaderAndSections() {
-		sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
 		this.oHeaderButton = new Button({id: "HeaderContentButton", text: "HeaderContentButton"});
 
 		this.oSubSection = new ObjectPageSubSection({
@@ -374,6 +352,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

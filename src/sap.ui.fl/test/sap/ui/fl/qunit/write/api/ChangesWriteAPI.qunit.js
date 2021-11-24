@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -25,6 +26,7 @@ sap.ui.define([
 	Component,
 	Element,
 	Manifest,
+	ManifestUtils,
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
@@ -123,7 +125,7 @@ sap.ui.define([
 			mPropertyBag.selector.getManifest = function() {};
 
 			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
 
 			return ChangesWriteAPI.create(mPropertyBag)
@@ -179,7 +181,7 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 
-			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
 
 			var oCreateInlineChangeStub = sandbox.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));

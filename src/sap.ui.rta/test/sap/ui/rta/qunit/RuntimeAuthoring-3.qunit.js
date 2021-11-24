@@ -108,11 +108,11 @@ sap.ui.define([
 				}
 			});
 
-			this.oComponent = new FixtureComponent('Comp');
-			this.oComponentContainer = new ComponentContainer('CompCont', {
+			this.oComponent = new FixtureComponent("Comp");
+			this.oComponentContainer = new ComponentContainer("CompCont", {
 				component: this.oComponent
 			});
-			this.oComponentContainer.placeAt('qunit-fixture');
+			this.oComponentContainer.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {

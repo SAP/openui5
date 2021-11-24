@@ -19,6 +19,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Overlay",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
@@ -52,6 +54,8 @@ sap.ui.define([
 	OverlayRegistry,
 	Overlay,
 	KeyCodes,
+	SmartVariantManagementApplyAPI,
+	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	VersionsAPI,
@@ -93,7 +97,7 @@ sap.ui.define([
 	}
 
 	function cleanInfoSessionStorage() {
-		var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oCompCont.getComponentInstance()});
 		window.sessionStorage.removeItem("sap.ui.fl.info." + sFlexReference);
 	}
 
@@ -588,22 +592,13 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when enabling restart", function(assert) {
 			var sComponentId = "restartingComponent";
-			var oComponent = {
-				getManifestEntry: function () {},
-				getMetadata: function () {
-					return {
-						getName: function () {
-							return sComponentId;
-						}
-					};
-				}
-			};
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			var oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sComponentId);
 			var sLayer = "LAYER";
 			RuntimeAuthoring.enableRestart(sLayer, {});
 			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
 			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
 			assert.equal(sRestartingComponent, sComponentId + ".Component", "and the component ID is set with an added .Component");
+			oComponent.destroy();
 		});
 
 		QUnit.test("when enabling and disabling restart", function(assert) {
@@ -952,7 +947,7 @@ sap.ui.define([
 				isResetEnabled: true
 			});
 			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
@@ -1063,7 +1058,7 @@ sap.ui.define([
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
 			var fnPublishStub = sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
@@ -1079,7 +1074,7 @@ sap.ui.define([
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant by navigation parameters", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			sandbox.stub(MessageToast, "show");
-			sandbox.stub(Utils, "isApplicationVariant").returns(true);
+			sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(true);
 			sandbox.stub(Utils, "isVariantByStartupParameter").returns(true);
 			var oRtaAppVariantFeatureStub = sandbox.stub(RtaAppVariantFeature, "getAppVariantDescriptor");
 			return this.oRta.transport().then(function() {
@@ -1090,7 +1085,7 @@ sap.ui.define([
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant", function(assert) {
 			var fnPublishStub = sandbox.stub(PersistenceWriteAPI, "publish").resolves();
 			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(true);
+			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(true);
 			var oDummyObject = {
 				foo: "hugo"
 			};
@@ -1111,7 +1106,7 @@ sap.ui.define([
 		QUnit.test("When transport function is called and Promise.reject() is returned from the flex persistence", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").rejects(new Error("Error"));
 			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
 			var oShowErrorStub = sandbox.stub(Log, "error");
 			var oErrorBoxStub = sandbox.stub(MessageBox, "error");
 			return this.oRta.transport().then(function() {
@@ -1157,7 +1152,7 @@ sap.ui.define([
 				var sErrorBoxText = this.oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 					+ this.oTextResources.getText("MSG_ERROR_REASON", oErrorResponse.errorText);
 				sandbox.stub(PersistenceWriteAPI, "publish").rejects(oErrorResponse.error);
-				var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+				var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
 				var oMessageToastStub = sandbox.stub(MessageToast, "show");
 				var oShowErrorStub = sandbox.stub(Log, "error");
 				var oErrorBoxStub = sandbox.stub(MessageBox, "error");
@@ -1174,7 +1169,7 @@ sap.ui.define([
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() with 'Error' as parameter", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves("Error");
 			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
@@ -1184,7 +1179,7 @@ sap.ui.define([
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() with 'Cancel' as parameter", function(assert) {
 			sandbox.stub(PersistenceWriteAPI, "publish").resolves("Cancel");
 			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			var oAppVariantRunningStub = sandbox.stub(Utils, "isApplicationVariant").returns(false);
+			var oAppVariantRunningStub = sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(false);
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 0, "then the messageToast was not shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
@@ -1257,7 +1252,7 @@ sap.ui.define([
 				return Promise.resolve();
 			});
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
-			var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oCompCont.getComponentInstance()});
 			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
 
 			return this.oRta._deleteChanges().then(function() {
@@ -1271,7 +1266,7 @@ sap.ui.define([
 		QUnit.test("when calling '_deleteChanges' successfully in AppVariant", function(assert) {
 			assert.expect(3);
 			this.oDeleteChangesStub.restore();
-			sandbox.stub(Utils, "isApplicationVariant").returns(true);
+			sandbox.stub(SmartVariantManagementApplyAPI, "isApplicationVariant").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
 				assert.deepEqual(arguments[0], {
 					selector: oCompCont.getComponentInstance(),
@@ -1288,7 +1283,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_deleteChanges and there is an error', ", function(assert) {
 			this.oDeleteChangesStub.restore();
-			var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oCompCont.getComponentInstance()});
 			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
@@ -1308,7 +1303,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_deleteChanges and reset is cancelled', ", function(assert) {
 			this.oDeleteChangesStub.restore();
-			var sFlexReference = Utils.getComponentClassName(oCompCont.getComponentInstance());
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oCompCont.getComponentInstance()});
 			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));

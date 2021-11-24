@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -24,6 +25,7 @@ sap.ui.define([
 	_omit,
 	Log,
 	Manifest,
+	ManifestUtils,
 	ChangesController,
 	ChangeHandlerStorage,
 	InitialUtils,
@@ -242,7 +244,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
@@ -325,7 +327,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
@@ -405,7 +407,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
@@ -496,7 +498,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(true);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
 				completeChangeContent: function() {
@@ -554,7 +556,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var mAppVariant = {
@@ -616,7 +618,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var mAppVariant = {
@@ -676,7 +678,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var oTransportResponse = {
@@ -724,7 +726,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var mAppVariant = {
@@ -790,7 +792,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var mAppVariant = {
@@ -837,7 +839,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(true);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var mAppVariant = {
@@ -884,7 +886,7 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(true);
 
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("testComponent");
 			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var mAppVariant = {
@@ -1166,13 +1168,13 @@ sap.ui.define([
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
-			var getComponentClassNameStub = sandbox.stub(flexUtils, "getComponentClassName");
+			var oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
 			var getAppComponentForControlStub = sandbox.stub(flexUtils, "getAppComponentForControl");
 
-			getComponentClassNameStub.withArgs(oAppComponent).returns("testComponent");
+			oGetFlexReferenceStub.withArgs(oAppComponent).returns("testComponent");
 			getAppComponentForControlStub.withArgs(oAppComponent).returns(oAppComponent);
 
-			getComponentClassNameStub.withArgs(oAppVariantComponent).returns("customer.reference.app.variant.id_123456");
+			oGetFlexReferenceStub.withArgs(oAppVariantComponent).returns("customer.reference.app.variant.id_123456");
 			getAppComponentForControlStub.withArgs(oAppVariantComponent).returns(oAppVariantComponent);
 
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({

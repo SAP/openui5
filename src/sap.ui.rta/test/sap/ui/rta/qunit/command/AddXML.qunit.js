@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -15,13 +14,13 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/List",
 	"sap/m/CustomListItem",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	CommandFactory,
 	AddXML,
 	ChangesWriteAPI,
 	Layer,
-	Utils,
 	LayerUtils,
 	DesignTime,
 	OverlayRegistry,
@@ -31,49 +30,20 @@ sap.ui.define([
 	Text,
 	List,
 	CustomListItem,
+	RtaQunitUtils,
 	sinon
 ) {
 	"use strict";
-
-	var oMockedAppComponent = {
-		getLocalId: function () {},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {},
-		createId: function(sId) {
-			return "testcomponent---" + sId;
-		}
-	};
-	var sandbox = sinon.sandbox.create();
-	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
-	});
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
 		beforeEach: function() {
+			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
-			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
+			this.oButton = new Button(this.oComponent.createId("myButton"));
 		},
 		afterEach: function() {
+			this.oComponent.destroy();
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -209,6 +179,7 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var done = assert.async();
 
+			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
@@ -239,6 +210,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach: function() {
+			this.oComponent.destroy();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oDesignTime.destroy();
