@@ -276,6 +276,10 @@ sap.ui.define([
 						return oFormContainerPropagatedMetadata;
 					} else if ( sType === "sap.ui.layout.form.FormElement") {
 						return oFormElementPropagatedMetadata;
+					} else if (oElement.isA("sap.ui.core.Label")) {
+						return {
+							actions: "not-adaptable"
+						};
 					} else {
 						return {
 							actions: null
