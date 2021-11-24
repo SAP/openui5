@@ -392,6 +392,7 @@ sap.ui.define([
 
 	MessageView.prototype.onBeforeRendering = function () {
 		var oGroupedItems,
+			aListItems,
 			aItems = this.getItems();
 
 		this._clearLists();
@@ -416,9 +417,13 @@ sap.ui.define([
 		this._fillSegmentedButton();
 		this._fnFilterList(this._getCurrentMessageTypeFilter() || "all");
 
-		if (aItems.length === 1 && this._oLists.all.getItems()[0].getType()  === ListType.Navigation) {
+		aListItems = this._oLists.all.getItems().filter(function (oItem) {
+			return oItem.isA("sap.m.MessageListItem");
+		});
 
-			this._fnHandleForwardNavigation(this._oLists.all.getItems()[0], "show");
+		if (aListItems.length === 1 && aListItems[0].getType()  === ListType.Navigation) {
+
+			this._fnHandleForwardNavigation(aListItems[0], "show");
 
 			// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
 			this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";

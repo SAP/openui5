@@ -1039,6 +1039,18 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageView._navContainer.getCurrentPage().getId(), this.oMessageView._detailsPage.getId(), "Details page should be initially shown if item is just one");
 	});
 
+	QUnit.test("Auto navigate even with grouped item", function (assert) {
+		// Setup
+		var oSpy = this.spy(this.oMessageView, "_fnHandleForwardNavigation");
+
+		// Act
+		this.oMessageView.setGroupItems(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oSpy.firstCall.args[0].isA("sap.m.MessageListItem"), "The Navigation happens against the correct element.");
+	});
+
 	QUnit.module("Aggregation Binding", {
 		beforeEach: function () {
 			this.oMessageView = new MessageView();
