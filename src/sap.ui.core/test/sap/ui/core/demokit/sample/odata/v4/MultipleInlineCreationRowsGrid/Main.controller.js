@@ -28,7 +28,7 @@ sap.ui.define([
 				// TODO react on the "unparked" event once it has been implemented
 				oContext.created().then(createEmptyRow, function (oError) {
 					if (!oError.canceled) {
-						throw oError; // unexpected internal error
+						throw oError; // unexpected error
 					}
 				});
 			}
@@ -61,6 +61,7 @@ sap.ui.define([
 		},
 
 		onExit : function () {
+			this.resetChanges();
 			this.oUIModel.destroy();
 			Controller.prototype.onExit.apply(this);
 		},
@@ -111,14 +112,19 @@ sap.ui.define([
 				});
 		},
 
-		setPartsContext : function (oContext) {
-			var oView = this.getView();
-
+		resetChanges : function () {
 			// TODO this is needed as long as the creation rows still are transient and thus pending
 			//  changes; as soon as we introduce the initial state these creation rows are no
 			//  pending changes anymore
-			oView.byId("orders").getBinding("items").resetChanges();
-			oView.byId("parts").setBindingContext(oContext);
+			this.getView().byId("products").getBinding("items").resetChanges();
+		},
+
+		setPartsContext : function (oContext) {
+			// TODO this is needed as long as the creation rows still are transient and thus pending
+			//  changes; as soon as we introduce the initial state these creation rows are no
+			//  pending changes anymore
+			this.resetChanges();
+			this.getView().byId("parts").setBindingContext(oContext);
 			this.createEmptyRows(iEmptyRowCount);
 			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 		}

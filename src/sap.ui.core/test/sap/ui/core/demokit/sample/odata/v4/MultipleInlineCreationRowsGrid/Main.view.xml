@@ -3,17 +3,21 @@
 	controllerName="sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
 	height="100%"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:t="sap.ui.table">
 <App>
 	<Page id="page" showHeader="false">
+		<Toolbar>
+			<ToolbarSpacer/>
+			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+					press="onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+		</Toolbar>
 		<content>
 			<f:FlexibleColumnLayout id="layout" layout="{ui>/sLayout}">
 				<f:beginColumnPages>
-				<Table id="orders" growing="true" growingThreshold="20" items="{
+				<Table id="products" growing="true" growingThreshold="20" items="{
 						path : '/Products',
 						parameters : {
 							$filter :
@@ -34,16 +38,18 @@
 						</Column>
 					</columns>
 					<ColumnListItem id="highlight">
-						<Text id="ID" text="{ID}"/>
+						<Text id="productId" text="{ID}"/>
 						<CheckBox editable="false" selected="{= !%{IsActiveEntity} }"/>
 						<Text id="name" text="{name}"/>
 					</ColumnListItem>
 				</Table>
 				</f:beginColumnPages>
 				<f:midColumnPages>
-					<t:Table id="parts" rows="{
+					<t:Table ariaLabelledBy="Product Parts"
+							id="parts" rows="{
 								path : '_Parts',
-								parameters : {$count : true, $$ownRequest : true}
+								parameters : {$count : true, $$ownRequest : true},
+								templateShareable : true
 							}"
 							selectionMode="None"
 							visibleRowCount="20">
@@ -51,7 +57,7 @@
 							<t:Column width="4em">
 								<Label text="ID" />
 								<t:template>
-									<Input value="{ID}" />
+									<Input id="partId" value="{ID}" />
 								</t:template>
 							</t:Column>
 							<t:Column width="8em">
@@ -68,8 +74,9 @@
 							</t:Column>
 							<t:Column width="3em">
 								<t:template>
-									<Button enabled="{= %{ID} !== null}"
-											icon="sap-icon://delete" press="onDelete"/>
+									<Button id="partDelete" enabled="{= %{ID} !== null}"
+										icon="sap-icon://delete" press="onDelete"
+										tooltip="Delete part"/>
 								</t:template>
 							</t:Column>
 						</t:columns>

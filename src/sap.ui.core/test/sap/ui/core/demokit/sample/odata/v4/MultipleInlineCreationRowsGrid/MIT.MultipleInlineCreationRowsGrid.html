@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style>
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Multiple Inline Creation Rows Grid</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Multiple Inline Creation Rows Grid</h1>
+		<h2>DESCRIPTION</h2>
+		Test of the Multiple Inline Creation Rows Grid application.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+
+		<h3>Testing with mock data</h3>
+		Start the Multiple Inline Creation Rows Grid application with following URL (adjust host and
+		port if necessary):
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid</a></li>
+
+		<h2>REALIZE and CHECK</h2>
+		<ol>
+			<li><b>Check</b>: A list with three products appears.</li>
+			<li>Select the first product with ID 10.</li>
+			<li><b>Check</b>: A table with three product parts appears, followed by three empty
+				rows.</li>
+			<li><b>Check</b>: The delete button is active for the parts and inactive for the empty
+				rows.</li>
+			<li>Enter "99" into the ID field of the first empty row and press
+				<code>Enter</code>.</li>
+			<li><b>Check</b>: The delete button of the row becomes active.</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+		</ol>
+	</body>
+</html>
