@@ -1121,6 +1121,8 @@ sap.ui.define([
 		throw new Error("UIArea can't be cloned");
 	};
 
+	UIArea._iFieldGroupDelayCounter = 0;
+
 	/**
 	 * Handles field group change or validation based on the given browser event.
 	 *
@@ -1136,15 +1138,15 @@ sap.ui.define([
 	UIArea.prototype._handleGroupChange = function(oEvent, oElement) {
 		var oKey = UIArea._oFieldGroupValidationKey;
 		if (oEvent.type === "focusin" || oEvent.type === "focusout") {
-			if (oEvent.type === "focusout") {
-				oElement = jQuery(document.activeElement).control(0);
-			}
 			// delay the check for a field group change to allow focus forwarding and resetting focus after selection
-			if (UIArea._iFieldGroupDelayTimer) {
-				clearTimeout(UIArea._iFieldGroupDelayTimer);
-				UIArea._iFieldGroupDelayTimer = null;
+			UIArea._iFieldGroupDelayCounter++;
+			Promise.resolve().then(this.setFieldGroupControl.bind(this, UIArea._iFieldGroupDelayCounter));
+
+			if (oEvent.type === "focusout") {
+				UIArea._oCurrentFieldGroupElement = jQuery(document.activeElement).control(0);
+			} else {
+				UIArea._oCurrentFieldGroupElement = oElement;
 			}
-			UIArea._iFieldGroupDelayTimer = setTimeout(this.setFieldGroupControl.bind(this, oElement), 0);
 			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
 		} else if (this.getFieldGroupControl() &&
 				oEvent.type === "keyup" &&
@@ -1152,10 +1154,7 @@ sap.ui.define([
 				oEvent.shiftKey === oKey.shiftKey &&
 				oEvent.altKey === oKey.altKey &&
 				oEvent.ctrlKey === oKey.ctrlKey) {
-			// check for field group change (validate) only after events where processed by elements
-			if (UIArea._iFieldGroupTriggerDelay) {
-				clearTimeout(UIArea._iFieldGroupTriggerDelay);
-			}
+
 			var oCurrentControl = this.getFieldGroupControl(),
 				aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []);
 			if (aCurrentGroupIds.length > 0) {
@@ -1171,15 +1170,17 @@ sap.ui.define([
 	 * the current field group control.
 	 * There is only one field group control for all UI areas.
 	 *
-	 * @param {sap.ui.core.Element} oElement the new field group control
-	 *
+	 * @param {int} iDelayCounter Promise counter to avoid multiple exectutions
 	 * @return {sap.ui.core.UIArea} the UI area that the active field group control belongs to.
 	 *
 	 * @private
 	 */
-	UIArea.prototype.setFieldGroupControl = function(oElement) {
-
-		var oControl = oElement;
+	UIArea.prototype.setFieldGroupControl = function(iDelayCounter) {
+		if (iDelayCounter !== UIArea._iFieldGroupDelayCounter) {
+			return this;
+		}
+		var oControl = UIArea._oCurrentFieldGroupElement;
+		UIArea._iFieldGroupDelayTimer = 0;
 		while ( oControl  && !(oControl instanceof Element && oControl.isA("sap.ui.core.Control")) ) {
 			oControl = oControl.getParent();
 		}

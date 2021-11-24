@@ -289,7 +289,6 @@ sap.ui.define([
 		var oFormElement = oInput.getDomRef();
 		var oFireApplySpy = sinon.spy(oCreationRow, "_fireApply");
 		var aEvents = [];
-		var oClock = sinon.useFakeTimers();
 
 		function test(fnAct, fnAssert) {
 			oFireApplySpy.resetHistory();
@@ -297,9 +296,10 @@ sap.ui.define([
 			fnAct();
 
 			return new Promise(function(resolve) {
-				oClock.tick(1);
-				fnAssert();
-				resolve();
+				setTimeout(function() {
+					fnAssert();
+					resolve();
+				}, 0);
 			});
 		}
 
@@ -326,17 +326,18 @@ sap.ui.define([
 		});
 
 		oFormElement.focus();
-		oClock.tick(1);
 
-		return test(function() {
+		return new Promise(function(resolve) {
+			setTimeout(resolve, 0);
+		}).then(function() {
+			return test(function() {
 				expectKeyboardEventMarked("onsapenter", true);
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, false);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
 				assert.deepEqual(aEvents, ["sapfocusleave", "validateFieldGroup", "apply", "focusin"], "The events on the form element were correctly fired");
-			}
-
-		).then(function() {
+			});
+		}).then(function() {
 			return test(function() {
 				expectKeyboardEventMarked("onsapentermodifiers", true);
 				qutils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
@@ -393,8 +394,6 @@ sap.ui.define([
 			}, function() {
 				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called");
 				assert.deepEqual(aEvents, [], "The events on the form element were not fired");
-				oClock.restore();
-
 			});
 
 		});
