@@ -4,8 +4,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.dom",
-	"jquery.sap.strings"
+	"sap/ui/thirdparty/jquery"
 ], function(F6Navigation, KeyCodes, Control, qutils, jQuery) {
 	"use strict";
 
@@ -19,7 +18,7 @@ sap.ui.define([
 	// to be more focus independent (-> More test stability)
 	F6Navigation.handleF6GroupNavigation_orig = F6Navigation.handleF6GroupNavigation;
 
-	jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
+	F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 		oSettings = oSettings ? oSettings : {};
 		if (!oSettings.scope) {
 			oSettings.scope = document.getElementById("scope");

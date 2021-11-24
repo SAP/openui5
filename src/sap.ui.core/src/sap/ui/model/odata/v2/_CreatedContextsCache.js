@@ -174,4 +174,4 @@ sap.ui.define([
 	};
 
 	return _CreatedContextsCache;
-}, /* bExport= */ false);
+});

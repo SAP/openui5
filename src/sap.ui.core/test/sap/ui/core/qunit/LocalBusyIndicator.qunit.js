@@ -710,6 +710,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since 1.15
+	 */
 	QUnit.test("LocalBusyIndicatorSupport", function(assert) {
 
 		assert.equal(typeof Control.prototype.setDelay, "undefined", "Control#setDelay should not be available by default");
@@ -724,6 +727,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated Since 1.15
+	 */
 	QUnit.test("LocalBusyIndicatorSupport (error handling)", function(assert) {
 
 		// apply deprecated LocalBusyIndicatorSupport to a specific control

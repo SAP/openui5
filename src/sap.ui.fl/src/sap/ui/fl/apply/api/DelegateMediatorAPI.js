@@ -79,4 +79,4 @@ sap.ui.define([
 	};
 
 	return DelegateMediatorAPI;
-}, /* bExport= */false);
+});

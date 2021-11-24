@@ -33,4 +33,4 @@ sap.ui.define([
 	};
 
 	return UploadSetTestUtils;
-}, true);
+});

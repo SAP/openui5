@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -38,7 +37,6 @@ sap.ui.define([
 	Button,
 	Label,
 	Log,
-	waitForThemeApplied,
 	KeyCodes,
 	oCore
 ) {
@@ -1259,6 +1257,4 @@ sap.ui.define([
 		// Clenaup
 		oCMB.destroy();
 	});
-
-	return waitForThemeApplied();
 });

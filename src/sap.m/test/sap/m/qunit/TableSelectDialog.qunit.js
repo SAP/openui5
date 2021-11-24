@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -38,7 +37,6 @@ sap.ui.define([
 	mobileLibrary,
 	jQuery,
 	Device,
-	waitForThemeApplied,
 	KeyCodes,
 	oCore
 ) {
@@ -1428,6 +1426,4 @@ sap.ui.define([
 
 		oDialog.destroy();
 	});
-
-	return waitForThemeApplied();
 });

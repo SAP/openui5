@@ -976,9 +976,6 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Popover",
 				sinon: {
 					useFakeTimers: true
-				},
-				ui5: {
-					theme: "sap_bluecrystal"
 				}
 			},
 			ProgressIndicator: {
@@ -1202,10 +1199,7 @@ sap.ui.define([
 				}
 			},
 			Shell: {
-				title: "QUnit Page for sap.m.Shell",
-				ui5: {
-					theme: "sap_bluecrystal"
-				}
+				title: "QUnit Page for sap.m.Shell"
 			},
 			SimpleFixFlex: {
 				title: "Test Page for sap.m.SimpleFixFlex",

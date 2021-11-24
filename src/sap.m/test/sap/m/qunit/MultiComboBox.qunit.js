@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
-	"jquery.sap.mobile",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/m/InputBase",

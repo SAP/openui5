@@ -111,15 +111,15 @@ sap.ui.define([
 				 * Different image sizes for device home screen need to be given as PNG images, an ICO file needs to be given as desktop browser bookmark icon (other file formats may not work in all browsers).
 				 * The <code>precomposed</code> flag defines whether there is already a glow effect contained in the home screen images (or whether iOS should add such an effect). The given structure could look like this:
 				 * {
-			 * 'phone':'phone-icon_57x57.png',
-			 * 'phone@2':'phone-retina_114x114.png',
+				 * 'phone':'phone-icon_57x57.png',
+				 * 'phone@2':'phone-retina_114x114.png',
 				 * 'tablet':'tablet-icon_72x72.png',
 				 * 'tablet@2':'tablet-retina_144x144.png',
 				 * 'precomposed':true,
 				 * 'favicon':'favicon.ico'
 				 * }
 				 *
-				 * See jQuery.sap.setIcons() for full documentation.
+				 * See {@link module:sap/ui/util/Mobile.setIcons} for full documentation.
 				 *
 				 */
 				homeIcon : {type : "object", group : "Misc", defaultValue : null},

@@ -2010,6 +2010,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated As of 1.56
+	 */
 	QUnit.test("Export filtered table with named model", function(assert) {
 		var done = assert.async();
 		sap.ui.require(["sap/ui/core/util/ExportTypeCSV"], function(ExportTypeCSV) {

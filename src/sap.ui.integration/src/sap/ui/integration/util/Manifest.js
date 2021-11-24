@@ -600,4 +600,4 @@ sap.ui.define([
 	};
 
 	return Manifest;
-}, true);
+});

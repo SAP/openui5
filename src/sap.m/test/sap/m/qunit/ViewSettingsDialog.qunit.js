@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
@@ -43,7 +42,6 @@ sap.ui.define([
 	ManagedObject,
 	Log,
 	KeyCodes,
-	waitForThemeApplied,
 	oCore
 ) {
 	"use strict";
@@ -4069,6 +4067,4 @@ sap.ui.define([
 
 		oVSD.destroy();
 	});
-
-	return waitForThemeApplied();
 });

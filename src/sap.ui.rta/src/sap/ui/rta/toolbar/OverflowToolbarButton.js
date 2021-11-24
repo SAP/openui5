@@ -93,4 +93,4 @@ sap.ui.define([
 	};
 
 	return OverflowToolbarButton;
-}, false);
+});

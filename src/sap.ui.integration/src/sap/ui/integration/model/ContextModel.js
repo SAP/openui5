@@ -106,4 +106,4 @@ sap.ui.define([
 	};
 
 	return ContextModel;
-}, true);
+});

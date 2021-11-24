@@ -187,4 +187,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 		};
 
 		return Analyzer;
-	}, false);
+	});

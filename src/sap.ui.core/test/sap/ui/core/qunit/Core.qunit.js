@@ -105,6 +105,9 @@ sap.ui.define([
 		assert.equal(oUIAreaCheck, oUIArea, "Returned UIArea must be the same as the one created before");
 	});
 
+	/**
+	 * @deprecated As of version 1.1
+	 */
 	QUnit.test("testSetRoot", function(assert) {
 		var oButton = new TestButton("test2Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea2");
@@ -114,6 +117,9 @@ sap.ui.define([
 		assert.ok(_providesPublicMethods(oUIAreaCheck, sap.ui.core.UIArea), "Expected instance of sap.ui.core.UIArea");
 	});
 
+	/**
+	 * @deprecated As of version 1.1
+	 */
 	QUnit.test("testGetElementById", function(assert) {
 		var oButton = new TestButton("test3Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea3");
@@ -149,6 +155,9 @@ sap.ui.define([
 		oBtn.destroy();
 	});
 
+	/**
+	 * @deprecated As of version 1.1
+	 */
 	QUnit.test("testGetControl", function(assert) {
 		var oButton = new TestButton("test4Button", {text:"Hallo JSUnit"});
 		createAndAppendDiv("uiArea4");

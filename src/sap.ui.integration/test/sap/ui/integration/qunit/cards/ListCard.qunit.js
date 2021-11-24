@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/util/CardActions",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/qunit/utils/MemoryLeakCheck"
 ], function (
 	mLibrary,
@@ -16,7 +15,6 @@ sap.ui.define([
 	ListContent,
 	CardActions,
 	Card,
-	waitForThemeApplied,
 	MemoryLeakCheck
 ) {
 	"use strict";
@@ -1228,6 +1226,4 @@ sap.ui.define([
 
 		return oListContent;
 	});
-
-	return waitForThemeApplied();
 });

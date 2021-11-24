@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/OverflowToolbar",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/includeStylesheet",
 	"require",
@@ -28,7 +27,6 @@ sap.ui.define([
 	JSONModel,
 	OverflowToolbar,
 	Device,
-	waitForThemeApplied,
 	jQuery,
 	includeStylesheet,
 	require,
@@ -664,5 +662,5 @@ sap.ui.define([
 		oPage.destroy();
 	});
 
-	return Promise.all([pStyleLoaded, waitForThemeApplied()]);
+	return pStyleLoaded;
 });

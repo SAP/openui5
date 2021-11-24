@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -44,7 +43,6 @@ sap.ui.define([
 	InvisibleText,
 	EventProvider,
 	GroupHeaderListItem,
-	waitForThemeApplied,
 	KeyCodes,
 	oCore
 ) {
@@ -2734,6 +2732,4 @@ sap.ui.define([
 		};
 		oFFL._handleSearchEvent(oEvent);
 	}
-
-	return waitForThemeApplied();
 });

@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/controls/ListContentItem",
-	"sap/ui/integration/controls/Microchart",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/integration/controls/Microchart"
 ], function (
 	Core,
 	ListContentItem,
-	Microchart,
-	waitForThemeApplied
+	Microchart
 ) {
 	"use strict";
 
@@ -102,6 +100,4 @@ sap.ui.define([
 		// clean up
 		oLCI.destroy();
 	});
-
-	return waitForThemeApplied();
 });

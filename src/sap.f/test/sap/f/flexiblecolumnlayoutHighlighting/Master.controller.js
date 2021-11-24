@@ -30,4 +30,4 @@ sap.ui.define([
 			this.highlighter.destroy();
 		}
 	});
-}, true);
+});

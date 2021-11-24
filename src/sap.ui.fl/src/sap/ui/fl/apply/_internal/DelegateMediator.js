@@ -301,4 +301,4 @@ sap.ui.define([
 	};
 
 	return DelegateMediator;
-}, /* bExport= */false);
+});

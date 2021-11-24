@@ -36,7 +36,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -76,7 +75,6 @@ sap.ui.define([
 	Element,
 	XMLView,
 	InvisibleText,
-	waitForThemeApplied,
 	KeyCodes,
 	oCore
 ) {
@@ -3126,6 +3124,4 @@ sap.ui.define([
 		// Destroy
 		oPC.destroy();
 	});
-
-	return waitForThemeApplied();
 });

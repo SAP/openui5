@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/m/InputListItem",
 	"sap/m/Input",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Core",
-	"jquery.sap.sjax"
+	"sap/ui/core/Core"
 ], function(
 	MockServer,
 	ODataModel,
@@ -48,12 +47,24 @@ sap.ui.define([
 		return oModel;
 	}
 
+	// convenience helper for synchronous ajax calls
+	function syncFetch(options) {
+		var oResult;
+		jQuery.ajax(Object.assign(options, {
+			async: false,
+			success : function(data) {
+				oResult = data;
+			}
+		}));
+		return oResult;
+	}
+
 	function createJSONModel(oData) {
 		oData = oData || {
-			Products : jQuery.sap.sjax({
+			Products : syncFetch({
 				url : "test-resources/sap/m/qunit/data/Product.json",
 				dataType:"json"
-			}).data
+			})
 		};
 
 		var oModel = new JSONModel();

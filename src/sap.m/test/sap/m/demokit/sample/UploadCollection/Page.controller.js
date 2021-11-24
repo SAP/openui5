@@ -1,5 +1,5 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/base/util/deepExtend",
 	"sap/ui/core/syncStyleClass",
 	"sap/ui/core/mvc/Controller",

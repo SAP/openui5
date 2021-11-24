@@ -10,27 +10,8 @@ sap.ui.define([
 
 	var oPanel = new Panel("myPanel");
 	oPanel.placeAt("uiArea1");
-	var oPanel2 = new Panel("myPanel2");
-	sap.ui.getCore().setRoot("uiArea3", oPanel2);
 
-	var doPerformCall = function(oContainerRef, oPosition, sContainerId, bIsUiArea, bUsePlaceAt) {
-		var oControl = new Button();
-		if (bUsePlaceAt) {
-			if (oPosition) {
-				oControl.placeAt(oContainerRef, oPosition);
-			} else {
-				oControl.placeAt(oContainerRef);
-			}
-		} else {
-			sap.ui.getCore().setRoot(oContainerRef, oControl);
-		}
-
-		var oCont = bIsUiArea ? sap.ui.getCore().getUIArea(sContainerId) : sap.ui.getCore().byId(sContainerId);
-
-		return [oControl.getId(), oCont];
-	};
-
-	var doCheckPlaceAtResult = function(assert, aCallResult, iExpectedLength, iExpectedIndex, sText) {
+	function doCheckPlaceAtResult(assert, aCallResult, iExpectedLength, iExpectedIndex, sText) {
 		sText = " after placeAt with '" + sText + "'";
 		var oContainer = aCallResult[1];
 		assert.ok(oContainer, "Container available" + sText);
@@ -38,39 +19,35 @@ sap.ui.define([
 			assert.equal(oContainer.getContent().length, iExpectedLength, "# Container children" + sText);
 			assert.equal(oContainer.getContent()[iExpectedIndex].getId(), aCallResult[0], "Correct Position of child" + sText);
 		}
-	};
+	}
 
-	var doCheckSetRootResult = function(assert, aCallResult) {
-		var oContainer = aCallResult[1];
-		assert.ok(oContainer, "Container available after setRoot");
-		if (oContainer) {
-			assert.equal(oContainer.getContent().length, 1, "# Container children after setRoot");
-			assert.equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
+	function doTestPlaceAt(assert, oContainerRef, sContainerId, bIsUiArea) {
+		function placeAt(oPosition) {
+			var oControl = new Button();
+			if (oPosition) {
+				oControl.placeAt(oContainerRef, oPosition);
+			} else {
+				oControl.placeAt(oContainerRef);
+			}
+
+			var oCont = bIsUiArea ? sap.ui.getCore().getUIArea(sContainerId) : sap.ui.getCore().byId(sContainerId);
+			return [oControl.getId(), oCont];
 		}
-	};
 
-	var doTestSetRoot = function(assert, oContainerRef, sContainerId, bIsUiArea) {
-		var aResult = doPerformCall(oContainerRef, null, sContainerId, bIsUiArea, false);
-		doCheckSetRootResult(assert, aResult);
-		aResult = doPerformCall(oContainerRef, null, sContainerId, bIsUiArea, false);
-		doCheckSetRootResult(assert, aResult);
-	};
-
-	var doTestPlaceAt = function(assert, oContainerRef, sContainerId, bIsUiArea) {
 		//Test "only" first to bring container into a clear state
-		var aResult = doPerformCall(oContainerRef, "only", sContainerId, bIsUiArea, true);
+		var aResult = placeAt("only");
 		doCheckPlaceAtResult(assert, aResult, 1, 0, "only");
-		aResult = doPerformCall(oContainerRef, null, sContainerId, bIsUiArea, true);
+		aResult = placeAt(null);
 		doCheckPlaceAtResult(assert, aResult, 2, 1, "default (last)");
-		aResult = doPerformCall(oContainerRef, "last", sContainerId, bIsUiArea, true);
+		aResult = placeAt("last");
 		doCheckPlaceAtResult(assert, aResult, 3, 2, "last");
-		aResult = doPerformCall(oContainerRef, "first", sContainerId, bIsUiArea, true);
+		aResult = placeAt("first");
 		doCheckPlaceAtResult(assert, aResult, 4, 0, "first");
-		aResult = doPerformCall(oContainerRef, 2, sContainerId, bIsUiArea, true);
+		aResult = placeAt(2);
 		doCheckPlaceAtResult(assert, aResult, 5, 2, "index 2");
-		aResult = doPerformCall(oContainerRef, "only", sContainerId, bIsUiArea, true);
+		aResult = placeAt("only");
 		doCheckPlaceAtResult(assert, aResult, 1, 0, "only");
-	};
+	}
 
 
 	QUnit.module("sap.ui.core.Control.placeAt");
@@ -95,26 +72,58 @@ sap.ui.define([
 		doTestPlaceAt(assert, "myPanel", "myPanel", false);
 	});
 
-	QUnit.module("sap.ui.core.Core.setRoot");
+	/**
+	 * @deprecated As of version 1.1
+	 */
+	(function() {
 
-	QUnit.test("Deferred call", function(assert) {
-		doCheckSetRootResult(assert, ["myPanel2", sap.ui.getCore().getUIArea("uiArea3")]);
-	});
+		var oPanel2 = new Panel("myPanel2");
+		sap.ui.getCore().setRoot("uiArea3", oPanel2);
 
-	QUnit.test("UIArea via ID", function(assert) {
-		doTestSetRoot(assert, "uiArea4", "uiArea4", true);
-	});
+		function doCheckSetRootResult(assert, aCallResult) {
+			var oContainer = aCallResult[1];
+			assert.ok(oContainer, "Container available after setRoot");
+			if (oContainer) {
+				assert.equal(oContainer.getContent().length, 1, "# Container children after setRoot");
+				assert.equal(oContainer.getContent()[0].getId(), aCallResult[0], "Correct Position of child after setRoot");
+			}
+		}
 
-	QUnit.test("UIArea via DomRef", function(assert) {
-		doTestSetRoot(assert, jQuery("#uiArea4")[0], "uiArea4", true);
-	});
+		function doTestSetRoot(assert, oContainerRef, sContainerId, bIsUiArea) {
+			function setRoot() {
+				var oControl = new Button();
+				sap.ui.getCore().setRoot(oContainerRef, oControl);
+				var oCont = bIsUiArea ? sap.ui.getCore().getUIArea(sContainerId) : sap.ui.getCore().byId(sContainerId);
+				return [oControl.getId(), oCont];
+			}
 
-	QUnit.test("Container Control via Control reference", function(assert) {
-		doTestSetRoot(assert, oPanel2, "myPanel2", false);
-	});
+			var aResult = setRoot();
+			doCheckSetRootResult(assert, aResult);
+			aResult = setRoot();
+			doCheckSetRootResult(assert, aResult);
+		}
 
-	QUnit.test("Container Control via ID", function(assert) {
-		doTestSetRoot(assert, "myPanel2", "myPanel2", false);
-	});
+		QUnit.module("sap.ui.core.Core.setRoot");
 
+		QUnit.test("Deferred call", function(assert) {
+			doCheckSetRootResult(assert, ["myPanel2", sap.ui.getCore().getUIArea("uiArea3")]);
+		});
+
+		QUnit.test("UIArea via ID", function(assert) {
+			doTestSetRoot(assert, "uiArea4", "uiArea4", true);
+		});
+
+		QUnit.test("UIArea via DomRef", function(assert) {
+			doTestSetRoot(assert, jQuery("#uiArea4")[0], "uiArea4", true);
+		});
+
+		QUnit.test("Container Control via Control reference", function(assert) {
+			doTestSetRoot(assert, oPanel2, "myPanel2", false);
+		});
+
+		QUnit.test("Container Control via ID", function(assert) {
+			doTestSetRoot(assert, "myPanel2", "myPanel2", false);
+		});
+
+	}());
 });
