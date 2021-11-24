@@ -279,8 +279,8 @@ sap.ui.define([
 			}))
 			.then(function () {
 				// add some instances for testing purposes
-				ChangePersistenceFactory._instanceCache[sReference2] = sinon.stub();
-				FlexControllerFactory._instanceCache[sReference2] = sinon.stub();
+				ChangePersistenceFactory._instanceCache[sReference2] = sandbox.stub();
+				FlexControllerFactory._instanceCache[sReference2] = sandbox.stub();
 			})
 			.then(FlexState.clearAndInitialize.bind(null, {
 				reference: sReferenceComponent2,
