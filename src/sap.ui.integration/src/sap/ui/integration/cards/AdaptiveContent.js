@@ -481,57 +481,24 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._loadWebcomponents = function () {
-			// Check weather the WebComponents are already loaded. We don't need to fetch the scripts again
 			if (this.getComponentsReady()) {
 				Log.debug("WebComponents were already loaded");
 				this._fireCardReadyEvent();
+
 				return;
 			}
 
-			// The feature detection and the loader would run in parallel.
-			// Whichever comes first, it would take precedence over the other.
-			//
-			// Note: This feature detection relies on the assumption that there's the full bundle
-			// and the ui5-button is present everywhere
-			if (window.customElements) {
-				window.customElements.whenDefined("ui5-button").then(function () {
-					if (!this.getComponentsReady()) {
-						this.setComponentsReady(true);
-						this._fireCardReadyEvent();
-					}
-				}.bind(this));
-			}
-
-			// The feature detection and the loader would run in parallel.
-			// Whichever comes first, it would take precedence over the other.
-			// Here the timeout is needed in order to enforce the race condition, otherwise, the loader
-			// would be executed everytime.
-			setTimeout(function () {
-				if (this.getComponentsReady()) {
-					Log.debug("WebComponents were already loaded");
-					return;
-				}
-				includeScript({
-					id: "webcomponents-loader",
-					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/webcomponents-loader.js")
-				});
-			}.bind(this));
-
-			// The Web Components need to wait a bit for the Web Components loader and eventual polyfills
-			// to get ready. There's a CustomEvent for which we need to subscribe.
-			// Note: This event would be fired only if subscribed before it was fired. In other words,
-			// if the WebComponents' loader was requested by the AdaptiveContent
-			document.addEventListener("WebComponentsReady", function () {
-				if (this.getComponentsReady()) {
-					Log.debug("WebComponents were already loaded");
-					return;
+			// Thе timeout is needed to delay the check if UI5 WebComponents gets loaded from elsewhere.
+			// This detection relies on the assumption that there's the full bundle and the ui5-button is present.
+			setTimeout(function(){
+				if (!window.customElements.get("ui5-button")) {
+					includeScript({
+						id: "webcomponents-bundle",
+						attributes: {type: "module"},
+						url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
+					});
 				}
 
-				includeScript({
-					id: "webcomponents-bundle",
-					attributes: {type: "module"},
-					url: sap.ui.require.toUrl("sap/ui/integration/thirdparty/webcomponents/bundle.esm.js")
-				});
 				this.setComponentsReady(true);
 				this._fireCardReadyEvent();
 			}.bind(this));
