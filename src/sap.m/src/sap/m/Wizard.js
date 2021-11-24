@@ -46,10 +46,12 @@ sap.ui.define([
 		 * Enables users to accomplish a single goal which consists of multiple dependable sub-tasks.
 		 * <h3>Overview</h3>
 		 * The sap.m.Wizard helps users complete a complex and unfamiliar task by dividing it into sections and guiding the user through it.
-		 * The wizard has two main areas - a navigation area at the top showing the step sequence and a content area below it.
+		 * The wizard has a mandatory title and two main areas - a navigation area at the top showing the step sequence, and a content area below.
 		 * <h3>Structure</h3>
+		 * <h4>Title</h4>
+		 * The wizard's title defines its purpose.
 		 * <h4>Navigation Area</h4>
-		 * The top most area of the wizard is occupied by the navigation area. It shows the sequence of {@link sap.m.WizardStep wizard steps}.
+		 * The navigation area shows the sequence of {@link sap.m.WizardStep wizard steps}.
 		 * <ul>
 		 * <li>The minimum number of steps is 3 and the maximum is 8 and are stored in the <code>steps</code> aggregation.</li>
 		 * <li>Steps can be branching depending on choices the user made in their input - this is set by the <code>enableBranching</code> property. </li>
