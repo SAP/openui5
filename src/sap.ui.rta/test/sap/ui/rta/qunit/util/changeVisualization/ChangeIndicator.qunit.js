@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat"
-],
-function(
+], function(
 	sinon,
 	QUnitUtils,
 	ChangeIndicator,
@@ -24,16 +23,17 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function createMockChange (sId, sAffectedElementId, sCommandName, sCommandCategory, mPayload) {
+		var oCreationDate = new Date();
 		return {
 			id: sId,
 			commandName: sCommandName,
 			commandCategory: sCommandCategory,
 			change: {
 				getCreation: function () {
-					return new Date();
+					return oCreationDate;
 				}
 			},
 			payload: mPayload,
@@ -89,7 +89,12 @@ function(
 	}, function() {
 		QUnit.test("when a change indicator with a single change is created", function (assert) {
 			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-
+			sandbox.stub(DateFormat, "getDateTimeInstance")
+				.callThrough()
+				.withArgs({relative: "true"})
+				.returns({
+					format: function() { return "myTime"; }
+				});
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "AfterValue"
@@ -139,11 +144,7 @@ function(
 						"then a description for the change is displayed"
 					);
 					var sDate = aItems[0].getCells()[2].getText();
-					assert.strictEqual(
-						sDate,
-						DateFormat.getDateTimeInstance({relative: "true"}).format(this.oChangeIndicator.getChanges()[0].change.getCreation()),
-						"then a relative date string is displayed correctly"
-					);
+					assert.strictEqual(sDate, "myTime", "then a relative date string is displayed correctly");
 				}.bind(this));
 		});
 
