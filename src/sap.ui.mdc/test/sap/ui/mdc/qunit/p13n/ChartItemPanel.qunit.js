@@ -63,7 +63,7 @@ sap.ui.define([
 		assert.ok(this.oChartItemPanel._oListControl.getItems().length == 7, "Table is filled correctly"); //3 visible Items, 2 Group Headers, 2 Templates
 		assert.ok(this.oChartItemPanel.getEnableReorder(), "EnableReorder property is set to true");
 		assert.ok(this.oChartItemPanel.getAggregation("_content") instanceof VBox, "Panel contains a VBox");
-		assert.ok(this.oChartItemPanel.getAggregation("_content").getItems()[0] instanceof sap.m.Table, "VBox contains a table");
+		assert.ok(this.oChartItemPanel.getAggregation("_content").getItems()[0].isA("sap.m.Table"), "VBox contains a table");
 		assert.ok(this.oChartItemPanel._sContainerResizeListener, "Resize listener is created");
 
 	}.bind(this));
@@ -113,13 +113,13 @@ sap.ui.define([
 	QUnit.test("_getRoleSelect", function(assert){
 		var oSelect = this.oChartItemPanel._getRoleSelect("Measure");
 
-		assert.ok(oSelect instanceof sap.m.Select, "Select is returned");
+		assert.ok(oSelect.isA("sap.m.Select"), "Select is returned");
 	}.bind(this));
 
 	QUnit.test("_getNameComboBox", function(assert){
 		var oSelect = this.oChartItemPanel._getNameComboBox("Measure");
 
-		assert.ok(oSelect instanceof sap.m.ComboBox, "ComboBox is returned");
+		assert.ok(oSelect.isA("sap.m.ComboBox"), "ComboBox is returned");
 	}.bind(this));
 
 	QUnit.test("_updateAvailableRolesForItems", function(assert){
@@ -301,28 +301,28 @@ sap.ui.define([
 	QUnit.test("_getMoveTopButton", function(assert){
 		var oBtn = this.oChartItemPanel._getMoveTopButton();
 		assert.ok(oBtn, "Button exists");
-		assert.ok(oBtn instanceof sap.m.Button, "Button is type of sap.m.Button");
+		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getMoveUpButton", function(assert){
 		var oBtn = this.oChartItemPanel._getMoveUpButton();
 		assert.ok(oBtn, "Button exists");
-		assert.ok(oBtn instanceof sap.m.Button, "Button is type of sap.m.Button");
+		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getMoveDownButton", function(assert){
 		var oBtn = this.oChartItemPanel._getMoveDownButton();
 		assert.ok(oBtn, "Button exists");
-		assert.ok(oBtn instanceof sap.m.Button, "Button is type of sap.m.Button");
+		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getMoveBottomButton", function(assert){
 		var oBtn = this.oChartItemPanel._getMoveBottomButton();
 		assert.ok(oBtn, "Button exists");
-		assert.ok(oBtn instanceof sap.m.Button, "Button is type of sap.m.Button");
+		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
@@ -575,7 +575,7 @@ sap.ui.define([
 	QUnit.test("_getTemplateComboBox", function(assert){
 		var oComboBox = this.oChartItemPanel._getTemplateComboBox("Measure");
 
-		assert.ok(oComboBox instanceof sap.m.ComboBox, "ComboBox is returned");
+		assert.ok(oComboBox.isA("sap.m.ComboBox"), "ComboBox is returned");
 		assert.ok(oComboBox.getPlaceholder() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER'), "ComboBox has correct placeholder");
 
 	}.bind(this));
@@ -585,13 +585,13 @@ sap.ui.define([
 
 		var oListItem = this.oChartItemPanel._createListItem("anyId", oMockModelContext);
 		assert.ok(oListItem, "List item was created");
-		assert.ok(oListItem instanceof sap.m.ColumnListItem, "List Item is of type sap.m.ColumnListItem");
+		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 3, "List Item has 3 cells");
-		assert.ok(oListItem.getCells()[0] instanceof sap.m.ComboBox, "Cell 1 is of type sap.m.ComboBox");
-		assert.ok(oListItem.getCells()[1] instanceof sap.m.Select, "Cell 2 is of type sap.m.Select");
-		assert.ok(oListItem.getCells()[2] instanceof sap.m.HBox, "Cell 3 is of type sap.m.HBox");
+		assert.ok(oListItem.getCells()[0].isA("sap.m.ComboBox"), "Cell 1 is of type sap.m.ComboBox");
+		assert.ok(oListItem.getCells()[1].isA("sap.m.Select"), "Cell 2 is of type sap.m.Select");
+		assert.ok(oListItem.getCells()[2].isA("sap.m.HBox"), "Cell 3 is of type sap.m.HBox");
 		assert.ok(oListItem.getCells()[2].getItems().length == 1, "Cell 3 contains one item");
-		assert.ok(oListItem.getCells()[2].getItems()[0] instanceof sap.m.Button, "Cell 3 contains a button");
+		assert.ok(oListItem.getCells()[2].getItems()[0].isA("sap.m.Button"), "Cell 3 contains a button");
 		assert.ok(oListItem.getCells()[2].getItems()[0].getIcon() == "sap-icon://decline", "Button has a delete icon");
 		assert.ok(oListItem.getCells()[2].getItems()[0].getType() == "Transparent", "Button transparent");
 
@@ -603,9 +603,9 @@ sap.ui.define([
 		var oListItem = this.oChartItemPanel._createListItem("anyId", oMockModelContext);
 
 		assert.ok(oListItem, "List item was created");
-		assert.ok(oListItem instanceof sap.m.ColumnListItem, "List Item is of type sap.m.ColumnListItem");
+		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 1, "List Item has 1 cell");
-		assert.ok(oListItem.getCells()[0] instanceof sap.m.ComboBox, "Cell 1 is of type sap.m.ComboBox");
+		assert.ok(oListItem.getCells()[0].isA("sap.m.ComboBox"), "Cell 1 is of type sap.m.ComboBox");
 
 	}.bind(this));
 
@@ -614,15 +614,15 @@ sap.ui.define([
 
 		var oListItem = this.oChartItemPanel._createListItemMobile("anyId", oMockModelContext);
 		assert.ok(oListItem, "List item was created");
-		assert.ok(oListItem instanceof sap.m.ColumnListItem, "List Item is of type sap.m.ColumnListItem");
+		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 2, "List Item has 2 cells");
-		assert.ok(oListItem.getCells()[0] instanceof sap.m.VBox, "Cell 1 is of type VBox");
+		assert.ok(oListItem.getCells()[0].isA("sap.m.VBox"), "Cell 1 is of type VBox");
 		assert.ok(oListItem.getCells()[0].getItems().length == 2, "VBox has 2 items");
-		assert.ok(oListItem.getCells()[0].getItems()[0] instanceof sap.m.ComboBox, "Item 1 is of type sap.m.ComboBox");
-		assert.ok(oListItem.getCells()[0].getItems()[1] instanceof sap.m.Select, "Item 1 is of type sap.m.Select");
-		assert.ok(oListItem.getCells()[1] instanceof sap.m.HBox, "Cell 2 is of type sap.m.HBox");
+		assert.ok(oListItem.getCells()[0].getItems()[0].isA("sap.m.ComboBox"), "Item 1 is of type sap.m.ComboBox");
+		assert.ok(oListItem.getCells()[0].getItems()[1].isA("sap.m.Select"), "Item 1 is of type sap.m.Select");
+		assert.ok(oListItem.getCells()[1].isA("sap.m.HBox"), "Cell 2 is of type sap.m.HBox");
 		assert.ok(oListItem.getCells()[1].getItems().length == 1, "Cell 2 contains one item");
-		assert.ok(oListItem.getCells()[1].getItems()[0] instanceof sap.m.Button, "Cell 2 contains a button");
+		assert.ok(oListItem.getCells()[1].getItems()[0].isA("sap.m.Button"), "Cell 2 contains a button");
 		assert.ok(oListItem.getCells()[1].getItems()[0].getIcon() == "sap-icon://decline", "Button has a delete icon");
 		assert.ok(oListItem.getCells()[1].getItems()[0].getType() == "Transparent", "Button transparent");
 
@@ -633,12 +633,12 @@ sap.ui.define([
 
 		var oListItem = this.oChartItemPanel._createListItemMobile("anyId", oMockModelContext);
 		assert.ok(oListItem, "List item was created");
-		assert.ok(oListItem instanceof sap.m.ColumnListItem, "List Item is of type sap.m.ColumnListItem");
+		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 2, "List Item has 2 cells");
-		assert.ok(oListItem.getCells()[0] instanceof sap.m.ComboBox, "Cell 1 is of type sap.m.ComboBox");
-		assert.ok(oListItem.getCells()[1] instanceof sap.m.HBox, "Cell 2 is of type sap.m.HBox");
+		assert.ok(oListItem.getCells()[0].isA("sap.m.ComboBox"), "Cell 1 is of type sap.m.ComboBox");
+		assert.ok(oListItem.getCells()[1].isA("sap.m.HBox"), "Cell 2 is of type sap.m.HBox");
 		assert.ok(oListItem.getCells()[1].getItems().length == 1, "Cell 2 contains one item");
-		assert.ok(oListItem.getCells()[1].getItems()[0] instanceof sap.m.Button, "Cell 2 contains a button");
+		assert.ok(oListItem.getCells()[1].getItems()[0].isA("sap.m.Button"), "Cell 2 contains a button");
 		assert.ok(oListItem.getCells()[1].getItems()[0].getIcon() == "sap-icon://decline", "Button has a delete icon");
 		assert.ok(oListItem.getCells()[1].getItems()[0].getType() == "Transparent", "Button transparent");
 

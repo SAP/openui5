@@ -468,7 +468,7 @@ sap.ui.define([
 				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
-			var oNewCol = new sap.ui.mdc.table.Column({
+			var oNewCol = new Column({
 				id: "cl"
 			});
 			fSetAggregationSpy.reset();

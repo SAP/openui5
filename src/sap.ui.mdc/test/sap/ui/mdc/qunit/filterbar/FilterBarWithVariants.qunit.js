@@ -728,10 +728,10 @@ var oVariantMap = {
 			fResolveWaitForSwitch = resolve;
 		});
 
-		sinon.stub(sap.ui.mdc.FilterBar.prototype, "triggerSearch");
+		sinon.stub(FilterBar.prototype, "triggerSearch");
 
-		var fOrigVariantSwitch = sap.ui.mdc.FilterBar.prototype._handleVariantSwitch;
-		sap.ui.mdc.FilterBar.prototype._handleVariantSwitch = function(oVariant) {
+		var fOrigVariantSwitch = FilterBar.prototype._handleVariantSwitch;
+		FilterBar.prototype._handleVariantSwitch = function(oVariant) {
 			fOrigVariantSwitch.apply(oFB, arguments);
 
 			fResolveWaitForSwitch();
@@ -776,8 +776,8 @@ var oVariantMap = {
 
 			oWaitForSwitchPromise.then(function() {
 
-				assert.ok(sap.ui.mdc.FilterBar.prototype.triggerSearch.calledOnce);
-				sap.ui.mdc.FilterBar.prototype.triggerSearch.resetHistory();
+				assert.ok(FilterBar.prototype.triggerSearch.calledOnce);
+				FilterBar.prototype.triggerSearch.resetHistory();
 
 				// required, because it is set in rendering
 				oModel._oVariantAppliedListeners["VMId"][oFB.getId()] = oFB._handleVariantSwitch.bind(oFB);
@@ -786,14 +786,14 @@ var oVariantMap = {
 					variantReference: "id_1589358930278_29"
 				}).then(function() {
 
-					assert.ok(sap.ui.mdc.FilterBar.prototype.triggerSearch.calledOnce);
-					sap.ui.mdc.FilterBar.prototype.triggerSearch.resetHistory();
+					assert.ok(FilterBar.prototype.triggerSearch.calledOnce);
+					FilterBar.prototype.triggerSearch.resetHistory();
 
 					ControlVariantApplyAPI.activateVariant({
 						variantReference: "id_1589359343056_37"
 					}).then(function() {
 
-						assert.ok(!sap.ui.mdc.FilterBar.prototype.triggerSearch.called);
+						assert.ok(!FilterBar.prototype.triggerSearch.called);
 						assert.equal(nCalledOnStandard, 0);
 
 						var fCallBack = function() { nCalledOnStandard++; return false; };
@@ -804,15 +804,15 @@ var oVariantMap = {
 							variantReference: "VMId"
 						}).then(function() {
 
-							assert.ok(!sap.ui.mdc.FilterBar.prototype.triggerSearch.called);
+							assert.ok(!FilterBar.prototype.triggerSearch.called);
 							assert.equal(nCalledOnStandard, 1);
 
 							oFB.destroy();
 							oVM.destroy();
 							oModel.destroy();
 
-							sap.ui.mdc.FilterBar.prototype.triggerSearch.restore();
-							sap.ui.mdc.FilterBar.prototype._handleVariantSwitch = fOrigVariantSwitch;
+							FilterBar.prototype.triggerSearch.restore();
+							FilterBar.prototype._handleVariantSwitch = fOrigVariantSwitch;
 							FlUtils.getAppComponentForControl.restore();
 							URLHandler.attachHandlers.restore();
 							FlexState.getVariantsState.restore();

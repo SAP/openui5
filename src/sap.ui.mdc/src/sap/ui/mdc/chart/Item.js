@@ -67,4 +67,4 @@ sap.ui.define([
 
     return Item;
 
-}, true);
+});

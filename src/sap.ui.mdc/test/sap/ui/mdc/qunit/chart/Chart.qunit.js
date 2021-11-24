@@ -131,7 +131,7 @@ function(
 
 			this.oMDCChart._getToolbar();
 			assert.ok(this.oMDCChart.getAggregation("_toolbar"), "Toolbar was created");
-			assert.ok(this.oMDCChart.getAggregation("_toolbar").getMetadata().getName() == "sap.ui.mdc.chart.ChartToolbar", "Toolbar is instance of sap.ui.mdc.chart.ChartToolbar");
+			assert.ok(this.oMDCChart.getAggregation("_toolbar").isA("sap.ui.mdc.chart.ChartToolbar"), "Toolbar is instance of sap.ui.mdc.chart.ChartToolbar");
 
 			done();
 

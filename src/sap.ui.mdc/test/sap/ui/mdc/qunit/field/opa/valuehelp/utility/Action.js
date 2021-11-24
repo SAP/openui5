@@ -213,4 +213,4 @@ sap.ui.define([
 	});
 
 	return Action;
-}, true);
+});

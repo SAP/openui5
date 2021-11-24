@@ -25,4 +25,4 @@ sap.ui.define(['sap/ui/mdc/util/TypeUtil'], function (TypeUtil) {
 	};
 
 	return BaseDelegate;
-}, /* bExport= */ true);
+});

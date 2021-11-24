@@ -3,7 +3,7 @@
  */
 
 /**
- * @namespace Provides utitlity functions for OPA tests
+ * @namespace Provides utility functions for OPA tests
  * @name sap.ui.mdc.qunit.p13n.OpaTests.utility.Util
  * @author SAP SE
  * @version ${version}
@@ -23,4 +23,4 @@ sap.ui.define([
 	};
 
 	return Util;
-}, /* bExport= */true);
+});

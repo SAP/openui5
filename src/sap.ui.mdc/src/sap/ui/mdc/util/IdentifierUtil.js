@@ -88,4 +88,4 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		}
 	};
 	return IdentifierUtil;
-}, /* bExport= */true);
+});

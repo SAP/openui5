@@ -290,4 +290,4 @@ sap.ui.define([
 
 	return ChartTypeButton;
 
-}, true);
+});

@@ -139,4 +139,4 @@ sap.ui.define([
 			MessageBox.information("Paste data:\n" + strData);
 		}
 	});
-}, true);
+});

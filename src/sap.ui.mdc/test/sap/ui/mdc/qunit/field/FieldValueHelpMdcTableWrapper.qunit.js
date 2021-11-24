@@ -9,8 +9,11 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/InParameter",
 	"sap/ui/mdc/field/OutParameter",
+	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/table/GridTableType",
+	"sap/ui/mdc/table/ResponsiveTableType",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/FilterBar",
@@ -20,8 +23,11 @@ sap.ui.define([
 		FieldValueHelpDelegate,
 		InParameter,
 		OutParameter,
+		FilterField,
 		Table,
 		Column,
+		GridTableType,
+		ResponsiveTableType,
 		Text,
 		JSONModel,
 		FilterBar,
@@ -113,12 +119,12 @@ sap.ui.define([
 					delegate: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}},
 					filterConditions: { myfilter: [{ operator: "EQ", values: ["a"] }] },
 					filterItems: [
-						new sap.ui.mdc.FilterField({
+						new FilterField({
 							delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 							conditions: "{$filters>/conditions/myfilter}"
 						})
 					],
-					basicSearchField: new sap.ui.mdc.FilterField({
+					basicSearchField: new FilterField({
 						delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 						dataType: "Edm.String",
 						conditions: "{$filters>/conditions/$search}",
@@ -214,7 +220,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instantly cloning wrapper", function(assert) {
-		_initTable(false, new sap.ui.mdc.table.GridTableType({rowCountMode: "Fixed"}));
+		_initTable(false, new GridTableType({rowCountMode: "Fixed"}));
 		var oClone = oWrapper.clone();
 		assert.notOk(oWrapper.OInnerWrapperClass, "OInnerWrapperClass not yet available.");
 		assert.ok(oClone, "oWrapper was cloned successfully");
@@ -224,7 +230,7 @@ sap.ui.define([
 	QUnit.test("initialize grid table", function(assert) {
 		var fnDone = assert.async();
 
-		_initTable(false, new sap.ui.mdc.table.GridTableType({rowCountMode: "Fixed"}));
+		_initTable(false, new GridTableType({rowCountMode: "Fixed"}));
 
 		oWrapper.initialize();
 
@@ -240,7 +246,7 @@ sap.ui.define([
 	QUnit.test("initialize responsive table", function(assert) {
 		var fnDone = assert.async();
 
-		_initTable(false, new sap.ui.mdc.table.ResponsiveTableType());
+		_initTable(false, new ResponsiveTableType());
 
 		oWrapper.initialize();
 
@@ -256,7 +262,7 @@ sap.ui.define([
 	QUnit.test("_handleSelectionChange", function(assert) {
 		var fnDone = assert.async();
 
-		_initTable(false, new sap.ui.mdc.table.GridTableType({rowCountMode: "Fixed"}));
+		_initTable(false, new GridTableType({rowCountMode: "Fixed"}));
 		oWrapper.initialize();
 		sinon.stub(oWrapper,"_isTableReady").returns(true);
 		sinon.spy(oWrapper, "_fireSelectionChange");

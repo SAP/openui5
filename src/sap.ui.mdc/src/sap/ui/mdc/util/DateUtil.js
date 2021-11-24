@@ -178,4 +178,4 @@ sap.ui.define([
 		};
 
 		return DateUtil;
-	}, /* bExport= */ true);
+	});

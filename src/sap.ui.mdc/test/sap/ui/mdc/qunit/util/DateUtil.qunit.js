@@ -5,14 +5,12 @@
 /* global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/mdc/util/DateUtil",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/DateTime"
 ], function(
-	jQuery,
 	DateUtil,
 	UniversalDate,
 	DateType,

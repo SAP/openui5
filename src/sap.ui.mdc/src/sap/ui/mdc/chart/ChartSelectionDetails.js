@@ -143,4 +143,4 @@ sap.ui.define([
         };
 
         return ChartSelectionDetails;
-    }, true);
+    });

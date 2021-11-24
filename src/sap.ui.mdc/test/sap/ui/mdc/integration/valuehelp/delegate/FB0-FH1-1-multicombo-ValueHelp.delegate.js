@@ -6,7 +6,10 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/base/util/UriParameters",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
@@ -15,7 +18,10 @@ sap.ui.define([
 	ODataV4ValueHelpDelegate,
 	MTable,
 	Conditions,
+	Column,
+	ColumnListItem,
 	Table,
+	Text,
 	UriParameters,
 	FilterBar,
 	FilterField,
@@ -51,18 +57,18 @@ sap.ui.define([
 					width: "20rem",
 					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 					columns: [
-						new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+						new Column({header: new Text({text : "ID"})}),
+						new Column({header: new Text({text : "Name"})})
 					],
 					items: {
 						path : "/Authors",
 						length: 10,
 						suspended: bSuspended,
-						template : new sap.m.ColumnListItem({
+						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-								new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
+								new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
 							]
 						})
 					}

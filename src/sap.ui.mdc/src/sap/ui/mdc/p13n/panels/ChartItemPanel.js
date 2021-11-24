@@ -489,7 +489,7 @@ sap.ui.define([
 		var oTarget = core.byId(oEvt.target.id);
 
 		//Don't handle focus on button presses as this messes up event propagation
-		if (oTarget instanceof sap.m.Button){
+		if (oTarget instanceof Button){
 			return;
 		}
 

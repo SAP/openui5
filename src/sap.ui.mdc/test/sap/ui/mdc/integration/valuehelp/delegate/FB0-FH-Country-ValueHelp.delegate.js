@@ -5,14 +5,19 @@
 sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/base/util/UriParameters",
-	'sap/m/library'
-
+	"sap/m/library"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
+	Column,
+	ColumnListItem,
 	Table,
+	Text,
 	UriParameters,
 	mLibrary
 ) {
@@ -44,19 +49,19 @@ sap.ui.define([
 					width: "30rem",
 					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 					columns: [
-						new sap.m.Column({header: new sap.m.Text({text : "Country"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+						new Column({header: new Text({text : "Country"})}),
+						new Column({header: new Text({text : "Name"})})
 
 					],
 					items: {
 						path : "/Countries",
 						length: 10,
 						suspended: bSuspended,
-						template : new sap.m.ColumnListItem({
+						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new sap.m.Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
-								new sap.m.Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
+								new Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
 							]
 						})
 					}
@@ -84,18 +89,18 @@ sap.ui.define([
 				growingThreshold: 20,
 				mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 				columns: [
-					new sap.m.Column({header: new sap.m.Text({text : "Country"})}),
-					new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+					new Column({header: new Text({text : "Country"})}),
+					new Column({header: new Text({text : "Name"})})
 
 				],
 				items: {
 					path : "/Countries",
 					suspended: bSuspended,
-					template : new sap.m.ColumnListItem({
+					template : new ColumnListItem({
 						type: "Active",
 						cells: [
-							new sap.m.Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
-							new sap.m.Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
+							new Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
+							new Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
 						]
 					})
 				}

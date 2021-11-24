@@ -229,4 +229,4 @@ sap.ui.define([
         this.checkAndRebind = FilterIntegrationMixin.checkAndRebind;
 	};
 
-}, /* bExport= */ true);
+});

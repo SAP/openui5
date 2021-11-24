@@ -75,4 +75,4 @@ sap.ui.define(['sap/ui/mdc/odata/TypeUtil', 'sap/ui/mdc/enum/BaseType'], functio
 
 	return ODataV4TypeUtil;
 
-}, /* bExport= */ true);
+});

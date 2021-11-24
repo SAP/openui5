@@ -27,4 +27,4 @@ sap.ui.define([
 		}
 
 	});
-}, true);
+});

@@ -3,7 +3,7 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/field/DefineConditionPanel",
 	"sap/ui/mdc/condition/ConditionModel",

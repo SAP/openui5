@@ -6,22 +6,32 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/base/util/UriParameters",
 	"sap/m/library",
+	"sap/ui/mdc/Field",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/Table"
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
 	MDCTable,
+	Column,
+	ColumnListItem,
 	Table,
+	Text,
 	UriParameters,
 	mLibrary,
+	Field,
 	FilterBar,
 	FilterField,
-	mdcTable
+	mdcTable,
+	mdcColumn
 ) {
 	"use strict";
 
@@ -51,8 +61,8 @@ sap.ui.define([
 					width: "30rem",
 					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 					columns: [
-						new sap.m.Column({header: new sap.m.Text({text : "City"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+						new Column({header: new Text({text : "City"})}),
+						new Column({header: new Text({text : "Name"})})
 
 					],
 					items: {
@@ -60,11 +70,11 @@ sap.ui.define([
 						length: 10,
 						parameters: {$select: 'country_code,region_code'},
 						suspended: bSuspended,
-						template : new sap.m.ColumnListItem({
+						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new sap.m.Text({text: "{path: 'city', type:'sap.ui.model.odata.type.String'}"}),
-								new sap.m.Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: "{path: 'city', type:'sap.ui.model.odata.type.String'}"}),
+								new Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"})
 							]
 						})
 					}
@@ -141,10 +151,10 @@ sap.ui.define([
 						}
 					},
 					columns: [
-					          new sap.ui.mdc.table.Column({importance: "High", header: "City", dataProperty: "city", template: new sap.ui.mdc.Field({value: "{city}", editMode: "Display"})}),
-					          new sap.ui.mdc.table.Column({importance: "High", header: "Name", dataProperty: "text", template: new sap.ui.mdc.Field({value: "{text}", editMode: "Display"})}),
-					          new sap.ui.mdc.table.Column({importance: "Low", header: "Country", dataProperty: "country_code", template: new sap.ui.mdc.Field({value: "{country_code}"/*, additionalValue: "{countryOfOrigin/text}", display: "Description"*/, editMode: "Display"})}),
-					          new sap.ui.mdc.table.Column({importance: "Low", header: "Region", dataProperty: "region_code", template: new sap.ui.mdc.Field({value: "{region_code}"/*, additionalValue: "{regionOfOrigin/text}", display: "Description"*/, editMode: "Display"})})
+					          new mdcColumn({importance: "High", header: "City", dataProperty: "city", template: new Field({value: "{city}", editMode: "Display"})}),
+					          new mdcColumn({importance: "High", header: "Name", dataProperty: "text", template: new Field({value: "{text}", editMode: "Display"})}),
+					          new mdcColumn({importance: "Low", header: "Country", dataProperty: "country_code", template: new Field({value: "{country_code}"/*, additionalValue: "{countryOfOrigin/text}", display: "Description"*/, editMode: "Display"})}),
+					          new mdcColumn({importance: "Low", header: "Region", dataProperty: "region_code", template: new Field({value: "{region_code}"/*, additionalValue: "{regionOfOrigin/text}", display: "Description"*/, editMode: "Display"})})
 					          ]
 				});
 				oCurrentContent.setTable(oCurrentTable);

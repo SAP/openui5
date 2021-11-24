@@ -5,7 +5,10 @@
 sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/base/util/UriParameters",
 	'sap/m/library',
 	"sap/ui/mdc/filterbar/vh/FilterBar",
@@ -13,7 +16,10 @@ sap.ui.define([
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
+	Column,
+	ColumnListItem,
 	Table,
+	Text,
 	UriParameters,
 	mLibrary,
 	FilterBar,
@@ -47,21 +53,21 @@ sap.ui.define([
 					width: "30rem",
 					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 					columns: [
-						new sap.m.Column({header: new sap.m.Text({text : "Region"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Country"})})
+						new Column({header: new Text({text : "Region"})}),
+						new Column({header: new Text({text : "Name"})}),
+						new Column({header: new Text({text : "Country"})})
 
 					],
 					items: {
 						path : "/Regions",
 						length: 10,
 						suspended: bSuspended,
-						template : new sap.m.ColumnListItem({
+						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new sap.m.Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
-								new sap.m.Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"}),
-								new sap.m.Text({text: "{path: 'country_code', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
+								new Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"}),
+								new Text({text: "{path: 'country_code', type:'sap.ui.model.odata.type.String'}"})
 							]
 						})
 					}
@@ -120,19 +126,19 @@ sap.ui.define([
 				growingThreshold: 20,
 				mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 				columns: [
-					new sap.m.Column({header: new sap.m.Text({text : "Region"})}),
-					new sap.m.Column({header: new sap.m.Text({text : "Name"})}),
-					new sap.m.Column({header: new sap.m.Text({text : "Country"})})
+					new Column({header: new Text({text : "Region"})}),
+					new Column({header: new Text({text : "Name"})}),
+					new Column({header: new Text({text : "Country"})})
 				],
 				items: {
 					path : "/Regions",
 					suspended: bSuspended,
-					template : new sap.m.ColumnListItem({
+					template : new ColumnListItem({
 						type: "Active",
 						cells: [
-							new sap.m.Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
-							new sap.m.Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"}),
-							new sap.m.Text({text: "{path: 'country_code', type:'sap.ui.model.odata.type.String'}"})
+							new Text({text: "{path: 'code', type:'sap.ui.model.odata.type.String'}"}),
+							new Text({text: "{path: 'text', type:'sap.ui.model.odata.type.String'}"}),
+							new Text({text: "{path: 'country_code', type:'sap.ui.model.odata.type.String'}"})
 						]
 					})
 				}

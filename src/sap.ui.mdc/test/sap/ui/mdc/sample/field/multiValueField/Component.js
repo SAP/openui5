@@ -3,14 +3,13 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/ViewType',
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/ui/core/util/MockServer',
 	"sap/ui/core/Core"
-], function(jQuery, View, ViewType, UIComponent, ODataModel, MockServer, oCore) {
+], function(View, ViewType, UIComponent, ODataModel, MockServer, oCore) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.mdc.sample.field.multiValueField.Component", {

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/condition/Condition"],
-	function(jQuery, ManagedObject, Condition) {
+sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/mdc/condition/Condition"],
+	function(ManagedObject, Condition) {
 		"use strict";
 
 		/**
@@ -539,4 +539,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/con
 
 
 		return BoolExprTool;
-	}, true);
+	});

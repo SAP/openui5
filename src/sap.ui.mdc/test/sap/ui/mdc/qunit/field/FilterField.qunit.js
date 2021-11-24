@@ -5,7 +5,7 @@
 /*eslint max-nested-callbacks: [2, 6]*/
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/field/FieldValueHelp",

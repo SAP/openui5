@@ -8,7 +8,6 @@
  * @version@
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/ViewType',
 	'sap/ui/core/UIComponent',
@@ -16,7 +15,7 @@ sap.ui.define([
 	'sap/ui/core/util/MockServer',
 	'sap/ui/mdc/field/ConditionsType', // as used in XML view
 	"sap/ui/core/Core"
-], function(jQuery, View, ViewType, UIComponent, ODataModel, MockServer, ConditionsType, oCore, ODataUtils) {
+], function(View, ViewType, UIComponent, ODataModel, MockServer, ConditionsType, oCore, ODataUtils) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.mdc.sample.field.Component", {

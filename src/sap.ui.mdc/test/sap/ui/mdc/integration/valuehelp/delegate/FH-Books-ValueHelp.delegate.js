@@ -10,8 +10,11 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column",
 	"sap/base/util/UriParameters",
 	"sap/m/library",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
 	"sap/m/Text"
 ], function(
@@ -22,8 +25,11 @@ sap.ui.define([
 	FilterBar,
 	FilterField,
 	mdcTable,
+	mdcColumn,
 	UriParameters,
 	mLibrary,
+	Column,
+	ColumnListItem,
 	Table,
 	Text
 ) {
@@ -52,19 +58,19 @@ sap.ui.define([
 					width: "30rem",
 					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 					columns: [
-						new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Title"})})
+						new Column({header: new Text({text : "ID"})}),
+						new Column({header: new Text({text : "Title"})})
 
 					],
 					items: {
 						path : "/Books",
 						length: 10,
 						suspended: bSuspended,
-						template : new sap.m.ColumnListItem({
+						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
-								new sap.m.Text({text: "{path: 'title', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
+								new Text({text: "{path: 'title', type:'sap.ui.model.odata.type.String'}"})
 							]
 						})
 					}
@@ -125,10 +131,10 @@ sap.ui.define([
 							}
 						},
 						columns: [
-								  new sap.ui.mdc.table.Column({importance: "High", header: "ID", dataProperty: "ID", template: new Text({text: "{ID}"})}),
-								  new sap.ui.mdc.table.Column({importance: "High", header: "Title", dataProperty: "title", template: new Text({text:  "{title}"})}),
-								  new sap.ui.mdc.table.Column({importance: "Low", header: "Description", dataProperty: "descr", template: new Text({text: "{descr}"})}),
-								  new sap.ui.mdc.table.Column({importance: "Low", header: "Published", dataProperty: "published", template: new Text({text: "{published}"})})
+								  new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Text({text: "{ID}"})}),
+								  new mdcColumn({importance: "High", header: "Title", dataProperty: "title", template: new Text({text:  "{title}"})}),
+								  new mdcColumn({importance: "Low", header: "Description", dataProperty: "descr", template: new Text({text: "{descr}"})}),
+								  new mdcColumn({importance: "Low", header: "Published", dataProperty: "published", template: new Text({text: "{published}"})})
 								  ]
 					})
 				});
@@ -174,19 +180,19 @@ sap.ui.define([
 					}),
 					table: new Table(sId + "-MTable-table", {
 						columns: [
-							new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Title"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Description"})})
+							new Column({header: new Text({text : "ID"})}),
+							new Column({header: new Text({text : "Title"})}),
+							new Column({header: new Text({text : "Description"})})
 						],
 						items: {
 							path : "/Books",
 							suspended: bSuspended,
-							template : new sap.m.ColumnListItem({
+							template : new ColumnListItem({
 								type: "Active",
 								cells: [
-									new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
-									new sap.m.Text({text: "{path: 'title', type:'sap.ui.model.odata.type.String'}"}),
-									new sap.m.Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
+									new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
+									new Text({text: "{path: 'title', type:'sap.ui.model.odata.type.String'}"}),
+									new Text({text: "{path: 'descr', type:'sap.ui.model.odata.type.String'}"})
 								]
 							})
 						}

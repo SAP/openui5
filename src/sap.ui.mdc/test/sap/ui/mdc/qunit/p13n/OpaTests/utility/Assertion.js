@@ -25,7 +25,7 @@ sap.ui.define([
 		iShouldSeeButtonWithIcon: function (sIcon) {
 			return this.waitFor({
 				controlType: "sap.m.Button",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "icon",
 					value: sIcon
 				}),
@@ -38,7 +38,7 @@ sap.ui.define([
 		iShouldSeeButtonWithText: function (sText) {
 			return this.waitFor({
 				controlType: "sap.m.Button",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "text",
 					value: sText
 				}),
@@ -113,7 +113,7 @@ sap.ui.define([
 					return aDialogs.length > 0;
 				},
 				success: function (aDialogs) {
-					//TODO: remove the line below once there is apossibility to set the tolerance on the
+					//TODO: remove the line below once there is a possibility to set the tolerance on the
 					//popover and handle this issue via the personalization logic itself
 					aDialogs[0]._followOfTolerance = 96;
 					Opa5.assert.equal(aDialogs.length, 1, 'Personalization Dialog should be open');
@@ -678,4 +678,4 @@ sap.ui.define([
 		}
 	});
 	return Assertion;
-}, true);
+});

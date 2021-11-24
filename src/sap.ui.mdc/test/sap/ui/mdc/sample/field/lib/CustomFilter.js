@@ -279,4 +279,4 @@ sap.ui.define([
 
 	return CustomFilter;
 
-}, /* bExport= */ true);
+});

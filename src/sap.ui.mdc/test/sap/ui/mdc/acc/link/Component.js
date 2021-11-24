@@ -1,11 +1,10 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/core/Core"
-], function(jQuery, UIComponent, ODataModel, MockServer, FakeLrepConnectorLocalStorage, oCore) {
+], function(UIComponent, ODataModel, MockServer, FakeLrepConnectorLocalStorage, oCore) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.mdc.acc.link.Component", {

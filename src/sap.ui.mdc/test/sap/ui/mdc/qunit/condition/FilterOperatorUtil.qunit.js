@@ -6,7 +6,6 @@
 /*eslint no-warning-comments: 0 */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils"
 ], function(
-	jQuery,
 	FilterOperatorUtil,
 	Operator,
 	RangeOperator,

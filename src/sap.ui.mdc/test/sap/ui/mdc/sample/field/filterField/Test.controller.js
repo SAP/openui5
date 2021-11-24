@@ -217,4 +217,4 @@ sap.ui.define([
 			oCM.removeAllConditions();
 		}
 	});
-}, true);
+});

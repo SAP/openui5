@@ -3,9 +3,12 @@ sap.ui.define([
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/valuehelp/content/MTable",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
-	'sap/m/library'
-], function (ODataFieldValueHelpDelegate, FilterField, FilterBar, MTable, Table, mLibrary) {
+	"sap/m/Text",
+	"sap/m/library"
+], function (ODataFieldValueHelpDelegate, FilterField, FilterBar, MTable, Column, ColumnListItem, Table, Text, mLibrary) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataFieldValueHelpDelegate);
 
@@ -66,20 +69,20 @@ sap.ui.define([
 						growingThreshold: 20,
 						mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 						columns: [
-							new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Name"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Country of Origin"})})
+							new Column({header: new Text({text : "ID"})}),
+							new Column({header: new Text({text : "Name"})}),
+							new Column({header: new Text({text : "Country of Origin"})})
 						],
 						items: {
 							path : "/Authors",
 							suspended: bSuspended,
 							templateShareable: false,
-							template : new sap.m.ColumnListItem({
+							template : new ColumnListItem({
 								type: "Active",
 								cells: [
-									new sap.m.Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
-									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
-									new sap.m.Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})
+									new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
+									new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
+									new Text({text: "{path: 'countryOfOrigin_code', type:'sap.ui.model.odata.type.String'}"})
 								]
 							})
 						}
@@ -117,20 +120,20 @@ sap.ui.define([
 						growingThreshold: 20,
 						mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 						columns: [
-							new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Name"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Date of Birth"})})
+							new Column({header: new Text({text : "ID"})}),
+							new Column({header: new Text({text : "Name"})}),
+							new Column({header: new Text({text : "Date of Birth"})})
 						],
 						items: {
 							path : "/Authors",
 							suspended: bSuspended,
 							templateShareable: false,
-							template : new sap.m.ColumnListItem({
+							template : new ColumnListItem({
 								type: "Active",
 								cells: [
-									new sap.m.Text(oCurrentContent.getId() + "--" +  "default-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
-									new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
-									new sap.m.Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})
+									new Text(oCurrentContent.getId() + "--" +  "default-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"}),
+									new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"}),
+									new Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})
 								]
 							})
 						}
@@ -151,23 +154,23 @@ sap.ui.define([
 
 	// 	var fncGetDefaultSearchTemplateTable = function() {
 	// 		if (!this._oDefaultSearchTemplateTable) {
-	// 			this._oDefaultSearchTemplateTable = new sap.m.Table({
+	// 			this._oDefaultSearchTemplateTable = new Table({
 	// 				growing: true, growingScrollToLoad: true, growingThreshold: 20,
 	// 				autoPopinMode: true,
 	// 				contextualWidth: "Auto",
 	// 				hiddenInPopin: ["Low"],
 	// 				columns: [
-	// 					new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
-	// 					new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
-	// 					new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Date of Birth"})})
+	// 					new Column({width: '5rem', importance:"High", header: new Text({text : "ID"})}),
+	// 					new Column({header: new Text({text : "Name "})}),
+	// 					new Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new Text({text : "Date of Birth"})})
 	// 				],
 	// 				items: {
 	// 					path : "/Authors",
-	// 					template : new sap.m.ColumnListItem({
+	// 					template : new ColumnListItem({
 	// 						type: "Active",
-	// 						cells: [new sap.m.Text({text: "{ID}"}),
-	// 								new sap.m.Text({text: "{name}"}),
-	// 								new sap.m.Text({text: "{dateOfBirth}"})]
+	// 						cells: [new Text({text: "{ID}"}),
+	// 								new Text({text: "{name}"}),
+	// 								new Text({text: "{dateOfBirth}"})]
 	// 					})
 	// 				},
 	// 				width: "100%"
@@ -178,23 +181,23 @@ sap.ui.define([
 
 	// 	var fncGetMySearchTemplate1Table = function() {
 	// 		if (!this.MySearchTemplate1Table) {
-	// 			this.MySearchTemplate1Table = new sap.m.Table({
+	// 			this.MySearchTemplate1Table = new Table({
 	// 				growing: true, growingScrollToLoad: true, growingThreshold: 20,
 	// 				autoPopinMode: true,
 	// 				contextualWidth: "Auto",
 	// 				hiddenInPopin: ["Low"],
 	// 				columns: [
-	// 					new sap.m.Column({width: '5rem', importance:"High", header: new sap.m.Text({text : "ID"})}),
-	// 					new sap.m.Column({header: new sap.m.Text({text : "Name "})}),
-	// 					new sap.m.Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new sap.m.Text({text : "Country"})})
+	// 					new Column({width: '5rem', importance:"High", header: new Text({text : "ID"})}),
+	// 					new Column({header: new Text({text : "Name "})}),
+	// 					new Column({width: '8rem', visible: !isSuggest, importance:"Low", header: new Text({text : "Country"})})
 	// 				],
 	// 				items: {
 	// 					path : "/Authors",
-	// 					template : new sap.m.ColumnListItem({
+	// 					template : new ColumnListItem({
 	// 						type: "Active",
-	// 						cells: [new sap.m.Text({text: "{ID}"}),
-	// 								new sap.m.Text({text: "{name}"}),
-	// 								new sap.m.Text({text: "{countryOfOrigin_code}"})]
+	// 						cells: [new Text({text: "{ID}"}),
+	// 								new Text({text: "{name}"}),
+	// 								new Text({text: "{countryOfOrigin_code}"})]
 	// 					})
 	// 				},
 	// 				width: "100%"

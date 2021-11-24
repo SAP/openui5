@@ -189,4 +189,4 @@ sap.ui.define([
 		}
 	});
 	return Assertion;
-}, true);
+});

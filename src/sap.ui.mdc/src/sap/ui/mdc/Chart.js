@@ -1109,4 +1109,4 @@ sap.ui.define([
         };
 
         return Chart;
-    }, true);
+    });

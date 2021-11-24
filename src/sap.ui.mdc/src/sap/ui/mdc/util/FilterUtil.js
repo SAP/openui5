@@ -157,4 +157,4 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/enum/ConditionValid
 		};
 
 		return FilterUtil;
-}, /* bExport= */true);
+});

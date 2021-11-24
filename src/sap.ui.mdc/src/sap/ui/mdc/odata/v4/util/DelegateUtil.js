@@ -108,4 +108,4 @@ sap.ui.define(['sap/ui/mdc/util/FilterUtil',
 
 
 	return DelegateUtil;
-}, /* bExport= */true);
+});

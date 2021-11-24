@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/core/Core"
-], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, oCore) {
+	'sap/ui/Device', 'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/core/Core"
+], function(Device, Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, oCore) {
 	'use strict';
 
 	var Action = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Action", {
@@ -45,7 +45,7 @@ sap.ui.define([
 		// 		controlType: "sap.m.CheckBox",
 		// 		check: function(aCheckboxes) {
 		// 			return aCheckboxes.filter(function(oCheckbox) {
-		// 				if (jQuery.sap.endsWith(oCheckbox.getId(), '-sa')) {
+		// 				if (oCheckbox.getId().endsWith('-sa')) {
 		// 					oSelectAllCheckbox = oCheckbox;
 		// 					return true;
 		// 				}
@@ -74,7 +74,7 @@ sap.ui.define([
 		// },
 
 		iNavigateToPanel: function(sPanelType) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return this.waitFor({
 					controlType: "sap.m.List",
 					success: function(aLists) {
@@ -391,7 +391,7 @@ sap.ui.define([
 		// 							name: "value",
 		// 							value: sVariantNameOld
 		// 						}),
-		// 						actions: new sap.ui.test.actions.EnterText({
+		// 						actions: new EnterText({
 		// 							text: sVariantNameNew
 		// 						}),
 		// 						success: function(aInputs) {
@@ -698,4 +698,4 @@ sap.ui.define([
 	});
 
 	return Action;
-}, true);
+});

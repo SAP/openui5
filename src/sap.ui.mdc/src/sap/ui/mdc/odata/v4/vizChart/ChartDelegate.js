@@ -6,6 +6,7 @@ sap.ui.define([
     "../ChartDelegate",
     "../../../util/loadModules",
     "sap/ui/core/Core",
+    "sap/m/library",
     "sap/m/Text",
     "sap/ui/mdc/library",
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
@@ -24,6 +25,7 @@ sap.ui.define([
     V4ChartDelegate,
     loadModules,
     Core,
+    mobileLibrary,
     Text,
     MDCLib,
     ODataMetaModelUtil,
@@ -52,6 +54,8 @@ sap.ui.define([
      */
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
 
+	var FlexJustifyContent = mobileLibrary.FlexJustifyContent;
+	var FlexAlignItems = mobileLibrary.FlexAlignItems;
 
     var mStateMap = new window.WeakMap();
     //var ChartLibrary;
@@ -1032,8 +1036,8 @@ sap.ui.define([
         }.bind(this));
 
         this._getInnerStructure(oMDCChart).removeAllItems();
-        this._getInnerStructure(oMDCChart).setJustifyContent(sap.m.FlexJustifyContent.Start);
-        this._getInnerStructure(oMDCChart).setAlignItems(sap.m.FlexAlignItems.Stretch);
+        this._getInnerStructure(oMDCChart).setJustifyContent(FlexJustifyContent.Start);
+        this._getInnerStructure(oMDCChart).setAlignItems(FlexAlignItems.Stretch);
         this._getInnerStructure(oMDCChart).addItem(this._getChart(oMDCChart));
 
         oState.dataLoadedCallback = fnCallbackDataLoaded;
