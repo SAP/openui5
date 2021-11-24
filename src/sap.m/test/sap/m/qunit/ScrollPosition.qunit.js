@@ -178,7 +178,7 @@ sap.ui.define([
 		page1.scrollTo(60, 0);
 
 		assert.equal(getScrollPos(), -60, "Page should be scrolled to position 60");
-		assert.equal(page1.getScrollDelegate().getScrollTop(), 60, "Internally stored y scrolling position should be 60");
+		assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 60, "Internally stored y scrolling position should be 60");
 	});
 
 	QUnit.test("Scrolling - delayed", function(assert) {
@@ -358,12 +358,12 @@ sap.ui.define([
 
 		window.setTimeout(function(){
 			assert.equal(getScrollPos(), 0, "Page should be scrolled to position 0");
-			assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
+			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 0, "Internally stored y scrolling position should be 0");
 
 			page1.scrollTo(50, 0, 0); // try to scroll when it should not be possible
 
 			assert.equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
-			assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
+			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 0, "Internally stored y scrolling position should still be 0");
 
 			done();
 		}, 300); // required for iScroll with resize Handler
@@ -377,7 +377,7 @@ sap.ui.define([
 
 		window.setTimeout(function(){
 			assert.equal(getScrollPos(), 0, "Page should be scrolled to position 0");
-			assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
+			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 0, "Internally stored y scrolling position should be 0");
 
 			done();
 		}, 10);
@@ -393,7 +393,7 @@ sap.ui.define([
 
 		window.setTimeout(function(){
 			assert.equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
-			assert.equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
+			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 0, "Internally stored y scrolling position should still be 0");
 
 			jQuery("#content").css("height", "300px");
 			done();
