@@ -10171,7 +10171,8 @@ sap.ui.define([
 			.expectChange("note", ["Note0", "Note1"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var aTableItems = that.oView.byId("table").getItems(),
+			var oTable = that.oView.byId("table"),
+				aTableItems = oTable.getItems(),
 				oBindingAmount0 = aTableItems[0].getCells()[0].getBinding("value"),
 				oBindingAmount1 = aTableItems[1].getCells()[0].getBinding("value"),
 				oBindingNote0 = aTableItems[0].getCells()[1].getBinding("value"),
@@ -10218,8 +10219,7 @@ sap.ui.define([
 					function () {
 						assert.notOk(oModel.hasPendingChanges("update"),
 							"No pending changes when submitBatch promise resolves");
-						assert.notOk(
-							that.oView.byId("table").getBinding("items").hasPendingChanges(),
+						assert.notOk(oTable.getBinding("items").hasPendingChanges(),
 							"No pending changes when submitBatch promise resolves");
 					}),
 				that.waitForChanges(assert)
