@@ -28,7 +28,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Default parameters", function () {
 		QUnit.test("when hasStableId is called without parameters", function (assert) {

@@ -84,7 +84,7 @@ sap.ui.define([
 				viewContent: mOptions.xmlView
 			};
 		}
-		var sandbox = sinon.sandbox.create();
+		var sandbox = sinon.createSandbox();
 
 		mOptions.before = mOptions.before || function() {};
 		mOptions.after = mOptions.after || function() {};

@@ -45,7 +45,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oCompCont;
 	var oComp;
 
@@ -1070,7 +1070,6 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
-			sandbox = sinon.sandbox.create();
 			var oSettings = {
 				isAtoAvailable: false,
 				isKeyUser: true,
@@ -1101,7 +1100,6 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
-			sandbox = sinon.sandbox.create();
 			var oSettings = {
 				isAtoAvailable: true,
 				isKeyUser: true,

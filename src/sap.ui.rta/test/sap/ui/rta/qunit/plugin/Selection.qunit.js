@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/Text",
 	"sap/m/VBox",
-	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/DesignTime",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
@@ -24,14 +22,14 @@ sap.ui.define([
 	"sap/m/InstanceManager",
 	"sap/m/Popover",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	Bar,
 	Button,
 	HBox,
 	Text,
 	VBox,
-	UIComponent,
 	Device,
 	KeyCodes,
 	DesignTime,
@@ -39,7 +37,6 @@ sap.ui.define([
 	OverlayRegistry,
 	ChangesWriteAPI,
 	Layer,
-	FlUtils,
 	QUnitUtils,
 	CommandFactory,
 	Combine,
@@ -49,19 +46,19 @@ sap.ui.define([
 	InstanceManager,
 	Popover,
 	jQuery,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach: function(assert) {
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
-			this.oComponent = new UIComponent();
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
+			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			this.oCommandFactory = new CommandFactory({
 				flexSettings: {
 					layer: Layer.CUSTOMER,

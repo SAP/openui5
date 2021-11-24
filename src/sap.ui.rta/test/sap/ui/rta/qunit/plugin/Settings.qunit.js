@@ -15,9 +15,9 @@ sap.ui.define([
 	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/fl/Utils",
 	"sap/ui/base/ManagedObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	sinon,
 	Button,
@@ -33,48 +33,17 @@ sap.ui.define([
 	SettingsCommand,
 	SettingsPlugin,
 	Stack,
-	Utils,
 	ManagedObject,
-	BaseLog
+	BaseLog,
+	RtaQunitUtils
 ) {
 	"use strict";
 
 	var sDefaultSettingsIcon = "sap-icon://key-user-settings";
-	var oMockedAppComponent = {
-		getLocalId: function() {
-			return undefined;
-		},
-		getManifestEntry: function() {
-			return {};
-		},
-		getMetadata: function() {
-			return {
-				getName: function() {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function() {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					},
-					id: "appId"
-				}
-			};
-		},
-		getModel: function() {}
-	};
-	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 	var oCompleteChangeContentStub = sinon.stub(PropertyChange, "completeChangeContent");
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-	QUnit.done(function() {
-		oGetAppComponentForControlStub.restore();
-		oCompleteChangeContentStub.restore();
-	});
-
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function createOverlayWithSettingsAction(oElement, vSettingsAction, bNoFunction) {
 		var oSettingsAction = bNoFunction ? vSettingsAction : function() {
@@ -529,7 +498,7 @@ sap.ui.define([
 				var oAppDescriptorCommand = oCompositeCommand.getCommands()[0];
 				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... which contains an App Descriptor command...");
 				assert.equal(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
-				assert.equal(oAppDescriptorCommand.getReference(), "appId", "with the correct reference");
+				assert.equal(oAppDescriptorCommand.getReference(), "someName", "with the correct reference");
 				assert.equal(oAppDescriptorCommand.getChangeType(), mAppDescriptorChange.changeSpecificData.appDescriptorChangeType, "with the correct change type");
 				assert.equal(oAppDescriptorCommand.getParameters(), mAppDescriptorChange.changeSpecificData.content.parameters, "with the correct parameters");
 				assert.equal(oAppDescriptorCommand.getTexts(), mAppDescriptorChange.changeSpecificData.content.texts, "with the correct texts");
@@ -583,7 +552,7 @@ sap.ui.define([
 				var oFlexCommand = oCompositeCommand.getCommands()[1];
 				assert.ok(oAppDescriptorCommand instanceof AppDescriptorCommand, "... containing an AppDescriptorCommand");
 				assert.equal(oAppDescriptorCommand.getAppComponent(), oMockedAppComponent, "with the correct app component");
-				assert.equal(oAppDescriptorCommand.getReference(), "appId", "with the correct reference");
+				assert.equal(oAppDescriptorCommand.getReference(), "someName", "with the correct reference");
 				assert.equal(oAppDescriptorCommand.getChangeType(), mAppDescriptorChange.changeSpecificData.appDescriptorChangeType, "with the correct change type");
 				assert.equal(oAppDescriptorCommand.getParameters(), mAppDescriptorChange.changeSpecificData.content.parameters, "with the correct parameters");
 				assert.equal(oAppDescriptorCommand.getTexts(), mAppDescriptorChange.changeSpecificData.content.texts, "with the correct texts");
@@ -951,6 +920,9 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
+		oCompleteChangeContentStub.restore();
+		oMockedAppComponent._restoreGetAppComponentStub();
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

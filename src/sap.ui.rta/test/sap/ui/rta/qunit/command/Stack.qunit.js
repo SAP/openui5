@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	CommandFactory,
 	DesignTimeMetadata,
@@ -25,16 +26,16 @@ sap.ui.define([
 	Panel,
 	UIComponent,
 	PersistenceWriteAPI,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
 		beforeEach: function () {
-			this.oComponent = new UIComponent();
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
+			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			// Create command stack with some commands
@@ -64,6 +65,7 @@ sap.ui.define([
 		afterEach: function () {
 			this.oCommandStack.destroy();
 			this.oSerializer.destroy();
+			this.oComponent.destroy();
 			this.oPanel.destroy();
 			sandbox.restore();
 		}
@@ -103,7 +105,7 @@ sap.ui.define([
 
 	QUnit.module("Given an array of dirty changes...", {
 		beforeEach: function () {
-			this.oComponent = new UIComponent("MyComponent");
+			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			this.oChangeDefinition1 = {
 				fileName: "fileName1",
@@ -163,8 +165,6 @@ sap.ui.define([
 			};
 
 			this.oControl = {id: "a Control"};
-			sandbox.stub(FlUtils, "getComponentForControl").returns(this.oComponent);
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "someApp"}});
 		},
 		afterEach: function () {
 			this.oComponent.destroy();

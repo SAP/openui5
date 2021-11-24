@@ -26,7 +26,7 @@ function(
 ) {
 	'use strict';
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var oCommandFactory = new CommandFactory({
 		flexSettings: {

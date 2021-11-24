@@ -6,28 +6,28 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/m/MessageToast",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	LocalResetPlugin,
 	CommandFactory,
 	VBox,
 	DesignTime,
 	OverlayRegistry,
-	FlUtils,
 	ChangesWriteAPI,
 	LocalResetAPI,
 	JsControlTreeModifier,
 	MessageToast,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and localReset plugin are instantiated", {
 		beforeEach: function(assert) {
@@ -37,13 +37,8 @@ sap.ui.define([
 					return undefined;
 				}
 			};
-			var oMockedAppComponent = {
-				getModel: function () {
-					return this.oVariantModel;
-				}.bind(this),
-				byId: function() {}
-			};
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
+			sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oVariantModel);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			this.oLocalResetPlugin = new LocalResetPlugin({
@@ -69,6 +64,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			sandbox.restore();
+			this.oMockedAppComponent.destroy();
 			this.oDesignTime.destroy();
 			this.oSimpleForm.destroy();
 		}
@@ -205,7 +201,7 @@ sap.ui.define([
 			sandbox.stub(this.oLocalResetPlugin, "getVariantManagementReference").returns("variantManagement1");
 			sandbox.stub(this.oVariantModel, "getCurrentVariantReference").returns("variantManagement1");
 			sandbox.stub(JsControlTreeModifier, "bySelector");
-			var oMessageToastSpy = sandbox.spy(MessageToast, "show");
+			var oMessageToastSpy = sandbox.stub(MessageToast, "show");
 			return this.oLocalResetPlugin.handler([this.oSimpleFormOverlay]).then(function () {
 				assert.strictEqual(oCommandFactoryStub.firstCall.args[1], "localReset", "then a local reset command is added to the composite command");
 				assert.strictEqual(oCommandFactoryStub.secondCall.args[1], "save", "then a save variant command is added to the composite command");
@@ -215,7 +211,7 @@ sap.ui.define([
 
 		QUnit.test("when the plugin handler is called for a local reset without a variant", function (assert) {
 			var oCommandFactoryStub = sandbox.stub(this.oLocalResetPlugin.getCommandFactory(), "getCommandFor");
-			var oMessageToastSpy = sandbox.spy(MessageToast, "show");
+			var oMessageToastSpy = sandbox.stub(MessageToast, "show");
 			return this.oLocalResetPlugin.handler([this.oSimpleFormOverlay]).then(function () {
 				assert.strictEqual(oCommandFactoryStub.firstCall.args[1], "localReset", "then a local reset command is added to the composite command");
 				assert.strictEqual(oCommandFactoryStub.callCount, 1, "then no save variant command is added to the composite command");

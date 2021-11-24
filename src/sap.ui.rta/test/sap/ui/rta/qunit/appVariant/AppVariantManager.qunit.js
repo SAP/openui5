@@ -17,12 +17,12 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/S4HanaCloudBackend",
 	"sap/base/Log",
 	"sap/m/MessageBox",
-	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/base/util/includes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	jQuery,
 	AppVariantManager,
@@ -40,16 +40,16 @@ sap.ui.define([
 	S4HanaCloudBackend,
 	Log,
 	MessageBox,
-	Manifest,
 	ChangesWriteAPI,
 	AppVariantWriteAPI,
 	DescriptorChangeTypes,
 	includes,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantManager is instantiated", {
 		beforeEach: function () {
@@ -137,22 +137,7 @@ sap.ui.define([
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
-			var oDescriptor = {
-				"sap.app": {
-					id: "TestId",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-
-			var oManifest = new Manifest(oDescriptor);
-			this.oAppComponent = {
-				name: "testComponent",
-				getManifest: function() {
-					return oManifest;
-				}
-			};
+			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "TestId");
 
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oAppComponent});
@@ -179,9 +164,9 @@ sap.ui.define([
 				icon: "App Variant Icon"
 			};
 		},
-
 		afterEach: function () {
 			sandbox.restore();
+			this.oAppComponent.destroy();
 			this.oAppVariantManager.destroy();
 			oServer.restore();
 		}
@@ -189,7 +174,6 @@ sap.ui.define([
 		QUnit.test("When createAllInlineChanges() method is called", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return this.oAppVariantManager.createAllInlineChanges(this.oAppVariantData, this.oAppComponent)

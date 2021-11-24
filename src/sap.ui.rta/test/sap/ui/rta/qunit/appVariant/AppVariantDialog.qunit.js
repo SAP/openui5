@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var oAppVariantDialog;
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantDialog is instantiated", {
 		beforeEach: function () {

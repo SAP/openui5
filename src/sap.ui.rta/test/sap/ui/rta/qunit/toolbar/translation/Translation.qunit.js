@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Download Translation Dialog", {
 		before: function () {

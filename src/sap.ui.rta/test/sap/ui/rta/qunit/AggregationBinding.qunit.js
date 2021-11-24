@@ -8,12 +8,12 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	Button,
 	CustomListItem,
@@ -22,44 +22,18 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	ChangesWriteAPI,
-	FlUtils,
 	HorizontalLayout,
 	JSONModel,
 	CommandFactory,
 	RemovePlugin,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-	sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a List with bound items and a List with unbound items", {
 		beforeEach: function(assert) {
@@ -123,7 +97,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
+		oMockedAppComponent._restoreGetAppComponentStub();
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

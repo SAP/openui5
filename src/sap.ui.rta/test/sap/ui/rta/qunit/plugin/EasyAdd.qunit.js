@@ -4,69 +4,35 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/EasyAdd",
-	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/VBox",
 	"sap/m/Button",
-	"sap/ui/fl/Utils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/sinon-4"
-],
-function(
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	DesignTime,
 	CommandFactory,
 	EasyAdd,
-	AddElementsDialog,
 	AdditionalElementsPlugin,
-	AdditionalElementsAnalyzer,
 	OverlayRegistry,
 	ObjectPageSection,
 	ObjectPageLayout,
 	ObjectPageSubSection,
 	VBox,
 	Button,
-	FlUtils,
 	QUnitUtils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
-	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
-	});
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
 		beforeEach: function(assert) {
@@ -285,6 +251,8 @@ function(
 	});
 
 	QUnit.done(function () {
+		oMockedAppComponent._restoreGetAppComponentStub();
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

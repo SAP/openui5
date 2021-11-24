@@ -31,7 +31,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a ManageApps controller is instantiated", {
 		afterEach: function () {

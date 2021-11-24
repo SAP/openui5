@@ -35,7 +35,7 @@ sap.ui.define([
 
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "Dummy");
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var fnSetOverlayDesigntimeMetadata = function (oOverlay, oDesignTimeMetadata, bEnabled) {
 		bEnabled = bEnabled === undefined || bEnabled === null ? true : bEnabled;

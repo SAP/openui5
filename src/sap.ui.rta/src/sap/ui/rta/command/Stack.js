@@ -3,22 +3,22 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/command/CompositeCommand",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/write/api/PersistenceWriteAPI"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	ManagedObject,
+	PersistenceWriteAPI,
 	FlUtils,
 	Settings,
 	CompositeCommand,
-	JsControlTreeModifier,
-	PersistenceWriteAPI
+	JsControlTreeModifier
 ) {
 	"use strict";
 
-	function _toAvailableChanges(mChanges, aChanges, sFileName) {
+	function toAvailableChanges(mChanges, aChanges, sFileName) {
 		var oChange = mChanges[sFileName];
 		if (oChange) {
 			aChanges.push(oChange);
@@ -26,7 +26,7 @@ sap.ui.define([
 		return aChanges;
 	}
 
-	function _pushToStack(oComponent, mComposite, oStack, oChange) {
+	function pushToStack(oComponent, mComposite, oStack, oChange) {
 		var oSelector = oChange.getSelector();
 		var oCommand = new Settings({
 			selector: oSelector,
@@ -90,23 +90,21 @@ sap.ui.define([
 	/**
 	 * Creates a stack prefilled with Settings commands. Every command contains a change from the given file name list
 	 *
-	 * @param {sap.ui.base.ManagedObject} oControl used to get the component
-	 * @param {string[]} aFileNames array of file names of changes the stack should be initialized with
-	 * @returns {Promise} Returns a promise with a stack as parameter
+	 * @param {sap.ui.base.ManagedObject} oControl - Used to get the component
+	 * @param {string[]} aFileNames - Array of file names of changes the stack should be initialized with
+	 * @returns {Promise} Resolves with a stack as parameter
 	 */
 	Stack.initializeWithChanges = function(oControl, aFileNames) {
 		var oStack = new Stack();
 		oStack._aPersistedChanges = aFileNames;
 		if (aFileNames && aFileNames.length > 0) {
-			var oComponent = FlUtils.getComponentForControl(oControl);
-			var sAppName = FlUtils.getAppDescriptor(oComponent)["sap.app"].id;
+			var oComponent = FlUtils.getAppComponentForControl(oControl);
 			var mPropertyBag = {
-				oComponent: oComponent,
-				appName: sAppName,
-				selector: oControl,
+				selector: oComponent,
 				invalidateCache: false
 			};
 			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
+
 			.then(function(aChanges) {
 				var mComposite = {};
 				var mChanges = {};
@@ -114,8 +112,8 @@ sap.ui.define([
 					mChanges[oChange.getDefinition().fileName] = oChange;
 				});
 				aFileNames
-				.reduce(_toAvailableChanges.bind(null, mChanges), [])
-				.forEach(_pushToStack.bind(null, oComponent, mComposite, oStack));
+					.reduce(toAvailableChanges.bind(null, mChanges), [])
+					.forEach(pushToStack.bind(null, oComponent, mComposite, oStack));
 				return oStack;
 			});
 		}

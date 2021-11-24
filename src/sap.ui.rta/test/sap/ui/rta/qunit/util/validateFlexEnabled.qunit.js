@@ -30,7 +30,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sLogErrorTextPart = "Control ID was generated dynamically by SAPUI5.";
 	var sMessageBoxTextKey = "MSG_UNSTABLE_ID_FOUND";
 	var vLoggedErrorMatcher = sinon.match(function (vError) {

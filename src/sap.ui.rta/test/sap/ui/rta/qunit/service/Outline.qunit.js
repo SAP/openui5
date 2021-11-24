@@ -49,7 +49,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
 		before: function(assert) {

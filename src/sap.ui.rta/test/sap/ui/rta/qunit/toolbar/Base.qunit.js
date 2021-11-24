@@ -26,7 +26,7 @@ sap.ui.define([
 	//RTA Toolbar needs RTA Mode settings
 	jQuery("body").addClass("sapUiRtaMode");
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Basic functionality", {
 		beforeEach: function() {

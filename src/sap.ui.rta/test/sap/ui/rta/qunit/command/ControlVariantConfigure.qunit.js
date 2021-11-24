@@ -25,7 +25,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function checkGeneratorInChanges(aChanges, assert) {
 		aChanges.forEach(function(oChange) {

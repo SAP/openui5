@@ -12,7 +12,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var CHANNEL_ID = 'sap.ui.rta.service.receiver';
 
 	function createIframe(sSrc) {

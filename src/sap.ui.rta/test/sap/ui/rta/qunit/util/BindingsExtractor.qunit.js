@@ -19,7 +19,7 @@ sap.ui.define([
 		});
 	}
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {

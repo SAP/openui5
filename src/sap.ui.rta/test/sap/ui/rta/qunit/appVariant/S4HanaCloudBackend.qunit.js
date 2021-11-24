@@ -10,7 +10,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	// Test
 	QUnit.module("Given the S4HanaCloudBackend class", {

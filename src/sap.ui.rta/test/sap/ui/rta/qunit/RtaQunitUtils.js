@@ -209,7 +209,7 @@ sap.ui.define([
 					iItemCount = oContextMenuControl.getItems().length;
 					return oContextMenuControl;
 				}.bind(this))
-				.then(RtaQunitUtils.closeContextMenu.call(this))
+				.then(RtaQunitUtils.closeContextMenu.bind(this))
 				.then(function () {
 					resolve(iItemCount);
 				});
@@ -234,6 +234,7 @@ sap.ui.define([
 
 		var oComponent = new Component(sId);
 		sandbox.stub(flUtils, "getAppComponentForControl").returns(oComponent);
+		oComponent._restoreGetAppComponentStub = flUtils.getAppComponentForControl.restore;
 		return oComponent;
 	};
 
