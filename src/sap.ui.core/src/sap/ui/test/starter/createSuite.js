@@ -214,8 +214,7 @@
 
 	};
 
-	var oSuiteReadyEvent = document.createEvent("CustomEvent");
-	oSuiteReadyEvent.initCustomEvent("sap-ui-testsuite-ready", true, true, {});
+	var oSuiteReadyEvent = new CustomEvent("sap-ui-testsuite-ready");
 	window.dispatchEvent(oSuiteReadyEvent);
 
 }));
