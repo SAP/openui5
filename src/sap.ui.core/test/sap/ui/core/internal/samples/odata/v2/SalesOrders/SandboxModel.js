@@ -798,30 +798,71 @@ sap.ui.define([
 					source : "Messages/TC6/error-1.json"
 				}]
 			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=4.*/,
+			/* Test Cases ODataListBinding.#create*/
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=2&\$orderby=SalesOrderID%20asc.*/,
 				response : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable.json"
+					source : "ODLB.create/TC1/SalesOrderSet_asc_0-2.json"
 				}
 			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=4&\$top=4.*/,
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=2&\$orderby=SalesOrderID%20desc&\$filter=SalesOrderID.*/,
 				response : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable2.json"
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-2.json"
 				}
 			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=8&\$top=4.*/,
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=1&\$orderby=SalesOrderID%20desc&\$filter=substringof.*/,
 				response : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable3.json"
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-1_filter.json"
 				}
 			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=8.*/,
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=2&\$orderby=SalesOrderID%20desc&\$filter=substringof.*/,
 				response : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable4.json"
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-2_filter.json"
 				}
 			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=12.*/,
+				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=4&\$orderby=SalesOrderID%20desc.*/,
+				response : [{
+					ifMatch : ithCall.bind(null, 0),
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4.json"
+				}, {
+					ifMatch : ithCall.bind(null, 1),
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_after_save.json"
+				}]
+			}, {
+				regExp : /GET .*\/SalesOrderSet\?\$skip=4&\$top=1&\$orderby=SalesOrderID%20desc.*/,
 				response : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableAll.json"
+					source : "ODLB.create/TC1/SalesOrderSet_desc_4-1.json"
 				}
+			}, {
+				regExp : /GET .*\/SalesOrderSet\('222'\).*/,
+				response : {}
+			}, {
+				regExp : /POST .*\/SalesOrderSet\.*/,
+				response : [{
+					ifMatch : function (oRequest) {
+						var oData = JSON.parse(oRequest.requestBody);
+
+						iTimesSaved = 1;
+						return oData.Note === "4";
+					},
+					code : 201,
+					source : "ODLB.create/TC1/SalesOrderSet_222.json"
+				}, {
+					ifMatch : function (oRequest) {
+						var oData = JSON.parse(oRequest.requestBody);
+
+						return oData.Note === "2";
+					},
+					code : 201,
+					source : "ODLB.create/TC1/SalesOrderSet_221.json"
+				}, {
+					ifMatch : function (oRequest) {
+						var oData = JSON.parse(oRequest.requestBody);
+
+						return oData.Note === "1";
+					},
+					code : 201,
+					source : "ODLB.create/TC1/SalesOrderSet_220.json"
+				}]
 			}, {
 				regExp : /GET .*\/SalesOrderSet\/\$count.*/,
 				response : {

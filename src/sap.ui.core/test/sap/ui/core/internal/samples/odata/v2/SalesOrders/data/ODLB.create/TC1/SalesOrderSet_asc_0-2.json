@@ -1,0 +1,30 @@
+{
+	"d": {
+		"__count" : "5",
+		"results": [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('201')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('201')",
+					"type" : "GWSAMPLE_BASIC.SalesOrder"
+				},
+				"SalesOrderID" : "201",
+				"CustomerName" : "Telecomunicaciones Star",
+				"Note" : "Inline Creation Rows 201",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "98710.62"
+			}, {
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('202')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('202')",
+					"type" : "GWSAMPLE_BASIC.SalesOrder"
+				},
+				"SalesOrderID" : "202",
+				"CustomerName" : "Asia High tech",
+				"Note" : "Inline Creation Rows 202",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "14789.32"
+			}
+		]
+	}
+}

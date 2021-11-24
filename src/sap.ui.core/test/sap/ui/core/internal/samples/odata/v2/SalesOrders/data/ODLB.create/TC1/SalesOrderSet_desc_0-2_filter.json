@@ -1,0 +1,19 @@
+{
+	"d": {
+		"__count" : "1",
+		"results": [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
+					"type" : "GWSAMPLE_BASIC.SalesOrder"
+				},
+				"SalesOrderID" : "205",
+				"CustomerName" : "SAP",
+				"Note" : "Inline Creation Rows 205",
+				"CurrencyCode" : "EUR",
+				"GrossAmount" : "1137.64"
+			}
+		]
+	}
+}
