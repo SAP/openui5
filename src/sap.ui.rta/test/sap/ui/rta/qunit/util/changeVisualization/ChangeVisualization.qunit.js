@@ -521,15 +521,20 @@ sap.ui.define([
 			prepareChanges(this.aMockChanges);
 			this.oChangeVisualization.setRootControlId(undefined);
 			this.oChangeVisualization.setIsActive(false);
+			var fnClickSpy = sandbox.spy(this.oChangeVisualization, "_fnOnClickHandler");
 			assert.strictEqual(this.oChangeVisualization.getRootControlId(), undefined, "then the RootControlId was not set before");
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization was inactive before");
 			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
 				.then(function() {
-					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp", "then the RootControlId is set afterwards");
+					assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp1", "then the RootControlId is set afterwards");
 					assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
+					var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
+					var oMouseEvent = new Event("click");
+					oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
+					assert.ok(fnClickSpy.called, "then the click event handler is added to the Root Overlay DomRef");
 					fnDone();
 				}.bind(this));
-			this.oChangeVisualization.triggerModeChange("Comp", this.oRta.getToolbar());
+			this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
 		});
 
 		QUnit.test("when ChangeVisualization is active and mode change is triggered", function (assert) {
@@ -537,13 +542,18 @@ sap.ui.define([
 			prepareChanges(this.aMockChanges);
 			this.oRta.setMode("visualization");
 			oCore.applyChanges();
+			var fnClickSpy = sandbox.spy(this.oChangeVisualization, "_fnOnClickHandler");
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization was active before");
 			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
 				.then(function() {
 					assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization is inactive afterwards");
+					var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
+					var oMouseEvent = new Event("click");
+					oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
+					assert.notOk(fnClickSpy.called, "then the click event handler was removed from the Root Overlay DomRef");
 					fnDone();
 				}.bind(this));
-			this.oChangeVisualization.triggerModeChange("Comp", this.oRta.getToolbar());
+			this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
 		});
 
 		QUnit.test("when details are selected for a change", function (assert) {
@@ -601,6 +611,17 @@ sap.ui.define([
 					});
 				}.bind(this));
 		});
+
+		QUnit.test("when ChangeVisualization is active and exits", function (assert) {
+			this.oRta.setMode("visualization");
+			var fnClickSpy = sandbox.spy(this.oChangeVisualization, "_fnOnClickHandler");
+			this.oChangeVisualization.exit();
+			assert.ok(this.oChangeVisualization._oChangeIndicatorRegistry._bIsBeingDestroyed, "then the ChangeIndicatorRegistry is destroyed");
+			var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
+			var oMouseEvent = new Event("click");
+			oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
+			assert.notOk(fnClickSpy.called, "then the click event handler was removed from the Root Overlay DomRef");
+		});
 	});
 
 	function getIndicatorForElement (aIndicators, sId) {
@@ -656,7 +677,6 @@ sap.ui.define([
 				"then the indicators are sorted and the first is focused"
 			);
 		});
-
 
 		QUnit.test("when LEFT, UP or SHIFT TAB are pressed", function (assert) {
 			var aIndicators = collectIndicatorReferences();
