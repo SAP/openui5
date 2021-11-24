@@ -256,5 +256,36 @@
         ]
       }
     ]
+  },
+  "1.96.2": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "6f54c840434baf9c1bab26116c1b279d36148ea1",
+        "type": "FIX",
+        "text": " sap.ui.core: remove irreg. whitespace, make testrunner use utf8",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321198"
+          }
+        ]
+      },
+      {
+        "id": "c3146f1681916a89bc46fe15fc4b33deeb0b8b4d",
+        "type": "FIX",
+        "text": " XMLView: Rendering of style attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170281098"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170290345"
+          }
+        ]
+      }
+    ]
   }
 }

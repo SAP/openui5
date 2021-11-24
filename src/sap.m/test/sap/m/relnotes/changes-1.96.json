@@ -669,5 +669,99 @@
         ]
       }
     ]
+  },
+  "1.96.2": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "a8f1ea4a1f6bc9af7db8c5051cefabb6509bf9ff",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Focus inside the picker when it is open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170299136"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500007641772021"
+          }
+        ]
+      },
+      {
+        "id": "9cf42da8f5487172d3e596d3d376d8b668035988",
+        "type": "FIX",
+        "text": " sap.m.Input: Description when input is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170256848"
+          }
+        ]
+      },
+      {
+        "id": "e237528444cfb407131aae5b92da03e157ec9156",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: prevent endless rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170263676"
+          }
+        ]
+      },
+      {
+        "id": "7dfbdd1cea90bf8ca773cb0342386ec55d2935f4",
+        "type": "FIX",
+        "text": " sap.m.Input: setValue is not called on backspace",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008020832021"
+          }
+        ]
+      },
+      {
+        "id": "b772d534909420e9054ce34fffea2821bbb6a7c0",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: 'titleSelectorPress' event is now fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170273849"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170313868"
+          }
+        ]
+      },
+      {
+        "id": "ab18c82cd1def582a202e05d50052108afc120e2",
+        "type": "FIX",
+        "text": " sap.m.Popover: Correct positioning to the window element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180283652"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500007641772021"
+          }
+        ]
+      },
+      {
+        "id": "1a75e243ff9bab9593d2e2a6ae473c2d0e2285db",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Steps taller than viewport displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180339806"
+          }
+        ]
+      }
+    ]
   }
 }

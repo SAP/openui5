@@ -1,0 +1,18 @@
+{
+  "1.96.2": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "997cffbe9fc7e630673790e1e102cbb352765e22",
+        "type": "FIX",
+        "text": " sap.ui.dt: New Context Menu supports persistant entries",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170303561"
+          }
+        ]
+      }
+    ]
+  }
+}
