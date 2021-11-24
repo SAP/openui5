@@ -1,7 +1,6 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/support/Bootstrap",
 	"sap/ui/support/supportRules/Main",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
@@ -11,10 +10,12 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/Panel",
 	"sap/m/Button",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/base/Log",
+	"sap/base/util/deepExtend",
+	"sap/base/util/ObjectPath"
 	],
-	function (jQuery,
-			  Bootstrap,
+	function (Bootstrap,
 			  Main,
 			  CommunicationBus,
 			  channelNames,
@@ -23,7 +24,10 @@ sap.ui.define([
 			  Icon,
 			  Panel,
 			  Button,
-			  Text) {
+			  Text,
+			  Log,
+			  deepExtend,
+			  ObjectPath) {
 		"use strict";
 
 		var spyChannel = function (channelName) {
@@ -188,7 +192,7 @@ sap.ui.define([
 		QUnit.module("Main.js methods", {
 			beforeEach: function () {
 				// Store _mRuleSets
-				this._mRuleSets = jQuery.extend(true, {}, RuleSetLoader._mRuleSets);
+				this._mRuleSets = deepExtend({}, RuleSetLoader._mRuleSets);
 
 				RuleSetLoader._mRuleSets = {
 					"temporary": {
@@ -280,7 +284,7 @@ sap.ui.define([
 			},
 			afterEach: function () {
 				// Restore _mRuleSets
-				RuleSetLoader._mRuleSets = jQuery.extend(true, {}, this._mRuleSets);
+				RuleSetLoader._mRuleSets = deepExtend({}, this._mRuleSets);
 				this._mRuleSets = null;
 				RuleSet.clearAllRuleSets();
 				Main._aSelectedRules = [];
@@ -394,7 +398,7 @@ sap.ui.define([
 
 		QUnit.test("_fetchRuleSet with ruleset of type RuleSet and library not present in the available rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return {
 					library: {
 						support: createRuleSet("sap.uxap", "validRule", 1)
@@ -409,12 +413,12 @@ sap.ui.define([
 			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
 			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 1, "Should have one fetched rule");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
 		QUnit.test("_fetchRuleSet with ruleset of type RuleSet and library present in the available rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return {
 					library: {
 						support: createRuleSet("sap.uxap", "anotherValidRule", 2)
@@ -432,12 +436,12 @@ sap.ui.define([
 			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
 			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 4, "Should have four fetched rules");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
 		QUnit.test("_fetchRuleSet with ruleset of type Object and library not present in the available rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return {
 					library: {
 						support: createRuleSetObject("sap.uxap", "validRule", 3)
@@ -452,12 +456,12 @@ sap.ui.define([
 			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
 			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 3, "Should have three fetched rules");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
 		QUnit.test("_fetchRuleSet join two types of rulesets", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				var oRuleSet = createRuleSetObject("sap.uxap", "validRule", 2);
 
 				// Test if a ruleset with nested arrays of rules joins them correctly
@@ -492,24 +496,24 @@ sap.ui.define([
 			assert.ok(RuleSetLoader._mRuleSets["sap.uxap"].ruleset instanceof RuleSet, "Should be an instance of RuleSet");
 			assert.equal(Object.keys(RuleSetLoader._mRuleSets["sap.uxap"].ruleset._mRules).length, 8, "Should have eight fetched rules");
 
-			jQuery.sap.getObject.restore();
+			ObjectPath.get.restore();
 		});
 
 		QUnit.test("_fetchRuleSet with unknown library", function (assert) {
 			// Arrange
-			sinon.stub(jQuery.sap, "getObject", function (sLibName) {
+			sinon.stub(ObjectPath, "get", function (sLibName) {
 				return;
 			});
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 
 			// Act
 			RuleSetLoader._fetchRuleSet("sap.test");
 
 			//Assert
 			assert.notOk(RuleSetLoader._mRuleSets["sap.test"], "Should be undefined");
-			assert.equal(jQuery.sap.log.error.callCount, 1, "should have logged an error");
+			assert.equal(Log.error.callCount, 1, "should have logged an error");
 
-			jQuery.sap.getObject.restore();
-			jQuery.sap.log.error.restore();
+			ObjectPath.get.restore();
+			Log.error.restore();
 		});
 	});

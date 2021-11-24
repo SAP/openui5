@@ -5,25 +5,25 @@
 /**
  * Creates a report from data.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver',
-	'sap/ui/support/supportRules/report/IssueRenderer'], function(jQuery, Archiver, IssueRenderer) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/security/encodeXML', 'sap/base/util/isEmptyObject', 'sap/base/util/isPlainObject', 'sap/ui/support/supportRules/report/Archiver',
+	'sap/ui/support/supportRules/report/IssueRenderer'], function(jQuery, Log, encodeXML, isEmptyObject, isPlainObject, Archiver, IssueRenderer) {
 	'use strict';
 
 	// Private fields
-	var resourcesBaseUrl = jQuery.sap.getResourcePath('sap/ui/support/supportRules/report/resources');
+	var resourcesBaseUrl = sap.ui.require.toUrl('sap/ui/support/supportRules/report/resources');
 
 	/*
 	 * Functions taken from core.support.plugins.TechInfo.js
 	 */
 	var techInfoRenderer = {
 		line: function (buffer, right, border, label, content) {
-			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", jQuery.sap.escapeHTML(label || ""), "</label></td><td",
+			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", encodeXML(label || ""), "</label></td><td",
 					border ? " class='sapUiSupportTechInfoBorder'" : "", ">");
 			var ctnt = content;
 			if (typeof content === "function") {
 				ctnt = content(buffer);
 			}
-			buffer.push(jQuery.sap.escapeHTML(ctnt || ""));
+			buffer.push(encodeXML(ctnt || ""));
 			buffer.push("</td></tr>");
 		},
 		multiline: function (buffer, right, border, label, content){
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 					if (v) {
 						if (typeof (v) === "string" || typeof (v) === "string" || typeof (v) === "boolean") {
 							val = v;
-						} else if (Array.isArray(v) || jQuery.isPlainObject(v)) {
+						} else if (Array.isArray(v) || isPlainObject(v)) {
 							val = JSON.stringify(v);
 						}
 					}
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 		},
 		subheader: function (buffer, title) {
 			buffer.push("<tr class='sapUiSupportTitle'><td valign='top' colspan='2'>", "<label class='sapUiSupportLabel'>",
-				jQuery.sap.escapeHTML(title || ""), "</label></td></tr>");
+				encodeXML(title || ""), "</label></td></tr>");
 		}
 	};
 
@@ -83,8 +83,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 				var sapUI5Version = technicalInfo.sapUi5Version;
 				if (sapUI5Version && sapUI5Version.version) {
 					var oVersionInfo = sapUI5Version.version;
-					var sVersion = jQuery.sap.escapeHTML(oVersionInfo.version || "");
-					buffer.push(sVersion, " (built at ", jQuery.sap.escapeHTML(oVersionInfo.buildTimestamp || ""), ", last change ", jQuery.sap.escapeHTML(oVersionInfo.scmRevision || ""), ")");
+					var sVersion = encodeXML(oVersionInfo.version || "");
+					buffer.push(sVersion, " (built at ", encodeXML(oVersionInfo.buildTimestamp || ""), ", last change ", encodeXML(oVersionInfo.scmRevision || ""), ")");
 				} else {
 					buffer.push("not available");
 				}
@@ -101,14 +101,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 			techInfoRenderer.line(html, true, true, "Application", technicalInfo.appurl);
 			techInfoRenderer.multiline(html, true, true, "Configuration (bootstrap)", technicalInfo.bootconfig);
 			techInfoRenderer.multiline(html, true, true, "Configuration (computed)", technicalInfo.config);
-			if (!jQuery.isEmptyObject(technicalInfo.libraries)) {
+			if (!isEmptyObject(technicalInfo.libraries)) {
 				techInfoRenderer.multiline(html, true, true, "Libraries", technicalInfo.libraries);
 			}
 			techInfoRenderer.multiline(html, true, true, "Loaded Libraries", technicalInfo.loadedLibraries);
 			techInfoRenderer.line(html, true, true, "Loaded Modules", function(buffer){
 				jQuery.each(technicalInfo.modules, function(i,v){
 					if (v.indexOf("sap.ui.core.support") < 0) {
-						buffer.push("<span>", jQuery.sap.escapeHTML(v || ""), "</span>");
+						buffer.push("<span>", encodeXML(v || ""), "</span>");
 						if (i < technicalInfo.modules.length - 1) {
 							buffer.push(", ");
 						}
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 			html.push("</table></div>");
 			content = html.join('');
 		} catch (ex) {
-			jQuery.sap.log.warning('There was a problem extracting technical info.');
+			Log.warning('There was a problem extracting technical info.');
 		}
 
 		return content;
@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 	function getComponentPart(value) {
 		var result = '<td>';
 		if (value) {
-			result += jQuery.sap.escapeHTML(value);
+			result += encodeXML(value);
 		}
 		result += '</td>';
 		return result;
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 
 			content += '</table>';
 		} catch (ex) {
-			jQuery.sap.log.warning('There was a problem extracting app info.');
+			Log.warning('There was a problem extracting app info.');
 			content = '';
 		}
 
@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 					break;
 			}
 		} catch (ex) {
-			jQuery.sap.log.warning('There was a problem extracting scope info.');
+			Log.warning('There was a problem extracting scope info.');
 			content = '';
 		}
 
@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/support/supportRules/report/Archiver
 
 			content += '</table>';
 		} catch (ex) {
-			jQuery.sap.log.warning('There was a problem extracting selected rules info.');
+			Log.warning('There was a problem extracting selected rules info.');
 			content = '';
 		}
 

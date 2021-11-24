@@ -1,9 +1,10 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/IssueManager"
-], function (Analyzer, IssueManager) {
+], function (Log, Analyzer, IssueManager) {
 		"use strict";
 
 		QUnit.module("Analyzer", {
@@ -131,7 +132,7 @@ sap.ui.define([
 
 			sinon.spy(this.oAnalyzer, "_updateProgress");
 			sinon.spy(this.oAnalyzer, "reset");
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 
 			var aRules = [
 				{
@@ -165,13 +166,13 @@ sap.ui.define([
 
 				// Assert
 				assert.equal(oSpy.callCount, 2, "Two check functions should be executed successfully");
-				assert.equal(jQuery.sap.log.error.callCount, 2, "should have two errors logged");
+				assert.equal(Log.error.callCount, 2, "should have two errors logged");
 				assert.equal(that.oAnalyzer._updateProgress.callCount, 4, "_updateProgress should be called 4 times");
 				assert.equal(that.oAnalyzer.reset.callCount, 1, "reset should be called once");
 
 				that.oAnalyzer._updateProgress.restore();
 				that.oAnalyzer.reset.restore();
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 
 				done();
 			});
@@ -190,7 +191,7 @@ sap.ui.define([
 			sinon.spy(this.oAnalyzer, "_updateProgress");
 			sinon.spy(this.oAnalyzer, "reset");
 			sinon.spy(this.oAnalyzer, "_handleException");
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 
 			this.oAnalyzer._iAllowedTimeout = 1500;
 
@@ -235,7 +236,7 @@ sap.ui.define([
 			this.oAnalyzer.start(aRules, this.oMockCoreFacade, this.oMockExecutionScope).then(function () {
 
 				// Assert
-				assert.equal(jQuery.sap.log.error.callCount, 3, "should have 3 errors logged");
+				assert.equal(Log.error.callCount, 3, "should have 3 errors logged");
 				assert.equal(that.oAnalyzer._handleException.callCount, 3, "should have 3 errors handled");
 				assert.equal(that.oAnalyzer._updateProgress.callCount, 4, "_updateProgress should be called 4 times");
 				assert.equal(that.oAnalyzer.reset.callCount, 1, "reset should be called once");
@@ -243,7 +244,7 @@ sap.ui.define([
 				that.oAnalyzer._updateProgress.restore();
 				that.oAnalyzer.reset.restore();
 				that.oAnalyzer._handleException.restore();
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 
 				done();
 			});

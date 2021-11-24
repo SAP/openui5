@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/core/util/File",
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/extend",
 	"sap/ui/support/library"
-], function (Storage, constants, SelectionUtils, SharedModel, File, jQuery, library) {
+], function (Storage, constants, SelectionUtils, SharedModel, File, extend, library) {
 	"use strict";
 
 	var PresetsUtils = {
@@ -49,7 +49,7 @@ sap.ui.define([
 					if (oSystemPreset.id === oPreset.id) {
 						if (!oPreset.isModified) {
 							var bIsSelected = oPreset.selected;
-							oPreset = jQuery.extend({}, oSystemPreset);
+							oPreset = extend({}, oSystemPreset);
 							oPreset.selected = bIsSelected;
 							if (bIsSelected) {
 								SelectionUtils.setSelectedRules(oPreset.selections);
@@ -64,7 +64,7 @@ sap.ui.define([
 						disableDelete: true,
 						isSystemPreset: true
 					};
-					aPresets.splice(iLastSystemPresetPosition + 1, 0, jQuery.extend(mSystemPresetConfig, oSystemPreset));
+					aPresets.splice(iLastSystemPresetPosition + 1, 0, extend(mSystemPresetConfig, oSystemPreset));
 				}
 
 				iLastSystemPresetPosition++;

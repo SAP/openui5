@@ -5,8 +5,8 @@
 /**
  * Creates a zip file
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/jszip', 'sap/ui/core/util/File'],
-	function (jQuery, JSZip, File) {
+sap.ui.define(['sap/base/Log', 'sap/base/util/isPlainObject', 'sap/ui/thirdparty/jszip', 'sap/ui/core/util/File'],
+	function (Log, isPlainObject, JSZip, File) {
 	"use strict";
 
 	/**
@@ -21,29 +21,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/jszip', 'sap/ui/core/util
 	 */
 	Archiver.prototype.add = function(sName, vData, sType) {
 		if (!sName) {
-			jQuery.sap.log.error("Archiver: No name was given.");
+			Log.error("Archiver: No name was given.");
 			return false;
 		}
 		if (!vData) {
-			jQuery.sap.log.error("Archiver: No data was given.");
+			Log.error("Archiver: No data was given.");
 			return false;
 		}
 		if (typeof vData === "string") {
 			this._mData[sName] = vData;
 			return true;
 		} else if (sType) {
-			if ((sType === "json" || sType === "har") && (jQuery.isPlainObject(vData) || Array.isArray(vData))) {
+			if ((sType === "json" || sType === "har") && (isPlainObject(vData) || Array.isArray(vData))) {
 				try {
 					this._mData[sName] = JSON.stringify(vData);
 					return true;
 				} catch (ex) {
-					jQuery.sap.log.error("Archiver: JSON data could not be serialized for " + sName);
+					Log.error("Archiver: JSON data could not be serialized for " + sName);
 				}
 			} else {
-				jQuery.sap.log.error("Archiver: JSON data could not be serialized for " + sType + ". Either the type is unknown or the data has a wrong format.");
+				Log.error("Archiver: JSON data could not be serialized for " + sType + ". Either the type is unknown or the data has a wrong format.");
 			}
 		} else {
-			jQuery.sap.log.error("Archiver: Data could not be serialized for " + sName + ". Data is is not a string or has a an invalid type.");
+			Log.error("Archiver: Data could not be serialized for " + sName + ". Data is is not a string or has a an invalid type.");
 			return false;
 		}
 		return false;

@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/CommunicationBus",
@@ -13,8 +12,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/ui/models/formatter",
 	"sap/ui/support/supportRules/Constants",
-	"sap/m/OverflowToolbarAssociativePopoverControls"
-], function ($, BaseController, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls) {
+	"sap/m/OverflowToolbarAssociativePopoverControls",
+	"sap/base/util/deepExtend"
+], function (BaseController, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter, constants, OverflowToolbarAssociativePopoverControls, deepExtend) {
 	"use strict";
 
 	var mIssueSettings = {
@@ -176,11 +176,11 @@ sap.ui.define([
 			var sevFilter = this.model.getProperty("/severityFilter"),
 				sevFilterApplied = issue.severity === sevFilter || sevFilter === constants.FILTER_VALUE_ALL,
 				catFilter = this.model.getProperty("/categoryFilter"),
-				catFilterApplied = $.inArray( catFilter, issue.categories ) > -1 || catFilter === constants.FILTER_VALUE_ALL,
+				catFilterApplied = (issue.categories && issue.categories.indexOf(catFilter) > -1) || catFilter === constants.FILTER_VALUE_ALL,
 				elementFilter = this.model.getProperty("/elementFilter"),
 				elementFilterApplied =  elementFilter ===  issue.context.id || elementFilter === constants.FILTER_VALUE_ALL,
 				audFilter = this.model.getProperty("/audienceFilter"),
-				audienceFilterApplied =  $.inArray( audFilter, issue.audiences ) > -1 || audFilter === constants.FILTER_VALUE_ALL,
+				audienceFilterApplied = (issue.audiences && issue.audiences.indexOf(audFilter) > -1) || audFilter === constants.FILTER_VALUE_ALL,
 				bEnabledFilterButton = sevFilter === constants.FILTER_VALUE_ALL && catFilter === constants.FILTER_VALUE_ALL && audFilter === constants.FILTER_VALUE_ALL && elementFilter === constants.FILTER_VALUE_ALL;
 
 			this.model.setProperty("/bEnabledFilterButton", !bEnabledFilterButton);
@@ -219,7 +219,7 @@ sap.ui.define([
 				selectionCopy;
 			if (this.model.getProperty("/visibleIssuesCount") > 0) {
 				selectedIssues = this.structuredIssuesModel[selection.ruleLibName][selection.ruleId];
-				selectionCopy = jQuery.extend(true, {}, selection); // clone the model so that the TreeTable will not be affected
+				selectionCopy = deepExtend({}, selection); // clone the model so that the TreeTable will not be affected
 				selectionCopy.issues = selectedIssues;
 				selectionCopy.resolutionUrls = selectedIssues[0].resolutionUrls;
 				this.issueTable.setSelectedIndex(0);

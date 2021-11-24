@@ -2,12 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/support/supportRules/Main",
+sap.ui.define(["sap/ui/thirdparty/jquery",
+		"sap/ui/support/supportRules/Main",
 		"sap/ui/support/supportRules/RuleSetLoader"],
-	function (Main,
+	function (jQuery,
+			  Main,
 			  RuleSetLoader) {
 		"use strict";
 
+		jQuery.sap = jQuery.sap || {};
 
 		/**
 		 * The <code>jQuery.sap.support</code> namespace is the central entry point for the Support Assistant functionality.

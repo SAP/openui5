@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/Documentation",
 	"sap/ui/support/supportRules/util/Utils",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/deepExtend",
 	"sap/ui/core/library"
 ], function (
 	BaseController,
@@ -24,7 +24,7 @@ sap.ui.define([
 	Documentation,
 	Utils,
 	GroupHeaderListItem,
-	jQuery,
+	deepExtend,
 	coreLibrary
 ) {
 	"use strict";
@@ -656,7 +656,7 @@ sap.ui.define([
 		aSelectedPresets.push(oPresetOptions);
 
 		// keep the original version of the preset
-		aCustomPresets.push(jQuery.extend(true, {}, oPresetOptions));
+		aCustomPresets.push(deepExtend({}, oPresetOptions));
 
 		if (PresetsUtils.isPersistingAllowed()) {
 			PresetsUtils.persistCustomPresets();

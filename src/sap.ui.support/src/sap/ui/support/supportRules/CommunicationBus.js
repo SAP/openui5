@@ -6,11 +6,10 @@
  * @typedef {object} EventListener
  */
 sap.ui.define([
-	"jquery.sap.script", // contains jQuery.sap.getUriParameters
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBConfig"
 ],
-function (jQuery, CommunicationBusCommon, CommunicationBusConfig) {
+function (CommunicationBusCommon, CommunicationBusConfig) {
 	"use strict";
 
 	var oCommunicationBus;

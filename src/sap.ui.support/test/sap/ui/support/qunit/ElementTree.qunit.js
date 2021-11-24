@@ -1,10 +1,12 @@
 /*global sinon, QUnit*/
 
 sap.ui.define([
+	'sap/base/Log',
+	'sap/base/util/deepExtend',
 	'sap/base/util/isEmptyObject',
 	'sap/ui/support/supportRules/ui/external/ElementTree'
 ],
-	function (isEmptyObject, ElementTree) {
+	function (Log, deepExtend, isEmptyObject, ElementTree) {
 		'use strict';
 
 		var CONTAINER_LOCATION = 'qunit-fixture';
@@ -102,7 +104,7 @@ sap.ui.define([
 		QUnit.test('Creating element tree without data', function (assert) {
 			// arrange
 			var functionSpy = sinon.spy(ElementTree.prototype, 'setData');
-			var warningFunctionSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var warningFunctionSpy = sinon.spy(Log, 'warning');
 			var elementTree = new ElementTree(null, {});
 
 			// assert
@@ -111,7 +113,7 @@ sap.ui.define([
 			assert.strictEqual(warningFunctionSpy.callCount, 1, 'A warning should be raised when element tree is instantiated without data');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			ElementTree.prototype.setData.restore();
 		});
 
@@ -291,7 +293,7 @@ sap.ui.define([
 			var _createTreeSpy = sinon.stub(ElementTree.prototype, '_createTree', function () {
 				return 'createTee';
 			});
-			var mockSetting = jQuery.extend(true, {}, mockSettingsObject);
+			var mockSetting = deepExtend({}, mockSettingsObject);
 			mockSetting.controls[0].name = 'Page';
 
 			// act
@@ -307,7 +309,7 @@ sap.ui.define([
 
 		QUnit.test('Setting data with incorrect values', function (assert) {
 			// arrange
-			var warningFunctionSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var warningFunctionSpy = sinon.spy(Log, 'warning');
 
 			// act
 			this.elementTree.setData('Something');
@@ -324,7 +326,7 @@ sap.ui.define([
 			assert.strictEqual(warningFunctionSpy.callCount, 2, 'A warning should be logged when passing an array');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 		});
 
 		QUnit.module('Method getData', {
@@ -393,7 +395,7 @@ sap.ui.define([
 
 		QUnit.test('Passing incorrect parameter', function (assert) {
 			// arrange
-			var logSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var logSpy = sinon.spy(Log, 'warning');
 			var parameter;
 
 			// act
@@ -439,13 +441,13 @@ sap.ui.define([
 			assert.strictEqual(logSpy.callCount, 5, 'A warning should be issued');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 		});
 
 		QUnit.test('Passing non-existing element id', function (assert) {
 			// arrange
 			var controlId = 'not-existing';
-			var warningSpy = sinon.spy(jQuery.sap.log, 'warning');
+			var warningSpy = sinon.spy(Log, 'warning');
 			var _selectTreeElementSpy = sinon.spy(this.elementTree, '_selectTreeElement');
 
 			// act
@@ -457,7 +459,7 @@ sap.ui.define([
 			assert.strictEqual(_selectTreeElementSpy.callCount, 0, 'Method _selectTreeElement() should not be called');
 
 			// clean
-			jQuery.sap.log.warning.restore();
+			Log.warning.restore();
 			this.elementTree._selectTreeElement.restore();
 		});
 
@@ -465,8 +467,8 @@ sap.ui.define([
 			// arrange
 			var controlId = '__label0';
 			var _selectTreeElementSpy = sinon.spy(this.elementTree, '_selectTreeElement');
-			var warningSpy = sinon.spy(jQuery.sap.log, 'warning');
-			var errorSpy = sinon.spy(jQuery.sap.log, 'error');
+			var warningSpy = sinon.spy(Log, 'warning');
+			var errorSpy = sinon.spy(Log, 'error');
 
 			// act
 			var returnValue = this.elementTree.setSelectedElement(controlId);
@@ -484,8 +486,8 @@ sap.ui.define([
 
 			// clean
 			this.elementTree._selectTreeElement.restore();
-			jQuery.sap.log.warning.restore();
-			jQuery.sap.log.error.restore();
+			Log.warning.restore();
+			Log.error.restore();
 		});
 
 		QUnit.module('Method _selectTreeElement', {

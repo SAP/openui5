@@ -3,7 +3,7 @@
 */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component",
@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/library"
 ],
-function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
+function (Log, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus,
 		  IssueManager, History, DataCollector, channelNames,
 		  constants, RuleSetLoader, RuleSerializer, library) {
@@ -55,7 +55,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 				var evt = document.createEvent("CustomEvent");
 				evt.initCustomEvent("supportToolLoaded", true, true, {});
 			} else {
-				jQuery.sap.log.warning("Only one support tool allowed");
+				Log.warning("Only one support tool allowed");
 
 				return oMain;
 			}
@@ -319,7 +319,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			vPresetOrRules = library.SystemPresets[vPresetOrRules];
 
 			if (!vPresetOrRules) {
-				jQuery.sap.log.error("System preset ID is not valid");
+				Log.error("System preset ID is not valid");
 				return;
 			}
 		}
@@ -341,7 +341,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			vRuleDescriptors = vPresetOrRules.selections;
 
 			if (!vPresetOrRules.id || !vPresetOrRules.title) {
-				jQuery.sap.log.error("The preset must have an ID and a title");
+				Log.error("The preset must have an ID and a title");
 				return;
 			}
 
@@ -396,7 +396,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			i;
 
 		if (ExecutionScope.possibleScopes.indexOf(oExecutionScope.type) === -1) {
-			jQuery.sap.log.error("Invalid execution scope type. Type must be one of the following: "
+			Log.error("Invalid execution scope type. Type must be one of the following: "
 				+ ExecutionScope.possibleScopes.join(", "));
 			return false;
 		}
@@ -406,7 +406,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 			if (oExecutionScope.parentId) {
 				aSelectors.push(oExecutionScope.parentId);
 			} else if (Array.isArray(oExecutionScope.selectors)) {
-				jQuery.merge(aSelectors, oExecutionScope.selectors);
+				aSelectors = aSelectors.concat(oExecutionScope.selectors);
 			} else if (oExecutionScope.selectors) {
 				aSelectors.push(oExecutionScope.selectors);
 			}
@@ -459,20 +459,20 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 				mRules;
 
 			if (!oRuleDescriptor.libName || !oRuleDescriptor.ruleId) {
-				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Invalid Rule Descriptor.");
+				Log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Invalid Rule Descriptor.");
 				return;
 			}
 
 			oRuleset = RuleSetLoader.getRuleSet(oRuleDescriptor.libName);
 
 			if (!oRuleset || !oRuleset.ruleset) {
-				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Ruleset for library " + oRuleDescriptor.libName);
+				Log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Ruleset for library " + oRuleDescriptor.libName);
 				return;
 			}
 
 			mRules = oRuleset.ruleset.getRules();
 			if (!mRules || !mRules[oRuleDescriptor.ruleId]) {
-				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Rule with id " +
+				Log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Rule with id " +
 					oRuleDescriptor.ruleId + " for library " + oRuleDescriptor.libName);
 				return;
 			}

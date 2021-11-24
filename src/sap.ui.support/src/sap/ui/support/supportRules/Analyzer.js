@@ -7,8 +7,8 @@
  * runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
  * The analyzer can be used to update the UI with the current progress of a task while it's running.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","sap/ui/support/supportRules/Constants"],
-	function (jQuery, IssueManager, Constants) {
+sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/ui/support/supportRules/Constants"],
+	function (Log, IssueManager, Constants) {
 		"use strict";
 
 		/**
@@ -108,7 +108,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","
 			var sText = eRuleException.message || eRuleException;
 			var sMessage = "[" + Constants.SUPPORT_ASSISTANT_NAME + "] Error while execution rule \"" + sRuleId +
 				"\": " + sText;
-			jQuery.sap.log.error(sMessage);
+			Log.error(sMessage);
 			fnResolve();
 			this._updateProgress();
 		};

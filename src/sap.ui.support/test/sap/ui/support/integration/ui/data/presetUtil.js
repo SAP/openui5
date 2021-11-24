@@ -14,7 +14,16 @@ sap.ui.define([
 			PRESETS_GROUP_CUSTOM: "Custom Presets"
 		},
 		loadExamplePreset: function (fileName) {
-			var preset = jQuery.sap.syncGetJSON("test-resources/sap/ui/support/integration/ui/data/Presets/" + fileName).data;
+			var preset;
+
+			jQuery.ajax({
+				url: "test-resources/sap/ui/support/integration/ui/data/Presets/" + fileName,
+				dataType: "json",
+				async: false,
+				success: function(data) {
+					preset = data;
+				}
+			});
 
 			// prepare title if modified, used for testing
 			preset._forTestTitleIfModified = this.getModifiedPresetTitle(preset.title);
