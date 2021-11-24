@@ -1,0 +1,39 @@
+{
+  "1.98.0": {
+    "date": "November 2021",
+    "notes": [
+      {
+        "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170275459"
+          }
+        ]
+      },
+      {
+        "id": "05983d22507a341052aea987e18e7a986492d477",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: busy state now properly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170304073"
+          }
+        ]
+      },
+      {
+        "id": "e4f05304347797a5bbbed34c7ba5e6d555b8992e",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Adapt footer toolbar's rounded corners"
+      },
+      {
+        "id": "0bc06af21375cea1e2c87740a32282886b7d9cc0",
+        "type": "FEATURE",
+        "text": " Controls adjusted to new theme SAP Horizon"
+      }
+    ]
+  }
+}
