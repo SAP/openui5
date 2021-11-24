@@ -111,7 +111,7 @@
 								width="100%">
 							<custom:TitleLink
 								text="{i18n>WELCOME_BLOCK_3_TITLE}"
-								href="topic/ec699e0817fb46a0817b0fa276a249f8"
+								href="topic/23cfd955f58142389fa7c9097e11559c"
 								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
 							<Text
@@ -149,6 +149,22 @@
 										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 								<Text text="{i18n>WELCOME_BLOCK_3_TEXT_5}"/>
 							</HBox>
+							<HBox>
+								<core:Icon
+										src="sap-icon://accept"
+										size="0.875rem"
+										color="Default"
+										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+								<Text text="{i18n>WELCOME_BLOCK_3_TEXT_6}"/>
+							</HBox>
+							<HBox>
+								<core:Icon
+										src="sap-icon://accept"
+										size="0.875rem"
+										color="Default"
+										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+								<Text text="{i18n>WELCOME_BLOCK_3_TEXT_7}"/>
+							</HBox>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -160,7 +176,7 @@
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
-								href="topic/23cfd955f58142389fa7c9097e11559c"
+								href="topic/bf2d55eaa33b44a78ef95e7946d658e8"
 								text="{i18n>WELCOME_BLOCK_4_TITLE}"
 								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
@@ -190,6 +206,38 @@
 											color="Default"
 											class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 									<Text text="{i18n>WELCOME_BLOCK_4_TEXT_4}"/>
+								</HBox>
+								<HBox>
+									<core:Icon
+											src="sap-icon://accept"
+											size="0.875rem"
+											color="Default"
+											class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+									<Text text="{i18n>WELCOME_BLOCK_4_TEXT_5}"/>
+								</HBox>
+								<HBox>
+									<core:Icon
+											src="sap-icon://accept"
+											size="0.875rem"
+											color="Default"
+											class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+									<Text text="{i18n>WELCOME_BLOCK_4_TEXT_6}"/>
+								</HBox>
+								<HBox>
+									<core:Icon
+											src="sap-icon://accept"
+											size="0.875rem"
+											color="Default"
+											class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+									<Text text="{i18n>WELCOME_BLOCK_4_TEXT_7}"/>
+								</HBox>
+								<HBox>
+									<core:Icon
+											src="sap-icon://accept"
+											size="0.875rem"
+											color="Default"
+											class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+									<Text text="{i18n>WELCOME_BLOCK_4_TEXT_8}"/>
 								</HBox>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
