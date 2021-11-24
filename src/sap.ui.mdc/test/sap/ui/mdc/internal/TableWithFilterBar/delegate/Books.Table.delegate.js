@@ -156,10 +156,9 @@ sap.ui.define([
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		var oDataStateIndicator = oTable.getDataStateIndicator();
 		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
-			var oFilterBar = Core.byId(oTable.getFilter());
+			if (oBindingInfo.filters) { // adjust already created filters as it may come from FilterBar or from Table-Filtering
+				var aPropertiesMetadata = oTable.getPropertyHelper().getProperties();
 
-			if (oFilterBar) {
-				var mConditions = oFilterBar.getConditions();
 				var fnAdjustDate = function(sValue, bStart) {
 					if (sValue && typeof sValue === "string" && sValue.indexOf("T") > 0) {
 						var aParts = sValue.split("T");
@@ -208,6 +207,7 @@ sap.ui.define([
 						return sValue;
 					}
 				};
+
 				var fnAdjustDateTimeFilter = function(oFilter) {
 					if (oFilter.sOperator === FilterOperator.EQ && oFilter.oValue1 && typeof oFilter.oValue1 === "string" && oFilter.oValue1.indexOf("T") > 0) {
 						// as milliseconds stored at service - convert into a range
@@ -225,39 +225,20 @@ sap.ui.define([
 					}
 				};
 
-				if (mConditions) {
-					var aPropertiesMetadata = oFilterBar.getPropertyInfoSet ? oFilterBar.getPropertyInfoSet() : null;
-					var aParameterNames = DelegateUtil.getParameterNames(oFilterBar);
-					var oOuterFilterInfo = FilterUtil.getFilterInfo(ODataTableDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
-					var aFilters = [];
-
-					var fnAdjustFilter = function(oFilter) {
-						var bChanged = false;
-						if (oFilter.aFilters) {
-							for (var j = 0; j < oFilter.aFilters.length; j++) {
-								if (fnAdjustFilter(oFilter.aFilters[j])) {
-									bChanged = true;
-								}
-							}
-						} else {
-							var oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, oFilter.sPath);
-							if (oProperty.typeConfig.typeInstance.getMetadata().getName() === "sap.ui.model.odata.type.DateTimeOffset") {
-								fnAdjustDateTimeFilter(oFilter);
-								bChanged = true;
-							}
+				var fnAdjustFilter = function(oFilter) {
+					if (oFilter.aFilters) {
+						for (var j = 0; j < oFilter.aFilters.length; j++) {
+							fnAdjustFilter(oFilter.aFilters[j]);
 						}
-						return bChanged;
-					};
-
-					if (oOuterFilterInfo.filters) {
-						var bChanged = fnAdjustFilter(oOuterFilterInfo.filters);
-
-						if (bChanged) { // only update if needed
-							aFilters.push(oOuterFilterInfo.filters);
-							oBindingInfo.filters = new Filter(aFilters, true);
+					} else {
+						var oProperty = FilterUtil.getPropertyByKey(aPropertiesMetadata, oFilter.sPath);
+						if (oProperty.typeConfig.typeInstance.getMetadata().getName() === "sap.ui.model.odata.type.DateTimeOffset") {
+							fnAdjustDateTimeFilter(oFilter);
 						}
 					}
-				}
+				};
+
+				fnAdjustFilter(oBindingInfo.filters);
 			}
 
 		}
