@@ -29,7 +29,7 @@ sap.ui.define([
 		},
 		handleItemPress: function (oEvent) {
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(2),
-				supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
+				supplierPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop();
 
 			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout,

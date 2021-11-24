@@ -12,10 +12,14 @@ sap.ui.define([
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this._bDescendingSort = false;
+
+			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
+			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
+			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
 		},
 		onListItemPress: function (oEvent) {
 			var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1),
-				productPath = oEvent.getSource().getBindingContext("products").getPath(),
+				productPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				product = productPath.split("/").slice(-1).pop();
 
 			this.oRouter.navTo("detail", {layout: oNextUIState.layout, product: product});
@@ -47,6 +51,13 @@ sap.ui.define([
 				oSorter = new Sorter("Name", this._bDescendingSort);
 
 			oBinding.sort(oSorter);
+		},
+
+		_onProductMatched: function (oEvent) {
+			var sProduct = oEvent.getParameter("arguments").product || this._product || "0",
+				oTable = this.byId("productsTable");
+
+			oTable.getItems()[oTable.getBinding("items").aIndices.indexOf(+sProduct)].setSelected(true);
 		}
 	});
 });

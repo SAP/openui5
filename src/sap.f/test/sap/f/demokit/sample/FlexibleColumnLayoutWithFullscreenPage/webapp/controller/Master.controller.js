@@ -10,7 +10,7 @@ sap.ui.define([
 			this._bDescendingSort = false;
 		},
 		onListItemPress: function (oEvent) {
-			var sCategory = oEvent.getSource().getCells()[0].getTitle(),
+			var sCategory = oEvent.getSource().getSelectedItem().getCells()[0].getTitle(),
 				bPhone = this.getOwnerComponent().getModel().getProperty("/isPhone"),
 				aProducts = this.getView().getModel("products").getData().ProductCollection,
 				iProduct = 0;
