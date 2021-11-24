@@ -351,24 +351,11 @@ Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/D
 
 Library: sap.ui.integration:
 
-Component: UI5 Web Components, version: 1.0.0-rc.8
+Component: UI5 Web Components, version: 1.0.1
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
-Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/*.*.json
-	src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/bundle*
-
-Component: Webcomponentsjs, version: 1.0.2
-Copyright: 2015 The Polymer Authors
-License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
-Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/webcomponentsjs/*
-
-Component: Unicode Common Locale Data Repository
-Copyright: 1991-2014 Unicode, Inc.
-License: Unicode-DFS-2015
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
-Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/Unicode-Data-Files-LICENSE.txt
+Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/*
 
 Component: Adaptive Cards, version: 2.9.0
 Copyright: 2017 Microsoft

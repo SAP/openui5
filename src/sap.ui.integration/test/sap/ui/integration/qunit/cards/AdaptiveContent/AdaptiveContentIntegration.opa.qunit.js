@@ -78,9 +78,9 @@ sap.ui.define([
 					Opa5.assert.strictEqual($oCard.find("#EmailVal ui5-input").val(), oData["EmailVal"], "The value is correct");
 					Opa5.assert.strictEqual($oCard.find("#TelVal ui5-input").val(), oData["TelVal"], "The value is correct");
 					Opa5.assert.strictEqual($oCard.find("#MultiLineVal ui5-textarea").val(), oData["MultiLineVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#NumVal ui5-input").val(), oData["NumVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#DateVal ui5-datepicker").val(), oData["DateVal"], "The value is correct");
-					Opa5.assert.strictEqual($oCard.find("#TimeVal ui5-timepicker").val(), oData["TimeVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#NumVal ui5-step-input").val(), parseInt(oData["NumVal"]), "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#DateVal ui5-date-picker").val(), oData["DateVal"], "The value is correct");
+					Opa5.assert.strictEqual($oCard.find("#TimeVal ui5-time-picker").val(), oData["TimeVal"], "The value is correct");
 
 					for (var i = 0; i < aRadioButtons.length; i++) {
 						if (aRadioButtons[i].selected) {

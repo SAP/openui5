@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		this._checkboxInputElement = document.createElement("ui5-checkbox");
 		this._checkboxInputElement.id = this.id;
 		this._checkboxInputElement.text = this.title || "";
-		this._checkboxInputElement.wrap = this.wrap;
+		this._checkboxInputElement.wrappingType = this.wrap ? "Normal" : "None";
 		this._checkboxInputElement.checked = false;
 
 		// We have to map Input.Toggle value with the checked property of the ui5-checkbox webcomponent.

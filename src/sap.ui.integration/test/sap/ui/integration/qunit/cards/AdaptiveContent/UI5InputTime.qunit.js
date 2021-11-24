@@ -72,11 +72,11 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oTimeInput = document.querySelector("#TimeVal ui5-timepicker");
-			var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-timepicker");
+			var oTimeInput = document.querySelector("#TimeVal ui5-time-picker");
+			var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-time-picker");
 
 			//Assert
-			assert.strictEqual(oTimeInput.tagName.toLowerCase(), "ui5-timepicker", "ui5-timepicker webcomponent is rendered");
+			assert.strictEqual(oTimeInput.tagName.toLowerCase(), "ui5-time-picker", "ui5-time-picker webcomponent is rendered");
 			assert.ok(oTimeInput, "The time input is created");
 			assert.strictEqual(oTimeInput.value, "", "There is no initial value set");
 			assert.strictEqual(oTimeInput.formatPattern, "HH:mm", "The formatPattern should be HH:mm");
@@ -96,7 +96,7 @@ function (
 			oDomRef = oToggleInput.internalRender();
 
 		//Assert
-		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-timepicker", "ui5-timepicker webcomponent is rendered");
+		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-time-picker", "ui5-time-picker webcomponent is rendered");
 	});
 
 
@@ -123,7 +123,7 @@ function (
 
 			setTimeout(function() {
 				//Arrange
-				var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-timepicker");
+				var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-time-picker");
 
 				//Assert
 				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value bigger than min value should be valid and value state should be None.");
@@ -158,7 +158,7 @@ function (
 
 			setTimeout(function () {
 				//Arrange
-				var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-timepicker");
+				var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-time-picker");
 
 				//Assert
 				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value less than max value should be valid and value state should be None.");
@@ -194,7 +194,7 @@ function (
 
 			setTimeout(function () {
 				//Arrange
-				var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-timepicker");
+				var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-time-picker");
 
 				//Assert
 				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value is valid and value state should be None.");
@@ -230,7 +230,7 @@ function (
 
 			setTimeout(function () {
 				//Arrange
-				var TimeInputWithWrongMinMaxValues = document.querySelector("#TimeInputWithWrongMinMaxValues ui5-timepicker");
+				var TimeInputWithWrongMinMaxValues = document.querySelector("#TimeInputWithWrongMinMaxValues ui5-time-picker");
 
 				// Assert
 				assert.strictEqual(TimeInputWithWrongMinMaxValues.valueState, ValueState.Error, "The min value is bigger than max value and value state should be Error.");

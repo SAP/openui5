@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 */
 	UI5InputDate.prototype = Object.create(AdaptiveCards.DateInput.prototype);
 	UI5InputDate.prototype.internalRender = function () {
-		this._dateInputElement = document.createElement("ui5-datepicker");
+		this._dateInputElement = document.createElement("ui5-date-picker");
 
 		this._dateInputElement.id = this.id;
 		this._dateInputElement.placeholder = this.placeholder;

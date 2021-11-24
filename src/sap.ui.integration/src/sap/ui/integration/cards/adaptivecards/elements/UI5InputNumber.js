@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 *
 	 * @class
 	 * An object that overwrites Microsoft's AdaptiveCard <code>Input.Number</code> element by replacing it with
-	 * <code>ui5-input</code> web component with type Number.
+	 * <code>ui5-step-input</code> web component.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -21,21 +21,16 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 */
 	UI5InputNumber.prototype = Object.create(AdaptiveCards.NumberInput.prototype);
 	UI5InputNumber.prototype.internalRender = function () {
-		this._numberInputElement = document.createElement("ui5-input");
+		this._numberInputElement = document.createElement("ui5-step-input");
 
-		this._numberInputElement.type = "Number";
 		this._numberInputElement.id = this.id;
 		this._numberInputElement.placeholder = this.placeholder || "";
 		this._numberInputElement.value = this.defaultValue || "";
+		this._numberInputElement.min = this.min;
+		this._numberInputElement.max = this.max;
+		this._numberInputElement.style.width = "13.125rem"; // the default width of the ui5-input web component
 
 		this._numberInputElement.addEventListener("change", function (oEvent) {
-			// the logic for min and max value from the native number input is handled here, since there are no similar properties in the ui5-input web component
-			if (oEvent.target.value > this.max) {
-				oEvent.target.value = this.max;
-			}
-			if (oEvent.target.value < this.min) {
-				oEvent.target.value = this.min;
-			}
 			this.valueChanged();
 		}.bind(this));
 

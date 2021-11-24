@@ -55,11 +55,11 @@ function (
 			Core.applyChanges();
 
 			//Arrange
-			var oDateInput = document.querySelector("#DateVal ui5-datepicker");
-			var oDateInputWithPlaceholder = document.querySelector("#DateInputWithPlaceholder ui5-datepicker");
+			var oDateInput = document.querySelector("#DateVal ui5-date-picker");
+			var oDateInputWithPlaceholder = document.querySelector("#DateInputWithPlaceholder ui5-date-picker");
 
 			//Assert
-			assert.strictEqual(oDateInput.tagName.toLowerCase(), "ui5-datepicker", "ui5-datepicker webcomponent is rendered");
+			assert.strictEqual(oDateInput.tagName.toLowerCase(), "ui5-date-picker", "ui5-date-picker webcomponent is rendered");
 			assert.ok(oDateInput, "The date input is created");
 			assert.strictEqual(oDateInput.placeholder, undefined, "There is no placeholder");
 			assert.strictEqual(oDateInput.value, "", "The is no initial value set");
@@ -78,6 +78,6 @@ function (
 			oDomRef = oToggleInput.internalRender();
 
 		//Assert
-		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-datepicker", "ui5-datepicker webcomponent is rendered");
+		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-date-picker", "ui5-date-picker webcomponent is rendered");
 	});
 });

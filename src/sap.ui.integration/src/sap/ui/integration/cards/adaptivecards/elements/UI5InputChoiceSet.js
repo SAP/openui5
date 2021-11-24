@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 *
 	 * @class
 	 * An object that overwrites Microsoft's Adaptive Card <code>Input.ChoiceSet</code> element by replacing it with
-	 * <code>ui5-select</code>, or container with <code>ui5-radiobutton</code>, or <code>ui5-checkbox</code> web components.
+	 * <code>ui5-select</code>, or container with <code>ui5-radio-button</code>, or <code>ui5-checkbox</code> web components.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -47,23 +47,23 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 
 				return this._selectElement;
 			}
-			//if this.isMultiSelect is false and this.isCompact is false, we need to render a container with ui5-radiobutton web components
+			//if this.isMultiSelect is false and this.isCompact is false, we need to render a container with ui5-radio-button web components
 			var oRbContainer = document.createElement("div");
 			oRbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
 			oRbContainer.id = this.id;
-			oRbContainer.addEventListener("select", function () {
+			oRbContainer.addEventListener("change", function () {
 				this.valueChanged();
 			}.bind(this));
 			this._toggleInputs = [];
 			for (var j = 0; j < this.choices.length; j++) {
-				var oRb = document.createElement("ui5-radiobutton");
+				var oRb = document.createElement("ui5-radio-button");
 				oRb.value = this.choices[j].value;
 				oRb.text = this.choices[j].title;
 				oRb.name = this.id;
-				oRb.wrap = this.wrap;
+				oRb.wrappingType = this.wrap ? "Normal" : "None";
 
 				if (this.choices[j].value === this.defaultValue) {
-					oRb.selected = true;
+					oRb.checked = true;
 				}
 
 				this._toggleInputs.push(oRb);
@@ -84,7 +84,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			oCb.value = this.choices[k].value;
 			oCb.text = this.choices[k].title;
 			oCb.name = this.id;
-			oCb.wrap = this.wrap;
+			oCb.wrappingType = this.wrap ? "Normal" : "None";
 
 			if (defaultValues && defaultValues.indexOf(this.choices[k].value) >= 0) {
 				oCb.checked = true;
@@ -115,7 +115,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 					}
 
 					for (i = 0; i < this._toggleInputs.length; i++) {
-						if (this._toggleInputs[i].selected) {
+						if (this._toggleInputs[i].checked) {
 							return this._toggleInputs[i].value;
 						}
 					}

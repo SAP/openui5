@@ -157,7 +157,7 @@ function (
 
 			//Assert
 			assert.strictEqual(oRBContainer.tagName.toLowerCase(), "div", "a container is rendered");
-			assert.ok(oSelectedRB.selected, "The correct option is selected");
+			assert.ok(oSelectedRB.checked, "The correct option is selected");
 			assert.strictEqual(oSelectedRB.text, "Green", "The choice title is mapped correctly");
 			assert.strictEqual(oSelectedRB.value, "2", "The choice value is mapped correctly");
 			assert.ok(aToggleInputs.length === aRadioButtons.length, "The options are correctly mapped");
@@ -165,8 +165,8 @@ function (
 
 			for (var i = 0; i < aRadioButtons.length; i++) {
 				var oRB = aRadioButtons[i];
-				assert.strictEqual(oRB.tagName.toLowerCase(), "ui5-radiobutton", "the container contains only ui5-radiobutton web components");
-				assert.ok(oRB.wrap, "The long text should wrap at some point");
+				assert.strictEqual(oRB.tagName.toLowerCase(), "ui5-radio-button", "the container contains only ui5-radio-button web components");
+				assert.strictEqual(oRB.wrappingType, "Normal", "The long text should wrap at some point");
 			}
 
 			done();
@@ -202,7 +202,7 @@ function (
 			for (var i = 0; i < aCheckBoxs.length; i++) {
 				var oCB = aCheckBoxs[i];
 				assert.strictEqual(oCB.tagName.toLowerCase(), "ui5-checkbox", "the container contains only ui5-checkbox web components");
-				assert.ok(oCB.wrap, "The long text should wrap at some point");
+				assert.strictEqual(oCB.wrappingType, "Normal", "The long text should wrap at some point");
 			}
 
 			done();

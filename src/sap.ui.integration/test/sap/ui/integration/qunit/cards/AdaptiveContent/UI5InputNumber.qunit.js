@@ -54,15 +54,14 @@ function (
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
-			var oNumberInput = document.querySelector("#WithValue ui5-input");
-			var oNumInputWithoutValue = document.querySelector("#ValueNotSpecified ui5-input");
+			var oNumberInput = document.querySelector("#WithValue ui5-step-input");
+			var oNumInputWithoutValue = document.querySelector("#ValueNotSpecified ui5-step-input");
 
 
 			//Assert
-			assert.strictEqual(oNumberInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+			assert.strictEqual(oNumberInput.tagName.toLowerCase(), "ui5-step-input", "ui5-step-input webcomponent is rendered");
 			assert.ok(oNumberInput, "The number input is created");
 			assert.strictEqual(oNumberInput.placeholder, "", "The placeholder is not specified");
-			assert.strictEqual(oNumberInput.type, "Number", "The input type is number");
 			assert.strictEqual(oNumberInput.value, 1, "The initial value is correct");
 			assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
 			assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
@@ -77,6 +76,6 @@ function (
 			oDomRef = oNumberInput.internalRender();
 
 		//Assert
-		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
+		assert.strictEqual(oDomRef.tagName.toLowerCase(), "ui5-step-input", "ui5-step-input webcomponent is rendered");
 	});
 });

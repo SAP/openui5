@@ -26,7 +26,7 @@ sap.ui.define([
 		UI5InputTime.prototype = Object.create(AdaptiveCards.TimeInput.prototype);
 
 		UI5InputTime.prototype.internalRender = function () {
-			var sWCElement = "ui5-timepicker";
+			var sWCElement = "ui5-time-picker";
 			this._timeInputElement = document.createElement(sWCElement);
 			this._timeInputElement.id = this.id;
 			this._timeInputElement.value = this.defaultValue || "";
