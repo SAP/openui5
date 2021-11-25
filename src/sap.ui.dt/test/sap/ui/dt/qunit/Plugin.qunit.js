@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a Plugin is initialized with register methods", {
 		beforeEach: function(assert) {

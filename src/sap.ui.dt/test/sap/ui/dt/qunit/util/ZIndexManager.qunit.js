@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	ZIndexManager,
 	BusyIndicator,
 	Popup,
@@ -20,7 +19,7 @@ function(
 ) {
 	"use strict";
 	var sAdaptableDialogId = "adaptableDialog";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var fnFilter = function(oPopupElement) {
 		if (oPopupElement.getId() === sAdaptableDialogId) {
 			return true;

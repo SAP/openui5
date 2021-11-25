@@ -28,8 +28,7 @@ sap.ui.define([
 	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	jQuery,
 	ElementUtil,
 	Button,
@@ -60,7 +59,7 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var fnCreateMinimumControls = function() {
 		this.oButton = new Button("testButton1", {text: "Button"});

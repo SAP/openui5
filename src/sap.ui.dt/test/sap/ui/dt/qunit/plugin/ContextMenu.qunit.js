@@ -10,9 +10,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Button",
-	"sap/m/Popover",
-	"sap/m/OverflowToolbarButton",
-	"sap/m/FlexBox",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4"
@@ -26,15 +23,12 @@ sap.ui.define([
 	Device,
 	QUnitUtils,
 	Button,
-	Popover,
-	OverflowToolbarButton,
-	FlexBox,
 	VerticalLayout,
 	KeyCodes,
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function openContextMenu(oOverlay, bMiniMenu, bTouch, bRestoreClock) {
 		if (bRestoreClock) {

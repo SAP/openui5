@@ -96,7 +96,7 @@ sap.ui.define([
 		this.insertMyInheritedAggregation();
 	};
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an ManagedObject is observed", {
 		beforeEach: function (assert) {

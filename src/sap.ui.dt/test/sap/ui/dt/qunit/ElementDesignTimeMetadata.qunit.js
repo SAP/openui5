@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an ElementDesignTimeMetadata is created for a control", {
 		beforeEach: function() {

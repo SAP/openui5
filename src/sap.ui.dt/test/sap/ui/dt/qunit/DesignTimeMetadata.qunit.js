@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Input"
-],
-function(
+], function(
 	jQuery,
 	sinon,
 	DesignTimeMetadata,
@@ -22,7 +21,7 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that the DesignTimeMetadata is created for a fake control", {
 		beforeEach: function() {

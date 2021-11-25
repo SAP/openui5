@@ -4,14 +4,13 @@ sap.ui.define([
 	"sap/ui/dt/enablement/report/QUnitReport",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Button" // Used implicitly by ElementEnablementTest
-],
-function (
+], function(
 	ReportQUnit,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.dt.test.report.QUnit", {
 		afterEach: function () {

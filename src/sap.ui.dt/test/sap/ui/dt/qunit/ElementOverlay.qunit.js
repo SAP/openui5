@@ -59,7 +59,7 @@ sap.ui.define([
 	// Please keep this tag without any styling.
 	jQuery("#qunit-fixture").removeAttr("style");
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Creation of the overlay container", {
 		beforeEach: function() {

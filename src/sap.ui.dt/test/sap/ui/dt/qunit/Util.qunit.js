@@ -5,17 +5,16 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	Util,
 	ManagedObject,
 	jQuery,
 	sinon
 ) {
-	'use strict';
-	var sandbox = sinon.sandbox.create();
+	"use strict";
+	var sandbox = sinon.createSandbox();
 
-	QUnit.module('wrapError()', function () {
+	QUnit.module("wrapError()", function () {
 		QUnit.test("string as parameter", function (assert) {
 			var sError = "I am an error as string";
 			assert.strictEqual(Util.wrapError(sError).message, sError, "error as string is correctly wrapped");
@@ -27,21 +26,21 @@ function(
 		QUnit.test("any object as parameter", function (assert) {
 			var oError = Util.wrapError({});
 			assert.ok(oError instanceof Error, "error object returned");
-			assert.strictEqual(oError.message, '', "message is empty");
+			assert.strictEqual(oError.message, "", "message is empty");
 		});
 		QUnit.test("no parameter is specified", function (assert) {
 			var oError = Util.wrapError();
 			assert.ok(oError instanceof Error, "error object returned");
-			assert.strictEqual(oError.message, '', "message is empty");
+			assert.strictEqual(oError.message, "", "message is empty");
 		});
 		QUnit.test("null as parameter", function (assert) {
 			var oError = Util.wrapError(null);
 			assert.ok(oError instanceof Error, "error object returned");
-			assert.strictEqual(oError.message, '', "message is empty");
+			assert.strictEqual(oError.message, "", "message is empty");
 		});
 	});
 
-	QUnit.module('isForeignError()', function () {
+	QUnit.module("isForeignError()", function () {
 		QUnit.test("foreign error as parameter", function (assert) {
 			var oError = new Error("This error happened somewhere else");
 			assert.equal(Util.isForeignError(oError), true, "error from somewhere else is recognized as foreign");
@@ -60,14 +59,14 @@ function(
 			);
 			assert.throws(
 				function () {
-					Util.isForeignError('error');
+					Util.isForeignError("error");
 				},
 				"error throws if a string specified"
 			);
 			assert.throws(
 				function () {
 					Util.isForeignError({
-						name: ''
+						name: ""
 					});
 				},
 				"error throws if a plain object specified"
@@ -87,49 +86,49 @@ function(
 		});
 	});
 
-	QUnit.module('createError()', function () {
+	QUnit.module("createError()", function () {
 		QUnit.test("both parameters are specified", function (assert) {
 			var oError = Util.createError("FileName#MethodName", "custom text message");
 			assert.ok(oError instanceof Error, "Error instance returned from the factory");
-			assert.ok(oError.name.indexOf('sap.ui.dt') !== -1, "Name of the error contains library information");
-			assert.ok(oError.name.indexOf('FileName#MethodName') !== -1, "Name of the error contains location information");
+			assert.ok(oError.name.indexOf("sap.ui.dt") !== -1, "Name of the error contains library information");
+			assert.ok(oError.name.indexOf("FileName#MethodName") !== -1, "Name of the error contains location information");
 			assert.equal(oError.message, "custom text message", "message of the error equals to specified message");
 		});
 		QUnit.test("message is omitted", function (assert) {
 			var oError = Util.createError("FileName#MethodName");
 			assert.ok(oError instanceof Error, "Error instance returned from the factory");
-			assert.ok(oError.name.indexOf('sap.ui.dt') !== -1, "Name of the error contains library information");
-			assert.ok(oError.name.indexOf('FileName#MethodName') !== -1, "Name of the error contains location information");
+			assert.ok(oError.name.indexOf("sap.ui.dt") !== -1, "Name of the error contains library information");
+			assert.ok(oError.name.indexOf("FileName#MethodName") !== -1, "Name of the error contains location information");
 			assert.equal(oError.message, undefined, "message is empty");
 		});
 		QUnit.test("location is omitted", function (assert) {
 			var oError = Util.createError(null, "custom text message");
 			assert.ok(oError instanceof Error, "Error instance returned from the factory");
-			assert.ok(oError.name.indexOf('sap.ui.dt') !== -1, "Name of the error contains library information");
-			assert.ok(oError.name.indexOf('FileName#MethodName') === -1, "Name of the error doesn't contain location information");
+			assert.ok(oError.name.indexOf("sap.ui.dt") !== -1, "Name of the error contains library information");
+			assert.ok(oError.name.indexOf("FileName#MethodName") === -1, "Name of the error doesn't contain location information");
 			assert.equal(oError.message, "custom text message", "message of the error equals to specified message");
 		});
 		QUnit.test("called without parameters", function (assert) {
 			var oError = Util.createError();
 			assert.ok(oError instanceof Error, "Error instance returned from the factory");
-			assert.ok(oError.name.indexOf('sap.ui.dt') !== -1, "Name of the error contains library information");
+			assert.ok(oError.name.indexOf("sap.ui.dt") !== -1, "Name of the error contains library information");
 			assert.equal(oError.message, undefined, "message is empty");
 		});
 	});
 
-	QUnit.module('errorToString()', function () {
+	QUnit.module("errorToString()", function () {
 		QUnit.test("string as parameter", function (assert) {
-			var sError = Util.errorToString('error message');
-			assert.strictEqual(sError, 'error message', "message is correct");
+			var sError = Util.errorToString("error message");
+			assert.strictEqual(sError, "error message", "message is correct");
 		});
 		QUnit.test("Error object as parameter", function (assert) {
-			var sError = Util.errorToString(new Error('error message'));
-			assert.ok(sError.indexOf('error message') !== -1, "error message is in output");
+			var sError = Util.errorToString(new Error("error message"));
+			assert.ok(sError.indexOf("error message") !== -1, "error message is in output");
 		});
 		QUnit.test("Error object as parameter", function (assert) {
-			var oError = new Error('error message');
+			var oError = new Error("error message");
 			var sStack = oError.stack;
-			oError.stack = oError.toString() + "\t\n \t\n" + oError.stack + '  \n';
+			oError.stack = oError.toString() + "\t\n \t\n" + oError.stack + "  \n";
 			assert.ok(oError.toString() + sStack, "duplicate text and whitespaces are trimmed");
 		});
 		QUnit.test("called with wrong parameter", function (assert) {
@@ -154,28 +153,28 @@ function(
 		});
 	});
 
-	QUnit.module('propagateError()', function () {
+	QUnit.module("propagateError()", function () {
 		QUnit.test("when Error is foreign", function (assert) {
-			var oError = new Error('original error message');
-			var oErrorPropagated = Util.propagateError(oError, 'FileName#MethodName', 'custom error message');
+			var oError = new Error("original error message");
+			var oErrorPropagated = Util.propagateError(oError, "FileName#MethodName", "custom error message");
 
 			assert.ok(oErrorPropagated instanceof Error, "Error object is returned");
 			assert.strictEqual(oErrorPropagated, oError, "same Error object is returned");
-			assert.ok(oErrorPropagated.message.indexOf('original error message') !== -1, "message contains original message");
-			assert.ok(oErrorPropagated.message.indexOf('custom error message') !== -1, "message contains custom message");
+			assert.ok(oErrorPropagated.message.indexOf("original error message") !== -1, "message contains original message");
+			assert.ok(oErrorPropagated.message.indexOf("custom error message") !== -1, "message contains custom message");
 		});
 		QUnit.test("when Error is not foreign", function (assert) {
-			var oError = Util.createError('FileName#MethodName', 'original error message');
-			var oErrorPropagated = Util.propagateError(oError, 'FileName#MethodName2', 'custom error message');
+			var oError = Util.createError("FileName#MethodName", "original error message");
+			var oErrorPropagated = Util.propagateError(oError, "FileName#MethodName2", "custom error message");
 
 			assert.ok(oErrorPropagated instanceof Error, "Error object is returned");
 			assert.strictEqual(oErrorPropagated, oError, "same Error object is returned");
-			assert.ok(oErrorPropagated.message.indexOf('original error message') !== -1, "message contains original message");
-			assert.ok(oErrorPropagated.message.indexOf('custom error message') === -1, "message contains custom message");
+			assert.ok(oErrorPropagated.message.indexOf("original error message") !== -1, "message contains original message");
+			assert.ok(oErrorPropagated.message.indexOf("custom error message") === -1, "message contains custom message");
 		});
 	});
 
-	QUnit.module('getObjectType()', function () {
+	QUnit.module("getObjectType()", function () {
 		QUnit.test("when called with a ManagedObject object", function (assert) {
 			var oObject = new ManagedObject();
 			var sType = Util.getObjectType(oObject);
@@ -189,7 +188,7 @@ function(
 		});
 	});
 
-	QUnit.module('printf()', function () {
+	QUnit.module("printf()", function () {
 		QUnit.test("basic functionality", function(assert) {
 			assert.equal(
 				Util.printf("Arg1: {0}, Arg2: {1}", "Val1", "Val2"),
@@ -199,7 +198,7 @@ function(
 		});
 	});
 
-	QUnit.module('objectValues()', function () {
+	QUnit.module("objectValues()", function () {
 		QUnit.test("objectValues()", function(assert) {
 			var sValue1 = "test1";
 			var sValue2 = "test2";
@@ -212,7 +211,7 @@ function(
 		});
 	});
 
-	QUnit.module('isInteger()', function () {
+	QUnit.module("isInteger()", function () {
 		QUnit.test("basic functionality", function(assert) {
 			assert.ok(Util.isInteger(0), "zero is an integer");
 			assert.ok(Util.isInteger(1.0), "real number pretended as integer is an integer");
@@ -225,7 +224,7 @@ function(
 		});
 	});
 
-	QUnit.module('castArray()', function () {
+	QUnit.module("castArray()", function () {
 		QUnit.test("castArray()", function(assert) {
 			var sValue = "test1";
 			var nValue = 7;
@@ -242,7 +241,7 @@ function(
 		});
 	});
 
-	QUnit.module('wrapIntoPromise()', function () {
+	QUnit.module("wrapIntoPromise()", function () {
 		QUnit.test("basic functionality", function (assert) {
 			assert.ok(typeof Util.wrapIntoPromise(function () {}) === "function");
 			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
@@ -250,16 +249,16 @@ function(
 		});
 		QUnit.test("promise resolve with certain value", function (assert) {
 			return Util.wrapIntoPromise(function () {
-				return 'value';
+				return "value";
 			})().then(function (vValue) {
-				assert.strictEqual(vValue, 'value');
+				assert.strictEqual(vValue, "value");
 			});
 		});
 		QUnit.test("nested promises resolve with certain value", function (assert) {
 			return Util.wrapIntoPromise(function () {
-				return Promise.resolve('value');
+				return Promise.resolve("value");
 			})().then(function (vValue) {
-				assert.strictEqual(vValue, 'value');
+				assert.strictEqual(vValue, "value");
 			});
 		});
 		QUnit.test("non-function is passed", function (assert) {
@@ -269,7 +268,7 @@ function(
 		});
 	});
 
-	QUnit.module('waitForSynced()', {
+	QUnit.module("waitForSynced()", {
 		afterEach: function() {
 			sandbox.restore();
 		}

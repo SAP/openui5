@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/dt/TaskRunner",
 	"sap/ui/dt/TaskManager",
 	"sap/ui/thirdparty/sinon-4"
-
 ], function (
 	TaskRunner,
 	TaskManager,
@@ -12,11 +11,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Instantiation TaskRunner", {
-		beforeEach: function () {
-		},
 		afterEach: function () {
 			sandbox.restore();
 		}

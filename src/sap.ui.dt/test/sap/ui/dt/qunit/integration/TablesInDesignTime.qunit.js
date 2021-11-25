@@ -10,11 +10,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	DesignTime,
 	OverlayRegistry,
 	Table,
@@ -24,13 +22,12 @@ function (
 	Label,
 	Button,
 	JSONModel,
-	Device,
 	Log,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function _createJSONModel() {
 		return new JSONModel([

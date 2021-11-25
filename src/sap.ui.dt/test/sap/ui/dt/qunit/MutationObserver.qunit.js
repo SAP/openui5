@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	MutationObserver,
 	DesignTime,
 	OverlayRegistry,
@@ -22,17 +21,17 @@ function(
 	includes,
 	sinon
 ) {
-	'use strict';
+	"use strict";
 
 	// Styles on "qunit-fixture" influence the scrolling tests if positioned on the screen during test execution.
 	// Please keep this tag without any styling.
 	jQuery("#qunit-fixture").removeAttr("style");
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a MutationObserver is created", {
 		beforeEach: function() {
-			this.sNodeId = 'node-id';
+			this.sNodeId = "node-id";
 			this.$Node = jQuery("<div></div>", {
 				id: this.sNodeId
 			}).appendTo("#qunit-fixture");
@@ -152,33 +151,33 @@ function(
 			', document.getElementById("qunit-fixture"));
 
 			this.oMutationObserver.registerHandler(this.sNodeId, function (mParameters) {
-				if (mParameters.type === 'MutationOnAnimationEnd') {
-					assert.ok(true, 'then domchanged callback called for mutation triggered by animationend');
+				if (mParameters.type === "MutationOnAnimationEnd") {
+					assert.ok(true, "then domchanged callback called for mutation triggered by animationend");
 					fnDone();
 				}
 			}, true);
 
-			this.$Node.addClass('customClass');
+			this.$Node.addClass("customClass");
 		});
 
 		QUnit.test("when transitionend is called", function(assert) {
 			var fnDone = assert.async();
 
 			this.$Node.css({
-				width: '100px',
-				height: '30px',
-				backgroundColor: 'blue',
-				transition: 'width 0.05s linear'
+				width: "100px",
+				height: "30px",
+				backgroundColor: "blue",
+				transition: "width 0.05s linear"
 			});
 
 			this.oMutationObserver.registerHandler(this.sNodeId, function (mParameters) {
-				if (mParameters.type === 'MutationOnTransitionend') {
-					assert.ok(true, 'then domchanged callback called for mutation triggered by transitionend');
+				if (mParameters.type === "MutationOnTransitionend") {
+					assert.ok(true, "then domchanged callback called for mutation triggered by transitionend");
 					fnDone();
 				}
 			}, true);
 
-			this.$Node.width('200px');
+			this.$Node.width("200px");
 		});
 	});
 
@@ -189,7 +188,7 @@ function(
 			}).appendTo("#qunit-fixture");
 
 			this.$Node = jQuery("<div></div>", {
-				id: 'node-id'
+				id: "node-id"
 			}).appendTo(this.$StaticUIArea);
 
 			this.oMutationObserver = new MutationObserver();
@@ -202,11 +201,11 @@ function(
 		QUnit.test("when mutations in static UIArea happen inside irrelevant node", function (assert) {
 			var fnDone = assert.async();
 			var oSpy = sandbox.spy();
-			this.oMutationObserver.registerHandler(this.$Node.attr('id'), oSpy, true);
+			this.oMutationObserver.registerHandler(this.$Node.attr("id"), oSpy, true);
 			jQuery("<div></div>").appendTo("#sap-ui-static");
 			// setTimeout is needed because of async nature of native MutationObserver
 			setTimeout(function () {
-				assert.notOk(oSpy.called, 'then domChanged callback has not been called');
+				assert.notOk(oSpy.called, "then domChanged callback has not been called");
 				fnDone();
 			});
 		});
@@ -214,8 +213,8 @@ function(
 		QUnit.test("when mutations in static UIArea happen inside relevant node", function (assert) {
 			var fnDone = assert.async();
 			assert.expect(1);
-			this.oMutationObserver.registerHandler(this.$Node.attr('id'), function () {
-				assert.ok(true, 'then domChanged callback has been called');
+			this.oMutationObserver.registerHandler(this.$Node.attr("id"), function () {
+				assert.ok(true, "then domChanged callback has been called");
 				fnDone();
 			}, true);
 			jQuery("<div></div>").appendTo(this.$Node);
@@ -223,8 +222,8 @@ function(
 
 		QUnit.test("when mutations in static UIArea happen on relevant node (simulate UI5 re-rendering)", function (assert) {
 			var fnDone = assert.async();
-			this.oMutationObserver.registerHandler(this.$Node.attr('id'), function () {
-				assert.ok(true, 'then domChanged callback has been called');
+			this.oMutationObserver.registerHandler(this.$Node.attr("id"), function () {
+				assert.ok(true, "then domChanged callback has been called");
 				fnDone();
 			}, true);
 			this.$Node.replaceWith(this.$Node.clone());
@@ -307,7 +306,7 @@ function(
 			var fnDone = assert.async();
 			var fnHandlerSpy = sandbox.spy();
 			this.oVerticalLayoutRootOverlay.attachEventOnce("applyStylesRequired", fnHandlerSpy);
-			this.oOutsidePanel.$().find('>.sapMPanelContent').scrollTop(50);
+			this.oOutsidePanel.$().find(">.sapMPanelContent").scrollTop(50);
 			window.requestAnimationFrame(function () {
 				assert.equal(fnHandlerSpy.called, false, "then the domchanged callback was not called");
 				fnDone();
@@ -320,7 +319,7 @@ function(
 				assert.strictEqual(oEvent.getParameters().type, "MutationOnScroll", "then a domchanged callback with 'scroll'-type is called");
 				fnDone();
 			});
-			this.oOuterPanel.$().find('>.sapMPanelContent').scrollTop(50);
+			this.oOuterPanel.$().find(">.sapMPanelContent").scrollTop(50);
 		});
 
 		QUnit.test("when a panel inside DT is scrolled", function(assert) {
@@ -331,7 +330,7 @@ function(
 				assert.equal(spy.called, false, "then the domchanged callback was not fired");
 				fnDone();
 			});
-			this.Panel0.$().find('>.sapMPanelContent').scrollTop(50);
+			this.Panel0.$().find(">.sapMPanelContent").scrollTop(50);
 		});
 	});
 
@@ -370,23 +369,23 @@ function(
 			var fnDone = assert.async();
 			this.oMutationObserver.registerHandler(this.oVerticalLayoutInner.getId(), function () {
 				// First mutation is triggered by qunit
-				assert.ok(true, 'then domChanged callback on Inner Layout has been called');
+				assert.ok(true, "then domChanged callback on Inner Layout has been called");
 				fnDone();
 			}, true);
-			this.oButton.setText('hallo');
+			this.oButton.setText("hallo");
 		});
 
 		QUnit.test("when the the inner Layout and button are registered for mutations and the button is modified", function(assert) {
 			var fnDone = assert.async();
 			this.oMutationObserver.registerHandler(this.oVerticalLayoutInner.getId(), function () {
 				// First mutation is triggered by qunit
-				assert.ok(true, 'then domChanged callback on Inner Layout has been called');
+				assert.ok(true, "then domChanged callback on Inner Layout has been called");
 				fnDone();
 			}, true);
 			this.oMutationObserver.registerHandler(this.oButton.getId(), function () {
-				assert.notOk(true, 'then domChanged callback on Button should not been called');
+				assert.notOk(true, "then domChanged callback on Button should not been called");
 			});
-			this.oButton.setText('hallo');
+			this.oButton.setText("hallo");
 		});
 
 		QUnit.test("when outerPanel has a scrollbar and all Elements are registered for mutations and the button is modified", function(assert) {
@@ -397,19 +396,19 @@ function(
 			this.oMutationObserver.registerHandler(this.oOuterPanel.getId(), function () {
 				// First mutation is triggered by qunit
 				this.oMutationObserver.exit();
-				assert.ok(true, 'then domChanged callback on outer Panel has been called');
+				assert.ok(true, "then domChanged callback on outer Panel has been called");
 				fnDone();
 			}.bind(this), true);
 			this.oMutationObserver.registerHandler(this.oInnerPanel.getId(), function () {
-				assert.notOk(true, 'then domChanged callback on Inner Panel should not been called');
+				assert.notOk(true, "then domChanged callback on Inner Panel should not been called");
 			});
 			this.oMutationObserver.registerHandler(this.oVerticalLayoutInner.getId(), function () {
-				assert.notOk(true, 'then domChanged callback on Inner Layout should not been called');
+				assert.notOk(true, "then domChanged callback on Inner Layout should not been called");
 			});
 			this.oMutationObserver.registerHandler(this.oButton.getId(), function () {
-				assert.notOk(true, 'then domChanged callback on Button should not been called');
+				assert.notOk(true, "then domChanged callback on Button should not been called");
 			});
-			this.oButton.setText('hallo');
+			this.oButton.setText("hallo");
 		});
 
 		QUnit.test("when outerPanel has a scrollbar, is registered and is modified", function(assert) {
@@ -420,16 +419,16 @@ function(
 			this.oMutationObserver.registerHandler(this.oOuterPanel.getId(), function () {
 				// First mutation is triggered by qunit
 				this.oMutationObserver.exit();
-				assert.ok(true, 'then domChanged callback on outer Panel have been called');
+				assert.ok(true, "then domChanged callback on outer Panel have been called");
 				fnDone();
 			}.bind(this), true);
 			this.oMutationObserver.registerHandler(this.oInnerPanel.getId(), function () {
-				assert.notOk(true, 'then domChanged callback on inner Panel should not been called');
+				assert.notOk(true, "then domChanged callback on inner Panel should not been called");
 			});
 			this.oMutationObserver.registerHandler(this.oButton.getId(), function () {
-				assert.notOk(true, 'then domChanged callback on Button should not been called');
+				assert.notOk(true, "then domChanged callback on Button should not been called");
 			});
-			this.oOuterPanel.setHeaderText('hallo');
+			this.oOuterPanel.setHeaderText("hallo");
 		});
 	});
 
@@ -466,14 +465,14 @@ function(
 			var fnDone = assert.async();
 			this.oMutationObserver.registerHandler(this.oVerticalLayout0.getId(), function () {
 				// First mutation is triggered by qunit
-				assert.notOk(true, 'then domChanged callback on layout0 should not been called');
+				assert.notOk(true, "then domChanged callback on layout0 should not been called");
 			}, true);
 			this.oMutationObserver.registerHandler(this.oVerticalLayout1.getId(), function () {
 				// First mutation is triggered by qunit
-				assert.ok(true, 'then domChanged callback on layout1 has been called');
+				assert.ok(true, "then domChanged callback on layout1 has been called");
 				fnDone();
 			}, true);
-			this.oButton1.setText('button1-text-RENAMED');
+			this.oButton1.setText("button1-text-RENAMED");
 		});
 	});
 
