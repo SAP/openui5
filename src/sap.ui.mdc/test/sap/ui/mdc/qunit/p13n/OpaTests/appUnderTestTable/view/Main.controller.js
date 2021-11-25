@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/Fragment',
 	"sap/base/util/UriParameters",
-	"sap/ui/core/Core"
-], function(Controller, Fragment, UriParameters, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/mdc/p13n/StateUtil"
+], function(Controller, Fragment, UriParameters, oCore, StateUtil) {
 	"use strict";
 	return Controller.extend("view.Main", {
 
@@ -16,7 +17,8 @@ sap.ui.define([
 				Explicit: "AppUnderTestTable.view.Explicit",
 				Implicit: "AppUnderTestTable.view.Implicit",
 				Transient: "AppUnderTestTable.view.Transient",
-				AutoImplicit: "AppUnderTestTable.view.AutoImplicit"
+				AutoImplicit: "AppUnderTestTable.view.AutoImplicit",
+				State: "AppUnderTestTable.view.State"
 			};
 
 			this.setFragment(mViews[sSubView]);
@@ -41,6 +43,32 @@ sap.ui.define([
 					});
 				});
 			});
+		},
+
+		onRetrieveState: function(oEvent) {
+			var oControl =  oCore.byId(oEvent.getSource().getId() == "tblRetrieve" ? "IDTableOfInternalSampleApp_01" : "IDFilterBar");
+			if (oControl) {
+				StateUtil.retrieveExternalState(oControl).then(function(oState) {
+					var oOutput = oCore.byId("CEState");
+					if (oOutput) {
+						oOutput.setValue(JSON.stringify(oState, null, "  "));
+					}
+				});
+			}
+		},
+
+		onApplyState: function(oEvt) {
+			var oControl =  oCore.byId(oEvt.getSource().getId() == "tblApply" ? "IDTableOfInternalSampleApp_01" : "IDFilterBar");
+			var oCE = oCore.byId("CEState");
+			var oState;
+			if (oCE) {
+				oState = JSON.parse(oCE.getValue());
+			}
+			if (oControl) {
+				StateUtil.applyExternalState(oControl, oState).then(function(){
+
+				});
+			}
 		}
 
 	});
