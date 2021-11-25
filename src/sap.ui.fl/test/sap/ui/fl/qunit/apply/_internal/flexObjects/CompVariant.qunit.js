@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var aScenarios = [{
 		testName: "and a variant in the USER layer",

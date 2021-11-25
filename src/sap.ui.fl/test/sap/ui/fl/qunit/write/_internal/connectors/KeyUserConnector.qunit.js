@@ -17,11 +17,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("KeyUserConnector", {
-		beforeEach: function () {
-		},
 		afterEach: function() {
 			WriteUtils.sendRequest.restore();
 			sandbox.restore();
@@ -47,6 +45,7 @@ sap.ui.define([
 				assert.deepEqual(oChange, oResponse.response[0]);
 			});
 		});
+
 		QUnit.test("given a mock server, when write is triggered for multiple change", function (assert) {
 			var mPropertyBag = {url: "/flexKeyuser", flexObjects: []};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/?sap-language=en";
@@ -71,6 +70,7 @@ sap.ui.define([
 				assert.deepEqual(oChange2, oResponse.response[1]);
 			});
 		});
+
 		QUnit.test("given a mock server, when write is triggered for a draft", function (assert) {
 			var mPropertyBag = {url: "/flexKeyuser", flexObjects: [], parentVersion: 1};
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/changes/?parentVersion=1&sap-language=en";
@@ -151,8 +151,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.translation", {
-		beforeEach: function () {
-		},
 		afterEach: function() {
 			InitialUtils.sendRequest.restore();
 			sandbox.restore();
@@ -199,8 +197,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector handing xsrf token in combination of the apply connector", {
-		beforeEach: function () {
-		},
 		afterEach: function() {
 			InitialConnector.xsrfToken = undefined;
 			sandbox.restore();

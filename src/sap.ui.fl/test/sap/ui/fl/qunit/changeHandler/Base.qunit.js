@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	jQuery,
 	Base,
 	Change,
@@ -16,7 +15,7 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.changeHandler.Base", {
 		beforeEach: function () {

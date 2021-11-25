@@ -4,14 +4,14 @@ sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	LRepConnector,
 	jQuery,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("LayerContentMaster", {
 		afterEach: function() {

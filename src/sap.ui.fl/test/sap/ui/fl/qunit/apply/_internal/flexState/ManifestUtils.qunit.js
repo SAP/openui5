@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	Manifest,
 	ManifestUtils,
 	Utils,
@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sReference = "fl.reference";
 
 	function createAppComponent(bFlexExtensionPointEnabled) {

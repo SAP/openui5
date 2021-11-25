@@ -45,8 +45,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	jQuery('#qunit-fixture').hide();
-	var sandbox = sinon.sandbox.create();
+	jQuery("#qunit-fixture").hide();
+	var sandbox = sinon.createSandbox();
 
 	function createAppComponent() {
 		var oDescriptor = {
@@ -85,7 +85,7 @@ sap.ui.define([
 	QUnit.module("Given AppVariantWriteAPI and app variant is created based on the original application which is running in the background", {
 		beforeEach: function () {
 			this.oDescrChangeSpecificData1 = {
-				changeType: 'appdescr_ovp_addNewCard',
+				changeType: "appdescr_ovp_addNewCard",
 				content: {
 					card: {
 						"customer.acard": {
@@ -130,7 +130,7 @@ sap.ui.define([
 			};
 
 			this.oDescrChangeSpecificData2 = {
-				changeType: 'appdescr_ovp_addNewCard',
+				changeType: "appdescr_ovp_addNewCard",
 				content: {
 					card: {
 						"customer.acard": {
@@ -175,7 +175,7 @@ sap.ui.define([
 			};
 
 			this.oDescrChangeSpecificData3 = {
-				changeType: 'appdescr_app_setTitle',
+				changeType: "appdescr_app_setTitle",
 				content: {
 					type: "XTIT",
 					maxLength: 20,
@@ -191,7 +191,7 @@ sap.ui.define([
 
 			// Duplicate descriptor change to oDescrChangeSpecificData3
 			this.oDescrChangeSpecificData4 = {
-				changeType: 'appdescr_app_setTitle',
+				changeType: "appdescr_app_setTitle",
 				content: {
 					type: "XTIT",
 					maxLength: 20,
@@ -1011,7 +1011,7 @@ sap.ui.define([
 	QUnit.module("Given AppVariantWriteAPI and app variant is created based on an app variant which is not running in the background", {
 		beforeEach: function () {
 			this.oDescrChangeSpecificData1 = {
-				changeType: 'appdescr_ovp_addNewCard',
+				changeType: "appdescr_ovp_addNewCard",
 				content: {
 					card: {
 						"customer.acard": {
@@ -1056,7 +1056,7 @@ sap.ui.define([
 			};
 
 			this.oDescrChangeSpecificData2 = {
-				changeType: 'appdescr_ovp_addNewCard',
+				changeType: "appdescr_ovp_addNewCard",
 				content: {
 					card: {
 						"customer.acard": {
@@ -1101,7 +1101,7 @@ sap.ui.define([
 			};
 
 			this.oDescrChangeSpecificData3 = {
-				changeType: 'appdescr_app_setTitle',
+				changeType: "appdescr_app_setTitle",
 				content: {
 					type: "XTIT",
 					maxLength: 20,

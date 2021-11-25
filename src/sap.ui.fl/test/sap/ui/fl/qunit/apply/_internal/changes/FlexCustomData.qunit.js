@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/Layer"
-],
-function (
+], function(
 	jQuery,
 	sinon,
 	Control,
@@ -24,7 +23,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var sAppliedKey = FlexCustomData.appliedChangesCustomDataKey;
 	var sFailedJSKey = FlexCustomData.failedChangesCustomDataKeyJs;

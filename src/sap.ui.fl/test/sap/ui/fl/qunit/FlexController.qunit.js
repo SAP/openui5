@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	FlexController,
 	Change,
 	Layer,
@@ -51,7 +51,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var oComponent = sap.ui.getCore().createComponent({
 		name: "testComponent",

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	Layers,
 	Layer,
 	Router,
@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oController;
 
 	QUnit.module("Layers", {

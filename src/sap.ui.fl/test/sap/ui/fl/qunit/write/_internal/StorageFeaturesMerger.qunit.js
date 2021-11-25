@@ -11,11 +11,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Basic functions", {
-		beforeEach: function () {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}

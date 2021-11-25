@@ -20,7 +20,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given sap.ui.fl.Variant class", {
 		beforeEach: function(assert) {

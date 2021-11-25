@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	ReloadInfoAPI,
 	VersionsAPI,
 	FeaturesAPI,
@@ -25,7 +25,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a CrossAppNavigation is needed because of a draft, handleParametersOnStart is called,", {
 		afterEach: function() {

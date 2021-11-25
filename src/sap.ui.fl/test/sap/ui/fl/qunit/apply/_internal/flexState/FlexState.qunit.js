@@ -31,7 +31,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sReference = "sap.ui.fl.reference";
 	var sComponentId = "componentId";
 	var mResponse = {

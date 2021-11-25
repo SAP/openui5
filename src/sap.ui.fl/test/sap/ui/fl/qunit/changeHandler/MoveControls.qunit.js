@@ -43,7 +43,7 @@ sap.ui.define([
 	var myObjectHeaderId = "myObjectHeader";
 	var myButtonId = "myButton";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oComponent = sap.ui.getCore().createComponent({
 		name: "testComponent",
 		id: "testComponent"

@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -11,7 +10,6 @@ sap.ui.define([
 ], function(
 	sinon,
 	Layer,
-	Storage,
 	TranslationAPI,
 	InitialConnector,
 	ManifestUtils,
@@ -19,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	QUnit.module("TranslationAPI rejects", {
 		before: function() {
 			this.vSelector = {

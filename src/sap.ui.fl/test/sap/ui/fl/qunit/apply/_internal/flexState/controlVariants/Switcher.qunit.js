@@ -16,7 +16,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	QUnit.dump.maxDepth = 20;
 
 	QUnit.module("Given Switcher.switchVariant()", {

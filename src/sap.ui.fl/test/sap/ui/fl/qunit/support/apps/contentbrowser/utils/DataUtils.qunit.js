@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	DataUtils,
 	ErrorUtils,
 	jQuery,
@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("LayerContentMaster", {
 		afterEach: function() {

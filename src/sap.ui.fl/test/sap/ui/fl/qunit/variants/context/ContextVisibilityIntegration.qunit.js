@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	ContextVisibilityController,
 	ContextVisibilityComponent,
 	ComponentContainer,
@@ -21,7 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var sCompName = "test---ContextVisibility--";
 	var oCore = sap.ui.getCore();

@@ -3,13 +3,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/appDescriptorChanges/prepareAppDescriptorMap",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	prepareAppDescriptorMap,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("prepareAppDescriptorMap: ", {
 		beforeEach: function () {
@@ -24,7 +24,6 @@ sap.ui.define([
 		afterEach: function () {
 			sandbox.restore();
 		}
-
 	}, function () {
 		QUnit.test("when called with no parameters", function (assert) {
 			var oExpectedMap = {appDescriptorChanges: []};

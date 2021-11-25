@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	Preprocessor,
 	Applier,
 	AddLibrary,
@@ -26,7 +25,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Preprocessor", {
 		beforeEach: function (assert) {

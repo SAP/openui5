@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Dialog"
-], function (
+], function(
 	ContentDetailsEdit,
 	LRepConnector,
 	DataUtils,
@@ -23,7 +23,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oController;
 
 	QUnit.module("ContentDetailsEdit", {

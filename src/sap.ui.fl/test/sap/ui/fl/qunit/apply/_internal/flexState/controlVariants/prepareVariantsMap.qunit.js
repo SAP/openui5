@@ -4,20 +4,18 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/fl/Change",
 	"sap/base/util/values",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	prepareVariantsMap,
 	VariantUtil,
 	LoaderExtensions,
-	Change,
 	values,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	QUnit.dump.maxDepth = 20;
 
 	function replaceInstancesOfCtrlChanges(mVariantsMap) {

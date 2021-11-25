@@ -37,7 +37,7 @@ sap.ui.define([
 	// mix-in stash functionality
 	StashedControlSupport.mixInto(Panel);
 	StashedControlSupport.mixInto(Control);
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.StashControl", {

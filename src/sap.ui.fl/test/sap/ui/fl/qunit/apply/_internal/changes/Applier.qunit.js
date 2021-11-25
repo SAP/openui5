@@ -43,7 +43,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function getInitialChangesMap(mPropertyBag) {
 		return merge(DependencyHandler.createEmptyDependencyMap(), mPropertyBag);

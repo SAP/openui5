@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	Manifest,
 	Loader,
 	ManifestUtils,
@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Loader", {
 		beforeEach: function() {

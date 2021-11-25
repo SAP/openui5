@@ -5,8 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	AddNewModelEnhanceWith,
 	Change,
 	jQuery,
@@ -14,7 +13,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {

@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.library", {
 		beforeEach: function () {
@@ -52,8 +52,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 	});
-
-
 
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();

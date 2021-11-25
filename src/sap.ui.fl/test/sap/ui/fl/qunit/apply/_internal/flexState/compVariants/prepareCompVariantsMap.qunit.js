@@ -8,7 +8,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function fakeFlexObject(sId, sPersistencyKey) {
 		return {
@@ -20,7 +20,6 @@ sap.ui.define([
 	}
 
 	QUnit.module("prepareCompVariantsMap", {
-		beforeEach: function() {},
 		afterEach: function() {
 			sandbox.restore();
 		}

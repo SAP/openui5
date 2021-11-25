@@ -16,7 +16,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	function createExtensionPoint(oView, sExtensionPointName, oParent, sAggregationName, iIndex) {
 		return {
 			view: oView,

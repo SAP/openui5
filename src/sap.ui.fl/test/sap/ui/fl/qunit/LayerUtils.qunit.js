@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
@@ -12,14 +11,13 @@ sap.ui.define([
 	Change,
 	Layer,
 	LayerUtils,
-	Utils,
 	Settings,
 	UriParameters,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function getURLParsingService(mParsedShellHash) {
 		return {

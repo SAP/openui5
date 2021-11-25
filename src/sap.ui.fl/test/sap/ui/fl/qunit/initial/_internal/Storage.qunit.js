@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/base/util/merge"
-], function (
+], function(
 	sinon,
 	Storage,
 	Change,
@@ -35,7 +35,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Storage checks the input parameters", {
 		beforeEach: function () {
@@ -53,7 +53,6 @@ sap.ui.define([
 			return assert.throws(Storage.loadFlexData({}));
 		});
 	});
-
 
 	QUnit.module("Storage merges results from different connectors", {
 		afterEach: function () {

@@ -23,7 +23,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function fnReturnData(nStatus, oHeader, sBody) {
 		sandbox.server.respondWith(function(request) {

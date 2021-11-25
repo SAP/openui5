@@ -16,7 +16,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function createFakeControl(sId) {
 		return { getId: function () { return sId; }};

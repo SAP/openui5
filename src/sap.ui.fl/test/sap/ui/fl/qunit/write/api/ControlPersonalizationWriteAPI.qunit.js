@@ -45,7 +45,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function(assert) {
