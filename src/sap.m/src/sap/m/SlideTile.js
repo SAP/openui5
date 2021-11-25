@@ -190,6 +190,11 @@ sap.ui.define([
 		// Slide Navigation through bullet click
 		var oCurrentBullet;
 		for (var i = 0; i < this.getTiles().length; i++) {
+			var oCurrentTile = this.getTiles()[this._iCurrentTile];
+			if (oCurrentTile && oCurrentTile._isNavigateActionEnabled()) {
+				oCurrentTile._oNavigateAction._bExcludeFromTabChain = false;
+				oCurrentTile._oNavigateAction.invalidate();
+			}
 			oCurrentBullet = document.querySelector('span[id$="tileIndicator-' + i + '"]');
 			if (oCurrentBullet) {
 				oCurrentBullet.addEventListener("click", function(event) {
@@ -526,7 +531,17 @@ sap.ui.define([
 		oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
 		sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 
+		var oCurrentTile = this.getTiles()[this._iCurrentTile];
+		if (oCurrentTile && oCurrentTile._isNavigateActionEnabled()) {
+			oCurrentTile._oNavigateAction._bExcludeFromTabChain = false;
+			oCurrentTile._oNavigateAction.invalidate();
+		}
 		if (this._iPreviousTile != undefined) {
+			var oPreviousTile = this.getTiles()[this._iPreviousTile];
+			if (oPreviousTile && oPreviousTile._isNavigateActionEnabled()) {
+				oPreviousTile._oNavigateAction._bExcludeFromTabChain = true;
+				oPreviousTile._oNavigateAction.invalidate();
+			}
 			oWrapperFrom = this.$("wrapper-" + this._iPreviousTile);
 			sWidthFrom = oWrapperFrom.css("width");
 			fWidthTo = parseFloat(oWrapperTo.css("width"));
