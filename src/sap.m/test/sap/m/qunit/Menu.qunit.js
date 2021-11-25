@@ -327,6 +327,20 @@ sap.ui.define([
 		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
 	});
 
+	QUnit.test("close without open", function(assert) {
+		// arrange
+		var oMenu = new Menu();
+
+		// act
+		oMenu.close();
+
+		// assert
+		assert.ok(true, "no exception on close");
+
+		// clean
+		oMenu.destroy();
+	});
+
 	QUnit.test('Item selection event', function (assert) {
 		var fnFireItemSelectedSpy = sinon.spy(this.sut, "fireItemSelected");
 
@@ -678,72 +692,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
-	});
-
-	QUnit.module("[PHONE] Data binding", {
-		beforeEach : function () {
-			prepareMobilePlatform.call(this);
-
-			this.sut = new Menu();
-			this.oButton = new Button();
-			this.oButton.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-		},
-		afterEach : function () {
-			this.oButton.destroy();
-			this.oButton = null;
-			destroyMenu.call(this);
-
-			jQuery('#qunit-fixture').removeClass('sap-phone');
-			jQuery('body').removeClass('sap-phone');
-		},
-		getFirstModelData: getFirstModelData,
-		getSecondModelData: getSecondModelData,
-		bindAggregations: function() {
-			bindAggregations.call(this, this.sut);
-		}
-	});
-
-	QUnit.test("Change items in the model", function (assert) {
-		var aItems,
-			oItem,
-			sTitleSelector,
-			oSecondData,
-			sSecondItemId;
-
-		this.bindAggregations();
-		this.sut.openBy(this.oButton);
-
-		aItems = this.sut._getVisualParent().getContent()[0].getItems();
-		oItem = aItems[0];
-		sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapMSLITitleOnly";
-
-		//Assert
-		assert.strictEqual(oItem.getTitle(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
-		assert.strictEqual(jQuery("#" + oItem.getId()).length, 1, 'First item is rendered before model property change.');
-
-		oSecondData = this.getSecondModelData()['items'];
-
-		this.sut.getModel().setProperty('/items', oSecondData);
-
-		aItems = this.sut._getVisualParent().getContent()[0].getItems();
-		oItem = aItems[0];
-		sSecondItemId = oItem.getId();
-
-		//Assert
-		assert.strictEqual(oItem.getTitle(), oSecondData[0]['text'], 'Correct item is being asserted.');
-		assert.strictEqual(jQuery("#" + sSecondItemId).length, 1, 'Second item is rendered after model property change.');
-		assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
-
-		oSecondData.push({
-			text: 'second-item3',
-			icon: 'sap-icon://accidental-leave'
-		});
-		this.sut.getModel().setProperty('/items', oSecondData);
-
-		//Assert
-		assert.strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
 	});
 
 	QUnit.module('MenuItem(inside Menu)', {
