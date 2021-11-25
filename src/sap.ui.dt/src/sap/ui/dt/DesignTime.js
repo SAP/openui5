@@ -354,11 +354,11 @@ function (
 
 	DesignTime.prototype._onApplyStylesRequired = function (oEvent) {
 		var mParameters = oEvent.getParameters();
-		var oElementOverlay = oEvent.getSource();
+		var oOverlay = oEvent.getSource();
 		this._oTaskManager.add({
 			type: "applyStyles",
-			callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay, mParameters.bForceScrollbarSync),
-			overlayId: oElementOverlay.getId()
+			callbackFn: oOverlay.applyStyles.bind(oOverlay, mParameters.bForceScrollbarSync),
+			overlayId: oOverlay.getId()
 		}, "overlayId");
 	};
 
@@ -1110,6 +1110,12 @@ function (
 
 		var oElementOverlay = oEvent.getSource();
 
+		// cancel open applyStyles tasks for the destroyed overlays in the task manager
+		this._oTaskManager.cancelBy({
+			type: "applyStyles",
+			overlayId: oElementOverlay.getId()
+		}, "overlayId");
+
 		// FIXME: workaround. Overlays should not kill themselves (see ElementOverlay@_onElementDestroyed).
 		var sElementId = oElementOverlay.getAssociation("element");
 		if (sElementId in this._mPendingOverlays) { // means that the overlay was destroyed during initialization process
@@ -1143,7 +1149,13 @@ function (
 	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
-	DesignTime.prototype._onAggregationOverlayDestroyed = function () {
+	DesignTime.prototype._onAggregationOverlayDestroyed = function (oEvent) {
+		// cancel open applyStyles tasks for the destroyed overlays in the task manager
+		this._oTaskManager.cancelBy({
+			type: "applyStyles",
+			overlayId: oEvent.getSource().getId()
+		}, "overlayId");
+
 		if (!OverlayRegistry.hasOverlays()) {
 			Overlay.removeOverlayContainer();
 		}
@@ -1208,6 +1220,8 @@ function (
 				} else {
 					this.fireElementPropertyChanged(oParams);
 				}
+				break;
+			default:
 				break;
 		}
 	};
@@ -1399,6 +1413,7 @@ function (
 				bFoundAncestor = true;
 				return false;
 			}
+			return undefined;
 		});
 
 		return bFoundAncestor;
