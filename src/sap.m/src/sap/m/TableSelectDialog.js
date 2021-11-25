@@ -87,7 +87,7 @@ sap.ui.define([
 	 * <li>Since version 1.58, the columns headers and the info toolbar are sticky (remain fixed on top when scrolling). This feature is not supported in all browsers.
 	 * <li>The TableSelectDialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
 	 * To enable this you need to set the <code>resizable</code> and <code>draggable</code> properties. Both properties are available only in desktop mode.</li>
-	 * For more information on browser support limitations, you can refer to the {@link sap.m.ListBase sap.m.ListBase} <code>sticky</code> property.
+	 * For more information on current restrictions, you can refer to the {@link sap.m.ListBase sap.m.ListBase} <code>sticky</code> property.
 	 * </ul>
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
