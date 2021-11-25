@@ -98,38 +98,113 @@ sap.ui
 						recordRequests: {type : "boolean", defaultValue : true},
 
 						/**
+						 * Methods that can be used to respond to a request.
+						 *
+						 * @interface
+						 * @name sap.ui.core.util.MockServer.Response
+						 * @public
+						 */
+
+						/**
+						 * Responds to the incoming request with the given <code>iStatusCode</code>,
+						 * <code>mHeaders</code> and <code>sBody</code>.
+						 *
+						 * @param {int} [StatusCode=200]
+						 *    HTTP status code to send with the response
+						 * @param {Object<string,string>} [mHeaders={}]
+						 *    HTTP headers to send with the response
+						 * @param {string} [sBody=""]
+						 *    A string that will be sent as response body
+						 * @public
+						 * @function
+						 * @name sap.ui.core.util.MockServer.Response.prototype.respond
+						 */
+
+						/**
+						 * Convenience variant of {@link #respond} which simplifies sending a JSON response.
+						 *
+						 * The response content <code>vBody</code> can either be given as a string, which is then
+						 * assumed to be in JSON format. Or it can be any JSON-stringifiable value which then will
+						 * be converted to a string using <code>JSON.stringify</code>. If no <code>vBody</code>
+						 * is given, an empty response will be sent.
+						 *
+						 * If no <code>Content-Type</code> header is given, it will be set to <code>application/json</code>.
+						 *
+						 * @param {int} [iStatusCode=200]
+						 *    HTTP status code to send with the response
+						 * @param {Object<string,string>} [mHeaders={}]
+						 *    HTTP Headers to send with the response
+						 * @param {object|string} [vBody=""]
+						 *    A valid JSON-string or a JSON-stringifiable object that should be sent as response body
+						 * @public
+						 * @function
+						 * @name sap.ui.core.util.MockServer.Response.prototype.respondJSON
+						 */
+
+						/**
+						 * Convenience variant of {@link #respond} which simplifies sending an XML response.
+						 *
+						 * If no <code>Content-Type</code> header is given, it will be set to <code>application/xml</code>.
+						 *
+						 * @param {int} [iStatusCode=200]
+						 *    HTTP status code to send with the response
+						 * @param {Object<string,string>} [mHeaders={}]
+						 *    HTTP Headers to send with the response
+						 * @param {string} [sXmlString='']
+						 *    XML string to send as response body
+						 * @public
+						 * @function
+						 * @name sap.ui.core.util.MockServer.Response.prototype.respondXML
+						 */
+
+						/**
+						 * Convenience variant of {@link #respond} which allows to send the content of an external
+						 * resource as response.
+						 *
+						 * This method first synchronously fetches the given <code>sFileUrl</code>. Depending on the
+						 * extension and path of the <code>sFileUrl</code>, it propagates the received response body
+						 * to {@link #respondJSON}, {@link #respondXML} or {@link #respond}, using the given
+						 * <code>iStatus</code> and <code>mHeaders</code>.
+						 *
+						 * The status code and headers of the received response are ignored. In particular, the
+						 * <code>Content-Type</code> header is not used for the mock server's response.
+						 *
+						 * @param {int} [iStatusCode=200]
+						 *    HTTP status code to send with the response
+						 * @param {Object<string,string>} [mHeaders={}]
+						 *    HTTP Headers to send with the response
+						 * @param {string} sFileUrl
+						 *    URL to get the response body from
+						 * @throws {Error} if the external resource cannot be fetched
+						 * @public
+						 * @function
+						 * @name sap.ui.core.util.MockServer.Response.prototype.respondFile
+						 */
+
+						/**
+						 * @typedef {object} sap.ui.core.util.MockServer.RequestHandler
+						 * @property {sap.ui.core.util.MockServer.HTTPMETHOD} method Any HTTP verb
+						 * @property {string|RegExp} path
+						 *    A string path is converted to a regular expression, so it can contain normal regular expression syntax.
+						 *
+						 *    All regular expression groups are forwarded as arguments to the <code>response</code> function.
+						 *    In addition to this, parameters can be written in this notation: <code>:param</code>.
+						 *    These placeholders will be replaced by regular expression groups.
+						 * @property {function(sap.ui.core.util.MockServer.Response,...any)} response
+						 *    A response handler function that will be called when an incoming request
+						 *    matches <code>method</code> and <code>path</code>.
+						 *    The first parameter of the handler will be a <code>Response</code> object which can be used
+						 *    to respond on the request.
+						 * @public
+						 */
+
+						/**
 						 * Setter for property <code>requests</code>.
 						 *
-						 * Default value is is <code>[]</code>
+						 * Default value is <code>[]</code>
 						 *
-						 * Each array entry should consist of an object with the following properties / values:
-						 *
-						 * <ul>
-						 * <li><b>method <string>: "GET"|"POST"|"DELETE|"PUT"</b>
-						 * <br>
-						 * (any HTTP verb)
-						 * </li>
-						 * <li><b>path <string>: "/path/to/resource"</b>
-						 * <br>
-						 * The path is converted to a regular expression, so it can contain normal regular expression syntax.
-						 * All regular expression groups are forwarded as arguments to the <code>response</code> function.
-						 * In addition to this, parameters can be written in this notation: <code>:param</code>. These placeholder will be replaced by regular expression groups.
-						 * </li>
-						 * <li><b>response <function>: function(xhr, param1, param2, ...) { }</b>
-						 * <br>
-						 * The xhr object can be used to respond on the request. Supported methods are:
-						 * <br>
-						 * <code>xhr.respond(iStatusCode, mHeaders, sBody)</code>
-						 * <br>
-						 * <code>xhr.respondJSON(iStatusCode, mHeaders, oJsonObjectOrString)</code>. By default a JSON header is set for response header
-						 * <br>
-						 * <code>xhr.respondXML(iStatusCode, mHeaders, sXmlString)</code>. By default an XML header is set for response header
-						 * <br>
-						 * <code>xhr.respondFile(iStatusCode, mHeaders, sFileUrl)</code>. By default the mime type of the file is set for response header
-						 * </li>
-						 * </ul>
-						 *
-						 * @param {object[]} requests new value for property <code>requests</code>
+						 * @param {sap.ui.core.util.MockServer.RequestHandler[]} requests new value for the <code>requests</code> property
+						 * @returns {this} Returns <code>this</code> to allow method chaining
 						 * @public
 						 * @name sap.ui.core.util.MockServer#setRequests
 						 * @function
@@ -140,7 +215,7 @@ sap.ui
 						 *
 						 * Default value is <code>[]</code>
 						 *
-						 * @return {object[]} the value of property <code>requests</code>
+						 * @returns {sap.ui.core.util.MockServer.RequestHandler[]} the value of property <code>requests</code>
 						 * @public
 						 * @name sap.ui.core.util.MockServer#getRequests
 						 * @function
