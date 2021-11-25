@@ -356,7 +356,7 @@
 						id="authorsTable"
 						header="Authors"
 						filter="authorsFilterBar"
-						p13nMode="Sort,Column"
+						p13nMode="Sort,Column,Filter"
 						delegate="{name: 'sap/ui/v4demo/delegate/Authors.Table.delegate', payload: {collectionName: 'Authors'}}"
 						showRowCount="true"
 						rowPress="onRowPress"

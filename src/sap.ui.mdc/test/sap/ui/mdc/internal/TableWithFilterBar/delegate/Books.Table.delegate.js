@@ -1,5 +1,6 @@
 sap.ui.define([
 	"./GridTable.delegate",
+	"./Books.FB.delegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
@@ -9,9 +10,17 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type) {
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
+
+	var getFullId = function(oControl, sVHId) {
+		var oView = oControl.getParent();
+		while (!oView.isA("sap.ui.core.mvc.View")) {
+			oView = oView.getParent();
+		}
+		return oView.getId() + "--" + sVHId;
+	};
 
 	BooksTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
@@ -21,22 +30,12 @@ sap.ui.define([
 			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
 			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProperties.forEach(function(oProperty){
-				if (oProperty.name === "language_code") {
-					oProperty.fieldHelp = "FHLanguage";
-				}
-
-				if (oProperty.name === "genre_code") {
-					oProperty.fieldHelp = "FHGenreSingle";
-					oProperty.label = "Genre";
+				if (oProperty.name === "title") {
+					oProperty.caseSensitive = false;
 				}
 
 				if (oProperty.name === "subgenre_code") {
-					oProperty.fieldHelp = "FHSubGenreSingle";
 					oProperty.label = "Sub Genre";
-				}
-
-				if (oProperty.name === "title") {
-					oProperty.caseSensitive = false;
 				}
 
 				if (oProperty.name === "ID" || oProperty.name === "author_ID") {
@@ -50,7 +49,34 @@ sap.ui.define([
 		});
 	};
 
-	BooksTableDelegate._createColumnTemplate = function (oProperty) {
+	BooksTableDelegate.getFilterDelegate = function() {
+		return {
+			addItem: function(sPropertyName, oTable) {
+				return BooksFBDelegate.addItem(sPropertyName, oTable)
+				.then(function(oFilterField) {
+					if (sPropertyName === "classification_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHClassification"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					}
+					if (sPropertyName === "genre_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHGenre"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					}
+					if (sPropertyName === "subgenre_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHSubGenre"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					}
+					if (sPropertyName === "detailgenre_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHDetailGenre"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					}
+					return oFilterField;
+				});
+			}
+		};
+	};
+
+	BooksTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
 		var oCtrlProperties = {
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
@@ -69,18 +95,24 @@ sap.ui.define([
 		}
 
 		if (oProperty.name === "language_code") {
+			oCtrlProperties.additionalValue = "{language/name}";
+			oCtrlProperties.display = FieldDisplay.Description;
+			oCtrlProperties.fieldHelp = getFullId(oTable, "FHLanguage");
+		}
 
-			return new Field({
-				id: "tFieldLink",
-				value: "{language/name}",
-				editMode: "Display"
-			});
+		if (oProperty.name === "genre_code") {
+			oCtrlProperties.display = FieldDisplay.Description;
+			oCtrlProperties.fieldHelp = getFullId(oTable, "FHGenreSingle");
+		}
 
+		if (oProperty.name === "subgenre_code") {
+			oCtrlProperties.display = FieldDisplay.Description;
+			oCtrlProperties.fieldHelp = getFullId(oTable, "FHSubGenreSingle");
 		}
 
 		if (oProperty.name === "title") {
 
-			return new Field({
+			oCtrlProperties = {
 				id: "tFieldLinkTitle",
 				value: "{title}",
 				editMode: "Display",
@@ -95,13 +127,13 @@ sap.ui.define([
 						}
 					}
 				})
-			});
+			};
 
 		}
 
 		if (oProperty.name === "author_ID") {
 
-			return new Field({
+			oCtrlProperties = {
 				id: "tFieldLinkAuthor",
 				value: {path: 'author_ID', type: new Int32Type({groupingEnabled: false}, {nullable: false})},
 				additionalValue:"{author/name}",
@@ -110,7 +142,7 @@ sap.ui.define([
 				fieldInfo: new Link({
 					delegate: { name: "sap/ui/v4demo/delegate/Books.Link.delegate" }
 				})
-			});
+			};
 
 		}
 
@@ -143,7 +175,7 @@ sap.ui.define([
 			// 	delete oColumn._oTemplateClone;
 			// }
 
-			var oTemplate = BooksTableDelegate._createColumnTemplate(oProperty);
+			var oTemplate = BooksTableDelegate._createColumnTemplate(oTable, oProperty);
 			oColumn.setTemplate(oTemplate);
 
 			return oColumn;

@@ -175,7 +175,7 @@
 						id="ordersTable"
 						header="Orders"
 						filter="ordersFilterBar"
-						p13nMode="Sort,Column"
+						p13nMode="Sort,Column,Filter"
 						delegate='{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": { "collectionName": "Orders" } }'
 						showRowCount="true"
 						rowPress="onRowPress"
