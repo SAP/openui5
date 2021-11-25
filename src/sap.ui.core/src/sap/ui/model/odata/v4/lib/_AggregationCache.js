@@ -207,8 +207,6 @@ sap.ui.define([
 		}
 		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
 		aElements.$count -= iCount;
-		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode,
-			{"@$ui5.node.groupLevelCount" : undefined});
 
 		return iCount;
 	};

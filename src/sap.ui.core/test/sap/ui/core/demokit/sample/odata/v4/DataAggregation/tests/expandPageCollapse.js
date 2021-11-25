@@ -393,7 +393,55 @@ sap.ui.define([
 
 		When.onTheMainPage.scrollToRow(0, "Scroll to top.");
 		toggleExpandInRow(3, "Collapse Germany.");
-		checkTable(aInitialTableState);
+		checkTable([{
+			level : 0,
+			groupLevelCount : "",
+			expanded : true,
+			country : "",
+			region : "",
+			segment : "",
+			accountResponsible : "",
+			salesAmountLocalCurrency : "79,443,315.00",
+			localCurrency : "",
+			salesNumber : "",
+			subtotal : true
+		}, {
+			level : 1,
+			groupLevelCount : "",
+			expanded : false,
+			country : "USA",
+			region : "",
+			segment : "",
+			accountResponsible : "",
+			salesAmountLocalCurrency : "40,405,175.00",
+			localCurrency : "USD",
+			salesNumber : "",
+			subtotal : true
+		}, {
+			level : 1,
+			groupLevelCount : "",
+			expanded : false,
+			country : "United Kingdom",
+			region : "",
+			segment : "",
+			accountResponsible : "",
+			salesAmountLocalCurrency : "14,548,502.00",
+			localCurrency : "GBP",
+			salesNumber : "",
+			subtotal : true
+		}, {
+			level : 1,
+			groupLevelCount : "7",
+			expanded : false,
+			country : "Germany",
+			region : "",
+			segment : "",
+			accountResponsible : "",
+			salesAmountLocalCurrency : "24,489,638.00",
+			localCurrency : "EUR",
+			salesNumber : "",
+			subtotal : true
+		}]);
 
 		toggleExpandInRow(3, "Expand Germany again.");
 		When.onTheMainPage.scrollToRow(11, "Scroll to B.-W./Small/Winfried Maier.");
