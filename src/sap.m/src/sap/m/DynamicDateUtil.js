@@ -176,7 +176,7 @@ sap.ui.define([
 	 * @public
 	 */
 	DynamicDateUtil.getStandardKeys = function () {
-		return STANDARD_KEYS_ARRAY;
+		return STANDARD_KEYS_ARRAY.slice(0);
 	};
 
 	/**
