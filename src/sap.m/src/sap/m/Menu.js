@@ -249,9 +249,9 @@ sap.ui.define([
 		 */
 		Menu.prototype.close = function() {
 			if (Device.system.phone) {
-				this._getDialog().close();
+				this._getDialog() && this._getDialog().close();
 			} else {
-				this._getVisualParent().close();
+				this._getVisualParent() && this._getVisualParent().close();
 			}
 		};
 
