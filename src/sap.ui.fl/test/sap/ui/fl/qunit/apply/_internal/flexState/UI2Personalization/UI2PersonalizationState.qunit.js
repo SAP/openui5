@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	merge,
 	UI2PersonalizationState,
 	FlexState,
@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sErrorMsg = "not all mandatory properties were provided for the storage of the personalization";
 	var sReference = "sap.ui.fl.Reference";
 	var sContainerKey = "container1";

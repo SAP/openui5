@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/initial/_internal/StorageUtils"
-],
-function(
+], function(
 	jQuery,
 	XMLHelper,
 	XmlTreeModifier,
@@ -30,7 +29,7 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl"); // preload lib for the spy
 

@@ -26,7 +26,7 @@ sap.ui.define([
 	var oDIV = document.createElement("div");
 	oDIV.id = "content";
 	document.body.appendChild(oDIV);
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var SYNC = true;
 	var ASYNC = false;
 

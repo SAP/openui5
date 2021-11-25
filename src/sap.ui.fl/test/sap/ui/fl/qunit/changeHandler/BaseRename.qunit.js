@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	BaseRename,
 	Base,
 	Change,
@@ -26,7 +25,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oComponent = sap.ui.getCore().createComponent({
 		name: "testComponent",
 		id: "testComponent"

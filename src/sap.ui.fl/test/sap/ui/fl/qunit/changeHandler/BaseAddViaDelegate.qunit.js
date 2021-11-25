@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/layout/form/Form",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	BaseAddViaDelegate,
 	DelegateMediatorAPI,
 	Change,
@@ -29,7 +28,7 @@ function(
 		});
 	}
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oComponent = sap.ui.getCore().createComponent({
 		name: "testComponent",
 		id: "testComponent"

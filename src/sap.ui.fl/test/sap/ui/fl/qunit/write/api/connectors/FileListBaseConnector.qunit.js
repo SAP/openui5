@@ -3,19 +3,15 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/api/connectors/FileListBaseConnector",
-	"sap/base/util/LoaderExtensions",
-	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
 	FileListBaseConnector,
-	LoaderExtensions,
-	StorageUtils,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var aFilePaths = [
 		"./test-resources/sap/ui/fl/qunit/testResources/changes/id_1445501120486_25_hideControl.change",
@@ -30,8 +26,6 @@ sap.ui.define([
 
 
 	QUnit.module("Given FileListBaseConnector without implementation", {
-		beforeEach: function() {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -45,8 +39,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a ListConnector implementing the FileListBaseConnector", {
-		beforeEach: function() {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}

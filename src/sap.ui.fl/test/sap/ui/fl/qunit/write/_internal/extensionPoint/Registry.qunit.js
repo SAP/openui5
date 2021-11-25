@@ -24,7 +24,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var sExtensionPointName1 = "ExtensionPoint1";
 	var sExtensionPointName2 = "ExtensionPoint2";

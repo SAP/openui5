@@ -41,7 +41,7 @@ sap.ui.define([
 
 	var Scenario = library.Scenario;
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var aControls = [];
 

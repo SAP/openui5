@@ -43,7 +43,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sReturnValue = "returnValue";
 
 	function mockFlexController(oControl, oReturn) {

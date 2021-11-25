@@ -26,7 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	jQuery("#qunit-fixture").hide();
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function simulateSystemConfig(bIsCloudSystem) {
 		sandbox.stub(Settings, "getInstance").resolves(

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	LayerContentMaster,
 	Layer,
 	UIComponent,
@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oController;
 	var oRouter;
 

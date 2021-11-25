@@ -13,12 +13,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oSandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	QUnit.module("Utils", {
 		beforeEach: function() {
-			oSandbox = sinon.sandbox.create();
-
-			oSandbox.stub(Settings, "getInstance").resolves(
+			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
 					isAtoAvailable: false,
@@ -28,7 +26,7 @@ sap.ui.define([
 			);
 		},
 		afterEach: function() {
-			oSandbox.restore();
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("getNameAndNameSpace", function(assert) {

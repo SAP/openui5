@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a AppVariantInlineChangeFactory for S4/Hana onPremise systems", {
 		beforeEach: function() {

@@ -34,7 +34,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sReference = "test.selector.id";
 	var oComponent = {
 		getManifestObject: function() {

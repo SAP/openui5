@@ -2,19 +2,16 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle",
-	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	SetTitle,
-	Change,
 	jQuery,
 	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
 		afterEach: function () {

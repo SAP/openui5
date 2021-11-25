@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	MoveElements,
 	Utils,
 	Button,
@@ -28,7 +27,7 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oComponent = sap.ui.getCore().createComponent({
 		name: "testComponent",
 		id: "testComponent"

@@ -42,7 +42,7 @@ sap.ui.define([
 	"use strict";
 
 	jQuery("#qunit-fixture").hide();
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sReturnValue = "returnValue";
 
 	function mockFlexController(oControl, oReturn) {

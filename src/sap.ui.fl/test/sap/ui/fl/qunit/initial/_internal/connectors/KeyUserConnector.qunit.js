@@ -2,18 +2,16 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector"
 ], function(
 	sinon,
-	Layer,
 	Utils,
 	KeyUserConnector
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Connector", {
 		afterEach: function() {

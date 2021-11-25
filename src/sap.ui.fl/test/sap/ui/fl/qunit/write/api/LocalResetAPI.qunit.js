@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/m/VBox",
-	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	sinon,
@@ -24,12 +23,11 @@ sap.ui.define([
 	ChangePersistence,
 	ChangePersistenceFactory,
 	VBox,
-	FlUtils,
 	JsControlTreeModifier
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function createChange (sChangeId, sSelectorId, oCustomDef) {
 		return new Change(Object.assign(

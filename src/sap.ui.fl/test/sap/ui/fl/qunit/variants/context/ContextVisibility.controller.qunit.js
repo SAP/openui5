@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/RadioButtonGroup",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	ContextVisibility,
 	WriteStorage,
 	JSONModel,
@@ -23,7 +23,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oController;
 
 

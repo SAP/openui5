@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	ContextVisibilityController,
 	ContextVisibilityComponent,
 	WriteStorage,
@@ -25,7 +25,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function fnShowErrorMessageStubs(bIsSelected) {
 		var oController = new ContextVisibilityController();

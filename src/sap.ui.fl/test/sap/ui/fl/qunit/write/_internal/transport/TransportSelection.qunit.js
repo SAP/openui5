@@ -25,7 +25,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
 		beforeEach: function () {

@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var TEST_CONNECTORS = ["apply/someConnector", "write/someConnector"];
 
 	function sortConnectors (mConnectors) {

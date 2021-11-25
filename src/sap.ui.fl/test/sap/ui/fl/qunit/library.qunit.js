@@ -3,17 +3,15 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/ui/fl/RegistrationDelegator"
 ], function(
 	sinon,
 	jQuery,
-	Configuration,
 	RegistrationDelegator
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.library", {
 		afterEach: function() {
@@ -31,8 +29,6 @@ sap.ui.define([
 			});
 		});
 	});
-
-
 
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();

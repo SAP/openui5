@@ -49,7 +49,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oView;
 	sinon.stub(PersistenceWriteAPI, "save");
 	var MockComponent = UIComponent.extend("MockController", {
@@ -883,6 +883,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
+		PersistenceWriteAPI.save.restore();
 		jQuery("body").removeClass("sapUiRtaMode");
 		jQuery("#qunit-fixture").hide();
 	});

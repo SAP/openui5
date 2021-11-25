@@ -29,7 +29,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var oAppComponent;
 	var sAffectedControlMgs = "Affected control under index";

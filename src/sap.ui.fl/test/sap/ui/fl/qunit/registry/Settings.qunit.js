@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.registry.Settings", {
 		beforeEach: function() {

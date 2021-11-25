@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	Applier,
 	ApplyStrategyFactory,
 	AddLibrary,
@@ -28,7 +27,7 @@ function (
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function convertChanges(aChanges) {
 		return aChanges.map(function(oChange) {

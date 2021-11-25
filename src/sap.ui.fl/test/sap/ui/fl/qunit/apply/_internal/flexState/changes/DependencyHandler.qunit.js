@@ -16,7 +16,7 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var PENDING = "sap.ui.fl:PendingChange";
 
 	function createChange(mPropertyBag) {

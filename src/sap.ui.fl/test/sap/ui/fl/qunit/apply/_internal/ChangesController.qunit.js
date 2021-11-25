@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var sReturnValue = "returnValue";
 	function setMethodStub(aStubArgs, aArguments, vReturnValue) {
 		var fnPersistenceStub = sandbox.stub.apply(sandbox, aStubArgs);
