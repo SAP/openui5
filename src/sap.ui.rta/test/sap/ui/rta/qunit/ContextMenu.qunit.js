@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/ui/fl/Utils",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
@@ -26,7 +25,6 @@ sap.ui.define([
 	FieldExtensibility,
 	Page,
 	Button,
-	FlexUtils,
 	RuntimeAuthoring,
 	sinon,
 	jQuery,
@@ -37,7 +35,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oComp;
 
 	jQuery("<div></div>", {
@@ -560,7 +558,7 @@ sap.ui.define([
 			//			ObjectPageSection - visible
 			//				ObjectPageSubSection
 			//					Button
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oComp);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
@@ -619,6 +617,8 @@ sap.ui.define([
 		},
 		after: function() {
 			this.oObjectPageLayout.destroy();
+			this.oMockedAppComponent._restoreGetAppComponentStub();
+			this.oMockedAppComponent.destroy();
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -688,7 +688,7 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
 		beforeEach: function() {
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oComp);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			var oSubSection = new ObjectPageSubSection({
 				id: "subsection1",
@@ -733,6 +733,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oRta.destroy();
+			this.oMockedAppComponent.destroy();
 			this.oObjectPageLayout.destroy();
 			sandbox.restore();
 		}

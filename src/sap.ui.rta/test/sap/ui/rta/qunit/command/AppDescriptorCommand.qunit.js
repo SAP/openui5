@@ -2,54 +2,32 @@
 
 sap.ui.define([
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/sinon-4"
-],
-function (
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+], function(
 	Layer,
-	FlUtils,
 	AppVariantInlineChangeFactory,
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
 	ManagedObject,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
-	'use strict';
+	"use strict";
 
 	QUnit.module("Given the parameters required to create an app descriptor change...", {
 		before: function () {
-			this.oMockedAppComponent = {
-				getLocalId: function () {},
-				getManifestEntry: function () {
-					return {};
-				},
-				getMetadata: function () {
-					return {
-						getName: function () {
-							return "someName";
-						}
-					};
-				},
-				getManifest: function () {
-					return {
-						"sap.app": {
-							applicationVersion: {
-								version: "1.2.3"
-							}
-						}
-					};
-				}
-			};
-			this.oFlUtilsStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
 		after: function () {
-			this.oFlUtilsStub.restore();
+			this.oMockedAppComponent._restoreGetAppComponentStub();
+			this.oMockedAppComponent.destroy();
 		},
 		beforeEach: function () {
 			this.sReference = "appReference";
@@ -140,7 +118,7 @@ function (
 			})
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 

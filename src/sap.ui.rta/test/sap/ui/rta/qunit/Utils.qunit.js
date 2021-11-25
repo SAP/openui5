@@ -48,7 +48,7 @@ sap.ui.define([
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
 	var ObjectPageSubSectionLayout = uxapLibrary.ObjectPageSubSectionLayout;
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a test app...", {
 		before: function() {

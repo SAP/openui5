@@ -71,7 +71,7 @@ sap.ui.define([
 						this.oView = mShared.view;
 						this.mAddViaDelegateAction = mShared.mAddViaDelegateAction;
 						this.oDelegate = mShared.delegate;
-						this.sandbox = sinon.sandbox.create();
+						this.sandbox = sinon.createSandbox();
 					}.bind(this));
 				},
 				afterEach: function() {

@@ -6,20 +6,20 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
 	"sap/ui/rta/plugin/Split",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	jQuery,
 	DesignTime,
 	CommandFactory,
 	OverlayRegistry,
 	ChangesWriteAPI,
-	Utils,
 	SplitPlugin,
 	XMLView,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -35,39 +35,9 @@ sap.ui.define([
 		}
 	};
 
-	var oMockedAppComponent = {
-		getLocalId: function () {
-			return undefined;
-		},
-		getManifestEntry: function () {
-			return {};
-		},
-		getMetadata: function () {
-			return {
-				getName: function () {
-					return "someName";
-				}
-			};
-		},
-		getManifest: function () {
-			return {
-				"sap.app": {
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-		},
-		getModel: function () {}
-	};
+	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-	var oGetAppComponentForControlStub = sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
-	});
-
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var fnSetOverlayDesigntimeMetadata = function(oOverlay, oDesignTimeMetadata) {
 		oOverlay.setDesignTimeMetadata(oDesignTimeMetadata);
 	};
@@ -381,6 +351,8 @@ sap.ui.define([
 
 
 	QUnit.done(function () {
+		oMockedAppComponent._restoreGetAppComponentStub();
+		oMockedAppComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

@@ -67,7 +67,7 @@ sap.ui.define([
 		}
 	});
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	sinon.stub(flLayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");

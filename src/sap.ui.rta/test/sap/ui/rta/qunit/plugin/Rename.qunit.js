@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
@@ -17,13 +16,12 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/UIComponent",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	VerticalLayout,
 	DesignTime,
 	ChangesWriteAPI,
-	FlUtils,
 	Utils,
 	CommandFactory,
 	OverlayRegistry,
@@ -36,12 +34,12 @@ sap.ui.define([
 	Button,
 	Label,
 	KeyCodes,
-	UIComponent,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
@@ -383,8 +381,7 @@ sap.ui.define([
 
 		QUnit.test("when the Label gets renamed with a responsible element", function(assert) {
 			var fnDone = assert.async();
-			var oMockAppComponent = new UIComponent("mockAppComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oMockAppComponent);
+			var oMockAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			addResponsibleElement(this.oLayoutOverlay.getDesignTimeMetadata(), this.oVerticalLayout, this.oButton);
 

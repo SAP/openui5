@@ -73,7 +73,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 	var oCompCont;
 	var oComp;
 
@@ -631,7 +631,6 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			// Prepare elements an designtime
@@ -648,7 +647,7 @@ sap.ui.define([
 			});
 			// Create commmands
 			var oCommandFactory = new CommandFactory();
-			return oCommandFactory.getCommandFor(oElement1, "Remove", {
+			oCommandFactory.getCommandFor(oElement1, "Remove", {
 				removedElement: oElement1
 			}, this.oGroupElementDesignTimeMetadata)
 
@@ -673,14 +672,11 @@ sap.ui.define([
 					});
 
 					this.oRta.start()
-
 						.then(function() {
 							this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
 							this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
 						}.bind(this))
-
 						.then(fnDone)
-
 						.catch(function (oError) {
 							assert.ok(false, "catch must never be called - Error: " + oError);
 						});
@@ -689,13 +685,8 @@ sap.ui.define([
 				this.oCommandStack = new Stack();
 				this.oCommandStack.attachEventOnce("modified", fnStackModifiedSpy);
 				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand);
-			}.bind(this))
-
-			.catch(function (oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
-			});
+			}.bind(this));
 		},
-
 		afterEach: function() {
 			cleanInfoSessionStorage();
 			sandbox.restore();
@@ -814,71 +805,7 @@ sap.ui.define([
 			this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
 			sap.ui.getCore().applyChanges();
 		});
-	});
 
-	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
-		before: function () {
-			return oComponentPromise;
-		},
-		beforeEach: function() {
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
-			var oGroupElement1 = new GroupElement({id: oComp.createId("element1")});
-			var oGroupElement2 = new GroupElement({id: oComp.createId("element2")});
-			var oGroup = new Group({
-				id: oComp.createId("group"),
-				groupElements: [oGroupElement1, oGroupElement2]
-			});
-			this.oSmartForm = new SmartForm({
-				id: oComp.createId("smartform"),
-				groups: [oGroup]
-			});
-			this.oSmartForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			var oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
-				data: {
-					actions: {
-						remove: {
-							changeType: "hideControl"
-						}
-					}
-				}
-			});
-			var oCommandFactory = new CommandFactory();
-			this.oCommandStack = new Stack();
-			this.oRta = new RuntimeAuthoring({
-				rootControl: this.oSmartForm,
-				commandStack: this.oCommandStack,
-				showToolbars: true
-			});
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
-
-			return RtaQunitUtils.clear()
-			.then(this.oRta.start.bind(this.oRta))
-			.then(function() {
-				return oCommandFactory.getCommandFor(oGroupElement1, "Remove", {
-					removedElement: oGroupElement1
-				}, oGroupElementDesignTimeMetadata);
-			})
-			.then(function(oRemoveCommand) {
-				return this.oCommandStack.pushAndExecute(oRemoveCommand);
-			}.bind(this))
-			.then(function() {
-				return oCommandFactory.getCommandFor(oGroupElement2, "Remove", {
-					removedElement: oGroupElement2
-				}, oGroupElementDesignTimeMetadata);
-			})
-			.then(function(oRemoveCommand) {
-				return this.oCommandStack.pushAndExecute(oRemoveCommand);
-			}.bind(this));
-		},
-		afterEach: function() {
-			cleanInfoSessionStorage();
-			sandbox.restore();
-			this.oSmartForm.destroy();
-			this.oRta.destroy();
-			return RtaQunitUtils.clear();
-		}
-	}, function() {
 		QUnit.test("when trying to stop rta with error in saving changes,", function(assert) {
 			var fnStubSerialize = function() {
 				return Promise.reject();
@@ -888,7 +815,7 @@ sap.ui.define([
 			return this.oRta.stop(false).catch(function() {
 				assert.ok(true, "then the promise got rejected");
 				assert.ok(this.oRta, "RTA is still up and running");
-				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 2, "2 commands are still in the stack");
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
 				assert.strictEqual(jQuery(".sapUiRtaToolbar:visible").length, 1, "and the Toolbar is visible.");
 			}.bind(this));
 		});
@@ -897,23 +824,12 @@ sap.ui.define([
 			return this.oRta.stop(true)
 				.then(function() {
 					assert.ok(true, "then the promise got resolved");
-					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 2, "2 commands are still in the stack");
+					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
 				}.bind(this))
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function (iNumOfChanges) {
 					assert.equal(iNumOfChanges, 0, "there is no change written");
 				});
-		});
-
-		QUnit.test("when stopping rta with saving changes", function(assert) {
-			return this.oRta.stop()
-			.then(function() {
-				assert.ok(true, "then the promise got resolved");
-			})
-			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
-			.then(function (iNumberOfChanges) {
-				assert.equal(iNumberOfChanges, 2);
-			});
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is disabled", function(assert) {

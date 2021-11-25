@@ -2,24 +2,24 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/UIComponent",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Control,
-	UIComponent,
 	ElementDesignTimeMetadata,
 	JSONModel,
 	ChangesWriteAPI,
 	Layer,
 	FlUtils,
 	CommandFactory,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -96,13 +96,12 @@ sap.ui.define([
 				this.mCurrentInfo = Object.assign({}, mInfo);
 				this.mCurrentCommandProperties = Object.assign({}, mCommandProperties);
 				this.mCurrentExpectedSpecificData = Object.assign({}, mExpectedSpecificData);
-				this.oMockedAppComponent = new UIComponent();
+				this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 				var oVariantModel = new JSONModel();
 				oVariantModel.getCurrentVariantReference = function(sVariantManagementReference) {
 					return sVariantManagementReference;
 				};
 				this.oMockedAppComponent.setModel(oVariantModel, FlUtils.VARIANT_MODEL_NAME);
-				sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oMockedAppComponent);
 				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 				this.oCreateStub = sandbox.stub(ChangesWriteAPI, "create").resolves();
 				this.oControl = new Control("myFancyControlId");

@@ -19,7 +19,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
 		beforeEach: function () {

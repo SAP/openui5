@@ -6,60 +6,62 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/base/Log",
-	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/m/MessageBox",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
 	jQuery,
 	AppVariantUtils,
 	Settings,
 	Layer,
 	FlUtils,
-	FlexRuntimeInfoAPI,
 	WriteUtils,
 	AppVariantFactory,
 	Log,
-	Manifest,
 	ChangesWriteAPI,
 	AppVariantWriteAPI,
 	MessageBox,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given an AppVariantUtils is instantiated", {
+	function stubUshellContainer() {
+		var oUshellContainerStub = {
+			getServiceAsync: function () {
+				return Promise.resolve({
+					getHash: function() {
+						return "testSemanticObject-testAction";
+					},
+					parseShellHash: function() {
+						return {
+							semanticObject: "testSemanticObject",
+							action: "testAction"
+						};
+					}
+				});
+			},
+			getLogonSystem: function() {
+				return {
+					isTrial: function() {
+						return false;
+					}
+				};
+			}
+		};
+		sandbox.stub(FlUtils, "getUshellContainer").returns(oUshellContainerStub);
+	}
+
+	QUnit.module("Given the ushell container is stubbed", {
 		beforeEach: function () {
-			var oUshellContainerStub = {
-				getServiceAsync: function () {
-					return Promise.resolve({
-						getHash: function() {
-							return "testSemanticObject-testAction";
-						},
-						parseShellHash: function() {
-							return {
-								semanticObject: "testSemanticObject",
-								action: "testAction"
-							};
-						}
-					});
-				},
-				getLogonSystem: function() {
-					return {
-						isTrial: function() {
-							return false;
-						}
-					};
-				}
-			};
-			sandbox.stub(FlUtils, "getUshellContainer").returns(oUshellContainerStub);
+			stubUshellContainer();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -332,291 +334,6 @@ sap.ui.define([
 			assert.deepEqual(AppVariantUtils.getInlineChangeForInboundPropertySaveAs("testInbound", "customer.appvar.id"), oInboundPropertyChange, "then the inbound property change is correct");
 		});
 
-		var fnCreateAppComponent = function() {
-			var oDescriptor = {
-				"sap.app": {
-					id: "TestId",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-
-			var oManifest = new Manifest(oDescriptor);
-			var oAppComponent = {
-				name: "testComponent",
-				getManifest: function() {
-					return oManifest;
-				}
-			};
-
-			return oAppComponent;
-		};
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'title'", function (assert) {
-			var oPropertyChange = {
-				type: "XTIT",
-				maxLength: 50,
-				comment: "New title entered by a key user via RTA tool",
-				value: {
-					"": "Test Title"
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", oAppComponent).then(function(oDescrChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oDescrChange._oInlineChange, "then the title inline change is correct");
-				assert.strictEqual(oDescrChange._oInlineChange.getMap().changeType, "appdescr_app_setTitle", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'subTitle'", function (assert) {
-			var oPropertyChange = {
-				type: "XTIT",
-				maxLength: 50,
-				comment: "New subtitle entered by a key user via RTA tool",
-				value: {
-					"": "Test Subtitle"
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", oAppComponent).then(function(oSubtitleInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oSubtitleInlineChange._oInlineChange, "then the subtitle inline change is correct");
-				assert.strictEqual(oSubtitleInlineChange._oInlineChange.getMap().changeType, "appdescr_app_setSubTitle", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'description'", function (assert) {
-			var oPropertyChange = {
-				type: "XTIT",
-				maxLength: 50,
-				comment: "New description entered by a key user via RTA tool",
-				value: {
-					"": "Test Description"
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", oAppComponent).then(function(oDescriptionInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oDescriptionInlineChange._oInlineChange, "then the description inline change is correct");
-				assert.strictEqual(oDescriptionInlineChange._oInlineChange.getMap().changeType, "appdescr_app_setDescription", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'icon'", function (assert) {
-			var oPropertyChange = {
-				content: {
-					icon: "testIcon"
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", oAppComponent).then(function(oIconInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oIconInlineChange._oInlineChange, "then the icon inline change is correct");
-				assert.strictEqual(oIconInlineChange._oInlineChange.getMap().changeType, "appdescr_ui_setIcon", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inbound'", function (assert) {
-			var oGeneratedID = AppVariantUtils.getId("testId");
-			var oPropertyChange = {
-				content: {
-					inboundId: "testInbound",
-					entityPropertyChange: {
-						propertyPath: "signature/parameters/sap-appvar-id",
-						operation: "UPSERT",
-						propertyValue: {
-							required: true,
-							filter: {
-								value: oGeneratedID,
-								format: "plain"
-							},
-							launcherValue: {
-								value: oGeneratedID
-							}
-						}
-					}
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the change inbound inline change is correct");
-				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'createInbound'", function (assert) {
-			var oPropertyChange = {
-				content: {
-					inbound: {
-						testInbound: {
-							semanticObject: "testSemanticObject",
-							action: "testAction"
-						}
-					}
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", oAppComponent).then(function(oCreateInboundInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oCreateInboundInlineChange._oInlineChange, "then the create inbound inline change is correct");
-				assert.strictEqual(oCreateInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_addNewInbound", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundTitle'", function (assert) {
-			var oPropertyChange = {
-				content: {
-					inboundId: "testInbound",
-					entityPropertyChange: {
-						propertyPath: "title",
-						operation: "UPSERT",
-						propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
-					}
-				},
-				texts: {
-					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.title": {
-						type: "XTIT",
-						maxLength: 50,
-						comment: "New title entered by a key user via RTA tool",
-						value: {
-							"": "Test Title"
-						}
-					}
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the inbound title inline change is correct");
-				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundSubtitle'", function (assert) {
-			var oPropertyChange = {
-				content: {
-					inboundId: "testInbound",
-					entityPropertyChange: {
-						propertyPath: "subTitle",
-						operation: "UPSERT",
-						propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle}}"
-					}
-				},
-				texts: {
-					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle": {
-						type: "XTIT",
-						maxLength: 50,
-						comment: "New subtitle entered by a key user via RTA tool",
-						value: {
-							"": "Test Subtitle"
-						}
-					}
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the create inbound subTitle inline change is correct");
-				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundIcon'", function (assert) {
-			var oPropertyChange = {
-				content: {
-					inboundId: "testInbound",
-					entityPropertyChange: {
-						propertyPath: "icon",
-						operation: "UPSERT",
-						propertyValue: "testIcon"
-					}
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the create inbound icon inline change is correct");
-				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
-			});
-		});
-
-		QUnit.test("When createInlineChange() method is called for propertyChange 'removeInbound'", function (assert) {
-			var oPropertyChange = {
-				content: {
-					inboundId: "testInbound"
-				}
-			};
-
-			var oAppComponent = fnCreateAppComponent();
-			sandbox.stub(Settings, "getInstance").resolves({});
-			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
-
-			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", oAppComponent).then(function(oRemoveAllInboundsExceptOneInlineChange) {
-				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
-				assert.ok(oRemoveAllInboundsExceptOneInlineChange._oInlineChange, "then the remove inbound inline change is correct");
-				assert.strictEqual(oRemoveAllInboundsExceptOneInlineChange._oInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne", "then the change type is correct");
-			});
-		});
-
 		QUnit.test("When getTransportInput() method is called", function (assert) {
 			var oTransportInput = AppVariantUtils.getTransportInput("", "TestNamespace", "TestId", "appdescr_variant");
 
@@ -639,14 +356,6 @@ sap.ui.define([
 				.catch(function() {
 					assert.ok("Operation cancelled successfully");
 				});
-		});
-
-		QUnit.test("When createAppVariant() method is called", function (assert) {
-			var oAppComponent = fnCreateAppComponent();
-			var fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
-			return AppVariantUtils.createAppVariant(oAppComponent, {id: "customer.appvar.id", layer: Layer.CUSTOMER}).then(function() {
-				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: oAppComponent, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
-			});
 		});
 
 		QUnit.test("When deleteAppVariant() method is called", function (assert) {
@@ -983,6 +692,258 @@ sap.ui.define([
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 			AppVariantUtils.buildDeleteSuccessMessage("APP_VAR_ID", true);
 			assert.ok(oGetText.calledWithExactly("DELETE_APP_VARIANT_SUCCESS_MESSAGE_CLOUD", "APP_VAR_ID"), "then the getText() method is called with correct parameters");
+		});
+	});
+
+	QUnit.module("Given the ushell container and an UIComponent is stubbed", {
+		beforeEach: function() {
+			stubUshellContainer();
+			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "TestId");
+		},
+		afterEach: function() {
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When createAppVariant() method is called", function (assert) {
+			var fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
+			return AppVariantUtils.createAppVariant(this.oAppComponent, {id: "customer.appvar.id", layer: Layer.CUSTOMER}).then(function() {
+				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oAppComponent, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
+			}.bind(this));
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'title'", function (assert) {
+			var oPropertyChange = {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New title entered by a key user via RTA tool",
+				value: {
+					"": "Test Title"
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", this.oAppComponent).then(function(oDescrChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oDescrChange._oInlineChange, "then the title inline change is correct");
+				assert.strictEqual(oDescrChange._oInlineChange.getMap().changeType, "appdescr_app_setTitle", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'subTitle'", function (assert) {
+			var oPropertyChange = {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New subtitle entered by a key user via RTA tool",
+				value: {
+					"": "Test Subtitle"
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", this.oAppComponent).then(function(oSubtitleInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oSubtitleInlineChange._oInlineChange, "then the subtitle inline change is correct");
+				assert.strictEqual(oSubtitleInlineChange._oInlineChange.getMap().changeType, "appdescr_app_setSubTitle", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'description'", function (assert) {
+			var oPropertyChange = {
+				type: "XTIT",
+				maxLength: 50,
+				comment: "New description entered by a key user via RTA tool",
+				value: {
+					"": "Test Description"
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", this.oAppComponent).then(function(oDescriptionInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oDescriptionInlineChange._oInlineChange, "then the description inline change is correct");
+				assert.strictEqual(oDescriptionInlineChange._oInlineChange.getMap().changeType, "appdescr_app_setDescription", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'icon'", function (assert) {
+			var oPropertyChange = {
+				content: {
+					icon: "testIcon"
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", this.oAppComponent).then(function(oIconInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oIconInlineChange._oInlineChange, "then the icon inline change is correct");
+				assert.strictEqual(oIconInlineChange._oInlineChange.getMap().changeType, "appdescr_ui_setIcon", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inbound'", function (assert) {
+			var oGeneratedID = AppVariantUtils.getId("testId");
+			var oPropertyChange = {
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "signature/parameters/sap-appvar-id",
+						operation: "UPSERT",
+						propertyValue: {
+							required: true,
+							filter: {
+								value: oGeneratedID,
+								format: "plain"
+							},
+							launcherValue: {
+								value: oGeneratedID
+							}
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the change inbound inline change is correct");
+				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'createInbound'", function (assert) {
+			var oPropertyChange = {
+				content: {
+					inbound: {
+						testInbound: {
+							semanticObject: "testSemanticObject",
+							action: "testAction"
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", this.oAppComponent).then(function(oCreateInboundInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oCreateInboundInlineChange._oInlineChange, "then the create inbound inline change is correct");
+				assert.strictEqual(oCreateInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_addNewInbound", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundTitle'", function (assert) {
+			var oPropertyChange = {
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "title",
+						operation: "UPSERT",
+						propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.title}}"
+					}
+				},
+				texts: {
+					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.title": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New title entered by a key user via RTA tool",
+						value: {
+							"": "Test Title"
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the inbound title inline change is correct");
+				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundSubtitle'", function (assert) {
+			var oPropertyChange = {
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "subTitle",
+						operation: "UPSERT",
+						propertyValue: "{{appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle}}"
+					}
+				},
+				texts: {
+					"appVariantId_sap.app.crossNavigation.inbounds.testInbound.subtitle": {
+						type: "XTIT",
+						maxLength: 50,
+						comment: "New subtitle entered by a key user via RTA tool",
+						value: {
+							"": "Test Subtitle"
+						}
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the create inbound subTitle inline change is correct");
+				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'inboundIcon'", function (assert) {
+			var oPropertyChange = {
+				content: {
+					inboundId: "testInbound",
+					entityPropertyChange: {
+						propertyPath: "icon",
+						operation: "UPSERT",
+						propertyValue: "testIcon"
+					}
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", this.oAppComponent).then(function(oChangeInboundInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the create inbound icon inline change is correct");
+				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
+			});
+		});
+
+		QUnit.test("When createInlineChange() method is called for propertyChange 'removeInbound'", function (assert) {
+			var oPropertyChange = {
+				content: {
+					inboundId: "testInbound"
+				}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves({});
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", this.oAppComponent).then(function(oRemoveAllInboundsExceptOneInlineChange) {
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
+				assert.ok(oRemoveAllInboundsExceptOneInlineChange._oInlineChange, "then the remove inbound inline change is correct");
+				assert.strictEqual(oRemoveAllInboundsExceptOneInlineChange._oInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne", "then the change type is correct");
+			});
 		});
 	});
 

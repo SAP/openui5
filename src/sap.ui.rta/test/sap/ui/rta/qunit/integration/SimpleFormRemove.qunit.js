@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/dt/plugin/MouseSelection",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/layout/library"
+	"sap/ui/layout/library",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	XMLView,
 	DesignTime,
@@ -20,15 +19,14 @@ sap.ui.define([
 	MouseSelectionPlugin,
 	RemovePlugin,
 	CommandFactory,
-	Utils,
-	UIComponent,
 	sinon,
-	layoutLibrary
+	layoutLibrary,
+	RtaQunitUtils
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.layout.form.SimpleFormLayout
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+	var sandbox = sinon.createSandbox();
 
 	function fnParamerizedTest(oSimpleFormLayout) {
 		var oComponent;
@@ -37,13 +35,11 @@ sap.ui.define([
 		var oSimpleForm;
 		var oRemove;
 
-		var sandbox = sinon.sandbox.create();
 		var oCommandFactory = new CommandFactory();
 
 		QUnit.module("Given the SimpleForm in RTA using " + oSimpleFormLayout, {
 			beforeEach: function(assert) {
-				oComponent = new UIComponent();
-				sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+				oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 				var done = assert.async();
 

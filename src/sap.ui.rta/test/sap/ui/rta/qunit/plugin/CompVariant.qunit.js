@@ -2,32 +2,30 @@
 
 sap.ui.define([
 	"sap/ui/comp/smartvariants/SmartVariantManagement",
-	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CompVariant",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	SmartVariantManagement,
-	UIComponent,
 	DesignTime,
 	OverlayRegistry,
 	KeyCodes,
 	SmartVariantManagementApplyAPI,
 	SmartVariantManagementWriteAPI,
 	Layer,
-	FlUtils,
 	CommandFactory,
 	CompVariant,
 	Utils,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -63,8 +61,7 @@ sap.ui.define([
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
 		before: function() {
-			this.oUIComponent = new UIComponent("mockComponent");
-			sinon.stub(FlUtils, "getAppComponentForControl").returns(this.oUIComponent);
+			this.oUIComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
 			});
@@ -111,6 +108,7 @@ sap.ui.define([
 		},
 		after: function() {
 			this.oVariantManagementControl.destroy();
+			this.oUIComponent._restoreGetAppComponentStub();
 			this.oUIComponent.destroy();
 		}
 	}, function() {
