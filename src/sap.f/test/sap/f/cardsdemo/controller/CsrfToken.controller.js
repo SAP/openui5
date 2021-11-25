@@ -34,6 +34,7 @@ sap.ui.define([
 			this.getView().byId('card3').setHost(oHost);
 			this.getView().byId('card4').setHost(oHostResolveToken);
 			this.getView().byId('card5').setHost(oHostResolveToken);
+			this.getView().byId('card6').setHost(oHost);
 		}
 	});
 });

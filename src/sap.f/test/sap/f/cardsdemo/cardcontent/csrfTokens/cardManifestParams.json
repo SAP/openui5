@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.ui.CardCSRFToken.Card3",
+		"id": "sap.ui.CardCSRFToken.Card5",
 		"type": "card",
 		"title": "Cards with CSRF tokens used",
 		"subTitle": "",
@@ -51,15 +51,15 @@
 			}
 		},
 		"header": {
-			"title": "Resolved by the Host"
+			"title": "Title"
 		},
 		"content": {
 			"data": {
 				"request": {
 					"url": "{{destinations.ActivitiesMockServer}}/Activities",
-					"method": "GET",
-					"headers": {
-						"X-CSRF-Token": "{{csrfTokens.token1}}"
+					"method": "POST",
+					"parameters": {
+						"X-CSRF-Token": "{{csrfTokens.token1}}ADD"
 					}
 				},
 				"path": "/data"

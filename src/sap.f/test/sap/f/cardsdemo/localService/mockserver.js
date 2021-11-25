@@ -72,6 +72,40 @@ sap.ui.define([
 			});
 
 			aRequests.push({
+				method: "POST",
+				path: /.*/,
+				response: function (oXhr, sQuery) {
+					if (oXhr.url.indexOf("Tokens") > -1) {
+						oXhr.respondJSON(200, null, tokens);
+						return;
+					}
+
+					var requestHeaders = oXhr.requestHeaders;
+					var headers = {
+
+					};
+					var respondStatus = 200;
+
+					if (requestHeaders["X-CSRF-Token"]) {
+						headers["X-CSRF-Token"] = requestHeaders["X-CSRF-Token"];
+					}
+
+					if (oXhr.url.indexOf("ExpiringToken") !== -1) {
+						if (!this.firstTime) {
+							this.firstTime = true;
+						} else {
+							this.firstTime = false;
+							respondStatus = 403;
+
+							headers["X-CSRF-Token"] = "required";
+						}
+					}
+
+					oXhr.respondJSON(respondStatus, headers, activities);
+				}
+			});
+
+			aRequests.push({
 				method: "HEAD",
 				path: /.*/,
 				response: function (oXhr, sQuery) {
@@ -93,14 +127,6 @@ sap.ui.define([
 					}
 
 					oXhr.respond(200, headers);
-				}
-			});
-
-			aRequests.push({
-				method: "POST",
-				path: /.*/,
-				response: function (oXhr, sQuery) {
-					oXhr.respondJSON(200, null, tokens);
 				}
 			});
 
