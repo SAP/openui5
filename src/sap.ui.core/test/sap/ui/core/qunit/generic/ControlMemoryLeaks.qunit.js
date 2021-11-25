@@ -252,7 +252,6 @@ sap.ui.define([
 
 		// ignore controls with known memory leaks - FIXME: reduce this list after the leaks have been fixed
 		if ([
-			"sap.ui.mdc.p13n.panels.Wrapper",                          // TICKET: TODO 9
 			"sap.uiext.inbox.InboxLaunchPad",                          // Ticket: TODO 3
 			"sap.uiext.inbox.InboxSplitApp",                           // Ticket: TODO 4
 			"sap.uiext.inbox.composite.InboxAttachmentTile",           // Ticket: TODO 5
