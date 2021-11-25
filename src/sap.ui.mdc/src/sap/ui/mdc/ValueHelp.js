@@ -452,6 +452,11 @@ sap.ui.define([
 	ValueHelp.prototype.open = function(bTypeahead) {
 		var oContainer = bTypeahead ? this.getTypeahead() : _getValueHelpContainer.call(this);
 
+		var oOtherContainer = bTypeahead ? this.getDialog() : this.getTypeahead();
+		if (oOtherContainer && oContainer !== oOtherContainer && (oOtherContainer.isOpen() || oOtherContainer.isOpening())) {
+			oOtherContainer.close(); 	// TODO: Check container to be fully closed via promise
+		}
+
 		if (oContainer && !oContainer.isOpen() && !oContainer.isOpening()) {
 			this._removePromise("delegateContent" + "--" + oContainer.getId());
 			oContainer.open(this._retrieveDelegateContent(oContainer, true));

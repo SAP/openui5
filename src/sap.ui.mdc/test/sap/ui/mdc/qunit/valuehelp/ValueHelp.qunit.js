@@ -330,6 +330,17 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("do not close open/opening containers if they are the same instance", function(assert) {
+		sinon.spy(oContainer, "open");
+		sinon.spy(oContainer, "close");
+		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
+		oValueHelp.open(false);
+		assert.ok(oContainer.open.called, "Container open called for dialog opening");
+		sinon.stub(oContainer, "isOpen").returns(true);
+		oValueHelp.open(false);
+		assert.notOk(oContainer.close.called, "Container close was not called for already open container");
+	});
+
 	QUnit.test("close", function(assert) {
 
 		sinon.spy(oContainer, "close");
@@ -850,6 +861,17 @@ sap.ui.define([
 			fnDone();
 		}, 0);
 
+	});
+
+	QUnit.test("close open/opening containers when opening in another mode", function(assert) {
+		sinon.spy(oContainer, "open");
+		sinon.spy(oContainer, "close");
+
+		//var fnDone = assert.async();
+		oValueHelp.open(false);
+		assert.ok(oContainer.open.called, "Container open called for dialog opening");
+		oValueHelp.open(true);
+		assert.ok(oContainer.close.called, "Container close called for already open container");
 	});
 
 	QUnit.test("close", function(assert) {
