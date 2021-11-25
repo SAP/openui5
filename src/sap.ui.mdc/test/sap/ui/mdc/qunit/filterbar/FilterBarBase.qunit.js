@@ -213,4 +213,42 @@ sap.ui.define([
 
     });
 
+
+    QUnit.test("Check _handleFilterItemSubmit with ongoing flex changes", function(assert){
+        var done = assert.async();
+
+        var fnSubmitPromiseResolve = null;
+        var oSubmitPromise = new Promise(function(resolve, reject) { fnSubmitPromiseResolve = resolve; });
+        var oEvent = {
+            getParameter: function() { fnSubmitPromiseResolve(); return oSubmitPromise; }
+        };
+
+        var fnFlexPromiseResolve = null;
+        var oFlexPromise = new Promise(function(resolve, reject) { fnFlexPromiseResolve = resolve; });
+        sinon.stub(this.oFilterBarBase, "_getWaitForChangesPromise").returns(oFlexPromise);
+
+        sinon.stub(this.oFilterBarBase, "_applyInitialFilterConditions").callsFake(function() {
+            this.oFilterBarBase._bInitialFiltersApplied = true;
+            this.oFilterBarBase._fResolveInitialFiltersApplied();
+            this.oFilterBarBase._fResolveInitialFiltersApplied = null;
+        }.bind(this));
+
+        this.oFilterBarBase.applyConditionsAfterChangesApplied();
+        var nStep = 0;
+        var fSearch = function(oEvent) {
+            assert.equal(++nStep, 2);
+            done();
+        };
+        var fFiltersChanged = function(oEvent) {
+            assert.equal(++nStep, 1);
+        };
+        this.oFilterBarBase.attachFiltersChanged(fFiltersChanged);
+        this.oFilterBarBase.attachSearch(fSearch);
+
+        this.oFilterBarBase._handleFilterItemSubmit(oEvent);
+        oSubmitPromise.then(function() {
+            setTimeout(function() { fnFlexPromiseResolve(); });
+        });
+    });
+
 });

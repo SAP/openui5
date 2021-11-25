@@ -719,7 +719,14 @@ sap.ui.define([
 		this._getConditionModel().oConditionModel.removeAllConditions();
 	};
 	FilterBarBase.prototype.onSearch = function(oEvent) {
-		this.triggerSearch();
+		if (!this._bSearchPressed) {
+			this._bSearchPressed = true;
+			this.triggerSearch().then(function() {
+				this._bSearchPressed = false;
+			}.bind(this), function(){
+				this._bSearchPressed = false;
+			}.bind(this));
+		}
 	};
 
 	/**
@@ -842,7 +849,14 @@ sap.ui.define([
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
 			oPromise.then(function() {
-				this.triggerSearch();
+				if (this._aCollectedChangePromises && this._aCollectedChangePromises.length > 0) {
+					var aChangePromises = this._aCollectedChangePromises.slice();
+					Promise.all(aChangePromises).then(function() {
+						this.triggerSearch();
+					}.bind(this));
+				} else {
+					this.triggerSearch();
+				}
 			}.bind(this));
 		}
 	};
@@ -967,8 +981,15 @@ sap.ui.define([
 		}
 
 		if (vRetErrorState === ErrorState.NoError) {
-			this._fResolvedSearchPromise();
-			fnCleanup();
+			if (this._isChangeApplying()) {
+				this._oFlexPromise.then(function() {
+					this._fResolvedSearchPromise();
+					fnCleanup();
+				}.bind(this));
+			} else {
+				this._fResolvedSearchPromise();
+				fnCleanup();
+			}
 		} else {
 			if (vRetErrorState === ErrorState.RequiredHasNoValue) {
 				sErrorMessage = this._oRb.getText("filterbar.REQUIRED_CONDITION_MISSING");
