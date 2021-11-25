@@ -23,17 +23,17 @@
 		"type": "List",
 		"configuration": {
 			"destinations": {
-				"ProductsMockServer": {
-					"name": "ProductsMockServer",
-					"label": "Products Mock",
-					"defaultUrl": "/SEPMRA_PROD_MAN/"
+				"ProductsMockServerWithCSRF": {
+					"name": "ProductsMockServerWithCSRF",
+					"label": "Products Mock CSRF",
+					"defaultUrl": "/getDataWithCSRF"
 				}
 			},
 			"csrfTokens": {
 				"token1": {
 					"data": {
 						"request": {
-							"url": "{{destinations.ProductsMockServer}}/",
+							"url": "{{destinations.ProductsMockServerWithCSRF}}/Token",
 							"method": "HEAD",
 							"headers": {
 								"X-CSRF-Token": "Fetch"
@@ -45,7 +45,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{destinations.ProductsMockServer}}/SEPMRA_C_PD_Product",
+				"url": "{{destinations.ProductsMockServerWithCSRF}}/Products",
 				"parameters": {
 					"$format": "json"
 				},
@@ -54,7 +54,7 @@
 					"X-CSRF-Token": "{{csrfTokens.token1}}"
 				}
 			},
-			"path": "/d/results"
+			"path": "/data"
 		},
 		"header": {
 			"title": "Products",
@@ -70,7 +70,7 @@
 					"value": "{= format.unit(${Weight}, ${WeightUnit})}"
 				}
 			},
-			"maxItems": 5
+			"maxItems": 4
 		}
 	}
 }

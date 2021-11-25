@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(Controller, MessageToast, Host) {
 	"use strict";
 
-	return Controller.extend("sap.ui.CardCSRFToken.CardCSRFToken", {
+	return Controller.extend("sap.f.cardsdemo.controller.CsrfToken", {
 
 		onInit: function () {
 			var oHost = new Host({
