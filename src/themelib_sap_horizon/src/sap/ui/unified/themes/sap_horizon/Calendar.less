@@ -70,12 +70,12 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus,
 .sapUiCalHead .sapUiCalHeadPrev,
 .sapUiCalHead .sapUiCalHeadNext,
 .sapUiCalHead .sapUiCalHeadToday {
-	color: @sapUiButtonLiteTextColor;
-	border: 0.0625rem solid @sapUiButtonBorderColor;
 	border-radius: 0.5rem;
 
 }
 
+.sapUiCalHead .sapUiCalHeadPrev:hover,
+.sapUiCalHead .sapUiCalHeadNext:hover,
 html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:hover {
 	box-shadow: 0 0 0.125rem 0 fade(@sapContent_ShadowColor, 72);
 }
@@ -404,10 +404,6 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 	bottom: 0.5rem;
 }
 
-.sapUiCalHead > button,
-.sapUiCalCancel {
-	background-color: @sapUiButtonBackground;
-}
 /* Day names inside day */
 .sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
 	line-height: 2.5rem;
@@ -439,6 +435,10 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 	line-height: 2rem;
 }
 
+.sapUiCalHead > button {
+	height: 2.25rem;
+}
+
 .sapUiSizeCompact {
 	.sapUiCalContentOver{
 		bottom: 0.25rem;
@@ -450,6 +450,11 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 	.sapUiCalItemSelBetween .sapUiCalItemText,
 	.sapUiCalItemSel.sapUiCalItemSelBetween:not(.sapUiCalItemNow) > .sapUiCalItemText {
 		line-height: 1.75rem;
+	}
+
+	.sapUiCalHead > button {
+		margin: 0.1875rem 0;
+		height: 1.625rem;
 	}
 }
 

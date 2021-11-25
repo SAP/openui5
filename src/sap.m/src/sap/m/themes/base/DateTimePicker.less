@@ -13,6 +13,7 @@
 .sapMDateTimePopupCont > .sapUiCal,
 .sapMDateTimePopupCont > .sapMTimePickerContainer {
 	float: left;
+	padding-top: 0.5rem;
 }
 
 .sapMDateTimePopupCont > .sapMTimePickerContainer {
@@ -21,16 +22,15 @@
 
 .sapMTimePickerSwitch {
 	margin-top: 1rem;
-	width: 100%;
 	text-align: center;
 }
 
 .sapMTimePickerSep {
 	height: ~'calc(100% - 2rem)';
-	width: 0px;
+	width: 0.0625rem;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
-	border-left: 1px solid @sapUiGroupContentBorderColor;
+	background-color: @sapUiGroupContentBorderColor;
 	box-sizing: border-box;
 	float: left;
 }
@@ -131,5 +131,10 @@ html:not(.sapUiMedia-Std-Phone),
 html:not(.sapUiMedia-StdExt-Phone) {
 	.sapMDateTimePopup .sapMPopoverCont {
 		overflow: hidden auto !important; /* disable horizontal scrolling when not phone size */
+	}
+	.sapMDateTimePopupCont {
+		.sapMTPClocksContainer {
+			padding: 0.5rem;
+		}
 	}
 }
