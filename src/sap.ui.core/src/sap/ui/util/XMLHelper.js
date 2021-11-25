@@ -15,15 +15,14 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	var Helper = {};
 
 	/**
-	 * Parses the specified XML formatted string text using native parsing
-	 * function of the browser and returns a valid XML document. If an error
-	 * occurred during parsing a parse error xobject is returned as property (parseError) of the
-	 * returned XML document object. The parse error object has the following error
-	 * information parameters: errorCode, url, reason, srcText, line, linepos, filepos
+	 * Parses the specified XML string into an XML document, using the native parsing functionality of the
+	 * browser. If an error occurs during parsing, a {@link module:sap/base/util/XMLHelper.XMLParseErrorInfo
+	 * parse error info object} is attached as the <code>parseError</code> property of the returned document.
 	 *
-	 * @param {string} sXMLText the XML data as string
-	 * @returns {object} the parsed XML document with a parseError property as described in
-	 *          getParseError. An error occurred if the errorCode property of the parseError is != 0.
+	 * @param {string} sXMLText An XML string
+	 * @returns {XMLDocument} the parsed XML document with a <code>parseError</code> property as described in
+	 *          {@link #getParseError}. An error occurred if the <code>errorCode</code> property of the
+	 *          <code>parseError</code> is not 0.
 	 * @public
 	 * @static
 	 */
@@ -45,14 +44,33 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	};
 
 	/**
+	 * Error information as provided by the <code>DOMParser</code>.
+	 *
+	 * Note that the set of properties with meaningful content differs between browsers.
+	 *
+	 * @typedef {object} module:sap/base/util/XMLHelper.XMLParseErrorInfo
+	 * @property {int} [errorCode=-1]
+	 * @property {sap.ui.core.URI} [url=""]
+	 * @property {string} [reason="unknown error"]
+	 * @property {string} [srcText=""]
+	 * @property {int} [line=-1]
+	 * @property {int} [linepos=-1]
+	 * @property {int} [filepos=-1]
+	 * @property {"error"|"warning"} [type="error"]
+	 * @public
+	 */
+
+	/**
 	 * Extracts parse error information from the specified document (if any).
 	 *
-	 * If an error was found the returned object has the following error
-	 * information parameters: errorCode, url, reason, srcText, line, linepos,
-	 * filepos
+	 * If an error was found, the returned object contains a browser-specific subset of
+	 * the properties described in {@link module:sap/base/util/XMLHelper.XMLParseErrorInfo XMLParseErrorInfo}.
+	 * Otherwise, it just contains an <code>errorCode</code> property with value 0.
 	 *
-	 * @param {string} oDocument the parsed XML document
-	 * @returns {object} oParseError if errors were found, or an object with an errorCode of 0 only
+	 * @param {XMLDocument} oDocument
+	 *    The parsed XML document
+	 * @returns {module:sap/base/util/XMLHelper.XMLParseErrorInfo}
+	 *    A browser-specific error info object if errors were found, or an object with an <code>errorCode<code> of 0 only
 	 * @public
 	 * @static
 	 */
@@ -64,7 +82,8 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 			srcText : "",
 			line : -1,
 			linepos : -1,
-			filepos : -1
+			filepos : -1,
+			type : "error"
 		};
 
 		// Firefox
@@ -72,14 +91,16 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 			&& oDocument.documentElement.tagName == "parsererror") {
 
 			var sErrorText = oDocument.documentElement.firstChild.nodeValue,
-				rParserError = /XML Parsing Error: (.*)\nLocation: (.*)\nLine Number (\d+), Column (\d+):(.*)/;
+				rParserError = /XML Parsing Error: (.*)\nLocation: (.*)\nLine Number (\d+), Column (\d+):(.*)/,
+				oMatch = rParserError.exec(sErrorText);
 
-			if (rParserError.test(sErrorText)) {
-				oParseError.reason = RegExp.$1;
-				oParseError.url = RegExp.$2;
-				oParseError.line = parseInt(RegExp.$3);
-				oParseError.linepos = parseInt(RegExp.$4);
-				oParseError.srcText = RegExp.$5;
+			if (oMatch) {
+				oParseError.reason = oMatch[1];
+				oParseError.url = oMatch[2];
+				oParseError.line = parseInt(oMatch[3]);
+				oParseError.linepos = parseInt(oMatch[4]);
+				oParseError.srcText = oMatch[5];
+				oParseError.type = "error";
 
 			}
 			return oParseError;
@@ -90,15 +111,16 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 			&& oDocument.getElementsByTagName("parsererror").length > 0) {
 
 			var sErrorText = Helper.serialize(oDocument),
-				rParserError = /(error|warning) on line (\d+) at column (\d+): ([^<]*)\n/;
+				rParserError = /(error|warning) on line (\d+) at column (\d+): ([^<]*)\n/,
+				oMatch = rParserError.exec(sErrorText);
 
-			if (rParserError.test(sErrorText)) {
-				oParseError.reason = RegExp.$4;
+			if (oMatch) {
+				oParseError.reason = oMatch[4];
 				oParseError.url = "";
-				oParseError.line = parseInt(RegExp.$2);
-				oParseError.linepos = parseInt(RegExp.$3);
+				oParseError.line = parseInt(oMatch[2]);
+				oParseError.linepos = parseInt(oMatch[3]);
 				oParseError.srcText = "";
-				oParseError.type = RegExp.$1;
+				oParseError.type = oMatch[1];
 
 			}
 			return oParseError;
@@ -114,10 +136,11 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 	};
 
 	/**
-	 * Serializes the specified XML document into a string representation.
+	 * Serializes the specified DOM tree into a string representation.
 	 *
-	 * @param {string} oXMLDocument the XML document object to be serialized as string
-	 * @returns {object} the serialized XML string
+	 * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/XMLSerializer/serializeToString}
+	 * @param {Node|Attr} oXMLDocument the XML document object to be serialized as string
+	 * @returns {string} the serialized XML string
 	 * @public
 	 * @static
 	 */
