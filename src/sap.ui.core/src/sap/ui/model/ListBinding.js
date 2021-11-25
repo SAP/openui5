@@ -72,8 +72,8 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 * Returns all current contexts of this list binding in no special order. Just like
 	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
 	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
-	 * return the contexts as last requested by a control, but all that are currently available in
-	 * the binding.
+	 * return those contexts that were last requested by a control, but all contexts that are
+	 * currently available in the binding.
 	 *
 	 * @returns {sap.ui.model.Context[]}
 	 *   All current contexts of this list binding, in no special order
