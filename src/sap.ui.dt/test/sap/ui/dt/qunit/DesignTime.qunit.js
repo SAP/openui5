@@ -71,7 +71,7 @@ sap.ui.define([
 		}\
 	', document.head);
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	function _isOverlayVisible(oElementOverlay) {
 		return oElementOverlay.$().width() > 0 && oElementOverlay.$().height() > 0;

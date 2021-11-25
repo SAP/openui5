@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an AggregationDesignTimeMetadata is created", {
 		before: function() {

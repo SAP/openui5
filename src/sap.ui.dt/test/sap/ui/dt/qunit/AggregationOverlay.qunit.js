@@ -24,7 +24,8 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
+
 	QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata and without children", {
 		beforeEach: function() {
 			this.oPage = new Page();

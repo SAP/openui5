@@ -14,8 +14,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	jQuery,
 	ElementOverlay,
 	OverlayRegistry,
@@ -32,7 +31,7 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an Overlay is created for a control", {
 		beforeEach: function(assert) {
