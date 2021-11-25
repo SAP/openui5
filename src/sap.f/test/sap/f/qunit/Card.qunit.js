@@ -116,7 +116,7 @@ function (
 
 		// Assert
 
-		assert.strictEqual(oHeader.$("mainIndicator-value-inner").html().length, sSampleNumber.length, "The numeric content is not truncated");
+		assert.strictEqual(oHeader._getNumericIndicators().$("mainIndicator-value-inner").html().length, sSampleNumber.length, "The numeric content is not truncated");
 
 		// Clean up
 		oHeader.destroy();

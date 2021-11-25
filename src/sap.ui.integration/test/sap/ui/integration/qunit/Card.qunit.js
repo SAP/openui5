@@ -1474,16 +1474,17 @@ sap.ui.define([
 
 			// Act
 			this.oCard.attachEvent("_ready", function () {
-				var oHeader = this.oCard.getAggregation("_header");
+				var oHeader = this.oCard.getAggregation("_header"),
+					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
 
 				Core.applyChanges();
 
 				// Assert aggregation mainIndicator
-				assert.ok(oHeader.getAggregation("_mainIndicator").getDomRef(), "Card header main indicator aggregation should be set and rendered");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getValue(), oManifest_NumericHeader["sap.card"].header.data.json["n"], "Card header main indicator value should be correct.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getScale(), oManifest_NumericHeader["sap.card"].header.data.json["u"], "Card header main indicator scale should be correct.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getIndicator(), oManifest_NumericHeader["sap.card"].header.data.json["trend"], "Card header main indicator indicator should be correct.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getValueColor(), oManifest_NumericHeader["sap.card"].header.data.json["valueColor"], "Card header main indicator valueColor should be correct.");
+				assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
+				assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader["sap.card"].header.data.json["n"], "Card header main indicator value should be correct.");
+				assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader["sap.card"].header.data.json["u"], "Card header main indicator scale should be correct.");
+				assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader["sap.card"].header.data.json["trend"], "Card header main indicator indicator should be correct.");
+				assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader["sap.card"].header.data.json["valueColor"], "Card header main indicator valueColor should be correct.");
 
 				done();
 			}.bind(this));
@@ -1499,16 +1500,17 @@ sap.ui.define([
 
 			// Act
 			this.oCard.attachEvent("_ready", function () {
-				var oHeader = this.oCard.getAggregation("_header");
+				var oHeader = this.oCard.getAggregation("_header"),
+					oMainIndicator = oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator");
 
 				Core.applyChanges();
 
 				// Assert aggregation _mainIndicator
-				assert.ok(oHeader.getAggregation("_mainIndicator").getDomRef(), "Card header main indicator aggregation should be set and rendered");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getValue(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.number, "Card header main indicator value should be correct.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getScale(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.unit, "Card header main indicator scale should be correct.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getIndicator(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.trend, "Card header main indicator indicator should be correct.");
-				assert.equal(oHeader.getAggregation("_mainIndicator").getValueColor(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.state, "Card header main indicator valueColor should be correct.");
+				assert.ok(oMainIndicator.getDomRef(), "Card header main indicator aggregation should be set and rendered");
+				assert.equal(oMainIndicator.getValue(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.number, "Card header main indicator value should be correct.");
+				assert.equal(oMainIndicator.getScale(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.unit, "Card header main indicator scale should be correct.");
+				assert.equal(oMainIndicator.getIndicator(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.trend, "Card header main indicator indicator should be correct.");
+				assert.equal(oMainIndicator.getValueColor(), oManifest_NumericHeader2["sap.card"].header.mainIndicator.state, "Card header main indicator valueColor should be correct.");
 
 				done();
 			}.bind(this));
@@ -1560,7 +1562,7 @@ sap.ui.define([
 
 				// Assert
 				assert.notOk(oHeader.getAggregation("_details"), "Card header should have no Details.");
-				assert.notOk(oHeader.getAggregation("_mainIndicator"), "Card header should have no Main indicators.");
+				assert.notOk(oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator"), "Card header should have no Main indicators.");
 				assert.equal(oHeader.getAggregation("sideIndicators").length, 0, "Card header should have no Side indicators.");
 
 				assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
@@ -1680,7 +1682,14 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oHeaderDomRef = oHeader.getDomRef(),
-					sAriaLabelledByIds = this.oNumericHeaderCard._ariaText.getId() + " " + oHeader._getTitle().getId() + " " + oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader._getUnitOfMeasurement().getId() + " " + oHeader._getMainIndicator().getId() + " " + oHeader._getSideIndicatorIds() + " " + oHeader._getDetails().getId();
+					sAriaLabelledByIds = this.oNumericHeaderCard._ariaText.getId() + " " +
+										oHeader._getTitle().getId() + " " +
+										oHeader._getSubtitle().getId() + " " +
+										oHeader.getId() + "-status" + " " +
+										oHeader._getUnitOfMeasurement().getId() + " " +
+										oHeader.getAggregation("_numericIndicators").getAggregation("_mainIndicator").getId() + " " +
+										oHeader._getSideIndicatorIds() + " " +
+										oHeader._getDetails().getId();
 
 				assert.equal(oHeaderDomRef.getAttribute("role"), "heading", "Card header should have a role - heading");
 				assert.equal(oHeaderDomRef.getAttribute("aria-roledescription"), this.oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER"), "Card header should have aria-roledescription - Card Header");

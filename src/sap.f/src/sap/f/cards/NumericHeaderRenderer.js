@@ -182,52 +182,23 @@ sap.ui.define([], function () {
 	 * Render main indicator and side indicators if any.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.f.cards.NumericHeader} oNumericHeader An object representation of the control that should be rendered
+	 * @param {sap.f.cards.NumericHeader} oNH An object representation of the control that should be rendered
 	 */
-	NumericHeaderRenderer.renderIndicators = function(oRm, oNumericHeader) {
-		var oMainIndicator = oNumericHeader.getAggregation("_mainIndicator"),
-			oSideIndicators = oNumericHeader.getAggregation("sideIndicators"),
-			oBindingInfos = oNumericHeader.mBindingInfos;
-
-		if ((oMainIndicator && oMainIndicator.getValue()) || oSideIndicators.length !== 0) {
-			oRm.openStart("div")
-				.class("sapFCardHeaderIndicators")
-				.openEnd();
-
-			if (oMainIndicator) {
-				oRm.openStart("div")
-					.class("sapFCardHeaderMainIndicator")
-					.openEnd();
-
-				if (oBindingInfos.scale || oBindingInfos.number || oBindingInfos.trend || oBindingInfos.state) {
-					oMainIndicator.addStyleClass("sapFCardHeaderItemBinded");
-				} else {
-					oMainIndicator.removeStyleClass("sapFCardHeaderItemBinded");
-				}
-				oRm.renderControl(oMainIndicator);
-				oRm.close("div");
-
-				oRm.openStart("div")
-					.class("sapFCardHeaderIndicatorsGap")
-					.openEnd()
-					.close("div");
-			}
-
-			if (oSideIndicators.length !== 0) {
-				oRm.openStart("div")
-					.class("sapFCardHeaderSideIndicators")
-					.openEnd();
-
-				// TODO min-width for side indicator. Now it starts to truncate too early
-				// Maybe wrap them when card is too small
-				oSideIndicators.forEach(function(oIndicator) {
-					oRm.renderControl(oIndicator);
-				});
-				oRm.close("div");
-			}
-
-			oRm.close("div");
+	NumericHeaderRenderer.renderIndicators = function(oRm, oNH) {
+		if (!oNH.getNumber() && oNH.getSideIndicators().length === 0) {
+			return;
 		}
+
+		var oNumericIndicators = oNH._getNumericIndicators(),
+			oMainIndicator = oNumericIndicators._getMainIndicator();
+
+		if (oNH.isBound("scale") || oNH.isBound("number") || oNH.isBound("trend") || oNH.isBound("state")) {
+			oMainIndicator.addStyleClass("sapFCardHeaderItemBinded");
+		} else {
+			oMainIndicator.removeStyleClass("sapFCardHeaderItemBinded");
+		}
+
+		oRm.renderControl(oNumericIndicators);
 	};
 
 	/**
