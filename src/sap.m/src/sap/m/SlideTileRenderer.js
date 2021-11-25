@@ -44,10 +44,12 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);
 		}
-		oRm.attr("tabindex", "0");
+		iLength = oControl.getTiles().length;
+		if (iLength > 1) {
+			oRm.attr("tabindex", "0");
+		}
 		oRm.attr("role", "presentation");
 		oRm.openEnd();
-		iLength = oControl.getTiles().length;
 		if (iLength > 1 && sScope === GenericTileScope.Display) {
 			this._renderPausePlayIcon(oRm, oControl);
 			this._renderTilesIndicator(oRm, oControl);

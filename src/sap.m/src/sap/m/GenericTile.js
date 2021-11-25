@@ -357,6 +357,7 @@ sap.ui.define([
 
 		//Navigate Action Button in Article Mode
 		this._oNavigateAction = new Button(this.getId() + "-navigateAction");
+		this._oNavigateAction._bExcludeFromTabChain = true;
 		this.addDependent(this._oNavigateAction);
 	};
 

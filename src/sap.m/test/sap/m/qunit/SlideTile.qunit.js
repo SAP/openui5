@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/NumericContent",
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/jquery/EventExtension" // only used indirectly?
-], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes) {
+], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils) {
 	"use strict";
 
 
@@ -894,5 +895,125 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter("domRef"), oSlideTile._oRemoveButton.getPopupAnchorDomRef(), "Event parameter 'domRef' points to Remove Button");
 		}
 	});
+
+	QUnit.module("SlideTile with GenericTiles", {
+		beforeEach: function() {
+			this.oTile1 = new GenericTile({
+				tileContent: [new TileContent({
+					content: new NewsContent()
+				})]
+			}).placeAt("qunit-fixture");
+			this.oSlideTile = new SlideTile("st-news", {
+				displayTime:200000,
+				tiles: [new GenericTile({
+					mode: "ArticleMode",
+					subheader: "Tile1",
+					frameType: "TwoByOne",
+					header: "Tile1",
+					url: "#",
+					enableNavigationButton: true,
+					tileContent: new TileContent({
+						unit: "EUR",
+						footer: "Current Quarter",
+						content: new NewsContent()
+					})
+				}),
+				new GenericTile({
+					mode: "ArticleMode",
+					subheader: "Tile2",
+					frameType: "TwoByOne",
+					header: "Tile2",
+					url: "#",
+					enableNavigationButton: true,
+					tileContent: new TileContent({
+						unit: "EUR",
+						footer: "Current Quarter",
+						content: new NewsContent()
+					})
+				}),
+				new GenericTile({
+					mode: "ArticleMode",
+					subheader: "Tile3",
+					frameType: "TwoByOne",
+					header: "Tile3",
+					url: "#",
+					enableNavigationButton: true,
+					tileContent: new TileContent({
+						unit: "EUR",
+						footer: "Current Quarter",
+						content: new NewsContent()
+					})
+				})]
+			}).placeAt("qunit-fixture");
+			this.oTile2 = new GenericTile({
+				tileContent: [new TileContent({
+					content: new NewsContent()
+				})]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
+	QUnit.test("Tab Navigation on tiles", function(assert) {
+		var bForward = true;
+		document.getElementById(this.oTile1.getId()).focus();
+		assert.equal(document.activeElement.id, this.oTile1.getId(), "Focus on Tile1");
+
+		qutils.triggerKeydown(this.oTile1.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement.id, this.oSlideTile.getId(), "Focus on Slide Tile");
+
+		qutils.triggerKeydown(this.oSlideTile.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement.id, this.oSlideTile.getTiles()[this.oSlideTile._iCurrentTile]._oNavigateAction.getId(), "Focus on Slide Tile Button");
+		qutils.triggerKeydown(this.oSlideTile.getTiles()[this.oSlideTile._iCurrentTile]._oNavigateAction.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement.id, this.oTile2.getId(), "Focus on Tile2");
+	});
+
+	// Checks whether the given DomRef is contained or equals (in) one of the given container
+	function isContained(aContainers, oRef) {
+		for (var i = 0; i < aContainers.length; i++) {
+			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Returns a jQuery object which contains all next/previous (bNext) tabbable DOM elements of the given starting point (oRef) within the given scopes (DOMRefs)
+	function findTabbables(oRef, aScopes, bNext) {
+		var $Ref = jQuery(oRef),
+			$All, $Tabbables;
+
+		if (bNext) {
+			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+		} else {
+			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
+		}
+
+		$Tabbables = jQuery.uniqueSort($Tabbables);
+		return $Tabbables.filter(function() {
+			return isContained(aScopes, this);
+		});
+	}
 
 });
