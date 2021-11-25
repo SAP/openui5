@@ -143,7 +143,7 @@ sap.ui.define([
 						var oSampleConfig = oConfig && oConfig.sample || {};
 
 						// only have the option to run standalone if there is an iframe
-						oModelData.showNewTab = !!oSampleConfig.iframe || ResourcesUtil.getHasProxy();
+						oModelData.showNewTab = !!oSampleConfig.iframe || !!ResourcesUtil.getHasProxy();
 						oModelData.id = oSample.id;
 						oModelData.name = oSample.name;
 						oModelData.details = oSample.details;
