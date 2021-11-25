@@ -25,6 +25,7 @@ sap.ui.define(['sap/m/library',
 						},
 						"TP2": {
 							"format": "HH:mm:ss",
+							"showCurrentTimeButton": "true",
 							"placeholder" :"Enter meeting end time"
 						},
 						"TP3": {

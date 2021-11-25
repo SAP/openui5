@@ -191,6 +191,19 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("showCurrentTimeButton - button existence", function(assert) {
+		// Prepare
+		var oDTP = new DateTimePicker({
+			showCurrentTimeButton: true
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oDTP.toggleOpen();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oDTP._oClocks.getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
+	});
+
 
 	QUnit.module("Rendering");
 

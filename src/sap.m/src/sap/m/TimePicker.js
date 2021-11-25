@@ -245,7 +245,14 @@ function(
 					 *
 					 * @since 1.97
 					 */
-					hideInput: { type: "boolean", group: "Misc", defaultValue: false }
+					hideInput: { type: "boolean", group: "Misc", defaultValue: false },
+
+					/**
+					 * Determines whether there is a shortcut navigation to current time.
+					 *
+					 * @since 1.98
+					 */
+					showCurrentTimeButton : {type : "boolean", group : "Behavior", defaultValue : false}
 
 				},
 				aggregations: {
@@ -1088,6 +1095,16 @@ function(
 			return this;
 		};
 
+			TimePicker.prototype.setShowCurrentTimeButton = function(bShow) {
+			var oClocks = this._getClocks(),
+				oNumericPicker = this._getNumericPicker();
+
+			oClocks && oClocks.setShowCurrentTimeButton(bShow);
+			oNumericPicker && oNumericPicker.getContent()[0].setShowCurrentTimeButton(bShow);
+
+			return this.setProperty("showCurrentTimeButton", bShow);
+		};
+
 		/**
 		 * @private
 		 * @returns {string} default display format style
@@ -1444,7 +1461,8 @@ function(
 				valueFormat: sFormat,
 				localeId: sLocaleId,
 				minutesStep: this.getMinutesStep(),
-				secondsStep: this.getSecondsStep()
+				secondsStep: this.getSecondsStep(),
+				showCurrentTimeButton: this.getShowCurrentTimeButton()
 			});
 			oClocks._setAcceptCallback(this._handleOkPress.bind(this));
 
@@ -1558,7 +1576,8 @@ function(
 						valueFormat: sFormat,
 						localeId: sLocaleId,
 						minutesStep: this.getMinutesStep(),
-						secondsStep: this.getSecondsStep()
+						secondsStep: this.getSecondsStep(),
+						showCurrentTimeButton: this.getShowCurrentTimeButton()
 					})
 				],
 				footer: [

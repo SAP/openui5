@@ -630,6 +630,11 @@ sap.ui.define([
 					tooltip: this._oResourceBundle.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP")
 				}));
 			}
+
+			if (!this.getAggregation("_nowButton")) {
+				this.setAggregation("_nowButton", this._getCurrentTimeButton());
+			}
+
 			aInputs = this.getAggregation("_inputs");
 			this._inputCount = aInputs.length;
 			this._switchInput(0);

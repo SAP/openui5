@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/Locale",
+	"./library",
+	"./Button",
 	'./TimePickerInternalsRenderer'
 ],
 	function(
@@ -20,11 +22,14 @@ sap.ui.define([
 		DateFormat,
 		LocaleData,
 		Locale,
+		library,
+		Button,
 		TimePickerInternalsRenderer
 	) {
 		"use strict";
 
 		var DEFAULT_STEP = 1,
+			ButtonType = library.ButtonType,
 			CalendarType = coreLibrary.CalendarType;
 
 		/**
@@ -94,13 +99,25 @@ sap.ui.define([
 					 * Allows to set a value of 24:00, used to indicate the end of the day.
 					 * Works only with HH or H formats. Don't use it together with am/pm.
 					 */
-					support2400: {type: "boolean", group: "Misc", defaultValue: false}
+					support2400: {type: "boolean", group: "Misc", defaultValue: false},
+
+					/**
+					 * Determines whether there is a shortcut navigation to current time.
+					 *
+					 * @since 1.98
+					 */
+					showCurrentTimeButton : {type : "boolean", group : "Behavior", defaultValue : false}
 				},
 				aggregations: {
 					/**
 					 * Holds the inner AM/PM segmented button.
 					 */
-					_buttonAmPm: { type: "sap.m.SegmentedButton", multiple: false, visibility: "hidden" }
+					_buttonAmPm: { type: "sap.m.SegmentedButton", multiple: false, visibility: "hidden" },
+
+					/**
+					 * Holds the inner button for shortcut navigation to current time.
+					 */
+					_nowButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" }
 				}
 			}
 		});
@@ -140,6 +157,10 @@ sap.ui.define([
 		TimePickerInternals.prototype.exit = function () {
 			this._destroyControls();
 			this.destroyAggregation("_texts");
+			if (this._oNowButton) {
+				this._oNowButton.destroy();
+				this._oNowButton = null;
+			}
 		};
 
 		/**
@@ -231,6 +252,12 @@ sap.ui.define([
 			this._createControls();
 
 			return this;
+		};
+
+		TimePickerInternals.prototype.setShowCurrentTimeButton = function(bShow) {
+			this._getCurrentTimeButton().setVisible(bShow);
+
+			return this.setProperty("showCurrentTimeButton", bShow);
 		};
 
 		/*
@@ -557,6 +584,27 @@ sap.ui.define([
 			}
 
 			return sValue.substr(iSubStringIndex, 2) === "24";
+		};
+
+		/**
+		 * Returns the button that navigates to the current time.
+		 *
+		 * @returns {sap.m.Button|null} button that displays seconds
+		 * @private
+		 */
+		TimePickerInternals.prototype._getCurrentTimeButton = function() {
+			if (!this._oNowButton) {
+				this._oNowButton = new Button(this.getId() + "-now", {
+					icon: "sap-icon://present",
+					tooltip: this._oResourceBundle.getText("TIMEPICKER_TOOLTIP_NOW"),
+					type: ButtonType.Transparent,
+					visible: false,
+					press: function () {
+						this._setTimeValues(new Date());
+					}.bind(this)
+				}).addStyleClass("sapMTPNow");
+			}
+			return this._oNowButton;
 		};
 
 		function strRepeat(sStr, iCount) {

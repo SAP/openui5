@@ -47,11 +47,12 @@
 
 		<Label
 			class="sapUiSmallMarginTop"
-			text="{/timePickers/TP2/format}" />
+			text="{/timePickers/TP2/format}, showCurrentTimeButton: {/timePickers/TP2/showCurrentTimeButton}" />
 		<TimePicker
 				id="TP2"
 				valueFormat="{/timePickers/TP2/format}"
 				displayFormat="{/timePickers/TP2/format}"
+				showCurrentTimeButton="true"
 				change="handleChange"
 				maskMode="{= ${/maskMode/state} ? 'On' : 'Off'}"
 				placeholder="{/timePickers/TP2/placeholder}" />
