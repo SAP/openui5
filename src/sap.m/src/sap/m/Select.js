@@ -2155,6 +2155,9 @@ function(
 					}
 				}
 			}, this)
+			.addEventDelegate({
+				onAfterRendering: this.onAfterRenderingList
+			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
 
 			 this._oList.setProperty("_tabIndex", "-1");
@@ -2211,6 +2214,11 @@ function(
 			var fnOnAfterRenderingPickerType = this["_onAfterRendering" + this.getPickerType()];
 			fnOnAfterRenderingPickerType && fnOnAfterRenderingPickerType.call(this);
 		};
+
+		/**
+		 * This event handler is called after the SelectList is rendered.
+		 */
+		 Select.prototype.onAfterRenderingList = function(){};
 
 		/**
 		 * Open the control's picker popup.

@@ -2,6 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	'./ObjectPageLayoutUtils',
 	"sap/ui/Device",
 	"sap/ui/core/Core",
@@ -11,7 +13,7 @@ sap.ui.define([
 	"sap/uxap/AnchorBar",
 	"sap/m/Button",
 	"sap/m/Text"
-], function (jQuery, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text) {
+], function (jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text) {
 	"use strict";
 
 	var $ = jQuery, iRenderingDelay = 2000,
@@ -592,6 +594,40 @@ sap.ui.define([
 			sExpectedTooltip = oRB.getText("ANCHOR_BAR_OVERFLOW");
 
 		assert.strictEqual(oSelect.getTooltip(), sExpectedTooltip, "Tooltip correctly set.");
+	});
+
+	QUnit.test("Hierarchy in HierarchicalSelect is preserved on arrow navigation", function (assert) {
+		// Arrange
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oSelect = oAnchorBar._getHierarchicalSelect(),
+			oDialog = oSelect.getAggregation("picker"),
+			clock = sinon.useFakeTimers(),
+			done = assert.async(),
+			oApplyClassesSpy;
+
+			oDialog.attachAfterOpen(function () {
+				clock.tick(100); // allow finish rendering
+
+				oApplyClassesSpy = this.spy(oSelect, "_applyHierarchyLevelClasses");
+
+				// Act - simulate arrow down key down
+				QUnitUtils.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, false, false);
+				clock.tick(100); // allow for re-render
+
+				// Assert
+				assert.strictEqual(oApplyClassesSpy.callCount, 1,
+					"Hierarchy classes applied once onAfterRendering of the SelectList via _applyHierarchyLevelClasses.");
+
+				// Clean Up
+				oApplyClassesSpy.resetHistory();
+				clock.restore();
+				done();
+			}.bind(this));
+
+		// Act - Open the picker
+		oSelect.focus();
+		QUnitUtils.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.F4);
+		clock.tick(500);
 	});
 
 	QUnit.test("Count information", function (assert) {
