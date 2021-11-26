@@ -6,7 +6,9 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/m/HBox",
 	"sap/m/Text",
-	"sap/ui/fl/variants/VariantManagement"
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/mdc/FilterBar",
+	"sap/ui/mdc/FilterField"
 ], function(
 	Controller,
 	MessageBox,
@@ -15,7 +17,9 @@ sap.ui.define([
 	Column,
 	HBox,
 	Text,
-	VariantManagement
+	VariantManagement,
+	FilterBar,
+	FilterField
 ) {
 	"use strict";
 
@@ -37,23 +41,17 @@ sap.ui.define([
 		},
 
 		onRefresh: function() {
-
-			// remove and destroy the existing mdc.Table
-			var oVBox = this.byId("tableContainer");
-			if (oVBox.getItems().length) {
-				var oOldTable = oVBox.getItems()[0];
-				oVBox.removeItem(oOldTable);
-				oOldTable.destroy();
-			}
-
-			var sServiceUrl = this.byId("serviceUrl").getValue().trim(),
-				sCollectionName = this.byId("collectionName").getValue().trim(),
-				sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
+			var sServiceUrl = this.byId("serviceUrl").getValue().trim();
+			var sCollectionName = this.byId("collectionName").getValue().trim();
+			var sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
+			var oVBox = this.byId("content");
 
 			if (!sServiceUrl || !sCollectionName) {
 				MessageBox.error("Please provide the required service URL and collection name");
 				return;
 			}
+
+			oVBox.destroyItems();
 
 			if (isLocalhost()) {
 				window.localStorage.setItem("settings", JSON.stringify({
@@ -67,7 +65,6 @@ sap.ui.define([
 			var aInitiallyVisibleProperties = sInitiallyVisibleProperties.split(",").map(function(sProperty) {
 				return sProperty.trim();
 			}).filter(Boolean);
-
 			var sUsername = this.byId("username").getValue();
 			var sPassword = this.byId("password").getValue();
 
@@ -82,43 +79,54 @@ sap.ui.define([
 						xhr.setRequestHeader("accept", "*/*");
 					},
 					complete: function() {
-						that.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).then(function(oTable) {
-							oVBox.addItem(oTable);
+						that.createContentControls(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).forEach(function(oControl) {
+							oVBox.addItem(oControl);
 						});
 					}
 				});
 			} else {
-				this.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).then(function(oTable) {
-					oVBox.addItem(oTable);
+				this.createContentControls(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).forEach(function(oControl) {
+					oVBox.addItem(oControl);
 				});
 			}
 		},
 
+		createContentControls: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
+			return [
+				this.createVariantManagement(),
+				this.createFilterBar(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties),
+				this.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties)
+			];
+		},
+
+		createVariantManagement: function() {
+			return new VariantManagement("variant", {
+				"for": ["mdcTable", "mdcFilterBar"]
+			});
+		},
+
 		createTable: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
-			var oTable = new Table({
-				header: "Table header",
+			var oTable = new Table("mdcTable", {
+				header: "Table with analytical capabilities",
 				enableExport: true,
 				selectionMode: "Multi",
 				p13nMode: ["Column", "Filter", "Sort", "Group", "Aggregate"],
-				noDataText: "This text is shown when no data is present in the table",
 				delegate: {
 					name: "delegates/odata/v4/TableDelegate",
 					payload: {
 						collectionName: sCollectionName
 					}
-				}
+				},
+				autoBindOnInit: false,
+				models: new ODataModel({
+					serviceUrl: sProxyServiceUrl,
+					synchronizationMode: "None",
+					operationMode: "Server"
+				}),
+				filter: "mdcFilterBar"
 			});
 
-			var oVariant = new VariantManagement();
-			oVariant.addFor(oTable);
-			oTable.setVariant(oVariant);
-			oTable.setModel(new ODataModel({
-				serviceUrl: sProxyServiceUrl,
-				synchronizationMode: "None",
-				operationMode: "Server"
-			}));
-
-			return oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
+			oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
 				aInitiallyVisibleProperties.forEach(function(sPropertyName) {
 					var oProperty = oPropertyHelper.getProperty(sPropertyName);
 					var oUnitProperty = oProperty.unitProperty;
@@ -132,8 +140,9 @@ sap.ui.define([
 				}, this);
 
 				oTable.rebind();
-				return oTable;
 			}.bind(this));
+
+			return oTable;
 		},
 
 		createColumnWithUnitTemplate: function(oTable, oProperty, oUnitProperty) {
@@ -199,7 +208,29 @@ sap.ui.define([
 			});
 
 			oTable.addColumn(oColumn);
-		}
+		},
 
+		createFilterBar: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
+			return new FilterBar("mdcFilterBar", {
+				liveMode: false,
+				delegate: {
+					name: "sap/ui/mdc/odata/v4/FilterBarDelegate",
+					payload: {
+						collectionName: sCollectionName
+					}
+				},
+				basicSearchField: new FilterField({
+					delegate: {
+						name: "sap/ui/mdc/odata/v4/FieldBaseDelegate"
+					},
+					dataType: "Edm.String",
+					placeholder: "Search",
+					conditions: "{$filters>/conditions/$search}",
+					maxConditions: 1,
+					width: "100%"
+				}),
+				p13nMode: ["Item"]
+			});
+		}
 	});
 });

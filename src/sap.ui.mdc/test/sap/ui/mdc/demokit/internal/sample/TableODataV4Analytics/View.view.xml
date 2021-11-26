@@ -1,11 +1,6 @@
 <mvc:View
-		xmlns:mdc="sap.ui.mdc"
-		xmlns:mdcTable="sap.ui.mdc.table"
 		xmlns="sap.m"
-		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:variants="sap.ui.fl.variants"
-		xmlns:unified="sap.ui.unified"
 		controllerName="sap.ui.mdc.sample.TableODataV4Analytics.View">
 	<OverflowToolbar>
 		<Input id="serviceUrl" placeholder="Service URL" width="20%"/>
@@ -16,6 +11,6 @@
 		<ToolbarSpacer/>
 		<OverflowToolbarButton icon="sap-icon://restart" tooltip="Refresh" text="Refresh" press=".onRefresh" />
 	</OverflowToolbar>
-	<VBox id="tableContainer" fitContainer="true">
+	<VBox id="content" fitContainer="true">
 	</VBox>
 </mvc:View>
