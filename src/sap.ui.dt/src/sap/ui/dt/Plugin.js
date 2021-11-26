@@ -62,6 +62,8 @@ function(
 
 	Plugin.prototype._bProcessingCounter = 0;
 
+	Plugin.prototype._oBusyPromise = {};
+
 	/**
 	 * Called when the Plugin is initialized
 	 * @protected
@@ -233,6 +235,33 @@ function(
 	 * @returns {boolean} Returns whether the plugin is currently busy
 	 */
 	Plugin.prototype.isBusy = Plugin.prototype.getBusy;
+
+	/**
+	 * Setter for the busy property. Sets a promise internally to be able to wait for a busy plugin
+	 *
+	 * @param {boolean} bBusy - Value for the busy state
+	 * @returns {this} Returns <code>this</code>
+	 */
+	Plugin.prototype.setBusy = function(bBusy) {
+		if (bBusy && !this.getBusy()) {
+			this._oBusyPromise.promise = new Promise(function(resolve) {
+				this._oBusyPromise.resolveFunction = resolve;
+			}.bind(this));
+		} else if (!bBusy && this.getBusy() && this._oBusyPromise.resolveFunction) {
+			this._oBusyPromise.resolveFunction();
+		}
+		this.setProperty("busy", bBusy);
+		return this;
+	};
+
+	/**
+	 * Waits for the busy promise and resolves as soon as the plugin is not busy anymore
+	 *
+	 * @returns {Promise<undefined>} Resolves with undefined
+	 */
+	Plugin.prototype.waitForBusyAction = function() {
+		return this._oBusyPromise.promise || Promise.resolve();
+	};
 
 	/**
 	 * @param {boolean} bProcessing - processing state to set

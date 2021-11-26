@@ -23,6 +23,51 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
+	QUnit.module("Busy Handling", {
+		beforeEach: function() {
+			this.oPlugin = new Plugin();
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when setBusy is called with false first", function(assert) {
+			this.oPlugin.setBusy(false);
+			return this.oPlugin.waitForBusyAction().then(function() {
+				assert.ok(true, "the function resolves");
+				assert.strictEqual(this.oPlugin.getBusy(), false, "the property is set to false");
+				assert.strictEqual(this.oPlugin.isBusy(), false, "isBusy returns the same");
+			}.bind(this));
+		});
+
+		QUnit.test("when setBusy is called twice with true", function(assert) {
+			var done = assert.async();
+			this.oPlugin.setBusy(true);
+			this.oPlugin.waitForBusyAction().then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
+			this.oPlugin.setBusy(true);
+			this.oPlugin.setBusy(false);
+		});
+
+		QUnit.test("when setBusy and waitForBusyAction are called", function(assert) {
+			var done = assert.async();
+			this.oPlugin.setBusy(true);
+			this.oPlugin.waitForBusyAction().then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
+			this.oPlugin.setBusy(false);
+		});
+
+		QUnit.test("when waitForBusyAction is called directly", function(assert) {
+			return this.oPlugin.waitForBusyAction().then(function() {
+				assert.ok(true, "the function resolves");
+			});
+		});
+	});
+
 	QUnit.module("Given that a Plugin is initialized with register methods", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();

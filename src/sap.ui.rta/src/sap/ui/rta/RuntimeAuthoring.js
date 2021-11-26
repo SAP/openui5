@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/rta/appVariant/Feature",
+	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/service/index",
@@ -75,6 +76,7 @@ sap.ui.define([
 	JSONModel,
 	Measurement,
 	RtaAppVariantFeature,
+	BaseCommand,
 	LREPSerializer,
 	CommandStack,
 	ServicesIndex,
@@ -226,6 +228,7 @@ sap.ui.define([
 			this._mServices = {};
 			this._mCustomServicesDictinary = {};
 			this._mUShellServices = {};
+			this._pElementModified = Promise.resolve();
 
 			this.addDependent(new PluginManager(), "pluginManager");
 			this.addDependent(new PopupManager(), "popupManager");
@@ -726,17 +729,25 @@ sap.ui.define([
 		return [];
 	};
 
+	function waitForPendingActions() {
+		return Promise.resolve(this._oDesignTime && this._oDesignTime.waitForBusyPlugins())
+			.then(function() {
+				return this._pElementModified;
+			}.bind(this));
+	}
+
 	/**
-	 * stop Runtime Authoring
+	 * Stops Runtime Authoring
 	 *
 	 * @public
-	 * @param {boolean} bDontSaveChanges - stop RTA with or w/o saving changes
-	 * @param {boolean} bSkipRestart - stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
-	 * @returns {Promise} promise with no parameters
+	 * @param {boolean} bDontSaveChanges - Stop RTA with or w/o saving changes
+	 * @param {boolean} bSkipRestart - Stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
+	 * @returns {Promise} Resolves with undefined
 	 */
 	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipRestart) {
 		this._checkToolbarAndExecuteFunction("setBusy", true);
-		return this._handleReloadOnExit(bSkipRestart)
+		return waitForPendingActions.call(this)
+			.then(this._handleReloadOnExit.bind(this, bSkipRestart))
 			.then(function(oReloadInfo) {
 				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
 				.then(this._checkToolbarAndExecuteFunction.bind(this, "hide", bDontSaveChanges))
@@ -1393,35 +1404,38 @@ sap.ui.define([
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
-		this.getPluginManager().handleStopCutPaste();
-
-		var vAction = oEvent.getParameter("action");
-		var sNewControlID = oEvent.getParameter("newControlId");
-
+		// events are synchronously reset after the handlers are called
 		var oCommand = oEvent.getParameter("command");
-		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			if (sNewControlID) {
-				this._scheduleOnCreated(sNewControlID, function (oElementOverlay) {
-					var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
-					var fnSelect = oDesignTimeMetadata.getData().select;
-					if (typeof fnSelect === "function") {
-						fnSelect(oElementOverlay.getElement());
+		var sNewControlID = oEvent.getParameter("newControlId");
+		var vAction = oEvent.getParameter("action");
+
+		this._pElementModified = this._pElementModified.then(function() {
+			this.getPluginManager().handleStopCutPaste();
+
+			if (oCommand instanceof BaseCommand) {
+				if (sNewControlID) {
+					this._scheduleOnCreated(sNewControlID, function (oElementOverlay) {
+						var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+						var fnSelect = oDesignTimeMetadata.getData().select;
+						if (typeof fnSelect === "function") {
+							fnSelect(oElementOverlay.getElement());
+						}
+					});
+					if (vAction) {
+						this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
 					}
-				});
-				if (vAction) {
-					this._scheduleRenameOnCreatedContainer(vAction, sNewControlID);
 				}
+				return this.getCommandStack().pushAndExecute(oCommand)
+					// Error handling when a command fails is done in the Stack
+					.catch(function(oError) {
+						if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
+							Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
+						}
+						Log.error("sap.ui.rta: " + oError.message);
+					});
 			}
-			return this.getCommandStack().pushAndExecute(oCommand)
-			// Error handling when a command fails is done in the Stack
-			.catch(function(oError) {
-				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
-					Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
-				}
-				Log.error("sap.ui.rta: " + oError.message);
-			});
-		}
-		return Promise.resolve();
+		}.bind(this));
+		return this._pElementModified;
 	};
 
 	/**
