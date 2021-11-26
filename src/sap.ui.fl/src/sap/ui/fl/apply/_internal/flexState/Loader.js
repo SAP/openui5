@@ -117,6 +117,7 @@ sap.ui.define([
 			var sCacheKey = mPropertyBag.reInitialize ? undefined : ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.reference, mPropertyBag.asyncHints);
 
 			return ApplyStorage.loadFlexData({
+				preview: ManifestUtils.getPreviewSectionFromAsyncHints(mPropertyBag.asyncHints),
 				reference: mPropertyBag.reference,
 				componentName: sComponentName,
 				cacheKey: sCacheKey,

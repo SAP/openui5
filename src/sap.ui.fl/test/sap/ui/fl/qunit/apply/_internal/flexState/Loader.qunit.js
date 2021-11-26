@@ -106,6 +106,7 @@ sap.ui.define([
 				componentName: "baseName",
 				cacheKey: "cacheKey",
 				siteId: "siteId",
+				preview: undefined,
 				appDescriptor: this.oRawManifest,
 				version: sap.ui.fl.Versions.Draft,
 				allContexts: true
@@ -135,6 +136,7 @@ sap.ui.define([
 				reference: "reference",
 				cacheKey: "cacheKey",
 				siteId: "siteId",
+				preview: undefined,
 				appDescriptor: this.oRawManifest,
 				componentName: "baseName",
 				version: undefined,
@@ -322,30 +324,49 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'loadChanges' is called without partialFlexData", function (assert) {
+			var sCacheKey = "abc";
+			var oPreview = {
+				maxLayer: "PARTNER",
+				reference: "SeleniumListReportAdaptation.Component"
+			};
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				reference: "test.app",
-				componentData: {}
+				componentData: {},
+				asyncHints: {
+					requests: [{
+						name: "sap.ui.fl.changes",
+						reference: "test.app",
+						cachebusterToken: sCacheKey,
+						preview: oPreview
+					}]
+				}
 			};
-			var sCacheKey = "abc";
-			sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns(sCacheKey);
+
 			return Loader.loadFlexData(mPropertyBag).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 0, "no changes were loaded");
 				assert.equal(this.oStorageCompleteFlexDataStub.callCount, 0, "and Storage.completeFlexData was NOT called");
 				assert.equal(this.oStorageLoadFlexDataStub.callCount, 1, "and Storage.loadFlexData was called");
 				assert.equal(this.oStorageLoadFlexDataStub.getCall(0).args[0].cacheKey, sCacheKey, "the cache key was passed correct");
+				assert.equal(this.oStorageLoadFlexDataStub.getCall(0).args[0].preview, oPreview, "the preview section was passed correct");
 			}.bind(this));
 		});
 
 		QUnit.test("when 'loadChanges' is called with reinitialize", function (assert) {
 			var sCacheKey = "abc";
-			sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns(sCacheKey);
 
 			var mPropertyBag = {
 				manifest: this.oManifest,
 				reference: "test.app",
 				componentData: {},
-				reInitialize: true
+				reInitialize: true,
+				asyncHints: {
+					requests: [{
+						name: "sap.ui.fl.changes",
+						reference: "test.app",
+						cachebusterToken: sCacheKey
+					}]
+				}
 			};
 			return Loader.loadFlexData(mPropertyBag).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 0, "no changes were loaded");

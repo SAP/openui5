@@ -170,7 +170,7 @@ sap.ui.define([
 			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), undefined, "no cachebusterToken is returned");
 		});
 
-		QUnit.test("with empty async hints given (<NO CHANGES>)", function(assert) {
+		QUnit.test("with an async hint for sap.ui.fl but without a cachebusterToken", function(assert) {
 			var oAsyncHints = {
 				requests: [
 					{
@@ -179,7 +179,41 @@ sap.ui.define([
 					}
 				]
 			};
-			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), "<NO CHANGES>", "nothing is returned");
+			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints(sReference, oAsyncHints), "<NO CHANGES>", "'<NO CHANGES>' is returned");
+		});
+	});
+
+	QUnit.module("ManifestUtils.getPreviewSectionFromAsyncHints", {}, function() {
+		QUnit.test("without async hints given", function(assert) {
+			assert.equal(ManifestUtils.getPreviewSectionFromAsyncHints({}), undefined, "nothing is returned");
+		});
+
+		QUnit.test("with filled async hints given but without a preview", function(assert) {
+			var oAsyncHints = {
+				requests: [
+					{
+						name: "sap.ui.fl.changes",
+						reference: sReference,
+						cachebusterToken: "token"
+					}
+				]
+			};
+			assert.equal(ManifestUtils.getPreviewSectionFromAsyncHints(oAsyncHints), undefined, "nothing is returned");
+		});
+
+		QUnit.test("with filled async hints given a preview is present", function(assert) {
+			var oPreview = {};
+			var oAsyncHints = {
+				requests: [
+					{
+						name: "sap.ui.fl.changes",
+						reference: sReference,
+						cachebusterToken: "token",
+						preview: oPreview
+					}
+				]
+			};
+			assert.equal(ManifestUtils.getPreviewSectionFromAsyncHints(oAsyncHints), oPreview, "the preview section is returned");
 		});
 	});
 
