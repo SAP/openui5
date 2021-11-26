@@ -531,11 +531,7 @@ sap.ui.define([
 				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					source : "Messages/TC6/SalesOrderSet-ToLineItems-2.json"
 				}],
-				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3&$inlinecount=allpages" : [{
-					ifMatch : ithCall.bind(null, 3),
-					source : "Messages/TC6/SalesOrderSet-ToLineItems.json"
-				}],
-				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=3&$filter=not(SalesOrderID%20eq%20%27106%27%20and%20ItemPosition%20eq%20%27030%27)&$inlinecount=allpages" : [{
+				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4&$filter=not(SalesOrderID%20eq%20%27106%27%20and%20ItemPosition%20eq%20%27030%27)&$inlinecount=allpages" : [{
 					source : "Messages/TC6/SalesOrderSet-ToLineItems-2.json"
 				}],
 				"SalesOrderSet('106')?$select=ChangedAt,GrossAmount,SalesOrderID" : {

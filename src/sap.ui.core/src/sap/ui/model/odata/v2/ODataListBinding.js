@@ -1822,11 +1822,12 @@ sap.ui.define([
 
 	/**
 	 * Gets an object with the values for system query options $skip and $top based on the given
-	 * start index and length, both from control point of view. It considers the number of entities
-	 * created via {@link #create}.
+	 * start index and length, both from control point of view. The number of entities created via
+	 * {@link #create} is considered for the <code>$skip</code> value, but it is not considered
+	 * for the <code>$top</code> value.
 	 *
 	 * @param {number} iStartIndex The start index from control point of view
-	 * @param {number} iLength The length from control point of view
+	 * @param {number} iLength The length
 	 * @returns {object}
 	 *   An object containing the properties <code>skip</code> and <code>top</code>; the values
 	 *   correspond to the system query options <code>$skip</code> and <code>$top</code>
@@ -1834,13 +1835,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength) {
-		var iServerStartIndex = iStartIndex - this._getCreatedContexts().length,
-			iServerLength = iServerStartIndex > 0 ? iLength : iLength + iServerStartIndex;
+		var iSkip = Math.max(0, iStartIndex - this._getCreatedContexts().length),
+			iTop = this.bLengthFinal && iSkip + iLength >= this.iLength
+				? this.iLength - iSkip
+				: iLength;
 
-		return {
-			skip : Math.max(0, iServerStartIndex),
-			top : Math.max(0, iServerLength)
-		};
+		return {skip : iSkip, top : iTop};
 	};
 
 	/**

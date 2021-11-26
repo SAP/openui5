@@ -560,6 +560,19 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks the text of the 'More' button for a sap.m.Table with the given ID.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {string} sTableID The ID of the sap.m.Table
+		 * @param {string} sExpected The expected count as text w/o "More" without spaces,
+		 *    e.g. "[5/10]"
+		 */
+		 checkMoreButton : function (assert, sTableID, sExpected) {
+			assert.strictEqual(this.oView.byId(sTableID + "-trigger").getDomRef().innerText
+				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
+		},
+
+		/**
 		 * Checks that the given value is the expected one for the control.
 		 *
 		 * @param {object} assert The QUnit assert object
@@ -6007,7 +6020,7 @@ usePreliminaryContext : false}}">\
 					__metadata : {uri : "SalesOrderSet('1')"},
 					SalesOrderID : "1"
 				})
-				.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=19", {
+				.expectRequest("SalesOrderSet('1')/ToLineItems?$skip=0&$top=20", {
 					results : [{
 						__metadata : {
 							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
@@ -10416,7 +10429,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
 				}, {})
-				.expectRequest("SalesOrderSet?$skip=0&$top=17"
+				.expectRequest("SalesOrderSet?$skip=0&$top=20"
 					+ "&$filter=not(SalesOrderID eq '44' or SalesOrderID eq '43')", {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('42')"},
@@ -10683,7 +10696,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					method : "DELETE",
 					requestUri : "SalesOrderSet('44')"
 				}, {})
-				.expectRequest("SalesOrderSet?$skip=0&$top=102"
+				.expectRequest("SalesOrderSet?$skip=0&$top=105"
 					+ "&$filter=not(SalesOrderID eq '45' or SalesOrderID eq '44' "
 					+ "or SalesOrderID eq '43')", {
 					results : [{
@@ -10888,14 +10901,33 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 17);
 
 			that.expectValue("id", [""])
 				.expectValue("note", ["New 1"]);
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, false);
 
+			assert.strictEqual(oBinding.getLength(), 18);
+
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders/$count"
+					+ "?$filter=SalesOrderID ge '13' or LifecycleStatus eq 'N'", "17")
+				.expectRequest("BusinessPartnerSet('4711')/ToSalesOrders?$skip=0&$top=1"
+					+ "&$filter=SalesOrderID ge '13' or LifecycleStatus eq 'N'", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('42')"},
+						Note : "First SalesOrder",
+						SalesOrderID : "42"
+					}]
+				});
+
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getLength(), 18);
 			that.expectValue("note", ["New 2"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, false);
@@ -11182,4 +11214,74 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('10')"));
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If the table displays only transient entities (no threshold is set) and a new
+	// control filter is set on the table the number of available entities is properly displayed.
+	// CPOUI5MODELS-692
+[CountMode.Request, CountMode.Inline, CountMode.InlineRepeat].forEach(function (sCountMode) {
+	var sTitle = "More button is updated after filtering the data and if only transient entities"
+			+ " are displayed; count mode: " + sCountMode;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			bInlineCount = sCountMode !== CountMode.Request,
+			oModel = createSalesOrdersModel({defaultCountMode : sCountMode}),
+			oResponse = {
+				results : [{__metadata : {uri : "SalesOrderSet('42')"}, SalesOrderID : "42"}]
+			},
+			sUrl = "SalesOrderSet?$skip=0&$top=1",
+			sView = '\
+<Table growing="true" growingThreshold="1" id="table" items="{/SalesOrderSet}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		if (bInlineCount) {
+			oResponse.__count = "17";
+			sUrl += "&$inlinecount=allpages";
+		} else {
+			this.expectRequest("SalesOrderSet/$count", "17");
+		}
+		this.expectHeadRequest()
+			.expectRequest(sUrl, oResponse)
+			.expectValue("id", ["42"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.checkMoreButton(assert, "table", "[1/17]");
+
+			that.expectValue("id", [""]);
+
+			oBinding.create({}, false);
+
+			that.checkMoreButton(assert, "table", "[1/18]");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oResponse = {
+				results : [{__metadata : {uri : "SalesOrderSet('42')"}, SalesOrderID : "42"}]
+			};
+			sUrl = "SalesOrderSet?$skip=0&$top=1&$filter=SalesOrderID ge '13'";
+			if (bInlineCount) {
+				oResponse.__count = "11";
+				sUrl += "&$inlinecount=allpages";
+			} else {
+				that.expectRequest("SalesOrderSet/$count?$filter=SalesOrderID ge '13'", "11");
+			}
+			that.expectRequest(sUrl, oResponse);
+
+			// Simulate control filter
+			oBinding.filter(new Filter("SalesOrderID", FilterOperator.GE, "13"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 12);
+			that.checkMoreButton(assert, "table", "[1/12]");
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 });
