@@ -231,6 +231,7 @@ sap.ui.define([
 	 *                     <strong>Note</strong>: These preprocessors are only available to this instance.
 	 *                     For global or on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
 	 * @public
+	 * @since 1.56.0
 	 * @static
 	 * @returns {Promise<sap.ui.core.mvc.XMLView>} A Promise that resolves with the view instance or rejects with any thrown error.
 	 */
@@ -760,6 +761,7 @@ sap.ui.define([
 	 * bSyncSupport flag to true.
 	 *
 	 * @public
+	 * @since 1.30
 	 * @static
 	 * @param {string|sap.ui.core.mvc.XMLView.PreprocessorType} sType
 	 *      the type of content to be processed
@@ -805,6 +807,7 @@ sap.ui.define([
 	 * @see sap.ui.core.mvc.XMLView
 	 * @see sap.ui.core.mvc.View.Preprocessor
 	 * @enum {string}
+	 * @since 1.34
 	 * @public
 	 */
 	XMLView.PreprocessorType = {
