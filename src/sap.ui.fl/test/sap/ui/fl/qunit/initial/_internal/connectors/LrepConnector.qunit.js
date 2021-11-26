@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
-	"sap/ui/fl/initial/_internal/connectors/Utils"
+	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/Layer"
 ], function(
 	sinon,
 	LrepConnector,
-	InitialUtils
+	InitialUtils,
+	Layer
 ) {
 	"use strict";
 
@@ -63,6 +65,21 @@ sap.ui.define([
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey}).then(function () {
 				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "the cacheKey is included in the request");
+			}.bind(this));
+		});
+
+		QUnit.test("when loading flex data is triggered with a preview", function (assert) {
+			var sCacheKey = "abc123";
+			var sBaseAppReference = "base.app.reference";
+			var oPreview = {
+				reference: sBaseAppReference,
+				maxLayer: Layer.PARTNER
+			};
+
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}));
+
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey, preview: oPreview}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/base.app.reference?sap-language=en&upToLayerType=PARTNER", "the reference is replaced by the base apps and the upToLayerType is included in the request");
 			}.bind(this));
 		});
 
