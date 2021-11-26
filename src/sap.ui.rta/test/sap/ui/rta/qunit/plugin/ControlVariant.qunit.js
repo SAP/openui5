@@ -200,17 +200,6 @@ sap.ui.define([
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
-			assert.notOk(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, "the parameter 'variantsEditable' is set to false");
-		});
-
-		QUnit.test("when registerElementOverlay and afterwards deregisterElementOverlay are called with VariantManagement control Overlay", function(assert) {
-			assert.ok(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, "the parameter 'variantsEditable' is true by default");
-			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			assert.notOk(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, "'variantsEditable' is set to false after registering");
-			this.oToolHooksPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
-			this.oControlVariantPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
-			assert.ok(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, "'variantsEditable' is set to true after deregistering");
 		});
 
 		QUnit.test("when isVariantSwitchAvailable is called with VariantManagement overlay", function(assert) {
@@ -636,7 +625,6 @@ sap.ui.define([
 			assert.notOk(this.oButton1Overlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
-			assert.notOk(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, "the parameter 'variantsEditable' is set to false");
 		});
 	});
 
