@@ -207,40 +207,53 @@ sap.ui.define([
 		expectedGroupLevels: ["prop3"]
 	}, {
 		label: "Search",
-		aggregationInfo: {
-			visible: ["Property1", "Property2"],
-			search: "Property"
-		},
-		expectedGroup: {prop1: {}, prop2: {}},
-		expectedAggregate: {},
-		expectedGroupLevels: [],
-		expectedSearch: "Property"
+		testData: [{
+			aggregationInfo: {
+				visible: ["Property1", "Property2"],
+				search: "Property"
+			},
+			expectedGroup: {prop1: {}, prop2: {}},
+			expectedAggregate: {},
+			expectedGroupLevels: [],
+			expectedSearch: "Property"
+		}, {
+			aggregationInfo: {
+				visible: ["Property1", "Property2"]
+			},
+			expectedGroup: {prop1: {}, prop2: {}},
+			expectedAggregate: {},
+			expectedGroupLevels: []
+		}]
 	}];
 
 	aTestData.forEach(function(oData) {
 		QUnit.test(oData.label, function(assert) {
-			var mAggregationInfo;
-			var bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
-			var bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
-			var oUpdateAggregationSpy = this.spy(this.oPlugin, "updateAggregation");
+			var aTestData = oData.testData || [oData];
 
-			this.oPlugin.setAggregationInfo(oData.aggregationInfo);
+			aTestData.forEach(function(oData) {
+				var mAggregationInfo;
+				var bEmptyAggregationInfo = oData.aggregationInfo == null || Object.keys(oData.aggregationInfo).length === 0;
+				var bExpectedTotalsSetting = bEmptyAggregationInfo ? undefined : true;
+				var oUpdateAggregationSpy = this.spy(this.oPlugin, "updateAggregation");
 
-			mAggregationInfo = this.oPlugin.getAggregationInfo();
-			assert.equal(oUpdateAggregationSpy.callCount, 1, "updateAggregation is called only once");
+				this.oPlugin.setAggregationInfo(oData.aggregationInfo);
 
-			if (bEmptyAggregationInfo) {
-				assert.equal(mAggregationInfo, undefined, "aggregation info is undefined");
-			} else {
-				assert.deepEqual(mAggregationInfo.group, oData.expectedGroup, "grouped properties");
-				assert.deepEqual(mAggregationInfo.aggregate, oData.expectedAggregate, "aggregated properties");
-				assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
-				assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
-				assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
-				assert.strictEqual(mAggregationInfo.search, oData.expectedSearch, "search parameter");
-			}
+				mAggregationInfo = this.oPlugin.getAggregationInfo();
+				assert.equal(oUpdateAggregationSpy.callCount, 1, "updateAggregation is called only once");
 
-			oUpdateAggregationSpy.restore();
+				if (bEmptyAggregationInfo) {
+					assert.equal(mAggregationInfo, undefined, "aggregation info is undefined");
+				} else {
+					assert.deepEqual(mAggregationInfo.group, oData.expectedGroup, "grouped properties");
+					assert.deepEqual(mAggregationInfo.aggregate, oData.expectedAggregate, "aggregated properties");
+					assert.deepEqual(mAggregationInfo.groupLevels, oData.expectedGroupLevels, "group levels");
+					assert.strictEqual(mAggregationInfo.grandTotalAtBottomOnly, bExpectedTotalsSetting, "grandTotalAtBottomOnly");
+					assert.strictEqual(mAggregationInfo.subtotalsAtBottomOnly, bExpectedTotalsSetting, "subtotalsAtBottomOnly");
+					assert.strictEqual(mAggregationInfo.search, oData.expectedSearch, "search parameter");
+				}
+
+				oUpdateAggregationSpy.restore();
+			}, this);
 		});
 	});
 

@@ -394,9 +394,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 
-			if (oAggregateInfo.search) {
-				this._sSearch = oAggregateInfo.search;
-			}
+			this._sSearch = oAggregateInfo.search;
 		}
 
 		this._mColumnState = oAggregateInfo.columnState;
