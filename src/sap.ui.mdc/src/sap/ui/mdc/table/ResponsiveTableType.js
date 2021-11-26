@@ -229,7 +229,6 @@ sap.ui.define([
 		var oRb = Core.getLibraryResourceBundle("sap.ui.mdc"), sText;
 
 		sText = this.bHideDetails ? oRb.getText("table.SHOWDETAILS_TEXT") : oRb.getText("table.HIDEDETAILS_TEXT");
-		this._oShowDetailsButton.setTooltip(sText);
 		this._oShowDetailsButton.setText(sText);
 	};
 
