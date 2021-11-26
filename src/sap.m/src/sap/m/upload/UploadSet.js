@@ -272,6 +272,7 @@ sap.ui.define([
 				 * <code>maxFileNameLength</code> property.</li>
 				 * <li>When the file name length restriction changes, and the file to be uploaded fails to meet the new
 				 * restriction.</li>
+				 * <li>Listeners can use the item parameter to remove the incomplete item that failed to meet the restriction</li>
 				 * </ul>
 				 */
 				fileNameLengthExceeded: {
@@ -290,6 +291,7 @@ sap.ui.define([
 				 * <code>maxFileSize</code> property.</li>
 				 * <li>When the file size restriction changes, and the file to be uploaded fails to meet the new
 				 * restriction.</li>
+				 * <li>Listeners can use the item parameter to remove the incomplete item that failed to meet the restriction</li>
 				 * </ul>
 				 */
 				fileSizeExceeded: {
