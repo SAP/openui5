@@ -1931,4 +1931,35 @@ sap.ui.define([
 			ODataListBinding.prototype._removePersistedCreatedContexts.call(oBinding),
 			"~aRemovedContexts");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllCurrentContexts: Return correct contexts", function (assert) {
+		var aAllCurrentContexts,
+			oBinding = {
+				_getCreatedContexts : function () {},
+				oContext : "~oContext",
+				// eslint-disable-next-line no-sparse-arrays
+				aKeys : ["foo(bar)", /* empty */, "foo(baz)"],
+				oModel : {
+					getContext : function () {},
+					resolveDeep : function () {}
+				},
+				sPath : "~sPath"
+			},
+			oModelMock = this.mock(oBinding.oModel);
+
+		this.mock(oBinding).expects("_getCreatedContexts")
+			.withExactArgs()
+			.returns(["~createdContexts"]);
+		oModelMock.expects("getContext").withExactArgs("/foo(bar)").returns("~context(bar)");
+		oModelMock.expects("getContext").withExactArgs("/foo(baz)").returns("~context(baz)");
+
+		//code under test
+		aAllCurrentContexts = ODataListBinding.prototype.getAllCurrentContexts.call(oBinding);
+
+		assert.strictEqual(aAllCurrentContexts.length, 3);
+		assert.ok(aAllCurrentContexts.includes("~createdContexts"));
+		assert.ok(aAllCurrentContexts.includes("~context(bar)"));
+		assert.ok(aAllCurrentContexts.includes("~context(baz)"));
+	});
 });
