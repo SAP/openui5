@@ -18,15 +18,11 @@ function(
 	}
 
 	function getFlAsyncHint(oAsyncHints) {
-		var oFlAsyncHint;
-
-		oAsyncHints.requests.some(function(oAsyncHint) {
-			if (oAsyncHint.name === "sap.ui.fl.changes") {
-				oFlAsyncHint = oAsyncHint;
-			}
-		});
-
-		return oFlAsyncHint;
+		if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
+			return oAsyncHints.requests.find(function(oAsyncHint) {
+				return oAsyncHint.name === "sap.ui.fl.changes";
+			});
+		}
 	}
 
 	/**
@@ -79,21 +75,24 @@ function(
 		},
 
 		getCacheKeyFromAsyncHints: function(sReference, oAsyncHints) {
-			if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
-				var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
-				if (oFlAsyncHint && oFlAsyncHint.reference === sReference) {
-					return oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
-				}
+			var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
+			if (oFlAsyncHint && oFlAsyncHint.reference === sReference) {
+				return oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
+			}
+		},
+
+		getPreviewSectionFromAsyncHints: function(oAsyncHints) {
+			var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
+			if (oFlAsyncHint) {
+				return oFlAsyncHint.preview;
 			}
 		},
 
 		getChangeManifestFromAsyncHints: function(oAsyncHints) {
 			// whenever there is a back end providing a fl async hint it is also not necessary to merge on client side
-			if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
-				var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
-				if (oFlAsyncHint) {
-					return false;
-				}
+			var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
+			if (oFlAsyncHint) {
+				return false;
 			}
 
 			return true;

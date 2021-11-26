@@ -60,6 +60,7 @@ sap.ui.define([
 			}
 
 			return ApplyStorage.loadFlexData({
+				preview: ManifestUtils.getPreviewSectionFromAsyncHints(mPropertyBag.asyncHints),
 				reference: mPropertyBag.reference,
 				componentName: sComponentName,
 				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.reference, mPropertyBag.asyncHints),
