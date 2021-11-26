@@ -160,7 +160,7 @@ sap.ui.define([
 						 * The current layout
 						 */
 						layout: {
-							type: "FCLLayout"
+							type: "sap.ui.webc.fiori.FCLLayout"
 						},
 
 						/**

@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @extends sap.ui.fl.apply._internal.flexObjects.RevertData
 	 * @private
 	 * @ui5-restricted
-	 * @since Since 1.87.0
+	 * @since 1.87.0
 	 */
 	return RevertData.extend("sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData", {
 		metadata: {
