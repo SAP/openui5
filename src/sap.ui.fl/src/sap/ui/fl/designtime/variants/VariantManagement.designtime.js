@@ -19,8 +19,10 @@ sap.ui.define([
 			return;
 		}
 
-		oModel.setModelPropertiesForControl(sVariantManagementReference, bDesignTimeMode, oVariantManagement);
-		oModel.checkUpdate(true);
+		oModel.waitForVMControlInit(sVariantManagementReference).then(function() {
+			oModel.setModelPropertiesForControl(sVariantManagementReference, bDesignTimeMode, oVariantManagement);
+			oModel.checkUpdate(true);
+		});
 	};
 	return {
 		annotations: {},
