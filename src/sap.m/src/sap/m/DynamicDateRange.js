@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/m/DynamicDateFormat',
 	'sap/m/DynamicDateUtil',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/Icon',
 	"sap/ui/core/LabelEnablement",
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/base/ManagedObjectObserver',
@@ -45,6 +46,7 @@ sap.ui.define([
 		DynamicDateFormat,
 		DynamicDateUtil,
 		IconPool,
+		Icon,
 		LabelEnablement,
 		DateFormat,
 		ManagedObjectObserver,
@@ -1224,6 +1226,16 @@ sap.ui.define([
 
 		DynamicDateRangeInput.prototype.preventChangeOnFocusLeave = function(oEvent) {
 			return this.bFocusoutDueRendering;
+		};
+
+		DynamicDateRangeInput.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
+			var bIsClickedOnIcon = oEvent.srcControl instanceof Icon;
+			return this.isMobileDevice()
+				&& this.getEditable()
+				&& this.getEnabled()
+				&& this.getShowSuggestion()
+				&& !bIsClickedOnIcon
+				&& (!this._bClearButtonPressed);
 		};
 
 		var DynamicDateRangeListItem = StandardListItem.extend("sap.m.DynamicDateRangeListItem", {
