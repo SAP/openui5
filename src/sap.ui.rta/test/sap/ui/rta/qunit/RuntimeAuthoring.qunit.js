@@ -103,6 +103,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a component as rootControl...", {
 		before: function () {
+			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			return oComponentPromise;
 		},
 		beforeEach: function() {
@@ -265,6 +266,15 @@ sap.ui.define([
 			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
 			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched again to the default cursor");
+		});
+
+		QUnit.test("when navigation mode is entered multiple times", function(assert) {
+			var oMessageToastSpy = sandbox.stub(MessageToast, "show");
+			this.oRta.setMode("navigation");
+			this.oRta.setMode("adaptation");
+			this.oRta.setMode("navigation");
+			var sExpectedErrorMessage = this.oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING");
+			assert.ok(oMessageToastSpy.calledOnceWith(sExpectedErrorMessage), "then a warning is shown once");
 		});
 	});
 
@@ -653,38 +663,28 @@ sap.ui.define([
 
 			.then(function(oRemoveCommand) {
 				this.oRemoveCommand = oRemoveCommand;
-				// Create command stack with the commands
-				return this.oRemoveCommand.execute();
-			}.bind(this))
-
-			.then(function() {
-				//After command has been pushed
-				var fnStackModifiedSpy = sinon.spy(function() {
-					// Start RTA with command stack
-					var oRootControl = oComp.getAggregation("rootControl");
-					this.oRta = new RuntimeAuthoring({
-						rootControl: oRootControl,
-						commandStack: this.oCommandStack,
-						showToolbars: true,
-						flexSettings: {
-							developerMode: false
-						}
-					});
-
-					this.oRta.start()
-						.then(function() {
-							this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-							this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
-						}.bind(this))
-						.then(fnDone)
-						.catch(function (oError) {
-							assert.ok(false, "catch must never be called - Error: " + oError);
-						});
-				}.bind(this));
-
 				this.oCommandStack = new Stack();
-				this.oCommandStack.attachEventOnce("modified", fnStackModifiedSpy);
-				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand);
+				// Start RTA with command stack
+				var oRootControl = oComp.getAggregation("rootControl");
+				this.oRta = new RuntimeAuthoring({
+					rootControl: oRootControl,
+					commandStack: this.oCommandStack,
+					showToolbars: true,
+					flexSettings: {
+						developerMode: false
+					}
+				});
+				return RtaQunitUtils.clear()
+					.then(this.oRta.start.bind(this.oRta))
+					.then(function() {
+						this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+						this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
+						this.oCommandStack.pushAndExecute(oRemoveCommand);
+					}.bind(this))
+					.then(fnDone)
+					.catch(function (oError) {
+						assert.ok(false, "catch must never be called - Error: " + oError);
+					});
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -829,6 +829,21 @@ sap.ui.define([
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function (iNumOfChanges) {
 					assert.equal(iNumOfChanges, 0, "there is no change written");
+				});
+		});
+
+		QUnit.test("when stopping rta with saving changes", function(assert) {
+			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+
+			return this.oRta.stop()
+				.then(function() {
+					var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
+					assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
+					assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
+				}.bind(this))
+				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+				.then(function(iNumberOfChanges) {
+					assert.strictEqual(iNumberOfChanges, 1, "then the change is written");
 				});
 		});
 

@@ -962,26 +962,22 @@ sap.ui.define([
 	/**
 	 * Removes unsaved changes and reverts these.
 	 *
-	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {string|string[]} vLayer - Layer or multiple layers for which changes shall be deleted
 	 * @param {sap.ui.core.Component} oComponent - Component instance
-	 * @param {string} oControl - Control for which the changes should be removed
+	 * @param {string} [oControl] - Control for which the changes should be deleted. If omitted, all changes for the app component are considered.
 	 * @param {string} [sGenerator] - Generator of changes (optional)
 	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
 	 *
 	 * @returns {Promise} Promise that resolves after the deletion took place
 	 */
-	ChangePersistence.prototype.removeDirtyChanges = function(sLayer, oComponent, oControl, sGenerator, aChangeTypes) {
-		if (!oControl) {
-			Log.error("The selectorId must be provided");
-			return Promise.reject("The selectorId must be provided");
-		}
-
+	ChangePersistence.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
+		var aLayers = [].concat(vLayer);
 		var aDirtyChanges = this._aDirtyChanges;
 
 		var aChangesToBeRemoved = aDirtyChanges.filter(function (oChange) {
 			var bChangeValid = true;
 
-			if (oChange.getLayer() !== sLayer) {
+			if (!aLayers.includes(oChange.getLayer())) {
 				return false;
 			}
 
@@ -989,8 +985,10 @@ sap.ui.define([
 				return false;
 			}
 
-			var vSelector = oChange.getSelector();
-			bChangeValid = oControl.getId() === JsControlTreeModifier.getControlIdBySelector(vSelector, oComponent);
+			if (oControl) {
+				var vSelector = oChange.getSelector();
+				bChangeValid = oControl.getId() === JsControlTreeModifier.getControlIdBySelector(vSelector, oComponent);
+			}
 
 			if (aChangeTypes) {
 				bChangeValid = bChangeValid && aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
