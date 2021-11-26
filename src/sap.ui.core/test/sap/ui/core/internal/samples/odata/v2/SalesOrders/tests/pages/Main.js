@@ -2,11 +2,13 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/Properties",
 	'sap/ui/test/Opa5'
-], function(Helper, EnterText, Press, Opa5) {
+], function(Helper, EnterText, Press, Ancestor, Properties, Opa5) {
 	"use strict";
 
-	var iCurrentItemCount, iCurrentMessageCount, oSalesOrderDetails,
+	var iCurrentItemCount, iCurrentMessageCount, oSalesOrderDetails, iCurrentSalesOrdersCount,
 		mColumn = {
 			Status : 0,
 			SalesOrderID : 1,
@@ -45,6 +47,13 @@ sap.ui.define([
 		rMessageDetails = /messageDetails/,
 		rObjectPage = /objectPage/,
 		rProductDetailsDialog = /productDetailsDialog/,
+		mSalesOrderProperty2Column = {
+			Status : 0,
+			SalesOrderID : 1,
+			CustomerName : 2,
+			GrossAmount : 3,
+			Note : 4
+		},
 		rToLineItems = /ToLineItems/,
 		sViewName = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main";
 
@@ -145,6 +154,35 @@ sap.ui.define([
 						actions : new EnterText({text : sNewId}),
 						id : "productID::createSalesOrderItemDialog",
 						searchOpenDialogs : true,
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Changes the note of the sales order at the given position to the given value.
+				 *
+				 * @param {number} iRow The item position in the table, with the top being 0
+				 * @param {string} sNewNote The new note value
+				 */
+				changeSalesOrderNoteOfRow : function (iRow, sNewNote) {
+					this.waitFor({
+						actions : new EnterText({text : sNewNote}),
+						id : "SalesOrderSet",
+						matchers : function (oTable) {
+							return oTable.getItems()[iRow]
+								.getCells()[mSalesOrderProperty2Column.Note];
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Changes the filter value for the sales orders table.
+				 *
+				 * @param {string} sFilterValue The new filter value
+				 */
+				changeSalesOrdersFilter : function (sFilterValue) {
+					this.waitFor({
+						actions : new EnterText({text : sFilterValue}),
+						id : "salesOrdersFilter",
 						viewName : sViewName
 					});
 				},
@@ -281,10 +319,46 @@ sap.ui.define([
 					pressButton(this, "saveCreatedItem::createSalesOrderItemDialog");
 				},
 				/*
+				 * Presses the "Create sales order" button
+				 */
+				pressSalesOrdersCreateButton : function () {
+					pressButton(this, "createSalesOrder");
+				},
+				/*
+				 * Presses the "Delete selected sales order" button
+				 */
+				pressSalesOrdersDelete : function () {
+					pressButton(this, "delete::SalesOrderList");
+				},
+				/*
+				 * Presses the "Go" button to filter the sales orders table
+				 */
+				pressSalesOrdersFilterGoButton : function () {
+					pressButton(this, "salesOrdersFilterGo");
+				},
+				/*
+				 * Presses the "More" button of the sales orders table
+				 */
+				pressSalesOrdersMoreButton : function () {
+					Helper.pressMoreButton(this, sViewName);
+				},
+				/*
+				 * Presses the "Refresh sales orders table" button.
+				 */
+				pressSalesOrdersRefreshButton : function () {
+					pressButton(this, "refresh::SalesOrderSet");
+				},
+				/*
 				 * Presses the Save button at the bottom of the page.
 				 */
 				pressSalesOrderSaveButton : function () {
 					pressButton(this, "saveSalesOrder");
+				},
+				/*
+				 * Presses the "Use Table" button at the top of the page.
+				 */
+				pressUseTableButton : function () {
+					pressButton(this, "showSalesOrderTable");
 				},
 				/*
 				 * Stores the current item count.
@@ -296,6 +370,22 @@ sap.ui.define([
 						if (sItemPosition !== "") {
 							iCurrentItemCount += 1;
 						}
+					});
+				},
+				/*
+				 * Stores the current sales orders count.
+				 */
+				rememberSalesOrdersCount : function () {
+					iCurrentSalesOrdersCount = 0;
+					this.waitFor({
+						id : "salesOrdersTitle",
+						success : function (oTitle) {
+							var sNumber = oTitle.getText().split(" ")[0];
+
+							iCurrentSalesOrdersCount = parseInt(sNumber);
+							Opa5.assert.ok(true, "Current number of sales orders: " + sNumber);
+						},
+						viewName : sViewName
 					});
 				},
 				/*
@@ -365,6 +455,35 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Selects the given row in the sales orders table.
+				 *
+				 * @param {number} iRow The row to select, with the top being 0
+				 */
+				selectSalesOrderAtRow : function (iRow) {
+					this.waitFor({
+						id : "SalesOrderSet",
+						success : function (oTable) {
+							var oListItem = oTable.getItems()[iRow];
+
+							this.waitFor({
+								actions: new Press(),
+								controlType: "sap.m.ColumnListItem",
+								matchers: [
+									new Ancestor(oTable),
+									function (oColumnListItem) {
+										return oColumnListItem === oListItem;
+									}
+								],
+								success : function () {
+									Opa5.assert.ok(true, "Selected sales order at index " + iRow);
+								},
+								viewName : sViewName
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Chooses a filter from the drop down list and selects it.
 				 *
 				 * @param {string} sFilterKey The key for the specific filter
@@ -397,6 +516,33 @@ sap.ui.define([
 						success : function () {
 							pressButton(this, "selectSalesOrder");
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Sort the sales orders table as given.
+				 *
+				 * @param {string} sSortOrder The sort order "asc" or "desc"
+				 */
+				sortSalesOrders : function (sSortOrder) {
+					this.waitFor({
+						actions: new Press(),
+						id : "salesOrdersSort",
+						success : function (oSelect) {
+							this.waitFor({
+								actions: new Press(),
+								controlType: "sap.ui.core.Item",
+								matchers: [
+									new Ancestor(oSelect),
+									new Properties({key : sSortOrder})
+								],
+								success : function () {
+									Opa5.assert.ok(true, "Sort sales orders \"" + sSortOrder
+										+ "\".");
+								},
+								viewName : sViewName
+							});
 						},
 						viewName : sViewName
 					});
@@ -730,6 +876,53 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Checks whether the sales order in the given row has the given ID, customer name
+				 * and note.
+				 *
+				 * @param {number} iRow
+				 *   The position of the sales order in the table, with the top being 0
+				 * @param {string} sExpectedID
+				 *   The expected sales order ID
+				 * @param {string} sExpectedCustomerName
+				 *   The expected customer name
+				 * @param {string} sExpectedNote
+				 *   The expected sales order note
+				 * @param {string} sExpectedStatus
+				 *   The expected sales order status
+				 */
+				checkSalesOrderAtRow : function (iRow, sExpectedID, sExpectedCustomerName,
+					sExpectedNote, sExpectedStatus) {
+					this.waitFor({
+						id : "SalesOrderSet",
+						success : function (oTable) {
+							var oRow = oTable.getItems()[iRow],
+								aCells = oRow.getCells();
+
+							Opa5.assert.strictEqual(
+								aCells[mSalesOrderProperty2Column.SalesOrderID].getValue(),
+								sExpectedID,
+								"The sales order in row " + iRow + " has the expected ID: "
+									+ sExpectedID);
+							Opa5.assert.strictEqual(
+								aCells[mSalesOrderProperty2Column.CustomerName].getValue(),
+								sExpectedCustomerName,
+								"The sales order in row " + iRow + " has the expected customer"
+									+ " name: " + sExpectedCustomerName);
+							Opa5.assert.strictEqual(
+								aCells[mSalesOrderProperty2Column.Note].getValue(),
+								sExpectedNote,
+								"The sales order in row " + iRow + " has the expected note: "
+									+ sExpectedNote);
+							Opa5.assert.strictEqual(
+								aCells[mSalesOrderProperty2Column.Status].getTooltip(),
+								sExpectedStatus,
+								"The sales order in row " + iRow + " has the expected status: "
+									+ sExpectedStatus);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Compares the sales order details with the details that have been stored earlier.
 				 * Stores the current details after comparing.
 				 */
@@ -789,6 +982,25 @@ sap.ui.define([
 						success : function (oField) {
 							Opa5.assert.strictEqual(oField.getValue(), sSalesOrderId,
 								"The sales order " + sSalesOrderId + " has been loaded");
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Checks if the sales orders count has changed by the given value.
+				 *
+				 * @param {number} iDelta
+				 *   The supposed difference between the current and the old sales orders count
+				 */
+				checkSalesOrdersCountChangedBy : function (iDelta) {
+					this.waitFor({
+						id : "salesOrdersTitle",
+						success : function (oTitle) {
+							var iCount = parseInt(oTitle.getText().split(" ")[0]);
+
+							iCurrentSalesOrdersCount += iDelta;
+							Opa5.assert.equal(iCount, iCurrentSalesOrdersCount,
+								"Sales orders count has changed by " + iDelta + " to " + iCount);
 						},
 						viewName : sViewName
 					});

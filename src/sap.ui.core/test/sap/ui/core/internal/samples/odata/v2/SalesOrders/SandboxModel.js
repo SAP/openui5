@@ -236,18 +236,24 @@ sap.ui.define([
 		return {
 			mFixture : {
 				"$metadata" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0; // reset counter with each metadata request
+
+						return true;
+					},
 					source : "metadata.xml"
 				},
 				"$metadata?sap-language=EN" : {
+					ifMatch : function (request) {
+						iTimesSaved = 0; // reset counter with each metadata request
+
+						return true;
+					},
 					source : "metadata.xml"
 				},
 
 				/* Test Case I */
 				"SalesOrderSet('101')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC1/SalesOrderSet.json"
 				},
 				"SalesOrderSet('101')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
@@ -347,10 +353,6 @@ sap.ui.define([
 
 				/* Test Case II */
 				"SalesOrderSet('102')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC2/SalesOrderSet.json"
 				},
 				"SalesOrderSet('102')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
@@ -401,11 +403,11 @@ sap.ui.define([
 				/* Test Case II Section II */
 				"SalesOrderSet('102.2')" : {
 					source : "Messages/TC2/SalesOrderSet-2.json",
-					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("maintenance",
-							"ToLineItems(SalesOrderID='102.2',ItemPosition='010')/ToProduct/ProductID"
-						).add("error",
-							"ToLineItems(SalesOrderID='102.2',ItemPosition='010')/Note"
-						)),
+					headers : getMessageHeader(undefined,
+						oCurrentMessages.reset().add("maintenance",
+							"ToLineItems(SalesOrderID='102.2',ItemPosition='010')/ToProduct/"
+							+ "ProductID")
+						.add("error", "ToLineItems(SalesOrderID='102.2',ItemPosition='010')/Note")),
 					ifMatch : function (request) {
 						iTimesSaved = 0;
 						return true;
@@ -436,10 +438,6 @@ sap.ui.define([
 						.add("order", "ToLineItems(SalesOrderID='103',ItemPosition='030')/Quantity")
 						.add("order", "ToLineItems(SalesOrderID='103',ItemPosition='050')/Quantity")
 					),
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC3/SalesOrderSet-0.json"
 				},
 				"SalesOrder_FixQuantities?SalesOrderID='103'" : {
@@ -466,10 +464,6 @@ sap.ui.define([
 				/* Test Case IV */
 				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('104')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC4/SalesOrderSet.json"
 				},
 				"SalesOrderSet('104')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
@@ -497,10 +491,6 @@ sap.ui.define([
 					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("error",
 							"ToLineItems(SalesOrderID='105',ItemPosition='020')/Note")
 						.add("info", "ToLineItems(SalesOrderID='105',ItemPosition='030')/Note")),
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC5/SalesOrderSet.json"
 				},
 				"SalesOrderSet('105')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
@@ -522,10 +512,6 @@ sap.ui.define([
 				/* Test Case VI */
 				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('106')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC6/SalesOrderSet.json"
 				},
 				"SalesOrderSet('106')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
@@ -566,10 +552,6 @@ sap.ui.define([
 
 				/* Test Case VIII */
 				"SalesOrderSet('108')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC8/SalesOrderSet.json"
 				},
 				"SalesOrderSet('108')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
@@ -602,10 +584,6 @@ sap.ui.define([
 
 				/* Test Case IX */
 				"SalesOrderSet('109')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					source : "Messages/TC9/SalesOrderSet.json"
 				},
 				"SalesOrderSet('109')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
@@ -637,10 +615,6 @@ sap.ui.define([
 				},
 				/* Test Case X */
 				"SalesOrderSet('110')" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0;
-						return true;
-					},
 					headers : getMessageHeader(undefined, oCurrentMessages.reset()
 						.add("infoCurrency",
 							"ToLineItems(SalesOrderID='110',ItemPosition='010')/CurrencyCode")),
@@ -677,6 +651,71 @@ sap.ui.define([
 							+ "(SalesOrderID='111',ItemPosition='020')"
 					},
 					source : "Messages/TC11/SalesOrderItem_Clone.json"
+				},
+
+				/* ODataListBinding#create: Test Case I */
+				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID&$inlinecount=allpages" : [{
+					ifMatch : ithCall.bind(null, 0),
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4.json"
+				}, {
+					ifMatch : ithCall.bind(null, 1),
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_after_save.json"
+				}],
+				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20asc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID" : [{
+					ifMatch : ithCall.bind(null, 0),
+					source : "ODLB.create/TC1/SalesOrderSet_asc_0-4.json"
+				}, {
+					ifMatch : ithCall.bind(null, 1),
+					source : "ODLB.create/TC1/SalesOrderSet_asc_0-4_after_save.json"
+				}],
+				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID" : {
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_noCount.json"
+				},
+				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=substringof(%27SAP%27,CustomerName)%20and%20LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID&$inlinecount=allpages" : {
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_SAP.json"
+				},
+				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=substringof(%27Talpa%27,CustomerName)%20and%20LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID&$inlinecount=allpages" : {
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_Talpa.json"
+				},
+				"POST SalesOrderSet" : [{
+					ifMatch : function (oRequest) {
+						if (JSON.parse(oRequest.requestBody).Note === "4") {
+							// all POST requests are contained in one $batch; increase the save
+							// counter only with the last matching POST request
+							iTimesSaved += 1;
+
+							return true;
+						}
+
+						return false;
+					},
+					code : 201,
+					source : "ODLB.create/TC1/SalesOrderSet_222.json"
+				}, {
+					ifMatch : function (oRequest) {
+						return JSON.parse(oRequest.requestBody).Note === "2";
+					},
+					code : 201,
+					source : "ODLB.create/TC1/SalesOrderSet_221.json"
+				}, {
+					ifMatch : function (oRequest) {
+						return JSON.parse(oRequest.requestBody).Note === "1";
+					},
+					code : 201,
+					source : "ODLB.create/TC1/SalesOrderSet_220.json"
+				}],
+				"SalesOrderSet('222')" : {
+					source : "ODLB.create/TC1/SalesOrderSet_222.json"
+				},
+				"SalesOrderSet('222')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+					message : { "d" : {"__count" : "0", "results" : []}}
+				},
+				"DELETE SalesOrderSet" : {code : 204},
+				"GET SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=(substringof(%27Talpa%27,CustomerName)%20and%20LifecycleStatus%20eq%20%27N%27)%20and%20not(SalesOrderID%20eq%20%27222%27%20or%20SalesOrderID%20eq%20%27221%27%20or%20SalesOrderID%20eq%20%27220%27)&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID&$inlinecount=allpages" : {
+					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_Talpa.json"
+				},
+				"SalesOrderSet?$skip=4&$top=3&$orderby=SalesOrderID%20asc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID" : {
+					source : "ODLB.create/TC1/SalesOrderSet_asc_4-3_after_save.json"
 				}
 			},
 			aRegExpFixture : [{
@@ -793,83 +832,6 @@ sap.ui.define([
 					code : 424,
 					source : "Messages/TC6/error-1.json"
 				}]
-			}, {
-			/* Test Cases ODataListBinding.#create*/
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=2&\$orderby=SalesOrderID%20asc.*/,
-				response : {
-					source : "ODLB.create/TC1/SalesOrderSet_asc_0-2.json"
-				}
-			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=2&\$orderby=SalesOrderID%20desc&\$filter=SalesOrderID.*/,
-				response : {
-					source : "ODLB.create/TC1/SalesOrderSet_desc_0-2.json"
-				}
-			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=1&\$orderby=SalesOrderID%20desc&\$filter=substringof.*/,
-				response : {
-					source : "ODLB.create/TC1/SalesOrderSet_desc_0-1_filter.json"
-				}
-			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=2&\$orderby=SalesOrderID%20desc&\$filter=substringof.*/,
-				response : {
-					source : "ODLB.create/TC1/SalesOrderSet_desc_0-2_filter.json"
-				}
-			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=0&\$top=4&\$orderby=SalesOrderID%20desc.*/,
-				response : [{
-					ifMatch : ithCall.bind(null, 0),
-					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4.json"
-				}, {
-					ifMatch : ithCall.bind(null, 1),
-					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_after_save.json"
-				}]
-			}, {
-				regExp : /GET .*\/SalesOrderSet\?\$skip=4&\$top=1&\$orderby=SalesOrderID%20desc.*/,
-				response : {
-					source : "ODLB.create/TC1/SalesOrderSet_desc_4-1.json"
-				}
-			}, {
-				regExp : /GET .*\/SalesOrderSet\('222'\).*/,
-				response : {}
-			}, {
-				regExp : /POST .*\/SalesOrderSet\.*/,
-				response : [{
-					ifMatch : function (oRequest) {
-						var oData = JSON.parse(oRequest.requestBody);
-
-						iTimesSaved = 1;
-						return oData.Note === "4";
-					},
-					code : 201,
-					source : "ODLB.create/TC1/SalesOrderSet_222.json"
-				}, {
-					ifMatch : function (oRequest) {
-						var oData = JSON.parse(oRequest.requestBody);
-
-						return oData.Note === "2";
-					},
-					code : 201,
-					source : "ODLB.create/TC1/SalesOrderSet_221.json"
-				}, {
-					ifMatch : function (oRequest) {
-						var oData = JSON.parse(oRequest.requestBody);
-
-						return oData.Note === "1";
-					},
-					code : 201,
-					source : "ODLB.create/TC1/SalesOrderSet_220.json"
-				}]
-			}, {
-				regExp : /GET .*\/SalesOrderSet\/\$count.*/,
-				response : {
-					headers : {
-						"Content-Length" : "2",
-						"Content-Type" : "text/plain",
-						DataServiceVersion : "2.0"
-					},
-					message : "12",
-					statusCode : "200"
-				}
 			}]
 		};
 	}
@@ -938,6 +900,8 @@ sap.ui.define([
 				}
 			}
 
+			// avoid caching the metadata to reset global counters when the metadata is requested
+			ODataModel.mSharedData = {meta: {}, server: {}, service: {}};
 			oModel = new ODataModel(mParameters);
 			oModel.destroy = function () {
 				if (oSandbox) {
