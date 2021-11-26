@@ -96,16 +96,47 @@ function(
 
 		QUnit.test("the createControl is called asynchronously, expecting an error after loading", function (assert) {
 			var sButtonText = "ButtonText";
-			sandbox.stub(sap.ui, "require").callThrough().withArgs(["sap/m/Button"]).callsArgWithAsync(2);
+			sandbox.stub(sap.ui, "require").callThrough()
+				.withArgs("sap/m/Button").returns(undefined)
+				.withArgs(["sap/m/Button"]).callsArgWithAsync(2);
 			return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText}, true)
 				.then(function() {
 					assert.notOk(true, "then the promise shouldn't be resolved");
 				})
 				.catch(function(oError) {
 					assert.equal(oError.message,
-						"Required control 'sap.m.Button' couldn't be created asynchronously",
+						"Required control 'sap/m/Button' couldn't be created asynchronously",
 						"then the promise is rejected with the expected message");
 				});
+		});
+
+		QUnit.test("the createControl is called and expected control is already loaded", function(assert) {
+			var oCalledSyncStub = sinon.stub().returns(Button);
+			var oCalledAsyncStub = sinon.stub();
+			sandbox.stub(sap.ui, "require").callThrough()
+				.withArgs("sap/m/Button").callsFake(oCalledSyncStub)
+				.withArgs(["sap/m/Button"]).callsFake(oCalledAsyncStub);
+				return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : "ButtonText"}, true)
+					.then(function(createdControl) {
+						assert.ok(createdControl.isA("sap.m.Button"), "then the button returned");
+						assert.strictEqual(oCalledAsyncStub.callCount, 0, "then the async require function is not called");
+						createdControl.destroy();
+					});
+		});
+
+		QUnit.test("the createControl is called and expected control is not loaded yet", function(assert) {
+			var oCalledSyncStub = sinon.stub();
+			var oCalledAsyncStub = sinon.stub();
+			sandbox.stub(sap.ui, "require").callThrough()
+				.withArgs("sap/m/Button").callsFake(oCalledSyncStub)
+				.withArgs(["sap/m/Button"]).callsFake(oCalledAsyncStub).callsArgWithAsync(1, Button);
+				return JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : "ButtonText"}, true)
+					.then(function(createdControl) {
+						assert.ok(createdControl.isA("sap.m.Button"), "then the button returned");
+						assert.strictEqual(oCalledSyncStub.callCount, 1, "then the sync require function is called");
+						assert.strictEqual(oCalledAsyncStub.callCount, 1, "then the async require function is called");
+						createdControl.destroy();
+					});
 		});
 
 		QUnit.test("the modifier finds the index of the control in its parent aggregation correctly, case 1 - no overwritten methods in parent control", function (assert) {
