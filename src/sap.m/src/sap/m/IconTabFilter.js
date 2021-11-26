@@ -174,7 +174,6 @@ sap.ui.define([
 			/**
 			 * The sub items of this filter (optional).
 			 * @since 1.77
-			 * @experimental As of 1.77
 			 */
 			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"},
 
