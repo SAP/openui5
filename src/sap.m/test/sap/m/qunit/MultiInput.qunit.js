@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/InvisibleMessage",
 	"sap/m/MultiInput",
 	"sap/m/Token",
 	"sap/m/Popover",
@@ -32,6 +33,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	createAndAppendDiv,
+	InvisibleMessage,
 	MultiInput,
 	Token,
 	Popover,
@@ -1453,7 +1455,7 @@ sap.ui.define([
 		assert.ok(oMI._getSuggestionsPopoverPopup().isOpen(), "The dialog is opened");
 
 		// Act
-		oPickerTextFieldDomRef = oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef();
+		oPickerTextFieldDomRef = oMI._getSuggestionsPopover().getInput().getFocusDomRef();
 
 		qutils.triggerCharacterInput(oPickerTextFieldDomRef, "test");
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
@@ -1510,8 +1512,8 @@ sap.ui.define([
 		assert.ok(oSpy.called, "_togglePopup is called when N-more is pressed");
 
 		// Act
-		qutils.triggerCharacterInput(oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef(), "d");
-		qutils.triggerEvent("input", oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef());
+		qutils.triggerCharacterInput(oMI._getSuggestionsPopover().getInput().getFocusDomRef(), "d");
+		qutils.triggerEvent("input", oMI._getSuggestionsPopover().getInput().getFocusDomRef());
 		this.clock.tick(100);
 
 		// Assert
@@ -1575,7 +1577,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(oMI._getSuggestionsPopoverInstance().getInput().getValue(), "", "The dialog's input is cleared.");
+		assert.strictEqual(oMI._getSuggestionsPopover().getInput().getValue(), "", "The dialog's input is cleared.");
 
 		// clean up
 		oMI.destroy();
@@ -1786,9 +1788,9 @@ sap.ui.define([
 
 		// Act
 		oMultiInput._openSuggestionsPopover({});
-		oMultiInput._getSuggestionsPopoverInstance().getInput().focus();
-		oMultiInput._getSuggestionsPopoverInstance().getInput().updateDomValue("123");
-		qutils.triggerKeydown(oMultiInput._getSuggestionsPopoverInstance().getInput().getFocusDomRef(), KeyCodes.ENTER);
+		oMultiInput._getSuggestionsPopover().getInput().focus();
+		oMultiInput._getSuggestionsPopover().getInput().updateDomValue("123");
+		qutils.triggerKeydown(oMultiInput._getSuggestionsPopover().getInput().getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiInput.getAggregation("tokenizer").getTokens().length, 1, "Just a single token gets created");
@@ -2396,6 +2398,43 @@ sap.ui.define([
 		oMultiInputWithSuggestions.destroy();
 	});
 
+	QUnit.test("Invisible Message - Announce navigation through suggestions and tokens", function(assert) {
+		var oItem = new Item({
+				key : "0",
+				text : "item 0"
+			}),
+			oAnnounceSpy = this.spy(InvisibleMessage.prototype, "announce"),
+			oMultiInputWithSuggestions = new MultiInput({
+				suggestionItems: [oItem]
+			});
+
+		oMultiInputWithSuggestions.placeAt("content");
+		Core.applyChanges();
+
+		oMultiInputWithSuggestions._openSuggestionsPopover();
+		this.clock.tick();
+
+		//Assert
+		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("MULTIINPUT_NAVIGATION_POPUP", [""])), "Navigation through suggestions should be announced.");
+
+		//Act
+		oMultiInputWithSuggestions._closeSuggestionPopup();
+		this.clock.tick();
+		oMultiInputWithSuggestions.addToken(new Token({text: "Token1"}));
+		Core.applyChanges();
+
+		oMultiInputWithSuggestions._openSuggestionsPopover();
+		this.clock.tick();
+
+		//Assert
+		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("MULTIINPUT_NAVIGATION_POPUP", [oResourceBundle.getText("MULTIINPUT_NAVIGATION_TOKENS")])),
+			"Navigation through suggestions and tokens should be announced.");
+
+		//Clean up
+		oAnnounceSpy.restore();
+		oMultiInputWithSuggestions.destroy();
+	});
+
 	QUnit.module("Copy/Cut Functionality", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();
@@ -2828,7 +2867,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		assert.ok(oStub.called, "The suggestion dialog is opened on click on N-more");
-		assert.ok(this.multiInput1._getSuggestionsPopoverInstance().getFilterSelectedButton(), "The filtering button is pressed on initial opening");
+		assert.ok(this.multiInput1._getSuggestionsPopover().getFilterSelectedButton(), "The filtering button is pressed on initial opening");
 		assert.ok(oTokenizer._getTokensList().getVisible(), "The list with tokens is visible");
 
 		// clean up
@@ -3536,7 +3575,7 @@ sap.ui.define([
 		oMultiInput._$input.trigger("focus").val("A").trigger("input");
 		this.clock.tick(300);
 
-		aVisibleItems = oMultiInput._getSuggestionsPopoverInstance().getItemsContainer().getItems().filter(function(oItem){
+		aVisibleItems = oMultiInput._getSuggestionsPopover().getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
 		});
 		oGroupHeader = aVisibleItems[0];
@@ -3763,7 +3802,7 @@ sap.ui.define([
 		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.ok(oMultiInput._getSuggestionsPopoverInstance().getItemsContainer().getVisible(), true, "List should be visible");
+		assert.ok(oMultiInput._getSuggestionsPopover().getItemsContainer().getVisible(), true, "List should be visible");
 
 		oMultiInput.destroy();
 	});
