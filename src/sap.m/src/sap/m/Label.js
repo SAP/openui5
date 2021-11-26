@@ -177,7 +177,15 @@ function(
 	 * @returns {object} AccessibilityInfo of the <code>sap.m.Label</code>
 	 */
 	Label.prototype.getAccessibilityInfo = function() {
-		return {description: this.getText()};
+		var sDescription = this.getText();
+
+		if (this.isRequired()) {
+			sDescription += " *";
+		}
+
+		return {
+			description: sDescription
+		};
 	};
 
 	/**

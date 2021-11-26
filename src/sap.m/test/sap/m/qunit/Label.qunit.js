@@ -372,6 +372,15 @@ sap.ui.define([
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
 	});
 
+	QUnit.test("getAccessibilityInfo with required=true", function(assert) {
+		this.label.setRequired(true);
+
+		var oInfo = this.label.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, "Label *", "Description");
+
+		this.label.setRequired(false);
+	});
+
 	QUnit.test("Label rendering when no labelFor association is set", function (assert) {
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true, "Should be rendered as a span element");
 	});
