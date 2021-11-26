@@ -1,0 +1,17 @@
+body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+code {
+	background-color: lightgrey;
+	border-radius: 5px;
+	display: inline-block;
+	font-size: 110%;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	padding: 2px 5px 2px 5px;
+}
+.backendOnly {
+	background-color: lightcoral;
+	border-radius: 5px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	padding: 2px 5px 2px 5px;
+}
