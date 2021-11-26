@@ -213,13 +213,12 @@ sap.ui.define([
 				case Keys.LASTMONTHS:
 				case Keys.LASTQUARTERS:
 				case Keys.LASTYEARS:
-					return _resourceBundle.getText("DYNAMIC_DATE_LASTX_TITLE", aParams[1].getOptions().join(" / "));
 				case Keys.NEXTDAYS:
 				case Keys.NEXTWEEKS:
 				case Keys.NEXTMONTHS:
 				case Keys.NEXTQUARTERS:
 				case Keys.NEXTYEARS:
-					return _resourceBundle.getText("DYNAMIC_DATE_NEXTX_TITLE", aParams[1].getOptions().join(" / "));
+					return this._getXPeriodTitle(aParams[1].getOptions());
 				default:
 					return _resourceBundle.getText("DYNAMIC_DATE_" + sKey + "_TITLE");
 			}
@@ -437,7 +436,7 @@ sap.ui.define([
 		StandardDynamicDateOption.prototype._getOptionParams = function(aGroupOptions, oOptions){
 			if (aGroupOptions.indexOf(this.getKey()) !== -1) {
 				return new DynamicDateValueHelpUIType({
-					text: "Time Periods:",
+					text: _resourceBundle.getText("DDR_LASTNEXTX_TIME_PERIODS_LABEL"),
 					type: "options",
 					options: oOptions ? oOptions.filter(function(option) {
 						return aGroupOptions.indexOf(option.getKey()) !== -1;
@@ -729,8 +728,36 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Gets a combined option title for the last x or the next x option.
+		 *
+		 * @param {*} aOptions A combination of the following string values: days, weeks, months, quarters, years
+		 * @returns {string} A combined option title
+		 * @private
+		 */
+		StandardDynamicDateOption.prototype._getXPeriodTitle = function(aOptions) {
+			var sCombinedOptions,
+				sKey = this.getKey();
+
+			if (aOptions.length === 1) {
+				return _resourceBundle.getText("DYNAMIC_DATE_" + sKey + "_TITLE");
+			}
+
+			sCombinedOptions = aOptions.map(function(sOption) {
+				return _resourceBundle.getText("DYNAMIC_DATE_" + sOption.toUpperCase());
+			}).join(" / ");
+
+			if (sKey.indexOf("LAST") === 0) {
+				return _resourceBundle.getText("DYNAMIC_DATE_LASTX_TITLE", sCombinedOptions);
+			}
+
+			if (sKey.indexOf("NEXT") === 0) {
+				return _resourceBundle.getText("DYNAMIC_DATE_NEXTX_TITLE", sCombinedOptions);
+			}
+		};
+
 		function makeRadioButton(sOptionName) {
-			return new RadioButton({ text: sOptionName });
+			return new RadioButton({ text: _resourceBundle.getText("DYNAMIC_DATE_" + sOptionName.toUpperCase()) });
 		}
 
 		return StandardDynamicDateOption;
