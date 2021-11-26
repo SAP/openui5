@@ -197,23 +197,33 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
-			return new Promise(function(fnResolve, fnReject) {
-				if (this.bySelector(oSelector, oAppComponent)) {
-					var sErrorMessage = "Can't create a control with duplicated ID " + (oSelector.id || oSelector);
-					fnReject(sErrorMessage);
-					return;
-				}
-				sap.ui.require([sClassName.replace(/\./g,"/")],
-					function(ClassObject) {
-						var sId = this.getControlIdBySelector(oSelector, oAppComponent);
-						fnResolve(new ClassObject(sId, mSettings));
-					}.bind(this),
-					function() {
-						fnReject(new Error("Required control '" + sClassName + "' couldn't be created asynchronously"));
-					}
-				);
-			}.bind(this));
+			sClassName = sClassName.replace(/\./g,"/");
+			if (this.bySelector(oSelector, oAppComponent)) {
+				var sErrorMessage = "Can't create a control with duplicated ID " + (oSelector.id || oSelector);
+				return Promise.reject(sErrorMessage);
+			}
 
+			var oPromise;
+			var oClassObject = sap.ui.require(sClassName);
+			if (oClassObject) {
+				oPromise = Promise.resolve(oClassObject);
+			} else {
+				oPromise = new Promise(function(fnResolve, fnReject) {
+					sap.ui.require([sClassName],
+						function(oClassObject) { fnResolve(oClassObject); },
+						function() {
+							fnReject(new Error("Required control '" + sClassName
+								+ "' couldn't be created asynchronously"));
+						}
+					);
+				});
+			}
+
+			return oPromise
+				.then(function(ClassObject) {
+					var sId = this.getControlIdBySelector(oSelector, oAppComponent);
+					return new ClassObject(sId, mSettings);
+				}.bind(this));
 		},
 
 		/**

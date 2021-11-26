@@ -297,6 +297,10 @@ sap.ui.define([
 		 */
 		_getControlMetadataInXml: function(oControl) {
 			var sControlType = this._getControlTypeInXml(oControl).replace(/\./g, "/");
+			var oControlType = sap.ui.require(sControlType);
+			if (oControlType && oControlType.getMetadata) {
+				return Promise.resolve(oControlType.getMetadata());
+			}
 			return new Promise(function(fnResolve, fnReject) {
 				sap.ui.require([sControlType],
 					function(ControlType) {
