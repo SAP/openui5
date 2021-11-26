@@ -208,7 +208,7 @@ sap.ui.define([
 					oDialog.addStyleClass("sapMdcValueHelpTitle");
 					oDialog.addStyleClass("sapMdcValueHelpTitleShadow");
 
-					var oVBox = new VBox({ fitContainer: true});
+					var oVBox = new VBox(this.getId() + "-Content", { fitContainer: true});
 					oVBox.addStyleClass("sapMdcValueHelpPanel");
 					oDialog.addContent(oVBox);
 
@@ -348,7 +348,7 @@ sap.ui.define([
 				var BackgroundDesign = MLibrary.BackgroundDesign;
 				var ButtonType = MLibrary.ButtonType;
 
-				this.oTokenizerPanel = new Panel( {
+				this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
 					backgroundDesign: BackgroundDesign.Transparent,
 					expanded: true,
 					visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter:
@@ -383,20 +383,22 @@ sap.ui.define([
 				});
 				this.oTokenizerPanel.addStyleClass("sapMdcTokenizerPanel");
 
-				var oHBox = new HBox({fitContainer: true, width: "100%"});
+				var oHBox = new HBox(this.getId() + "-TokenBox", {fitContainer: true, width: "100%"});
 
 				var oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
 
 				var oValueHelpModel = this.getModel("$valueHelp");
 				var oConfig = oValueHelpModel ? oValueHelpModel.getProperty("/_config") : {};
+				var oParent = this.getParent();
 				var oFormatOptions = { // TODO: is more needed?
 							maxConditions: -1, // as for tokens there should not be a limit on type side
 							valueType: oConfig.dataType,
 							operators: oConfig.operators,
-							display: oConfig.display
+							display: oConfig.display,
+							fieldHelpID: oParent && oParent.getId() // needed to get description for Token (if not provided)
 						};
-				var oTokenTemplate = new Token({text: {path: '$valueHelp>', type: new ConditionType(oFormatOptions)}});
-				this.oTokenizer = new Tokenizer({
+				var oTokenTemplate = new Token(this.getId() + "-Token", {text: {path: '$valueHelp>', type: new ConditionType(oFormatOptions)}});
+				this.oTokenizer = new Tokenizer(this.getId() + "-Tokenizer", {
 					width: "100%",
 					tokenDelete: function(oEvent) {
 						if (oEvent.getParameter("tokens")) {
@@ -420,7 +422,7 @@ sap.ui.define([
 				this.oTokenizer.addAriaDescribedBy( this.oTokenizer.getTokensInfoId());
 				this.oTokenizer.addStyleClass("sapMdcTokenizer");
 
-				this.oRemoveAllBtn = new Button({
+				this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
 					press: function(oEvent) {
 						this.fireSelect({type: SelectType.Set, conditions: []});
 

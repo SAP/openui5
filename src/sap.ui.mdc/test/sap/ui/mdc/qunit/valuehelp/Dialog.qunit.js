@@ -10,8 +10,10 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/Content",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/SelectType",
+	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/String",
 	"sap/ui/Device",
 	"sap/base/strings/formatMessage",
 	"sap/m/library"
@@ -21,8 +23,10 @@ sap.ui.define([
 		Content,
 		Condition,
 		SelectType,
+		FieldDisplay,
 		Icon,
 		JSONModel,
+		StringType,
 		Device,
 		formatMessage,
 		mLibrary
@@ -63,10 +67,14 @@ sap.ui.define([
 		},
 		invalidate: function() {
 			return null;
+		},
+		getId: function() {
+			return "VH";
 		}
 	};
 	var oValueHelpConfig;
 	var oModel; // to fake ManagedObjectModel of ValueHelp
+	var oType;
 
 	/* use dummy control to simulate Field */
 
@@ -92,6 +100,10 @@ sap.ui.define([
 		if (oContentField) {
 			oContentField.destroy();
 			oContentField = undefined;
+		}
+		if (oType) {
+			oType.destroy();
+			oType = undefined;
 		}
 	};
 
@@ -201,9 +213,13 @@ sap.ui.define([
 
 	QUnit.module("assigned to ValueHelp", {
 		beforeEach: function() {
+			oType = new StringType();
+
 			oValueHelpConfig = {
 				maxConditions: -1,
-				display: "Description"
+				dataType: oType,
+				operators: ["EQ", "BT"],
+				display: FieldDisplay.Description
 			};
 			oModel = new JSONModel({
 				_config: oValueHelpConfig,
@@ -275,6 +291,17 @@ sap.ui.define([
 				var aTokens = oTokenizer.getTokens();
 				assert.equal(aTokens.length, 1, "number of tokens");
 				assert.equal(aTokens[0].getText(), "Text", "Token text");
+				var oBinding = aTokens[0].getBinding("text");
+				var oBindingType = oBinding.getType();
+				assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
+				var oFormatOptions = {
+					maxConditions: -1, // as for tokens there should not be a limit on type side
+					valueType: oType,
+					operators: ["EQ", "BT"],
+					display: FieldDisplay.Description,
+					fieldHelpID: "VH"
+				};
+				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 
 				fnDone();
 			}).catch(function(oError) {
