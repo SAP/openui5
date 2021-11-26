@@ -18,33 +18,33 @@ sap.ui.define([
 	var aProviders = [];
 
 	/**
-	 * Creates and initializes a new Placeholder.
+	 * Creates a Placeholder instance. A path to a '.html' file containing the placeholder HTML content
+	 * must be provided.
+	 *
+	 * Note: As normal '.html' files are not bundled automatically, it is recommended to use an HTMLFragment
+	 * definition ('.fragment.html') instead.
+	 *
+	 * @example
+	 * new Placeholder({
+	 * 	html: 'myPlaceholder.fragment.html'
+	 * });
+	 *
+	 * @param {object} mParameters Object containing the settings for the placeholder
+	 * @param {string} mParameters.html Name of the HTML file that provides the placeholder content
+	 *
+	 * @class Represents a placeholder and its HTML content.
+	 * @alias sap.ui.core.Placeholder
+	 * @extends sap.ui.base.Object
+	 * @private
+	 * @ui5-restricted SAPUI5 Distribution libraries only
+	 * @since 1.92
 	 */
-	var Placeholder = BaseObject.extend("sap.ui.core.Placeholder", /* @lends sap.ui.core.PlaceHolder */ {
-		/**
-		 * Creates a Placeholder instance. A path to a '.html' file containing the placeholder HTML content
-		 * must be provided.
-		 *
-		 * Note: As normal '.html' files are not bundled automatically it is recomended to use a HTMLFragment
-		 * definition '.fragment.html' instead.
-		 *
-		 * @example
-		 * new Placeholder({
-		 * 	html: 'myPlaceholder.fragment.html'
-		 * });
-		 *
-		 * @param {object} mParameters Object containing the placeholder HTML file name
-		 * @param {string} [mParameters.html] Name of the HTML file that provides the placeholder content
-		 *
-		 * @private
-		 * @ui5-restricted SAPUI5 Distribution libraries only
-		 * @since 1.92
-		 */
+	var Placeholder = BaseObject.extend("sap.ui.core.Placeholder", /* @lends sap.ui.core.Placeholder.prototype */ {
 		constructor : function(mParameters) {
 			BaseObject.call(this);
 
 			if (!mParameters.html) {
-				throw new Error("A HTML page defining the placeholders content must be given!");
+				throw new Error("An HTML page defining the placeholder's content must be given!");
 			}
 			this.bShow = false;
 			this.placeholderHTML = mParameters.html;
@@ -71,7 +71,7 @@ sap.ui.define([
 				// the DOM element of the control contains the placeholder. Only when the control doesn't have the
 				// placeholder, a new placeholder DOM element is generated and inserted into the control.
 				if (sPlaceholderContent && this.bShow && !oControl.getDomRef().contains(this.placeholder)) {
-					// unblock old blockstate when multiple rendering happens
+					// unblock old blockstate when multiple renderings happen
 					if (this.blockState) {
 						BlockLayerUtils.unblock(this.blockState);
 					}
@@ -109,7 +109,7 @@ sap.ui.define([
 		/**
 		 * Loads the placeholder from given HTML file name.
 		 *
-		 * @return {Promise} Returns a promise resolving with the placeholder content
+		 * @returns {Promise<string>} Returns a promise resolving with the placeholder content
 		 * @private
 		 */
 		_load: function() {
@@ -136,7 +136,7 @@ sap.ui.define([
 	 * Registers provider functions which allow to dynamically define the placeholder HTML files,
 	 * based on the routing configuration.
 	 *
-	 * @param  {function} fnProvider Provider function which provides the placeholder HTML file name
+	 * @param {function} fnProvider Provider function which provides the placeholder HTML file name
 	 *
 	 * @private
 	 * @ui5-restricted SAPUI5 Distribution libraries only
@@ -149,7 +149,7 @@ sap.ui.define([
 	/**
 	 * Checks if provider functions have been registered.
 	 *
-	 * @return {boolean} Whether provider functions have been registered or not.
+	 * @returns {boolean} Whether provider functions have been registered or not.
 	 * @private
 	 */
 	Placeholder.hasProviders = function() {
@@ -157,10 +157,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the placeholder HTML file for the given provider configuration
+	 * Retrieves the placeholder HTML file for the given provider configuration.
 	 *
 	 * The registered provider function must return an object providing
-	 * a html property that points to the placeholders HTML content.
+	 * an html property that points to the placeholder's HTML content.
 	 *
 	 * @param  {object} oConfig Configuration object containing the provider name
 	 * @return {object|undefined} If available, the config defined by the provider function will be returned

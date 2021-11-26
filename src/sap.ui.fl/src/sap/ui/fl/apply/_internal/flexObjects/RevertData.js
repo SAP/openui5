@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @extends sap.ui.base.ManagedObject
 	 * @private
 	 * @ui5-restricted
-	 * @since Since 1.90.0
+	 * @since 1.90.0
 	 */
 	return ManagedObject.extend("sap.ui.fl.apply._internal.flexObjects.RevertData", {
 		metadata: {

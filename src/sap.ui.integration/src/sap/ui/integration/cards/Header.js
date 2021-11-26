@@ -33,7 +33,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * Displays general information in the header of the {@link sap.ui.integration.widgets.Card}.
-	 * @extends sap.f.Header
+	 * @extends sap.f.cards.Header
 	 *
 	 * @author SAP SE
 	 * @version ${version}

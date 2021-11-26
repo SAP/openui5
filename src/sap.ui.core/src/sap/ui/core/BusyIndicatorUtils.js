@@ -22,7 +22,7 @@ sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possib
 	 * styling + animation: LocalBusyIndicator.less
 	 *
 	 * @param {string} sSize either "Large" or "Medium". Other sizes will be mapped to "Medium"
-	 * @returns {DOM.element} the element for the busy indicator
+	 * @returns {Element} the element for the busy indicator
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.chart
 	 */

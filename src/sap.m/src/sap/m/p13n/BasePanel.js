@@ -17,7 +17,7 @@ sap.ui.define([
 	 * This control serves as base class for personalization implementations.
 	 * This base class is faceless and should be inherited to implement control specific personalization panels.
 	 *
-	 * @extends sap.m.p13n.Control
+	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
