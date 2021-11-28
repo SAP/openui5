@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/initial/_internal/StorageUtils"
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Layer,
-	Utils
+	Utils,
+	oCore
 ) {
 	"use strict";
 
@@ -182,7 +184,7 @@ sap.ui.define([
 	QUnit.module("Given the default configuration", {
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
-			this.oConfigurationSpy = sandbox.spy(sap.ui.getCore().getConfiguration(), "getFlexibilityServices");
+			this.oConfigurationSpy = sandbox.spy(oCore.getConfiguration(), "getFlexibilityServices");
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -212,7 +214,7 @@ sap.ui.define([
 	QUnit.module("Given a KeyUserConnector and PersonalizationConnector is configured", {
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
-			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			this.oConfigurationStub = sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
@@ -246,7 +248,7 @@ sap.ui.define([
 	QUnit.module("Given a NeoLrepConnector is configured", {
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
-			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			this.oConfigurationStub = sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "NeoLrepConnector", layers: [Layer.ALL]}
 			]);
 		},
@@ -269,7 +271,7 @@ sap.ui.define([
 	QUnit.module("Given a custom connector (legacy with applyConnector) is configured", {
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
-			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			this.oConfigurationStub = sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{applyConnector: "apply/someConnector", writeConnector: "write/someConnector", layers: [Layer.ALL]}
 			]);
 			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(requireConnectorsFake);
@@ -305,7 +307,7 @@ sap.ui.define([
 	QUnit.module("Given a custom connector (with loadConnector) is configured", {
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
-			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			this.oConfigurationStub = sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{loadConnector: "apply/someConnector", writeConnector: "write/someConnector", layers: [Layer.ALL]}
 			]);
 			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(requireConnectorsFake);
@@ -341,7 +343,7 @@ sap.ui.define([
 	QUnit.module("Given a custom connector (without a writeConnector) is configured", {
 		beforeEach: function() {
 			this.oGetConnectorsSpy = sandbox.spy(Utils, "getConnectors");
-			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			this.oConfigurationStub = sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{loadConnector: "apply/someConnector", layers: [Layer.ALL]}
 			]);
 			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(requireConnectorsFake);

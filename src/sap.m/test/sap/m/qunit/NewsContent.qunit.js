@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/NewsContent",
 	"sap/m/MessageToast",
 	"sap/ui/core/TooltipBase",
-	"sap/m/library"
-], function(NewsContent, MessageToast, TooltipBase, library) {
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(NewsContent, MessageToast, TooltipBase, library, oCore) {
 	"use strict";
 
 
@@ -24,7 +25,7 @@ sap.ui.define([
 				}
 			});
 			this.oNewsContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oNewsContent.destroy();
@@ -46,7 +47,7 @@ sap.ui.define([
 	QUnit.test("HTML ContentText", function(assert) {
 		//Act
 		this.oNewsContent.setContentText("My <u>new</u> Text");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oNewsContent.getProperty("contentText"), "My <u>new</u> Text", "ContentText text has HTML");
 		assert.equal(this.oNewsContent._oContentText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
@@ -56,7 +57,7 @@ sap.ui.define([
 	QUnit.test("HTML Subheader", function(assert) {
 		//Act
 		this.oNewsContent.setSubheader("My <u>new</u> Text");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oNewsContent.getProperty("subheader"), "My <u>new</u> Text", "Subheader text has HTML");
 		assert.equal(this.oNewsContent._oSubHeaderText.getHtmlText(), "My <u>new</u> Text", "Inner text has HTML");
@@ -68,7 +69,7 @@ sap.ui.define([
 			this.oNewsContent = new NewsContent({
 				size : Size.M
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oNewsContent.destroy();
@@ -147,7 +148,7 @@ sap.ui.define([
 				subheader : "August 21, 2013",
 				tooltip : "Test tooltip"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oNewsContent.destroy();

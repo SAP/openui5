@@ -1,8 +1,8 @@
 /*global QUnit */
-sap.ui.define(["sap/m/WizardStep"], function(WizardStep) {
+sap.ui.define(["sap/m/WizardStep", "sap/ui/core/Core"], function(WizardStep, oCore) {
 	"use strict";
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("WizardStep API", {
 		beforeEach: function () {
@@ -32,7 +32,7 @@ sap.ui.define(["sap/m/WizardStep"], function(WizardStep) {
 
 	QUnit.test("Default accessibility values", function (assert) {
 		this.wizardStep.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.wizardStep.$().attr("role"), "region", "Role should be region");
 		assert.strictEqual(this.wizardStep.$().attr("aria-labelledby"),
 			this.wizardStep.getId() + "-Title", "Region should be labelled by the title and position");

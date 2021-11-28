@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/base/strings/formatMessage",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Core"
 ], function (
 		ValueHelpDelegate,
 		Dialog,
@@ -25,14 +26,15 @@ sap.ui.define([
 		JSONModel,
 		Device,
 		formatMessage,
-		mLibrary
+		mLibrary,
+		oCore
 	) {
 	"use strict";
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var oDialog;
-	var iDialogDuration = sap.ui.getCore().getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	var iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 
 	var _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
 	var oField;
@@ -226,7 +228,7 @@ sap.ui.define([
 				return oField;
 			};
 			oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: _teardown
 	});

@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Adaptation,
 	Fragment,
 	JSONModel,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -18,7 +20,7 @@ sap.ui.define([
 	QUnit.module("Download Translation Dialog", {
 		before: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbarControlsModel = new JSONModel({
 				undoEnabled: false,

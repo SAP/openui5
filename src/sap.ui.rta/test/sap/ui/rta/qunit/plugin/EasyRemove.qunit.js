@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	QUnitUtils,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Button,
 	ChangesWriteAPI,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -64,7 +66,7 @@ sap.ui.define([
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections: [this.oSection, this.oSection2]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
@@ -94,13 +96,13 @@ sap.ui.define([
 				done();
 			});
 
-			var oDeleteButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-DeleteIcon");
+			var oDeleteButton = oCore.byId(this.oSectionOverlay.getId() + "-DeleteIcon");
 			QUnitUtils.triggerEvent("tap", oDeleteButton.getDomRef());
 		});
 
 		QUnit.test("when an ObjectPageSection is rendered and one section gets removed", function(assert) {
-			var oDeleteButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-DeleteIcon");
-			var oDeleteButton2 = sap.ui.getCore().byId(this.oSectionOverlay2.getId() + "-DeleteIcon");
+			var oDeleteButton = oCore.byId(this.oSectionOverlay.getId() + "-DeleteIcon");
+			var oDeleteButton2 = oCore.byId(this.oSectionOverlay2.getId() + "-DeleteIcon");
 
 			assert.ok(oDeleteButton, "then the 1st Delete-Icon is displayed");
 			assert.ok(oDeleteButton.getEnabled(), "and enabled");
@@ -108,7 +110,7 @@ sap.ui.define([
 			assert.ok(oDeleteButton2.getEnabled(), "and enabled");
 
 			this.oSection.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(oDeleteButton2, "after removing the 1st section, the 2nd Delete-Icon is still displayed");
 			assert.notOk(oDeleteButton2.getEnabled(), "but disabled");
@@ -141,7 +143,7 @@ sap.ui.define([
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections: [this.oSection]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
@@ -160,7 +162,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when an ObjectPageSection is rendered and the EasyRemovePlugin is used", function(assert) {
-			var oDeleteButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-DeleteIcon");
+			var oDeleteButton = oCore.byId(this.oSectionOverlay.getId() + "-DeleteIcon");
 			assert.notOk(oDeleteButton, "then the Delete-Icon is not displayed");
 		});
 	});

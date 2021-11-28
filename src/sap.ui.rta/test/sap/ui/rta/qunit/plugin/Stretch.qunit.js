@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/base/util/includes",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	ManagedObject,
@@ -33,7 +34,8 @@ sap.ui.define([
 	Button,
 	includes,
 	_debounce,
-	sinon
+	sinon,
+	oCore
 ) {
 	'use strict';
 
@@ -126,7 +128,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
@@ -157,7 +159,7 @@ sap.ui.define([
 
 		QUnit.test("when the controls get rerendered", function(assert) {
 			this.oLayout.getParent().invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(isStretched(this.oLayoutOverlay), "the style class is still set");
 			assert.ok(isStretched(this.oVBoxOverlay1), "the style class is still set");
@@ -167,7 +169,7 @@ sap.ui.define([
 		QUnit.test("when the controls get rerendered while a plugin is busy", function(assert) {
 			sandbox.stub(this.oStretchPlugin.getDesignTime(), "getBusyPlugins").returns([1]);
 			this.oLayout.getParent().invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(isStretched(this.oLayoutOverlay), "the style class is still set");
 			assert.ok(isStretched(this.oVBoxOverlay1), "the style class is still set");
@@ -240,7 +242,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
@@ -384,7 +386,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
@@ -447,7 +449,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 			sandbox.stub(this.oStretchPlugin, "_isEditable").callsFake(function(oOverlay) {
@@ -558,7 +560,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 			sandbox.stub(this.oStretchPlugin, "_isEditable").callsFake(function(oOverlay) {
@@ -618,7 +620,7 @@ sap.ui.define([
 			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
 			this.oHBox2.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("When the invisible hbox becomes visible while the plugin is busy", function(assert) {
@@ -646,7 +648,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oStretchPlugin = new Stretch();
 
@@ -712,7 +714,7 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapUiRtaRoot");
 			this.oLayout1.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 
@@ -787,7 +789,7 @@ sap.ui.define([
 			});
 
 			this.oForm.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oStretchPlugin = new Stretch();
 

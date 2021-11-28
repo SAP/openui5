@@ -37,7 +37,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function (
 		qutils,
 		FieldValueHelpUITableWrapper,
@@ -71,16 +72,17 @@ sap.ui.define([
 		ODataModel,
 		ODataListBinding,
 		Device,
-		KeyCodes
+		KeyCodes,
+		oCore
 	) {
 	"use strict";
 
-	var iDialogDuration = sap.ui.getCore().getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	var iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 	var iPopoverDuration = Device.browser.firefox ? 410 : 355;
 
 	var oModel;
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var oWrapper;
 	var oFieldHelp;
@@ -187,7 +189,7 @@ sap.ui.define([
 				   {text: "Item 2", key: "I2", additionalText: "Text 2"},
 				   {text: "X-Item 3", key: "I3", additionalText: "Text 3"}]
 			});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oItemTemplate = new ColumnListItem("MyItem", {
 			type: "Active",
@@ -432,9 +434,9 @@ sap.ui.define([
 		var oScrollSpy = sinon.spy(oWrapper, "_handleScrolling");
 
 		var _handleScrolling = function (fnAfter) {
-            var oScrollPromise = oScrollSpy.lastCall.returnValue;
+			var oScrollPromise = oScrollSpy.lastCall.returnValue;
 			return oScrollPromise ? oScrollPromise.then(fnAfter) : Promise.resolve(fnAfter());
-        };
+		};
 
 		iMaxConditions = 1;
 		oWrapper.fieldHelpOpen(true); //suggestion
@@ -951,7 +953,7 @@ sap.ui.define([
 
 			var oContent = oWrapper.getDialogContent();
 			oContent.placeAt("content"); // render table
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			iMaxConditions = 1;
 			oWrapper.fieldHelpOpen(true); // suggestion with single selection
@@ -1248,7 +1250,7 @@ sap.ui.define([
 					descriptionPath: "text"
 				});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oField.addDependent(oFieldHelp);
 		oFieldHelp.connect(oField);

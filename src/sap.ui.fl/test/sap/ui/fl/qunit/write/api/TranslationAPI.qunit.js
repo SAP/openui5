@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Layer,
 	TranslationAPI,
 	InitialConnector,
 	ManifestUtils,
-	FlUtils
+	FlUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -117,7 +119,7 @@ sap.ui.define([
 				"en-US",
 				"de-DE"
 			];
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -144,7 +146,7 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 

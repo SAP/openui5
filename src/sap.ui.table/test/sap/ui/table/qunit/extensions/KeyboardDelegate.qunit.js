@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, KeyCodes, JSONModel, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, qutils, TableUtils, KeyboardDelegate, Device, F6Navigation, library, Table, Column, KeyCodes, JSONModel, jQuery, oCore) {
 	"use strict";
 
 	var createTables = window.createTables;
@@ -147,7 +148,7 @@ sap.ui.define([
 
 	function removeFocusDummies() {
 		aFocusDummyIds.forEach(function(sId) {
-			sap.ui.getCore().byId(sId).destroy();
+			oCore.byId(sId).destroy();
 		});
 		aFocusDummyIds = [];
 	}
@@ -159,7 +160,7 @@ sap.ui.define([
 		renderFocusDummy("Focus2");
 		oTreeTable.placeAt("qunit-fixture");
 		renderFocusDummy("Focus3");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	function teardownTest() {
@@ -220,8 +221,8 @@ sap.ui.define([
 	 */
 	var Key = {
 		Arrow: {
-			LEFT: sap.ui.getCore().getConfiguration().getRTL() ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT,
-			RIGHT: sap.ui.getCore().getConfiguration().getRTL() ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT,
+			LEFT: oCore.getConfiguration().getRTL() ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT,
+			RIGHT: oCore.getConfiguration().getRTL() ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT,
 			UP: KeyCodes.ARROW_UP,
 			DOWN: KeyCodes.ARROW_DOWN
 		},
@@ -377,7 +378,7 @@ sap.ui.define([
 
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[0]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 1)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
@@ -432,7 +433,7 @@ sap.ui.define([
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 
 		oTreeTable.setUseGroupMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTreeTable, getCell(0, 0, null, null, oTreeTable)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
@@ -483,7 +484,7 @@ sap.ui.define([
 			mInputTypes[sInputType].columnIndex = TableQUnitUtils.addColumn(oTable, sInputType, mInputTypes[sInputType].value, true, null, null,
 																			sInputType, false).getIndex();
 		}
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (sInputType in mInputTypes) {
 			testInputElement(mInputTypes[sInputType]);
@@ -582,7 +583,7 @@ sap.ui.define([
 		oTable.getColumns().forEach(function(oColumn) {
 			oColumn.setVisible(false);
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
@@ -789,7 +790,7 @@ sap.ui.define([
 
 	QUnit.test("Row Actions", function(assert) {
 		initRowActions(oTable, 1, 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oElem = checkFocus(getRowAction(1, true), assert);
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(document.getElementById("Focus2"), assert);
@@ -802,7 +803,7 @@ sap.ui.define([
 	QUnit.test("Extension and Footer", function(assert) {
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 		simulateTabEvent(oElem, true);
@@ -829,7 +830,7 @@ sap.ui.define([
 		checkFocus(document.getElementById("Focus2"), assert);
 
 		oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oElem = getCell(1, 1, true);
 		simulateTabEvent(oElem, true);
 		checkFocus(document.getElementById("Extension"), assert);
@@ -857,7 +858,7 @@ sap.ui.define([
 
 		oTable.setColumnHeaderVisible(false);
 		oTable.setVisibleRowCount(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 		simulateTabEvent(oElem);
@@ -871,7 +872,7 @@ sap.ui.define([
 		var oElem;
 
 		oTable.setVisibleRowCount(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oElem = checkFocus(getColumnHeader(0, true), assert);
 		simulateTabEvent(oElem);
@@ -901,7 +902,7 @@ sap.ui.define([
 			});
 
 			// The KeyboardDelegate does not handle navigation to the right. The ItemNavigation handles onsapnext (onsapprevious in RTL).
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = oCore.getConfiguration().getRTL();
 			var mKeyInfo = {};
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapup", keyName: "ArrowUp"};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdown", keyName: "ArrowDown"};
@@ -1055,7 +1056,7 @@ sap.ui.define([
 	QUnit.test("Grouped", function(assert) {
 		this.oTable.setEnableGrouping(true);
 		this.oTable.setGroupBy(this.oTable._getVisibleColumns()[0]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			this.testArrowKeys(assert);
@@ -1064,7 +1065,7 @@ sap.ui.define([
 
 	QUnit.test("Fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
@@ -1074,21 +1075,21 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(6);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
 
 	QUnit.test("No Row Header", function(assert) {
 		this.oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
 
 	QUnit.test("No Column Header", function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
@@ -1104,7 +1105,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(6);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
@@ -1120,7 +1121,7 @@ sap.ui.define([
 		this.oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		function getMultiHeader(iColumnIndex) {
 			return document.getElementById(that.oTable.qunit.getColumnHeaderCell(iColumnIndex).getAttribute("id") + "_1");
@@ -1152,7 +1153,7 @@ sap.ui.define([
 		this.oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.triggerKey(Key.Arrow.RIGHT, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(-1));
 		this.triggerKey(Key.Arrow.RIGHT,
@@ -1174,7 +1175,7 @@ sap.ui.define([
 	QUnit.test("Variable row heights", function(assert) {
 		this.oTable._bVariableRowHeightEnabled = true;
 		this.oTable.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			this.testArrowKeys(assert);
@@ -1199,7 +1200,7 @@ sap.ui.define([
 			});
 
 			var mKeyInfo = {};
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = oCore.getConfiguration().getRTL();
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapupmodifiers", keyName: "ArrowUp", ctrl: true};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdownmodifiers", keyName: "ArrowDown", ctrl: true};
 			mKeyInfo[Key.Arrow.LEFT] = {eventName: bRTL ? "onsaprightmodifiers" : "onsapleftmodifiers", keyName: "ArrowLeft", ctrl: true};
@@ -1239,7 +1240,7 @@ sap.ui.define([
 			});
 
 			var mKeyInfo = {};
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = oCore.getConfiguration().getRTL();
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapupmodifiers", keyName: "ArrowUp", shift: true};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdownmodifiers", keyName: "ArrowDown", shift: true};
 			mKeyInfo[Key.Arrow.LEFT] = {eventName: bRTL ? "onsaprightmodifiers" : "onsapleftmodifiers", keyName: "ArrowLeft", shift: true};
@@ -1291,7 +1292,7 @@ sap.ui.define([
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
 		this.oTable.setSelectionBehavior(library.SelectionBehavior.RowSelector);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var i, iRowIndex, oRow;
 		var iVisibleRowCount = this.oTable.getVisibleRowCount();
@@ -1344,7 +1345,7 @@ sap.ui.define([
 		qutils.triggerKeyup(oTarget, Key.SHIFT, false, false, false); // End selection mode.
 
 		this.oTable.setSelectionMode(library.SelectionMode.Single);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oTarget = this.oTable.qunit.getRowHeaderCell(1);
 		oTarget.focus();
@@ -1360,7 +1361,7 @@ sap.ui.define([
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
 		this.oTable.setSelectionBehavior(library.SelectionBehavior.RowOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var i, iColumnIndex, oRow;
 		var iRowIndex = 0;
@@ -1588,7 +1589,7 @@ sap.ui.define([
 			});
 
 			var mKeyInfo = {};
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = oCore.getConfiguration().getRTL();
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapupmodifiers", keyName: "ArrowUp", alt: true};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdownmodifiers", keyName: "ArrowDown", alt: true};
 			mKeyInfo[Key.Arrow.LEFT] = {eventName: bRTL ? "onsaprightmodifiers" : "onsapleftmodifiers", keyName: "ArrowLeft", alt: true};
@@ -1643,7 +1644,7 @@ sap.ui.define([
 	QUnit.test("Element outside the grid", function(assert) {
 		var oInput = new TestInputControl({tabbable: true});
 		this.oTable.addExtension(oInput);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.triggerKey(Key.HOME, oInput.getDomRef(), oInput.getDomRef(), {defaultPrevented: false, propagationStopped: false});
 		this.triggerKey(Key.END, oInput.getDomRef(), oInput.getDomRef(), {defaultPrevented: false, propagationStopped: false});
@@ -1672,7 +1673,7 @@ sap.ui.define([
 
 	QUnit.test("Column header; No row selection", function(assert) {
 		this.oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// First cell
 		// *HOME* -> First cell
@@ -1690,7 +1691,7 @@ sap.ui.define([
 
 	QUnit.test("Column header; 1 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - Single cell
 		// *HOME* -> SelectAll
@@ -1732,7 +1733,7 @@ sap.ui.define([
 
 	QUnit.test("Column header; 2 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - First cell
 		// *HOME* -> SelectAll
@@ -1762,7 +1763,7 @@ sap.ui.define([
 
 	QUnit.test("Column header; 4 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Non-Fixed area - Single cell
 		// *HOME* -> Fixed area - First cell
@@ -1777,7 +1778,7 @@ sap.ui.define([
 
 	QUnit.test("Column header; 5 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - Last cell
 		// *HOME* -> Fixed area - First cell
@@ -1810,7 +1811,7 @@ sap.ui.define([
 
 	QUnit.test("Content; No row selection", function(assert) {
 		this.oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// First cell
 		// *HOME* -> First cell
@@ -1828,7 +1829,7 @@ sap.ui.define([
 
 	QUnit.test("Content; 1 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - Single cell
 		// *HOME* -> Selection cell
@@ -1855,7 +1856,7 @@ sap.ui.define([
 
 	QUnit.test("Content; 2 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - First cell
 		// *HOME* -> Selection cell
@@ -1885,7 +1886,7 @@ sap.ui.define([
 
 	QUnit.test("Content; 4 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Non-Fixed area - Single cell
 		// *HOME* -> Fixed area - First cell
@@ -1900,7 +1901,7 @@ sap.ui.define([
 
 	QUnit.test("Content; 5 (of 5) fixed columns", function(assert) {
 		this.oTable.setFixedColumnCount(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - Last cell
 		// *HOME* -> Fixed area - First cell
@@ -1995,7 +1996,7 @@ sap.ui.define([
 
 		this.oTable.setFixedColumnCount(4);
 		this.oTable.getColumns()[2].setHeaderSpan([iColSpan]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Fixed area - First cell
 		// *END* -> Fixed area - Last cell (First cell of the span)
@@ -2024,7 +2025,7 @@ sap.ui.define([
 		this.oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d"}));
 		this.oTable.getColumns()[4].addMultiLabel(new TestControl({text: "d2"}));
 		this.oTable.setFixedColumnCount(3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		function getMultiHeader(iColumnIndex) {
 			return document.getElementById(that.oTable.qunit.getColumnHeaderCell(iColumnIndex).getAttribute("id") + "_1");
@@ -2128,7 +2129,7 @@ sap.ui.define([
 
 	QUnit.test("Row header column - Less data rows than rendered rows", function(assert) {
 		this.oTable.setVisibleRowCount(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var iNonEmptyRowCount = TableUtils.getNonEmptyRowCount(this.oTable);
@@ -2154,7 +2155,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(12);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var mRowCounts = this.oTable._getRowCounts();
@@ -2193,7 +2194,7 @@ sap.ui.define([
 
 	QUnit.test("Row header column - No Column Header", function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var iRowCount = this.oTable._getRowCounts().count;
@@ -2228,7 +2229,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(6);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var mRowCounts = this.oTable._getRowCounts();
@@ -2309,7 +2310,7 @@ sap.ui.define([
 
 	QUnit.test("Content column - Less data rows than rendered rows", function(assert) {
 		this.oTable.setVisibleRowCount(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var iRowCount = this.oTable._getRowCounts().count;
@@ -2336,7 +2337,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(12);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var mRowCounts = this.oTable._getRowCounts();
@@ -2373,7 +2374,7 @@ sap.ui.define([
 
 	QUnit.test("Content column - No Column Header", function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var iRowCount = this.oTable._getRowCounts().count;
@@ -2408,7 +2409,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(6);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var iTotalRowCount = this.oTable._getTotalRowCount();
 		var mRowCounts = this.oTable._getRowCounts();
@@ -2461,7 +2462,7 @@ sap.ui.define([
 	QUnit.test("Content column - Variable row heights", function(assert) {
 		this.oTable._bVariableRowHeightEnabled = true;
 		this.oTable.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oTable = this.oTable;
 		var iTotalRowCount = oTable._getTotalRowCount();
@@ -3000,7 +3001,7 @@ sap.ui.define([
 
 	QUnit.test("Less data rows than rendered rows", function(assert) {
 		this.oTable.setVisibleRowCount(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testPageKeys(assert);
 	});
@@ -3014,7 +3015,7 @@ sap.ui.define([
 		this.oTable.getColumns()[2].addMultiLabel(new TestControl({text: "b2"}));
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d"}));
 		this.oTable.getColumns()[3].addMultiLabel(new TestControl({text: "d1"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testPageKeys(assert);
 	});
@@ -3023,7 +3024,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(6);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testPageKeys(assert);
 	});
@@ -3032,7 +3033,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(10);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testPageKeys(assert);
 	});
@@ -3049,7 +3050,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCount(6);
 		this.oTable.setFixedRowCount(2);
 		this.oTable.setFixedBottomRowCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testPageKeys(assert);
 	});
@@ -3059,7 +3060,7 @@ sap.ui.define([
 		this.oTable.invalidate();
 		this.oTable.getModel().destroy();
 		this.oTable.setModel(TableQUnitUtils.createJSONModel(10));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oTable = this.oTable;
 		var iTotalRowCount = oTable._getTotalRowCount();
@@ -3272,7 +3273,7 @@ sap.ui.define([
 		var i;
 
 		this.oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// First cell -> *PAGE_UP* -> First cell
 		this.triggerKey(Key.Page.UP, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getColumnHeaderCell(0));
@@ -3370,7 +3371,7 @@ sap.ui.define([
 		var i;
 
 		this.oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// First cell -> *PAGE_UP* -> First cell
 		this.triggerKey(Key.Page.UP, this.oTable.qunit.getDataCell(0, 0), this.oTable.qunit.getDataCell(0, 0));
@@ -3402,7 +3403,7 @@ sap.ui.define([
 		this.oTable.getColumns()[3].setHeaderSpan([8]);
 		this.oTable.getColumns()[11].setHeaderSpan([2]);
 		this.oTable.getColumns()[25].setHeaderSpan([2]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// First cell (3-span column) -> *PAGE_DOWN* -> 4th cell (8-span column)
 		this.triggerKey(Key.Page.DOWN, this.oTable.qunit.getColumnHeaderCell(0), this.oTable.qunit.getColumnHeaderCell(3));
@@ -3472,7 +3473,7 @@ sap.ui.define([
 	QUnit.test("F6 - Forward navigation - With Extension and Footer", function(assert) {
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
@@ -3500,7 +3501,7 @@ sap.ui.define([
 	QUnit.test("Shift+F6 - Backward navigation - With Extension and Footer", function(assert) {
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
@@ -3548,7 +3549,7 @@ sap.ui.define([
 		oTable.setShowOverlay(true);
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 		simulateTabEvent(oElem, false);
@@ -3571,7 +3572,7 @@ sap.ui.define([
 		oTable.setShowOverlay(true);
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 		simulateTabEvent(oElem, true);
@@ -3626,7 +3627,7 @@ sap.ui.define([
 		}
 
 		oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
@@ -3654,7 +3655,7 @@ sap.ui.define([
 
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
@@ -3703,7 +3704,7 @@ sap.ui.define([
 
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
@@ -3837,7 +3838,7 @@ sap.ui.define([
 
 			oTable.setBusyIndicatorDelay(0);
 			oTable.setBusy(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -3919,7 +3920,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aEventTargetGetters.length; i++) {
 			oTable.setFirstVisibleRow(1);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oEventTarget = aEventTargetGetters[i]();
 			oEventTarget.trigger("focus");
@@ -4065,7 +4066,7 @@ sap.ui.define([
 		oTable.insertColumn(new Column({
 			template: new TestControl({text: "new"})
 		}), 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
@@ -4077,7 +4078,7 @@ sap.ui.define([
 			oTable.addColumn(new Column({
 				template: new TestControl({text: "new"})
 			}));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
@@ -4095,7 +4096,7 @@ sap.ui.define([
 		oTable.insertColumn(new Column({
 			template: new TestControl({text: "new"})
 		}), 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(2), "The same cell is focused");
@@ -4107,7 +4108,7 @@ sap.ui.define([
 			oTable.addColumn(new Column({
 				template: new TestControl({text: "new"})
 			}));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(1), "The same cell is focused");
@@ -4122,7 +4123,7 @@ sap.ui.define([
 
 		oTable.qunit.getDataCell(1, 1).focus();
 		oTable.setFixedColumnCount(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
@@ -4137,7 +4138,7 @@ sap.ui.define([
 
 		oTable.qunit.getDataCell(2, 1).focus();
 		oTable.setVisibleRowCount(oTable.getVisibleRowCount() + 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(2, 1), "The cell at the same position is focused");
@@ -4152,7 +4153,7 @@ sap.ui.define([
 
 		oTable.qunit.getDataCell(1, 1).focus();
 		oTable.setFixedRowCount(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
@@ -4166,7 +4167,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 
 		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oTable.qunit.getDataCell(1, 1).focus();
@@ -4297,7 +4298,7 @@ sap.ui.define([
 					that.oTable.removeSelectionInterval(iNumberOfRows - 1, iNumberOfRows - 1);
 				}
 				that.oTable.setFirstVisibleRow(iStartIndex);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				return that.oTable.qunit.whenRenderingFinished().then(function() {
 					var oElem = that.getCellOrRowHeader(bRowHeader, 0, 0, true);
@@ -4383,7 +4384,7 @@ sap.ui.define([
 						that.oTable.removeSelectionInterval(iStartIndex, iStartIndex);
 					}
 					that.oTable.setFirstVisibleRow(iStartIndex - (iVisibleRowCount - 1));
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 				}).then(that.oTable.qunit.whenRenderingFinished).then(function() {
 					var oElem = that.getCellOrRowHeader(bRowHeader, iVisibleRowCount - 1, 0, true);
 
@@ -4499,7 +4500,7 @@ sap.ui.define([
 	QUnit.test("Default Test Table - Move between Row Header and Row", function(assert) {
 		this.oTable.setSelectionBehavior(library.SelectionBehavior.Row);
 		this.oTable.setSelectedIndex(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			var oElem = this.oTable.qunit.getRowHeaderCell(0);
@@ -4538,7 +4539,7 @@ sap.ui.define([
 		beforeEach: function() {
 			setupTest();
 			oTable._getVisibleColumns()[2].setResizable(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -4615,7 +4616,7 @@ sap.ui.define([
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aVisibleColumns = oTable._getVisibleColumns();
 		var iMinColumnWidth = TableUtils.Column.getMinColumnWidth();
@@ -4733,7 +4734,7 @@ sap.ui.define([
 		beforeEach: function() {
 			setupTest();
 			oTable.setFixedColumnCount(0);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -4805,7 +4806,7 @@ sap.ui.define([
 
 	QUnit.test("Fixed Columns - Move fixed columns", function(assert) {
 		oTable.setFixedColumnCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFirstFixedColumn = oTable.getColumns()[0];
 		var oLastFixedColumn = oTable.getColumns()[1];
@@ -4850,7 +4851,7 @@ sap.ui.define([
 
 	QUnit.test("Fixed Columns - Move scrollable columns", function(assert) {
 		oTable.setFixedColumnCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFirstColumn = oTable.getColumns()[2];
 		var oLastColumn = oTable.getColumns()[oTable.columnCount - 1];
@@ -4961,7 +4962,7 @@ sap.ui.define([
 
 	QUnit.test("On SelectAll", function(assert) {
 		oTable.clearSelection();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = checkFocus(getSelectAll(true), assert);
 
@@ -5003,7 +5004,7 @@ sap.ui.define([
 
 	QUnit.test("On a Row Header", function(assert) {
 		oTable.clearSelection();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem1 = checkFocus(getRowHeader(0, true), assert);
 		var oElem2 = checkFocus(getRowHeader(1, true), assert);
@@ -5093,7 +5094,7 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem1 = checkFocus(getCell(0, 0, true), assert);
 
@@ -5211,7 +5212,7 @@ sap.ui.define([
 
 		oTable.clearSelection();
 		oTable.attachCellClick(cellClickEventHandler);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem2 = checkFocus(getCell(1, 0, true), assert);
 		var oElem1 = checkFocus(getCell(0, 0, true), assert);
@@ -5278,7 +5279,7 @@ sap.ui.define([
 
 		oTable.clearSelection();
 		oTable.attachCellClick(cellClickEventHandler);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem2 = checkFocus(getCell(1, 0, true), assert);
 		var oElem1 = checkFocus(getCell(0, 0, true), assert);
@@ -5310,7 +5311,7 @@ sap.ui.define([
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable._getVisibleColumns()[0]);
 		oTable.attachCellClick(cellClickEventHandler);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		function test(assert) {
 			oRowToggleExpandedState.resetHistory();
@@ -5402,7 +5403,7 @@ sap.ui.define([
 
 	QUnit.test("(De)Select All possible", function(assert) {
 		oTable.setSelectionMode(library.SelectionMode.MultiToggle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
@@ -5447,7 +5448,7 @@ sap.ui.define([
 			} else {
 				oTable.clearSelection();
 			}
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oElem = checkFocus(getColumnHeader(0, true), assert);
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
@@ -5462,7 +5463,7 @@ sap.ui.define([
 
 			// Mass (De)Selection is not allowed in selection mode "Single".
 			oTable.setSelectionMode(library.SelectionMode.Single);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oElem = getColumnHeader(0, true);
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
@@ -5486,7 +5487,7 @@ sap.ui.define([
 
 			// Mass (De)Selection is not allowed in selection mode "None".
 			oTable.setSelectionMode(library.SelectionMode.None);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oElem = getCell(0, 0, true);
 			qutils.triggerKeydown(oElem, Key.A, false, false, true);
@@ -5520,7 +5521,7 @@ sap.ui.define([
 				assert.ok(!oEvent.isDefaultPrevented(), "Default action was not prevented");
 			}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCell = getCell(0, 0)[0];
 		oCell.classList.remove("sapUiTableDataCell");
@@ -5555,7 +5556,7 @@ sap.ui.define([
 	QUnit.test("Deselect All possible", function(assert) {
 		function test(sSelectionMode, aSelectedIndices) {
 			oTable.setSelectionMode(sSelectionMode);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var aCells = [
 				getCell(0, 0),
@@ -5603,7 +5604,7 @@ sap.ui.define([
 	QUnit.test("Deselect All not possible", function(assert) {
 		function test(sSelectionMode, aSelectedIndices) {
 			oTable.setSelectionMode(sSelectionMode);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oElem = checkFocus(getColumnHeader(0, true), assert);
 
@@ -5633,7 +5634,7 @@ sap.ui.define([
 			setupTest();
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -5702,7 +5703,7 @@ sap.ui.define([
 		}
 
 		oTable.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.testCollapseExpandAndFocus(assert, oTable, getCell(0, 1));
 		this.testCollapseExpandAndFocus(assert, oTable, getRowHeader(0));
 		this.testNoCollapseExpand(assert, oTable, getColumnHeader(0));
@@ -5726,7 +5727,7 @@ sap.ui.define([
 			setupTest();
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -5813,7 +5814,7 @@ sap.ui.define([
 			setupTest();
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -6004,7 +6005,7 @@ sap.ui.define([
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true, null, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, null, null, null, true);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -6079,7 +6080,7 @@ sap.ui.define([
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
 			oTable.getRows()[0].toggleExpandedState();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oElem = checkFocus(getRowHeader(0, true), assert);
 			assert.ok(TableUtils.Grouping.isInGroupHeaderRow(oElem), "Cell to be tested is in a group header row");
@@ -6099,7 +6100,7 @@ sap.ui.define([
 			}
 
 			oTable.setEnableGrouping(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		/**
@@ -6215,7 +6216,7 @@ sap.ui.define([
 		// Stay in Action Mode: Focus a group header icon cell.
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[0]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oElement = checkFocus(getRowHeader(0, true), assert)[0];
 		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(oElement), "Cell to be tested is in a group header row");
@@ -6227,7 +6228,7 @@ sap.ui.define([
 
 		// Remove row selectors.
 		oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Enter Action Mode: Focus tabbable input control inside a data cell.
 		oElement = TableUtils.getInteractiveElements(getCell(1, oTable.columnCount - 2))[0];
@@ -6365,7 +6366,7 @@ sap.ui.define([
 	QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no click handler", function(assert) {
 		oTable.clearSelection();
 		TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocusNoTab", false, false, false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		/* Test on a data cell with an interactive control inside */
 
@@ -6566,7 +6567,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 
 		oTable.setSelectionMode("None");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			return new Promise(function(resolve) {
@@ -6662,7 +6663,7 @@ sap.ui.define([
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false, null, null, true);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -6671,7 +6672,7 @@ sap.ui.define([
 		setupGrouping: function() {
 			oTable.setEnableGrouping(true);
 			oTable.setGroupBy(oTable.getColumns()[0]);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		testAsync: function(mSettings) {
@@ -7259,7 +7260,7 @@ sap.ui.define([
 
 	QUnit.test("TAB & Shift+TAB", function(assert) {
 		oTable.setSelectionMode(library.SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.testActionModeTabNavigation(assert);
 	});
@@ -7270,14 +7271,14 @@ sap.ui.define([
 
 	QUnit.test("TAB & Shift+TAB - Row Headers, Invisible Columns", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.testActionModeTabNavigation(assert);
 	});
 
 	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns", function(assert) {
 		oTable.setFixedColumnCount(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.testActionModeTabNavigation(assert);
 	});
@@ -7424,7 +7425,7 @@ sap.ui.define([
 
 	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate between text input elements", function(assert) {
 		oTable.setVisibleRowCount(4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInputElement = document.createElement("input");
 		oInputElement.setAttribute("id", oTable.getRows()[1].getCells()[1].getId());
@@ -7472,7 +7473,7 @@ sap.ui.define([
 
 	QUnit.test("Up & Down - Navigate between text input elements", function(assert) {
 		oTable.setVisibleRowCount(4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInputElement = document.createElement("input");
 		var oTextAreaElement = document.createElement("textarea");
@@ -7540,7 +7541,7 @@ sap.ui.define([
 				aEvents.push("focusin");
 			}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 		var oInput = oTable.getRows()[0].getCells()[1];

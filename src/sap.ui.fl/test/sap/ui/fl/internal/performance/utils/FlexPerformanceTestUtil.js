@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/VBox",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function(
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
@@ -25,7 +26,8 @@ sap.ui.define([
 	RatingIndicator,
 	VerticalLayout,
 	VBox,
-	Log
+	Log,
+	oCore
 ) {
 	"use strict";
 	var sMassiveLabel = "applyChangesMassive";
@@ -35,7 +37,7 @@ sap.ui.define([
 
 	function _writeData (sControlId) {
 		sControlId = sControlId || sIdForStatus;
-		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
+		var oLayout = oCore.byId("idMain1--Layout");
 		var sDurationText = sMassiveLabel + " = " + window.wpp.customMetrics[sMassiveLabel] + " ms";
 		Log.info(sDurationText);
 		_addLabel(oLayout, sControlId, sDurationText);
@@ -57,7 +59,7 @@ sap.ui.define([
 		.then(function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
 			_writeData();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		})
 		.catch(function (vError) {
 			Log.error(vError);
@@ -71,7 +73,7 @@ sap.ui.define([
 	 *			initialLabel (label) -- will be added as selector to apply rename changes
 	 */
 	function _createControlsForRename(sControlId) {
-		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
+		var oLayout = oCore.byId("idMain1--Layout");
 		var oControl = new Label(sControlId, {text: sControlId});
 		oLayout.addContent(oControl);
 		return oControl;
@@ -91,7 +93,7 @@ sap.ui.define([
 	 *					.button (button) -- will be added as selector to apply changes
 	 */
 	function _createControlsForDiverse(sControlId) {
-		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
+		var oLayout = oCore.byId("idMain1--Layout");
 		var oInnerLayout = new VerticalLayout({
 			id: sControlId + ".layout",
 			content: [
@@ -121,8 +123,8 @@ sap.ui.define([
 
 	function _startVariantsScenario() {
 		_createControlsForDiverse("idMain1--dependencyScenarioControl");
-		var oComponent = FlUtils.getAppComponentForControl(sap.ui.getCore().byId("idMain1--Layout"));
-		var oControlToBeChanged = sap.ui.getCore().byId("idMain1--dependencyScenarioControl.vbox");
+		var oComponent = FlUtils.getAppComponentForControl(oCore.byId("idMain1--Layout"));
+		var oControlToBeChanged = oCore.byId("idMain1--dependencyScenarioControl.vbox");
 
 		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
 		.then(function() {
@@ -135,8 +137,8 @@ sap.ui.define([
 
 	function _startSaveAsScenario() {
 		_createControlsForDiverse("idMain1--dependencyScenarioControl");
-		var oVMControl = sap.ui.getCore().byId("idMain1--variantManagementOrdersTable");
-		var oControlToBeChanged = sap.ui.getCore().byId("idMain1--dependencyScenarioControl.vbox");
+		var oVMControl = oCore.byId("idMain1--variantManagementOrdersTable");
+		var oControlToBeChanged = oCore.byId("idMain1--dependencyScenarioControl.vbox");
 
 		// wait for the initial changes to be applied
 		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})

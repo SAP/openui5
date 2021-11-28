@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	XMLHelper,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -94,7 +96,7 @@ sap.ui.define([
 	}
 
 	function _createComponent() {
-		return sap.ui.getCore().createComponent({
+		return oCore.createComponent({
 			name: "testComponent",
 			id: "testComponent",
 			metadata: {
@@ -292,7 +294,7 @@ sap.ui.define([
 				this.oPanel = oXmlView.getContent()[1];
 				this.oPanelWithoutStableId = oXmlView.getContent()[2];
 				oXmlView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				fnDone();
 			}.bind(this));
 		},

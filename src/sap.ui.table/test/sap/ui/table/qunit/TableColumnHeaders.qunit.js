@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/library",
-	"sap/ui/core/library"
-], function(TableQUnitUtils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TableUtils, Column, JSONModel, Table, tableLibrary, coreLibrary, oCore) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;
@@ -124,7 +125,7 @@ sap.ui.define([
 		oTable.bindRows("/modelData");
 
 		oTable.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	QUnit.module("Rendering", {
@@ -155,13 +156,13 @@ sap.ui.define([
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(false);
 			aCols[4].setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(true);
 			aCols[4].setVisible(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 	});
 
@@ -175,7 +176,7 @@ sap.ui.define([
 	QUnit.module("Fixed columns", {
 		beforeEach: function() {
 			oTable.setFixedColumnCount(1);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 		}
@@ -187,7 +188,7 @@ sap.ui.define([
 
 	QUnit.test("Fixed column count with multiheaders and hidden columns", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
 	});
 
@@ -205,7 +206,7 @@ sap.ui.define([
 
 		// set a single header column as the last fixed
 		oTable.setFixedColumnCount(6);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(hasFreezeMenuItem(0, false), "Column 0 has Freeze menu");
 		assert.ok(hasFreezeMenuItem(5, true), "Column 5 has Unfreeze menu");

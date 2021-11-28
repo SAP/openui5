@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/m/StandardTreeItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/internal/dttool/controls/OutlineTree",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Core"
 ], function (
 	StandardTreeItem,
 	JSONModel,
 	OutlineTree,
-	mobileLibrary
+	mobileLibrary,
+	oCore
 ) {
 	"use strict";
 
@@ -91,7 +93,7 @@ sap.ui.define([
 			oTree.bindItems("/", oTreeItem);
 			oTree.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var sPath = "/1/nodes/0/nodes/0/nodes/0/nodes/0";
 			var sText = oTree.getModel().getProperty(sPath).text;

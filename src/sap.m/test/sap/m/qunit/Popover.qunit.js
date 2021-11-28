@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Input",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dom/containsOrEquals"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -56,7 +57,8 @@ sap.ui.define([
 	Title,
 	Input,
 	KeyCodes,
-	containsOrEquals
+	containsOrEquals,
+	oCore
 ) {
 	"use strict";
 
@@ -240,7 +242,7 @@ sap.ui.define([
 				contentHeight: "300px"
 			});
 			page.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oPopover.destroy();
@@ -452,7 +454,7 @@ sap.ui.define([
 			}
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oButton.focus();
@@ -714,11 +716,11 @@ sap.ui.define([
 		oButton.firePress();
 		this.clock.tick(500);
 		oPopover.setModal(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.getElementById("sap-ui-blocklayer-popup"), "Block layer is rendered");
 		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "visible", "block layer is visible");
 		oPopover.setModal(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(jQuery("#sap-ui-blocklayer-popup").css("visibility"), "hidden", "block layer is invisible");
 	});
 
@@ -727,19 +729,19 @@ sap.ui.define([
 		assert.equal(oPopover.$("title").text(), sOldTitleValue, "Title should be with the right value");
 		assert.ok(oPopover.$("title").closest("#" + oPopover.getId() + "-intHeader-BarMiddle")[0], "Title should be rendered in the middle part of the bar");
 		oPopover.setTitle(sNewTitleValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oPopover.$("title").text(), sNewTitleValue, "Title should be changed to the new value");
 	});
 
 	QUnit.test("Set title to empty string", function (assert){
 		oPopover.setTitle("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oPopover.$("title").text(), "", "Title should be able to be set to empty string");
 	});
 
 	QUnit.test("Add left button", function (assert){
 		oPopover.setBeginButton(oBeginButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oBeginButtonFocusDom = oBeginButton.getFocusDomRef();
 		assert.ok(oBeginButtonFocusDom, "BeginButton should be rendered");
 		if (!Device.support.touch) {
@@ -748,7 +750,7 @@ sap.ui.define([
 		assert.ok(oBeginButton.$().closest("#" + oPopover.getId() + "-intHeader-BarLeft")[0], "Left button is set in the left side of the bar in iOS");
 
 		oBeginButton.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		if (!Device.support.touch) {
 			assert.equal(oPopover.getDomRef(), document.activeElement, "beginButton should not trap the focus");
@@ -757,7 +759,7 @@ sap.ui.define([
 
 	QUnit.test("Add right button", function (assert){
 		oPopover.setEndButton(oEndButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.getElementById("endButton"), "EndButton should be rendered");
 		assert.ok(oEndButton.$().closest("#" + oPopover.getId() + "-intHeader-BarRight")[0], "EndButton is set in the right side of the bar");
 
@@ -766,7 +768,7 @@ sap.ui.define([
 		}
 
 		oEndButton.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		if (!Device.support.touch) {
 			assert.equal(oPopover.getDomRef(), document.activeElement, "endButton should not trap the focus");
@@ -777,7 +779,7 @@ sap.ui.define([
 
 	QUnit.test("Remove beginButton", function (assert){
 		oPopover.setBeginButton(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oEndButtonFocusDom = oEndButton.getFocusDomRef();
 		if (!Device.support.touch) {
 			assert.equal(oEndButtonFocusDom, document.activeElement, "EndButton should have the focus");
@@ -791,13 +793,13 @@ sap.ui.define([
 
 	QUnit.test("Remove right button", function (assert){
 		oPopover.setEndButton(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!jQuery("#" + oPopover.getId() + "-intHeader-BarRight").children("#endButton")[0], "EndButton is removed from the bar");
 	});
 
 	QUnit.test("Set sub header", function (assert){
 		oPopover.setSubHeader(oSubHeader);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oPopover.$().children(".sapMPopoverSubHeader")[0], "Sub header is rendered");
 	});
 
@@ -834,7 +836,7 @@ sap.ui.define([
 	QUnit.test("Set vertical/horizontal scrolling", function (assert){
 		oPopover.setVerticalScrolling(false);
 		oPopover.setHorizontalScrolling(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") != -1, true, "verticalScrolling should be disabled");
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") != -1, true, "horizontalScrolling should be disabled");
@@ -843,7 +845,7 @@ sap.ui.define([
 
 		oPopover.setVerticalScrolling(true);
 		oPopover.setHorizontalScrolling(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverVerScrollDisabled") == -1, true, "verticalScrolling should be enabled");
 		assert.equal(oPopover.getDomRef().className.indexOf("sapMPopoverHorScrollDisabled") == -1, true, "horizontalScrolling should be enabled");
@@ -855,16 +857,16 @@ sap.ui.define([
 		assert.ok(oPopover.getDomRef("intHeader"), "Internal header is rendered");
 		oPopover.setModal(true);
 		oPopover.setShowHeader(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is removed");
 		oPopover.setShowHeader(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oPopover.$("intHeader").css("display") !== "none", "Internal header is re-rendered");
 	});
 
 	QUnit.test("Set custom header", function (assert){
 		oPopover.setCustomHeader(oCustomHeader);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.getElementById("customHeader"), "Custom Header is rendered");
 		assert.ok(!oPopover.getDomRef("intHeader"), "Internal header is destroyed");
 		oPopover.destroy();
@@ -878,7 +880,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -917,7 +919,7 @@ sap.ui.define([
 
 		oButton.placeAt("content");
 		oButton2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oButton.$().removeClass("positioned positioned1 positioned2");
 		oButton.$().addClass("positioned3");
@@ -932,7 +934,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oPopover.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oSpy = this.spy(jQuery.sap, "assert");
 		var oBeforeCloseSpy = this.spy();
@@ -998,7 +1000,7 @@ sap.ui.define([
 
 		var oButton = new Button();
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.focus();
 
 		var oPopover = new Popover({
@@ -1217,7 +1219,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			contentWidth: "400px",
@@ -1249,7 +1251,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oButton.$().css({
 			position: "absolute",
@@ -1319,7 +1321,7 @@ sap.ui.define([
 		});
 
 		oSegBtn.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oButton.firePress();
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
@@ -1339,7 +1341,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -1380,7 +1382,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oPopover.openBy(oButton);
 
 		this.clock.tick(500);
@@ -1414,7 +1416,7 @@ sap.ui.define([
 			text: "Focus Problem with Popover"
 		});
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.openBy(oButton);
 		this.clock.tick(1000);
@@ -1433,7 +1435,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 
@@ -1472,7 +1474,7 @@ sap.ui.define([
 			text: "Right Border Stays"
 		}).addStyleClass("positioned2");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			contentWidth: "200px",
@@ -1482,7 +1484,7 @@ sap.ui.define([
 		this.clock.tick(400);
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
 		oButton.setText("Short");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(400);
 		assert.ok(oPopover.isOpen(), "Popover should still be open");
 
@@ -1495,7 +1497,7 @@ sap.ui.define([
 			text: "Open Popover"
 		}).addStyleClass("positioned2");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			contentWidth: "200px",
@@ -1528,7 +1530,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({showArrow: false}),
 				oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
@@ -1553,7 +1555,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({showArrow: true}),
 				oSpyGetArrowOffsetCss = sinon.spy(oPopover, "_getArrowOffsetCss"),
@@ -1578,7 +1580,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Arrange
 		this.oPopover = new Popover();
@@ -2011,7 +2013,7 @@ sap.ui.define([
 		oScrollContainer.addContent(oButton);
 
 		oScrollContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oPopover.openBy(oButton);
 
 		assert.equal(oPopover._arrowOffset, 9, "_arrowoffset should be 9");
@@ -2026,7 +2028,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover();
 		var oSpy = this.spy(oPopover, "_afterAdjustPositionAndArrowHook");
@@ -2045,7 +2047,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover();
 		oPopover.openBy(oButton);
@@ -2062,7 +2064,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover();
 		oPopover.openBy(oButton);
@@ -2080,7 +2082,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			title: "Title text"
@@ -2101,7 +2103,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			title: "Title text"
@@ -2128,7 +2130,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			showHeader: false,
@@ -2154,7 +2156,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			title: "Title text",
@@ -2186,7 +2188,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			title: "Title text",
@@ -2225,7 +2227,7 @@ sap.ui.define([
 
 		oInvisibleText.placeAt("content");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover({
 			ariaLabelledBy: sInvTextId
@@ -2251,7 +2253,7 @@ sap.ui.define([
 			text: "Open Popover"
 		});
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = new Popover();
 		oPopover.openBy(oButton);
@@ -2283,7 +2285,7 @@ sap.ui.define([
 			text: "Open Popover"
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -2316,7 +2318,7 @@ sap.ui.define([
 			text: "Open Popover"
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.openBy(oButton);
 		this.clock.tick(500);
@@ -2375,7 +2377,7 @@ sap.ui.define([
 		var oBeforeCloseSpy = this.spy();
 
 		// Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oPopover.openBy(oOpenButton);
 		this.clock.tick(300);
 
@@ -2401,14 +2403,14 @@ sap.ui.define([
 		oPopover.oPopup.touchEnabled = true;
 		oButton.addDependent(oPopover);
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.attachBeforeClose(beforeCloseSpy);
 		oPopover.attachAfterClose(afterCloseSpy);
 
 		//Act
 		oPopover.openBy(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 
 		oPopover.oPopup.close();
@@ -2454,7 +2456,7 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oPopover.openBy(oButton);
@@ -2496,13 +2498,13 @@ sap.ui.define([
 				oPopover.destroy();
 			}
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		//Act
 		try {
 			oButton.firePress();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) { e; }
 
 		// Assert
@@ -2549,7 +2551,7 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oPopover.destroy();
@@ -2562,7 +2564,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		this.clock.tick(1); // also process nested setTimeout calls
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $longTextItem = this.oPopover.$().find("#longTextItem .sapMSLITitleOnly");
 
@@ -2572,7 +2574,7 @@ sap.ui.define([
 
 	QUnit.test("Text is truncated when width is too small", function(assert) {
 		this.oPopover.setContentWidth("20rem");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oPopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -2596,7 +2598,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(Popover.prototype, "_initResponsivePaddingsEnablement");
 		var oButton = new Button().placeAt("content");
 		var oPopover = new Popover({});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oPopover.openBy(oButton);
@@ -2644,17 +2646,17 @@ sap.ui.define([
 
 		page.addContent(oButton);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.addStyleClass("sapUiResponsivePadding--header");
 		oPopover.addStyleClass("sapUiResponsivePadding--subHeader");
 		oPopover.addStyleClass("sapUiResponsivePadding--content");
 		oPopover.addStyleClass("sapUiResponsivePadding--footer");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.openBy(oButton);
 		clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnIsResponsive = function (sParentSelector, sChildSelector) {
 			return oPopover.$().find(sParentSelector).hasClass(sChildSelector);
@@ -2669,7 +2671,7 @@ sap.ui.define([
 		// Act
 		oPopover.setContentWidth("600px");
 		clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingM"), "The sapUi-Std-PaddingM class is applied to the header");
@@ -2680,7 +2682,7 @@ sap.ui.define([
 		// Act
 		oPopover.setContentWidth("300px");
 		clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
@@ -2697,7 +2699,7 @@ sap.ui.define([
 		var oPopover = new Popover({}),
 			oStub = sinon.stub(oPopover, "getDomRef").callsFake(function() { return null; });
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oPopover._clearCSSStyles();
 
 		assert.ok(true, "No exception is thrown");

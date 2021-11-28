@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/demo/orderbrowser/localService/mockserver",
-	"sap/base/strings/capitalize"
-], function (Opa5, mockserver, capitalize) {
+	"sap/base/strings/capitalize",
+	"sap/ui/core/Core"
+], function (Opa5, mockserver, capitalize, oCore) {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.orderbrowser.test.integration.pages.Common", {
@@ -22,9 +23,7 @@ sap.ui.define([
 			var sPropertyValue = fnProperty.call(oControl);
 
 			if (sLibrary) {
-				oResourceBundle = sap.ui
-					.getCore()
-					.getLibraryResourceBundle(sLibrary);
+				oResourceBundle = oCore.getLibraryResourceBundle(sLibrary);
 			} else {
 				oModel = oControl.getModel("i18n");
 				oResourceBundle = oModel.getResourceBundle();

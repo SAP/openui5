@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/layout/form/Form",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	BaseAddViaDelegate,
 	DelegateMediatorAPI,
 	Change,
 	JsControlTreeModifier,
 	Form,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -29,7 +31,7 @@ sap.ui.define([
 	}
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = sap.ui.getCore().createComponent({
+	var oComponent = oCore.createComponent({
 		name: "testComponent",
 		id: "testComponent"
 	});

@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/SortPanel", "sap/ui/model/json/JSONModel"
-], function (SortPanel, JSONModel) {
+	"sap/ui/mdc/p13n/panels/SortPanel", "sap/ui/model/json/JSONModel", "sap/ui/core/Core"
+], function (SortPanel, JSONModel, oCore) {
 	"use strict";
 
 	QUnit.module("SelectionPanel API tests", {
@@ -32,7 +32,7 @@ sap.ui.define([
 			this.oSortPanel.setP13nModel(oModel);
 			this.oSortPanel.setPanelColumns(["Name", "Sort Order"]);
 			this.oSortPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function(){
 			this.oSortPanel.destroy();

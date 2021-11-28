@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/qunit/QUnitUtils",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	BasePropertyEditor,
 	QUnitUtils,
 	EditorQunitUtils,
-	ObjectPath
+	ObjectPath,
+	oCore
 ) {
 	"use strict";
 
@@ -62,7 +64,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oMapEditor = aPropertyEditor[0];
 				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
 				this.oAddButton = oMapEditorContent.addButton;
@@ -545,7 +547,7 @@ sap.ui.define([
 				var oMapEditorContent = getMapEditorContent(oMapEditor);
 				var aItems = oMapEditorContent.items;
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				EditorQunitUtils.setInputValue(aItems[0].key.getContent(), "foo");
 
 				assert.deepEqual(

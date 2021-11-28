@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Title",
 	"sap/m/Label",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/core/Core"
 ], function(
 	RenameSimpleForm,
 	SimpleForm,
@@ -16,7 +17,8 @@ sap.ui.define([
 	XmlTreeModifier,
 	Title,
 	Label,
-	Input
+	Input,
+	oCore
 ) {
 	"use strict";
 
@@ -36,7 +38,7 @@ sap.ui.define([
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
@@ -127,7 +129,7 @@ sap.ui.define([
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 			this.oFormElement = this.oFormContainer.getAggregation("formElements")[0];
@@ -260,7 +262,7 @@ sap.ui.define([
 				var oExpectedChangeVizInfo = {
 					affectedControls: [
 						// as the FormElements in a SimpeForm don't get stable IDs, we have to cheat
-						sap.ui.getCore().byId("component---Label0").getParent().getId()
+						oCore.byId("component---Label0").getParent().getId()
 					],
 					payload: {
 						originalLabel: "oldLabel0",

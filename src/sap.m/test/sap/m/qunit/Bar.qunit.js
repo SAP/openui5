@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	Bar,
 	Button,
@@ -26,7 +27,8 @@ sap.ui.define([
 	ResizeHandler,
 	Parameters,
 	InvisibleText,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -57,7 +59,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		fnAssertions();
@@ -114,7 +116,7 @@ sap.ui.define([
 		var oBar = new Bar().placeAt("qunit-fixture");
 
 		// Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sExpectedClass = BarRenderer.getContext(oBar);
 
@@ -131,7 +133,7 @@ sap.ui.define([
 		var oBar = new Bar().placeAt("qunit-fixture");
 
 		// Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oExpectedContexts = oBar.getContext(oBar);
 
@@ -153,17 +155,17 @@ sap.ui.define([
 			assert.ok(jQuery("#myBar").is("div"), "bar should be rendered as div");
 			assert.ok(jQuery("#myBar1").is("div"), "bar1 should be rendered as div");
 
-			var bar = sap.ui.getCore().byId("myBar");
+			var bar = oCore.byId("myBar");
 			bar.setHTMLTag('Header');
 			bar.rerender();
 			assert.ok(jQuery("#myBar").is("header"), "bar should be rendered as header");
 
-			var bar1 = sap.ui.getCore().byId("myBar1");
+			var bar1 = oCore.byId("myBar1");
 			bar1.setHTMLTag('Footer');
 			bar1.rerender();
 			assert.ok(jQuery("#myBar1").is("footer"), "bar1 should be rendered as footer");
 
-			var bar2 = sap.ui.getCore().byId("myBar2");
+			var bar2 = oCore.byId("myBar2");
 			bar2.setHTMLTag('H1');
 			bar2.rerender();
 			assert.ok(jQuery("#myBar2").is("H1"), "bar2 should be rendered as H1");
@@ -177,12 +179,12 @@ sap.ui.define([
 
 		renderingTest.call(this, function() {
 
-			var bar2 = sap.ui.getCore().byId("myBar2");
+			var bar2 = oCore.byId("myBar2");
 			assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should be a FlexBox with class sapMFlexBox");
 			assert.ok(jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should be a HBox with class sapMHBox");
 			bar2.setEnableFlexBox(false);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMFlexBox"), "header placeholder should not be a FlexBox with class sapMFlexBox");
 			assert.ok(!jQuery("#myBar2-BarPH").hasClass("sapMHBox"), "header placeholder should not be a HBox with class sapMHBox");
@@ -201,7 +203,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(sut.$().filter(".sapMBarTranslucent").length,1,"translucent class got set");
@@ -219,12 +221,12 @@ sap.ui.define([
 
 		//Arrange + Act
 		oBar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnSpy = this.spy(ResizeHandler, "register");
 
 		//Act
 		oBar.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
@@ -253,11 +255,11 @@ sap.ui.define([
 
 		// Act + assert
 		oBar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		function assertButton (oButton, oMargins) {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (oCore.getConfiguration().getRTL()) {
 				assert.strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
 				assert.strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
 			} else {
@@ -281,7 +283,7 @@ sap.ui.define([
 			right : 0
 		});
 
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (oCore.getConfiguration().getRTL()) {
 			assert.strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
 		} else {
 			assert.strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + "px", "Left bar does have a padding");
@@ -336,7 +338,7 @@ sap.ui.define([
 		   Bar.prototype.onAfterRendering.apply(sut, arguments);
 		});
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		check("after onAfterRendering");
@@ -365,7 +367,7 @@ sap.ui.define([
 			Bar.prototype.onAfterRendering.apply(sut, arguments);
 		});
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		check("after onAfterRendering");
@@ -394,7 +396,7 @@ sap.ui.define([
 			Bar.prototype.onAfterRendering.apply(sut, arguments);
 		});
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		check("after onAfterRendering");
@@ -495,14 +497,14 @@ sap.ui.define([
 
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return sut;
 	}
 
 	function testAlsoForRTL(sName, fnTest) {
 		QUnit.test(sName, function (assert) {
-			var config = sap.ui.getCore().getConfiguration();
+			var config = oCore.getConfiguration();
 
 			//turn on rtl for this test
 			this.stub(config, "getRTL").callsFake(function() {
@@ -513,7 +515,7 @@ sap.ui.define([
 		});
 
 		QUnit.test(sName + " RTL", function (assert) {
-			var config = sap.ui.getCore().getConfiguration();
+			var config = oCore.getConfiguration();
 
 			//turn on rtl for this test
 			this.stub(config, "getRTL").callsFake(function() {
@@ -613,7 +615,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should push the mid to the center of the remaining space, if the right content overlaps it", function(assert) {
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+		var bRtl = oCore.getConfiguration().getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left";
 
 		//Arrange + System under Test + Act
@@ -623,7 +625,7 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -637,7 +639,7 @@ sap.ui.define([
 
 		//Change to flexbox mode
 		sut.setEnableFlexBox(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		oBarInternals = getJqueryObjectsForBar(sut);
@@ -681,7 +683,7 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -705,7 +707,7 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -718,7 +720,7 @@ sap.ui.define([
 
 		//Change to flexbox mode
 		sut.setEnableFlexBox(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		oBarInternals = getJqueryObjectsForBar(sut);
@@ -742,7 +744,7 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -766,7 +768,7 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
@@ -796,12 +798,12 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("750px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
 
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (oCore.getConfiguration().getRTL()) {
 			assert.strictEqual(oBarInternals.$right.outerWidth(), oBarInternals.$left.position().left, "left content starts where right content ends");
 		} else {
 			assert.strictEqual(oBarInternals.$left.outerWidth(), oBarInternals.$right.position().left, "right content starts where left content ends");
@@ -825,7 +827,7 @@ sap.ui.define([
 		//Act
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
@@ -872,7 +874,7 @@ sap.ui.define([
 
 		jQuery("#qunit-fixture").width("500px");
 		sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize was called once");
 
@@ -885,7 +887,7 @@ sap.ui.define([
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "resize not called twice");
 
 		sut.addContentLeft(new Button());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oHandleResizeSpy.callCount, 2, "resize was called twice");
 
@@ -949,7 +951,7 @@ sap.ui.define([
 				contentMiddle: [ new Label("myLabel", {text: "my Bar"})]
 			});
 			this.Bar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.Bar.destroy();

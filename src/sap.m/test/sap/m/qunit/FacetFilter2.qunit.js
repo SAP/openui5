@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -44,7 +45,8 @@ sap.ui.define([
 	EventProvider,
 	GroupHeaderListItem,
 	waitForThemeApplied,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -73,7 +75,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 		oFFL.addItem(oFFI);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -118,7 +120,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 		oFFL.addItem(oFFI);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDialog = oFF._getFacetDialog();
 		oDialog.attachEventOnce("afterOpen", function(oEvent) {
@@ -172,13 +174,13 @@ sap.ui.define([
 		var oFFL = new FacetFilterList();
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oFF.getVisible(), true, "Visibility should be enabled by default");
 		assert.ok(getButtonCtrl(oFF, 0).getDomRef(), "Button should be rendered");
 
 		oFF.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(!getButtonCtrl(oFF, 0).getDomRef(), "Button should not be rendered");
 
@@ -233,12 +235,12 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oFF.getShowPersonalization(), false, "Personalization should be disabled by default");
 
 		oFF.setShowPersonalization(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(getAddFacetCtrl(oFF).getDomRef(), "Add button should be displayed");
 		assert.equal(getAddFacetCtrl(oFF).$().find(".sapUiIcon").attr("data-sap-ui-icon-content").charCodeAt(0), 57430,
@@ -273,7 +275,7 @@ sap.ui.define([
 			items: [new FacetFilterItem({text: "Val"})]
 		}));
 		oFFSimple.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnTestSimple = function(oFF) {
 
@@ -329,7 +331,7 @@ sap.ui.define([
 		}));
 
 		oFFLight.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnTestLight = function(oFF) {
 			var oSummaryBar = oFF.getAggregation("summaryBar"),
@@ -353,12 +355,12 @@ sap.ui.define([
 
 		// Switch from simple to light
 		oFFSimple.setType(FacetFilterType.Light);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		fnTestLight(oFFSimple);
 
 		// Switch from light to simple
 		oFFLight.setType(FacetFilterType.Simple);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		fnTestSimple(oFFLight);
 
 		oFFSimple.destroy();
@@ -387,7 +389,7 @@ sap.ui.define([
 			//oFFPhone.setShowPersonalization(true);
 
 			oFFPhone.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			//fnTestLight(oFFPhone);
 
 		 }
@@ -402,7 +404,7 @@ sap.ui.define([
 		var fnCheckOverflowSpy = sinon.spy(oFFLight, "_checkOverflow");
 
 		oFFLight.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			assert.strictEqual(fnCheckOverflowSpy.callCount, 0, 'No _checkOverflow should be registered to the central timer in light mode.');
@@ -445,7 +447,7 @@ sap.ui.define([
 		oFFL.setModel(oListModel);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 
@@ -490,7 +492,7 @@ sap.ui.define([
 	QUnit.test("FacetFilter.showReset", function(assert) {
 		var oFF = new FacetFilter();
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// First test the reset button with a FacetFilter of Simple type
 		assert.ok(
@@ -504,7 +506,7 @@ sap.ui.define([
 		var $button = $div.find("button");
 		assert.ok($button, "There should be a button element within the container element");
 		oFF.setShowReset(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(
 				!oFF.$().hasClass("sapMFFResetSpacer"),
@@ -519,17 +521,17 @@ sap.ui.define([
 			showSummaryBar : true
 		});
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		testResetInSummaryBar(oFF, true, assert);
 
 		oFF.setShowReset(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		testResetInSummaryBar(oFF, false, assert);
 
 		 oFF.setShowReset(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		testResetInSummaryBar(oFF, true, assert);
 
@@ -540,29 +542,29 @@ sap.ui.define([
 
 		var oFF = new FacetFilter();
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(!oFF.getAggregation("summaryBar").getDomRef(), "Summary bar should not be displayed");
 
 		oFF.setShowSummaryBar(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oSummaryBar = oFF.getAggregation("summaryBar");
 		assert.ok(oSummaryBar.getDomRef(), "Summary bar should be displayed");
 		assert.ok(!oSummaryBar.getActive(), "Summary bar should be inactive when type is Simple");
 		testResetInSummaryBar(oFF, true, assert);
 		oFF.setShowSummaryBar(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.setShowSummaryBar(true);
 		oFF.setShowReset(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		testResetInSummaryBar(oFF, false, assert);
 
 		oFF.setShowSummaryBar(true);
 		oFF.setShowReset(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		testResetInSummaryBar(oFF, true, assert);
 
@@ -577,13 +579,13 @@ sap.ui.define([
 		var oFFL = new FacetFilterList();
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oFFL.getActive(), true, "List active should be enabled by default");
 		assert.ok(getButtonCtrl(oFF, 0).getDomRef(), "Button should be rendered");
 
 		oFFL.setActive(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oFFL.getActive(), false, "List active should be disabled");
 		assert.ok(!getButtonCtrl(oFF, 0).getDomRef(), "Button should not be rendered");
@@ -628,14 +630,14 @@ sap.ui.define([
 		});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFFL.getTitle(), initialTitle, "List title should be set to the initial value");
 		assert.ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL.getTitle()) !== -1,
 				"Button label should be set to the initial value");
 
 		assert.ok(oFFL.setTitle(changedTitle), "setTitle should support method chaining");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFFL.getTitle(), changedTitle, "List title should be set to the changed value");
 		assert.ok(getButtonCtrl(oFF, 0).$().text().indexOf(oFFL.getTitle()) !== -1,
@@ -671,7 +673,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 
@@ -681,7 +683,7 @@ sap.ui.define([
 			oList.getItems()[0].setSelected(true);
 
 			oPopover.attachEventOnce("afterClose", function(oEvent) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				// var oButton = getButtonCtrl(oFF, 0);
 				var oButton = oFF._getButtonForList(oFFL);
 				assert.ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
@@ -725,7 +727,7 @@ sap.ui.define([
 		oFFL.setModel(oModel);
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
 
@@ -737,7 +739,7 @@ sap.ui.define([
 			oFFL.getItems()[2].setSelected(true);
 
 			oPopover.attachEventOnce("afterClose", function(oEvent) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				//assert
 				assert.equal(oButton.getText(), " (3)",
 						"Button text is 3 because the model was changed with another one with 4 items, 3 of them - selected during the search");
@@ -772,7 +774,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDialog = oFF._getFacetDialog();
 
@@ -785,7 +787,7 @@ sap.ui.define([
 				oList.getItems()[0].setSelected(true);
 
 				oDialog.attachEventOnce("afterClose", function(oEvent) {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					var oButton = getButtonCtrl(oFF, 0);
 					assert.ok(oButton.getText().indexOf(sItem1Text) !== -1, "Button text should be updated with the selected value");
 					destroyFF(oFF);
@@ -1134,7 +1136,7 @@ sap.ui.define([
 
 //		oFF._createResetButton();
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oFF._startItemNavigation();
 		return oFF;
 
@@ -1417,7 +1419,7 @@ sap.ui.define([
 		});
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oButton = oFF._getButtonForList(oFFL);
 		assert.strictEqual(oButton.getText().indexOf("Val4") > -1, true,
@@ -1429,7 +1431,7 @@ sap.ui.define([
 		});
 		// rerendering required to display selected keys
 		oFF.rerender();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oButton.getText().indexOf("2") > -1, true, "Two items are displayed on the button");
 
 		oFFL.setSelectedKeys({
@@ -1437,7 +1439,7 @@ sap.ui.define([
 		});
 		oFFL._search("Val2");
 		oFF.rerender();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oButton.getText().indexOf("Val4") > -1, true,
 				"Selected item isd isplayed on the button");
 
@@ -1503,20 +1505,20 @@ sap.ui.define([
 		var oFFL = oFF.getLists()[0];
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oFFL._search("Val1", true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL.getItems()[0].setSelected(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL._search("Val3", true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL.getItems()[0].setSelected(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oFF._getSelectedItemsText(oFFL).join(","), "Val3,Val1", "Summary text is correct");
@@ -1536,7 +1538,7 @@ sap.ui.define([
 
 
 		oFF.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCheckbox = oFF._createSelectAllCheckboxBar(oFFL).getContentLeft()[0];
 
@@ -1572,7 +1574,7 @@ sap.ui.define([
 		//act
 		oFF._createSelectAllCheckboxBar(oFFL);
 
-		oAllCheckbox = sap.ui.getCore().byId(oFFL.getAssociation("allcheckbox"));
+		oAllCheckbox = oCore.byId(oFFL.getAssociation("allcheckbox"));
 
 		//assert
 		assert.ok(oAllCheckbox, "all checkbox is created");
@@ -1587,7 +1589,7 @@ sap.ui.define([
 		var oFF = oSCHelper.createFFWithModel();
 		var oFFL = oFF.getLists()[0];
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
+		oCore.applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
 
 		oFFL.setSelectedKeys({
 			"4" : "Val4"
@@ -1622,12 +1624,12 @@ sap.ui.define([
 
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1647,7 +1649,7 @@ sap.ui.define([
 		oFF._getFacetDialog().attachEventOnce("afterClose", function(oEvent) {
 			// Assert
 			assert.ok(oFF._bCheckForAddListBtn, '_bCheckForAddListBtn should be set to true');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			setTimeout(function () {
 				assert.equal(oFF.getAggregation("buttons"), null, 'The button for the list is not rendered, when the list is empty');
 				destroyFF(oFF);
@@ -1687,12 +1689,12 @@ sap.ui.define([
 		oFF.addList(oFFL);
 		oFF.addList(oFFL2);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1746,12 +1748,12 @@ sap.ui.define([
 
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1815,7 +1817,7 @@ sap.ui.define([
 			}));
 			this.oFF.addList(this.oFFL);
 			this.oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFF.destroy();
@@ -1929,7 +1931,7 @@ sap.ui.define([
 				items: aItems
 			});
 			this.oHBox.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFacetFilter.destroy();
@@ -1951,7 +1953,7 @@ sap.ui.define([
 				this.oFF.getLists()[i].setModel(oSCHelper.createModel());
 			}
 			this.oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			destroyFF(this.oFF);
@@ -1999,7 +2001,7 @@ sap.ui.define([
 		var oListToRemove = this.oFF.getLists()[2];
 
 		this.oFF.removeList(oListToRemove);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.testFacetFilterList(assert, 4);
 	});
@@ -2011,7 +2013,7 @@ sap.ui.define([
 
 		oFacetFilter.setType("Light");
 		oFacetFilter.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oToolbar = oFacetFilter._getSummaryBar().$();
 
 		// assert
@@ -2030,7 +2032,7 @@ sap.ui.define([
 		oFacetFilter.setType("Simple");
 		oFacetFilter.setShowSummaryBar(true);
 		oFacetFilter.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oToolbar = oFacetFilter._getSummaryBar().$();
 
 		// assert
@@ -2049,7 +2051,7 @@ sap.ui.define([
 		oFacetFilter.setType("Simple");
 		oFacetFilter.setShowSummaryBar(false);
 		oFacetFilter.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oFilter = oFacetFilter.$();
 
 		// assert
@@ -2090,7 +2092,7 @@ sap.ui.define([
 
 		oFF.setModel(oModel);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL.attachEventOnce("search", function(oEvent) {
 			var sSearchString = oEvent.getParameters()["term"];
@@ -2114,7 +2116,7 @@ sap.ui.define([
 			oFFL._handleSelectAllClick(true);
 
 			oPopover.attachEventOnce("afterClose", function(oEvent) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				//assert
 				assert.equal(oButtonOpener.getText(), "Values (All)", "Button text is All");
 				oFF.destroy();
@@ -2165,7 +2167,7 @@ sap.ui.define([
 		oFFList.setModel(oModel);
 
 		oFF.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oFF._getButtonForList(oFFList).getText(), "test (text2)", "button has the correct initial title");
 
 		//act
@@ -2210,7 +2212,7 @@ sap.ui.define([
 		oFF.addList(oFFList);
 		oFFList.setModel(oModel);
 		oFF.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFList.attachUpdateFinished(function () {
 			//wait for all
@@ -2261,7 +2263,7 @@ sap.ui.define([
 		oFFList.setModel(oModel);
 
 		oFF.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oModel.setData(newData);
@@ -2301,7 +2303,7 @@ sap.ui.define([
 		oFFL.setModel(oModel);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSelectedItems = oFFL.getSelectedItems();
 		oFFL.setSelectedKeys({"1": "Val1", "3": "Val3"});
 
@@ -2348,7 +2350,7 @@ sap.ui.define([
 		oFFL.setModel(oModel);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oFFL.setSelectedKeys({1: "Val1"});
@@ -2452,7 +2454,7 @@ sap.ui.define([
 		});
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oFF.oItemNavigation.getRootDomRef(), oFF.getDomRef(), "RootDomRef is properly set to the item navigation");
@@ -2480,7 +2482,7 @@ sap.ui.define([
 		});
 		var oFFFocusSpy = this.spy(oFF, "focus");
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oMockedEvent = {
 			target: oFF.getDomRef()
 		};
@@ -2502,7 +2504,7 @@ sap.ui.define([
 			type: "Light"
 		});
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oFF.$().attr("tabindex"), "FF doesn't have tabindex");
@@ -2603,7 +2605,7 @@ sap.ui.define([
 	}
 
 	function getAddFacetCtrl(oFF) {
-		return sap.ui.getCore().byId(oFF.getId() + "-add");
+		return oCore.byId(oFF.getId() + "-add");
 	}
 
 	function openPopover(oFF, iIndex) {

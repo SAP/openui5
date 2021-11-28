@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/SortFlex", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier"
-], function(createAppEnvironment, SortFlex, ChangesWriteAPI, JsControlTreeModifier) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/SortFlex", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/Core"
+], function(createAppEnvironment, SortFlex, ChangesWriteAPI, JsControlTreeModifier, oCore) {
 	"use strict";
 
 	var fCreateAddSortDefinition = function(){
@@ -41,7 +41,7 @@ sap.ui.define([
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oTable = this.oView.byId('myTable');
 

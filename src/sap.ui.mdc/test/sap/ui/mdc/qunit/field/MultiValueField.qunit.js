@@ -32,7 +32,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	qutils,
@@ -63,7 +64,8 @@ sap.ui.define([
 	oDataCurrencyType,
 	JSONModel,
 	DateTimeType,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -137,7 +139,7 @@ sap.ui.define([
 	QUnit.test("default rendering", function(assert) {
 
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -151,7 +153,7 @@ sap.ui.define([
 
 		oField.setEditMode(EditMode.Display);
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -159,7 +161,7 @@ sap.ui.define([
 		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
 
 		oField.setEditMode(EditMode.ReadOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
@@ -176,9 +178,9 @@ sap.ui.define([
 	var _initModel = function() {
 		oModel = new JSONModel({
 			items: [{ key: 1, description: "Text 1" },
-			        { key: 2, description: "Text 2" },
-			        { key: 3, description: "Text 3" }
-			        ]
+					{ key: 2, description: "Text 2" },
+					{ key: 3, description: "Text 3" }
+					]
 		});
 
 		oType = new IntegerType();
@@ -214,7 +216,7 @@ sap.ui.define([
 				}).setModel(oModel);
 			oFieldEdit.placeAt("content");
 			oFieldDisplay.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oFieldEdit.destroy();
@@ -236,7 +238,7 @@ sap.ui.define([
 
 	QUnit.test("conditions & Tokens", function(assert) {
 
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 		var fnDone = assert.async();
 		setTimeout(function() { // async set of condition
 			var aConditions = oFieldEdit.getConditions();
@@ -284,7 +286,7 @@ sap.ui.define([
 //				liveChange: _myLiveChangeHandler,
 //				parseError: _myParseErrorHandler
 			}).setModel(oModel).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oField.focus(); // as FieldHelp is connected with focus
 		},
 		afterEach: function() {
@@ -300,7 +302,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function() { // async set of condition
-			var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
+			var oFieldHelp = oCore.byId(oField.getFieldHelp());
 			var oCondition = Condition.createItemCondition(4, "Text 4");
 			oFieldHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 

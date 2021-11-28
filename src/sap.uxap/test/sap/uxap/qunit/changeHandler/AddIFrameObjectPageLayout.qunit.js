@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
-	"sap/ui/util/XMLHelper"
+	"sap/ui/util/XMLHelper",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	AddIFrameObjectPageLayout,
@@ -19,7 +20,8 @@ sap.ui.define([
 	View,
 	ObjectPageLayout,
 	ObjectPageSection,
-	XMLHelper
+	XMLHelper,
+	oCore
 ) {
 	"use strict";
 
@@ -118,7 +120,7 @@ sap.ui.define([
 
 			var oChangeJson = {
 				selector: mExpectedSelector,
-                reference: "sap.uxap.qunit.changeHander.AddIFrameObjectPageLayout",
+				reference: "sap.uxap.qunit.changeHander.AddIFrameObjectPageLayout",
 				validAppVersions: {
 					creation: "1.0.0"
 				},
@@ -149,7 +151,7 @@ sap.ui.define([
 			});
 
 			this.oObjectPageLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.mPropertyBag = {
 				modifier : JsControlTreeModifier,
@@ -249,7 +251,7 @@ sap.ui.define([
 
 			this.oChange = new Change(oChangeJson);
 
-			this.oComponent = sap.ui.getCore().createComponent({
+			this.oComponent = oCore.createComponent({
 				name: "testComponent",
 				id: "testComponent",
 				metadata: {

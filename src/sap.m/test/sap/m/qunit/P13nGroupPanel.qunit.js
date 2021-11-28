@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/m/P13nGroupPanel",
 	"sap/m/P13nGroupItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/P13nItem"
+	"sap/m/P13nItem",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	P13nGroupPanel,
 	P13nGroupItem,
 	JSONModel,
-	P13nItem
+	P13nItem,
+	oCore
 ) {
 	"use strict";
 
@@ -81,7 +83,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
@@ -105,7 +107,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
@@ -126,7 +128,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");
@@ -144,7 +146,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		var nItems = 2;
@@ -163,7 +165,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oP13nGroupPanel.insertGroupItem(new P13nGroupItem({
 			columnKey: "c1",
@@ -222,7 +224,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// Remove item
@@ -268,7 +270,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -310,7 +312,7 @@ sap.ui.define([
 		});
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -327,7 +329,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oP13nGroupPanel.addItem(new P13nItem({
 			columnKey: "c0",
@@ -354,7 +356,7 @@ sap.ui.define([
 			operation: "Descending",
 			showIfGrouped: false
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -373,7 +375,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nGroupPanel.getItems().length, 3, "length of getItems should be 3");

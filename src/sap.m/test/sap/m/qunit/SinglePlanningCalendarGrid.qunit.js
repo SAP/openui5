@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/events/KeyCodes",
-	'sap/ui/unified/calendar/CalendarDate'
+	'sap/ui/unified/calendar/CalendarDate',
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	ResponsivePopover,
@@ -16,7 +17,8 @@ sap.ui.define([
 	mobileLibrary,
 	CalendarAppointment,
 	KeyCodes,
-	CalendarDate
+	CalendarDate,
+	oCore
 ) {
 	"use strict";
 
@@ -181,7 +183,7 @@ sap.ui.define([
 
 	QUnit.test("_getCellStartEndInfo start/end format for 12-hour clocks", function (assert) {
 		// Prepare
-		sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+		oCore.getConfiguration().setFormatLocale("en-US");
 
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = new Date(2019, 7, 5, 10),
@@ -190,7 +192,7 @@ sap.ui.define([
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 3:00:00 PM";
 
 		oGrid.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
@@ -201,7 +203,7 @@ sap.ui.define([
 
 	QUnit.test("_getCellStartEndInfo start/end format for 24-hour clocks", function (assert) {
 		// Prepare
-		sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
+		oCore.getConfiguration().setFormatLocale("en-GB");
 
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = new Date(2019, 7, 5, 10),
@@ -210,7 +212,7 @@ sap.ui.define([
 				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 15:00:00";
 
 		oGrid.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
@@ -236,7 +238,7 @@ sap.ui.define([
 			fnApplyFocusInfoSpy = this.spy(oGrid, "applyFocusInfo");
 
 		oGrid.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oAppointment.getDomRef().focus();

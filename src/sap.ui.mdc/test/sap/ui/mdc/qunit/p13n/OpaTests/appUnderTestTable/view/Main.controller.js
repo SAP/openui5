@@ -2,8 +2,9 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/Fragment',
-	"sap/base/util/UriParameters"
-], function(Controller, Fragment, UriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Core"
+], function(Controller, Fragment, UriParameters, oCore) {
 	"use strict";
 	return Controller.extend("view.Main", {
 
@@ -33,7 +34,7 @@ sap.ui.define([
 
 		onPressRTA: function() {
 			var oOwnerComponent = this.getOwnerComponent();
-			sap.ui.getCore().loadLibrary("sap/ui/rta", { async: true }).then(function () {
+			oCore.loadLibrary("sap/ui/rta", { async: true }).then(function () {
 				sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
 					startKeyUserAdaptation({
 						rootControl: oOwnerComponent.getAggregation("rootControl")

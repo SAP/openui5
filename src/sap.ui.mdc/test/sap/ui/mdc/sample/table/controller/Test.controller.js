@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/ui/mdc/table/RowSettings',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/m/MessageBox',
-	'sap/m/MessageToast'
-], function(Controller, ResponsiveTableType, RowSettings, StateUtil, MessageBox, MessageToast) {
+	'sap/m/MessageToast',
+	"sap/ui/core/Core"
+], function(Controller, ResponsiveTableType, RowSettings, StateUtil, MessageBox, MessageToast, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.table.controller.Test", {
@@ -35,7 +36,7 @@ sap.ui.define([
 		},
 
 		toggleNavigated: function(oEvent) {
-			var oTable = sap.ui.getCore().byId('onlyTableView').byId('mdcTable');
+			var oTable = oCore.byId('onlyTableView').byId('mdcTable');
 			var oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
@@ -51,7 +52,7 @@ sap.ui.define([
 		},
 
 		toggleHighlight: function(oEvent) {
-			var oTable = sap.ui.getCore().byId('onlyTableView').byId('mdcTable');
+			var oTable = oCore.byId('onlyTableView').byId('mdcTable');
 			var oSettings = oTable.getRowSettings();
 			if (!oSettings) {
 				oSettings = new RowSettings();
@@ -67,7 +68,7 @@ sap.ui.define([
 		},
 
 		toggleShowDetails: function(oEvent) {
-			var oTable = sap.ui.getCore().byId('onlyTableView').byId('mdcTable');
+			var oTable = oCore.byId('onlyTableView').byId('mdcTable');
 			var vType = oTable.getType();
 			var bPressed = oEvent.getParameters().pressed;
 
@@ -85,13 +86,13 @@ sap.ui.define([
 		},
 
 		switchToScrollableResponsiveTable: function() {
-			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
+			oCore.byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
 				growingMode: 'Scroll'
 			}));
 		},
 
 		switchToNonGrowingResponsiveTable: function() {
-			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
+			oCore.byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
 				growingMode: 'None'
 			}));
 		},

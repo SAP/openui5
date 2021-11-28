@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
 	"sap/base/util/merge",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
-	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, Device, JSONModel, Control, merge, jQuery
+	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, Device, JSONModel, Control, merge, jQuery, oCore
 ) {
 	"use strict";
 
@@ -586,7 +587,7 @@ sap.ui.define([
 		oTable.qunit.scrollHSbTo = function(iScrollPosition) {
 			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
 			var $HSb = jQuery(oHSb);
-			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			var bRTL = oCore.getConfiguration().getRTL();
 			var iOldScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 
 			if (bRTL) {
@@ -935,7 +936,7 @@ sap.ui.define([
 
 		if (sContainerId != null) {
 			oTable.placeAt(sContainerId);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 
 		return oTable;
@@ -1219,7 +1220,7 @@ sap.ui.define([
 			}
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	/**
@@ -1583,7 +1584,7 @@ sap.ui.define([
 		if (!bSkipPlaceAt) {
 			oTable.placeAt("qunit-fixture");
 			oTreeTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 	};
 
@@ -1770,7 +1771,7 @@ sap.ui.define([
 			oRowAction.addItem(oItem);
 		}
 		oTable.setRowActionTemplate(oRowAction);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	window.removeRowActions = function(oTable) {
@@ -1780,7 +1781,7 @@ sap.ui.define([
 		}
 
 		oTable.setRowActionCount(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	return TableQUnitUtils;

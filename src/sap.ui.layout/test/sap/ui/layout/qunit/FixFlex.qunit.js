@@ -3,12 +3,14 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/FixFlex',
 	'sap/m/Button',
-	'sap/m/Label'
+	'sap/m/Label',
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	FixFlex,
 	Button,
-	Label) {
+	Label,
+	oCore) {
 	'use strict';
 
 	/* =========================================================== */
@@ -30,7 +32,7 @@ sap.ui.define([
 		});
 
 		// Act
-		var s1 = sap.ui.getCore().byId(oFixFlex.getId());
+		var s1 = oCore.byId(oFixFlex.getId());
 
 		// Assert
 		assert.ok((s1 !== undefined) && (s1 != null), "FixFlex should be found");
@@ -56,7 +58,7 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oFixFlex.$().hasClass("sapUiFixFlex"), "FixFlex should be rendered");
@@ -87,11 +89,11 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oFixFlex.setFixFirst(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUiFixFlexFlexible"), "Flex container should be the first child");
@@ -111,11 +113,11 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oFixFlex.setVertical(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(jQuery(oFixFlex.$()).hasClass("sapUiFixFlexRow"), "The layout direction should be horizontal (row)");
@@ -136,14 +138,14 @@ sap.ui.define([
 		});
 
 		oFixFlex.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
 		assert.equal($flexible.css('overflow'), 'hidden', 'Overflow is hidden.');
 
 		oFixFlex.setMinFlexSize(100);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		$flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
@@ -168,7 +170,7 @@ sap.ui.define([
 
 		// Act
 		oFixFlex.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oFixFlex.$().hasClass("sapUiFixFlexScrolling"), "'sapUiFixFlexScrolling' class should be added to the FixFlex.");

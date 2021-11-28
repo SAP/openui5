@@ -1,10 +1,10 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry"
-], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry", "sap/ui/core/Core"
+], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry, oCore) {
 	"use strict";
 
-	sap.ui.getCore().loadLibrary("sap.ui.fl");
+	oCore.loadLibrary("sap.ui.fl");
 
 	function createFilterItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return new Promise(function(resolve, reject){

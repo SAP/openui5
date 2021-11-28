@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ImageContent",
-	"sap/ui/events/jquery/EventExtension"
-], function(jQuery, ImageContent, EventExtension) {
+	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/core/Core"
+], function(jQuery, ImageContent, EventExtension, oCore) {
 	"use strict";
 
 
@@ -17,7 +18,7 @@ sap.ui.define([
 				press: jQuery.noop
 			});
 			this.oImageContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oImageContent.destroy();
@@ -35,7 +36,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(this.oImageContent, "_setPointerOnImage");
 		//Act
 		this.oImageContent.setSrc("sap-icon://travel-expense");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(document.getElementById("img-cnt-icon-image"), "Icon was rendered successfully");
 		assert.equal(oSpy.callCount, 1, "During rendering _setPointerOnImage has been called");
@@ -49,7 +50,7 @@ sap.ui.define([
 				press: jQuery.noop
 			});
 			this.oImageContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oImageContent.destroy();
@@ -76,7 +77,7 @@ sap.ui.define([
 
 	QUnit.test("In case no description is set, getAltText method should return the default", function(assert) {
 		this.oImageContent.setDescription("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sAlt = this.oImageContent.getAggregation("_content").getAlt();
 		assert.deepEqual(sAlt, "", "Alt property of inner control is empty");
 	});
@@ -84,7 +85,7 @@ sap.ui.define([
 	QUnit.test("In case no description is set, getAltText method should return the default of the inner control", function(assert) {
 		this.oImageContent.setDescription("");
 		this.oImageContent.setSrc("sap-icon://travel-expense");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sAltText = this.oImageContent.getAltText();
 		assert.equal(sAltText, "", "Inner control's text should be ignored for decorative images.");
 	});
@@ -98,7 +99,7 @@ sap.ui.define([
 			this.oImageContent = new ImageContent("img-cnt", {
 				src: IMAGE_PATH + "headerImg1.png"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			sinon.spy(this, "ftnPressHandler");
 		},
 		afterEach : function() {

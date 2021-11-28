@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/ObjectNumber",
 	"sap/m/ObjectMarker",
 	"sap/m/Label",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ObjectNumber,
 	ObjectMarker,
 	Label,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -240,14 +242,14 @@ sap.ui.define([
 		var oOH = new ObjectHeader({attributes: [oOA]});
 
 		oOH.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oOH.invalidate();
 		oOA.setText("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oOA.setText("rerendered");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oOA.$("text")[0].textContent, "rerendered", "Attribute is rendered inside ObjectHeader");
@@ -616,7 +618,7 @@ sap.ui.define([
 
 		// system under test
 		oObjectHeader.placeAt("objectHeaders");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $objectHeader = oObjectHeader.$("titlediv");
@@ -636,7 +638,7 @@ sap.ui.define([
 
 		// system under test
 		oObjectHeader.placeAt("objectHeaders");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $objectHeader = oObjectHeader.$("titlediv");
@@ -655,10 +657,10 @@ sap.ui.define([
 			showMarkers : true
 		});
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 		assert.ok(jQuery("#" + ohFlagAndFavoriteMarkerId + "-flag").hasClass("sapMObjectMarker"), "Flag is sapMObjectMarker");
@@ -675,11 +677,11 @@ sap.ui.define([
 			showMarkers : true
 		});
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(false);
 		ohFlagAndFavoriteMarker.setMarkFavorite(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 
@@ -695,11 +697,11 @@ sap.ui.define([
 			showMarkers : true
 		});
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(false);
 		ohFlagAndFavoriteMarker.setMarkFavorite(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "Only one marker should be rendered");
 		assert.ok(jQuery("#" + ohFlagAndFavoriteMarkerId + "-favorite").hasClass("sapMObjectMarker"), "Favorite is sapMObjectMarker.");
@@ -716,11 +718,11 @@ sap.ui.define([
 			showMarkers : true
 		});
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		ohFlagAndFavoriteMarker.setMarkFlagged(false);
 		ohFlagAndFavoriteMarker.setMarkFavorite(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 
@@ -736,13 +738,13 @@ sap.ui.define([
 			showMarkers : true
 		});
 		ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		ohFlagAndFavoriteMarker.setShowMarkers(false);
 		ohFlagAndFavoriteMarker.addAttribute(new ObjectAttribute("ohefafm1", {
 			text : "My Test Attribute"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 		assert.notEqual(document.getElementById("ohefafm1"), null, "Attribute should be rendered.");
@@ -828,7 +830,7 @@ sap.ui.define([
 			iconPress: eventHandler
 		});
 		ohResponsiveIcon.placeAt('objectHeaders');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		var $oImageControlRef = ohResponsiveIcon._oImageControl.$();
@@ -866,7 +868,7 @@ sap.ui.define([
 
 		// System under test
 		oArrowOH.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oArrow = jQuery("#arrowOH-titleArrow")[0];
 		oArrow.focus(); // set focus on the arrow
@@ -890,7 +892,7 @@ sap.ui.define([
 
 		// System under test
 		oArrowOH.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oArrow = jQuery("#arrowOH-titleArrow")[0];
 		oArrow.focus(); // set focus on the arrow
@@ -966,7 +968,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -985,7 +987,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1003,10 +1005,10 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oObjectHeader.setTitleLevel("H4");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1025,7 +1027,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oObjectHeader.$("title");
@@ -1056,14 +1058,14 @@ sap.ui.define([
 				numberUnit: "Views",
 				number: "454"
 			}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(jQuery("#" + sId + ">.sapMOH").attr("aria-labelledby"), "There is no reference when there is no title");
 
 		// Arrange
 		oObjectHeader.setTitle("Test title level");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#" + sId + ">.sapMOH").attr("aria-labelledby"), "OHID-titleText-inner", "There is a reference, when there is a title");
@@ -1078,7 +1080,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oOH.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(jQuery("#objectHeader>.sapMOH").attr("aria-labelledby").includes("label"), true,
 				"Reference added via ariaLabelledBy has been added in aria-labelledby");
@@ -1117,22 +1119,22 @@ sap.ui.define([
 	QUnit.test("TestIconExit", function(assert) {
 		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
-		assert.ok(sap.ui.getCore().byId("iconOH"), "Icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOH"), "Icon is found in UI5 Core");
 		assert.ok(!$sImg.attr("title"), "Icon has no tooltip");
-		assert.ok(sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
-		assert.ok(sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOH-flag"), "Flag icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
-		assert.ok(!sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
-		assert.ok(!sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+		assert.ok(!oCore.byId("iconOH-flag"), "Flag icon is found in UI5 Core");
+		assert.ok(!oCore.byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
 		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
-		assert.ok(sap.ui.getCore().byId("imageOH"), "Image is found in UI5 Core");
+		assert.ok(oCore.byId("imageOH"), "Image is found in UI5 Core");
 		assert.equal($sImg.attr("title"), "test tooltip", "Image has tooltip");
 		imageOH.destroy();
-		assert.ok(!sap.ui.getCore().byId("imageOH"), "Image is removed from UI5 Core");
+		assert.ok(!oCore.byId("imageOH"), "Image is removed from UI5 Core");
 	});
 
 	QUnit.test("Title selector icon size", function(assert) {
@@ -1144,14 +1146,14 @@ sap.ui.define([
 
 		// system under test
 		ohFlagFav.placeAt("objectHeaders");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert: default in constructor
 		assert.strictEqual(oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem");
 
 		// assert: setter false
 		oObjectHeader.setCondensed(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem again");
 
 		// cleanup
@@ -1174,7 +1176,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1194,7 +1196,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1219,7 +1221,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1244,7 +1246,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1267,7 +1269,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1287,14 +1289,14 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok((oAdditionalNum.length == 1), "One additional number is rendered.");
 
 		oObjectHeader.removeAdditionalNumber(oNum);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1319,14 +1321,14 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok((oAdditionalNum.length == 2), "Two additional numbers are rendered.");
 
 		oObjectHeader.removeAllAdditionalNumbers();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1341,10 +1343,10 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oObjectHeader.removeAllAdditionalNumbers();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1369,14 +1371,14 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
 		assert.ok((oAdditionalNum.length == 2), "Two additional numbers are rendered.");
 
 		oObjectHeader.destroyAdditionalNumbers();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		oAdditionalNum = oObjectHeader.$().find(".additionalOHNumberDiv");
@@ -1397,7 +1399,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
@@ -1425,7 +1427,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var oSeparator = oObjectHeader.$().find(".additionalOHNumberSeparatorDiv");
@@ -1447,7 +1449,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is rendered");
@@ -1466,7 +1468,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
@@ -1485,13 +1487,13 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is not rendered since the background is Transparent");
 
 		oObjectHeader.setBackgroundDesign(BackgroundDesign.Solid);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(jQuery("#" + "contrastId >").hasClass("sapContrastPlus"), "Contrast container class is rendered when the background is Solid");
@@ -1516,7 +1518,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 		assert.ok(document.getElementById("unsaved"), "marker unsaved should be rendered.");
@@ -1535,7 +1537,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
 

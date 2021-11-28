@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(HorizontalLayout, Button, Input, Label, Device, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(HorizontalLayout, Button, Input, Label, Device, jQuery, oCore) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -19,7 +20,7 @@ sap.ui.define([
 						new Input("IN1",{value:"Test",width:"50px"}),
 						new Button("B2",{text:"Y", tooltip:"Button tooltip"})]
 			}).placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oLayout1.destroy();
@@ -45,8 +46,8 @@ sap.ui.define([
 
 	QUnit.test("NoWrap", function(assert) {
 		this.oLayout1.setAllowWrapping(false);
-		sap.ui.getCore().byId("IN1").setWidth("5000px");
-		sap.ui.getCore().applyChanges();
+		oCore.byId("IN1").setWidth("5000px");
+		oCore.applyChanges();
 
 		var oButton = jQuery('#B1');
 		var oInput = jQuery('#IN1');
@@ -57,8 +58,8 @@ sap.ui.define([
 
 	QUnit.test("Wrapping", function(assert) {
 		this.oLayout1.setAllowWrapping(true);
-		sap.ui.getCore().byId("IN1").setWidth("5000px");
-		sap.ui.getCore().applyChanges();
+		oCore.byId("IN1").setWidth("5000px");
+		oCore.applyChanges();
 
 		var oButton = jQuery('#B1');
 		var oInput = jQuery('#IN1');
@@ -87,7 +88,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
 

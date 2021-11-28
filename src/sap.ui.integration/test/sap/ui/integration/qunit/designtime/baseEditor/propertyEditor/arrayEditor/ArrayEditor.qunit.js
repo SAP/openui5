@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/restricted/_merge",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	QUnitUtils,
 	ObjectPath,
 	_merge,
-	EditorQunitUtils
+	EditorQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -245,7 +247,7 @@ sap.ui.define([
 			this.oArrayEditor.setConfig(this.oPropertyConfig);
 
 			this.oArrayEditor.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oArrayEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is one item");
 					assert.deepEqual(oEvent.getParameter("value")[0], {}, "Then the new item is created with proper default values");
@@ -483,7 +485,7 @@ sap.ui.define([
 
 			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				fnReady();
 			}.bind(this));
 		},
@@ -611,7 +613,7 @@ sap.ui.define([
 
 			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				fnReady();
 			}.bind(this));
 		},
@@ -681,7 +683,7 @@ sap.ui.define([
 
 			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0].getAggregation("propertyEditor");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				fnReady();
 			}.bind(this));
 		},
@@ -724,7 +726,7 @@ sap.ui.define([
 			});
 
 			this.oBaseEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -871,7 +873,7 @@ sap.ui.define([
 			});
 
 			this.oBaseEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function (oEvent) {
 				this.oArrayEditor = oEvent.getSource().getPropertyEditorsByNameSync("cars")[0].getAggregation("propertyEditor");

@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Select",
 	"sap/ui/core/Control",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
 ], function(
 	createAndAppendDiv,
 	Device,
@@ -15,7 +16,8 @@ sap.ui.define([
 	mobileLibrary,
 	Select,
 	Control,
-	coreLibrary
+	coreLibrary,
+	oCore
 ) {
 	"use strict";
 
@@ -151,7 +153,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 		oValueStateMessage.open();
 		oValueStateMessage.close();
@@ -174,7 +176,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 		oValueStateMessage._oControl = {
 			getDomRef: function() {
@@ -252,7 +254,7 @@ sap.ui.define([
 		});
 
 		oInputBase.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInputBase.openValueStateMessage();

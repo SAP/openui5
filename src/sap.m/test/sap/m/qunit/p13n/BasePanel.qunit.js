@@ -1,7 +1,12 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/m/p13n/BasePanel", "sap/m/StandardListItem", "sap/ui/thirdparty/sinon", "sap/ui/base/Event", "sap/m/MessageStrip"
-], function (BasePanel, StandardListItem, sinon, Event, MessageStrip) {
+	"sap/m/p13n/BasePanel",
+	"sap/m/StandardListItem",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/base/Event",
+	"sap/m/MessageStrip",
+	"sap/ui/core/Core"
+], function (BasePanel, StandardListItem, sinon, Event, MessageStrip, oCore) {
 	"use strict";
 
 	QUnit.module("BasePanel API tests", {
@@ -35,7 +40,7 @@ sap.ui.define([
 				"Name", "Country", "Year"
 			]);
 			this.oBasePanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oBtnShowSelected = this.oBasePanel._oListControl.getHeaderToolbar().getContent()[6];
 		},
 		afterEach: function() {
@@ -194,11 +199,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'enableReorder' --> hover event delegate provided/removed", function(assert){
-        this.oBasePanel.setEnableReorder(true);
-        assert.equal(this.oBasePanel.getAggregation("_template").aDelegates.length, 1, "Hover event delegate registered");
+		this.oBasePanel.setEnableReorder(true);
+		assert.equal(this.oBasePanel.getAggregation("_template").aDelegates.length, 1, "Hover event delegate registered");
 
-        this.oBasePanel.setEnableReorder(false);
-        assert.equal(this.oBasePanel.getAggregation("_template").aDelegates.length, 0, "No hover event delegate registered");
-    });
+		this.oBasePanel.setEnableReorder(false);
+		assert.equal(this.oBasePanel.getAggregation("_template").aDelegates.length, 0, "No hover event delegate registered");
+	});
 
 });

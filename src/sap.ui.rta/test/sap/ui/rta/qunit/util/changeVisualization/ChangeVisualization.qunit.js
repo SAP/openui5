@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/restricted/_merge",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/dt/OverlayRegistry"
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/core/Core"
 ], function(
 	RtaQunitUtils,
 	sinon,
@@ -35,12 +36,13 @@ sap.ui.define([
 	KeyCodes,
 	merge,
 	RuntimeAuthoring,
-	OverlayRegistry
+	OverlayRegistry,
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 	var oComp;
 	var oCompCont;
 	QUnit.config.fixture = null;
@@ -70,7 +72,7 @@ sap.ui.define([
 			]
 		});
 		this.oContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oDesignTime = new DesignTime({
 			rootElements: [this.oContainer]
@@ -188,7 +190,7 @@ sap.ui.define([
 	function collectIndicatorReferences () {
 		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function (oDomRef) {
-			return sap.ui.getCore().byId(oDomRef.id);
+			return oCore.byId(oDomRef.id);
 		});
 	}
 
@@ -235,7 +237,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
 					var aMenuItems = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton")
 						.getMenu().getItems();
@@ -254,7 +256,7 @@ sap.ui.define([
 			this.oCheckModelAll.count = 3;
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
 					var aMenuItems = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton")
 						.getMenu().getItems();
@@ -270,7 +272,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					var aMenuItems = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton")
 						.getMenu().getItems();
 					assert.equal(aMenuItems[0].getKey(), "all", "'all' is on first position");
@@ -288,13 +290,13 @@ sap.ui.define([
 			var sMenuButtonText;
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
 					assert.strictEqual(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL"));
 					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("move"));
 				}.bind(this))
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
 					assert.equal(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_MOVE"));
 					fnDone();
@@ -453,7 +455,7 @@ sap.ui.define([
 			this.oRta.setMode("visualization");
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					//startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
 					var aIndicators = collectIndicatorReferences();
 					assert.strictEqual(
@@ -477,7 +479,7 @@ sap.ui.define([
 			this.oRta.setMode("visualization");
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
 				.then(function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.strictEqual(
 						collectIndicatorReferences().filter(function (oIndicator) {
 							return oIndicator.getVisible();
@@ -488,7 +490,7 @@ sap.ui.define([
 
 					// Deactivate
 					this.oChangeVisualization.setIsActive(false);
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.strictEqual(
 						collectIndicatorReferences().filter(function (oIndicator) {
 							return oIndicator.getVisible();
@@ -501,7 +503,7 @@ sap.ui.define([
 					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("add"))
 						.then(function () {
 							this.oChangeVisualization.setIsActive(true);
-							sap.ui.getCore().applyChanges();
+							oCore.applyChanges();
 							assert.strictEqual(
 								collectIndicatorReferences().filter(function (oIndicator) {
 									return oIndicator.getVisible();
@@ -534,7 +536,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
 			this.oRta.setMode("visualization");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization was active before");
 			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
 				.then(function() {
@@ -555,7 +557,7 @@ sap.ui.define([
 				{
 					getChangeVisualizationInfo: function (oChange) {
 						return {
-							dependentControls: [sap.ui.getCore().byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
+							dependentControls: [oCore.byId("Comp1---idMain1--rb2")], // Test if vis can handle elements
 							affectedControls: [oChange.getSelector()] // Test if vis can handle IDs
 						};
 					}
@@ -567,14 +569,14 @@ sap.ui.define([
 					return waitForMethodCall(this.oToolbar, "setModel");
 				}.bind(this))
 				.then(function() {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					var oSelectChangePromise = waitForMethodCall(this.oChangeVisualization, "_selectChange");
 					var oChangeIndicator = collectIndicatorReferences()[0];
 					oChangeIndicator.fireSelectChange({
 						changeId: oChangeIndicator.getChanges()[0].id
 					});
 					return oSelectChangePromise.then(function () {
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 
 						var oDependentOverlayDomRef = OverlayRegistry.getOverlay("Comp1---idMain1--rb2").getDomRef();
 						assert.ok(
@@ -590,7 +592,7 @@ sap.ui.define([
 						);
 						return waitForMethodCall(oDependentOverlayDomRef.classList, "remove")
 							.then(function () {
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								assert.notOk(
 									oDependentOverlayDomRef.className.split(" ").includes("sapUiRtaChangeIndicatorDependent"),
 									"then the appropriate style class is removed"
@@ -635,7 +637,7 @@ sap.ui.define([
 					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
 				.then(function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					fnDone();
 				});
 		},
@@ -727,7 +729,7 @@ sap.ui.define([
 					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
 				.then(function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					fnDone();
 				});
 		},
@@ -747,14 +749,14 @@ sap.ui.define([
 		QUnit.test("when the change visualization is created a second time", function (assert) {
 			var fnDone = assert.async();
 			this.oRta.setMode("adaptation");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oRta.setMode("visualization");
 			waitForMethodCall(this.oToolbar, "setModel")
 				.then(function() {
 					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
 				.then(function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.strictEqual(collectIndicatorReferences().length, 1, "then indicators are created again");
 					this.oChangeVisualization.destroy();
 					fnDone();

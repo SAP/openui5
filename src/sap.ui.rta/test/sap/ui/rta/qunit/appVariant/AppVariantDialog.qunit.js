@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantDialog",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	jQuery,
 	AppVariantDialog,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -58,7 +60,7 @@ sap.ui.define([
 		QUnit.test("When liveChange event is triggered on a title Input field with empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oTitleInput = sap.ui.getCore().byId("titleInput");
+			var oTitleInput = oCore.byId("titleInput");
 
 			oTitleInput.attachLiveChange(function() {
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), false, "then the save button is not enabled");
@@ -71,7 +73,7 @@ sap.ui.define([
 		QUnit.test("When liveChange event is triggered on a title Input field with non empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oTitleInput = sap.ui.getCore().byId("titleInput");
+			var oTitleInput = oCore.byId("titleInput");
 
 			oTitleInput.attachLiveChange(function() {
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), true, "then the save button is not enabled");
@@ -86,10 +88,10 @@ sap.ui.define([
 		QUnit.test("When valueHelpRequest event is triggered on an Input field and then search event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = oCore.byId("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = sap.ui.getCore().byId("selectDialog");
+				var oSelectDialog = oCore.byId("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -109,7 +111,7 @@ sap.ui.define([
 
 		QUnit.test("When liveChange event is triggered on an Input field", function(assert) {
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = oCore.byId("selectInput");
 
 			var bEventTriggered = false;
 
@@ -125,10 +127,10 @@ sap.ui.define([
 		QUnit.test("When confirm event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = oCore.byId("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = sap.ui.getCore().byId("selectDialog");
+				var oSelectDialog = oCore.byId("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -152,10 +154,10 @@ sap.ui.define([
 		QUnit.test("When cancel event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = sap.ui.getCore().byId("selectInput");
+			var oSelectInput = oCore.byId("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = sap.ui.getCore().byId("selectDialog");
+				var oSelectDialog = oCore.byId("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");

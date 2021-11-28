@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/Device",
-	"sap/ui/core/Popup"
-], function(TableQUnitUtils, TableUtils, MenuUnified, MenuItemUnified, MenuM, MenuItemM, Device, Popup) {
+	"sap/ui/core/Popup",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TableUtils, MenuUnified, MenuItemUnified, MenuM, MenuItemM, Device, Popup, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -279,7 +280,7 @@ sap.ui.define([
 
 		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
 		oColumnA.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDomRef = oColumnB.getDomRef();
 		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
@@ -295,7 +296,7 @@ sap.ui.define([
 		this.resetSpies();
 
 		oColumnA.setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		Device.system.desktop = false;
 
@@ -535,13 +536,13 @@ sap.ui.define([
 		}
 
 		aColumns[1].setHeaderSpan(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(TableUtils.Menu._openColumnContextMenu(oTable, aColumns[1].getDomRef()), false, "Returned false");
 		assertCloseColumnContextMenuSpiesCalled(1);
 		assert.ok(oCloseContentCellContextMenu.calledOnceWithExactly(oTable), "_closeContentCellContextMenu was called");
 		assertColumnOpenMenuSpiesCalled();
 		aColumns[1].setHeaderSpan();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		resetSpies();
 
 		assert.strictEqual(TableUtils.Menu._openColumnContextMenu(oTable, getColumnHeader(0)[0]), false, "Returned false");
@@ -589,7 +590,7 @@ sap.ui.define([
 		}
 
 		oTable.setVisibleRowCount(iNumberOfRows + 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, getCell(iNumberOfRows, 0)[0]), false, "Returned false");
 		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
 		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");

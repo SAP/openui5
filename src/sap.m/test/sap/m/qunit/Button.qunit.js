@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/events/KeyCodes",
-	"sap/m/BadgeCustomData"
+	"sap/m/BadgeCustomData",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -28,7 +29,8 @@ sap.ui.define([
 	InvisibleText,
 	DragInfo,
 	KeyCodes,
-	BadgeCustomData
+	BadgeCustomData,
+	oCore
 ) {
 	"use strict";
 
@@ -203,19 +205,19 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			b1 = sap.ui.getCore().byId("b1");
-			b2 = sap.ui.getCore().byId("b2");
-			b4 = sap.ui.getCore().byId("b4");
-			b5 = sap.ui.getCore().byId("b5");
-			b6 = sap.ui.getCore().byId("b6");
-			b7 = sap.ui.getCore().byId("b7");
-			b8 = sap.ui.getCore().byId("b8");
-			b9 = sap.ui.getCore().byId("b9");
-			b10 = sap.ui.getCore().byId("b10");
-			b11 = sap.ui.getCore().byId("b11");
-			b12 = sap.ui.getCore().byId("b12");
-			b13 = sap.ui.getCore().byId("b13");
-			b14 = sap.ui.getCore().byId("b14");
+			b1 = oCore.byId("b1");
+			b2 = oCore.byId("b2");
+			b4 = oCore.byId("b4");
+			b5 = oCore.byId("b5");
+			b6 = oCore.byId("b6");
+			b7 = oCore.byId("b7");
+			b8 = oCore.byId("b8");
+			b9 = oCore.byId("b9");
+			b10 = oCore.byId("b10");
+			b11 = oCore.byId("b11");
+			b12 = oCore.byId("b12");
+			b13 = oCore.byId("b13");
+			b14 = oCore.byId("b14");
 		},
 		afterEach : function() {
 			b1 = null;
@@ -334,7 +336,7 @@ sap.ui.define([
 			enabled : oTestDescription.enabled
 		});
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		var bHoverable = oButton._isHoverable();
@@ -388,11 +390,11 @@ sap.ui.define([
 
 		// System under Test
 		var oButton = new Button(oConstructor).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oResult = oButton.setText(sTextToSet);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oButton, "Should be able to chain");
@@ -514,7 +516,7 @@ sap.ui.define([
 		var oInfo = oButton.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -542,7 +544,7 @@ sap.ui.define([
 			oButton = new Button("btn1", {
 				press: pressSpy
 			}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oButton._bRenderActive = true; //simulate pressed state
 
@@ -567,7 +569,7 @@ sap.ui.define([
 			});
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oButton._activeButton();
@@ -595,7 +597,7 @@ sap.ui.define([
 		b1._bExcludeFromTabChain = true;
 
 		b1.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(b1.$().attr("tabindex"), "-1", "Button(root) should have negative tabindex when requested via _bExcludeFromTabChain");
@@ -609,7 +611,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.ENTER);
@@ -628,7 +630,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.ENTER);
@@ -647,7 +649,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		qutils.triggerKeydown(oButton.getDomRef(), KeyCodes.SPACE);
@@ -666,7 +668,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		qutils.triggerKeyup(oButton.getDomRef(), KeyCodes.SPACE);
@@ -685,7 +687,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
@@ -708,7 +710,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
@@ -728,7 +730,7 @@ sap.ui.define([
 		// System under Test
 		var oButton = new Button().placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then the flag should be set to false
@@ -750,7 +752,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on SHIFT, release SPACE then release SHIFT
@@ -773,7 +775,7 @@ sap.ui.define([
 				press: pressSpy
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on SHIFT, release ESCAPE then release SHIFT
@@ -796,7 +798,7 @@ sap.ui.define([
 			},
 			oButton = new Button().placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Action
 		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
@@ -877,14 +879,14 @@ sap.ui.define([
 			text: "button"
 		});
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.notOk(oButton.getIcon(), "still no icon");
 
 		// act
 		oButton.setType(ButtonType.Negative);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(
@@ -895,7 +897,7 @@ sap.ui.define([
 
 		// act
 		oButton.setType(ButtonType.Critical);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(
@@ -906,7 +908,7 @@ sap.ui.define([
 
 		// act
 		oButton.setType(ButtonType.Success);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(
@@ -917,7 +919,7 @@ sap.ui.define([
 
 		// act
 		oButton.setType(ButtonType.Neutral);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(
@@ -940,7 +942,7 @@ sap.ui.define([
 
 		// act
 		oButton.setType(ButtonType.Negative);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oButton.getIcon(), "sap-icon://message-information", "the icon property is not touched");
@@ -952,7 +954,7 @@ sap.ui.define([
 
 		// act
 		oButton.setIcon(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(
@@ -971,13 +973,13 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oButton.$("iconBtn").length, "Default Back/Up icon is rendered");
 		assert.notOk(oButton.$("img").length, "Explicit icon isn't rendered");
 
 		oButton.setIcon("sap-icon://add");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oButton.$("iconBtn").length, "Default Back/Up icon is still rendered");
 		assert.ok(oButton.$("img").length, "Explicit icon is now rendered too");
@@ -987,7 +989,7 @@ sap.ui.define([
 
 	QUnit.module("Tap Event Checking", {
 		beforeEach : function() {
-			b15 = sap.ui.getCore().byId("b15");
+			b15 = oCore.byId("b15");
 		},
 		afterEach : function() {
 			b15 = null;
@@ -1072,7 +1074,7 @@ sap.ui.define([
 			this.oLabel.placeAt("qunit-fixture");
 			this.oDescription.placeAt("qunit-fixture");
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oLabel.destroy();
@@ -1154,7 +1156,7 @@ sap.ui.define([
 			this.oLabel.placeAt("qunit-fixture");
 			this.oDescription.placeAt("qunit-fixture");
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oButtonDomRef = this.oButton.getDomRef();
 		},
@@ -1172,7 +1174,7 @@ sap.ui.define([
 
 	QUnit.test("Described (via association)", function (assert) {
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1183,7 +1185,7 @@ sap.ui.define([
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-label"), "Add", "Tooltip is added in aria-label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1192,7 +1194,7 @@ sap.ui.define([
 
 	QUnit.test("Labelled (via association)", function (assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1201,7 +1203,7 @@ sap.ui.define([
 
 	QUnit.test("Labelled (via labelFor)", function (assert) {
 		this.oLabel.setLabelFor(this.oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1211,7 +1213,7 @@ sap.ui.define([
 	QUnit.test("Combined (via associations)", function (assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1221,7 +1223,7 @@ sap.ui.define([
 	QUnit.test("Combined (via labelFor and association)", function (assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1233,7 +1235,7 @@ sap.ui.define([
 
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1245,7 +1247,7 @@ sap.ui.define([
 
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label", "Label is added");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
@@ -1270,7 +1272,7 @@ sap.ui.define([
 			this.oLabel.placeAt("qunit-fixture");
 			this.oDescription.placeAt("qunit-fixture");
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oButtonDomRef = this.oButton.getDomRef();
 		},
@@ -1288,7 +1290,7 @@ sap.ui.define([
 
 	QUnit.test("Descriptive (via association)", function (assert) {
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1298,7 +1300,7 @@ sap.ui.define([
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1306,7 +1308,7 @@ sap.ui.define([
 
 	QUnit.test("Labelled (via association)", function (assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1315,7 +1317,7 @@ sap.ui.define([
 
 	QUnit.test("Labelled (via labelFor)", function (assert) {
 		this.oLabel.setLabelFor(this.oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1325,7 +1327,7 @@ sap.ui.define([
 	QUnit.test("Combined (via associations)", function (assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1335,7 +1337,7 @@ sap.ui.define([
 	QUnit.test("Combined (via labelFor and association)", function (assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1347,7 +1349,7 @@ sap.ui.define([
 
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1359,7 +1361,7 @@ sap.ui.define([
 
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
@@ -1383,7 +1385,7 @@ sap.ui.define([
 			this.oLabel.placeAt("qunit-fixture");
 			this.oDescription.placeAt("qunit-fixture");
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oButtonDomRef = this.oButton.getDomRef();
 		},
@@ -1398,7 +1400,7 @@ sap.ui.define([
 
 	QUnit.test("Descriptive (via association)", function (assert) {
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
 	});
@@ -1407,21 +1409,21 @@ sap.ui.define([
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
 	});
 
 	QUnit.test("Labelled (via association)", function (assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 	});
 
 	QUnit.test("Labelled (via labelFor)", function (assert) {
 		this.oLabel.setLabelFor(this.oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 	});
@@ -1429,7 +1431,7 @@ sap.ui.define([
 	QUnit.test("Combined (via associations)", function (assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
@@ -1438,7 +1440,7 @@ sap.ui.define([
 	QUnit.test("Combined (via labelFor and association)", function (assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.addAriaDescribedBy(this.oDescription);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
@@ -1449,7 +1451,7 @@ sap.ui.define([
 
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
@@ -1460,7 +1462,7 @@ sap.ui.define([
 
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
@@ -1475,7 +1477,7 @@ sap.ui.define([
 			sTooltip = oButton._getTooltip();
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(sTooltip, "Button knows that a default tooltip needs to be generated");
 		assert.strictEqual(oButton.$().attr("title"), sTooltip, "That tooltip is added in the DOM");
@@ -1492,7 +1494,7 @@ sap.ui.define([
 
 		// setup
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButtonDomRef = oButton.getDomRef();
 
 		// check initial aria-haspopup state
@@ -1500,14 +1502,14 @@ sap.ui.define([
 
 		// act
 		oButton.setAriaHasPopup(AriaHasPopup.Menu);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if aria-haspopup appears
 		assert.equal(oButtonDomRef.getAttribute("aria-haspopup"), AriaHasPopup.Menu.toLowerCase(), "There is aria-haspopup attribute with proper value after the button property is being set to something different than None.");
 
 		// act
 		oButton.setAriaHasPopup(AriaHasPopup.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if aria-haspopup disappears
 		assert.notOk(oButtonDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute after the button property is being set to None.");
@@ -1527,7 +1529,7 @@ sap.ui.define([
 			icon:'sap-icon://save'
 		}).placeAt('qunit-fixture');
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oTextButton.$("BDI-content").attr("aria-live"), "Button with only text doesn't have initially aria-live attribute set");
 		assert.notOk(oIconButton.$("tooltip").attr("aria-live"), "Button with only icon doesn't have initially aria-live attribute set");
@@ -1564,7 +1566,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 			this.oBadgeData = this.oButton.getBadgeCustomData();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oButton.destroy();
@@ -1580,7 +1582,7 @@ sap.ui.define([
 
 		// change badge value
 		this.oBadgeData.setValue("6");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check for new badge value
 		assert.equal($oBadgeIndicator.attr("data-badge"), this.oBadgeData.getValue(), "Badge value is correct after the change");
@@ -1603,7 +1605,7 @@ sap.ui.define([
 
 		// hide badge
 		this.oBadgeData.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if aria-describedby contains invisible text id
 		assert.equal(this.oButton._getBadgeInvisibleText().getText(), "",
@@ -1627,7 +1629,7 @@ sap.ui.define([
 
 		//Arrange
 		this.oButton.setBadgeMinValue(3).setBadgeMaxValue(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator");
 
 		//Act

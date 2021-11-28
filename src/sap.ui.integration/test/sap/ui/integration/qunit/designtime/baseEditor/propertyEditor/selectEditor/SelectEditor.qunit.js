@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
-	EditorQunitUtils
+	EditorQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -58,7 +60,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
 				this.oSelectEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oSelectEditorElement = this.oSelectEditor.getContent();
 			}.bind(this));
 		},
@@ -170,7 +172,7 @@ sap.ui.define([
 
 			this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
 				var oSelectEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oSelectEditorElement = oSelectEditor.getContent();
 
 				oSelectEditor.attachValueChange(function (oEvent) {
@@ -190,7 +192,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
 				var oSelectEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oSelectEditorElement = oSelectEditor.getContent();
 
 				EditorQunitUtils.setInputValueAndConfirm(oSelectEditorElement, "{validBindingString}");

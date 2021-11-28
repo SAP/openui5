@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/mdc/enum/EditMode",
 	"sap/m/library",
 	"sap/m/MessageToast",
-	"sap/ui/mdc/field/FieldHelpBaseDelegate"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast, FieldHelpBaseDelegate) {
+	"sap/ui/mdc/field/FieldHelpBaseDelegate",
+	"sap/ui/core/Core"
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, EditMode, mobileLibrary, MessageToast, FieldHelpBaseDelegate, oCore) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -16,7 +17,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.sample.field.Test", {
 
 		onInit: function(oEvent) {
-			var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			var oFormatSettings = oCore.getConfiguration().getFormatSettings();
 			oFormatSettings.setUnitMappings({
 				"g": "mass-gram",
 				"kg": "mass-kilogram",
@@ -47,9 +48,9 @@ sap.ui.define([
 					additionalValue: null
 				},
 				collectiveSearch: [
-				                   {key: "1", description: "Search 1"},
-				                   {key: "2", description: "Search 2"}
-				                   ]
+								   {key: "1", description: "Search 1"},
+								   {key: "2", description: "Search 2"}
+								   ]
 			});
 			this.getView().setModel(oViewModel, "view");
 

@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -42,7 +43,8 @@ sap.ui.define([
 	ManagedObject,
 	Log,
 	KeyCodes,
-	waitForThemeApplied
+	waitForThemeApplied,
+	oCore
 ) {
 	"use strict";
 
@@ -126,7 +128,7 @@ sap.ui.define([
 			checkbox_label : "lorem ipsum checkbox label"
 		}
 	});
-	sap.ui.getCore().setModel(model);
+	oCore.setModel(model);
 
 	var oVsdConfig = {
 		// Factory for the 'content' aggregation for custom tabs - with or without items in it.
@@ -472,10 +474,10 @@ sap.ui.define([
 
 	QUnit.module("Initial Check", {
 		beforeEach : function () {
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -497,7 +499,7 @@ sap.ui.define([
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -551,7 +553,7 @@ sap.ui.define([
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -676,7 +678,7 @@ sap.ui.define([
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -711,7 +713,7 @@ sap.ui.define([
 			oVsdConfig.addPresetFilterItems(this.oVSD);
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -753,7 +755,7 @@ sap.ui.define([
 			this.oVSD = new ViewSettingsDialog();
 			oVsdConfig.addFilterItems(this.oVSD);
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -773,21 +775,21 @@ sap.ui.define([
 		}
 
 		openAndNavigateToFilterDetailsPage(this.oVSD);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oVSD._filterDetailList.getItems()[0].data("item").setSelected(true);
 		this.oVSD._dialog.getBeginButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		openAndNavigateToFilterDetailsPage(this.oVSD);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oVSD._filterDetailList.getItems()[1].data("item").setSelected(true);
 		this.oVSD._dialog.getEndButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oVSD.open("filter");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		setTimeout(function () {
@@ -820,7 +822,7 @@ sap.ui.define([
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1058,7 +1060,7 @@ sap.ui.define([
 		this.oVSD.open("group");
 		this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[0]);
 		this.oVSD._getDialog().getBeginButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		clock.tick(1000);
 
 		//Check
@@ -1070,13 +1072,13 @@ sap.ui.define([
 		this.oVSD.open("group");
 		this.oVSD.setSelectedGroupItem();
 		this.oVSD._getDialog().getBeginButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		clock.tick(1000);
 
 		//Check
 		assert.ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
 		sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
-		assert.equal(sap.ui.getCore().byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called without params");
+		assert.equal(oCore.byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called without params");
 
 		clock.restore();
 	});
@@ -1089,12 +1091,12 @@ sap.ui.define([
 		this.oVSD.open("group");
 		this.oVSD.setSelectedGroupItem("");
 		this.oVSD._getDialog().getBeginButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		clock.tick(1000);
 
 		//Check
 		sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
-		assert.equal(sap.ui.getCore().byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called with empty string param");
+		assert.equal(oCore.byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called with empty string param");
 
 		clock.restore();
 	});
@@ -1123,7 +1125,7 @@ sap.ui.define([
 			this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1333,7 +1335,7 @@ sap.ui.define([
 				]
 			});
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1387,7 +1389,7 @@ sap.ui.define([
 					]
 				});
 				this.oVSD.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this.oVSD.destroy();
@@ -1436,7 +1438,7 @@ sap.ui.define([
 				]
 			});
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1476,7 +1478,7 @@ sap.ui.define([
 			oVsdConfig.addFilterItems(this.oVSD);
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -1593,7 +1595,7 @@ sap.ui.define([
 		aItems = this.oVSD._filterDetailList.getItems();
 		iItems = aItems.length;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		getItemsInfo(aItems);
 
@@ -1606,7 +1608,7 @@ sap.ui.define([
 		// simulate button press
 		oShowOnlySelected.setPressed(true);
 		oShowOnlySelected.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		getItemsInfo(aItems);
 
@@ -1628,7 +1630,7 @@ sap.ui.define([
 		// simulate button press
 		oShowOnlySelected.setPressed(false);
 		oShowOnlySelected.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		getItemsInfo(aItems);
 
@@ -1640,7 +1642,7 @@ sap.ui.define([
 		// simulate button press
 		oShowOnlySelected.setPressed(true);
 		oShowOnlySelected.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		getItemsInfo(aItems);
 
@@ -2064,7 +2066,7 @@ sap.ui.define([
 			};
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -2276,7 +2278,7 @@ sap.ui.define([
 			}));
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 	});
 
@@ -2337,7 +2339,7 @@ sap.ui.define([
 			this.oVSD = new ViewSettingsDialog();
 
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -2852,7 +2854,7 @@ sap.ui.define([
 	QUnit.test("Reset group items selection on cancel", function (assert) {
 		var delay = 1000,
 			done = assert.async(),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		var aGroupItems = [
 			new ViewSettingsItem({
@@ -2872,24 +2874,24 @@ sap.ui.define([
 			this.oVSD.addGroupItem(oItem);
 		}, this);
 		this.oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		assert.strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+		assert.strictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Should have None button selected");
 
 		this.oVSD.setSelectedGroupItem(aGroupItems[0]);
-		sap.ui.getCore().applyChanges();
-		assert.notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+		oCore.applyChanges();
+		assert.notStrictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Should have changed the selection");
 
 		this.oVSD._dialog.getEndButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			this.oVSD.open();
-			assert.strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(),
+			assert.strictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getText(),
 				oResourceBundle.getText("VIEWSETTINGS_NONE_ITEM"),
 				"Previous selection should have been reset");
 			done();
@@ -2902,7 +2904,7 @@ sap.ui.define([
 			this.bindAggregations(this.oVSD);
 
 			this.oVSD.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach : function () {
@@ -3137,7 +3139,7 @@ sap.ui.define([
 				assert.strictEqual(jQuery("#" + sSecondItemId).length, 1, 'Second item is rendered after model property change.');
 
 				assert.strictEqual(this.oVSD._getPage2().getCustomHeader().getContentMiddle()[0].getText(),
-						sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + " Filter text B",
+						oCore.getLibraryResourceBundle("sap.m").getText("VIEWSETTINGS_TITLE_FILTERBY") + " Filter text B",
 						'Title correctly changed in the header.');
 
 				oSecondData[0].myItems.push({
@@ -3179,7 +3181,7 @@ sap.ui.define([
 				{myKey: "k1", myText: "Filter subitem 1, selected", selected: true },
 				{myKey: "k2", myText: "Filter subitem 2, selected", selected: true }
 			]);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert
 			$Counter = this.oVSD.$().find(".sapMLIBCounter");
@@ -3310,7 +3312,7 @@ sap.ui.define([
 			});
 
 		oViewSettingsDialog.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oViewSettingsDialog.open();
 
 		oViewSettingsDialog._dialog.attachAfterOpen(function () {
@@ -3384,21 +3386,21 @@ sap.ui.define([
 		//act
 		fnCreateDialog();
 		oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
-		assert.equal(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
+		assert.equal(jQuery(oCore.getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
 
 		//act
 		oVSD._dialog.getEndButton().firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oVSD.destroy();
 		fnCreateDialog();
 		oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
-		assert.equal(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
+		assert.equal(jQuery(oCore.getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
 
 		//clean
 		oVSD.destroy();
@@ -3419,7 +3421,7 @@ sap.ui.define([
 
 		//act
 		oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Item");
@@ -3448,7 +3450,7 @@ sap.ui.define([
 
 		//act
 		oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Detail Item");
@@ -3472,7 +3474,7 @@ sap.ui.define([
 
 		//act
 		oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Group Item");
@@ -3666,12 +3668,12 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach : function () {
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 			this.oVSD = new ViewSettingsDialog();
 			this.bindAggregations(this.oVSD);
 
 			this.oVSD.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -3814,7 +3816,7 @@ sap.ui.define([
 
 		// Act
 		openAndNavigateToFilterDetailsPage(this.oVSD);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aAriaLabelledBy = this.oVSD._getDialog().getAriaLabelledBy();
 
@@ -3827,12 +3829,12 @@ sap.ui.define([
 
 	QUnit.module("Reset Button", {
 		beforeEach : function () {
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 			this.oVSD = new ViewSettingsDialog();
 			this.bindAggregations(this.oVSD);
 
 			this.oVSD.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();
@@ -3921,7 +3923,7 @@ sap.ui.define([
 	QUnit.test("Enabled/disabled state", function (assert) {
 
 		this.oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check initial Reset button state
 		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), false, "Reset button is initially disabled");
@@ -3973,10 +3975,10 @@ sap.ui.define([
 			]
 		});
 		oVSD.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oVSD.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act - select a sort item
 		oVSD.setSelectedSortItem(oVSD.getSortItems()[0]);

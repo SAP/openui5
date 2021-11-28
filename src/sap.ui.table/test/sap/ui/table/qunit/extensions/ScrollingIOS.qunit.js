@@ -5,8 +5,9 @@ sap.ui.define([
 	'sap/ui/Device',
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/model/Filter"
-], function(library, Device, QUnitUtils, TableQUnitUtils, Filter) {
+	"sap/ui/model/Filter",
+	"sap/ui/core/Core"
+], function(library, Device, QUnitUtils, TableQUnitUtils, Filter, oCore) {
 	"use strict";
 
 	QUnit.module("Initialization and Destruction", {
@@ -88,7 +89,7 @@ sap.ui.define([
 			"Table content fits height -> Vertical scrollbar is not visible");
 
 		oTable.setVisibleRowCount(3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oVSbIOS = oVSb.nextSibling;

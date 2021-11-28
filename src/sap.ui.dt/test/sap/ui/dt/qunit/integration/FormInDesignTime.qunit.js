@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/core/Title",
-	"sap/m/CheckBox"
+	"sap/m/CheckBox",
+	"sap/ui/core/Core"
 ],
 function(
 	DesignTime,
@@ -20,7 +21,8 @@ function(
 	Label,
 	Input,
 	Title,
-	CheckBox
+	CheckBox,
+	oCore
 ) {
 	'use strict';
 
@@ -83,14 +85,14 @@ function(
 				this.oFormContainer3
 			]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oFormDesignTime = new DesignTime({
 			rootElements: [this.oForm]
 		});
 
 		this.oFormDesignTime.attachEventOnce("synced", function() {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			fnDone();
 		});
 	};

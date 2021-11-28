@@ -16,7 +16,8 @@ sap.ui.define([
 	"./waitForSelectWithSelectedTextOnPanel",
 	"./Util",
 	"sap/base/Log",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Core"
 ], function(
 	Opa5,
 	Matcher,
@@ -31,11 +32,12 @@ sap.ui.define([
 	waitForSelectWithSelectedTextOnPanel,
 	Util,
 	Log,
-	UriParameters
+	UriParameters,
+	oCore
 ) {
 	"use strict";
 
-	var oMDCBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var iOpenThePersonalizationDialog = function(oControl, oSettings) {
 		var sControlId = typeof oControl === "string" ? oControl : oControl.getId();
@@ -683,7 +685,7 @@ sap.ui.define([
 		});
 	};
 
-    return {
+	return {
 		iPressTheOKButtonOnTheDialog: function(oDialog, oSettings) {
 			return iPressTheOKButtonOnTheDialog.call(this, oDialog, oSettings);
 		},
@@ -1075,5 +1077,5 @@ sap.ui.define([
 				}
 			});
 		}
-    };
+	};
 });

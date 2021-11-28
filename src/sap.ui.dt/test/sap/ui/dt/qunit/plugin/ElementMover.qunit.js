@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/Core"
 ], function(
 	ElementMover,
 	OverlayRegistry,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Form,
 	FormContainer,
 	Button,
-	VerticalLayout
+	VerticalLayout,
+	oCore
 ) {
 	"use strict";
 
@@ -28,12 +30,12 @@ sap.ui.define([
 				]
 			});
 
-			this.oGroup1 = sap.ui.getCore().byId("group1");
-			this.oGroup2 = sap.ui.getCore().byId("group2");
+			this.oGroup1 = oCore.byId("group1");
+			this.oGroup2 = oCore.byId("group2");
 			this.oElementMover = new ElementMover();
 
 			this.oForm1.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oElementMover.destroy();
@@ -135,7 +137,7 @@ sap.ui.define([
 				]
 			}).placeAt('qunit-fixture');
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]

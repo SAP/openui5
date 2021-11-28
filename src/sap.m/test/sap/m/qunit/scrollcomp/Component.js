@@ -1,8 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/UIComponent', 'sap/m/Page', 'sap/m/Panel', 'sap/m/Button'],
-	function(UIComponent, Page, Panel, Button) {
+sap.ui.define([
+	'sap/ui/core/UIComponent',
+	'sap/m/Page',
+	'sap/m/Panel',
+	'sap/m/Button',
+	"sap/ui/core/Core"
+],
+	function(UIComponent, Page, Panel, Button, oCore) {
 	"use strict";
 
 	var Component = UIComponent.extend("samples.scrollcomp.Component", {
@@ -27,11 +33,11 @@ sap.ui.define(['sap/ui/core/UIComponent', 'sap/m/Page', 'sap/m/Panel', 'sap/m/Bu
 	};
 
 	Component.prototype.getTestControl = function(bInScrollContainer) {
-		return sap.ui.getCore().byId(bInScrollContainer ? this._scrollContainerButton : this._noScrollContainerButton);
+		return oCore.byId(bInScrollContainer ? this._scrollContainerButton : this._noScrollContainerButton);
 	};
 
 	Component.prototype.getInnerScrollDelegate = function() {
-		return sap.ui.getCore().byId(this._scrollContainer).getScrollDelegate();
+		return oCore.byId(this._scrollContainer).getScrollDelegate();
 	};
 
 	return Component;

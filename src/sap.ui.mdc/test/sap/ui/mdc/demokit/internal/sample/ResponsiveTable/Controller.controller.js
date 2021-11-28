@@ -1,15 +1,16 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/Fragment"
-], function(Controller, Message, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Core"
+], function(Controller, Message, Fragment, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.ResponsiveTable.Controller", {
 
 		onInit: function() {
 			this.oDataStatePlugin = this.byId("dataStatePlugin");
-			this.oMessageManager = sap.ui.getCore().getMessageManager();
+			this.oMessageManager = oCore.getMessageManager();
 			this.oMessageManager.registerObject(this.getView(), true);
 			this.getView().setModel(this.oMessageManager.getMessageModel(), "message");
 			this.getView().bindElement("/ProductList");

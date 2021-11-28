@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/RenderManager",
-	"sap/ui/core/ResizeHandler"
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Core"
 ], function (
 	Log,
 	Splitter,
@@ -18,7 +19,8 @@ sap.ui.define([
 	coreLibrary,
 	XMLView,
 	RenderManager,
-	ResizeHandler
+	ResizeHandler,
+	oCore
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 		this.oSplitter = new Splitter("mySplitter0", {
 			contentAreas: [createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px")]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	QUnit.module("API", {
@@ -147,7 +149,7 @@ sap.ui.define([
 			]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oBtn1.getLayoutData().setSize("30rem");
@@ -192,7 +194,7 @@ sap.ui.define([
 				contentAreas: [oContainer1, oContainer2, oContainer3]
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act- don't use loops in unit tests- anti-pattern
 		oCurContainer = oSplitter.getContentAreas()[0];
@@ -281,7 +283,7 @@ sap.ui.define([
 			contentAreas: [oCont]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oCont.$().parent().width(), oSplitter.$().width(), "Content area should take all the available width when size is 100%");
@@ -358,7 +360,7 @@ sap.ui.define([
 
 		oSplitter.addContentArea(oButton);
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		assert.strictEqual(oSplitter.getContentAreas().length, oSplitter._getContentAreas().length, "Should return same value as getContent()");
@@ -370,7 +372,7 @@ sap.ui.define([
 	QUnit.test("triggerResize", function (assert) {
 		var oSplitter = new Splitter();
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oResizeSpy = this.spy(oSplitter, "_resize"),
 			oDelayedResizeSpy = this.spy(oSplitter, "_delayedResize");
@@ -388,7 +390,7 @@ sap.ui.define([
 	QUnit.test("Live resize enabling", function (assert) {
 		var oSplitter = new Splitter();
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oSplitter._liveResize, true, "Live resize enabled by default");
 
@@ -409,7 +411,7 @@ sap.ui.define([
 			]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oEnableKeyboardSupportSpy = this.spy(oSplitter, "_enableKeyboardListeners"),
 			oDisableKeyboardSupportSpy = this.spy(oSplitter, "_disableKeyboardListeners");
@@ -438,13 +440,13 @@ sap.ui.define([
 				}
 			};
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oKeyboardResizeSpy = this.spy(oSplitter, "_resizeContents");
 		oKeyboardResizeSpy.withArgs(12, 5, true);
 
 		oSplitter._onKeyboardResize("inc", 5, oEvent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oKeyboardResizeSpy.withArgs(0, 5, true).calledOnce);
 
@@ -463,7 +465,7 @@ sap.ui.define([
 			addedItem = new Button();
 		oSplitter.placeAt("qunit-fixture");
 		oSplitter.addContentArea(addedItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 3, "Has 3 content areas rendered");
 
@@ -480,7 +482,7 @@ sap.ui.define([
 			addedItem = new Button();
 		oSplitter.placeAt("qunit-fixture");
 		oSplitter.insertContentArea(addedItem, 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 3, "Has 3 content areas");
 
@@ -496,7 +498,7 @@ sap.ui.define([
 			});
 		oSplitter.placeAt("qunit-fixture");
 		oSplitter.removeContentArea(addedItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oSplitter.$().children(".sapUiLoSplitterContent").length, 0, "Has 0 content areas");
 
@@ -516,14 +518,14 @@ sap.ui.define([
 			contentAreas: [createExampleContent("400px"), createExampleContent()]
 		});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContentAreas = oSplitter.getContentAreas();
 
 		var aOldContentSize = aContentAreas.map(getSize);
 
 		oSplitter.resetContentAreasSizes();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			var aNewContentSize = aContentAreas.map(getSize);
@@ -550,13 +552,13 @@ sap.ui.define([
 				contentAreas: [oArea]
 			});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSplitter.triggerResize(true);
 		var iOldWidth = oSplitter.$("content-0").width();
 
 		// Act
 		oSplitter.resetContentAreasSizes();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			var iNewContentSize = oSplitter.$("content-0").width();
@@ -579,7 +581,7 @@ sap.ui.define([
 				]
 			});
 			this.oSplitter.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSplitter.destroy();
@@ -650,7 +652,7 @@ sap.ui.define([
 			var oResizeSplitter = oXMLView.byId("myResizeSplitter");
 
 			oXMLView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var oSpy = this.spy(oResizeSplitter, "getCalculatedSizes");
 
 			oXMLView.attachBeforeRendering(function () {
@@ -673,7 +675,7 @@ sap.ui.define([
 			contentAreas: []
 		});
 		oSplitter.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oSpy = this.spy(oSplitter, "getCalculatedSizes");
 
 		// Act
@@ -721,7 +723,7 @@ sap.ui.define([
 
 		// Act
 		oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		fnTriggerResize();
 		this.clock.runAll();
 		fnTriggerResize();
@@ -755,7 +757,7 @@ sap.ui.define([
 	QUnit.test("'left' position of overlay bar - Horizontal splitter", function (assert) {
 		// arrange
 		this.oSplitter.setOrientation("Horizontal");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $splitterBar = this.oSplitter.$().children("#splitter-splitbar-1"),
 			iBarWidth = $splitterBar.outerWidth();
 
@@ -772,7 +774,7 @@ sap.ui.define([
 	QUnit.test("'top' position of overlay bar - Vertical splitter", function (assert) {
 		// arrange
 		this.oSplitter.setOrientation("Vertical");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $splitterBar = this.oSplitter.$().children("#splitter-splitbar-1"),
 			iBarHeight = $splitterBar.outerHeight();
 
@@ -810,7 +812,7 @@ sap.ui.define([
 				minSize: 100
 			})
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(
@@ -833,7 +835,7 @@ sap.ui.define([
 				minSize: 80
 			})
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.notOk(

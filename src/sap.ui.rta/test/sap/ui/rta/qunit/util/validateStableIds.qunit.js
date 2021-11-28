@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/util/includes",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function (
 	validateStableIds,
@@ -22,7 +23,8 @@ function (
 	XMLView,
 	includes,
 	LoaderExtensions,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -60,7 +62,7 @@ function (
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -169,7 +171,7 @@ function (
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [

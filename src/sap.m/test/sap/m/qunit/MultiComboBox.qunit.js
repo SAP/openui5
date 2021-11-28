@@ -84,7 +84,7 @@ sap.ui.define([
 	};
 
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 
 	// =========================================================== //
 	// Check UX requirements on                                    //
@@ -152,8 +152,8 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getName(), "", 'Default name is ""');
@@ -348,7 +348,7 @@ sap.ui.define([
 			// arrange
 			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 
@@ -392,7 +392,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), []);
@@ -530,7 +530,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "300px");
@@ -547,11 +547,11 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.setMaxWidth("30%");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oMultiComboBox.getMaxWidth(), "30%");
@@ -844,15 +844,15 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var fnListAddAggregationSpy = this.spy(oMultiComboBox._getList(), "addAggregation");
 
 		// act
 		oMultiComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -886,11 +886,11 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -922,11 +922,11 @@ sap.ui.define([
 		var oItem = new Item();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -962,12 +962,12 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.addItem(oItem);
 		oMultiComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", oItem),
@@ -996,7 +996,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.addItem(null);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(fnAddAggregationSpy.calledWith("items", null),
@@ -1027,7 +1027,7 @@ sap.ui.define([
 
 		// act
 		oItemRemoved = oMultiComboBox.removeItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oItemRemoved, oItem);
@@ -1103,7 +1103,7 @@ sap.ui.define([
 
 		// act
 		aItems = oMultiComboBox.removeAllItems();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(aItems, [oItem]);
@@ -1279,11 +1279,11 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.destroyItems();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getItems(), []);
@@ -1306,11 +1306,11 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// arrange
 		oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnInsertAggregation = this.spy(oMultiComboBox, "insertAggregation");
 		var fnInsertItem = this.spy(oMultiComboBox, "insertItem");
@@ -1321,10 +1321,10 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.insertItem(oItem, 0);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.syncPickerContent(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(fnInsertAggregation.calledWith("items", oItem, 0),
@@ -1355,7 +1355,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.open();
@@ -1384,7 +1384,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.open();
@@ -1413,7 +1413,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -1444,7 +1444,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -1516,7 +1516,7 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oItem1, oItem2]);
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2], "Should have both items");
@@ -1670,7 +1670,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.setSelectedKeys(["1"]);
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 
@@ -1845,7 +1845,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.addItem(oItem = new Item({
 			key : "01",
 			text : "selected item"
@@ -1855,7 +1855,7 @@ sap.ui.define([
 			text : "item"
 		}));
 		oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
@@ -1880,14 +1880,14 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.addItem(oItem1);
 		oMultiComboBox.addItem(oItem2 = new Item({
 			key : "02",
 			text : "selected item"
 		}));
 		oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["01", "02"]);
@@ -1906,11 +1906,11 @@ sap.ui.define([
 			]
 		}).placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiComboBox.addSelectedKeys(["", "", "1", "2", ""]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 5, "To have 5 items as selected keys");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are 2 real selected items");
@@ -1968,7 +1968,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
@@ -2014,7 +2014,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.destroyItems();
@@ -2057,7 +2057,7 @@ sap.ui.define([
 			// arrange
 			oMultiComboBox.syncPickerContent();
 			oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
@@ -2102,7 +2102,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem1), oItem2);
@@ -2138,7 +2138,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem1), null);
@@ -2175,7 +2175,7 @@ sap.ui.define([
 
 				// arrange
 				oMultiComboBox.placeAt("MultiComboBoxContent");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				oMultiComboBox.open();
 				this.clock.tick(500);
 
@@ -2215,7 +2215,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
@@ -2257,7 +2257,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oItem1.setEnabled(false); //leads to invalidate of control
@@ -2297,7 +2297,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.setSelectable(oItem3, false);
@@ -2332,7 +2332,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.setSelectable(new Item({
@@ -2369,7 +2369,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.setSelectable(oItem3, false);
@@ -2406,7 +2406,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.setSelectable(oItem1, false);
@@ -2445,7 +2445,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.clearFilter();
@@ -2481,7 +2481,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -2518,7 +2518,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.clearFilter();
@@ -2555,7 +2555,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		ListHelpers.getListItem(oMultiComboBox.getFirstItem()).setVisible(false);
@@ -2591,7 +2591,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oItem1.setEnabled(true);
@@ -2636,19 +2636,19 @@ sap.ui.define([
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		oMultiComboBox.setValue("l");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.fireChange({ value: "l" });
 		oMultiComboBox.oninput(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oFakeEvent.target.value = "t";
 		oMultiComboBox.fireChange({ value: "t" });
 		oMultiComboBox.oninput(oFakeEvent);
 		oMultiComboBox.setValue("t");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(ListHelpers.getSelectableItems(oMultiComboBox.getItems()).length, 1, "1 item should be available");
 		assert.strictEqual(ListHelpers.getSelectableItems(oMultiComboBox.getItems())[0].getText(), "test", "selectable item should be test");
@@ -2670,7 +2670,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oTarget = oMultiComboBox.getFocusDomRef();
 		var fnOninputSpy = this.spy(oMultiComboBox, "oninput");
@@ -2681,7 +2681,7 @@ sap.ui.define([
 		oTarget.value = "Algeriz";
 		qutils.triggerEvent("input", oTarget);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
@@ -2714,7 +2714,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.selectText(1, 2);
 		var oTarget = oMultiComboBox.getFocusDomRef();
 		var fnOninputSpy = this.spy(oMultiComboBox, "oninput");
@@ -2724,7 +2724,7 @@ sap.ui.define([
 		qutils.triggerKeyup(oTarget, ''); // store old value
 		oTarget.value = "Azgeri";
 		qutils.triggerEvent("input", oTarget);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(fnOninputSpy.callCount, 1, "The oninput was called");
@@ -2763,7 +2763,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem1.getText());
@@ -2783,7 +2783,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.removeAllSelectedItems();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem3.getText());
@@ -2823,7 +2823,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2855,7 +2855,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2891,7 +2891,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -2931,7 +2931,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
@@ -2998,10 +2998,10 @@ sap.ui.define([
 				text: "Algeria"
 			})]
 		}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oEventStub = this.stub({
 			stopPropagation: function () {
@@ -3020,7 +3020,7 @@ sap.ui.define([
 		// Act
 		window.clipboardData = null;
 		oMultiComboBox.onpaste(oEventStub);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Should have one selected item");
@@ -3066,7 +3066,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
@@ -3110,7 +3110,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3149,7 +3149,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3158,7 +3158,7 @@ sap.ui.define([
 		// act
 		oMultiComboBox.focus();
 		qutils.triggerKeydown(oMultiComboBox.getFocusDomRef(), KeyCodes.BACKSPACE); // select last token
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(document.activeElement, oMultiComboBox.getAggregation("tokenizer").getTokens()[0].getDomRef(),
@@ -3166,7 +3166,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.BACKSPACE); // delete selected token
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3192,7 +3192,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3207,7 +3207,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(document.activeElement, KeyCodes.DELETE); // delete selected token
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3240,7 +3240,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3249,9 +3249,9 @@ sap.ui.define([
 		// act
 		oMultiComboBox.focus();
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.A, false, false, true); // select all tokens
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.DELETE); // delete selected tokens
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3277,7 +3277,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3311,7 +3311,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3359,7 +3359,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
@@ -3392,7 +3392,7 @@ sap.ui.define([
 
 		// act
 		oMCB.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oHandleIndicatorPressSpy = this.spy(oTokenizer, "_togglePopup");
 
 		// assert
@@ -3434,7 +3434,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act - 'alg' + OpenList + Enter
@@ -3442,7 +3442,7 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.ENTER);
 		qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
 		qutils.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_UP, false, true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem2]);
@@ -3472,7 +3472,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act - 'al' + OpenList + Enter
@@ -3511,7 +3511,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
@@ -3523,7 +3523,7 @@ sap.ui.define([
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		var oListItem = Core.byId(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -3566,7 +3566,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
@@ -3578,7 +3578,7 @@ sap.ui.define([
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		var oListItem = Core.byId(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -3613,7 +3613,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var fnTapSpy = this.spy(oMultiComboBox, "ontap");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
@@ -3656,7 +3656,7 @@ sap.ui.define([
 		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		var oStubSetSelection = this.stub(Event.prototype, "getParameters");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oStubSetSelection.withArgs("id").returns(oItem.getId());
 		oStubSetSelection.withArgs("item").returns(oItem);
@@ -3686,7 +3686,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		oMultiComboBox.setSelectedItems([oItem]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act - clicking on control
 		oToken = oMultiComboBox.getAggregation("tokenizer").getTokens()[0];
@@ -3726,7 +3726,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnShowSpy = this.spy(oMultiComboBox, "onsapshow");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3770,7 +3770,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnHideSpy = this.spy(oMultiComboBox, "onsaphide");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3813,7 +3813,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnShowSpy = this.spy(oMultiComboBox, "onsapshow");
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3852,7 +3852,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.F4);
@@ -3885,7 +3885,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 		// act - clicking on arrow
@@ -3932,7 +3932,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 		// act
@@ -3976,7 +3976,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 		this.clock.tick(500);
 
@@ -4017,7 +4017,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		qutils.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
@@ -4058,7 +4058,7 @@ sap.ui.define([
 				// arrange
 				oMultiComboBox.syncPickerContent();
 				oMultiComboBox.placeAt("MultiComboBoxContent");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
 				// act
@@ -4109,7 +4109,7 @@ sap.ui.define([
 				// arrange
 				oMultiComboBox.syncPickerContent();
 				oMultiComboBox.placeAt("MultiComboBoxContent");
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				oMultiComboBox.focus();
 				var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 
@@ -4160,14 +4160,14 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.getFocusDomRef().focus();
 		oMultiComboBox.open();
 		this.clock.tick(500);
 
 		// act
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		var oListItem = Core.byId(oDomListItem.id);
 		qutils.triggerEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4236,7 +4236,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4267,7 +4267,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4309,13 +4309,13 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		qutils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 		this.clock.tick(500);
 
 		// act
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		var oListItem = Core.byId(oDomListItem.id);
 		oListItem.focus();
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -4346,7 +4346,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4375,7 +4375,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4403,7 +4403,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4431,7 +4431,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4439,7 +4439,7 @@ sap.ui.define([
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 		var oDomListItem = ListHelpers.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		var oListItem = Core.byId(oDomListItem.id);
 		qutils.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4464,7 +4464,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4493,7 +4493,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -4531,7 +4531,7 @@ sap.ui.define([
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 		oMultiComboBoxNext.placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.setValue("Foo");
 
 		// act
@@ -4571,7 +4571,7 @@ sap.ui.define([
 		oMultiComboBoxNext.placeAt("MultiComboBoxContent");
 
 		oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.getFocusDomRef().focus();
@@ -4600,7 +4600,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.focus();
 
@@ -4640,7 +4640,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox.open();
@@ -4675,7 +4675,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(1000);
 
 		// assertions
@@ -4704,10 +4704,10 @@ sap.ui.define([
 		var oSpySetSelection = this.spy(oMCB, "setSelection");
 		var oList = oMCB.getList();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMCB.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		var oFakeEvent = {
@@ -4769,7 +4769,7 @@ sap.ui.define([
 		var oHandleTokensStub = this.stub(Event.prototype, "getParameter");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
@@ -4779,13 +4779,13 @@ sap.ui.define([
 		oMultiComboBox.setValue("t");
 		oMultiComboBox.fireChange({ value: "t" });
 		oMultiComboBox.oninput(oFakeInput);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oHandleTokensStub.withArgs("listItem").returns(ListHelpers.getListItem(oItem));
 		oHandleTokensStub.withArgs("selected").returns(true);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), false, "Picker should close after selection");
@@ -4821,7 +4821,7 @@ sap.ui.define([
 		this.stub(MultiComboBox.prototype, "onfocusin");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
@@ -4831,13 +4831,13 @@ sap.ui.define([
 		oMultiComboBox.setValue("t");
 		oMultiComboBox.fireChange({ value: "t" });
 		oMultiComboBox.oninput(oFakeInput);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oHandleTokensStub.withArgs("listItem").returns(ListHelpers.getListItem(oItem));
 		oHandleTokensStub.withArgs("selected").returns(true);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.isOpen(), true, "Picker should not close after selection");
@@ -4870,7 +4870,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.getFocusDomRef().focus();
 
 		oMultiComboBox.setValue("t");
@@ -4887,7 +4887,7 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		oMultiComboBox._handleSelectionLiveChange(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getValue(), "", "Value should be cleared");
@@ -4907,7 +4907,7 @@ sap.ui.define([
 
 		this.stub(oMultiComboBox, "getFocusDomRef");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -4919,7 +4919,7 @@ sap.ui.define([
 		document.body.focus();
 
 		oMultiComboBox.onAfterRenderingList();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oFocusSpy.calledOnce, "The item should not be focused");
@@ -4930,7 +4930,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.onAfterRenderingList();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oFocusSpy.calledOnce, "The item should be focused");
@@ -4949,7 +4949,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -4994,7 +4994,7 @@ sap.ui.define([
 				selectedKeys: ["Item1"]
 			}).placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set to true.");
@@ -5025,7 +5025,7 @@ sap.ui.define([
 
 		var oHandleTokenFocusStub = this.stub(Event.prototype, "getParameter");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.setSelectedItems([oItem]);
 
@@ -5062,7 +5062,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oButton.focus();
 		// we need to render the list once
@@ -5095,7 +5095,7 @@ sap.ui.define([
 		var oSpy = this.spy(oMultiComboBox.getAggregation("tokenizer"), "scrollToEnd");
 		var oHandleFocusleaveStub = this.stub(Event.prototype, "getParameter");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oHandleFocusleaveStub.withArgs("relatedControlId").returns(null);
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5115,7 +5115,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5134,7 +5134,7 @@ sap.ui.define([
 			oFakeEvent = {};
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.onsapfocusleave(oFakeEvent);
@@ -5156,7 +5156,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox().placeAt("MultiComboBoxContent"),
 			oStub = this.stub(MultiComboBox.prototype, "onfocusin");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 		this.clock.tick(500);
@@ -5185,7 +5185,7 @@ sap.ui.define([
 			oHandleTokensStub = this.stub(Event.prototype, "getParameter");
 
 		oMultiComboBox.setSelectedItems([oItem]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oHandleTokensStub.withArgs("tokens").returns([]);
 		oMultiComboBox._handleTokenDelete(oFakeEvent);
@@ -5209,7 +5209,7 @@ sap.ui.define([
 				keyCode: 111 // dommy code
 			};
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.onsapshow(oFakeEvent);
@@ -5235,7 +5235,7 @@ sap.ui.define([
 				keyCode: 111 // dommy code
 			};
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.onsapshow(oFakeEvent);
@@ -5263,7 +5263,7 @@ sap.ui.define([
 			};
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.getAggregation("tokenizer").getTokens()[1].focus();
 		this.clock.tick(500);
@@ -5293,11 +5293,11 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSpy = this.spy(oTokenizer, "scrollToEnd");
 		oTokenizer.getTokens()[0].focus();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		setTimeout(function(){
@@ -5320,7 +5320,7 @@ sap.ui.define([
 
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
@@ -5348,7 +5348,7 @@ sap.ui.define([
 
 		// Arrange
 		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
@@ -5390,7 +5390,7 @@ sap.ui.define([
 			},
 			oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.onsapshow(oEventMock);
 		this.clock.tick(300);
 
@@ -5466,26 +5466,26 @@ sap.ui.define([
 			});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiComboBox.setSelectedItems([oItem0, oItem1, oItem2, oItem3]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.setEditable(false);
 		oMultiComboBox.setWidth("50px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(300);
 
 		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(sKeyShortcut, "Enter", "'aria-keyshortcuts' attribute should be presented with the correct value");
 
 		// Act
 		oMultiComboBox.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		//Assert
@@ -5494,7 +5494,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.setEnabled(true);
 		oMultiComboBox.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sKeyShortcut = oMultiComboBox.getFocusDomRef().getAttribute('aria-keyshortcuts');
 
 		//Assert
@@ -5508,7 +5508,7 @@ sap.ui.define([
 				items: [oItem1, oItem2]
 			}),
 			sInvisibleTextId = oMultiComboBox.getAggregation("tokenizer").getTokensInfoId(),
-			oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+			oInvisibleText = Core.byId(sInvisibleTextId);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
 
@@ -5517,7 +5517,7 @@ sap.ui.define([
 
 		// act
 		oMultiComboBox.setSelectedKeys(["Item1"]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_ONE_TOKEN"), "'MultiComboBox contains 1 token' text is set.");
@@ -5525,7 +5525,7 @@ sap.ui.define([
 		// act
 		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
@@ -5538,7 +5538,7 @@ sap.ui.define([
 		oMultiComboBox.setEditable(false);
 		oMultiComboBox.setWidth("50px");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		//assert
@@ -5553,10 +5553,10 @@ sap.ui.define([
 
 	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
 		var oMultiComboBox = new MultiComboBox();
-		this.stub(sap.ui.getCore().getConfiguration(), "getAccessibility").returns(false);
+		this.stub(Core.getConfiguration(), "getAccessibility").returns(false);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(!!oMultiComboBox.getDomRef(), "The MultiComboBox should be rendered, when accessibility is off.");
 
@@ -5577,7 +5577,7 @@ sap.ui.define([
 			});
 			this.oTokenizer = this.oMultiComboBox.getAggregation("tokenizer");
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}, afterEach: function() {
 			this.oMultiComboBox.destroy();
 		}
@@ -5596,7 +5596,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.setSelectedItems([aItems[0], aItems[2]]); // The first and last item
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5612,7 +5612,7 @@ sap.ui.define([
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
@@ -5624,7 +5624,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5640,7 +5640,7 @@ sap.ui.define([
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
@@ -5652,7 +5652,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.setSelectedItems([aItems[1], aItems[3]]); // The first and last item
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
@@ -5693,7 +5693,7 @@ sap.ui.define([
 		 */
 		this.oMultiComboBox.getParent().invalidate();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oToken = this.oMultiComboBox.getAggregation("tokenizer").getTokens()[0];
@@ -5759,7 +5759,7 @@ sap.ui.define([
 
 		this.oMultiComboBox.onsaptabprevious();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectedKeys().length, 1, "The first item should be selected");
@@ -5856,7 +5856,7 @@ sap.ui.define([
 		this.oMultiComboBox.setValueState("Warning");
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
 		this.oMultiComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -5898,7 +5898,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
 
 		this.oMultiComboBox.setValueState("None");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -5932,7 +5932,7 @@ sap.ui.define([
 		// Arrange
 		this.oMultiComboBox.setValueState("Warning");
 		this.oMultiComboBox.setShowSelectAll(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMultiComboBox.open();
 		this.clock.tick();
@@ -5977,7 +5977,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oMultiComboBox.setValueState("None");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.HOME);
@@ -6007,7 +6007,7 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oFakeEvent.relatedControlId = oMultiComboBox.getPicker().getId();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//act
 		qutils.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
@@ -6034,7 +6034,7 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox().placeAt("MultiComboBoxContent"),
 			fnOpenSpy = this.spy(oMultiComboBox, "open");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//act
 		var oFakeEvent = {
@@ -6082,13 +6082,13 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 1, "Only one item should be visible");
@@ -6096,7 +6096,7 @@ sap.ui.define([
 
 		oMultiComboBox.fireChange({ value: "I" });
 		oMultiComboBox.oninput(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 3, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
@@ -6142,13 +6142,13 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
 		oSelectedButton.setPressed(true);
 		oMultiComboBox._filterSelectedItems({"oSource": oSelectedButton});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "There is one selected item");
@@ -6156,7 +6156,7 @@ sap.ui.define([
 		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
 
 		oMultiComboBox.oninput(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 5, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
@@ -6244,7 +6244,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox._selectItemByKey(oFakeEvent);
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -6327,7 +6327,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox._selectItemByKey(oFakeEvent);
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -6379,7 +6379,7 @@ sap.ui.define([
 		oMultiComboBox.setSelectedItems([oFirstItem]);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.open();
 		this.clock.tick(nPopoverAnimationTick);
@@ -6414,9 +6414,9 @@ sap.ui.define([
 		}), oResourceBundleOptions = oResourceBundle.getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		assert.equal(sap.ui.getCore().byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
+		assert.equal(Core.byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
 		oMultiComboBox.destroy();
 	});
 
@@ -6555,7 +6555,7 @@ sap.ui.define([
 		var oModel = new JSONModel(oData);
 		oMultiCombo.setModel(oModel);
 		oMultiCombo.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys are set to 1 item.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
@@ -6563,7 +6563,7 @@ sap.ui.define([
 		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are properly propagated.");
 
 		oModel.setProperty("/ProductCollection", oData2);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 1, "Selected keys remain to 1.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected keys remain to 1.");
@@ -6613,7 +6613,7 @@ sap.ui.define([
 		var oModel = new JSONModel(oData);
 		oMultiCombo.setModel(oModel);
 		oMultiCombo.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 2, "Selected keys are set to 2 items.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
@@ -6623,7 +6623,7 @@ sap.ui.define([
 		var oData2 = Object.assign({}, oData);
 		oData2.ProductCollection.push({ProductId: "Zzz3", Name: "New Item"});
 		oModel.setProperty("/ProductCollection", oData2.ProductCollection);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 2, "Selected keys remain to 2.");
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 2, "Selected keys are updated to 2.");
@@ -6668,7 +6668,7 @@ sap.ui.define([
 		oMultiComboBox.setModel(oModel);
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oNewSelectedItem = oMultiComboBox.getItems()[0];
 
@@ -6683,7 +6683,7 @@ sap.ui.define([
 		};
 
 		oMultiComboBox.setSelection(oFakeParams);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oMultiComboBox.getAggregation("tokenizer").getTokens().length, 1, 'Only one token should be shown');
@@ -6710,7 +6710,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 
 		// act
@@ -6741,7 +6741,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.highlightList("(T");
 
 		// act
@@ -6773,7 +6773,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.oninput(oFakeEvent);
 		this.clock.tick(100);
@@ -6801,7 +6801,7 @@ sap.ui.define([
 			});
 
 		oMCB.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMCB.open();
 		this.clock.tick();
@@ -6956,7 +6956,7 @@ sap.ui.define([
 			oFocusinStub = this.stub(oMultiComboBox, "focus");
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oFakeEvent = { target: oMultiComboBox.getDomRef("arrow") };
 
@@ -6981,7 +6981,7 @@ sap.ui.define([
 			});
 			this.oMCB1.placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMCB1.destroy();
@@ -6999,7 +6999,7 @@ sap.ui.define([
 
 		//close and open the picker
 		this.oMCB1.onfocusin(oEventMock);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oIndicator.hasClass("sapUiHidden"), "The n-more label is hidden on focusin.");
@@ -7034,10 +7034,10 @@ sap.ui.define([
 			});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "398px", "_calculateSpaceForTokenizer returns a correct px value");
 
@@ -7049,10 +7049,10 @@ sap.ui.define([
 			output;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.$().find(".sapMMultiComboBoxInputContainer").removeClass("sapMMultiComboBoxInputContainer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		output = oMultiComboBox._calculateSpaceForTokenizer();
 
@@ -7067,7 +7067,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiComboBox._calculateSpaceForTokenizer(), "0px", "_calculateSpaceForTokenizer returns a non negative value");
 
@@ -7091,7 +7091,7 @@ sap.ui.define([
 			oTokenizer = oMCB.getAggregation("tokenizer");
 
 		oMCB.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTokenizer._handleNMoreIndicatorPress();
 		this.clock.tick(200);
@@ -7105,7 +7105,7 @@ sap.ui.define([
 
 		oReadOnlyPopover.close();
 		oMCB.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTokenizer._oIndicator.trigger("click");
 		this.clock.tick(1000);
@@ -7134,7 +7134,7 @@ sap.ui.define([
 
 		// act
 		oMCB.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(300);
 
 		// assert
@@ -7151,14 +7151,14 @@ sap.ui.define([
 
 		// Act
 		this.oMCB1.setWidth("30px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 4));
 
 		// Act
 		this.oMCB1.getItems()[0].setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
@@ -7183,7 +7183,7 @@ sap.ui.define([
 			});
 			this.oMCB1.placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMCB1.destroy();
@@ -7229,7 +7229,7 @@ sap.ui.define([
 
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMultiComboBox.$().find(".sapMTokenizerIndicator").trigger("click");
 		this.clock.tick(600);
@@ -7277,7 +7277,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oInputDomRef = oMultiComboBox.getDomRef("inner");
@@ -7333,7 +7333,7 @@ sap.ui.define([
 		// arrange
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oInputDomRef = oMultiComboBox.getDomRef("inner");
@@ -7408,7 +7408,7 @@ sap.ui.define([
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oMultiComboBox.open();
@@ -7471,7 +7471,7 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oMultiComboBox.focus();
 		oMultiComboBox.open();
 		this.clock.tick(500);
@@ -7526,7 +7526,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function(){
 			this.oMultiComboBox.destroy();
@@ -7595,7 +7595,7 @@ sap.ui.define([
 			});
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
@@ -7633,7 +7633,7 @@ sap.ui.define([
 			},
 			showSecondaryValues: true
 		}).setModel(oModel).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.multiComboBox.open();
 
@@ -7676,7 +7676,7 @@ sap.ui.define([
 			});
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
@@ -7699,13 +7699,13 @@ sap.ui.define([
 
 	QUnit.test("onsapenter should not reset the initially set value to None", function(assert) {
 		this.oMultiComboBox.setValueState("Information");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		// arrange
 		var oAlreadySelectedItemSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
 
 		// act
 		qutils.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER); //onsapenter
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oAlreadySelectedItemSpy.callCount, 1, "_showAlreadySelectedVisualEffect() should be called exactly once");
@@ -7717,7 +7717,7 @@ sap.ui.define([
 		this.oMultiComboBox._$input.trigger("focus").val("Brussel").trigger("input");
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
 		this.oMultiComboBox._$input.trigger("focus").val("H").trigger("input");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The value state is reset to none.");
@@ -7725,7 +7725,7 @@ sap.ui.define([
 
 	QUnit.test("oninput the value state should be reset to the initial one", function(assert) {
 		this.oMultiComboBox.setValueState("Warning");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oFakeEvent = {
 			isMarked: function () {return false;},
@@ -7740,10 +7740,10 @@ sap.ui.define([
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
 		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMultiComboBox.oninput(oFakeEvent); // Fake input
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Warning, "The value state is reset.");
 	});
@@ -7753,7 +7753,7 @@ sap.ui.define([
 		// act
 		this.oMultiComboBox.focus();
 		this.oMultiComboBox.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
@@ -7774,7 +7774,7 @@ sap.ui.define([
 
 		// act
 		this.oMultiComboBox.setValueStateText(sCustomText);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oFakeEvent = {
 			isMarked: function () { },
@@ -7793,7 +7793,7 @@ sap.ui.define([
 		this.oMultiComboBox.setValue(oFakeEvent.value);
 		this.oMultiComboBox.oninput(oFakeEvent);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
@@ -7802,7 +7802,7 @@ sap.ui.define([
 		oFakeEvent.value = "Brussel";
 		this.oMultiComboBox.setValue(oFakeEvent.value);
 		qutils.triggerKeydown(this.oMultiComboBox.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(),
@@ -7814,7 +7814,7 @@ sap.ui.define([
 
 		this.oMultiComboBox.setValue(oFakeEvent.value);
 		this.oMultiComboBox.oninput(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMultiComboBox.getValueStateText(), sCustomText, "Value State message is correct.");
@@ -7822,11 +7822,11 @@ sap.ui.define([
 
 	QUnit.test("onfocusout value should be deleted", function(assert) {
 		this.oMultiComboBox.setValueState("Success");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		this.oMultiComboBox.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "Brussel");
@@ -7848,7 +7848,7 @@ sap.ui.define([
 
 		// act
 		this.oMultiComboBox.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		qutils.triggerCharacterInput(oFocusedDomRef, "Brussel");
@@ -7903,7 +7903,7 @@ sap.ui.define([
 			this.oMultiComboBox.setFormattedValueStateText(oFormattedValueStateText);
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
@@ -7969,7 +7969,7 @@ sap.ui.define([
 		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"});
 
 		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		this.oMultiComboBox.onsapshow(oEventMock);
@@ -8000,7 +8000,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.multiComboBox.destroy();
@@ -8071,7 +8071,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 		},
 		afterEach: function () {
@@ -8115,7 +8115,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.showItems();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
@@ -8134,7 +8134,7 @@ sap.ui.define([
 		this.oMultiComboBox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
@@ -8214,7 +8214,7 @@ sap.ui.define([
 		this.oMultiComboBox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
@@ -8222,7 +8222,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oMultiComboBox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._getList().getItems()).length, 5, "All items are visible");
@@ -8233,7 +8233,7 @@ sap.ui.define([
 		this.oMultiComboBox.showItems(function () {
 			return false;
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.isOpen(), false, "The Popover should not be displayed.");
@@ -8253,7 +8253,7 @@ sap.ui.define([
 				]
 			}).placeAt("MultiComboBoxContent"),
 			oTokenizer = oMultiComboBox.getAggregation("tokenizer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, oMultiComboBox.getSelectedItems().length, "Selection should be in sync");
@@ -8283,7 +8283,7 @@ sap.ui.define([
 					new Item({key: "4", text: "4"})
 				]
 			}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 3, "Selection should be in sync");
@@ -8302,7 +8302,7 @@ sap.ui.define([
 					new Item({key: "4", text: "4"})
 				]
 			}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["1"], "There should be selected key defined");
@@ -8310,7 +8310,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["1"], "There should be selected key defined");
@@ -8320,7 +8320,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "Selected keys should be empty");
@@ -8339,11 +8339,11 @@ sap.ui.define([
 			]
 		}).placeAt("MultiComboBoxContent"),
 		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiComboBox.addSelectedKeys(["2", "3"]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["2", "3"], "SelectedKeys should be saved");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "selectedItems should be there");
@@ -8351,7 +8351,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedKeys([]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 0, "SelectedKeys should be empty");
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 0, "selectedItems should be empty");
@@ -8372,7 +8372,7 @@ sap.ui.define([
 				selectedKeys: ["1"],
 				items: aItems
 			}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8381,7 +8381,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 4, "Items should be 4");
@@ -8390,7 +8390,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeItem(aItems[0]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8399,7 +8399,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeSelectedItem(aItems[0]); // This item has already been removed, but let's give it another try
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8408,7 +8408,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.removeSelectedItem(aItems[1]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getItems().length, 3, "Items should be 3");
@@ -8437,7 +8437,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOnBeforeRenderingSpy.called, true, "onBeforeRendering has been called and items should be in sync");
@@ -8474,7 +8474,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOnBeforeRenderingSpy.called, true, "onBeforeRendering has been called and items should be in sync");
@@ -8513,7 +8513,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		// Assert
@@ -8525,7 +8525,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedItems([aItems[1]]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items should be adjusted");
@@ -8535,7 +8535,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["C", "A"]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["C", "A"], "SelectedKeys should be adjusted");
@@ -8574,7 +8574,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.setModel(oModel, "test");
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oTokenizer.getTokens().length, 2, "The MultiComboBox was not invalidated");
@@ -8584,7 +8584,7 @@ sap.ui.define([
 		// Act
 		oMultiComboBox.getModel("test").setProperty("/a", "A Test");
 		oMultiComboBox.getModel("test").setProperty("/b", "B Test");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oTokenizer.getTokens()[0].getText(), "A Test", "Token text should be updated");
@@ -8616,7 +8616,7 @@ sap.ui.define([
 		}).placeAt("MultiComboBoxContent"),
 		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
@@ -8646,7 +8646,7 @@ sap.ui.define([
 			});
 
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiComboBox.destroy();
@@ -8668,9 +8668,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onfocusin(oMockEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Loose), "_useCollapsedMode should be called with 'Narrow'.");
@@ -8678,9 +8678,9 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.onsapfocusleave(oMockEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSpy.calledWith(TokenizerRenderMode.Narrow), "_useCollapsedMode should be called with 'Loose'.");
 		assert.ok(oTokenizer.hasOneTruncatedToken(), "Truncation was set on the token");
@@ -8733,7 +8733,7 @@ sap.ui.define([
 
 		// Act
 		this.oMultiComboBox.$().find(".sapMTokenizerIndicator")[0].click();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -8745,11 +8745,11 @@ sap.ui.define([
 		var oMultiComboBox = new MultiComboBox();
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -8766,11 +8766,11 @@ sap.ui.define([
 
 		// Remove all tokens
 		this.oMultiComboBox.setSelectedKeys([]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true); // trigger Control key + I
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
 		// Assert
@@ -8793,18 +8793,18 @@ sap.ui.define([
 		});
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["token1"]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), true, "Should contain 'sapMMultiComboBoxHasToken' class when there are tokens");
 
 		// Act
 		oMultiComboBox.setSelectedKeys([]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), false, "Should not contain 'sapMMultiComboBoxHasToken' class when there are no tokens");
@@ -8841,7 +8841,7 @@ sap.ui.define([
 
 		// Act
 		oMultiComboBox.setSelectedKeys(["token1"]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), true, "Should contain 'sapMMultiComboBoxHasToken' class when there are tokens");
@@ -8871,7 +8871,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oMultiComboBox.open();
@@ -8916,7 +8916,7 @@ sap.ui.define([
 			this.oMultiComboBox = new MultiComboBox({
 				items: aItems
 			}).placeAt("MultiComboBoxContent");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
@@ -8946,7 +8946,7 @@ sap.ui.define([
 		this.oMultiComboBox._setIsClick(true);
 		this.oMultiComboBox._handleSelectionLiveChange(oEventMock);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getAggregation("tokenizer").getTokens().length, 3, "3 Tokens must be added");
@@ -9022,7 +9022,7 @@ sap.ui.define([
 			});
 			this.oMultiComboBox.placeAt("MultiComboBoxContent");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.oMultiComboBox.destroy();
@@ -9035,7 +9035,7 @@ sap.ui.define([
 		assert.notOk(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should not be rendered by default");
 
 		this.oMultiComboBox.setShowSelectAll(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectAllToolbar(), "The select all toolbar should not be rendered, since the list is not rendered");
@@ -9044,7 +9044,7 @@ sap.ui.define([
 		// Act
 		this.oMultiComboBox.open();
 		this.clock.tick(500);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(this.oMultiComboBox.getSelectAllToolbar().hasStyleClass("sapMMultiComboBoxSelectAll"), "The select all checkbox should be rendered");
@@ -9052,13 +9052,13 @@ sap.ui.define([
 		assert.ok(this.oMultiComboBox.getSelectAllCheckbox(), "The select all checkbox should be rendered");
 
 		this.oMultiComboBox.setShowSelectAll(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.notOk(this.oMultiComboBox.getSelectAllToolbar().getVisible(), "The select all toolbar should not be visible, when showSelectAll is false");
 
 		this.oMultiComboBox.setShowSelectAll(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(this.oMultiComboBox.getSelectAllToolbar().getVisible(), "The select all toolbar should be visible, when showSelectAll is true");
@@ -9071,7 +9071,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oMultiComboBox.focusSelectAll();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMultiComboBox.getSelectAllCheckbox().getFocusDomRef(), document.activeElement, "The select all checkbox should be focused.");
@@ -9093,7 +9093,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oMultiComboBox.focusSelectAll();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		sap.ui.test.qunit.triggerKeyup(document.activeElement, KeyCodes.SPACE);
@@ -9139,7 +9139,7 @@ sap.ui.define([
 			items: aItems,
 			showClearIcon: true
 		}).placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Arrange
 		var fnFilterItemsSpy = this.spy(oMultiComboBox, "filterItems");
@@ -9150,7 +9150,7 @@ sap.ui.define([
 		oMultiComboBox._$input.focus().val("b").trigger("input");
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), KeyCodes.b);
 		oMultiComboBox.onkeyup();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick();
 
 		// Assert
@@ -9175,14 +9175,14 @@ sap.ui.define([
 		var oSetValueSpy, oSetPropertySpy;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSetValueSpy = this.spy(oMultiComboBox, "setValue");
 		oSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSetValueSpy.calledWith(""), true, "setValue was called with the correct parameters");
@@ -9205,13 +9205,13 @@ sap.ui.define([
 		var oSetPropertySpy;
 
 		oMultiComboBox.placeAt("MultiComboBoxContent");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSetPropertySpy = this.spy(oMultiComboBox, "setProperty");
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");
@@ -9219,12 +9219,12 @@ sap.ui.define([
 		// Arrange
 		oMultiComboBox.setEnabled(true);
 		oMultiComboBox.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oSetPropertySpy.reset();
 
 		// Act
 		oMultiComboBox.handleClearIconPress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSetPropertySpy.calledWith('effectiveShowClearIcon', false), false, "setProperty was called with the correct parameters");

@@ -9,16 +9,17 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"sap/m/Button",
 	"sap/m/OverflowToolbar",
 	"sap/m/ToggleButton",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function (UploadCollection, UploadCollectionToolbarPlaceholder, Title, ToolbarSpacer, FileUploader, Button,
-			 OverflowToolbar, ToggleButton, Log) {
+			 OverflowToolbar, ToggleButton, Log, oCore) {
 	"use strict";
 
 	QUnit.module("Toolbar Default", {
 		beforeEach: function () {
 			this.oUploadCollection = new UploadCollection("noToolbarTest", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oUploadCollection.destroy();
@@ -60,7 +61,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 			})
 		});
 		this.oUploadCollection.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var bInfoTextWasFound = false;
 		var aStubCalls = oInfoLogStub.getCalls(); //Get correct call of Log.info(...)
@@ -90,7 +91,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 				})
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oUploadCollection.destroy();

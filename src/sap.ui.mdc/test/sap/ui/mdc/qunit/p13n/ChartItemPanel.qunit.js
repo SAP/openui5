@@ -1,16 +1,16 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/ChartItemPanel", "sap/ui/model/json/JSONModel", "sap/m/VBox", "sap/ui/thirdparty/sinon", "sap/ui/test/actions/Press"
-], function (ChartItemPanel, JSONModel, VBox, sinon, Press) {
+	"sap/ui/mdc/p13n/panels/ChartItemPanel", "sap/ui/model/json/JSONModel", "sap/m/VBox", "sap/ui/thirdparty/sinon", "sap/ui/test/actions/Press", "sap/ui/core/Core"
+], function (ChartItemPanel, JSONModel, VBox, sinon, Press, oCore) {
 	"use strict";
 
-	var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var oChartConfig = {
 		allowedLayoutOptions: ["axis1", "category", "series"], templateConfig: [{kind: "Dimension"},{kind: "Measure"}]
 	};
 
-	sap.ui.getCore().applyChanges();
+	oCore.applyChanges();
 
 	QUnit.module("ChartItemPanelNew Unit tests", {
 		beforeEach: function(){

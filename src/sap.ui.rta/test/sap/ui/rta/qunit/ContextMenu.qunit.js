@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core"
 ], function(
 	RtaQunitUtils,
 	KeyCodes,
@@ -31,7 +32,8 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	QUnitUtils
+	QUnitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -58,16 +60,16 @@ sap.ui.define([
 	QUnit.module("Given RTA is started...", {
 		before: function(assert) {
 			var fnDone = assert.async();
-			this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
-			this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
-			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
-			this.oBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oAnotherBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
-			this.oUnBoundGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Victim");
-			this.oMultipleFieldTwoBoundGroupElements = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-			this.oMultipleBoundFieldGroupElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-			this.oFieldInGroupWithoutStableId = sap.ui.getCore().byId("Comp1---idMain1--FieldInGroupWithoutStableId");
-			this.oSimpleFormWithTitles = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
+			this.oPage = oCore.byId("Comp1---idMain1--mainPage");
+			this.oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
+			this.oGroup = oCore.byId("Comp1---idMain1--GeneralLedgerDocument");
+			this.oBoundGroupElement = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oAnotherBoundGroupElement = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.Name");
+			this.oUnBoundGroupElement = oCore.byId("Comp1---idMain1--Victim");
+			this.oMultipleFieldTwoBoundGroupElements = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+			this.oMultipleBoundFieldGroupElement = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+			this.oFieldInGroupWithoutStableId = oCore.byId("Comp1---idMain1--FieldInGroupWithoutStableId");
+			this.oSimpleFormWithTitles = oCore.byId("Comp1---idMain1--SimpleForm");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl"),
@@ -391,7 +393,7 @@ sap.ui.define([
 		QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", function(assert) {
 			assert.expect(4);
 			this.oPage._headerTitle.destroy();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oPage._headerTitle = null;
 			var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 			oPageOverlay.focus();
@@ -560,7 +562,7 @@ sap.ui.define([
 			//					Button
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
+			var oEmbeddedView = oCore.byId("Comp1---idMain1");
 
 			var oSubSection = new ObjectPageSubSection({
 				id: oEmbeddedView.createId("subsection1"),
@@ -592,7 +594,7 @@ sap.ui.define([
 				subSections: [oSubSection2]
 			});
 
-			var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
+			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id: oEmbeddedView.createId("ObjectPageLayout"),
@@ -605,7 +607,7 @@ sap.ui.define([
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			var clock = sinon.useFakeTimers();
 			clock.tick(1000);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
@@ -722,7 +724,7 @@ sap.ui.define([
 				]
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
@@ -766,7 +768,7 @@ sap.ui.define([
 
 	QUnit.module("Given RTA is started for Object Page...", {
 		beforeEach: function() {
-			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
+			var oEmbeddedView = oCore.byId("Comp1---idMain1");
 
 			this.oObjectPageSection1 = new ObjectPageSection({
 				title: "Section_1",
@@ -778,7 +780,7 @@ sap.ui.define([
 				visible: false
 			});
 
-			var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
+			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id: oEmbeddedView.createId("ObjectPageLayout"),
@@ -793,7 +795,7 @@ sap.ui.define([
 			});
 			oPage.addContent(this.oObjectPageLayout);
 			oEmbeddedPage.addContent(oPage);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oPage,

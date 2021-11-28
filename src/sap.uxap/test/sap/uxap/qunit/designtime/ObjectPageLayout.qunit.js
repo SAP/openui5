@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/rta/plugin/CutPaste',
 	"sap/ui/rta/plugin/RTAElementMover",
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/thirdparty/sinon-4'
+	'sap/ui/thirdparty/sinon-4',
+	"sap/ui/core/Core"
 ], function (
 	elementActionTest,
 	ObjectPageLayout,
@@ -27,7 +28,8 @@ sap.ui.define([
 	CutPastePlugin,
 	RTAElementMover,
 	OverlayRegistry,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -268,7 +270,7 @@ sap.ui.define([
 			});
 
 			this.oObjectPageLayout.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -363,7 +365,7 @@ sap.ui.define([
 			});
 
 			this.oObjectPageLayout.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -494,7 +496,7 @@ sap.ui.define([
 		//hiding parent element
 		oParentNode.style.display = "none";
 		this.oSimpleObjectPageLayout.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		iWidth = this.oSimpleObjectPageLayout._getWidth(this.oSimpleObjectPageLayout);
 
 		assert.equal(iWidth, 0, "The width of the DOM Element is calculated correctly");

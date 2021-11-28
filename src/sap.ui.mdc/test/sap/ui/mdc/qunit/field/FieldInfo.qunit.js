@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/link/ContactDetails",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/m/Button",
-	"sap/ui/mdc/Link"
+	"sap/ui/mdc/Link",
+	"sap/ui/core/Core"
 ], function(jQuery,
 	qutils,
 	Device,
@@ -24,7 +25,8 @@ sap.ui.define([
 	ContactDetails,
 	LinkItem,
 	Button,
-	Link) {
+	Link,
+	oCore) {
 	"use strict";
 
 	var oMockServer;
@@ -88,7 +90,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			stopMockServer();
@@ -147,7 +149,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			stopMockServer();
@@ -233,7 +235,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			stopMockServer();
@@ -290,7 +292,7 @@ sap.ui.define([
 			});
 
 			this.oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			stopMockServer();

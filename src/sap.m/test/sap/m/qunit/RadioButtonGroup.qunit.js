@@ -57,7 +57,7 @@ sap.ui.define([
 
 		// arrange
 		oRBGroup.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.strictEqual(oRBGroup.getColumns(), nColumns, "Property 'columns': Default value should be '" + nColumns + "'");
@@ -92,7 +92,7 @@ sap.ui.define([
 
 		// arrange
 		oRBGroup.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.ok(!oRBGroup.getDomRef(), "visible=true: RadioButtonGroup should not have been rendered");
@@ -125,7 +125,7 @@ sap.ui.define([
 
 		// arrange
 		oRBGroup.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		for (var i = 0; i < aRadioButtons.length; i++) {
@@ -159,7 +159,7 @@ sap.ui.define([
 		oRadioButton2.setTooltip("Tooltip 2");
 		oRBGroup.addButton(oRadioButton2);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		oRBGroup.placeAt("qunit-fixture");
@@ -192,42 +192,42 @@ sap.ui.define([
 			oRBGroup.addButton(oRadioButton);
 		}
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Focus first radio
 		oRBGroup.placeAt("qunit-fixture");
 		qutils.triggerMouseEvent("RBG1-0", "click");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		// Test arrow pressing
 		qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
 		qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 		qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
 		qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		qutils.triggerKeyboardEvent("RBG1", "END");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 		qutils.triggerKeyboardEvent("RBG1", "HOME");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 		// cleanup
@@ -251,7 +251,7 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "rtl", "Control has 'dir' property set to right to left");
@@ -272,7 +272,7 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertions
 		assert.equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "ltr", "Control has 'dir' property set to left to right");
@@ -292,7 +292,7 @@ sap.ui.define([
 			});
 
 			this.rbg.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.rbg.destroy();
@@ -304,7 +304,7 @@ sap.ui.define([
 
 		// act
 		this.rbg.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
@@ -328,7 +328,7 @@ sap.ui.define([
 
 		// act
 		this.rbg.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oPropagateStateStub.called, "Propagation should be called");
@@ -371,7 +371,7 @@ sap.ui.define([
 
 		// act
 		this.rbg.setValueState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oDisabledRB.$().hasClass("sapMRbErr"), "Setting state to the group doesn't modify disabled buttons");
@@ -388,7 +388,7 @@ sap.ui.define([
 			});
 
 			this.rbg.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.rbg.destroy();
@@ -405,7 +405,7 @@ sap.ui.define([
 		oNewButton = new RadioButton({text: 'radio-200'});
 		this.rbg.insertButton(oNewButton, -200);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.rbg.$().find('.sapMRb').length, 3, "Buttons are rendered correctly");
@@ -413,7 +413,7 @@ sap.ui.define([
 
 	QUnit.test("RemoveAllButtons", function(assert) {
 		var aButtons = this.rbg.removeAllButtons();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.rbg.$().find('.sapMRb').length, 0, "All buttons are removed");
@@ -484,7 +484,7 @@ sap.ui.define([
 			});
 
 			this.rbg.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.rbg.destroy();

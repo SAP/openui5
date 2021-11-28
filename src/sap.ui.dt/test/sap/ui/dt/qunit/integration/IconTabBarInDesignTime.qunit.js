@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
-	"sap/ui/dt/DOMUtil"
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/core/Core"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Button,
 	IconTabBar,
 	IconTabFilter,
-	DOMUtil
+	DOMUtil,
+	oCore
 ) {
 	'use strict';
 
@@ -73,7 +75,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -104,7 +106,7 @@ sap.ui.define([
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
 			this.oIconTabBar.setSelectedKey("Open");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			OverlayRegistry.getOverlay(this.oIconTabBar).applyStyles();
 
 			assert.strictEqual(oListOverlay.isVisible(), false, "List overlay is not visible");

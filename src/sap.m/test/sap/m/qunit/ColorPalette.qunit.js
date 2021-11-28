@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	Button,
 	ColorPalette,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Control,
 	containsOrEquals,
 	EventExtension,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -474,7 +476,7 @@ sap.ui.define([
 
 			oCP._setShowDefaultColorButton(true);
 			oCP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSpyFocusDefaultButton = this.spy(oCP._getDefaultColorButton().getDomRef(), "focus");
 
 			// Act
@@ -495,7 +497,7 @@ sap.ui.define([
 
 			oCP._setShowDefaultColorButton(false);
 			oCP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSpyFocusFirstSwatch = this.spy(oCP._getAllPaletteColorSwatches()[0], "focus");
 
 			// Act
@@ -1555,7 +1557,7 @@ sap.ui.define([
 						"#a811ff"
 					]/*black, white, non-named*/
 				}),
-				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				oBundle = oCore.getLibraryResourceBundle("sap.m"),
 				sBlack = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_BLACK"),
 				sWhite = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_WHITE"),
 				$SwatchContainer,
@@ -1564,7 +1566,7 @@ sap.ui.define([
 
 			// Act
 			oCP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			// swatch container
@@ -2014,7 +2016,7 @@ sap.ui.define([
 					oOpener = new Button();
 
 				oOpener.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// Act
 				oCPP.openBy(oOpener);

@@ -22,10 +22,12 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core",
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
-            ListItemBaseRenderer, Dialog, Device, JSONModel, ManagedObject, OverflowToolbar,
-            MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter, Sorter, Element, library, KeyCodes) {
+			ListItemBaseRenderer, Dialog, Device, JSONModel, ManagedObject, OverflowToolbar,
+			MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter, Sorter, Element, library, KeyCodes, oCore
+) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -177,7 +179,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -410,7 +412,7 @@ sap.ui.define([
 		this.oUploadCollection.setInfoToolbar(oInfoToolbar);
 		var oInfoToolbar = this.oUploadCollection.getInfoToolbar();
 		var oInfoToolbarList = this.oUploadCollection._oList.getInfoToolbar();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(oInfoToolbar, oInfoToolbarList, "Info toolbar belongs to the item list");
 		assert.ok(document.getElementById("uploadCollection-infoToolbar"), "Info toolbar is rendered");
@@ -423,7 +425,7 @@ sap.ui.define([
 		var oSpy = this.spy(UploadCollectionRenderer, "renderNoData"),
 			oSpyLIBRenderer = this.spy(ListItemBaseRenderer, "addFocusableClasses");
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(oSpy.calledOnce, "no data rendering in upload collection is called");
 		assert.ok(oSpyLIBRenderer.calledOnce, "Method addFocusableClasses of ListItemBaseRenderer is called");
@@ -436,7 +438,7 @@ sap.ui.define([
 		this.oUploadCollection.unbindAggregation("items");
 		this.oUploadCollection.setUploadEnabled(false);
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(this.oUploadCollection.getDomRef("no-data-text"), "No data text is rendered in upload disabled state");
 		assert.notOk(this.oUploadCollection.getDomRef("no-data-description"), "No data description is not rendered in upload disabled state");
@@ -448,7 +450,7 @@ sap.ui.define([
 		var sNoDataText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_TEXT");
 		var sNoDataDescription = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oUploadCollection.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
 		assert.equal(this.oUploadCollection.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
@@ -463,7 +465,7 @@ sap.ui.define([
 		var sListNoDataText = this.oUploadCollection._oList.getNoDataText();
 		var sUCNoDataTextDescription = sUpdNoDataText + " " + sUpdNoDataDescription;
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(sUCNoDataTextDescription, sListNoDataText, "Accessibility Nodata text matches ");
 	});
@@ -477,7 +479,7 @@ sap.ui.define([
 		var sUCNoDataTextDescription = sUpdNoDataText + " " + sUpdNoDataDescription;
 		this.oUploadCollection.unbindAggregation("items");
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oUploadCollection.$("no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
 		assert.equal(sUCNoDataTextDescription, sListNoDataText, "Accessibility Nodata text matches after setter");
@@ -488,7 +490,7 @@ sap.ui.define([
 		this.oUploadCollection.setNoDataDescription("myNoDataDescription");
 		this.oUploadCollection.unbindAggregation("items");
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oUploadCollection.$("no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
@@ -510,7 +512,7 @@ sap.ui.define([
 				uploadButtonInvisible: true
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -534,7 +536,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oUploadCollection = new UploadCollection();
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -708,7 +710,7 @@ sap.ui.define([
 				items: this.oItem
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.encodeToAscii = function(value) {
 				var sEncodedValue = "";
 				for (var i = 0; i < value.length; i++) {
@@ -770,7 +772,7 @@ sap.ui.define([
 			}
 		});
 		this.oUploadCollection.insertItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oButton = oItem._getDeleteButton();
 		//Act
 		oButton.firePress();
@@ -870,7 +872,7 @@ sap.ui.define([
 		});
 		oItem._requestIdName = 0;
 		this.oUploadCollection.insertItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
 		var oSpyGetter = this.spy(oItem, "_getDeleteButton");
 		//Act
@@ -890,7 +892,7 @@ sap.ui.define([
 		var sText = "My own text for attachments";
 		this.oUploadCollection.setNumberOfAttachmentsText("My own text for attachments");
 		this.oUploadCollection._setNumberOfAttachmentsTitle();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
 		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.$().text(), sText);
 	});
@@ -981,7 +983,7 @@ sap.ui.define([
 		});
 
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oTerminateButton = this.oUploadCollection.aItems[0]._getTerminateButton();
 		oTerminateButton.firePress();
@@ -989,7 +991,7 @@ sap.ui.define([
 		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
 
 		// Clean up
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.destroy();
 	});
 
@@ -999,15 +1001,15 @@ sap.ui.define([
 			fileName: "otto4711.txt"
 		});
 		this.oUploadCollection._handleTerminate({}, oItem);
-		sap.ui.getCore().applyChanges();
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oCore.applyChanges();
+		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
 		assert.ok(oDialog.getDomRef(), "Dialog was rendered.");
 		oDialog.attachAfterClose(function() {
 			assert.ok(true, "Dialog is closed.");
 			done();
 		});
 		oDialog.getButtons()[1].firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Function _handleDelete creates the popup and changes the internal state of UploadCollection correctly", function(assert) {
@@ -1048,10 +1050,10 @@ sap.ui.define([
 		oItem._status = UploadCollection._uploadingStatus;
 		oItem._requestIdName = 0;
 		this.oUploadCollection.insertItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Call termination
 		this.oUploadCollection._handleTerminate({}, oItem);
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.attachAfterClose(function() {
 			assert.ok(true, "Dialog is closed.");
 			done();
@@ -1073,16 +1075,16 @@ sap.ui.define([
 			assert.equal(oEvent.getParameter("documentId"), "4712", "Correct documentId passed.");
 			assert.deepEqual(oEvent.getParameter("item"), oItem, "Correct item passed.");
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Call termination
 		this.oUploadCollection._handleTerminate({}, oItem);
-		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.attachAfterClose(function() {
 			assert.ok(true, "Dialog is closed.");
 			done();
 		});
 		oDialog.getButtons()[0].firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("handle Change - Special characters in the fileName property is displayed correctly", function(assert) {
@@ -1097,7 +1099,7 @@ sap.ui.define([
 		});
 		//Act
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oUploadCollection.aItems[0].getFileName(), oFile2.name, "Special characters in the fileName property is displayed correctly");
 	});
@@ -1112,7 +1114,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1125,7 +1127,7 @@ sap.ui.define([
 		var nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
 		//Act
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oUploadCollection._oList.mEventRegistry.selectionChange.length, nListeners, "Event 'selectionChange' is attached once");
 	});
@@ -1393,7 +1395,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1432,7 +1434,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1524,7 +1526,7 @@ sap.ui.define([
 				}
 			});
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1564,7 +1566,7 @@ sap.ui.define([
 				return "1";
 			};
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1591,17 +1593,17 @@ sap.ui.define([
 			]
 		});
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.fireUploadProgress({
 			fileName: "file1",
 			loaded: 50,
 			total: 100
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
-		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
+		assert.equal(oCore.byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
 		assert.equal(document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-valuenow"), "50", "Correct ARIA-valuenow attribute");
 	});
 
@@ -1624,17 +1626,17 @@ sap.ui.define([
 			]
 		});
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.fireUploadProgress({
 			fileName: "file1",
 			loaded: 100,
 			total: 100
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
-		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
+		assert.equal(oCore.byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
 		assert.equal(document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-label"), sUploadCompleted, "Correct ARIA-label attribute");
 	});
 
@@ -1654,7 +1656,7 @@ sap.ui.define([
 				multiple: true
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1753,7 +1755,7 @@ sap.ui.define([
 	QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
 		//Arrange
 		this.oUploadCollection.setMultiple(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 		var oStubMessageBox = this.stub(MessageBox, "error");
 		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
@@ -1905,7 +1907,7 @@ sap.ui.define([
 				})]
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -1945,7 +1947,7 @@ sap.ui.define([
 			}).setModel(new JSONModel(oData));
 			this.oDataCopy = jQuery.extend(true, {}, oData);
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2286,7 +2288,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2297,16 +2299,16 @@ sap.ui.define([
 	QUnit.test("Edit", function(assert) {
 		//trigger edit button of line 2 and check the status of the line
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-		sap.ui.getCore().byId(sEditButtonId).firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(oCore.byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text for Edited element is empty.");
 
 		var oInputField1 = this.oUploadCollection.aItems[1].$("ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//check cancel
 		var oEvent = {};
@@ -2318,40 +2320,40 @@ sap.ui.define([
 
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'cancel'");
-		assert.notEqual(sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
-		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
+		assert.notEqual(oCore.byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(oCore.byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text is empty.");
 
 		//check file name after cancel
-		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		var sFileNameField = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
 		assert.equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");
 
 		//check save
-		sap.ui.getCore().byId(sEditButtonId).firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
 		var oInputField2 = this.oUploadCollection.aItems[1].$("ta_editFileName-inner");
 		oInputField2[0].value = "NewDocument";
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oData.items[1].fileName = "NewDocument.txt";
 		oEvent.target.id = this.oUploadCollection.aItems[1].sId + "-cli";
 		oEvent.oSource.sId = this.oUploadCollection.aItems[1].sId;
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'ok'");
 
 		//check changed file name after save
-		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		var sFileNameField = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
 		assert.equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
 
 		//check sameFileNameAllowed == false!
 		var sEditButtonId2 = this.oUploadCollection.aItems[2].sId + "-editButton";
-		sap.ui.getCore().byId(sEditButtonId2).firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(sEditButtonId2).firePress();
+		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[2]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(oCore.byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText() , "Invisible Text for Editetd element is empty.");
 
 		var oInputField3 = this.oUploadCollection.aItems[2].$("ta_editFileName-inner");
@@ -2359,16 +2361,16 @@ sap.ui.define([
 		oData.items[2].fileName = "NewDocument.txt";
 		oEvent.target.id = this.oUploadCollection.aItems[2].sId;
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
-		sap.ui.getCore().applyChanges();
-		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
+		oCore.applyChanges();
+		var bShowValueStateMessage = oCore.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
 		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exists");
 		assert.equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
 
 		// edit and delete buttons in case duplicated file name entered
-		var oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
-		var oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
-		var oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
-		var oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		var oEditButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		var oEditButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		var oDeleteButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
 		assert.equal(oEditButton0.getEnabled(), false, "Edit button of item 1 is NOT enabled");
 		assert.equal(oEditButton1.getEnabled(), false, "Edit button of item 2 is NOT enabled");
 		assert.equal(oDeleteButton0.getEnabled(), false, "Delete button of item 1 is NOT enabled");
@@ -2376,26 +2378,26 @@ sap.ui.define([
 
 		oEvent.target.id = this.oUploadCollection.aItems[2].sId + "-cancelButton";
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[2]._status, "display", "Item 3 has status 'display' after 'cancel'");
-		assert.notEqual(sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
-		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
+		assert.notEqual(oCore.byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(oCore.byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text is empty.");
 
 		// edit and delete buttons
-		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
-		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
-		oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
-		oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		oEditButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		oEditButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		oDeleteButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		oDeleteButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
 		assert.equal(oEditButton0.getEnabled(), true, "Edit button of item 1 is enabled");
 		assert.equal(oEditButton1.getEnabled(), true, "Edit button of item 2 is enabled");
 		assert.equal(oDeleteButton0.getEnabled(), true, "Delete button of item 1 is enabled");
 		assert.equal(oDeleteButton1.getEnabled(), true, "Delete button of item 2 is enabled");
 
-		var oEditButton2 = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-editButton");
-		var oEditButton3 = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-editButton");
-		var oDeleteButton2 = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-deleteButton");
-		var oDeleteButton3 = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-deleteButton");
+		var oEditButton2 = oCore.byId(this.oUploadCollection.aItems[2].sId + "-editButton");
+		var oEditButton3 = oCore.byId(this.oUploadCollection.aItems[3].sId + "-editButton");
+		var oDeleteButton2 = oCore.byId(this.oUploadCollection.aItems[2].sId + "-deleteButton");
+		var oDeleteButton3 = oCore.byId(this.oUploadCollection.aItems[3].sId + "-deleteButton");
 		assert.equal(oEditButton2.getEnabled(), false, "Edit button of item 3 is NOT enabled");
 		assert.equal(oEditButton3.getEnabled(), false, "Edit button of item 4 is NOT enabled");
 		assert.equal(oDeleteButton2.getEnabled(), false, "Delete button of item 3 is NOT enabled");
@@ -2406,8 +2408,8 @@ sap.ui.define([
 	QUnit.test("Cancel with different event target", function(assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-		sap.ui.getCore().byId(sEditButtonId).firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
 
 		var oSpy = this.spy(UploadCollection.prototype, "_handleCancel");
 		var oEvent = {
@@ -2416,7 +2418,7 @@ sap.ui.define([
 
 		// Act
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oSpy.callCount, 1, "Cancel handling is done even for targets that are not the button itself.");
@@ -2434,8 +2436,8 @@ sap.ui.define([
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().byId(sEditButtonId).firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(sEditButtonId).firePress();
+		oCore.applyChanges();
 
 		//Act
 		this.oUploadCollection._handleCancel(null, this.oUploadCollection.editModeItem);
@@ -2456,13 +2458,13 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-			sap.ui.getCore().byId(sEditButtonId).firePress();
-			sap.ui.getCore().applyChanges();
+			oCore.byId(sEditButtonId).firePress();
+			oCore.applyChanges();
 
 			this.oUploadCollection.aItems[1].setFileName("");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oObj = {
 				oSource: {
@@ -2484,9 +2486,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Delete the file name in edit", function(assert) {
-		sap.ui.getCore().applyChanges();
-		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
-		var sValueState = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
+		oCore.applyChanges();
+		var bShowValueStateMessage = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
+		var sValueState = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
 
 		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because no file name entered");
 		assert.equal(sValueState, "Error", "Error value state set");
@@ -2516,7 +2518,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2531,9 +2533,9 @@ sap.ui.define([
 			assert.equal(this.oUploadCollection.aItems[i]._status, "display", "Status of item " + i + " is correct");
 		}
 
-		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
-		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
-		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		var oFileName = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
+		var oEditButton = oCore.byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton = oCore.byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
 		assert.equal(oEditButton.getEnabled(), true, "Edit button is enabled");
 		assert.equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		assert.equal(oFileName.getEnabled(), true, "File name is enabled");
@@ -2545,8 +2547,8 @@ sap.ui.define([
 
 		//Act
 		// An event is triggered, because there is a url provided at item[1]
-		sap.ui.getCore().byId(this.oUploadCollection.getItems()[1].getId() + "-ia_iconHL").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(this.oUploadCollection.getItems()[1].getId() + "-ia_iconHL").firePress();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(UploadCollection.prototype._triggerLink.callCount, 1, "Function _triggerLink has been called once");
@@ -2558,8 +2560,8 @@ sap.ui.define([
 
 		//Act
 		// No event is triggered, because there is no url provided at item[0]
-		sap.ui.getCore().byId(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL").firePress();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(UploadCollection.prototype._triggerLink.callCount, 0, "Function _triggerLink has not been called");
@@ -2581,7 +2583,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2612,7 +2614,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oUploadCollection = new UploadCollection();
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2730,7 +2732,7 @@ sap.ui.define([
 	QUnit.test("noDataText", function(assert) {
 		var sNoDataText = "myNoDataText";
 		testSetter(this.oUploadCollection, "noDataText", sNoDataText, true, assert);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.$("no-data-text").text(), sNoDataText, "Property 'noDataText' properly rendered in DOM");
 	});
 
@@ -2783,7 +2785,7 @@ sap.ui.define([
 				}
 			}).setModel(this.oModel);
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2795,7 +2797,7 @@ sap.ui.define([
 
 	QUnit.test("Model refresh with empty data", function(assert) {
 		this.oModel.setProperty("/items", null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oUploadCollection.getItems().length, 0);
 		assert.strictEqual(this.oUploadCollection.aItems.length, 0);
 		assert.strictEqual(this.oUploadCollection._oList.getItems().length, 0);
@@ -2821,7 +2823,7 @@ sap.ui.define([
 				"url": ""
 			}
 		]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oUploadCollection.getItems().length, 2);
 		assert.strictEqual(this.oUploadCollection.aItems.length, 2);
 		assert.strictEqual(this.oUploadCollection._oList.getItems().length, 2);
@@ -2841,7 +2843,7 @@ sap.ui.define([
 				"url": ""
 			}
 		]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.oUploadCollection._fillList.calledOnce);
 	});
 
@@ -2856,7 +2858,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -2871,26 +2873,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Icon", function(assert) {
-		var oIcon = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		var oIcon = oCore.byId(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		var $Icon = document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		assert.strictEqual(oIcon.getAlt(), "textForIconOfItemSusanBaker", "The icon has correct alt text");
 		assert.strictEqual($Icon.getAttribute("aria-label"), "textForIconOfItemSusanBaker", "The DOM object icon has correct tooltip");
 	});
 
 	QUnit.test("Image", function(assert) {
-		var oImage = sap.ui.getCore().byId(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		var oImage = oCore.byId(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
 		var $Image = document.getElementById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
 		assert.strictEqual(oImage.getAlt(), "textForImageOfItemKateBrown", "The image has correct alt text");
 		assert.strictEqual($Image.getAttribute("aria-label"), "textForImageOfItemKateBrown", "The DOM object image has correct tooltip");
 	});
 
 	QUnit.test("Edit Button", function(assert) {
-		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		var oEditButton = oCore.byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		assert.strictEqual(oEditButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"), "The edit button has correct tooltip");
 	});
 
 	QUnit.test("Delete Button", function(assert) {
-		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		var oDeleteButton = oCore.byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
 		assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 	});
 
@@ -2903,7 +2905,7 @@ sap.ui.define([
 					id: oListItem.getId()
 				}
 			},
-			oEditButton = sap.ui.getCore().byId(sUCItemId + "-editButton"),
+			oEditButton = oCore.byId(sUCItemId + "-editButton"),
 			oFirePressStub = this.stub(oEditButton, "firePress"),
 			oHandleClickStub = this.stub(this.oUploadCollection, "_handleClick");
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[1].getId();
@@ -2959,7 +2961,7 @@ sap.ui.define([
 					id: sUCItemId + "-cli"
 				}
 			},
-			oDeleteButton = sap.ui.getCore().byId(sUCItemId + "-deleteButton"),
+			oDeleteButton = oCore.byId(sUCItemId + "-deleteButton"),
 			oFirePressStub = this.stub(oDeleteButton, "firePress");
 		//Act
 		this.oUploadCollection._handleDEL(oPressEvent);
@@ -3054,7 +3056,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
@@ -3072,7 +3074,7 @@ sap.ui.define([
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
 		//Act
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, true, "Event delegations saved to be deleted on the beginning of the next rendering cycle");
 	});
@@ -3080,11 +3082,11 @@ sap.ui.define([
 		//Arrange
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oUploadCollection.editModeItem = null;
 		//Act
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
 	});
@@ -3112,7 +3114,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();

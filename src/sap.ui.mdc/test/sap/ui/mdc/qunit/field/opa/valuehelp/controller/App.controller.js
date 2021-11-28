@@ -13,14 +13,15 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/core/Fragment"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Core"
+], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, UriParameters, URI, Fragment, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
 		onInit: function () {
 
-			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
+			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			var oDefaultModel = this.getView().getModel();
 			oDefaultModel.setSizeLimit(100000);

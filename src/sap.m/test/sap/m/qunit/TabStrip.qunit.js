@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +23,8 @@ sap.ui.define([
 	jQuery,
 	Device,
 	Element,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -113,7 +115,7 @@ sap.ui.define([
 
 		preparePhonePlatform(this);
 		oTS.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oTS.setSelectedItem(oItem2);
@@ -314,7 +316,7 @@ sap.ui.define([
 		});
 
 		oTabStrip.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oItem = oTabStrip.getItems()[1];
 
@@ -389,7 +391,7 @@ sap.ui.define([
 			});
 
 		oCSList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oItem.$().trigger("focus");
@@ -760,7 +762,7 @@ sap.ui.define([
 		});
 
 		this.oTS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		// assert
@@ -780,7 +782,7 @@ sap.ui.define([
 		});
 
 		this.oTS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		// assert
@@ -801,7 +803,7 @@ sap.ui.define([
 		});
 
 		this.oTS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		// assert
@@ -910,7 +912,7 @@ sap.ui.define([
 		var fnScrollingSpy = this.spy(this.sut, "_adjustScrolling");
 
 		this.sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(fnScrollingSpy.callCount, 0, "scrolling calcualtion is not utilized on phone");
@@ -937,7 +939,7 @@ sap.ui.define([
 				]
 			});
 			this.oTS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.restoreSystemValues();

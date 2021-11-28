@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TabStrip",
-	"sap/m/TabStripItem"
-], function(qutils, createAndAppendDiv, TabStrip, TabStripItem) {
+	"sap/m/TabStripItem",
+	"sap/ui/core/Core"
+], function(qutils, createAndAppendDiv, TabStrip, TabStripItem, oCore) {
 	"use strict";
 
 	// prepare DOM
@@ -20,7 +21,7 @@ sap.ui.define([
 			});
 			this.sut.setHasSelect(true);
 			this.sut.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();

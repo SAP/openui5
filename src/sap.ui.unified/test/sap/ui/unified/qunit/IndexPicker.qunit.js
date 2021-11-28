@@ -3,15 +3,16 @@
 sap.ui.define([
 	"sap/ui/unified/calendar/IndexPicker",
 	"sap/ui/unified/DateRange",
-	"sap/ui/unified/calendar/CalendarDate"
-], function(IndexPicker, DateRange, CalendarDate) {
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/core/Core"
+], function(IndexPicker, DateRange, CalendarDate, oCore) {
 	"use strict";
 
 		QUnit.module("API ", {
 			beforeEach: function () {
 				this.oIP = new IndexPicker();
 				this.oIP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oIP.destroy();

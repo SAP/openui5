@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/SplitApp",
 	"sap/m/Page",
 	"sap/ui/util/Mobile",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(qutils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, waitForThemeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Core"
+], function(qutils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, waitForThemeApplied, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -63,7 +64,7 @@ sap.ui.define([
 
 	// Shell features
 	QUnit.test("Shell features", function(assert) {
-		var sExpectedAltForLogoImage = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO");
+		var sExpectedAltForLogoImage = oCore.getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO");
 		assert.equal(oShell.$("hdrTxt").text(), "Test Shell", "Title should be rendered");
 		assert.equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
 		assert.equal(oShell.$("logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
@@ -75,10 +76,10 @@ sap.ui.define([
 		});
 
 		oShellNoTitle.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
-		assert.ok(!sap.ui.getCore().byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
+		assert.ok(!oCore.byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
 
 		// clean up
 		oShellNoTitle.destroy();
@@ -118,7 +119,7 @@ sap.ui.define([
 			oShell.setBackgroundColor("#0f0");
 			oShell.setBackgroundOpacity(0.5);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var bgDiv = oShell.$("BG"),
 				style = window.getComputedStyle(bgDiv[0]);
@@ -137,7 +138,7 @@ sap.ui.define([
 			oShell.setBackgroundColor(null);
 			oShell.setBackgroundOpacity(1);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var bgDiv = oShell.$("BG"),
 				style = window.getComputedStyle(bgDiv[0]);
@@ -160,7 +161,7 @@ sap.ui.define([
 				oSetPropertySpy;
 
 			//arrange
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSetPropertySpy = this.spy(oShell, "setProperty");
 
 			//act
@@ -182,7 +183,7 @@ sap.ui.define([
 				oSetPropertySpy;
 
 			//arrange
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSetPropertySpy = this.spy(oShell, "setProperty");
 
 			//act
@@ -203,7 +204,7 @@ sap.ui.define([
 				oSetPropertySpy;
 
 			//arrange
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSetPropertySpy = this.spy(oShell, "setProperty");
 
 			//act
@@ -233,7 +234,7 @@ sap.ui.define([
 					oSetPropertySpy;
 
 			//arrange
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSetPropertySpy = this.spy(oShell, "setProperty");
 
 			//act
@@ -272,7 +273,7 @@ sap.ui.define([
 				};
 
 			//arrange
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oSetPropertySpy = this.spy(oShell, "setProperty");
 			oMobileSetIconSpy = this.spy(Mobile, "setIcons");
 
@@ -301,7 +302,7 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");
@@ -320,7 +321,7 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");
@@ -338,10 +339,10 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oShell.setTitleLevel("H4");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");
@@ -360,7 +361,7 @@ sap.ui.define([
 
 		// System under test
 		oShell.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $sTitle = oShell.$("hdr");

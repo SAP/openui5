@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	ColorPicker,
 	ColorPickerDisplayMode,
@@ -25,12 +26,13 @@ sap.ui.define([
 	qutils,
 	Device,
 	KeyCodes,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
 		var CONSTANTS = new ColorPicker()._getConstants(), // Get control constants
-			applyChanges = sap.ui.getCore().applyChanges;
+			applyChanges = oCore.applyChanges;
 
 		QUnit.module("sap.ui.unified.ColorPickerHelper");
 
@@ -142,7 +144,7 @@ sap.ui.define([
 
 		QUnit.test("RTL flag", function (oAssert) {
 			// Arrange
-			var bFrameworkRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+			var bFrameworkRtlMode = oCore.getConfiguration().getRTL();
 
 			// Assert
 			oAssert.strictEqual(this.oCP.bRtl, bFrameworkRtlMode,
@@ -250,7 +252,7 @@ sap.ui.define([
 
 		QUnit.test("Root ARIA attributes", function (oAssert) {
 			var $colorPickerRef = this.oCP.$(),
-				sExpectedRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("COLOR_PICKER_TITLE");
+				sExpectedRoledescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("COLOR_PICKER_TITLE");
 
 			oAssert.strictEqual($colorPickerRef.attr("role"), "group", "Color Picker has a 'group' role");
 			oAssert.strictEqual($colorPickerRef.attr("aria-roledescription"), sExpectedRoledescription, "roledescription contains control's name");
@@ -323,7 +325,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Radio buttons tooltips", function (oAssert) {
-			var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			var oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
 
 			// Assert
 			oAssert.strictEqual(this.oCP.oRbRGB.getTooltip(), oRB.getText("COLORPICKER_SELECT_RGB_TOOLTIP"),
@@ -387,14 +389,14 @@ sap.ui.define([
 
 			// act
 			oCP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
 
 			// act
 			oCP.setColorString("red");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.strictEqual(oFireChangeSpy.callCount, 0, "no events are fired on rendering");
 
@@ -436,7 +438,7 @@ sap.ui.define([
 			// Arrange
 			var oInput = new InputBase(),
 				sTooltipID = "COLORPICKER_HEX",
-				sTooltipResult = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText(sTooltipID),
+				sTooltipResult = oCore.getLibraryResourceBundle("sap.ui.unified").getText(sTooltipID),
 				oLabel,
 				oUnitLabel,
 				oHL;
@@ -682,7 +684,7 @@ sap.ui.define([
 
 		QUnit.test("Internal RTL flag", function (oAssert) {
 			// Arrange
-			var bFrameworkRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+			var bFrameworkRtlMode = oCore.getConfiguration().getRTL();
 
 			// Assert
 			oAssert.strictEqual(this.oCPBox.bRtl, bFrameworkRtlMode,

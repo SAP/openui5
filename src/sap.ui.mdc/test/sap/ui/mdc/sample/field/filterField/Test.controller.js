@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/enum/ConditionValidated"
+	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/core/Core"
 ], function(
 	Controller,
 	Filter,
@@ -19,14 +20,15 @@ sap.ui.define([
 	FilterConverter,
 	FilterOperatorUtil,
 	Operator,
-	ConditionValidated
+	ConditionValidated,
+	oCore
 ) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.base.sample.field.filterField.Test", {
 
 		onInit: function(oEvent) {
-			var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			var oFormatSettings = oCore.getConfiguration().getFormatSettings();
 			oFormatSettings.setUnitMappings({
 				"g": "mass-gram",
 				"kg": "mass-kilogram",

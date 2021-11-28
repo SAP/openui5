@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/includeStylesheet",
-	"require"
+	"require",
+	"sap/ui/core/Core"
 ], function(
 	createAndAppendDiv,
 	HTML,
@@ -30,7 +31,8 @@ sap.ui.define([
 	waitForThemeApplied,
 	jQuery,
 	includeStylesheet,
-	require
+	require,
+	oCore
 ) {
 	"use strict";
 
@@ -91,8 +93,8 @@ sap.ui.define([
 		var sNavButtonTooltip = jQuery("#myFirstPage-navButton").attr("title");
 		assert.ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
 		assert.ok(document.getElementById("qunit-header"), "Page content should be rendered");
-		assert.ok(sap.ui.getCore().byId("myFirstPage-intHeader").$().parent().is("header"), "header should be rendered as header tag");
-		assert.ok(sap.ui.getCore().byId("myFooter").$().parent().is("footer"), "footer should be rendered as footer tag");
+		assert.ok(oCore.byId("myFirstPage-intHeader").$().parent().is("header"), "header should be rendered as header tag");
+		assert.ok(oCore.byId("myFooter").$().parent().is("footer"), "footer should be rendered as footer tag");
 
 		// The following qunit is removed because of
 		// BCP: 1670157998
@@ -101,19 +103,19 @@ sap.ui.define([
 		/*assert.ok(parseInt(sap.ui.getCore().byId("mySubHeader").$().position().top, 10) >= parseInt(sap.ui.getCore().byId("myFirstPage-intHeader").$().position().top, 10) + parseInt(sap.ui.getCore().byId("myFirstPage-intHeader").$().outerHeight(), 10),
 					"subHeader should be directly below header");*/
 
-		assert.ok(sap.ui.getCore().byId("myFirstPage-intHeader").$().hasClass("sapMHeader-CTX"), "header should contain header context");
-		assert.ok(!sap.ui.getCore().byId("mySubHeader").$().hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
-		assert.ok(sap.ui.getCore().byId("myFooter").$().hasClass("sapMFooter-CTX"), "footer should contain footer context");
-		assert.ok(!sap.ui.getCore().byId("myFirstPage").$().hasClass("sapMPageBgList"), "Page content should not have list gray background color");
+		assert.ok(oCore.byId("myFirstPage-intHeader").$().hasClass("sapMHeader-CTX"), "header should contain header context");
+		assert.ok(!oCore.byId("mySubHeader").$().hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
+		assert.ok(oCore.byId("myFooter").$().hasClass("sapMFooter-CTX"), "footer should contain footer context");
+		assert.ok(!oCore.byId("myFirstPage").$().hasClass("sapMPageBgList"), "Page content should not have list gray background color");
 		oPage.setBackgroundDesign("List");
-		assert.ok(sap.ui.getCore().byId("myFirstPage").$().hasClass("sapMPageBgList"), "Page content should have list background color");
+		assert.ok(oCore.byId("myFirstPage").$().hasClass("sapMPageBgList"), "Page content should have list background color");
 		oPage.setBackgroundDesign("Standard");
-		assert.ok(sap.ui.getCore().byId("myFirstPage").$().hasClass("sapMPageBgStandard"), "Page content should have standard background color");
-		assert.ok(!sap.ui.getCore().byId("myFirstPage").$().hasClass("sapMPageBgList"), "Page content should not have list background color");
+		assert.ok(oCore.byId("myFirstPage").$().hasClass("sapMPageBgStandard"), "Page content should have standard background color");
+		assert.ok(!oCore.byId("myFirstPage").$().hasClass("sapMPageBgList"), "Page content should not have list background color");
 		oPage.setBackgroundDesign("Solid");
-		assert.ok(sap.ui.getCore().byId("myFirstPage").$().hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
+		assert.ok(oCore.byId("myFirstPage").$().hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
 		oPage.setBackgroundDesign("Transparent");
-		assert.ok(sap.ui.getCore().byId("myFirstPage").$().hasClass("sapMPageBgTransparent"), "Page content should be transparent");
+		assert.ok(oCore.byId("myFirstPage").$().hasClass("sapMPageBgTransparent"), "Page content should be transparent");
 		assert.equal(oPage.$("cont").hasClass("sapMPageEnableScrolling"), false, "In a page with scrolling disabled, no scroll-related class should be added");
 	});
 
@@ -123,7 +125,7 @@ sap.ui.define([
 		assert.equal(document.getElementById("mySecondPage-navButton"), undefined, "nav button should not be rendered");
 		assert.ok(document.getElementById("p2content"), "Page 2 content should be rendered");
 		oPage2.setBackgroundDesign("List");
-		assert.ok(sap.ui.getCore().byId("mySecondPage").$().hasClass("sapMPageBgList"), "Page 2 content should have list background color");
+		assert.ok(oCore.byId("mySecondPage").$().hasClass("sapMPageBgList"), "Page 2 content should have list background color");
 	});
 
 	QUnit.test("Page 3 rendered with no header", function(assert) {
@@ -152,7 +154,7 @@ sap.ui.define([
 		assert.equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 
 		oRenderOncePage.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
 		oRenderOncePage.rerender();
@@ -175,7 +177,7 @@ sap.ui.define([
 		assert.equal(iRenderCounter, 0, "Page should not be rendered directly after instantiation");
 
 		oRenderOncePage.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(iRenderCounter, 1, "Page should be rendered only once");
 
 		oRenderOncePage.rerender();
@@ -195,7 +197,7 @@ sap.ui.define([
 				content: "<div id='p4content'>another test content</div>"
 			})
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPageContentRef = oPage.getDomRef("cont");
 		var hasScroll = oPageContentRef.getBoundingClientRect().height < oPageContentRef.scrollHeight;
@@ -218,7 +220,7 @@ sap.ui.define([
 		});
 		oPage.setModel(oModel);
 		oPage.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oPage.getTitle(), oPage.$("title-inner").text(), "Title should be escaped properly when using curly braces.");
@@ -229,17 +231,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("showSubHeader", function(assert) {
-		var oSubHeader = sap.ui.getCore().byId("mySubHeader");
+		var oSubHeader = oCore.byId("mySubHeader");
 		assert.ok(oSubHeader.$().length, "subHeader should be rendered");
 
 
 		oPage.setShowSubHeader(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(document.getElementById("mySubHeader"), undefined, "subHeader should not be rendered when 'showSubHeader' is false");
 		assert.equal(jQuery("#myFirstPage-cont").css("top"), "48px", "top of Page content with subHeader not shown should be 48px (3rem)");
 
 		oPage.setShowSubHeader(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.getElementById("mySubHeader"), "subHeader should be rendered");
 		assert.equal(jQuery("#myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 	});
@@ -254,7 +256,7 @@ sap.ui.define([
 
 		oPage.placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(!!document.getElementById("myFooter"), true, "footer should be rendered");
 		assert.equal(oPage.getFooter().$().parent().hasClass("sapUiHidden"), true, "footer is hidden");
@@ -272,7 +274,7 @@ sap.ui.define([
 		done = assert.async();
 
 		oPage.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $footer = oPage.$().find(".sapMPageFooter").last();
 
@@ -280,7 +282,7 @@ sap.ui.define([
 
 		//Act
 		oPage.setShowFooter(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function() {
 			//Assert
@@ -301,7 +303,7 @@ sap.ui.define([
 				showFooter: false,
 				footer: oBar
 			}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
@@ -310,7 +312,7 @@ sap.ui.define([
 
 		// Act
 		oPage.setShowFooter(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
@@ -319,7 +321,7 @@ sap.ui.define([
 
 		// Act
 		oPage.setShowFooter(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
@@ -329,7 +331,7 @@ sap.ui.define([
 		// Act
 		oPage.setShowFooter(true);
 		oPage.setFooter(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
@@ -349,11 +351,11 @@ sap.ui.define([
 				oPage = new Page("myPage");
 
 		oPage.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oPage.setBusy(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		clock.tick(1000);
 
 		oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
@@ -365,12 +367,12 @@ sap.ui.define([
 
 		// Setup & Act
 		oPage.setBusy(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		clock.tick(1000);
 
 		oPage.setContentOnlyBusy(true);
 		oPage.setBusy(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		clock.tick(1000);
 
 		oBusyIndicator = [].filter.call(oPage.getDomRef().childNodes, function (oChild) {
@@ -393,25 +395,25 @@ sap.ui.define([
 		var oPage = new Page();
 
 		oPage.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oPage._navBtn, "Button should not be initialized");
 
 		oPage.setShowNavButton(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oPage._navBtn, "Button should be initialized");
 		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Default button type 'Back' should be propagated");
 
 		oPage.setShowNavButton(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oPage._navBtn.getDomRef(), "Button should not be rendered");
 
 		oPage.setShowNavButton(true);
 		oPage.setNavButtonType("Up");
 		oPage.setNavButtonText("Up");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oPage.getNavButtonType(), oPage._navBtn.getType(), "Type 'Up' should be set to the nav button");
 		assert.strictEqual(oPage._navBtn.getType(), "Up", "Up should be propagated to nav button of the page");
@@ -426,10 +428,10 @@ sap.ui.define([
 		QUnit.module("Scrolling");
 
 		var getScrollPos = function(sPageId) {
-			var fScrollLeft, scrollEnablement = sap.ui.getCore().byId(sPageId).getScrollDelegate();
+			var fScrollLeft, scrollEnablement = oCore.byId(sPageId).getScrollDelegate();
 
 			if (scrollEnablement._scroller) { // iScroll
-				var $Scroll = sap.ui.getCore().byId(sPageId + "-scroll").$();
+				var $Scroll = oCore.byId(sPageId + "-scroll").$();
 				if (Device.browser.mozilla) {
 					fScrollLeft = $Scroll.css("-moz-transform").split(" ")[5]; // "matrix(1, 0, 0, 1, 0, -99.9999)" => "99.9999)"
 				} else if (Device.browser.safari || Device.browser.chrome) {
@@ -470,7 +472,7 @@ sap.ui.define([
 				]
 			});
 			oPage4.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oPage4.scrollToElement(this.oTestButton);
 
@@ -490,7 +492,7 @@ sap.ui.define([
 				});
 
 			oPage5.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oScrollEnablement = oPage5.getScrollDelegate(),
 				oSpy = sinon.spy(oScrollEnablement, "scrollToElement");
@@ -518,7 +520,7 @@ sap.ui.define([
 
 			// Act
 			oContainer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oContainer.addStyleClass("sapUiNoContentPadding");
 			$containerContent = oContainer.$().find(sContentSelector);
 

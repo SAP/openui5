@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enum/ActionToolbarActionAlignment"
-], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment) {
+	"sap/ui/mdc/ActionToolbar", "sap/m/Button", "sap/m/Title", "sap/m/Text", "sap/ui/mdc/actiontoolbar/ActionToolbarAction", "sap/ui/mdc/enum/ActionToolbarActionAlignment", "sap/ui/core/Core"
+], function(ActionToolbar, Button, Title, Text, ActionToolbarAction, ActionToolbarActionAlignment, oCore) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.ActionToolbar - General", {
@@ -162,7 +162,7 @@ sap.ui.define([
 			this.oSpacer = this.oToolbarAddAggregations._oSpacer;
 			this.oEndActionsBeginSeparator = this.oToolbarAddAggregations._oEndActionsBeginSeparator;
 			this.oEndActionsEndSeparator = this.oToolbarAddAggregations._oEndActionsEndSeparator;
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			if (this.oToolbarAddAggregations) {

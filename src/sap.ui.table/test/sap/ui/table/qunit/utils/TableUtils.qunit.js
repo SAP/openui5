@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/table/RowSettings",
 	"sap/ui/base/Object",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
@@ -27,7 +28,8 @@ sap.ui.define([
 	RowSettings,
 	BaseObject,
 	ResourceBundle,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -82,7 +84,7 @@ sap.ui.define([
 			oTreeTable.setSelectionBehavior(sSelectionBehavior);
 			oTreeTable.setSelectionMode(sSelectionMode);
 			oTreeTable.setUseGroupMode(bGroup);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var bRes = TableUtils.isRowSelectionAllowed(oTreeTable);
 			assert.ok(bRes && bExpected || !bRes && !bExpected,
 				"isRowSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
@@ -113,7 +115,7 @@ sap.ui.define([
 			oTreeTable.setSelectionBehavior(sSelectionBehavior);
 			oTreeTable.setSelectionMode(sSelectionMode);
 			oTreeTable.setUseGroupMode(bGroup);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var bRes = TableUtils.isRowSelectorSelectionAllowed(oTreeTable);
 			assert.ok(bRes && bExpected || !bRes && !bExpected,
 				"isRowSelectorSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
@@ -194,7 +196,7 @@ sap.ui.define([
 		oTable.getColumns()[2].setHeaderSpan(2);
 		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
 		oTable.setCreationRow(new CreationRow());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		/* Data Cells */
 
@@ -352,12 +354,12 @@ sap.ui.define([
 		assert.ok(TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'MultiToggle'");
 
 		oTable.setSelectionMode(SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'None'");
 
 		oTable.setSelectionMode(SelectionMode.MultiToggle);
 		oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.RowOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionBehavior 'RowOnly'");
 	});
 
@@ -452,7 +454,7 @@ sap.ui.define([
 		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount, "All columns visible");
 
 		oTable.getColumns()[1].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount - 1, "1 column hidden");
 	});
@@ -460,16 +462,16 @@ sap.ui.define([
 	QUnit.test("getHeaderRowCount", function(assert) {
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 1, "Initial Number of header rows");
 		oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Headers hidden");
 		oTable.setColumnHeaderVisible(true);
 		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 		oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 2, "Multiline Headers");
 		oTable.setColumnHeaderVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(TableUtils.getHeaderRowCount(oTable), 0, "Multiline Headers hidden");
 	});
 
@@ -521,7 +523,7 @@ sap.ui.define([
 		function testLocal(oRowIndicator) {
 			oTable.clearSelection();
 			oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.Row);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var iRowIndex = 0;
 			if (oRowIndicator === parseInt(oRowIndicator)) {
@@ -554,7 +556,7 @@ sap.ui.define([
 
 		// If row selection is not allowed on data cells the selection state should not change.
 		oTable.setSelectionBehavior(TableLibrary.SelectionBehavior.RowSelector);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oElem = getCell(0, 0);
 		TableUtils.toggleRowSelection(oTable, oElem); // Toggle
@@ -600,7 +602,7 @@ sap.ui.define([
 
 	QUnit.test("getRowColCell", function(assert) {
 		oTable.getColumns()[2].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInfo = TableUtils.getRowColCell(oTable, 0, 0, false);
 		assert.strictEqual(oInfo.row, oTable.getRows()[0], "Row 1");
@@ -659,7 +661,7 @@ sap.ui.define([
 
 		oTable.setEnableGrouping(true);
 		oTable.setGroupBy(oTable.getColumns()[1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInfo = TableUtils.getRowColCell(oTable, 1, 0, false);
 		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
@@ -699,7 +701,7 @@ sap.ui.define([
 		var oMyColumn = new MyColumn({template: new TestControl({text: "Custom"})});
 		oTable.insertColumn(oMyColumn, 0);
 		oTable.setEnableGrouping(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInfo = TableUtils.getRowColCell(oTable, 1, 0, true);
 		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
@@ -712,7 +714,7 @@ sap.ui.define([
 		function initTest(iFixedBottomCount, iRowCount) {
 			oTable.setFixedBottomRowCount(iFixedBottomCount);
 			oTable.setVisibleRowCount(iRowCount);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 
 		initTest(0, iNumberOfRows - 3);
@@ -892,18 +894,18 @@ sap.ui.define([
 		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable), "The busy indicator is not visible: Returned false");
 
 		oTable.setBusy(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is visible: Returned true");
 
 		oTable.getRows()[0].getCells()[0].setBusyIndicatorDelay(0);
 		oTable.getRows()[0].getCells()[0].setBusy(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is visible, and a cells busy indicator is visible: Returned true");
 
 		oTable.setBusy(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable),
 			"The tables busy indicator is not visible, but a cells busy indicator is visible: Returned false");
 	});
@@ -940,7 +942,7 @@ sap.ui.define([
 		oTable.setVisibleRowCount(iVisibleRowCount);
 		oTable.setFixedRowCount(iFixedTop);
 		oTable.setFixedBottomRowCount(iFixedBottom);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (var j = 0; j < 2; j++) {
 			for (var i = 0; i < iVisibleRowCount; i++) {
@@ -957,7 +959,7 @@ sap.ui.define([
 		oTable.setRowActionTemplate(new RowAction());
 		oTable.getColumns()[0].setCreationTemplate(new TestInputControl());
 		oTable.setCreationRow(new CreationRow());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(TableUtils.getCell(), null, "Returned null: Invalid input");
 		assert.strictEqual(TableUtils.getCell(oTable), null, "Returned null: Invalid input");
@@ -994,7 +996,7 @@ sap.ui.define([
 		var pPromise;
 		var oBundle;
 		var oPreviousBundle;
-		var sOriginalLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sOriginalLanguage = oCore.getConfiguration().getLanguage();
 		var sTestLanguageA = sOriginalLanguage === "en-US" ? "de-DE" : "en-US";
 		var sTestLanguageB = sOriginalLanguage === "en-US" ? "fr-FR" : "en-US";
 		var fnOnLocalizationChanged = Table.prototype.onlocalizationChanged;
@@ -1008,7 +1010,7 @@ sap.ui.define([
 		assert.ok(oBundle instanceof ResourceBundle, "{async: false, reload: false} - Returned a bundle");
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Returned the already loaded bundle");
 
-		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageA);
+		oCore.getConfiguration().setLanguage(sTestLanguageA);
 
 		oPreviousBundle = oBundle;
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
@@ -1021,7 +1023,7 @@ sap.ui.define([
 
 		/* Asynchronous */
 
-		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageB);
+		oCore.getConfiguration().setLanguage(sTestLanguageB);
 
 		pPromise = TableUtils.getResourceBundle({async: true});
 		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Returned a Promise");
@@ -1047,7 +1049,7 @@ sap.ui.define([
 			assert.strictEqual(oBundle, oPreviousBundle, "Promise returned the already loaded bundle");
 		}).then(function() {
 			// Restore
-			sap.ui.getCore().getConfiguration().setLanguage(sOriginalLanguage);
+			oCore.getConfiguration().setLanguage(sOriginalLanguage);
 			Table.prototype.onlocalizationChanged = fnOnLocalizationChanged;
 
 			done();
@@ -1595,7 +1597,7 @@ sap.ui.define([
 			TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "FocusTab", true, null, true);
 			TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "NoTab", true, null, false);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			destroyTables();

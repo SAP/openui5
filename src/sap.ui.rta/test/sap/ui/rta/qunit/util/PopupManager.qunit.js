@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	DesignTime,
 	RuntimeAuthoring,
@@ -45,7 +46,8 @@ sap.ui.define([
 	XMLView,
 	FlSettings,
 	FlUtils,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -76,7 +78,7 @@ sap.ui.define([
 		component: oComp
 	});
 	oComponentContainer.placeAt("qunit-fixture");
-	sap.ui.getCore().applyChanges();
+	oCore.applyChanges();
 
 	function findOverlay(oElement, oDesignTime) {
 		var aOverlays = oDesignTime.getElementOverlays();
@@ -194,7 +196,7 @@ sap.ui.define([
 				rootControl: oComp.getAggregation("rootControl")
 			});
 			this.oRta._$document = jQuery(document);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var oToolbarPromise = this.oRta._createToolsMenu({}).then(function() {
 				return this.oRta.getToolbar().show();
 			}.bind(this));
@@ -680,7 +682,7 @@ sap.ui.define([
 				assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
 				this.oRta._oDesignTime.attachEventOnce("synced", function() {
 					assert.ok(findOverlay(this.oDialog, this.oRta._oDesignTime), "then overlay exists for root dialog element");
-					assert.ok(findOverlay(sap.ui.getCore().byId("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
+					assert.ok(findOverlay(oCore.byId("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
 
 					this.oDialog.attachAfterClose(function() {
 						assert.notEqual(this.fnRemoveDialogInstanceSpy.callCount, 0, "then removeRootElement from DesignTime called at least once");

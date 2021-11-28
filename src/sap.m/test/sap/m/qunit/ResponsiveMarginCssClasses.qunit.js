@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/base/util/UriParameters",
+	"sap/ui/core/Core",
 	"sap/ui/layout/form/ResponsiveGridLayout" // form layout used by SimpleForm
-], function(Component, ComponentContainer, UriParameters) {
+], function(Component, ComponentContainer, UriParameters, oCore) {
 	"use strict";
 
 	sap.ui.define("margin/qunit/controller.controller", [
@@ -65,7 +66,7 @@ sap.ui.define([
 			var oComponentContainer = new ComponentContainer();
 			oComponentContainer.setComponent(oComponent);
 			oComponentContainer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oTestView = oComponent.getRootControl(),
 				oPage = oTestView.byId('page'),
@@ -97,7 +98,7 @@ sap.ui.define([
 				}
 				oControl.addStyleClass(sMarginClass);
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Check values
 			assert.equal(oPage.$().css(sCssProperty), sExpectedMarginValue, sCssProperty + " Page " +  sExpectedMarginValue);

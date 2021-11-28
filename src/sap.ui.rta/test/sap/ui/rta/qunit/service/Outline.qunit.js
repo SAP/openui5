@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"testdata/StaticDesigntimeMetadata",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	RuntimeAuthoring,
 	Plugin,
@@ -45,7 +46,8 @@ sap.ui.define([
 	Controller,
 	JSONModel,
 	StaticDesigntimeMetadata,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -140,7 +142,7 @@ sap.ui.define([
 				height: "100%"
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -351,7 +353,7 @@ sap.ui.define([
 				height: "100%"
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oComp,
@@ -445,7 +447,7 @@ sap.ui.define([
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
 			this.oLayout.addContent(new Button("newButton")); //inserts new overlay
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("when setEditable is called for an existing overlay", function (assert) {
@@ -577,7 +579,7 @@ sap.ui.define([
 					content: [new Button("button2")]
 				});
 				oOuterLayout.placeAt('qunit-fixture');
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oRta._oDesignTime.addRootElement(oOuterLayout);
 				this.oOutline.attachEventOnce("update", function (aUpdates) {
@@ -634,14 +636,14 @@ sap.ui.define([
 	}
 
 	function _beforeEachExtensionPoint (sXmlView, oController) {
-		sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 		sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
 			.then(function (oXmlView) {
 				this.oXmlView = oXmlView;
 				oXmlView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				return new RuntimeAuthoring({
 					showToolbars: false,
 					rootControl: this.oXmlView

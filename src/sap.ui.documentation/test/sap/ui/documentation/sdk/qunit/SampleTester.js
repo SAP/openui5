@@ -10,9 +10,21 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(Log, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page, jQuery, URI) {
+], function(
+	Log,
+	Component,
+	ComponentContainer,
+	LibraryInfo,
+	ODataModel,
+	App,
+	Page,
+	jQuery,
+	URI,
+	oCore
+) {
 
 	"use strict";
 
@@ -104,7 +116,7 @@ sap.ui.define([
 		oLibInfo._getDocuIndex(sLibraryName, function(oData) {
 
 			// wait with test creation until all libs are loaded
-			sap.ui.getCore().attachInit(function() {
+			oCore.attachInit(function() {
 				this._createTests(oData && oData.explored);
 			}.bind(this));
 

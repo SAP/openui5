@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/m/ObjectMarker",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +23,8 @@ sap.ui.define([
 	jQuery,
 	Device,
 	ObjectMarker,
-	mobileLibrary
+	mobileLibrary,
+	oCore
 ) {
 	"use strict";
 
@@ -1361,7 +1363,7 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 		assert.ok(document.getElementById("favorite"), "marker favorite should be rendered.");
@@ -1380,13 +1382,13 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $allRows = jQuery("#markersOH .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
 
 		oObjectHeader.insertMarker(marker, 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 
@@ -1406,12 +1408,12 @@ sap.ui.define([
 
 		// System under test
 		oObjectHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("flag"), "marker flag should be rendered.");
 
 		oObjectHeader.removeAllMarkers();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $allRows = jQuery("#markersOH .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");

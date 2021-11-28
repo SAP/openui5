@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	jQuery,
 	AppVariantManager,
@@ -45,7 +46,8 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	includes,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -72,7 +74,7 @@ sap.ui.define([
 			var fnCancel;
 
 			this.oAppVariantManager._openDialog(fnCreate, fnCancel);
-			var oAppVariantDialog = sap.ui.getCore().byId("appVariantDialog");
+			var oAppVariantDialog = oCore.byId("appVariantDialog");
 			oAppVariantDialog.fireCreate();
 
 			assert.equal(bCreate, true, "then the create event is correctly triggered");
@@ -87,7 +89,7 @@ sap.ui.define([
 			};
 
 			this.oAppVariantManager._openDialog(fnCreate, fnCancel);
-			var oAppVariantDialog = sap.ui.getCore().byId("appVariantDialog");
+			var oAppVariantDialog = oCore.byId("appVariantDialog");
 			oAppVariantDialog.fireCancel();
 
 			assert.equal(bCancel, true, "then the cancel event is correctly triggered");

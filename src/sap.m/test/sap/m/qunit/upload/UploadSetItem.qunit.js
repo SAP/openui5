@@ -15,9 +15,10 @@ sap.ui.define([
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
 	"sap/ui/core/IconPool",
 	"sap/m/upload/Uploader",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/core/Core"
 ], function (jQuery, KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore) {
 	"use strict";
 
 	function getData() {
@@ -47,7 +48,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();
@@ -118,7 +119,7 @@ sap.ui.define([
 		oItem._getDeleteButton().firePress();
 
 		// Close the dialog
-		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		assert.ok(oDialog, "Remove dialog should now be presented.");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
@@ -165,12 +166,12 @@ sap.ui.define([
 		assert.equal(oDeleteSpy.callCount, 1, "Upload set item handler for removing a file should be called.");
 
 		// Close the dialog
-		var oDialog = sap.ui.getCore().byId(this.oUploadSet.getId() + "-deleteDialog");
+		var oDialog = oCore.byId(this.oUploadSet.getId() + "-deleteDialog");
 		oDialog.getButtons()[1].firePress();
 		oDialog.destroy();
 
 		oItem._setInEditMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oItem.$("fileNameEdit").addClass( "sapMInputFocused" );
 		this.oUploadSet.onkeydown({
 			target: oTarget,
@@ -287,7 +288,7 @@ sap.ui.define([
 
 		//Act
 		this.oUploadSet.insertItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oIcon = this.oUploadSet.getItems()[0]._oIcon.getSrc();
 
 		//Assert
@@ -312,7 +313,7 @@ sap.ui.define([
 		this.oUploadSet.insertHeaderField(oUSHeaderField);
 
 		this.oUploadSet.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		this.oUploadSet._uploadItemIfGoodToGo(oItem);
@@ -345,7 +346,7 @@ sap.ui.define([
 		oItem.insertHeaderField(oUSIHeaderField);
 
 		this.oUploadSet.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		this.oUploadSet._uploadItemIfGoodToGo(oItem);
@@ -365,7 +366,7 @@ sap.ui.define([
 		this.oUploadSet.setAggregation("uploader", oUploader);
 
 		this.oUploadSet.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oUploader.uploadItem(oItem);

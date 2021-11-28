@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Slider",
 	"sap/m/Dialog",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ], function(
 		Controller,
 		Filter,
@@ -35,7 +36,8 @@ sap.ui.define([
 		MessageToast,
 		Slider,
 		Dialog,
-		Button
+		Button,
+		oCore
 	) {
 	"use strict";
 
@@ -44,7 +46,7 @@ sap.ui.define([
 		onInit: function() {
 
 			// add messageManager. TODO: should work automatically
-			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
+			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			// create a ConditionModel for the listbinding
 			var oCM = new ConditionModel();

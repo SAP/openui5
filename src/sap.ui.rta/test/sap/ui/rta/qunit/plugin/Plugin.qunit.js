@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	Button,
 	Label,
@@ -37,7 +38,8 @@ sap.ui.define([
 	Plugin,
 	Remove,
 	Rename,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -99,7 +101,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -296,7 +298,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
@@ -346,7 +348,7 @@ sap.ui.define([
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
@@ -494,7 +496,7 @@ sap.ui.define([
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oPlugin = new Plugin({
 				commandFactory: new CommandFactory()
@@ -583,7 +585,7 @@ sap.ui.define([
 				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oForm = this.oSimpleForm.getAggregation("form");
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
@@ -709,7 +711,7 @@ sap.ui.define([
 				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 

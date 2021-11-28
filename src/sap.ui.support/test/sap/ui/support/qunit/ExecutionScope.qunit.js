@@ -11,7 +11,8 @@ sap.ui.define([
 		'sap/m/ComboBox',
 		'sap/m/Input',
 		'sap/m/List',
-		'sap/m/StandardListItem'],
+		'sap/m/StandardListItem',
+		'sap/ui/core/Core'],
 	function(ExecutionScope,
 			 JSONModel,
 			 CustomData,
@@ -23,7 +24,8 @@ sap.ui.define([
 			 ComboBox,
 			 Input,
 			 List,
-			 StandardListItem) {
+			 StandardListItem,
+			 oCore) {
 		'use strict';
 
 		// list setup code copied from list.qunit
@@ -93,7 +95,7 @@ sap.ui.define([
 
 		var core;
 
-		sap.ui.getCore().registerPlugin({
+		oCore.registerPlugin({
 			startPlugin: function (oCore) {
 				core = oCore;
 			}

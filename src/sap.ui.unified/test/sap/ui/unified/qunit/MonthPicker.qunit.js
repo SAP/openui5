@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
-], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(MonthPicker, DateRange, CalendarDate, Device, KeyCodes, jQuery, oCore) {
 	"use strict";
 	(function () {
 
@@ -16,7 +17,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oMP = new MonthPicker();
 				this.oMP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oMP.destroy();
@@ -171,12 +172,12 @@ sap.ui.define([
 				iFocusedIndex;
 
 			this.MP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oGridItemRefs = this.MP._oItemNavigation.getItemDomRefs();
 
 			// Act
 			this.MP.setMonth(5);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			iFocusedIndex = this.MP._oItemNavigation.getFocusedIndex();
 
 			// Assert
@@ -276,20 +277,20 @@ sap.ui.define([
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			aRefs = this.MP.$().find(".sapUiCalItem");
 
 			// act
 			this.MP._selectMonth(0);
 			this.MP._handleMousedown(oFakeMousedownEvent, 6);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getStartDate().getMonth(), 6, "July is selected start month");
 
 			// act
 			this.MP.onmouseup(oFakeMouseupEvent);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getEndDate().getMonth(), 8, "September is selected end month");
@@ -450,7 +451,7 @@ sap.ui.define([
 				aRefs;
 
 			this.MP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			aRefs = this.MP.$().find(".sapUiCalItem");
 
 
@@ -469,7 +470,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oMP = new MonthPicker();
 				this.oMP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oMP.destroy();
@@ -479,7 +480,7 @@ sap.ui.define([
 
 		QUnit.test("Control description", function (assert) {
 			// Arrange
-			var sControlDescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER");
+			var sControlDescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("MONTH_PICKER");
 
 			// Assert
 			assert.strictEqual(this.oMP.$().attr("aria-roledescription"), sControlDescription , "Control description is added in aria-roledescription");
@@ -489,7 +490,7 @@ sap.ui.define([
 			beforeEach: function() {
 				this.MP = new MonthPicker();
 				this.MP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.MP.destroy();

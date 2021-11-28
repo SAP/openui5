@@ -10434,7 +10434,7 @@ sap.ui.define([
 			var oAccDomRef;
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oAccDomRef = document.getElementById(oSelect.getValueStateMessageId() + "-sr");
 
 			//Assert
@@ -10452,7 +10452,7 @@ sap.ui.define([
 			});
 
 			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			//Assert
 			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-describedby"), oSelect.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");

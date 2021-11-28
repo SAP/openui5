@@ -1,7 +1,23 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils", "sap/ui/qunit/utils/createAndAppendDiv", "sap/m/P13nColumnsPanel", "sap/m/P13nColumnsItem", "sap/m/P13nItem", "sap/ui/model/json/JSONModel", "sap/ui/events/jquery/EventExtension"
-], function(qutils, createAndAppendDiv, P13nColumnsPanel, P13nColumnsItem, P13nItem, JSONModel, EventExtension) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/m/P13nColumnsPanel",
+	"sap/m/P13nColumnsItem",
+	"sap/m/P13nItem",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/core/Core"
+], function(
+	qutils,
+	createAndAppendDiv,
+	P13nColumnsPanel,
+	P13nColumnsItem,
+	P13nItem,
+	JSONModel,
+	EventExtension,
+	oCore
+) {
 	"use strict";
 
 	// prepare DOM
@@ -23,7 +39,7 @@ sap.ui.define([
 	QUnit.test("Show panel", function(assert) {
 		var oPanel = new P13nColumnsPanel();
 		oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oPanel.getDomRef());
 		oPanel.destroy();
 	});
@@ -59,7 +75,7 @@ sap.ui.define([
 			]
 		});
 		oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oPanel.$().find("table"));
 		assert.equal(oPanel.$().find("td").find("span").length, 2);
@@ -98,7 +114,7 @@ sap.ui.define([
 			]
 		});
 		oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oPanel.$().find("table"));
 		assert.equal(oPanel.$().find("td").find("span").length, 2);
@@ -161,7 +177,7 @@ sap.ui.define([
 			]
 		}));
 		oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oPanel.$().find("table"));
 		assert.equal(oPanel.$().find("td").find("span").length, 2);
@@ -229,7 +245,7 @@ sap.ui.define([
 			]
 		}));
 		oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oPanel.$().find("table"));
 		assert.equal(oPanel.$().find("td").find("span").length, 3);
@@ -308,7 +324,7 @@ sap.ui.define([
 			]
 		}));
 		oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	QUnit.test("check item focus - move to top", function(assert){
@@ -320,7 +336,7 @@ sap.ui.define([
 		sinon.stub(this.oPanel, "_getMarkedTableItem").returns(oLastItem);
 		this.oPanel.onPressButtonMoveToTop();
 
-		assert.equal(sap.ui.getCore().getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button focused");
+		assert.equal(oCore.getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button focused");
 	});
 
 	QUnit.test("check item focus - move down", function(assert){
@@ -331,7 +347,7 @@ sap.ui.define([
 		sinon.stub(this.oPanel, "_getMarkedTableItem").returns(oFirstItem);
 		this.oPanel.onPressButtonMoveDown();
 
-		assert.notEqual(sap.ui.getCore().getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button is not focused");
+		assert.notEqual(oCore.getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button is not focused");
 	});
 
 	QUnit.test("check item focus - move bottom", function(assert){
@@ -342,7 +358,7 @@ sap.ui.define([
 		sinon.stub(this.oPanel, "_getMarkedTableItem").returns(oFirstItem);
 		this.oPanel.onPressButtonMoveToBottom();
 
-		assert.equal(sap.ui.getCore().getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button is not focused");
+		assert.equal(oCore.getCurrentFocusedControlId(), this.oPanel.getId() + "-showSelected", "Show selected button is not focused");
 	});
 
 	QUnit.test("selected B after selected A", function(assert) {
@@ -460,7 +476,7 @@ sap.ui.define([
 			]
 		}));
 		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act: B, A, C -> A, B, C
 		this.oPanel.onPressButtonMoveUp();
@@ -510,7 +526,7 @@ sap.ui.define([
 			]
 		}));
 		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act: B, A, C -> C, B, A
 		this.oPanel.onPressButtonMoveToTop();
@@ -577,7 +593,7 @@ sap.ui.define([
 				]
 			}));
 			this.oPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();
@@ -625,7 +641,7 @@ sap.ui.define([
 	});
 	QUnit.test("Shall check onBeforeNavigationFrom", function(assert) {
 		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced");
 		assert.strictEqual(this.oPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
@@ -660,7 +676,7 @@ sap.ui.define([
 			]
 		}));
 		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced as threshold is not reached");
 	});
 
@@ -693,7 +709,7 @@ sap.ui.define([
 			]
 		}));
 		this.oPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), false, "navigation validation shall be influenced as threshold is reached");
 	});
@@ -749,7 +765,7 @@ sap.ui.define([
 			this.oPanel.setModel(new JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();
@@ -917,7 +933,7 @@ sap.ui.define([
 			this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();

@@ -22,7 +22,7 @@ sap.ui.define([
 			//Currency with default values
 			this.sut = new Currency();
 			this.sut.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.sut.destroy();
@@ -80,28 +80,28 @@ sap.ui.define([
 		this.sut.setValue(45012.91);
 		this.sut.setCurrency("EUR");
 		this.sut.setUseSymbol(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.fnGetRenderedValue(), "45,012.91", "Default formatting for EUR");
 
 		this.sut.setMaxPrecision(0);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.fnGetRenderedValue(), "45,012", "Format number without precision in EUR");
 
 		this.sut.setMaxPrecision(-1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
 
 		this.sut.setCurrency("JPY");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
 
 		this.sut.setMaxPrecision(0);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.fnGetRenderedValue(), "45,013", "Format number without precision in JPY");
 
 		this.sut.setMaxPrecision(2);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.fnGetRenderedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
 	});
 
@@ -109,16 +109,16 @@ sap.ui.define([
 		//arrange
 		this.sut.setCurrency("USD");
 		this.sut.setValue(55.21);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		//assert
 		assert.strictEqual(this.fnGetRenderedValue(), "55.21", "The default maxPrecision value resulted in adding one figure space to the back of the value");
 		//arrange
 		this.sut.setMaxPrecision(5);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		//assert
 		assert.strictEqual(this.fnGetRenderedValue(), "55.21\u2007\u2007\u2007", "New maxPrecision value added two more figure spaces to the back of the value");
 		this.sut.setMaxPrecision(1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		//assert
 		assert.strictEqual(this.fnGetRenderedValue(), "55.2", "New maxPrecision value subtracted the value with one");
 	});
@@ -127,12 +127,12 @@ sap.ui.define([
 		//arrange
 		this.sut.setCurrency("*");
 		this.sut.setValue(123.23);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		//assert
 		assert.strictEqual(this.fnGetRenderedValue(), "", "Nothing is rendered even when change value");
 		//arrange
 		this.sut.setCurrency("BGN");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		//assert
 		assert.strictEqual(this.fnGetRenderedValue(), "123.23", "Value is rendered when currency is other than *");
 	});
@@ -267,7 +267,7 @@ sap.ui.define([
 					useSymbol: true
 				}]
 			};
-			sap.ui.getCore().setModel(new JSONModel(this.oData));
+			Core.setModel(new JSONModel(this.oData));
 			this.sut = new VBox({});
 			this.sut.bindAggregation("items", "/currencyCollection", new Currency({
 				value: "{value}",
@@ -276,7 +276,7 @@ sap.ui.define([
 				useSymbol: "{useSymbol}"
 			}));
 			this.sut.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -313,7 +313,7 @@ sap.ui.define([
 			});
 			this.oCurrencyRenderer = this.oCurrency.getRenderer();
 			this.oCurrency.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.sandbox.spy(this.oCurrency, '_renderValue');
 			this.sandbox.spy(this.oCurrency, '_renderCurrency');
@@ -352,14 +352,14 @@ sap.ui.define([
 		// Arrange
 		this.oCurrency.setCurrency("*");
 		this.oCurrency.setValue(120);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Resetting counters after modification
 		this.sandbox.reset();
 
 		// Act
 		this.oCurrency.setCurrency("USD");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
@@ -370,7 +370,7 @@ sap.ui.define([
 
 		// Act
 		this.oCurrency.setCurrency("*");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once");
@@ -383,7 +383,7 @@ sap.ui.define([
 		// Arrange
 		this.oCurrency.setValue(50.99);
 		this.oCurrency.setUseSymbol(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Resetting counters after modification
 		this.sandbox.reset();
@@ -432,14 +432,14 @@ sap.ui.define([
 					currency: "*"
 				}]
 			};
-			sap.ui.getCore().setModel(new JSONModel(this.oData));
+			Core.setModel(new JSONModel(this.oData));
 			this.oVBox = new VBox({});
 			this.oVBox.bindAggregation("items", "/currencyCollection", new Currency({
 				value: "{value}",
 				currency: "{currency}"
 			}));
 			this.oVBox.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.aControls = this.oVBox.getItems();
 		},
@@ -472,7 +472,7 @@ sap.ui.define([
 			oCurrency = new Currency({id: "cDir", value: 100, currency: "EUR"});
 
 		oCurrency.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		dirText = jQuery("#cDir").find(".sapUiUfdCurrencyValue").attr("dir");
 		assert.strictEqual(dirText, "ltr", "Text direction should be set to ltr");
@@ -483,19 +483,19 @@ sap.ui.define([
 	QUnit.test("Currency value dir in RTL", function(assert) {
 		var dirText,
 			oCurrency = new Currency({id: "cDir", value: 100, currency: "EUR"}),
-			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bRTL = Core.getConfiguration().getRTL();
 
 		// Arrange
-		sap.ui.getCore().getConfiguration().setRTL(true);
+		Core.getConfiguration().setRTL(true);
 
 		oCurrency.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		dirText = jQuery("#cDir").find(".sapUiUfdCurrencyValue").attr("dir");
 		assert.strictEqual(dirText, "ltr", "Text direction should be set to ltr in RTL mode");
 
 		// Clean up
-		sap.ui.getCore().getConfiguration().setRTL(bRTL);
+		Core.getConfiguration().setRTL(bRTL);
 		oCurrency.destroy();
 	});
 

@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/m/P13nSortPanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/P13nItem",
-	"sap/m/P13nSortItem"
+	"sap/m/P13nSortItem",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	P13nSortPanel,
 	JSONModel,
 	P13nItem,
-	P13nSortItem
+	P13nSortItem,
+	oCore
 ) {
 	"use strict";
 
@@ -78,7 +80,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
@@ -96,7 +98,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");
@@ -114,7 +116,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		var nItems = 2;
@@ -162,7 +164,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// Remove item
@@ -206,7 +208,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
@@ -246,7 +248,7 @@ sap.ui.define([
 		});
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -263,7 +265,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oP13nSortPanel.addItem(new P13nItem({
 			columnKey: "c0",
@@ -288,7 +290,7 @@ sap.ui.define([
 			columnKey: "c0",
 			operation: "Descending"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -307,7 +309,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nSortPanel.getItems().length, 3, "length of getItems should be 3");

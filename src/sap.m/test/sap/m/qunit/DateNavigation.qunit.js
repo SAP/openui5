@@ -3,16 +3,18 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	'sap/ui/unified/library',
-	"sap/m/delegate/DateNavigation"
+	"sap/m/delegate/DateNavigation",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	unifiedLibrary,
-	DateNavigation
+	DateNavigation,
+	oCore
 ) {
 		"use strict";
 
 		// first day of the week needs to be fixed (Monday)
-		sap.ui.getCore().getConfiguration().setLanguage("en_GB");
+		oCore.getConfiguration().setLanguage("en_GB");
 
 		var Periods = unifiedLibrary.CalendarIntervalType;
 

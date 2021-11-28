@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	CommandFactory,
 	DragDropPlugin,
@@ -41,7 +42,8 @@ sap.ui.define([
 	Bar,
 	ComponentContainer,
 	JSONModel,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -90,7 +92,7 @@ sap.ui.define([
 		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
 		before: function() {
 			QUnit.config.fixture = null;
-			var oComp = sap.ui.getCore().createComponent({
+			var oComp = oCore.createComponent({
 				name: "sap.ui.rta.test.additionalElements",
 				id: "Comp1",
 				settings: {
@@ -104,9 +106,9 @@ sap.ui.define([
 			this.oCompCont = new ComponentContainer({
 				component: oComp
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return oComp.oView.then(function() {
-				this.oView = sap.ui.getCore().byId("Comp1---idMain1");
+				this.oView = oCore.byId("Comp1---idMain1");
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
@@ -124,7 +126,7 @@ sap.ui.define([
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 				var oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
 				var oBoundGroupElement = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1].getGroupElements()[0];
@@ -249,7 +251,7 @@ sap.ui.define([
 			this.oDragDropPlugin.setCommandFactory(oCommandFactory);
 
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -260,11 +262,11 @@ sap.ui.define([
 
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
-				this.oGroup1 = sap.ui.getCore().byId("group1");
-				this.oGroup2 = sap.ui.getCore().byId("group2");
-				this.oGroup3 = sap.ui.getCore().byId("form1").getGroups()[1];
+				this.oGroup1 = oCore.byId("group1");
+				this.oGroup2 = oCore.byId("group2");
+				this.oGroup3 = oCore.byId("form1").getGroups()[1];
 
 				this.oGroup1AggrOverlay = OverlayRegistry.getOverlay(this.oGroup1).getAggregationOverlay("formElements");
 				this.oGroup2AggrOverlay = OverlayRegistry.getOverlay(this.oGroup2).getAggregationOverlay("formElements");
@@ -338,7 +340,7 @@ sap.ui.define([
 			});
 
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -441,7 +443,7 @@ sap.ui.define([
 			});
 
 			this.oOuterLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -523,7 +525,7 @@ sap.ui.define([
 			});
 
 			this.oSmartForm1.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// stub designtime metadata
 			var oSmartFormPropagation = fnCreatePropagateRelevantContainerObj(true);
@@ -655,7 +657,7 @@ sap.ui.define([
 			});
 
 			this.oBar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// stub designtime metadata
 			var oBarMetadata = new ElementDesignTimeMetadata({
@@ -766,7 +768,7 @@ sap.ui.define([
 			});
 
 			this.oBar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// stub designtime metadata
 			var oBarMetadata = new ElementDesignTimeMetadata({
@@ -869,7 +871,7 @@ sap.ui.define([
 				content: [this.oBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDragDropPlugin = new DragDropPlugin({
 				commandFactory: new CommandFactory()

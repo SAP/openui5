@@ -8,8 +8,9 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	"sap/ui/Device",
 	"sap/m/UploadCollectionItem",
 	"sap/m/ObjectMarker",
-	"sap/base/Log"
-], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (jQuery, UploadCollection, JSONModel, Event, Device, UploadCollectionItem, ObjectMarker, Log, oCore) {
 	"use strict";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
@@ -115,7 +116,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.stub(jQuery.prototype, "trigger");
 		},
 		afterEach: function () {
@@ -199,7 +200,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 				}
 			}).setModel(new JSONModel(oData));
 			this.oUploadCollection.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.aFile = [{
 				name: "file",
 				size: 1,
@@ -224,7 +225,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 			newValue: this.aFile[0].name
 		});
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		assert.deepEqual(this.oUploadCollection.aItems.length, 5, "The new file is in the UploadCollection.aItems");
 		assert.deepEqual(this.oUploadCollection._oList.getItems().length, 4, "The new file is not in the aggregated list");
@@ -241,7 +242,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 			newValue: this.aFile[0].name
 		});
 		this.oUploadCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		assert.ok(this.oUploadCollection._oNumberOfAttachmentsTitle.getText().indexOf("4") > -1, "Number of attachments is reduced in case of uploadingNewVersion");
 	});

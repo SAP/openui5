@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +31,8 @@ sap.ui.define([
 	Device,
 	Button,
 	mobileLibrary,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -41,7 +43,7 @@ sap.ui.define([
 
 
 
-	sap.ui.getCore().setModel(new JSONModel({
+	oCore.setModel(new JSONModel({
 		"ProductCollection": [
 			{
 				"ProductId": "1239102",
@@ -113,7 +115,7 @@ sap.ui.define([
 			});
 
 			this.oTabContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTabContainer.destroy();
@@ -144,7 +146,7 @@ sap.ui.define([
 
 			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
 
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m"),
 			oSelectDomRef = this.oTabContainer._getTabStrip().getAggregation('_select').getFocusDomRef();
 		assert.strictEqual(jQuery(oSelectDomRef).attr('title'),
 				oMessageBundle.getText("TABSTRIP_OPENED_TABS"),
@@ -205,7 +207,7 @@ sap.ui.define([
 			});
 
 			this.oTabContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTabContainer.destroy();
@@ -304,7 +306,7 @@ sap.ui.define([
 		});
 
 		oTabContainer2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oItems = oTabContainer2.getItems();
 
@@ -341,7 +343,7 @@ sap.ui.define([
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTabContainer.destroy();
@@ -362,7 +364,7 @@ sap.ui.define([
 		});
 
 		oTabContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oItem = oTabContainer._getTabStrip().getItems()[1];
 		var oTabStrip = oTabContainer._getTabStrip();
@@ -403,7 +405,7 @@ sap.ui.define([
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTabContainer.destroy();
@@ -546,7 +548,7 @@ sap.ui.define([
 			this.oTabContainer.placeAt("qunit-fixture");
 			this.oTabStrip = this.oTabContainer._getTabStrip();
 			this.items = this.oTabContainer.getItems();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTabContainer.destroy();
@@ -607,7 +609,7 @@ sap.ui.define([
 			showAddNewButton: true
 		}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		jQuery('body').addClass('sap-phone');
 
 		// act
@@ -635,12 +637,12 @@ sap.ui.define([
 			oTabStripItemToRemove;
 
 		oTabContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oTabStripItemToRemove = oTabContainer._toTabStripItem(oTabContainer.getItems()[0]);
 		oTabContainer._getTabStrip()._removeItem(oTabStripItemToRemove);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oTabContainer.getSelectedItem(), undefined, "content is empty after the last tab is closed");
@@ -692,16 +694,16 @@ sap.ui.define([
 
 		oTabContainer.setModel(oModel);
 		oTabContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oTabContainer.setSelectedItem(oTabContainer.getItems()[2]);
 		var sFirstItemDomId = oTabContainer.getItems()[0].getId();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		var data = oModel.getData();
 		data.employees.splice(1, 2); //remove the 2nd and 3rd items
 		oModel.setData(data);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oTabContainer.getSelectedItem(), sFirstItemDomId, "there is a selected and existing item after removing several items from the model");

@@ -71,7 +71,7 @@ sap.ui.define([
 				visible: false
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -92,7 +92,7 @@ sap.ui.define([
 				title: sTitle
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -121,7 +121,7 @@ sap.ui.define([
 			});
 			this.oIFrame.setModel(this.oModel, "model");
 			this.oIFrame.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
@@ -155,7 +155,7 @@ sap.ui.define([
 			var sSapUI5Url = sProtocol + "://sapui5." + sServer + "/";
 
 			this.oModel.setProperty("/flavor", "sapui5");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(this.oIFrame.getUrl(), sSapUI5Url, "URL has changed to the expected one");
 			assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
@@ -216,7 +216,7 @@ sap.ui.define([
 				url: sOpenUI5Url + "?domain={$user>/domain}"
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			return this.oIFrame.waitForInit();
 		},
 		afterEach: function() {
@@ -238,7 +238,7 @@ sap.ui.define([
 				url: sOpenUI5Url + "?domain={$user>/domain}"
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			return this.oIFrame.waitForInit();
 		},
 		afterEach: function() {
@@ -260,7 +260,7 @@ sap.ui.define([
 				url: sOpenUI5Url + "?domain={$user>/domain}"
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			return this.oIFrame.waitForInit();
 		},
 		afterEach: function() {

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/dt/DOMUtil"
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/core/Core"
 ], function (
 	DesignTime,
 	OverlayRegistry,
@@ -17,7 +18,8 @@ sap.ui.define([
 	ComponentContainer,
 	VerticalLayout,
 	Button,
-	DOMUtil
+	DOMUtil,
+	oCore
 ) {
 	'use strict';
 
@@ -54,7 +56,7 @@ sap.ui.define([
 			});
 
 			this.oLayout = new VerticalLayout({ content: [this.oComponentContainer] }).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -103,7 +105,7 @@ sap.ui.define([
 			this.oComponentContainer = new ComponentContainer("CompCont1");
 
 			this.oLayout = new VerticalLayout({ content: [this.oComponentContainer, new Button({ text: "I give the layout a size" })] }).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -162,7 +164,7 @@ sap.ui.define([
 			});
 
 			this.oLayout = new VerticalLayout({ content: [this.oComponentContainer, new Button({ text: "I give the layout a size" })] }).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar",
 	"sap/m/Select",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/core/Core"
 ], function(
 	createAndAppendDiv,
 	coreLibrary,
@@ -36,7 +37,8 @@ sap.ui.define([
 	ToolbarSpacer,
 	OverflowToolbar,
 	Select,
-	Item
+	Item,
+	oCore
 ) {
 	"use strict";
 
@@ -107,15 +109,15 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function(assert) {
-			l1 = sap.ui.getCore().byId("l1");
-			l2 = sap.ui.getCore().byId("l2");
+			l1 = oCore.byId("l1");
+			l2 = oCore.byId("l2");
 
 			l1.setDesign(oStandardDesign);
 			l1.setTextDirection(oTextDirectionDefault);
 
 			l2.setWidth(sWidth);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(l1, "l1 should not be null");
 			assert.ok(l2, "l2 should not be null");
@@ -172,11 +174,11 @@ sap.ui.define([
 
 	QUnit.test("When width is not set max-width should apply to control", function(assert) {
 		var sut = new Label({text : "text"}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(sut.$().hasClass("sapMLabelMaxWidth"), "Label has max width restriction for the trunctation.");
 
 		sut.setWidth("100%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 	});
 
@@ -190,7 +192,7 @@ sap.ui.define([
 
 		l1.setWrapping(true);
 		l2.setWrapping(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(l1.getWrapping(), true, "Has to be set to true.");
 		assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
@@ -201,7 +203,7 @@ sap.ui.define([
 		//reset values
 		l1.setWrapping(false);
 		l2.setWrapping(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(l1.getWrapping(), false, "Has to be set to false.");
 		assert.strictEqual(l2.getWrapping(), false, "Has to be set to false.");
@@ -210,7 +212,7 @@ sap.ui.define([
 		assert.strictEqual(l2.$().hasClass("sapMLabelWrapped"), false, "Doesn't have a class set.");
 
 		l2.setWrapping(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
 
@@ -218,7 +220,7 @@ sap.ui.define([
 
 		//reset value
 		l2.setWrapping(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Label wrappingType (Hyphenation)", function(assert) {
@@ -228,7 +230,7 @@ sap.ui.define([
 		l1.setWidth("200px");
 		l1.setWrapping(true);
 		l1.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnIsHyphenated = function () {
 			if (l1.$().outerHeight() >= 2 * iHeight) {
@@ -260,7 +262,7 @@ sap.ui.define([
 			tooltip : "foo"
 		});
 		oLabel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oLabel.$().attr("title"), "foo", "Tooltip got rendered");
@@ -280,7 +282,7 @@ sap.ui.define([
 			tooltip : "foo"
 		});
 		oLabel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oDomRef = oLabel.getDomRef();
 
 		oLabel.addEventDelegate({
@@ -289,7 +291,7 @@ sap.ui.define([
 
 		// Act
 		oLabel.setTooltip("bar");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oRerenderingSpy.callCount, 1, "Label is rerendered");
@@ -327,16 +329,16 @@ sap.ui.define([
 
 		assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 		oInput.setRequired(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
 		oInput.setRequired(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 		oLabel4.setLabelFor();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!oLabel4.$().hasClass("sapMLabelRequired"), "Label is not required");
 		oLabel4.setLabelFor("I1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oLabel4.$().hasClass("sapMLabelRequired"), "Label is required");
 
 	});
@@ -345,12 +347,12 @@ sap.ui.define([
 		beforeEach: function() {
 			this.label = new Label({text: "Label"});
 			this.label.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oLabel = new Label('label2', {
 				text: 'Selected: 1'
 			}).placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oLabel.destroy();
@@ -392,7 +394,7 @@ sap.ui.define([
 
 		this.oLabel.setText("Selected: 2");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		sAriaLabel = this.oLabel.$().attr('aria-label');
 
@@ -401,9 +403,9 @@ sap.ui.define([
 
 	QUnit.test("Label rendering when labelFor association is set", function (assert) {
 		var oInput = new Input().placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.label.setLabelFor(oInput);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLLabelElement, true, "Should be rendered as a label element");
 
@@ -413,7 +415,7 @@ sap.ui.define([
 	QUnit.test("Label rendering when labelFor association is set to non-labelable control", function (assert) {
 		var oLink = new Link({text: "text"}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.label.setLabelFor(oLink);
 
@@ -427,7 +429,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.label = new Label({text: "Sample Label"});
 			this.label.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.label.destroy();
@@ -444,7 +446,7 @@ sap.ui.define([
 
 		var domRef = this.label.getDomRef();
 		var result = this.label.setDisplayOnly(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.label.getDisplayOnly(), true, "The property displayOnly should be set tot true");
 		assert.strictEqual(result, this.label, "Setter should return this for chaining");
@@ -483,7 +485,7 @@ sap.ui.define([
 			oOverflowTB = new OverflowToolbar({width: 'auto', content: aToolbarContent});
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oOverflowTB.setWidth('10px'); // set small width that causes all content to move to the overflow
 		this.clock.tick(1000);
@@ -515,7 +517,7 @@ sap.ui.define([
 				text: 'Hello World'
 			}).placeAt('qunit-fixture');
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -531,7 +533,7 @@ sap.ui.define([
 
 		this.label.setLabelFor(this.select);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		ariaLabelledby = this.select._getHiddenSelect().attr('aria-labelledby') || "";
 

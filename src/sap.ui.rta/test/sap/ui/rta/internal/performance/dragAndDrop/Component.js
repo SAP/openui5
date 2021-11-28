@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/core/CustomData",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	UIComponent,
 	DtPerformanceTestUtil,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Label,
 	CustomData,
 	VerticalLayout,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -27,7 +29,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
-			window.fnResolve(RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("HBox")));
+			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("HBox")));
 		},
 
 		createContent: function () {

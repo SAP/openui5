@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	RuntimeAuthoring,
 	Stack,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Device,
 	QUnitUtils,
 	KeyCodes,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -48,9 +50,9 @@ sap.ui.define([
 			return oComponentPromise;
 		},
 		beforeEach: function() {
-			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
-			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+			this.oField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oGroup = oCore.byId("Comp1---idMain1--Dates");
+			this.oForm = oCore.byId("Comp1---idMain1--MainForm");
 
 			this.oCommandStack = new Stack();
 
@@ -91,7 +93,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oGroup.getVisible(), false, "then group is hidden...");
 				assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
 				assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
@@ -102,7 +104,7 @@ sap.ui.define([
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
 			.then(function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
 				assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
 				assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
@@ -112,7 +114,7 @@ sap.ui.define([
 			.then(this.oRta.redo.bind(this.oRta))
 
 			.then(function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
 				assert.ok(this.oRta.getToolbar().getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
 				// pushAndExecute fires modified twice!
@@ -183,7 +185,7 @@ sap.ui.define([
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta)).then(function () {
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-				this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
+				this.oElementOverlay = OverlayRegistry.getOverlay(oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -224,7 +226,7 @@ sap.ui.define([
 				oMenu.getItems()[1].setEnabled(true);
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
 				clock.tick(1000);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				clock.restore();
 
 				var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
@@ -233,9 +235,9 @@ sap.ui.define([
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
 					QUnitUtils.triggerKeydown(document, KeyCodes.Y, false, false, true);
 					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
-					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -243,7 +245,7 @@ sap.ui.define([
 
 		QUnit.test("during rename", function(assert) {
 			var fnDone = assert.async();
-			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+			oCore.getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oElementOverlay) {
 					QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
@@ -261,7 +263,7 @@ sap.ui.define([
 				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[0].getDomRef());
 				clock.tick(1000);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				clock.restore();
 			}.bind(this));
 		});

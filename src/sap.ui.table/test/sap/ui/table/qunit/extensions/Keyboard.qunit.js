@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device, jQuery, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -297,7 +298,7 @@ sap.ui.define([
 			createTables();
 
 			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.addCreationRow = function(oTable) {
 				oTable.addColumn(TableQUnitUtils.createTextColumn({text: "test"}).setCreationTemplate(
@@ -309,7 +310,7 @@ sap.ui.define([
 				));
 
 				oTable.setCreationRow(new CreationRow());
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			};
 		},
 		afterEach: function() {
@@ -466,7 +467,7 @@ sap.ui.define([
 
 	QUnit.test("Focus restoration and item navigation reinitialization", function(assert) {
 		initRowActions(oTable, 1, 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oKeyboardExtension = oTable._getKeyboardExtension();
 		var aTestElementIds = [

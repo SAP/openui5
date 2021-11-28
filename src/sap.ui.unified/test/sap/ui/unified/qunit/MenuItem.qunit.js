@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/Label",
-	"sap/ui/commons/RichTooltip"
-], function(Menu, MenuItem, Label, RichTooltip) {
+	"sap/ui/commons/RichTooltip",
+	"sap/ui/core/Core"
+], function(Menu, MenuItem, Label, RichTooltip, oCore) {
 	"use strict";
 
 	QUnit.module("Accessibility");
@@ -41,7 +42,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oMenu.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oMenu.open();
 		var $menuItemRef = oMenuItem.$();
@@ -61,7 +62,7 @@ sap.ui.define([
 			oMenu = new Menu({ items: [oMenuItem, oMenuItemWithSubmenu] });
 
 		oMenu.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oMenu.open();
 		assert.notOk(oMenuItem.$().attr("aria-haspopup"), "Menu items don't have aria-haspopup when there's no submenu");
@@ -84,7 +85,7 @@ sap.ui.define([
 			});
 
 			this.oMenu.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMenu.destroy();

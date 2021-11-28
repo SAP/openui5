@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Core"
 ], function(
 	BaseController,
 	JSONModel,
@@ -23,7 +24,8 @@ sap.ui.define([
 	jQuery,
 	Parameters,
 	coreLibrary,
-	Fragment
+	Fragment,
+	oCore
 ) {
 	"use strict";
 
@@ -102,7 +104,7 @@ sap.ui.define([
 
 			//Called when the user chooses a new theme in the ComboBox
 			//Creates a new Data Structure for the table including the updated theme data
-			sap.ui.getCore().attachThemeChanged(function () {
+			oCore.attachThemeChanged(function () {
 				this.getParameterMetadata(function (oParameterMetadata) {
 					var oData = this.createDataStructure(oParameterMetadata);
 					oModel.setData(oData);
@@ -647,27 +649,27 @@ sap.ui.define([
 			this.onAction();
 			switch (value) {
 				case "Belize":
-					sap.ui.getCore().applyTheme("sap_belize");
+					oCore.applyTheme("sap_belize");
 					this.byId("title").setText("Details for ''Belize''");
 					break;
 				case "Blue Crystal":
-					sap.ui.getCore().applyTheme("sap_bluecrystal");
+					oCore.applyTheme("sap_bluecrystal");
 					this.byId("title").setText("Details for ''Blue Crystal''");
 					break;
 				case "High Contrast White":
-					sap.ui.getCore().applyTheme("sap_belize_hcw");
+					oCore.applyTheme("sap_belize_hcw");
 					this.byId("title").setText("Details for ''High Contrast White''");
 					break;
 				case "Belize Plus":
-					sap.ui.getCore().applyTheme("sap_belize_plus");
+					oCore.applyTheme("sap_belize_plus");
 					this.byId("title").setText("Details for ''Belize Plus''");
 					break;
 				case "High Contrast Black":
-					sap.ui.getCore().applyTheme("sap_belize_hcb");
+					oCore.applyTheme("sap_belize_hcb");
 					this.byId("title").setText("Details for ''High Contrast Black''");
 					break;
 				case "Fiori 3":
-					sap.ui.getCore().applyTheme("sap_fiori_3");
+					oCore.applyTheme("sap_fiori_3");
 					this.byId("title").setText("Details for ''Fiori 3''");
 					break;
 			}

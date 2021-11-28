@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/layout/ResponsiveFlowLayout",
 	"sap/ui/layout/ResponsiveFlowLayoutData",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
-], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(ResponsiveFlowLayout, ResponsiveFlowLayoutData, Button, jQuery, oCore) {
 	"use strict";
 
 	function injectDefaultContent(context) {
@@ -41,7 +42,7 @@ sap.ui.define([
 
 			var $layout = jQuery("#qunit-fixture");
 			$layout.css("width", "300px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oRFL.destroy();
@@ -68,7 +69,7 @@ sap.ui.define([
 	QUnit.test("Line break works & LayoutData event catched by Layout", function(assert) {
 		assert.expect(3);
 		this.oBtn2.getLayoutData().setLinebreak(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oBtn1DomRef = document.getElementById("button1-cont0_0");
 		var oBtn2DomRef = document.getElementById("button2-cont1_0");
@@ -94,7 +95,7 @@ sap.ui.define([
 
 			var $layout = jQuery("#qunit-fixture");
 			$layout.css("width", "400px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oRFL.destroy();
@@ -107,7 +108,7 @@ sap.ui.define([
 		var $layout = jQuery("#qunit-fixture");
 		// this sets the layout to a size where the size falls below the min-width of a button
 		$layout.css("width", "150px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// have to wait more than 300ms until the layout recognized the minimization
 		setTimeout(function() {
@@ -191,7 +192,7 @@ sap.ui.define([
 		oResponsiveFlowLayout = new ResponsiveFlowLayout();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//check
 		assert.ok(oResponsiveFlowLayout.oRm, "RenderManager should be created during rendering");
 		//cleanup
@@ -204,7 +205,7 @@ sap.ui.define([
 		var oExitSpy = this.spy(ResponsiveFlowLayout.prototype, "exit");
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//check
 		assert.ok(!oResponsiveFlowLayout.oRm, "RenderManager should not be created since the control is not visible");
@@ -225,7 +226,7 @@ sap.ui.define([
 		var oResponsiveFlowLayout = new ResponsiveFlowLayout();
 		//act
 		oResponsiveFlowLayout.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDestroySpy = this.spy(oResponsiveFlowLayout.oRm, "destroy");
 

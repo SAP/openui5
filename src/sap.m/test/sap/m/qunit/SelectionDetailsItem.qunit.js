@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/SelectionDetailsItem",
 	"sap/m/SelectionDetailsItemLine",
 	"sap/ui/core/Item",
-	"sap/m/library"
-], function(SelectionDetailsItem, SelectionDetailsItemLine, Item, library) {
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(SelectionDetailsItem, SelectionDetailsItemLine, Item, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.SelectionDetailsActionLevel
@@ -122,7 +123,7 @@ sap.ui.define([
 			});
 			this.oListItem = this.oItem._getListItem();
 			this.oListItem.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oListItem = null;
@@ -170,7 +171,7 @@ sap.ui.define([
 		this.oListItem.invalidate();
 
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSetPropertySpy.withArgs("type", ListType.Navigation, true).callCount, 1, "ListItem's type property has been correctly updated.");
@@ -183,7 +184,7 @@ sap.ui.define([
 		this.oListItem.invalidate();
 
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSetPropertySpy.withArgs("type", ListType.Inactive, true).callCount, 1, "ListItem's type property has been correctly updated.");
@@ -198,7 +199,7 @@ sap.ui.define([
 			});
 			this.oSelectionDetailsListItem = this.oItem._getListItem();
 			this.oSelectionDetailsListItem.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetailsListItem.destroy();
@@ -210,7 +211,7 @@ sap.ui.define([
 		// Arrange
 		var sActionTypeExpected = "_actionPress",
 			oActionExpected = this.oItem.getAggregation("actions")[0],
-			oButton = sap.ui.getCore().byId(this.oItem.getId() + "-action-0"),
+			oButton = oCore.byId(this.oItem.getId() + "-action-0"),
 			oSpy = sinon.spy(SelectionDetailsItem.prototype, "fireEvent");
 		// Act
 		oButton.firePress();

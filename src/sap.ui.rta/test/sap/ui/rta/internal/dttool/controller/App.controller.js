@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/rta/internal/dttool/util/DTToolUtils",
 	"sap/base/util/merge",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function (
 	jQuery,
 	Controller,
@@ -35,7 +36,8 @@ sap.ui.define([
 	HashChanger,
 	DTToolUtils,
 	merge,
-	Log
+	Log,
+	oCore
 ) {
 	"use strict";
 	return Controller.extend("sap.ui.rta.internal.dttool.controller.App", {
@@ -155,7 +157,7 @@ sap.ui.define([
 			oEvent.stopPropagation();
 			var oItemDom = window.document.activeElement;
 			if (oItemDom.tagName === "TR" && oItemDom.id) {
-				var oItem = sap.ui.getCore().byId(oItemDom.id);
+				var oItem = oCore.byId(oItemDom.id);
 				if (oItem) {
 					var oContext = oItem.getBindingContext("palette");
 					var sClassName = oContext.getProperty("className");
@@ -664,7 +666,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.getCore().byId("addDialogInput").onsapenter = function (oEvent) {
+			oCore.byId("addDialogInput").onsapenter = function (oEvent) {
 				var sText = oEvent.srcControl.getValue();
 
 				if (/^(?:\w+\/)+\w+$/.test(sText)) {
@@ -680,7 +682,7 @@ sap.ui.define([
 		 * Loads a control and adds it to the palette
 		 */
 		onAddCustomControl: function () {
-			var sText = sap.ui.getCore().byId("addDialogInput").getValue();
+			var sText = oCore.byId("addDialogInput").getValue();
 
 			DTMetadata.loadElement(sText.replace(/\//g, ".")).then(function (oData) {
 				if (!oData) {
@@ -886,7 +888,7 @@ sap.ui.define([
 				this.sLastExpandedId = "";
 			} else {
 				if (this.sLastExpandedId) {
-					sap.ui.getCore().byId(this.sLastExpandedId).setExpanded(false);
+					oCore.byId(this.sLastExpandedId).setExpanded(false);
 				}
 				this.sLastExpandedId = oEvent.getSource().getId();
 				oEvent.getSource().getHeaderToolbar().focus();

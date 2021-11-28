@@ -564,7 +564,7 @@ sap.ui.define([
 
 		// Act
 		this.oAvatar.setShowBorder(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok($oAvatar.hasClass("sapFAvatarBorder"), "Avatar has 'sapFAvatarBorder' class when showBorder='true'");
@@ -729,7 +729,7 @@ sap.ui.define([
 		//assert
 		assert.equal(this.oAvatar._badgeRef != null, true, "Badge is attached to Avatar");
 		assert.equal(this.oAvatar._badgeRef.getTooltip(),
-			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+			oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
 			"Badge Tooltip is predefined");
 	});
 
@@ -759,7 +759,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//assert
-		assert.equal(this.oAvatar._badgeRef.getTooltip() != sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+		assert.equal(this.oAvatar._badgeRef.getTooltip() != oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
 		true, "Badge tooltip is not predefined");
 
 		//assert

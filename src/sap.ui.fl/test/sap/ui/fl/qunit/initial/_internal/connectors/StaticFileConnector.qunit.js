@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/base/Log",
-	"sap/base/util/LoaderExtensions"
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	StaticFileConnector,
 	Log,
-	LoaderExtensions
+	LoaderExtensions,
+	oCore
 ) {
 	"use strict";
 
@@ -90,7 +92,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given debug is enabled", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDebug").returns(true);
+			sandbox.stub(oCore.getConfiguration(), "getDebug").returns(true);
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded"}).then(function () {
@@ -101,7 +103,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given componentPreload is 'off'", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getComponentPreload").returns("off");
+			sandbox.stub(oCore.getConfiguration(), "getComponentPreload").returns("off");
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded"}).then(function () {

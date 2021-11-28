@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ToggleButton",
 	"sap/m/Toolbar",
-	"sap/ui/events/KeyCodes"
-], function(qutils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(qutils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes, oCore) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -48,14 +49,14 @@ sap.ui.define([
 
 	QUnit.test("TestPressedToUnpressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton1.getId());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oToggleButton1.getPressed(), false, "getPressedState");
 		assert.strictEqual(oToggleButton1.$().attr("aria-pressed"), "false", "aria-pressed state is false for testToggleButton_1 after tap");
 	});
 
 	QUnit.test("TestUnpressedToPressedOK", function(assert) {
 		qutils.triggerEvent("tap", oToggleButton2.getId());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oToggleButton2.getPressed(), true, "getPressedState");
 		assert.strictEqual(oToggleButton2.$().attr("aria-pressed"), "true", "aria-pressed state is true for testToggleButton_2 after tap");
 	});
@@ -69,7 +70,7 @@ sap.ui.define([
 			oTapSpy = this.spy(oToggleButton, "ontap");
 
 		oToggleButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		qutils.triggerEvent("tap", oToggleButton.getId());
@@ -89,7 +90,7 @@ sap.ui.define([
 			oTapSpy = this.spy(oToggleButton, "ontap");
 
 		oToggleButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		qutils.triggerEvent("tap", oToggleButton.getId());
@@ -107,7 +108,7 @@ sap.ui.define([
 			});
 
 		oToggleButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oToggleButton.setPressed(false);
@@ -124,7 +125,7 @@ sap.ui.define([
 			});
 
 		oToggleButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oToggleButton.setPressed(true);
@@ -149,7 +150,7 @@ sap.ui.define([
 		oToolbar.addContent(oToggleButton);
 
 		oToolbar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		qutils.triggerEvent("tap", oToggleButton.getId());
@@ -200,7 +201,7 @@ sap.ui.define([
 		var oInfo = oButton.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -215,11 +216,11 @@ sap.ui.define([
 		oButton.setTooltip(null);
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
+		assert.strictEqual(oInfo.description, oCore.getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
 		oButton.setPressed(true);
 		oInfo = oButton.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description,
-				sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("Icon.search") + " " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED"),
+				oCore.getLibraryResourceBundle("sap.ui.core").getText("Icon.search") + " " + oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED"),
 				"Description");
 		oButton.destroy();
 	});

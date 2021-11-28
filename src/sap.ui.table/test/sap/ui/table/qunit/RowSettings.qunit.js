@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/library",
-	"sap/ui/core/theming/Parameters"
-], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters) {
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, RowSettings, TableUtils, CoreLibrary, ThemeParameters, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -70,7 +71,7 @@ sap.ui.define([
 			}
 		}));
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	QUnit.module("Highlights", {
@@ -226,7 +227,7 @@ sap.ui.define([
 
 	QUnit.test("Rendering - Settings not configured", function(assert) {
 		oTable.setRowSettingsTemplate(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.assertRendering(assert, false);
 	});
@@ -235,14 +236,14 @@ sap.ui.define([
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: null
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.assertRendering(assert, false);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			highlight: MessageType.None
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.assertRendering(assert, false);
 	});
@@ -282,7 +283,7 @@ sap.ui.define([
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		oTable.getRows()[0].getAggregation("_settings").setHighlight(MessageType.Error);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight");
 		this.assertColor(assert, 0, this.getColorRgb("sapUiErrorBorder"));
@@ -296,7 +297,7 @@ sap.ui.define([
 
 		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
 		oTable.getRows()[0].getAggregation("_settings").setHighlightText("testitext");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oOnAfterRenderingEventListener.notCalled, "The table did not re-render after changing a highlight text");
 		this.assertText(assert, 0, "testitext");
@@ -423,7 +424,7 @@ sap.ui.define([
 				}
 			}));
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -454,7 +455,7 @@ sap.ui.define([
 
 	QUnit.test("Rendering - Settings not configured", function(assert) {
 		oTable.setRowSettingsTemplate(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 	});
@@ -463,14 +464,14 @@ sap.ui.define([
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: null
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: false
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.assertNavIndicatorRendering(assert, true, false);
 	});

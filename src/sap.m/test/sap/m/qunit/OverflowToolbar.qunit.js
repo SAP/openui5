@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/Title",
 	"sap/m/SegmentedButton",
-	"sap/m/SegmentedButtonItem"
+	"sap/m/SegmentedButtonItem",
+	"sap/ui/core/Core"
 ], function(
 	DomUnitsRem,
 	createAndAppendDiv,
@@ -54,7 +55,8 @@ sap.ui.define([
 	FlexItemData,
 	Title,
 	SegmentedButton,
-	SegmentedButtonItem
+	SegmentedButtonItem,
+	oCore
 ) {
 	"use strict";
 
@@ -115,7 +117,7 @@ sap.ui.define([
 		oOverflowTB.placeAt("qunit-fixture");
 
 		if (!bSkipAplyChanges) {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 
 		return oOverflowTB;
@@ -197,7 +199,7 @@ sap.ui.define([
 
 		// Resize the toolbar
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// After the resize there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -224,7 +226,7 @@ sap.ui.define([
 
 		// Restore the toolbar to the original size
 		oOverflowTB.setWidth('550px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// There should be no overflow button, no overflow area, all buttons visible again
 		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after restoring to full size");
@@ -260,7 +262,7 @@ sap.ui.define([
 
 		// Resize the toolbar
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// After the resize there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.MyButton");
@@ -293,7 +295,7 @@ sap.ui.define([
 
 		// Change the width of a button
 		aDefaultContent[4].setWidth("500px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// After the width change there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -305,7 +307,7 @@ sap.ui.define([
 
 		// Resize the button back
 		aDefaultContent[4].setWidth("100px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// There should be no overflow button, no overflow area, all buttons visible again
 		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
@@ -337,7 +339,7 @@ sap.ui.define([
 		// Insert a new button
 		var oNewButton = new Button({text: "0", width: "100px"});
 		oOverflowTB.insertContent(oNewButton, 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// After the insertion there should be less buttons visible on the toolbar
 		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
@@ -349,7 +351,7 @@ sap.ui.define([
 
 		// Remove the button
 		oOverflowTB.removeContent(oNewButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// There should be no overflow button, no overflow area, all buttons visible again
 		assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
@@ -386,7 +388,7 @@ sap.ui.define([
 
 			// Act - change the width of a button
 			aDefaultContent[4].setWidth("500px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			setTimeout(function () {
 				// Assert - after the width change there should be less buttons visible on the toolbar
@@ -399,7 +401,7 @@ sap.ui.define([
 
 				// Act - resize the button back
 				aDefaultContent[4].setWidth("100px");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				setTimeout(function () {
 					// Assert - there should be no overflow button, no overflow area, all buttons visible again
@@ -460,7 +462,7 @@ sap.ui.define([
 
 		// Resize the toolbar
 		oOverflowTB.setWidth('200px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// After the resize there should be less buttons visible on the toolbar
 		assert.strictEqual(oSpecialButton.$().is(":visible"), true, "After the resize, the special layout button is still visible");
@@ -517,7 +519,7 @@ sap.ui.define([
 			}),
 			aContent;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Even though there is enough space on the toolbar, two of the buttons always oferflows
 		iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
@@ -536,7 +538,7 @@ sap.ui.define([
 		aContent = oOverflowTB.getContent();
 		aContent[2].setVisible(false);
 		aContent[3].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oOverflowTB._getOverflowButton().$().is(":visible"),
 			"Overflow button is not visible when controls with AlwaysOverflow are not visible and there is enough space for the others");
@@ -564,7 +566,7 @@ sap.ui.define([
 
 		// Shrink the toolbar
 		oOverflowTB.setWidth('300px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Click the overflow button
 		var oOverflowButton = oOverflowTB._getOverflowButton();
@@ -649,7 +651,7 @@ sap.ui.define([
 
 		// Change the button priority from Low to High
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.High}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button moved back to the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -682,7 +684,7 @@ sap.ui.define([
 
 		// Change the button priority from Low to NeverOverflow
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Check if the button is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -715,7 +717,7 @@ sap.ui.define([
 
 		// Change the button priority from High to Low
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.Low}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Check if the button moved back to the overflow area
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -757,7 +759,7 @@ sap.ui.define([
 
 		// Change the button priority from High to AlwaysOverflow
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Check if the button is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -794,7 +796,7 @@ sap.ui.define([
 
 		// Resize the toolbar so the buttons should overflow from right to the left
 		oOverflowTB.setWidth('300px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button with Priority High is still visible
 		assert.strictEqual(oButtonWithHighPriority.$().is(":visible"), true,
@@ -823,7 +825,7 @@ sap.ui.define([
 
 		// Resize the toolbar so the buttons should overflow from right to the left
 		oOverflowTB.setWidth('300px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button with Priority Low is still visible
 		assert.strictEqual(oButtonWithLowPriority.$().is(":visible"), false, "The button with Priority Low is not visible");
@@ -859,7 +861,7 @@ sap.ui.define([
 
 		// Resize the toolbar so the buttons should overflow from right to the left
 		oOverflowTB.setWidth('300px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the leftmost button is still visible
 		assert.strictEqual(oLeftMostButton.$().is(":visible"), true,
@@ -930,7 +932,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the buttons under test are visible in the toolbar
 		assert.strictEqual(oButtonUnderTest1.$().is(":visible"), false,
@@ -944,7 +946,7 @@ sap.ui.define([
 			priority: OverflowToolbarPriority.High,
 			group: 1
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the buttons under test are visible in the toolbar
 		assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
@@ -976,7 +978,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the buttons under test are visible in the toolbar
 		assert.strictEqual(oButtonUnderTest1.$().is(":visible"), true,
@@ -990,7 +992,7 @@ sap.ui.define([
 			priority: OverflowToolbarPriority.Low,
 			group: 1
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Click the overflow button
 		oOverflowTB._getOverflowButton().firePress();
@@ -1028,7 +1030,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the members of group number 1 are visible
 		assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
@@ -1071,7 +1073,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the members of group number 1 are visible
 		assert.strictEqual(oGroupedButton1.$().is(":visible"), false,
@@ -1118,7 +1120,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Click the overflow button
 		oOverflowTB._getOverflowButton().firePress();
@@ -1154,7 +1156,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -1162,7 +1164,7 @@ sap.ui.define([
 
 		// Change the group of the button
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({group: 1}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -1198,7 +1200,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), false,
@@ -1206,7 +1208,7 @@ sap.ui.define([
 
 		// Change the group of the button
 		oButtonUnderTest.setLayoutData(new OverflowToolbarLayoutData({group: 2}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the button under test is visible in the toolbar
 		assert.strictEqual(oButtonUnderTest.$().is(":visible"), true,
@@ -1234,7 +1236,7 @@ sap.ui.define([
 
 		// Shrink the toolbar with 100px
 		oOverflowTB.setWidth('400px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check if the members of group number 1 are visible
 		assert.strictEqual(oGroupedButton1.$().is(":visible"), true,
@@ -1615,7 +1617,7 @@ sap.ui.define([
 				}),
 				oOverflowTB = createOverflowToolbar({width: 'auto'}, [btn]);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		btn.destroy();
 
@@ -1680,7 +1682,7 @@ sap.ui.define([
 		//Act
 		aContent[5].setVisible(false);
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oOverflowTB._aMovableControls.indexOf(aContent[5]) === -1,
@@ -1818,7 +1820,7 @@ sap.ui.define([
 			//Act
 
 			oButton.setType("Emphasized");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert
 			assert.ok(oSpyInvalidation.calledWith(true), "Button property 'type' invalidates the OTB");
@@ -2036,7 +2038,7 @@ sap.ui.define([
 
 		oOverflowTB.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oOverflowTB.onThemeChanged();
 
@@ -2064,7 +2066,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				spyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
 		assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
@@ -2095,7 +2097,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				oSpyCache;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2125,7 +2127,7 @@ sap.ui.define([
 				iNewItemWidth,
 				oSpyCache;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2156,7 +2158,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				oSpyCache;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2182,7 +2184,7 @@ sap.ui.define([
 				}, aDefaultContent, true),
 				oSpyCache;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSpyCache = this.spy(oOverflowTB, "_cacheControlsInfo");
 
 		// Act
@@ -2216,7 +2218,7 @@ sap.ui.define([
 
 		oMovableControl.setVisible(true);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oOverflowTB._aMovableControls.length, 1, "movable visible button is inclided");
 
@@ -2252,7 +2254,7 @@ sap.ui.define([
 
 	// Act
 		oLabel.setText("Text123");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	// Assert
 		assert.strictEqual(spyOTInvalidate.callCount, 0);
 	});
@@ -2663,7 +2665,7 @@ sap.ui.define([
 			spy;
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		spy = this.spy(oPopover, "_closeOnInteraction");
 
@@ -2695,7 +2697,7 @@ sap.ui.define([
 			oMathSpy = this.spy(Math, "round");
 
 		oTestButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200);
@@ -2709,7 +2711,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oTestButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 0);
@@ -2733,7 +2735,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestToolbarSpacer]);
 
 		oTestToolbarSpacer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestToolbarSpacer), 20);
@@ -2753,7 +2755,7 @@ sap.ui.define([
 			iRemInPx = DomUnitsRem.toPx("1rem");
 
 		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 50 + (0.25 * iRemInPx),
@@ -2774,7 +2776,7 @@ sap.ui.define([
 			oOTB = createOverflowToolbar({}, [oTestButton]);
 
 		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 0,
@@ -2797,7 +2799,7 @@ sap.ui.define([
 			iRemInPx = DomUnitsRem.toPx("1rem");
 
 		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), 200 + (0.25 * iRemInPx),
@@ -2826,7 +2828,7 @@ sap.ui.define([
 			iRemInPx = DomUnitsRem.toPx("1rem");
 
 		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oOTB._getOptimalControlWidth(oTestButton), (3 * iRemInPx) + (0.25 * iRemInPx),
@@ -2845,7 +2847,7 @@ sap.ui.define([
 			oOverflowBtnClonedSpy = this.spy(OverflowToolbar.prototype, "_recalculateOverflowButtonSize");
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation called from doLayout");
@@ -2894,7 +2896,7 @@ sap.ui.define([
 			oOverflowBtnClonedSpy = this.spy(oOverflowTB._getOverflowButtonClone(), "$");
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oOverflowBtnClonedSpy.called, "Recalculation is done");
@@ -2931,7 +2933,7 @@ sap.ui.define([
 
 		oOverflowTB.placeAt("qunit-fixture");
 		oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Presence of overflow button is checked correctly", function (assert) {
@@ -2950,12 +2952,12 @@ sap.ui.define([
 				done = assert.async();
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oOverflowTB.addContent(oButton1.clone());
 		oButton1.setLayoutData(new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.AlwaysOverflow}));
 		oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Adding tolerance on content size for fixing rounding issues", function (assert) {
@@ -2966,7 +2968,7 @@ sap.ui.define([
 			oOverflowButton;
 
 		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		oOverflowButton = oOTB._getOverflowButton();
@@ -3007,7 +3009,7 @@ sap.ui.define([
 		});
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.module("Focusing", {
@@ -3052,7 +3054,7 @@ sap.ui.define([
 			this.oOTB.placeAt("qunit-fixture");
 			this.oOTB2.placeAt("qunit-fixture");
 			this.oOTBOverflowed.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sinon.config.useFakeTimers = false;
 		},
@@ -3091,7 +3093,7 @@ sap.ui.define([
 		// act - child control is on focus, invalidate the toolbar.
 		this.oOTB.sFocusedChildControlId = this.oButtonUnderTest.getId();
 		this.oOTB.setWidth("1000px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Focus on toolbar child's focusDomRef is retained after toolbar invalidation", function (assert) {
@@ -3114,7 +3116,7 @@ sap.ui.define([
 		// act - child control is on focus, invalidate the toolbar.
 		this.oOTB2.sFocusedChildControlId = this.oSelectUnderTest.getId();
 		this.oOTB2.setWidth("1000px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Focus on overflow button is retained after toolbar invalidation", function (assert) {
@@ -3172,7 +3174,7 @@ sap.ui.define([
 
 		// act (1) - set toolbar width to larger than its content and invalidate the toolbar.
 		this.oOTBOverflowed.setWidth("500px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Focus info is cleared upon sapfocusleave", function (assert) {
@@ -3204,7 +3206,7 @@ sap.ui.define([
 			oApplyFocusSpy = oSpy(oOverflowTBbar, "_applyFocus");
 			oOverflowTBbar.sFocusedChildControlId = oButtonUnderTest.getId();
 			oOverflowTBbar.setWidth("1000px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			setTimeout(function () {
 				// Assert
@@ -3225,7 +3227,7 @@ sap.ui.define([
 
 		// Arrange
 		oOTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Overwrite the OverflowToolbar exit method
 		// to simulate layoutDataChange is fired before the _popover aggregation is unregistered from the Core.
@@ -3339,7 +3341,7 @@ sap.ui.define([
 	QUnit.test("Aria attributes", function (assert) {
 		// arrange
 		var oOverflowTB = createOverflowToolbar(),
-			sExpectedAriaRoleDescription = sap.ui.getCore()
+			sExpectedAriaRoleDescription = oCore
 				.getLibraryResourceBundle("sap.m")
 				.getText(oOverflowTB.constructor.ARIA_ROLE_DESCRIPTION);
 
@@ -3394,7 +3396,7 @@ sap.ui.define([
 
 		this.content[0].setText("test2");
 		this.otb._handleResize();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 	});
 
@@ -3418,7 +3420,7 @@ sap.ui.define([
 
 
 		this.otb.setWidth('200px');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oOverflowButton.firePress();
 		oButtonWithPressFunc.firePress();

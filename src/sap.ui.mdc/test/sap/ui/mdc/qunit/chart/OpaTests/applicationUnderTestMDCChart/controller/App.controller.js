@@ -10,15 +10,16 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/m/SelectDialog",
 	"sap/m/StandardListItem",
-	"sap/ui/model/Filter"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter) {
+	"sap/ui/model/Filter",
+	"sap/ui/core/Core"
+], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, oCore) {
 	"use strict";
 
 	return Controller.extend("applicationUnderTestMDCChart.controller.App", {
 
 		onInit: function () {
 
-			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
+			oCore.getMessageManager().registerObject(this.getView(), true);
 
 
 			var oCM = new ConditionModel();

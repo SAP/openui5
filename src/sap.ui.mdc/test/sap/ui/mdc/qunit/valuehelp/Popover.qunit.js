@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
-	"sap/m/Toolbar"
+	"sap/m/Toolbar",
+	"sap/ui/core/Core"
 ], function (
 		ValueHelpDelegate,
 		Popover,
@@ -23,7 +24,8 @@ sap.ui.define([
 		Icon,
 		JSONModel,
 		mLibrary,
-		Toolbar
+		Toolbar,
+		oCore
 	) {
 	"use strict";
 
@@ -166,7 +168,7 @@ sap.ui.define([
 				return oField;
 			};
 			oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: _teardown
 	});

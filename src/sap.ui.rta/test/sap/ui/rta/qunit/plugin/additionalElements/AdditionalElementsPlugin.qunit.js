@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	includes,
 	isEmptyObject,
@@ -55,7 +56,8 @@ sap.ui.define([
 	RTAPlugin,
 	RTAUtils,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -124,8 +126,8 @@ sap.ui.define([
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
 		beforeEach: function (assert) {
 			registerControlsForChanges();
-			this.oRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
+			this.oRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
+			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
@@ -1078,8 +1080,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has addViaDelegate, a reveal and a custom add actions", function (assert) {
-			var oOriginalRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
+			var oOriginalRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
+			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
 			var sAggregationName = "contentLeft";
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
@@ -1120,7 +1122,7 @@ sap.ui.define([
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
-				return sap.ui.getCore().loadLibrary.wrappedMethod.apply(this, arguments);
+				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1155,7 +1157,7 @@ sap.ui.define([
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
-				return sap.ui.getCore().loadLibrary.wrappedMethod.apply(this, arguments);
+				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
 			});
 
 			var oRequireStub = sandbox.stub(sap.ui, "require");
@@ -1669,7 +1671,7 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 					assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
-					var oCustomFieldButton = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+					var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
 					assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 				}.bind(this));
 		});
@@ -1692,7 +1694,7 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-					var oCustomFieldButton = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+					var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
 					assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 				}.bind(this));
 		});
@@ -1716,7 +1718,7 @@ sap.ui.define([
 
 				.then(function () {
 					assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-					var oCustomFieldButton = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+					var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
 					assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 				}.bind(this));
 		});
@@ -1788,7 +1790,7 @@ sap.ui.define([
 
 				.then(function () {
 					assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-					var oBCContainer = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+					var oBCContainer = oCore.byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 					assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 					assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
@@ -1826,7 +1828,7 @@ sap.ui.define([
 
 						.then(function () {
 							assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-							var oBCContainer = sap.ui.getCore().byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+							var oBCContainer = oCore.byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
 							assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 							assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 							return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
@@ -1957,7 +1959,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button("control1", {text: "foo"});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			givenThePluginWithOKClosingDialog.call(this);
 			return new Promise(function (resolve) {
 				this.oDesignTime = new DesignTime({
@@ -2019,7 +2021,7 @@ sap.ui.define([
 		this.oPseudoPublicParent.setModel(new SomeModel());
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//simulate analyzer returning some elements
 		this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer, "enhanceInvisibleElements").resolves([
@@ -2237,7 +2239,7 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this))
 		.then(function () {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			switch (sOverlayType) {
 				case ON_SIBLING :
 					return this.oSiblingOverlay;

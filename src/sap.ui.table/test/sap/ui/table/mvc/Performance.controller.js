@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
-	"sap/base/Log"
-], function(Table, Column, library, Text, Label, Controller, JSONModel, Measurement, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function(Table, Column, library, Text, Label, Controller, JSONModel, Measurement, Log, oCore) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
@@ -228,7 +229,7 @@ sap.ui.define([
 				this.oTable.placeAt("tableContainer");
 			}
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		destroyTable: function() {

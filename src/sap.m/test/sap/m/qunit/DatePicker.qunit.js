@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -56,7 +57,8 @@ sap.ui.define([
 	CustomMonthPicker,
 	Log,
 	deepEqual,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -158,10 +160,10 @@ sap.ui.define([
 		dateValue: new Date("2015", "10", "23"),
 		dateValue1: new Date("2015", "10", "23")
 	});
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
 	var bParseError = false;
-	sap.ui.getCore().attachParseError(
+	oCore.attachParseError(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
@@ -170,7 +172,7 @@ sap.ui.define([
 			});
 
 	var bValidationSuccess = false;
-	sap.ui.getCore().attachValidationSuccess(
+	oCore.attachValidationSuccess(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
@@ -235,28 +237,28 @@ sap.ui.define([
 		// act
 		oDatePicker.setDateValue(new Date("2014", "0", "04", "10", "55", "44"));
 		oDatePicker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oDatePicker.getValue(), "1/4/14", "Default display format should be short");
 
 		// act
 		oDatePicker.setValueFormat("medium");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oDatePicker.getValue(), "Jan 4, 2014", "Display format should be medium");
 
 		// act
 		oDatePicker.setValueFormat("long");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oDatePicker.getValue(), "January 4, 2014", "Display format should be long");
 
 		// act
 		oDatePicker.setValueFormat("short");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oDatePicker.getValue(), "1/4/14", "Display format should be short");
@@ -302,11 +304,11 @@ sap.ui.define([
 	QUnit.test("title is set to the icon", function (assert) {
 		// arrange
 		var oDatePicker = new DatePicker(),
-			sExpected = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT");
+			sExpected = oCore.getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT");
 
 		// act
 		oDatePicker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oDatePicker.$("icon").control(0).getTooltip(), sExpected, "icon has its tooltip property set");
@@ -324,7 +326,7 @@ sap.ui.define([
 			oRP;
 
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.toggleOpen();
@@ -354,7 +356,7 @@ sap.ui.define([
 
 		oLabel.placeAt("qunit-fixture");
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.toggleOpen();
@@ -380,18 +382,18 @@ sap.ui.define([
 			oSpy;
 
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDP.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDP._handleCancelButton();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopup = oDP._oPopup._getPopup();
 		oSpy = this.spy(oPopup, "_applyPosition");
 
 		// Act
 		oDP.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oSpy.callCount > 0, "_applyPosition is called after rendering");
@@ -471,7 +473,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("data binding with sap.ui.model.odata.type.DateTime", function(assert) {
-		var oConfiguration = sap.ui.getCore().getConfiguration();
+		var oConfiguration = oCore.getConfiguration();
 		var oFormatSettings = oConfiguration.getFormatSettings();
 		var oDate = new Date(2017, 0, 1, 0, 0, 0);
 		var oModel = new JSONModel({
@@ -603,7 +605,7 @@ sap.ui.define([
 		// Act
 		oDatePicker.setModel(oModel, "model");
 		oDatePicker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oDatePicker.$().find("input").val(), "Jun 18, 2019", "DOM value should equal the date passed from the model");
@@ -629,7 +631,7 @@ sap.ui.define([
 				});
 		oDPMinDate.placeAt("qunit-fixture");
 		oDPMaxDate.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Act
 		oDPMinDate.setDateValue(today);
 
@@ -655,7 +657,7 @@ sap.ui.define([
 			dateValue: new Date(2000, 11, 31, 23, 59, 59)
 		});
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oDP.setDateValue(new Date(9999, 11, 31, 23, 59, 59));
@@ -680,11 +682,11 @@ sap.ui.define([
 			oSpyLogError = this.spy(Log, "error");
 
 		oSut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oSut.setMinDate(oNewMinDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
@@ -712,11 +714,11 @@ sap.ui.define([
 			oSpyLogError = this.spy(Log, "error");
 
 		oSut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oSut.setMaxDate(oNewMaxDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
@@ -766,7 +768,7 @@ sap.ui.define([
 			oDP2.setModel(oModelInvalid);
 			oDP1.placeAt("qunit-fixture");
 			oDP2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Pre-Assert
 			assert.equal(oDP1.getValue().toString(), "20170101",
@@ -790,7 +792,7 @@ sap.ui.define([
 			//Act - set a valid model
 			oDP1.setModel(oModelValid);
 			oDP2.setModel(oModelValid);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert
 			assert.equal(oDP1.getValue().toString(), "20170120", "A valid DP1 property <value> should be always set");
@@ -822,12 +824,12 @@ sap.ui.define([
 
 		oDP1.placeAt("qunit-fixture");
 		oDP2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oDP1.setDateValue();
 		oDP2.setValue();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to undefined");
@@ -916,7 +918,7 @@ sap.ui.define([
 
 		// Act
 		oDP.setMaxDate(oDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		qutils.triggerEvent("click", "DatePickerApi-icon");
 
 		// Assert
@@ -938,12 +940,12 @@ sap.ui.define([
 
 		oDP1.placeAt("qunit-fixture");
 		oDP2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oDP1.setDateValue(null);
 		oDP2.setValue("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to null");
@@ -966,23 +968,23 @@ sap.ui.define([
 				showCurrentDateButton: true
 			}).placeAt("uiArea6");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDP.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oDP._getCalendar().getShowCurrentDateButton(), "Today button visibility is propagated to calendar when the displayFormat allows days");
 
 		// Prepare
 		oDP.setDisplayFormat("yyyyMM");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oDP._getCalendar().getShowCurrentDateButton(), "Today button visibility is not propagated to calendar when the displayFormat does not allow day");
 
 		// Prepare
 		oDP.setDisplayFormat("yyyy");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oDP._getCalendar().getShowCurrentDateButton(), "Today button visibility is not propagated to calendar when the displayFormat does not allow day");
@@ -995,7 +997,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oDp = new DatePicker();
 			this.oDp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -1186,9 +1188,9 @@ sap.ui.define([
 		// On a desktop (non-touch) device
 		Device.support.touch = false;
 		Device.system.desktop = true;
-		sap.ui.getCore().byId("DP5").focus();
+		oCore.byId("DP5").focus();
 		qutils.triggerEvent("click", "DP5-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
@@ -1239,9 +1241,9 @@ sap.ui.define([
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(sap.ui.require("sap/ui/unified/Calendar"), "sap.ui.unified.Calendar now loaded");
-		assert.ok(sap.ui.getCore().byId("DP3-cal"), "DP3: calender exists");
+		assert.ok(oCore.byId("DP3-cal"), "DP3: calender exists");
 		assert.ok(oDP3._oPopup, "DP3: popup exists");
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
@@ -1267,19 +1269,19 @@ sap.ui.define([
 		assert.equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "10").getTime(), "DateValue set");
 
 		oDP3.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "Readonly DatePicker: calendar is not visible");
 
 		oDP3.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDP5.focus();
 		qutils.triggerEvent("click", "DP5-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oDP5._getCalendar().getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
 		assert.equal(oDP5._getCalendar().getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
@@ -1288,7 +1290,7 @@ sap.ui.define([
 
 		oDP7.focus();
 		qutils.triggerEvent("click", "DP7-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oDP7._getCalendar().getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
 		jQuery("#DP7-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", KeyCodes.ENTER, false, false, false);
@@ -1314,7 +1316,7 @@ sap.ui.define([
 		sId = "";
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 		jQuery("#DP3-cal--Month0-20140410").trigger("focus");
@@ -1346,7 +1348,7 @@ sap.ui.define([
 		var oNewMaxDate = new Date(2014,11,31, 23, 59, 59, 999);
 		oDP3.setMinDate(oNewMinDate);
 		oDP3.setMaxDate(oNewMaxDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(oDP3.getMinDate().toString(), oNewMinDate.toString(), "DP3: new min date property");
 		assert.equal(oDP3.getMaxDate().toString(), oNewMaxDate.toString(), "DP3: new max date property");
@@ -1362,7 +1364,7 @@ sap.ui.define([
 
 		//Act - set dateValue that does not match min/max range
 		oDP3.setDateValue(oNewDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oDP3.getDateValue(), oNewDate, "DP3: new invalid <dateValue> set");
@@ -1446,7 +1448,7 @@ sap.ui.define([
 		//Act - app.developer sets empty min/max date
 		oDP3.setMinDate();
 		oDP3.setMaxDate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
 		assert.ok(!oDP3.getMaxDate(), "DP3: no max date set");
@@ -1483,11 +1485,11 @@ sap.ui.define([
 				"). App. developers should take care to maintain dateValue/value accordingly.";
 
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oDP.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oDP.getValue(), sValue, "..sets the <value> property");
@@ -1514,7 +1516,7 @@ sap.ui.define([
 
 		oDP.placeAt("qunit-fixture");
 		oDP.setValue("20200630");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oDP.focus();
@@ -1545,9 +1547,9 @@ sap.ui.define([
 			fnFireSelectSpy;
 
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDP.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oYP = oDP._getCalendar()._getYearPicker();
 		oItemNavigationStub = this.stub(oYP._oItemNavigation, "getFocusedIndex").callsFake(function () { return iFocusedIndex; });
@@ -1568,9 +1570,9 @@ sap.ui.define([
 
 		// Act
 		oYP.onmousedown({});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oYP.onmouseup(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(fnFireSelectSpy.notCalled, "'fireSelect' is not called");
@@ -1682,7 +1684,7 @@ sap.ui.define([
 		oDP3.removeSpecialDate(0);
 		assert.equal(oDP3.getSpecialDates().length, 2, "2 SpecialDates in Aggregation");
 		oDP3.insertSpecialDate(new DateTypeRange({startDate: new Date(2016, 5, 21), type: CalendarDayType.Type02, secondaryType: CalendarDayType.NonWorking}), 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		setTimeout( function(){
@@ -1712,7 +1714,7 @@ sap.ui.define([
 		assert.ok(jQuery("#DP3-cal--Month0-20160604").hasClass("sapUiCalItemType03"), "20160603 has Type03");
 		oDP3.removeAllSpecialDates();
 		assert.equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout( function(){
 			assert.ok(!jQuery("#DP3-cal--Month0-20160602").hasClass("sapUiCalItemType02"), "20160602 has no Type02");
@@ -1743,10 +1745,10 @@ sap.ui.define([
 		assert.ok(jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has Type04");
 		assert.ok(jQuery("#DP3-cal--Month0-20160606").hasClass("sapUiCalItemType05"), "20160603 has Type05");
 		oDP3.destroySpecialDates();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
-		assert.ok(!sap.ui.getCore().byId("SD1"), "Special date control don't exits any more");
-		sap.ui.getCore().applyChanges();
+		assert.ok(!oCore.byId("SD1"), "Special date control don't exits any more");
+		oCore.applyChanges();
 
 		setTimeout( function(){
 			assert.ok(!jQuery("#DP3-cal--Month0-20160605").hasClass("sapUiCalItemType04"), "20160603 has no Type04");
@@ -1773,7 +1775,7 @@ sap.ui.define([
 				}
 			}).placeAt("uiArea2");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oDP.focus();
@@ -1824,13 +1826,13 @@ sap.ui.define([
 				change: handleChange
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
@@ -1848,12 +1850,12 @@ sap.ui.define([
 				change: handleChange
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Act
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
@@ -1877,7 +1879,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			oCustomMonthPicker;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDP.toggleOpen(oDP.isOpen());
 		oCustomMonthPicker = oDP._getCalendar();
 
@@ -1899,13 +1901,13 @@ sap.ui.define([
 				change: handleChange
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "Calendar is visible");
@@ -1921,13 +1923,13 @@ sap.ui.define([
 				change: handleChange
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "Calendar is visible");
@@ -1944,18 +1946,18 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					sap.ui.getCore().byId("HDP").openBy(this.getDomRef());
+					oCore.byId("HDP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "picker is visible");
@@ -1969,7 +1971,7 @@ sap.ui.define([
 
 	QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
 		var oDP = new DatePicker("DP", {}).placeAt("uiArea4");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//before opening the popup
 		assert.strictEqual(oDP.$("inner").attr("type"), "text", "DP input has correct type 'text'");
@@ -1989,10 +1991,10 @@ sap.ui.define([
 
 	QUnit.test("aria-roledescription", function(assert) {
 		var oDP = new DatePicker(),
-			sRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+			sRoledescription = oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 
 		oDP.placeAt("uiArea4");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oDP._$input.attr("aria-roledescription"), sRoledescription, "Input's Date type is indicatd in aria-roledescription");
 
@@ -2003,7 +2005,7 @@ sap.ui.define([
 		var oDP = new DatePicker();
 
 		oDP.placeAt("uiArea4");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oDP._$input.attr("aria-haspopup"), "grid", "DatePicker indicates that it opens a grid");
 
@@ -2021,7 +2023,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -2066,7 +2068,7 @@ sap.ui.define([
 			this.fnHandleOKButton = this.spy(this.oDP, "_handleOKButton");
 			this.fnFireNavigate = this.spy(this.oDP, "fireNavigate");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSpy = null;
@@ -2165,7 +2167,7 @@ sap.ui.define([
 				dateValue: new Date(2016, 0, 1),
 				navigate: this.fHandleNavigate.bind(this)
 			}).placeAt("uiArea6");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Open date picker
 			qutils.triggerEvent("click", "SDP-icon");
@@ -2273,7 +2275,7 @@ sap.ui.define([
 		setTimeout(function () {
 			// Open month picker
 			qutils.triggerEvent("click", "SDP-cal--Head-B1");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Click on March
 			that.clickOnMonth(2);
@@ -2293,7 +2295,7 @@ sap.ui.define([
 		setTimeout(function () {
 			// Open month picker
 			qutils.triggerEvent("click", "SDP-cal--Head-B2");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Click on 2015
 			that.clickOnYear(2015);
@@ -2334,7 +2336,7 @@ sap.ui.define([
 
 		this.oDP.placeAt("qunit-fixture");
 		oLabel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		this.oDP._createPopup();
@@ -2370,7 +2372,7 @@ sap.ui.define([
 		this.oDP.placeAt("qunit-fixture");
 		oLabel.placeAt("qunit-fixture");
 		oInvisibleText.toStatic().placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		this.oDP._createPopup();
@@ -2390,7 +2392,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oDP.toggleOpen();
@@ -2421,7 +2423,7 @@ sap.ui.define([
 	function simulateSelectionOnTheCalendar(assert) {
 		oDP2.focus();
 		qutils.triggerEvent("click", "DP2-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Date = jQuery("#DP2-cal--Month0-20140401");
 		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], KeyCodes.ENTER, false, false, false);
@@ -2437,7 +2439,7 @@ sap.ui.define([
 		var oDP = new DatePicker();
 		// Act
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oDP.isValidValue(), true, "empty string is valid value");
@@ -2453,7 +2455,7 @@ sap.ui.define([
 		});
 		// Act
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oDP.isValidValue(), true, "the value is valid");
@@ -2469,7 +2471,7 @@ sap.ui.define([
 		});
 		// Act
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oDP.isValidValue(), true, "the value is valid");
@@ -2485,7 +2487,7 @@ sap.ui.define([
 		});
 		// Act
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oDP.isValidValue(), false, "the value is not valid");
@@ -2498,7 +2500,7 @@ sap.ui.define([
 		// Arrange
 		var oDP = new DatePicker();
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.setValue("2014-03-26");
@@ -2530,7 +2532,7 @@ sap.ui.define([
 				displayFormat: "dd+MM+yyyy"
 			});
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.focus();
@@ -2548,7 +2550,7 @@ sap.ui.define([
 		// Arrange
 		var oDP = new DatePicker();
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.$().find("input").val("96876876786868678");
@@ -2567,7 +2569,7 @@ sap.ui.define([
 				value: "2019-05-05"
 			});
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.setMaxDate(new Date("2019", "04", "04"));
@@ -2585,7 +2587,7 @@ sap.ui.define([
 				value: "2019-05-05"
 			});
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.setMinDate(new Date("2019", "06", "06"));
@@ -2603,7 +2605,7 @@ sap.ui.define([
 				minDate: new Date("2019", "05", "05")
 			});
 		oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDP.setValue("2014-08-26");
@@ -2637,7 +2639,7 @@ sap.ui.define([
 			this.oDP = new DatePicker("SDP", {
 				dateValue: new Date(2016, 0, 1)
 			}).placeAt("uiArea6");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Open date picker
 			qutils.triggerEvent("click", "SDP-icon");
@@ -2666,7 +2668,7 @@ sap.ui.define([
 		var fnDone = assert.async(),
 			oHeader = this.oDP._oCalendar.getAggregation("header");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var afterRenderDelegate = {
 			onAfterRendering: function () {
 				// Assert
@@ -2680,7 +2682,7 @@ sap.ui.define([
 
 		// Open month picker
 		qutils.triggerEvent("click", "SDP-cal--Head-B1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
 		this.oDP._oCalendar.addDelegate(afterRenderDelegate);
@@ -2709,7 +2711,7 @@ sap.ui.define([
 			this.fnIncreaseDateSpy = this.spy(this.oDRS, "_increaseDate");
 
 			this.oDRS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oDRS.destroy();
@@ -2771,7 +2773,7 @@ sap.ui.define([
 		this.oDRS.toggleOpen();
 		oSpy = this.spy(this.oDRS._getCalendar(), "_closePickers");
 		this.oDRS._getCalendar().onsapshow(this.oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oSpy.notCalled, "the month picker is opened");
@@ -2785,25 +2787,25 @@ sap.ui.define([
 			displayFormat: "dd MMM yyyy"
 		});
 		this.oDP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		this.oDP.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this.oDP._getCalendar().getMetadata().getName().indexOf("Calendar") !== -1, "Calendar picker is opened");
 
 		// prepare
 		this.oDP.setDisplayFormat("MMM yyyy");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this.oDP._getCalendar().getMetadata().getName().indexOf("CustomMonthPicker") !== -1, "Month picker is opened");
 
 		// prepare
 		this.oDP.setDisplayFormat("yyyy");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this.oDP._getCalendar().getMetadata().getName().indexOf("CustomYearPicker") !== -1, "Year picker is opened");
@@ -2824,14 +2826,14 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 
 		// Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#oDP").find("input").val(), "09-01-2021", "Input value is correct when it is before min value.");
 
 		// Act
 		oDP.setDateValue(new Date(2021, 11, 31));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#oDP").find("input").val(), "12-31-2021", "Input value is correct when it is after max value.");

@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Icon",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -38,7 +39,8 @@ sap.ui.define([
 	Device,
 	ManagedObject,
 	Icon,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -89,7 +91,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oInput.getValue(), "", 'The default value is ""');
@@ -370,14 +372,14 @@ sap.ui.define([
 				"lorem-ipsum-label"
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oInput.getFocusDomRef().getAttribute("aria-required"), "The attribute is set correctly");
 
 		// Act
 		oLabel.setRequired(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oInput.getFocusDomRef().getAttribute("aria-required"), "The attribute is removed");
@@ -399,7 +401,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
@@ -439,7 +441,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
 
 			// act
@@ -505,7 +507,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act - set dom value
 		oInput.getFocusDomRef().value = sValue + sValue;
@@ -535,7 +537,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
@@ -574,11 +576,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oInput.setWidth(mSettings.input);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oInput.getDomRef().style.width, mSettings.output);
@@ -617,11 +619,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
@@ -640,7 +642,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
@@ -657,7 +659,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("disabled"), undefined);
@@ -678,7 +680,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output));
@@ -731,11 +733,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oInput.setValueState(mSettings.input);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.ok(oInput.$("content").hasClass(mSettings.output), "Input should have the class " + mSettings.output);
@@ -767,17 +769,17 @@ sap.ui.define([
 		var oInput = new InputBase({
 			valueState : null
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state before rendering is converted to default value.");
 
 		oInput.setValueState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput.$("content").hasClass("sapMInputBaseContentWrapperError"), "Input has the state class before testing the invalid value.");
 
 		oInput.setValueState(undefined);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oInput.getValueState(), ValueState.None, "Invalid value state is converted to default value.");
 		assert.ok(!oInput.$().hasClass("sapMInputBaseState"), "Input's state class is removed after setting the invalid value");
@@ -794,21 +796,21 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
 
 		// act
 		oInput.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
 
 		// act
 		oInput.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.notOk(oInput.getDomRef("content").classList.contains("sapMInputBaseContentWrapperInformation"));
@@ -830,7 +832,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
@@ -846,11 +848,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setName("myInput");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
@@ -871,11 +873,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oInput.setPlaceholder(mSettings.input);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
@@ -916,7 +918,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
@@ -948,11 +950,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oInput.setEditable(mSettings.input);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
@@ -987,7 +989,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oInput.$().length, 0);
@@ -1008,7 +1010,7 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
@@ -1040,11 +1042,11 @@ sap.ui.define([
 
 			// arrange
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oInput.setTextAlign(mSettings.input);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
@@ -1077,7 +1079,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.destroy();
@@ -1113,7 +1115,7 @@ sap.ui.define([
 		// arrange
 		oErrorInput.placeAt("content");
 		oWarningInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oErrorInput.focus();
 		this.clock.tick(500);
 
@@ -1139,7 +1141,7 @@ sap.ui.define([
 		assert.ok(!document.getElementById("warninginput-message"), "warning message popup is closed when focus is out");
 
 		oErrorInput.setShowValueStateMessage(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oErrorInput.focus();
 		this.clock.tick(500);
 		assert.ok(!document.getElementById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
@@ -1151,7 +1153,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("it should update the value state message accordingly", function(assert) {
-		var oCoreRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
+		var oCoreRB = oCore.getLibraryResourceBundle("sap.ui.core"),
 				oValueStateInput = new Input("vsinput", {
 					placeholder: "value state changes while you are typing",
 					liveChange: function() {
@@ -1160,27 +1162,27 @@ sap.ui.define([
 						switch (i % 5) {
 							case 0:
 								oValueStateInput.setValueState("None");
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								break;
 
 							case 1:
 								oValueStateInput.setValueState("Warning");
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								break;
 
 							case 2:
 								oValueStateInput.setValueState("Success");
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								break;
 
 							case 3:
 								oValueStateInput.setValueState("Error");
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								break;
 
 							case 4:
 								oValueStateInput.setValueState("Information");
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								break;
 						}
 					}
@@ -1188,7 +1190,7 @@ sap.ui.define([
 
 		var fnSetErrorAnnounceSpy  = this.spy(oValueStateInput, "setErrorMessageAnnouncementState");
 		oValueStateInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// warning state
 		oValueStateInput.updateDomValue("1").focus();
@@ -1261,7 +1263,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
 
@@ -1277,7 +1279,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
 
@@ -1294,7 +1296,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
@@ -1314,7 +1316,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
@@ -1338,7 +1340,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act
@@ -1366,7 +1368,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -1390,7 +1392,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "bar");
@@ -1427,7 +1429,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -1454,7 +1456,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oInputDomRef = oInput.getFocusDomRef();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
@@ -1498,7 +1500,7 @@ sap.ui.define([
 		// arrange
 		oInput.placeAt("content");
 		oButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 		oInput.getFocusDomRef().value = sExpectedValue;
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
@@ -1528,7 +1530,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireEventSpy = this.spy(oInput, "fireEvent");
 		var fnOnEscapeSpy = this.spy(oInput, "onsapescape");
 
@@ -1576,7 +1578,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oInputDomRef = oInput.getFocusDomRef();
 		var fnInputDelegateSpy = this.spy();
 		var oInputDelegate = {
@@ -1605,7 +1607,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		try {
@@ -1632,7 +1634,7 @@ sap.ui.define([
 			},
 			oStub = sinon.stub(oInput, "getDomRef").returns(undefined);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		try {
 			// act
@@ -1660,7 +1662,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertion - before escape
 		assert.strictEqual(oInput.getFocusDomRef(), oInput.$().find("input")[0], "getFocusDomRef returns the input field.");
@@ -1677,7 +1679,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireChangeSpy = this.spy(oInput, "fireChange");
 
 		// act - set dom value and change cursor position
@@ -1687,7 +1689,7 @@ sap.ui.define([
 
 		// invalidate the control after dom value changes
 		oInput.setPlaceholder("placeholder");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
@@ -1714,7 +1716,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act - set dom value and set value property and change cursor position
 		oInput.focus();
@@ -1724,7 +1726,7 @@ sap.ui.define([
 
 		// invalidate the control after dom and property value changes
 		oInput.setPlaceholder("placeholder");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertion
 		assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
@@ -1748,7 +1750,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Input = jQuery(oInput.getFocusDomRef());
 
 		// act - get focus info and change cursor position of the dom element
@@ -1775,15 +1777,15 @@ sap.ui.define([
 		// arrange
 		var sValue = "Lorem Ipsum";
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.focus();
 
 		// act
 		oInput.updateDomValue(sValue);
 		oInput.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInput.setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oInput.getFocusDomRef().value, sValue);
@@ -1798,7 +1800,7 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertion - before escape
 		assert.strictEqual(oInput.getPopupAnchorDomRef(), oInput.$()[0], "getFocusDomRef returns the control's DOM reference.");
@@ -1824,7 +1826,7 @@ sap.ui.define([
 		var oModel = new JSONModel({
 			value : sInitValue
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		// arrange
 		var oInput = new InputBase({
@@ -1834,7 +1836,7 @@ sap.ui.define([
 			}
 		});
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertion
 		assert.strictEqual(oInput.getValue(), smile(sInitValue), "Initial formatter is applied correctly");
@@ -1870,7 +1872,7 @@ sap.ui.define([
 		var oInput = new InputBase().placeAt("content");
 		var fnSetErrorAnnounceSpy  = this.spy(oInput, "setErrorMessageAnnouncementState");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
@@ -1880,24 +1882,24 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
 
 		oInput.setValueState(ValueState.Warning);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the value state is not Error");
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
 
 		oInput.setValueState(ValueState.Success);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
 
 		oInput.setValueState(ValueState.Information);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Information does not make control invalid");
 
 		oInput.setValueState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the control is not focused");
@@ -1905,30 +1907,30 @@ sap.ui.define([
 
 		oInput.focus();
 		oInput.setValueState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, true,
 			"The error annoucement state should be changed, when the control is on focus and there are dynamic changes");
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
 
 		oInput.rerender();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error is at the dom after rendering");
 
 		oInput.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("readonly"), "readonly", "readonly attribute is set for editable=false");
 
 		oInput.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("disabled"), "disabled", "disabled attribute is set for enabled=false");
 
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "text", "aria-labelledby set for assosiation");
 
@@ -1945,11 +1947,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setTooltip("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oInput.$().attr("title"), undefined);
@@ -1968,11 +1970,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setTooltip("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -2001,11 +2003,11 @@ sap.ui.define([
 
 		// arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setTooltip("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -2039,7 +2041,7 @@ sap.ui.define([
 		// arrange
 		oInput.placeAt("content");
 		oText.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setTooltip("");
@@ -2088,7 +2090,7 @@ sap.ui.define([
 		var oInput = new MyTextField({
 			valueState: ValueState.Error
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "combobox", "Control role set correctly");
@@ -2101,14 +2103,14 @@ sap.ui.define([
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
 		oInput.addAriaDescribedBy(oText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "text internal_labelledby_id", "aria-labelledby is set for assosiation and internal together");
 		assert.strictEqual($Input.attr("aria-describedby"), "text internal_describedby_id", "aria-describedby is set for assosiation and internal together");
 
 		oInput.removeAriaLabelledBy(oText);
 		oInput.removeAriaDescribedBy(oText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "aria-labelledby is set only for internal");
 		assert.strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "aria-describedby is set only for internal");
@@ -2118,7 +2120,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRb = oCore.getLibraryResourceBundle("sap.m");
 		var oInput = new InputBase({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 
 		assert.ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");
@@ -2157,7 +2159,7 @@ sap.ui.define([
 				})
 			})
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oInput.getAggregation("_invisibleFormattedValueStateText").getControls()[0].getDomRef().getAttribute("tabindex"), "-1", "The link shouldn't be tabbable");
 		oInput.destroy();
@@ -2189,7 +2191,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		oInput.oninput = oninputOverride;
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			if (callCount) {
@@ -2228,13 +2230,13 @@ sap.ui.define([
 			value: 'ä'
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			oInput.oninput = oninputOverride;
 
 			oInput.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			setTimeout(function () {
 				if (callCount) {
@@ -2277,13 +2279,13 @@ sap.ui.define([
 		var oPanel = new Panel({
 			content: oInput
 		}).placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function () {
 			oInput.oninput = oninputOverride;
 
 			oPanel.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			setTimeout(function () {
 				if (callCount) {
@@ -2323,7 +2325,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInputDomRef = oInput.getFocusDomRef(),
 			fnFireChangeSpy = this.spy(oInput, "fireChange"),
@@ -2350,19 +2352,19 @@ sap.ui.define([
 			oBeginIcon, oEndIcon;
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(0, oInput._calculateIconsSpace(),
 			"The space taken by the icon should be 0, when no icon present");
 
 		oEndIcon = oInput.addEndIcon({src: "sap-icon://slim-arrow-down"});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oEndIcon.getDomRef().offsetWidth, oInput._calculateIconsSpace(),
 			"The space taken by the icon should be calculated");
 
 		oBeginIcon = oInput.addBeginIcon({src: "sap-icon://slim-arrow-down"});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oBeginIcon.getDomRef().offsetWidth + oEndIcon.getDomRef().offsetWidth,
 			oInput._calculateIconsSpace(), "The space taken by the icons should be calculated" );
@@ -2380,7 +2382,7 @@ sap.ui.define([
 		var fnOnInputBaseSpy = this.spy(oRenderer, "getInnerSuffix");
 
 		oInputBase.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "getInnerSuffix() is called");
 		assert.strictEqual(oInputBase.$(oRenderer.getInnerSuffix()).length, 1, "The inner element has proper Id");
@@ -2397,9 +2399,9 @@ sap.ui.define([
 			this.oInput._setPreferUserInteraction(true);
 			this.oInput.bindProperty("value", {path: "/value"});
 			this.oModel.setData({"value": 'Initial Value'});
-			sap.ui.getCore().setModel(this.oModel);
+			oCore.setModel(this.oModel);
 			this.oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oInputFocusDomRef = this.oInput.getFocusDomRef();
 		},
 		afterEach: function () {

@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/NavContainer",
 	"sap/m/Page",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	JSONModel,
@@ -26,7 +27,8 @@ sap.ui.define([
 	Toolbar,
 	NavContainer,
 	Page,
-	InvisibleText
+	InvisibleText,
+	oCore
 ) {
 	"use strict";
 
@@ -147,7 +149,7 @@ sap.ui.define([
 
 			bindListData(data, oItemTemplate1, this.oList);
 			this.oButton.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach: function() {
@@ -215,13 +217,13 @@ sap.ui.define([
 
 		// Open the ResponsivePopover
 		this.oResponsivePopover.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 0, "CloseButton should not be rendered");
 
 		this.oResponsivePopover.setShowCloseButton(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#" + this.oResponsivePopover.getId() + "-closeButton").length === 1, "CloseButton should be rendered");
 	});
@@ -245,7 +247,7 @@ sap.ui.define([
 
 		// Open the ResponsivePopover
 		oResponsivePopover.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.ok(true, "does not throw an exception");
@@ -294,7 +296,7 @@ sap.ui.define([
 		});
 
 		this.oResponsivePopover.addContent(oNavContainer);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oResponsivePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -403,7 +405,7 @@ sap.ui.define([
 		var oButton = new Button();
 
 		oButton.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// open the RPO
 		oResponsivePopover.openBy(oButton);
@@ -412,11 +414,11 @@ sap.ui.define([
 		// remove it from the UI Area
 		var oUIArea = oResponsivePopover.getParent();
 		oUIArea.removeAllContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// invalidate it
 		oResponsivePopover.addContent(new Button());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(true, "Assertion has done");
 	});

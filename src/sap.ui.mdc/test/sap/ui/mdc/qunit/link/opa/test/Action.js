@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals'
-], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals) {
+	'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/core/Core"
+], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, oCore) {
 	'use strict';
 
 	var Action = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Action", {
@@ -611,7 +611,7 @@ sap.ui.define([
 		},
 
 		iPressOnRtaSaveButton: function(bWithReload) {
-			var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			return this.waitFor({
 				controlType: "sap.m.Button",
 				matchers: function(oButton) {

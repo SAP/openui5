@@ -1579,7 +1579,7 @@ sap.ui.define([
 
 		QUnit.module("Card Accessibility", {
 			beforeEach: function () {
-				this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+				this.oRb = Core.getLibraryResourceBundle("sap.f");
 				this.oCard = new Card("somecard", {
 					width: "400px",
 					height: "600px"

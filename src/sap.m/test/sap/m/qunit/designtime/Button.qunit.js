@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	elementDesigntimeTest,
 	elementActionTest,
 	JSONModel,
 	CustomData,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -163,10 +165,10 @@ sap.ui.define([
 		var fnPreviousActionFiredCorrectlyAfterCombine = function (oButton, oViewAfterAction, assert) {
 			var oCreatedMenuButton = oViewAfterAction.byId("bar0").getContentMiddle()[0];
 			oCreatedMenuButton.setButtonMode("Split");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
-			var oTextButton = sap.ui.getCore().byId(oCreatedMenuButton.getFocusDomRef().id);
+			var oTextButton = oCore.byId(oCreatedMenuButton.getFocusDomRef().id);
 
 			// Select an item, then press the menu button
 			oCreatedMenuButton.getMenu().fireItemSelected({item: oFirstMenuItem});
@@ -503,7 +505,7 @@ sap.ui.define([
 			},
 			layer: "VENDOR",
 			before: function () {
-				var config = sap.ui.getCore().getConfiguration();
+				var config = oCore.getConfiguration();
 				//turn on rtl for this test
 				sandbox.stub(config, "getRTL").returns(true);
 			},

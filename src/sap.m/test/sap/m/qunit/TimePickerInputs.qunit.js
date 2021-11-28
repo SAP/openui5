@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/m/TimePickerInputs",
 	"sap/m/TimePickerInternals",
-	"sap/ui/events/KeyCodes"
-], function(TimePickerInputs, TimePickerInternals, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(TimePickerInputs, TimePickerInternals, KeyCodes, oCore) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -11,7 +12,7 @@ sap.ui.define([
 			this.oTPI = new TimePickerInputs();
 
 			this.oTPI.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPI.destroy();
@@ -27,7 +28,7 @@ sap.ui.define([
 			oSetupControlsSpy = this.spy(this.oTPI, "_createControls");
 
 		this.oTPI.setLocaleId(sLocale);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(this.oTPI._sAM, sExpectedAM, "_sAM property should be set to proper locale AM");
 		assert.equal(this.oTPI._sPM, sExpectedPM, "_sPM property should be set to proper locale PM");
@@ -41,7 +42,7 @@ sap.ui.define([
 			oSetupControlsSpy = this.spy(this.oTPI, "_createControls");
 
 		this.oTPI.setDisplayFormat(sDisplayFormat);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("displayFormat", sDisplayFormat, true), true, "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -53,7 +54,7 @@ sap.ui.define([
 			iStep = 23;
 
 		this.oTPI.setMinutesStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -65,7 +66,7 @@ sap.ui.define([
 				iStep = 23;
 
 		this.oTPI.setSecondsStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -76,7 +77,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPI, "setProperty");
 
 		this.oTPI.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
@@ -89,7 +90,7 @@ sap.ui.define([
 		this.stub(this.oTPI, "_parseValue").returns(sExpectedDate);
 
 		this.oTPI.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
 	});
@@ -100,7 +101,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("HH:mm:ss");
 		this.oTPI.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
@@ -114,7 +115,7 @@ sap.ui.define([
 
 		this.oTPI.setValueFormat("HH:mm:ss");
 		this.oTPI.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, true), true, "_setTimeValues is called with parsed date");
 	});
@@ -138,7 +139,7 @@ sap.ui.define([
 			this.oTPI = new TimePickerInputs();
 
 			this.oTPI.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPI.destroy();
@@ -537,7 +538,7 @@ sap.ui.define([
 			this.oTPI._setTimeValues(new Date(2017, 7, 8, 22, 58, 58));
 
 			this.oTPI.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oFakeEvent = {
 				target: {
 					classList: {
@@ -606,7 +607,7 @@ sap.ui.define([
 
 		//change to minutes input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_DOWN));
@@ -625,7 +626,7 @@ sap.ui.define([
 
 		//change to seconds input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_DOWN));
@@ -675,7 +676,7 @@ sap.ui.define([
 
 		//change to minutes input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_UP));
@@ -694,7 +695,7 @@ sap.ui.define([
 
 		//change to seconds input
 		this.oTPI.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.ARROW_UP));
@@ -725,12 +726,12 @@ sap.ui.define([
 		this.oTPI.setValueFormat("hh:mm:ss a");
 		this.oTPI.setDisplayFormat("hh:mm:ss a");
 		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("1"));
 		this.oTPI.onkeydown(this.fakeEvent("1"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -739,7 +740,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
 		this.oTPI.onkeydown(this.fakeEvent("2"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -748,7 +749,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("3"));
 		this.oTPI.onkeydown(this.fakeEvent("3"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -756,7 +757,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent(KeyCodes.P));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -776,11 +777,11 @@ sap.ui.define([
 		this.oTPI.setValueFormat("hh:mm:ss a");
 		this.oTPI.setDisplayFormat("hh:mm:ss a");
 		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("1"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPI._getHoursInput().getValue(), 1, "Hours are set properly");
@@ -790,7 +791,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPI._getMinutesInput().getValue(), 2, "Minutes are set properly");
@@ -800,7 +801,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("3"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPI._getSecondsInput().getValue(), 3, "Seconds are set properly");
@@ -819,11 +820,11 @@ sap.ui.define([
 		this.oTPI.setValueFormat("hh:mm:ss");
 		this.oTPI.setDisplayFormat("hh:mm:ss");
 		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("7"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -831,7 +832,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("7"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -839,7 +840,7 @@ sap.ui.define([
 
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("7"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//assert
@@ -862,7 +863,7 @@ sap.ui.define([
 		this.oTPI.setDisplayFormat("HH:mm:ss");
 		this.oTPI.setSupport2400(true);
 		this.oTPI._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oHoursInput = this.oTPI._getHoursInput();
 		oMinutesInput = this.oTPI._getMinutesInput();
@@ -871,7 +872,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
 		this.oTPI.onkeydown(this.fakeEvent("4"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oHoursInput.getValue(), 24, "Hours are set to 24");
@@ -884,7 +885,7 @@ sap.ui.define([
 		//act
 		this.oTPI.onkeydown(this.fakeEvent("2"));
 		this.oTPI.onkeydown(this.fakeEvent("2"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oHoursInput.getValue(), 22, "Hours are set properly");
@@ -904,7 +905,7 @@ sap.ui.define([
 			});
 
 			this.oTPI.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPI.destroy();
@@ -923,11 +924,11 @@ sap.ui.define([
 			sSecondsLabelled = oSecondsInput.getAriaLabelledBy()[0];
 
 		//assert
-		assert.equal(sap.ui.getCore().byId(sHoursLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_HOURS"), "Hours input is aria-labelledby properly");
+		assert.equal(oCore.byId(sHoursLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_HOURS"), "Hours input is aria-labelledby properly");
 
-		assert.equal(sap.ui.getCore().byId(sMinutesLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_MINUTES"), "Minutes input is aria-labelledby properly");
+		assert.equal(oCore.byId(sMinutesLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_MINUTES"), "Minutes input is aria-labelledby properly");
 
-		assert.equal(sap.ui.getCore().byId(sSecondsLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_SECONDS"), "Seconds input is aria-labelledby properly");
+		assert.equal(oCore.byId(sSecondsLabelled).getText(), oRB.getText("TIMEPICKER_INPUTS_ENTER_SECONDS"), "Seconds input is aria-labelledby properly");
 
 		assert.equal(this.oTPI._getFormatButton().getDomRef().getAttribute("title"), oRB.getText("TIMEPICKER_AMPM_BUTTON_TOOLTIP"), "AM/PM segmented button have proper tooltip");
 
@@ -940,7 +941,7 @@ sap.ui.define([
 			this.oTPI = new TimePickerInputs();
 
 			this.oTPI.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPI.destroy();

@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/IconPool",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/Core"
 ], function (
 	UIComponent,
 	IconPool,
-	Device
+	Device,
+	oCore
 ) {
 	"use strict";
 
@@ -30,7 +32,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// specify the only supported language
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			oCore.getConfiguration().setLanguage("en");
 
 			// register TNT icon font
 			IconPool.registerFont({
@@ -80,7 +82,7 @@ sap.ui.define([
 
 			if (!this._oCookiesComponent) {
 				this._oCookiesComponent = this.runAsOwner(function() {
-					this._oCookiesComponent = sap.ui.getCore().createComponent({
+					this._oCookiesComponent = oCore.createComponent({
 						id: 'cookiesComp-' + sId,
 						name: sId
 					});

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/PullToRefresh",
 	"sap/m/Page",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -18,7 +19,8 @@ sap.ui.define([
 	List,
 	PullToRefresh,
 	Page,
-	Device
+	Device,
+	oCore
 ) {
 	"use strict";
 
@@ -48,7 +50,7 @@ sap.ui.define([
 			}
 		};
 
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRb = oCore.getLibraryResourceBundle("sap.m");
 		var oApp = new App("p2RApp", {initialPage:"page1"});
 
 		var sPullDwn = oRb.getText("PULL2REFRESH_REFRESH"),
@@ -126,7 +128,7 @@ sap.ui.define([
 			qutils.triggerEvent("click", oP2R.getId());
 			assert.strictEqual(oSpy.callCount, 1, "Refresh event has been fired.");
 			assert.strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
 			setTimeout(function() {
 				oP2R.hide(); // Close
@@ -146,7 +148,7 @@ sap.ui.define([
 				sAriaDescribedBy = oPullToRefresh._getAriaDescribedByReferences();
 
 			oPullToRefresh.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sExpectedAriaControls = oPullToRefresh.getParent().sId + "-cont";
 

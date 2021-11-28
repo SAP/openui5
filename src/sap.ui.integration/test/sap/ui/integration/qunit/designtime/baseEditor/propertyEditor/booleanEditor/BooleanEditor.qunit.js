@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	ResourceBundle,
 	ResourceModel,
-	EditorQunitUtils
+	EditorQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -46,7 +48,7 @@ sap.ui.define([
 			return this.oBaseEditor.getPropertyEditorsByName("sampleBoolean").then(function (aPropertyEditor) {
 				this.oBooleanEditor = aPropertyEditor[0];
 				this.oBooleanEditor.setValue(true);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oBooleanEditorElement = this.oBooleanEditor.getContent();
 			}.bind(this));
 		},

@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/m/semantic/MultiSelectAction",
 	"sap/m/library",
 	"sap/m/Label",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -44,7 +45,8 @@ sap.ui.define([
 	MultiSelectAction,
 	mobileLibrary,
 	Label,
-	InvisibleText
+	InvisibleText,
+	oCore
 ) {
 	"use strict";
 
@@ -80,7 +82,7 @@ sap.ui.define([
 		}
 
 		oPage.placeAt("qunit-fixture-visible");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oPage;
 	}

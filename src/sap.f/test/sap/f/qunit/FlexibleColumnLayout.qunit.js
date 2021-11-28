@@ -114,10 +114,10 @@ function (
 	QUnit.module("DESKTOP - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this.sOldAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
+			this.sOldAnimationMode = Core.getConfiguration().getAnimationMode();
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE); // > 1280px
-			sap.ui.getCore().getConfiguration().setAnimationMode("none");
+			Core.getConfiguration().setAnimationMode("none");
 
 			this.getBeginColumnBackArrow = function () { return this.oFCL.getAggregation("_beginColumnBackArrow"); };
 			this.getMidColumnBackArrow = function () { return this.oFCL.getAggregation("_midColumnBackArrow"); };
@@ -127,7 +127,7 @@ function (
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("auto");
-			sap.ui.getCore().getConfiguration().setAnimationMode(this.sOldAnimationMode);
+			Core.getConfiguration().setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 		}
 	});
@@ -465,10 +465,10 @@ function (
 	QUnit.module("TABLET - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this.sOldAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
+			this.sOldAnimationMode = Core.getConfiguration().getAnimationMode();
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(TABLET_SIZE); // Between 960 and 1280
-			sap.ui.getCore().getConfiguration().setAnimationMode("none");
+			Core.getConfiguration().setAnimationMode("none");
 
 			this.getBeginColumnBackArrow = function () { return this.oFCL.getAggregation("_beginColumnBackArrow"); };
 			this.getMidColumnBackArrow = function () { return this.oFCL.getAggregation("_midColumnBackArrow"); };
@@ -478,7 +478,7 @@ function (
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("auto");
-			sap.ui.getCore().getConfiguration().setAnimationMode(this.sOldAnimationMode);
+			Core.getConfiguration().setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 		}
 	});
@@ -1041,7 +1041,7 @@ function (
 	QUnit.test("FCL does not have animations with animationMode=minimal", function(assert){
 		// arrange
 		var oSpy = this.spy(this.oFCL._oAnimationEndListener, "waitForColumnResizeEnd"),
-			oConfiguration = sap.ui.getCore().getConfiguration(),
+			oConfiguration = Core.getConfiguration(),
 			sOriginalAnimationMode = oConfiguration.getAnimationMode();
 
 		oConfiguration.setAnimationMode("minimal");
@@ -1529,8 +1529,8 @@ function (
 			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this._sOrigAminationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
-			sap.ui.getCore().getConfiguration().setAnimationMode("none");
+			this._sOrigAminationMode = Core.getConfiguration().getAnimationMode();
+			Core.getConfiguration().setAnimationMode("none");
 			$("html").attr("data-sap-ui-animation", "off");
 
 
@@ -1542,7 +1542,7 @@ function (
 			// Clean Up
 			this.oFCL.destroy();
 			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
-			sap.ui.getCore().getConfiguration().setAnimationMode(this._sOrigAminationMode);
+			Core.getConfiguration().setAnimationMode(this._sOrigAminationMode);
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 		}
 	});
@@ -1611,8 +1611,8 @@ function (
 			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this._sOrigAminationMode = sap.ui.getCore().getConfiguration().getAnimationMode();
-			sap.ui.getCore().getConfiguration().setAnimationMode("none");
+			this._sOrigAminationMode = Core.getConfiguration().getAnimationMode();
+			Core.getConfiguration().setAnimationMode("none");
 			$("html").attr("data-sap-ui-animation", "off");
 		},
 		afterEach: function () {
@@ -1620,7 +1620,7 @@ function (
 			// Clean Up
 			this.oFCL.destroy();
 			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
-			sap.ui.getCore().getConfiguration().setAnimationMode(this._sOrigAminationMode);
+			Core.getConfiguration().setAnimationMode(this._sOrigAminationMode);
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 		}
 	});

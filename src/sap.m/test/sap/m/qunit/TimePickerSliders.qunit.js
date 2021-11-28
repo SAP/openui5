@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/TimePickerSlider",
 	"sap/m/TimePickerSliders",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
-], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, jQuery, oCore) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -13,7 +14,7 @@ sap.ui.define([
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPS.destroy();
@@ -29,7 +30,7 @@ sap.ui.define([
 			oSetupListsSpy = this.spy(this.oTPS, "_setupLists");
 
 		this.oTPS.setLocaleId(sLocale);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(this.oTPS._sAM, sExpectedAM, "_sAM property should be set to proper locale AM");
 		assert.equal(this.oTPS._sPM, sExpectedPM, "_sPM property should be set to proper locale PM");
@@ -46,7 +47,7 @@ sap.ui.define([
 			oSetupListsSpy = this.spy(this.oTPS, "_setupLists");
 
 		this.oTPS.setDisplayFormat(sDisplayFormat);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("displayFormat", sDisplayFormat, true), true, "setProperty is called with right arguments");
 		assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
@@ -60,7 +61,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
 		this.oTPS.setLabelText(sLabelText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText), true, "setProperty is called with right arguments");
 	});
@@ -71,7 +72,7 @@ sap.ui.define([
 			iStep = 23;
 
 		this.oTPS.setMinutesStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
@@ -86,7 +87,7 @@ sap.ui.define([
 			iExpectedStep = 1;
 
 		this.oTPS.setMinutesStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iExpectedStep, true), "setProperty is called with right arguments");
 		assert.equal(this.oTPS.getMinutesStep(), iExpectedStep, "minutesStep is corrected to 1");
@@ -100,7 +101,7 @@ sap.ui.define([
 				iStep = 23;
 
 		this.oTPS.setSecondsStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupListsSpy.called, "_setupLists is called to regenerate the lists");
@@ -115,7 +116,7 @@ sap.ui.define([
 				iExpectedStep = 1;
 
 		this.oTPS.setSecondsStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iExpectedStep, true), "setProperty is called with right arguments");
 		assert.equal(this.oTPS.getSecondsStep(), iExpectedStep, "secondsStep is corrected to 1");
@@ -128,7 +129,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
 		this.oTPS.setWidth(sWidth);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("width", sWidth), true, "setProperty is called with right arguments");
 		assert.equal(this.oTPS.$().outerWidth() + "px", sWidth, "width is properly set");
@@ -139,7 +140,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
 		this.oTPS.setHeight(sHeight);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("height", sHeight), true, "setProperty is called with right arguments");
 		assert.equal(this.oTPS.$().outerHeight() + "px", sHeight, "height is properly set");
@@ -150,7 +151,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
 		this.oTPS.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 
@@ -164,7 +165,7 @@ sap.ui.define([
 			oParseValueStub = this.stub(this.oTPS, "_parseValue").returns(sExpectedDate);
 
 		this.oTPS.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
 
@@ -178,7 +179,7 @@ sap.ui.define([
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 
@@ -193,7 +194,7 @@ sap.ui.define([
 
 		this.oTPS.setValueFormat("HH:mm:ss");
 		this.oTPS.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, true), true, "_setTimeValues is called with parsed date");
 
@@ -206,7 +207,7 @@ sap.ui.define([
 		aSliders[0].setIsExpanded(true);
 
 		this.oTPS.collapseAll();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aSliders.forEach(function (oSlider, index) {
 			assert.equal(oSlider.getIsExpanded(), false, "slider " + index + " is not expanded");
@@ -218,7 +219,7 @@ sap.ui.define([
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPS.destroy();
@@ -237,7 +238,7 @@ sap.ui.define([
 		this.oTPS.attachChange(fnChangeEventSpy);
 
 		this.oTPS.getAggregation("_columns")[0].setIsExpanded(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(fnChangeEventSpy.callCount, 1, "closing of a slider should");
 		assert.equal(sEventParam, sExpectedValue, "TimepickerSliders value should be passed as a parameter to the change event");
@@ -251,7 +252,7 @@ sap.ui.define([
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPS.destroy();
@@ -280,7 +281,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("arrows tooltips", function (assert) {
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oRB = oCore.getLibraryResourceBundle("sap.m"),
 			sUpArrowTooltipText = oRB.getText("TIMEPICKER_TOOLTIP_UP"),
 			sDownArrowTooltipText = oRB.getText("TIMEPICKER_TOOLTIP_DOWN");
 
@@ -751,7 +752,7 @@ sap.ui.define([
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPS.destroy();

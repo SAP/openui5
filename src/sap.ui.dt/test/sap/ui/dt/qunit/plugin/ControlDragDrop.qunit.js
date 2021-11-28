@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ], function (
 	OverlayUtil,
 	ControlDragDrop,
 	DesignTime,
 	OverlayRegistry,
 	VerticalLayout,
-	Button
+	Button,
+	oCore
 ) {
 	"use strict";
 
@@ -25,7 +27,7 @@ sap.ui.define([
 			this.oEmptyLayout = new VerticalLayout();
 			this.oParentLayout = new VerticalLayout({content: [this.oLayout, this.oEmptyLayout]});
 			this.oParentLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDragDrop = new ControlDragDrop();
 			this.oDesignTime = new DesignTime({

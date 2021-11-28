@@ -135,7 +135,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -306,7 +306,7 @@ sap.ui.define([
 
 				if (mTestSettings.renderTable) {
 					oTable.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
+					Core.applyChanges();
 				}
 
 				var oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
@@ -436,7 +436,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -449,7 +449,7 @@ sap.ui.define([
 		var oShowGroupMenuButton = sinon.stub(TableUtils.Grouping, "showGroupMenuButton");
 		oShowGroupMenuButton.returns(true);
 		this.oTable.invalidate();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		function doTest(oTable) {
 			oTable.$().find(".sapUiTableGroupMenuButton").trigger("click");

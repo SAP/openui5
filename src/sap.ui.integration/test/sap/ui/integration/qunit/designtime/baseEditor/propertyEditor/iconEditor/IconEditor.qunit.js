@@ -7,7 +7,8 @@ sap.ui.define([
 	"qunit/designtime/EditorQunitUtils",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	IconEditor,
 	BaseEditor,
@@ -15,7 +16,8 @@ sap.ui.define([
 	EditorQunitUtils,
 	ResourceBundle,
 	ResourceModel,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 			return this.oBaseEditor.getPropertyEditorsByName("sampleIcon").then(function(aPropertyEditor) {
 				this.oIconEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconEditor.setValue("sap-icon://target-group");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oIconEditorElement = this.oIconEditor.getContent();
 			}.bind(this));
 		},

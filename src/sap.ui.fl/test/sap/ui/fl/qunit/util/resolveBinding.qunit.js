@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/util/resolveBinding"
+	"sap/ui/fl/util/resolveBinding",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	sinon,
 	View,
 	JSONModel,
-	resolveBinding
+	resolveBinding,
+	oCore
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -34,7 +36,7 @@ sap.ui.define([
 			this.oView.setBindingContext(this.oDefaultModel.getContext("/bar"), "context");
 			this.oView.setModel(this.oCustomModel, "custom");
 			this.oView.setBindingContext(this.oCustomModel.getContext("/"), "custom");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		after: function() {
 			this.oView.destroy();

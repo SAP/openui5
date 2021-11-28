@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/CountMode",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Core"
 ], function(
 	UriParameters,
 	Log,
@@ -21,7 +22,8 @@ sap.ui.define([
 	JSONModel,
 	ODataModel,
 	CountMode,
-	FlUtils
+	FlUtils,
+	oCore
 ) {
 	"use strict";
 	function setTableModelData (oModel, sResourcePath) {
@@ -201,7 +203,7 @@ sap.ui.define([
 			) {
 				var aFileNames = [];
 
-				Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames).then(function(oStack) {
+				Stack.initializeWithChanges(oCore.byId("Comp1---idMain1"), aFileNames).then(function(oStack) {
 					//expose undo/redo test function to console
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 
@@ -226,7 +228,7 @@ sap.ui.define([
 			) {
 				var oComponent = this.getOwnerComponent();
 				oComponent.runAsOwner(function() {
-					if (!this._oDialog || !sap.ui.getCore().byId(this._oDialog.getId())) {
+					if (!this._oDialog || !oCore.byId(this._oDialog.getId())) {
 						Fragment.load({
 							id: this.getView().createId("SmartFormDialog"),
 							name: "sap.ui.rta.test.fragment.Popup"
@@ -271,7 +273,7 @@ sap.ui.define([
 			) {
 				var oComponent = this.getOwnerComponent();
 				oComponent.runAsOwner(function() {
-					if (!this._oDialog || !sap.ui.getCore().byId(this._oDialog.getId())) {
+					if (!this._oDialog || !oCore.byId(this._oDialog.getId())) {
 						this._oDialogForm = new XMLView(
 							this.getView().createId("SmartFormDialog"),
 							{
@@ -347,7 +349,7 @@ sap.ui.define([
 			], function(Popover) {
 				var oComponent = this.getOwnerComponent();
 				oComponent.runAsOwner(function() {
-					if (!this._oPopover || !sap.ui.getCore().byId(this._oPopover.getId())) {
+					if (!this._oPopover || !oCore.byId(this._oPopover.getId())) {
 						Fragment.load({
 							id: this.getView().createId("FormPopover"),
 							name: "sap.ui.rta.test.fragment.Popup"

@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/rta/internal/dttool/plugins/OutsideDragDrop",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/uid"
+	"sap/base/util/uid",
+	"sap/ui/core/Core"
 ], function (
 	DragDropUtil,
 	PostMessageBus,
@@ -25,7 +26,8 @@ sap.ui.define([
 	OutsideDragDrop,
 	ObjectPath,
 	LoaderExtensions,
-	uid
+	uid,
+	oCore
 ) {
 	"use strict";
 	var Preview = {};
@@ -102,7 +104,7 @@ sap.ui.define([
 	Preview.refreshIframe = function(sCompName) {
 		this.sCompId = "sampleComp-" + sCompName;
 
-		this.oUiComponent = sap.ui.getCore().createComponent({
+		this.oUiComponent = oCore.createComponent({
 			id: this.sCompId,
 			name: sCompName
 		});
@@ -134,7 +136,7 @@ sap.ui.define([
 			channelId: "dtTool",
 			eventId: "loadLibs",
 			data: {
-				libs: Object.keys(sap.ui.getCore().getLoadedLibraries())
+				libs: Object.keys(oCore.getLoadedLibraries())
 			}
 		});
 	};
@@ -505,7 +507,7 @@ sap.ui.define([
 
 		this.getClass(sClassName).then(function (aResults) {
 			var Constructor = aResults;
-			this.oDragElement = sap.ui.getCore().getComponent(this.sCompId).runAsOwner(function () {
+			this.oDragElement = oCore.getComponent(this.sCompId).runAsOwner(function () {
 				return new Constructor();
 			});
 			this.oDragElement

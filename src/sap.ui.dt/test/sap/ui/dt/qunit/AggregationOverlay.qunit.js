@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Overlay,
 	ElementOverlay,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Button,
 	Panel,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -30,7 +32,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oAggregationOverlay = new AggregationOverlay({
 				element: this.oPage,
@@ -54,7 +56,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oPage = new Page();
 			this.oPage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oAggregationOverlay = new AggregationOverlay({
 				isRoot: true,
@@ -94,7 +96,7 @@ sap.ui.define([
 				]
 			});
 			this.oPage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			Promise.all(
 				[this.oButton1, this.oButton2].map(function (oElement) {
@@ -170,7 +172,7 @@ sap.ui.define([
 			this.oPage = new Page({
 				content: this.aPanels
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oAggregationOverlay = new AggregationOverlay({
 				element: this.oPage,

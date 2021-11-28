@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/MessageBox",
 	"sap/ui/base/Event",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
 ], function (ManagedObject, UploadCollectionItem, UploadCollection, ObjectAttribute, ObjectStatus, ObjectMarker, Label,
-			 JSONModel, mlibrary, Sorter, MessageBox, Event, library) {
+			 JSONModel, mlibrary, Sorter, MessageBox, Event, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -138,7 +139,7 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -148,7 +149,7 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -161,7 +162,7 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -211,7 +212,7 @@ sap.ui.define([
 				sorter: new Sorter("/uploadedDate", true, true)
 			}
 		}).setModel(oModel).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -232,9 +233,9 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
+		oCore.byId(this.oItem.getId() + "-editButton").firePress();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -245,11 +246,11 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().byId(this.oItem.getId() + "-cancelButton").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
+		oCore.byId(this.oItem.getId() + "-editButton").firePress();
+		oCore.applyChanges();
+		oCore.byId(this.oItem.getId() + "-cancelButton").firePress();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -260,13 +261,13 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().byId(this.oItem.getId() + "-editButton").firePress();
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().byId(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().byId(this.oItem.getId() + "-okButton").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
+		oCore.byId(this.oItem.getId() + "-editButton").firePress();
+		oCore.applyChanges();
+		oCore.byId(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
+		oCore.applyChanges();
+		oCore.byId(this.oItem.getId() + "-okButton").firePress();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -287,12 +288,12 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.stub(MessageBox, "show");
-		sap.ui.getCore().byId(this.oItem.getId() + "-deleteButton").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(this.oItem.getId() + "-deleteButton").firePress();
+		oCore.applyChanges();
 		oCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -308,7 +309,7 @@ sap.ui.define([
 
 	QUnit.skip("Uploading a file - progress case", function (assert) {
 		var oCollection = new UploadCollection().placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -316,14 +317,14 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.fireUploadProgress({
 			fileName: "file1",
 			loaded: 50,
 			total: 100
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
@@ -332,7 +333,7 @@ sap.ui.define([
 		var oCollection = new UploadCollection({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -340,7 +341,7 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oFileUploaderEventMock = {
 			fileName: "file1",
 			response: {"propertyOne": "ValueOne"},
@@ -353,14 +354,14 @@ sap.ui.define([
 			}
 		};
 		oCollection._onUploadComplete(new Event("uploadComplete", oFileUploader, oFileUploaderEventMock));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
 	QUnit.skip("Uploading a file - terminate upload", function (assert) {
 		var oCollection = new UploadCollection().placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -368,19 +369,19 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection._getFileUploader().fireUploadAborted({
 			fileName: "file1",
 			requestHeaders: []
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
 	});
 
 	QUnit.skip("Uploading a file - terminate upload via popover", function (assert) {
 		var oCollection = new UploadCollection().placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: [{
@@ -388,12 +389,12 @@ sap.ui.define([
 			}]
 		});
 		oCollection.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCollection._handleTerminateRequest({}, oCollection.aItems[0]);
-		sap.ui.getCore().applyChanges();
-		var oDialog = sap.ui.getCore().byId(oCollection.getId() + "deleteDialog");
+		oCore.applyChanges();
+		var oDialog = oCore.byId(oCollection.getId() + "deleteDialog");
 		oDialog.getButtons()[1].firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDialog.fireEvent("afterClose");
 		oCollection.destroy();
 		checkDestroy(this, assert);

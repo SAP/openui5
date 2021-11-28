@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	ObjectMarker,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Label,
 	ColumnListItem,
 	KeyCodes,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -31,7 +33,7 @@ sap.ui.define([
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
 
-	var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oRB = oCore.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Rendering");
 
@@ -43,7 +45,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMarker.$().length, 1, "Control is in the DOM.");
@@ -59,7 +61,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMarker.$().children().length, 0, "Object Marker inner control is not rendered when type is not set.");
@@ -77,7 +79,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().find(".sapMLnk").length, "The inner control is rendered as sap.m.Link when a press event is set.");
@@ -94,7 +96,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().find(".sapMText").length, "The inner control is rendered as sap.m.Text when a press event is not set.");
@@ -113,7 +115,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oMarker.$().text().length, "Control text is not visible by default.");
@@ -131,7 +133,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oMarker.$().text().length, "Control text is not visible by default.");
@@ -149,7 +151,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible by default.");
@@ -167,7 +169,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible by default.");
@@ -185,7 +187,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible by default.");
@@ -203,7 +205,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible by default.");
@@ -221,7 +223,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible by default.");
@@ -241,13 +243,13 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		sinon.stub(oMarker, "_getDeviceType").returns("small");
 		oMarker._handleMediaChange();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oMarker.$().text().length, "Control now does not show the text.");
@@ -264,12 +266,12 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible when visibility is set to IconAndText.");
@@ -278,7 +280,7 @@ sap.ui.define([
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oMarker.$().text().length, "Control text is not visible when visibility is set to IconOnly.");
@@ -287,7 +289,7 @@ sap.ui.define([
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.TextOnly);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().text().length, "Control text is visible when visibility is set to TextOnly.");
@@ -307,12 +309,12 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMarker.attachPress(fn);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().find(".sapMLnk").length, "The inner control is re-rendered as sap.m.Link when a press event is set.");
@@ -320,7 +322,7 @@ sap.ui.define([
 		// Act
 		oMarker.detachPress(fn);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oMarker.$().find(".sapMText").length, "The inner control is re-rendered as sap.m.Text when a press event is set.");
@@ -342,7 +344,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.expect(1);
@@ -371,7 +373,7 @@ sap.ui.define([
 
 		oMarker.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMarker.getType(), ObjectMarkerType.Locked, "Control type is set to 'Locked' via binding");
@@ -380,7 +382,7 @@ sap.ui.define([
 		var sExpectedText = oRB.getText('OM_FAVORITE');
 		oModel.setData({ modelData: { type: ObjectMarkerType.Favorite }});
 		oMarker.setModel(oModel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMarker.$("text").text(), sExpectedText, "Control type is displayed as 'Favorite' after re-binding");
@@ -419,7 +421,7 @@ sap.ui.define([
 
 		oTable.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oTable.$().find(".sapMLnk").text(), sExpectedText, "Object Marker type is set to 'Locked' via binding");
@@ -452,7 +454,7 @@ sap.ui.define([
 		}));
 
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oTable.getItems().length, 2, "2 ObjectMarkers are shown in the table, growing is not triggered");
@@ -520,7 +522,7 @@ sap.ui.define([
 		var oMarker = new ObjectMarker({
 			additionalInfo: "by John Doe"
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sExpectedText = oRB.getText('OM_LOCKED');
 
@@ -529,7 +531,7 @@ sap.ui.define([
 
 		// Act
 		oMarker.setType(ObjectMarkerType.Locked);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oMarker.$().children().length, 1, "There rendered content when type is applied");
@@ -546,7 +548,7 @@ sap.ui.define([
 
 		var sExpectedText = oRB.getText('OM_LOCKED_BY', ["John Doe"]);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -561,7 +563,7 @@ sap.ui.define([
 
 		var sExpectedText = oRB.getText('OM_LOCKED_BY_ANOTHER_USER');
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -577,7 +579,7 @@ sap.ui.define([
 
 		var sExpectedText = oRB.getText('OM_UNSAVED_BY', ["John Doe"]);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -592,7 +594,7 @@ sap.ui.define([
 
 		var sExpectedText = oRB.getText('OM_UNSAVED_BY_ANOTHER_USER');
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -603,7 +605,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.marker = new ObjectMarker();
 			this.marker.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.marker.destroy();
@@ -615,7 +617,7 @@ sap.ui.define([
 			aLabels;
 		// act
 		this.marker.addAriaLabelledBy("id");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.notOk(this.marker._getInnerControl(), "internal control's is not created");
@@ -627,11 +629,11 @@ sap.ui.define([
 		// arrange
 		this.marker.setType(ObjectMarkerType.Locked);
 		this.marker.attachPress(function(e) {});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		this.marker.addAriaLabelledBy("id1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// assert
 		assert.strictEqual(this.marker.getAriaLabelledBy().length, 1, "ariaLabelledBy has one id");
 		assert.strictEqual(this.marker.getAriaLabelledBy()[0], "id1", "ariaLabelledBy has the right id");
@@ -640,7 +642,7 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaDescribedBy("id2");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// assert
@@ -651,7 +653,7 @@ sap.ui.define([
 
 		// act
 		sLabelId = this.marker.removeAriaLabelledBy("id1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(sLabelId, "id1", "removeAriaLabelledBy returns the right id");
@@ -661,9 +663,9 @@ sap.ui.define([
 		// act
 		this.marker.addAriaLabelledBy("id3");
 		this.marker.addAriaLabelledBy("id4");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aLabels = this.marker.removeAllAriaLabelledBy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(aLabels.length, 2, "removeAllAriaLabelledBy returns a list of ids");
@@ -678,7 +680,7 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaLabelledBy("id1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this.marker.getAriaLabelledBy(), "ariaLabelledBy is save in ObjectMarker");
@@ -686,7 +688,7 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaDescribedBy("id2");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this.marker.getAriaDescribedBy(), "ariaDescribedBy is save in ObjectMarker");
@@ -698,7 +700,7 @@ sap.ui.define([
 
 		// act
 		this.marker.addAriaLabelledBy("id1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this.marker.getAriaLabelledBy(), "AriaLabelledBy is save");
@@ -731,7 +733,7 @@ sap.ui.define([
 		// Act
 		this.marker.setType(ObjectMarkerType.Favorite);
 		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.marker._getInnerControl().$().attr("tabindex"), "0", "tabindex is set to '0'");
@@ -741,7 +743,7 @@ sap.ui.define([
 		// Act
 		this.marker.setType(ObjectMarkerType.Flagged);
 		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.marker._getInnerControl().$().attr("tabindex"), "0", "tabindex is set to '0'");
@@ -755,25 +757,25 @@ sap.ui.define([
 			oIcon = oMarker._getInnerControl()._getIconAggregation();
 
 		oMarker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oIcon.getDecorative(), "Icon should be decorative if there's additional text");
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oIcon.getDecorative(), "Icon shouldn't be decorative if there's no additional text");
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oIcon.getDecorative(), "Icon is back to being decorative");
@@ -791,13 +793,13 @@ sap.ui.define([
 			sType;
 
 		oMarker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (sType in ObjectMarkerType) {
 			// Act
 			oMarker.setType(sType);
 			oIcon = oMarker._getInnerControl()._getIconAggregation();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.notOk(oIcon.getAlt(), "aria-label is correct for type " + sType);
@@ -816,13 +818,13 @@ sap.ui.define([
 			sType;
 
 		oMarker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (sType in ObjectMarkerType) {
 			// Act
 			oMarker.setType(sType);
 			oIcon = oMarker._getInnerControl()._getIconAggregation();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.strictEqual(oIcon.getDomRef().getAttribute("aria-label"), oMarker._getMarkerText(ObjectMarker.M_PREDEFINED_TYPES[sType], sType, ""), "aria-label is correct for type " + sType);
@@ -856,12 +858,12 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			sType;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (sType in ObjectMarkerType) {
 			// Act
 			oMarker.setType(sType);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.strictEqual(oMarker.getDomRef().querySelectorAll("#OM-link")[0].getAttribute("aria-labelledby"), "labelInTable", "aria-labelledby is correct for type " + sType);
@@ -895,12 +897,12 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			sType;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (sType in ObjectMarkerType) {
 			// Act
 			oMarker.setType(sType);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.strictEqual(oMarker.getDomRef().querySelectorAll("#OM-link")[0].getAttribute("aria-labelledby"), "labelInTable OM-link", "aria-labelledby is correct for type " + sType);
@@ -918,25 +920,25 @@ sap.ui.define([
 			oInnerControl = oMarker._getInnerControl();
 
 		oMarker.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconAndText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oInnerControl.getTooltip(), "The tooltip of the inner control must not exist if the ObjectMarker has icon and text");
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oInnerControl.getTooltip(), "The tooltip of the inner control must exist if the ObjectMarker has icon only");
 
 		// Act
 		oMarker.setVisibility(ObjectMarkerVisibility.TextOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oInnerControl.getTooltip(), "The tooltip of the inner control must not exist if the ObjectMarker has text only");

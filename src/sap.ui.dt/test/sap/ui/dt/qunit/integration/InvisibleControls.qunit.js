@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Page",
-	"sap/m/SplitContainer"
+	"sap/m/SplitContainer",
+	"sap/ui/core/Core"
 ], function (
 	DesignTime,
 	OverlayRegistry,
 	Button,
 	Page,
-	SplitContainer
+	SplitContainer,
+	oCore
 ) {
 	'use strict';
 
@@ -41,7 +43,7 @@ sap.ui.define([
 			});
 
 			this.oSplitContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -74,7 +76,7 @@ sap.ui.define([
 
 		QUnit.test("when the visibility of hidden page is changed", function(assert) {
 			this.oPage1.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(OverlayRegistry.getOverlay(this.oButton1).isVisible(), "overlays for controls in this page are visible");
 		});

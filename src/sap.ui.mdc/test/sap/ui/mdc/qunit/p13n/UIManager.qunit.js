@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/mdc/p13n/AdaptationProvider",
 	"sap/ui/mdc/p13n/UIManager",
-	"sap/ui/mdc/Control"
-], function (AdaptationProvider, UIManager, Control) {
+	"sap/ui/mdc/Control",
+	"sap/ui/core/Core"
+], function (AdaptationProvider, UIManager, Control, oCore) {
 	"use strict";
 
 	QUnit.module("Basics", {
@@ -176,7 +177,7 @@ sap.ui.define([
 			assert.ok(oPopup.getContent()[0].isA("sap.m.p13n.Container"), "Use an additional wrapper in case multiple keys have been provided");
 			assert.ok(oPopup.getContent()[0].oLayout.getEnableScrolling(), "The inner wrapper has scrolling enabled");
 			assert.notOk(oPopup.getVerticalScrolling(), "The outer container should not have vertical scrolling enabled, as the Wrapper takes care of it");
-			assert.equal(oPopup.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.VIEW_SETTINGS"), "Multiple keys provided - use the default settings");
+			assert.equal(oPopup.getTitle(), oCore.getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.VIEW_SETTINGS"), "Multiple keys provided - use the default settings");
 			done();
 		});
 	});

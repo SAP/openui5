@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/thirdparty/jquery"
-], function(DynamicSideContent, layoutLibrary, Button, List, Page, StandardListItem, Device, ResizeHandler, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(DynamicSideContent, layoutLibrary, Button, List, Page, StandardListItem, Device, ResizeHandler, jQuery, oCore) {
 	"use strict";
 
 	var SideContentFallDown = layoutLibrary.SideContentFallDown;
@@ -47,7 +48,7 @@ sap.ui.define([
 
 				this._oDSC = new DynamicSideContent();
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this._oDSC.destroy();
@@ -78,7 +79,7 @@ sap.ui.define([
 		QUnit.test("'sideContentPosition' property set to Begin",function(assert) {
 
 			this._oDSC.setSideContentPosition(SideContentPosition.Begin);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oSideContent = this._oDSC.$("SCGridCell"),
 			oMainContent = this._oDSC.$("MCGridCell");
@@ -260,7 +261,7 @@ sap.ui.define([
 					})
 			});
 			oPage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oDSC._currentBreakpoint = "M";
@@ -298,7 +299,7 @@ sap.ui.define([
 				this._oDSC = new DynamicSideContent();
 				this._oDSC.placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this._oDSC.destroy();
@@ -638,7 +639,7 @@ sap.ui.define([
 				this.spy(this._oDSC, "_adjustToScreenSize");
 				$("#qunit-fixture").width(960);
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
@@ -660,7 +661,7 @@ sap.ui.define([
 				});
 				$("#qunit-fixture").width(200);
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
@@ -679,7 +680,7 @@ sap.ui.define([
 			beforeEach : function () {
 				this._oDSC = new DynamicSideContent();
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this._oDSC = null;
@@ -717,7 +718,7 @@ sap.ui.define([
 			beforeEach : function () {
 				this._oDSC = new DynamicSideContent();
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this._oDSC.destroy();
@@ -824,14 +825,14 @@ sap.ui.define([
 			// prepare
 			oDSC.addDelegate(oAfterRenderingDelegate);
 			oDSC.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.module("Screen reader", {
 			beforeEach : function () {
 				this._oDSC = new DynamicSideContent({containerQuery: true});
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this._oDSC = null;
@@ -842,7 +843,7 @@ sap.ui.define([
 			var sSideContentTag = Device.browser.firefox ? "div" : "aside",
 					$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
 			//$sideContent = this.oDSC.$().find("> aside"),
-					oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+					oMessageBundle = oCore.getLibraryResourceBundle("sap.ui.layout");
 
 			assert.strictEqual($sideContent.length, 1, "Side Content has correct " + sSideContentTag + " tag");
 			assert.strictEqual($sideContent.attr("role"), "complementary", "Side Content has correct role 'complementary'");
@@ -853,7 +854,7 @@ sap.ui.define([
 			beforeEach : function () {
 				this._oDSC = new DynamicSideContent({showSideContent: false, containerQuery: true});
 				this._oDSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach : function () {
 				this._oDSC = null;
@@ -865,7 +866,7 @@ sap.ui.define([
 				HIDDEN_CLASS = "sapUiHidden";
 
 			this._oDSC.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
 		});

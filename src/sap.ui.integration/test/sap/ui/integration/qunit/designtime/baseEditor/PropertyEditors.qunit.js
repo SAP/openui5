@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 	"sap/base/util/deepClone",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	PropertyEditors,
 	PropertyEditorFactory,
 	StringEditor,
 	deepClone,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -83,7 +85,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			return oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& oPropertyEditors.getDomRef().offsetHeight > 0
@@ -116,7 +118,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			return oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& oPropertyEditors.getDomRef().offsetHeight > 0
@@ -146,7 +148,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			return oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then priority is over config object");
 			});
 		});
@@ -160,7 +162,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			return oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oOldContent = oPropertyEditors.getContent();
 				oPropertyEditors.setLayout("form");
 				assert.strictEqual(
@@ -184,7 +186,7 @@ sap.ui.define([
 			this.oPropertyEditors = new PropertyEditors();
 			this.oBaseEditor.addContent(this.oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -195,7 +197,7 @@ sap.ui.define([
 			this.oPropertyEditors.setTags("foo");
 
 			return this.oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& this.oPropertyEditors.getDomRef().offsetHeight > 0
@@ -245,7 +247,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -253,7 +255,7 @@ sap.ui.define([
 					"propertyEditorsChange",
 					sandbox.stub()
 						.onSecondCall().callsFake(function () {
-							sap.ui.getCore().applyChanges();
+							oCore.applyChanges();
 
 							assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "bar1 value", "then internal property editor has a correct value");
 							assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "bar2 value", "then internal property editor has a correct value");
@@ -275,7 +277,7 @@ sap.ui.define([
 			}]);
 
 			return this.oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
 					&& this.oPropertyEditors.getDomRef().offsetHeight > 0
@@ -331,7 +333,7 @@ sap.ui.define([
 			}]);
 
 			this.oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -421,7 +423,7 @@ sap.ui.define([
 			this.oPropertyEditors.setTags("foo");
 
 			return this.oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -448,7 +450,7 @@ sap.ui.define([
 			}]);
 
 			this.oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -476,7 +478,7 @@ sap.ui.define([
 			this.oPropertyEditors.setTags("foo");
 
 			this.oPropertyEditors.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then internal property editor has a correct value");
 
 				var oSpy = sandbox.spy();
@@ -517,7 +519,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -552,7 +554,7 @@ sap.ui.define([
 						"propertyEditorsChange",
 						sandbox.stub()
 							.onSecondCall().callsFake(function () {
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received correct value from new editor");
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received correct value from new editor");
 
@@ -577,7 +579,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
@@ -612,7 +614,7 @@ sap.ui.define([
 						"propertyEditorsChange",
 						sandbox.stub()
 							.onSecondCall().callsFake(function () {
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1_2 value", "then internal editor re-rendered and received corrent value from new editor");
 								assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2_2 value", "then internal editor re-rendered and received corrent value from new editor");
 
@@ -743,13 +745,13 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var aPropertyEditors = this.oPropertyEditors._getPropertyEditors();
 				assert.strictEqual(aPropertyEditors[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(aPropertyEditors[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.ok(!this.oPropertyEditors._getPropertyEditors(), "then internal editor is removed");
 					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
 					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
@@ -766,13 +768,13 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var aPropertyEditors = this.oPropertyEditors._getPropertyEditors();
 				assert.strictEqual(aPropertyEditors[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(aPropertyEditors[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 
 				this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.ok(!this.oPropertyEditors._getPropertyEditors(), "then internal editor is removed");
 					assert.ok(aPropertyEditors[0].bIsDestroyed, "then internal property editor is destroyed");
 					assert.ok(aPropertyEditors[1].bIsDestroyed, "then internal property editor is destroyed");
@@ -827,7 +829,7 @@ sap.ui.define([
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", assert.async());
 			this.oPropertyEditors = new PropertyEditors();
 			this.oPropertyEditors.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oPropertyEditors.destroy();
@@ -853,7 +855,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 				fnDone();
@@ -867,7 +869,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
 				fnDone();
@@ -918,7 +920,7 @@ sap.ui.define([
 			this.oPropertyEditors = new PropertyEditors();
 			this.oBaseEditor.addContent(this.oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -929,7 +931,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oPropertyEditors.attachEventOnce("propertyEditorsChange", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var aPropertyEditors = this.oPropertyEditors._getPropertyEditors();
 
 				assert.strictEqual(aPropertyEditors[0].getValue(), "foo1 value", "then internal property editor has a correct value");
@@ -1057,7 +1059,7 @@ sap.ui.define([
 				json: mJson
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oBaseEditor.destroy();
@@ -1082,7 +1084,7 @@ sap.ui.define([
 				init: fnRegisterWrapper.bind(this)
 			});
 			this.oBaseEditor.addContent(this.oPropertyEditors);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("When a PropertyEditors wrapper has no nested editors", function (assert) {
@@ -1090,7 +1092,7 @@ sap.ui.define([
 				config: []
 			});
 			this.oBaseEditor.addContent(this.oPropertyEditors);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			return this.oPropertyEditors.ready().then(function () {
 				assert.strictEqual(
@@ -1115,7 +1117,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.ready().then(function() {
 				this.oBaseEditor.addContent(this.oPropertyEditors);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				return this.oPropertyEditors.ready();
 			}.bind(this)).then(function () {
@@ -1187,7 +1189,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 			return this.oBaseEditor.getPropertyEditorsByTag("foo").then(function (aPropertyEditors) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oFoo1LayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[0];
 				this.oFooTagLayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[1];
 			}.bind(this));

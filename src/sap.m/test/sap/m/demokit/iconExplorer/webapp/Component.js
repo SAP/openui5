@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/FavoriteModel",
 	"sap/ui/demo/iconexplorer/controller/ErrorHandler",
 	"sap/ui/core/IconPool",
-	"sap/ui/VersionInfo"
+	"sap/ui/VersionInfo",
+	"sap/ui/core/Core"
 ], function(
 	UIComponent,
 	Device,
@@ -17,7 +18,8 @@ sap.ui.define([
 	FavoriteModel,
 	ErrorHandler,
 	IconPool,
-	VersionInfo
+	VersionInfo,
+	oCore
 ) {
 	"use strict";
 
@@ -171,7 +173,7 @@ sap.ui.define([
 
 			if (!this._oCookiesComponent) {
 				this._oCookiesComponent = this.runAsOwner(function() {
-					this._oCookiesComponent = sap.ui.getCore().createComponent({
+					this._oCookiesComponent = oCore.createComponent({
 						id: 'cookiesComp-' + sId,
 						name: sId
 					});

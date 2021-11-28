@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	Log,
 	Button,
@@ -27,7 +28,8 @@ sap.ui.define([
 	RemovePlugin,
 	Utils,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -47,7 +49,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton, this.oButton1]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],
@@ -424,7 +426,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton1, this.oButton2, this.oButton3]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]

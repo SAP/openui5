@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/StandardTreeItem",
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
-	"sap/m/library"
-], function(createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library) {
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library, oCore) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -174,64 +175,64 @@ sap.ui.define([
 	QUnit.test("indentation1", function(assert){
 		assert.equal(oTree.getDeepestLevel(), 0, "deepestLevel");
 
-		var oArrow = sap.ui.getCore().byId("__item0-__tree0-1-expander");
+		var oArrow = oCore.byId("__item0-__tree0-1-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTree.getDeepestLevel(), 1, "deepestLevel");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
 
-		oArrow = sap.ui.getCore().byId("__item0-__tree0-2-expander");
+		oArrow = oCore.byId("__item0-__tree0-2-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTree.getDeepestLevel(), 2, "deepestLevel");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "16px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "32px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-2").$().css("padding-left"), "16px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-3").$().css("padding-left"), "32px", "padding");
 
-		oArrow = sap.ui.getCore().byId("__item0-__tree0-3-expander");
+		oArrow = oCore.byId("__item0-__tree0-3-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTree.getDeepestLevel(), 3, "deepestLevel");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "8px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "16px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "24px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-2").$().css("padding-left"), "8px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-3").$().css("padding-left"), "16px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-4").$().css("padding-left"), "24px", "padding");
 
-		oArrow = sap.ui.getCore().byId("__item0-__tree0-4-expander");
+		oArrow = oCore.byId("__item0-__tree0-4-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		oArrow = sap.ui.getCore().byId("__item0-__tree0-5-expander");
+		oArrow = oCore.byId("__item0-__tree0-5-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		oArrow = sap.ui.getCore().byId("__item0-__tree0-6-expander");
+		oArrow = oCore.byId("__item0-__tree0-6-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTree.getDeepestLevel(), 6, "deepestLevel");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "8px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "12px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-5").$().css("padding-left"), "16px", "padding");
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-6").$().css("padding-left"), "20px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-3").$().css("padding-left"), "8px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-4").$().css("padding-left"), "12px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-5").$().css("padding-left"), "16px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-6").$().css("padding-left"), "20px", "padding");
 
 		// collapse
-		var oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
+		var oArrowDomRef = oCore.byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
 		oArrowDomRef.trigger("click");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//expand
-		oArrow = sap.ui.getCore().byId("__item0-__tree0-2-expander");
+		oArrow = oCore.byId("__item0-__tree0-2-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
+		assert.equal(oCore.byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
 
 		oTree.collapseAll();
 	});
@@ -257,7 +258,7 @@ sap.ui.define([
 
 	QUnit.test("Accessibility - custom announcement", function(assert) {
 		var oTreeItem = oTree.getItems()[1];
-		var sSelected = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_SELECTED");
+		var sSelected = oCore.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_SELECTED");
 		oTreeItem.focus();
 		assert.equal(oTreeItem.getAccessibilityInfo().description, sSelected + " . " + "Node2", "Custom announcement is added with current state");
 	});
@@ -276,9 +277,9 @@ sap.ui.define([
 		oTree.focus();
 		assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "false", "aria-expanded is false");
 
-		var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+		var oArrow = oCore.byId("__item0-__tree0-0-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oTree.getItems().length, 4, "four nodes displayed after tree expanding");
 
@@ -310,9 +311,9 @@ sap.ui.define([
 		assert.strictEqual(oTree.getItems().length, 4, "four nodes before tree expanding");
 
 		oTree.focus();
-		var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+		var oArrow = oCore.byId("__item0-__tree0-0-expander");
 		oArrow.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed after tree collapsing");
 
@@ -323,10 +324,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expand to level and tree item expander tooltip test", function(assert){
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = oCore.getLibraryResourceBundle("sap.m");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_EXPAND_NODE"), "Tooltip is correctly set to the Expander control");
 		oTree.expandToLevel(3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oTree.getItems()[0].getExpanded(),"node is expanded");
 		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_COLLAPSE_NODE"), "Tooltip for the Expander control updated correctly");
 		assert.equal(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
@@ -340,12 +341,12 @@ sap.ui.define([
 
 	QUnit.test("Expand/collapse multiple nodes", function(assert){
 		oTree.expand([0,1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTree.getItems().length, 5, "multiple expanding success.");
 
 		oTree.collapse([0,3]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTree.getItems().length, 2, "multiple collapsing success.");
 	});
@@ -354,7 +355,7 @@ sap.ui.define([
 
 	QUnit.test("ParentNode", function(assert){
 		oTree.focus();
-		var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+		var oArrow = oCore.byId("__item0-__tree0-0-expander");
 		oArrow.firePress();
 		assert.ok(oTree.getItems()[1].getParentNode().getId(),"__item0-__tree0-0","parent node is found.");
 	});
@@ -371,7 +372,7 @@ sap.ui.define([
 
 	QUnit.test("Expanded", function(assert){
 		oTree.focus();
-		var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+		var oArrow = oCore.byId("__item0-__tree0-0-expander");
 		oArrow.firePress();
 		assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 		assert.ok(!oTree.getItems()[1].getExpanded(), "second node is not expanded");
@@ -410,7 +411,7 @@ sap.ui.define([
 		QUnit.test("tree item with icon", function(assert){
 		assert.ok(document.getElementById("__item0-__tree0-0-icon"), "icon is rendered");
 
-		var oImage = sap.ui.getCore().byId("__item0-__tree0-0-icon");
+		var oImage = oCore.byId("__item0-__tree0-0-icon");
 		assert.strictEqual(oImage.getSrc(), IMAGE_PATH + "action.png", "icon source is correct");
 	});
 
@@ -441,7 +442,7 @@ sap.ui.define([
 			});
 
 			oTree.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oTree = oTree;
 		},
@@ -455,7 +456,7 @@ sap.ui.define([
 		assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "initial binding context.");
 
 		oModel.setProperty("/", oData2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oTree.getItems()[0].$().hasClass("sapMTreeItemBaseLeaf"), "data changed");
 		assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "icon has correct source.");
@@ -503,7 +504,7 @@ sap.ui.define([
 		});
 
 		oTree.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// 2nd tree item is a leaf node
 		var oSecondItem = oTree.getItems()[1];
@@ -517,7 +518,7 @@ sap.ui.define([
 		var oBinding = oTree.getBinding("items");
 		var oSorter = new Sorter("title", false);
 		oBinding.sort(oSorter);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// 2nd tree item becomes a top level node after sorting is applied
 		assert.ok(oSecondItem.isTopLevel(), "2nd item is a top level node");

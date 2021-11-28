@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device, jQuery, oCore) {
 	"use strict";
 
 	// mapping of globals
@@ -143,7 +144,7 @@ sap.ui.define([
 	QUnit.test("Scrolling & Indicator size - dragover", function(assert) {
 		// Increase a column width to be able to test horizontal scrolling.
 		oTable.getColumns()[1].setWidth("3000px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeIndicator = jQuery("<div></div>").attr("style", "width: 0; height: 0; left: 0; right: 0");
 		var oFakeEvent = {
@@ -443,7 +444,7 @@ sap.ui.define([
 			var iVisibleRowCount = oTable.getVisibleRowCount();
 
 			oTable.setVisibleRowCount(10);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			Object.getOwnPropertyNames(DropPosition).forEach(function(sPropertyName) {
 				oTable.getDragDropConfig()[0].setDropPosition(DropPosition[sPropertyName]);
@@ -456,7 +457,7 @@ sap.ui.define([
 			// Restore
 			oTable.getDragDropConfig()[0].setDropPosition(sOriginalDropPosition);
 			oTable.setVisibleRowCount(iVisibleRowCount);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 
 		function testGroupHeaderRow() {
@@ -513,7 +514,7 @@ sap.ui.define([
 		oTable.unbindRows();
 		oTable.setVisibleRowCount(2);
 		oTable.setShowNoData(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oClock.tick(50);
 
 		Object.getOwnPropertyNames(DropPosition).forEach(function(sPropertyName) {
@@ -579,7 +580,7 @@ sap.ui.define([
 			});
 
 			oTable.addDragDropConfig(this.oDDI);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -621,7 +622,7 @@ sap.ui.define([
 
 		// force horizontal scrolling
 		aColumns[2].setWidth("5000px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		triggerDragEvent("dragenter", aColumns[2]);
 		assert.equal(

@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
+	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Layer,
@@ -33,7 +34,8 @@ sap.ui.define([
 	WriteKeyUserConnector,
 	JsObjectConnector,
 	InitialPersonalizationConnector,
-	WritePersonalizationConnector
+	WritePersonalizationConnector,
+	oCore
 ) {
 	"use strict";
 
@@ -82,7 +84,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				flexObjects: oFlexObjects
 			};
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.USER]}
 			]);
 
@@ -99,7 +101,7 @@ sap.ui.define([
 				layer: Layer.VENDOR,
 				flexObjects: oFlexObjects
 			};
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector"},
 				{connector: "JsObjectConnector"}
 			]);
@@ -119,7 +121,7 @@ sap.ui.define([
 				flexObjects: oFlexObjects
 			};
 			var sUrl = "/some/url";
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 
@@ -140,7 +142,7 @@ sap.ui.define([
 			};
 			var sUrl = "/PersonalizationConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
@@ -176,7 +178,7 @@ sap.ui.define([
 			};
 			var sUrl = "/KeyUserConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl}
 			]);
 
@@ -206,7 +208,7 @@ sap.ui.define([
 
 
 		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer when writing draft changes", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
@@ -223,7 +225,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when creating changes without a draft flag", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
@@ -240,7 +242,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when creating changes for a draft but the layer does not support a draft", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
@@ -265,7 +267,7 @@ sap.ui.define([
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl1},
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
@@ -298,7 +300,7 @@ sap.ui.define([
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl1},
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
@@ -419,7 +421,7 @@ sap.ui.define([
 				condensedChanges: [aAllChanges[2]]
 			};
 			var sUrl = "/some/url";
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
@@ -852,7 +854,7 @@ sap.ui.define([
 			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled: false});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{
 					connector: "LrepConnector",
 					url: this.url,
@@ -901,7 +903,7 @@ sap.ui.define([
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").resolves({});
 			var sUrl = "/some/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl},
 				{connector: "JsObjectConnector"}
 			]);
@@ -917,7 +919,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("then merges the response of the connectors", function(assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: this.url},
 				{connector: "JsObjectConnector"}
 			]);
@@ -936,7 +938,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("then higher layer overrule the lower layer", function(assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: this.url},
 				{connector: "JsObjectConnector"}
 			]);
@@ -982,7 +984,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1018,7 +1020,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1054,7 +1056,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1106,7 +1108,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				reference: "reference"
 			};
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 
@@ -1121,7 +1123,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				reference: "reference"
 			};
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector"}
 			]);
 
@@ -1137,7 +1139,7 @@ sap.ui.define([
 				reference: "reference"
 			};
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector"},
 				{connector: "JsObjectConnector"}
 			]);
@@ -1168,7 +1170,7 @@ sap.ui.define([
 
 			var sUrl = "/LrepConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 
@@ -1205,7 +1207,7 @@ sap.ui.define([
 
 			var sUrl = "/LrepConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
@@ -1242,7 +1244,7 @@ sap.ui.define([
 			var sUrl = "/LrepConnector/url";
 			var sUrl2 = "/KeyUserConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", url: sUrl},
 				{connector: "KeyUserConnector", url: sUrl2}
 			]);
@@ -1280,7 +1282,7 @@ sap.ui.define([
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl1},
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
@@ -1355,7 +1357,7 @@ sap.ui.define([
 			};
 
 			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.loadContextDescriptions(mPropertyBag).catch(function () {
 				assert.equal(oSpySendRequest.callCount, 0, "no request was send");
@@ -1369,7 +1371,7 @@ sap.ui.define([
 			};
 
 			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.getContexts(mPropertyBag).catch(function () {
 				assert.equal(oSpySendRequest.callCount, 0, "no request was send");
@@ -1389,7 +1391,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1432,7 +1434,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 

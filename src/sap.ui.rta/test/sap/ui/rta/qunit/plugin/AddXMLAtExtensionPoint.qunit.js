@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	CommandFactory,
 	AddXMLAtExtensionPointCommand,
@@ -25,7 +26,8 @@ sap.ui.define([
 	OverlayRegistry,
 	DesignTime,
 	XMLView,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 	'</mvc:View>';
 
 	function createComponent() {
-		return sap.ui.getCore().createComponent({
+		return oCore.createComponent({
 			name: "testComponent",
 			id: "testComponent",
 			metadata: {
@@ -85,7 +87,7 @@ sap.ui.define([
 				this.oInvisiblePanel = oXmlView.getContent()[2];
 				this.oLabel = this.oPanel.getContent()[1];
 				oXmlView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oCommandFactory = new CommandFactory({
 					flexSettings: {
@@ -115,7 +117,7 @@ sap.ui.define([
 
 	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin without fragment handler function are created and the DesignTime is started ", {
 		beforeEach: function() {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
 			sandbox.stub(Loader, "loadFlexData").resolves({ changes: [] });
 			return createBeforeEach.call(this);
@@ -185,7 +187,7 @@ sap.ui.define([
 
 	QUnit.module("Given an xmlView with extensionPoints and AddXMLAtExtensionPoint plugin with initial fragment handler function is created and the DesignTime is started ", {
 		beforeEach: function() {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			this.sInitialFragmentPath = "sap/ui/.../fragment/fragmentName";
 			this.oFragmentHandlerStub = sandbox.stub().resolves({
 				extensionPointName: "EP1",

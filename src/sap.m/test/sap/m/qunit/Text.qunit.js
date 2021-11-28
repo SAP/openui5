@@ -216,7 +216,7 @@ sap.ui.define([
 				})
 			);
 			oView.placeAt('content64');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			var myText64a = oView.byId("xmltext1");
@@ -337,22 +337,22 @@ sap.ui.define([
 	});
 	QUnit.test("When width is not set max-width should apply to control", function(assert) {
 		var sut = new Text({text : "text"}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
 
 		sut.setWidth("10rem");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(!sut.$().hasClass("sapMTextMaxWidth"), "Text has width and does not have max width restriction.");
 		sut.destroy();
 	});
 
 	QUnit.test("getTextDomRef should respect maxlines", function(assert) {
 		var sut = new Text({text : "line1\nline2\nline3", maxLines: 2}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
 
 		sut.setMaxLines(1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(sut.getDomRef() === sut.getTextDomRef(), "TextDomRef is the controls dom ref.");
 		sut.destroy();
 	});
@@ -367,11 +367,11 @@ sap.ui.define([
 		assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 
 		t6.setText("LongTextWithNoSpaces");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
 
 		t6.setText("LongTextWith Spaces");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 	});
 
@@ -380,15 +380,15 @@ sap.ui.define([
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text does not have a class for render whitespace characters");
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text does not have a class for render whitespace characters with wrapping");
 		oText.setRenderWhitespace(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), true, "Text should have sapMTextRenderWhitespaceWrap when wrapping is true ");
 
 		oText.setWrapping(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), true, "Text should have sapMTextRenderWhitespace when wrapping is false ");
 
 		oText.setRenderWhitespace(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text should not have a class sapMTextRenderWhitespace");
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text should not have a class sapMTextRenderWhitespaceWrap");
 		oText.destroy();
@@ -403,7 +403,7 @@ sap.ui.define([
 		});
 
 		oText.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oText.$().hasClass("sapMTextBreakWord"));
 	});
@@ -438,7 +438,7 @@ sap.ui.define([
 		this.stub(textWithMaxLines,"canUseNativeLineClamp").returns(false);
 		this.spy(textWithMaxLines, "clampHeight");
 		textWithMaxLines.placeAt("content91");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(textWithMaxLines.clampHeight.calledOnce, "clampHeight was called ones");
 
@@ -448,15 +448,15 @@ sap.ui.define([
 		function themeChanged() {
 			return new Promise(function(resolve) {
 				function onChanged() {
-					sap.ui.getCore().detachThemeChanged(onChanged);
+					Core.detachThemeChanged(onChanged);
 					resolve();
 				}
-				sap.ui.getCore().attachThemeChanged(onChanged);
+				Core.attachThemeChanged(onChanged);
 			});
 		}
 
 		var done = assert.async();
-		var sCurrentTheme = sap.ui.getCore().getConfiguration().getTheme();
+		var sCurrentTheme = Core.getConfiguration().getTheme();
 		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 		this.stub(sap.ui.getCore(), "isThemeApplied").returns(false);
 
@@ -472,11 +472,11 @@ sap.ui.define([
 
 		themeChanged().then(function () {
 			assert.ok(textWithMaxLines._handleThemeLoad.calledOnce, "_handleThemeLoad was called ones");
-			sap.ui.getCore().applyTheme(sCurrentTheme);
+			Core.applyTheme(sCurrentTheme);
 			done();
 		});
-		sap.ui.getCore().applyChanges();
-		sap.ui.getCore().applyTheme(sCurrentTheme == "sap_belize" ? "sap_fiori_3" : "sap_belize");
+		Core.applyChanges();
+		Core.applyTheme(sCurrentTheme == "sap_belize" ? "sap_fiori_3" : "sap_belize");
 	});
 
 	QUnit.module("EmptyIndicator", {

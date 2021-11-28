@@ -7,11 +7,12 @@ sap.ui.define([
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
-	"sap/ui/util/Mobile"
-], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library, Mobile) {
+	"sap/ui/util/Mobile",
+	"sap/ui/core/Core"
+], function (jQuery, GenericTile, NumericContent, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore) {
 	"use strict";
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
 	// shortcut for sap.m.ValueColor
 	var ValueColor = library.ValueColor;
@@ -31,7 +32,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -40,19 +41,19 @@ sap.ui.define([
 	});
 	QUnit.test("Numeric Content rendered.", function (assert) {
 		this.oNumericContent.setValue("12");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		fnAssertNumericContentHasRendered(assert);
 	});
 
 	QUnit.test("Numeric Content - Render Placeholder loading animation", function (assert) {
 		//Switch to Loading State
 		this.oNumericContent.setState(LoadState.Loading);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.querySelector(".sapMNCLoadingShimmer"), "Loading Shimmer present on 'Loading' state");
 
 		//Switch to Loaded State
 		this.oNumericContent.setState(LoadState.Loaded);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
 	});
 
@@ -130,11 +131,11 @@ sap.ui.define([
 			})]
 		});
 		this.oGenericTile.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oNumericContent.setValue("12");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(document.getElementById("generic-tile"), "GenericTile (wrapper of NumericContent) was rendered successfully");
@@ -159,7 +160,7 @@ sap.ui.define([
 
 		// Act
 		this.oGenericTile.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpyRegister.callCount, 1, "ResizeHandler.register was called.");
@@ -175,7 +176,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -186,18 +187,18 @@ sap.ui.define([
 	QUnit.test("Test formatter value processing", function (assert) {
 		this.oNumericContent.setFormatterValue(false);
 		this.oNumericContent.setValue("68Mio.");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "68Mi", "Value was rendered successfully with formatter switched off");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "M", "Scale was rendered successfully with formatter switched off");
 		this.oNumericContent.setFormatterValue(true);
 		this.oNumericContent.setValue("68 Mio");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "68", "Value was rendered successfully with formatter switched on");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 		this.oNumericContent.setValue(undefined);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value cleaned successfully with formatter switched on");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale"), null, "Scale cleaned successfully with formatter switched on");
 	});
@@ -206,7 +207,7 @@ sap.ui.define([
 		this.oNumericContent.setFormatterValue(true);
 		var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
 		this.oNumericContent.setValue(sFormattedValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "58,7", "Value was rendered successfully with formatter switched on");
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
@@ -215,7 +216,7 @@ sap.ui.define([
 	QUnit.test("Test nullify parameter", function (assert) {
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value was nullified successfully");
 		this.oNumericContent.setNullifyValue(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "", "Value was not nullified");
 	});
 
@@ -252,7 +253,7 @@ sap.ui.define([
 		//Arrange
 		this.oNumericContent.setValueColor(ValueColor.None);
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		sTooltip = this.oNumericContent.getTooltip_AsString();
 		isValueColorPresent = sTooltip.indexOf(ValueColor.None) > -1;
 
@@ -293,9 +294,9 @@ sap.ui.define([
 
 	QUnit.test("Test _getMaxDigitsData language", function (assert) {
 		// Arrange 1
-		var sOrigLang = sap.ui.getCore().getConfiguration().getLanguage();
+		var sOrigLang = oCore.getConfiguration().getLanguage();
 		var oExpected = {fontClass: "sapMNCLargeFontSize", maxLength: 4};
-		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		oCore.getConfiguration().setLanguage("en_US");
 
 		// Act 1
 		var oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
@@ -304,7 +305,7 @@ sap.ui.define([
 		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with normal language casing.");
 
 		// Arrange 2
-		sap.ui.getCore().getConfiguration().setLanguage("EN_US");
+		oCore.getConfiguration().setLanguage("EN_US");
 
 		// Act 2
 		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
@@ -313,7 +314,7 @@ sap.ui.define([
 		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with uppercase language casing.");
 
 		// Arrange 3
-		sap.ui.getCore().getConfiguration().setLanguage("en_us");
+		oCore.getConfiguration().setLanguage("en_us");
 
 		// Act 3
 		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
@@ -322,7 +323,7 @@ sap.ui.define([
 		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with lowercase language casing.");
 
 		// Arrange 4
-		sap.ui.getCore().getConfiguration().setLanguage("en-US-x-sappsd");
+		oCore.getConfiguration().setLanguage("en-US-x-sappsd");
 
 		// Act 4
 		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
@@ -331,7 +332,7 @@ sap.ui.define([
 		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct for a language which is not defined in the language map.");
 
 		// Arrange 5
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		oCore.getConfiguration().setLanguage("de");
 
 		// Act 5
 		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
@@ -340,7 +341,7 @@ sap.ui.define([
 		assert.deepEqual(oMaxDigitsData, {fontClass: "sapMNCSmallFontSize", maxLength: 8}, "Max digits data should be correct for de language.");
 
 		// Restore
-		sap.ui.getCore().getConfiguration().setLanguage(sOrigLang);
+		oCore.getConfiguration().setLanguage(sOrigLang);
 	});
 
 	QUnit.module("Property withoutMargin", {
@@ -350,7 +351,7 @@ sap.ui.define([
 				indicator: DeviationIndicator.Up,
 				value: "699"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -365,7 +366,7 @@ sap.ui.define([
 	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", function (assert) {
 		assert.ok(!this.oNumericContent.$().hasClass("WithoutMargin"));
 		this.oNumericContent.setWithMargin(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.oNumericContent.$().hasClass("WithoutMargin"), "'withoutMargin' CSS class expected.");
 		assert.ok(jQuery(this.oNumericContent.$().children()[0]).hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the inner div container.");
 		assert.ok(this.oNumericContent.$("value").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the parent value container.");
@@ -377,7 +378,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -436,7 +437,7 @@ sap.ui.define([
 				animateTextChange: false,
 				icon:  "sap-icon://line-charts"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -466,65 +467,65 @@ sap.ui.define([
 
 	QUnit.test("Test the adaptive font size change based on language - small", function (assert) {
 		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		var sDefaultLanguage = oCore.getConfiguration().getLanguage(),
 			sNewLanguage = "de";
-		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		oCore.getConfiguration().setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
 		// Arrange
 		sNewLanguage = "de-de";
-		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		oCore.getConfiguration().setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
-		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		oCore.getConfiguration().setLanguage(sDefaultLanguage);
 	});
 
 	QUnit.test("Test the adaptive font size change based on language - medium", function (assert) {
 		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		var sDefaultLanguage = oCore.getConfiguration().getLanguage(),
 			sNewLanguage = "es";
-		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		oCore.getConfiguration().setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCMediumFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		this.oNumericContent.setAdaptiveFontSize(true);
-		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		oCore.getConfiguration().setLanguage(sDefaultLanguage);
 	});
 
 	QUnit.test("Test the adaptive font size change based on language - large", function (assert) {
 		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		var sDefaultLanguage = oCore.getConfiguration().getLanguage(),
 			sNewLanguage = "bg";
-		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		oCore.getConfiguration().setLanguage(sNewLanguage);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCLargeFontSize", sNewLanguage);
 		this.oNumericContent.setAdaptiveFontSize(true);
-		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		oCore.getConfiguration().setLanguage(sDefaultLanguage);
 	});
 
 	QUnit.test("Test the adaptive font size change based on language - adaptiveFontSize: false", function (assert) {
@@ -545,7 +546,7 @@ sap.ui.define([
 				value: "12345678123456781234567812345678",
 				animateTextChange: false
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oNumericContent.destroy();
@@ -556,14 +557,14 @@ sap.ui.define([
 	QUnit.test("Test custom truncateValueTo property", function(assert) {
 		// Arrange
 		this.oNumericContent.setTruncateValueTo(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 1, "Value is truncated to 1 char");
 
 		// Arrange
 		this.oNumericContent.setTruncateValueTo(20);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 20, "Value is truncated to 20 chars");
@@ -572,7 +573,7 @@ sap.ui.define([
 	QUnit.test("Test default value when adaptiveFontSize=false", function(assert) {
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars");
@@ -580,32 +581,32 @@ sap.ui.define([
 
 	QUnit.test("Test default value for specific language", function(assert) {
 		// Arrange
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		var sDefaultLanguage = oCore.getConfiguration().getLanguage();
+		oCore.getConfiguration().setLanguage("de");
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 8, "Value is truncated to 8 chars for 'de'");
 
 		// Arrange
-		sap.ui.getCore().getConfiguration().setLanguage("es");
+		oCore.getConfiguration().setLanguage("es");
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 6, "Value is truncated to 6 chars for 'es'");
 
 		// Arrange
-		sap.ui.getCore().getConfiguration().setLanguage("en");
+		oCore.getConfiguration().setLanguage("en");
 		this.oNumericContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars for 'en'");
 
 		// return the language
-		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		oCore.getConfiguration().setLanguage(sDefaultLanguage);
 	});
 
 	/* --- Helpers --- */

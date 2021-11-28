@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/m/Bar",
 	"dt/Page",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
-	"sap/ui/rta/enablement/elementActionTest"
+	"sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/core/Core"
 ], function(
 	sapMPage,
 	Bar,
 	Page,
 	elementDesigntimeTest,
-	elementActionTest
+	elementActionTest,
+	oCore
 ) {
 	"use strict";
 
@@ -185,8 +187,8 @@ sap.ui.define([
 			assert.strictEqual( oViewAfterAction.byId("page").getHeaderContent().length, 1, "then the contentHeader contains 1 button");
 			// destroy controls which are no longer part of the view after combine command
 			// to avoid duplicate id errors
-			sap.ui.getCore().byId("comp---view--btn0").destroy();
-			sap.ui.getCore().byId("comp---view--btn1").destroy();
+			oCore.byId("comp---view--btn0").destroy();
+			oCore.byId("comp---view--btn1").destroy();
 		};
 
 		var fnConfirmButtonsAreSplited = function (oUiComponent, oViewAfterAction, assert) {
@@ -229,7 +231,7 @@ sap.ui.define([
 			assert.strictEqual( oViewAfterAction.byId("page").getHeaderContent().length, 2,
 				"then the headerContent contains 2 buttons");
 
-			sap.ui.getCore().byId("comp---view--menubtn").destroy();
+			oCore.byId("comp---view--menubtn").destroy();
 		};
 
 		var fnConfirmSplitedMenuButtonIsCombined = function (oUiComponent, oViewAfterAction, assert) {

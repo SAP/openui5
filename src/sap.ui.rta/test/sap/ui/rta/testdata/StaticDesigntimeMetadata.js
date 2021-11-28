@@ -1,4 +1,4 @@
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	"use strict";
 
 	var StaticDesigntimeMatadata = {};
@@ -173,10 +173,10 @@ sap.ui.define([], function() {
 		return {
 			name: {
 				singular: function() {
-					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
+					return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 				},
 				plural: function() {
-					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+					return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 				}
 			},
 			palette: {
@@ -219,10 +219,10 @@ sap.ui.define([], function() {
 		return {
 			name: {
 				singular: function() {
-					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
+					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 				},
 				plural: function() {
-					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL__PLURAL");
+					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL__PLURAL");
 				}
 			},
 			aggregations: {
@@ -232,10 +232,10 @@ sap.ui.define([], function() {
 					},
 					childNames: {
 						singular: function() {
-							return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
+							return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 						},
 						plural: function() {
-							return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+							return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 						}
 					},
 					actions: {

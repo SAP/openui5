@@ -788,7 +788,7 @@ function (jQuery, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPage
 
 		// setup
 		oHeader.addAction(new Button(sIdWithSpecialChars));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// create the search context
 		$HeaderClone = oHeader.$().clone();

@@ -38,7 +38,7 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
 
-	var  oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var  oResourceBundleM = Core.getLibraryResourceBundle("sap.m");
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
@@ -478,7 +478,7 @@ sap.ui.define([
 		var closeButtonId = closeButton.sId;
 
 		notificationListItem.destroy();
-		assert.strictEqual(sap.ui.getCore().byId(closeButtonId), undefined, "close button is destroyed");
+		assert.strictEqual(Core.byId(closeButtonId), undefined, "close button is destroyed");
 	});
 
 	QUnit.module('Action and close buttons - mobile', {

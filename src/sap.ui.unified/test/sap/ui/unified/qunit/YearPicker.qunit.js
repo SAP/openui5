@@ -5,15 +5,16 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(YearPicker, DateRange, CalendarDate, Device, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(YearPicker, DateRange, CalendarDate, Device, jQuery, oCore) {
 	"use strict";
 
 		QUnit.module("API ", {
 			beforeEach: function () {
 				this.oYP = new YearPicker();
 				this.oYP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oYP.destroy();
@@ -66,7 +67,7 @@ sap.ui.define([
 
 			// Act
 			this.oYP.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.ok(oFormatSpy.getCall(0).args[1], "The format function is called with bUTC flag equal to true");
@@ -125,12 +126,12 @@ sap.ui.define([
 				aRefs;
 
 			this.YP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			aRefs = this.YP.$().find(".sapUiCalItem");
 
 			// act
 			this.YP._selectYear(12);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelectedDates[0].getStartDate().getFullYear(), 2000, "2000 is selected start year");
@@ -266,7 +267,7 @@ sap.ui.define([
 				aRefs;
 
 			this.YP.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			aRefs = this.YP.$().find(".sapUiCalItem");
 
 
@@ -285,7 +286,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oYP = new YearPicker();
 				this.oYP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oYP.destroy();
@@ -295,7 +296,7 @@ sap.ui.define([
 
 		QUnit.test("Control description", function (assert) {
 			// Arrange
-			var sControlDescription = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER");
+			var sControlDescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("YEAR_PICKER");
 
 			// Assert
 			assert.strictEqual(this.oYP.$().attr("aria-roledescription"), sControlDescription , "Control description is added in aria-roledescription");
@@ -305,7 +306,7 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oYP = new YearPicker();
 				this.oYP.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oYP.destroy();
@@ -316,7 +317,7 @@ sap.ui.define([
 		QUnit.test("Year is set to 0001", function(assert) {
 			// Act
 			this.oYP.setYear(1);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.ok(true, "Error is not thrown trying to format date with negative year value");
@@ -328,7 +329,7 @@ sap.ui.define([
 
 			// Act
 			this.oYP.setYear(9999);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oYP._updatePage(true, 0, true);
 			oMaxYear = this.oYP._oMaxDate.toLocalJSDate().getFullYear();

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	VerticalLayout,
 	DesignTime,
@@ -35,17 +36,18 @@ sap.ui.define([
 	Label,
 	KeyCodes,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	function triggerAndWaitForStartEdit(oPlugin, oOverlay) {
 		return new Promise(function(resolve) {
-			sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function() {
+			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function() {
 				resolve();
 			});
 			oPlugin.startEdit(oOverlay);
@@ -54,7 +56,7 @@ sap.ui.define([
 
 	function triggerAndWaitForStopEdit(oPlugin) {
 		return new Promise(function(resolve) {
-			sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function() {
+			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function() {
 				resolve();
 			});
 			triggerEventOnEditableField(oPlugin, KeyCodes.ENTER);
@@ -108,7 +110,7 @@ sap.ui.define([
 				content: [this.oForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oForm],
@@ -335,7 +337,7 @@ sap.ui.define([
 				content: [this.oButton, this.oLabel],
 				width: "200px"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],
@@ -360,7 +362,7 @@ sap.ui.define([
 				this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
 				this.oLayoutOverlay.setSelectable(true);
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				done();
 			}.bind(this));

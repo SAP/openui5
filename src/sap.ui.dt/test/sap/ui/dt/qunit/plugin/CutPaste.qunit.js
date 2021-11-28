@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function(
 	jQuery,
@@ -22,7 +23,8 @@ function(
 	Device,
 	QUnitUtils,
 	KeyCodes,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -55,9 +57,9 @@ function(
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oCutPaste = new CutPaste({
 				movableTypes: [
 					"sap.m.Button"
@@ -76,7 +78,7 @@ function(
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
 				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);

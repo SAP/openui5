@@ -29,12 +29,12 @@ sap.ui.define([
 	});
 
 	function assertVMControlFound(sLocalControlId, sLocalVMControlId, aVMControlIds, assert) {
-		var oControl = sap.ui.getCore().byId("testComponent2---mockview--" + sLocalControlId);
+		var oControl = Core.byId("testComponent2---mockview--" + sLocalControlId);
 		assert.equal(VariantUtils.getRelevantVariantManagementControlId(oControl, aVMControlIds), "testComponent2---mockview--" + sLocalVMControlId, "the correct VM Control was found");
 	}
 
 	function assertNoVMControlFound(sLocalControlId, aVMControlIds, assert) {
-		var oControl = sap.ui.getCore().byId("testComponent2---mockview--" + sLocalControlId);
+		var oControl = Core.byId("testComponent2---mockview--" + sLocalControlId);
 		assert.notOk(VariantUtils.getRelevantVariantManagementControlId(oControl, aVMControlIds), "no VM Control was found");
 	}
 
@@ -177,9 +177,9 @@ sap.ui.define([
 			assertNoVMControlFound("ObjectPageSubSection1", ["testComponent2---mockview--VariantManagement2"], assert);
 			assertNoVMControlFound("Button", aVMControlIds, assert);
 
-			var bBelongsToVM1 = VariantUtils.belongsToVariantManagement(sap.ui.getCore().byId("testComponent2---mockview--ObjectPageLayout"));
-			var bBelongsToVM2 = VariantUtils.belongsToVariantManagement(sap.ui.getCore().byId("testComponent2---mockview--TextTitle1"));
-			var bBelongsToVM3 = VariantUtils.belongsToVariantManagement(sap.ui.getCore().byId("testComponent2---mockview--Button"));
+			var bBelongsToVM1 = VariantUtils.belongsToVariantManagement(Core.byId("testComponent2---mockview--ObjectPageLayout"));
+			var bBelongsToVM2 = VariantUtils.belongsToVariantManagement(Core.byId("testComponent2---mockview--TextTitle1"));
+			var bBelongsToVM3 = VariantUtils.belongsToVariantManagement(Core.byId("testComponent2---mockview--Button"));
 			assert.strictEqual(bBelongsToVM1, true, "true is returned for the first variant management control");
 			assert.strictEqual(bBelongsToVM2, true, "true is returned for the second variant management control");
 			assert.strictEqual(bBelongsToVM3, false, "false is returned for the control not belonging to a variant management control");

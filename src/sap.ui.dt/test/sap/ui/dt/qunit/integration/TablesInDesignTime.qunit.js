@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Button,
 	JSONModel,
 	Log,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -48,7 +50,7 @@ sap.ui.define([
 		}
 
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oTable.addColumn(new Column({
 			label: new Label({text: "Last Name"}),
@@ -113,7 +115,7 @@ sap.ui.define([
 
 			this.oTable = _createTable();
 			this.oColumn = this.oTable.getColumns()[0];
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oTable]
@@ -163,7 +165,7 @@ sap.ui.define([
 
 			this.oTable.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oColumn = new AnalyticalColumn({
 				label: new Label({text: "Last Name"}),
@@ -197,7 +199,7 @@ sap.ui.define([
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// TODO: Temporal solution. Remove when the synced event in DesignTime waits for all async processes to be completed.
 				setTimeout(done, 16);

@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	MoveElements,
 	Utils,
@@ -23,12 +24,13 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = sap.ui.getCore().createComponent({
+	var oComponent = oCore.createComponent({
 		name: "testComponent",
 		id: "testComponent"
 	});

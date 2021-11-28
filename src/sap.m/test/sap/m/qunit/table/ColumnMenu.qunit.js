@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/table/ColumnMenu",
 	"sap/m/table/QuickAction",
 	"sap/m/table/Item",
-	"sap/m/Button"
-], function (QUnitUtils, ColumnMenu, QuickAction, Item, Button) {
+	"sap/m/Button",
+	"sap/ui/core/Core"
+], function (QUnitUtils, ColumnMenu, QuickAction, Item, Button, oCore) {
 	"use strict";
 	// Test setup
 
@@ -17,7 +18,7 @@ sap.ui.define([
 
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -60,7 +61,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -124,7 +125,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -146,7 +147,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowHeader());
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowFooter());
@@ -157,7 +158,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aCalls = [],
 			fnViewSwitch = function (oEvt) {
@@ -180,7 +181,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
 		assert.equal(document.activeElement.id, sId);
@@ -191,7 +192,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
 		assert.equal(document.activeElement.id, sId);
@@ -202,7 +203,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sId = this.oColumnMenu.getAggregation("_quickActions")[0].getContent().getId();
 		assert.equal(document.activeElement.id, sId);
@@ -213,7 +214,7 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sId = this.oColumnMenu.getQuickActions()[0].getContent().getId();
 		assert.equal(document.activeElement.id, sId);
@@ -224,13 +225,13 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to item
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
 	});
@@ -240,16 +241,16 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to item
 		var sId = this.oColumnMenu.getItems()[1].getId(); // Third item (Control Item, App Item, *App Item*)
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to item
 		this.oColumnMenu._oItemsContainer.switchView("$default");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
 	});
@@ -263,7 +264,7 @@ sap.ui.define([
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
@@ -276,12 +277,12 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.oColumnMenu._oBtnOk.getVisible());
 		assert.ok(this.oColumnMenu._oBtnCancel.getVisible());
@@ -296,17 +297,17 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oItem.changeButtonSettings({
 			reset: {visible: false}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["reset"]["visible"]);
@@ -314,7 +315,7 @@ sap.ui.define([
 		this.oItem.changeButtonSettings({
 			reset: {visible: true, enabled: false}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
 		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
@@ -326,17 +327,17 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oItem.changeButtonSettings({
 			cancel: {visible: false}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(this.oColumnMenu._oBtnCancel.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["cancel"]["visible"]);
@@ -346,17 +347,17 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Navigate to first item
 		var sId = this.oColumnMenu.getItems()[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oItem.changeButtonSettings({
 			confirm: {visible: false}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	uid,
 	XMLView,
@@ -35,7 +36,8 @@ sap.ui.define([
 	CommandFactory,
 	CreateContainerPlugin,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -75,7 +77,7 @@ sap.ui.define([
 				content: [this.oForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.sNewControlID = oMockedViewWithStableId.createId(uid());
 			this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
@@ -432,7 +434,7 @@ sap.ui.define([
 				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],

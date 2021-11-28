@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/table/plugins/MultiSelectionPlugin",
-	"sap/m/MessageToast"
-], function(MultiSelectionPlugin, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/Core"
+], function(MultiSelectionPlugin, MessageToast, oCore) {
 	"use strict";
 
 	window.TABLESETTINGS = {};
@@ -233,35 +234,35 @@ sap.ui.define([
 				RTL: {
 					text: "Right to Left",
 					value: function() {
-						return sap.ui.getCore().getConfiguration().getRTL();
+						return oCore.getConfiguration().getRTL();
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
-						sap.ui.getCore().getConfiguration().setRTL(bValue);
+						oCore.getConfiguration().setRTL(bValue);
 					}
 				},
 				LANG: {
 					text: "Language (table related localized texts only)",
 					value: function() {
-						return sap.ui.getCore().getConfiguration().getLocale().getLanguage().toUpperCase();
+						return oCore.getConfiguration().getLocale().getLanguage().toUpperCase();
 					},
 					choice: {
 						EN: {
 							text: "en",
 							action: function(oTable) {
-								sap.ui.getCore().getConfiguration().setLanguage("en");
+								oCore.getConfiguration().setLanguage("en");
 							}
 						},
 						DE: {
 							text: "de",
 							action: function(oTable) {
-								sap.ui.getCore().getConfiguration().setLanguage("de");
+								oCore.getConfiguration().setLanguage("de");
 							}
 						},
 						FR: {
 							text: "fr",
 							action: function(oTable) {
-								sap.ui.getCore().getConfiguration().setLanguage("fr");
+								oCore.getConfiguration().setLanguage("fr");
 							}
 						}
 					}
@@ -505,7 +506,7 @@ sap.ui.define([
 									enableNotification: true
 								});
 								oTable.addPlugin(oPlugin);
-								sap.ui.getCore().byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
+								oCore.byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
 							}
 						}
 					}
@@ -739,7 +740,7 @@ sap.ui.define([
 								}
 							}).placeAt(oTable.getParent().getId(), "first");
 						} else {
-							sap.ui.getCore().byId("HideOverlayButton").destroy();
+							oCore.byId("HideOverlayButton").destroy();
 						}
 					}
 				},
@@ -1260,11 +1261,11 @@ sap.ui.define([
 			change: function(oEvent) {
 				var sSettingsKey = oEvent.getParameter("selectedItem").getKey();
 				var sSettingsSnapshot = TABLESETTINGS.storedSettings[sSettingsKey];
-				var oDialog = sap.ui.getCore().byId("settingsDialog");
+				var oDialog = oCore.byId("settingsDialog");
 
 				applySettingsSnapshot(TABLESETTINGS.table, sSettingsSnapshot);
 				saveAppliedSettingsKey(sSettingsKey);
-				sap.ui.getCore().byId("settingsSelector").setSelectedKey(sSettingsKey); // Synchronize the select control on the main page.
+				oCore.byId("settingsSelector").setSelectedKey(sSettingsKey); // Synchronize the select control on the main page.
 
 				oDialog.removeAllContent();
 				oDialog.addContent(initForm(mActions));
@@ -1307,7 +1308,7 @@ sap.ui.define([
 									}
 
 									var sSelects = [
-										sap.ui.getCore().byId("settingsSelector"),
+										oCore.byId("settingsSelector"),
 										oSettingsSelector
 									];
 
@@ -1356,7 +1357,7 @@ sap.ui.define([
 									}
 
 									var sSelects = [
-										sap.ui.getCore().byId("settingsSelector"),
+										oCore.byId("settingsSelector"),
 										oSettingsSelector
 									];
 
@@ -1585,9 +1586,9 @@ sap.ui.define([
 		bInit = true;
 
 		try {
-			sap.ui.getCore().loadLibrary("sap.ui.layout");
-			sap.ui.getCore().loadLibrary("sap.ui.unified");
-			sap.ui.getCore().loadLibrary("sap.m");
+			oCore.loadLibrary("sap.ui.layout");
+			oCore.loadLibrary("sap.ui.unified");
+			oCore.loadLibrary("sap.m");
 		} catch (e) {
 			jQuery.sap.log.error("The table settings extension needs librarys 'sap.m', 'sap.ui.unified' and 'sap.ui.layout'.");
 			throw (e);
@@ -1667,8 +1668,8 @@ sap.ui.define([
 					icon: "sap-icon://restart",
 					press: function() {
 						var mNewServiceSettings = {
-							url: sap.ui.getCore().byId("TableSettings_ServiceUrl").getValue(),
-							collection: sap.ui.getCore().byId("TableSettings_Collection").getValue()
+							url: oCore.byId("TableSettings_ServiceUrl").getValue(),
+							collection: oCore.byId("TableSettings_Collection").getValue()
 						};
 
 						mNewServiceSettings.defaultProxyUrl = "../../../../proxy/" + mNewServiceSettings.url.replace("://", "/");
@@ -1709,7 +1710,7 @@ sap.ui.define([
 		function changeSettings() {
 			var aData = oColumnSettingsModel.getData().columns;
 			for (var i = 0; i < aData.length; i++) {
-				var oColumn = sap.ui.getCore().byId(aData[i].id);
+				var oColumn = oCore.byId(aData[i].id);
 				for (var item in mConfig) {
 					mConfig[item].action(oColumn, aData[i][item]);
 				}

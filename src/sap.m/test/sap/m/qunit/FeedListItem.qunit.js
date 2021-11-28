@@ -18,9 +18,10 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/library",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar,
-			ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes) {
+			ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -341,19 +342,19 @@ sap.ui.define([
 		assert.equal(this.oNonActiveItem.oAvatar.$().css("color"), "rgb(255, 255, 255)", "The inactive icon color is white in Default theme");
 		this.applyTheme = function(sTheme, fnCallback) {
 			this.sRequiredTheme = sTheme;
-			if (sap.ui.getCore().getConfiguration().getTheme() === this.sRequiredTheme && sap.ui.getCore().isThemeApplied()) {
+			if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 				if (typeof fnCallback === "function") {
 					fnCallback.bind(this)();
 					fnCallback = undefined;
 				}
 			} else {
-				sap.ui.getCore().attachThemeChanged(fnThemeApplied.bind(this));
-				sap.ui.getCore().applyTheme(sTheme);
+				oCore.attachThemeChanged(fnThemeApplied.bind(this));
+				oCore.applyTheme(sTheme);
 			}
 
 			function fnThemeApplied(oEvent) {
-				sap.ui.getCore().detachThemeChanged(fnThemeApplied);
-				if (sap.ui.getCore().getConfiguration().getTheme() === this.sRequiredTheme && sap.ui.getCore().isThemeApplied()) {
+				oCore.detachThemeChanged(fnThemeApplied);
+				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
@@ -444,7 +445,7 @@ sap.ui.define([
 			this.bOriginalIsPhone = Device.system.phone;
 			Device.system.phone = true;
 			appFeedList.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			Device.system.phone = this.bOriginalIsPhone;
@@ -465,7 +466,7 @@ sap.ui.define([
 			this.bOriginalIsPhone = Device.system.phone;
 			Device.system.phone = false;
 			appFeedList.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			Device.system.phone = this.bOriginalIsPhone;
@@ -491,7 +492,7 @@ sap.ui.define([
 				showIcon: true,
 				senderActive: false
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedListItem.destroy();
@@ -509,7 +510,7 @@ sap.ui.define([
 		this.oFeedListItem.setConvertLinksToAnchorTags(LinkConversion.All);
 		this.oFeedListItem.setConvertedLinksDefaultTarget(sLinkTarget);
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oFeedListItem.getAggregation("_text").getConvertLinksToAnchorTags(), LinkConversion.All, "The convertLinksToAnchorTags property has been forwarded to sap.m.FormattedText");
 		assert.equal(this.oFeedListItem.getAggregation("_text").getConvertedLinksDefaultTarget(), sLinkTarget, "The ConvertedLinksDefaultTarget property has been forwarded to sap.m.FormattedText");
@@ -649,7 +650,7 @@ sap.ui.define([
 	QUnit.test("Expand collapse text changed", function (assert) {
 		oFeedList.getItems()[10].setMoreLabel("MORE TEXT");
 		oFeedList.getItems()[10].setLessLabel("LESS TEXT");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE TEXT");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
 	});
@@ -677,14 +678,14 @@ sap.ui.define([
 
 	QUnit.test("MoreLabel property set to 'null'", function (assert) {
 		oFeedList.getItems()[10].setMoreLabel(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 	});
 
 	QUnit.test("LessLabel property set to 'null'", function (assert) {
 		oFeedList.getItems()[10].setLessLabel(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oFeedList.getItems()[10]._toggleTextExpanded();
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "LESS");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowLess);
@@ -701,7 +702,7 @@ sap.ui.define([
 				senderActive: false
 			});
 			this.oFeedListItem.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			//this.oFeedListItem.destroy();
@@ -725,7 +726,7 @@ sap.ui.define([
 				sender: null,
 				text: "Some text <strong>which</strong> is <em>displayed</em>."
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedListItem.destroy();
@@ -749,7 +750,7 @@ sap.ui.define([
 		var sPlainText = "Some text which is displayed.";
 		//Act
 		this.oFeedListItem.setText(sPlainText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sText = this.oFeedListItem._sFullText;
 		//Assert
 		assert.equal(sPlainText, sText, "Text does not have html tags");
@@ -761,7 +762,7 @@ sap.ui.define([
 		var sFullText = this.oFeedListItem.getText();
 		//Act
 		this.oFeedListItem.setMaxCharacters(17);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sCollapsedTextNew = this.oFeedListItem._sShortText;
 		var sFullTextNew = this.oFeedListItem._sFullText;
 		//Assert
@@ -788,7 +789,7 @@ sap.ui.define([
 		//Act
 		this.oFeedListItem.setText(sText);
 		this.oFeedListItem.setMaxCharacters(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sCollapsedTextNew = this.oFeedListItem._sShortText;
 		var sFullText = this.oFeedListItem._sFullText;
 		//Assert
@@ -829,7 +830,7 @@ sap.ui.define([
 		this.oFeedListItem.setMaxCharacters(5);
 		this.oFeedListItem._bTextExpanded = true;
 		var oSinonSpy = sinon.spy(this.oFeedListItem, "_clearEmptyTagsInCollapsedText");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Act
 		this.oFeedListItem._toggleTextExpanded();
 		//Assert
@@ -876,7 +877,7 @@ sap.ui.define([
 			oModel.setData(oData);
 			this.oFeedListItem.setModel(oModel);
 			this.oFeedListItem.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedListItem.destroy();
@@ -895,7 +896,7 @@ sap.ui.define([
 					new FeedListItemAction()
 				]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedListItem.destroy();
@@ -917,7 +918,7 @@ sap.ui.define([
 		this.oFeedListItem.destroyAggregation("actions");
 
 		// Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(this.oFeedListItem.$("actionButton").length === 0, "The action button is not rendered");
@@ -1100,7 +1101,7 @@ sap.ui.define([
 				};
 			}
 		};
-		var oThemeStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize");
+		var oThemeStub = sinon.stub(oCore.getConfiguration(), "getTheme").returns("sap_belize");
 		var bOriginSystemPhone = Device.system.phone;
 		Device.system.phone = false;
 
@@ -1127,7 +1128,7 @@ sap.ui.define([
 				};
 			}
 		};
-		var oThemeStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize_plus");
+		var oThemeStub = sinon.stub(oCore.getConfiguration(), "getTheme").returns("sap_belize_plus");
 		var bOriginSystemPhone = Device.system.phone;
 		Device.system.phone = false;
 

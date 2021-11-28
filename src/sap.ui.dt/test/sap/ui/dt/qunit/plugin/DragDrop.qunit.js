@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core"
 ], function (
 	ElementOverlay,
 	DragDrop,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Device,
 	sinon,
 	jQuery,
-	QUnitUtils
+	QUnitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -53,7 +55,7 @@ sap.ui.define([
 			this.oButton = new Button();
 			this.oLayout = new VerticalLayout({content: [this.oButton]});
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
@@ -245,7 +247,7 @@ sap.ui.define([
 			this.oLayout1 = new VerticalLayout({content: [this.oButton]});
 			this.oLayout2 = new VerticalLayout({content: [this.oLayout1]});
 			this.oLayout2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
@@ -386,7 +388,7 @@ sap.ui.define([
 						designTimeMetadata: { data: oDesignTimeMetadata },
 						lazyRendering: false
 					});
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					that.oDragDrop = new DragDrop();
 					var oPageContentOverlay = that.oPageOverlay.getAggregationOverlay("content");
 					that.oDragDrop.registerAggregationOverlay(oPageContentOverlay);

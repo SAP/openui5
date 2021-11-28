@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/ScrollContainer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/type/String"
+	"sap/ui/model/type/String",
+	"sap/ui/core/Core"
 ], function (
 		MemoryLeakCheck,
 		FieldBase,
@@ -57,7 +58,8 @@ sap.ui.define([
 		ColumnListItem,
 		ScrollContainer,
 		JSONModel,
-		StringType
+		StringType,
+		oCore
 	) {
 	"use strict";
 
@@ -93,7 +95,7 @@ sap.ui.define([
 			   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
 			   {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}]
 		});
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
 	MemoryLeakCheck.checkControl("FieldValueHelp Suggestion", function() {
 		// don't need to be really rendered or opened, just test if inner controls are cleared.

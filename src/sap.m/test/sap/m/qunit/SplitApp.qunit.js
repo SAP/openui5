@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/library",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -24,7 +25,8 @@ sap.ui.define([
 	jQuery,
 	NavContainer,
 	mobileLibrary,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -74,7 +76,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.ok(jQuery("#master").length, "Master page should be rendered initially.");
@@ -118,7 +120,7 @@ sap.ui.define([
 			mode: "PopoverMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
 
@@ -173,7 +175,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -227,7 +229,7 @@ sap.ui.define([
 			mode: "StretchCompressMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -273,7 +275,7 @@ sap.ui.define([
 			mode: "PopoverMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -320,7 +322,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -367,7 +369,7 @@ sap.ui.define([
 			mode: "StretchCompressMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -411,7 +413,7 @@ sap.ui.define([
 			mode: "HideMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
@@ -459,7 +461,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSplitApp.showMaster();
 
@@ -505,7 +507,7 @@ sap.ui.define([
 			mode: "ShowHideMode"
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(jQuery("#splitapp").length, "SplitApp is rendered in the beginning.");
 		assert.ok(jQuery("#master").length, "Master Nav Container should be rendered initially.");
@@ -539,7 +541,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oSpyIndexOfPage = this.spy(oSplitApp._oMasterNav, "indexOfPage");
 
@@ -582,7 +584,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oNewMasterPage = new Page("newMasterPage1",{
 			title : "Master 1"
@@ -653,7 +655,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oMovePage = new Page("movePagePage1",{
 			title : "Detail 1"
@@ -705,7 +707,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aMaster;
 
@@ -764,7 +766,7 @@ sap.ui.define([
 			]
 		});
 		oSplitApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oSpyRemoveAllPages = this.spy(oSplitApp._oMasterNav, "removeAllPages");
 
@@ -800,7 +802,7 @@ sap.ui.define([
 		oSplitApp1.addMasterPage(page).addDetailPage(page2);
 
 		oSplitApp1.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oMasterButton = oSplitApp1._oShowMasterBtn;
 		assert.ok(oMasterButton.getDomRef(), "Master Button is rendered");
@@ -819,7 +821,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oSplitApp = new SplitApp();
 			this.oSplitApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSplitApp.destroy();
@@ -844,7 +846,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oSplitApp = new SplitApp();
 			this.oSplitApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSplitApp.destroy();
@@ -857,7 +859,7 @@ sap.ui.define([
 		var oApp = this.oSplitApp;
 		// Act
 		oApp.setBackgroundImage(sBackgroundImageSrc);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sBackgroundImageSrc) : sBackgroundImageSrc) + '\")',
@@ -879,13 +881,13 @@ sap.ui.define([
 			sImgSrc2 = sPath + sUnreservedChars + sReservedChars1 + sReservedChars2 + sOtherChars + sReservedCharsUnencoded + sFileExtension + sQuery;
 
 		oApp.setBackgroundImage(sImgSrc1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + sImgSrc1 + '\")',
 			"correct property value");
 
 		oApp.setBackgroundImage(sImgSrc2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Check
 		assert.strictEqual(getBgDomElement(oApp).style.backgroundImage, 'url(\"' + (Device.browser.safari ? getAbsoluteURL(sImgSrc2) : sImgSrc2) + '\")',
 			"correct property value");
@@ -901,7 +903,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -918,7 +920,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -963,7 +965,7 @@ sap.ui.define([
 			});
 
 			this.oSplitApp.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSplitApp.destroy();
@@ -980,16 +982,16 @@ sap.ui.define([
 	QUnit.test("encodes html-specific chars in backgroundImage style", function(assert) {
 		// Act
 		this.oHideButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check
 		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
 
 		// Act
 		this.oStrechButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oHideButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Check
 		assert.strictEqual(this.oSplitApp._oShowMasterBtn.getTooltip(), "Show Master", 'Tooltip is should be "Show Master"');
@@ -1005,7 +1007,7 @@ sap.ui.define([
 			});
 
 			this.oScrollContainer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -1017,7 +1019,7 @@ sap.ui.define([
 		assert.strictEqual(this.oScrollContainer.getDomRef().firstChild.style.height, '100%', "height is set correctly");
 
 		this.oScrollContainer.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oScrollContainer.getDomRef().firstChild.style.height, '100%', "height is set correctly");
 	});

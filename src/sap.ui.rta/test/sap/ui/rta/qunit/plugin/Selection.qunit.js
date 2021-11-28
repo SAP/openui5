@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	Bar,
 	Button,
@@ -47,7 +48,8 @@ sap.ui.define([
 	Popover,
 	jQuery,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -112,7 +114,7 @@ sap.ui.define([
 				]
 			});
 			this.oVBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				plugins: [

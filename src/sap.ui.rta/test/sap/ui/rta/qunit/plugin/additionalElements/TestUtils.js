@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	XMLView,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 	function _renderComplexView() {
@@ -18,7 +20,7 @@ sap.ui.define([
 		}).then(function(oViewInstance) {
 			oView = oViewInstance;
 			oViewInstance.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return oViewInstance.getController().isDataReady();
 		}).then(function() {
 			return oView;

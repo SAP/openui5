@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/m/MessageToast",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function(
 	Controller,
 	VariantModel,
 	VariantManagement,
 	MessageToast,
-	Log
+	Log,
+	oCore
 ) {
 	"use strict";
 
@@ -155,7 +157,7 @@ sap.ui.define([
 			};
 
 			var sResourceUrl = "i18n/i18n.properties";
-			var sLocale = sap.ui.getCore().getConfiguration().getLanguage();
+			var sLocale = oCore.getConfiguration().getLanguage();
 			var oResourceModel = new sap.ui.model.resource.ResourceModel({
 				bundleUrl: sResourceUrl,
 				bundleLocale: sLocale

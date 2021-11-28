@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/TileContainer",
 	"sap/m/library",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/events/KeyCodes"
-], function(qutils, Tile, TileContainer, mobileLibrary, InvisibleText, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(qutils, Tile, TileContainer, mobileLibrary, InvisibleText, KeyCodes, oCore) {
 	"use strict";
 
 	var core = sap.ui.getCore();
@@ -285,8 +286,8 @@ sap.ui.define([
 		sut.isEditable(true);
 		//Assert
 		assert.equal(sut.$().attr('aria-describedby'), InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY"), 'When tile is editable, aria-describedby should exist');
-		assert.equal(sap.ui.getCore().byId(InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY")).getText(),
-				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
+		assert.equal(oCore.byId(InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY")).getText(),
+				oCore.getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
 				'When tile is editable, aria-describedby should point to a label with certain text');
 
 		cnt.destroy();

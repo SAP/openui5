@@ -3,12 +3,9 @@
 sap.ui.define([
 	"sap/ui/fl/EventHistory",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
-], function(
-	EventHistory,
-	sinon,
-	jQuery
-) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(EventHistory, sinon, jQuery, oCore) {
 	"use strict";
 
 	var oSubscribeStub;
@@ -16,12 +13,12 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.EventHistory", {
 		beforeEach: function() {
-			oSubscribeStub = sinon.stub(sap.ui.getCore().getEventBus(), "subscribe");
-			oUnsubscribeStub = sinon.stub(sap.ui.getCore().getEventBus(), "unsubscribe");
+			oSubscribeStub = sinon.stub(oCore.getEventBus(), "subscribe");
+			oUnsubscribeStub = sinon.stub(oCore.getEventBus(), "unsubscribe");
 		},
 		afterEach: function() {
-			sap.ui.getCore().getEventBus().subscribe.restore();
-			sap.ui.getCore().getEventBus().unsubscribe.restore();
+			oCore.getEventBus().subscribe.restore();
+			oCore.getEventBus().unsubscribe.restore();
 			EventHistory._oHistory = {};
 			EventHistory._aUnsubscribedEventIds = [];
 		}

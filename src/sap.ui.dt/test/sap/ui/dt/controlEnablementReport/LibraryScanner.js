@@ -5,8 +5,9 @@
 // Provides class sap.ui.dt.test.LibraryEnablementTest.
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"controlEnablementReport/ElementActionDefinitionTest"
-], function(ManagedObject, ElementActionDefinitionTest) {
+	"controlEnablementReport/ElementActionDefinitionTest",
+	"sap/ui/core/Core"
+], function(ManagedObject, ElementActionDefinitionTest, oCore) {
 	"use strict";
 
 
@@ -70,22 +71,22 @@ sap.ui.define([
 						oLib.name.indexOf("sap.ui.demoapps") === -1 &&
 						oLib.name !== "sap.ui.core" &&
 						oLib.name !== "sap.ui.fl") {
-					aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(oLib.name, { async: true }));
+					aLoadLibraryPromises.push(oCore.loadLibrary(oLib.name, { async: true }));
 				}
 			});
 		} else {
 			aLibraries.forEach(function(sLib) {
-				aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(sLib, { async: true }));
+				aLoadLibraryPromises.push(oCore.loadLibrary(sLib, { async: true }));
 			});
 		}
 
 		return Promise.all(aLoadLibraryPromises).then(function () {
-			var oLoadedLibs = sap.ui.getCore().getLoadedLibraries();
+			var oLoadedLibs = oCore.getLoadedLibraries();
 			for (var sLibraryName in oLoadedLibs) {
 				if (aLibraries.length > 0 && aLibraries.indexOf(sLibraryName) === -1) {
 					continue;
 				}
-				var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
+				var oLib = oCore.getLoadedLibraries()[sLibraryName];
 				if (oLib && sLibraryName !== "sap.ui.core") {
 					var aLibraryControls = oLib.controls;
 					var aLibraryElements = oLib.elements;

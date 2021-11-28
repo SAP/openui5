@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/library",
 	"sap/m/Toolbar",
-	"sap/ui/core/theming/Parameters"
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/Core"
 	],
 	function(
 			qutils,
@@ -16,7 +17,8 @@ sap.ui.define([
 			Title,
 			mLibrary,
 			Toolbar,
-			Parameters
+			Parameters,
+			oCore
 	) {
 	"use strict";
 
@@ -104,7 +106,7 @@ sap.ui.define([
 
 		oFormContainer.destroy();
 		oFormContainer = undefined;
-		assert.notOk(sap.ui.getCore().byId(sButtonId), "Button destroyed");
+		assert.notOk(oCore.byId(sButtonId), "Button destroyed");
 
 		initTest();
 	}
@@ -257,8 +259,8 @@ sap.ui.define([
 		var aFormElements = oFormContainer.getFormElements();
 
 		assert.equal(aFormElements.length, 0, "0 FormElement assigned");
-		assert.notOk(sap.ui.getCore().byId("FE1"), "FormElement1 destroyed");
-		assert.notOk(sap.ui.getCore().byId("FE2"), "FormElement2 destroyed");
+		assert.notOk(oCore.byId("FE1"), "FormElement1 destroyed");
+		assert.notOk(oCore.byId("FE2"), "FormElement2 destroyed");
 	});
 
 	QUnit.test("getVisibleFormElements", function(assert) {

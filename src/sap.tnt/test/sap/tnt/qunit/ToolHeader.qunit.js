@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/m/ToolbarSpacer',
 	'sap/tnt/ToolHeader',
 	'sap/tnt/ToolHeaderUtilitySeparator',
-	'sap/ui/qunit/utils/waitForThemeApplied'
+	'sap/ui/qunit/utils/waitForThemeApplied',
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	App,
@@ -19,7 +20,9 @@ sap.ui.define([
 	ToolbarSpacer,
 	ToolHeader,
 	ToolHeaderUtilitySeparator,
-	waitForThemeApplied) {
+	waitForThemeApplied,
+	oCore
+) {
 
 	'use strict';
 
@@ -181,7 +184,7 @@ sap.ui.define([
 
 			this.toolHeader = getToolHeader();
 			this.oPage.addContent(this.toolHeader);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -196,7 +199,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("created", function (assert) {
-		assert.ok(sap.ui.getCore().byId(this.toolHeader.getId()), "created");
+		assert.ok(oCore.byId(this.toolHeader.getId()), "created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {

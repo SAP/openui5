@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	Button,
 	CustomListItem,
@@ -27,7 +28,8 @@ sap.ui.define([
 	CommandFactory,
 	RemovePlugin,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -61,7 +63,7 @@ sap.ui.define([
 				content: [this.oBoundList, this.oUnBoundList]
 			});
 			this.oHorizontalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oHorizontalLayout]

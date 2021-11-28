@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	Button,
 	FlexBox,
@@ -57,7 +58,8 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -161,7 +163,7 @@ sap.ui.define([
 					this.oToolHooksPlugin = new ToolHooksPlugin();
 					done();
 				}.bind(this));
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -295,14 +297,14 @@ sap.ui.define([
 			var done = assert.async();
 			var done2 = assert.async();
 
-			sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", function () {
+			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", function () {
 				assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
 				this.oControlVariantPlugin._$oEditableControlDomRef.text("Test");
 				this.oControlVariantPlugin._$editableField.text(this.oControlVariantPlugin._$oEditableControlDomRef.text());
 				var $Event = jQuery.Event("keydown"); // eslint-disable-line new-cap
 				$Event.keyCode = KeyCodes.ENTER;
 				this.oControlVariantPlugin._$editableField.trigger($Event);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				done2();
 			}, this);
 
@@ -425,11 +427,11 @@ sap.ui.define([
 			var done = assert.async();
 			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then VariantManagement Key is initially undefined");
 			this.oDesignTime.addPlugin(this.oControlVariantPlugin);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(this.oButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully propagated from ObjectPageLayout to Button (last element)");
 			var oTestButton = new Button("testButton");
 			this.oLayout.addContent(oTestButton);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				var oTestButtonOverlay = OverlayRegistry.getOverlay(oTestButton);
 				assert.equal(oTestButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set for newly inserted ElementOverlay from parent ElementOverlays");
@@ -601,7 +603,7 @@ sap.ui.define([
 					done();
 				}.bind(this));
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -648,7 +650,7 @@ sap.ui.define([
 						actions: {}
 					}
 				};
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oDesignTime = new DesignTime({
 					designTimeMetadata: oVariantManagementDesignTimeMetadata,
 					rootElements: [this.oVariantManagementControl]
@@ -694,7 +696,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _handlePostRename is called two times back to back", function(assert) {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sandbox.stub(this.oControlVariantPlugin, "_emitLabelChangeEvent").resolves();
 			sandbox.stub(RenameHandler, "_validateNewText");
@@ -737,7 +739,7 @@ sap.ui.define([
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
 			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
 				.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true, true));
@@ -766,7 +768,7 @@ sap.ui.define([
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent.getParameter("command") instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
@@ -799,7 +801,7 @@ sap.ui.define([
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("\xa0");
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
 			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
 				.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
@@ -826,7 +828,7 @@ sap.ui.define([
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sExistingVariantTitle);
 			this.oControlVariantPlugin.setOldValue("Source Variant Title");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
 				.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
@@ -851,7 +853,7 @@ sap.ui.define([
 			var sOldVariantTitle = "Old Variant Title";
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title Copy");
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -888,7 +890,7 @@ sap.ui.define([
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Modified Source Variant Title Copy");
 			sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
 			this.oControlVariantPlugin.setOldValue(sExistingVariantTitle + " Copy");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -1114,7 +1116,7 @@ sap.ui.define([
 				};
 
 				this.oVariantManagementControl.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oDesignTime = new DesignTime({
 					designTimeMetadata: oVariantManagementDesignTimeMetadata,
@@ -1129,7 +1131,7 @@ sap.ui.define([
 					done();
 				}.bind(this));
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		},
 		afterEach: function () {

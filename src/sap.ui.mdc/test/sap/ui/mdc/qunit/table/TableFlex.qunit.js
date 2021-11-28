@@ -1,10 +1,10 @@
 /* global QUnit */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/util/TypeUtil", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/FlexUtil","sap/ui/mdc/table/TableSettings","sap/ui/mdc/flexibility/Table.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column"
-], function(createAppEnvironment, TypeUtil, FilterField, FlexUtil, TableSettings, TableFlexHandler, ChangesWriteAPI, JsControlTreeModifier, UIComponent, ComponentContainer, TableDelegate, Column) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/util/TypeUtil", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/FlexUtil", "sap/ui/mdc/table/TableSettings", "sap/ui/mdc/flexibility/Table.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/core/Core"
+], function(createAppEnvironment, TypeUtil, FilterField, FlexUtil, TableSettings, TableFlexHandler, ChangesWriteAPI, JsControlTreeModifier, UIComponent, ComponentContainer, TableDelegate, Column, oCore) {
 	'use strict';
 
-	sap.ui.getCore().loadLibrary("sap.ui.fl");
+	oCore.loadLibrary("sap.ui.fl");
 	var aPropertyInfo = [
 		{
 			name: "column0",
@@ -58,7 +58,7 @@ sap.ui.define([
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oTable = this.oView.byId('myTable');
 				this.oColumn1 = this.oView.byId('myTable--column1');

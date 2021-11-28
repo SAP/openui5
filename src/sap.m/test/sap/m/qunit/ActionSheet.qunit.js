@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/Core"
 ], function(
 	library,
 	App,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Log,
 	qutils,
 	createAndAppendDiv,
-	Device
+	Device,
+	oCore
 ) {
 	"use strict";
 
@@ -34,7 +36,7 @@ sap.ui.define([
 
 
 	var ButtonType = library.ButtonType;
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 	var oActionSheet = new ActionSheet("actionsheet", {
 		showCancelButton: true,
 		buttons: [
@@ -83,11 +85,11 @@ sap.ui.define([
 		var done = assert.async();
 		oActionSheet.attachBeforeOpen(function onBeforeOpen() {
 			oActionSheet.detachBeforeOpen(onBeforeOpen);
-			assert.ok(sap.ui.getCore().byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
+			assert.ok(oCore.byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
 		});
 		oActionSheet.attachAfterOpen(function onAfterOpen() {
 			oActionSheet.detachAfterOpen(onAfterOpen);
-			assert.equal(sap.ui.getCore().byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+			assert.equal(oCore.byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible after it's opened");
 			done();
 		});
 	}
@@ -96,11 +98,11 @@ sap.ui.define([
 		var done = assert.async();
 		oActionSheet.attachBeforeClose(function onBeforeClose() {
 			oActionSheet.detachBeforeClose(onBeforeClose);
-			assert.equal(sap.ui.getCore().byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible before it's closed");
+			assert.equal(oCore.byId("actionsheet").$().css("visibility"), "visible", "ActionSheet should be visible before it's closed");
 		});
 		oActionSheet.attachAfterClose(function onAfterClose() {
 			oActionSheet.detachAfterClose(onAfterClose);
-			assert.ok(sap.ui.getCore().byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
+			assert.ok(oCore.byId("actionsheet").$().css("visibility") !== "visible", "ActionSheet should be hidden after it's closed");
 			assert.ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
 			done();
 		});
@@ -109,7 +111,7 @@ sap.ui.define([
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert) {
-		assert.ok(!sap.ui.getCore().byId("actionsheet").$().length, "ActionSheet is not rendered before it's ever opened.");
+		assert.ok(!oCore.byId("actionsheet").$().length, "ActionSheet is not rendered before it's ever opened.");
 	});
 
 	QUnit.module("Open and Close - with Title and Cancel Button");
@@ -120,12 +122,12 @@ sap.ui.define([
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 
 		setTimeout(function () {
-			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("header.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(sap.ui.getCore().byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -157,12 +159,12 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
-			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("header.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(sap.ui.getCore().byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -191,12 +193,12 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
-			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("div.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(sap.ui.getCore().byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -225,12 +227,12 @@ sap.ui.define([
 		oButton.firePress();
 		assert.ok(oActionSheet.isOpen(), "ActionSheet is already open");
 		setTimeout(function () {
-			var $actionSheet = sap.ui.getCore().byId("actionsheet").$(),
+			var $actionSheet = oCore.byId("actionsheet").$(),
 				$parentControl = !Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
 				$header = $parentControl.children("div.sapMBar"),
 				$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
 			assert.expect(8);
-			assert.ok(sap.ui.getCore().byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
+			assert.ok(oCore.byId("actionsheet").$(), "ActionSheet is rendered after it's opened.");
 			assert.ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 			assert.ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
 
@@ -300,11 +302,11 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
-			assert.ok(sap.ui.getCore().byId('asButton2').$().is(":focus"), 'The 2nd button should be focused');
+			assert.ok(oCore.byId('asButton2').$().is(":focus"), 'The 2nd button should be focused');
 
 			done();
 			oActionSheet.close();
@@ -337,7 +339,7 @@ sap.ui.define([
 		}), oSpy;
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 		oClock.tick(300);
 
@@ -425,21 +427,21 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
-			sap.ui.getCore().byId('oButton7').$().trigger("focus");
+			oCore.byId('oButton7').$().trigger("focus");
 
-			qutils.triggerKeydown(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
-			qutils.triggerKeyup(sap.ui.getCore().byId('oButton7').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(oCore.byId('oButton7').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeyup(oCore.byId('oButton7').$()[0], KeyCodes.PAGE_UP);
 
-			assert.ok(sap.ui.getCore().byId('oButton2').$().is(":focus"), 'The 2nd button should be focused');
+			assert.ok(oCore.byId('oButton2').$().is(":focus"), 'The 2nd button should be focused');
 
-			qutils.triggerKeydown(sap.ui.getCore().byId('oButton2').$()[0], KeyCodes.PAGE_UP);
-			qutils.triggerKeyup(sap.ui.getCore().byId('oButton2').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeydown(oCore.byId('oButton2').$()[0], KeyCodes.PAGE_UP);
+			qutils.triggerKeyup(oCore.byId('oButton2').$()[0], KeyCodes.PAGE_UP);
 
-			assert.ok(sap.ui.getCore().byId('oButton1').$().is(":focus"), 'The first button should be focused');
+			assert.ok(oCore.byId('oButton1').$().is(":focus"), 'The first button should be focused');
 			done();
 			oActionSheet.close();
 
@@ -505,17 +507,17 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
-			qutils.triggerKeydown(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
 
-			assert.ok(sap.ui.getCore().byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
+			assert.ok(oCore.byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
 
-			qutils.triggerKeydown(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
 			assert.ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
 			done();
 			oActionSheet.close();
@@ -579,19 +581,19 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
-			qutils.triggerKeydown(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(sap.ui.getCore().byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton1').$()[0], KeyCodes.PAGE_DOWN);
 
-			assert.ok(sap.ui.getCore().byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
+			assert.ok(oCore.byId('oButton6').$().is(":focus"), 'The 6th button should be focused');
 
-			qutils.triggerKeydown(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
-			qutils.triggerKeyup(sap.ui.getCore().byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeydown(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
+			qutils.triggerKeyup(oCore.byId('oButton6').$()[0], KeyCodes.PAGE_DOWN);
 
-			assert.ok(sap.ui.getCore().byId('oButton7').$().is(":focus"), 'The 7th button should be focused');
+			assert.ok(oCore.byId('oButton7').$().is(":focus"), 'The 7th button should be focused');
 
 			done();
 			oActionSheet.close();
@@ -654,7 +656,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -696,7 +698,7 @@ sap.ui.define([
 			oActionSheetContentDivRole;
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -731,10 +733,10 @@ sap.ui.define([
 			sActualText;
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
-		sActualText = sap.ui.getCore().byId(oActionSheet.getPopupHiddenLabelId()).getText();
+		sActualText = oCore.byId(oActionSheet.getPopupHiddenLabelId()).getText();
 
 		setTimeout(function () {
 			assert.equal(sActualText, sExpectedText, 'popup ariaLabelledBy is set');
@@ -777,10 +779,10 @@ sap.ui.define([
 
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
-		sActualText = sap.ui.getCore().byId(oActionSheet.getPopupHiddenLabelId()).getText();
+		sActualText = oCore.byId(oActionSheet.getPopupHiddenLabelId()).getText();
 
 		setTimeout(function () {
 			assert.equal(sActualText, sExpectedText, 'popup ariaLabelledBy is set');
@@ -813,7 +815,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -864,7 +866,7 @@ sap.ui.define([
 		oActionSheet.addButton(button1);
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
@@ -911,12 +913,12 @@ sap.ui.define([
 		oActionSheet.insertButton(oASButton2, 1);
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
 			var sInvisibleTextId = oASButton2.getAriaLabelledBy()[0],
-				oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+				oInvisibleText = oCore.byId(sInvisibleTextId);
 
 			//Assert
 			assert.strictEqual(oActionSheet.indexOfAggregation("buttons", oASButton2), 1, "Inserted button should be correctly placed at the second place.");
@@ -951,12 +953,12 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		setTimeout(function () {
-			var sInvisibleText = sap.ui.getCore().byId('asButton1').getAriaLabelledBy()[0],
-				oInvisibleTextObj = sap.ui.getCore().byId(sInvisibleText);
+			var sInvisibleText = oCore.byId('asButton1').getAriaLabelledBy()[0],
+				oInvisibleTextObj = oCore.byId(sInvisibleText);
 
 			assert.strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");
 
@@ -978,7 +980,7 @@ sap.ui.define([
 		});
 
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 
 		assert.strictEqual(oActionSheet._parent.getProperty('ariaRoleApplication'), true, "ariaRoleApplication of the ActionSheet is set to true.");
@@ -1082,7 +1084,7 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 		oActionSheet.close();
 		oClock.tick(300);
@@ -1121,7 +1123,7 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 		oActionSheet.onmousedown({ srcControl: oButton1 });
 		oButton1.firePress();
@@ -1172,7 +1174,7 @@ sap.ui.define([
 
 		//Act
 		page.addContent(oButton);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oButton.firePress();
 		oActionSheet.onmousedown({ srcControl: oCancelButton });
 		oCancelButton.firePress();

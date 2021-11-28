@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/ComboBox",
 	"sap/m/MultiComboBox",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/core/Item"
+	"sap/ui/core/Item",
+	"sap/ui/core/Core"
 ], function (
 	Device,
 	qutils,
@@ -26,14 +27,15 @@ sap.ui.define([
 	ComboBox,
 	MultiComboBox,
 	GroupHeaderListItem,
-	Item
+	Item,
+	oCore
 ) {
 	"use strict";
 
 	QUnit.module("Highlighting", {
 		before: function () {
 			this.oSuggestionsPopover = new SuggestionsPopover();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		after: function () {
 			this.oSuggestionsPopover.destroy();
@@ -70,7 +72,7 @@ sap.ui.define([
 	QUnit.module("initContent", {
 		beforeEach: function () {
 			this.oSuggestionsPopover = new SuggestionsPopover();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSuggestionsPopover.destroy();
@@ -92,7 +94,7 @@ sap.ui.define([
 		// Act
 		oInput._bIsComposingCharacter = true;
 		oInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._$input.trigger("focus").val("te").trigger("input");
 
@@ -124,7 +126,7 @@ sap.ui.define([
 		oSuggestionsPopover = new SuggestionsPopover();
 		oSuggestionsPopover._bUseDialog = true;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oSuggestionsPopover.createSuggestionPopup(oComboBox, {});
@@ -149,7 +151,7 @@ sap.ui.define([
 
 		oComboBox = new ComboBox();
 		oComboBox.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.open();
@@ -176,7 +178,7 @@ sap.ui.define([
 
 		oMultiComboBox = new MultiComboBox();
 		oMultiComboBox.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMultiComboBox.open();
@@ -204,11 +206,11 @@ sap.ui.define([
 		// Setup
 		oInput = new Input();
 		oSuggPopover = oInput._getSuggestionsPopover();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oSuggPopover.addContent(new List());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oSuggPopover.getItemsContainer(), "This is not the items container, but a custom list");
@@ -227,7 +229,7 @@ sap.ui.define([
 		oInput = new Input();
 		oSuggPopover = oInput._getSuggestionsPopover();
 		oSuggPopover.initContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oList = oSuggPopover.getItemsContainer();
 		oListSpy = this.spy(oList, "removeSelections");

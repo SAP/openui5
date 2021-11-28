@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/thirdparty/jquery",
 	"sap/uxap/ObjectPageLayout",
-	"sap/uxap/ObjectPageSection"
+	"sap/uxap/ObjectPageSection",
+	"sap/ui/core/Core"
 ], function(
 	XMLView,
 	JsControlTreeModifier,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Change,
 	jQuery,
 	ObjectPageLayout,
-	ObjectPageSection
+	ObjectPageSection,
+	oCore
 ) {
 	"use strict";
 
@@ -83,7 +85,7 @@ sap.ui.define([
 			this.oXmlObjectPageSection3 = this.oXmlLayout.childNodes[0].childNodes[2];
 			this.oXmlObjectPageSection4 = this.oXmlLayout.childNodes[0].childNodes[3];
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oChange = null;

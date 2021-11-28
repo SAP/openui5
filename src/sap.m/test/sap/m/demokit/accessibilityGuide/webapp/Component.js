@@ -1,9 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/Core"
 ], function (
 	UIComponent,
-	Device
+	Device,
+	oCore
 ) {
 	"use strict";
 
@@ -25,7 +27,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// specify the only supported language
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			oCore.getConfiguration().setLanguage("en");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();

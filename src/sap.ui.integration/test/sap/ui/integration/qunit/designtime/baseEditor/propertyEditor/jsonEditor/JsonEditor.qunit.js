@@ -66,7 +66,7 @@ sap.ui.define([
 			return this.oBaseEditor.getPropertyEditorsByName("sampleJson").then(function(aPropertyEditor) {
 				this.oJsonEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oJsonEditor.setValue(this.oValue);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 				this.oJsonEditorElement = this.oJsonEditor.getContent();
 			}.bind(this));
 		},

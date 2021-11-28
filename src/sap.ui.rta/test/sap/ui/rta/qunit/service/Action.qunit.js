@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function (
 	RuntimeAuthoring,
@@ -18,7 +19,8 @@ function (
 	Page,
 	Button,
 	OverlayRegistry,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -52,7 +54,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').resolves(true);
 		},

@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, RowAction, RowActionItem, TableUtils, Device, tableLibrary, Column, Control, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, RowAction, RowActionItem, TableUtils, Device, tableLibrary, Column, Control, jQuery, oCore) {
 	"use strict";
 
 	QUnit.module("Scrollbars", {
@@ -123,7 +124,7 @@ sap.ui.define([
 		}).then(function() {
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[3].setWidth("1000px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return oTable.qunit.whenRenderingFinished();
 		}).then(function() {
 			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 1250, false);

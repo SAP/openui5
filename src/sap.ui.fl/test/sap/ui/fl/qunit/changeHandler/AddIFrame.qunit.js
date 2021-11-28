@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/core/mvc/View",
 	"sap/m/HBox",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	XMLHelper,
@@ -19,7 +20,8 @@ sap.ui.define([
 	XmlTreeModifier,
 	View,
 	HBox,
-	Button
+	Button,
+	oCore
 ) {
 	"use strict";
 
@@ -142,7 +144,7 @@ sap.ui.define([
 			});
 
 			this.oHBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
@@ -238,7 +240,7 @@ sap.ui.define([
 			this.oChange = new Change(oChangeJson);
 
 			// XMLTreeModifier specific beforeEach
-			this.oComponent = sap.ui.getCore().createComponent({
+			this.oComponent = oCore.createComponent({
 				name: "testComponent",
 				id: "testComponent",
 				metadata: {

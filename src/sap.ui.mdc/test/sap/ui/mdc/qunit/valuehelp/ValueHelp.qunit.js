@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/odata/type/String",
 	"sap/m/library",
-	"sap/m/Popover"
+	"sap/m/Popover",
+	"sap/ui/core/Core"
 ], function (
 		ValueHelp,
 		ValueHelpDelegate,
@@ -47,7 +48,8 @@ sap.ui.define([
 		Filter,
 		StringType,
 		mLibrary,
-		Popover
+		Popover,
+		oCore
 	) {
 	"use strict";
 
@@ -102,7 +104,7 @@ sap.ui.define([
 
 		oField.placeAt("content");
 		oField2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oField.focus();
 //		oClock = sinon.useFakeTimers();
 	};
@@ -686,38 +688,38 @@ sap.ui.define([
 
 		// set
 		var aSelectConditions = [
-		                         Condition.createCondition("EQ", ["X"]),
-		                         Condition.createCondition("BT", ["A", "C"])
-		                         ];
+								 Condition.createCondition("EQ", ["X"]),
+								 Condition.createCondition("BT", ["A", "C"])
+								 ];
 		oContainer.fireSelect({type: SelectType.Set, conditions: aSelectConditions});
 		var aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
 
 		// add
 		aSelectConditions = [
-		                     Condition.createCondition("EQ", ["X"]),
-		                     Condition.createCondition("EQ", ["Y"])
-		                     ];
+							 Condition.createCondition("EQ", ["X"]),
+							 Condition.createCondition("EQ", ["Y"])
+							 ];
 		oContainer.fireSelect({type: SelectType.Add, conditions: aSelectConditions});
 		var aCheckConditions = [
-		                        Condition.createCondition("EQ", ["X"]),
-		                        Condition.createCondition("BT", ["A", "C"]),
 								Condition.createCondition("EQ", ["X"]),
-		                        Condition.createCondition("EQ", ["Y"])
-		                        ];
+								Condition.createCondition("BT", ["A", "C"]),
+								Condition.createCondition("EQ", ["X"]),
+								Condition.createCondition("EQ", ["Y"])
+								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "Add: Conditions added");
 
 		// remove
 		aSelectConditions = [
-		                     Condition.createCondition("EQ", ["X"])
-		                     ];
+							 Condition.createCondition("EQ", ["X"])
+							 ];
 		oContainer.fireSelect({type: SelectType.Remove, conditions: aSelectConditions});
 		aCheckConditions = [
-		                        Condition.createCondition("BT", ["A", "C"]),
+								Condition.createCondition("BT", ["A", "C"]),
 								Condition.createCondition("EQ", ["X"]),
-		                        Condition.createCondition("EQ", ["Y"])
-		                        ];
+								Condition.createCondition("EQ", ["Y"])
+								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "Remove: Condition removed");
 
@@ -726,13 +728,13 @@ sap.ui.define([
 		oValueHelp.setProperty("_config", {maxConditions: 1});
 
 		aSelectConditions = [
-		                     Condition.createCondition("EQ", ["X"]),
-		                     Condition.createCondition("EQ", ["Y"])
-		                     ];
+							 Condition.createCondition("EQ", ["X"]),
+							 Condition.createCondition("EQ", ["Y"])
+							 ];
 		oContainer.fireSelect({type: SelectType.Add, conditions: aSelectConditions});
 		aCheckConditions = [
-		                        Condition.createCondition("EQ", ["X"])
-		                        ];
+								Condition.createCondition("EQ", ["X"])
+								];
 		aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aCheckConditions, "SingleSelect - Add: Only first condition taken");
 
@@ -746,16 +748,16 @@ sap.ui.define([
 
 		sinon.spy(oValueHelp, "close");
 		var aConditions = [
-		                   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
-		                   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
-		                   {operator: "EQ", values: [], isEmpty: true, validated: ConditionValidated.NotValidated},
-		                   {operator: "EQ", values: [1, undefined], isInitial: true, validated: ConditionValidated.NotValidated, isEmpty: null}
-		                   ];
+						   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
+						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
+						   {operator: "EQ", values: [], isEmpty: true, validated: ConditionValidated.NotValidated},
+						   {operator: "EQ", values: [1, undefined], isInitial: true, validated: ConditionValidated.NotValidated, isEmpty: null}
+						   ];
 		var aCheckConditions = [
-		                   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
-		                   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
-		                   Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated)
-		                   ];
+						   Condition.createCondition("EQ", ["X", "X"], undefined, undefined, ConditionValidated.Validated),
+						   Condition.createCondition("BT", ["A", "C"], undefined, undefined, ConditionValidated.NotValidated),
+						   Condition.createCondition("EQ", [1], undefined, undefined, ConditionValidated.NotValidated)
+						   ];
 		oValueHelp.setConditions(aConditions);
 		oContainer.fireConfirm({});
 		assert.equal(iSelect, 1, "Select event fired");
@@ -1109,9 +1111,9 @@ sap.ui.define([
 
 		// Just test event is processed, Details are tested in TypeAhead (there is no check for kind of content)
 		var aSelectConditions = [
-		                         Condition.createCondition("EQ", ["X"]),
-		                         Condition.createCondition("BT", ["A", "C"])
-		                         ];
+								 Condition.createCondition("EQ", ["X"]),
+								 Condition.createCondition("BT", ["A", "C"])
+								 ];
 		oContainer.fireSelect({type: SelectType.Set, conditions: aSelectConditions});
 		var aConditions = oValueHelp.getConditions();
 		assert.deepEqual(aConditions, aSelectConditions, "Set: Selected condtions set on ValueHelp");
@@ -1146,7 +1148,7 @@ sap.ui.define([
 				outParameter: null,
 				inOutParameter: "inOut",
 				contexts: [{icon: "sap-icon://sap-ui5", inParameter: "in1", inOutParameter: "inOut1", outParameter: "out1"},
-				           {icon: "sap-icon://lightbulb", inParameter: "in2", inOutParameter: "inOut2", outParameter: "out2"}]
+						   {icon: "sap-icon://lightbulb", inParameter: "in2", inOutParameter: "inOut2", outParameter: "out2"}]
 
 			});
 			var oInParameter1 = new InParameter({value: {path: "/inParameter", type: new StringType()}, helpPath: "myInParameter", initialValueFilterEmpty: true});
@@ -1258,7 +1260,7 @@ sap.ui.define([
 		};
 		var oFilter = new Filter({
 			filters: [new Filter({path: "myInParameter", operator: "EQ", value1: "in"}),
-			          new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut"})],
+					  new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut"})],
 			and: true
 			});
 		var oCheckConfig = {
@@ -1330,13 +1332,13 @@ sap.ui.define([
 		};
 		var oFilter = new Filter({
 			filters: [
-			          new Filter({
-			             filters: [new Filter({path: "myInParameter", operator: "EQ", value1: ""}),
-			                       new Filter({path: "myInParameter", operator: "EQ", value1: null})],
-			                       and: false
-			          }),
-			          new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut"})],
-			          and: true
+					  new Filter({
+						 filters: [new Filter({path: "myInParameter", operator: "EQ", value1: ""}),
+								   new Filter({path: "myInParameter", operator: "EQ", value1: null})],
+								   and: false
+					  }),
+					  new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut"})],
+					  and: true
 		});
 		var oCheckConfig = {
 				parsedValue: "A",
@@ -1414,7 +1416,7 @@ sap.ui.define([
 		};
 		var oFilter = new Filter({
 			filters: [new Filter({path: "myInParameter", operator: "EQ", value1: "in2"}),
-			          new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut2"})],
+					  new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut2"})],
 			and: true
 			});
 		var oCheckConfig = {
@@ -1586,9 +1588,9 @@ sap.ui.define([
 
 		// add
 		aSelectConditions = [
-		                     Condition.createItemCondition("X", "Text", {myInParameter: "X", myInOutParameter: "Y"}, {myOutParameter: "Z", myInOutParameter: "Y"}),
-		                     Condition.createItemCondition("Y", "Text2", {myInParameter: "X2", myInOutParameter: "Y2"}, {myOutParameter: "Z2", myInOutParameter: "Y2"})
-		                     ];
+							 Condition.createItemCondition("X", "Text", {myInParameter: "X", myInOutParameter: "Y"}, {myOutParameter: "Z", myInOutParameter: "Y"}),
+							 Condition.createItemCondition("Y", "Text2", {myInParameter: "X2", myInOutParameter: "Y2"}, {myOutParameter: "Z2", myInOutParameter: "Y2"})
+							 ];
 		oContainer.fireSelect({type: SelectType.Add, conditions: aSelectConditions});
 		aCheckConditions.push(Condition.createItemCondition("X", "Text", {inParameter: "X", inOutParameter: "Y"}, {outParameter: "Z", inOutParameter: "Y"}));
 		aCheckConditions.push(Condition.createItemCondition("Y", "Text2", {inParameter: "X2", inOutParameter: "Y2"}, {outParameter: "Z2", inOutParameter: "Y2"}));
@@ -1675,7 +1677,7 @@ sap.ui.define([
 		oCompareConditions = {
 				myInParameter: [Condition.createCondition("EQ", ["in"], undefined, undefined, ConditionValidated.Validated)],
 				newPath: [Condition.createCondition("EQ", ["inOut"], undefined, undefined, ConditionValidated.Validated),
-				          Condition.createCondition("EQ", ["X"], {"conditions/myInParameter": "nestedIn"}, {"conditions/myOutParameter": "nestedOut"}, ConditionValidated.Validated)]
+						  Condition.createCondition("EQ", ["X"], {"conditions/myInParameter": "nestedIn"}, {"conditions/myOutParameter": "nestedOut"}, ConditionValidated.Validated)]
 		};
 		FilterOperatorUtil.checkConditionsEmpty(oCompareConditions.myInParameter); // as done in ConditionModel
 		FilterOperatorUtil.checkConditionsEmpty(oCompareConditions.newPath); // as done in ConditionModel
@@ -1725,7 +1727,7 @@ sap.ui.define([
 		};
 		var oFilter = new Filter({
 			filters: [new Filter({path: "myInParameter", operator: "EQ", value1: "in"}),
-			          new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut"})],
+					  new Filter({path: "myInOutParameter", operator: "EQ", value1: "inOut"})],
 			and: true
 			});
 		var oCheckConfig = {
@@ -1791,12 +1793,12 @@ sap.ui.define([
 		};
 		var oFilter = new Filter({
 			filters: [new Filter({path: "myInParameter", operator: "EQ", value1: "X"}),
-			          new Filter({
-			             filters: [new Filter({path: "myInOutParameter", operator: "EQ", value1: "Y"}),
-			                       new Filter({path: "myInParameter", operator: "EQ", value1: "nestedIn"})],
-			                       and: true
-			          })],
-			          and: true
+					  new Filter({
+						 filters: [new Filter({path: "myInOutParameter", operator: "EQ", value1: "Y"}),
+								   new Filter({path: "myInParameter", operator: "EQ", value1: "nestedIn"})],
+								   and: true
+					  })],
+					  and: true
 		});
 		var oCheckConfig = {
 				parsedValue: "A",

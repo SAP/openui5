@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	UpdateIFrame,
 	Change,
@@ -19,12 +20,13 @@ sap.ui.define([
 	VerticalLayout,
 	JSONModel,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = sap.ui.getCore().createComponent({
+	var oComponent = oCore.createComponent({
 		name: "testComponent",
 		id: "testComponent"
 	});

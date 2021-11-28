@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/DesignTime",
 	"sap/base/Log",
-	"./TestUtils"
+	"./TestUtils",
+	"sap/ui/core/Core"
 ], function(
 	AdditionalElementsAnalyzer,
 	BindingsExtractor,
 	ElementUtil,
 	DesignTime,
 	Log,
-	TestUtils
+	TestUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -34,7 +36,7 @@ sap.ui.define([
 			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
 			var oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
 			var oGroupElement4 = this.oView.byId("EntityType02.technicalInvisibleProp"); // UI.Hidden Annotation binding
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var oGroup = oGroupElement4.getParent();
 			return registerTestOverlaysWithRelevantContainer.call(this,	oGroup)
 				.then(function () {
@@ -79,7 +81,7 @@ sap.ui.define([
 			var oSection1 = this.oView.byId("ObjectPageSectionWithForm");
 			var oSection2 = this.oView.byId("DelegateObjectPageSectionWithForm");
 			var oSection3 = this.oView.byId("ObjectPageSectionAbsoluteBindingList");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var oElementWithHideFromRevealProperty = this.oView.byId("EntityType01.technicalInvisibleProp");
 			return registerTestOverlaysWithRelevantContainer.call(this, oElementWithHideFromRevealProperty)
 				.then(function () {
@@ -121,7 +123,7 @@ sap.ui.define([
 			var oGroupElement1 = this.oView.byId("DelegateEntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("DelegateEntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
 			var oGroupElement3 = this.oView.byId("DelegateEntityType02.AbsoluteBinding"); // Absolute binding
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -383,7 +385,7 @@ sap.ui.define([
 			oGroupElement1.setVisible(false);
 			var oGroupElement2 = this.oView.byId("EntityType02.CompProp1");
 			oGroupElement2.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -419,7 +421,7 @@ sap.ui.define([
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -527,7 +529,7 @@ sap.ui.define([
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -639,7 +641,7 @@ sap.ui.define([
 			var oGroupElement2 = oGroup.getGroupElements()[0];
 			oGroupElement2.setVisible(false);
 			oGroupElement2.getLabelControl().setText("RenamedLabel");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -793,7 +795,7 @@ sap.ui.define([
 			var oGroup = this.oView.byId("GroupEntityType02");
 			var oGroupElement1 = oGroup.getGroupElements()[14];
 			oGroupElement1.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oActionsObject = {
 				aggregation: "formElements",

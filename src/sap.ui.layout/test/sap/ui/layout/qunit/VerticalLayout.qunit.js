@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/RatingIndicator",
 	"sap/m/CheckBox",
-	"sap/m/Label"
-], function(Device, qutils, VerticalLayout, Button, Input, Image, Slider, TextArea, RatingIndicator, CheckBox, Label) {
+	"sap/m/Label",
+	"sap/ui/core/Core"
+], function(Device, qutils, VerticalLayout, Button, Input, Image, Slider, TextArea, RatingIndicator, CheckBox, Label, oCore) {
 	"use strict";
 
 	var oLayout1 = new VerticalLayout("Layout1", {
@@ -88,7 +89,7 @@ sap.ui.define([
 		var aResponsiveSize = sResponsiveSize.split(" ");
 		// Act
 		oContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$();
 

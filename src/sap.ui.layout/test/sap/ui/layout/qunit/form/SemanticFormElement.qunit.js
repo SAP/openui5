@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Text",
 	"sap/ui/core/Control",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 	],
 	function(
 			SemanticFormElement,
@@ -16,7 +17,8 @@ sap.ui.define([
 			Input,
 			Text,
 			Control,
-			jQuery
+			jQuery,
+			oCore
 	) {
 	"use strict";
 
@@ -106,7 +108,7 @@ sap.ui.define([
 
 		try {
 			oFormElement.addField(oLabel);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}
@@ -141,7 +143,7 @@ sap.ui.define([
 		var oField2 = new Input("F2", {value: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFields = oFormElement.getFieldsForRendering();
 		var oLabel = oFormElement.getLabelControl();
@@ -192,11 +194,11 @@ sap.ui.define([
 		var oField2 = new Input("F2", {value: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFormElement.removeField(oField1);
 		oFormElement.removeFieldLabel(oLabel1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFields = oFormElement.getFieldsForRendering();
 		var oLabel = oFormElement.getLabelControl();
@@ -371,7 +373,7 @@ sap.ui.define([
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		oFormElement.addField(oField3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFields = oFormElement.getFieldsForRendering();
 		var oLabel = oFormElement.getLabelControl();
@@ -386,7 +388,7 @@ sap.ui.define([
 
 		oField2.setVisible(true);
 		oField3.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aFields = oFormElement.getFieldsForRendering();
 		oLabel = oFormElement.getLabelControl();
@@ -400,7 +402,7 @@ sap.ui.define([
 		assert.equal(aFields[2], oField2, "Second field rendered on second position");
 
 		oField3.setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aFields = oFormElement.getFieldsForRendering();
 		oLabel = oFormElement.getLabelControl();
@@ -428,7 +430,7 @@ sap.ui.define([
 		var oField1 = new Input("F1", {value: "Text 1"});
 		oFormElement.addField(oField1);
 		var aFields = oFormElement.getFieldsForRendering();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(aFields.length, 1, "1 control rendered");
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
@@ -437,7 +439,7 @@ sap.ui.define([
 		this.spy(aFields[0], "setText");
 
 		oRenderControl.invalidate(); // simulate invalidate bubbled by setText to Form
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.notOk(aFields[0].setText.called, "Text not determined again");
 	});
 
@@ -449,7 +451,7 @@ sap.ui.define([
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		var aFields = oFormElement.getFieldsForRendering();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(aFields.length, 1, "1 control rendered");
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
@@ -467,7 +469,7 @@ sap.ui.define([
 		oFormElement.addField(oField2);
 		oFormElement.insertField(oField3, 1);
 		var aFields = oFormElement.getFieldsForRendering();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(aFields.length, 1, "1 control rendered");
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
@@ -490,7 +492,7 @@ sap.ui.define([
 		oFormElement.addField(oField2);
 		oFormElement.addField(oField3);
 		var aFields = oFormElement.getFieldsForRendering();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(aFields.length, 1, "1 control rendered");
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
@@ -515,7 +517,7 @@ sap.ui.define([
 		oFormElement.removeField(oField1);
 		oField1.destroy();
 		var aFields = oFormElement.getFieldsForRendering();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(aFields.length, 1, "1 control rendered");
 		assert.ok(aFields[0].isA("sap.m.Text"), "Text control rendered");
@@ -533,7 +535,7 @@ sap.ui.define([
 		oFormElement.addField(oField2);
 		oFormElement.addField(oField3);
 		var aFields = oFormElement.getFieldsForRendering();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oField1.setValue("Test 1");
 		oField2.setText("Test 2");
@@ -551,7 +553,7 @@ sap.ui.define([
 		var oField2 = new Input("F2", {value: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFormElement.setDelimiter("*");
 		var aFields = oFormElement.getFieldsForRendering();
@@ -568,7 +570,7 @@ sap.ui.define([
 		var oField2 = new Input("F2", {value: "Text 2"});
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFields = oFormElement.getFieldsForRendering();
 		var oField = aFields[0];
@@ -576,7 +578,7 @@ sap.ui.define([
 		assert.equal(oField.getText && oField.getText(), "Text 1 / Text 2", "rendered text");
 
 		oFormElement._setEditable(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aFields = oFormElement.getFieldsForRendering();
 		var oDeleimiter = aFields[1];
@@ -587,7 +589,7 @@ sap.ui.define([
 		assert.ok(aFields[2] && aFields[2] === oField2, "Second field rendered");
 
 		oFormElement._setEditable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aFields = oFormElement.getFieldsForRendering();
 		assert.ok(oField.isA("sap.m.Text"), "Text control rendered");
@@ -608,7 +610,7 @@ sap.ui.define([
 		oFormElement.addField(oField1);
 		oFormElement.addField(oField2);
 		oFormElement.addField(oField3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFields = oFormElement.getFieldsForRendering();
 		var oLabel = oFormElement.getLabelControl();
@@ -622,7 +624,7 @@ sap.ui.define([
 
 		oField2.setVisible(true);
 		oField3.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aFields = oFormElement.getFieldsForRendering();
 		oLabel = oFormElement.getLabelControl();
@@ -635,7 +637,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2", "rendered text");
 
 		oField3.setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aFields = oFormElement.getFieldsForRendering();
 		oLabel = oFormElement.getLabelControl();

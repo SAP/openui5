@@ -2,8 +2,9 @@ sap.ui.define([
 	'./BaseController',
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/VersionInfo",
-	"sap/ui/core/mvc/XMLView"
-], function (BaseController, JSONModel, VersionInfo, XMLView) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Core"
+], function (BaseController, JSONModel, VersionInfo, XMLView, oCore) {
 	"use strict";
 	return BaseController.extend("sap.ui.demo.toolpageapp.controller.Statistics", {
 
@@ -24,7 +25,7 @@ sap.ui.define([
 
 				if (sType === "Micro") {
 					// For SAPUI5, we need first to load the microchart library and then create the view
-					sap.ui.getCore().loadLibrary("sap.suite.ui.microchart", {async: true}).then(function () {
+					oCore.loadLibrary("sap.suite.ui.microchart", {async: true}).then(function () {
 						this._createView(sType);
 					}.bind(this));
 				} else {

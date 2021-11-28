@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
-	"sap/ui/base/ManagedObject"
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Core"
 ], function (
 	qutils,
 	CustomData,
@@ -60,7 +61,8 @@ sap.ui.define([
 	InputBase,
 	ValueStateSupport,
 	coreLibrary,
-	ManagedObject
+	ManagedObject,
+	oCore
 ) {
 	"use strict";
 
@@ -138,7 +140,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getName(), "", 'Default name is ""');
@@ -207,17 +209,17 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/rebum"));
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), "ipsum");
 
 		// act
 		oComboBox.setBindingContext(oModel.getContext("/sanctus"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getValue(), "dolor");
@@ -233,7 +235,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setValue("test");
@@ -354,7 +356,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -395,7 +397,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -452,7 +454,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -491,7 +493,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -532,7 +534,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -571,7 +573,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -598,7 +600,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -644,7 +646,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -690,7 +692,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -731,7 +733,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -788,7 +790,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -827,7 +829,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -866,7 +868,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -905,7 +907,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -981,7 +983,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1008,7 +1010,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1054,7 +1056,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1100,7 +1102,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1141,7 +1143,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1163,7 +1165,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1202,7 +1204,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1241,7 +1243,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1280,7 +1282,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1321,7 +1323,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -1350,12 +1352,12 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oItem.setKey("GER");
 		oItem.setText("Germany");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "GER");
@@ -1390,7 +1392,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.setSelectedItem(oItem1);
 		this.clock.tick(500);
 
@@ -1419,7 +1421,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// arrange
 		var fnAddItemSpy = this.spy(oComboBox, "addItem");
@@ -1430,7 +1432,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.addItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1456,7 +1458,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1477,7 +1479,7 @@ sap.ui.define([
 		var oComboBox = new ComboBox();
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// arrange
 		var fnInsertItem = this.spy(oComboBox, "insertItem");
@@ -1488,7 +1490,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.insertItem(oItem, 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1521,7 +1523,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -1665,7 +1667,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setSelectedItem(oComboBox.getLastItem());
@@ -1708,7 +1710,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setSelectedItem(null);
@@ -1751,7 +1753,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -1759,7 +1761,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItem(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1847,7 +1849,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setSelectedItemId("item-id");
@@ -1890,7 +1892,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setSelectedItemId("");
@@ -1933,7 +1935,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -1941,7 +1943,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedItemId("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -1964,7 +1966,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2006,7 +2008,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === oExpectedItem);
@@ -2084,7 +2086,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnSetPropertySpy = this.spy(oComboBox, "setProperty"),
 			fnSetAssociationSpy = this.spy(oComboBox, "setAssociation"),
@@ -2138,7 +2140,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setSelectedKey("");
@@ -2181,7 +2183,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -2189,7 +2191,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.setSelectedKey("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2220,7 +2222,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.open();
 		this.clock.tick();
@@ -2244,13 +2246,13 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.focus();
 		this.clock.tick();
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.clock.tick(300);
 
@@ -2282,14 +2284,14 @@ sap.ui.define([
 
 		// Arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
@@ -2320,7 +2322,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.unbindObject();
 		assert.strictEqual(oComboBox.getModel().oData.context[0].value, "1", "unbindObject doesn't overwrite model");
@@ -2353,7 +2355,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oComboBox.getValue(), "1", "the value is set properly");
 		oComboBox.unbindObject();
@@ -2373,7 +2375,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "100%");
@@ -2391,7 +2393,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "50%");
@@ -2407,11 +2409,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setMaxWidth("40%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getDomRef().style.maxWidth, "40%");
@@ -2493,11 +2495,11 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 		oComboBox.placeAt("content");
 
 		var oSelectedItem = oComboBox.getItemByKey("8");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oEvent = new jQuery.Event("input", {
 			target: oComboBox.getFocusDomRef()
@@ -2509,7 +2511,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.removeItem(8);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(fnDestroyItems.callCount, 1, "sap.m.List.prototype.destroyItems() method was called");
@@ -2578,14 +2580,14 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.removeItem(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2614,11 +2616,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.removeItem(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getSelectedItem() === null);
@@ -2661,13 +2663,13 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnRemoveAllItemsSpy = this.spy(oComboBox, "removeAllItems");
 		// var fnListRemoveAllItemsSpy = this.spy(oComboBox._getList(), "removeAllItems");
 
 		// act
 		var oRemovedItems = oComboBox.removeAllItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		// assert.strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.List.prototype.removeAllItems() method was called");
@@ -2715,7 +2717,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.syncPickerContent();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -2723,7 +2725,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.destroyItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(fnDestroyItemsSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyItems() method returns the ComboBox instance");
@@ -2764,7 +2766,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
 
 		// act
@@ -2817,7 +2819,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -2825,7 +2827,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.rerender();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.hasStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
@@ -2854,7 +2856,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.syncPickerContent();
@@ -2881,7 +2883,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var sExpectedValue = "lorem ipsum";
 		var oTarget = oComboBox.getFocusDomRef();
@@ -2920,7 +2922,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -2956,7 +2958,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		oLabel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -3011,7 +3013,7 @@ sap.ui.define([
 			});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.focus();
@@ -3064,14 +3066,14 @@ sap.ui.define([
 			oCloseSpy = this.spy(oComboBox, "close");
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.open();
 		this.clock.tick(1000);
 
 		oComboBox._getList().getItems()[1].$().trigger("tap");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 
 		// Assert
@@ -3205,7 +3207,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oItem1 = oComboBox.getItemAt(2);
@@ -3248,7 +3250,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oItem = oComboBox.getFirstItem();
@@ -3267,7 +3269,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oItem = oComboBox.getFirstItem();
@@ -3308,7 +3310,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oItem = oComboBox.getLastItem();
@@ -3327,7 +3329,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oItem = oComboBox.getLastItem();
@@ -3370,7 +3372,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oItem1 = oComboBox.getItemByKey("0"),
@@ -3467,7 +3469,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnSetValueSpy = this.spy(oComboBox, "setValue");
 
 		// act
@@ -3507,7 +3509,7 @@ sap.ui.define([
 
 		// arrange
 		oErrorComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oErrorComboBox.focus();
@@ -3541,7 +3543,7 @@ sap.ui.define([
 		var sValueStateText = "Error message. Extra long text used as an error message. Extra long text used as an error message - 2. Extra long text used as an error message - 3.";
 		oComboBox.placeAt("content");
 		oComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sText,
 			"The text is forwarded correctly.");
@@ -3550,7 +3552,7 @@ sap.ui.define([
 		oComboBox.setValueStateText("");
 		oComboBox.setValueState("Error");
 		oComboBox.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), ValueStateSupport.getAdditionalText(oComboBox),
@@ -3558,7 +3560,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.setValueStateText(sValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox._oSuggestionPopover._getValueStateHeader().getText(), sValueStateText, "The text is set correctly when is set from the user.");
@@ -3576,11 +3578,11 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setValueState(ValueState.Error);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.$("content").hasClass("sapMInputBaseContentWrapperState"));
@@ -3614,7 +3616,7 @@ sap.ui.define([
 		// Arrange
 		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -3642,7 +3644,7 @@ sap.ui.define([
 		// Arrange
 		oErrorComboBox.syncPickerContent();
 		oErrorComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oErrorComboBox._getSuggestionsPopover().getPopover().getCustomHeader().getText(), "custom", "text should be custom");
@@ -3677,11 +3679,11 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getItems().length, 0);
@@ -3717,7 +3719,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.syncPickerContent();
 		oComboBox.open();
@@ -3725,7 +3727,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getItems().length, 0);
@@ -3748,7 +3750,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
 		var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
 
@@ -3775,7 +3777,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
 		var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
 
@@ -3898,7 +3900,7 @@ sap.ui.define([
 		oModel.setData(mData);
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.updateAggregation("items");
@@ -3909,7 +3911,7 @@ sap.ui.define([
 		// cleanup
 		oComboBox.destroy();
 		oModel.destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("it should correctly set the selection if the items aggregation is bounded to an OData model", function (assert) {
@@ -4030,14 +4032,14 @@ sap.ui.define([
 		]);
 
 		oModel.setDefaultBindingMode("OneWay");
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/1"));
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.setBindingContext(oModel.getContext("/0"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "DZ");
@@ -4121,7 +4123,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.open();
 		var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
 
@@ -4496,7 +4498,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("opacity"), "0");
@@ -4517,7 +4519,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("cursor"), "default");
@@ -4542,7 +4544,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
@@ -4566,7 +4568,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
 
@@ -4765,7 +4767,7 @@ sap.ui.define([
 		oComboBox6.placeAt("content");
 		oComboBox7.placeAt("content");
 		oComboBox8.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		aComboBox.forEach(function (oComboBox) {
@@ -4786,7 +4788,7 @@ sap.ui.define([
 			assert.ok(oComboBox.getArrowIcon().getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
 			assert.ok(oComboBox.getArrowIcon().hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
 			assert.strictEqual(oComboBox.getArrowIcon().getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
+			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
 
 			// cleanup
 			oComboBox.destroy();
@@ -4813,7 +4815,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getArrowIcon().getVisible(), false, "Icons visibility is false");
@@ -4847,7 +4849,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerTouchEvent("touchstart", oComboBox.getOpenArea(), {
 			touches: {
@@ -4915,7 +4917,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait 1s after the open animation is completed
@@ -4964,7 +4966,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "", "List item title is not updated");
@@ -4977,7 +4979,7 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.syncPickerContent(); // Simulate before open of the popover
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "Item 1", "List item title is updated");
@@ -4991,11 +4993,11 @@ sap.ui.define([
 			showClearIcon: true
 		});
 		var aEndIcons;
-		var sClearIconAltText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_CLEAR_ICON_ALT");
+		var sClearIconAltText = oCore.getLibraryResourceBundle("sap.m").getText("INPUT_CLEAR_ICON_ALT");
 
 		// Arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aEndIcons = oComboBox.getAggregation("_endIcon");
 
@@ -5029,7 +5031,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5081,7 +5083,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.placeAt("content");
 		oComboBox2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -5093,7 +5095,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		oComboBox2.focus();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.notOk(oComboBox.getDomRef().classList.contains("sapMFocus"), "The input field should not have visual focus.");
@@ -5123,7 +5125,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -5159,13 +5161,13 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// arrange
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -5202,7 +5204,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -5236,7 +5238,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5282,7 +5284,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5319,7 +5321,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
@@ -5356,7 +5358,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event
@@ -5399,7 +5401,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -5443,7 +5445,7 @@ sap.ui.define([
 			oSelectTextSpy = this.spy(oComboBox, "selectText");
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.onsapshow(oFakeEvent);
@@ -5484,7 +5486,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
@@ -5523,7 +5525,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -5557,7 +5559,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnHideSpy = this.spy(oComboBox, "onsaphide");
 
@@ -5595,7 +5597,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnEscapeSpy = this.spy(oComboBox, "onsapescape");
 		var fnCloseSpy = this.spy(oComboBox, "close");
@@ -5636,7 +5638,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5678,7 +5680,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5710,7 +5712,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5757,7 +5759,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.getFocusDomRef().value = "A";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
@@ -5789,7 +5791,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5822,7 +5824,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5855,7 +5857,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -5889,7 +5891,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 
@@ -5934,7 +5936,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
@@ -5970,7 +5972,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6014,7 +6016,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnKeyDownSpy = this.stub(oComboBox, "onsapdown");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6061,7 +6063,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyDownSpy = this.spy(oComboBox, "onsapdown");
@@ -6097,7 +6099,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6142,7 +6144,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
@@ -6155,7 +6157,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
@@ -6190,7 +6192,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6226,7 +6228,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // wait after the open animation is completed
@@ -6234,7 +6236,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6256,7 +6258,7 @@ sap.ui.define([
 			},
 			loadItems: function () {
 				oComboBox.setModel(oModel);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}
 		});
 
@@ -6266,7 +6268,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -6276,7 +6278,7 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
@@ -6317,7 +6319,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -6369,7 +6371,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6412,7 +6414,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6456,7 +6458,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnKeyUpSpy = this.spy(oComboBox, "onsapup");
 
@@ -6503,7 +6505,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnKeyUpSpy = this.stub(oComboBox, "onsapup");
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
@@ -6545,7 +6547,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6591,7 +6593,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6639,7 +6641,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
@@ -6683,7 +6685,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.open();
@@ -6692,7 +6694,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6743,7 +6745,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
@@ -6779,7 +6781,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6835,7 +6837,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyHomeSpy = this.spy(oComboBox, "onsaphome");
@@ -6895,7 +6897,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -6950,7 +6952,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
@@ -6960,7 +6962,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick(0);
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -6991,7 +6993,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -7056,7 +7058,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0); // tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		var fnKeyEndSpy = this.spy(oComboBox, "onsapend");
@@ -7113,7 +7115,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -7159,7 +7161,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7201,7 +7203,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
@@ -7209,7 +7211,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7240,7 +7242,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -7277,7 +7279,7 @@ sap.ui.define([
 
 			// arrange
 			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oComboBox.focus();
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 			var fnPageDownSpy = this.spy(oComboBox, "onsappagedown");
@@ -7461,7 +7463,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -7517,7 +7519,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7569,7 +7571,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait after the open animation is completed
@@ -7577,7 +7579,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7608,7 +7610,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -7645,7 +7647,7 @@ sap.ui.define([
 
 			// arrange
 			oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oComboBox.focus();
 			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 			var fnPageUpSpy = this.spy(oComboBox, "onsappageup");
@@ -7833,7 +7835,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 		oComboBox.attachSelectionChange(function (oControlEvent) {
@@ -7888,7 +7890,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 		oComboBox.focus();
 
@@ -7942,7 +7944,7 @@ sap.ui.define([
 		// arrange
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);	// wait 1s after the open animation is completed
@@ -7950,7 +7952,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), sExpectedActiveDescendantId);
@@ -7981,7 +7983,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8031,7 +8033,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		var fnOpenSpy = this.spy(oComboBox, "open");
@@ -8066,7 +8068,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -8106,7 +8108,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var oEvent = new jQuery.Event("input", {
 			target: oComboBox.getFocusDomRef()
@@ -8142,7 +8144,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8189,7 +8191,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8236,7 +8238,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8283,7 +8285,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8314,7 +8316,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnOpenSpy = this.spy(ComboBox.prototype, "open");
 		oComboBox.focus();
 
@@ -8343,7 +8345,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var oTarget = oComboBox.getFocusDomRef();
 		oTarget.value = "l";
@@ -8373,7 +8375,7 @@ sap.ui.define([
 			},
 			loadItems: function () {
 				oComboBox.setModel(oModel);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}
 		});
 
@@ -8383,7 +8385,7 @@ sap.ui.define([
 		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
 		var oModel = new ODataModel(sUri, true);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var oTarget = oComboBox.getFocusDomRef();
 
@@ -8393,12 +8395,12 @@ sap.ui.define([
 		oTarget.value = "F";
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oTarget, KeyCodes.F);
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oTarget.value = "Fl";
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oTarget, KeyCodes.L);
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -8446,7 +8448,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -8496,7 +8498,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8548,7 +8550,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8590,7 +8592,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8622,7 +8624,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8655,7 +8657,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var oFocusDomRef = oComboBox.getFocusDomRef();
 
@@ -8713,7 +8715,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.focus();
 		oComboBox.open();
@@ -8768,7 +8770,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		sap.ui.qunit.QUnitUtils.triggerEvent("focusin", oComboBox.getOpenArea(), {
@@ -8797,7 +8799,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.focus();
@@ -8832,7 +8834,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
 			which: KeyCodes.L
@@ -8869,7 +8871,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8899,7 +8901,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -8930,7 +8932,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -9133,7 +9135,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -9162,7 +9164,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -9195,7 +9197,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -9235,7 +9237,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.open();
 
 		// act
@@ -9259,7 +9261,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -9294,7 +9296,7 @@ sap.ui.define([
 			},
 			fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.syncPickerContent();
@@ -9323,7 +9325,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9356,7 +9358,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9393,7 +9395,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9431,7 +9433,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9468,7 +9470,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9506,7 +9508,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9543,7 +9545,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9581,7 +9583,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9622,7 +9624,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9664,7 +9666,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9705,7 +9707,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9747,7 +9749,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -9772,7 +9774,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("Germany");
@@ -9798,7 +9800,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("lorem ipsum");
@@ -9825,7 +9827,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000);
@@ -9862,7 +9864,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
@@ -9898,7 +9900,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -9957,7 +9959,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 
@@ -10011,7 +10013,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.open();
 		var oParams = {
 			touches: {
@@ -10081,7 +10083,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -10130,7 +10132,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -10165,7 +10167,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -10196,7 +10198,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 		oComboBox.open();
 		this.clock.tick(0);
@@ -10240,7 +10242,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.focus();
@@ -10285,7 +10287,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.focus();
@@ -10409,12 +10411,12 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oItem.bVisible = false;
 		oComboBox.rerender();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oItem.bVisible, false);
@@ -10426,7 +10428,7 @@ sap.ui.define([
 	QUnit.module("getAccessibilityInfo");
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRb = oCore.getLibraryResourceBundle("sap.m");
 		var oComboBox = new ComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -10460,7 +10462,7 @@ sap.ui.define([
 	QUnit.test("Role combobox should be on the wrapper div of the input", function (assert) {
 		var oComboBox = new ComboBox();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("role"), "combobox", "should be combobox");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("type"), "text", "should be text");
@@ -10472,7 +10474,7 @@ sap.ui.define([
 			oArrowSpan;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oArrowSpan = oComboBox.getDomRef("arrow");
 
 		assert.strictEqual(oArrowSpan.tagName.toLowerCase(), "span", "tag should be span");
@@ -10488,12 +10490,12 @@ sap.ui.define([
 			items: [
 				oItem
 			]
-		}), oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+		}), oResourceBundle = oCore.getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		assert.equal(sap.ui.getCore().byId(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+		assert.equal(oCore.byId(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 
 		oComboBox.destroy();
 	});
@@ -10510,7 +10512,7 @@ sap.ui.define([
 
 		oLabel.placeAt("content");
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sAriaLabelledBy = oComboBox.getDomRef("arrow").getAttribute("aria-labelledby").split(" ");
 		assert.ok(sAriaLabelledBy.indexOf(oLabel.getId()) > -1, "ComboBox aria-labelledby attribute is set to label id");
 
@@ -10540,7 +10542,7 @@ sap.ui.define([
 				]
 			});
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oComboBox._getList(), "No list available on init (lazy loading)");
@@ -10548,7 +10550,7 @@ sap.ui.define([
 
 		// Act (init the SuggestionPopover with the List)
 		oComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getVisibleItems().length, "On init the List item should be the same as the enabled core items");
@@ -10556,12 +10558,12 @@ sap.ui.define([
 		// Act
 		oComboBox.open();
 		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getVisibleItems().length, "ComboBox should not display disabled items as a suggestions");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		vTemp = oComboBox.removeAllItems();
 		oComboBox.syncPickerContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10571,7 +10573,7 @@ sap.ui.define([
 		// Act
 		vTemp = aItems.pop();
 		oComboBox.addItem(vTemp);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10579,7 +10581,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.removeItem(vTemp);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10589,7 +10591,7 @@ sap.ui.define([
 		oComboBox.insertItem(aItems[0]);
 		oComboBox.insertItem(aItems[1]);
 		oComboBox.insertItem(aItems[2], 1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10598,7 +10600,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.destroyItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10606,7 +10608,7 @@ sap.ui.define([
 
 		oComboBox.destroy();
 		oComboBox = null;
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Object cloning", function (assert) {
@@ -10657,11 +10659,11 @@ sap.ui.define([
 			selectedItem: oItem
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oClone = oCB.clone();
 		oClone.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oClone.getValue(), "Dryanovo", "Value should be kept");
 		assert.strictEqual(oClone.getSelectedItem().getText(), "Dryanovo", "Selected item should be cloned");
@@ -10693,7 +10695,7 @@ sap.ui.define([
 			content: [oComboBox]
 		}).placeAt('content');
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[1]);
 		oComboBox._getList().fireItemPress({listItem: oListItem});
@@ -10725,7 +10727,7 @@ sap.ui.define([
 			oCB.addItem(oItem);
 		}
 		oCB.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oCB.focus();
 
@@ -10754,7 +10756,7 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10763,7 +10765,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.setSelectedKey("1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10772,7 +10774,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10798,7 +10800,7 @@ sap.ui.define([
 		//Act
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10809,7 +10811,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10837,7 +10839,7 @@ sap.ui.define([
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
 		oComboBox.setSelectedKey("2");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10846,7 +10848,7 @@ sap.ui.define([
 
 		//Act
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10876,7 +10878,7 @@ sap.ui.define([
 		//Act
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10887,7 +10889,7 @@ sap.ui.define([
 		oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "3", text: "3"}]);
 		oComboBox.getModel().setProperty("/selectedKey", "3");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(100);
 
 		//Assert
@@ -10907,7 +10909,7 @@ sap.ui.define([
 			value: "Testt",
 			items: [oItem]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.BACKSPACE);
@@ -10939,7 +10941,7 @@ sap.ui.define([
 			oFocusinStub = this.stub(oComboBox, "focus");
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFakeEvent = {target: oComboBox.getDomRef("arrow")};
 
@@ -10961,7 +10963,7 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oComboBox.getPicker().getInitialFocus(), oComboBox.getId());
 
@@ -10980,7 +10982,7 @@ sap.ui.define([
 
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFakeEvent = {
 			target: oComboBox.getFocusDomRef(),
@@ -11014,7 +11016,7 @@ sap.ui.define([
 			]
 		});
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox._handlePopupOpenAndItemsLoad(false);
 
@@ -11036,12 +11038,12 @@ sap.ui.define([
 
 		oComboBox.syncPickerContent();
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.getFocusDomRef().value = "A";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		oList = oComboBox._getList();
@@ -11052,7 +11054,7 @@ sap.ui.define([
 		// act
 		oComboBox.getFocusDomRef().value = "AC";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox.$().hasClass("sapMFocus"), "The input field should have visual focus.");
@@ -11077,7 +11079,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oComboBox.focus();
@@ -11123,7 +11125,7 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		oList = oComboBox._getList();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.setSelectedItem(oItem1);
 		this.clock.tick(500);
@@ -11159,7 +11161,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		sap.ui.qunit.QUnitUtils.triggerEvent("focusin", oComboBox.getOpenArea(), {
@@ -11192,7 +11194,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.focus();
 
 		// act
@@ -11223,7 +11225,7 @@ sap.ui.define([
 
 		// arrange
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oComboBox.highlightList("(T");
 
 		// act
@@ -11245,13 +11247,13 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFocusDomRef = oComboBox.getFocusDomRef();
 
 		oFocusDomRef.value = "b";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oFocusDomRef);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var highlightedPart = oComboBox._getList().getItems()[0].getDomRef().querySelector(".sapMInputHighlight");
 
@@ -11285,7 +11287,7 @@ sap.ui.define([
 
 			this.oComboBox.syncPickerContent();
 			this.oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oComboBox.destroy();
@@ -11341,7 +11343,7 @@ sap.ui.define([
 
 	QUnit.test("Setting a valid filter should apply on items and their text", function (assert) {
 		this.oComboBox.setFilterSecondaryValues(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var aFilteredItems = this.oComboBox.filterItems("B").items;
@@ -11439,7 +11441,7 @@ sap.ui.define([
 				}
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
@@ -11508,7 +11510,7 @@ sap.ui.define([
 
 			this.comboBox.setModel(oSpecialCharsModel);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
@@ -11519,7 +11521,7 @@ sap.ui.define([
 	QUnit.test('Input text selection "without" re-rendering on selection change', function (assert) {
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		var selectedText = this.comboBox._$input.getSelectedText();
@@ -11532,7 +11534,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		var selectedText = this.comboBox._$input.getSelectedText();
@@ -11558,7 +11560,7 @@ sap.ui.define([
 				]
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.comboBox.destroy();
@@ -11723,7 +11725,7 @@ sap.ui.define([
 			}
 		}).setModel(oModel);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oItem1 = oComboBox.getItems()[0],
 			oListItem1 = oComboBox._mapItemToListItem(oItem1);
@@ -11756,13 +11758,13 @@ sap.ui.define([
 
 		this.oComboBox.addItem(oItem);
 		oListItem = this.oComboBox._mapItemToListItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oItem.setText("New Item Title");
 		oItem.setTooltip("New Tooltip Text");
 		oItem.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oListItem.getTitle(), "New Item Title", "The list item title is updated.");
@@ -11779,11 +11781,11 @@ sap.ui.define([
 		this.oComboBox.addItem(oItem);
 		this.oComboBox.setShowSecondaryValues(true);
 		oListItem = this.oComboBox._mapItemToListItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oItem.setAdditionalText("New additional text");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oListItem.getInfo(), "New additional text", "The list item info is updated.");
@@ -11862,7 +11864,7 @@ sap.ui.define([
 			};
 
 			this.oComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			// clean
@@ -11883,7 +11885,7 @@ sap.ui.define([
 		var oGroupHeaderListItem, oInvisibleText,
 			oFocusDomRef = this.oComboBox.getFocusDomRef(),
 			oSeparatorItem = this.oComboBox._getList().getItems()[0],
-			oExpectedLabel = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
+			oExpectedLabel = oCore.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
 			sExpectedActiveDescendantId;
 
 		// arrange
@@ -11898,7 +11900,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 
 		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
-		oInvisibleText = sap.ui.getCore().byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
+		oInvisibleText = oCore.byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
 		sExpectedActiveDescendantId = oGroupHeaderListItem.getId();
 
 		// assert
@@ -12197,7 +12199,7 @@ sap.ui.define([
 					template: new Item({key: "{key}", text: "{text}"})
 				}
 			}).setModel(new JSONModel(oData)).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oComboBox.getItems().length > 4, "There should be more items as there's a separator item for each group");
@@ -12220,7 +12222,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// arrange
 		oComboBox.focus();
@@ -12257,7 +12259,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// arrange
 		oComboBox.focus();
@@ -12301,7 +12303,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach: function () {
@@ -12330,7 +12332,7 @@ sap.ui.define([
 		this.oCombobox.oninput(oEvent);
 		this.oCombobox.invalidate();
 		this.clock.tick(500);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "There should be 5 items in the list...");
@@ -12341,7 +12343,7 @@ sap.ui.define([
 		this.oCombobox.oninput(oEvent);
 		this.oCombobox.invalidate();
 		this.clock.tick(500);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(fnFilterVisibleItems(this.oCombobox._getList().getItems()).length, 5, "All items should be visible");
@@ -12382,7 +12384,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox.showItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12401,7 +12403,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12418,12 +12420,12 @@ sap.ui.define([
 
 		// arrange
 		var oComboBox = new ComboBox("test-combobox").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.destroy();
 		oComboBox = new ComboBox("test-combobox").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(true, "If there's no exception so far, everything is ok");
@@ -12511,7 +12513,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
@@ -12519,7 +12521,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 5, "All items are visible");
@@ -12530,7 +12532,7 @@ sap.ui.define([
 		this.oCombobox.showItems(function () {
 			return false;
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oCombobox.isOpen(), false, "The Popover should not be displayed.");
@@ -12541,7 +12543,7 @@ sap.ui.define([
 
 		// Act
 		this.oCombobox.addItem(new Item({text: "", key: "emptyItem"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oCombobox.open();
 
@@ -12558,10 +12560,10 @@ sap.ui.define([
 	QUnit.test("List css classes", function (assert) {
 		// setup
 		var oComboBox = new ComboBox().placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oComboBox.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oComboBox._getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"),
@@ -12604,7 +12606,7 @@ sap.ui.define([
 			});
 
 			this.oErrorComboBox.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oErrorComboBox.destroy();
@@ -12673,12 +12675,12 @@ sap.ui.define([
 		// Act
 		this.oErrorComboBox.open();
 		this.clock.tick(500);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "The visual pseudo focus is on the first item");
@@ -12707,7 +12709,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeEvent = {
 			getEnabled: function () { return true; },
@@ -12717,7 +12719,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.focus();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
@@ -12767,7 +12769,7 @@ sap.ui.define([
 		});
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.ontap();
@@ -12808,7 +12810,7 @@ sap.ui.define([
 		});
 
 		this.oErrorComboBox.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oErrorComboBox.open();
 		this.clock.tick();
@@ -12824,7 +12826,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oErrorComboBox.open();
 		this.clock.tick();
@@ -12846,7 +12848,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		this.oErrorComboBox._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSuggPopoverHeaderValueState = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
@@ -13015,7 +13017,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox.focus();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
@@ -13069,7 +13071,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13091,7 +13093,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13113,7 +13115,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13135,7 +13137,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13156,7 +13158,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "", "selectedKey should remain");
@@ -13177,7 +13179,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13199,7 +13201,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13221,7 +13223,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "2", "selectedKey should remain");
@@ -13242,12 +13244,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -13269,12 +13271,12 @@ sap.ui.define([
 			})
 				.setModel(this.oModel)
 				.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -13297,16 +13299,16 @@ sap.ui.define([
 			})
 				.setModel(oModel)
 				.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.focus();
 		qutils.triggerCharacterInput(oComboBox._$input, "T", "This is a user input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oModel.setData(this.oData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -13338,7 +13340,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.open();
@@ -13386,11 +13388,11 @@ sap.ui.define([
 
 		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oComboBox.showItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems()[0].getText(), "{ ttt", "Braces are correctly escaped in the separator item.");
@@ -13415,13 +13417,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.called, true, "setProperty was called");
@@ -13441,13 +13443,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.called, true, "setProperty was called");
@@ -13467,13 +13469,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.onkeyup();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.called, false, "setProperty was not called");
@@ -13492,13 +13494,13 @@ sap.ui.define([
 		var oSpy;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSpy = this.spy(oComboBox._oClearIcon, "setVisible");
 
 		// Act
 		oComboBox.setShowClearIcon(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setVisible was called exactly 1 time");
@@ -13518,14 +13520,14 @@ sap.ui.define([
 		var oClearSelectionSpy, oSetPropertySpy;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
 		oSetPropertySpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.handleClearIconPress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, true, "clearSelection was called");
@@ -13547,14 +13549,14 @@ sap.ui.define([
 		var oClearSelectionSpy, oSetPropertySpy;
 
 		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oClearSelectionSpy = this.spy(oComboBox, "clearSelection");
 		oSetPropertySpy = this.spy(oComboBox, "setProperty");
 
 		// Act
 		oComboBox.handleClearIconPress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");
@@ -13563,13 +13565,13 @@ sap.ui.define([
 		// Arrange
 		oComboBox.setEnabled(true);
 		oComboBox.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oClearSelectionSpy.reset();
 		oSetPropertySpy.reset();
 
 		// Act
 		oComboBox.handleClearIconPress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oClearSelectionSpy.called, false, "clearSelection was called");

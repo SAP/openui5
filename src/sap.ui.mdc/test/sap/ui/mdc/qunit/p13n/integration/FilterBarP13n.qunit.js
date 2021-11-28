@@ -1,16 +1,16 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
-], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, TestModificationHandler) {
+	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
+], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, TestModificationHandler, oCore) {
 	"use strict";
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI FilterBar", {
-        setLiveMode: function(sController, bLiveMode) {
-            Engine.getInstance().getController(this.oFilterBar, sController).getLiveMode = function() {
-                return bLiveMode;
-            };
-        },
+		setLiveMode: function(sController, bLiveMode) {
+			Engine.getInstance().getController(this.oFilterBar, sController).getLiveMode = function() {
+				return bLiveMode;
+			};
+		},
 		beforeEach: function () {
 			this.aPropertyInfos = [
 				{
@@ -53,32 +53,32 @@ sap.ui.define([
 						conditions: "{$filters>/conditions/item2}"
 					})
 				]
-            });
-            MDCQUnitUtils.stubPropertyInfos(this.oFilterBar, aPropertyInfos);
+			});
+			MDCQUnitUtils.stubPropertyInfos(this.oFilterBar, aPropertyInfos);
 
-            sinon.stub(FilterBarDelegate, "addItem").callsFake(function(sKey, oFilterBar) {
-                return Promise.resolve(new FilterField({
-                    conditions: "{$filters>/conditions/" + sKey + "}"
-                }));
-            });
+			sinon.stub(FilterBarDelegate, "addItem").callsFake(function(sKey, oFilterBar) {
+				return Promise.resolve(new FilterField({
+					conditions: "{$filters>/conditions/" + sKey + "}"
+				}));
+			});
 		},
 		destroyTestObjects: function() {
-            this.oFilterBar.destroy();
-            FilterBarDelegate.addItem.restore();
+			this.oFilterBar.destroy();
+			FilterBarDelegate.addItem.restore();
 			MDCQUnitUtils.restorePropertyInfos(this.oFilterBar);
 		}
-    });
+	});
 
-    QUnit.test("Check 'Engine' subcontroller registration", function(assert) {
-        assert.ok(Engine.getInstance().getController(this.oFilterBar, "Item"), "AdaptFiltersController has been registered");
-        assert.ok(Engine.getInstance().getController(this.oFilterBar, "Filter"), "FilterController has been registered");
+	QUnit.test("Check 'Engine' subcontroller registration", function(assert) {
+		assert.ok(Engine.getInstance().getController(this.oFilterBar, "Item"), "AdaptFiltersController has been registered");
+		assert.ok(Engine.getInstance().getController(this.oFilterBar, "Filter"), "FilterController has been registered");
 	});
 
 
 	QUnit.test("PropertyInfo should not take $search into account for FilterBar", function(assert){
 		var done = assert.async();
 
-        this.setLiveMode("Item", false);
+		this.setLiveMode("Item", false);
 
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 			//check container
@@ -94,7 +94,7 @@ sap.ui.define([
 			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-            assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know $search");
+			assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know $search");
 			done();
 
 		}.bind(this));
@@ -106,7 +106,7 @@ sap.ui.define([
 
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
-            assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know about 'hiddenFilter'");
+			assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know about 'hiddenFilter'");
 			done();
 		});
 
@@ -127,7 +127,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("use AdaptationFilterBar", function (assert) {
-        var done = assert.async();
+		var done = assert.async();
 
 		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
 
@@ -168,16 +168,16 @@ sap.ui.define([
 			//3 items, 2 initially selected
 			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
-            assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
+			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
-            var oAddaptFiltersController = Engine.getInstance().getController(this.oFilterBar, "Item");
+			var oAddaptFiltersController = Engine.getInstance().getController(this.oFilterBar, "Item");
 			var aModelItems = oAddaptFiltersController._oAdaptationModel.getData().items;
 			var aModelItemsGrouped = oAddaptFiltersController._oAdaptationModel.getData().itemsGrouped;
 
 			aModelItems[2].visible = true;
 			aModelItemsGrouped[0].items[2].visible = true;
 
-            //3 items selected --> mock a model change
+			//3 items selected --> mock a model change
 			oAddaptFiltersController._oAdaptationModel.setProperty("/items", aModelItems);
 			oAddaptFiltersController._oAdaptationModel.setProperty("/itemsGrouped", aModelItemsGrouped);
 
@@ -209,21 +209,21 @@ sap.ui.define([
 			item3: [{operator: "EQ", values:["Test"]}]
 		};
 
-        Engine.getInstance().createChanges({
-            control: this.oFilterBar,
-            key: "Filter",
-            state: mConditions
-        }).then(function(aChanges){
-            assert.ok(aChanges, "changes created");
-            assert.equal(aChanges.length, 6, "six changes created");
-            assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
-            assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
-            assert.equal(aChanges[2].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
-            assert.equal(aChanges[3].changeSpecificData.changeType, "addCondition", "one condition change created");
-            assert.equal(aChanges[4].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
-            assert.equal(aChanges[5].changeSpecificData.changeType, "addCondition", "one condition change created");
-            done();
-        });
+		Engine.getInstance().createChanges({
+			control: this.oFilterBar,
+			key: "Filter",
+			state: mConditions
+		}).then(function(aChanges){
+			assert.ok(aChanges, "changes created");
+			assert.equal(aChanges.length, 6, "six changes created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
+			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
+			assert.equal(aChanges[2].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
+			assert.equal(aChanges[3].changeSpecificData.changeType, "addCondition", "one condition change created");
+			assert.equal(aChanges[4].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
+			assert.equal(aChanges[5].changeSpecificData.changeType, "addCondition", "one condition change created");
+			done();
+		});
 
 	});
 
@@ -234,17 +234,17 @@ sap.ui.define([
 		//use Engine with a non existing property
 		var mConditions = {
 			someNonexistingProperty: [{operator: "EQ", values:["Test"]}]
-        };
+		};
 
-        Engine.getInstance().createChanges({
-            control: this.oFilterBar,
-            key: "Filter",
-            state: mConditions
-        }).then(function(aChanges){
-            assert.ok(aChanges, "changes created");
+		Engine.getInstance().createChanges({
+			control: this.oFilterBar,
+			key: "Filter",
+			state: mConditions
+		}).then(function(aChanges){
+			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 0, "no change created as the property is not defined in the PropertyInfo");
 			done();
-        });
+		});
 
 	});
 
@@ -260,11 +260,11 @@ sap.ui.define([
 		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
 		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
 
-        Engine.getInstance().createChanges({
-            control: this.oFilterBar,
-            key: "Filter",
-            state: mConditions
-        }).then(function(aChanges){
+		Engine.getInstance().createChanges({
+			control: this.oFilterBar,
+			key: "Filter",
+			state: mConditions
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 4, "four changes created");
 			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item1
@@ -272,7 +272,7 @@ sap.ui.define([
 			assert.equal(aChanges[2].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");  // item3
 			assert.equal(aChanges[3].changeSpecificData.changeType, "addCondition", "one condition change created"); // item3
 			done();
-        });
+		});
 
 	});
 
@@ -288,11 +288,11 @@ sap.ui.define([
 		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
 		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
 
-        Engine.getInstance().createChanges({
-            control: this.oFilterBar,
-            key: "Filter",
-            state: mConditions
-        }).then(function(aChanges){
+		Engine.getInstance().createChanges({
+			control: this.oFilterBar,
+			key: "Filter",
+			state: mConditions
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 6, "six changes created");
 			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item1
@@ -302,7 +302,7 @@ sap.ui.define([
 			assert.equal(aChanges[4].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");   // item3
 			assert.equal(aChanges[5].changeSpecificData.changeType, "addCondition", "one condition change created");
 			done();
-        });
+		});
 
 	});
 
@@ -316,17 +316,17 @@ sap.ui.define([
 		sinon.stub(this.oFilterBar, "getPropertyInfoSet").returns(this.aPropertyInfos);
 		this.oFilterBar.setFilterConditions({item1: [{operator: "EQ", values:["Test"]}]});
 
-        Engine.getInstance().createChanges({
-            control: this.oFilterBar,
-            key: "Filter",
-            state: mConditions
-        }).then(function(aChanges){
+		Engine.getInstance().createChanges({
+			control: this.oFilterBar,
+			key: "Filter",
+			state: mConditions
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 2, "two changes created");
 			assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo", "one metadata change created");
 			assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition", "one condition change created");
 			done();
-        });
+		});
 
 	});
 

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/DatePicker",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ],
 function(
 	DesignTime,
@@ -22,7 +23,8 @@ function(
 	Input,
 	DatePicker,
 	VerticalLayout,
-	Button
+	Button,
+	oCore
 ) {
 	"use strict";
 
@@ -47,7 +49,7 @@ function(
 			this.oVerticalLayout = new VerticalLayout({content: [this.oSimpleForm, this.oLabel]});
 
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -68,7 +70,7 @@ function(
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				done();
 			});
 		},
@@ -87,7 +89,7 @@ function(
 			var fnDone = assert.async();
 			this.oButton = new Button("button1", {text: "Button"});
 			this.oSimpleForm.addContent(this.oButton);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);

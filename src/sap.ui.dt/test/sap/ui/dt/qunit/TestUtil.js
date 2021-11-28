@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/Button",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core"
 ], function(
 	List,
 	CustomListItem,
 	Button,
 	HorizontalLayout,
-	JSONModel
+	JSONModel,
+	oCore
 ) {
 	"use strict";
 
@@ -51,7 +53,7 @@ sap.ui.define([
 				content: [this.oBoundList, this.oUnBoundList]
 			});
 			this.oHorizontalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return this.oHorizontalLayout;
 		}
 	};

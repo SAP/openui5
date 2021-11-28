@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/List",
-	"sap/m/StandardListItem"
+	"sap/m/StandardListItem",
+	"sap/ui/core/Core"
 ], function (
 		qutils,
 		BoolFieldHelp,
@@ -33,7 +34,8 @@ sap.ui.define([
 		mLibrary,
 		Popover,
 		List,
-		StandardListItem
+		StandardListItem,
+		oCore
 	) {
 	"use strict";
 
@@ -82,7 +84,7 @@ sap.ui.define([
 		iOpen++;
 	};
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	/* first test it without the Field to prevent loading of popup etc. */
 	/* use dummy control to simulate Field */
@@ -96,7 +98,7 @@ sap.ui.define([
 
 		oField.placeAt("content");
 		oField2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	var _teardown = function() {

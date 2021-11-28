@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ], function (
 	DOMUtil,
-	Button
+	Button,
+	oCore
 ) {
 	"use strict";
 
@@ -105,7 +107,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 			// Render Controls
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oButton.destroy();

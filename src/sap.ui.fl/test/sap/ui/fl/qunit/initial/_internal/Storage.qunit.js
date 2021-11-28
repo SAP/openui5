@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Storage,
@@ -31,7 +32,8 @@ sap.ui.define([
 	PersonalizationConnector,
 	ObjectPathConnector,
 	ObjectStorageUtils,
-	merge
+	merge,
+	oCore
 ) {
 	"use strict";
 
@@ -71,7 +73,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide their own cacheKey values", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
@@ -80,12 +82,12 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: "abc123"}));
-				sap.ui.getCore().getConfiguration().getFlexibilityServices.restore();
+				oCore.getConfiguration().getFlexibilityServices.restore();
 			});
 		});
 
 		QUnit.test("Given 2 connectors provide url and path properties", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "ObjectPathConnector", path: "path/to/data"},
 				{connector: "PersonalizationConnector", url: "url/to/something"}
 			]);
@@ -95,7 +97,7 @@ sap.ui.define([
 			return Storage.loadFlexData({reference: "app.id"}).then(function () {
 				assert.equal(oObjectStorageStub.lastCall.args[0].path, "path/to/data", "the path parameter was passed");
 				assert.equal(oPersoStub.lastCall.args[0].url, "url/to/something", "the url parameter was passed");
-				sap.ui.getCore().getConfiguration().getFlexibilityServices.restore();
+				oCore.getConfiguration().getFlexibilityServices.restore();
 			});
 		});
 
@@ -619,7 +621,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer is set", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
@@ -639,7 +641,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of a draft layer provided by a url parameter", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},
 				{connector: "JsObjectConnector", layers: [Layer.USER]}
 			]);
@@ -660,7 +662,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given two connectors are provided and one is in charge of all layers and a draft layer provided by a url parameter", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
@@ -681,7 +683,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given one connector are provided version parameter are not set in url parameter", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]}
 			]);
 
@@ -742,12 +744,12 @@ sap.ui.define([
 
 	QUnit.module("Storage with a custom & broken connector", {
 		beforeEach: function() {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{
 				loadConnector: "my/connectors/BrokenInitialConnector",
 				layers: []}
 			]);
 			// enforce the bundle loading by simulating the no-preload scenario
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getComponentPreload").returns("off");
+			sandbox.stub(oCore.getConfiguration(), "getComponentPreload").returns("off");
 		},
 		afterEach: function() {
 			sandbox.restore();

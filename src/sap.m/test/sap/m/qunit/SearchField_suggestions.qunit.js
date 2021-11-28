@@ -88,7 +88,7 @@ sap.ui.define([
 		assert.ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
 
 		var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
-		var popup = sap.ui.getCore().byId(popupId);
+		var popup = Core.byId(popupId);
 		assert.ok(!!popup, "popup exists");
 
 		assert.ok(popup.getDomRef().style.minWidth, 'popup min-width is set');

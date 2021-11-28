@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/QuickViewCard",
 	"sap/m/QuickViewPage",
 	"sap/m/QuickViewGroup",
-	"sap/m/QuickViewGroupElement"
+	"sap/m/QuickViewGroupElement",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	JSONModel,
@@ -19,7 +20,8 @@ sap.ui.define([
 	QuickViewCard,
 	QuickViewPage,
 	QuickViewGroup,
-	QuickViewGroupElement
+	QuickViewGroupElement,
+	oCore
 ) {
 	"use strict";
 
@@ -230,7 +232,7 @@ sap.ui.define([
 	// set the data for the model
 	oModel.setData(mData);
 
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "quickViewPage"});
@@ -279,7 +281,7 @@ sap.ui.define([
 			this.oQuickViewCard = getQuickViewCard();
 			oPage.addContent(this.oQuickViewCard);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oQuickViewCard.destroy();
@@ -288,7 +290,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
-		assert.ok(sap.ui.getCore().byId(this.oQuickViewCard.getId()), "should render");
+		assert.ok(oCore.byId(this.oQuickViewCard.getId()), "should render");
 	});
 
 	QUnit.test("Test binding", function (assert) {
@@ -310,7 +312,7 @@ sap.ui.define([
 		mData.pages[0].description = "";
 
 		oModel.setData(mData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		QVCardScrollContainer = document.getElementById(this.oQuickViewCard.sId + "-" + mData.pages[0].pageId + "-scroll");
 		assert.strictEqual(QVCardScrollContainer.children.length, 1, "ScrollContainer inside QuickViewCard contains only SimpleForm");
@@ -321,7 +323,7 @@ sap.ui.define([
 			this.oQuickViewCard = getQuickViewCard();
 			oPage.addContent(this.oQuickViewCard);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oQuickViewCard.destroy();

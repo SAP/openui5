@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	EditorQunitUtils,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -159,7 +161,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleDestination").then(function (aPropertyEditor) {
 				var oDestinationsEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oNestedArrayEditor = oDestinationsEditor.getContent();
 				return oNestedArrayEditor.ready().then(function () {
 					var oComplexEditors = _getComplexMapEditors(oNestedArrayEditor)[0];

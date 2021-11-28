@@ -1,233 +1,234 @@
 /* global QUnit */
 sap.ui.define([
-    "sap/m/p13n/Popup",
-    "sap/m/Button",
-    "sap/ui/core/Element",
-    "sap/ui/core/Control"
-], function(P13nPopup, Button, Element, Control) {
+	"sap/m/p13n/Popup",
+	"sap/m/Button",
+	"sap/ui/core/Element",
+	"sap/ui/core/Control",
+	"sap/ui/core/Core"
+], function(P13nPopup, Button, Element, Control, oCore) {
 	"use strict";
 
-    QUnit.module("p13n.Popup API tests", {
+	QUnit.module("p13n.Popup API tests", {
 		beforeEach: function() {
-            var oPopup = new P13nPopup();
-            this.oPopup = oPopup;
-            this.oPopup.placeAt("qunit-fixture");
-            this.oSource = new Button();
-            sap.ui.getCore().applyChanges();
+			var oPopup = new P13nPopup();
+			this.oPopup = oPopup;
+			this.oPopup.placeAt("qunit-fixture");
+			this.oSource = new Button();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
-            this.oPopup.destroy();
+			this.oPopup.destroy();
 		}
-    });
+	});
 
-    QUnit.test("Instantiate Popup", function(assert) {
-        assert.ok(this.oPopup, "Popup could be instantiated");
-    });
+	QUnit.test("Instantiate Popup", function(assert) {
+		assert.ok(this.oPopup, "Popup could be instantiated");
+	});
 
-    QUnit.test("Error handling on 'open'", function(assert) {
+	QUnit.test("Error handling on 'open'", function(assert) {
 
 		assert.throws(function(){
-            this.oPopup.open();
+			this.oPopup.open();
 		}, 'Error thrown in case no source control is provided');
 
-    });
+	});
 
-    QUnit.test("Check 'isOpen'", function(assert) {
-        assert.equal(this.oPopup.isOpen(), false, "Popup is initially not open");
+	QUnit.test("Check 'isOpen'", function(assert) {
+		assert.equal(this.oPopup.isOpen(), false, "Popup is initially not open");
 
-        //Check open
-        this.oPopup.open(this.oSource);
-        assert.equal(this.oPopup.isOpen(), true, "Popup is open");
+		//Check open
+		this.oPopup.open(this.oSource);
+		assert.equal(this.oPopup.isOpen(), true, "Popup is open");
 
-        //Check OK
-        this.oPopup._oPopup.getButtons()[0].firePress();
-        assert.equal(this.oPopup.isOpen(), false, "Popup is closed");
+		//Check OK
+		this.oPopup._oPopup.getButtons()[0].firePress();
+		assert.equal(this.oPopup.isOpen(), false, "Popup is closed");
 
-        //Check Cancel
-        this.oPopup.open(this.oSource);
-        this.oPopup._oPopup.getButtons()[1].firePress();
-        assert.equal(this.oPopup.isOpen(), false, "Popup is closed");
-    });
+		//Check Cancel
+		this.oPopup.open(this.oSource);
+		this.oPopup._oPopup.getButtons()[1].firePress();
+		assert.equal(this.oPopup.isOpen(), false, "Popup is closed");
+	});
 
-    QUnit.test("Check 'open' depending on 'mode'", function(assert) {
+	QUnit.test("Check 'open' depending on 'mode'", function(assert) {
 
-        this.oPopup.open(this.oSource);
+		this.oPopup.open(this.oSource);
 
-        assert.ok(this.oPopup._oPopup.isA("sap.m.Dialog"), "Popup is a Dialog");
+		assert.ok(this.oPopup._oPopup.isA("sap.m.Dialog"), "Popup is a Dialog");
 
-        //Close Dialog
-        this.oPopup._oPopup.getButtons()[0].firePress();
+		//Close Dialog
+		this.oPopup._oPopup.getButtons()[0].firePress();
 
-        //Switch to ResponsivePopover
-        this.oPopup.setMode("ResponsivePopover");
-        this.oPopup.open(this.oSource);
-        assert.ok(this.oPopup._oPopup.isA("sap.m.ResponsivePopover"), "Popup is a ResponsivePopover");
-    });
+		//Switch to ResponsivePopover
+		this.oPopup.setMode("ResponsivePopover");
+		this.oPopup.open(this.oSource);
+		assert.ok(this.oPopup._oPopup.isA("sap.m.ResponsivePopover"), "Popup is a ResponsivePopover");
+	});
 
-    QUnit.test("Check 'open' width custom width & height settings (Dialog mode)", function(assert) {
+	QUnit.test("Check 'open' width custom width & height settings (Dialog mode)", function(assert) {
 
-        var oOpenSettings = {
-            contentWidth: "30rem",
-            contentHeight:"10rem"
-        };
+		var oOpenSettings = {
+			contentWidth: "30rem",
+			contentHeight:"10rem"
+		};
 
-        this.oPopup.open(this.oSource, oOpenSettings);
+		this.oPopup.open(this.oSource, oOpenSettings);
 
-        assert.equal(this.oPopup._oPopup.getContentHeight(), oOpenSettings.contentHeight, "Content height propagated");
-        assert.equal(this.oPopup._oPopup.getContentWidth(), oOpenSettings.contentWidth, "Content width propagated");
-    });
+		assert.equal(this.oPopup._oPopup.getContentHeight(), oOpenSettings.contentHeight, "Content height propagated");
+		assert.equal(this.oPopup._oPopup.getContentWidth(), oOpenSettings.contentWidth, "Content width propagated");
+	});
 
-    QUnit.test("Check 'open' width custom width & height settings (ResponsivePopover mode)", function(assert) {
+	QUnit.test("Check 'open' width custom width & height settings (ResponsivePopover mode)", function(assert) {
 
-        var oOpenSettings = {
-            contentWidth: "30rem",
-            contentHeight:"10rem"
-        };
+		var oOpenSettings = {
+			contentWidth: "30rem",
+			contentHeight:"10rem"
+		};
 
-        this.oPopup.setMode("ResponsivePopover");
+		this.oPopup.setMode("ResponsivePopover");
 
-        this.oPopup.open(this.oSource, oOpenSettings);
+		this.oPopup.open(this.oSource, oOpenSettings);
 
-        assert.equal(this.oPopup._oPopup.getContentHeight(), oOpenSettings.contentHeight, "Content height propagated");
-        assert.equal(this.oPopup._oPopup.getContentWidth(), oOpenSettings.contentWidth, "Content width propagated");
-    });
+		assert.equal(this.oPopup._oPopup.getContentHeight(), oOpenSettings.contentHeight, "Content height propagated");
+		assert.equal(this.oPopup._oPopup.getContentWidth(), oOpenSettings.contentWidth, "Content width propagated");
+	});
 
-    QUnit.test("Check 'reset' callback NOT provided (button only visible if callback provided)", function(assert) {
+	QUnit.test("Check 'reset' callback NOT provided (button only visible if callback provided)", function(assert) {
 
-        this.oPopup.open(this.oSource);
+		this.oPopup.open(this.oSource);
 
-        //Trigger reset via 'Reset' button
-        assert.notOk(this.oPopup._oPopup.getCustomHeader(), "Custom header is not provided");
+		//Trigger reset via 'Reset' button
+		assert.notOk(this.oPopup._oPopup.getCustomHeader(), "Custom header is not provided");
 
-    });
+	});
 
-    QUnit.test("Check 'reset' callback IS provided (button only visible if callback provided)", function(assert) {
+	QUnit.test("Check 'reset' callback IS provided (button only visible if callback provided)", function(assert) {
 
-        this.oPopup.setReset(function(){});
+		this.oPopup.setReset(function(){});
 
-        this.oPopup.open(this.oSource);
+		this.oPopup.open(this.oSource);
 
-        //Trigger reset via 'Reset' button
-        assert.ok(this.oPopup._oPopup.getCustomHeader(), "Custom header is provided");
-        assert.ok(this.oPopup._oPopup.getCustomHeader().getContentRight()[0].getText(), "Reset", "The 'Reset' button has been created");
+		//Trigger reset via 'Reset' button
+		assert.ok(this.oPopup._oPopup.getCustomHeader(), "Custom header is provided");
+		assert.ok(this.oPopup._oPopup.getCustomHeader().getContentRight()[0].getText(), "Reset", "The 'Reset' button has been created");
 
-    });
+	});
 
-    QUnit.test("Check 'additionalButtons' aggregation", function(assert) {
+	QUnit.test("Check 'additionalButtons' aggregation", function(assert) {
 
-        this.oPopup.addAdditionalButton(new Button({
-            text: "Custom 1"
-        }));
+		this.oPopup.addAdditionalButton(new Button({
+			text: "Custom 1"
+		}));
 
-        this.oPopup.addAdditionalButton(new Button({
-            text: "Custom 2"
-        }));
+		this.oPopup.addAdditionalButton(new Button({
+			text: "Custom 2"
+		}));
 
-        this.oPopup.open(this.oSource);
+		this.oPopup.open(this.oSource);
 
-        assert.equal(this.oPopup._oPopup.getButtons()[0].getText(), "OK");
-        assert.equal(this.oPopup._oPopup.getButtons()[1].getText(), "Cancel");
-        assert.equal(this.oPopup._oPopup.getButtons()[2].getText(), "Custom 1");
-        assert.equal(this.oPopup._oPopup.getButtons()[3].getText(), "Custom 2");
-    });
+		assert.equal(this.oPopup._oPopup.getButtons()[0].getText(), "OK");
+		assert.equal(this.oPopup._oPopup.getButtons()[1].getText(), "Cancel");
+		assert.equal(this.oPopup._oPopup.getButtons()[2].getText(), "Custom 1");
+		assert.equal(this.oPopup._oPopup.getButtons()[3].getText(), "Custom 2");
+	});
 
-    QUnit.module("p13n.Popup Reset tests", {
+	QUnit.module("p13n.Popup Reset tests", {
 		beforeEach: function() {
-            var oPopup = new P13nPopup({
-                reset: function() {
-                    this.fnReset();
-                }.bind(this)
-            });
-            this.oPopup = oPopup;
-            this.oPopup.placeAt("qunit-fixture");
-            this.oSource = new Button();
-            sap.ui.getCore().applyChanges();
+			var oPopup = new P13nPopup({
+				reset: function() {
+					this.fnReset();
+				}.bind(this)
+			});
+			this.oPopup = oPopup;
+			this.oPopup.placeAt("qunit-fixture");
+			this.oSource = new Button();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
-            this.oPopup.destroy();
+			this.oPopup.destroy();
 		}
-    });
+	});
 
-    QUnit.test("Check focus handling after reset", function(assert){
+	QUnit.test("Check focus handling after reset", function(assert){
 
-        var done = assert.async();
+		var done = assert.async();
 
-        this.fnReset = function() {
+		this.fnReset = function() {
 
-            //4) check if the current focused control is the P13nDialogs reset btn
-            var nActiveElement = document.activeElement;
-            assert.ok(this.oPopup._oPopup.getButtons()[0].getFocusDomRef() === nActiveElement, "The OK button control of the p13n Dialog is focused");
-            done();
+			//4) check if the current focused control is the P13nDialogs reset btn
+			var nActiveElement = document.activeElement;
+			assert.ok(this.oPopup._oPopup.getButtons()[0].getFocusDomRef() === nActiveElement, "The OK button control of the p13n Dialog is focused");
+			done();
 
-        }.bind(this);
+		}.bind(this);
 
-        this.oPopup.open(this.oSource);
+		this.oPopup.open(this.oSource);
 
-        //1) Trigger reset on Dialog
-        var oResetBtn = this.oPopup._oPopup.getCustomHeader().getContentRight()[0];
-        oResetBtn.firePress();
+		//1) Trigger reset on Dialog
+		var oResetBtn = this.oPopup._oPopup.getCustomHeader().getContentRight()[0];
+		oResetBtn.firePress();
 
-        //2) --> Find MessageBox opened by Dialog
-        var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+		//2) --> Find MessageBox opened by Dialog
+		var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
 
-        //3) confirm warning
-        oMessageBox.getButtons()[0].firePress();
-        sap.ui.getCore().applyChanges();
+		//3) confirm warning
+		oMessageBox.getButtons()[0].firePress();
+		oCore.applyChanges();
 
-    });
+	});
 
-    QUnit.module("p13n.Popup add panels dynamically", {
-        getCustomPanelClass: function() {
-            return Control.extend("temp", {
+	QUnit.module("p13n.Popup add panels dynamically", {
+		getCustomPanelClass: function() {
+			return Control.extend("temp", {
 				metadata: {
 					properties: {
 						title: {
-                            type: "string"
-                        }
+							type: "string"
+						}
 					}
 				}
 			});
-        },
+		},
 		beforeEach: function() {
-            var oPopup = new P13nPopup();
-            this.oPopup = oPopup;
-            this.oPopup.placeAt("qunit-fixture");
-            this.oSource = new Button();
-            sap.ui.getCore().applyChanges();
+			var oPopup = new P13nPopup();
+			this.oPopup = oPopup;
+			this.oPopup.placeAt("qunit-fixture");
+			this.oSource = new Button();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
-            this.oPopup.destroy();
+			this.oPopup.destroy();
 		}
-    });
+	});
 
-    QUnit.test("Check adding panels", function(assert){
+	QUnit.test("Check adding panels", function(assert){
 
-        var Custom = this.getCustomPanelClass();
-        var oMyPanel = new Custom({
-            title: "My Custom Test 1"
-        });
+		var Custom = this.getCustomPanelClass();
+		var oMyPanel = new Custom({
+			title: "My Custom Test 1"
+		});
 
-        this.oPopup.addPanel(oMyPanel);
+		this.oPopup.addPanel(oMyPanel);
 
-        assert.equal(this.oPopup.getPanels().length, 1, "Panel added to the Popup");
-        assert.equal(this.oPopup._getContainer().getViews().length, 2, "Panel added to the inner Container (+default view)");
+		assert.equal(this.oPopup.getPanels().length, 1, "Panel added to the Popup");
+		assert.equal(this.oPopup._getContainer().getViews().length, 2, "Panel added to the inner Container (+default view)");
 
-    });
+	});
 
 
-    QUnit.test("Check removing panels", function(assert){
+	QUnit.test("Check removing panels", function(assert){
 
-        var Custom = this.getCustomPanelClass();
-        var oMyPanel = new Custom({
-            title: "My Custom Test 1"
-        });
+		var Custom = this.getCustomPanelClass();
+		var oMyPanel = new Custom({
+			title: "My Custom Test 1"
+		});
 
-        this.oPopup.addPanel(oMyPanel);
-        this.oPopup.removePanel(oMyPanel);
+		this.oPopup.addPanel(oMyPanel);
+		this.oPopup.removePanel(oMyPanel);
 
-        assert.equal(this.oPopup.getPanels().length, 0, "Panel added and removed");
-        assert.equal(this.oPopup._getContainer().getViews().length, 1, "Panel added and removed to the inner Container (+default view)");
+		assert.equal(this.oPopup.getPanels().length, 0, "Panel added and removed");
+		assert.equal(this.oPopup._getContainer().getViews().length, 1, "Panel added and removed to the inner Container (+default view)");
 
-    });
+	});
 
 });
