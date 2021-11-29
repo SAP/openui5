@@ -33,7 +33,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function revertChangesAndUpdateVariantModel(oComponent, aChanges) {
+	function revertChangesAndUpdateVariantModel(oComponent, bSkipUrlUpdate, aChanges) {
 		return Promise.resolve()
 			.then(function () {
 				if (aChanges.length !== 0) {
@@ -57,12 +57,15 @@ sap.ui.define([
 							}
 						});
 
-						URLHandler.update({
-							parameters: [],
-							updateURL: true,
-							updateHashEntry: true,
-							model: oModel
-						});
+						// Temporary fix, parameters generally should not be removed
+						if (!bSkipUrlUpdate) {
+							URLHandler.update({
+								parameters: [],
+								updateURL: true,
+								updateHashEntry: true,
+								model: oModel
+							});
+						}
 					}
 				}
 
@@ -443,7 +446,7 @@ sap.ui.define([
 			var aLayersToReset = Object.values(Layer).filter(function(sLayerToCheck) {
 				return sLayerToCheck !== sLayer;
 			});
-			return this.removeDirtyChanges(aLayersToReset, oAppComponent);
+			return this.removeDirtyChanges(aLayersToReset, oAppComponent, undefined, undefined, undefined, true);
 		}
 		return Promise.resolve();
 	};
@@ -580,7 +583,7 @@ sap.ui.define([
 	 */
 	FlexController.prototype.resetChanges = function(sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
-			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
+			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, undefined));
 	};
 
 	/**
@@ -591,12 +594,13 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} [oControl] - Control for which the changes should be removed
 	 * @param {string} [sGenerator] - Generator of changes (optional)
 	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
+	 * @param {boolean} [bSkipUrlUpdate] - Whether to skip soft reload during variant model update
 	 *
 	 * @returns {Promise} Promise that resolves after the deletion took place
 	 */
-	FlexController.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
+	FlexController.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes, bSkipUrlUpdate) {
 		return this._oChangePersistence.removeDirtyChanges(vLayer, oComponent, oControl, sGenerator, aChangeTypes)
-			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
+		.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, bSkipUrlUpdate));
 	};
 
 	/**
