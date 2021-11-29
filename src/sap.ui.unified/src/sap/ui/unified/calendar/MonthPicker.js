@@ -156,14 +156,31 @@ sap.ui.define([
 		// check if day names are too big -> use smaller ones
 		_checkNamesLength.call(this);
 
-		this._oItemNavigation.focusItem(this.getProperty("_focusedMonth") % this.getMonths());
+		var iFocusedMonthInYear = this.getProperty("_focusedMonth") % this.getMonths(),
+			// iFocusedMonthInYear holds which is the focused month from the currently displayed on the screen ones (values starts from 0 to this.getMonths())
+			iPropSeqMonths = parseInt(12 / this.getMonths()),
+			// iPropSeqMonths holds how many proper sequences of months starting from january and shifting with this.getMonths() are held in a year (from 0 to 11)
+			iLastDisplayedIndexFormPropSeqMonths = iPropSeqMonths * this.getMonths();
+			// iLastDisplayedIndexFormPropSeqMonths holds the index of the last month in the last group of properly sequences displayed months in year
+
+		if (this.getProperty("_focusedMonth") >= iLastDisplayedIndexFormPropSeqMonths) {
+			iFocusedMonthInYear = 12 - iLastDisplayedIndexFormPropSeqMonths + 1 + iFocusedMonthInYear;
+		}
+
+		this._oItemNavigation.focusItem(iFocusedMonthInYear);
 	};
 
 	MonthPicker.prototype.setMonth = function(iMonth){
 
+		var iFirstDisplayedMonth = Math.floor(iMonth / this.getMonths()) * this.getMonths();
+
+		if (iFirstDisplayedMonth + this.getMonths() > 12) {
+			iFirstDisplayedMonth = 12 - this.getMonths();
+		}
+
 		this.setProperty("month", iMonth);
 		this.setProperty("_focusedMonth", iMonth);
-		this.setProperty("_firstMonth", Math.floor(iMonth / this.getMonths()) * this.getMonths());
+		this.setProperty("_firstMonth", iFirstDisplayedMonth);
 		iMonth = this.getProperty("month"); // to have type conversion, validation....
 
 		if (iMonth < 0 || iMonth > 11) {
@@ -430,7 +447,13 @@ sap.ui.define([
 		}
 		_updateMonths.call(this, iMonth);
 
-		this.setProperty("_firstMonth", (this.getStartMonth() + this.getMonths()) % MONTHS_IN_YEAR);
+		var iFirstDisplayedMonth = Math.floor(this.getStartMonth() + this.getMonths()) % MONTHS_IN_YEAR;
+
+		if (iFirstDisplayedMonth + this.getMonths() > 12) {
+			iFirstDisplayedMonth = 12 - this.getMonths();
+		}
+
+		this.setProperty("_firstMonth", iFirstDisplayedMonth);
 
 		return this;
 
@@ -456,7 +479,13 @@ sap.ui.define([
 		}
 		_updateMonths.call(this, iMonth);
 
-		this.setProperty("_firstMonth", (this.getStartMonth() - this.getMonths()) % MONTHS_IN_YEAR);
+		var iFirstDisplayedMonth = Math.floor(this.getStartMonth() - this.getMonths()) % MONTHS_IN_YEAR;
+
+		if (iFirstDisplayedMonth < 0) {
+			iFirstDisplayedMonth = 0;
+		}
+
+		this.setProperty("_firstMonth", iFirstDisplayedMonth);
 
 		return this;
 

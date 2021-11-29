@@ -312,7 +312,12 @@ sap.ui.define([
 	CalendarDateInterval.prototype._setHeaderText = function(oDate){
 
 		// sets the text for the month and the year button to the header
-		var oTexts = Calendar.prototype._setHeaderText.apply(this, arguments);
+		var oTexts;
+		if (this.getStartDate()) {
+			oTexts = Calendar.prototype._setHeaderText.apply(this, [CalendarDate.fromLocalJSDate(this.getStartDate(), this.getPrimaryCalendarType())]);
+		} else {
+			oTexts = Calendar.prototype._setHeaderText.apply(this, arguments);
+		}
 		var sText,
 			sAriaLabel = oTexts.sAriaLabel,
 			oHeader = this.getAggregation("header");

@@ -4,7 +4,7 @@
 /* ==================================================== */
 
 .sapUiCalInt:not(.sapUiCalWithDayNamesLine):not(.sapUiCalWithWeekNumbers) .sapUiCalContent {
-	min-height: 3.875rem;
+	min-height: 6.5rem;
 }
 
 .sapUiCalInt.sapUiCalWithDayNamesLine:not(.sapUiCalWithWeekNumbers) .sapUiCalContent {
@@ -13,4 +13,9 @@
 
 .sapUiCalInt.sapUiCalWithWeekNumbers:not(.sapUiCalWithDayNamesLine) .sapUiCalContent {
 	min-height: 3.875rem;
+}
+
+.sapUiCalInt .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalInt .sapUiCalContent > .sapUiCalYearPicker{
+	padding: 0;
 }
