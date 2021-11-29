@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/StorageUtils",
@@ -27,6 +28,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Change,
 	Layer,
+	Utils,
 	Variant,
 	FlexState,
 	StorageUtils,
@@ -473,8 +475,8 @@ sap.ui.define([
 				assert.equal(vReturn, "foo", "the function returns the return value of waitForChanges");
 				assert.equal(oFlexControllerStub.waitForChangesToBeApplied.callCount, 1, "waitForChanges was called once");
 				var aArguments = oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0];
-				assert.ok(aArguments.indexOf("RTADemoAppMD---detail--GroupElementDatesShippingStatus") > -1, "the first selector was passed");
-				assert.ok(aArguments.indexOf("RTADemoAppMD---detail--GroupElementDatesShippingStatus1") > -1, "the second selector was passed");
+				assert.ok(Utils.indexOfObject(aArguments, {selector: "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }) > -1, "the first selector was passed");
+				assert.ok(Utils.indexOfObject(aArguments, {selector: "RTADemoAppMD---detail--GroupElementDatesShippingStatus1" }) > -1, "the second selector was passed");
 			});
 		});
 
@@ -490,10 +492,9 @@ sap.ui.define([
 				appComponent: {},
 				flexController: oFlexControllerStub
 			})
-			.then(function(vReturn) {
-				assert.equal(vReturn, "foo", "the function returns the return value of waitForChanges");
-				assert.equal(oFlexControllerStub.waitForChangesToBeApplied.callCount, 1, "waitForChanges was called once");
-				assert.deepEqual(oFlexControllerStub.waitForChangesToBeApplied.lastCall.args[0], [], "no controls were passed");
+			.then(function() {
+				assert.ok(true, "the function resolves");
+				assert.equal(oFlexControllerStub.waitForChangesToBeApplied.callCount, 0, "waitForChanges was not called");
 			});
 		});
 	});
