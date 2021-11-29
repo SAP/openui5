@@ -754,4 +754,11 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isSearchSupported", function(assert) {
+
+		var bSupported = oFixedList.isSearchSupported();
+		assert.ok(bSupported, "Search is supported");
+
+	});
+
 });

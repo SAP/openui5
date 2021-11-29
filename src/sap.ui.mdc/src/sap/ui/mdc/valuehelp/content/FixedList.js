@@ -337,6 +337,10 @@ sap.ui.define([
 		return true;
 	};
 
+	FixedList.prototype.isSearchSupported = function () {
+		return true;
+	};
+
 	FixedList.prototype._handleConditionsUpdate = function(oChanges) {
 		_updateSelection.call(this);
 	};
