@@ -217,6 +217,7 @@ sap.ui.define([
 			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 			this._initProgressNavigator();
 			this._initResponsivePaddingsEnablement();
+			this._iNextButtonHeight = 0;
 		};
 
 		Wizard.prototype.onBeforeRendering = function () {
@@ -315,7 +316,7 @@ sap.ui.define([
 			this._iStepCount = null;
 			this._bScrollLocked = null;
 			this._oResourceBundle = null;
-			this._bNextButtonPressed = null;
+			this._iNextButtonHeight = null;
 		};
 
 		/**************************************** PUBLIC METHODS ***************************************/
@@ -780,8 +781,6 @@ sap.ui.define([
 					throw new Error("The wizard is in branching mode, and the nextStep association is not set.");
 				}
 
-				this._bNextButtonPressed = true;
-
 				oProgressNavigator.incrementProgress();
 
 				this._handleStepActivated(oProgressNavigator.getProgress());
@@ -798,12 +797,11 @@ sap.ui.define([
 		Wizard.prototype._getStepScrollOffset = function (oStep) {
 			var oStepContainer = this.getDomRef("step-container"),
 				iScrollerTop = oStepContainer ? oStepContainer.scrollTop : 0,
-				oNextButton = this._getNextButton(),
-				oProgressStep = this._getCurrentStepInstance(),
-				iStepTop = 0, iAdditionalOffset = 0,
+				iStepTop = 0,
+				iAdditionalOffset = 0,
+				iNextButtonHeight = this._getNextButtonHeight(),
 				iStepScrollHeight = oStep.getDomRef() ? oStep.getDomRef().scrollHeight : 0,
-				iStepContainerClientHeight = oStepContainer ? oStepContainer.clientHeight : 0,
-				bStepContainsButton = !!oNextButton && containsOrEquals(oProgressStep.getDomRef(), oNextButton.getDomRef());
+				iStepContainerClientHeight = oStepContainer ? oStepContainer.clientHeight : 0;
 
 			if (oStep && oStep.$() && oStep.$().position()) {
 				iStepTop = oStep.$().position().top || 0;
@@ -812,17 +810,16 @@ sap.ui.define([
 			/**
 			 * Additional Offset is added in case of new step activation.
 			 * Because the rendering from step.addContent(button) happens with delay,
-			 * we can't properly detect the offset of the step, that's why
-			 * additionalOffset is added like this.
+			 * we can't properly detect the offset of the step.
 			 *
-			 * Additional Offset is also added if a 'next' button has been pressed
-			 * and the oStep is taller than the viewport. - BCP: 2180339806
+			 * This offset will only be added if the step is taller than the
+			 * step container's client height. - BCP: 2180339806
 			 */
-			if ((!Device.system.phone && oProgressStep && !bStepContainsButton) || (iStepScrollHeight > iStepContainerClientHeight && this._bNextButtonPressed)) {
-				iAdditionalOffset = oNextButton.$().outerHeight();
+			if (iNextButtonHeight > 0 && iStepScrollHeight > iStepContainerClientHeight) {
+				iAdditionalOffset = iNextButtonHeight;
 			}
 
-			this._bNextButtonPressed = false;
+			this._setNextButtonHeight(0);
 
 			return (iScrollerTop + iStepTop) - (Wizard.CONSTANTS.SCROLL_OFFSET + iAdditionalOffset);
 		};
@@ -861,7 +858,10 @@ sap.ui.define([
 		Wizard.prototype._handleStepActivated = function (iIndex) {
 			var iPreviousStepIndex = iIndex - 2,
 				oPreviousStep = this._aStepPath[iPreviousStepIndex],
-				oNextStep = this._getNextStep(oPreviousStep, iPreviousStepIndex);
+				oNextStep = this._getNextStep(oPreviousStep, iPreviousStepIndex),
+				oNextButtonDomRef = this._getNextButton().getDomRef();
+
+			this._setNextButtonHeight(oNextButtonDomRef ? oNextButtonDomRef.offsetHeight : 0);
 
 			this._activateStep(oNextStep);
 			this._updateProgressNavigator();
@@ -1205,6 +1205,24 @@ sap.ui.define([
 
 			this._aStepPath.push(oStep);
 			oStep._activate();
+		};
+
+		/**
+		 * Gets the value of the _iNextButtonHeight property.
+		 * @returns {number} The height of the "next" button.
+		 * @private
+		 */
+		Wizard.prototype._getNextButtonHeight = function () {
+			return this._iNextButtonHeight;
+		};
+
+		/**
+		 * Sets the value of the _iNextButtonHeight property.
+		 * @param {number} iHeight The height of the "next" button.
+		 * @private
+		 */
+		Wizard.prototype._setNextButtonHeight = function (iHeight) {
+			this._iNextButtonHeight = iHeight;
 		};
 
 		return Wizard;
