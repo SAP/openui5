@@ -252,7 +252,7 @@ sap.ui.define([
 				}
 				if (oContext.created()) {
 					// happens only for a created context that is not transient anymore
-					that.destroyCreated(oContext, true);
+					that.destroyCreated(oContext);
 					bFireChange = true;
 				} else if (iIndex >= 0) {
 					// prepare all contexts for deletion
@@ -793,7 +793,7 @@ sap.ui.define([
 
 		// only for createInCache
 		oGroupLock = this.lockGroup(sGroupId, true, true, function () {
-			that.destroyCreated(oContext, true);
+			that.destroyCreated(oContext);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
 				// can read the data synchronously. This is important for extended change detection.
@@ -989,17 +989,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the given context for a created entity from the list of contexts and destroys it.
+	 * Removes the given context for a created entity from the list of contexts and destroys it
+	 * later so that the control has time to handle the context's dependent bindings before.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context instance for the created entity to be destroyed
-	 * @param {boolean} bDestroyLater
-	 *   Whether to destroy the context later so that the control has time to handle the context's
-	 *   dependent bindings before.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.destroyCreated = function (oContext, bDestroyLater) {
+	ODataListBinding.prototype.destroyCreated = function (oContext) {
 		var iIndex = oContext.getModelIndex(),
 			i;
 
@@ -1011,7 +1009,22 @@ sap.ui.define([
 			this.bCreatedAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
-		if (bDestroyLater && this.iCurrentEnd) {
+		this.destroyLater(oContext);
+		// The path of all contexts in aContexts after the removed one is untouched, still points to
+		// the same data, hence no checkUpdate is needed.
+	};
+
+	/**
+	 * Destroys the given context later so that the control has time to handle the context's
+	 * dependent bindings before.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context instance to be destroyed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.destroyLater = function (oContext) {
+		if (this.iCurrentEnd) {
 			// Add the context to mPreviousContextsByPath although it definitely won't be reused.
 			// Then it is destroyed later, but only if there is a listener (iCurrentEnd is set by
 			// getContexts and mPreviousContextsByPath is only cleared when getContexts is called)
@@ -1019,8 +1032,6 @@ sap.ui.define([
 		} else {
 			oContext.destroy();
 		}
-		// The path of all contexts in aContexts after the removed one is untouched, still points to
-		// the same data, hence no checkUpdate is needed.
 	};
 
 	/**
@@ -1163,6 +1174,8 @@ sap.ui.define([
 				}
 				oResult.setKeepAlive(true, fnOnBeforeDestroyClone);
 			}
+		} else {
+			this.destroyLater(oOldContext);
 		}
 		this._fireChange({reason : ChangeReason.Change});
 

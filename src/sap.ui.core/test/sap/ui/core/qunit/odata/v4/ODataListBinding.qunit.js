@@ -3310,50 +3310,27 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[
-	{bDestroyLater : false, bHasRead : true},
-	{bDestroyLater : true, bHasRead : false},
-	{bDestroyLater : true, bHasRead : true}
-].forEach(function (oFixture) {
-	QUnit.test("destroyCreated: " + JSON.stringify(oFixture), function (assert) {
+	QUnit.test("destroyCreated", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				SyncPromise.resolve(Promise.resolve())),
-			oContext0FromServer,
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-25)", -3,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-26)", -4,
-				SyncPromise.resolve(Promise.resolve())),
-			aData = [{}];
+				SyncPromise.resolve(Promise.resolve()));
 
-		if (oFixture.bHasRead) {
-			// simulate 1 entity read from server
-			oBinding.createContexts(0, aData);
-			oContext0FromServer = oBinding.aContexts[0];
-			oBinding.iCurrentEnd = 1;
-		}
 		// simulate 4 created entities
 		oBinding.aContexts.unshift(oContext3, oContext2, oContext1, oContext0);
 		oBinding.iCreatedContexts = 4;
-
-		if (oFixture.bHasRead) {
-			// check some preconditions
-			assert.strictEqual(oBinding.aContexts[4], oContext0FromServer);
-			assert.strictEqual(oContext0FromServer.getIndex(), 4);
-			assert.strictEqual(oContext0FromServer.iIndex, 0, "Server index as expected");
-		}
-		assert.strictEqual(oBinding.getLength(), oFixture.bHasRead ? 15 : 14, "length");
-
-		this.mock(oContext1).expects("destroy")
-			.exactly(oFixture.bDestroyLater && oFixture.bHasRead ? 0 : 1)
-			.withExactArgs();
+		assert.strictEqual(oBinding.getLength(), 14, "length");
+		this.mock(oBinding).expects("destroyLater").withExactArgs(sinon.match.same(oContext1));
 
 		// code under test
-		oBinding.destroyCreated(oContext1, oFixture.bDestroyLater);
+		oBinding.destroyCreated(oContext1);
 
-		assert.strictEqual(oBinding.getLength(), oFixture.bHasRead ? 14 : 13);
+		assert.strictEqual(oBinding.getLength(), 13);
 		assert.strictEqual(oBinding.iCreatedContexts, 3);
 		assert.strictEqual(oBinding.aContexts[0], oContext3);
 		assert.strictEqual(oContext3.getIndex(), 0);
@@ -3361,12 +3338,6 @@ sap.ui.define([
 		assert.strictEqual(oContext2.getIndex(), 1);
 		assert.strictEqual(oBinding.aContexts[2], oContext0);
 		assert.strictEqual(oContext0.getIndex(), 2);
-		assert.strictEqual(oBinding.aContexts[3], oContext0FromServer);
-		if (oFixture.bHasRead) {
-			assert.strictEqual(oContext0FromServer.getIndex(), 3);
-		}
-		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"],
-			oFixture.bDestroyLater && oFixture.bHasRead ? oContext1 : undefined);
 
 		return Promise.all([
 			oContext0.created(),
@@ -3374,6 +3345,26 @@ sap.ui.define([
 			oContext2.created(),
 			oContext3.created()
 		]);
+	});
+
+	//*********************************************************************************************
+[0, 1].forEach(function (iCurrentEnd) {
+	var sTitle = "destroyLater: iCurrentEnd=" + iCurrentEnd;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
+				SyncPromise.resolve());
+
+		oBinding.iCurrentEnd = iCurrentEnd;
+		this.mock(oContext).expects("destroy").exactly(iCurrentEnd ? 0 : 1)
+			.withExactArgs();
+
+		// code under test
+		oBinding.destroyLater(oContext);
+
+		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"],
+			iCurrentEnd ? oContext : undefined);
 	});
 });
 
@@ -3887,8 +3878,7 @@ sap.ui.define([
 			.resolves();
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
 		this.stub(oContext0, "toString"); // called by SinonJS, would call #isTransient
-		this.mock(oBinding).expects("destroyCreated")
-			.withExactArgs(sinon.match.same(oContext0), true);
+		this.mock(oBinding).expects("destroyCreated").withExactArgs(sinon.match.same(oContext0));
 
 		// code under test
 		return oBinding._delete("myGroup", "EMPLOYEES('1')", oContext0, oETagEntity,
@@ -4057,7 +4047,7 @@ sap.ui.define([
 		// code under test - call fnErrorCallback
 		oCreateInCacheExpectation.args[0][5](oError);
 
-		oBindingMock.expects("destroyCreated").withExactArgs(sinon.match.same(oContext0), true);
+		oBindingMock.expects("destroyCreated").withExactArgs(sinon.match.same(oContext0));
 
 		// code under test - call fnCancelCallback to simulate cancellation
 		oPromise = oLockGroupExpectation.args[0][3]();
@@ -4678,8 +4668,8 @@ sap.ui.define([
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
-		this.mock(oBinding).expects("destroyCreated")
-			.withExactArgs(sinon.match.same(oContext), true).callThrough();
+		this.mock(oBinding).expects("destroyCreated").withExactArgs(sinon.match.same(oContext))
+			.callThrough();
 		oBindingMock.expects("deleteFromCache").callsFake(function () {
 			return fnDeleteFromCache.apply(this, arguments).then(function () {
 				// the change must only be fired when deleteFromCache is finished
@@ -8113,6 +8103,8 @@ sap.ui.define([
 		this.mock(Context).expects("create").never();
 		oDoReplaceWithExpectation = this.mock(oBinding.oCache).expects("doReplaceWith")
 			.withExactArgs(42, sinon.match.same(oElement));
+		this.mock(oBinding).expects("destroyLater").exactly(bKeepAlive ? 0 : 1)
+			.withExactArgs(sinon.match.same(oOldContext));
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
 				assert.ok(oDoReplaceWithExpectation.calledOnce);
@@ -8195,6 +8187,8 @@ sap.ui.define([
 		oSetKeepAliveExpectation = this.mock(oNewContext).expects("setKeepAlive")
 			.exactly(bKeepAlive ? 1 : 0)
 			.withExactArgs(true, bHasOnBeforeDestroy ? sinon.match.func : undefined);
+		this.mock(oBinding).expects("destroyLater").exactly(bKeepAlive ? 0 : 1)
+			.withExactArgs(sinon.match.same(oOldContext));
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
 				assert.ok(oDoReplaceWithExpectation.calledOnce);
