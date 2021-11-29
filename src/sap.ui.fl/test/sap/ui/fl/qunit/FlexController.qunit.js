@@ -123,13 +123,23 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saveAll is called with a layer and bRemoveOtherLayerChanges", function(assert) {
+			var oComp = {
+				name: "testComp",
+				getModel: function() {
+					return {
+						id: "variantModel"
+					};
+				}
+			};
 			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			var oRemoveStub = sandbox.stub(this.oFlexController._oChangePersistence, "removeDirtyChanges").resolves([]);
-			return this.oFlexController.saveAll(oComponent, true, false, Layer.CUSTOMER, true)
+			var oUrlHandlerStub = sandbox.stub(URLHandler, "update");
+			return this.oFlexController.saveAll(oComp, true, false, Layer.CUSTOMER, true)
 				.then(function() {
 					var aLayersToReset = oRemoveStub.firstCall.args[0];
 					assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
 					assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
+					assert.ok(oUrlHandlerStub.notCalled, "then the page is not reloaded");
 				});
 		});
 
