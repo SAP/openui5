@@ -33443,21 +33443,25 @@ sap.ui.define([
 			oContext1,
 			oContext2,
 			oContext3,
+			iEventCount = 0,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
+	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 	<Text id="position" text="{ItemPosition}"/>\
 	<Input id="note" value="{Note}"/>\
 </t:Table>',
 			that = this;
 
 		this.expectChange("count")
+			.expectChange("inactive", [])
 			.expectChange("position", [])
 			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("position", ["", "", ""])
+			that.expectChange("inactive", [true, true, true])
+				.expectChange("position", ["", "", ""])
 				.expectChange("note", ["default note", "", ""])
 				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$count=true"
 					+ "&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
@@ -33465,12 +33469,16 @@ sap.ui.define([
 					value : [{ItemPosition : "0010", Note : "Note 10", SalesOrderID : "42"}]
 				})
 				.expectChange("count", "4") // TODO: not the final state, should be 1!
+				.expectChange("inactive", [undefined,,, true])
 				.expectChange("position", ["0010",,, ""])
 				.expectChange("note", ["Note 10", "default note",, ""]);
 
 			oBinding = that.oView.byId("table").getBinding("rows");
 			oBinding.setContext(oModel.createBindingContext("/SalesOrderList('42')"));
 			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+			oBinding.attachCreateActivate(function () {
+				iEventCount += 1;
+			});
 
 			// code under test (oInitialData, bSkipRefresh, bAtEnd, bInactive)
 			oContext1 = oBinding.create({Note : "default note"}, true, true, true);
@@ -33480,6 +33488,9 @@ sap.ui.define([
 			assert.strictEqual(oModel.hasPendingChanges(), true); // TODO: not the final state!
 			assert.strictEqual(oModel.hasPendingChanges("$auto"), false);
 			assert.strictEqual(oBinding.hasPendingChanges(), true); // TODO: not the final state!
+			assert.strictEqual(oContext1.isInactive(), true);
+			assert.strictEqual(oContext2.isInactive(), true);
+			assert.strictEqual(oContext3.isInactive(), true);
 			assert.strictEqual(oContext1.isTransient(), true);
 			assert.strictEqual(oContext2.isTransient(), true);
 			assert.strictEqual(oContext3.isTransient(), true);
@@ -33496,6 +33507,7 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataListBinding");
 			that.expectChange("note", [, "Note 1"])
 				//.expectChange("count", "2") // TODO: not the final state
+				.expectChange("inactive", [, false])
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList('42')/SO_2_SOITEM",
@@ -33515,11 +33527,14 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 4);
 			assert.strictEqual(oBinding.getCount(), 4); // TODO: not the final state, should be 2!
 			assert.strictEqual(oContext1.hasPendingChanges(), true);
+			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), true);
+			assert.strictEqual(iEventCount, 1, "createActivate was fired");
 
 			return that.waitForChanges(assert, "(2)");
 		}).then(function () {
 			assert.strictEqual(oContext1.hasPendingChanges(), true);
+			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), true);
 
 			that.expectRequest({
@@ -33541,10 +33556,12 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			assert.strictEqual(oContext1.hasPendingChanges(), false);
+			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), false);
 
 			that.expectChange("count", "3") // TODO: not the final state, should be "2"
-				.expectChange("note", null, null) // from the deleted row
+				.expectChange("inactive", undefined, null) // from the deleted row
+				.expectChange("note", null, null)
 				.expectChange("position", null, null);
 
 			// code under test
@@ -33559,6 +33576,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getCount(), 3); // TODO: not the final state, should be 2!
 
 			that.expectChange("note", [,, "Note 3"])
+				.expectChange("inactive", [,, false])
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList('42')/SO_2_SOITEM",
@@ -33574,7 +33592,9 @@ sap.ui.define([
 			oContext3.setProperty("Note", "Note 3");
 
 			assert.strictEqual(oContext3.hasPendingChanges(), true);
+			assert.strictEqual(oContext3.isInactive(), false);
 			assert.strictEqual(oContext3.isTransient(), true);
+			assert.strictEqual(iEventCount, 2, "createActivate was fired");
 
 			return Promise.all([
 				oContext3.created(),
@@ -33584,7 +33604,9 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 3);
 			assert.strictEqual(oBinding.getCount(), 3);
 			assert.strictEqual(oContext3.hasPendingChanges(), false);
+			assert.strictEqual(oContext3.isInactive(), false);
 			assert.strictEqual(oContext3.isTransient(), false);
+			assert.strictEqual(iEventCount, 2, "no further createActivate events");
 		});
 	});
 

@@ -49,14 +49,22 @@ sap.ui.define([
 		assert.strictEqual(oContext.getPath(), sPath);
 		assert.strictEqual(oContext.getModelIndex(), 42);
 		assert.strictEqual(oContext.created(), undefined);
+		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
+
+		// code under test
+		oContext = Context.create(oModel, oBinding, sPath, 42, undefined, false);
+
+		assert.strictEqual(oContext.isInactive(), undefined, "bInactive: false -> undefined");
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42,
 			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
-			}));
+			}), true);
+
+		assert.strictEqual(oContext.isInactive(), true);
 
 		// code under test
 		oCreatedPromise = oContext.created();
@@ -2463,12 +2471,14 @@ sap.ui.define([
 
 	return Promise.resolve("n/a"); // #update succeeds after retry
 }].forEach(function (fnScenario, i) {
-	var sTitle = "doSetProperty: scenario " + i;
+	[undefined, true].forEach(function (bInactive) {
+		var sTitle = "doSetProperty: scenario " + i + ", bInactive=" + bInactive;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
+				fireEvent : function () {},
 				firePatchCompleted : function () {},
 				firePatchSent : function () {},
 				getResolvedPath : function () {},
@@ -2490,7 +2500,8 @@ sap.ui.define([
 				resolve : function () {}
 			},
 			oModelMock = this.mock(oModel),
-			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
+			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')", 42,
+				/*oCreatePromise*/undefined, bInactive),
 			oError = new Error("This call intentionally failed"),
 			bSkipRetry = i === 1,
 			vWithCacheResult = {},
@@ -2529,6 +2540,8 @@ sap.ui.define([
 				that.mock(_Helper).expects("getRelativePath")
 					.withExactArgs("/entity/path", "/resolved/binding/path")
 					.returns("helper/path");
+				oBindingMock.expects("fireEvent").exactly(bInactive ? 1 : 0)
+					.withExactArgs("createActivate");
 				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 					.withExactArgs("/resolved/data/path")
 					.returns("unit/or/currency/path");
@@ -2539,6 +2552,7 @@ sap.ui.define([
 						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func,
 						/*fnIsKeepAlive*/sinon.match.func)
 					.callsFake(function () {
+						assert.strictEqual(oContext.isInactive(), bInactive ? false : undefined);
 						return SyncPromise.resolve(
 							fnScenario(assert, that.mock(oModel), oBinding, oBindingMock,
 								/*fnErrorCallback*/arguments[3], /*fnPatchSent*/arguments[8],
@@ -2578,6 +2592,8 @@ sap.ui.define([
 				assert.ok(i < 2);
 				assert.strictEqual(oError0, oError);
 			});
+	});
+
 	});
 });
 

@@ -33,6 +33,7 @@ sap.ui.define([
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
+			createActivate : true,
 			createCompleted : true,
 			createSent : true,
 			dataReceived : true,
@@ -66,9 +67,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class List binding for an OData V4 model.
 	 *   An event handler can only be attached to this binding for the following events:
-	 *   'AggregatedDataStateChange', 'change', 'createCompleted', 'createSent', 'dataReceived',
-	 *   'dataRequested', 'DataStateChange', 'patchCompleted', 'patchSent', and 'refresh'. For
-	 *   other events, an error is thrown.
+	 *   'AggregatedDataStateChange', 'change', 'createActivate', 'createCompleted', 'createSent',
+	 *   'dataReceived', 'dataRequested', 'DataStateChange', 'patchCompleted', 'patchSent', and
+	 *   'refresh'. For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
 	 * @hideconstructor
 	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
@@ -152,6 +153,32 @@ sap.ui.define([
 		});
 
 	asODataParentBinding(ODataListBinding.prototype);
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createActivate' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
+		this.attachEvent("createActivate", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createActivate' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.detachCreateActivate = function (fnFunction, oListener) {
+		this.detachEvent("createActivate", fnFunction, oListener);
+	};
 
 	/**
 	 * Attach event handler <code>fnFunction</code> to the 'createCompleted' event of this binding.
@@ -446,6 +473,18 @@ sap.ui.define([
 	 * @event sap.ui.model.odata.v4.ODataListBinding#change
 	 * @public
 	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'createActivate' event is fired when a property is changed on a context in an 'inactive'
+	 * state (see {@link #create}). The context then changes its state to 'transient'.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 *
+	 * @event sap.ui.model.odata.v4.ODataListBinding#createActivate
+	 * @public
+	 * @since 1.98.0
 	 */
 
 	/**
@@ -840,7 +879,7 @@ sap.ui.define([
 
 		this.iCreatedContexts += 1;
 		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
-			oCreatePromise);
+			oCreatePromise, bInactive);
 		this.aContexts.unshift(oContext);
 		this._fireChange({reason : ChangeReason.Add});
 

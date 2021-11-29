@@ -318,7 +318,8 @@ sap.ui.define([
 	 */
 	_Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
 			oEntityData, fnErrorCallback, fnSubmitCallback) {
-		var aCollection,
+		var aCollection = this.getValue(sPath),
+			sGroupId = oGroupLock.getGroupId(),
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
 			oPostBody,
 			that = this;
@@ -345,10 +346,9 @@ sap.ui.define([
 		}
 
 		function request(sPostPath, oPostGroupLock) {
-			var sPostGroupId = oPostGroupLock.getGroupId();
 
 			// mark as transient (again)
-			_Helper.setPrivateAnnotation(oEntityData, "transient", sPostGroupId);
+			_Helper.setPrivateAnnotation(oEntityData, "transient", sGroupId);
 			_Helper.addByPath(that.mPostRequests, sPath, oEntityData);
 			return SyncPromise.all([
 				that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oPostBody,
@@ -400,14 +400,22 @@ sap.ui.define([
 				if (that.fetchTypes().isRejected()) {
 					throw oError;
 				}
-				sPostGroupId = sPostGroupId.replace(rInactive, "");
-				return request(sPostPath, that.oRequestor.lockGroup(
-					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
-						sPostGroupId : "$parked." + sPostGroupId, that, true, true));
+				sGroupId = sGroupId.replace(rInactive, "");
+				sGroupId = that.oRequestor.getGroupSubmitMode(sGroupId) === "API"
+					? sGroupId
+					: "$parked." + sGroupId;
+
+				return request(sPostPath,
+					that.oRequestor.lockGroup(sGroupId, that, true, true));
 			});
 		}
 
 		this.checkSharedRequest();
+		if (!Array.isArray(aCollection)) {
+			throw new Error("Create is only supported for collections; '" + sPath
+				+ "' does not reference a collection");
+		}
+
 		// clone data to avoid modifications outside the cache
 		// remove any property starting with "@$ui5."
 		oEntityData = _Helper.publicClone(oEntityData, true) || {};
@@ -416,12 +424,10 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);
 		_Helper.setPrivateAnnotation(oEntityData, "transientPredicate", sTransientPredicate);
 		oEntityData["@$ui5.context.isTransient"] = true;
-
-		aCollection = this.getValue(sPath);
-		if (!Array.isArray(aCollection)) {
-			throw new Error("Create is only supported for collections; '" + sPath
-				+ "' does not reference a collection");
+		if (sGroupId.startsWith("$inactive.")) {
+			oEntityData["@$ui5.context.isInactive"] = true;
 		}
+
 		aCollection.unshift(oEntityData);
 		aCollection.$created += 1;
 		addToCount(this.mChangeListeners, sPath, aCollection, 1);
@@ -1792,13 +1798,16 @@ sap.ui.define([
 			}
 			// remember the old value
 			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
-			// write the changed value into the cache
-			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			oPostBody = _Helper.getPrivateAnnotation(oEntity, "postBody");
 			if (oPostBody) {
-				// change listeners are already informed
+				// change listeners are informed later
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
+				if (oEntity["@$ui5.context.isInactive"]) {
+					oUpdateData["@$ui5.context.isInactive"] = false;
+				}
 			}
+			// write the changed value into the cache
+			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
