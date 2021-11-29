@@ -152,7 +152,7 @@
 						<td>method</td>
 						<td>string</td>
 						<td>No</td>
-						<td>The HTTP method. Possible values are "GET", "POST". Default value is "GET".</td>
+						<td>The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD". Default value is "GET".</td>
 						<td>1.14.0</td>
 						<td>1.65</td>
 					</tr>
@@ -162,9 +162,9 @@
 						<td>No</td>
 						<td>
 							The request parameters to be sent to the server.
-							If the HTTP method is "POST" the parameters will be put as key/value pairs into the body of
+							If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put as key/value pairs into the body of
 							the request.
-							If the method doesn't have an entity body, such as the "GET" method, the data is appended to
+							If the method doesn't have an entity body, such as the "GET" or "HEAD" methods, the data is appended to
 							the URL.<br><br>
 							Default encoding is <code>application/x-www-form-urlencoded</code>.
 							Also JSON is supported for the body encoding (see <a target="_parent"
@@ -257,7 +257,7 @@
 						<td>method</td>
 						<td>string</td>
 						<td>Yes</td>
-						<td>The HTTP method. Only "GET", "POST", "PUT", "PATCH" and "DELETE" are allowed. Use capital letters only.</td>
+						<td>The HTTP method. Only "GET", "POST", "PUT", "PATCH", and "DELETE" are allowed. Use capital letters only.</td>
 						<td>1.33.0</td>
 						<td>1.90</td>
 					</tr>
