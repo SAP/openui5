@@ -26,20 +26,7 @@ sap.ui.define([
 	createAndAppendDiv(["target1", "target2"]);
 
 	// convenience helper for synchronous ajax calls
-	function syncFetch(options) {
-		var oResult;
-		Object.assign(options, {
-			async: false,
-			success : function(data, textStatus, xhr) {
-				oResult = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status };
-			},
-			error : function(xhr, textStatus, error) {
-				oResult = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText};
-			}
-		});
-		jQuery.ajax(options);
-		return oResult;
-	}
+	var syncAjax = MockServer._syncAjax;
 
 	// notepad control for list binding test
 	var MyListItem = Element.extend("MyListItem", {
@@ -120,7 +107,7 @@ sap.ui.define([
 		assert.ok(oMockServer, "Mock server is created");
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects",
 			dataType: "json"
 		});
@@ -132,7 +119,7 @@ sap.ui.define([
 
 		oMockServer.stop();
 		assert.ok(!oMockServer.isStarted(), "Mock server is stopped");
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects",
 			dataType: "json"
 		});
@@ -140,7 +127,7 @@ sap.ui.define([
 
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started again");
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects",
 			dataType: "json"
 		});
@@ -169,7 +156,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/BooleanKeyEntitySet(ThisIsNotABoolean)",
 			dataType: "json"
 		});
@@ -196,7 +183,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/BooleanKeyEntitySet(true)",
 			dataType: "json"
 		});
@@ -224,7 +211,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/BooleanKeyEntitySet(false)",
 			dataType: "json"
 		});
@@ -247,14 +234,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$filter=startswith(flightDetails,'Smartphones&$Tab&lets')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded well");
 		assert.equal(oResponse.data.d.results.length, 0, "No values found for the filter query");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection?key1=1&key2=22&key3='h&m'&key4='42\" tv'",
 			dataType: "json"
 		});
@@ -282,7 +269,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects2/323234",
 			dataType: "json"
 		});
@@ -310,7 +297,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects/323234",
 			dataType: "json"
 		});
@@ -417,7 +404,7 @@ sap.ui.define([
 		oMockServer2.start();
 		assert.ok(oMockServer2.isStarted(), "Mock server 2 is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects",
 			dataType: "json"
 		});
@@ -427,7 +414,7 @@ sap.ui.define([
 			"id": "323233"
 		}], "Response is right");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects2/323234",
 			dataType: "json"
 		});
@@ -437,7 +424,7 @@ sap.ui.define([
 		oMockServer2.stop();
 		assert.ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects2/323234",
 			dataType: "json"
 		});
@@ -666,7 +653,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects/323234",
 			dataType: "json"
 		});
@@ -696,7 +683,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects/323234",
 			dataType: "xml"
 		});
@@ -728,14 +715,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects/323234",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.test, "works", "JSON: Response is right");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/projects2/323234",
 			dataType: "xml"
 		});
@@ -782,7 +769,7 @@ sap.ui.define([
 
 		oMockServer.start();
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/mydummyservice/path?customParameter=123"
 		});
 
@@ -793,7 +780,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, 'path');
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, 'path');
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/mydummyservice/path?customParameter=123"
 		});
 
@@ -829,7 +816,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection/$count",
 			dataType: "json"
 		});
@@ -842,7 +829,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection/$count",
 			dataType: "json"
 		});
@@ -879,7 +866,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.GET, fnCbPre);
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, fnCbPost);
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection/$count",
 			dataType: "json"
 		});
@@ -890,7 +877,7 @@ sap.ui.define([
 		iTesterPre = 0;
 
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection/$count",
 			dataType: "json"
 		});
@@ -903,7 +890,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre);
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost);
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection/$count",
 			dataType: "json"
 		});
@@ -912,7 +899,7 @@ sap.ui.define([
 		assert.equal(iTesterPost, 0, "Post function was executed");
 		assert.equal(oResponse.data, 100, "callback on $count on entityset attach");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection/$count",
 			dataType: "json"
 		});
@@ -949,7 +936,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
@@ -962,7 +949,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "FlightCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "FlightCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
@@ -1000,7 +987,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')",
 			dataType: "json"
 		});
@@ -1013,7 +1000,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')",
 			dataType: "json"
 		});
@@ -1050,7 +1037,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
 			dataType: "json"
 		});
@@ -1063,7 +1050,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
 			dataType: "json"
 		});
@@ -1100,7 +1087,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights?$skip=10",
 			dataType: "json"
 		});
@@ -1113,7 +1100,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.GET, fnCbPre, "CarrierCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.GET, fnCbPost, "CarrierCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights?$skip=10",
 			dataType: "json"
 		});
@@ -1150,7 +1137,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.POST, fnCbPre, "FlightCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.POST, fnCbPost, "FlightCollection");
 
-		var oPostResponse = syncFetch({
+		var oPostResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			type: 'POST',
 			data: '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
@@ -1166,7 +1153,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.POST, fnCbPre, "FlightCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.POST, fnCbPost, "FlightCollection");
 
-		var oPostResponse = syncFetch({
+		var oPostResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			type: 'POST',
 			data: '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
@@ -1206,7 +1193,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.PUT, fnCbPre, "FlightCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.PUT, fnCbPost, "FlightCollection");
 
-		var oPutResponse = syncFetch({
+		var oPutResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'PUT',
 			data: '{"carrid":"BB","connid":"009"}'
@@ -1222,7 +1209,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.PUT, fnCbPre, "FlightCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.PUT, fnCbPost, "FlightCollection");
 
-		oPutResponse = syncFetch({
+		oPutResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'PUT',
 			data: '{"carrid":"BB","connid":"009"}'
@@ -1260,7 +1247,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.MERGE, fnCbPre, "FlightCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.MERGE, fnCbPost, "FlightCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'MERGE',
 			dataType: "json",
@@ -1277,7 +1264,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.MERGE, fnCbPre, "FlightCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.MERGE, fnCbPost, "FlightCollection");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'MERGE',
 			dataType: "json",
@@ -1316,7 +1303,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.PATCH, fnCbPre, "FlightCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.PATCH, fnCbPost, "FlightCollection");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'PATCH',
 			dataType: "json",
@@ -1333,7 +1320,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.PATCH, fnCbPre, "FlightCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.PATCH, fnCbPost, "FlightCollection");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'MERGE',
 			dataType: "json",
@@ -1373,7 +1360,7 @@ sap.ui.define([
 		oMockServer.attachBefore(MockServer.HTTPMETHOD.DELETE, fnCbPre, "CarrierCollection");
 		oMockServer.attachAfter(MockServer.HTTPMETHOD.DELETE, fnCbPost, "CarrierCollection");
 
-		var oDelResponse = syncFetch({
+		var oDelResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')",
 			type: 'DELETE'
 		});
@@ -1388,7 +1375,7 @@ sap.ui.define([
 		oMockServer.detachBefore(MockServer.HTTPMETHOD.DELETE, fnCbPre, "CarrierCollection");
 		oMockServer.detachAfter(MockServer.HTTPMETHOD.DELETE, fnCbPost, "CarrierCollection");
 
-		var oDelResponse = syncFetch({
+		var oDelResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 2')",
 			type: 'DELETE'
 		});
@@ -1412,7 +1399,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/$metadata",
 			headers: {
 				"x-csrf-token": "Fetch"
@@ -1421,7 +1408,7 @@ sap.ui.define([
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, 200, "CSRF token fetched");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/SomeNonExistentEntity"
 		});
 		assert.ok(!oResponse.success, "Mock server responded");
@@ -1440,7 +1427,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oPostResponse = syncFetch({
+		var oPostResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			type: 'POST',
 			data: '{"carrid":"BB","connid":"007"}'
@@ -1463,14 +1450,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/SubscriptionCollection",
 			dataType: "json"
 		});
@@ -1488,14 +1475,14 @@ sap.ui.define([
 		});
 		oMockServer.start();
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/SubscriptionCollection",
 			dataType: "json"
 		});
@@ -1512,14 +1499,14 @@ sap.ui.define([
 		});
 		oMockServer.start();
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection from json file");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/SubscriptionCollection",
 			dataType: "json"
 		});
@@ -1533,14 +1520,14 @@ sap.ui.define([
 		oMockServer.simulate(sMetadataUrl, null);
 		oMockServer.start();
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 100, "FlightCollection");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/SubscriptionCollection",
 			dataType: "json"
 		});
@@ -1557,14 +1544,14 @@ sap.ui.define([
 		});
 		oMockServer.start();
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 100, "FlightCollection");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/SubscriptionCollection",
 			dataType: "json"
 		});
@@ -1582,44 +1569,44 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?sap-client=100",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "?sap-client=100");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$top=1&sap-client=100",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "?$top=1&sap-client=100");
 		assert.equal(oResponse.data.d.results.length, 1, "?$top=1&sap-client=100");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$sap-client=100",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "?$sap-client=100");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')?sap-client=100",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "?sap-client=100");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')?$sap-client=100",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "?$sap-client=100");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights?sap-client=100",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "?sap-client=100");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights?$sap-client=100",
 			dataType: "json"
 		});
@@ -1639,7 +1626,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$expand=FlightCarrier&$orderby=FlightCarrier/CARRNAME",
 			dataType: "json"
 		});
@@ -1659,14 +1646,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/",
 			type: 'HEAD',
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/",
 			dataType: "json"
 		});
@@ -1687,7 +1674,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
@@ -1699,7 +1686,7 @@ sap.ui.define([
 
 		oMockServer.setEntitySetData("FlightCollection", aFlights);
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
@@ -1727,13 +1714,13 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 18);
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
 			dataType: "json"
 		});
@@ -1743,7 +1730,7 @@ sap.ui.define([
 
 		oDeepCreate["FlightCarrier"].CARRNAME = "Deeply Created";
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			type: 'POST',
 			data: JSON.stringify(oDeepCreate)
@@ -1751,7 +1738,7 @@ sap.ui.define([
 		assert.ok(oResponse.success, "Mock server responded the POST resquest");
 		assert.equal(oResponse.statusCode, 201, "resource successfully created");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
@@ -1759,7 +1746,7 @@ sap.ui.define([
 
 		oMockServer.setEntitySetData("CarrierCollection", []);
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			type: 'POST',
 			data: JSON.stringify(oDeepCreate)
@@ -1767,7 +1754,7 @@ sap.ui.define([
 		assert.ok(oResponse.success, "Mock server responded the POST resquest");
 		assert.equal(oResponse.statusCode, 201, "resource successfully created");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
@@ -1788,14 +1775,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveItemSubCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "");
 		assert.equal(oResponse.data.d.results.length, 2, "");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection",
 			dataType: "json"
 		});
@@ -1816,13 +1803,13 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$select=flightbooking/SMOKER",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$select=fldate,flightDetails/countryFrom",
 			dataType: "json"
 		});
@@ -1841,7 +1828,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/EVALUATIONS('ID 1')/FILTERS?$format=json",
 			dataType: "json"
 		});
@@ -1866,21 +1853,21 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server has started");
 		// Ceck FlightCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "FlightCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
 		// Ceck TravelagencyCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/TravelagencyCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "TravelagencyCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
@@ -1898,21 +1885,21 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server has started");
 		// Ceck FlightCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "FlightCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
 		// Ceck TravelagencyCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/TravelagencyCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "TravelagencyCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
@@ -1929,21 +1916,21 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server has started");
 		// Ceck FlightCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "FlightCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
 		// Ceck TravelagencyCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/TravelagencyCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "TravelagencyCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
@@ -1960,21 +1947,21 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server has started");
 		// Ceck FlightCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "FlightCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 0, "FlightCollection json file");
 		// Ceck TravelagencyCollection
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/TravelagencyCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "TravelagencyCollection - mock server responded");
 		assert.equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
 		// Ceck CarrierCollection
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
@@ -1994,7 +1981,7 @@ sap.ui.define([
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
 		// Test binary of type X'<hexadecimal number>'
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/Patient(X'49534830317A67634C684A75484848746B4C4372444A61477A5534')",
 			dataType: "json"
 		});
@@ -2002,7 +1989,7 @@ sap.ui.define([
 		assert.ok(oResponse.data.d);
 
 		// Test for binary of type binary'<hexadecimal number>'
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Patient(binary'49534830317A67634C684A75484848746B4C4372444A61477A5534')",
 			dataType: "json"
 		});
@@ -2010,7 +1997,7 @@ sap.ui.define([
 		assert.equal(oResponse.statusCode, 404);
 
 		// Test for an illegal binary value
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Patient('notBinary')",
 			dataType: "json"
 		});
@@ -2029,34 +2016,34 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')?$format=json",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "CarrierCollection('carrid 1')?$format=json");
 		assert.ok(oResponse.data.d, "CarrierCollection('carrid 1')?$format=json");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$format=json",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "CarrierCollection?$format=json");
 		assert.ok(oResponse.data.d.results, "CarrierCollection?$format=json");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$format=json&$top=3",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "CarrierCollection?$format=json&$top=3");
 		assert.equal(oResponse.data.d.results.length, 3, "CarrierCollection?$format=json&$top=3");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')?$format=xml",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "CarrierCollection('carrid 1')?$format=xml");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$format=xml",
 			dataType: "json"
 		});
@@ -2075,7 +2062,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')",
 			dataType: "json"
 		});
@@ -2083,7 +2070,7 @@ sap.ui.define([
 		assert.ok(oResponse.data.d, "single entry no OData system query options");
 		assert.equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
-		syncFetch({
+		syncAjax({
 			url: "/myservice/CarrierCollection(carrid='carrid 1')",
 			dataType: "json"
 		});
@@ -2091,14 +2078,14 @@ sap.ui.define([
 		assert.ok(oResponse.data.d, "single entry no OData system query options");
 		assert.equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid%201')", "single key");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/?$select=carrid",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.ok(oResponse.data.d.carrid, "single entry with OData system query options");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 				url: "/myservice/FlightCollection/?$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate,FlightCarrier/CARRNAME&$expand=FlightCarrier",
 				dataType: "json"
 			});
@@ -2108,14 +2095,14 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.results[0].fldate, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
 		assert.ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "$top=1&$select=FlightCarrier/CARRNAME&$expand=FlightCarrier");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/?$selsdfect=carrid",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "fake query option");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/?$top=1",
 			dataType: "json"
 		});
@@ -2134,7 +2121,7 @@ sap.ui.define([
 
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/SalesOrder",
 			dataType: "json"
 		});
@@ -2152,49 +2139,49 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection/$count",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data, 100, "$count on entityset");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection/$count?$top=10",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data, 10, "$count on entityset");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 100, "entity set no opts.");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$top=1&format=json",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 1, "entity set with opts.");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection/?$top=1",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 1, "entity set / with opts.");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollect",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, 404, "entitySet doesn't exist ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$fsdf=sfsdf",
 			dataType: "json"
 		});
@@ -2212,7 +2199,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights/",
 			dataType: "json"
 		});
@@ -2220,28 +2207,28 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 100, "navigation to collection");
 		assert.equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight", "simple navigation returns flight");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$top=1&$expand=flightbooking",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate, "FlightCollection?$top=1&$expand=flightbooking");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data, 100, "navigation $count");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count?$skip=10",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data, 90, "navigation $count");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights/?$select=carrid,connid",
 			dataType: "json"
 		});
@@ -2251,14 +2238,14 @@ sap.ui.define([
 			"navigation to collection with OData query returns flight");
 		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "navigation to collection with OData query returns only 2 properties ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		var skey = oResponse.data.d.results[0].__metadata.uri;
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: skey + "/FlightCarrier",
 			dataType: "json"
 		});
@@ -2266,7 +2253,7 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.carrid, "navigation to one entry");
 		assert.equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier", "navigation to one entry returns Carrier ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: skey + "/FlightCarrier?$select=carrid",
 			dataType: "json"
 		});
@@ -2274,7 +2261,7 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.carrid, "navigation to one entry");
 		assert.equal(oResponse.data.d.__metadata.type, "RMTSAMPLEFLIGHT.Carrier", "navigation to one entry returns Carrier ");
 		assert.equal(countProperties(oResponse.data.d), 2, "navigation to singel entry with OData query returns only 1 properties ");
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: skey + "/FlightCarrier?$top=1",
 			dataType: "json"
 		});
@@ -2294,7 +2281,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$top=2&$skip=1",
 			dataType: "json"
 		});
@@ -2302,7 +2289,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 2, "query chaining worked");
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "top and skip returned ok");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$skip=1&$top=1",
 			dataType: "json"
 		});
@@ -2310,28 +2297,28 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 1, "query chaining worked");
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "skip and top returned ok");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$skip=1&$top=sdlfksdf",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "top invalid value ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$skip=1.5",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "skip invalid value [not a number]");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$skip=5,",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "skip invalid value [ends with ,]");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$skip=-5",
 			dataType: "json"
 		});
@@ -2352,28 +2339,28 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=type",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "simple orderby single property");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=type asc",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "simple orderby single property asc");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=type desc",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results[0].type, "Vacation", "simple orderby single property desc");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=entitlement,pendingitems",
 			dataType: "json"
 		});
@@ -2381,7 +2368,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Unpaid Leave", "multiple orderby worked");
 		assert.equal(oResponse.data.d.results[2].type, "Sick Leave", "multiple orderby worked");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=entitlement desc, pendingitems asc",
 			dataType: "json"
 		});
@@ -2389,7 +2376,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "multiple orderby asc/desc");
 		assert.equal(oResponse.data.d.results[2].type, "Vacation", "multiple orderby asc/desc");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=entitlement%20desc%2Cpendingitems%20asc",
 			dataType: "json"
 		});
@@ -2397,21 +2384,21 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "encoded multiple orderby asc/desc");
 		assert.equal(oResponse.data.d.results[2].type, "Vacation", "encoded multiple orderby asc/desc");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=entitlement descjkh",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "orderby invalid order param");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=entitlementFood",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "orderby invalid param");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$orderby=type%20asc",
 			dataType: "json"
 		});
@@ -2432,7 +2419,7 @@ sap.ui.define([
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
 		//test for filtering while sample data contains null values
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=substringof('e', organizationunit)",
 			dataType: "json"
 		});
@@ -2440,145 +2427,145 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 2, "");
 
 		//test for filtering by comma
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=substringof(',', type)",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 0, "");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A or B");
 		assert.equal(oResponse.data.d.results.length, 2, "A or B");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "(A or B)");
 		assert.equal(oResponse.data.d.results.length, 2, "(A or B)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection/$count?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "$count on (A or B)");
 		assert.equal(oResponse.data, 2, "(A or B)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "(((A or B)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' or type eq 'Unpaid Leave'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A or B or C");
 		assert.equal(oResponse.data.d.results.length, 3, "A or B or C");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "malformed: A or ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A and B");
 		assert.equal(oResponse.data.d.results.length, 0, "A and B");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and type eq 'Sick Leave' or type eq 'Vacation'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A and B or C");
 		assert.equal(oResponse.data.d.results.length, 1, "A and B or C");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or type eq 'Sick Leave' and type eq 'Sick Leave'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A or B and C");
 		assert.equal(oResponse.data.d.results.length, 1, "A or B and C");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "(A)");
 		assert.equal(oResponse.data.d.results.length, 1, "(A)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave' or type eq 'Vacation')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A op (B op C)");
 		assert.equal(oResponse.data.d.results.length, 1, "A op (B op C)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' and (type eq 'Sick Leave') or type eq 'Vacation'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "A op (B) op C");
 		assert.equal(oResponse.data.d.results.length, 1, "A op (B) op C");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "(A op B) op C");
 		assert.equal(oResponse.data.d.results.length, 1, "(A op B) op C");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=(type eq 'Vacation' and type eq 'Sick Leave') or (type eq 'Vacation')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "(A op B) op (C)");
 		assert.equal(oResponse.data.d.results.length, 1, "(A op B) op (C)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=((type eq 'Vacation' and type eq 'Sick Leave') or type eq 'Vacation')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "((A op B) op C)");
 		assert.equal(oResponse.data.d.results.length, 1, "((A op B) op C)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 				url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation' or ( type eq 'Sick Leave' and  substringof('elina', type))",
 				dataType: "json"
 			});
 		assert.ok(oResponse.success, "A op (B)");
 		assert.equal(oResponse.data.d.results.length, 1, "A op (B)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=substringof('ac', type)",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter substringof('ac', type)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 				url: "/myservice/LeaveHeaderCollection?$skip=0&$top=4&$filter=(substringof('',type)%20or%20substringof('Pink%20Straits%20Corp.',type))",
 				dataType: "json"
 			});
 		assert.ok(oResponse.success, "(substringof() op substringof())");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=startswith(type, 'Va')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter startswith(type, 'Va')");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=endswith(type, 've')",
 			dataType: "json"
 		});
@@ -2587,7 +2574,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter endswith(type, 've')");
 		assert.equal(oResponse.data.d.results.length, 2, "filter endswith(type, 've')");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type eq 'Vacation'",
 			dataType: "json"
 		});
@@ -2596,7 +2583,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Vacation", "filter type eq 'Vacation'");
 		assert.equal(oResponse.data.d.results.length, 1, "filter type eq 'Vacation'");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type ne 'Vacation'",
 			dataType: "json"
 		});
@@ -2605,7 +2592,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Sick Leave", "filter type ne 'Vacation'");
 		assert.equal(oResponse.data.d.results.length, 2, "filter type ne 'Vacation'");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemid gt 6",
 			dataType: "json"
 		});
@@ -2614,49 +2601,49 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results[0].type, "Unpaid Leave", "filter itemid gt 6'");
 		assert.equal(oResponse.data.d.results.length, 1, "itemid gt 6'");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemid lt 6",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 5, "itemid lt 6");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemid ge 6",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 2, "itemid le 6");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemid le 6",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 6, "itemid le 6");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemid lfde 6",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "filter option doesn't exist");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemidFood le 6",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "filter path doesn't exist");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection?$filter=itemid%20le%206",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 6, "itemid%20le%206");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$filter=type%20ne%20%27Vacation%27",
 			dataType: "json"
 		});
@@ -2673,7 +2660,7 @@ sap.ui.define([
 		oMockServer.simulate(sMetadataUrl);
 		oMockServer.start();
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$filter=flightDetails/cityFrom eq 'cityFrom 1'",
 			dataType: "json"
 		});
@@ -2693,62 +2680,62 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/Products?$filter=Discontinued eq true",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products?$top=1&$orderby=ProductID desc",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products?$filter=UnitsInStock lt 40",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 15, "$filter=UnitsInStock lt 40");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products?$filter=(UnitsInStock eq 120)",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 1, "$filter=(UnitsInStock eq 120)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products(5)/Category",
 			dataType: "json"
 		});
 		assert.ok(oResponse.data.d.CategoryName, "Products(5)/Category");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products?$filter=UnitsInStock eq (120)",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Order_Details?$filter=UnitPrice le 100M",
 			dataType: "json"
 		});
 		assert.ok(oResponse, "$filter=UnitPrice le 100M");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Order_Details?$filter=UnitPrice le 100m",
 			dataType: "json"
 		});
 		assert.ok(oResponse, "$filter=UnitPrice le 100m");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "$filter=Category/CategoryName eq 'Beverages'");
 		assert.ok(!oResponse.data.d.results[0].Category.CategoryName);
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category",
 			dataType: "json"
 		});
@@ -2768,7 +2755,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$select=type",
 			dataType: "json"
 		});
@@ -2776,7 +2763,7 @@ sap.ui.define([
 
 		assert.equal(countProperties(oResponse.data.d.results[0]), 2, "select 1 property");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$select=type, availablebalance",
 			dataType: "json"
 		});
@@ -2784,7 +2771,7 @@ sap.ui.define([
 
 		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "select 2 properties");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?%24select=type%2Cavailablebalance",
 			dataType: "json"
 		});
@@ -2792,14 +2779,14 @@ sap.ui.define([
 
 		assert.equal(countProperties(oResponse.data.d.results[0]), 3, "select 2 properties encoded");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$select=*",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(countProperties(oResponse.data.d.results[0]), 8, "select all properties by *");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$select=sdfsdf",
 			dataType: "json"
 		});
@@ -2818,7 +2805,7 @@ sap.ui.define([
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/Products('HT-2001')?$select=Name,Price,CurrencyCode,Reviews/UserDisplayName,Reviews/Rating&$expand=Reviews",
 			dataType: "json"
 		});
@@ -2839,28 +2826,28 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$top=3&$inlinecount=allpages",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.__count, 3, "inlinecount = allpages, with count = 3 ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$inlinecount=none",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.__count, undefined, "inlinecount = none,  No count ");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$inlinecount=sfg",
 			dataType: "json"
 		});
 		assert.ok(!oResponse.success, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "inlinecount parm invalid");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?$inlinecount=",
 			dataType: "json"
 		});
@@ -2879,14 +2866,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$expand=carrierFlights",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.ok(oResponse.data.d.results[0].carrierFlights.results[0].CURRENCY, "expand with multiplicity many");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$top=1&$expand=FlightCarrier",
 			dataType: "json"
 		});
@@ -2894,14 +2881,14 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with multiplicity one");
 		assert.equal(oResponse.data.d.results.length, 1, "expand and top");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$top=1",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.ok(!oResponse.data.d.results[0].FlightCarrier.CARRNAME, "Expand didn't changed the data");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$top=1&$expand=FlightCarrier, flightbooking",
 			dataType: "json"
 
@@ -2910,14 +2897,14 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "expand with 2 params,first ok");
 		assert.ok(!oResponse.data.d.results[0].flightBooking, "expand with 2 params, second ok");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$expand=carrierFlights",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.ok(oResponse.data.d.results[0].carrierFlights.results[0].CURRENCY, "expand with multiplicity many");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking",
 			dataType: "json"
 		});
@@ -2925,7 +2912,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 100, "Expand with nav- return 100 nav entries");
 		assert.equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate);
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection?$expand=carrierFlights/flightbooking",
 			dataType: "json"
 		});
@@ -2939,7 +2926,7 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
 			"Expand deepDown second level, flightBookings not in expand, not expanded");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/CarrierCollection('carrid 1')?$expand=carrierFlights/flightbooking",
 			dataType: "json"
 		});
@@ -2953,7 +2940,7 @@ sap.ui.define([
 		assert.ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,
 			"Expand deepDown second level, flightBookings not in expand, not expanded");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$top=1&$expand=FlightFood",
 			dataType: "json"
 		});
@@ -2969,7 +2956,7 @@ sap.ui.define([
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
 		// deep multi navigation expand
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/AccountCollection('accountID 1')?$expand=Contacts/Attachments,Contacts/Account",
 			dataType: "json"
 		});
@@ -2990,7 +2977,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 		//Search with search-focus on porperty employeeid
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?search=JSM&search-focus=employeeid",
 			dataType: "json"
 		});
@@ -2999,7 +2986,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 3, "3 entries found with search and search-focus (key)");
 
 		//No search focus (=search on all key fields)
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?search=JSM",
 			dataType: "json"
 		});
@@ -3007,7 +2994,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 3, "3 entries found without search-focus (only search)");
 
 		//Non-key search focus
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?search=53&search-focus=entitlement",
 			dataType: "json"
 		});
@@ -3015,7 +3002,7 @@ sap.ui.define([
 		assert.equal(oResponse.data.d.results.length, 2, "2 entries found with search and non-key search-focus");
 
 		//Neagtive test: search with not existing value
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection?search=HelloWorld",
 			dataType: "json"
 		});
@@ -3035,7 +3022,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FRA_CV_ExcludedTermList?$select=to_ListTypeGroupAssignment/ListTypeGroup,to_ListTypeGroupAssignment/ListTypeGroupDescription&$expand=to_ListTypeGroupAssignment",
 			dataType: "json"
 		});
@@ -3055,42 +3042,42 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.ok(oResponse.data, "same order as in md xml");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection(itemid='1', employeeid='JSMITH',type='Vacation')",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.ok(oResponse.data, "scrumbled order");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection(dummykey='1', employeeid='JSMITH',type='Vacation')",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "false key");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection(itemid='dummyValue', employeeid='JSMITH',type='Vacation')",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 404, "false key value");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection(key='keyvalue')",
 			dataType: "json"
 		});
 		assert.equal(oResponse.success, false, "Mock server responded");
 		assert.equal(oResponse.statusCode, 400, "no commas");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection('keyvalue')",
 			dataType: "json"
 		});
@@ -3109,7 +3096,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='AA',connid='0017',fldate=dattime'2010-10-20T00%3A00%3A00')",
 			dataType: "json"
 		});
@@ -3126,7 +3113,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/Titles(1)",
 			dataType: "json"
 		});
@@ -3144,7 +3131,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection(employeeid='JSMITH',itemid = 1 ,type='Vacation')",
 			dataType: "json"
 		});
@@ -3164,14 +3151,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 100, "100 entities generated");
 
-		var oPostResponse = syncFetch({
+		var oPostResponse = syncAjax({
 			url: "/myservice/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
 			type: 'POST',
 			data: '{"type":"Vacation","from":"2014-03-26","to":"2014-03-27","length":"1 day","state":"Pending"}'
@@ -3180,13 +3167,13 @@ sap.ui.define([
 		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 		assert.ok(oPostResponse.data.d.type, "New entry created");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 101, "101 entities read");
 
-		var oPutResponse = syncFetch({
+		var oPutResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'PUT',
 			data: '{"type":"Vacation","from":"2014-03-27","to":"2014-03-28","length":"1 day","state":"Pending"}'
@@ -3194,35 +3181,35 @@ sap.ui.define([
 		assert.ok(oPutResponse.success, "Mock server responded the PUT resquest");
 		assert.equal(oPutResponse.statusCode, 204, "resource successfully updated");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
 		// read the just created resource again
-		var oGetResponse = syncFetch({
+		var oGetResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'GET'
 		});
 		assert.ok(oGetResponse.success, "Mock server responded the GET request");
 		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
 
-		var oDelResponse = syncFetch({
+		var oDelResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'DELETE'
 		});
 		assert.ok(oDelResponse.success, "Mock server responded the DELETE request");
 		assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
 		// Try to read the just delted resource -this shall fail
-		var oGetAgainResponse = syncFetch({
+		var oGetAgainResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'GET'
 		});
 		assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
 		assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/LeaveItemCollection",
 			dataType: "json"
 		});
@@ -3241,14 +3228,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 100, "100 entities generated");
 
-		var oPostResponse = syncFetch({
+		var oPostResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			type: 'POST',
 			data: '{"carrid1":"BB","connid":"007","fldate":"\/Date(1287532800000)\/"}'
@@ -3257,13 +3244,13 @@ sap.ui.define([
 		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 		assert.ok(oPostResponse.data.uri, "resource uri available");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
-		var oPutResponse = syncFetch({
+		var oPutResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'PUT',
 			data: '{"carrid":"BB","connid":"008","fldate":"\/Date(1287532800000)\/"}'
@@ -3271,7 +3258,7 @@ sap.ui.define([
 		assert.ok(oPutResponse.success, "Mock server responded the PUT resquest");
 		assert.equal(oPutResponse.statusCode, 204, "resource successfully updated");
 
-		oPutResponse = syncFetch({
+		oPutResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'PUT',
 			data: '{"carrid":"BB","connid":"009"}'
@@ -3279,14 +3266,14 @@ sap.ui.define([
 		assert.ok(oPutResponse.success, "Mock server responded the PUT resquest");
 		assert.equal(oPutResponse.statusCode, 204, "resource successfully updated");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
 		assert.equal(oResponse.data.d.results.length, 101, "101 entities returned");
 
 		// read the just created resource again with encode datetime
-		var oGetResponse = syncFetch({
+		var oGetResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00%3A00%3A00')",
 			type: 'GET'
 		});
@@ -3296,7 +3283,7 @@ sap.ui.define([
 
 
 		// read the just created resource again
-		var oGetResponse = syncFetch({
+		var oGetResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'GET'
 		});
@@ -3304,21 +3291,21 @@ sap.ui.define([
 		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
 		assert.equal(oGetResponse.data.d.connid, "009", "re-read of new resource successfull");
 
-		var oDelResponse = syncFetch({
+		var oDelResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'DELETE'
 		});
 		assert.ok(oDelResponse.success, "Mock server responded the DELETE request");
 		assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
 		// Try to read the just delted resource -this shall fail
-		var oGetAgainResponse = syncFetch({
+		var oGetAgainResponse = syncAjax({
 			url: "/myservice/FlightCollection(carrid='BB',connid='009',fldate=datetime'2010-10-20T00:00:00')",
 			type: 'GET'
 		});
 		assert.equal(oGetAgainResponse.success, false, "Mock server responded the GET request");
 		assert.equal(oGetAgainResponse.statusCode, 404, "Read of deleted resource intensionally failed");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/FlightCollection",
 			dataType: "json"
 		});
@@ -3339,14 +3326,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/$metadata?sap-client=001",
 			dataType: "xml"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(jQuery(oResponse.data).find("Schema").children().length, 4, "Metadata XML: Response is right");
 
-		var oPostResponse = syncFetch({
+		var oPostResponse = syncAjax({
 				url: "http://anyserver.sap.com:8080/sap/ui/mock/myservice.svc/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/Items",
 				type: 'POST',
 				data: '{"type":"Vacation","from":"2013-09-26","to":"2013-09-27","length":"1 day","state":"Pending"}'
@@ -3355,7 +3342,7 @@ sap.ui.define([
 		assert.equal(oPostResponse.statusCode, 201, "resource successfully created");
 		assert.ok(oPostResponse.data.uri, "resource uri available");
 
-		var oPutResponse = syncFetch({
+		var oPutResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'PUT',
 			data: '{"type":"Vacation","from":"2013-10-26","to":"2013-10-27","length":"1 day","state":"Pending"}'
@@ -3364,21 +3351,21 @@ sap.ui.define([
 		assert.equal(oPutResponse.statusCode, 204, "resource successfully created");
 
 		// read the just created resource again
-		var oGetResponse = syncFetch({
+		var oGetResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'GET'
 		});
 		assert.ok(oGetResponse.success, "Mock server responded the GET request");
 		assert.equal(oGetResponse.statusCode, 200, "re-read of new resource successfull");
 
-		var oDelResponse = syncFetch({
+		var oDelResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'DELETE'
 		});
 		assert.ok(oDelResponse.success, "Mock server responded the DELETE request");
 		assert.equal(oDelResponse.statusCode, 204, "resource successfully deleted");
 		// Try to read the just delted resource -this shall fail
-		var oGetAgainResponse = syncFetch({
+		var oGetAgainResponse = syncAjax({
 			url: oPostResponse.data.uri,
 			type: 'GET'
 		});
@@ -3581,7 +3568,7 @@ sap.ui.define([
 			assert.equal(oData.__batchResponses[1].response.statusCode, 400, "StatusCode is propagated");
 			assert.equal(oData.__batchResponses[1].response.statusText, "Bad Request", "StatusText is propagated"); // TODO clarify: is reason phrase mandatory in batch response?
 			// read to verify no changes made
-			var oGetResponse = syncFetch({
+			var oGetResponse = syncAjax({
 				url: '/mock/LeaveHeaderCollection',
 				type: 'GET'
 			});
@@ -3661,7 +3648,7 @@ sap.ui.define([
 			assert.equal(oData.__batchResponses[1].__changeResponses[0].statusCode, 204, "oData second change set put succeeded");
 			assert.equal(oData.__batchResponses[1].__changeResponses[1].statusCode, 201, "oData post succeeded");
 			// read to verify no changes made
-			var oGetResponse = syncFetch({
+			var oGetResponse = syncAjax({
 				url: '/mock/LeaveHeaderCollection',
 				type: 'GET'
 			});
@@ -3946,7 +3933,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/$metadata",
 			dataType: "xml"
 		});
@@ -3985,7 +3972,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/$metadata",
 			dataType: "xml"
 		});
@@ -4027,7 +4014,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/$metadata",
 			dataType: "xml"
 		});
@@ -4065,7 +4052,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/FlightCollection?$filter=flightDetails/cityFrom eq 'cityFrom 1'",
 			dataType: "json"
 		});
@@ -4085,14 +4072,14 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/CarrierCollection",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success, "Mock server responded");
 		assert.equal(oResponse.data.d.results.length, 18, "successfuly parsed the GW response for collection");
 
-		oResponse = syncFetch({
+		oResponse = syncAjax({
 			url: "/myservice/TravelagencyCollection",
 			dataType: "json"
 		});
@@ -4308,7 +4295,7 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/StrategyDerivationRequests(DetObjType='DET1', Solution='01')/Results/",
 			dataType: "json"
 		});
@@ -4336,7 +4323,7 @@ sap.ui.define([
 			var oEntry = {};
 			oEntry.CARRNAME = "USD";
 			oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function () {
-				var oResponse = syncFetch({
+				var oResponse = syncAjax({
 					url: "/myservice/CarrierCollection('carrid 1')",
 					dataType: "json"
 				});
@@ -4475,7 +4462,7 @@ sap.ui.define([
 		});
 		oMockServer.start();
 
-		var oResponse = syncFetch({
+		var oResponse = syncAjax({
 			url: "/myservice/Orders",
 			dataType: "json"
 		});

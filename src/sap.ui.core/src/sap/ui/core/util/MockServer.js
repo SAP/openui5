@@ -1207,7 +1207,7 @@ sap.ui
 				// "<" as first character is a strong indicator for an XML-containing string. Everything else: URL...
 				if (sMetadata.substring(0,1) !== "<") {
 					// load the metadata as string to avoid usage of serializer
-					sMetadata = syncFetch({
+					sMetadata = syncAjax({
 						url: sMetadata,
 						dataType: "text"
 					}).data;
@@ -1439,7 +1439,7 @@ sap.ui
 					mData = {};
 				this._oMockdata = {};
 				var fnLoadMockData = function(sUrl, oEntitySet) {
-					var oResponse = syncFetch({
+					var oResponse = syncAjax({
 						url: sUrl,
 						dataType: "json"
 					});
@@ -1469,7 +1469,7 @@ sap.ui
 
 				// load all the mock data in one single file
 				if (sBaseUrl.endsWith(".json")) {
-					var oResponse = syncFetch({
+					var oResponse = syncAjax({
 						url: sBaseUrl,
 						dataType: "json"
 					});
@@ -3842,8 +3842,7 @@ sap.ui
 				return false;
 			};
 
-			// convenience helper for synchronous ajax calls
-			function syncFetch(options) {
+			function syncAjax(options) {
 				var oResult;
 				Object.assign(options, {
 					async: false,
@@ -3857,6 +3856,15 @@ sap.ui
 				jQuery.ajax(options);
 				return oResult;
 			}
+
+			/**
+			 * Convenience helper for synchronous ajax calls.
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.core.util
+			 * @function
+			 */
+			MockServer._syncAjax = syncAjax;
 
 			// ================================
 			// SINON CONFIGURATON AND EXTENSION
@@ -3897,7 +3905,7 @@ sap.ui
 			 * @public
 			 */
 			window.sinon.FakeXMLHttpRequest.prototype.respondFile = function(iStatus, mHeaders, sFileUrl) {
-				var oResponse = syncFetch({
+				var oResponse = syncAjax({
 					url: sFileUrl,
 					dataType: "text"
 				});
