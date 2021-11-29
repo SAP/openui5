@@ -227,6 +227,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if all tabs are textOnly version.
+	 * @private
+	 * @returns {boolean} True if all tabs are textOnly version, otherwise false
+	 */
+	IconTabBarSelectList.prototype._checkTextOnly = function () {
+		return this.getItems().every(function (oItem) {
+			return oItem.isA('sap.m.IconTabSeparator') || !oItem.getIcon();
+		});
+	};
+
+	/**
 	 * Handles tap event.
 	 * @private
 	 */

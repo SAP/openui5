@@ -1816,12 +1816,21 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel:after {
 	content: "";
 	position: absolute;
-	bottom: 0;
+	bottom: 0.188rem;
 	left: 0.5rem;
 	right: 2.5rem;
 	padding-right: 1rem;
 	border-bottom: 0.188rem solid #d1e8ff;
-	border-radius: 0.125rem 0.125rem 0 0;
+	border-radius: 0.125rem;
+}
+
+.sapUiTheme-sap_fiori_3.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
+.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+	height: 2.75rem;
+}
+
+.sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
+	border: none;
 }
 
 /* SAP Quartz Light theme - end */

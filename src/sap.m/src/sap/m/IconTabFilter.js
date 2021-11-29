@@ -660,14 +660,14 @@ sap.ui.define([
 			return;
 		}
 
-		var bTextOnly = true,
-			bIconOnly = oSelectList._bIconOnly,
+		var bIconOnly = oSelectList._bIconOnly,
+			bTextOnlyItemsInSelectList = true,
 			oIconTabHeader = oSelectList._oIconTabHeader,
 			sIconColor = this.getIconColor(),
 			bEnabled = this.getEnabled();
 
 		if (oIconTabHeader) {
-			bTextOnly = oIconTabHeader._bTextOnly;
+			bTextOnlyItemsInSelectList = oSelectList._checkTextOnly();
 		}
 
 		oRM.openStart("li", this)
@@ -717,7 +717,7 @@ sap.ui.define([
 			aLabelledByIds.push(sItemId + "-text");
 		}
 
-		if (!bTextOnly && this.getIcon()) {
+		if (!bTextOnlyItemsInSelectList && this.getIcon()) {
 			aLabelledByIds.push(sItemId + "-icon");
 		}
 
@@ -732,7 +732,7 @@ sap.ui.define([
 			this._renderIconColorDescription(oRM);
 		}
 
-		if (!bTextOnly) {
+		if (!bTextOnlyItemsInSelectList) {
 			this._renderIcon(oRM, bIconOnly);
 		}
 
