@@ -585,21 +585,16 @@ sap.ui.define([
 			reference: mPropertyBag.reference,
 			changeInstance: true
 		});
-		var aSelectors = aCurrentVariantChanges.reduce(function(aCurrentSelectors, oChange) {
-			if (Utils.indexOfObject(aCurrentSelectors, oChange.getSelector()) === -1) {
-				aCurrentSelectors.push(oChange.getSelector());
-			}
-			return aCurrentSelectors;
-		}, []);
-		var aControls = [];
-		aSelectors.map(function(oSelector) {
+		var aControls = aCurrentVariantChanges.reduce(function(aCurrentControls, oChange) {
+			var oSelector = oChange.getSelector();
 			var oControl = JsControlTreeModifier.bySelector(oSelector, mPropertyBag.appComponent);
-			if (oControl) {
-				aControls.push(oControl);
+			if (oControl && Utils.indexOfObject(aCurrentControls, {selector: oControl}) === -1) {
+				aCurrentControls.push({selector: oControl});
 			}
-		});
+			return aCurrentControls;
+		}, []);
 
-		return mPropertyBag.flexController.waitForChangesToBeApplied(aControls);
+		return aControls.length ? mPropertyBag.flexController.waitForChangesToBeApplied(aControls) : Promise.resolve();
 	};
 
 	return VariantManagementState;
