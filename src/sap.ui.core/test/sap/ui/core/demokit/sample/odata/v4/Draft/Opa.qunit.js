@@ -70,11 +70,14 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkProductID("10");
 				Then.onTheObjectPage.checkIsActiveEntity(false);
 				Then.onTheObjectPage.checkName("Product 1");
+				Then.onTheObjectPage.checkPart(0, "1", "Part 1", "2.00");
 				Then.onTheListReport.checkProduct(0, "10", false, "Product 1");
 
 				When.onTheObjectPage.changeName("Test");
+				When.onTheObjectPage.changeQuantity(0, "123");
 
 				Then.onTheObjectPage.checkName("Test");
+				Then.onTheObjectPage.checkPart(0, "1", "Part 1", "123.00");
 				Then.onTheListReport.checkProduct(0, "10", false, "Test");
 
 				When.onTheObjectPage.pressSave();
@@ -82,6 +85,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkProductID("10");
 				Then.onTheObjectPage.checkIsActiveEntity(true);
 				Then.onTheObjectPage.checkName("Test");
+				Then.onTheObjectPage.checkPart(0, "1", "Part 1", "123.00");
 				Then.onTheListReport.checkProduct(0, "10", true, "Test");
 
 				// Cancel Without Edit

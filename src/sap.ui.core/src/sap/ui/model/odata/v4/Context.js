@@ -546,6 +546,8 @@ sap.ui.define([
 	 *   The unique number of this context's generation, or <code>0</code>
 	 *
 	 * @private
+	 * @see sap.ui.model.odata.v4.Context.createNewContext
+	 * @see #setNewGeneration
 	 */
 	Context.prototype.getGeneration = function (bOnlyLocal) {
 		if (this.iGeneration || bOnlyLocal) {
@@ -904,7 +906,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Replaces this context with the given other context. You probably want to delete this context
+	 * Replaces this context with the given other context "in situ", that is, at the index it
+	 * currently has in its list binding's collection. You probably want to delete this context
 	 * afterwards without requesting the new count from the server, see the
 	 * <code>bDoNotRequestCount</code> parameter of {@link #delete}.
 	 *
@@ -913,6 +916,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> this context's root binding is suspended,
 	 *     <li> this context is transient (see {@link #isTransient}),
+	 *     <li> this context is not in the collection (has no index, see {@link #getIndex}),
 	 *     <li> the given other context does not belong to the same list binding as this context, or
 	 *       is already in the collection (has an index, see {@link #getIndex}).
 	 *   </ul>
@@ -924,8 +928,8 @@ sap.ui.define([
 		var oElement;
 
 		this.oBinding.checkSuspended();
-		if (this.isTransient()) {
-			throw new Error("Cannot replace a transient context: " + this);
+		if (this.iIndex === undefined || this.isTransient()) {
+			throw new Error("Cannot replace " + this);
 		}
 		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined) {
 			throw new Error("Cannot replace with " + oOtherContext);
@@ -1356,6 +1360,18 @@ sap.ui.define([
 	 */
 	Context.prototype.resetKeepAlive = function () {
 		this.bKeepAlive = false;
+	};
+
+	/**
+	 * Sets a new unique number for this context's generation, just like
+	 * {@link sap.ui.model.odata.v4.Context.createNewContext} does for a new context.
+	 *
+	 * @private
+	 * @see #getGeneration
+	 */
+	Context.prototype.setNewGeneration = function () {
+		iGenerationCounter += 1;
+		this.iGeneration = iGenerationCounter;
 	};
 
 	/**

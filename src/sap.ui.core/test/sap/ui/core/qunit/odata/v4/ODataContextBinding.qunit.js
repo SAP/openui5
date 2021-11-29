@@ -1274,6 +1274,7 @@ sap.ui.define([
 				delete oContext.getBinding;
 				delete oContext.isTransient;
 			} else {
+				oContext.iIndex = 42;
 				this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 				this.mock(oParentBinding).expects("checkKeepAlive")
 					.withExactArgs(sinon.match.same(oContext));
@@ -1303,7 +1304,8 @@ sap.ui.define([
 	QUnit.test("execute: relative, bReplaceWithRVC, checkKeepAlive throws", function (assert) {
 		var oContext = {
 				getBinding : function () {},
-				getPath : function () { return "/Employees('42')"; }
+				getPath : function () { return "/Employees('42')"; },
+				iIndex : 42
 			},
 			oBinding = this.bindContext("schema.Operation(...)", oContext),
 			oError = new Error("This call intentionally failed"),
@@ -1327,10 +1329,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("execute: bReplaceWithRVC throws because of base context", function (assert) {
-		var oContext = {
-				getPath : function () { return "/Employees('42')"; }
-			},
+[false, true].forEach(function (bV4) {
+	var sTitle = "execute: bReplaceWithRVC throws because "
+			+ (bV4 ? "not in collection" : "of base context");
+
+	QUnit.test(sTitle, function (assert) {
+		var oContext = bV4
+				? Context.create(this.oModel, {/*oBinding*/}, "/EMPLOYEES('42')", undefined)
+				: this.oModel.createBindingContext("/EMPLOYEES('42')"),
 			oBinding = this.bindContext("schema.Operation(...)", oContext);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -1340,8 +1346,9 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oBinding.execute("groupId", false, null, true);
-		}, new Error("Cannot replace when parent context is not a V4 context"));
+		}, new Error("Cannot replace this parent context: /EMPLOYEES('42')"));
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("execute: bReplaceWithRVC throws because of absolute binding", function (assert) {
@@ -1850,10 +1857,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bSamePredicate) {
-	[false, true].forEach(function (bNavigationProperty) {
-		var sTitle = "_execute: bReplaceWithRVC, bSamePredicate=" + bSamePredicate
-				+ ", bNavigationProperty=" + bNavigationProperty;
+[false, true].forEach(function (bNavigationProperty) {
+	var sTitle = "_execute: bReplaceWithRVC, bNavigationProperty=" + bNavigationProperty;
 
 	QUnit.test(sTitle, function (assert) {
 		var oGroupLock = {
@@ -1866,6 +1871,9 @@ sap.ui.define([
 			oParentEntity = {},
 			sPath = bNavigationProperty ? "ToTwin" : "name.space.Operation",
 			oResponseEntity = {},
+			oResult = {
+				setNewGeneration : function () {}
+			},
 			oRootBinding = {
 				doReplaceWith : function () {}
 			},
@@ -1873,8 +1881,7 @@ sap.ui.define([
 			oBinding = this.bindContext(sPath + "(...)", oParentContext);
 
 		_Helper.setPrivateAnnotation(oParentEntity, "predicate", "('42')");
-		_Helper.setPrivateAnnotation(oResponseEntity, "predicate",
-			bSamePredicate ? "('42')" : "('77')");
+		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
 		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("/TEAMS/" + sPath + "/@$ui5.overload")
 			.returns(SyncPromise.resolve(Promise.resolve(
@@ -1893,26 +1900,24 @@ sap.ui.define([
 		this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
 			.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
 		this.mock(oParentContext).expects("getValue").withExactArgs().returns(oParentEntity);
-		this.mock(oParentContext).expects("patch").exactly(bSamePredicate ? 1 : 0)
-			.withExactArgs(sinon.match.same(oResponseEntity));
+		this.mock(oParentContext).expects("patch").never();
 		this.mock(oBinding).expects("hasReturnValueContext")
 			.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
 		this.mock(Context).expects("createNewContext").never();
-		this.mock(oRootBinding).expects("doReplaceWith").exactly(bSamePredicate ? 0 : 1)
+		this.mock(oRootBinding).expects("doReplaceWith")
 			.withExactArgs(sinon.match.same(oParentContext), sinon.match.same(oResponseEntity),
 				"('77')")
-			.returns("~result~");
+			.returns(oResult);
+		this.mock(oResult).expects("setNewGeneration").withExactArgs();
 
 		// code under test
 		return oBinding._execute(oGroupLock, "~mParameters~", "~bIgnoreETag~",
 			"~fnOnStrictHandlingFailed~", /*bReplaceWithRVC*/true)
 		.then(function (oResultingContext) {
-			assert.strictEqual(oResultingContext, bSamePredicate ? oParentContext : "~result~");
+			assert.strictEqual(oResultingContext, oResult);
 			assert.strictEqual(oBinding.oCache, null);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		});
-	});
-
 	});
 });
 

@@ -8316,6 +8316,23 @@ sap.ui.define([
 		assert.notStrictEqual(oOldContext.fnOnBeforeDestroy.args[1][0], oNewContext1);
 		assert.strictEqual(oOldContext.fnOnBeforeDestroy.args[1][0], oNewContext2);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("doReplaceWith: same instance", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oOldContext = {
+				iIndex : 42,
+				isKeepAlive : function () {} // result does not matter
+			};
+
+		oBinding.mPreviousContextsByPath["/EMPLOYEES('1')"] = oOldContext;
+		this.mock(Context).expects("create").never();
+		this.mock(oBinding.oCache).expects("doReplaceWith").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.strictEqual(oBinding.doReplaceWith(oOldContext, {}, "('1')"), oOldContext);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

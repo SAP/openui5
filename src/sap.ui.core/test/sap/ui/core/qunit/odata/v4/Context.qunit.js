@@ -90,7 +90,12 @@ sap.ui.define([
 		// code under test
 		assert.ok(oContext1.getGeneration() > 0);
 		assert.strictEqual(oContext1.getGeneration(), oContext1.getGeneration());
-		assert.ok(oContext2.getGeneration(), oContext1.getGeneration());
+		assert.ok(oContext2.getGeneration() > oContext1.getGeneration());
+
+		// code under test
+		oContext1.setNewGeneration();
+
+		assert.ok(oContext1.getGeneration() > oContext2.getGeneration());
 	});
 
 	//*********************************************************************************************
@@ -1277,7 +1282,7 @@ sap.ui.define([
 		var oModel = {
 				getReporter : function () {}
 			},
-			oContext =  Context.create(oModel, {/*oBinding*/}, "/EMPLOYEES('42')"),
+			oContext = Context.create(oModel, {/*oBinding*/}, "/EMPLOYEES('42')"),
 			oError = new Error(),
 			oPromise = Promise.reject(oError),
 			fnReporter = sinon.spy();
@@ -1300,7 +1305,7 @@ sap.ui.define([
 				checkSuspended : function () {},
 				doReplaceWith : function (/*oOldContext, oElement, sPredicate*/) {}
 			},
-			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 0),
 			oOtherContext = {
 				oBinding : oBinding,
 				iIndex : undefined,
@@ -1319,32 +1324,42 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("replaceWith: transient context", function (assert) {
+[false, true].forEach(function (bTransient) {
+	var sTitle = "replaceWith: "
+			+ (bTransient ? "transient context" : "not in the collection");
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
-				SyncPromise.resolve(Promise.resolve()));
+			oContext = bTransient
+				? Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
+					SyncPromise.resolve(Promise.resolve()))
+				: Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('1')", undefined);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		// #toString calls #isTransient, mock neither of them
 
 		assert.throws(function () {
 			// code under test
-			oContext.replaceWith({/*oOtherContext*/});
-		}, new Error("Cannot replace a transient context: /EMPLOYEES($uid=1)[0|transient]"));
+			oContext.replaceWith();
+		}, new Error("Cannot replace " + oContext));
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("replaceWith: not the same list binding", function (assert) {
+[false, true].forEach(function (bWrongBinding) {
+	var sTitle = "replaceWith: "
+			+ (bWrongBinding ? "not the same list binding" : "already in the collection");
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
-			oOtherContext = {
-				oBinding : {/*not oBinding*/},
-				toString : function () { return "/TEAMS('1')"; }
-			};
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 1),
+			oOtherContext = bWrongBinding
+				? Context.create({/*oModel*/}, {/*not oBinding*/}, "/TEAMS('1')", 0)
+				: Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('1')", /*not undefined*/0);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
@@ -1352,29 +1367,9 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oContext.replaceWith(oOtherContext);
-		}, new Error("Cannot replace with /TEAMS('1')"));
+		}, new Error("Cannot replace with " + oOtherContext));
 	});
-
-	//*********************************************************************************************
-	QUnit.test("replaceWith: already in the collection", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {}
-			},
-			oContext =  Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')"),
-			oOtherContext = {
-				oBinding : oBinding,
-				iIndex : 0, // not undefined
-				toString : function () { return "/TEAMS('1')[0]"; }
-			};
-
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-
-		assert.throws(function () {
-			// code under test
-			oContext.replaceWith(oOtherContext);
-		}, new Error("Cannot replace with /TEAMS('1')[0]"));
-	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestRefresh, list binding", function (assert) {
@@ -1440,7 +1435,7 @@ sap.ui.define([
 					withUnresolvedBindings : function () {}
 				},
 				oModelMock = this.mock(oModel),
-				oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
+				oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 				oContextMock = this.mock(oContext),
 				oPromise,
 				bRefreshed = false;
@@ -1491,7 +1486,7 @@ sap.ui.define([
 			oModel = {
 				checkGroupId : function () {}
 			},
-			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
@@ -1529,7 +1524,7 @@ sap.ui.define([
 			oModel = {
 				checkGroupId : function () {}
 			},
-			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();

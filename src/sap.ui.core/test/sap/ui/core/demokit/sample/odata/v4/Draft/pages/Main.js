@@ -53,6 +53,9 @@ sap.ui.define([
 				changeName : function (sName) {
 					Helper.changeInputValue(this, sViewName, "Product::name", sName);
 				},
+				changeQuantity : function (iRow, sQuantity) {
+					Helper.changeInputValue(this, sViewName, /_Parts::quantity/, sQuantity, iRow);
+				},
 				pressCancel : function () {
 					Helper.pressButton(this, sViewName, "cancel");
 				},
@@ -70,6 +73,23 @@ sap.ui.define([
 				},
 				checkName : function (sName) {
 					Helper.checkInputValue(this, sViewName, "Product::name", sName);
+				},
+				checkPart : function (iRow, sPartID, sDescription, sQuantity) {
+					Helper.waitForSortedByID(this, {
+						id : /_Parts::ID|_Parts::description|_Parts::quantity/,
+						matchers : function (oControl) {
+							return oControl.getBindingContext().getIndex() === iRow;
+						},
+						success : function (aControls) {
+							Opa5.assert.strictEqual(aControls[0].getText(), sPartID,
+								"Part ID is " + sPartID);
+							Opa5.assert.strictEqual(aControls[1].getBinding("text").getValue(),
+								sDescription, "Description is " + sDescription);
+							Opa5.assert.strictEqual(aControls[2].getValue(), sQuantity,
+								"Quantity is " + sQuantity);
+						},
+						viewName : sViewName
+					});
 				},
 				checkProductID : function (sProductID) {
 					Helper.checkInputValue(this, sViewName, "Product::ID", sProductID);
