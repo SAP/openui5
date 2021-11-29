@@ -39,30 +39,7 @@
 				delegate="{name: 'sap/ui/v4demo/delegate/FB0-FH1-1-multicombo-ValueHelp.delegate', payload: {}}">
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
-							<Table id="mTable1-1-multicombo" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" width="20rem">
-								<columns>
-									<Column width="5rem">
-										<header>
-											<Text text="ID" />
-										</header>
-									</Column>
-									<Column>
-										<header>
-											<Text text="Name" />
-										</header>
-									</Column>
-								</columns>
-								<items>
-									<ColumnListItem type="Active">
-										<cells>
-											<Text text="{ID}" />
-											<Text text="{name}" />
-										</cells>
-									</ColumnListItem>
-								</items>
-							</Table>
-						</mdcvc:MTable>
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true"/>
 					</mdcv:Popover>
 				</mdc:typeahead>
 			</mdc:ValueHelp>

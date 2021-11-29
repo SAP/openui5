@@ -51,7 +51,7 @@
 												<mdc:typeahead>
 													<mdcv:Popover id="FH1-Popover" title="Author ID">
 														<mdcvc:MTable id="FH1-Popover-MTable" keyPath="ID" descriptionPath="name" filterFields="$search">
-															<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem">
+															<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 																<columns>
 																	<Column width="5rem">
 																		<header>
@@ -108,7 +108,7 @@
 																	</vhfb:filterItems>
 																</vhfb:FilterBar>
 															</mdcvc:filterBar>
-															<Table id="mTable2" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+															<Table id="mTable2" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 																<columns>
 																	<Column width="5rem">
 																		<header>
@@ -197,7 +197,7 @@
 										<mdc:typeahead>
 											<mdcv:Popover title="Genre">
 												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-													<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: ["classification_code"]}}' width="30rem">
+													<Table id="mTable1_genre" items='{path : "/Genres", length: 10, parameters: {$select: ["classification_code"]}}' width="30rem" mode="SingleSelectMaster">
 														<columns>
 															<Column width="10rem">
 																<header>
@@ -231,7 +231,7 @@
 										<mdc:dialog>
 											<mdcv:Dialog title="Genre">
 												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-													<Table id="mTable2_genre" items='{path : "/Genres", parameters: {$select: ["classification_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+													<Table id="mTable2_genre" items='{path : "/Genres", parameters: {$select: ["classification_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 														<columns>
 															<Column width="10rem">
 																<header>
@@ -276,7 +276,7 @@
 										<mdc:typeahead>
 											<mdcv:Popover title="Sub Genre">
 												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-													<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem">
+													<Table id="mTable1_subgenre" items='{path : "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="SingleSelectMaster">
 														<columns>
 															<Column width="10rem">
 																<header>
@@ -316,7 +316,7 @@
 										<mdc:dialog>
 											<mdcv:Dialog title="Sub Genre">
 												<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-													<Table id="mTable2_subgenre" items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+													<Table id="mTable2_subgenre" items='{path : "/SubGenres", parameters: {$select: ["classification_code", "genre_code"]}}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 														<columns>
 															<Column width="10rem">
 																<header>

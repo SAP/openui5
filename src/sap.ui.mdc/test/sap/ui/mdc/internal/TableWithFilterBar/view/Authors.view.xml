@@ -117,7 +117,7 @@
 						<mdc:typeahead>
 							<mdcv:Popover >
 								<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
-									<Table items="{path: '/Countries'}" width="30rem">
+									<Table items="{path: '/Countries'}" width="30rem" mode="MultiSelect">
 										<columns>
 											<Column>
 												<Label text="Country"></Label>
@@ -150,7 +150,7 @@
 						<mdc:typeahead>
 							<mdcv:Popover>
 								<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
-									<Table items="{path: '/Regions', length: 10, parameters: {$select: 'country_code'}}" width="30rem">
+									<Table items="{path: '/Regions', length: 10, parameters: {$select: 'country_code'}}" width="30rem" mode="MultiSelect">
 										<columns>
 											<Column>
 												<Label text="Region"></Label>
@@ -183,7 +183,7 @@
 										</vhfb:FilterBar>
 									</mdcvc:filterBar>
 
-									<Table items="{path: '/Regions', parameters: {$select: 'country_code'}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+									<Table items="{path: '/Regions', parameters: {$select: 'country_code'}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 										<columns>
 											<Column>
 												<Label text="Region"></Label>
@@ -221,7 +221,7 @@
 						<mdc:typeahead>
 							<mdcv:Popover>
 								<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
-									<Table items="{path: '/Regions', length: 10, parameters: {$select: 'country_code'}}" width="30rem">
+									<Table items="{path: '/Regions', length: 10, parameters: {$select: 'country_code'}}" width="30rem" mode="MultiSelect">
 										<columns>
 											<Column>
 												<Label text="Region"/>
@@ -260,7 +260,7 @@
 						<mdc:typeahead>
 							<mdcv:Popover>
 							<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
-								<Table items="{path: '/Cities', length: 10, parameters: {$select: ['country_code', 'region_code']}}" width="30rem">
+								<Table items="{path: '/Cities', length: 10, parameters: {$select: ['country_code', 'region_code']}}" width="30rem" mode="MultiSelect">
 									<columns>
 										<Column>
 											<Label text="City"></Label>
@@ -297,7 +297,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<Table items="{path: '/Cities', parameters: {$select: ['country_code', 'region_code']}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+								<Table items="{path: '/Cities', parameters: {$select: ['country_code', 'region_code']}}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 									<columns>
 										<Column>
 											<Label text="City"></Label>

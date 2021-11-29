@@ -281,6 +281,9 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * Table to be used in value help
+				 *
+				 * <b>Note:</b> Set the right selection mode (multiple selection or single selection) as it cannot be determined automatically
+				 * for every case. (Maybe for multi-value <code>FilterField</code> controls only single selection from table might be wanted.)
 				 */
 				table: {
 					type: "sap.ui.mdc.Table",
@@ -491,10 +494,6 @@ sap.ui.define([
 	}
 
 	function _adjustTable () {
-		if (this._oTable) {
-			this._oTable.setSelectionMode(this._isSingleSelect() ? MDCSelectionMode.Single : MDCSelectionMode.Multi);
-		}
-
 		if (this._oTableHelper) {
 			this._oTableHelper.adjustTable.call(this);
 		}
@@ -568,6 +567,21 @@ sap.ui.define([
 		return this._oTableHelper && this._oTableHelper.getListBindingInfo();
 	};
 
+	MDCTable.prototype.onShow = function () {
+		if (this._oTable) {
+			// check if selection mode is fine
+			var sSelectionMode = FilterableListContent.prototype._isSingleSelect.apply(this) ? MDCSelectionMode.Single : MDCSelectionMode.Multi;
+			if (this._oTable.getSelectionMode() === MDCSelectionMode.None) { // only set automatically if not provided from outside (and do it only once)
+				this._oTable.setSelectionMode(sSelectionMode);
+			}
+			if (this._oTable.getSelectionMode() !== sSelectionMode) {
+				throw new Error("Table selectionMode needs to be " + sSelectionMode);
+			}
+		}
+
+		FilterableListContent.prototype.onShow.apply(this, arguments);
+	};
+
 	MDCTable.prototype.applyFilters = function(sSearch) { // TODO the arguments are not passed as expected.
 
 		var oTable = this.getTable();
@@ -636,6 +650,21 @@ sap.ui.define([
 	MDCTable.prototype.setParent = function(oParent) {
 		FilterableListContent.prototype.setParent.apply(this, arguments);
 		_adjustTable.call(this);
+	};
+
+	MDCTable.prototype._isSingleSelect = function() {
+
+		// use selection mode of table if set
+		if (this._oTable) {
+			if (this._oTable.getSelectionMode() === MDCSelectionMode.Multi) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return FilterableListContent.prototype._isSingleSelect.apply(this, arguments);
+		}
+
 	};
 
 	return MDCTable;

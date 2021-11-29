@@ -6,32 +6,33 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
-	"sap/m/Column",
-	"sap/m/ColumnListItem",
-	"sap/m/Table",
-	"sap/m/Text",
-	"sap/base/util/UriParameters",
-	"sap/m/library",
-	"sap/ui/mdc/Field",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Table",
-	"sap/ui/mdc/table/Column"
-], function(
+	"sap/ui/mdc/table/Column",
+	"sap/m/library",
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Text",
+	"sap/base/util/UriParameters"
+]
+, function(
 	ODataV4ValueHelpDelegate,
 	MTable,
 	MDCTable,
-	Column,
-	ColumnListItem,
-	Table,
-	Text,
-	UriParameters,
-	mLibrary,
-	Field,
 	FilterBar,
 	FilterField,
+	Field,
 	mdcTable,
-	mdcColumn
+	mdcColumn,
+	mLibrary,
+	Table,
+	Column,
+	ColumnListItem,
+	Text,
+	UriParameters
 ) {
 	"use strict";
 
@@ -59,7 +60,7 @@ sap.ui.define([
 
 				oCurrentTable = new Table("mTable-city1", {
 					width: "30rem",
-					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectMaster,
 					columns: [
 						new Column({header: new Text({text : "City"})}),
 						new Column({header: new Text({text : "Name"})})
@@ -143,7 +144,8 @@ sap.ui.define([
 					showRowCount: true,
 					width: "100%",
 					height: "100%",
-//					type: new ResponsiveTableType(),
+					selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
+					//					type: new ResponsiveTableType(),
 					delegate: {
 						name: "sap/ui/v4demo/delegate/ResponsiveTable.delegate",
 						payload: {

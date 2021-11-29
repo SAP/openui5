@@ -7,37 +7,37 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
-	"sap/m/Column",
-	"sap/m/ColumnListItem",
-	"sap/m/Table",
-	"sap/m/Text",
-	"sap/base/util/UriParameters",
-	"sap/ui/core/Item",
-	"sap/ui/mdc/Field",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/Field",
+	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/m/library",
-	"sap/ui/mdc/table/GridTableType"
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Text",
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Item"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
 	MDCTable,
 	Conditions,
-	Column,
-	ColumnListItem,
-	Table,
-	Text,
-	UriParameters,
-	Item,
-	Field,
 	FilterBar,
 	FilterField,
+	Field,
+	GridTableType,
 	mdcTable,
 	mdcColumn,
 	mLibrary,
-	GridTableType
+	Table,
+	Column,
+	ColumnListItem,
+	Text,
+	UriParameters,
+	Item
 ) {
 	"use strict";
 
@@ -66,7 +66,7 @@ sap.ui.define([
 			if (!oCurrentContent.getTable()) {
 				oCurrentContent.setTable(new Table(oCurrentContent.getId() + "--popover-mTable", {
 					width: "30rem",
-					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectMaster,
 					columns: [
 						new Column({header: new Text({text : "ID"})}),
 						new Column({header: new Text({text : "Name"})})
@@ -161,6 +161,7 @@ sap.ui.define([
 						showRowCount: true,
 						width: "100%",
 						height: "100%",
+						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
@@ -217,6 +218,7 @@ sap.ui.define([
 						showRowCount: true,
 						width: "100%",
 						height: "100%",
+						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",

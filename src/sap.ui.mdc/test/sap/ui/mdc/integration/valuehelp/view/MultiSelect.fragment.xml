@@ -28,7 +28,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
-							<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem">
+							<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -77,7 +77,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<Table id="mTable2" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+							<Table id="mTable2" items='{path : "/Authors"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -117,7 +117,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
-							<Table id="mTable1-1-multicombo" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" width="20rem">
+							<Table id="mTable1-1-multicombo" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" width="20rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -160,7 +160,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
-							<Table items='{path : "/Authors", length: 10}' width="30rem">
+							<Table items='{path : "/Authors", length: 10}' width="30rem" mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -247,7 +247,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover title="Test2">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
-							<Table items='{path : "/Authors", length: 10}' width="30rem">
+							<Table items='{path : "/Authors", length: 10}' width="30rem" mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -387,7 +387,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-Country-Popover" title="Country">
 						<mdcvc:MTable id="FB0-FH-Country-Popover-MTable" keyPath="code" descriptionPath="descr" filterFields="$search" title="Country" useAsValueHelp="false">
-							<Table id="mTable-country1" items="{path: '/Countries', length: 10}" width="30rem">
+							<Table id="mTable-country1" items="{path: '/Countries', length: 10}" width="30rem" mode="MultiSelect">
 								<columns>
 									<Column>
 										<Label text="Country"/>
@@ -409,7 +409,7 @@
 				<mdc:dialog>
 					<mdcv:Dialog id="FB0-FH-Country-Dialog" title="Country">
 						<mdcvc:MTable id="FB0-FH-Country-Dialog-MTable" keyPath="code" descriptionPath="descr" filterFields="$search" title="Country">
-							<Table id="mTable-country2" items="{path: '/Countries'}" width="100%" growing="true" growingScrollToLoad="true"	growingThreshold="20">
+							<Table id="mTable-country2" items="{path: '/Countries'}" width="100%" growing="true" growingScrollToLoad="true"	growingThreshold="20" mode="MultiSelect">
 								<columns>
 									<Column>
 										<Label text="Country"/>
@@ -442,7 +442,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-Region-Popover" title="Region">
 						<mdcvc:MTable  id="FB0-FH-Region-Popover-MTable" keyPath="code" descriptionPath="text" filterFields="$search" title="Region" useAsValueHelp="false">
-							<Table id="mTable-region1" items="{path: '/Regions', length: 10}" width="30rem">
+							<Table id="mTable-region1" items="{path: '/Regions', length: 10}" width="30rem" mode="MultiSelect">
 								<columns>
 									<Column>
 										<Label text="Region"/>
@@ -484,7 +484,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<Table id="mTable-region2" items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+							<Table id="mTable-region2" items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
 								<columns>
 									<Column>
 										<Label text="Region"/>
@@ -523,7 +523,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-City-Popover" title="City">
 						<mdcvc:MTable  id="FB0-FH-City-Popover-MTable" keyPath="city" descriptionPath="text" filterFields="$search" title="City" useAsValueHelp="false">
-							<Table id="mTable-City1" items="{path: '/Cities', length: 10, parameters: {$select:'country_code,region_code'}}" width="30rem">
+							<Table id="mTable-City1" items="{path: '/Cities', length: 10, parameters: {$select:'country_code,region_code'}}" width="30rem" mode="MultiSelect">
 								<columns>
 									<Column>
 										<Label text="City"/>
@@ -602,7 +602,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover id="FH_Books1-Pop" title="Books">
 						<mdcvc:MTable id="FH_Books1-Typeahead" keyPath="ID" descriptionPath="title" filterFields="$search">
-							<Table id="FH_Books1-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem">
+							<Table id="FH_Books1-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -683,7 +683,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<Table id="FH_Books1-MTable-table" items='{path : "/Books", length: 10}'>
+							<Table id="FH_Books1-MTable-table" items='{path : "/Books", length: 10}' mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -721,7 +721,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover id="FH_Books2-Pop" title="Books">
 						<mdcvc:MTable id="FH_Books2-Typeahead" keyPath="ID" descriptionPath="title" filterFields="*title,descr*">
-							<Table id="FH_Books2-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem">
+							<Table id="FH_Books2-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -802,7 +802,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<Table id="FH_Books2-MTable-table" items='{path : "/Books", length: 10}'>
+							<Table id="FH_Books2-MTable-table" items='{path : "/Books", length: 10}' mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -840,7 +840,7 @@
 				<mdc:typeahead>
 					<mdcv:Popover id="FH_Books3-Pop" title="Books">
 						<mdcvc:MTable id="FH_Books3-Typeahead" keyPath="ID" descriptionPath="title">
-							<Table id="FH_Books3-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem">
+							<Table id="FH_Books3-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -921,7 +921,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<Table id="FH_Books3-MTable-table" items='{path : "/Books", length: 10}'>
+							<Table id="FH_Books3-MTable-table" items='{path : "/Books", length: 10}' mode="MultiSelect">
 								<columns>
 									<Column width="5rem">
 										<header>

@@ -5,25 +5,25 @@
 sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
+	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/FilterField",
+	"sap/m/library",
+	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"sap/m/Table",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
-	'sap/m/library',
-	"sap/ui/mdc/filterbar/vh/FilterBar",
-	"sap/ui/mdc/FilterField"
+	"sap/base/util/UriParameters"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
+	FilterBar,
+	FilterField,
+	mLibrary,
+	Table,
 	Column,
 	ColumnListItem,
-	Table,
 	Text,
-	UriParameters,
-	mLibrary,
-	FilterBar,
-	FilterField
+	UriParameters
 ) {
 	"use strict";
 
@@ -51,7 +51,7 @@ sap.ui.define([
 
 				oCurrentTable = new Table("mTable-region1", {
 					width: "30rem",
-					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectMaster,
 					columns: [
 						new Column({header: new Text({text : "Region"})}),
 						new Column({header: new Text({text : "Name"})}),

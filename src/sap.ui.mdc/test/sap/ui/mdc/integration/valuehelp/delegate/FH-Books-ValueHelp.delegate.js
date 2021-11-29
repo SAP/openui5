@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./ValueHelp.delegate",
+	"sap/ui/mdc/library",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
@@ -11,14 +12,15 @@ sap.ui.define([
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
-	"sap/base/util/UriParameters",
 	"sap/m/library",
+	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"sap/m/Table",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/base/util/UriParameters"
 ], function(
 	ODataV4ValueHelpDelegate,
+	library,
 	MTable,
 	MDCTable,
 	Conditions,
@@ -26,15 +28,16 @@ sap.ui.define([
 	FilterField,
 	mdcTable,
 	mdcColumn,
-	UriParameters,
 	mLibrary,
+	Table,
 	Column,
 	ColumnListItem,
-	Table,
-	Text
+	Text,
+	UriParameters
 ) {
 	"use strict";
 
+	var SelectionMode = library.SelectionMode;
 	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
 	ValueHelpDelegate.retrieveContent = function (oPayload, oContainer) {
@@ -56,7 +59,7 @@ sap.ui.define([
 			if (!oCurrentTable) {
 				oCurrentTable = new Table(sId + "-Pop-mTable", {
 					width: "30rem",
-					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectMaster,
 					columns: [
 						new Column({header: new Text({text : "ID"})}),
 						new Column({header: new Text({text : "Title"})})
@@ -124,6 +127,7 @@ sap.ui.define([
 						showRowCount: true,
 						width: "100%",
 						height: "100%",
+						selectionMode: bMultiSelect ? SelectionMode.Multi : SelectionMode.Single,
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
 							payload: {
@@ -131,7 +135,7 @@ sap.ui.define([
 							}
 						},
 						columns: [
-								  new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Text({text: "{ID}"})}),
+								  new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Text({text: "{ID}"}), width: "5rem"}),
 								  new mdcColumn({importance: "High", header: "Title", dataProperty: "title", template: new Text({text:  "{title}"})}),
 								  new mdcColumn({importance: "Low", header: "Description", dataProperty: "descr", template: new Text({text: "{descr}"})}),
 								  new mdcColumn({importance: "Low", header: "Published", dataProperty: "published", template: new Text({text: "{published}"})})
@@ -179,10 +183,11 @@ sap.ui.define([
 						]
 					}),
 					table: new Table(sId + "-MTable-table", {
+						mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 						columns: [
-							new Column({header: new Text({text : "ID"})}),
-							new Column({header: new Text({text : "Title"})}),
-							new Column({header: new Text({text : "Description"})})
+							new Column({header: new Text({text: "ID"}), width: "5rem"}),
+							new Column({header: new Text({text: "Title"})}),
+							new Column({header: new Text({text: "Description"})})
 						],
 						items: {
 							path : "/Books",

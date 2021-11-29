@@ -71,6 +71,9 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * Table to be used in value help
+				 *
+				 * <b>Note:</b> Set the right selection mode (multiple selection or single selection) as it cannot be determined automatically
+				 * for every case. (In type-ahead also for multi-value <code>FilterField</code> controls only single selection from table might be wanted.)
 				 */
 				table: {
 					type: "sap.m.Table",
@@ -112,20 +115,13 @@ sap.ui.define([
 
 	function _updateSelection () {
 		if (this._oTable) {
-//			var aSelectedIds = this.getConditions().filter(function (oCondition) {
-//				return oCondition.operator === "EQ";
-//			}).map(function (oCondition) {
-//				return oCondition.values[0];
-//			});
 			var aItems = this._oTable.getItems();
 			var aConditions = this.getConditions();
+			var bHideSelection = this._isSingleSelect() && !FilterableListContent.prototype._isSingleSelect.apply(this); // if table is in single selection but Fild allows multiple values, don'tr select items
 
 			for (var iId in aItems) {
 				var oItem = aItems[iId];
-//				var oContext = oItem && oItem.getBindingContext();
-//				var oContextValue = oContext && oContext.getObject();
-//				var bSelected = oContextValue && aSelectedIds.indexOf(oContextValue[this.getKeyPath()]) >= 0;
-				var bSelected = this._isItemSelected(oItem, aConditions);
+				var bSelected = bHideSelection ? false : this._isItemSelected(oItem, aConditions);
 				oItem.setSelected(bSelected);
 			}
 		}
@@ -260,6 +256,17 @@ sap.ui.define([
 		if (oTable) {
 			if (!oTable.hasStyleClass("sapMComboBoxList")) { // TODO: only in typeahead case?
 				oTable.addStyleClass("sapMComboBoxList"); // to allow focus outline in navigation
+			}
+			// check if selection mode is fine
+			var sSelectionMode = this.isTypeahead() ? ListMode.SingleSelectMaster : ListMode.SingleSelectLeft;
+			if (!FilterableListContent.prototype._isSingleSelect.apply(this) && oTable.getMode() !== sSelectionMode) { // if in multi-select mode only single-selection on table is allowed this is also OK
+				sSelectionMode = ListMode.MultiSelect;
+			}
+			if (oTable.getMode() === ListMode.None) { // only set automatically if not provided from outside (and do it only once)
+				oTable.setMode(sSelectionMode);
+			}
+			if (oTable.getMode() !== sSelectionMode) {
+				throw new Error("Table selection mode needs to be " + sSelectionMode);
 			}
 		}
 
@@ -789,18 +796,6 @@ sap.ui.define([
 				// make headers sticky
 				this._oTable.setSticky([Sticky.ColumnHeaders]);
 			}
-
-			if (this.isTypeahead()) {
-				if (this._isSingleSelect()) {
-					this._oTable.setMode(ListMode.SingleSelectMaster);
-				} else {
-					this._oTable.setMode(ListMode.MultiSelect);
-				}
-			} else if (this._isSingleSelect()) {
-					this._oTable.setMode(ListMode.SingleSelectLeft);
-			} else {
-				this._oTable.setMode(ListMode.MultiSelect);
-			}
 		}
 	}
 	MTable.prototype.setParent = function(oParent) {
@@ -919,6 +914,22 @@ sap.ui.define([
 
 	MTable.prototype.shouldOpenOnNavigate = function() {
 		return true;
+	};
+
+	MTable.prototype._isSingleSelect = function() {
+
+		// use selection mode of table if set
+		var oTable = this._getTable();
+		if (oTable) {
+			if (oTable.getMode() === ListMode.MultiSelect) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return FilterableListContent.prototype._isSingleSelect.apply(this, arguments);
+		}
+
 	};
 
 	MTable.prototype.exit = function () {
