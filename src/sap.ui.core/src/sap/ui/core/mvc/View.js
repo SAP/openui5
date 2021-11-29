@@ -923,6 +923,7 @@ sap.ui.define([
 	 * <code>bSyncSupport</code> flag to <code>true</code>.
 	 *
 	 * @protected
+	 * @since 1.30
 	 * @static
 	 * @param {string} sType
 	 * 		the type of content to be processed
