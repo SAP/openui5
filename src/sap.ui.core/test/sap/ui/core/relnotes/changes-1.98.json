@@ -3,6 +3,27 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "494b714998db178a54e327f6acc0a385c21289c2",
+        "type": "FIX",
+        "text": " sap/ui/util/XMLHelper: fix JSDoc and improve implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180388370"
+          }
+        ]
+      },
+      {
+        "id": "673ea04afd8a6ff14824d7e2e2dbc9027d2c668b",
+        "type": "FIX",
+        "text": " MockServer: improve documentation for the 'requests' property"
+      },
+      {
+        "id": "60e10eb6b0cd6078d82b98562a5a374eb7b71b74",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#createEntry: consider refreshAfterChange also when retrying the creation"
+      },
+      {
         "id": "ce230f4f40a0e105fac4dfd03ee4e736e4ac5550",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataListBinding#requestFilterForMessages and message target w/o predicate"

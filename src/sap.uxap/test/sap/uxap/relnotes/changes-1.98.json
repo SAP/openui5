@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "7d5937065ca58e8454ae8cd429366077c9b936f3",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed lost of hierarchy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170316918"
+          }
+        ]
+      },
+      {
         "id": "f68776618c2b4e182adc2338b141bfdb7fe1e301",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix tab-stops under Anchor bar",

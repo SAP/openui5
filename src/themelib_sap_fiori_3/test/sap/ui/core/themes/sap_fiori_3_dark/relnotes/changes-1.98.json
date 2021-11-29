@@ -3,6 +3,17 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "66dbd6a164458177f812a352e37436300abe10de",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Icons are now correctly centered in macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170317303"
+          }
+        ]
+      },
+      {
         "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
         "type": "FIX",
         "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",

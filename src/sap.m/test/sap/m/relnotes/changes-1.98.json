@@ -3,6 +3,88 @@
     "date": "November 2021",
     "notes": [
       {
+        "id": "7d5937065ca58e8454ae8cd429366077c9b936f3",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed lost of hierarchy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170316918"
+          }
+        ]
+      },
+      {
+        "id": "068da119ccfd0de65abcd188209b193f78086a06",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: focus aligned to visual; specifications",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170330176"
+          }
+        ]
+      },
+      {
+        "id": "ae4d9a40de92abe80c7358e2b5ef3bdd18756bad",
+        "type": "FIX",
+        "text": " sap.m.Label: Asterisk for property required is now announced in List",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170305444"
+          }
+        ]
+      },
+      {
+        "id": "1550662d00c00c475c8e0d45141f6c783fef305f",
+        "type": "FIX",
+        "text": " sap.m.Menu: No exception on close without open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180387537"
+          }
+        ]
+      },
+      {
+        "id": "b2217e35438c6fee0d989b087221e2b0aac64a70",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Translations corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170330795"
+          }
+        ]
+      },
+      {
+        "id": "4c01c1353a3dba8f2b1569bcad9b968e08635f1b",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: can fast-forward to current time"
+      },
+      {
+        "id": "f017bc1ab25f3aa8c252f2140639ca623f0376c5",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: scroll arrows work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170308086"
+          }
+        ]
+      },
+      {
+        "id": "66dbd6a164458177f812a352e37436300abe10de",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Icons are now correctly centered in macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170317303"
+          }
+        ]
+      },
+      {
         "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
         "type": "FIX",
         "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",
