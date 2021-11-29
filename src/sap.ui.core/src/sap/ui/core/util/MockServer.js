@@ -6,17 +6,15 @@
 sap.ui
 	.define(
 		[
-			'jquery.sap.global',
-			'sap/ui/base/ManagedObject',
-			'sap/ui/thirdparty/sinon',
 			'sap/base/Log',
 			'sap/base/util/isEmptyObject',
+			'sap/ui/base/ManagedObject',
 			'sap/ui/core/util/MockServerAnnotationsHandler',
 			'sap/ui/core/util/DraftEnabledMockServer',
-			'jquery.sap.xml',
-			'jquery.sap.sjax'
+			'sap/ui/thirdparty/jquery',
+			'sap/ui/thirdparty/sinon'
 		],
-		function(jQuery, ManagedObject, sinon, Log, isEmptyObject, MockServerAnnotationsHandler, DraftEnabledMockServer/*, jQuerySapXml, jQuerySapSjax*/) {
+		function(Log, isEmptyObject, ManagedObject, MockServerAnnotationsHandler, DraftEnabledMockServer, jQuery, sinon) {
 			"use strict";
 
 			/**
@@ -1198,7 +1196,7 @@ sap.ui
 
 			/**
 			 * Loads the service metadata for the given url
-			 * @param {string} sMetadataUrl url to the service metadata document
+			 * @param {string} sMetadata url to the service metadata document or content of the metadata document
 			 * @return {XMLDocument} the xml document object
 			 * @private
 			 */
@@ -1209,7 +1207,7 @@ sap.ui
 				// "<" as first character is a strong indicator for an XML-containing string. Everything else: URL...
 				if (sMetadata.substring(0,1) !== "<") {
 					// load the metadata as string to avoid usage of serializer
-					sMetadata = jQuery.sap.sjax({
+					sMetadata = syncFetch({
 						url: sMetadata,
 						dataType: "text"
 					}).data;
@@ -1441,7 +1439,7 @@ sap.ui
 					mData = {};
 				this._oMockdata = {};
 				var fnLoadMockData = function(sUrl, oEntitySet) {
-					var oResponse = jQuery.sap.sjax({
+					var oResponse = syncFetch({
 						url: sUrl,
 						dataType: "json"
 					});
@@ -1471,7 +1469,7 @@ sap.ui
 
 				// load all the mock data in one single file
 				if (sBaseUrl.endsWith(".json")) {
-					var oResponse = jQuery.sap.sjax({
+					var oResponse = syncFetch({
 						url: sBaseUrl,
 						dataType: "json"
 					});
@@ -3844,6 +3842,22 @@ sap.ui
 				return false;
 			};
 
+			// convenience helper for synchronous ajax calls
+			function syncFetch(options) {
+				var oResult;
+				Object.assign(options, {
+					async: false,
+					success : function(data, textStatus, xhr) {
+						oResult = { success : true, data : data, status : textStatus, statusCode : xhr && xhr.status };
+					},
+					error : function(xhr, textStatus, error) {
+						oResult = { success : false, data : undefined, status : textStatus, error : error, statusCode : xhr.status, errorResponse :  xhr.responseText};
+					}
+				});
+				jQuery.ajax(options);
+				return oResult;
+			}
+
 			// ================================
 			// SINON CONFIGURATON AND EXTENSION
 			// ================================
@@ -3883,7 +3897,7 @@ sap.ui
 			 * @public
 			 */
 			window.sinon.FakeXMLHttpRequest.prototype.respondFile = function(iStatus, mHeaders, sFileUrl) {
-				var oResponse = jQuery.sap.sjax({
+				var oResponse = syncFetch({
 					url: sFileUrl,
 					dataType: "text"
 				});
