@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/ManifestResolver"
+	"sap/ui/integration/util/ManifestResolver"
 ], function (
 	ManifestResolver
 ) {
@@ -178,6 +178,20 @@ sap.ui.define([
 				// Assert
 				assert.ok(true, "No error were thrown");
 				assert.ok(oRes, "There is result returned");
+			});
+	});
+
+	QUnit.test("Promise is rejected if there was a fundamental error in the card", function (assert) {
+		// Arrange
+		var oManifest = {};
+
+		assert.expect(1);
+
+		// Act
+		return ManifestResolver.resolve(oManifest, "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/")
+			.catch(function (sError) {
+				// Assert
+				assert.ok(true, "Promise is rejected with '" + sError + "'if manifest is empty.");
 			});
 	});
 

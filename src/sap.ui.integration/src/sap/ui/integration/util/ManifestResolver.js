@@ -16,23 +16,23 @@ sap.ui.define([
 
 	/**
 	 * Util class for preprocessing of card manifests.
-	 * @namespace sap.ui.integration.ManifestResolver
+	 * @namespace sap.ui.integration.util.ManifestResolver
 	 * @since 1.97
 	 * @experimental 1.97
 	 * @private
-	 * @ui5-restricted shell-toolkit
+	 * @ui5-restricted Mobile SDK
 	 */
 	var ManifestResolver = {};
 
 	/**
 	 * Resolves manifest.
-	 * @memberof sap.ui.integration.ManifestResolver
-	 * @alias sap.ui.integration.ManifestResolver.resolve
+	 * @memberof sap.ui.integration.util.ManifestResolver
+	 * @alias sap.ui.integration.util.ManifestResolver.resolve
 	 * @param {object} oManifest Card manifest
 	 * @param {string} sBaseUrl The base URL of the card manifest
-	 * @returns {Promise<string>} Stringified manifest without any bindings
+	 * @returns {Promise<string>} Promise which resolves with stringified manifest with resolved bindings and translations or rejects with an error message if there is an error.
 	 * @private
-	 * @ui5-restricted shell-toolkit
+	 * @ui5-restricted Mobile SDK
 	 */
 	ManifestResolver.resolve = function (oManifest, sBaseUrl) {
 		var oCard = new Card({
@@ -40,6 +40,20 @@ sap.ui.define([
 			manifest: oManifest
 		});
 
+		return ManifestResolver.resolveCard(oCard);
+	};
+
+	/**
+	 * Resolves a card and returns its resolved manifest.
+	 * @memberof sap.ui.integration.util.ManifestResolver
+	 * @alias sap.ui.integration.util.ManifestResolver.resolveCard
+	 * @param {sap.ui.integration.widgets.Card} oCard The card to resolve.
+	 * @param {string} sBaseUrl The base URL of the card manifest
+	 * @returns {Promise<string>} Promise which resolves with stringified manifest with resolved bindings and translations or rejects with an error message if there is an error.
+	 * @private
+	 * @ui5-restricted Mobile SDK
+	 */
+	ManifestResolver.resolveCard = function (oCard) {
 		oCard.startManifestProcessing();
 
 		return ManifestResolver._awaitReadyEvent(oCard)
@@ -57,6 +71,11 @@ sap.ui.define([
 	ManifestResolver._handleCardReady = function (oCard) {
 		var oManifest = oCard.getManifestEntry("/");
 		var aFilters = [];
+		var aErrors = oCard.getFundamentalErrors();
+
+		if (aErrors.length) {
+			return Promise.reject(aErrors.join(" "));
+		}
 
 		if (oCard.getAggregation("_filterBar")) {
 			aFilters =  oCard.getAggregation("_filterBar").getItems().map(function (oFilter) {
