@@ -17108,7 +17108,7 @@ sap.ui.define([
 				// second row with "Y" was moved (E.C.D.)
 				// third row is *new*
 				.expectChange("groupLevelCount",
-					[undefined, /*undefined*/, undefined, undefined, undefined, undefined])
+					[/*4*/, /*undefined*/, undefined, undefined, undefined, undefined])
 				.expectChange("isExpanded", [false, /*false*/, false, false, false, false])
 				.expectChange("isTotal", [, /*true*/, true, true, true, true])
 				.expectChange("level", [, /*1*/, 1, 1, 1, 1])
@@ -17133,7 +17133,7 @@ sap.ui.define([
 			]);
 
 			that.expectChange("groupLevelCount",
-					[4, undefined, undefined, undefined, undefined])
+					[/*4*/, undefined, undefined, undefined, undefined])
 				.expectChange("isExpanded", [true, undefined, undefined, undefined, undefined])
 				.expectChange("isTotal", [/*true*/, false, false, false, false])
 				.expectChange("level", [/*1*/, 2, 2, 2, 2])
@@ -18033,7 +18033,7 @@ sap.ui.define([
 				"/BusinessPartners($isTotal=true)"
 			], [
 				[undefined, true, true, 0, "", "", "3510", ""],
-				[undefined, false, true, 1, "A", "", "10", "EUR"],
+				[1, false, true, 1, "A", "", "10", "EUR"],
 				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 		});
@@ -18201,7 +18201,7 @@ sap.ui.define([
 				"/BusinessPartners($isTotal=true)"
 			], [
 				[undefined, true, true, 0, "", "", "3510", ""],
-				[undefined, false, false, 1, "A", "", "", ""],
+				[1, false, false, 1, "A", "", "", ""],
 				[undefined, undefined, true, 0, "", "", "3510", ""]
 			]);
 		});
@@ -18330,7 +18330,6 @@ sap.ui.define([
 			var oThirdRow = oTable.getRows()[2].getBindingContext();
 
 			that.expectResets(oTable, 2, 2, 2)
-				.expectChange("groupLevelCount", [, undefined])
 				.expectChange("isExpanded", [, false]);
 
 			// code under test
@@ -18513,7 +18512,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3 + 2 + 1);
 
-			that.expectChange("groupLevelCount", [undefined, undefined, undefined])
+			that.expectChange("groupLevelCount", [, undefined, undefined])
 				.expectChange("isExpanded", [false, false, false, false])
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [, 1, 1, 1])
@@ -18535,7 +18534,7 @@ sap.ui.define([
 			oUKContext = oRowsBinding.getCurrentContexts()[1];
 
 			// expectation: tree should be restored with all previously expanded nodes
-			that.expectChange("groupLevelCount", [3, 2, 1])
+			that.expectChange("groupLevelCount", [, 2, 1])
 				.expectChange("isExpanded", [true, true, true, undefined])
 				.expectChange("isTotal", [,,, false])
 				.expectChange("level", [, 2, 3, 4])
@@ -18567,7 +18566,7 @@ sap.ui.define([
 			assert.strictEqual(oUKContext0.getPath(), oUKContext.getPath());
 			assert.ok(oUKContext0 === oUKContext, "'UK' context is still the same instance");
 		}).then(function () {
-			that.expectChange("groupLevelCount", [, undefined, undefined])
+			that.expectChange("groupLevelCount", [,, undefined])
 				.expectChange("isExpanded", [, false, false, false])
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [,, 2, 2])
@@ -18977,8 +18976,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 26 + 3);
 
-			that.expectChange("groupLevelCount", [undefined])
-				.expectChange("isExpanded", [, true, true])
+			that.expectChange("isExpanded", [, true, true])
 				.expectChange("isExpanded", [false, false, false])
 				.expectChange("level", [, 1, 1, 1])
 				.expectChange("country", [, "UK", "DE", "IT", "FR", "BE", "NL", "LU"])
@@ -19019,7 +19017,7 @@ sap.ui.define([
 					- US-X
 				- UK
 			 */
-			that.expectChange("groupLevelCount", [3, 2,,, 1])
+			that.expectChange("groupLevelCount", [, 2,,, 1])
 				.expectChange("isExpanded", [true, true, undefined, undefined, true, undefined])
 				.expectChange("isTotal", [,, false, false,, false])
 				.expectChange("level", [, 2, 3, 3, 2, 3, 2])
@@ -19133,6 +19131,7 @@ sap.ui.define([
 					})
 				.expectCanceledError("Failed to get contexts for /aggregation/BusinessPartners"
 					+ " with start index 4 and length 4", "Collapse before read has finished")
+				.expectChange("groupLevelCount", [26])
 				.expectChange("isExpanded", [false])
 				.expectChange("isTotal", [true])
 				.expectChange("level", [1])
@@ -19147,8 +19146,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 1);
 
-			that.expectChange("groupLevelCount", [26])
-				.expectChange("isExpanded", [true])
+			that.expectChange("isExpanded", [true])
 				.expectChange("isTotal", [, false, false, false])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US"])

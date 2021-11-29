@@ -2050,8 +2050,7 @@ sap.ui.define([
 			}, {
 				"@$ui5._" : {predicate : "('4')"},
 				"@$ui5.node.level" : 5 // sibling
-			}],
-			oHelperMock = this.mock(_Helper);
+			}];
 
 		if (bSubtotalsAtBottom) {
 			oAggregation.subtotalsAtBottomOnly = bSubtotalsAtBottomOnly;
@@ -2074,13 +2073,10 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(aElements[1]));
-		oHelperMock.expects("updateAll")
+		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(aElements[1]), sinon.match.same(oCollapsed))
 			.callThrough();
-		oHelperMock.expects("updateAll")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-				sinon.match.same(aElements[1]), {"@$ui5.node.groupLevelCount" : undefined});
 
 		// code under test
 		assert.strictEqual(oCache.collapse("~path~"), bCollapseBottom ? 3 : 2,
@@ -2120,24 +2116,21 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oCollapsed = {"@$ui5.node.isExpanded" : false},
 			aElements = [{
+				"@$ui5.node.groupLevelCount" : 42,
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 5
-			}],
-			oHelperMock = this.mock(_Helper);
+			}];
 
 		oCache.aElements = aElements.slice(); // simulate a read
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(aElements[0]));
-		oHelperMock.expects("getPrivateAnnotation")
+		this.mock(_Helper).expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(aElements[0]), "collapsed").returns(oCollapsed);
-		oHelperMock.expects("updateAll")
+		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
 				sinon.match.same(aElements[0]), sinon.match.same(oCollapsed))
 			.callThrough();
-		oHelperMock.expects("updateAll")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-				sinon.match.same(aElements[0]), {"@$ui5.node.groupLevelCount" : undefined});
 
 		// code under test
 		assert.strictEqual(oCache.collapse("~path~"), 0, "number of removed elements");
@@ -2146,6 +2139,7 @@ sap.ui.define([
 			"@$ui5._" : {
 				spliced : []
 			},
+			"@$ui5.node.groupLevelCount" : 42,
 			"@$ui5.node.isExpanded" : false,
 			"@$ui5.node.level" : 5
 		}]);
