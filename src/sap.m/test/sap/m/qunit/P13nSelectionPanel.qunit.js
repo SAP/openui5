@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/P13nItem",
 	"sap/m/P13nSelectionItem",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -14,7 +15,8 @@ sap.ui.define([
 	mobileLibrary,
 	P13nItem,
 	P13nSelectionItem,
-	JSONModel
+	JSONModel,
+	oCore
 ) {
 	"use strict";
 
@@ -83,7 +85,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
@@ -122,7 +124,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
@@ -165,7 +167,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 3);
@@ -208,7 +210,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oItem, oItemB);
@@ -250,7 +252,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oItem, null);
@@ -292,7 +294,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(aItems, [
@@ -329,7 +331,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oSelectionPanel.getItems().length, 0);
@@ -380,7 +382,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -402,7 +404,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -424,7 +426,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -452,7 +454,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oSelectionItem, oSelectionItemA);
@@ -484,7 +486,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oSelectionItem, null);
@@ -513,7 +515,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(aSelectionItems, [oSelectionItemA]);
@@ -541,7 +543,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oSelectionPanel.getItems(), []);
@@ -585,7 +587,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// The table items order is: C, B, A
@@ -630,7 +632,7 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// The table items order is: C, B, A
@@ -676,11 +678,11 @@ sap.ui.define([
 
 		// arrange
 		oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oSelectionPanel.removeSelectionItem(oSelectionItemC);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// The table items order has been changed to: A, B, C
@@ -741,7 +743,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
@@ -766,7 +768,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		var oCheckbox = this.oSelectionPanel._oTable.getItems()[0].$().find("input[type=checkbox]")[0];
@@ -838,7 +840,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSelectionPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		this.oSelectionPanel._getSearchField().setValue("foo");
@@ -906,7 +908,7 @@ sap.ui.define([
 
 			// arrange
 			this.oSelectionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach: function () {

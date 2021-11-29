@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/Core"
 ], function(
 	MoveTableColumnsChangeHandler,
 	Change,
@@ -18,7 +19,8 @@ sap.ui.define([
 	ComponentContainer,
 	JSONModel,
 	qutils,
-	createAndAppendDiv
+	createAndAppendDiv,
+	oCore
 ) {
 	'use strict';
 	createAndAppendDiv("content");
@@ -308,7 +310,7 @@ sap.ui.define([
 
 			this.oView = this.oUiComponent.getRootControl();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oTable = this.oView.byId('myTable');
 			this.oColumn0 = this.oView.byId('column0');
@@ -452,7 +454,7 @@ sap.ui.define([
 				}]
 			}));
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oTable = this.oView.byId('myTable');
 

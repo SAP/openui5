@@ -4,13 +4,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/Device"
-], function(
-	createAndAppendDiv,
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv,
 	jQuery,
 	Component,
 	ComponentContainer,
-	Device
+	Device,
+	oCore
 ) {
 	"use strict";
 
@@ -261,7 +262,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// render
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//check values
 			assert.equal(this.oPage.$().css(oConfig.cssProperty), oConfig.expected, oConfig.cssProperty + " Page " +  oConfig.expected);

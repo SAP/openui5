@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(Month, CalendarDate, CalendarLegend, CalendarLegendRenderer,
-	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery) {
+	CalendarLegendItem, Button, DateRange, DateTypeRange, CalendarType, InvisibleText, ItemNavigation, unifiedLibrary, KeyCodes, Device, jQuery, oCore) {
 	"use strict";
 
 	(function () {
@@ -68,7 +69,7 @@ sap.ui.define([
 		QUnit.module("Rendering", {
 			beforeEach: function () {
 				this.oM = new Month().placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oM.destroy();
@@ -84,7 +85,7 @@ sap.ui.define([
 		QUnit.test("Corner case for January 0001", function (assert) {
 			// Act
 			this.oM.setDate(createDate(1, 0, 1));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var aItems = this.oM.$().find(".sapUiCalItem"),
 				$FirstDay = jQuery(aItems[0]);
@@ -98,10 +99,10 @@ sap.ui.define([
 			// Act
 			var oMonth = new Month({
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oMonth.setDate(createDate(9999, 11, 1));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var aItems = oMonth.$().find(".sapUiCalItem"),
 				$LastDay = jQuery(aItems[aItems.length - 1]);
@@ -232,7 +233,7 @@ sap.ui.define([
 		QUnit.module("Rendering", {
 			beforeEach: function () {
 				this.oM = new Month().placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oM.destroy();
@@ -250,7 +251,7 @@ sap.ui.define([
 				oButton = new Button({text: "Btn"}).placeAt("qunit-fixture");
 
 			this.oM.setDate(createDate(2017, 1, 1));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Act - focus the button control and add a special date to the month
 			oButton.focus();
@@ -280,7 +281,7 @@ sap.ui.define([
 			oAssert.strictEqual(this.oM.$().hasClass("sapUiCalNoWeekNum"), false, "When showWeekNumbers property is 'true', the class that hides the week numbers should not be 'visible'");
 			// Act
 			this.oM.setShowWeekNumbers(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			oAssert.strictEqual(this.oM.$().hasClass("sapUiCalNoWeekNum"), true, "When showWeekNumbers property is 'false', the class that hides the week numbers should be 'visible'");
@@ -345,7 +346,7 @@ sap.ui.define([
 
 			// Act
 			this.oM.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			$Date = jQuery("#" + this.oM.getId() + "-20160630");
@@ -380,7 +381,7 @@ sap.ui.define([
 		QUnit.test("Selecting a weeknumber does not throw an error", function (assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
@@ -400,7 +401,7 @@ sap.ui.define([
 		QUnit.test("Selecting a day header does not throw an error", function (assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oTarget = this.oM.getDomRef().querySelector(".sapUiCalWH"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
@@ -440,7 +441,7 @@ sap.ui.define([
 		QUnit.test("Selecting a week number in Edge + touch does not cause day selection", function (assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oTarget = this.oM.getDomRef().querySelectorAll(".sapUiCalWeekNum")[1],
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
@@ -516,7 +517,7 @@ sap.ui.define([
 			oLastMonthDate.setMonth(oLastMonthDate.getMonth() - 1);
 			this.oM.displayDate(oLastMonthDate);
 			this.oM.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Act
 			this.oM.displayDate(new Date());
@@ -531,8 +532,8 @@ sap.ui.define([
 		QUnit.module("Aria", {
 			beforeEach: function() {
 				//Prepare
-				this.sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
+				this.sOldLanguage = oCore.getConfiguration().getLanguage();
+				oCore.getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
 
 				this.oLegend = new CalendarLegend({
 					items: [
@@ -563,14 +564,14 @@ sap.ui.define([
 				//Clear
 				this.oSut.destroy();
 				this.oLegend.destroy();
-				sap.ui.getCore().getConfiguration().setLanguage(this.sOldLanguage);
+				oCore.getConfiguration().setLanguage(this.sOldLanguage);
 			}
 		});
 
 		QUnit.test("General ARIA", function (assert) {
 			// Arrange
 			this.oSut.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.notOk(this.oSut.$().attr("aria-readonly"), "Month doesn't have aria-readonly on it");
@@ -579,7 +580,7 @@ sap.ui.define([
 		QUnit.test("First DOM element with role='rowheader' has week label set", function (assert) {
 			// Arrange
 			this.oSut.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var oRowHeader = this.oSut.$().find("[role='rowheader']")[0],
 				aAriaLabels = oRowHeader.getAttribute("aria-labelledby").split(" ");
 
@@ -600,7 +601,7 @@ sap.ui.define([
 		QUnit.test("Day cells have role gridcell", function (assert) {
 			// Arrange
 			this.oSut.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.equal(jQuery("#" + this.oSut.getId() + "-20160105").attr("role"), "gridcell", "The day cell has role gridcell");
@@ -609,7 +610,7 @@ sap.ui.define([
 		QUnit.test("Wrapper of day cells has role row", function (assert) {
 			// Arrange
 			this.oSut.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.equal(this.oSut.getDomRef().childNodes[1].getAttribute("role"), "row", "The day cell's wrapper has role row");
@@ -618,7 +619,7 @@ sap.ui.define([
 		QUnit.test("Special Dates with legend", function (assert) {
 			//Act
 			this.oSut.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert
 			assert.ok(jQuery("#" + this.oSut.getId() + "-20160101").attr("aria-label").indexOf("National Holidays") >= 0,
@@ -713,7 +714,7 @@ sap.ui.define([
 				});
 
 			oMonth.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			aItemsMarkedAsBetween = jQuery('.sapUiCalItemSelBetween');
 
@@ -734,7 +735,7 @@ sap.ui.define([
 				oSelectedDate = new DateRange({ startDate: new Date(2017, 6, 19) });
 
 			oMonth.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//act - hover a date, with nothing selected yet
 			$HoveredDate = jQuery("#" + oMonth.getId() + "-20170725");
@@ -837,7 +838,7 @@ sap.ui.define([
 		QUnit.module("_getDateTypes function", {
 			beforeEach: function () {
 				this.oM = new Month({date: new Date(2017, 1, 1)}).placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oM.destroy();
@@ -1046,7 +1047,7 @@ sap.ui.define([
 				this.oTargetParent.setAttribute('data-sap-day', "20170101");
 				this.oTargetParent.appendChild(this.oTarget);
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oM.destroy();
@@ -1239,7 +1240,7 @@ sap.ui.define([
 				this.oRangeStartParent.appendChild(this.oRangeStart);
 				this.oRangeEndParent.appendChild(this.oRangeEnd);
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oM.destroy();

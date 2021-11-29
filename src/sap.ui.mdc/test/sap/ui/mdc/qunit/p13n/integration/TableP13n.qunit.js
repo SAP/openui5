@@ -1,9 +1,9 @@
 /* global QUnit,sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate",  "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/modification/FlexModificationHandler", "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
-], function (Engine, MDCQUnitUtils, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler) {
+	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/modification/FlexModificationHandler", "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
+], function (Engine, MDCQUnitUtils, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler, oCore) {
 	"use strict";
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Engine API tests showUI Table", {
 		beforeEach: function () {
@@ -44,29 +44,29 @@ sap.ui.define([
 				]
 			});
 			this.oTable.setP13nMode(["Column","Sort","Filter"]);
-            MDCQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
+			MDCQUnitUtils.stubPropertyInfos(this.oTable, aPropertyInfos);
 
-            sinon.stub(TableDelegate,"getFilterDelegate").callsFake(function() {
-                return {
-                    addItem: function(sPropName, oControl){
-                        return Promise.resolve(new FilterField({
-                            conditions: "{$filters>/conditions/" + sPropName + "}"
-                        }));
-                    }
-                };
-            });
+			sinon.stub(TableDelegate,"getFilterDelegate").callsFake(function() {
+				return {
+					addItem: function(sPropName, oControl){
+						return Promise.resolve(new FilterField({
+							conditions: "{$filters>/conditions/" + sPropName + "}"
+						}));
+					}
+				};
+			});
 		},
 		destroyTestObjects: function() {
-            this.oTable.destroy();
-            TableDelegate.getFilterDelegate.restore();
+			this.oTable.destroy();
+			TableDelegate.getFilterDelegate.restore();
 			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		}
 	});
 
 	QUnit.test("Check 'Engine' subcontroller registration", function(assert) {
-        assert.ok(Engine.getInstance().getController(this.oTable, "Column"), "ColumnsController has been registered");
-        assert.ok(Engine.getInstance().getController(this.oTable, "Sort"), "SortController has been registered");
-        assert.ok(Engine.getInstance().getController(this.oTable, "Filter"), "FilterController has been registered");
+		assert.ok(Engine.getInstance().getController(this.oTable, "Column"), "ColumnsController has been registered");
+		assert.ok(Engine.getInstance().getController(this.oTable, "Sort"), "SortController has been registered");
+		assert.ok(Engine.getInstance().getController(this.oTable, "Filter"), "FilterController has been registered");
 	});
 
 
@@ -237,7 +237,7 @@ sap.ui.define([
 			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-            var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 
 			//we have to remove one from '_getAvailableItems' as it also contains the empty selector ($none)
 			assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length - 1, oPropertyHelper.getProperties().length, "correct amount of items has been set");
@@ -356,23 +356,23 @@ sap.ui.define([
 		];
 
 		Engine.getInstance().createChanges({
-            control: this.oTable,
-            key: "Sort",
-            state: aP13nData,
-            suppressAppliance: true
-        }).then(function(aChanges){
-            assert.ok(aChanges, "changes created");
+			control: this.oTable,
+			key: "Sort",
+			state: aP13nData,
+			suppressAppliance: true
+		}).then(function(aChanges){
+			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 1, "one change created");
-            assert.equal(aChanges[0].changeSpecificData.changeType, "addSort", "once sort change created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "addSort", "once sort change created");
 
-            //Sort changes should only store 'name' and 'descending' and 'index'
-            assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 3, "Only name, index + descending persisted");
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("descending"), "Correct attribute persisted");
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
+			//Sort changes should only store 'name' and 'descending' and 'index'
+			assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 3, "Only name, index + descending persisted");
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("descending"), "Correct attribute persisted");
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
 
 			done();
-        });
+		});
 
 	});
 
@@ -385,20 +385,20 @@ sap.ui.define([
 		];
 
 		Engine.getInstance().createChanges({
-            control: this.oTable,
-            key: "Column",
-            state: aP13nData,
-            suppressAppliance: true
-        }).then(function(aChanges){
+			control: this.oTable,
+			key: "Column",
+			state: aP13nData,
+			suppressAppliance: true
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 2, "one change created");
 			assert.equal(aChanges[0].changeSpecificData.changeType, "addColumn", "once column change created");
-            assert.equal(aChanges[1].changeSpecificData.changeType, "addColumn", "once column change created");
+			assert.equal(aChanges[1].changeSpecificData.changeType, "addColumn", "once column change created");
 
-            //addColumn changes should only store 'name' and 'index'
-            assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 2, "Only name + index persisted");
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
+			//addColumn changes should only store 'name' and 'index'
+			assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 2, "Only name + index persisted");
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
 			done();
 		});
 	});
@@ -412,11 +412,11 @@ sap.ui.define([
 		];
 
 		Engine.getInstance().createChanges({
-            control: this.oTable,
-            key: "Column",
-            state: aP13nData,
-            suppressAppliance: true
-        }).then(function(aChanges){
+			control: this.oTable,
+			key: "Column",
+			state: aP13nData,
+			suppressAppliance: true
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 1, "one change created");
 			assert.equal(aChanges[0].changeSpecificData.changeType, "addColumn", "once column change created");
@@ -432,17 +432,17 @@ sap.ui.define([
 		];
 
 		Engine.getInstance().createChanges({
-            control: this.oTable,
-            key: "Column",
-            state: aP13nData,
-            suppressAppliance: true
-        }).then(function(aChanges){
+			control: this.oTable,
+			key: "Column",
+			state: aP13nData,
+			suppressAppliance: true
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 1, "one change created");
-            assert.equal(aChanges[0].changeSpecificData.changeType, "removeColumn", "once column change created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "removeColumn", "once column change created");
 
-            //removeColumn changes should only store 'name'
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+			//removeColumn changes should only store 'name'
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
 			done();
 		});
 	});
@@ -455,18 +455,18 @@ sap.ui.define([
 		];
 
 		Engine.getInstance().createChanges({
-            control: this.oTable,
-            key: "Column",
-            state: aP13nData,
-            suppressAppliance: true
-        }).then(function(aChanges){
+			control: this.oTable,
+			key: "Column",
+			state: aP13nData,
+			suppressAppliance: true
+		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");
 			assert.equal(aChanges.length, 1, "one change created");
-            assert.equal(aChanges[0].changeSpecificData.changeType, "moveColumn", "once column change created");
+			assert.equal(aChanges[0].changeSpecificData.changeType, "moveColumn", "once column change created");
 
-            //moveColumn changes should only store 'name' and 'index'
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-            assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
+			//moveColumn changes should only store 'name' and 'index'
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
 			done();
 		});
 	});

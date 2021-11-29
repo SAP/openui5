@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	qutils,
@@ -59,7 +60,8 @@ sap.ui.define([
 	oDataCurrencyType,
 	JSONModel,
 	DateTimeType,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -143,7 +145,7 @@ sap.ui.define([
 	QUnit.test("default rendering", function(assert) {
 
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -157,7 +159,7 @@ sap.ui.define([
 
 		oField.setEditMode(EditMode.Display);
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -165,7 +167,7 @@ sap.ui.define([
 		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
 
 		oField.setEditMode(EditMode.ReadOnly);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
@@ -181,13 +183,13 @@ sap.ui.define([
 		oField.setContent(oSlider);
 		oField.setValue(70);
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSlider.getDomRef(), "Slider rendered");
 		assert.equal(oSlider.getValue(), 70, "Value of Slider");
 
 		oField.destroyContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -197,7 +199,7 @@ sap.ui.define([
 		oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSlider.getDomRef(), "Slider rendered");
 		assert.equal(oSlider.getValue(), 70, "Value of Slider");
@@ -212,7 +214,7 @@ sap.ui.define([
 			oFieldDisplay = new Field("F2", { editMode: EditMode.Display });
 			oFieldEdit.placeAt("content");
 			oFieldDisplay.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oFieldEdit.destroy();
@@ -271,7 +273,7 @@ sap.ui.define([
 
 		oFieldEdit.setDisplay(FieldDisplay.Description);
 		oFieldDisplay.setDisplay(FieldDisplay.Description);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aContent = oFieldEdit.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -282,7 +284,7 @@ sap.ui.define([
 
 		oFieldEdit.setDisplay(FieldDisplay.DescriptionValue);
 		oFieldDisplay.setDisplay(FieldDisplay.DescriptionValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aContent = oFieldEdit.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
@@ -295,7 +297,7 @@ sap.ui.define([
 		oFieldDisplay.setDisplay(FieldDisplay.Description);
 		oFieldEdit.setAdditionalValue("");
 		oFieldDisplay.setAdditionalValue("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aConditions = oFieldEdit.getConditions();
 		assert.notEqual(aConditions[0].values[1], "", "Conditions not updated syncronously");
 
@@ -319,7 +321,7 @@ sap.ui.define([
 		oFieldDisplay.setValue("Test");
 		oFieldEdit.setMultipleLines(true);
 		oFieldDisplay.setMultipleLines(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -362,7 +364,7 @@ sap.ui.define([
 		oFieldEdit.setValue(new Date(1970, 0, 1, 9, 0, 0));
 		oFieldDisplay.setDataType("sap.ui.model.type.Time");
 		oFieldDisplay.setValue(new Date(1970, 0, 1, 9, 0, 0));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -382,7 +384,7 @@ sap.ui.define([
 		oFieldEdit.setValue(new Date(2017, 10, 7, 13, 1, 24));
 		oFieldDisplay.setDataType("Edm.DateTimeOffset");
 		oFieldDisplay.setValue(new Date(2017, 10, 7, 13, 1, 24));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -402,7 +404,7 @@ sap.ui.define([
 		oFieldEdit.setValue([12.34, "USD"]);
 		oFieldDisplay.setDataType("sap.ui.model.type.Currency");
 		oFieldDisplay.setValue([12.34, "USD"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oType = new CurrencyType({ showMeasure: false });
 		sValue = oType.formatValue([12.34, "USD"], "string"); // because of special whitspaced and local dependend
@@ -429,7 +431,7 @@ sap.ui.define([
 
 		oFieldEdit.setWidth("100px");
 		oFieldDisplay.setWidth("100px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(jQuery("#F1").width(), 100, "Width of Edit Field");
 		assert.equal(jQuery("#F2").width(), 100, "Width of Display Field");
@@ -448,7 +450,7 @@ sap.ui.define([
 
 		var oLabel = new Label("L1", { text: "test", labelFor: oFieldEdit }).placeAt("content");
 		oFieldEdit.setRequired(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -461,7 +463,7 @@ sap.ui.define([
 	QUnit.test("placeholder", function(assert) {
 
 		oFieldEdit.setPlaceholder("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -473,7 +475,7 @@ sap.ui.define([
 
 		oFieldEdit.setValueState("Error");
 		oFieldEdit.setValueStateText("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -486,7 +488,7 @@ sap.ui.define([
 
 		oFieldEdit.setTextAlign("End");
 		oFieldDisplay.setTextAlign("End");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -502,7 +504,7 @@ sap.ui.define([
 
 		oFieldEdit.setTextDirection("RTL");
 		oFieldDisplay.setTextDirection("RTL");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -531,7 +533,7 @@ sap.ui.define([
 			oField.attachPress(_myPressHandler);
 			oField.attachParseError(_myParseErrorHandler);
 			oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -604,7 +606,7 @@ sap.ui.define([
 		var oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSlider.focus();
 		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
@@ -620,7 +622,7 @@ sap.ui.define([
 		var oButton = new Button("B1");
 		oField.setContent(oButton);
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSlider.focus();
 		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "change event of field not fired again");
@@ -635,9 +637,9 @@ sap.ui.define([
 	QUnit.test("clenaup wrong input", function(assert) {
 
 		var fnDone = assert.async();
-		sap.ui.getCore().getMessageManager().registerObject(oField, true); // to test valueState
+		oCore.getMessageManager().registerObject(oField, true); // to test valueState
 		oField.setDataType("sap.ui.model.type.Date");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -680,7 +682,7 @@ sap.ui.define([
 			oField.setValue("Test");
 			oField.attachChange(_myChangeHandler);
 			oField.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -693,7 +695,7 @@ sap.ui.define([
 
 		var oClone = oField.clone("myClone");
 		oClone.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -703,12 +705,12 @@ sap.ui.define([
 		assert.equal(oCloneContent.getValue(), "Test", "Value set on clone Input control");
 
 		oField.setValue("Hello");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oContent.getValue(), "Hello", "value set on Input control");
 		assert.equal(oCloneContent.getValue(), "Test", "Value set on clone Input control");
 
 		oClone.setValue("World");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oContent.getValue(), "Hello", "value set on Input control");
 		assert.equal(oCloneContent.getValue(), "World", "Value set on clone Input control");
 
@@ -744,23 +746,23 @@ sap.ui.define([
 		var oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oClone = oField.clone("myClone");
 		oClone.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCloneSlider = oClone.getContent();
 		assert.ok(oCloneSlider instanceof Slider, "Clone has Slider as Content");
 		assert.equal(oCloneSlider.getValue(), 70, "Value set on clone Slider control");
 
 		oField.setValue(80);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSlider.getValue(), 80, "value set on Slider control");
 		assert.equal(oCloneSlider.getValue(), 70, "Value set on clone Slider control");
 
 		oClone.setValue(60);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSlider.getValue(), 80, "value set on Slider control");
 		assert.equal(oCloneSlider.getValue(), 60, "Value set on clone Slider control");
@@ -873,7 +875,7 @@ sap.ui.define([
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField5.setModel(oModel);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oField.destroy();
@@ -963,7 +965,7 @@ sap.ui.define([
 	QUnit.test("change binding", function(assert) {
 
 		oField2.bindProperty("value", { path: "/value", type: oType });
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oField2._oContentFactory.getDataType()._bMyType, "Given Type is used in Field");
 		var aContent = oField2.getAggregation("_content");
@@ -1027,7 +1029,7 @@ sap.ui.define([
 
 	QUnit.test("BindingContext change to same value on wrong input", function(assert) {
 
-		sap.ui.getCore().getMessageManager().registerObject(oField3, true); // to activate message manager
+		oCore.getMessageManager().registerObject(oField3, true); // to activate message manager
 		var fnDone = assert.async();
 
 		setTimeout(function() { // as conditions are updated async
@@ -1056,7 +1058,7 @@ sap.ui.define([
 
 	QUnit.test("BindingContext change to different value on wrong input", function(assert) {
 
-		sap.ui.getCore().getMessageManager().registerObject(oField3, true); // to activate message manager
+		oCore.getMessageManager().registerObject(oField3, true); // to activate message manager
 		var fnDone = assert.async();
 
 		setTimeout(function() { // as conditions are updated async
@@ -1261,7 +1263,7 @@ sap.ui.define([
 		oField.setValue([1, "USD"]); // to check that currency list is still used
 
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oType = new CurrencyType({ showMeasure: false });
 		sValue = oType.formatValue([1, "USD"], "string"); // because of special whitspaces and local dependend
@@ -1277,7 +1279,7 @@ sap.ui.define([
 
 		oField.setValue([1, "USD", oCurrencyCodeList]);
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		sinon.spy(oField, "setProperty");
 
@@ -1314,7 +1316,7 @@ sap.ui.define([
 
 		// simulates OutParameter sets unit while user alredy types number
 		oField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oField.setValue([undefined, undefined, oCurrencyCodeList]); // after rendering to create internal data type (as we don't use binding here)
 
 		sinon.spy(oField, "setProperty");

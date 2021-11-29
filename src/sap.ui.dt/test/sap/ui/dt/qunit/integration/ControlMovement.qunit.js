@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/SplitContainer",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	jQuery,
 	ControlDragDrop,
@@ -29,7 +30,8 @@ sap.ui.define([
 	SplitContainer,
 	QUnitUtils,
 	KeyCodes,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -84,7 +86,7 @@ sap.ui.define([
 			this.oParentLayout = new VerticalLayout({content: [this.oLayout, this.oEmptyLayout]});
 
 			this.oParentLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oControlDragDrop = new ControlDragDrop({
 				draggableTypes: aAllMovableTypes
@@ -113,7 +115,7 @@ sap.ui.define([
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
 				this.oLayoutAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
@@ -412,7 +414,7 @@ sap.ui.define([
 			});
 
 			this.oSplitContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oControlDragDrop = new ControlDragDrop({
 				draggableTypes: aAllMovableTypes
@@ -434,7 +436,7 @@ sap.ui.define([
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				this.oSplitContainerOverlay = OverlayRegistry.getOverlay(this.oSplitContainer);
 				this.oSplitContainerMasterPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("masterPages");

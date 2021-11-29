@@ -5,13 +5,14 @@ sap.ui.define([
 	"sap/m/LightBoxItem",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/m/library"
-], function(
-	LightBox,
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(LightBox,
 	LightBoxItem,
 	qutils,
 	KeyCodes,
-	library
+	library,
+	oCore
 ) {
 		'use strict';
 
@@ -170,7 +171,7 @@ sap.ui.define([
 				oLightBoxPopup = this.LightBox._oPopup;
 
 			oImageContent.setImageSrc(sImageSource);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oNativeImage.onload = function () {
 				fnOnload.apply(oNativeImage, arguments);
@@ -263,7 +264,7 @@ sap.ui.define([
 						})
 					]
 				});
-				this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				this._oRB = oCore.getLibraryResourceBundle("sap.m");
 			},
 			afterEach: function() {
 				this.LightBox.close();
@@ -280,7 +281,7 @@ sap.ui.define([
 
 			oImageContent.setImageSrc(sImageSource);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.LightBox.open();
 
@@ -310,7 +311,7 @@ sap.ui.define([
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg';
 
 			oImageContent.setImageSrc(sImageSource);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.LightBox.open();
@@ -332,7 +333,7 @@ sap.ui.define([
 
 			oImageContent.setImageSrc(sImageSource);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.LightBox.open();
 
@@ -355,7 +356,7 @@ sap.ui.define([
 
 			oImageContent.setImageSrc(sImageSource);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.LightBox.open();
@@ -391,7 +392,7 @@ sap.ui.define([
 				sImageSource = IMAGE_PATH + 'demo/nature/elephant.jpg'; // big image
 
 			oImageContent.setImageSrc(sImageSource);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -414,7 +415,7 @@ sap.ui.define([
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/150x150.jpg'; // small image
 
 			oImageContent.setImageSrc(sImageSource);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -436,7 +437,7 @@ sap.ui.define([
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/320x150.jpg'; // horizontal image
 
 			oImageContent.setImageSrc(sImageSource);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -458,7 +459,7 @@ sap.ui.define([
 				sImageSource = IMAGE_PATH + 'demo/smallImgs/150x288.jpg'; // vertical image
 
 			oImageContent.setImageSrc(sImageSource);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var done = assert.async();
 
@@ -496,7 +497,7 @@ sap.ui.define([
 
 			// Act
 			this.LightBox.open();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Wait for CSS animation to complete
 			setTimeout(function () {

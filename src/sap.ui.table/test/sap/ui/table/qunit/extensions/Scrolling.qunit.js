@@ -13,9 +13,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Context",
-	"sap/ui/model/ChangeReason"
-], function(TableQUnitUtils, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column,
-			Control, JSONModel, Context, ChangeReason) {
+	"sap/ui/model/ChangeReason",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column, Control, JSONModel, Context, ChangeReason, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -148,7 +148,7 @@ sap.ui.define([
 		assert.ok(oVSb.offsetWidth > 0 && oVSb.offsetHeight > 0, "Table content does not fit height -> Vertical scrollbar is visible");
 
 		oTable.setVisibleRowCount(6);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oVSb = oScrollExtension.getVerticalScrollbar();
@@ -202,7 +202,7 @@ sap.ui.define([
 				height: "150px"
 			})
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
@@ -318,7 +318,7 @@ sap.ui.define([
 
 		/* As many data rows as there are visible rows, with fixed top/bottom rows */
 		oTable.setVisibleRowCount(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			// ↓ Down
@@ -334,7 +334,7 @@ sap.ui.define([
 			oTable.setVisibleRowCount(5);
 			oTable.setFixedRowCount(0);
 			oTable.setFixedBottomRowCount(0);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			// ↓ Down
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
@@ -347,7 +347,7 @@ sap.ui.define([
 		}).then(function() {
 			/* As many data rows as there are visible rows, without fixed top/bottom rows */
 			oTable.setVisibleRowCount(10);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			// ↓ Down
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row before scrolling");
@@ -399,7 +399,7 @@ sap.ui.define([
 		assert.ok(oScrollExtension.isHorizontalScrollbarVisible(), "Table content does not fit width -> Horizontal scrollbar is visible");
 
 		this.oTable.getColumns()[0].setWidth("10px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			assert.ok(!oScrollExtension.isHorizontalScrollbarVisible(), "Table content fits width -> Horizontal scrollbar is not visible");
@@ -412,7 +412,7 @@ sap.ui.define([
 		assert.ok(oScrollExtension.isVerticalScrollbarVisible(), "Table content does not fit height -> Vertical scrollbar is visible");
 
 		this.oTable.setVisibleRowCount(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			assert.ok(!oScrollExtension.isVerticalScrollbarVisible(), "Table content fits height -> Vertical scrollbar is not visible");
@@ -925,7 +925,7 @@ sap.ui.define([
 		oTable.getColumns()[3].setWidth("800px");
 		oTable.getColumns()[4].setWidth("100px");
 		oTable.setFixedColumnCount(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			return test("Focus header cell in column 3 (scrollable column)", oTable.qunit.getColumnHeaderCell(2), 0, true);
@@ -952,7 +952,7 @@ sap.ui.define([
 			oTable.getColumns()[2].setWidth("100px");
 			oTable.getColumns()[3].setWidth("1000px");
 			oTable.getColumns()[4].setWidth("100px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return oTable.qunit.whenRenderingFinished();
 		}).then(function() {
 			return test("Focus header cell in column 2 (scrollable column)", oTable.qunit.getColumnHeaderCell(1), 50, false);
@@ -975,7 +975,7 @@ sap.ui.define([
 
 		return oTable.qunit.scrollHSbTo(50).then(function() {
 			oTable.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			that.assertSynchronization(assert, 50);
 		});
@@ -1225,7 +1225,7 @@ sap.ui.define([
 			var iInnerScrollPosition = this.oTable.getDomRef("tableCCnt").scrollTop;
 
 			this.oTable.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			return this.oTable.qunit.whenRenderingFinished().then(function() {
 				that.assertPosition(assert, iFirstVisibleRow, iScrollPosition, iInnerScrollPosition, sTitle + "After re-rendering");
@@ -2668,7 +2668,7 @@ sap.ui.define([
 					oTable.setFirstVisibleRow(1);
 				});
 				oTable.invalidate();
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			});
@@ -2700,7 +2700,7 @@ sap.ui.define([
 					oTable.setFirstVisibleRow(1);
 				});
 				oTable.invalidate();
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", FirstVisibleRow = 1");
 			});
@@ -5698,7 +5698,7 @@ sap.ui.define([
 		Device.support.touch = true;
 		oTable.invalidate();
 		oTable.qunit.preventFocusOnTouch();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oTable.qunit.whenRenderingFinished().then(oTable.qunit.$focus(oTable.getRows()[0].getCells()[0].getDomRef())).then(function() {
 			// Horizontal

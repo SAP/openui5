@@ -722,35 +722,35 @@ sap.ui.define([
 			this.multiInput1.addSuggestionItem(new Item({ text : String.fromCharCode(i + AasciiCode) + "-Item"}));
 		}
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
 		this.multiInput1.setValue("a");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 		this.multiInput1.onsapenter();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.multiInput1.getTokens().length, 1, "MultiInput contains 1 token, added via suggest");
 
 		this.multiInput1.setValue("B");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 		this.multiInput1.onsapenter();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, added via suggest ");
 
 		this.multiInput1.setValue("C");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return false; };
 		this.multiInput1.onsapenter();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, suggestion list was closed");
 
 		this.multiInput1.setValue("Z");
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 		this.multiInput1.onsapenter();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.multiInput1.getTokens().length, 2, "MultiInput contains 2 tokens, no token added, value does not fit suggestion list");
 	});
@@ -3875,11 +3875,11 @@ sap.ui.define([
 		// arrow down
 		qutils.triggerKeydown(oMultiInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oDummyBtn.focus();
 		this.clock.tick();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oMultiInput.hasStyleClass("sapMFocus"), "Input should not have focus class");
 

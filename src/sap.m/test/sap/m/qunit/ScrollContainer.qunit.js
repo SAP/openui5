@@ -137,23 +137,23 @@ sap.ui.define([
 	// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)
 	function getScrollPos(sScrollContainerId, sDirection) {
 		var s,
-			scrollEnablement = sap.ui.getCore().byId(sScrollContainerId).getScrollDelegate(),
+			scrollEnablement = Core.byId(sScrollContainerId).getScrollDelegate(),
 			aScrollPosition = null;
 
 		if (scrollEnablement._scroller) { // iScroll
 			if (Device.browser.mozilla) {
-				aScrollPosition = sap.ui.getCore().byId(sScrollContainerId).$().css("-moz-transform").split(" ");
+				aScrollPosition = Core.byId(sScrollContainerId).$().css("-moz-transform").split(" ");
 				// "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
 				s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 			} else if (Device.browser.safari || Device.browser.chrome) {
-				aScrollPosition = sap.ui.getCore().byId(sScrollContainerId).$().css("-webkit-transform").split(" ");
+				aScrollPosition = Core.byId(sScrollContainerId).$().css("-webkit-transform").split(" ");
 				s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 			}
 
 			return Math.round(parseFloat(s));
 
 		} else { // NativeMouseScroller
-			sDirection == "left" ? s = Math.round(sap.ui.getCore().byId(sScrollContainerId).getDomRef().scrollLeft) : s = Math.round(sap.ui.getCore().byId(sScrollContainerId).getDomRef().scrollTop);
+			sDirection == "left" ? s = Math.round(Core.byId(sScrollContainerId).getDomRef().scrollLeft) : s = Math.round(Core.byId(sScrollContainerId).getDomRef().scrollTop);
 			return -s;
 		}
 	}
@@ -268,7 +268,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oScrollContainer.scrollToElement(this.oTestButton);
 
@@ -298,7 +298,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oScrollContainer.scrollToElement(this.oTestButton.getDomRef());
 		assert.equal(getScrollPos(oScrollContainer.getId(), "left"), -800, "ScrollContainer should be scrolled to position 800 from the left");
@@ -340,7 +340,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Initial rendering without overflow", function(assert) {
@@ -359,7 +359,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Resize to overflow", function(assert) {
@@ -383,7 +383,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("Resize to underflow", function(assert) {
@@ -408,7 +408,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.module("scrollTo with scrollEndCallback", {
@@ -445,7 +445,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.test("non-animated scroll", function(assert) {
@@ -466,7 +466,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this.oScrollContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 	});
 
 	QUnit.module("Keyboard Handling");
@@ -564,7 +564,7 @@ sap.ui.define([
 
 		// Act
 		oContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oContainer.addStyleClass("sapUiNoContentPadding");
 		$containerContent = oContainer.$().find(sContentSelector);
 

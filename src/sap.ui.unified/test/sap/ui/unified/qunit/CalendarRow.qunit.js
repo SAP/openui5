@@ -12,9 +12,9 @@ sap.ui.define([
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/unified/library",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
-], function(qutils, CalendarLegend, CalendarLegendRenderer, CalendarRowRenderer,
-	CalendarLegendItem, CalendarType, InvisibleText, DateFormat, CalendarRow, CalendarAppointment, unifiedLibrary, Device, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(qutils, CalendarLegend, CalendarLegendRenderer, CalendarRowRenderer, CalendarLegendItem, CalendarType, InvisibleText, DateFormat, CalendarRow, CalendarAppointment, unifiedLibrary, Device, jQuery, oCore) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -198,7 +198,7 @@ sap.ui.define([
 			aAppointments[i].setSelected(false);
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	var oRow2 = new CalendarRow("Row2",  {
@@ -251,7 +251,7 @@ sap.ui.define([
 		var previousGroupAppointmentsMode = oRow1.getGroupAppointmentsMode();
 		var previousIntervalType = oRow1.getIntervalType();
 		oRow1.setIntervalType(CalendarIntervalType.Month);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert before act
 		var nbItems = oRow1.getAggregation("groupAppointments").length;
@@ -259,7 +259,7 @@ sap.ui.define([
 
 		//Act
 		oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(true, "Set the groupAppointmentsMode to Expanded");
 
 		//Assert
@@ -268,7 +268,7 @@ sap.ui.define([
 		//Cleanup
 		oRow1.setGroupAppointmentsMode(previousGroupAppointmentsMode);
 		oRow1.setIntervalType(previousIntervalType);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Calendar Row group appointments are not changed on the phone device when groupAppointmentsMode is Expanded", function(assert) {
@@ -276,7 +276,7 @@ sap.ui.define([
 		var deviceStub = this.stub(Device.system, "phone").value(true);
 		var previousIntervalType = oRow1.getIntervalType();
 		oRow1.setIntervalType(CalendarIntervalType.Month);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var previousGroupAppointmentsMode = oRow1.getGroupAppointmentsMode();
 
 		// Assert before act
@@ -285,7 +285,7 @@ sap.ui.define([
 
 		//Act
 		oRow1.setGroupAppointmentsMode(GroupAppointmentsMode.Expanded);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(true, "Set the groupAppointmentsMode to Expanded");
 
 		//Assert
@@ -295,12 +295,12 @@ sap.ui.define([
 		//Cleanup
 		oRow1.setGroupAppointmentsMode(previousGroupAppointmentsMode);
 		oRow1.setIntervalType(previousIntervalType);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		deviceStub.restore();
 	});
 
 	QUnit.test("Appointment", function(assert) {
-		var oAppointment = sap.ui.getCore().byId("App0");
+		var oAppointment = oCore.byId("App0");
 		assert.equal(oAppointment.getKey(), "A0", "Appointment: key set");
 		assert.equal(oAppointment.getTitle(), "Appointment 0", "Appointment: Title set");
 		assert.equal(oAppointment.getText(), "Appointment of 5 minutes, 2 hour in past", "Appointment: text set");
@@ -353,7 +353,7 @@ sap.ui.define([
 		assert.ok(!bNonWorkingIntervals, "Row1: no non working interval displayed");
 
 		oRow1.setNonWorkingHours([11, 12, 14]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.ok(!jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval0 not non-working interval");
 		assert.ok(jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval1 non-working interval");
@@ -362,12 +362,12 @@ sap.ui.define([
 		assert.ok(jQuery(aIntervals[4]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval4 non-working interval");
 		assert.ok(!jQuery(aIntervals[5]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval5 not non-working interval");
 		oRow1.setNonWorkingHours();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval1 not non-working interval");
 
 		oRow1.setIntervalType(CalendarIntervalType.Day);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.ok(jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval0 non-working interval");
 		assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval1 not non-working interval");
@@ -379,7 +379,7 @@ sap.ui.define([
 		assert.ok(jQuery(aIntervals[7]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval7 non-working interval");
 
 		oRow1.setNonWorkingDays([2, 3, 5]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.ok(!jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval0 not non-working interval");
 		assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval1 not non-working interval");
@@ -391,7 +391,7 @@ sap.ui.define([
 		assert.ok(!jQuery(aIntervals[7]).hasClass("sapUiCalendarRowAppsNoWork"), "Row1: interval7 not non-working interval");
 
 		oRow1.setNonWorkingDays([]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		for (var i = 0; i < aIntervals.length; i++) {
 			if (jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork")) {
@@ -402,7 +402,7 @@ sap.ui.define([
 
 		oRow1.setNonWorkingDays();
 		oRow1.setIntervalType(CalendarIntervalType.Hour);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Appointments - Hours view", function(assert) {
@@ -483,7 +483,7 @@ sap.ui.define([
 		assert.equal(aSubintervals.length, 0, "No subintervals rendered");
 
 		oRow1.setShowSubIntervals(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 4, "4 subintervals rendered");
 		var sStyle = jQuery(aSubintervals[0]).attr("style");
@@ -492,7 +492,7 @@ sap.ui.define([
 		assert.equal(iWidth, "25", "subinterval width");
 
 		oRow1.setShowSubIntervals(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 0, "No subintervals rendered");
 	});
@@ -503,13 +503,13 @@ sap.ui.define([
 		var oDate = new Date();
 		oDate.setHours(oDate.getHours() - 3);
 		oRow1.setStartDate(oDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(jQuery("#Row1-Now").get(0), "Now indicatior is rendered");
 		assert.ok(jQuery("#Row1-Now").is(":visible"), "Now indicatior is visible");
 		initializeRow1();
 
 		oRow1.setStartDate(new Date("2015", "0", "31", "22", "15"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Appointment0 = jQuery("#App0");
 		var $Appointment1 = jQuery("#App1");
 		var $Appointment2 = jQuery("#App2");
@@ -542,12 +542,12 @@ sap.ui.define([
 
 	QUnit.test("Appointments - EmptyIntervalHeaders", function(assert) {
 		oRow1.setShowEmptyIntervalHeaders(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
 		assert.ok(!oHead, "no empty Head area rendered");
 
 		oRow1.setShowEmptyIntervalHeaders(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
 		assert.ok(oHead, "Interval0: Head area rendered again");
 		assert.equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
@@ -555,14 +555,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Appointments - change properties", function(assert) {
-		var oAppointment = sap.ui.getCore().byId("App0");
+		var oAppointment = oCore.byId("App0");
 		oAppointment.setKey("Ap0");
 		oAppointment.setTitle("App 0");
 		oAppointment.setText("App 0");
 		oAppointment.setIcon("sap-icon://sap-ui5");
 		oAppointment.setTentative(true);
 		oAppointment.setSelected(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Appointment0 = jQuery("#App0");
 		assert.equal(oAppointment.getKey(), "Ap0", "Appointment: key set");
@@ -590,7 +590,7 @@ sap.ui.define([
 			appointments: [oApp]});
 
 		oCalendarRow.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Pre-Assert
 		assert.deepEqual(oCalendarRow.aSelectedAppointments, [oApp.getId()], "Selected appointment is part of CalendarRow's aSelectedAppointments array");
@@ -615,7 +615,7 @@ sap.ui.define([
 			appointments: [oApp]});
 
 		oCalendarRow.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Pre-Assert
 		assert.deepEqual(oCalendarRow.aSelectedAppointments, [], "Initially appointment is not part of CalendarRow's aSelectedAppointments array");
@@ -632,7 +632,7 @@ sap.ui.define([
 
 	QUnit.test("Appointments - days view", function(assert) {
 		oRow1.setIntervalType(CalendarIntervalType.Day);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Appointment0 = jQuery("#App0");
 		var $Appointment1 = jQuery("#App1");
 		var $Appointment2 = jQuery("#App2");
@@ -682,7 +682,7 @@ sap.ui.define([
 		assert.equal(aSubintervals.length, 0, "No subintervals rendered");
 
 		oRow1.setShowSubIntervals(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 24, "24 subintervals rendered");
 		var sStyle = jQuery(aSubintervals[0]).attr("style");
@@ -691,14 +691,14 @@ sap.ui.define([
 		assert.equal(iWidth, Math.floor(10000 / 24) / 100 + "", "subinterval width");
 
 		oRow1.setShowSubIntervals(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 0, "No subintervals rendered");
 	});
 
 	QUnit.test("Appointments - month view", function(assert) {
 		oRow1.setIntervalType(CalendarIntervalType.Month);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Appointment0 = jQuery("#App0");
 		var $Appointment1 = jQuery("#App1");
 		var $Appointment2 = jQuery("#App2");
@@ -749,7 +749,7 @@ sap.ui.define([
 		assert.equal(aSubintervals.length, 0, "No subintervals rendered");
 
 		oRow1.setShowSubIntervals(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 31, "31 subintervals rendered (first month)");
 		assert.ok(!jQuery(aSubintervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval0 working interval");
@@ -775,14 +775,14 @@ sap.ui.define([
 		assert.equal(iWidth, Math.floor(10000 / 28) / 100 + "", "subinterval width");
 
 		oRow1.setShowSubIntervals(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
 		assert.equal(aSubintervals.length, 0, "No subintervals rendered");
 	});
 
 	QUnit.test("Appointments - change intervals", function(assert) {
 		oRow1.setIntervals(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 		assert.equal(aIntervals.length, 2, "Row1: 3 intervals rendered");
 		var sStyle = jQuery(aIntervals[0]).attr("style");
@@ -808,12 +808,12 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "Row1-Group0");
 
 		assert.equal(iSelectedGroupAppointments, 7, "Selected Appointments in group");
-		assert.ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
-		assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment1: selected property set");
-		assert.ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment1: selected property set");
-		assert.ok(sap.ui.getCore().byId("App4").getSelected(), "Appointment1: selected property set");
-		assert.ok(sap.ui.getCore().byId("App5").getSelected(), "Appointment1: selected property set");
-		assert.ok(sap.ui.getCore().byId("App6").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App2").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App3").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App4").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App5").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App6").getSelected(), "Appointment1: selected property set");
 		assert.equal(sDomRefId, "Row1-Group0", "sDomRefId returns the right ID of the group appointment");
 	});
 
@@ -826,18 +826,18 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "App1");
 		assert.equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
 		assert.ok(!bMultiSelect, "Appointment 1: no multiple selection");
-		assert.ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App1").getSelected(), "Appointment1: selected property set");
 		assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
 		sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
 		assert.ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
 		assert.equal(sDomRefId, "App1", "sDomRefId returns the right ID of the appointment");
 
 		qutils.triggerEvent("tap", "App2-Title");
-		assert.ok(!sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property not longer set");
+		assert.ok(!oCore.byId("App1").getSelected(), "Appointment1: selected property not longer set");
 		assert.ok(!jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected not longer rendered");
 		assert.equal(sSelectedAppointmentId, "App2", "Appointment 2: click on title fires select event");
 		assert.ok(!bMultiSelect, "Appointment 2: no multiple selection");
-		assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected property set");
+		assert.ok(oCore.byId("App2").getSelected(), "Appointment2: selected property set");
 		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
 		sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
 		assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
@@ -846,11 +846,11 @@ sap.ui.define([
 		assert.equal(sDomRefId, "App2", "sDomRefId returns the right ID of the appointment");
 
 		qutils.triggerEvent("tap", "App3-Text", {ctrlKey: true});
-		assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected still property set");
+		assert.ok(oCore.byId("App2").getSelected(), "Appointment2: selected still property set");
 		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected still rendered");
 		assert.equal(sSelectedAppointmentId, "App3", "Appointment 3: click on text fires select event");
 		assert.ok(bMultiSelect, "Appointment 3: multiple selection");
-		assert.ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
+		assert.ok(oCore.byId("App3").getSelected(), "Appointment3: selected property set");
 		assert.ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
 		sAriaLabel3 = jQuery("#App3").attr("aria-labelledby");
 		assert.ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
@@ -863,9 +863,9 @@ sap.ui.define([
 		qutils.triggerEvent("tap", "App1");
 		assert.equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
 		assert.ok(bMultiSelect, "Appointment 1: multiple selection");
-		assert.ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
-		assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected property set");
-		assert.ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
+		assert.ok(oCore.byId("App1").getSelected(), "Appointment1: selected property set");
+		assert.ok(oCore.byId("App2").getSelected(), "Appointment2: selected property set");
+		assert.ok(oCore.byId("App3").getSelected(), "Appointment3: selected property set");
 		assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
 		assert.ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
 		assert.ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
@@ -891,7 +891,7 @@ sap.ui.define([
 		assert.ok(!bSubInterval, "No sub-interval clicked");
 
 		oRow1.setIntervalType(CalendarIntervalType.Day);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
 		bSubInterval = undefined;
@@ -902,7 +902,7 @@ sap.ui.define([
 		assert.ok(!bSubInterval, "No sub-interval clicked");
 
 		oRow1.setIntervalType(CalendarIntervalType.Month);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
 		bSubInterval = undefined;
@@ -913,12 +913,12 @@ sap.ui.define([
 		assert.ok(!bSubInterval, "No sub-interval clicked");
 
 		oRow1.setIntervalType(CalendarIntervalType.Hours);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("click on sub-interval", function(assert) {
 		oRow1.setShowSubIntervals(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
@@ -930,7 +930,7 @@ sap.ui.define([
 		assert.ok(bSubInterval, "sub-interval clicked");
 
 		oRow1.setIntervalType(CalendarIntervalType.Day);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
@@ -942,7 +942,7 @@ sap.ui.define([
 		assert.ok(bSubInterval, "sub-interval clicked");
 
 		oRow1.setIntervalType(CalendarIntervalType.Month);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
 		oIntervalStartDate = undefined;
 		oIntervalEndDate = undefined;
@@ -955,7 +955,7 @@ sap.ui.define([
 
 		oRow1.setIntervalType(CalendarIntervalType.Hours);
 		oRow1.setShowSubIntervals(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("keyboard arrow navigation", function(assert) {
@@ -968,7 +968,7 @@ sap.ui.define([
 
 		bStartDateChange = false;
 		qutils.triggerKeydown("App1", "ARROW_RIGHT");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(document.activeElement.id, "App3", "Appointment3 focused");
 		assert.equal(jQuery("#App3").attr("tabindex"), "0", "Appointment3: tabindex 0 rendered");
 		assert.equal(jQuery("#App1").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
@@ -982,7 +982,7 @@ sap.ui.define([
 		assert.equal(oRow1.getFocusedAppointment().getId(), "App2", "Appointment2 returned by getFocusedAppointment");
 
 		qutils.triggerKeydown("App2", "ARROW_LEFT");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(document.activeElement.id, "App0", "Appointment0 focused");
 		assert.equal(jQuery("#App0").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
 		assert.equal(jQuery("#App2").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
@@ -996,7 +996,7 @@ sap.ui.define([
 		jQuery("#App1").trigger("focus");
 		bStartDateChange = false;
 		qutils.triggerKeydown("App1", "HOME");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(document.activeElement.id, "App0", "Appointment0 focused");
 		assert.equal(jQuery("#App0").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
 		assert.equal(jQuery("#App1").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
@@ -1006,7 +1006,7 @@ sap.ui.define([
 
 		bStartDateChange = false;
 		qutils.triggerKeydown("App0", "END");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(document.activeElement.id, "App4", "Appointment4 focused");
 		assert.equal(jQuery("#App0").attr("tabindex"), "-1", "Appointment0: tabindex -1 rendered");
 		assert.equal(jQuery("#App4").attr("tabindex"), "0", "Appointment4: tabindex 0 rendered");
@@ -1019,7 +1019,7 @@ sap.ui.define([
 		qutils.triggerKeydown("App0", "ENTER");
 		assert.equal(sSelectedAppointmentId, "App0", "Appointment 0: ENTER fires select event");
 		assert.ok(!bMultiSelect, "Appointment 0: no multiple selection");
-		assert.ok(sap.ui.getCore().byId("App0").getSelected(), "Appointment0: selected property set");
+		assert.ok(oCore.byId("App0").getSelected(), "Appointment0: selected property set");
 		assert.ok(jQuery("#App0").hasClass("sapUiCalendarAppSel"), "Appointment0: selected rendered");
 	});
 
@@ -1060,7 +1060,7 @@ sap.ui.define([
 	QUnit.module("functions");
 
 	QUnit.test("focusAppointment", function(assert) {
-		oRow1.focusAppointment(sap.ui.getCore().byId("App2"));
+		oRow1.focusAppointment(oCore.byId("App2"));
 		assert.equal(document.activeElement.id, "App2", "Appointment2 focused");
 	});
 
@@ -1082,7 +1082,7 @@ sap.ui.define([
 		assert.ok(oApp3.$().is(":visible"), "The third appointment is visible");
 		//arrange
 		oRow2.setIntervalType(CalendarIntervalType.Month);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//assert
 		assert.ok(oApp.$().is(":visible"), "The first appointment is visible");
 		assert.notOk(oApp2.$().is(":visible"), "The second appointment not is visible");
@@ -1101,7 +1101,7 @@ sap.ui.define([
 			}
 			return 0;
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oRow1._aVisibleAppointments[0].level, "0", "Appointment1 now has level 0");
 
 	});
@@ -1110,7 +1110,7 @@ sap.ui.define([
 		//arrange and act
 		var fnCustom = this.spy();
 		oRow1._setCustomAppointmentsSorterCallback(fnCustom);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oRow1._fnCustomSortedAppointments, fnCustom,
@@ -1122,8 +1122,8 @@ sap.ui.define([
 QUnit.module("RTL", {
 		beforeEach: function () {
 			//Arrange
-			this.bOriginalRTLMode = sap.ui.getCore().getConfiguration().getRTL();
-			sap.ui.getCore().getConfiguration().setRTL(true);
+			this.bOriginalRTLMode = oCore.getConfiguration().getRTL();
+			oCore.getConfiguration().setRTL(true);
 
 			this.oRowRTL = new CalendarRow("RowRTL",  {
 				startDate: new Date("2015", "01", "01", "10", "15"),
@@ -1148,11 +1148,11 @@ QUnit.module("RTL", {
 				]
 			});
 			this.oRowRTL.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			//Cleanup
-			sap.ui.getCore().getConfiguration().setRTL(this.bOriginalRTLMode);
+			oCore.getConfiguration().setRTL(this.bOriginalRTLMode);
 			this.oRowRTL.destroy();
 		}
 	});
@@ -1165,7 +1165,7 @@ QUnit.test("keyboard arrow navigation", function(assert) {
 	assert.equal(this.oRowRTL.getFocusedAppointment().getId(), "App1RTL", "Appointment1 returned by getFocusedAppointment");
 
 	qutils.triggerKeydown("App1RTL", "ARROW_LEFT");
-	sap.ui.getCore().applyChanges();
+	oCore.applyChanges();
 	assert.equal(document.activeElement.id, "App3RTL", "Appointment3 focused");
 	assert.equal(jQuery("#App3RTL").attr("tabindex"), "0", "Appointment3: tabindex 0 rendered");
 	assert.equal(jQuery("#App1RTL").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
@@ -1178,7 +1178,7 @@ QUnit.test("keyboard arrow navigation", function(assert) {
 	assert.equal(this.oRowRTL.getFocusedAppointment().getId(), "App2RTL", "Appointment2 returned by getFocusedAppointment");
 
 	qutils.triggerKeydown("App2RTL", "ARROW_RIGHT");
-	sap.ui.getCore().applyChanges();
+	oCore.applyChanges();
 	assert.equal(document.activeElement.id, "App0RTL", "Appointment0 focused");
 	assert.equal(jQuery("#App0RTL").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
 	assert.equal(jQuery("#App2RTL").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
@@ -1189,7 +1189,7 @@ QUnit.test("Now indicator is displayed on the right", function(assert) {
 	var oDate = new Date();
 	oDate.setHours(oDate.getHours() - 3);
 	this.oRowRTL.setStartDate(oDate);
-	sap.ui.getCore().applyChanges();
+	oCore.applyChanges();
 	assert.ok(jQuery("#RowRTL-Now").is(":visible"), "Now indicatior is visible");
 	assert.ok(jQuery("#RowRTL-Now").css("right"), "Now indicatior is displayed on the right");
 });
@@ -1238,7 +1238,7 @@ QUnit.module("Accessibility", {
 				})
 			]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	},
 	afterEach: function () {
 		this.sut.destroy();
@@ -1291,7 +1291,7 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 
 QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert) {
 	// Prepare
-	sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+	oCore.getConfiguration().setFormatLocale("en-US");
 
 	var oCalendarRow = new CalendarRow(),
 		oMockedDate = new Date(2019, 7, 5, 15),
@@ -1306,7 +1306,7 @@ QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert)
 
 QUnit.test("_oFormatAria start/end format for 24-hour clocks", function (assert) {
 	// Prepare
-	sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
+	oCore.getConfiguration().setFormatLocale("en-GB");
 
 	var oCalendarRow = new CalendarRow(),
 		oMockedDate = new Date(2019, 7, 5, 15),

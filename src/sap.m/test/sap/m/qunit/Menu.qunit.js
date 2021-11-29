@@ -237,7 +237,7 @@ sap.ui.define([
 		//Act
 		this.sut.getItems()[0].setVisible(false);
 		this.sut.openBy();
-		var oItemFridge = sap.ui.getCore().byId(this.sut.getItems()[0]._getVisualControl());
+		var oItemFridge = oCore.byId(this.sut.getItems()[0]._getVisualControl());
 
 		//Assert
 		assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
@@ -593,7 +593,7 @@ sap.ui.define([
 			this.sut = new Menu();
 			this.oButton = new Button();
 			this.oButton.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach : function () {
@@ -689,9 +689,9 @@ sap.ui.define([
 
 		// filter the model
 		this.sut.getBinding('items').filter(new Filter("type", FilterOperator.EQ, 'world'));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		assert.ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
+		assert.ok(!oCore.byId(oItemId), 'The item that does not fit in the filter is destroyed');
 	});
 
 	QUnit.module('MenuItem(inside Menu)', {
@@ -714,7 +714,7 @@ sap.ui.define([
 			this.sutRootMenu = new Menu({items: this.sut});
 			this.oLabel = new Label(); //.openBy needs a reference
 			this.sutRootMenu.openBy(this.oLabel);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.sutRootMenu.close();
@@ -838,7 +838,7 @@ sap.ui.define([
 		assert.strictEqual(this.sut.getItems().length, 1, "less items");
 		assert.strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
 		assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-		assert.ok(sap.ui.getCore().byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
+		assert.ok(oCore.byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
 	});
 
 	QUnit.test("removeAllAggregation 'items'", function(assert) {
@@ -854,7 +854,7 @@ sap.ui.define([
 		assert.strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
 		assert.strictEqual(this.sut.getItems().length, 0, "no items");
 		assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-		assert.ok(sap.ui.getCore().byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
+		assert.ok(oCore.byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
 	});
 
 	QUnit.test("destroyAggregation 'items'", function(assert) {
@@ -866,10 +866,10 @@ sap.ui.define([
 		this.sut.destroyAggregation("items", true);
 
 		//Assert
-		assert.ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
+		assert.ok(!oCore.byId(oFirstItem.getId()), "the items are destroyed");
 		assert.strictEqual(this.sut.getItems().length, 0, "no items");
 		assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-		assert.equal(sap.ui.getCore().byId(sFirstUnfItemId), null, "should destroy the connected sap.ui.unified.MenuItem");
+		assert.equal(oCore.byId(sFirstUnfItemId), null, "should destroy the connected sap.ui.unified.MenuItem");
 	});
 
 	QUnit.test("removeItem and add it later", function(assert) {
@@ -885,7 +885,7 @@ sap.ui.define([
 		//Assert
 		assert.equal(oRemoveItem._getVisualControl(), sRemoveUnfItemId,
 				"should keep sap.m.MenuItem & sap.ui.unified.MenuItem connected");
-		assert.ok(sap.ui.getCore().byId(sRemoveUnfItemId), "should reuse the existing sap.ui.unified.MenuItem connected" +
+		assert.ok(oCore.byId(sRemoveUnfItemId), "should reuse the existing sap.ui.unified.MenuItem connected" +
 			" to the given sap.m.MenuItem");
 	});
 
@@ -894,7 +894,7 @@ sap.ui.define([
 		var fnMenuCloseSpy = sinon.spy(this.sutRootMenu._getVisualParent(), "close");
 
 		//act
-		sap.ui.getCore().byId(this.sut._getVisualControl()).onsapshow(new jQuery.Event('sapshow'));
+		oCore.byId(this.sut._getVisualControl()).onsapshow(new jQuery.Event('sapshow'));
 
 		//assert
 		assert.strictEqual(fnMenuCloseSpy.called, true, "menu is closed after F4 on an item");
@@ -1191,7 +1191,7 @@ sap.ui.define([
 		oMenu.setModel(oModel, "myModel");
 
 		oButton.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMenu.openBy(oButton);

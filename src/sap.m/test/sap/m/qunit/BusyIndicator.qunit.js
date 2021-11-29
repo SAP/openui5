@@ -13,7 +13,7 @@ sap.ui.define([
 			this.oBusyInd = new BusyIndicator();
 
 			this.oBusyInd.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oBusyInd.destroy();
@@ -56,7 +56,7 @@ sap.ui.define([
 	QUnit.test("setText() sets the correct value to the control and the label", function (assert) {
 		var text = "something text 2";
 		this.oBusyInd.setText(text);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getText(), text, "CONTROL TEXT should be " + text);
 		assert.strictEqual(this.oBusyInd._busyLabel.getText(), text, "LABEL TEXT should be " + text);
@@ -65,11 +65,11 @@ sap.ui.define([
 	QUnit.test("setText() RE-sets (updates) the correct value to the control and the label", function (assert) {
 		var sText = "Some text";
 		this.oBusyInd.setText(sText);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sTextTwo = "Some text 2";
 		this.oBusyInd.setText(sTextTwo);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getText(), sTextTwo, "CONTROL TEXT should be " + sTextTwo);
 		assert.strictEqual(this.oBusyInd._busyLabel.getText(), sTextTwo, "LABEL TEXT should be " + sTextTwo);
@@ -82,7 +82,7 @@ sap.ui.define([
 
 		this.oBusyInd.setText(sText);
 		this.oBusyInd.setTextDirection(sDir);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getTextDirection(), sDir, "CONTROL TEXT dir should be " + sDir);
 		assert.strictEqual(this.oBusyInd._busyLabel.getTextDirection(), sDir, "LABEL TEXT dir should be " + sDir);
@@ -94,11 +94,11 @@ sap.ui.define([
 
 		this.oBusyInd.setText(sText);
 		this.oBusyInd.setTextDirection(sDir);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sDirTwo = "LTR";
 		this.oBusyInd.setTextDirection(sDirTwo);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getTextDirection(), sDirTwo, "CONTROL TEXT dir should be " + sDirTwo);
 		assert.strictEqual(this.oBusyInd._busyLabel.getTextDirection(), sDirTwo, "LABEL TEXT dir should be " + sDirTwo);
@@ -107,7 +107,7 @@ sap.ui.define([
 	QUnit.test("setCustomIcon() sets the correct value to the control and the image", function (assert) {
 		var icon = "../images/settings_64.png";
 		this.oBusyInd.setCustomIcon(icon);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIcon(), icon, "CONTROL ICON should be " + icon);
 		assert.strictEqual(this.oBusyInd._iconImage.getSrc(), icon, "ICON src should be " + icon);
@@ -118,10 +118,10 @@ sap.ui.define([
 		var sIconTwo = "../images/edit_48.png";
 
 		this.oBusyInd.setCustomIcon(sIcon);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oBusyInd.setCustomIcon(sIconTwo);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIcon(), sIconTwo, "CONTROL ICON should be " + sIconTwo);
 		assert.strictEqual(this.oBusyInd._iconImage.getSrc(), sIconTwo, "ICON src should be " + sIconTwo);
@@ -134,7 +134,7 @@ sap.ui.define([
 		var bIsAware = false;
 		this.oBusyInd.setCustomIconDensityAware(bIsAware);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIconDensityAware(), bIsAware, "CONTROL density aware should be " + bIsAware);
 		assert.strictEqual(this.oBusyInd._iconImage.getDensityAware(), bIsAware, "ICON density aware should be " + bIsAware);
@@ -146,12 +146,12 @@ sap.ui.define([
 
 		var bIsAware = false;
 		this.oBusyInd.setCustomIconDensityAware(bIsAware);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		var bIsAwareNew = true;
 		this.oBusyInd.setCustomIconDensityAware(bIsAwareNew);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIconDensityAware(), bIsAwareNew, "CONTROL density aware should be " + bIsAwareNew);
 		assert.strictEqual(this.oBusyInd._iconImage.getDensityAware(), bIsAwareNew, "ICON density aware should be " + bIsAwareNew);
@@ -164,7 +164,7 @@ sap.ui.define([
 		var sIcon = "../images/settings_64.png";
 		this.oBusyInd.setCustomIcon(sIcon);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIconWidth(), sWidth, "CONTROL ICON width should be " + sWidth);
 		assert.strictEqual(this.oBusyInd._iconImage.getWidth(), sWidth, "ICON width should be " + sWidth);
@@ -176,11 +176,11 @@ sap.ui.define([
 
 		var sIcon = "../images/settings_64.png";
 		this.oBusyInd.setCustomIcon(sIcon);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sWidthNew = "2.5rem";
 		this.oBusyInd.setCustomIconWidth(sWidthNew);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIconWidth(), sWidthNew, "CONTROL ICON width should be " + sWidthNew);
 		assert.strictEqual(this.oBusyInd._iconImage.getWidth(), sWidthNew, "ICON width should be " + sWidthNew);
@@ -193,7 +193,7 @@ sap.ui.define([
 		var sHeight = "1.75rem";
 		this.oBusyInd.setCustomIconHeight(sHeight);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIconHeight(), sHeight, "CONTROL ICON height should be " + sHeight);
 		assert.strictEqual(this.oBusyInd._iconImage.getHeight(), sHeight, "ICON height should be " + sHeight);
@@ -205,11 +205,11 @@ sap.ui.define([
 
 		var sHeight = "1.75rem";
 		this.oBusyInd.setCustomIconHeight(sHeight);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sHeightNew = "2.75rem";
 		this.oBusyInd.setCustomIconHeight(sHeightNew);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oBusyInd.getCustomIconHeight(), sHeightNew, "CONTROL ICON height should be " + sHeightNew);
 		assert.strictEqual(this.oBusyInd._iconImage.getHeight(), sHeightNew, "ICON height should be " + sHeightNew);
@@ -220,7 +220,7 @@ sap.ui.define([
 			this.oBusyInd = new BusyIndicator();
 
 			this.oBusyInd.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oBusyInd.destroy();
@@ -242,7 +242,7 @@ sap.ui.define([
 
 	QUnit.test("Custom icon animation is using sap.m.Image", function (assert) {
 		this.oBusyInd.setCustomIcon("../images/settings_64.png");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $image = this.oBusyInd.$().find(".sapMImg");
 		assert.strictEqual($image.length, 1, "sap.m.Image shoud be rendered");
@@ -251,7 +251,7 @@ sap.ui.define([
 	QUnit.test("Setting text property renders sap.m.Label", function (assert) {
 		var text = "loading...";
 		this.oBusyInd.setText(text);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var $label = this.oBusyInd.$().find(".sapMLabel");
 		assert.strictEqual($label.length, 1, "sap.m.Label shoud be rendered");
@@ -306,7 +306,7 @@ sap.ui.define([
 			});
 
 			this.oBusyInd.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oBusyInd.destroy();
@@ -317,7 +317,7 @@ sap.ui.define([
 	QUnit.test("setCustomIconWidth sets the correct width of the custom icon", function (assert) {
 		// arrange
 		this.oBusyInd.setCustomIconWidth("100px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oBusyInd.getDomRef("icon").style.width, "100px", "should be 100px");
@@ -326,7 +326,7 @@ sap.ui.define([
 	QUnit.test("setCustomIconHeight sets the correct height of the custom icon", function (assert) {
 		// arrange
 		this.oBusyInd.setCustomIconHeight("100px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oBusyInd.getDomRef("icon").style.height, "100px", "should be 100px");

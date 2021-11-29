@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/base/Log",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -38,7 +39,8 @@ sap.ui.define([
 	Label,
 	Log,
 	waitForThemeApplied,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -80,7 +82,7 @@ sap.ui.define([
 			this.oMenu.addItem(oMenuItem1);
 			this.oMenu.addItem(oMenuItem2);
 			this.sut.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -103,7 +105,7 @@ sap.ui.define([
 		// arrange
 		var oMenuButton = new MenuButton({ buttonMode: MenuButtonMode.Split });
 		oMenuButton.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oMenuButton.getDomRef("internalSplitBtn"), "there is an element with -internalSplitBtn suffix");
@@ -141,7 +143,7 @@ sap.ui.define([
 				})
 			});
 			this.sut.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -163,7 +165,7 @@ sap.ui.define([
 
 		// act
 		oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "true",
@@ -171,7 +173,7 @@ sap.ui.define([
 
 		// act
 		this.sut.getMenu().close();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
@@ -181,7 +183,7 @@ sap.ui.define([
 	QUnit.test("MenuButton (Split) aria-expanded attribute", function (assert) {
 		this.sut.setButtonMode("Split");
 		var oButton = this.sut._getButtonControl()._getArrowButton();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
@@ -189,7 +191,7 @@ sap.ui.define([
 
 		// act
 		oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "true",
@@ -197,7 +199,7 @@ sap.ui.define([
 
 		// act
 		this.sut.getMenu().close();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oButton.$().attr("aria-expanded"), "false",
@@ -224,7 +226,7 @@ sap.ui.define([
 
 	QUnit.test("MenuButton in Split aria-controls placement", function (assert) {
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $arrowButton = this.sut._getButtonControl()._getArrowButton().$(),
 			oGetMenuSub = this.stub(this.sut, "getMenu").callsFake(function () {
@@ -246,7 +248,7 @@ sap.ui.define([
 	QUnit.test("MenuButton in Split root aria attributes", function(assert) {
 		//arrange
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			sAriaHasPopup = oInnerButton._getArrowButton().$().attr("aria-haspopup");
@@ -259,11 +261,11 @@ sap.ui.define([
 	QUnit.test("MenuButton in Split mode", function (assert) {
 		//arrange
 		var sText = "Example",
-			sExpectedArrowButtonTooltip = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP");
+			sExpectedArrowButtonTooltip = oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP");
 
 		this.sut.setText(sText);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			aAriaLabelledIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
@@ -277,11 +279,11 @@ sap.ui.define([
 				sText,
 				'Referenced control in "aria-labelledby" shows the text of the button');
 		assert.strictEqual(aAriaLabelledByDomElements[1].text(),
-				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
+				oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_DESCRIPTION"),
 				'Referenced control in "aria-labelledby" shows that this is a split button');
 
 		assert.strictEqual(aAriaLabelledByDomElements[2].text(),
-				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
+				oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"),
 				'Referenced control in "aria-labelledby" shows the keyboard handling hint');
 
 		assert.strictEqual(oInnerButton._getArrowButton().getTooltip(), sExpectedArrowButtonTooltip,
@@ -294,7 +296,7 @@ sap.ui.define([
 		var sTooltip = "Some meaningful tooltip";
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setTooltip(sTooltip);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			oArrowButton = oInnerButton._getArrowButton(),
@@ -314,7 +316,7 @@ sap.ui.define([
 		var sIconName = "add";
 		this.sut.setIcon("sap-icon://" + sIconName);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			oTextButton = oInnerButton._getTextButton(),
@@ -322,7 +324,7 @@ sap.ui.define([
 			sInternalTooltipId = oInnerButton.getId() + "-tooltip",
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
+			bAriaLabeledByHasCorrectValue = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue, '"aria-labelledby" is present and has correct value');
@@ -339,7 +341,7 @@ sap.ui.define([
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setTooltip(sTooltip);
 		this.sut.setIcon("sap-icon://" + sIconName);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl();
 
@@ -351,13 +353,13 @@ sap.ui.define([
 		//arrange
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setType(ButtonType.Emphasized);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
@@ -370,13 +372,13 @@ sap.ui.define([
 		this.sut.setText("Hello");
 		this.sut.setType(ButtonType.Emphasized);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
@@ -389,13 +391,13 @@ sap.ui.define([
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setType(ButtonType.Emphasized);
 		this.sut.setIcon("sap-icon://" + sIconName);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
@@ -409,13 +411,13 @@ sap.ui.define([
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		this.sut.setIcon("sap-icon://" + sIconName);
 		this.sut.setTooltip(sTooltip);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl(),
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
-			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
+			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
+			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, oCore.getLibraryResourceBundle("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
 
 		//assert
 		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
@@ -428,7 +430,7 @@ sap.ui.define([
 		this.sut.setText("Hello");
 		this.sut.setType(ButtonType.Emphasized);
 		this.sut.setButtonMode(MenuButtonMode.Split);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oInnerButton = this.sut._getButtonControl();
 
@@ -582,7 +584,7 @@ sap.ui.define([
 
 			this.oLabel.placeAt("content");
 			this.oMenuButton.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oLabel.destroy();
@@ -606,7 +608,7 @@ sap.ui.define([
 			sInternalButtonAriaLabelledby;
 
 		oLabel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		sInternalButtonAriaLabelledby = this.oMenuButton._getButtonControl().$().attr("aria-labelledby");
 
@@ -634,7 +636,7 @@ sap.ui.define([
 			this.oMenu.addItem(this.oMenuItem2);
 
 			this.sut.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -672,7 +674,7 @@ sap.ui.define([
 		var oMenuButton = this.sut,
 			oMenuButton2 = new MenuButton("menuButton2").placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		// simulate event handlers in the expected order
@@ -765,7 +767,7 @@ sap.ui.define([
 	QUnit.test("Open and close if the menu contains only disabled items", function(assert) {
 		this.oMenuItem1.setEnabled(false);
 		this.oMenuItem2.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.sut.openMenuByKeyboard();
 
@@ -803,7 +805,7 @@ sap.ui.define([
 			beforeMenuOpen : function () {}
 		});
 		this.sut.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnFireDefaultAction = sinon.spy(this.sut, "fireDefaultAction"),
 			fnFireBeforeMenuOpen = sinon.spy(this.sut, "fireBeforeMenuOpen");
@@ -871,7 +873,7 @@ sap.ui.define([
 				})
 			});
 			this.sut.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -1021,7 +1023,7 @@ sap.ui.define([
 		}});
 
 		oButton.placeAt('content'); // popover opens only if opening button is rendered
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oButton.firePress(); // press to open the popover
 		this.clock.tick(1000);
@@ -1031,7 +1033,7 @@ sap.ui.define([
 
 		//act
 		oPopover.rerender();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check width after rerendering
 		assert.ok(oMenuButton.$().width() > 1, "width is still greater than 1 after rerendering");
@@ -1070,7 +1072,7 @@ sap.ui.define([
 			oSpyArrowButtonPress = this.spy(oSplitButtonArrow, "firePress");
 
 		this.sut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		this.keydown(KeyCodes.ENTER);
@@ -1169,7 +1171,7 @@ sap.ui.define([
 
 		//act
 		mb.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.ok(mb._getButtonControl()._getTextButton().getDomRef("content").style.width, 'text button content has initial width');

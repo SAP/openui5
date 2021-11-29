@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	RuntimeAuthoring,
 	ElementDesignTimeMetadata,
@@ -26,7 +27,8 @@ sap.ui.define([
 	UIComponent,
 	ComponentContainer,
 	_omit,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -78,7 +80,7 @@ sap.ui.define([
 				component: this.oComp
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 
 			this.oRta = new RuntimeAuthoring({
@@ -488,7 +490,7 @@ sap.ui.define([
 			});
 			oComponentContainer.placeAt('qunit-fixture');
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,

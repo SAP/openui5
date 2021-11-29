@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/mdc/enum/SelectType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Core"
 ], function (
 		ValueHelpDelegate,
 		FieldBaseDelegate,
@@ -25,8 +26,9 @@ sap.ui.define([
 		SelectType,
 		JSONModel,
 		StringType,
-		mLibrary
-		) {
+		mLibrary,
+		oCore
+	) {
 	"use strict";
 
 	var oConditions;
@@ -35,7 +37,7 @@ sap.ui.define([
 	var bIsOpening = false;
 	var oModel;
 	var oType;
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var oContainer = { //to fake Container
 		getScrollDelegate: function() {

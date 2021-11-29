@@ -4,17 +4,18 @@ sap.ui.define([
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
 	"sap/m/FeedListItem",
-	"sap/ui/events/KeyCodes"
-], function(qutils, FeedInput, TooltipBase, FeedListItem, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(qutils, FeedInput, TooltipBase, FeedListItem, KeyCodes, oCore) {
 	"use strict";
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Properties", {
 		beforeEach: function () {
 			this.oFeedInput = new FeedInput("input");
 			this.oFeedInput.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedInput.destroy();
@@ -22,11 +23,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Defaults", function (assert) {
-		assert.strictEqual(this.oFeedInput.getButtonTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
+		assert.strictEqual(this.oFeedInput.getButtonTooltip(), oCore.getLibraryResourceBundle("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
 		assert.strictEqual(this.oFeedInput.getEnabled(), true, "enabled is 'true'");
 		assert.strictEqual(this.oFeedInput.getIcon(), "", "icon is ''");
 		assert.strictEqual(this.oFeedInput.getMaxLength(), 0, "maxLength is '0'");
-		assert.strictEqual(this.oFeedInput.getPlaceholder(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
+		assert.strictEqual(this.oFeedInput.getPlaceholder(), oCore.getLibraryResourceBundle("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
 		assert.strictEqual(this.oFeedInput.getShowIcon(), true, "showIcon is 'true'");
 		assert.strictEqual(this.oFeedInput.getValue(), "", "value is ''");
 		assert.strictEqual(this.oFeedInput.getVisible(), true, "visible is 'true'");
@@ -64,17 +65,17 @@ sap.ui.define([
 
 		this.oFeedInput.setEnabled(true);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput._getTextArea().getEnabled(), true, "enabled=true: TextArea should be enabled");
 		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=true, Value = '': Button should be disabled");
 		assert.strictEqual(this.oFeedInput.$("outerContainer").hasClass("sapMFeedInDisabled"), false, "enabled=true: sapMFeedInDisabled should be enabled");
 
 		this.oFeedInput.setValue(" ");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "enabled=true, Value = ' ': Button should be disabled when TextArea contains only whitespace chars");
 
 		this.oFeedInput.setValue("some string");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "enabled=true, Value = 'some string': Button should be enabled when TextArea contains any non-whitespace chars");
 	});
 
@@ -88,14 +89,14 @@ sap.ui.define([
 
 		this.oFeedInput.setIcon("");
 		this.oFeedInput.setIconInitials("TT");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput._getAvatar().getInitials(), "TT", "Should have initials set");
 		assert.strictEqual(this.oFeedInput._getAvatar()._getActualDisplayType(),
 		"Initials", "Should have initials set");
 
 		this.oFeedInput.setIcon("");
 		this.oFeedInput.setIconInitials("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput._getAvatar()._getActualDisplayType(),
 		"Icon", "Should have default placeholder icon");
 	});
@@ -160,12 +161,12 @@ sap.ui.define([
 
 	QUnit.test("ShowIcon", function (assert) {
 		this.oFeedInput.setShowIcon(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput.getShowIcon(), false, "Getter should return correct non-default value");
 		assert.ok(this.oFeedInput.$().find("#input-outerContainer").hasClass("sapMFeedInNoIcon"), "ShowIcon=false: div input should have class 'sapMFeedInNoIcon'");
 
 		this.oFeedInput.setShowIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!this.oFeedInput.$().find("#input-outerContainer").hasClass("sapMFeedInNoIcon"), "ShowIcon=true: div input should not have class 'sapMFeedInNoIcon'");
 		assert.ok(this.oFeedInput.$().find("#input-figure").hasClass("sapMFeedInFigure"), "ShowIcon=true: div figure should have class 'sapMFeedInFigure'");
 	});
@@ -206,7 +207,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oFeedInput = new FeedInput("input");
 			this.oFeedInput.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedInput.destroy();
@@ -231,7 +232,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has correct children");
 		this.oFeedInput.setMaxLength(20);
 		this.oFeedInput.setShowExceededText(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container contain Text Area counter");
 		assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain Text Area counter");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").hasClass("sapMFeedInCounter"), "Counter container should have class 'sapMFeedInCounter'");
@@ -242,7 +243,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 1, "Text Area has correct children");
 		this.oFeedInput.setMaxLength(0);
 		this.oFeedInput.setShowExceededText(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container does not contain Text Area counter");
 		assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain visible Text Area counter");
 		assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
@@ -251,7 +252,7 @@ sap.ui.define([
 		assert.ok(this.oFeedInput.$().find("#input-textArea").children().length === 2, "Text Area has correct children");
 		this.oFeedInput.setMaxLength(20);
 		this.oFeedInput.setShowExceededText(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container contain Text Area counter");
 		assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain Text Area counter");
 		assert.ok(this.oFeedInput.$().find("#input-counterContainer").hasClass("sapMFeedInCounter"), "Counter container should have class 'sapMFeedInCounter'");
@@ -267,7 +268,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oFeedInput = new FeedInput("input");
 			this.oFeedInput.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFeedInput.destroy();

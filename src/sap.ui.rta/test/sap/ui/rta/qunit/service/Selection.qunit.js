@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
 	"sap/m/Button",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function (
 	RuntimeAuthoring,
@@ -18,7 +19,8 @@ function (
 	ComponentContainer,
 	Page,
 	Button,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').resolves(true);
 		},

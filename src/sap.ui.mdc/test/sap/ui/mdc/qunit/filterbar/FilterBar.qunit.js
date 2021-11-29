@@ -15,7 +15,8 @@ sap.ui.define([
 	'sap/base/util/merge',
 	"sap/ui/core/library",
 	"../QUnitUtils",
-	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
+	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
+	"sap/ui/core/Core"
 ], function (
 	FlexRuntimeInfoAPI,
 	FilterBar,
@@ -29,7 +30,8 @@ sap.ui.define([
 	merge,
 	CoreLibrary,
 	MDCQUnitUtils,
-	TestModificationHandler
+	TestModificationHandler,
+	oCore
 ) {
 	"use strict";
 
@@ -396,8 +398,8 @@ sap.ui.define([
 
 	QUnit.test("check getAssignedFiltersText", function (assert) {
 
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("EN");
+		var sLanguage = oCore.getConfiguration().getLanguage();
+		oCore.getConfiguration().setLanguage("EN");
 
 		var mText, fResolve, oPromise = new Promise(function (resolve) {
 			fResolve = resolve;
@@ -495,7 +497,7 @@ sap.ui.define([
 
 					oFilterBar.getControlDelegate().fetchProperties.restore();
 
-					sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
+					oCore.getConfiguration().setLanguage(sLanguage);
 					done();
 				});
 			});
@@ -1270,8 +1272,8 @@ sap.ui.define([
 			hiddenFilter: true
 		};
 
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("EN");
+		var sLanguage = oCore.getConfiguration().getLanguage();
+		oCore.getConfiguration().setLanguage("EN");
 
 		var oCM = oFilterBar._getConditionModel();
 		oCM.addCondition("key7", Condition.createCondition("EQ", ["foo"]));
@@ -1298,7 +1300,7 @@ sap.ui.define([
 		assert.equal(aNames[2], oProperty2.name);
 		assert.equal(aNames[3], oProperty1.name);
 
-		sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
+		oCore.getConfiguration().setLanguage(sLanguage);
 	});
 
 	QUnit.test("check _handleConditionModelPropertyChange", function (assert) {

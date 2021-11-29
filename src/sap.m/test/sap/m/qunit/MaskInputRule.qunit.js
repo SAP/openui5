@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MaskInputRule",
 	"sap/m/MaskInput",
-	"sap/base/Log"
-], function(QUnitUtils, createAndAppendDiv, MaskInputRule, MaskInput, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function(QUnitUtils, createAndAppendDiv, MaskInputRule, MaskInput, Log, oCore) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -17,7 +18,7 @@ sap.ui.define([
 			this.oMaskInputRule = new MaskInputRule();
 			this.oMaskInput = new MaskInput({rules: [this.oMaskInputRule]});
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oMaskInput.destroy();

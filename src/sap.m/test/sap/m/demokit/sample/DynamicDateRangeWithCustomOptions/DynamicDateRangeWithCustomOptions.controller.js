@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/m/Label',
 	'sap/m/CustomDynamicDateOption',
 	'sap/ui/core/ValueState',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	"sap/ui/core/Core"
 ], function(
 	Controller,
 	LocaleData,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Label,
 	CustomDynamicDateOption,
 	ValueState,
-	Device
+	Device,
+	oCore
 ) {
 "use strict";
 
@@ -338,7 +340,7 @@ var DynamicDateRangeController = Controller.extend(".sample.DynamicDateRangeWith
 			},
 			validateValueHelpUI: validateValueHelpUIHelper,
 			toDates: function(oValue) {
-				var oLocale = sap.ui.getCore().getConfiguration().getLocale();
+				var oLocale = oCore.getConfiguration().getLocale();
 				var oLocaleData = new LocaleData(oLocale);
 				var iValue = oValue.values[0];
 				var oSaturdayDate = new Date();
@@ -383,7 +385,7 @@ var DynamicDateRangeController = Controller.extend(".sample.DynamicDateRangeWith
 			},
 			validateValueHelpUI: validateValueHelpUIHelper,
 			toDates: function(oValue) {
-				var oLocale = sap.ui.getCore().getConfiguration().getLocale();
+				var oLocale = oCore.getConfiguration().getLocale();
 				var oLocaleData = new LocaleData(oLocale);
 				var iValue = oValue.values[0];
 				var aResultDateRange = [new Date(), new Date()];

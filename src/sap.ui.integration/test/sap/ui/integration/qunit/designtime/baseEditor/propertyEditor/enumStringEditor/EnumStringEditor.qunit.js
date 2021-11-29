@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
-	EditorQunitUtils
+	EditorQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 
 			this.oBaseEditor.getPropertyEditorsByName("sampleEnum").then(function (aPropertyEditor) {
 				this.oEnumStringEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oEnumStringEditorElement = this.oEnumStringEditor.getContent();
 				fnReady();
 			}.bind(this));
@@ -139,7 +141,7 @@ sap.ui.define([
 
 			this.oBaseEditor.getPropertyEditorsByName("sampleEnum").then(function (aPropertyEditor) {
 				var oEnumStringEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oEnumStringEditorElement = oEnumStringEditor.getContent();
 
 				oEnumStringEditor.attachValueChange(function (oEvent) {
@@ -159,7 +161,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleEnum").then(function (aPropertyEditor) {
 				var oEnumStringEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oEnumStringEditorElement = oEnumStringEditor.getContent();
 
 				EditorQunitUtils.setInputValueAndConfirm(oEnumStringEditorElement, "validBindingString}");

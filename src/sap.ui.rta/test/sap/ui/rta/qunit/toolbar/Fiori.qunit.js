@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/m/Image",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function(
 	jQuery,
@@ -18,7 +19,8 @@ function(
 	RtaUtils,
 	Image,
 	Log,
-	sinon
+	sinon,
+	oCore
 ) {
 	'use strict';
 
@@ -36,7 +38,7 @@ function(
 			}, this);
 
 			this.oImage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oToolbarControlsModel = new JSONModel({
 				undoEnabled: false,
@@ -97,7 +99,7 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 

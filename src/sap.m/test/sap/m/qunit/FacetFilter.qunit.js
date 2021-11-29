@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -44,7 +45,8 @@ sap.ui.define([
 	InvisibleText,
 	EventProvider,
 	GroupHeaderListItem,
-	waitForThemeApplied
+	waitForThemeApplied,
+	oCore
 ) {
 	"use strict";
 
@@ -87,7 +89,7 @@ sap.ui.define([
 
 		this.stub(Device.support, "touch").value(true);
 		oFF.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -123,7 +125,7 @@ sap.ui.define([
 		oFF.addList(new FacetFilterList("list1"));
 		oFF.addList(new FacetFilterList("list2"));
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFF.getLists().length, 2, "There should be two lists in the 'lists' aggregation");
 		assert.ok(oFF.getAggregation("addFacetButton"), "Add facet button aggregation should be created");
@@ -138,7 +140,7 @@ sap.ui.define([
 		oFF.addList(new FacetFilterList("list1"));
 		oFF.addList(new FacetFilterList("list2"));
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		destroyFF(oFF);
 	});
@@ -162,7 +164,7 @@ sap.ui.define([
 		oFF.setModel(oModel);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oDialog = oFF._getFacetDialog();
@@ -266,7 +268,7 @@ sap.ui.define([
 
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -292,7 +294,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -320,7 +322,7 @@ sap.ui.define([
 		oFF.addList(oFFL2);
 		oFF.addList(oFFL3);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFF.indexOfAggregation("lists", oFFL1), 0, "List 1 should be at index 0");
 		assert.equal(oFF.indexOfAggregation("lists", oFFL2), 1, "List 2 should be at index 1");
@@ -397,7 +399,7 @@ sap.ui.define([
 		oFFL.addItem(oFFI);
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL.attachListClose(function(oEvent) {
 			oListCloseEvent = oEvent;
@@ -431,12 +433,12 @@ sap.ui.define([
 		oFF.addList(oFFL1);
 		oFF.addList(oFFL2);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oList = oFF._createFacetList();
 		assert.ok(oList, "List should not be null");
 		oList.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		assert.equal(oList.getMode(), ListMode.None, "The facet list mode should be None");
@@ -578,12 +580,12 @@ sap.ui.define([
 			lists: [oFFL1, oFFL2]
 		});
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -629,12 +631,12 @@ sap.ui.define([
 			lists: [oFFL1, oFFL2]
 		});
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -665,12 +667,12 @@ sap.ui.define([
 			lists: [oFFL1, oFFL2]
 		});
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 
 		var oSearchField = getDialogFacetSearchField(oFacetPage);
 
@@ -706,12 +708,12 @@ sap.ui.define([
 		oFFL.addItem(new FacetFilterItem({text: "Val1"}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -838,7 +840,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: sListTitle});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges(); //_getButtonForList is implicitly called upon rendering
+		oCore.applyChanges(); //_getButtonForList is implicitly called upon rendering
 
 		var oButton = oFF.getAggregation("buttons")[0];
 		assert.strictEqual(oFF._getButtonForList(oFFL), oButton, "There should be only one button instance created per list");
@@ -856,7 +858,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: "List"});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
+		oCore.applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
 
 		var oIcon = oFF.getAggregation("removeFacetIcons")[0];
 		assert.strictEqual(oFF._getFacetRemoveIcon(oFFL), oIcon, "There should be only one icon instance created per list");
@@ -873,7 +875,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: "List"});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 
@@ -898,7 +900,7 @@ sap.ui.define([
 		var oFFL = new FacetFilterList({title: "List"});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 
@@ -936,7 +938,7 @@ sap.ui.define([
 		   var oFFL = new FacetFilterList({title: "List", showRemoveFacetIcon:true});
 		   oFF.addList(oFFL);
 		   oFF.placeAt("content");
-		   sap.ui.getCore().applyChanges();
+		   oCore.applyChanges();
 		   var oPopover = oFF._getPopover();
 		   oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			   assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLVisibleRemoveIcon"), "The remove icon should  be displayed.");
@@ -954,7 +956,7 @@ sap.ui.define([
 		 var oFFL = new FacetFilterList({title: "List", showRemoveFacetIcon:false});
 		 oFF.addList(oFFL);
 		 oFF.placeAt("content");
-		 sap.ui.getCore().applyChanges();
+		 oCore.applyChanges();
 		 var oPopover = oFF._getPopover();
 		 oPopover.attachEventOnce("afterOpen", function(oEvent) {
 			 assert.ok(getRemoveIconCtrl(oFF, 0).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should not be displayed.");
@@ -1111,7 +1113,7 @@ sap.ui.define([
 		oFFL.addItem(new FacetFilterItem({text: sItemText3}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oButton = oFF._getButtonForList(oFFL);
 		oFFL.getItems()[0].setSelected(true);
@@ -1182,7 +1184,7 @@ sap.ui.define([
 		oFF.addList(oFFL3);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDialog = oFF._getFacetDialog();
 		oDialog.attachEventOnce("afterOpen", function(oEvent) {
@@ -1274,7 +1276,7 @@ sap.ui.define([
 		oFF.addList(oFFL1);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDialog = oFF._getFacetDialog();
 		oDialog.attachEventOnce("afterOpen", function(oEvent) {
@@ -1613,7 +1615,7 @@ sap.ui.define([
 		});
 
 		oFacetFilter.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oTargetList._handleSearchEvent(oFakeEvent);
@@ -1654,7 +1656,7 @@ sap.ui.define([
 
 		oFacetFilter.setModel(oModel);
 		oFacetFilter.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oTargetList.attachEventOnce("search", function(oEvent) {
 			var sSearchString = oEvent.getParameters()["term"];
@@ -1760,12 +1762,12 @@ sap.ui.define([
 			var oFF = new FacetFilter();
 			oFF.addList(oFFL);
 			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 				var sSearchId = getPopoverFilterItemsList(oPopover).getAssociation("search");
-				var oSearch = sap.ui.getCore().byId(sSearchId);
+				var oSearch = oCore.byId(sSearchId);
 				//This moves the focus out of the filter items, because when item is focused and deleted (due to filtering) on Crhome the focus for this item is lost and the popover closes.
 				oSearch.focus();
 
@@ -1994,7 +1996,7 @@ sap.ui.define([
 		oFF.addList(new FacetFilterList());
 		oFF.addList(new FacetFilterList());
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnGetButtonRefs = function() {
 			var aButtonRefs = [];
@@ -2074,7 +2076,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		oFF.setModel(oModel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL.setSelectedKeys({"1": "Val1", "2": "Val2"});
 		oFFL.fireListOpen();
@@ -2100,7 +2102,7 @@ sap.ui.define([
 		oFF.addList(oFFL1);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFFL1.setSelectedKeys({"1": "Val1", "2": "Val2"});
 
@@ -2150,7 +2152,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aSelectedItems = oFFL.getSelectedItems();
 		assert.equal(aSelectedItems.length, 0, "Empty array should be returned when nothing is selected");
@@ -2191,7 +2193,7 @@ sap.ui.define([
 		oFF.addList(oFFL);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oFFL.getSelectedItem(), null, "No item should be selected");
 
@@ -2328,7 +2330,7 @@ sap.ui.define([
 		oFacetFilter.addList(oFacetFilterList);
 
 		oFacetFilter.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oResetSearchSpy = sinon.spy(oFacetFilterList, "_setSearchValue");
 
@@ -2429,7 +2431,7 @@ sap.ui.define([
 				]
 			});
 			this.oFacetFilter.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oFacetFilter.destroy();
@@ -2481,7 +2483,7 @@ sap.ui.define([
 		});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -2506,7 +2508,7 @@ sap.ui.define([
 		oFFL._setSearchValue("search_value");
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function(oEvent) {
@@ -2552,7 +2554,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -2604,7 +2606,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -2651,7 +2653,7 @@ sap.ui.define([
 		}));
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		oPopover.attachEventOnce("afterOpen", function() {
@@ -2733,7 +2735,7 @@ sap.ui.define([
 		var oFF = new FacetFilter();
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.attachEventOnce("reset", function(oEvent) {
 			assert.ok(oEvent, "Filter reset event triggered");
@@ -2753,7 +2755,7 @@ sap.ui.define([
 		});
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFF.attachEventOnce("reset", function(oEvent) {
 			assert.ok(oEvent, "Filter reset event triggered");
@@ -2780,7 +2782,7 @@ sap.ui.define([
 		oFF.addList(oFFL2);
 
 		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = oFF._getPopover();
 		// click another button after the first popover is opened
@@ -2834,7 +2836,7 @@ sap.ui.define([
 
 		oFFL._searchValue = "5";
 		oFFL._applySearch();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oFFL.getItems().length !== iInitialItems, "Items are being filtered");
 
 		oResetButton.firePress();
@@ -2861,9 +2863,9 @@ sap.ui.define([
 		});
 
 		this.oFacetFilter._openPopover(oPopover, oButtonOpener);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oFacetFilter._handlePopoverAfterClose(oTargetList);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.strictEqual(fnListOpenSpy.callCount, 1, "ListOpen is called once");
 		assert.strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
@@ -2893,10 +2895,10 @@ sap.ui.define([
 		});
 
 		this.oFacetFilter._openPopover(oPopover, oButtonOpener);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(fnListOpenSpy.callCount, 1, "ListOpen is called once");
 		oPopoverOKButton.firePress({});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		setTimeout(function() {
 			//Assert
 			assert.strictEqual(fnListCloseSpy.callCount, 1, "ListClose is called once");
@@ -2922,9 +2924,9 @@ sap.ui.define([
 		});
 
 		this.oFacetFilter.openFilterDialog();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDialogOkButton.firePress({});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.strictEqual(fnConfirmSpy.callCount, 1, "Confirm event was fired");
 	});
@@ -2937,7 +2939,7 @@ sap.ui.define([
 		}).placeAt("content"),
 			oScrollSpy = this.spy(oFF, "_scroll");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oEvent = {
 			target: document.querySelector("#" + oFF.getId() + "-arrowScrollRight .sapUiIconTitle"),
 			preventDefault: function() { }

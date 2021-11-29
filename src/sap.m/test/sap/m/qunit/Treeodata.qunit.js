@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/m/StandardTreeItem",
-	"sap/m/Tree"
-], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree) {
+	"sap/m/Tree",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, qutils, MockServer, ODataModelV2, StandardTreeItem, Tree, oCore) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -53,7 +54,7 @@ sap.ui.define([
 			});
 
 			oTree.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oTree = oTree;
 		},

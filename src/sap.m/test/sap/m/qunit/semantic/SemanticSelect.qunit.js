@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/semantic/SortSelect",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Item"
-], function(createAndAppendDiv, SortSelect, JSONModel, Item) {
+	"sap/ui/core/Item",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, SortSelect, JSONModel, Item, oCore) {
 	"use strict";
 
 	createAndAppendDiv("qunit-fixture-visible");
@@ -47,7 +48,7 @@ sap.ui.define([
 					}
 				});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oModel.setData(aSampleData);
@@ -129,7 +130,7 @@ sap.ui.define([
 					selectedKey: "{/selected}"
 				});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oModel.setData(aSampleData);

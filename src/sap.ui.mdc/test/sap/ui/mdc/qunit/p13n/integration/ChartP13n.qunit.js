@@ -1,9 +1,9 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils",   "sap/ui/mdc/Chart", "sap/m/Button", "sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem"
-], function (Engine, MDCQUnitUtils,  Chart, Button,Dimension, Measure) {
+	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Chart", "sap/m/Button", "sap/ui/mdc/chart/DimensionItem", "sap/ui/mdc/chart/MeasureItem", "sap/ui/core/Core"
+], function (Engine, MDCQUnitUtils, Chart, Button, Dimension, Measure, oCore) {
 	"use strict";
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	QUnit.module("Controller API tests showUI Chart", {
 		beforeEach: function () {
@@ -55,8 +55,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'Engine' subcontroller registration", function(assert) {
-        assert.ok(Engine.getInstance().getController(this.oChart, "Item"), "ChartItemController has been registered");
-        assert.ok(Engine.getInstance().getController(this.oChart, "Sort"), "SortController has been registered");
+		assert.ok(Engine.getInstance().getController(this.oChart, "Item"), "ChartItemController has been registered");
+		assert.ok(Engine.getInstance().getController(this.oChart, "Sort"), "SortController has been registered");
 	});
 
 	QUnit.test("use ChartItemPanel", function (assert) {

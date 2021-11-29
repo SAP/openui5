@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/m/FeedContent",
 	"sap/ui/core/TooltipBase",
-	"sap/m/library"
-], function(FeedContent, TooltipBase, library) {
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(FeedContent, TooltipBase, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.ValueColor
@@ -22,7 +23,7 @@ sap.ui.define([
 				truncateValueTo : 4,
 				value : "-888"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oFeedContent.destroy();
@@ -45,7 +46,7 @@ sap.ui.define([
 				truncateValueTo : 4,
 				value : "-888"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oFeedContent.destroy();
@@ -106,7 +107,7 @@ sap.ui.define([
 				truncateValueTo : 4,
 				value : "-888"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oFeedContent.destroy();

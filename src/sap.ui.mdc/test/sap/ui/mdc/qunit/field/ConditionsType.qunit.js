@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
-	"sap/ui/model/odata/type/String"
+	"sap/ui/model/odata/type/String",
+	"sap/ui/core/Core"
 ], function (
 		ConditionsType,
 		Condition,
@@ -15,11 +16,12 @@ sap.ui.define([
 		ConditionValidated,
 		IntegerType,
 		CurrencyType,
-		StringType
-		) {
+		StringType,
+		oCore
+	) {
 	"use strict";
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 	var oConditionsType;
 	var oValueType;
 	var bAsyncCalled;

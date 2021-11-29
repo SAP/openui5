@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/unified/DateRange"
+	"sap/ui/unified/DateRange",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +31,8 @@ sap.ui.define([
 	DateFormat,
 	jQuery,
 	KeyCodes,
-	DateRange
+	DateRange,
+	oCore
 ) {
 	"use strict";
 
@@ -77,16 +79,16 @@ sap.ui.define([
 	oModel.setData({
 		dateValue: new Date("2016", "01", "17", "10", "11", "12")
 	});
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
-	sap.ui.getCore().attachParseError(
+	oCore.attachParseError(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
 				bValid = false;
 			});
 
-	sap.ui.getCore().attachValidationSuccess(
+	oCore.attachValidationSuccess(
 			function(oEvent) {
 				sId = oEvent.getParameter("element").getId();
 				sValue = oEvent.getParameter('newValue');
@@ -181,7 +183,7 @@ sap.ui.define([
 
 		// Act
 		oDP.setMaxDate(oYesterdayDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		qutils.triggerEvent("click", "DatePicker-icon");
 
 		// Assert
@@ -196,9 +198,9 @@ sap.ui.define([
 		var oDTP = new DateTimePicker({
 			showCurrentTimeButton: true
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDTP.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oDTP._oClocks.getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
@@ -235,7 +237,7 @@ sap.ui.define([
 		//arrange
 		oDateTimePicker.setMinDate(oNewMinDate);
 		oDateTimePicker.setMaxDate(oNewMaxDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 
@@ -260,11 +262,11 @@ sap.ui.define([
 			oCalendar;
 
 		oDTP7.placeAt("uiArea8");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDTP7.focus();
 
 		qutils.triggerEvent("click", "DTP7-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCalendar = oDTP7._getCalendar();
 		oAfterRenderingDelegate = {
 			onAfterRendering: function() {
@@ -291,11 +293,11 @@ sap.ui.define([
 			oCalendar;
 
 		oDTP8.placeAt("uiArea8");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDTP8.focus();
 
 		qutils.triggerEvent("click", "DTP8-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oCalendar = oDTP8._getCalendar();
 		oAfterRenderingDelegate = {
 			onAfterRendering: function() {
@@ -318,7 +320,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oDTp = new DateTimePicker();
 			this.oDTp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -443,11 +445,11 @@ sap.ui.define([
 
 		oDTP3._createPopup();
 		oDTP3._oPopup.attachEvent("afterOpen", function() {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 			assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
 
-			oClocks = sap.ui.getCore().byId("DTP3-Clocks");
+			oClocks = oCore.byId("DTP3-Clocks");
 			assert.equal(oClocks.getAggregation("_buttons").length, 2 , "DTP3: number of rendered clocks");
 
 			aMonths = jQuery("#DTP3-cal-content").children(".sapUiCalMonthView");
@@ -466,7 +468,7 @@ sap.ui.define([
 
 			oDTP3._oClocks.getAggregation("_buttons")[0].focus();
 			qutils.triggerKeyboardEvent(oDTP3._oClocks.getAggregation("_buttons")[0].getDomRef(), KeyCodes.ARROW_UP, false, false, false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.equal(jQuery("#DTP3-Clocks-clockH-selected").text(), "11" , "DTP3: correct hours set after keyboard navigation");
 
 			done();
@@ -474,7 +476,7 @@ sap.ui.define([
 
 		oDTP3.focus();
 		qutils.triggerEvent("click", "DTP3-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("change date using calendar - choose", function(assert) {
@@ -503,18 +505,18 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					sap.ui.getCore().byId("HDTP").openBy(this.getDomRef());
+					oCore.byId("HDTP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
-		assert.ok(sap.ui.getCore().byId(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
+		assert.ok(oCore.byId(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
 		assert.ok(oDTP._oPopup, oDTP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDTP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDTP.getId() + "-cal").is(":visible"), "picker is visible");
@@ -530,7 +532,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oDTP = new DateTimePicker("DP", {}).placeAt("uiArea8");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//before opening the popup
 		assert.equal(oDTP.$("inner").attr("aria-expanded"), "false", "DP input has 'aria-expand' set to false when the picker is not open");
@@ -539,7 +541,7 @@ sap.ui.define([
 		oDTP.focus();
 		qutils.triggerEvent("click", "DP-icon");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		setTimeout(function(){
 			//after opening popup
 			assert.equal(oDTP.$("inner").attr("aria-expanded"), "true", "DP input has 'aria-expand' set to true when the picker is open");
@@ -553,7 +555,7 @@ sap.ui.define([
 		var oDTP = new DateTimePicker();
 
 		oDTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oDTP.$("inner").attr("aria-haspopup"), "dialog", "DateTimePicker's Input indicates that it opens a dialog");
 
@@ -570,7 +572,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value  Date and Time", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -601,20 +603,20 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oDTP = new DateTimePicker().placeAt("uiArea1");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDTP._createPopup();
 		oDTP._createPopupContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDTP._openPopup();
 
 		setTimeout(function() {
 			var oYearButton = oDTP._oPopup.getContent()[1].getCalendar().getAggregation("header").getDomRef("B2"),
 				oHoursClock = oDTP._oPopup.getContent()[1].getClocks().getAggregation("_buttons")[0];
 			oYearButton.focus();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			qutils.triggerKeydown(oYearButton, KeyCodes.TAB);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			// Assert
 			assert.strictEqual(oHoursClock.getDomRef(), document.activeElement, "The clock's value is focused after a tap");
 
@@ -633,13 +635,13 @@ sap.ui.define([
 		var oDTP5 = new DateTimePicker("DTP5", {
 						dateValue: new Date()
 					}).placeAt("uiArea5");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 
 		oDTP5.focus();
 		qutils.triggerEvent("click", "DTP5-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		setTimeout(function(){
 			assert.ok(jQuery("#DTP5-RP-popover")[0], "popover is rendered");
 			assert.ok(jQuery("#DTP5-RP-popover").is(":visible"), "popover is visible");
@@ -662,7 +664,7 @@ sap.ui.define([
 						var $selectedDate = jQuery("#DTP5-cal--Month0-20211101");
 						$selectedDate.trigger("focus");
 						qutils.triggerKeydown($selectedDate, KeyCodes.ENTER);
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 						assert.strictEqual(jQuery("#DTP5-cal").css("display"), "none", "Calendar is not visible");
 						assert.strictEqual(jQuery("#DTP5-Clocks").css("display"), "block", "Clocks are visible");
 						oDTP5.destroy();
@@ -683,11 +685,11 @@ sap.ui.define([
 		oDTP5._createPopupContent();
 		oCalendar = oDTP5._getCalendar();
 		oCalendar.addDelegate(oAfterRenderingDelegate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDTP5.focus();
 		qutils.triggerEvent("click", "DTP5-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("data binding with sap.ui.model.odata.type.DateTime", function(assert) {
@@ -753,7 +755,7 @@ sap.ui.define([
 
 		oDateTimePicker.placeAt("qunit-fixture");
 		oLabel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oDateTimePicker._createPopup();
@@ -782,12 +784,12 @@ sap.ui.define([
 
 		// arrange
 		oDTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oDTP._createPopup();
 		oDTP._createPopupContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oDTP._openPopup();
 		oClocks = oDTP._oClocks;
 
@@ -829,7 +831,7 @@ sap.ui.define([
 			secondsStep: 4
 		}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDTP._createPopup();
 		oDTP._createPopupContent();
@@ -878,7 +880,7 @@ sap.ui.define([
 		var oDTP = new DateTimePicker().placeAt("qunit-fixture"),
 			oPopupContent;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDTP.toggleOpen();

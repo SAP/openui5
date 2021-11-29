@@ -34,7 +34,8 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	RtaQunitUtils,
 	UriParameters,
@@ -69,7 +70,8 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	RtaUtils,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -103,7 +105,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a component as rootControl...", {
 		before: function () {
-			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			return oComponentPromise;
 		},
 		beforeEach: function() {
@@ -644,8 +646,8 @@ sap.ui.define([
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
 			// Prepare elements an designtime
-			var oElement1 = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
-			var oElement2 = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			var oElement1 = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.Name");
+			var oElement2 = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
 					actions: {
@@ -748,11 +750,11 @@ sap.ui.define([
 			var done = assert.async();
 			var fnFireElementModifiedSpy = sandbox.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
 
-			var oSimpleForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
+			var oSimpleForm = oCore.byId("Comp1---idMain1--SimpleForm");
 			var oSimpleFormOverlay = OverlayRegistry.getOverlay(oSimpleForm.getAggregation("form").getId());
 
 			sandbox.stub(this.oRta.getPluginManager().getDefaultPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
 				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins()["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
 				assert.ok(fnFireElementModifiedSpy.calledOnce, "then 'fireElementModified' from the createContainer plugin is called once");
@@ -763,7 +765,7 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oRta.getPlugins()["createContainer"].handleCreate(false, oSimpleFormOverlay);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert) {
@@ -771,13 +773,13 @@ sap.ui.define([
 
 			var fnFireElementModifiedSpy = sinon.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
 
-			var oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+			var oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
 			var oSmartFormOverlay = OverlayRegistry.getOverlay(oSmartForm.getId());
 
 			sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
 				var oArgs = fnFireElementModifiedSpy.getCall(0).args[0];
 				var sNewControlContainerId = this.oRta.getPluginManager().getDefaultPlugins()["createContainer"].getCreatedContainerId(oArgs.action, oArgs.newControlId);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(true, "then the new container starts the edit for rename");
 				assert.strictEqual(oNewContainerOverlay.getElement().getId(), sNewControlContainerId, "then rename is called with the new container's overlay");
 				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
@@ -785,25 +787,25 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oRta.getPlugins()["createContainer"].handleCreate(false, oSmartFormOverlay);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("when _handleElementModified is called if a create container command was executed on an empty form", function(assert) {
 			var done = assert.async();
 
 			// An existing empty Form is used for the test
-			var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm1");
+			var oForm = oCore.byId("Comp1---idMain1--MainForm1");
 			var oFormOverlay = OverlayRegistry.getOverlay(oForm.getId());
 
 			sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit").callsFake(function (oNewContainerOverlay) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(oNewContainerOverlay.isSelected(), "then the new container is selected");
 				assert.ok(true, "then the new container starts the edit for rename");
 				this.oCommandStack.undo().then(done);
 			}.bind(this));
 
 			this.oRta.getPlugins()["createContainer"].handleCreate(false, oFormOverlay);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("when trying to stop rta with error in saving changes,", function(assert) {
@@ -931,7 +933,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
 		before: function () {
-			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			return oComponentPromise;
 		},
 		beforeEach: function() {

@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Bar",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	createAndAppendDiv,
 	Button,
 	Page,
 	Bar,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 	createAndAppendDiv("content");
@@ -27,7 +29,7 @@ sap.ui.define([
 		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
 
 		oTestPage.destroy();
-    });
+	});
 
 	QUnit.test("Correct style classes are applied", function (assert) {
 		// Arrange
@@ -51,12 +53,12 @@ sap.ui.define([
 		oTestPage.addStyleClass("sapUiResponsivePadding--content");
 		oTestPage.addStyleClass("sapUiResponsivePadding--footer");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $page = jQuery("#testPage");
 		$page.css("width", "300px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		var $pageHeader = oTestPage.$().find("#testPage-intHeader"),
@@ -78,7 +80,7 @@ sap.ui.define([
 		//Act
 		$page.css("width", "700px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingM");
 		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingM");
@@ -93,7 +95,7 @@ sap.ui.define([
 
 		//Act
 		$page.css("width", "1300px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(300);
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingL");
@@ -110,7 +112,7 @@ sap.ui.define([
 		//Act
 		$page.css("width", "1700px");
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingXL");
 		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingXL");

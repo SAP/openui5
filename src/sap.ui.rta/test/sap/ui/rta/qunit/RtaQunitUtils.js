@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/rta/RuntimeAuthoring"
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/core/Core"
 ], function(
 	JsControlTreeModifier,
 	ComponentContainer,
@@ -25,7 +26,8 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	FakeLrepConnectorSessionStorage,
 	QUnitUtils,
-	RuntimeAuthoring
+	RuntimeAuthoring,
+	oCore
 ) {
 	"use strict";
 
@@ -38,7 +40,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId) {
 		disableRtaRestart();
-		var oComp = sap.ui.getCore().createComponent({
+		var oComp = oCore.createComponent({
 			name: "sap.ui.rta.qunitrta",
 			id: "Comp1",
 			settings: {
@@ -51,13 +53,13 @@ sap.ui.define([
 		var oCompCont = new ComponentContainer({
 			component: oComp
 		}).placeAt(sDomId);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oCompCont;
 	};
 
 	RtaQunitUtils.clear = function (oElement, bRevert) {
-		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || sap.ui.getCore().getComponent("Comp1");
+		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || oCore.getComponent("Comp1");
 		var aCustomerChanges;
 
 		return FlexState.initialize({
@@ -108,7 +110,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
 		disableRtaRestart();
-		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
+		oCore.getConfiguration().setFlexibilityServices([{
 			connector: "SessionStorageConnector"
 		}]);
 
@@ -132,7 +134,7 @@ sap.ui.define([
 			})
 			.then(function(oComponentContainer) {
 				oComponentContainer.placeAt(sDomId);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				return oComponentContainer;
 			});
@@ -161,7 +163,7 @@ sap.ui.define([
 			})
 			.then(function(oComponentContainer) {
 				oComponentContainer.placeAt(sDomId);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				return oComponentContainer;
 			});
 	};

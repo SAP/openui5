@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core"
 ],
 function (
 	validateFlexEnabled,
@@ -26,7 +27,8 @@ function (
 	DtUtil,
 	includes,
 	sinon,
-	JSONModel
+	JSONModel,
+	oCore
 ) {
 	"use strict";
 
@@ -104,7 +106,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			_stubMessageBoxAndLog();
 
@@ -228,7 +230,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			_stubMessageBoxAndLog();
 
@@ -333,7 +335,7 @@ function (
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			_stubMessageBoxAndLog();
 

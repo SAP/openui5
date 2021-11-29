@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Button",
 	"sap/ui/dt/qunit/TestUtil",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	ElementOverlay,
@@ -27,7 +28,8 @@ sap.ui.define([
 	VBox,
 	Button,
 	TestUtil,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -79,7 +81,7 @@ sap.ui.define([
 				]
 			});
 			this.oLayout2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout2]
@@ -377,7 +379,7 @@ sap.ui.define([
 			this.oVBox0 = new VBox("VBox", {
 				items: [this.oLayout0]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox0]

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/Button",
 	"sap/m/MessagePopover",
-	"sap/m/MessagePopoverItem"
-], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem) {
+	"sap/m/MessagePopoverItem",
+	"sap/ui/core/Core"
+], function(Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem, oCore) {
 	"use strict";
 
 	var oTable;
@@ -31,7 +32,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.table.mvc.TreeTableODataV2", {
 
 		onInit: function() {
-			this._oMessageManager = sap.ui.getCore().getMessageManager();
+			this._oMessageManager = oCore.getMessageManager();
 			var oMessageModel = this._oMessageManager.getMessageModel();
 
 			oMessagePopover.setModel(oMessageModel);
@@ -427,7 +428,7 @@ sap.ui.define([
 					text: 'OK',
 					enabled: false,
 					press: function() {
-						var sBusinessEntityKey = sap.ui.getCore().byId('businessEntityValueTextArea').getValue();
+						var sBusinessEntityKey = oCore.byId('businessEntityValueTextArea').getValue();
 
 						// create entry
 						var oBinding = oTable.getBinding();

@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/unified/DateRange",
-	"sap/ui/thirdparty/jquery"
-], function(Calendar, CalendarType, UniversalDate, DateFormat, Locale, LocaleData, DateRange, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(Calendar, CalendarType, UniversalDate, DateFormat, Locale, LocaleData, DateRange, jQuery, oCore) {
 	"use strict";
 
 	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));
@@ -28,7 +29,7 @@ sap.ui.define([
 		oCal1.destroySelectedDates();
 		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
 		oCal1.displayDate(oDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	function checkDate(sSelectedDate, iExpectedDay, iExpectedMonth, iExpectedYear,
@@ -82,7 +83,7 @@ sap.ui.define([
 			assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpMonth - 1], "Islamic Month is correct before navigation: " + aMonthNames[iExpMonth - 1]);
 
 			oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).trigger("click");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var iNextMonthIdx = bForwardNavigation ? iExpMonth : iExpMonth - 2;
 			if (iNextMonthIdx < 0) {
@@ -106,7 +107,7 @@ sap.ui.define([
 	function checkMonthPicker(sSelectedDate, iExpectedMonth, assert) {
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-B1").trigger("click");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aMonths = oCal1.$("-MP").find(".sapUiCalItem"),
 			$Month,
@@ -131,7 +132,7 @@ sap.ui.define([
 	QUnit.module("Dates", {
 		beforeEach: function () {
 			oCal1 = new Calendar("Cal1", {}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach:  function () {
 			oCal1.destroy();
@@ -153,7 +154,7 @@ sap.ui.define([
 	QUnit.module("Navigation to next/previous Month", {
 		beforeEach: function () {
 			oCal1 = new Calendar("Cal1", {}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach:  function () {
 			oCal1.destroy();
@@ -171,7 +172,7 @@ sap.ui.define([
 	QUnit.module("Monthpicker", {
 		beforeEach: function () {
 			oCal1 = new Calendar("Cal1", {}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach:  function () {
 			oCal1.destroy();

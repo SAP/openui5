@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/m/Button",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	XMLView,
 	BindingsExtractor,
 	Button,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -32,7 +34,7 @@ sap.ui.define([
 				return oView.loaded();
 			}.bind(this)).then(function() {
 				this.oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/m/library",
-	"sap/m/Popover"
+	"sap/m/Popover",
+	"sap/ui/core/Core"
 ], function (
 		FieldHelpBase,
 		FieldHelpBaseDelegate,
@@ -31,7 +32,8 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		mLibrary,
-		Popover
+		Popover,
+		oCore
 	) {
 	"use strict";
 
@@ -76,7 +78,7 @@ sap.ui.define([
 
 		oField.placeAt("content");
 		oField2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oField.focus();
 		oClock = sinon.useFakeTimers();
 	};

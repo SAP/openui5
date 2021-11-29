@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Toolbar"
-], function(TableQUnitUtils, CreationRow, Column, qutils, KeyCodes, Control, JSONModel, Toolbar) {
+	"sap/m/Toolbar",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, CreationRow, Column, qutils, KeyCodes, Control, JSONModel, Toolbar, oCore) {
 	"use strict";
 
 	var TestControl = TableQUnitUtils.TestControl;
@@ -53,7 +54,7 @@ sap.ui.define([
 		assert.strictEqual(oInput.selectionEnd, 5, "The selection ends as index 5");
 
 		this.oTable.getColumns()[1].destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oTable.qunit.getDataCell(0, 0).focus();
 
 		assert.strictEqual(oCreationRow.resetFocus(), false, "Returned false, because no element was focused");
@@ -111,7 +112,7 @@ sap.ui.define([
 		oApplySpy.resetHistory();
 		oResetFocusSpy.resetHistory();
 		this.oTable.getColumns()[1].destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oCreationRow._fireApply(), false, "Returned false, because no element was focused");
 		assert.ok(oApplySpy.calledOnce, "The CreationRow's \"apply\" event was called once");
@@ -131,34 +132,34 @@ sap.ui.define([
 
 	QUnit.test("If child of a table", function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notEqual(this.oCreationRow.getDomRef(), null, "The creation row is rendered");
 	});
 
 	QUnit.test("If not child of a table", function(assert) {
 		this.oCreationRow.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(this.oCreationRow.getDomRef(), null, "The creation row did not render anything");
 	});
 
 	QUnit.test("Toolbar", function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
 
 		assert.notEqual(oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
 
 		this.oCreationRow.setToolbar(new Toolbar());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notEqual(this.oCreationRow.getToolbar().getDomRef(), null, "Custom toolbar is set: The custom toolbar is rendered");
 		assert.equal(oDefaultToolbar.getDomRef(), null, "Custom toolbar is set: The default toolbar is not rendered");
 
 		this.oCreationRow.destroyToolbar();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notEqual(oDefaultToolbar.getDomRef(), null, "No custom toolbar is set: The default toolbar is rendered");
 	});
@@ -167,28 +168,28 @@ sap.ui.define([
 		var sBusySection = "sapUiTableGridCnt";
 
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After rendering the table with a visible creation row,"
 			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
 
 		this.oCreationRow.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After making the creation row invisible,"
 			+ " the horizontal scrollbar is rendered inside the element that is covered by the busy indicator.");
 
 		this.oCreationRow.setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.notOk(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After making the creation row visible,"
 			+ " the horizontal scrollbar is rendered outside the element that is covered by the busy indicator.");
 
 		this.oTable.setCreationRow();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oCreationRow.setVisible(false);
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.oTable.getDomRef(sBusySection).contains(this.oTable._getScrollExtension().getHorizontalScrollbar()),
 			"After rendering the table with an invisible creation row,"
@@ -526,14 +527,14 @@ sap.ui.define([
 
 	QUnit.test("Create if no custom toolbar is provided", function(assert) {
 		this.oCreationRow.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") == null,
 			"No default toolbar exists if rendered while not a child of the table");
 
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.oCreationRow.getToolbar() === null, "No custom toolbar is set");
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") != null,
@@ -544,7 +545,7 @@ sap.ui.define([
 		var oToolbar = new Toolbar();
 		this.oCreationRow.setToolbar(oToolbar);
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.oCreationRow.getToolbar() === oToolbar, "A custom toolbar is set");
 		assert.ok(this.oCreationRow.getAggregation("_defaultToolbar") == null, "The default toolbar is not created");
@@ -552,22 +553,22 @@ sap.ui.define([
 
 	QUnit.test("Do not recreate", function(assert) {
 		this.oCreationRow.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oDefaultToolbar = this.oCreationRow.getAggregation("_defaultToolbar");
 
 		this.oCreationRow.setToolbar(new Toolbar());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oCreationRow.destroyToolbar();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oDefaultToolbar, this.oCreationRow.getAggregation("_defaultToolbar"), "The default toolbar is reused");
 	});
 
 	QUnit.test("Destroy when the CreationRow is destroyed", function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oToolbarDestroySpy = sinon.spy(this.oCreationRow.getAggregation("_defaultToolbar"), "destroy");
 
@@ -578,7 +579,7 @@ sap.ui.define([
 
 	QUnit.test("Content", function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
 		var oApplySpy = sinon.spy(this.oCreationRow, "_fireApply");
@@ -594,14 +595,14 @@ sap.ui.define([
 			applyEnabled: false
 		});
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is disabled");
 	});
 
 	QUnit.test("Update content", function(assert) {
 		this.oTable.setCreationRow(this.oCreationRow);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oApplyButton = this.oCreationRow.getAggregation("_defaultToolbar").getContent().slice(-1)[0];
 		var oApplyButtonAfterRendering = sinon.spy();
@@ -613,24 +614,24 @@ sap.ui.define([
 		this.oCreationRow.setApplyEnabled(false);
 		assert.strictEqual(oApplyButton.getEnabled(), false, "The button is disabled after setting \"applyEnabled\" of the CreationRow to \"false\"");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oApplyButtonAfterRendering.calledOnce, "The button was re-rendered");
 		oApplyButtonAfterRendering.resetHistory();
 
 		this.oCreationRow.setApplyEnabled(true);
 		assert.strictEqual(oApplyButton.getEnabled(), true, "The button is enabled after setting \"applyEnabled\" of the CreationRow to \"true\"");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oApplyButtonAfterRendering.calledOnce, "The button was re-rendered");
 
 		this.oCreationRow.setToolbar(new Toolbar());
 		this.oCreationRow.setApplyEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oApplyButton.getEnabled(), true,
 			"The button is still enabled after setting \"applyEnabled\" of the CreationRow to \"false\", if there is a custom toolbar");
 
 		this.oCreationRow.destroyToolbar();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oApplyButton.getEnabled(), false, "The button is updated after removing the custom toolbar, and is disabled");
 	});
 });

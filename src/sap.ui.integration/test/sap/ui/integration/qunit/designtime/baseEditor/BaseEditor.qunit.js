@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/integration/designtime/baseEditor/PropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	_omit,
 	_merge,
 	PropertyEditor,
 	StringEditor,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -43,7 +45,7 @@ sap.ui.define([
 		QUnit.test("When config with 1 property is set", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
@@ -73,7 +75,7 @@ sap.ui.define([
 		QUnit.test("When config has no context", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
 					"bar1",
@@ -100,7 +102,7 @@ sap.ui.define([
 		QUnit.test("When config has a root context", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsSync()[0].getValue(),
 					"bar1",
@@ -156,7 +158,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(
 					this.oBaseEditor.getPropertyEditorsByNameSync("my.prop.name")[0].getValue(),
@@ -267,7 +269,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oBaseEditor.attachEventOnce("propertyEditorsReady", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByNameSync("prop2")[0].getValue(), "value2", "Then property editor getter works with property name");
 
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsByTagSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
@@ -958,7 +960,7 @@ sap.ui.define([
 			this.oBaseEditor.placeAt("qunit-fixture");
 
 			return this.oBaseEditor.ready().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				var oProp1Editor = this.oBaseEditor.getPropertyEditorsByNameSync("prop1")[0];
 				oProp1Editor.setValue("New prop1 value");
@@ -993,7 +995,7 @@ sap.ui.define([
 				});
 
 				this.oBaseEditor.addContent(oStringEditor);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				return this.oBaseEditor.ready();
 			}.bind(this)).then(function() {
@@ -1040,7 +1042,7 @@ sap.ui.define([
 				});
 
 				this.oBaseEditor.addContent(oStringEditor);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// Changing the path to a relative path should deregister the editor
 				oStringEditor.setConfig({
@@ -1094,7 +1096,7 @@ sap.ui.define([
 					}
 				});
 				this.oBaseEditor.addContent(oNumberEditor);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				oNumberEditor.ready().then(function () {
 					assert.strictEqual(oReadySpy.callCount, 0, "Then the BaseEditor doesn't fire ready before its initialization isn't finished");

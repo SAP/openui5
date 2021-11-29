@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
-	'sap/m/Page'
-], function(createAndAppendDiv, mLib, Component, ComponentContainer, Page) {
+	'sap/m/Page',
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, mLib, Component, ComponentContainer, Page, oCore) {
 	"use strict";
 
 	// prepare DOM
@@ -28,7 +29,7 @@ sap.ui.define([
 				});
 				oPage.placeAt("area");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			});
 		}
 	});

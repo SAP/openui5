@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/ObjectMarker",
 	"sap/m/library",
 	"sap/ui/Device",
-	"sap/ui/core/util/File"
-], function(UploadCollectionItem, ObjectAttribute, ObjectMarker, mlibrary, Device, File) {
+	"sap/ui/core/util/File",
+	"sap/ui/core/Core"
+], function(UploadCollectionItem, ObjectAttribute, ObjectMarker, mlibrary, Device, File, oCore) {
 	"use strict";
 
 
@@ -28,7 +29,7 @@ sap.ui.define([
 				uploadedDate : "2014-07-30",
 				url : ""
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -79,7 +80,7 @@ sap.ui.define([
 				thumbnailUrl : "",
 				url : ""
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -114,7 +115,7 @@ sap.ui.define([
 					text : "Test"
 				})]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -197,7 +198,7 @@ sap.ui.define([
 					text : "Test"
 				})]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -231,7 +232,7 @@ sap.ui.define([
 					text : "Test"
 				})]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -259,7 +260,7 @@ sap.ui.define([
 					visibility : "IconOnly"
 				})]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
@@ -291,7 +292,7 @@ sap.ui.define([
 				uploadedDate : "2014-07-30",
 				url : "/pathToTheFile/Woman_04.png"
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		initFakeServer: function(sResponseCode) {
 			this.aFakeRequest = this._oSandbox.useFakeServer();
@@ -373,7 +374,7 @@ sap.ui.define([
 				uploadedDate : "2014-07-30",
 				url : "/pathToTheFile/Woman_04.png"
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oUploadCollectionItem.destroy();

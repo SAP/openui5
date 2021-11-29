@@ -1,8 +1,9 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
-		'sap/ui/model/json/JSONModel'
-	], function(Controller, Filter, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/core/Core'
+	], function(Controller, Filter, JSONModel, oCore) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableOutdated.Table", {
@@ -13,7 +14,7 @@ sap.ui.define([
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 			// reuse table sample component
-			var oComp = sap.ui.getCore().createComponent({
+			var oComp = oCore.createComponent({
 				name: "sap.m.sample.Table"
 			});
 			oComp.setModel(this.getView().getModel());

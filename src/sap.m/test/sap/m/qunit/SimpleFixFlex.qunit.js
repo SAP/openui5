@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/SimpleFixFlexRenderer",
 	"sap/m/Button",
 	"sap/m/Text",
-	"sap/base/Log"
-], function(SimpleFixFlex, SimpleFixFlexRenderer, Button, Text, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function(SimpleFixFlex, SimpleFixFlexRenderer, Button, Text, Log, oCore) {
 	"use strict";
 
 	var oCore = sap.ui.getCore();
@@ -162,7 +163,7 @@ sap.ui.define([
 
 		// Act
 		this.oSimpleFixFlex.getFixContent().setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		try {
 			oSpy.apply(this.oSimpleFixFlex);

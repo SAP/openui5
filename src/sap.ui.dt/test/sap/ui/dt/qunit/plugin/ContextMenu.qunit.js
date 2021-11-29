@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	ContextMenuPlugin,
 	OverlayRegistry,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Button,
 	VerticalLayout,
 	KeyCodes,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -68,7 +70,7 @@ sap.ui.define([
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oMenuEntries = {};
 			this.oMenuEntries.available = {
 				id: "CTX_ALWAYS_THERE",
@@ -165,7 +167,7 @@ sap.ui.define([
 				]
 			});
 			this.oDesignTime.attachEventOnce("synced", function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
 				this.oButton1Overlay.setSelectable(true);
 				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);

@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils",
 	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
@@ -15,7 +16,8 @@ sap.ui.define([
 	AdditionalElementsUtils,
 	ActionExtractor,
 	CommandFactory,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -527,7 +529,7 @@ sap.ui.define([
 		QUnit.test("when there are no elements available but extension fields is allowed - child case", function(assert) {
 			var aElementOverlays = [{}];
 			var aSelectedOverlays = ["DummySelectedOverlay"];
-			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			var sExpectedContextMenuText = oTextResources.getText("CTX_ADD_ELEMENTS", oTextResources.getText("MULTIPLE_CONTROL_NAME"));
 
 			// "getAllElements" returns no elements

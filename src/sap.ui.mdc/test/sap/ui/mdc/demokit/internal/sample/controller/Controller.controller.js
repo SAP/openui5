@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/ui/core/Fragment',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/m/MessageBox',
-	'sap/m/MessageToast'
-], function(Controller, RowSettings, Fragment, StateUtil, MessageBox, MessageToast) {
+	'sap/m/MessageToast',
+	'sap/ui/core/Core'
+], function(Controller, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
@@ -157,8 +158,8 @@ sap.ui.define([
 			var oTable = this.byId('mdcTable');
 			var vType = oTable.getType();
 			var bSelected = oEvent.getParameters().selected;
-			var oFEButtonSetting = sap.ui.getCore().byId("fe-detailsButtonSetting");
-			var oMCBButtonSetting = sap.ui.getCore().byId("mcb-detailsButtonSetting");
+			var oFEButtonSetting = oCore.byId("fe-detailsButtonSetting");
+			var oMCBButtonSetting = oCore.byId("mcb-detailsButtonSetting");
 
 			if (vType === "ResponsiveTable") {
 				oTable.setType(new sap.ui.mdc.table.ResponsiveTableType({

@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/table/ColumnMenu",
 	"sap/m/table/QuickAction",
 	"sap/m/table/Item",
-	"sap/m/Text"
-], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Text) {
+	"sap/m/Text",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Text, oCore) {
 	"use strict";
 
 	QUnit.module("Basics");
@@ -403,7 +404,7 @@ sap.ui.define([
 			this._oTable.addColumn(this._oColumnWithUnifiedMenu);
 
 			this._oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this._oColumnWithColumnMenu.destroy();
@@ -418,7 +419,7 @@ sap.ui.define([
 		this._oColumnWithColumnMenu.filter("filterValue");
 		this._oColumnWithColumnMenu._openMenu();
 
-		var oFilterField = sap.ui.getCore().byId(oColumnMenu.getId() + "-filter");
+		var oFilterField = oCore.byId(oColumnMenu.getId() + "-filter");
 		assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
 		assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
 
@@ -455,7 +456,7 @@ sap.ui.define([
 			this.oTable.setCreationRow(this.oCreationRow);
 
 			this.oTable.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oColumn.destroy();
@@ -1020,7 +1021,7 @@ sap.ui.define([
 			this._oTable.addColumn(this._oColumn2);
 
 			this._oTable.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this._oColumn1.destroy();
@@ -1123,7 +1124,7 @@ sap.ui.define([
 		this._oTable2.addColumn(this._oColumn23);
 
 		this._oTable2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this._oColumn2.setVisible(false);
 		this._oColumn1._openMenu();

@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/DraftIndicator"
-], function(QUnitUtils, createAndAppendDiv, DraftIndicator) {
+	"sap/m/DraftIndicator",
+	"sap/ui/core/Core"
+], function(QUnitUtils, createAndAppendDiv, DraftIndicator, oCore) {
 	"use strict";
 
 	// prepare DOM
@@ -11,7 +12,7 @@ sap.ui.define([
 
 
 
-	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oBundle = oCore.getLibraryResourceBundle("sap.m");
 	var oCore = sap.ui.getCore();
 
 	QUnit.module("id");
@@ -23,7 +24,7 @@ sap.ui.define([
 		assert.strictEqual(oDraftIndi.getId(), "draftId", "control has the expected id");
 
 		// Act
-		var oRetrievedIndi = sap.ui.getCore().byId("draftId");
+		var oRetrievedIndi = oCore.byId("draftId");
 
 		// Assert
 		assert.notEqual(oRetrievedIndi, undefined, "the button is retrieved by id");

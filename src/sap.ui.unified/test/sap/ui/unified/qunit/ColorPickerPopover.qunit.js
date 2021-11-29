@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/unified/library",
 	"sap/m/ResponsivePopover",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -14,7 +15,8 @@ sap.ui.define([
 	unifiedLibrary,
 	ResponsivePopover,
 	Button,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -247,7 +249,7 @@ sap.ui.define([
 			oOpener = new Button();
 
 		oOpener.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oCPP.openBy(oOpener);

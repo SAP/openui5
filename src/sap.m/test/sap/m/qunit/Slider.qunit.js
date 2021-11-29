@@ -64,7 +64,7 @@ sap.ui.define([
 
 		if (mOptions.invalidate) {
 			oPage.addContent(mOptions.control);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}
 
 		// assert
@@ -186,7 +186,7 @@ sap.ui.define([
 		oPage.addContent(oSlider9);
 		oPage.addContent(oSlider10);
 		oPage.addContent(oSlider11);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var aSliders = [oSlider0, oSlider1, oSlider2, oSlider3, oSlider4, oSlider5, oSlider6, oSlider7, oSlider8, oSlider9, oSlider10, oSlider11];
 		var CSS_CLASS = SliderRenderer.CSS_CLASS;
@@ -256,7 +256,7 @@ sap.ui.define([
 		// arrange
 		oSlider.setEnableTickmarks(true);
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(oSlider.$().find(".sapMSliderLabel:eq(1)").html(), oSlider.getMax(), "The end label shows the max value");
@@ -287,7 +287,7 @@ sap.ui.define([
 
 		// arrange
 		oRangeSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oRangeSlider.getDomRef("handle1"));
@@ -315,7 +315,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
@@ -347,7 +347,7 @@ sap.ui.define([
 
 	QUnit.test("_handlesLabels aggregation", function (assert) {
 		// arrange & act
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
 			oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
 			oSlider = new Slider(),
 			aLabels = oSlider.getAggregation("_handlesLabels"),
@@ -367,7 +367,7 @@ sap.ui.define([
 		oSlider.placeAt("content");
 		oSliderWithTickmarks.placeAt("content");
 		oSliderWithLables.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var sInvisibleTextId = oSliderWithLables.getDomRef("handle").getAttribute("aria-labelledby");
 
@@ -389,7 +389,7 @@ sap.ui.define([
 			oSlider = new Slider({ariaLabelledBy: new Label({text: "LabelForSlider"})});
 
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		sHandleLabels = oSlider.getDomRef("handle").getAttribute("aria-labelledby");
@@ -406,7 +406,7 @@ sap.ui.define([
 		var fnRegisterResizeHandlerSpy = this.spy(oSlider, "_registerResizeHandler");
 		var fnDeregisterResizeHandlerSpy = this.spy(oSlider, "_deregisterResizeHandler");
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(fnDeregisterResizeHandlerSpy.callCount, 1, "_deregisterResizeHandler should be called");
@@ -432,7 +432,7 @@ sap.ui.define([
 		});
 		var fnDestroyAggregationSpy = this.spy(oSlider, "destroyAggregation");
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.exit();
@@ -454,7 +454,7 @@ sap.ui.define([
 		//arrange
 		var fnHandleSliderResizeSpy = this.spy(oSlider, "_handleSliderResize");
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(1);
 
 		// assert
@@ -625,7 +625,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.$().outerWidth() + "px", "100px", "Check the slider width after rendering");
@@ -647,7 +647,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), +oSlider.$("input").attr("value"), 'Check the "value" attribute of the native input');
@@ -672,7 +672,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 50);
@@ -694,7 +694,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 100);
@@ -715,7 +715,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 95);
@@ -736,7 +736,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 90);
@@ -754,7 +754,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var log = sap.ui.require('sap/base/Log'),
 			fnErrorSpy = this.spy(log, "error");
@@ -783,7 +783,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
@@ -799,7 +799,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.setValue(50);
@@ -821,7 +821,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 0.5555555555);
@@ -842,7 +842,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("progress").style.width, "0%");
@@ -863,7 +863,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.setValue(50);
@@ -888,7 +888,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 13);
@@ -907,7 +907,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.setValue(50);
@@ -932,7 +932,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oHandleDomRef = oSlider.getDomRef("handle");
 
 		// assert
@@ -958,7 +958,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oHandleDomRef = oSlider.getDomRef("handle");
 
 		// act
@@ -989,7 +989,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var $HandleDomRef = oSlider.$().find(".sapMSliderLabel");
 
 		// assert
@@ -1018,7 +1018,7 @@ sap.ui.define([
 			fnWarningSpy = this.spy(log, "warning");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(fnWarningSpy.callCount, 1, "sap.base.log.Warning method was called");
@@ -1036,7 +1036,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "5");
@@ -1055,7 +1055,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "10000000");
@@ -1077,7 +1077,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
@@ -1096,7 +1096,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "10000000");
@@ -1118,7 +1118,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSlider.getDomRef("progress"), "The progress indicator HTMLDivElement is in DOM");
@@ -1268,11 +1268,11 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.setStep(-1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getStep(), -1);
@@ -1311,7 +1311,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSlider.getDomRef("handle").hasAttribute("title"));
@@ -1327,7 +1327,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.setValue(5);
@@ -1348,7 +1348,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
@@ -1366,7 +1366,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.setValue(5);
@@ -1401,7 +1401,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var fnFocus = this.spy(oSlider.getDomRef("handle"), "focus");
 		var oTouches = {
@@ -1446,7 +1446,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oTouches = {
 			0: {
@@ -1503,7 +1503,7 @@ sap.ui.define([
 
 			// arrange
 			oPage.addContent(oSlider);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			var oTouches = {
 				0: {
@@ -1563,7 +1563,7 @@ sap.ui.define([
 
 		// arrange
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oTouches = {
 			0: {
@@ -1613,7 +1613,7 @@ sap.ui.define([
 		var fnIncreaseSpy = this.spy(oSlider, "onsapincrease");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT);
@@ -1645,7 +1645,7 @@ sap.ui.define([
 			this.spy(oSlider, "onsapincreasemodifiers");
 
 			oPage.addContent(oSlider);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
@@ -1710,7 +1710,7 @@ sap.ui.define([
 		var fnDecreaseSpy = this.spy(oSlider, "onsapdecrease");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT);
@@ -1742,7 +1742,7 @@ sap.ui.define([
 			var fnDecreaseModifiersSpy = this.spy(oSlider, "onsapdecreasemodifiers");
 
 			oPage.addContent(oSlider);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_LEFT, false, false, /* Ctrl key */ true);
@@ -1808,7 +1808,7 @@ sap.ui.define([
 		var fnPageUpSpy = this.spy(oSlider, "onsappageup");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.PAGE_UP);
@@ -1840,7 +1840,7 @@ sap.ui.define([
 		var fnPageDownSpy = this.spy(oSlider, "onsappagedown");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.PAGE_DOWN);
@@ -1872,7 +1872,7 @@ sap.ui.define([
 		var fnHomeSpy = this.spy(oSlider, "onsaphome");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
@@ -1903,7 +1903,7 @@ sap.ui.define([
 		var fnEndSpy = this.spy(oSlider, "onsapend");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.END);
@@ -1966,7 +1966,7 @@ sap.ui.define([
 		var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
 
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSlider.getAggregation("_tooltipContainer").show(oSlider);
 		oSlider.getAggregation("_defaultTooltips")[0].fireChange({ value: 0.45 });
@@ -1997,7 +1997,7 @@ sap.ui.define([
 				keyCode: KeyCodes.SPACE
 			};
 		oPage.addContent(oSlider);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSlider.onkeydown(fnFakeEvent);
@@ -2015,11 +2015,11 @@ sap.ui.define([
 
 	QUnit.module("RTL", {
 		beforeEach: function () {
-			sap.ui.getCore().getConfiguration().setRTL(true);
+			Core.getConfiguration().setRTL(true);
 			this.oSlider = new Slider();
 		},
 		afterEach: function () {
-			sap.ui.getCore().getConfiguration().setRTL(false);
+			Core.getConfiguration().setRTL(false);
 			this.oSlider.destroy();
 		}
 	});
@@ -2029,7 +2029,7 @@ sap.ui.define([
 		// arrange
 		this.oSlider.setEnableTickmarks(true);
 		this.oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(0)").html(), this.oSlider.getMin(), "The start label shows the min value");
@@ -2059,7 +2059,7 @@ sap.ui.define([
 
 			// arrange
 			oSlider.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var $HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
 			// assert
@@ -2070,7 +2070,7 @@ sap.ui.define([
 
 			// arrange
 			oScale.destroy();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			oDefaultScale = oSlider.getAggregation('_defaultScale');
 			$HandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 
@@ -2094,14 +2094,14 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(oSlider.getAggregation('_defaultScale'), "The default scale should be created.");
 
 		// arrange
 		oSlider.setEnableTickmarks(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oSlider.getAggregation('_defaultScale'), "The default scale should be destroyed.");
@@ -2120,7 +2120,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
 		// assert
@@ -2129,7 +2129,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.setAggregation('scale', oScale);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oDefaultScale = oSlider.getAggregation('_defaultScale');
 
 		// assert
@@ -2170,7 +2170,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		$SliderTickmarksDomRef = oSlider.$().find('.sapMSliderTickmarks');
 		$SliderLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
 		$SliderTicksDomRef = oSlider.$().find(".sapMSliderTick");
@@ -2196,7 +2196,7 @@ sap.ui.define([
 			});
 
 			this.oSlider.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		});
 
 		hooks.afterEach(function () {
@@ -2212,7 +2212,7 @@ sap.ui.define([
 			var aDefaultTooltips;
 
 			this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			aDefaultTooltips = this.oSlider.getAggregation("_defaultTooltips") || [];
 
@@ -2227,7 +2227,7 @@ sap.ui.define([
 			this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
 			this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
 			this.oSlider.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.strictEqual(this.oSlider.getCustomTooltips().length, 2, "Custom tooltips are set");
 			assert.strictEqual(this.oSlider.getAggregation("_tooltipContainer").getAssociatedTooltips().length, 1, "TooltipContainer should render 1 Tooltip");
@@ -2240,12 +2240,12 @@ sap.ui.define([
 			assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized on init");
 
 			oSlider.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized if advancedTooltips is false");
 
 			oSlider.setShowAdvancedTooltip(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer is initialized after advanced tooltips are on");
 
@@ -2258,14 +2258,14 @@ sap.ui.define([
 
 			// act
 			this.oSlider.addCustomTooltip(oTooltip);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oSlider.getCustomTooltips()[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Custom tooltip should be used");
 
 			// act
 			this.oSlider.removeAllCustomTooltips();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
@@ -2276,7 +2276,7 @@ sap.ui.define([
 				aDefaultTooltips;
 
 			oSlider.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
 
@@ -2284,7 +2284,7 @@ sap.ui.define([
 			assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltips are added initially");
 
 			oSlider.setShowAdvancedTooltip(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
 
@@ -2299,11 +2299,11 @@ sap.ui.define([
 				oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
 
 			this.oSlider.addCustomTooltip(oCustomTooltip);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// act
 			oCustomTooltip.destroy();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(true, "No exception have been thrown");
@@ -2312,7 +2312,7 @@ sap.ui.define([
 
 		QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
 			this.oSlider.setValue(4);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			assert.ok(true, "should not throw an error");
 		});
@@ -2324,14 +2324,14 @@ sap.ui.define([
 			// act
 			this.oSlider.getAggregation("_tooltipContainer").show(this.oSlider);
 			var oLeftTooltip = jQuery("#" + this.oSlider.getId() + "-" + "leftTooltip-input");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.ok(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should be applied");
 
 			//act
 			oSliderTooltip.setEditable(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.notOk(oLeftTooltip.hasClass("sapMSliderTooltipNotEditable"), "'sapMSliderTooltipNotEditable' class should not be applied");
@@ -2347,7 +2347,7 @@ sap.ui.define([
 		});
 
 		oSlider.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oRb = Core.getLibraryResourceBundle("sap.m"),
 			sAriaLabel;
@@ -2355,7 +2355,7 @@ sap.ui.define([
 		// act
 		oSlider.getAggregation("_tooltipContainer").show(oSlider);
 		var oLeftTooltip = jQuery("#" + oSlider.getId() + "-" + "leftTooltip-input");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sAriaLabel = oLeftTooltip.attr('aria-label');
 
@@ -2378,13 +2378,13 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sInvisibleTextId = oSlider.getDomRef("handle").getAttribute("aria-describedby");
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
 		// assert
-		assert.strictEqual(sap.ui.getCore().byId(sInvisibleTextId).getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
+		assert.strictEqual(Core.byId(sInvisibleTextId).getText(), Core.getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
 		assert.ok(!oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
 		assert.strictEqual(sKeyShortcut, "F2", "The 'aria-keyshortcuts' attribute should be presented with appropriate value");
 
@@ -2397,7 +2397,7 @@ sap.ui.define([
 
 		// act
 		oSlider.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
@@ -2429,7 +2429,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		// assert
@@ -2491,7 +2491,7 @@ sap.ui.define([
 
 		// arrange
 		oSlider.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		// assert
@@ -2502,7 +2502,7 @@ sap.ui.define([
 
 		// Act
 		oSlider.setValue(1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		assert.strictEqual(oHandleDomRef.attr("title"), undefined, "The title should be undefined if there's a tooltip.");
@@ -2511,7 +2511,7 @@ sap.ui.define([
 
 		//Act
 		oSlider.setShowAdvancedTooltip(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		assert.strictEqual(oHandleDomRef.attr("title"), "One", "The title should be One.");

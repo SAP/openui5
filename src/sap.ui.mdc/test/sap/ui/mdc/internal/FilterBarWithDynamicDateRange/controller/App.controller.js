@@ -11,14 +11,15 @@ sap.ui.define([
 	"sap/m/SelectDialog",
 	"sap/m/StandardListItem",
 	"../Operators",
-	"sap/ui/model/Filter"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Operators, Filter) {
+	"sap/ui/model/Filter",
+	"sap/ui/core/Core"
+], function (Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Operators, Filter, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
 
 		onInit: function () {
-			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
+			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			var oCM = new ConditionModel();
 			this.getView().setModel(oCM, "cm");

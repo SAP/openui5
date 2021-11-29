@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/util/Animation",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Button,
 	ManagedObject,
@@ -15,7 +16,8 @@ sap.ui.define([
 	BaseToolbar,
 	Animation,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -48,7 +50,7 @@ sap.ui.define([
 			assert.ok(oPromise instanceof Promise, "show() method returns Promise");
 
 			return oPromise.then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
 				assert.ok(this.oToolbar.$().filter(":visible").length === 1, "Toolbar is visible");
 			}.bind(this));
@@ -60,7 +62,7 @@ sap.ui.define([
 			assert.ok(oPromise instanceof Promise, "hide() method returns Promise");
 
 			return oPromise.then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 				assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 			}.bind(this));
@@ -72,7 +74,7 @@ sap.ui.define([
 			assert.ok(oPromise instanceof Promise, "hide() method returns Promise");
 
 			return oPromise.then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 				assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 			}.bind(this));
@@ -80,12 +82,12 @@ sap.ui.define([
 
 		QUnit.test("show()/hide() combination", function(assert) {
 			return this.oToolbar.show().then(function () {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.ok(this.oToolbar.getDomRef() instanceof HTMLElement, "Toolbar is rendered");
 				assert.ok(this.oToolbar.$().filter(":visible").length === 1, "Toolbar is visible");
 
 				return this.oToolbar.hide().then(function () {
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.strictEqual(this.oToolbar.getDomRef(), null, "Toolbar is not rendered");
 					assert.ok(this.oToolbar.$().filter(":visible").length === 0, "Toolbar is not visible");
 				}.bind(this));
@@ -99,7 +101,7 @@ sap.ui.define([
 
 				var iZIndex = iInitialZIndex + 1;
 				this.oToolbar.setZIndex(iZIndex);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				assert.strictEqual(parseInt(this.oToolbar.$().css("z-index")), iZIndex, "z-index is updated properly");
 			}.bind(this));

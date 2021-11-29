@@ -73,7 +73,7 @@ sap.ui.define([
 		var oTable = new TreeTable("table0", mParams);
 		oTable.setModel(this.oModel);
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		return oTable;
 	}
 

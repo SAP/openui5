@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/GridData",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/model/type/Float"
+	"sap/ui/model/type/Float",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -34,7 +35,8 @@ sap.ui.define([
 	ResponsiveGridLayout,
 	GridData,
 	KeyCodes,
-	TypeFloat
+	TypeFloat,
+	oCore
 ) {
 	"use strict";
 
@@ -445,7 +447,7 @@ sap.ui.define([
 		// arrange
 		this.stepInput.setDescription("EUR");
 		assert.strictEqual(this.stepInput.$("input" + sNumericDescSuffix).length, 0, "Description element is not yet rendered");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getDescription(), this.stepInput.getDescription(), "the description is passed to the inner input aggregation");
@@ -457,12 +459,12 @@ sap.ui.define([
 
 		// arrange
 		this.stepInput.setDescription("EUR");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//assert
 		assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "50%", "field width by default is 50%");
 		// arrange
 		this.stepInput.setFieldWidth("70%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(this.stepInput._getInput().getFieldWidth(), this.stepInput.getFieldWidth(), "the fieldWidth is passed to the inner input aggregation");
 		assert.strictEqual(this.stepInput.$().find(".sapMInputBaseContentWrapper")[0].style.width, "70%", "field width of 70% is correctly set to the Input wraper");
@@ -475,7 +477,7 @@ sap.ui.define([
 		this.oLiveChangeSpy = sinon.spy(this.stepInput, "_attachLiveChange");
 		this.oDettachLiveChangeSpy = sinon.spy(this.stepInput, "_detachLiveChange");
 		this.stepInput.setValidationMode(StepInputValidationMode.LiveChange);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput.getValidationMode(), StepInputValidationMode.LiveChange, "validation mode is set to 'LiveChange'");
@@ -484,7 +486,7 @@ sap.ui.define([
 
 		// arrange
 		this.stepInput.setValidationMode(StepInputValidationMode.FocusOut);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput.getValidationMode(), StepInputValidationMode.FocusOut, "validation mode is set to 'FocusOut'");
@@ -497,7 +499,7 @@ sap.ui.define([
 		this.stepInput.setStepMode(StepMode.Multiple);
 		this.stepInput.setStep(5);
 		this.stepInput.setValue(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		this.stepInput._verifyValue();
@@ -519,7 +521,7 @@ sap.ui.define([
 
 		// act
 		oInnerInput.fireLiveChange({ value: "0", newValue: "5" });
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDomRef2 = oInnerInput.getDomRef();
 
@@ -1212,7 +1214,7 @@ sap.ui.define([
 			oSpy = this.spy(this.stepInput, "_changeValueWithStep");
 
 		this.stepInput.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.stepInput.onsapup(oFakeEvent);
@@ -2010,7 +2012,7 @@ sap.ui.define([
 		var oAccInfo = this.stepInput.getAccessibilityInfo();
 
 		// Assert
-		assert.strictEqual(oAccInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"), "Type correctly provided");
+		assert.strictEqual(oAccInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_STEPINPUT"), "Type correctly provided");
 		assert.strictEqual(oAccInfo.description, 4, "Value correctly provided");
 		assert.ok(oAccInfo.focusable, "Control is focusable");
 		assert.ok(oAccInfo.enabled, "Control is enabled");
@@ -2052,7 +2054,7 @@ sap.ui.define([
 	QUnit.test("Setting value to a disabled StepInput", function (assert) {
 		// Prepare
 		this.stepInput.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.stepInput._applyValue(123);
@@ -2304,7 +2306,7 @@ sap.ui.define([
 			this.stepInput.setStepMode(StepMode.Multiple);
 			this.stepInput.setValue(-1);
 			this.stepInput.setStep(5);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Act
 			fResult = this.stepInput._calculateNewValue(1, true);
@@ -2320,7 +2322,7 @@ sap.ui.define([
 			this.stepInput.setStepMode(StepMode.Multiple);
 			this.stepInput.setValue(-1);
 			this.stepInput.setStep(5);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Act
 			fResult = this.stepInput._calculateNewValue(1, false);
@@ -2338,7 +2340,7 @@ sap.ui.define([
 		this.stepInput.setValue(1);
 		this.stepInput.setStep(5);
 		this.stepInput.setLargerStep(3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(3, true);
@@ -2355,7 +2357,7 @@ sap.ui.define([
 		this.stepInput.setValue(-1);
 		this.stepInput.setStep(5);
 		this.stepInput.setLargerStep(3);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(3, false);
@@ -2373,7 +2375,7 @@ sap.ui.define([
 		this.stepInput.setMax(15);
 		this.stepInput.setValue(12);
 		this.stepInput.setStep(6);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(1, true);
@@ -2390,7 +2392,7 @@ sap.ui.define([
 		this.stepInput.setValue(-10);
 		this.stepInput.setStep(5);
 		this.stepInput.setMin(-14);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		fResult = this.stepInput._calculateNewValue(1, false);
@@ -2414,7 +2416,7 @@ sap.ui.define([
 			step: 5.0
 		});
 		oStepInputNoMandatory.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		fResult1 = this.stepInput._calculateNewValue(1, true);
@@ -2458,7 +2460,7 @@ sap.ui.define([
 		this.stepInput.setStepMode(StepMode.Multiple);
 		this.stepInput.setValue(-7);
 		this.stepInput.setStep(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oSpyCalculateNewValue = this.spy(this.stepInput, "_calculateNewValue");
 
@@ -2490,7 +2492,7 @@ sap.ui.define([
 		this.stepInput.setStepMode(StepMode.Multiple);
 		this.stepInput.setValue(-7);
 		this.stepInput.setStep(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oSpyCalculateNewValue = this.spy(this.stepInput, "_calculateNewValue");
 
@@ -2624,7 +2626,7 @@ sap.ui.define([
 		this.stepInput.setDisplayValuePrecision(2);
 		this.stepInput.setStep(0.05); //make sure the precision is different than the one in the value one
 		this.stepInput.setValue(1.20);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		this.stepInput.setValue(1.567); //make sure the precision is different than the one in the step above
@@ -2676,12 +2678,12 @@ sap.ui.define([
 		// arrange
 		this.stepInput.setMin(2);
 		this.stepInput.setDisplayValuePrecision(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		this.stepInput._getInput().setValue("1");
 		this.stepInput._verifyValue(); // it shouldn't invalidate
-		sap.ui.getCore().applyChanges(); // so here should not re-render
+		oCore.applyChanges(); // so here should not re-render
 
 		// assert
 		assert.strictEqual(this.stepInput._getInput().getValue(), "1", "value has not been touched");

@@ -1212,7 +1212,7 @@ sap.ui.define([
 				selected: "{/selected}"
 			});
 			this.oCheckBox.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oCheckBox.destroy();
@@ -1225,13 +1225,13 @@ sap.ui.define([
 			oModel = new JSONModel({
 				selected: true
 			}),
-			oMessageManager = sap.ui.getCore().getMessageManager(),
+			oMessageManager = Core.getMessageManager(),
 			oMessage = new Message({
 				type: MessageType.Error,
 				target: "/selected",
 				processor: oModel
 			}),
-			sExpectedTooltipText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+			sExpectedTooltipText = Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		// act
 		this.oCheckBox.setModel(oModel);
@@ -1252,7 +1252,7 @@ sap.ui.define([
 			oModel = new JSONModel({
 				selected: true
 			}),
-			oMessageManager = sap.ui.getCore().getMessageManager(),
+			oMessageManager = Core.getMessageManager(),
 			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
 			oMessage = new Message({
 				type: MessageType.Error,

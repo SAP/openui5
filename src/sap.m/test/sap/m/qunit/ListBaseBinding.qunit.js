@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/InputListItem",
 	"sap/m/Input",
 	"sap/base/strings/capitalize",
+	"sap/ui/core/Core",
 	"jquery.sap.sjax"
 ], function(
 	MockServer,
@@ -27,7 +28,8 @@ sap.ui.define([
 	StandardListItem,
 	InputListItem,
 	Input,
-	capitalize
+	capitalize,
+	oCore
 ) {
 	"use strict";
 
@@ -88,7 +90,7 @@ sap.ui.define([
 
 		// render the list
 		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// set the list as a promise
 		oDeferred.promise(oList);

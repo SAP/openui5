@@ -296,7 +296,7 @@ sap.ui.define([
 		assert.ok(!mediaAttachSpy.called, "Media handler not attached initially");
 
 		parent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(mediaAttachSpy.called, "Media handler attached when table is rendered");
 
@@ -312,7 +312,7 @@ sap.ui.define([
 
 		parent.placeAt("qunit-fixture");
 		parent.addColumn(sut);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(mediaAttachSpy.called, "Media handler called immediately");
 
@@ -332,7 +332,7 @@ sap.ui.define([
 
 		// The table needs to be rendered for the column media object to be initialized
 		parent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sut._notifyResize({from: 240}); // this is the default value for minScreenWidth="phone"
 		this.clock.tick(1);
@@ -372,7 +372,7 @@ sap.ui.define([
 
 		// The table is rendered without contextual width, the Device.media API is used
 		page.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(1);
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
 
@@ -400,7 +400,7 @@ sap.ui.define([
 
 		// The table is rendered without contextual width, the Device.media API is used
 		page.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(1);
 
 		assert.ok(!tableResizeSpy.called, "Initially no resize is needed, table normally rendered as for desktop");
@@ -438,7 +438,7 @@ sap.ui.define([
 
 
 		page.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		page._applyContextualSettings({contextualWidth: 100});
 
 		// Place the table in a container that already has contextual settings
@@ -470,7 +470,7 @@ sap.ui.define([
 
 
 		page.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		page._applyContextualSettings({contextualWidth: 100});
 
 		// Place the table in a container that already has contextual settings
@@ -500,7 +500,7 @@ sap.ui.define([
 
 
 		page.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		page._applyContextualSettings({contextualWidth: 1000});
 
 		// Place the table in a container that already has contextual settings
@@ -536,7 +536,7 @@ sap.ui.define([
 
 		//Act
 		parent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		sut.setDisplay(jQuery("table")[0], false);
@@ -611,7 +611,7 @@ sap.ui.define([
 		});
 
 		parent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(sut.getSortIndicator(), "None", "Default value for sorted is None");
 
@@ -653,7 +653,7 @@ sap.ui.define([
 			this.sut.setAssociation("columnHeaderMenu", this.oMenu);
 
 			this.parent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oMenu.destroy();

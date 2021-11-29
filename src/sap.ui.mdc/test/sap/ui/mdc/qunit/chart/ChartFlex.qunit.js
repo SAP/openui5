@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/Chart.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "test-resources/sap/ui/fl/api/FlexTestAPI"
-], function (createAppEnvironment, ChartFlexibility, ChangesWriteAPI, JsControlTreeModifier, FlexTestAPI) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/Chart.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "test-resources/sap/ui/fl/api/FlexTestAPI", "sap/ui/core/Core"
+], function (createAppEnvironment, ChartFlexibility, ChangesWriteAPI, JsControlTreeModifier, FlexTestAPI, oCore) {
 	'use strict';
 
 	function clearChanges() {
@@ -55,7 +55,7 @@ sap.ui.define([
 				this.oChart = this.oView.byId('IDChart');
 				this.oItem1 = this.oView.byId('item1');
 				this.oUiComponentContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		},
 		afterEach: function () {

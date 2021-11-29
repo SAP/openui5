@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	jQuery,
 	RuntimeAuthoring,
@@ -17,7 +18,8 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	FlexTestAPI,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -31,7 +33,7 @@ sap.ui.define([
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
 				.then(function(oCompContainer) {
 					oCompCont = oCompContainer;
-					oView = sap.ui.getCore().byId("Comp1---idMain1");
+					oView = oCore.byId("Comp1---idMain1");
 					return oView.getController().isDataReady();
 				});
 		},
@@ -42,12 +44,12 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			return RtaQunitUtils.clear(oView, true).then(function () {
-				this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
-				this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-				this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
-				this.oDatesGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
-				this.oGeneralGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
-				this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+				this.oVictim = oCore.byId("Comp1---idMain1--Victim");
+				this.oCompanyCodeField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+				this.oBoundButton35Field = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+				this.oDatesGroup = oCore.byId("Comp1---idMain1--Dates");
+				this.oGeneralGroup = oCore.byId("Comp1---idMain1--GeneralLedgerDocument");
+				this.oForm = oCore.byId("Comp1---idMain1--MainForm");
 
 				this.oRta = new RuntimeAuthoring({
 					rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
@@ -80,7 +82,7 @@ sap.ui.define([
 			var $fieldOverlay = this.oCompanyCodeFieldOverlay.$();
 
 			return new Promise(function(fnResolve) {
-				sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
+				oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
 					if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 						var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
 
@@ -103,7 +105,7 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this)),
 							new Promise(function (fnResolveWhenRenamed) {
-								sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function (sChannel, sEvent, mParams) {
+								oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function (sChannel, sEvent, mParams) {
 									if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 										assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(), " and focus is on field overlay");
 										$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
@@ -141,7 +143,7 @@ sap.ui.define([
 					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
 						var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 						QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 
 						oDialog.attachOpened(function () {
 							var oFieldToAdd = oDialog.getElements().filter(function (oField) {
@@ -151,7 +153,7 @@ sap.ui.define([
 								var aCommands = oCommandStack.getAllExecutedCommands();
 								if (aCommands &&
 									aCommands.length === 3) {
-									sap.ui.getCore().applyChanges();
+									oCore.applyChanges();
 
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 										var oGroupElements = this.oGeneralGroup.getGroupElements();
@@ -174,9 +176,9 @@ sap.ui.define([
 
 							// select the field in the list and close the dialog with OK
 							oFieldToAdd.selected = true;
-							var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+							var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
 							QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-							sap.ui.getCore().applyChanges();
+							oCore.applyChanges();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this), 2000);
@@ -236,16 +238,16 @@ sap.ui.define([
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.focus();
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
-					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
 					sap.ui.qunit.QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				var oContextMenuItem = oMenu.getItems()[1];
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		});
 
@@ -324,7 +326,7 @@ sap.ui.define([
 
 			var fnDone = assert.async();
 
-			sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
+			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oDatesGroupOverlay) {
 					var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
 
@@ -348,7 +350,7 @@ sap.ui.define([
 							}.bind(this));
 						}.bind(this)),
 						new Promise(function (fnResolveWhenRenamed) {
-							sap.ui.getCore().getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function (sChannel, sEvent, mParams) {
+							oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function (sChannel, sEvent, mParams) {
 								if (mParams.overlay === this.oDatesGroupOverlay) {
 									assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
 									$editableField = $groupOverlay.find(".sapUiRtaEditableField");
@@ -380,7 +382,7 @@ sap.ui.define([
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			var fnDone = assert.async();
-			var oForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm--Form");
+			var oForm = oCore.byId("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oCommandStack = this.oRta.getCommandStack();
 			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
@@ -399,7 +401,7 @@ sap.ui.define([
 						if (aCommands && aCommands.length === 1) {
 							fnWaitForExecutionAndSerializationBeingDone.call(this)
 								.then(function () {
-									sap.ui.getCore().applyChanges();
+									oCore.applyChanges();
 
 									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 									assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
@@ -415,16 +417,16 @@ sap.ui.define([
 
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.selected = true;
-					var oOkButton = sap.ui.getCore().byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 				var oContextMenuItem = oMenu.getItems()[1];
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		});
 
@@ -454,7 +456,7 @@ sap.ui.define([
 
 		QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {
 			var fnDone = assert.async();
-			var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
+			var oCombinedElement = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
@@ -464,7 +466,7 @@ sap.ui.define([
 			oCommandStack.attachCommandExecuted(function () {
 				fnWaitForExecutionAndSerializationBeingDone.call(this)
 					.then(function () {
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 						return this.oRta.stop();
@@ -487,7 +489,7 @@ sap.ui.define([
 				})[0];
 				assert.ok(oContextMenuItem, "the the split action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oContextMenuItem.getDomRef());
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			});
 			QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});

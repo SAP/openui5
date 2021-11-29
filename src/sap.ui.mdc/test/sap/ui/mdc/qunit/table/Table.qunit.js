@@ -2506,7 +2506,7 @@ sap.ui.define([
 			this.oTable.setEnableExport(true);
 			Core.applyChanges();
 			assert.ok(this.oTable.getEnableExport(), "enableExport=true");
-			sap.ui.getCore().loadLibrary("sap.ui.unified", {async: true}).then(function() { // do the same async steps as the Table to load unified lib and Menu, so the Menu is available in the next checks
+			Core.loadLibrary("sap.ui.unified", {async: true}).then(function() { // do the same async steps as the Table to load unified lib and Menu, so the Menu is available in the next checks
 				sap.ui.require(["sap/m/Menu", "sap/m/MenuItem"], function(/* Menu, MenuItem */) {
 					this.oTable._oExportButton.getMenu().getItems()[1].firePress();
 					assert.ok(this.oTable._onExportAs.calledOnce, "_onExportAs called");

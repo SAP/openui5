@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
 	"sap/m/Text",
-	"sap/ui/Device"
-], function(qutils, FileUploader, FileUploaderParameter, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+], function(qutils, FileUploader, FileUploaderParameter, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
 	"use strict";
 
 	/**
@@ -79,7 +80,7 @@ sap.ui.define([
 
 		//Set up
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$fileUploader = oFileUploader.$();
 
 		// assert default
@@ -87,13 +88,13 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// assert
 		fnTestDisabledClass($fileUploader, true);
 
 		// act
 		oFileUploader.setEnabled(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// assert
 		fnTestDisabledClass($fileUploader, false);
 
@@ -104,10 +105,10 @@ sap.ui.define([
 	QUnit.test("Destroy: cleans the file uploader input filed from static area", function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader(),
-			oStaticArea = sap.ui.getCore().getStaticAreaRef();
+			oStaticArea = oCore.getStaticAreaRef();
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		// Trigger invalidation by using a setter,
@@ -116,7 +117,7 @@ sap.ui.define([
 		// hook won't be executed and file uploader input
 		// field will be left in static area
 		oFileUploader.setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oStaticArea.querySelector("[type='file']"), "File uploader input field exits in the static area");
@@ -145,7 +146,7 @@ sap.ui.define([
 
 		//Set up
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$fileUploader = oFileUploader.$();
 
 		// assert default
@@ -153,7 +154,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.setButtonOnly(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$fileUploader = oFileUploader.$();
 		// assert
 		fnTestButtonOnlyClass($fileUploader, false);
@@ -276,7 +277,7 @@ sap.ui.define([
 			oFileUploader = new FileUploader();
 
 		oFileUploader.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
@@ -305,7 +306,7 @@ sap.ui.define([
 			sInputName;
 
 		oFileUploader.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		sInputName = document.querySelector("[type='file']").getAttribute("name");
 
 		var oAfterRenderingDelegate = {
@@ -350,7 +351,7 @@ sap.ui.define([
 
 		oFileUploader.addDelegate(oAfterRenderingDelegate);
 		oFileUploader.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	});
 
 	QUnit.test("Test httpRequestMethod property with native form submit", function (assert) {
@@ -360,7 +361,7 @@ sap.ui.define([
 		//Act
 		oFileUploader.setHttpRequestMethod(FileUploaderHttpRequestMethod.Put);
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(
@@ -388,7 +389,7 @@ sap.ui.define([
 
 		oFileUploader.setHttpRequestMethod(FileUploaderHttpRequestMethod.Put);
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oFileUploader._sendFilesWithXHR(aFiles);
@@ -411,7 +412,7 @@ sap.ui.define([
 		});
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
 			".txt,.pdf,image/png,image/jpeg",
@@ -430,14 +431,14 @@ sap.ui.define([
 		});
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
 			".XML",
 			"accept attribute is correct initially");
 
 		oFileUploader.setFileType(["JSON"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
 			".JSON",
@@ -452,14 +453,14 @@ sap.ui.define([
 
 		//Set up
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert default
 		assert.equal(oFileUploader.getValueStateText(), "", "setValueStateText() --> getValueStateText() should return an empty string by default");
 
 		// act
 		oFileUploader.setValueStateText(VALUE_STATE_TEXT);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oFileUploader.getValueStateText(), VALUE_STATE_TEXT, "setValueStateText() --> getValueStateText() should return '" + VALUE_STATE_TEXT + "'");
@@ -478,11 +479,11 @@ sap.ui.define([
 
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oFileUploader.setTooltip(sTooltip);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "FileUploader tooltip is correct");
@@ -501,7 +502,7 @@ sap.ui.define([
 
 		// act
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert (only tooltip type of string are added via the 'title' attribute)
 		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), null, "The title attribute is not set");
@@ -523,7 +524,7 @@ sap.ui.define([
 		};
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		FUEl = oFileUploader.getDomRef("fu");
@@ -541,7 +542,7 @@ sap.ui.define([
 		// arrange
 		var oFileUploader = new FileUploader().placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oFileUploader.upload();
@@ -565,7 +566,7 @@ sap.ui.define([
 		var oFileUploader = new FileUploader({ uploadUrl: "test" }).placeAt("qunit-fixture"),
 			oFireUploadStartSpy = this.spy(oFileUploader, "fireUploadStart");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oFileUploader.upload();
@@ -617,7 +618,7 @@ sap.ui.define([
 
 		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		//attach the events which will be fired
@@ -688,7 +689,7 @@ sap.ui.define([
 			oFileAllowedSpy = this.spy(oFileUploader, "fireFileAllowed");
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oFileUploader.handlechange(fakeEvent);
@@ -728,7 +729,7 @@ sap.ui.define([
 
 		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
 
@@ -748,7 +749,7 @@ sap.ui.define([
 
 		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.setValue("Testfilename.txt");
 		assert.equal(oFileUploader.getValue(), "Testfilename.txt", "Check if filename is set correctly");
@@ -785,7 +786,7 @@ sap.ui.define([
 		};
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.handlechange(oTestEvent);
 		assert.equal(fnFireFileEmpty.calledOnce, true, "Event on empty file upload is fired.");
@@ -817,7 +818,7 @@ sap.ui.define([
 			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader._sendFilesWithXHR(aFiles);
 
@@ -861,7 +862,7 @@ sap.ui.define([
 		};
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act - send files to make sure _appendFileToFormData method is used
 		oFileUploader._sendFilesWithXHR(aFiles);
@@ -942,7 +943,7 @@ sap.ui.define([
 		var oFileUploader = new FileUploader(),
 			oChangeHandlerSpy = this.spy(oFileUploader, "handlechange");
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oFileUploader.setMultiple(false);
@@ -964,7 +965,7 @@ sap.ui.define([
 
 			//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
 			this.oFileUploader.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function() {
@@ -976,7 +977,7 @@ sap.ui.define([
 		var $Frame = this.oFileUploader.$("frame");
 
 		var oParentRef = $Frame.parent().get(0);
-		var oStatic = sap.ui.getCore().getStaticAreaRef();
+		var oStatic = oCore.getStaticAreaRef();
 
 		assert.equal($Frame.length, 1, "iFrame was inserted into DOM");
 		assert.equal(oParentRef, oStatic, "FileUploader's Blindlayer UI-area is the static UI-area");
@@ -1013,7 +1014,7 @@ sap.ui.define([
 			stopPropagationSpy = this.spy(oMockEscapePress, "stopPropagation");
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFileUploader.onkeydown(oMockEscapePress);
 
@@ -1032,7 +1033,7 @@ sap.ui.define([
 			},
 			oClickSpy;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oClickSpy = this.spy(oFileUploader.oFileUpload, "click");
 
 		// Act
@@ -1095,7 +1096,7 @@ sap.ui.define([
 			];
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		aLabelledBy.forEach(function(oLabel) {
@@ -1188,7 +1189,7 @@ sap.ui.define([
 		// act
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		sInternalButtonAriaLabelledby = oFileUploader.oBrowse.$().attr("aria-labelledby");
 
@@ -1213,12 +1214,12 @@ sap.ui.define([
 		// act
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oNewLabel = new Label("newLabel", { labelFor: "fu" });
 
 		oNewLabel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		sInternalButtonAriaLabelledby = oFileUploader.oBrowse.$().attr("aria-labelledby");
 
@@ -1238,13 +1239,13 @@ sap.ui.define([
 		});
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oFileUploader.oBrowse.getTooltip(), "It shouldn't have one while FileUploader has text");
 
 		oFileUploader.setIconOnly(true);
 		oFileUploader.setIcon("sap-icon://add");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oFileUploader.oBrowse.getTooltip(), oFileUploader.getBrowseText(),
 				"Once FileUploader becomes icon-only, then it should contain just the 'Browse...' text");
@@ -1255,10 +1256,10 @@ sap.ui.define([
 	QUnit.test("Description for default FileUploader", function (assert) {
 		// Setup
 		var oFileUploader = new FileUploader("fu"),
-			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $description = oFileUploader.$().find("#fu-AccDescr");
@@ -1274,10 +1275,10 @@ sap.ui.define([
 				tooltip: "the-tooltip",
 				placeholder: "the-placeholder"
 			}),
-			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var sDescriptionText = oFileUploader.$().find("#fu-AccDescr").text();
@@ -1299,11 +1300,11 @@ sap.ui.define([
 			sAccDescription;
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oFileUploader.setTooltip(sUpdatedTooltip);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
@@ -1324,11 +1325,11 @@ sap.ui.define([
 			sAccDescription;
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oFileUploader.setPlaceholder(sUpdatedPlaceholder);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		sAccDescription = document.getElementById("fu-AccDescr").innerHTML;
@@ -1343,11 +1344,11 @@ sap.ui.define([
 		// Setup
 		var oLabel = new Label({ text: "Label", labelFor: "fu", required: true }),
 			oFileUploader = new FileUploader("fu"),
-			sRequiredText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
+			sRequiredText = oCore.getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
 
 		oLabel.placeAt("qunit-fixture");
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		var $description = oFileUploader.$().find("#fu-AccDescr");
@@ -1364,7 +1365,7 @@ sap.ui.define([
 			aInputLabels;
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aInputLabels = oFileUploader.oFilePath.getAriaLabelledBy();
 		assert.strictEqual(aInputLabels[0], sExpectedLabelId, "A hidden label is added to FileUploader's input");
@@ -1379,7 +1380,7 @@ sap.ui.define([
 			oSpy = this.spy(oFileUploader.oBrowse, "focus");
 
 		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Act
 		oFileUploader.onclick();
 

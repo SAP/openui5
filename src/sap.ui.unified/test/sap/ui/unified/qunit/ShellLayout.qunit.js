@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/unified/ShellLayout",
 	"sap/base/util/ObjectPath",
-	"sap/ui/thirdparty/jquery"
-], function(qutils, containsOrEquals, Control, ShellLayout, ObjectPath, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(qutils, containsOrEquals, Control, ShellLayout, ObjectPath, jQuery, oCore) {
 	"use strict";
 
 	// Control initialization
@@ -135,7 +136,7 @@ sap.ui.define([
 	QUnit.module("Rendering");
 
 	QUnit.test("Content", function(assert) {
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(containsOrEquals(document.getElementById("shell-hdrcntnt"), document.getElementById("_header")), "Header rendered correctly");
 		assert.ok(containsOrEquals(document.getElementById("shell-curt-container-canvas"), document.getElementById("_curt_ctnt")), "Curtain Content rendered correctly");
 		assert.ok(containsOrEquals(document.getElementById("shell-curt-container-pane"), document.getElementById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");

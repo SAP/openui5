@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -38,7 +39,8 @@ sap.ui.define([
 	jQuery,
 	Device,
 	waitForThemeApplied,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -348,7 +350,7 @@ sap.ui.define([
 		assert.strictEqual(oTableSelectDialog1.getShowClearButton(), false, 'ShowClearButton should by default be set to "false"');
 		oTableSelectDialog1.setMultiSelect(true);
 		oTableSelectDialog1.setShowClearButton(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oTableSelectDialog1.getMultiSelect(), true, 'Multi Select should now be updated to  "true"');
 		assert.strictEqual(oTableSelectDialog1.getShowClearButton(), true, 'ShowClearButton should now be updated to  "true"');
 
@@ -358,7 +360,7 @@ sap.ui.define([
 		var iDelay = 50;
 		oTableSelectDialog.setBusyIndicatorDelay(iDelay);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
 		assert.strictEqual(oTableSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The delay value of dialog should be ' + iDelay);
 		assert.strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
@@ -371,7 +373,7 @@ sap.ui.define([
 		oTableSelectDialog.setBusy(true);
 
 		this.clock.tick(50);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oTableSelectDialog.getBusy(), true, 'The Dialog should be in busy state');
 
 		this.clock.tick(1000);
@@ -382,7 +384,7 @@ sap.ui.define([
 	QUnit.test("setBusy should disable the SearchField", function(assert) {
 		oTableSelectDialog.open();
 		oTableSelectDialog.setBusy(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
 		assert.strictEqual(searchFieldEnabled, false, 'The SearchField should be disabled');
@@ -465,7 +467,7 @@ sap.ui.define([
 	QUnit.test("confirmButtonText", function(assert) {
 		// assert
 		assert.equal(oTableSelectDialog._getOkButton().getText(),
-			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
+			oCore.getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
 			'The default confirmation text is set.');
 
 		// act
@@ -599,7 +601,7 @@ sap.ui.define([
 
 		oTableSelectDialog1.open();
 
-		var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+		var oTable = oCore.byId("oTableSelectDialog1-table");
 		var aItems = oTable.getItems();
 
 		aItems[0].setSelected(true);
@@ -693,8 +695,8 @@ sap.ui.define([
 	QUnit.test("TableSelectDialog1 SearchField Set Value 'Mo'", function(assert){
 		var done = assert.async();
 		assert.expect(0);
-		sap.ui.getCore().applyChanges();
-		var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
+		oCore.applyChanges();
+		var searchField = oCore.byId("oTableSelectDialog1-searchField");
 		searchField.setValue("Mo");
 		done();
 	});
@@ -709,7 +711,7 @@ sap.ui.define([
 	QUnit.test("TableSelectDialog1 SearchField Fire Search Event", function(assert){
 		var done = assert.async();
 		assert.expect(0);
-		var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
+		var searchField = oCore.byId("oTableSelectDialog1-searchField");
 		searchField.fireSearch({query: "Mo"});
 		done();
 	});
@@ -728,7 +730,7 @@ sap.ui.define([
 	QUnit.test("TableSelectDialog1 SearchField Fire Search Event Again with same data", function(assert){
 		var done = assert.async();
 		assert.expect(0);
-		var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
+		var searchField = oCore.byId("oTableSelectDialog1-searchField");
 		searchField.fireSearch({query: "Mo"});
 		done();
 	});
@@ -772,7 +774,7 @@ sap.ui.define([
 	QUnit.test("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(assert){
 		var done = assert.async();
 		assert.expect(0);
-		var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
+		var searchField = oCore.byId("oTableSelectDialog1-searchField");
 		searchField.setValue("");
 		searchField.fireLiveChange({newValue: ""});
 		done();
@@ -793,7 +795,7 @@ sap.ui.define([
 
 	QUnit.test("TableSelectDialog1 Change to Single Select", function(assert) {
 		oTableSelectDialog1.setMultiSelect(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
 	});
 
@@ -810,7 +812,7 @@ sap.ui.define([
 	QUnit.module("Test Dialog Single Select Item");
 
 	QUnit.test("TableSelectDialog1 singleSelection Item 2", function(assert) {
-		var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+		var oTable = oCore.byId("oTableSelectDialog1-table");
 		var aItems = oTable.getItems();
 		aItems[2].setSelected(true);
 		assert.equal(aItems[0].getSelected(), false, "SingleSelection: Item 0 should not be selected");
@@ -828,7 +830,7 @@ sap.ui.define([
 		oButton1.firePress();
 		assert.ok(document.getElementById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
 		assert.ok(!document.getElementById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
-		var oCancel = sap.ui.getCore().byId("oTableSelectDialog1-cancel");
+		var oCancel = oCore.byId("oTableSelectDialog1-cancel");
 		oCancel.firePress();
 		done();
 	});
@@ -1014,7 +1016,7 @@ sap.ui.define([
 
 	QUnit.test("GetSelectedContexts", function(assert) {
 		oTableSelectDialog1.open();
-		var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+		var oTable = oCore.byId("oTableSelectDialog1-table");
 
 		var fnTableGetSelectedContexts = sinon.spy(oTable, "getSelectedContexts");
 
@@ -1040,7 +1042,7 @@ sap.ui.define([
 	QUnit.test("Closing without filtering doesn't re-filter the model", function(assert) {
 		oTableSelectDialog1.open();
 
-		var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+		var oTable = oCore.byId("oTableSelectDialog1-table");
 		var oBindings = oTable.getBinding("items");
 
 		var fnFilter = sinon.spy(oBindings, "filter");
@@ -1057,24 +1059,24 @@ sap.ui.define([
 		searchField.setValue('m');
 		searchField.fireLiveChange({newValue: "m"});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
-		var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+		var oTable = oCore.byId("oTableSelectDialog1-table");
 
 		assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
 
 		oTableSelectDialog1._fireConfirmAndUpdateSelection();
 		oTableSelectDialog1._oDialog.close();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		oTableSelectDialog1.open();
 		searchField.fireLiveChange({newValue: ""});
 		searchField.fireLiveChange({newValue: "m"});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
@@ -1167,7 +1169,7 @@ sap.ui.define([
 	QUnit.test("Initial loading with selected items from previous selection", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
@@ -1176,7 +1178,7 @@ sap.ui.define([
 	QUnit.test("Initial loading without selected items from previous selection", function(assert) {
 		this.oTableSelectDialogClearButton1.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
@@ -1186,7 +1188,7 @@ sap.ui.define([
 	QUnit.test("Removing selection should disable button", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
@@ -1200,7 +1202,7 @@ sap.ui.define([
 	QUnit.test("Adding selection should enable button", function(assert) {
 		this.oTableSelectDialogClearButton1.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton1._getClearButton().getEnabled(), false, 'Clear button should be disabled');
@@ -1214,7 +1216,7 @@ sap.ui.define([
 	QUnit.test("Clicking on enabled 'Clear' button should clear selection", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton._getClearButton().getEnabled(), true, 'Clear button should be enabled');
@@ -1229,7 +1231,7 @@ sap.ui.define([
 	QUnit.test("Title of dialog should be also set", function(assert) {
 		this.oTableSelectDialogClearButton.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(this.oTableSelectDialogClearButton.getTitle(), "Title", 'Title of TableSelectDialog should be "Title"');
@@ -1239,7 +1241,7 @@ sap.ui.define([
 
 	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
 		this.oTableSelectDialogClearButton.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
@@ -1249,7 +1251,7 @@ sap.ui.define([
 
 	QUnit.test("After clear is preset the focus should be returned to the search field", function(assert) {
 		this.oTableSelectDialogClearButton.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		this.oTableSelectDialogClearButton._getClearButton().firePress();
@@ -1259,40 +1261,40 @@ sap.ui.define([
 
 	QUnit.test("Disable already enabled clear button and then enable it again", function(assert) {
 		this.oTableSelectDialogClearButton.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		var oCustomHeader = this.oTableSelectDialogClearButton._oDialog.getCustomHeader();
 
 		this.oTableSelectDialogClearButton.setShowClearButton(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), false, 'Clear button is not visible');
 		assert.notOk(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is not in dom');
 
 		this.oTableSelectDialogClearButton.setShowClearButton(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
-		assert.equal(oCustomHeader.getContentRight()[0].getProperty("text"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TABLESELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
+		assert.equal(oCustomHeader.getContentRight()[0].getProperty("text"), oCore.getLibraryResourceBundle("sap.m").getText("TABLESELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
 	});
 
 	QUnit.test("Disable already enabled clear button and then enabled", function(assert) {
 		this.oTableSelectDialogShowClearNot.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		var oCustomHeader = this.oTableSelectDialogShowClearNot._oDialog.getCustomHeader();
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oTableSelectDialogClearButton.setShowClearButton(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oTableSelectDialogShowClearNot.setShowClearButton(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oCustomHeader.getContentRight()[0].getVisible(), true, 'Clear button is not visible');
 		assert.ok(oCustomHeader.getContentRight()[0].getDomRef(), 'Clear button is in dom');
@@ -1310,11 +1312,11 @@ sap.ui.define([
 
 		// act
 		oTableSelectDialog.open("somevalue");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerKeydown(oTableSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 		oTableSelectDialog._oDialog.close();
 		this.clock.tick(500);

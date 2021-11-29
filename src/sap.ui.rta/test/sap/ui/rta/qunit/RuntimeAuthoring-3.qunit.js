@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/Log",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	UIComponent,
 	ComponentContainer,
@@ -21,7 +22,8 @@ sap.ui.define([
 	DtUtil,
 	ManagedObjectMetadata,
 	Log,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -48,7 +50,7 @@ sap.ui.define([
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -113,7 +115,7 @@ sap.ui.define([
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -579,7 +581,7 @@ sap.ui.define([
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({
@@ -647,7 +649,7 @@ sap.ui.define([
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		beforeEach: function () {
 			this.oRta = new RuntimeAuthoring({

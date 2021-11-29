@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/BaseEditor"
+	"sap/ui/integration/designtime/baseEditor/BaseEditor",
+	"sap/ui/core/Core"
 ], function (
-	BaseEditor
+	BaseEditor,
+	oCore
 ) {
 	"use strict";
 
@@ -42,7 +44,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleGroup").then(function (aPropertyEditors) {
 				this.oGroupEditor = aPropertyEditors[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oGroupEditorElement = this.oGroupEditor.getContent();
 			}.bind(this));
 		},

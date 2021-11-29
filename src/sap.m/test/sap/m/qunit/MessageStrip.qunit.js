@@ -25,7 +25,7 @@ sap.ui.define([
 			this.oMessageStrip = new MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessageStrip.destroy();
@@ -36,7 +36,7 @@ sap.ui.define([
 		// act
 		this.oMessageStrip.setShowIcon(true);
 		this.oMessageStrip.setShowCloseButton(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(this.oMessageStrip, "MessageStrip should be rendered");
@@ -57,7 +57,7 @@ sap.ui.define([
 	QUnit.test("Setting None type", function(assert) {
 		// act
 		this.oMessageStrip.setType("None");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
@@ -66,7 +66,7 @@ sap.ui.define([
 	QUnit.test("Setting undefined as type", function(assert) {
 		// act
 		this.oMessageStrip.setType(undefined);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
@@ -76,7 +76,7 @@ sap.ui.define([
 		// act
 		this.oMessageStrip.setType("Error");
 		this.oMessageStrip.setCustomIcon("sap-icon://undo");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://undo", "icon should be undo");
@@ -85,7 +85,7 @@ sap.ui.define([
 	QUnit.test("Custom icon should not be set by the type icon", function(assert) {
 		// act
 		this.oMessageStrip.setType("Error");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "", "custom icon should not be defined");
@@ -95,7 +95,7 @@ sap.ui.define([
 		var linkText = "Link Text";
 
 		this.oMessageStrip.setLink(new Link({ text: linkText }));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oMessageStrip.getLink().getText(), linkText,
 			"should be set as an aggregation and have the specified text");
@@ -109,7 +109,7 @@ sap.ui.define([
 
 		// act
 		this.oMessageStrip.setAggregation("link", oLink, false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMessageStrip.$().find(".sapMLnk").length, 1, "should be set as an aggregation");
@@ -121,7 +121,7 @@ sap.ui.define([
 
 		// act
 		this.oMessageStrip.setText("Test example");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(oText.getText(), "Test example", "should set the text of the hiddent aggregation");
@@ -169,7 +169,7 @@ sap.ui.define([
 
 		// Act - apply test string and trigger UI update
 		this.oMessageStrip.setText(sTestString);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		oAssert.ok(oFormattedText.getDomRef(),
@@ -179,7 +179,7 @@ sap.ui.define([
 
 		// Act - toggle setter
 		this.oMessageStrip.setEnableFormattedText(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		oAssert.notOk(oFormattedText.getDomRef(),
@@ -200,7 +200,7 @@ sap.ui.define([
 		// Act
 		this.oMessageStrip.setText(sTestString);
 		this.oMessageStrip.setEnableFormattedText(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oFormattedText = this.oMessageStrip.getAggregation("_formattedText");
 
@@ -232,7 +232,7 @@ sap.ui.define([
 		// Act
 		this.oMessageStrip.setEnableFormattedText(true);
 		this.oMessageStrip.setText(sHTMLString);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Arrange - get all html elements rendered and evaluate them as jQuery object
 		$Result = jQuery(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html());
@@ -258,7 +258,7 @@ sap.ui.define([
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessageStrip.destroy();
@@ -278,7 +278,7 @@ sap.ui.define([
 		// act
 		this.oMessageStrip.setModel(oModel);
 		this.oMessageStrip.bindProperty("text", "/text");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oMessageStrip.getText(), sData, "should work");
@@ -295,7 +295,7 @@ sap.ui.define([
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oButton = this.oMessageStrip.getAggregation("_closeButton");
 		},
@@ -368,7 +368,7 @@ sap.ui.define([
 
 		setTimeout(function() {
 			this.oMessageStrip.close();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		}.bind(this), nAnimationLengthTimeout);
 	});
 
@@ -382,7 +382,7 @@ sap.ui.define([
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			if (this.oMessageStrip) {
@@ -413,7 +413,7 @@ sap.ui.define([
 		});
 
 		oMessageStrip.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oMessageStripDomRef = oMessageStrip.getDomRef(),
 			oMessageStripWithLinkDomRef = this.oMessageStrip.getDomRef(),
@@ -455,7 +455,7 @@ sap.ui.define([
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
 		//Arrange
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRb = Core.getLibraryResourceBundle("sap.m");
 
 		var $oCloseButton = this.oMessageStrip.$().find(".sapMMsgStripCloseButton"),
 			$sCloseButtonLabelId = $oCloseButton.attr("aria-labelledby"),
@@ -471,7 +471,7 @@ sap.ui.define([
 
 		//Act
 		this.oMessageStrip.setType("Error");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(document.getElementById($oCloseButton.attr("aria-labelledby")).innerText, sInvisibleTextError,
@@ -479,7 +479,7 @@ sap.ui.define([
 
 		//Act
 		this.oMessageStrip.setType("Warning");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(document.getElementById($oCloseButton.attr("aria-labelledby")).innerText, sInvisibleTextWarning,
@@ -487,7 +487,7 @@ sap.ui.define([
 
 		//Act
 		this.oMessageStrip.setType("Success");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(document.getElementById($oCloseButton.attr("aria-labelledby")).innerText, sInvisibleTextSuccess,
@@ -504,7 +504,7 @@ sap.ui.define([
 	QUnit.test("Decorative icon should have aria-hidden set to true", function(assert) {
 		//Act
 		this.oMessageStrip.setShowIcon(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(jQuery(".sapUiIcon").attr("aria-hidden"), "true", "The icon has an aria-hidden attribute set to true");
@@ -518,7 +518,7 @@ sap.ui.define([
 			}),
 			oCloseButton = oMessageStrip.getAggregation("_closeButton");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(document.querySelectorAll("#" + oCloseButton.getAriaLabelledBy()).length, 1,

@@ -2,13 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/rta/util/changeVisualization/categories/RenameVisualization"
+	"sap/ui/rta/util/changeVisualization/categories/RenameVisualization",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
-	RenameVisualization
+	RenameVisualization,
+	oCore
 ) {
 	"use strict";
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	QUnit.module("Base tests", {
 		beforeEach: function() {

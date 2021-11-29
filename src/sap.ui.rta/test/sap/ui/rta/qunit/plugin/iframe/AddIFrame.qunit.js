@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/base/util/uid",
 	"sap/m/Button",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	XMLView,
 	Utils,
@@ -37,7 +38,8 @@ sap.ui.define([
 	includes,
 	uid,
 	Button,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -88,7 +90,7 @@ sap.ui.define([
 				content: [this.oObjectPageLayout, this.oButton]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.sNewControlID = oMockedViewWithStableId.createId(uid());
 			this.oNewObjectPageSection = new ObjectPageSection(this.sNewControlID);
@@ -123,7 +125,7 @@ sap.ui.define([
 			var sExpectedSectionText = "Section text";
 			var sExpectedHeaderText = "Header text";
 
-			var oRtaTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText")
 				.withArgs("CTX_ADDIFRAME", "as foo").returns(sExpectedSectionText)
 				.withArgs("CTX_ADDIFRAME", "as bar").returns(sExpectedHeaderText);
@@ -242,7 +244,7 @@ sap.ui.define([
 			});
 
 			var sExpectedText = "Section text";
-			var oRtaTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", sText).returns(sExpectedText);
 
 			this.oButtonOverlay.setDesignTimeMetadata({

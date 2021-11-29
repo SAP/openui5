@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendarMonthGrid",
 	"sap/ui/unified/CalendarAppointment",
 	'sap/ui/unified/DateTypeRange',
-	'sap/ui/unified/library'
+	'sap/ui/unified/library',
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	SinglePlanningCalendar,
@@ -14,7 +15,8 @@ sap.ui.define([
 	SinglePlanningCalendarMonthGrid,
 	CalendarAppointment,
 	DateTypeRange,
-	unifiedLibrary
+	unifiedLibrary,
+	oCore
 ) {
 		"use strict";
 
@@ -55,7 +57,7 @@ sap.ui.define([
 					]
 				}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oSPC.destroy();
@@ -98,7 +100,7 @@ sap.ui.define([
 					startDate: o2Aug2018_00_00
 				}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.oSPC.destroy();
@@ -129,7 +131,7 @@ sap.ui.define([
 				type: CalendarDayType.Type05,
 				startDate: new Date(2018, 6, 30)
 			}));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.ok(this.oSPC.$().find(".sapMSPCMonthDay")[0]
@@ -156,7 +158,7 @@ sap.ui.define([
 					]
 				}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.oSPC.destroy();
@@ -285,7 +287,7 @@ sap.ui.define([
 
 			// act
 			this.oSPC.addAppointment(oAppointment);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oFakeEvent = {
 				target: {
@@ -311,7 +313,7 @@ sap.ui.define([
 					startDate: o2Aug2018_00_00
 				}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.oSPCMG.destroy();
@@ -431,7 +433,7 @@ sap.ui.define([
 					]
 				}).placeAt("qunit-fixture");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.oSPC.destroy();
@@ -449,7 +451,7 @@ sap.ui.define([
 
 			//act
 			this.oSPC.setEnableAppointmentsDragAndDrop(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//asert
 			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "Тhe appointment must receive the correct 'draggable' attribute from the SPC settings");

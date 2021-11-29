@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/InstanceManager",
 	"sap/ui/core/HTML",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -18,7 +19,8 @@ sap.ui.define([
 	InstanceManager,
 	HTML,
 	EventExtension,
-	Log
+	Log,
+	oCore
 ) {
 	"use strict";
 
@@ -180,7 +182,7 @@ sap.ui.define([
 		});
 	};
 
-	isValidOf("of", sap.ui.getCore().byId("myApp"), 0);
+	isValidOf("of", oCore.byId("myApp"), 0);
 	isValidOf("of", jQuery("html")[0], 0);
 	isValidOf("of", jQuery("html"), 0);
 	isValidOf("of", window, 0);
@@ -384,7 +386,7 @@ sap.ui.define([
 		});
 
 		oPage.addContent(oSvgCircle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		MessageToast.show("test", {
 			onClose: function () {

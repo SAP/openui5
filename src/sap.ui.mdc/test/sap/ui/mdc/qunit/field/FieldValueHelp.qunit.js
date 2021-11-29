@@ -39,8 +39,9 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/Toolbar",
+	"sap/ui/core/Core",
 	"sap/m/ToolbarSpacer"
-], function (
+], function(
 		qutils,
 		FieldValueHelp,
 		FieldValueHelpContentWrapperBase,
@@ -74,25 +75,26 @@ sap.ui.define([
 		Popover,
 		Dialog,
 		Button,
-		ToolbarSpacer
+		ToolbarSpacer,
+		oCore
 	) {
 	"use strict";
 
-	var iDialogDuration = sap.ui.getCore().getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	var iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 	var iPopoverDuration = Device.browser.firefox ? 410 : 355;
 
 	var oModelData = {
 			items:[{text: "Item 1", key: "I1", additionalText: "Text 1", filter: "XXX"},
-			       {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
-			       {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}],
+				   {text: "Item 2", key: "I2", additionalText: "Text 2", filter: "XXX"},
+				   {text: "X-Item 3", key: "I3", additionalText: "Text 3", filter: "YYY"}],
 			test: "Hello",
 			contexts: [{icon: "sap-icon://sap-ui5", inParameter: "in1", inParameter2: "in1-2", outParameter: "out1"},
-			           {icon: "sap-icon://lightbulb", inParameter: "in2", inParameter2: "in2-2", outParameter: "out2"},
-			           {icon: "sap-icon://camera", inParameter: "in3", inParameter2: "in3-2", outParameter: "out3"}]
+					   {icon: "sap-icon://lightbulb", inParameter: "in2", inParameter2: "in2-2", outParameter: "out2"},
+					   {icon: "sap-icon://camera", inParameter: "in3", inParameter2: "in3-2", outParameter: "out3"}]
 			};
 
 	var oModel = new JSONModel(merge({}, oModelData));
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
 	var oDialogContent;
 	var oSuggestContent;
@@ -235,7 +237,7 @@ sap.ui.define([
 
 		oField.placeAt("content");
 		oField2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oField.focus();
 	};
 
@@ -515,7 +517,7 @@ sap.ui.define([
 	QUnit.test("getTextForKey - with complex InParameters", function(assert) {
 
 		var aConditions = [Condition.createCondition("EQ", ["X"], {testIn: "1"}),
-		                   Condition.createCondition("BT", ["A", "C"])];
+						   Condition.createCondition("BT", ["A", "C"])];
 		oFieldHelp.addInParameter(new InParameter({value: aConditions, helpPath: "In1"}));
 		oFieldHelp.addInParameter(new InParameter({value: "{/testIn}", helpPath: "In2", initialValueFilterEmpty: true}));
 
@@ -950,7 +952,7 @@ sap.ui.define([
 		assert.strictEqual(oFieldHelp.getRoleDescription(), null, "no role description returned as default");
 		assert.strictEqual(oFieldHelp.getRoleDescription(1), null, "no role description returned for maxCondition = 1");
 
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		var sText = oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
 
 		assert.strictEqual(oFieldHelp.getRoleDescription(-1), sText, "no role description returned for multi-combobox");
@@ -2321,10 +2323,10 @@ sap.ui.define([
 		FilterOperatorUtil.addOperator(oOperator);
 
 		oFieldHelp.setConditions([
-		                          Condition.createCondition("MyTest", ["I2"], undefined, undefined, ConditionValidated.Validated),
-		                          Condition.createCondition("MyTest2", ["I2"], undefined, undefined, ConditionValidated.Validated),
-		                          Condition.createCondition("GT", ["I1"], undefined, undefined, ConditionValidated.NotValidated)
-		                          ]);
+								  Condition.createCondition("MyTest", ["I2"], undefined, undefined, ConditionValidated.Validated),
+								  Condition.createCondition("MyTest2", ["I2"], undefined, undefined, ConditionValidated.Validated),
+								  Condition.createCondition("GT", ["I1"], undefined, undefined, ConditionValidated.NotValidated)
+								  ]);
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 
@@ -2477,8 +2479,8 @@ sap.ui.define([
 
 		oFieldHelp.connect(oField2);
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item 1"),
-		                          Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated),
-		                          Condition.createCondition("StartsWith", ["X"])]);
+								  Condition.createCondition("EQ", ["I2"], undefined, undefined, ConditionValidated.Validated),
+								  Condition.createCondition("StartsWith", ["X"])]);
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 
@@ -2962,7 +2964,7 @@ sap.ui.define([
 		oFieldHelp.setFilterBar(oFilterBar);
 		oClock.tick(0); // wait for binding update (FilterBar)
 		oClock.tick(0); // wait for binding update (FilterConditionModel)
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oVHP = oDialog.getContent()[0];
 		assert.ok(oVHP.getShowFilterbar(), "ValueHelpPanel showFilterbar");
 		assert.ok(oVHP._oFilterbar, "ValueHelpPanel FilterBar used");
@@ -3483,7 +3485,7 @@ sap.ui.define([
 
 	QUnit.test("show CollectiveSearch", function(assert) {
 
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 		var sTitle = oResourceBundle.getText("COL_SEARCH_SEL_TITLE");
 
 		oFieldHelp.open(false);

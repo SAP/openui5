@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Bar,
 	Button,
@@ -33,7 +34,8 @@ sap.ui.define([
 	Utils,
 	VerticalLayout,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -44,7 +46,7 @@ sap.ui.define([
 	var myButtonId = "myButton";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = sap.ui.getCore().createComponent({
+	var oComponent = oCore.createComponent({
 		name: "testComponent",
 		id: "testComponent"
 	});

@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/MessagePage",
 	"sap/m/Link",
 	"sap/m/Button",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
 ], function(
 	createAndAppendDiv,
 	IconPool,
@@ -14,7 +15,8 @@ sap.ui.define([
 	MessagePage,
 	Link,
 	Button,
-	coreLibrary
+	coreLibrary,
+	oCore
 ) {
 	"use strict";
 
@@ -59,7 +61,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMessagePage = createMessagePage();
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage.destroy();
@@ -89,7 +91,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMessagePage = createMessagePageWithAggregations();
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage.destroy();
@@ -124,7 +126,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setTitle("Some string");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$title = this.oMessagePage.$("title");
 
@@ -141,7 +143,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setTitleLevel(TitleLevel.H4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage._getTitle().getLevel(), TitleLevel.H4, "MessagePage titleLevel is correctly set to the title instance");
@@ -151,7 +153,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMessagePage = createMessagePage();
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage.destroy();
@@ -166,7 +168,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setTitle(sExpectedValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		sActualValue =  jQuery("#" + messagePageId + " .sapMTitle").text();
@@ -180,7 +182,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setText(sExpectedValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		sActualValue =  jQuery(".sapMMessagePageMainText").text();
@@ -194,7 +196,7 @@ sap.ui.define([
 
 		// Act
 		this.oMessagePage.setDescription(sExpectedValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		sActualValue =  jQuery(".sapMMessagePageDescription").text();
@@ -208,7 +210,7 @@ sap.ui.define([
 
 		// System under test
 		this.oMessagePage.setShowHeader(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		iActualResult = jQuery("#" + messagePageId + " .sapMPageHeader").length;
 		assert.ok(!iActualResult, "The header is not rendered");
@@ -235,7 +237,7 @@ sap.ui.define([
 		// In this case the MessagePage removes and destroys the existing Icon control
 		// and creates new one.
 		this.oMessagePage.setIcon(sNewImage);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(this.oMessagePage.getIcon(), sNewImage, "New Image is set.");
 		assert.equal(this.oMessagePage._oIconControl.getSrc(), sNewImage, "New Icon is set.");
@@ -249,21 +251,21 @@ sap.ui.define([
 	QUnit.test("Set textDirection", function(assert) {
 		// Act
 		this.oMessagePage.setTextDirection(TextDirection.RTL);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage.getDomRef().dir, "rtl", "Text direction is rtl");
 
 		// Act
 		this.oMessagePage.setTextDirection(TextDirection.LTR);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage.getDomRef().dir, "ltr", "Text direction is ltr");
 
 		// Act
 		this.oMessagePage.setTextDirection(TextDirection.Inherit);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oMessagePage.getDomRef().dir, "", "Text direction is not set explicitly");
@@ -272,7 +274,7 @@ sap.ui.define([
 	QUnit.test("Set enableFormattedText", function(assert) {
 		// Act
 		this.oMessagePage.setEnableFormattedText(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(this.oMessagePage.getDomRef("formattedText"), "FormattedText is rendered");
@@ -285,7 +287,7 @@ sap.ui.define([
 					title: "Title",
 					text: "text with braces {{}}"
 				});
-			sap.ui.getCore().setModel(oModel);
+			oCore.setModel(oModel);
 
 			this.oMessagePage = new MessagePage(messagePageId, {
 				title: "{/title}",
@@ -294,7 +296,7 @@ sap.ui.define([
 			});
 
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage.destroy();
@@ -314,7 +316,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMessagePage = createMessagePage();
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage = null;
@@ -333,7 +335,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMessagePage = createMessagePageWithAggregations();
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage.destroy();
@@ -346,7 +348,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMessagePage = createMessagePageWithAggregations();
 			this.oMessagePage.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePage.destroy();
@@ -357,7 +359,7 @@ sap.ui.define([
 	QUnit.test("ARIA attributes", function(assert) {
 		// Arrange
 		var $oMessagePage = this.oMessagePage.$(),
-			sExpectedRoleDescription = sap.ui.getCore().getLibraryResourceBundle("sap.m")
+			sExpectedRoleDescription = oCore.getLibraryResourceBundle("sap.m")
 				.getText(this.oMessagePage.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// Assert

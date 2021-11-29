@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/Ancestor"
-], function(Opa5, Press, Properties, Ancestor) {
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/core/Core"
+], function(Opa5, Press, Properties, Ancestor, oCore) {
 	"use strict";
 
 	var iTeamCount;
@@ -135,7 +136,7 @@ sap.ui.define([
 							if (oCalendar.getViewKey) {
 								sSelectedViewKey = oCalendar.getViewKey();
 							} else {
-								sSelectedViewKey = sap.ui.getCore().byId(oCalendar.getSelectedView()).getKey();
+								sSelectedViewKey = oCore.byId(oCalendar.getSelectedView()).getKey();
 							}
 							Opa5.assert.strictEqual(
 								sExpectedViewKey,
@@ -182,7 +183,7 @@ sap.ui.define([
 						fragmentId: oControlIds.sFragmentId,
 						success: function () {
 							Opa5.assert.strictEqual(
-								sap.ui.getCore().byId(oControlIds.sSelectorId).getSelectedIndex(),
+								oCore.byId(oControlIds.sSelectorId).getSelectedIndex(),
 								iSelectedMember,
 								"The Planning Calendar is switched to Single Planning Calendar and proper team member is selected"
 							);

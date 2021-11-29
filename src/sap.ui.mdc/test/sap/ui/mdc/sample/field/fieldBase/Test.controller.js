@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/Text",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"sap/ui/core/Core"
 ], function(
 	Controller,
 	Filter,
@@ -33,14 +34,15 @@ sap.ui.define([
 	Column,
 	Label,
 	Text,
-	MessageToast
+	MessageToast,
+	oCore
 ) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.base.sample.field.fieldBase.Test", {
 
 		onInit: function(oEvent) {
-			var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			var oFormatSettings = oCore.getConfiguration().getFormatSettings();
 			oFormatSettings.setUnitMappings({
 				"g": "mass-gram",
 				"kg": "mass-kilogram",

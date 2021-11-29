@@ -45,7 +45,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
@@ -70,7 +70,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");
@@ -87,13 +87,13 @@ sap.ui.define([
 		});
 
 		oObjectNumber.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#onUnit").find(".sapMObjectNumberUnit").length, 0, "No unit span is rendered when the Unit is null.");
 
 		oObjectNumber.setUnit("");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#onUnit").find(".sapMObjectNumberUnit").length, 0, "No unit span is rendered when the Unit is empty string.");
@@ -115,7 +115,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		var $ontxt = jQuery("#on2").find(".sapMObjectNumberText");
@@ -141,7 +141,7 @@ sap.ui.define([
 
 		//Act
 		sut.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		//Check value
@@ -157,7 +157,7 @@ sap.ui.define([
 
 		for (var i = 0; i < aValueStates.length; i++) {
 			sut.setState(aValueStates[i]);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			var sStatusClass = "sapMObjectNumberStatus" + aValueStates[i];
 			var $ontxt = jQuery("#on3");
 			assert.ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
@@ -211,7 +211,7 @@ sap.ui.define([
 		on6.placeAt("content");
 		on7.placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
@@ -256,7 +256,7 @@ sap.ui.define([
 			this.oONEmphasizedInfoId = "ON-emphasized";
 
 			this.oON.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oON.destroy();
@@ -267,7 +267,7 @@ sap.ui.define([
 	QUnit.test("Default ObjectNumber", function (assert) {
 		var oStateElement = document.getElementById(this.oONStateId),
 			oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId),
-			sControlName = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME"),
+			sControlName = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME"),
 			oControlRef = this.oON.getDomRef();
 
 		assert.notOk(oEmphasizedInfoElement, "Additional SPAN for emphasized information isn't created");
@@ -287,7 +287,7 @@ sap.ui.define([
 		this.oON.setActive(true);
 
 		oLabel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oControlRef = this.oON.getDomRef();
 		assert.strictEqual(oControlRef.getAttribute("role"), "button", "ObjectNumber indicates it's active state");
@@ -325,7 +325,7 @@ sap.ui.define([
 		assert.strictEqual(oEmphasizedInfoElement.innerHTML, sEmphasizedText, "Control has mapped the correct text for emphasizing");
 
 		this.oON.setNumber(undefined);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
 
 		assert.notOk(oEmphasizedInfoElement, "Text element for emphasized information is not present");
@@ -337,7 +337,7 @@ sap.ui.define([
 			sAriaDescribedByReferences;
 
 		this.oON.addAriaDescribedBy(oDescription);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		sAriaDescribedByReferences = this.oON.getDomRef().getAttribute("aria-describedby");
 		assert.strictEqual(sAriaDescribedByReferences, oDescription.getId(), "Description's ID is placed in aria-describedby");
@@ -346,7 +346,7 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo()", function (assert) {
 		var oAccInfo = this.oON.getAccessibilityInfo(),
 			sExpectedDescription = this.oON.getNumber() + " " + this.oON.getUnit(),
-			sErrorText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
+			sErrorText = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR");
 
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "Description contains just number and unit");
 

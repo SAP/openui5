@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(CalendarLegend, CalendarLegendRenderer, CalendarLegendItem,
-	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, StandardCalendarLegendItem, Log, DateFormat, XMLView, jQuery) {
+	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, StandardCalendarLegendItem, Log, DateFormat, XMLView, jQuery, oCore) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -46,7 +47,7 @@ sap.ui.define([
 		} else {
 			sType = "Type" + aSpecialDay[3];
 		}
-		sap.ui.getCore().byId("Cal").addSpecialDate(new DateTypeRange({
+		oCore.byId("Cal").addSpecialDate(new DateTypeRange({
 			startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
 			endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
 			type: sType,
@@ -171,7 +172,7 @@ sap.ui.define([
 	QUnit.module("Rendering", {
 		beforeEach: function () {
 			this.oLegend = new CalendarLegend("Leg", {}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oLegend.destroy();
@@ -195,7 +196,7 @@ sap.ui.define([
 				new CalendarLegendItem("L2-I5", {text: "no type 2", tooltip: "no type 2"})
 			]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
@@ -210,7 +211,7 @@ sap.ui.define([
 			text: "Placeholder " + (i + 1)
 		}));
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aLegendItems = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 14, "14 categories rendered");
@@ -248,7 +249,7 @@ sap.ui.define([
 			text: "custom color 2",
 			tooltip: "custom color 2", color: "#FF0000"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCustomColorIfL4I6 = _getCssColorProperty(jQuery("#L1-I0 .sapUiUnifiedLegendSquareColor"), "background-color");
 		var oCustomColorIfL4I7 = _getCssColorProperty(jQuery("#L1-I1 .sapUiUnifiedLegendSquareColor"), "background-color");
@@ -267,7 +268,7 @@ sap.ui.define([
 				text: specialDates[i].getTooltip()
 			}));
 		}
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Leg = this.oLegend.$().find(".sapUiUnifiedLegendItems").children();
 

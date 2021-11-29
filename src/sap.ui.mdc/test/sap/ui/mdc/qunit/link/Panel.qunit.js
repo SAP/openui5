@@ -1,8 +1,8 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon"
-], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon) {
+	"sap/ui/layout/library", "sap/ui/mdc/link/Panel", "sap/ui/mdc/link/PanelItem", "sap/ui/layout/form/SimpleForm", "sap/ui/core/Icon", "sap/ui/core/Core"
+], function(layoutLibrary, Panel, PanelItem, SimpleForm, Icon, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
@@ -72,7 +72,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 
@@ -87,7 +87,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -103,7 +103,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -119,7 +119,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -134,7 +134,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -152,7 +152,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleIcons(assert, this.oPanel, 0);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true); // nothing to be persisted
@@ -178,7 +178,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -195,7 +195,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleText(assert, this.oPanel, "A", false, "Panel is not responsible for the visibility of items, it takes them as they are");
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -212,7 +212,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -229,7 +229,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleText(assert, this.oPanel, "A", false);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
@@ -257,7 +257,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleIcons(assert, this.oPanel, 0);
 	});
@@ -277,7 +277,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
@@ -296,7 +296,7 @@ sap.ui.define([
 		});
 
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
@@ -322,14 +322,14 @@ sap.ui.define([
 			]
 		});
 		this.oPanel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert before act
 		assert.equal(this.oPanel.getDependents().length, 0);
 
 		// act
 		var done = assert.async();
-		sap.ui.getCore().loadLibrary('sap.ui.fl', {
+		oCore.loadLibrary('sap.ui.fl', {
 			async: true
 		}).then(function() {
 			sap.ui.require([

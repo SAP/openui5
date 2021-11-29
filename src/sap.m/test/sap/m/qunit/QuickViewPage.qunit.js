@@ -86,7 +86,7 @@ sap.ui.define([
 	// set the data for the model
 	oModel.setData(mData);
 
-	sap.ui.getCore().setModel(oModel);
+	Core.setModel(oModel);
 
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "quickViewPage"});
@@ -131,7 +131,7 @@ sap.ui.define([
 
 			this.oQuickViewPage.setModel(oModel);
 			oPage.addContent(this.oQuickViewPage);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();
@@ -148,7 +148,7 @@ sap.ui.define([
 
 		this.oQuickViewPage.setModel(oModel);
 		oPage.addContent(this.oQuickViewPage);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		// Assert
@@ -189,7 +189,7 @@ sap.ui.define([
 
 			this.oQuickViewPage.setModel(oModel);
 			oPage.addContent(this.oQuickViewPage);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oQuickViewPage.destroy();

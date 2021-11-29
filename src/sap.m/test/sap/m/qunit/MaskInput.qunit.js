@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/events/KeyCodes"
-
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -29,7 +29,8 @@ sap.ui.define([
 	coreLibrary,
 	EventExtension,
 	waitForThemeApplied,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -46,7 +47,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -157,7 +158,7 @@ sap.ui.define([
 		oControl.setMask("ISBN99-99");
 		var oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oControl.focus();
@@ -332,7 +333,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -402,7 +403,7 @@ sap.ui.define([
 
 			this.oMaskSerialNumber.placeAt("content");
 			this.oMaskPhoneNumber.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -432,7 +433,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -455,7 +456,7 @@ sap.ui.define([
 	QUnit.test("Initial focusing of MaskInput - caret positioning", function (assert){
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oMaskInput.focus();
 		this.clock.tick(1000);
 
@@ -466,7 +467,7 @@ sap.ui.define([
 	QUnit.test("Focus of MaskInput when it has incomplete value - caret positioning", function (assert){
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oMaskInput.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
@@ -484,7 +485,7 @@ sap.ui.define([
 	QUnit.test("Focus of MaskInput when it has complete value - caret positioning", function (assert){
 		//arrange
 		this.oMaskInput.setPlaceholderSymbol("_").setMask("9999-9999-99");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oMaskInput.focus();
 		this.clock.tick(1000);
 		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
@@ -512,7 +513,7 @@ sap.ui.define([
 		var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 			oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 
 		oControl.focus();
@@ -532,7 +533,7 @@ sap.ui.define([
 			oOtherControl = new Input({value: "some other value"});
 
 		oOtherControl.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 
 		oControl.setValue('#1-23');
@@ -586,7 +587,7 @@ sap.ui.define([
 			this.oOtherControl = new Button({text: "my button"});
 			this.oOtherControl.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oChangeListenerPassedEvent = null;
 			this.spyChangeEvent = this.spy(this.changeListener.bind(this));
 			this.oMaskInput.attachEvent("change", this.spyChangeEvent);
@@ -696,7 +697,7 @@ sap.ui.define([
 			});
 			this.oMaskInputHebrew.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -812,7 +813,7 @@ sap.ui.define([
 			mask: "aaaa"
 		});
 		this.oMaskInputLatin.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 		var sContent = "abc";
 		this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
@@ -838,7 +839,7 @@ sap.ui.define([
 			]
 		});
 		this.oMaskInputHebrew.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 		var sContent =  "וצה"; /*3 chars*/
 		this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
@@ -851,7 +852,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -875,7 +876,7 @@ sap.ui.define([
 		var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aaaa'),
 			oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 
 		assert.strictEqual(getMaskInputDomValue(oControl), "", "Unless focused an empty dom value should remain empty");
@@ -1029,7 +1030,7 @@ sap.ui.define([
 		var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 			oOtherControl = new Input({value: "some other value"});
 		oOtherControl.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(1000);
 
 		oControl.focus();
@@ -1089,7 +1090,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMaskInput = new MaskInput();
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.fnIsChromeOnAndroidStub = this.stub(this.oMaskInput, "_isChromeOnAndroid").callsFake(function () {
 				return true;
@@ -1156,7 +1157,7 @@ sap.ui.define([
 	QUnit.test("Private, Android specific: onkeydown, current state is stored", function(assert) {
 		// Prepare
 		this.oMaskInput.setMask("99999");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oMaskInput.focus();
@@ -1174,7 +1175,7 @@ sap.ui.define([
 		var	fnOnInputForAndroidHandlerStub = this.spy(this.oMaskInput, "_onInputForAndroidHandler");
 
 		this.oMaskInput.setMask("99999");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oMaskInput.oninput(new jQuery.Event());
@@ -1197,7 +1198,7 @@ sap.ui.define([
 				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo").callsFake(function() { return oBuildKeyboardEventInfoResponse;});
 
 			this.oMaskInput.setMask("99999");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oMaskInput._oKeyDownStateAndroid = {};
 
 			// Act
@@ -1232,7 +1233,7 @@ sap.ui.define([
 				fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo").callsFake(function() { return oBuildKeyboardEventInfoResponse;});
 
 			this.oMaskInput.setMask("99999");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oMaskInput._oKeyDownStateAndroid = {oSelection: {}};
 
 			// Act
@@ -1264,7 +1265,7 @@ sap.ui.define([
 			});
 			this.oRenderer = this.oMaskInput.getRenderer();
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -1296,7 +1297,7 @@ sap.ui.define([
 				showClearIcon: true
 			});
 			this.oMaskInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (!bSkipDestroy) {
@@ -1454,7 +1455,7 @@ sap.ui.define([
 			iLength = sValue.length,
 			bModified = false,
 			bOnlyHebrewContent = new RegExp("[\u0591-\u05F4]").test(sValue),
-			bRTLMode = sap.ui.getCore().getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
+			bRTLMode = oCore.getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
 
 
 		if (bRTLMode && !bOnlyHebrewContent) {
@@ -1507,7 +1508,7 @@ sap.ui.define([
 			oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd},
 			bModified = false,
 			bOnlyHebrewContent = new RegExp("[\u0591-\u05F4]").test(sValue),
-			bRTLMode = sap.ui.getCore().getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
+			bRTLMode = oCore.getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
 
 		if (!bRTLMode || bOnlyHebrewContent) {
 			return oSelection;

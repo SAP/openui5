@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/library",
-	"sap/ui/qunit/QUnitUtils"
-], function(TableQUnitUtils, MultiSelectionPlugin, MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, MultiSelectionPlugin, MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, oCore) {
 	"use strict";
 
 	var sServiceURI = "/service/";
@@ -170,13 +171,13 @@ sap.ui.define([
 
 			var oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
 			oSelectionPlugin.setLimit(5);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(oSetPropertySpy.calledOnce, "setProperty is called once");
 			assert.ok(oSetPropertySpy.calledWithExactly("limit", 5, true), "setProperty called with the correct parameters");
 			oSetPropertySpy.resetHistory();
 
 			oSelectionPlugin.setLimit(0);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(oSetPropertySpy.calledOnce, "setProperty is called once");
 			assert.ok(oSetPropertySpy.calledWithExactly("limit", 0, false), "setProperty called with the correct parameters");
 
@@ -381,7 +382,7 @@ sap.ui.define([
 
 		oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 		oTable.attachFirstVisibleRowChanged(oFirstVisibleRowChangedSpy);
@@ -908,7 +909,7 @@ sap.ui.define([
 
 		oSelectionPlugin.setLimit(0);
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "toggle", "The headerSelector type is toggle");
 
@@ -952,7 +953,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
 		this.oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return new Promise(function(resolve) {
 			setTimeout(function() {
@@ -995,7 +996,7 @@ sap.ui.define([
 		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
 		this.oTable.setVisibleRowCount(3);
 		oSelectionPlugin.setLimit(5);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return new Promise(function(resolve) {
 			setTimeout(function() {
@@ -1036,7 +1037,7 @@ sap.ui.define([
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelectionMode(SelectionMode.Single);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCell = this.oTable.getDomRef("selall");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
@@ -1072,7 +1073,7 @@ sap.ui.define([
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setSelectionMode(SelectionMode.None);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oCell = this.oTable.getDomRef("selall");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");

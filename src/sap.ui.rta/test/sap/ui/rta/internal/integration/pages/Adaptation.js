@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/ui/test/actions/Press",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	Opa5,
 	PropertyStrictEquals,
@@ -13,7 +14,8 @@ sap.ui.define([
 	Press,
 	QUnitUtils,
 	FakeLrepConnectorSessionStorage,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -102,7 +104,7 @@ sap.ui.define([
 					});
 				},
 				iClickOnAContextMenuEntryWithText: function(sText) {
-					var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.ui.unified.MenuItem",
 						matchers: new PropertyStrictEquals({
@@ -168,7 +170,7 @@ sap.ui.define([
 					});
 				},
 				iPressOK: function() {
-					var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
@@ -181,7 +183,7 @@ sap.ui.define([
 					});
 				},
 				iExitRtaMode: function() {
-					var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: function(oButton) {
@@ -224,7 +226,7 @@ sap.ui.define([
 					});
 				},
 				iExitRtaPersonalizationMode: function() {
-					var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: function(oButton) {

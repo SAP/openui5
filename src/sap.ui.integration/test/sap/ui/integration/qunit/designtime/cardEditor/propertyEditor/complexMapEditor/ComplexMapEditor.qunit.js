@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/values"
+	"sap/base/util/values",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	QUnitUtils,
 	EditorQunitUtils,
 	sinon,
-	values
+	values,
+	oCore
 ) {
 	"use strict";
 
@@ -231,7 +233,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
 				var oComplexMapEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oNestedArrayEditor = oComplexMapEditor.getContent();
 				return oNestedArrayEditor.ready().then(function () {
 					var mEditors = _getComplexMapEditors(oNestedArrayEditor)[0];
@@ -248,7 +250,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
 				var oComplexMapEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oNestedArrayEditor = oComplexMapEditor.getContent();
 				assert.strictEqual(
 					oNestedArrayEditor.getConfig().template.key.label,

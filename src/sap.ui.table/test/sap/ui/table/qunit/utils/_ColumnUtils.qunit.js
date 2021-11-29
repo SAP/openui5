@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/Device"
-], function(TableQUnitUtils, TableUtils, Table, Column, Control, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TableUtils, Table, Column, Control, Device, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -509,7 +510,7 @@ sap.ui.define([
 
 		oTable.setEnableColumnReordering(false);
 		oTreeTable.setEnableColumnReordering(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "ColumnReordering Disabled: Fixed Column");
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "ColumnReordering Disabled: Non-Fixed Column");
@@ -519,7 +520,7 @@ sap.ui.define([
 		oTable.setEnableColumnReordering(true);
 		oTreeTable.setEnableColumnReordering(true);
 		oTable.getColumns()[1].setHeaderSpan(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column");
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column");
@@ -527,7 +528,7 @@ sap.ui.define([
 		oTable.getColumns()[1].setHeaderSpan([2, 1]);
 		oTable.getColumns()[1].addMultiLabel(new TestControl());
 		oTable.getColumns()[1].addMultiLabel(new TestControl());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column (Multi Header)");
 		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column (Multi Header)");
@@ -541,7 +542,7 @@ sap.ui.define([
 		var i;
 
 		oTable.setEnableColumnReordering(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = false;
@@ -549,7 +550,7 @@ sap.ui.define([
 		}
 
 		oTable.setEnableColumnReordering(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
@@ -560,7 +561,7 @@ sap.ui.define([
 		}
 
 		oTable.getColumns()[3].setHeaderSpan(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
@@ -573,7 +574,7 @@ sap.ui.define([
 		oTable.getColumns()[3].setHeaderSpan([2, 1]);
 		oTable.getColumns()[3].addMultiLabel(new TestControl());
 		oTable.getColumns()[3].addMultiLabel(new TestControl());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
 			bExpect = true;
@@ -586,7 +587,7 @@ sap.ui.define([
 		oTable.getColumns()[1].setHeaderSpan(2);
 		oTable.getColumns()[3].setHeaderSpan(1);
 		oTable.getColumns()[3].destroyMultiLabels();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oColumn = oTable.getColumns()[4];
 
@@ -611,7 +612,7 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 3, "Correct Index after move.");
 	});
@@ -627,7 +628,7 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 0, "Correct Index after move.");
 	});
@@ -643,7 +644,7 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 4, "Correct Index after move.");
 	});
@@ -661,7 +662,7 @@ sap.ui.define([
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Correct Index after move.");
 	});
@@ -697,7 +698,7 @@ sap.ui.define([
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_2"}));
 		oTable.getColumns()[2].addMultiLabel(new TestControl({text: "a_3_3"}));
 		oTable.getColumns()[0].setHeaderSpan([3, 2, 1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aVisibleColumns = oTable._getVisibleColumns();
 
@@ -841,35 +842,35 @@ sap.ui.define([
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 2), i2emInPixel, "Returned 2em in pixels: " + i2emInPixel);
 
 		aVisibleColumns[3].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 100, "Returned 100: Column is not visible and width set to 100px");
 
 		aVisibleColumns[3].setWidth("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"\"");
 
 		aVisibleColumns[3].setWidth("auto");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"auto\"");
 
 		aVisibleColumns[3].setWidth("10%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 3), 0, "Returned 0: Column is not visible and width is set to \"10%\"");
 
 		aVisibleColumns[4].setWidth("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 			"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"\"");
 
 		aVisibleColumns[4].setWidth("auto");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 			"The width in pixels was correctly retrieved from the DOM in case the column width was set to \"auto\"");
 
 		aVisibleColumns[4].setWidth("10%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		iColumnWidth = aVisibleColumns[4].getDomRef().offsetWidth;
 		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, 4), iColumnWidth,
 			"The width in pixels was correctly retrieved from the DOM in case of a column width specified in percentage");
@@ -885,7 +886,7 @@ sap.ui.define([
 				this.aColumns[i].setWidth("100px");
 			}
 			oTable.setWidth(((this.aColumns.length * 100) + 200) + "px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.aColumns = null;

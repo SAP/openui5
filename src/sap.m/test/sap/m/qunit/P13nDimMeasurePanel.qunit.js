@@ -1,7 +1,25 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils", "sap/ui/qunit/utils/createAndAppendDiv", "sap/m/P13nDimMeasurePanel", "sap/m/library", "sap/m/P13nItem", "sap/m/P13nDimMeasureItem", "sap/ui/model/json/JSONModel", "sap/ui/events/jquery/EventExtension"
-], function(qutils, createAndAppendDiv, P13nDimMeasurePanel, mobileLibrary, P13nItem, P13nDimMeasureItem, JSONModel, EventExtension) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/m/P13nDimMeasurePanel",
+	"sap/m/library",
+	"sap/m/P13nItem",
+	"sap/m/P13nDimMeasureItem",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/core/Core"
+], function(
+	qutils,
+	createAndAppendDiv,
+	P13nDimMeasurePanel,
+	mobileLibrary,
+	P13nItem,
+	P13nDimMeasureItem,
+	JSONModel,
+	EventExtension,
+	oCore
+) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -31,7 +49,7 @@ sap.ui.define([
 		});
 
 		// assertions
-		assert.strictEqual(oDimMeasurePanel.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("CHARTPANEL_TITLE"));
+		assert.strictEqual(oDimMeasurePanel.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("CHARTPANEL_TITLE"));
 		assert.strictEqual(oDimMeasurePanel.getTitleLarge(), "");
 		assert.strictEqual(oDimMeasurePanel.getType(), P13nPanelType.dimeasure);
 		assert.strictEqual(oDimMeasurePanel.getChartTypeKey(), "");
@@ -68,7 +86,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
@@ -109,7 +127,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
@@ -153,7 +171,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 3);
@@ -197,7 +215,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(oItem, oItemB);
@@ -240,7 +258,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oItem, null);
@@ -283,7 +301,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.deepEqual(aItems, [
@@ -321,7 +339,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oDimMeasurePanel.getItems().length, 0);
@@ -361,7 +379,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// The table items order has been changed to: C, A, B
@@ -408,7 +426,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// The table items order has been changed to: C, A, B
@@ -456,11 +474,11 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oDimMeasurePanel.removeDimMeasureItem(oDimMeasureItemC);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		// The table items order has been changed to: A, B, C
@@ -504,7 +522,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// act
@@ -549,7 +567,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// act
@@ -601,7 +619,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// act
@@ -645,7 +663,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// act
@@ -726,7 +744,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// act
@@ -782,7 +800,7 @@ sap.ui.define([
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// act
@@ -860,7 +878,7 @@ sap.ui.define([
 			this.oPanel.setModel(new JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();
@@ -1017,7 +1035,7 @@ sap.ui.define([
 			this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oPanel.destroy();

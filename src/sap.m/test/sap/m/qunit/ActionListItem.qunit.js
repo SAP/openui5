@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/List",
-	"sap/m/ActionListItem"
-], function(qutils, KeyCodes, List, ActionListItem) {
+	"sap/m/ActionListItem",
+	"sap/ui/core/Core"
+], function(qutils, KeyCodes, List, ActionListItem, oCore) {
 	"use strict";
 
 
@@ -14,7 +15,7 @@ sap.ui.define([
 			items : [ new ActionListItem(sListItemId, oMetadata) ]
 		});
 		oList.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		return oList;
 	};
 
@@ -36,7 +37,7 @@ sap.ui.define([
 				includeItemInSelection : bIncludeItemInSelection
 			});
 			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			qutils.triggerKeyboardEvent("item1", KeyCodes.SPACE);
 

@@ -2,19 +2,21 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/rta/toolbar/FioriLike"
+	"sap/ui/rta/toolbar/FioriLike",
+	"sap/ui/core/Core"
 ],
 function(
 	jQuery,
-	FioriLike
+	FioriLike,
+	oCore
 ) {
 	'use strict';
 
 	QUnit.module('Given FioriLike toolbar is instantiated', {
 		beforeEach: function() {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oToolbar = new FioriLike({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
 			});
 			return this.oToolbar.onFragmentLoaded();
 		},

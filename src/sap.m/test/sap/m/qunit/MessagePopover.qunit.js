@@ -123,14 +123,14 @@ sap.ui.define([
 
 			this.oButton.addDependent(this.oMessagePopover);
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			sinon.stub(ObjectPool.prototype, "returnObject").callsFake(function(){});
 		},
 		bindMessagePopover: function (oMessagePopover, oData) {
 			var oModel = new JSONModel();
 			oModel.setData(oData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 
 			oMessagePopover.bindAggregation("items", {
 				path: "/messages",
@@ -186,9 +186,9 @@ sap.ui.define([
 		var JSView = sap.ui.view({type:ViewType.JS, viewName:"test.view"});
 		JSView.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		assert.strictEqual(sap.ui.getCore().byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
+		assert.strictEqual(Core.byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
 
 		// clean up
 		JSView.destroy();
@@ -280,7 +280,7 @@ sap.ui.define([
 		this.oMessagePopover.openBy(this.oButton);
 
 		this.oMessagePopover.getItems()[1].setMarkupDescription(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oStandardListItem = this.oMessagePopover._oMessageView._oLists.all.getItems()[1];
 
@@ -414,7 +414,7 @@ sap.ui.define([
 	QUnit.test("openBy() called from sap.m.Toolbar button should open the popover without arrow", function (assert) {
 		var oToolbar = new Toolbar({ content: this.oButton });
 		oToolbar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -621,7 +621,7 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.getCore().getMessageManager().addMessages(
+		Core.getMessageManager().addMessages(
 				new Message({
 					message: "Invalid order of characters in this name!",
 					type: MessageType.Warning,
@@ -636,7 +636,7 @@ sap.ui.define([
 		assert.equal(this.oMessagePopover._oMessageView.getItems().length, 1, "The message should be one");
 
 		// cleanup
-		sap.ui.getCore().getMessageManager().removeAllMessages();
+		Core.getMessageManager().removeAllMessages();
 	});
 
 	QUnit.test("Filtering after resize should not reset the height of the Popover", function(assert) {
@@ -654,7 +654,7 @@ sap.ui.define([
 	QUnit.test("Initially collapsed popover should be able to expand", function(assert) {
 		var $Content;
 		this.oMessagePopover.setInitiallyExpanded(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
 		this.oMessagePopover._expandMsgPopover();
@@ -720,7 +720,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oMessagePopover.destroy();
@@ -740,7 +740,7 @@ sap.ui.define([
 		this.oMessagePopover.insertItem(oItem2);
 
 		this.oMessagePopover.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oMessagePopover._oMessageView._oSegmentedButton.getVisible(), false, "no header buttons should be rendered");
 	});
@@ -754,7 +754,7 @@ sap.ui.define([
 		this.oMessagePopover.insertItem(oItem2);
 
 		this.oMessagePopover.openBy(this.oButton);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oMessagePopover._oMessageView._oSegmentedButton.getVisible(), true, "header buttons should be rendered");
 	});
@@ -778,7 +778,7 @@ sap.ui.define([
 	QUnit.test("sapMMsgPopover-init class should be present after shrinking the MessagePopover", function (assert) {
 		this.oMessagePopover.openBy(this.oButton);
 		this.oMessagePopover._collapseMsgPopover();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oDomRef = this.oMessagePopover.getDomRef();
 
@@ -802,7 +802,7 @@ sap.ui.define([
 			title: "dummy item"
 		}));
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -833,7 +833,7 @@ sap.ui.define([
 				})
 			]
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 
 		// Act
@@ -843,7 +843,7 @@ sap.ui.define([
 
 		// Emulate a small screen size on desktop
 		oMessagePopover._oPopover.setContentHeight("0px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Close the popover
 		oMessagePopover.close();
@@ -949,14 +949,14 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			sinon.stub(ObjectPool.prototype, "returnObject").callsFake(function(){});
 		},
 		bindMessagePopover: function(oMessagePopover, oData) {
 			var oModel = new JSONModel();
 			oModel.setData(oData);
-			sap.ui.getCore().setModel(oModel);
+			Core.setModel(oModel);
 
 			oMessagePopover.bindAggregation("items", {
 				path: "/messages",
@@ -1067,7 +1067,7 @@ sap.ui.define([
 		});
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1097,7 +1097,7 @@ sap.ui.define([
 		var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1124,7 +1124,7 @@ sap.ui.define([
 		var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1155,7 +1155,7 @@ sap.ui.define([
 		var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
 		oToolbar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
 
@@ -1191,7 +1191,7 @@ sap.ui.define([
 			}]));
 
 			this.oButton2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oMessagepopover2.destroy();
@@ -1228,7 +1228,7 @@ sap.ui.define([
 		oMessagePopover.addItem(oMessagePopoverItem);
 
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
 		this.clock.tick(500);
@@ -1247,10 +1247,10 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oMessagepopover2.getModel().setData(null);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessagepopover2.getModel().setData([tempObject]);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(this.oMessagepopover2.getItems().length);
 
@@ -1281,7 +1281,7 @@ sap.ui.define([
 		oMessagePopover.setModel(new JSONModel());
 		oButton.addDependent(oMessagePopover);
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		var oMessage = new Message({
@@ -1293,11 +1293,11 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		sap.ui.getCore().getMessageManager().addMessages(oMessage);
-		sap.ui.getCore().applyChanges();
+		Core.getMessageManager().addMessages(oMessage);
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//Assert
@@ -1307,7 +1307,7 @@ sap.ui.define([
 		oMessage.destroy();
 		oMessagePopover.destroy();
 		oButton.destroy();
-		sap.ui.getCore().getMessageManager().removeAllMessages();
+		Core.getMessageManager().removeAllMessages();
 	});
 
 	QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
@@ -1317,7 +1317,7 @@ sap.ui.define([
 
 		oButton.addDependent(oMessagePopover);
 		oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		var oMessage = new Message({
@@ -1329,11 +1329,11 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		sap.ui.getCore().getMessageManager().addMessages(oMessage);
-		sap.ui.getCore().applyChanges();
+		Core.getMessageManager().addMessages(oMessage);
+		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//Assert
@@ -1344,7 +1344,7 @@ sap.ui.define([
 		oMessage.destroy();
 		oMessagePopover.destroy();
 		oButton.destroy();
-		sap.ui.getCore().getMessageManager().removeAllMessages();
+		Core.getMessageManager().removeAllMessages();
 	});
 
 	QUnit.test("Update binding of single item should change its properties (integration test)", function (assert) {
@@ -1460,7 +1460,7 @@ sap.ui.define([
 		//System under test
 		this.oButton.addDependent(this.oMessagePopover);
 		this.oButton.setModel(this.oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
@@ -1473,7 +1473,7 @@ sap.ui.define([
 		//System under test
 		this.oButton.addDependent(this.oMessagePopover);
 		this.oButton.setModel(this.oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		//Open the MessagePopover
@@ -1491,7 +1491,7 @@ sap.ui.define([
 	QUnit.test("Model set directly on the MessagePopover - before it is opened", function (assert) {
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
@@ -1503,7 +1503,7 @@ sap.ui.define([
 	QUnit.test("After the MessagePopover is opened - there are items in the MessageView", function (assert) {
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		//Open the MessagePopover
@@ -1521,7 +1521,7 @@ sap.ui.define([
 	QUnit.test("Changing property in any MessagePopover item should update the items in the MessageView", function (assert) {
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		//Open the MessagePopover
@@ -1531,7 +1531,7 @@ sap.ui.define([
 		var oItem = this.oMessagePopover.getItems()[0];
 		var spyInvalidate = sinon.spy(this.oMessagePopover, "invalidate");
 		oItem.setTitle("Test");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(spyInvalidate.callCount, 1, "The MessagePopover is invalidated once");
@@ -1545,7 +1545,7 @@ sap.ui.define([
 	QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", function (assert) {
 		//System under test
 		this.oMessagePopover.setModel(this.oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		this.oMessagePopover.getItems()[0].addCustomData(new CustomData({key : "test", value : true}));
@@ -1577,7 +1577,7 @@ sap.ui.define([
 			]
 		});
 		var oCloseStub = this.stub(oMessagePopover, "close");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -1595,7 +1595,7 @@ sap.ui.define([
 	QUnit.test("MessagePopover opened by a button, should be auto closed in case the DOM of this button is removed", function(assert){
 		// arrange
 		this.oButton.addDependent(this.oMessagePopover);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
@@ -1616,7 +1616,7 @@ sap.ui.define([
 		//Arrange
 		var oNavigateBackSpy = sinon.spy(this.oMessagePopover._oMessageView, "navigateBack");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Act
 		this.oMessagePopover.navigateBack();
@@ -1651,7 +1651,7 @@ sap.ui.define([
 			this.oMessagePopover = new MessagePopover();
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function() {
 			this.oMessagePopover.close();

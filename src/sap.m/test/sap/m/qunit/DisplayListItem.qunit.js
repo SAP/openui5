@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/library",
-	"sap/m/DisplayListItem"
-], function(coreLibrary, DisplayListItem) {
+	"sap/m/DisplayListItem",
+	"sap/ui/core/Core"
+], function(coreLibrary, DisplayListItem, oCore) {
 	"use strict";
 
 
@@ -16,7 +17,7 @@ sap.ui.define([
 		});
 
 		oDLI.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oDLI.$().length, 1, "DisplayListItem is in DOM");
 		assert.ok(oDLI.$().hasClass("sapMDLI"), "DisplayListItem has correct class name");
@@ -34,7 +35,7 @@ sap.ui.define([
 		});
 
 		sDisplayListItem.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'rtl', "The dir element must be set to 'rtl'");
 
@@ -49,7 +50,7 @@ sap.ui.define([
 		});
 
 		sDisplayListItem.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), 'ltr', "The dir element must be set to 'ltr'");
 
@@ -63,7 +64,7 @@ sap.ui.define([
 		});
 
 		sDisplayListItem.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(sDisplayListItem.$().find('.sapMDLIValue').attr('dir'), undefined, "The dir attribute should not be rendered");
 

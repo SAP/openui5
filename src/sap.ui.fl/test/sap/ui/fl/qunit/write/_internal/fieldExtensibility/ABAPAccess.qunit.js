@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Log,
 	XMLView,
@@ -21,7 +22,8 @@ sap.ui.define([
 	ABAPAccess,
 	ABAPExtensibilityVariantFactory,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -268,7 +270,7 @@ sap.ui.define([
 			}).then(function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},

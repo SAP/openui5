@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
 	"sap/m/Text",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/core/Core"
 ],
-function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
+function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore) {
 	"use strict";
 	var core, oFactory, helpers, $ = jQuery;
 
@@ -44,7 +45,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 			});
 		},
 		getResourceBundle: function () {
-			return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			return oCore.getLibraryResourceBundle("sap.m");
 		}
 	};
 
@@ -199,13 +200,13 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 			$currentLocationText;
 
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
 		assert.strictEqual($currentLocationText.length, 0, "has " + 0 + " links");
 
 		oStandardBreadCrumbsControl.setCurrentLocationText("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$currentLocationText = oStandardBreadCrumbsControl.$("currentText");
 		assert.strictEqual($currentLocationText.length, 1, "has " + 1 + " links");
@@ -252,7 +253,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 			sExpectedSymbol;
 
 		oControl.setSeparatorStyle(sStyle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		sAppliedSymbol = oControl.$().find(".sapMBreadcrumbsSeparator").first().text();
@@ -274,7 +275,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 
 			// clean up
 			oControl.destroy();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} );
 	});
 
@@ -283,7 +284,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		var oControl = this.oStandardBreadCrumbsControl;
 		oControl.placeAt("qunit-fixture");
 		// initial rendering is always string rendering, later re-renderings will use DOM patching
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
@@ -647,14 +648,14 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
 
 		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Act
 		oCurrentLocation.focus();
 		// Assert
 		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus on the current location element");
 		// Act
 		oStandardBreadCrumbsControl.addLink(new Link({text: "New Test Link"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// Assert
 		assert.equal(document.activeElement, oCurrentLocation.getDomRef(), "Focus is correctly restored");
 

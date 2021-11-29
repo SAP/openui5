@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
 	"sap/m/MessageBox",
-	"sap/ui/core/BusyIndicator"
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	InitialLrepConnector,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Layer,
 	Change,
 	MessageBox,
-	BusyIndicator
+	BusyIndicator,
+	oCore
 ) {
 	"use strict";
 
@@ -191,7 +193,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").returns(Promise.resolve());
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {
@@ -223,7 +225,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").resolves();
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {

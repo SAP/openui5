@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/qunit/QUnitUtils", "sap/m/Bar"], function(QUnitUtils, Bar) {
+sap.ui.define(["sap/ui/qunit/QUnitUtils", "sap/m/Bar", "sap/ui/core/Core"], function(QUnitUtils, Bar, oCore) {
 	"use strict";
 
 	function renderBarInPageTestCase(sTestName, sContext, sExpectedTag, sExpectedClass) {
@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/qunit/QUnitUtils", "sap/m/Bar"], function(QUnitUtils, Bar
 			// Act
 			oBar.applyTagAndContextClassFor(sContext);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.strictEqual(oBar.getDomRef().nodeName, sExpectedTag.toUpperCase());

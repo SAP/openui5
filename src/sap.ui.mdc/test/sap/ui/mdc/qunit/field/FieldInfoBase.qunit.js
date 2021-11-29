@@ -6,11 +6,13 @@
 sap.ui.define([
 	"sap/ui/mdc/field/CustomFieldInfo",
 	"sap/ui/mdc/field/FieldInfoBase",
-	"sap/ui/core/Icon"
+	"sap/ui/core/Icon",
+	"sap/ui/core/Core"
 ], function(
 		CustomFieldInfo,
 		FieldInfoBase,
-		Icon
+		Icon,
+		oCore
 	) {
 	"use strict";
 
@@ -35,7 +37,7 @@ sap.ui.define([
 				dataUpdate: _myDataUpdateHandler
 			});
 			oField.addDependent(oFieldInfoBase);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oFieldInfoBase.destroy();
@@ -99,7 +101,7 @@ sap.ui.define([
 		sinon.stub(oFieldInfoBase, "isTriggerable").returns(Promise.resolve(true));
 
 		var oPromise = oFieldInfoBase.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		var fnDone = assert.async();
@@ -148,7 +150,7 @@ sap.ui.define([
 				dataUpdate: _myDataUpdateHandler
 			});
 			oField.addDependent(oFieldInfoBase);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oFieldInfoBase.destroy();
@@ -172,7 +174,7 @@ sap.ui.define([
 			fnDone2();
 		});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {
@@ -199,7 +201,7 @@ sap.ui.define([
 			assert.notOk(sHref, "getTriggerHref");
 			fnDone2();
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {

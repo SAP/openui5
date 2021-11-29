@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/TablePersoController",
 	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer"
-], function(createAndAppendDiv, jQuery, TablePersoController, Component, ComponentContainer) {
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, jQuery, TablePersoController, Component, ComponentContainer, oCore) {
 	"use strict";
 
 	// prepare DOM
@@ -150,7 +151,7 @@ sap.ui.define([
 
 	QUnit.test("Column order as in historic settings", function(assert) {
 
-		var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
+		var aColumns = oCore.byId("__xmlview0").byId("myTable").getColumns();
 		assert.equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
 		assert.equal(aColumns[1].getHeader().getText(), "Color", "Column 2 is Color");
 		assert.equal(aColumns[2].getHeader().getText(), "Number", "Column 3 is Number");
@@ -159,7 +160,7 @@ sap.ui.define([
 
 	QUnit.test("Column visibility as in historic settings", function(assert) {
 
-		var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
+		var aColumns = oCore.byId("__xmlview0").byId("myTable").getColumns();
 		assert.equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");
 		assert.equal(aColumns[1].getVisible(), true, "Column 2 (Color) is visible");
 		assert.equal(aColumns[2].getVisible(), true, "Column 3 (Number) is visible");

@@ -1,15 +1,17 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/enablement/report/Statistic"
+	"sap/ui/dt/enablement/report/Statistic",
+	"sap/ui/core/Core"
 ],
 function (
-	Statistic
+	Statistic,
+	oCore
 ) {
 	"use strict";
 
 	var getValue = function(oControl, sStatus) {
-		return sap.ui.getCore().byId(oControl.getId() + "--form-" + sStatus + "-value").getText();
+		return oCore.byId(oControl.getId() + "--form-" + sStatus + "-value").getText();
 	};
 
 	QUnit.module("Given that a statistic report is created", {
@@ -27,7 +29,7 @@ function (
 				data: this.oResult
 			});
 			this.oStatistic.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oStatistic.destroy();

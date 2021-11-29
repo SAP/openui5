@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/restricted/_debounce",
-	"qunit/designtime/EditorQunitUtils"
+	"qunit/designtime/EditorQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	QUnitUtils,
 	_debounce,
-	EditorQunitUtils
+	EditorQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -70,7 +72,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleParams").then(function (aPropertyEditor) {
 				this.oEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oEditorContent = getParameterEditorContent(this.oEditor);
 				this.oAddButton = oEditorContent.addButton;
 				this.aItems = oEditorContent.items;

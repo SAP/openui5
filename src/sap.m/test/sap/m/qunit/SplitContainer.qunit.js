@@ -246,7 +246,7 @@ sap.ui.define([
 
 		oApp.addPage(oPage);
 		oApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oSpy = this.spy();
 		oDetailPage2.addEventDelegate({
@@ -329,7 +329,7 @@ sap.ui.define([
 		});
 
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSplitContainer.toDetail("page2");
 	});
@@ -369,7 +369,7 @@ sap.ui.define([
 		});
 
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSplitContainer.showMaster();
 	});
@@ -393,7 +393,7 @@ sap.ui.define([
 		var oSplitContainer = new SplitContainer();
 		oSplitContainer._onOrientationChange = this.spy();
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.stub(Device, "orientation").value(oPortrait);
 		oSplitContainer._fnResize();
@@ -428,7 +428,7 @@ sap.ui.define([
 
 		oSplitContainer._handleNavigationEvent = this.spy();
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oSplitContainer.toDetail("page2");
 		assert.notEqual(oSplitContainer._handleNavigationEvent.callCount, 0, "Events work on the phone also.");
@@ -467,7 +467,7 @@ sap.ui.define([
 
 		// Act + Render
 		oSplitContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		// Assert Button is shown
 		assert.ok(oToolbar.getContent()[0].$(), "the master button is shown");
 
@@ -504,13 +504,13 @@ sap.ui.define([
 		});
 
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
 
 		var oHeader = new Bar();
 		oPage.setCustomHeader(oHeader);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
 
@@ -560,12 +560,12 @@ sap.ui.define([
 
 		// Act
 		oSC.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act - Change Orientation to portrait
 		this.stub(Device, "orientation").value(oPortrait);
 		oSC._fnResize();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert - portrait orientation
 		assert.ok(oPage._getAnyHeader(), "Header is in page");
@@ -580,7 +580,7 @@ sap.ui.define([
 		// Act - Change Orientation to landscape
 		this.stub(sap.ui.Device, "orientation").value(oLandscape);
 		oSC._fnResize();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert - landscape orientation
 		assert.strictEqual(iCalled, 1, "Should fire masterButton event once");
@@ -652,12 +652,12 @@ sap.ui.define([
 			});
 
 		oSC.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSC._oShowMasterBtn.$().is(":visible"), "Master button is shown");
 
 		oPage.setShowNavButton(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSC._oShowMasterBtn.$().is(":hidden"), "Master button is now hidden");
 
@@ -696,7 +696,7 @@ sap.ui.define([
 			});
 
 		oSC.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oSC.getCurrentMasterPage().getId(), "mp1", "Current page in master is 'mp1'");
 		assert.equal(oSC.getCurrentDetailPage().getId(), "dp1", "Current page in detail is 'dp1'");
@@ -740,7 +740,7 @@ sap.ui.define([
 			});
 
 		oSC.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oMasterButton = oSC._oShowMasterBtn;
 
@@ -801,14 +801,14 @@ sap.ui.define([
 
 		assert.equal(oSplitContainer.getMode(), SplitAppMode.ShowHideMode, "The default mode is showhide mode");
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
 		assert.notOk(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
 		assert.ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
 
 		oSplitContainer.setMode(SplitAppMode.HideMode);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is removed from master after switching to HideMode");
 		assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is added to master after switching to HideMode");
 		assert.notOk(oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
@@ -823,7 +823,7 @@ sap.ui.define([
 			oSplitContainer._handleResize();
 
 			oSplitContainer.setMode(SplitAppMode.ShowHideMode);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
 			assert.ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
 			assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
@@ -858,7 +858,7 @@ sap.ui.define([
 		});
 
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
 
@@ -877,7 +877,7 @@ sap.ui.define([
 		this.sut.setMasterButtonTooltip(oTooltip);
 
 		this.sut.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
 	});
@@ -902,7 +902,7 @@ sap.ui.define([
 	QUnit.module("SplitContainer Navigation test", {
 		beforeEach : function () {
 			this.sut = splitContainerSetup();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function () {
 			this.sut.destroy();
@@ -1011,12 +1011,12 @@ sap.ui.define([
 	QUnit.test("Mater button tooltip updating", function(assert) {
 
 		this.sut.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 1 Page ', 'Initial tooltip is correct');
 
 		this.sut.to('master2', 'show');
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.equal(this.sut._oShowMasterBtn.getTooltip(), 'Show Master 2 Page ', 'Initial tooltip is correct');
 	});
 
@@ -1036,7 +1036,7 @@ sap.ui.define([
 			});
 
 		oApp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var iHidesCounter = 0,
 			iDesiredHides = 3;
@@ -1073,7 +1073,7 @@ sap.ui.define([
 	QUnit.module("SplitContainer public API test", {
 		beforeEach : function () {
 			this.sut = splitContainerSetup();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function () {
 			this.sut.destroy();
@@ -1159,7 +1159,7 @@ sap.ui.define([
 	QUnit.module("Remove All pages API test", {
 		beforeEach : function () {
 			this.sut = splitContainerSetup(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function () {
 			this.sut.destroy();
@@ -1195,7 +1195,7 @@ sap.ui.define([
 		// remove all master pages
 		this.sut.insertMasterPage(page, 0, true);
 		this.sut.removeAllMasterPages(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.sut.getMasterPages().length, 0, "Master pages now are 0");
 	});
 
@@ -1247,11 +1247,11 @@ sap.ui.define([
 				new Page("master2Mobile", { title : "master2Mobile"})
 			]
 		});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// force invalidation of the detail page
 		this.sut.getDetailPages()[0].addContent(new Label({text:"test content"}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(this.sut._oMasterNav.getInitialPage(), "detailMobile", "First page should be detail");
@@ -1320,7 +1320,7 @@ sap.ui.define([
 			]
 		});
 		oSplitContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is initially hidden");
 
@@ -1391,7 +1391,7 @@ sap.ui.define([
 		});
 
 		oScrollContainer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oSplitContainer.$("Master").hasClass("sapMSplitContainerMasterHidden"), "Master is initially hidden");
 

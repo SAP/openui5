@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Page",
 	"sap/m/App",
-	"sap/m/Bar"
-], function(QUnitUtils, createAndAppendDiv, Page, App, Bar) {
+	"sap/m/Bar",
+	"sap/ui/core/Core"
+], function(QUnitUtils, createAndAppendDiv, Page, App, Bar, oCore) {
 	"use strict";
 
 	createAndAppendDiv("page-content");
@@ -19,7 +20,7 @@ sap.ui.define([
 	var cacheAndInitializeDomRefs = function(sId) {
 
 		// global variables
-		var oPage = sap.ui.getCore().byId(sId);
+		var oPage = oCore.byId(sId);
 		$Page = oPage.$();
 		$PageHeader = $Page.find(".sapMBar.sapMHeader-CTX");
 		$PageSubHeader = $Page.find(".sapMBar.sapMSubHeader-CTX");
@@ -42,7 +43,7 @@ sap.ui.define([
 		var oApp = new App("myApp");
 		oApp.placeAt("page-content");
 		oApp.addPage(oPage);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		cacheAndInitializeDomRefs(oPage.getId());
 
 		// assertions
@@ -82,7 +83,7 @@ sap.ui.define([
 
 			oApp.placeAt("page-content");
 			oApp.addPage(oPage);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			cacheAndInitializeDomRefs(oPage.getId());
 
 			// assertions

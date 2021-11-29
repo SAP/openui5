@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/format/DateFormat"
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	QUnitUtils,
@@ -19,7 +20,8 @@ sap.ui.define([
 	OverlayRegistry,
 	Button,
 	JSONModel,
-	DateFormat
+	DateFormat,
+	oCore
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 			this.oButton = new Button("TestButton");
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime();
 
@@ -88,7 +90,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a change indicator with a single change is created", function (assert) {
-			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 				.callThrough()
 				.withArgs({relative: "true"})
@@ -103,7 +105,7 @@ sap.ui.define([
 			this.oChangeIndicator.getModel().setData({
 				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.notOk(
 				this.oChangeIndicator.getAggregation("_text").getVisible(),
 				"then the number of changes is not displayed"
@@ -149,7 +151,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a change was created within the session", function (assert) {
-			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 			this.oChangeIndicator.getModel().setData({
 				changes: [Object.assign(
 					createMockChange("someChangeId", this.oButton.getId(), "remove"),
@@ -160,7 +162,7 @@ sap.ui.define([
 					}
 				)]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
@@ -181,7 +183,7 @@ sap.ui.define([
 					createMockChange("someOtherChangeId", this.oButton.getId(), "rename")
 				]
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(
 				this.oChangeIndicator.getAggregation("_text").getVisible(),
 				"then the number of changes is displayed 1/2"
@@ -225,7 +227,7 @@ sap.ui.define([
 		QUnit.test("when a change indicator is focused before it is rendered", function (assert) {
 			sandbox.stub(this.oChangeIndicator, "_toggleHoverStyleClasses").returns(true);
 			this.oChangeIndicator.focus();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.strictEqual(
 				document.activeElement,
 				this.oChangeIndicator.getDomRef(),
@@ -251,7 +253,7 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
@@ -285,7 +287,7 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
@@ -320,7 +322,7 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
@@ -335,7 +337,7 @@ sap.ui.define([
 				newLabel: "Aftervalue"
 			};
 
-			var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
@@ -343,7 +345,7 @@ sap.ui.define([
 				]
 			});
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,

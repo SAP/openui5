@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel"
-], function(TableQUnitUtils, ExtensionBase, TableUtils, library, Device, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, ExtensionBase, TableUtils, library, Device, JSONModel, oCore) {
 	"use strict";
 
 	QUnit.module("Initialization", {
@@ -135,7 +136,7 @@ sap.ui.define([
 			oSyncInterface.rowCount.resetHistory();
 
 			oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Auto);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(0),
@@ -147,7 +148,7 @@ sap.ui.define([
 
 			oTable._bVariableRowHeightEnabled = true;
 			oTable.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
@@ -297,7 +298,7 @@ sap.ui.define([
 			oSyncInterface.rowHeights = sinon.spy();
 
 			oTable.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var iHeight = TableUtils.DefaultRowHeight.sapUiSizeCozy;
@@ -323,7 +324,7 @@ sap.ui.define([
 
 			oTable._bVariableRowHeightEnabled = true;
 			oTable.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oSyncInterface.innerVerticalScrollPosition.calledWithExactly(0),
@@ -348,7 +349,7 @@ sap.ui.define([
 			oSyncInterface.layout = sinon.spy();
 
 			oTable.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oSyncInterface.layout.calledWithExactly({
@@ -555,7 +556,7 @@ sap.ui.define([
 			assert.strictEqual(Div.childElementCount, 1, "The container contains only one element");
 			oTableInvalidate.resetHistory();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
@@ -575,7 +576,7 @@ sap.ui.define([
 			oTableInvalidate.resetHistory();
 			Div.firstElementChild.removeChild(oExternalVSb);
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
@@ -616,7 +617,7 @@ sap.ui.define([
 		document.getElementById("qunit-fixture").appendChild(Div);
 
 		return oTable._enableSynchronization().then(function(oSyncInterface) {
-			var oRenderManager = sap.ui.getCore().createRenderManager();
+			var oRenderManager = oCore.createRenderManager();
 			oSyncInterface.renderHorizontalScrollbar(oRenderManager, "hsbid", 100);
 			oRenderManager.flush(Div);
 

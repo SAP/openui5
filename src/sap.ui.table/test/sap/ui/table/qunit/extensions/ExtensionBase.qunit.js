@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
-	"sap/ui/base/Object"
-], function(TableQUnitUtils, ExtensionBase, Table, TreeTable, AnalyticalTable, BaseObject) {
+	"sap/ui/base/Object",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, ExtensionBase, Table, TreeTable, AnalyticalTable, BaseObject, oCore) {
 	"use strict";
 
 	//************************************************************************
@@ -159,7 +160,7 @@ sap.ui.define([
 		};
 
 		oStandardTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(iCount == 0, "Balanced calls of attach and detach"); // beforeRendering calls _detachEvents, afterRendering _attachEvents
 		assert.ok(iCounter == 2, "Attach and detach called");
 

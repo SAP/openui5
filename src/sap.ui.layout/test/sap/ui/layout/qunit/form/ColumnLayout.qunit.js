@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Toolbar",
 	"sap/m/Label",
-	"sap/m/Text"
-	],
+	"sap/m/Text",
+	"sap/ui/core/Core"
+],
 	function(
 		jQuery,
 		qutils,
@@ -31,7 +32,8 @@ sap.ui.define([
 		Title,
 		Toolbar,
 		Label,
-		Text
+		Text,
+		oCore
 	) {
 	"use strict";
 
@@ -80,7 +82,7 @@ sap.ui.define([
 			editable: false,
 			formContainers: aFormContainers
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	function afterTest() {
@@ -118,7 +120,7 @@ sap.ui.define([
 		});
 
 		oForm.addFormContainer(oFormContainer);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oFormContainer;
 	}
@@ -132,7 +134,7 @@ sap.ui.define([
 		});
 
 		oFormContainer.addFormElement(oFormElement);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		return oFormElement;
 	}
@@ -203,7 +205,7 @@ sap.ui.define([
 
 		// act
 		oForm.setWidth("500px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -225,7 +227,7 @@ sap.ui.define([
 
 		// act
 		oForm.setWidth("1000px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -247,7 +249,7 @@ sap.ui.define([
 
 		// act
 		oForm.setWidth("1300px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -269,7 +271,7 @@ sap.ui.define([
 
 		// act
 		oForm.setWidth("1500px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		window.requestAnimationFrame(function() {
@@ -300,7 +302,7 @@ sap.ui.define([
 
 		try {
 			oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(1);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}
@@ -333,7 +335,7 @@ sap.ui.define([
 
 	QUnit.test("One container - set columns", function(assert) {
 		oColumnLayout.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
@@ -342,7 +344,7 @@ sap.ui.define([
 	QUnit.test("Title", function(assert) {
 		var oTitle = new Title("Title1", {text: "Title"});
 		oFormContainer1.setTitle(oTitle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
@@ -355,7 +357,7 @@ sap.ui.define([
 		var oToolbar = new Toolbar("TB1");
 		oFormContainer1.setTitle(oTitle);
 		oFormContainer1.setToolbar(oToolbar);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.equal($Container.children().length, 2, "two DOM nodes in Container");
@@ -375,7 +377,7 @@ sap.ui.define([
 
 		oFormContainer1.setExpanded(false);
 		oFormContainer1.invalidate(); // to test in renderer
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		assert.ok($Container.hasClass("sapUiFormCLContainerColl"), "container collapsed");
 	});
@@ -385,7 +387,7 @@ sap.ui.define([
 		assert.notOk($Container.attr("title"), "container has no tooltip");
 
 		oFormContainer1.setTooltip("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		assert.equal($Container.attr("title"), "Test", "container has tooltip");
 	});
@@ -610,7 +612,7 @@ sap.ui.define([
 	QUnit.test("ColumnContainerData - One container", function(assert) {
 		var oLayoutData = new ColumnContainerData({columnsM: 1, columnsL: 1, columnsXL: 1});
 		oFormContainer1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		assert.ok($Container.parent().hasClass("sapUiFormCLContent"), "content DOM element rendered");
@@ -622,7 +624,7 @@ sap.ui.define([
 		var oFormContainer2 = addContainer("FC2");
 		var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 2, columnsXL: 3});
 		oFormContainer2.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 1, true, false, 1, true, false);
@@ -630,7 +632,7 @@ sap.ui.define([
 		checkContainerClasses(assert, $Container, 2, 1, false, false, 2, false, true, 2, true, false, 3, true, false);
 
 		oLayoutData.setColumnsM(1).setColumnsL(1).setColumnsXL(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 1, true, false, 2, true, false, 3, true, false);
 		$Container = jQuery("#FC2");
@@ -639,7 +641,7 @@ sap.ui.define([
 		oFormContainer2.setLayoutData();
 		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(4);
 		oFormContainer1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 4, true, false);
 		$Container = jQuery("#FC2");
@@ -647,7 +649,7 @@ sap.ui.define([
 
 		oColumnLayout.setColumnsXL(6);
 		oLayoutData.setColumnsM(2).setColumnsL(3).setColumnsXL(6);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Container = jQuery("#FC1");
 		checkContainerClasses(assert, $Container, 1, 1, true, false, 2, true, false, 3, true, false, 6, true, false);
 		$Container = jQuery("#FC2");
@@ -661,7 +663,7 @@ sap.ui.define([
 		try {
 			var oLayoutData = new ColumnContainerData({columnsM: 2, columnsL: 3, columnsXL: 4});
 			oFormContainer1.setLayoutData(oLayoutData);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}
@@ -714,7 +716,7 @@ sap.ui.define([
 
 	QUnit.test("One field without label", function(assert) {
 		oFormElement1.destroyLabel();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
 		assert.equal(aChildren.length, 1, "Element has 1 child nodes");
@@ -723,7 +725,7 @@ sap.ui.define([
 
 	QUnit.test("Label with two fields", function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -736,7 +738,7 @@ sap.ui.define([
 	QUnit.test("Label with three fields", function(assert) {
 		oFormElement1.addField(new Text("T2", {text: "Text2"}));
 		oFormElement1.addField(new Text("T3", {text: "Text3"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -757,7 +759,7 @@ sap.ui.define([
 		oFormElement1.addField(new Text("T8", {text: "Text8"}));
 		oFormElement1.addField(new Text("T9", {text: "Text9"}));
 		oFormElement1.addField(new Text("T10", {text: "Text10"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -790,7 +792,7 @@ sap.ui.define([
 		oFormElement1.addField(new Text("T13", {text: "Text13"}));
 		oFormElement1.addField(new Text("T14", {text: "Text14"}));
 		oFormElement1.addField(new Text("T15", {text: "Text15"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -816,7 +818,7 @@ sap.ui.define([
 	QUnit.test("ColumnElementData on label", function(assert) {
 		var oLayoutData = new ColumnElementData({cellsLarge: 12, cellsSmall: 5});
 		oLabel1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -827,7 +829,7 @@ sap.ui.define([
 	QUnit.test("ColumnElementData on label with -1", function(assert) {
 		var oLayoutData = new ColumnElementData({cellsLarge: -1, cellsSmall: -1});
 		oLabel1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -839,7 +841,7 @@ sap.ui.define([
 		oFormElement1.addField(new Text("T2", {text: "Text2", layoutData: new ColumnElementData({cellsLarge: -1, cellsSmall: -1})}));
 		var oLayoutData = new ColumnElementData({cellsLarge: 1, cellsSmall: 1});
 		oField1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -853,7 +855,7 @@ sap.ui.define([
 		oLabel1.setLayoutData(oLayoutData);
 		oLayoutData = new ColumnElementData({cellsLarge: 5, cellsSmall: 5});
 		oField1.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -861,7 +863,7 @@ sap.ui.define([
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 5, false, 0, 5, false, 0);
 
 		oLayoutData.setCellsLarge(10).setCellsSmall(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 10, true, 0, 10, true, 0);
@@ -878,7 +880,7 @@ sap.ui.define([
 		oField1.setLayoutData(oLayoutData);
 		oLayoutData = new ColumnElementData({cellsLarge: 5, cellsSmall: 5});
 		oField3.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $Element = jQuery("#FE1");
 		var aChildren = $Element.children();
@@ -890,7 +892,7 @@ sap.ui.define([
 		oLayoutData.setCellsLarge(10).setCellsSmall(5);
 		oLayoutData = oLabel1.getLayoutData();
 		oLayoutData.setCellsLarge(3).setCellsSmall(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		aChildren = $Element.children();
 		checkElementClasses(assert, jQuery(aChildren[1]), 2, false, "T1", 11, false, 0, 8, false, 0);
@@ -903,7 +905,7 @@ sap.ui.define([
 		assert.notOk($Element.attr("title"), "Element has no tooltip");
 
 		oFormElement1.setTooltip("Test");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Element = jQuery("#FE1");
 		assert.equal($Element.attr("title"), "Test", "element has tooltip");
 	});
@@ -920,7 +922,7 @@ sap.ui.define([
 
 		try {
 			oFormElement1.addField(oToolbar);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		} catch (e) {
 			oException = e;
 		}

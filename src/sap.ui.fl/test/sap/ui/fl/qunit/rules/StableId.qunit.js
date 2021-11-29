@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/Bootstrap",
 	"sap/ui/support/RuleAnalyzer",
-	"test-resources/sap/ui/support/TestHelper"
+	"test-resources/sap/ui/support/TestHelper",
+	"sap/ui/core/Core"
 ], function (
 	UIComponent,
 	ComponentContainer,
@@ -27,7 +28,8 @@ sap.ui.define([
 	JSONModel,
 	Bootstrap,
 	RuleAnalyzer,
-	testRule
+	testRule,
+	oCore
 ) {
 	"use strict";
 
@@ -62,7 +64,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
@@ -134,7 +136,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDialog.attachAfterOpen(function () {
 				this.oPopover.attachAfterOpen(function () {
@@ -221,7 +223,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
@@ -279,7 +281,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone

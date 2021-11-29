@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
-	"sap/ui/mdc/enum/ConditionValidated"
+	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/core/Core"
 ], function(
 	Controller,
 	Filter,
@@ -17,7 +18,8 @@ sap.ui.define([
 	FilterConverter,
 	FilterOperatorUtil,
 	Operator,
-	ConditionValidated
+	ConditionValidated,
+	oCore
 ) {
 	"use strict";
 
@@ -25,7 +27,7 @@ sap.ui.define([
 
 		onInit: function() {
 			// this.getView().bindElement("/Books(1)");
-			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
+			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			// create a ConditionModel for the listbinding
 			var oCM = new ConditionModel();

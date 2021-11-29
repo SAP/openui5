@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/FormattedText",
 	"sap/m/Link",
-	"sap/base/Log"
-], function(QUnitUtils, createAndAppendDiv, FormattedText, Link, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function(QUnitUtils, createAndAppendDiv, FormattedText, Link, Log, oCore) {
 	"use strict";
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
@@ -22,7 +23,7 @@ sap.ui.define([
 
 	function setText(sHtml) {
 		oFT.setHtmlText(sHtml);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	QUnit.module("Test the basic functions");
@@ -33,7 +34,7 @@ sap.ui.define([
 		assert.strictEqual(oFT.getDomRef().style.width, "100%", "Width of the control is correct");
 		assert.strictEqual(oFT.getDomRef().style.height, "auto", "Height of the control is correct");
 		oFT.setWidth("").setHeight("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!oFT.getDomRef().style.width, "The width css is cleared");
 		assert.ok(!oFT.getDomRef().style.height, "The height css is cleared");
 	});
@@ -99,7 +100,7 @@ sap.ui.define([
 			}).placeAt("content"),
 			$FormattedText;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$FormattedText = oFormattedText.$();
 
@@ -138,7 +139,7 @@ sap.ui.define([
 		// Act
 		this.oFT._setUseLimitedRenderingRules(true);
 		this.oFT.setHtmlText(sHTMLString).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Arrange - get all html elements rendered and evaluate them as jQuery object
 		$Result = jQuery(this.oFT.$().html());
@@ -199,7 +200,7 @@ sap.ui.define([
 			if (aLinks && aLinks[iIndex]) {
 				jQuery("BODY").append('<div id="link-output"></div>');
 				aLinks[iIndex].placeAt("link-output");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				sResult = jQuery("#link-output").html();
 				jQuery("#link-output").html("");
 				this.oFT.insertAggregation("controls", this.aLinks[iIndex], iIndex);
@@ -209,7 +210,7 @@ sap.ui.define([
 		getControlOutput: function() {
 			var sOutput = '';
 			this.oFT.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			sOutput = jQuery("#qunit-fixture > div").html();
 			return sOutput;
 		}
@@ -310,7 +311,7 @@ sap.ui.define([
 		});
 
 		oFT.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oFT.getDomRef().classList.contains("sapMFTOverflowWidth"), "sapMFTOverflowWidth is set");
@@ -326,7 +327,7 @@ sap.ui.define([
 		});
 
 		oFT.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oFT.getDomRef().classList.contains("sapMFTOverflowHeight"), "sapMFTOverflowHeight is set");

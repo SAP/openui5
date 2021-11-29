@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/unified/DateRange",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
-], function(qutils, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(qutils, Calendar, CalendarType, UniversalDate, DateFormat, LocaleData, Locale, DateRange, KeyCodes, jQuery, oCore) {
 	"use strict";
 
 	var oLocaleData = LocaleData.getInstance(new Locale("en-US"));
@@ -30,7 +31,7 @@ sap.ui.define([
 		oCal1.destroySelectedDates();
 		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
 		oCal1.displayDate(oDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	function checkDate(sSelectedDate, iExpectedDay, iExpectedMonth, iExpectedYear, iExpectedEra, sExpectedEra,
@@ -82,7 +83,7 @@ sap.ui.define([
 
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).trigger("click");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedYear, "Year is correct after navigation " + sExpectedYear);
@@ -92,7 +93,7 @@ sap.ui.define([
 	function checkYearPicker(sSelectedDate, sExpectedStartYear, sExpectedEndYear, sExpectedSelYear, assert) {
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-B2").trigger("click");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aYears = oCal1.$("-YP").find(".sapUiCalItem"),
 			$Year;
@@ -111,7 +112,7 @@ sap.ui.define([
 
 		aYears[0].focus();
 		qutils.triggerKeydown(aYears[0], KeyCodes.ENTER, false, false, false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedStartYear, "Year is correct after navigation");
 	}
 

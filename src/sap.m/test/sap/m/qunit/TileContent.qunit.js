@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/NewsContent",
 	"sap/m/FeedContent",
 	"sap/m/Text",
-	"sap/m/library"
-], function(jQuery, TileContent, NewsContent, FeedContent, Text, library) {
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(jQuery, TileContent, NewsContent, FeedContent, Text, library, oCore) {
 	"use strict";
 
 
@@ -17,7 +18,7 @@ sap.ui.define([
 	QUnit.module("Default Values", {
 		beforeEach : function() {
 			this.oTileContent = new TileContent();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -61,7 +62,7 @@ sap.ui.define([
 				})
 			});
 			this.oNewsTileContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oNewsTileContent.destroy();
@@ -79,7 +80,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oTileContent = new TileContent();
 			this.oTileContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -93,7 +94,7 @@ sap.ui.define([
 	QUnit.test("Critical CSS Class added", function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Critical);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorCritical"), "Correct CSS class added");
 	});
@@ -101,7 +102,7 @@ sap.ui.define([
 	QUnit.test("Error CSS Class added", function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Error);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorError"), "Correct CSS class added");
 	});
@@ -109,7 +110,7 @@ sap.ui.define([
 	QUnit.test("Good CSS Class added", function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Good);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorGood"), "Correct CSS class added");
 	});
@@ -128,7 +129,7 @@ sap.ui.define([
 				})
 			});
 			this.oFeedTileContent.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oFeedTileContent.destroy();
@@ -148,7 +149,7 @@ sap.ui.define([
 				footer : "Current Quarter",
 				unit : "EUR"
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -188,7 +189,7 @@ sap.ui.define([
 
 		//Act
 		this.oTileContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.ok(!document.getElementById("tileContent-footer-text"), "No footer has been rendered.");
@@ -199,7 +200,7 @@ sap.ui.define([
 			this.oTileContent = new TileContent("tileContent", {
 				content: new Text()
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oTileContent.destroy();
@@ -239,7 +240,7 @@ sap.ui.define([
 
 		//Act
 		this.oTileContent.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.ok(!document.getElementById("tileContent-content"), "No content has been rendered.");
@@ -261,7 +262,7 @@ sap.ui.define([
 			tooltip: "fulltile"
 		});
 		this.oTileContent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var tooltip = "fulltile" + "\n" + "content " + "\n";
 		//Assert
 		assert.equal(document.getElementById("tileContent").title,tooltip);
@@ -276,7 +277,7 @@ sap.ui.define([
 			})
 		});
 		this.oTileContent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(document.getElementById("tileContent1").title,"content " + "\n");
 	});
@@ -289,7 +290,7 @@ sap.ui.define([
 			tooltip: "fulltile"
 		});
 		this.oTileContent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(document.getElementById("tileContent2").title,"fulltile");
 	});

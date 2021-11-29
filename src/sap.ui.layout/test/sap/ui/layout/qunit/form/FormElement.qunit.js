@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Core"
 	],
 	function(
 			qutils,
 			FormElement,
 			Label,
 			Input,
-			JSONModel
+			JSONModel,
+			oCore
 	) {
 	"use strict";
 
@@ -96,7 +98,7 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel2);
 		oLabel = oFormElement.getLabelControl();
 
-		assert.notOk(sap.ui.getCore().byId(oLabelId), "internal Label is destroyed");
+		assert.notOk(oCore.byId(oLabelId), "internal Label is destroyed");
 		assert.equal(oLabel, oLabel2, "Label control is used");
 	});
 
@@ -106,7 +108,7 @@ sap.ui.define([
 		oFormElement.setLabel("Test2");
 		var oLabel2 = oFormElement.getLabelControl();
 
-		assert.ok(sap.ui.getCore().byId("L1"), "old Label still exist");
+		assert.ok(oCore.byId("L1"), "old Label still exist");
 		assert.equal(oLabel.getText(), "Test", "old Label has still old text");
 		assert.equal(oLabel2.getText(), "Test2", "internal Label created and text set");
 
@@ -119,7 +121,7 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel1);
 		oFormElement.setLabel(oLabel2);
 
-		assert.ok(sap.ui.getCore().byId("L1"), "old Label still exist");
+		assert.ok(oCore.byId("L1"), "old Label still exist");
 		assert.notOk(oLabel1.getParent(), "old label not longer assigned to element");
 		assert.equal(oLabel1.getText(), "Test", "old Label has still old text");
 		assert.equal(oLabel2.getText(), "Test2", "internal Label created and text set");
@@ -144,7 +146,7 @@ sap.ui.define([
 
 		assert.notOk(oFormElement.getLabel(), "no Label is assigned");
 		assert.notOk(oFormElement.getLabelControl(), "no Label is used");
-		assert.notOk(sap.ui.getCore().byId(oLabelId), "internal Label is destroyed");
+		assert.notOk(oCore.byId(oLabelId), "internal Label is destroyed");
 	});
 
 	QUnit.test("_setEditable function", function(assert) {
@@ -208,7 +210,7 @@ sap.ui.define([
 
 		oFormElement.destroy();
 		oFormElement = undefined;
-		assert.notOk(sap.ui.getCore().byId(oLabelId), "internal Label is destroyed");
+		assert.notOk(oCore.byId(oLabelId), "internal Label is destroyed");
 	});
 
 	QUnit.module("Fields", {
@@ -317,8 +319,8 @@ sap.ui.define([
 		assert.equal(aFields.length, 0, "no Fields assigned");
 		assert.deepEqual(aFields, oFormElement.getFieldsForRendering(), "getFieldsForRendering returns same Fields");
 		assert.notOk(oLabel.getLabelForRendering(), "Label points to no field");
-		assert.notOk(sap.ui.getCore().byId("I1"), "Field1 destroyed");
-		assert.notOk(sap.ui.getCore().byId("I2"), "Field2 destroyed");
+		assert.notOk(oCore.byId("I1"), "Field1 destroyed");
+		assert.notOk(oCore.byId("I2"), "Field2 destroyed");
 	});
 
 	QUnit.test("updateFields", function(assert) {
@@ -326,8 +328,8 @@ sap.ui.define([
 		oFormElement.setLabel(oLabel);
 		var oModel = new JSONModel({
 			fields:[{value: "Field 1", required: false},
-			        {value: "Field 2", required: false},
-			        {value: "Field 3", required: true}]
+					{value: "Field 2", required: false},
+					{value: "Field 3", required: true}]
 		});
 		oFormElement.setModel(oModel);
 
@@ -341,7 +343,7 @@ sap.ui.define([
 		assert.ok(oLabel.isRequired(), "Label is required");
 
 		oModel.oData.fields = [{value: "Field 2", required: false},
-		                       {value: "Field 3", required: false}];
+							   {value: "Field 3", required: false}];
 		oModel.checkUpdate();
 
 		aFields = oFormElement.getFields();

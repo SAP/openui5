@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Component,
 	ComponentContainer,
@@ -18,7 +19,8 @@ sap.ui.define([
 	ExtensionPointApplyProcessor,
 	Loader,
 	ManifestUtils,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -145,7 +147,7 @@ sap.ui.define([
 	QUnit.module("ExtensionPoints with sync and async view when component is created sync with 'flexExtensionPointEnabled: false'", {
 		before: function () {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			return createComponentAndContainer(SYNC);
 		},
 		after: destroyComponentAndContainer.bind(null, SYNC)
@@ -158,7 +160,7 @@ sap.ui.define([
 	QUnit.module("ExtensionPoints with sync and async view when component is created async with 'flexExtensionPointEnabled: false'", {
 		before: function () {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
 			return createComponentAndContainer(ASYNC);
 		},
 		after: destroyComponentAndContainer.bind(null, ASYNC)

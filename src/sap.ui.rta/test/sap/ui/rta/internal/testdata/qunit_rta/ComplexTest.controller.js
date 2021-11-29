@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/CountMode",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/core/Core"
 ], function(
 	UriParameters,
 	Log,
@@ -17,7 +18,8 @@ sap.ui.define([
 	JSONModel,
 	ODataModel,
 	CountMode,
-	FlUtils
+	FlUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -114,7 +116,7 @@ sap.ui.define([
 			sap.ui.require(["sap/ui/rta/api/startAdaptation"], function(startAdaptation) {
 				var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-ccf");
 				startAdaptation({
-					rootControl: sap.ui.getCore().byId("Comp1---idMain1"),
+					rootControl: oCore.byId("Comp1---idMain1"),
 					customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
 					showCreateCustomField: sUriParam === "true",
 					stop: function() {

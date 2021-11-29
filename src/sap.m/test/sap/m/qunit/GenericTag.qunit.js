@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ToolbarSpacer",
-	"sap/m/OverflowToolbar"
-], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar) {
+	"sap/m/OverflowToolbar",
+	"sap/ui/core/Core"
+], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore) {
 	"use strict";
 
 	var GenericTagDesign = library.GenericTagDesign,
@@ -763,7 +764,7 @@ sap.ui.define([
 				content: aToolbarContent
 			});
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// set small width that causes all content to move to the OverflowToolbar
 		oOverflowTB.setWidth("1rem");
 		this.clock.tick(1000);

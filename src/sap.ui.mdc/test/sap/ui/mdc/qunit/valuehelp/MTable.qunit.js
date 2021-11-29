@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/ScrollContainer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
 ], function (
 		qutils,
 		ValueHelpDelegate,
@@ -55,14 +56,15 @@ sap.ui.define([
 		Text,
 		ScrollContainer,
 		KeyCodes,
-		coreLibrary
+		coreLibrary,
+		oCore
 	) {
 	"use strict";
 
 	var ListMode = mLibrary.ListMode;
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-	var oMResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	var oMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
 	var oMTable;
 	var oModel;
@@ -792,7 +794,7 @@ sap.ui.define([
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 		sinon.spy(oTable, "scrollToIndex");
 
@@ -906,7 +908,7 @@ sap.ui.define([
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 
 		oMTable.setConfig({
@@ -990,7 +992,7 @@ sap.ui.define([
 			return oScrollContainer.getUIArea();
 		};
 		oScrollContainer.placeAt("content"); // render ScrollContainer
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 
 		var iNavigate = 0;

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/uxap/ObjectPageHeader",
 	"sap/m/Button",
-	"sap/m/VBox"
+	"sap/m/VBox",
+	"sap/ui/core/Core"
 ],
 function (
 	DesignTime,
@@ -18,7 +19,8 @@ function (
 	ObjectPageSubSection,
 	ObjectPageHeader,
 	Button,
-	VBox
+	VBox,
+	oCore
 ) {
 	'use strict';
 
@@ -50,7 +52,7 @@ function (
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -80,7 +82,7 @@ function (
 			}, this);
 
 			this.oSection.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 	});
 

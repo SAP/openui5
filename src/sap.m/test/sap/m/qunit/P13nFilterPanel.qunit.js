@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/P13nFilterItem",
 	"sap/m/library",
 	"sap/m/P13nOperationsHelper",
-	"sap/m/MessageStrip"
+	"sap/m/MessageStrip",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -20,7 +21,8 @@ sap.ui.define([
 	P13nFilterItem,
 	mobileLibrary,
 	P13nOperationsHelper,
-	MessageStrip
+	MessageStrip,
+	oCore
 ) {
 	"use strict";
 
@@ -107,7 +109,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		var nItems = "-1";
@@ -130,7 +132,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		var nItems = 3;
@@ -149,7 +151,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		var nItems = 3;
@@ -174,7 +176,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		var nItems = 8;
@@ -233,7 +235,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Change item
@@ -291,7 +293,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -347,7 +349,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assertions
 		assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
@@ -364,7 +366,7 @@ sap.ui.define([
 
 		// arrange
 		oP13nFilterPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oP13nFilterPanel.addItem(new P13nItem({
 			columnKey: "c0",
@@ -404,7 +406,7 @@ sap.ui.define([
 			value1: DateFormat.getDateInstance().format(new Date()),
 			value2: DateFormat.getDateInstance().format(new Date())
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		// assertions
 		assert.strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
 		assert.strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");

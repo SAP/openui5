@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/Row",
 	"sap/ui/table/Column",
-	"sap/ui/table/utils/TableUtils"
-], function(TableQUnitUtils, Row, Column, TableUtils) {
+	"sap/ui/table/utils/TableUtils",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, Row, Column, TableUtils, oCore) {
 	"use strict";
 
 	var initRowActions = window.initRowActions;
@@ -46,66 +47,66 @@ sap.ui.define([
 
 	QUnit.test("After changing column visibility", function(assert) {
 		this.oTable.getColumns()[1].setVisible(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column4");
 
 		this.oTable.getColumns()[2].setVisible(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column3", "Column4");
 	});
 
 	QUnit.test("After setting column templates", function(assert) {
 		this.oTable.getColumns()[0].setTemplate(new TestControl({text: "Column1"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column1", "Column2", "Column4");
 	});
 
 	QUnit.test("After removing column templates", function(assert) {
 		this.oTable.getColumns()[1].setTemplate(null);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column4");
 	});
 
 	QUnit.test("After destroying column templates", function(assert) {
 		this.oTable.getColumns()[1].destroyTemplate();
 		this.oTable.getColumns()[3].getTemplate().destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert);
 	});
 
 	QUnit.test("After changing column templates", function(assert) {
 		this.oTable.getColumns()[1].getTemplate().setText("Not Column2");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column2", "Column4");
 	});
 
 	QUnit.test("After removing columns", function(assert) {
 		this.oTable.removeColumn(this.oTable.getColumns()[1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column4");
 
 		this.oTable.removeAllColumns();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert);
 	});
 
 	QUnit.test("After destroying columns", function(assert) {
 		this.oTable.getColumns()[1].destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column4");
 
 		this.oTable.destroyColumns();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert);
 	});
 
 	QUnit.test("After adding columns", function(assert) {
 		this.oTable.addColumn(new Column({template: new TestControl({text: "Column5"})}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column2", "Column4", "Column5");
 
 		this.oTable.insertColumn(new Column({template: new TestControl({text: "Column0"})}), 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.assertCells(assert, "Column0", "Column2", "Column4", "Column5");
 	});
 

@@ -1,8 +1,9 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	"sap/ui/mdc/condition/ConditionModel",
-	"sap/ui/mdc/condition/Condition"
-], function(Controller, ConditionModel, Condition) {
+	"sap/ui/mdc/condition/Condition",
+	"sap/ui/core/Core"
+], function(Controller, ConditionModel, Condition, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.ValueHelp.Controller", {
@@ -10,7 +11,7 @@ sap.ui.define([
 		onInit: function() {
 			this.getView().bindElement("/Books(1)");
 
-			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
+			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			// create a ConditionModel for the listbinding
 			var oCM = new ConditionModel();

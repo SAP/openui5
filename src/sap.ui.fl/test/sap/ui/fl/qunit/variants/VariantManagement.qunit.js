@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/RadioButton",
 	"sap/ui/core/Icon",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	VariantManagement,
 	VariantModel,
@@ -27,7 +28,8 @@ sap.ui.define([
 	RadioButton,
 	Icon,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -256,12 +258,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check acc text", function(assert) {
-			var oConfiguration = sap.ui.getCore().getConfiguration();
+			var oConfiguration = oCore.getConfiguration();
 			var sLanguage = oConfiguration.getLanguage();
 
 			oConfiguration.setLanguage("en_EN");
 
-			this.oVariantManagement._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			this.oVariantManagement._oRb = oCore.getLibraryResourceBundle("sap.ui.fl");
 
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
@@ -1214,7 +1216,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking the sharing text", function(assert) {
-			var oConfiguration = sap.ui.getCore().getConfiguration();
+			var oConfiguration = oCore.getConfiguration();
 			var sLanguage = oConfiguration.getLanguage();
 
 			oConfiguration.setLanguage("en_EN");

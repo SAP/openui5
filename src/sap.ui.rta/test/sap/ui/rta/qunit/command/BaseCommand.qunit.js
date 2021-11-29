@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	Button,
 	Input,
@@ -57,7 +58,8 @@ sap.ui.define([
 	flUtils,
 	flLayerUtils,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -1175,7 +1177,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oVBox31 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0];
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
@@ -1426,7 +1428,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oList]
@@ -1507,7 +1509,7 @@ sap.ui.define([
 			});
 
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0];
 			var oDesignTime = new DesignTime({

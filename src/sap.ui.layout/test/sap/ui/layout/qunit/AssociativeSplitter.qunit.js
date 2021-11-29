@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/layout/SplitterLayoutData",
 	"sap/m/Button",
 	"sap/m/ScrollContainer",
-	"sap/ui/dom/units/Rem"
+	"sap/ui/dom/units/Rem",
+	"sap/ui/core/Core"
 ], function(
 	AssociativeSplitter,
 	SplitterLayoutData,
 	Button,
 	ScrollContainer,
-	Rem
+	Rem,
+	oCore
 ) {
 	"use strict";
 
@@ -43,7 +45,7 @@ sap.ui.define([
 			this.oSplitter.addAssociatedContentArea(new Button());
 			this.oSplitter.addAssociatedContentArea(new Button());
 			this.oSplitter.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSplitter._getContentAreas().forEach(function (oArea) {
@@ -92,7 +94,7 @@ sap.ui.define([
 			this.oSplitter = new AssociativeSplitter("splitter");
 			this.oContainer = new ScrollContainer({content: this.oSplitter, width: "400px", height: "300px"});
 			this.oContainer.placeAt(DOM_RENDER_LOCATION);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSplitter._getContentAreas().forEach(function (oArea) {
@@ -115,7 +117,7 @@ sap.ui.define([
 		}));
 		this.oSplitter.addAssociatedContentArea(new Button());
 		this.oContainer.setWidth("500px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		aCalculatedSizes = this.oSplitter.getCalculatedSizes();
 		iFirstContentAreaWidth = aCalculatedSizes[0];
@@ -159,7 +161,7 @@ sap.ui.define([
 
 		// act
 		this.oContainer.setWidth("1000px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		iExpectedSize = 25 * this.oSplitter._calcAvailableContentSize() / 100;
@@ -182,7 +184,7 @@ sap.ui.define([
 
 		// act
 		this.oContainer.setWidth("300px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		aSizes = this.oSplitter.getCalculatedSizes();
@@ -205,7 +207,7 @@ sap.ui.define([
 				size: "60%" // results in 600px
 			})
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var aAreas = this.oSplitter._getContentAreas(),
 			iFirstAreaWidth = aAreas[0].$().parent().width(),
 			iSecondAreaWidth = aAreas[1].$().parent().width(),
@@ -229,7 +231,7 @@ sap.ui.define([
 			})
 		}));
 		this.oSplitter.addContentArea(new Button());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var $bar = this.oSplitter.$().children("#splitter-splitbar-0");
 
 		// act - move the bar
@@ -252,7 +254,7 @@ sap.ui.define([
 
 		// act - shrink the whole splitter
 		this.oSplitter.setWidth("600px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var iSecondAreaWidthAfterParentShrink = aAreas[1].$().parent().width();
 
 		assert.ok(iSecondAreaWidthAfterParentShrink < iSecondAreaWidthBeforeParentShrink, "Second area had shrunk");
@@ -267,7 +269,7 @@ sap.ui.define([
 			})
 		});
 		this.oSplitter.addContentArea(oArea);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oArea.$().parent().width(), this.oSplitter._calcAvailableContentSize(), "Single area sized with % should take the whole space");

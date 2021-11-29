@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Split",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function (
 	jQuery,
 	DesignTime,
@@ -19,7 +20,8 @@ sap.ui.define([
 	SplitPlugin,
 	XMLView,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -62,7 +64,7 @@ sap.ui.define([
 			});
 
 			this.oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oButton1 = this.oView.byId("button1");
 			this.oButton2 = this.oView.byId("button2");

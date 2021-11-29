@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	ElementUtil,
@@ -55,7 +56,8 @@ sap.ui.define([
 	DynamicPage,
 	DynamicPageTitle,
 	ManagedObject,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -93,7 +95,7 @@ sap.ui.define([
 			]
 		});
 		this.oVerticalLayout.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	var fnDestroyControls = function() {
@@ -156,7 +158,7 @@ sap.ui.define([
 				new FormContainer("group2")
 			]
 		});
-		this.oFormContainer1 = sap.ui.getCore().byId("group1");
+		this.oFormContainer1 = oCore.byId("group1");
 	};
 
 	var fnDestroyForm = function() {
@@ -280,7 +282,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when fixComponentContainerElement() is called with a ComponentContainer with a Component", function(assert) {
 			this.oCompContainer.setComponent(this.oComponent);
-			var oRootControl = sap.ui.getCore().byId("Root");
+			var oRootControl = oCore.byId("Root");
 			assert.equal(ElementUtil.fixComponentContainerElement(this.oCompContainer), oRootControl, 'then the static method "fixComponentContainerElement" returns the Root Control of the Component');
 		});
 		QUnit.test("when fixComponentContainerElement() is called with a ComponentContainer without a Component", function(assert) {
@@ -890,7 +892,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oVBox1 = this.oList.getItems()[1].getContent()[0];
 			this.oListItem0 = this.oList.getItems()[0];
@@ -1006,7 +1008,7 @@ sap.ui.define([
 			this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].addItem(new Button("evil-btn2"));
 
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oButton1 = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oButton2 = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
@@ -1067,7 +1069,7 @@ sap.ui.define([
 				content: [this.oBoundList, this.oUnboundList, this.oFactoryBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oBound = this.oBoundList.getItems()[0];
 			this.oBoundChild = this.oBoundList.getItems()[0].getContent()[0];

@@ -121,7 +121,7 @@ sap.ui.define([
 
 	var init = function (sId) {
 		// global variables
-		oRating = sap.ui.getCore().byId(sId);
+		oRating = Core.byId(sId);
 		if (!oRating.getVisible()) {
 			return;
 		}
@@ -218,7 +218,7 @@ sap.ui.define([
 		var oRating = new RatingIndicator({});
 
 		oRating.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// initial assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), false, 'Initially the control does not have class "sapMRIDisplayOnly" on ' + oRating);
@@ -227,7 +227,7 @@ sap.ui.define([
 
 		// act
 		oRating.setDisplayOnly(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
@@ -244,7 +244,7 @@ sap.ui.define([
 		});
 
 		oRating.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// initial assertion
 		assert.strictEqual(oRating.getEditable(), true, 'The Editable property is false on ' + oRating);
@@ -255,7 +255,7 @@ sap.ui.define([
 
 		// act
 		oRating.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertion
 		assert.strictEqual(oRating.getEditable(), false, 'The Editable property is true on ' + oRating);
@@ -272,7 +272,7 @@ sap.ui.define([
 		var oRating = new RatingIndicator({});
 
 		oRating.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// initial assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisabled"), false, 'Initially the control does not have class "sapMRIDisabled" on ' + oRating);
@@ -281,7 +281,7 @@ sap.ui.define([
 
 		// act
 		oRating.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assertion
 		assert.strictEqual(oRating.$().hasClass("sapMRIDisabled"), true, 'The control have class "sapMRIDisabled" on ' + oRating);
@@ -295,7 +295,7 @@ sap.ui.define([
 	QUnit.module("Methods");
 
 	QUnit.test("getter / setter", function (assert) {
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// 0
 		assert.strictEqual(oRating0.getValue(), 0, "The rating value is 0 on " + oRating0);
@@ -386,7 +386,7 @@ sap.ui.define([
 
 		oRating1.placeAt("content");
 		oRating2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oRating1.getValue(), 0.5, "The value is  valid and correctly formatted");
@@ -395,7 +395,7 @@ sap.ui.define([
 		// Act
 		oRating2.setValue("abv");
 		oRating2.setValue("3.125E-01");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oRating1.getValue(), 0.5, "The value is not changed because it is not a valid one.");
@@ -416,7 +416,7 @@ sap.ui.define([
 
 		// System under Test
 		oRating.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(oRating._getDensityMode(), "Cozy", "The density mode is Cozy");
 
@@ -435,7 +435,7 @@ sap.ui.define([
 		jQuery("body").addClass("sapUiSizeCondensed");
 		assert.strictEqual(oRating2._getDensityMode(), "Condensed", "The density mode is set in the body and is Condensed");
 		oRating2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		jQuery("body").removeClass("sapUiSizeCondensed");
 		jQuery("html").addClass("sapUiSizeCozy");
 
@@ -623,7 +623,7 @@ sap.ui.define([
 
 		// System under Test
 		oRating.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oRating.$().trigger("focus"); // set focus on RatingIndicator
 
@@ -679,15 +679,15 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "slider", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_RATING"), "Type");
-		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
+		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_RATING"), "Type");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [5, 10]), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, oControl.getEditable(), "Editable");
 		oControl.setValue(0);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
+		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 

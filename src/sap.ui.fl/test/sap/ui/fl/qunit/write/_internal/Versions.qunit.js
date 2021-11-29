@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	JSONModel,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Storage,
 	KeyUserConnector,
 	ChangePersistenceFactory,
-	UriParameters
+	UriParameters,
+	oCore
 ) {
 	"use strict";
 
@@ -200,7 +202,7 @@ sap.ui.define([
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
 		beforeEach: function () {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
@@ -358,7 +360,7 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
@@ -675,7 +677,7 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},

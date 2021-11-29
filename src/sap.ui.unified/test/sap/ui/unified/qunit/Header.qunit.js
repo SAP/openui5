@@ -1,8 +1,9 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/unified/calendar/Header"
-], function(Header) {
+	"sap/ui/unified/calendar/Header",
+	"sap/ui/core/Core"
+], function(Header, oCore) {
 	"use strict";
 
 	QUnit.module("Rendering", function (hooks) {
@@ -10,7 +11,7 @@ sap.ui.define([
 			this.oHeader = new Header();
 
 			this.oHeader.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 		hooks.afterEach(function () {
 			this.oHeader.destroy();
@@ -203,7 +204,7 @@ sap.ui.define([
 
 			// act
 			oHeader.setVisibleCurrentDateButton(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.ok(oHeader.getDomRef().querySelector(sHeaderId), "button is rendered");
@@ -220,7 +221,7 @@ sap.ui.define([
 			this.oHeader = new Header();
 
 			this.oHeader.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 		hooks.afterEach(function () {
 			this.oHeader.destroy();
@@ -288,7 +289,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setTextButton3(sExpectedText);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// assert
 				assert.equal(this.oHeader._textButton3, sExpectedText, "inner property should be set properly");
@@ -316,7 +317,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setTextButton4(sExpectedText);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// assert
 				assert.equal(this.oHeader._textButton4, sExpectedText, "inner property should be set properly");
@@ -346,7 +347,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setAriaLabelButton3(sExpectedText);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// assert
 				assert.equal(this.oHeader._ariaLabelButton3, sExpectedText, "inner property should be set properly");
@@ -374,7 +375,7 @@ sap.ui.define([
 
 				// act
 				this.oHeader._setAriaLabelButton4(sExpectedText);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// assert
 				assert.equal(this.oHeader._ariaLabelButton4, sExpectedText, "inner property should be set properly");

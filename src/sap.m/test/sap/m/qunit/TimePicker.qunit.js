@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -52,7 +53,8 @@ sap.ui.define([
 	typeTime,
 	Device,
 	XMLView,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -109,7 +111,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTp = new TimePicker();
 			this.oTp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oTp.destroy();
@@ -248,7 +250,7 @@ sap.ui.define([
 				minutesStep: this.STEP
 			});
 			this.oClocks.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oClocks.destroy();
@@ -273,7 +275,7 @@ sap.ui.define([
 			this.clock = sinon.useFakeTimers();
 			this.oTimePicker = new TimePicker("t1");
 			this.oTimePicker.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.clock.restore();
@@ -328,9 +330,9 @@ sap.ui.define([
 	QUnit.test("showCurrentTimeButton - button existence", function(assert) {
 		// Prepare
 		this.oTimePicker.setShowCurrentTimeButton(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oTimePicker.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(this.oTimePicker._getClocks().getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
@@ -341,7 +343,7 @@ sap.ui.define([
 			// SUT
 			this.oTimePicker = new TimePicker();
 			this.oTimePicker.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			// Cleanup
@@ -390,7 +392,7 @@ sap.ui.define([
 				dateValue: new Date(2016, 1, 17, 10, 11, 12)
 			});
 			this.oTimePicker.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			// Cleanup
@@ -470,7 +472,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		for (i = 0; i < aSetValues.length; i++) {
@@ -692,7 +694,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test default locale", function (assert) {
-		var stub = sinon.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), 'getFormatLocale').returns(new Locale('ar'));
+		var stub = sinon.stub(oCore.getConfiguration().getFormatSettings(), 'getFormatLocale').returns(new Locale('ar'));
 		//Test default browser locale set to arabic
 		generateValuesTest([
 			{ key: "setDisplayFormat", value: "hh:mm:ss a"},
@@ -723,7 +725,7 @@ sap.ui.define([
 		//arrange
 		var oTP = new TimePicker(),
 			oLocale,
-			oSystemLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			oSystemLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale();
 
 		// act
 		oLocale = oTP._getLocale();
@@ -740,7 +742,7 @@ sap.ui.define([
 		// arrange
 		var oTP = new TimePicker({localeId:'en'}),
 			oLocale,
-			oSystemLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			oSystemLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale();
 
 		// act
 		oLocale = oTP._getLocale();
@@ -759,7 +761,7 @@ sap.ui.define([
 			});
 
 		oTP.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oTP.setValue(null);
 		assert.strictEqual(oTP.getValue(), "", "'getValue' is updated and returns correct VALIDATED value");
@@ -988,7 +990,7 @@ sap.ui.define([
 		//sut
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//arrange
 		tp.focus();
@@ -1010,7 +1012,7 @@ sap.ui.define([
 		//sut
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//arrange
 		tp.focus();
@@ -1040,7 +1042,7 @@ sap.ui.define([
 			displayFormat: "HH:mm"
 		});
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//arrange
 		tp.focus();
@@ -1069,7 +1071,7 @@ sap.ui.define([
 			displayFormat: "HH:mm"
 		});
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//arrange
 		tp.focus();
@@ -1091,7 +1093,7 @@ sap.ui.define([
 		var tp = new TimePicker();
 		var oBtnCancel, oPopoverCloseSpy;
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//arrange
 		tp._openPicker();
@@ -1117,15 +1119,15 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					sap.ui.getCore().byId("HTP").openBy(this.getDomRef());
+					oCore.byId("HTP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oTP.getAggregation("_picker"), oTP.getId() + ": picker exists");
@@ -1159,7 +1161,7 @@ sap.ui.define([
 		tp.setModel(oModel);
 
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 
@@ -1198,7 +1200,7 @@ sap.ui.define([
 		tp.setModel(oModel);
 
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(tp.getValue(), "4:35 PM", "the value property is set in and formatted correctly");
@@ -1266,7 +1268,7 @@ sap.ui.define([
 	QUnit.test("tap on the input icon open/closes the picker", function(assert) {
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var icon = tp.$().find(".sapUiIcon");
 		qutils.triggerEvent("mousedown", icon[0]);
@@ -1287,7 +1289,7 @@ sap.ui.define([
 	QUnit.test("focussed input is styled correctly", function(assert) {
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		tp._openPicker();
 		this.clock.tick(1000);
@@ -1309,7 +1311,7 @@ sap.ui.define([
 	QUnit.test("_getInputValue", function(assert) {
 		var tp = new TimePicker();
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		tp.setValue("10:55:13 AM");
 		var result = tp._getInputValue();
@@ -1345,7 +1347,7 @@ sap.ui.define([
 		});
 
 		oTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oTP._handleInputChange("24:00:00");
@@ -1389,7 +1391,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//render
 
@@ -1428,7 +1430,7 @@ sap.ui.define([
 
 		// arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		qutils.triggerEvent("focusin", tp.getDomRef());
@@ -1451,7 +1453,7 @@ sap.ui.define([
 		oSandbox.stub(Device.system, "desktop").value(false);
 		oTimePicker.placeAt("qunit-fixture");
 		oLabel.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oTimePicker._createPicker("medium");
@@ -1472,13 +1474,13 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
-			this.oRB = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+			this.oRB = oCore.getLibraryResourceBundle('sap.m');
 			this.oTP = new TimePicker({
 				localeId: 'en' //set localeId explicitly otherwise it will be taken from the system configuration and the test won't be stable
 			});
 			this.sandbox = sinon.sandbox;
 			this.oTP.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTP.destroy();
@@ -1535,7 +1537,7 @@ sap.ui.define([
 						var oLabel = new Label(sLabelId, {
 							labelFor: oSut
 						}).placeAt('qunit-fixture');
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 						//assert
 						fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, true, "External label reference is applied");
 						//clear
@@ -1550,13 +1552,13 @@ sap.ui.define([
 					if (bReferencedWithPlaceholder) {
 						//prepare
 						oSut.setPlaceholder("Placeholder");
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 						//assert
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), "Placeholder", "placeholder invisible label text is as expected");
 						//clear
 						oSut.setPlaceholder(null);
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 					} else {
 						//assert
 						fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
@@ -1599,11 +1601,11 @@ sap.ui.define([
 		this.oTP.setPlaceholder("Placeholder");
 		//assert
 		assert.ok(!!this.oTP.getAccessibilityInfo, "TimePicker has a getAccessibilityInfo function");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oInfo = this.oTP.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value Placeholder", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -1690,7 +1692,7 @@ sap.ui.define([
 
 			//arrange
 			tp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//act
 			triggerMultipleKeypress(tp, sInput);
@@ -1839,7 +1841,7 @@ sap.ui.define([
 			displayFormat: "HH:mm"
 		}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		qutils.triggerKeydown(jQuery(oTimePicker.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
@@ -1910,7 +1912,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		triggerMultipleKeypress(oTp, "15");
@@ -1931,7 +1933,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		triggerMultipleKeypress(oTp, "151");
@@ -1953,7 +1955,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//focus is explicitly needed, because sending a single key ('7' - see below) does not focus the element.
 		jQuery(oTp).trigger("focus");
 		this.clock.tick(1000);
@@ -1979,7 +1981,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
@@ -2006,7 +2008,7 @@ sap.ui.define([
 
 		//arrange
 		oTp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		triggerMultipleKeypress(oTp, "15");
@@ -2029,7 +2031,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
 		qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), KeyCodes.ARROW_RIGHT);
@@ -2056,7 +2058,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("y", 4, "12 P-");
 
@@ -2078,7 +2080,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("v", 3, "12 ------");
 
@@ -2099,7 +2101,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 3, "12 --");
@@ -2121,7 +2123,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 4, "12 M---");
@@ -2143,7 +2145,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("A", 4, "12 M---");
@@ -2165,7 +2167,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("a", 3, "12 --");
@@ -2282,7 +2284,7 @@ sap.ui.define([
 			});
 
 		oTp.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oTp.setValue("");
@@ -2301,7 +2303,7 @@ sap.ui.define([
 			}).placeAt("content"),
 			oInitMaskSpy = this.spy(oTP, "_initMask");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oTP.setDateValue();
@@ -2320,7 +2322,7 @@ sap.ui.define([
 			}).placeAt("content"),
 			iDelPressed = -1;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oTP.focus();
@@ -2367,7 +2369,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oTp = new TimePicker();
 			this.oTp.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -2801,7 +2803,7 @@ sap.ui.define([
 		var oGetMaskModeStub = this.stub(this.oTp, "getMaskMode").callsFake(function () { return TimePickerMaskMode.Off; }),
 			oChangeSpy = this.spy();
 		this.oTp.attachChange(oChangeSpy);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		jQuery(this.oTp.getFocusDomRef()).val("11");
@@ -2818,7 +2820,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oTp = new TimePicker();
 			this.oTp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 
 		afterEach: function () {
@@ -2962,7 +2964,7 @@ sap.ui.define([
 
 		// arrange
 		oTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oTP._openPicker();
@@ -2991,7 +2993,7 @@ sap.ui.define([
 
 			//arrange
 			this.oTp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.clock.restore();
@@ -3015,7 +3017,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		tp._handleInputChange("13 00");
 		tp._handleInputChange("13 00");
@@ -3047,7 +3049,7 @@ sap.ui.define([
 
 				// Arrange
 				tp.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// Act
 				tp.updateDomValue(" 8:00:00 AM");
@@ -3079,7 +3081,7 @@ sap.ui.define([
 
 				// Arrange
 				tp.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				// Act
 				tp.updateDomValue("08:00:00 AM");
@@ -3111,7 +3113,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		tp._handleInputChange("11 28");
@@ -3133,7 +3135,7 @@ sap.ui.define([
 
 		//arrange
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		tp._$input.val("2:28:34");
@@ -3186,7 +3188,7 @@ sap.ui.define([
 		var tp = new TimePicker(),
 			oIsIconClickedSpy = this.spy(tp, "_isIconClicked");
 		tp.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		tp._openPicker();
 		var icon = tp.$().find(".sapUiIcon");
@@ -3248,7 +3250,7 @@ sap.ui.define([
 		});
 		//arrange
 		oTp2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		triggerMultipleKeypress(this.oTp, "09");
@@ -3267,7 +3269,7 @@ sap.ui.define([
 		//arrange
 		this.oTp.setValue("07:15");
 		oTp2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		jQuery(this.oTp.getFocusDomRef()).trigger("focus");
@@ -3293,7 +3295,7 @@ sap.ui.define([
 
 		// Arrange
 		this.oTP.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oTP.toggleOpen();

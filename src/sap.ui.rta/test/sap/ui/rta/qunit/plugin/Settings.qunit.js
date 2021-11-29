@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	sinon,
 	Button,
@@ -35,7 +36,8 @@ sap.ui.define([
 	Stack,
 	ManagedObject,
 	BaseLog,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -80,7 +82,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({
 				content: [this.oButton]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			sandbox.restore();

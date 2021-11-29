@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function (
 	CollectiveSearchSelect,
 	createAndAppendDiv,
-	keyCodes
+	keyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -55,7 +57,7 @@ sap.ui.define([
 	QUnit.test("testing open popover and creation of list", function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -71,7 +73,7 @@ sap.ui.define([
 	QUnit.test("testing subheader and search field visiblity", function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -92,7 +94,7 @@ sap.ui.define([
 	QUnit.test("testing search field ", function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -120,7 +122,7 @@ sap.ui.define([
 	QUnit.test("testing open popover via keyboard", function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -128,7 +130,7 @@ sap.ui.define([
 		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
 
 		this.oColSearch.onkeyup({which : keyCodes.F4});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(this.oColSearch.oPopover.isOpen() === true, "Popover should be open!");
@@ -137,7 +139,7 @@ sap.ui.define([
 	QUnit.test("testing selection of item and event handling", function(assert) {
 		// arrange
 		this.oColSearch.placeAt("mdcColSearchcontent");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Prepare
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -158,7 +160,7 @@ sap.ui.define([
 			item: new sap.ui.core.Item({key: "cs2", text: "col Search 2"})
 		};
 		this.oColSearch.oList.fireItemPress(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!this.bEventHandled, "select event should not be triggered");
@@ -169,7 +171,7 @@ sap.ui.define([
 			item: new sap.ui.core.Item({key: "cs3", text: "col Search 3"})
 		};
 		this.oColSearch.oList.fireItemPress(oFakeEvent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(this.bEventHandled, "select event should be triggered");

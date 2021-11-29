@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PlanningCalendarLegend",
-	"sap/ui/unified/CalendarLegendItem"
-], function(XMLView, JSONModel, PlanningCalendarLegend, CalendarLegendItem) {
+	"sap/ui/unified/CalendarLegendItem",
+	"sap/ui/core/Core"
+], function(XMLView, JSONModel, PlanningCalendarLegend, CalendarLegendItem, oCore) {
 	"use strict";
 
 	var sPclNoDB =
@@ -150,7 +151,7 @@ sap.ui.define([
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
 			myView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert
 			assert.deepEqual(oPCLegend.getStandardItems(), ["WorkingDay", "NonWorkingDay"], "Should return the same items");
@@ -173,7 +174,7 @@ sap.ui.define([
 
 			//Act
 			oPCLegend.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert --section header
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
@@ -195,7 +196,7 @@ sap.ui.define([
 
 		//Act
 		oPCLegend.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 1, "One header sections should rendered");
@@ -215,7 +216,7 @@ sap.ui.define([
 
 			//Act
 			oPCLegend.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			//Assert --section header
 			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
@@ -236,7 +237,7 @@ sap.ui.define([
 			appointmentItems: [new CalendarLegendItem({ text: "def", type: "Type02" })]
 		});
 		oPCLegend.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[0].innerText, "Calendar", "there is a default items header");
@@ -245,7 +246,7 @@ sap.ui.define([
 		// act
 		oPCLegend.setItemsHeader("");
 		oPCLegend.setAppointmentItemsHeader("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 0, "the items and appointment items headers can be empty");
@@ -253,7 +254,7 @@ sap.ui.define([
 		// act
 		oPCLegend.setItemsHeader("A");
 		oPCLegend.setAppointmentItemsHeader("B");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader")[0].innerText, "A", "the items header is correct");

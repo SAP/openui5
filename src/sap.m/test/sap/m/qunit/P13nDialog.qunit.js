@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/m/P13nDimMeasurePanel",
 	"sap/m/P13nColumnsPanel",
 	"sap/m/P13nItem",
-	"sap/m/P13nColumnsItem"
+	"sap/m/P13nColumnsItem",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -28,7 +29,8 @@ sap.ui.define([
 	P13nDimMeasurePanel,
 	P13nColumnsPanel,
 	P13nItem,
-	P13nColumnsItem
+	P13nColumnsItem,
+	oCore
 ) {
 	"use strict";
 
@@ -65,7 +67,7 @@ sap.ui.define([
 			assert.deepEqual(this.oP13nDialog.getPanels(), []);
 			assert.strictEqual(this.oP13nDialog.getVisiblePanel(), null);
 
-			assert.strictEqual(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.strictEqual(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.strictEqual(this.oP13nDialog.getVerticalScrolling(), true, "getVerticalScrolling is true");
 			assert.strictEqual(this.oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
 			assert.strictEqual(this.oP13nDialog.getButtons()[0].getVisible(), true, "OK button is visible");
@@ -92,7 +94,7 @@ sap.ui.define([
 			assert.deepEqual(this.oP13nDialog.getPanels(), []);
 			assert.strictEqual(this.oP13nDialog.getVisiblePanel(), null);
 
-			assert.strictEqual(this.oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.strictEqual(this.oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.strictEqual(this.oP13nDialog.getVerticalScrolling(), false, "getVerticalScrolling is false");
 			assert.strictEqual(this.oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
 			assert.strictEqual(this.oP13nDialog.getButtons()[0].getVisible(), true, "OK button is visible");
@@ -180,7 +182,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 			done();
 		}.bind(this));
@@ -197,7 +199,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), P13nPanelType.filter);
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 			done();
 		}.bind(this));
@@ -214,7 +216,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "columns");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 			done();
 		}.bind(this));
@@ -256,7 +258,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel(), null);
 			done();
 		}.bind(this));
@@ -286,7 +288,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
@@ -307,7 +309,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), P13nPanelType.filter);
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
@@ -328,7 +330,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), P13nPanelType.sort);
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.sort);
 
 			assert.equal(Device.system.phone, false);
@@ -349,7 +351,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "columns");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
@@ -369,7 +371,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false);
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_SORT"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_SORT"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.sort);
 
 			assert.equal(Device.system.phone, false);
@@ -387,7 +389,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assertions
 		var done = assert.async();
@@ -397,7 +399,7 @@ sap.ui.define([
 
 			//we expect both panels to be visible, therefore the navigation is required and the dialog needs to display 'View Settings'
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
 
 			assert.equal(Device.system.phone, false);
@@ -415,7 +417,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assertions
 		var done = assert.async();
@@ -425,7 +427,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false);
 
 			//same behavior expected as if there were two different panels
-			assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_COLUMNS"));
+			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_COLUMNS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
 
 			assert.equal(Device.system.phone, false);
@@ -452,7 +454,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog._oNavigationControlsPromise.then(function () {
@@ -483,7 +485,7 @@ sap.ui.define([
 	});
 	QUnit.test("test", function (assert) {
 		var oP13nPanelF, oP13nPanelS, oP13nPanelD;
-		sap.ui.getCore().setModel(new ResourceModel({
+		oCore.setModel(new ResourceModel({
 			bundleName: "resourceroot.data.i18n.i18n"
 		}), "i18n");
 
@@ -500,7 +502,7 @@ sap.ui.define([
 		// arrange
 		this.oP13nDialog.placeAt("content");
 		this.oP13nDialog.open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog._oNavigationControlsPromise.then(function () {
@@ -523,7 +525,7 @@ sap.ui.define([
 				panels: [new P13nColumnsPanel(), new P13nGroupPanel()]
 			});
 			this.oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
@@ -545,7 +547,7 @@ sap.ui.define([
 
 			// assertions
 			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
+			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
 
 			done();
 			oDialog.destroy();
@@ -572,7 +574,7 @@ sap.ui.define([
 
 			// assertions
 			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
+			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
 
 			done();
 			oDialog.destroy();
@@ -641,7 +643,7 @@ sap.ui.define([
 				panels: [this.oPanel1 = new P13nFilterPanel("P1", {}), this.oPanel2 = new P13nSortPanel("P2", {})]
 			});
 			this.oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
@@ -679,7 +681,7 @@ sap.ui.define([
 			// Post assertions
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getPanels()[0].getId(), "P1");
-			assert.notOk(!!sap.ui.getCore().byId("P2-navItem"), "navigation item destroyed after removing panel");
+			assert.notOk(!!oCore.byId("P2-navItem"), "navigation item destroyed after removing panel");
 
 			assert.equal(this.oP13nDialog.getSubHeader().getId(), "PD1-navigationBar");
 			assert.equal(this.oP13nDialog.getSubHeader().getContentLeft().length, 1);
@@ -719,7 +721,7 @@ sap.ui.define([
 				panels: [this.oPanel1 = new P13nFilterPanel("P1", {}), this.oPanel2 = new P13nSortPanel("P2", {})]
 			});
 			this.oP13nDialog.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oP13nDialog.destroy();
@@ -761,7 +763,7 @@ sap.ui.define([
 			// Post assertions
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getPanels()[0].getId(), "P1");
-			assert.notOk(!!sap.ui.getCore().byId("P2-navItem"), "navigation item destroyed after removing panel");
+			assert.notOk(!!oCore.byId("P2-navItem"), "navigation item destroyed after removing panel");
 
 			assert.equal(this.oP13nDialog.getSubHeader(), undefined);
 
@@ -833,7 +835,7 @@ sap.ui.define([
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -862,7 +864,7 @@ sap.ui.define([
 		}));
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -908,7 +910,7 @@ sap.ui.define([
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -927,7 +929,7 @@ sap.ui.define([
 		assert.equal(this.oP13nDialog.getPanels().length, 1);
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -957,7 +959,7 @@ sap.ui.define([
 		}));
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -1007,7 +1009,7 @@ sap.ui.define([
 		assert.equal(this.oP13nDialog.getPanels().length, 2);
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {
@@ -1027,7 +1029,7 @@ sap.ui.define([
 		this.oP13nDialog.removePanel(this.oP13nDialog.getPanels()[1]);
 
 		this.oP13nDialog.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var done = assert.async();
 		this.oP13nDialog.attachAfterOpen(function () {

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
-	"sap/ui/table/Row"
-], function(TableQUnitUtils, TableUtils, Device, Table, TreeTable, AnalyticalTable, Row) {
+	"sap/ui/table/Row",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TableUtils, Device, Table, TreeTable, AnalyticalTable, Row, oCore) {
 	"use strict";
 
 	// mapping of global function calls
@@ -227,7 +228,7 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables();
 			oTreeTable.setVisibleRowCount(12);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -328,7 +329,7 @@ sap.ui.define([
 			if (bSecondPass) {
 				oTreeTable.setShowNoData(false);
 				oTreeTable.unbindRows();
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				for (var i = 0; i < 12; i++) {
 					var oRow = oTreeTable.getRows()[i];
@@ -401,7 +402,7 @@ sap.ui.define([
 			if (bSecondPass) {
 				oTreeTable.setShowNoData(false);
 				oTreeTable.unbindRows();
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				for (var i = 0; i < 12; i++) {
 					var $Row = oTreeTable.getRows()[i].$();
@@ -413,7 +414,7 @@ sap.ui.define([
 		};
 
 		oTreeTable.setUseGroupMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		fnHandler();
 
@@ -426,7 +427,7 @@ sap.ui.define([
 		var i;
 		var oGroupMenuButton;
 		oTreeTable.setUseGroupMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (i = 0; i < 12; i++) {
 			oGroupMenuButton = oTreeTable.getDomRef("rowsel" + i).querySelector(".sapUiTableGroupMenuButton");
@@ -435,7 +436,7 @@ sap.ui.define([
 
 		sinon.stub(TableUtils.Grouping, "showGroupMenuButton").returns(true);
 		oTreeTable.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		for (i = 0; i < 12; i++) {
 			oGroupMenuButton = oTreeTable.getDomRef("rowsel" + i).querySelector(".sapUiTableGroupMenuButton");
@@ -457,7 +458,7 @@ sap.ui.define([
 			oTable.setVisibleRowCount(12);
 			oTable.setFixedColumnCount(0);
 			oTable.setEnableGrouping(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			destroyTables();

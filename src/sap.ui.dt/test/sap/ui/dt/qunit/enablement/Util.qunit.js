@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/dt/enablement/Util",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/Core"
 ],
 function (
 	EnablementUtil,
 	DesignTime,
 	Button,
-	VerticalLayout
+	VerticalLayout,
+	oCore
 ) {
 	"use strict";
 
@@ -18,7 +20,7 @@ function (
 		beforeEach: function (assert) {
 			this.oButton = new Button({text: "my button"});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oButton]
@@ -51,7 +53,7 @@ function (
 		beforeEach: function(assert) {
 			this.oVerticalLayout = new VerticalLayout();
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -87,7 +89,7 @@ function (
 				content: [this.oButton]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]

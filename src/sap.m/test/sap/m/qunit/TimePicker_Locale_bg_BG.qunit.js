@@ -1,8 +1,9 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/m/TimePicker"
-], function(createAndAppendDiv, TimePicker) {
+	"sap/m/TimePicker",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, TimePicker, oCore) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -17,7 +18,7 @@ sap.ui.define([
 			valueFormat: "dd MMMM yyyy h:mm a" /* value format should be defined as well*/
 		}).placeAt('content');
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oSut.getValue(), "17:21:00 ч.", "Hour in medium format without single quotes");

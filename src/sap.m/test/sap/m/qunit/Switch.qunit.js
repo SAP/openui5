@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/events/KeyCodes"
-], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(Switch, Page, Label, mobileLibrary, jQuery, qutils, createAndAppendDiv, KeyCodes, oCore) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -87,7 +88,7 @@ sap.ui.define([
 	// helper functions
 	var fnGetDomRefs = function (sId) {
 
-		var oSwitch = sap.ui.getCore().byId(sId),
+		var oSwitch = oCore.byId(sId),
 			$SwtCont = oSwitch.$(),
 			$Swt = $SwtCont.children(".sapMSwt"),
 			$SwtInner = $Swt.children(".sapMSwtInner"),
@@ -137,10 +138,10 @@ sap.ui.define([
 		assert.strictEqual(oSwitch6.getEnabled(), true, "Check setEnabled() and getEnabled()");
 		assert.strictEqual(oSwitch6.getName(), "switch-1", "Check setName() and getName()");
 		assert.strictEqual(oSwitch6.getFocusDomRef(), oSwitch6.getDomRef());
-		assert.strictEqual(sap.ui.getCore().byId("__switch9").getCustomTextOn(), "I", "");
-		assert.strictEqual(sap.ui.getCore().byId("__switch9").getCustomTextOff(), "O", "");
-		assert.strictEqual(sap.ui.getCore().byId("__switch11")._sOn, "111", "");
-		assert.strictEqual(sap.ui.getCore().byId("__switch11")._sOff, "000", "");
+		assert.strictEqual(oCore.byId("__switch9").getCustomTextOn(), "I", "");
+		assert.strictEqual(oCore.byId("__switch9").getCustomTextOff(), "O", "");
+		assert.strictEqual(oCore.byId("__switch11")._sOn, "111", "");
+		assert.strictEqual(oCore.byId("__switch11")._sOff, "000", "");
 	});
 
 	/* ------------------------------ */
@@ -156,7 +157,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
@@ -174,7 +175,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
@@ -190,7 +191,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oSwitch.setState(false);
@@ -221,7 +222,7 @@ sap.ui.define([
 		// arrange
 		oLabel.placeAt("content");
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 		// assert
@@ -247,7 +248,7 @@ sap.ui.define([
 		// arrange
 		oLabel.placeAt("content");
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 		// assert
@@ -272,7 +273,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var sExpectedLabelledBy = "label " + oSwitch.getInvisibleElementId();
 
 		// assert
@@ -294,7 +295,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, "Yes");
@@ -304,7 +305,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = oCore.getLibraryResourceBundle("sap.m");
 		var oSwitch = new Switch({
 			customTextOn: "CustomON",
 			customTextOff: "CustomOff"
@@ -390,10 +391,10 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
-		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
+		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, oCore.getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
 		assert.strictEqual(getComputedStyle(oSwitch.getDomRef("invisible")).getPropertyValue("display"), "none");
 		assert.strictEqual(oSwitch.getDomRef("invisible").getAttribute("aria-hidden"), "true");
 
@@ -419,7 +420,7 @@ sap.ui.define([
 	 */
 	function testSwitchON(assert, oSwitch) {
 		var mDomRefs = fnGetDomRefs(oSwitch.getId());
-		var switchOnText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ON");
+		var switchOnText = oCore.getLibraryResourceBundle("sap.m").getText("SWITCH_ON");
 
 		// assert
 		assert.ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
@@ -453,7 +454,7 @@ sap.ui.define([
 
 		// arrange
 		var mDomRefs = fnGetDomRefs(oSwitch.getId());
-		var switchOffText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_OFF");
+		var switchOffText = oCore.getLibraryResourceBundle("sap.m").getText("SWITCH_OFF");
 
 		// assert
 		assert.ok(oSwitch.$().hasClass("sapMSwtCont"), 'The switch container html element "must have" the css class "sapMSwtCont"');
@@ -496,7 +497,7 @@ sap.ui.define([
 		var oSwitch = new Switch().placeAt("content"),
 			aDomRefs;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aDomRefs = oSwitch.$().find(".sapMSwtLabel");
 
 		// Assert
@@ -525,7 +526,7 @@ sap.ui.define([
 		oSwitch7.setEnabled(false);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		testSwitchOFF(assert, oSwitch7);
@@ -538,7 +539,7 @@ sap.ui.define([
 		oSwitch7.setEnabled(true);
 
 		// arrange
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		testSwitchOFF(assert, oSwitch7);
@@ -546,7 +547,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing that setName() method add the html attribute name", function (assert) {
-		var oSwitch7 = sap.ui.getCore().byId("__switch7");
+		var oSwitch7 = oCore.byId("__switch7");
 		assert.strictEqual(oSwitch7.$().find("input[type=checkbox]").attr("name"), "switch-7", "The attribute name from the input type checkbox inside the switch must have the value " + oSwitch7.getName());
 	});
 
@@ -560,8 +561,8 @@ sap.ui.define([
 		var j,
 			i,
 			oTouchMove,
-			oSwitch0 = sap.ui.getCore().byId("__switch0"),
-			oSwitch8 = sap.ui.getCore().byId("__switch8");
+			oSwitch0 = oCore.byId("__switch0"),
+			oSwitch8 = oCore.byId("__switch8");
 
 		qutils.triggerTouchEvent("touchstart", oSwitch0.getDomRef(), {
 			touches: {
@@ -727,7 +728,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oTouchstart = {
 			touches: {
@@ -795,7 +796,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oTouchstart = {
 			touches: {
@@ -886,7 +887,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
@@ -910,7 +911,7 @@ sap.ui.define([
 
 		// arrange
 		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var fnFireChangeSpy = this.spy(oSwitch, "fireChange");
 
 		// act
@@ -954,7 +955,7 @@ sap.ui.define([
 
 		// arrange
 		oCustomSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oCustomSwitch.isActive());
@@ -968,7 +969,7 @@ sap.ui.define([
 			this.switch = new Switch();
 			this.switch.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.switch.destroy();
@@ -985,7 +986,7 @@ sap.ui.define([
 
 		// act
 		this.switch.setState(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal($IT.html(), "On", "its text is correct");

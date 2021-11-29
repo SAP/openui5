@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/library",
-	"sap/ui/thirdparty/jquery"
-], function(TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library, jQuery, oCore) {
 	"use strict";
 
 	// Shortcuts
@@ -72,13 +73,13 @@ sap.ui.define([
 		oTable.setModel(oModel);
 
 		oTable.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		return oTable;
 	}
 
 	function destroyTable(oTable) {
 		oTable.destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	// *************************************************************************
@@ -310,11 +311,11 @@ sap.ui.define([
 		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Tree, "Initial");
 
 		this.table.setUseFlatMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assertMode(this.table, TableUtils.Grouping.HierarchyMode.Flat, "Enabled flat mode");
 
 		this.table.setUseGroupMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assertMode(this.table, TableUtils.Grouping.HierarchyMode.GroupedTree, "Enabled group mode when flat mode is enabled");
 
 		this.table.setUseGroupMode(false);

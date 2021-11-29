@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/m/Input",
 	"sap/base/util/ObjectPath",
-	"sap/ui/rta/internal/dttool/controls/DTToolListItem"
+	"sap/ui/rta/internal/dttool/controls/DTToolListItem",
+	"sap/ui/core/Core"
 ], function (
 	Table,
 	Column,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Select,
 	Input,
 	ObjectPath,
-	DTToolListItem
+	DTToolListItem,
+	oCore
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var fnCheckEnumVals = function (oComboBox, sKey) {
 				assert.ok(oComboBox.getItemByKey(sKey), "enum value not missing");
@@ -154,7 +156,7 @@ sap.ui.define([
 				]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oDTTLi0.getContent()[0].fireChange({value: newVals["DTTLi0"]});
 			oDTTLi1.getContent()[0].fireChange({selectedItem: new Item({key: newVals["DTTLi1"], value: newVals["DTTLi1"]})});

@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
 	qutils,
@@ -39,7 +40,8 @@ sap.ui.define([
 	KeyCodes,
 	deepEqual,
 	Log,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -128,7 +130,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			oYearPicker;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDRS.toggleOpen();
@@ -165,7 +167,7 @@ sap.ui.define([
 			oCalendar;
 
 		oDPS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDPS.toggleOpen();
@@ -222,11 +224,11 @@ sap.ui.define([
 			oYearPicker;
 
 		oDRS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDRS.toggleOpen();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oYearPicker = oDRS._getCalendar()._getYearPicker();
 
 		// Assert
@@ -243,7 +245,7 @@ sap.ui.define([
 		var oNewMaxDate = new Date(2014,11,31);
 		oDRS2.setMinDate(oNewMinDate);
 		oDRS2.setMaxDate(oNewMaxDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		bChange = false;
 		bValid = true;
@@ -279,7 +281,7 @@ sap.ui.define([
 
 		oDRS2.setMinDate();
 		oDRS2.setMaxDate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 	});
 
@@ -306,7 +308,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			oMonthPicker;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDRS.toggleOpen();
@@ -329,7 +331,7 @@ sap.ui.define([
 		oDRS.setDateValue(new Date(2001, 0, 1));
 		oDRS.setSecondDateValue(new Date(2001, 0, 10));
 		oDRS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act - user opens the picker when current input value is outside min/max range
 		oDRS.focus();
@@ -358,12 +360,12 @@ sap.ui.define([
 		var oDRS = new DateRangeSelection({
 			dateValue: new Date(2021, 1, 1)
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().getConfiguration().setLanguage("en-GB"); // ensure that there are 4 weeks
-		sap.ui.getCore().applyChanges();
+		oCore.getConfiguration().setLanguage("en-GB"); // ensure that there are 4 weeks
+		oCore.applyChanges();
 
 		//Act
 		qutils.triggerEvent("click", oDRS.getId() + "-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		try {
 			oDRS._getCalendar().getAggregation("month")[0]._selectDay(CalendarDate.fromLocalJSDate(new Date(2021, 1, 10)));
@@ -375,7 +377,7 @@ sap.ui.define([
 
 		//Cleanup
 		oDRS.destroy();
-		sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		oCore.getConfiguration().setLanguage("en-US");
 	});
 
 	QUnit.test("focused element after picker close", function(assert) {
@@ -386,7 +388,7 @@ sap.ui.define([
 		sap.ui.Device.support.touch = false;
 		sap.ui.Device.system.desktop = true;
 		qutils.triggerEvent("click", "DRS2-icon");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
@@ -537,7 +539,7 @@ sap.ui.define([
 			}).placeAt("qunit-fixture"),
 			oStartDate = new Date(2014, 1, 16),
 			oEndDate = new Date(2014, 1, 22);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oDateRangeSelection.toggleOpen();
@@ -548,7 +550,7 @@ sap.ui.define([
 				endDate: oEndDate
 			})
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oDateRangeSelection.getDateValue().getTime(), oStartDate.getTime(), "dateValue is at the beginning of the week");
@@ -577,7 +579,7 @@ sap.ui.define([
 			this.fnFireChangeEventSpy = sinon.spy(this.oDRS, "fireChangeEvent");
 
 			this.oDRS.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oDRS.destroy();
@@ -926,10 +928,10 @@ sap.ui.define([
 
 	QUnit.test("aria-roledescription", function (assert) {
 		var oDRS = new DateRangeSelection(),
-			sRoledescription = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+			sRoledescription = oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
 
 		oDRS.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oDRS._$input.attr("aria-roledescription"), sRoledescription, "Input's DateRange type is indicated in aria-roledescription");
 
@@ -948,7 +950,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -990,7 +992,7 @@ sap.ui.define([
 			this.sut = new DateRangeSelection();
 			this.sut.setModel(this.model);
 			this.sut.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.sut.destroy();
@@ -1001,17 +1003,17 @@ sap.ui.define([
 			return DateFormat.getDateInstance({
 				style: "medium",
 				interval: true
-			}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale());
+			}, oCore.getConfiguration().getFormatSettings().getFormatLocale());
 		},
 		getExpectedFormat: function (sFormat, bUTC) {
 			return DateFormat.getDateInstance({
 				format: sFormat,
 				interval: true,
 				UTC: bUTC
-			}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale());
+			}, oCore.getConfiguration().getFormatSettings().getFormatLocale());
 		},
 		getDefaultLocaleData: function() {
-			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			var oLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale();
 			return LocaleData.getInstance(oLocale);
 		}
 	});
@@ -1173,7 +1175,7 @@ sap.ui.define([
 
 				//Act
 				oDRS.$().find(".sapUiIcon").trigger("click"); //to open the calendar popoup
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				//Simulate the user has selected 10 - 20 Dec 2017.
 				oCalendar = oDRS._oPopup.getContent()[1];
 				var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
@@ -1221,7 +1223,7 @@ sap.ui.define([
 			}).placeAt('qunit-fixture');
 
 		oDSR4.setModel(oModel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		var aDates = oDSR4._parseValue("123");
@@ -1249,7 +1251,7 @@ sap.ui.define([
 			}).placeAt('qunit-fixture');
 
 		oDSR4.setModel(oModel);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oDSR4._getInputValue();
@@ -1282,11 +1284,11 @@ sap.ui.define([
 			oSpyLogError = this.spy(Log, "error");
 
 		oSut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oSut.setMinDate(oNewMinDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
@@ -1323,11 +1325,11 @@ sap.ui.define([
 			oSpyLogError = this.spy(Log, "error");
 
 		oSut.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oSut.setMaxDate(oNewMaxDate);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
@@ -1388,7 +1390,7 @@ sap.ui.define([
 				oDP2.setModel(oModelInvalid);
 				oDP1.placeAt("qunit-fixture");
 				oDP2.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				//Pre-Assert
 				assert.equal(oDP1.getValue().toString(), "20170101 - 20170120",
@@ -1422,7 +1424,7 @@ sap.ui.define([
 				//Act - set a valid model
 				oDP1.setModel(oModelValid);
 				oDP2.setModel(oModelValid);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				//Assert
 				assert.equal(oDP1.getValue().toString(), "20170120 - 20170130", "A valid DP1 property <value> should be always set");
@@ -1459,13 +1461,13 @@ sap.ui.define([
 
 		oDP1.placeAt("qunit-fixture");
 		oDP2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oDP1.setDateValue();
 		oDP1.setSecondDateValue();
 		oDP2.setValue();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to undefined");
@@ -1492,7 +1494,7 @@ sap.ui.define([
 			secondDateValue: new Date(2017, 11, 31, 23, 59, 59, 100)
 		});
 		oDateRangeSelector.placeAt('qunit-fixture');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oDateRangeSelector.getValue(), "2017-01-01 - 2017-12-31", "Date range is set correctly");
 

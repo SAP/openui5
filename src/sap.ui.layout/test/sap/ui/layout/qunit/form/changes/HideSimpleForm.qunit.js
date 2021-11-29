@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function(
 	HideSimpleForm,
 	SimpleForm,
@@ -23,7 +24,8 @@ sap.ui.define([
 	Input,
 	Toolbar,
 	mobileTitle,
-	Log
+	Log,
+	oCore
 ) {
 	"use strict";
 
@@ -40,7 +42,7 @@ sap.ui.define([
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},
@@ -92,7 +94,7 @@ sap.ui.define([
 				content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return "component---" + sString;},
@@ -290,7 +292,7 @@ sap.ui.define([
 				content : [this.oToolbar0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oToolbar1, this.oLabel10, this.oInput10, this.oLabel11, this.oInput11]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},
@@ -413,7 +415,7 @@ sap.ui.define([
 				content : [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oToolbar1, this.oLabel10, this.oInput10, this.oLabel11, this.oInput11]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oMockedComponent = {
 				createId: function (sString) {return sString;},

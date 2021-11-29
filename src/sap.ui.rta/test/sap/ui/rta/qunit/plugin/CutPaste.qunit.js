@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Page",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function(
 	Layer,
@@ -22,7 +23,8 @@ function(
 	OverlayRegistry,
 	DesignTime,
 	Page,
-	sinon
+	sinon,
+	oCore
 ) {
 	'use strict';
 
@@ -152,7 +154,7 @@ function(
 				content: [this.oVerticalLayout]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage]
@@ -247,7 +249,7 @@ function(
 				content: [this.oVerticalLayoutWoStableId]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage]

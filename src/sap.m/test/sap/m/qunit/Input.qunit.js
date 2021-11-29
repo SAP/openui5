@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/FormattedText",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/zIndex" // provides jQuery.fn.zIndex
 ], function(
 	qutils,
@@ -73,7 +74,8 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	FormattedText,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -143,12 +145,12 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			i1 = sap.ui.getCore().byId("i1");
-			i2 = sap.ui.getCore().byId("i2");
-			i3 = sap.ui.getCore().byId("i3");
-			i4 = sap.ui.getCore().byId("i4");
-			i5 = sap.ui.getCore().byId("i5");
-			i8 = sap.ui.getCore().byId("i8");
+			i1 = oCore.byId("i1");
+			i2 = oCore.byId("i2");
+			i3 = oCore.byId("i3");
+			i4 = oCore.byId("i4");
+			i5 = oCore.byId("i5");
+			i8 = oCore.byId("i8");
 		},
 		afterEach : function() {
 			i1 = null;
@@ -220,7 +222,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.invalidate();
@@ -251,7 +253,7 @@ sap.ui.define([
 
 	QUnit.test("Change", function(assert) {
 		i1.setValue("new");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		i1.attachChange(function() {
 			assert.equal(this.getValue(), "new", "New value in onChange");
 		});
@@ -271,7 +273,7 @@ sap.ui.define([
 			bChangeEventCalled = false;
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -355,7 +357,7 @@ sap.ui.define([
 		i4.setValueState("Warning");
 		i5.setValueState("Error");
 		i8.setValueState("Information");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(i4.$("content").hasClass('sapMInputBaseContentWrapperWarning'), true, "After new value state : Warning");
 		assert.equal(i5.$("content").hasClass('sapMInputBaseContentWrapperError'), true, "After new value state : Error");
@@ -384,7 +386,7 @@ sap.ui.define([
 
 		// set value help indicator to true
 		oInput.setShowValueHelp(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// screen reader announcement for F4, there should be at least one description
 		var describedById = oInput.getFocusDomRef().getAttribute("aria-describedby");
@@ -409,13 +411,13 @@ sap.ui.define([
 
 		// Act
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oValueHelpIcon = document.getElementById(oInput._getValueHelpIcon().sId);
 
 		// Assert
 		assert.strictEqual(oValueHelpIcon.getAttribute("role"), "button", "The value help icon role attribute is correctly set to 'button'");
-		assert.strictEqual(oValueHelpIcon.getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
+		assert.strictEqual(oValueHelpIcon.getAttribute("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON"), "The value help icon aria-label attribute is correctly set");
 
 		// Clean
 		oInput.destroy();
@@ -431,7 +433,7 @@ sap.ui.define([
 
 		// Act
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput._getValueHelpIcon().getSrc(), "sap-icon://arrow-down", "The value help icon is a custom one");
@@ -490,7 +492,7 @@ sap.ui.define([
 			oSpy = sinon.spy(oInput, "fireValueHelpRequest");
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._fireValueHelpRequest();
@@ -512,7 +514,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.setShowSuggestion(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		try {
@@ -520,7 +522,7 @@ sap.ui.define([
 		} catch (e) {
 			// continue
 		}
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(!oUpdateSpy.threw(), "No error was thrown.");
@@ -553,7 +555,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "t");
@@ -593,7 +595,7 @@ sap.ui.define([
 
 		// change event should be fired only when the input is on focus
 		oInput.onfocusin();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
 			var e = "";
@@ -606,7 +608,7 @@ sap.ui.define([
 
 			sEvents = "";
 			sValue = "";
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
 			if (bSubmitExpected) {
@@ -620,36 +622,36 @@ sap.ui.define([
 
 		checkSubmit("Enter pressed without change", true, false, "");
 		oInput.$("inner").val("hello");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		checkSubmit("Enter pressed after change", true, true, "hello");
 		oInput.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		checkSubmit("Enter pressed on disabled field", false, false);
 		oInput.setEnabled(true);
 		oInput.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		checkSubmit("Enter pressed on readonly field", false, false);
 		oInput.setEditable(true);
 		oInput.setShowValueHelp(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		checkSubmit("Enter pressed on field with value help", true, false, "hello");
 		oInput.setValueHelpOnly(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		checkSubmit("Enter pressed on field with value help only", false, false);
 		oInput.setShowValueHelp(false);
 		oInput.setValueHelpOnly(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Enter on Suggestions
 		if (Device.system.desktop) {
 			oInput.setShowSuggestion(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var aItemsAdded = [];
 			oInput.attachSuggest(function() {
@@ -661,12 +663,12 @@ sap.ui.define([
 					}
 				}
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val("abc").trigger("input");
 			this.clock.tick(300);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -696,14 +698,14 @@ sap.ui.define([
 			oInput.attachSuggest(function () {
 				oInput.addSuggestionItem(new ListItem({text: sSuggestion}));
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val(" ").trigger("input");
 			this.clock.tick(300);
 
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
 		}
@@ -721,7 +723,7 @@ sap.ui.define([
 
 		// place control
 		oInputVHO.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Value help event check
 		oInputVHO._$input.trigger("focus").trigger("tap");
@@ -742,7 +744,7 @@ sap.ui.define([
 
 		// place control
 		oInputVHO.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if valueHelpOnly class is set in addition to ValueHelp class
 		assert.ok(oInputVHO.$().hasClass("sapMInputVH") === false, "showValueHelp = false: Outer div has no additional CSS class\"sapMInputVH\"");
@@ -765,7 +767,7 @@ sap.ui.define([
 
 		// place control
 		oInputVHO1.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if valueHelpOnly class is set in addition to ValueHelp class
 		assert.ok(oInputVHO1.$().hasClass("sapMInputVHO") === false, "valueHelponly = false: Outer div has no additional CSS class\"sapMInputVHO\"");
@@ -787,7 +789,7 @@ sap.ui.define([
 
 		// place control
 		oInputVHO2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if valueHelpOnly class is set in addition to ValueHelp class
 		assert.ok(oInputVHO2.$().hasClass("sapMInputVHO") === false, "editable = false: Outer div has no additional CSS class\"sapMInputVHO\"");
@@ -809,7 +811,7 @@ sap.ui.define([
 
 		// place control
 		oInputVHO3.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// check if valueHelpOnly class is set in addition to ValueHelp class
 		assert.ok(oInputVHO3.$().hasClass("sapMInputVHO") === false, "enabled = false: Outer div has no additional CSS class\"sapMInputVHO\"");
@@ -850,7 +852,7 @@ sap.ui.define([
 			valueLiveUpdate: true
 		});
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "a");
@@ -887,7 +889,7 @@ sap.ui.define([
 		var oGetSpy = sinon.spy(oInput, "_getTypedInValue");
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._bDoTypeAhead = true;
 		qutils.triggerEvent("focus", oInput.getFocusDomRef());
@@ -928,7 +930,7 @@ sap.ui.define([
 		$Input;
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$Input = oInput.$();
 
 		assert.strictEqual($Input.length, 1, "Before destroy input is rendered in DOM");
@@ -973,7 +975,7 @@ sap.ui.define([
 		oInput.bindAggregation("suggestionItems", "/", new Item({text: "{name}"}));
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("De").trigger("input");
@@ -991,7 +993,7 @@ sap.ui.define([
 				type: "Text",
 				showSuggestion: true
 			});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSpy = sinon.spy(oInput, "_openSuggestionsPopover");
 		// Arrange
@@ -1024,7 +1026,7 @@ sap.ui.define([
 			oSpy = this.spy(oInput, "_openSuggestionPopup");
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -1059,7 +1061,7 @@ sap.ui.define([
 					sorter: [new Sorter('group', false, true)]
 				}
 			}).setModel(oModel).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.List"), "The container is a sap.m.List");
@@ -1081,7 +1083,7 @@ sap.ui.define([
 				header: new Label({text: "{columnLabel}"})
 			})
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer().isA("sap.m.Table"), "The container is a sap.m.Table");
@@ -1112,7 +1114,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content"),
 			oOpenerSpy = this.spy(oInput, "_openSuggestionsPopover");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._openSuggestionPopup();
@@ -1163,7 +1165,7 @@ sap.ui.define([
 			}
 		});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput6._$input.trigger("focus").val("abc").trigger("input");
@@ -1196,7 +1198,7 @@ sap.ui.define([
 			oSpy = this.spy();
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.attachSuggest(oSpy);
 
@@ -1239,7 +1241,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -1272,7 +1274,7 @@ sap.ui.define([
 		this.stub(ObjectPool.prototype, "returnObject", function(){});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++) {
@@ -1324,7 +1326,7 @@ sap.ui.define([
 
 		oInput.placeAt("content");
 		oNextInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -1384,7 +1386,7 @@ sap.ui.define([
 		oInput.setModel(oModel);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
@@ -1396,7 +1398,7 @@ sap.ui.define([
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
 		// set focus into the suggestion popup
-		var oLink = sap.ui.getCore().byId("link-sInput-0");
+		var oLink = oCore.byId("link-sInput-0");
 		oLink.focus();
 		this.clock.tick(100);
 
@@ -1412,7 +1414,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopup1,
 			aItems,
@@ -1429,12 +1431,12 @@ sap.ui.define([
 				}
 			}
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("abc").trigger("input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.clock.tick(300);
 		oPopup1 = oInput._getSuggestionsPopover().getPopover();
@@ -1485,7 +1487,7 @@ sap.ui.define([
 			showSuggestion: true
 		});
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
@@ -1605,7 +1607,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopup, // is lazy loaded
 			i,
@@ -1687,7 +1689,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1759,7 +1761,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1810,7 +1812,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.ontap({
 			target: {
@@ -1867,7 +1869,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -1885,7 +1887,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tabular Suggestions on Desktop", function(assert){
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		var oInput = new Input({
 			width: "100px",
@@ -1968,11 +1970,11 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// this tests calling the setter of showSuggestion after input is rendered
 		oInput.setShowSuggestion(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2112,11 +2114,11 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// this tests calling the setter of showSuggestion after input is rendered
 		oInput.setShowSuggestion(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2324,7 +2326,7 @@ sap.ui.define([
 		oInput.setModel(tableModel);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("Prod").trigger("input");
@@ -2361,7 +2363,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick();
 
 		// Act
@@ -2388,7 +2390,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Tabular Suggestion on Phone", function(assert){
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m");
 
 		var oSystem = {
 				desktop: false,
@@ -2480,7 +2482,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
@@ -2655,7 +2657,7 @@ sap.ui.define([
 		};
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// custom filter for limit field
 		oInput.setFilterFunction(function(sValue, oColumnListItem) {
@@ -2784,7 +2786,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -2888,7 +2890,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		var oRemovedRow = oInput.getSuggestionRows()[0];
@@ -2981,7 +2983,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._$input.trigger("focus").val("P").trigger("input");
@@ -3010,7 +3012,7 @@ sap.ui.define([
 
 		// Arrange
 		oInput9.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(oInput9.getProperty("separateSuggestions"), false, "The separateSuggestions property initially set to false");
@@ -3047,7 +3049,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._$input.trigger("focus").val("25").trigger("input");
 		this.clock.tick(400);
@@ -3082,7 +3084,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._$input.trigger("focus");
 		this.clock.tick(400);
@@ -3195,10 +3197,10 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setShowSuggestion(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().isA("sap.m.Toolbar"), "Suggestion Popup has Toolbar footer");
@@ -3299,7 +3301,7 @@ sap.ui.define([
 		oInput.setShowValueHelp(true);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setShowSuggestion(true);
 
@@ -3314,7 +3316,7 @@ sap.ui.define([
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3335,11 +3337,11 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oInput.setShowSuggestion(true); // set show suggestion after items are added
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer(), "List should be created when enabling suggestions");
@@ -3387,7 +3389,7 @@ sap.ui.define([
 		});
 		var fnTriggerSuggestSpy = sinon.spy(oInput, "_triggerSuggest");
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("te").trigger("input");
@@ -3448,18 +3450,18 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Trigger false
 		oInput.setShowSuggestion(!oInput.getShowSuggestion());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(this._oButtonToolbar, "Toolbar ref should be cleaned up");
 		assert.notOk(this._oShowMoreButton, "Button ref should be cleaned up");
 
 		// Trigger true
 		oInput.setShowSuggestion(!oInput.getShowSuggestion());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(true, "No exception should be thrown");
 	});
@@ -3485,13 +3487,13 @@ sap.ui.define([
 			}).setModel(oModel);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.focus();
 		oInput._$input.val("Tex");
 		oInput._triggerSuggest("Tex");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// Assert
@@ -3549,7 +3551,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3576,7 +3578,7 @@ sap.ui.define([
 		var fnOnChangeSpy = this.spy(InputBase.prototype, 'onChange');
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._$input.trigger("focus").val("It").trigger("input");
@@ -3601,7 +3603,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		oInput._bDoTypeAhead = true;
 		oInput._createSuggestionPopupContent();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._$input.trigger("focus").val("it").trigger("input");
@@ -3612,7 +3614,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSetSelectionItemSpy.firstCall.args[1], true, "Second parameter was 'true' indicating the selection was made by interaction.");
@@ -3630,14 +3632,14 @@ sap.ui.define([
 		oInput.placeAt("content");
 		oInput._bDoTypeAhead = true;
 		oInput._createSuggestionPopupContent(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._$input.trigger("focus").val("Auch").trigger("input");
 		oInput._getFilteredSuggestionItems("Auch");
 		oInput._openSuggestionsPopover();
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSetSelectionRowSpy.callCount, 1, "'setSelectionRow' was called once.");
@@ -3661,7 +3663,7 @@ sap.ui.define([
 		oInput.setTextFormatMode("KeyValue");
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setSelectedKey("2");
 		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
@@ -3689,25 +3691,25 @@ sap.ui.define([
 			});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "", "Initially when the input has selected key but no suggestion items it's value has to be empty");
 
 		oInput.setModel(oModelData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
 
 
 		oInput.setSelectedKey("a3");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "", "After setting new selected key which is not in the list items the value should be empyt");
 
 		oInput.setValue("New value");
 
 		oInput.setSelectedKey("");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "", "After the selected key to empty string, the value should be cleared");
 
@@ -3715,33 +3717,33 @@ sap.ui.define([
 
 		oInput.setValue('');
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeAllSuggestionItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing all items");
 
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.destroySuggestionItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after destroying all items");
 
 		var oItem = new Item({text: "a3", key: "a3"});
 		oInput.addSuggestionItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeSuggestionItem(oItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing item");
 
@@ -3757,7 +3759,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
 
@@ -3868,7 +3870,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.clock.tick(50);
 
@@ -3885,7 +3887,7 @@ sap.ui.define([
 		oInput.setTextFormatMode(InputTextFormatMode.ValueKey);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setSelectedItem(oInput.getSuggestionItems()[1]);
 
@@ -4070,7 +4072,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnCallback);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
@@ -4092,7 +4094,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._$input.trigger("focus").val("Au").trigger("input");
 		this.clock.tick(300);
@@ -4116,7 +4118,7 @@ sap.ui.define([
 		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._$input.trigger("focus").val("Au").trigger("input");
 		this.clock.tick(300);
@@ -4153,7 +4155,7 @@ sap.ui.define([
 		oInput.setTextFormatMode(InputTextFormatMode.ValueKey);
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.setSelectedRow(oInput.getSuggestionRows()[1]);
 
@@ -4171,14 +4173,14 @@ sap.ui.define([
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to true.");
 
 		// Act
 		oInput.setEnableTableAutoPopinMode(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oInput._getSuggestionsTable().getAutoPopinMode(), "The table should have autopopin set to false.");
@@ -4195,12 +4197,12 @@ sap.ui.define([
 		});
 		oInputWithDes.setDescription("EUR");
 		oInputWithDes.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInputWithDes.$().find(".sapMInputDescriptionText").text(), "EUR", "Input description is EUR");
 
 		oInputWithDes.setFieldWidth("100px");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oInputWithDes.$('descr').text(), "EUR", "Description ID is set to the correct span");
 		assert.equal(oInputWithDes.getDomRef('descr').id, oInputWithDes.$('inner').attr('aria-describedby'), "Inner input aria-describedby attribute is correct");
@@ -4214,7 +4216,7 @@ sap.ui.define([
 		//Arrange
 		var oInput = new Input({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"}),
 			oInfo = oInput.getAccessibilityInfo(),
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oRb = oCore.getLibraryResourceBundle("sap.m"),
 			sEmptyDescriptionText = oRb.getText("INPUTBASE_VALUE_EMPTY");
 
 		// Assert
@@ -4265,7 +4267,7 @@ sap.ui.define([
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -4288,7 +4290,7 @@ sap.ui.define([
 
 		oInputWithoutSuggestions.placeAt("content");
 		oInputWithSuggestions.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), undefined, "aria-haspopup should not be  presented.");
@@ -4296,7 +4298,7 @@ sap.ui.define([
 
 		//Act
 		oInputWithoutSuggestions.setShowSuggestion(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oInputWithoutSuggestions._$input.attr("aria-haspopup"), "listbox", "aria-haspopup should have value 'listbox'.");
@@ -4311,12 +4313,12 @@ sap.ui.define([
 		var oInputWithSuggestions = createInputWithSuggestions();
 
 		oInputWithSuggestions.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInputWithSuggestions._openSuggestionsPopover();
 		this.clock.tick();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oInputWithSuggestions.getFocusDomRef().getAttribute("aria-describedby"), null, "The sugg. results acc node is not referenced in the Input");
@@ -4327,7 +4329,7 @@ sap.ui.define([
 
 	QUnit.test("General - Input suggestions description", function(assert) {
 		// Arrange
-		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m"),
 			oInput = new Input({
 				showSuggestion: true,
 				suggestionItems: [
@@ -4343,7 +4345,7 @@ sap.ui.define([
 			});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.onfocusin();
@@ -4379,16 +4381,16 @@ sap.ui.define([
 		});
 
 		oInputValueHelpOnly.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		qutils.triggerTouchEvent("tap", oInputValueHelpOnly._$input[0]);
 		this.clock.tick(1000);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDialog.close();
 		this.clock.tick(1000);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.equal(document.activeElement.id, oInputValueHelpOnly._$input[0].id, 'Active element is the input');
@@ -4411,7 +4413,7 @@ sap.ui.define([
 					oSelectionItem
 				]
 			}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
@@ -4419,7 +4421,7 @@ sap.ui.define([
 		// Act
 		oInput._sProposedItemText = "Bulgaria";
 		oInput.onsaptabnext();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedItem(), oSelectionItem.getId(), "Focusleave should have triggered item selection");
@@ -4442,7 +4444,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		var oBtn = new Button().placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Arrange
 		oInput._createSuggestionPopupContent();
@@ -4452,16 +4454,16 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._sProposedItemText = "Item 1";
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.TAB);
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oBtn.focus();
 		this.clock.tick(300);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		assert.strictEqual(fnSpy.callCount, 1, "Suggestion item select should be fired once.");
@@ -4479,7 +4481,7 @@ sap.ui.define([
 					new Item({text: "Item 3"})
 				]
 			}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Arrange
 		oInput._createSuggestionPopupContent();
@@ -4512,7 +4514,7 @@ sap.ui.define([
 		var oAccDomRef;
 
 		oInputWithValueState.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
 
 		//Assert
@@ -4530,7 +4532,7 @@ sap.ui.define([
 		});
 
 		oInputWithValueState.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-describedby"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
@@ -4547,7 +4549,7 @@ sap.ui.define([
 		});
 
 		oInputWithValueState.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.strictEqual(oInputWithValueState.getFocusDomRef().getAttribute("aria-errormessage"), oInputWithValueState.getValueStateMessageId() + "-sr", "Input has static aria-describedby reference pointing to the correct ID");
@@ -4564,7 +4566,7 @@ sap.ui.define([
 		var oAccDomRef;
 
 		oInputWithValueState.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInputWithValueState.openValueStateMessage();
 		this.clock.tick();
@@ -4573,7 +4575,7 @@ sap.ui.define([
 		// Simulate dynamic update of the value state by the user by changing the value state while focused
 		oInputWithValueState.focus();
 		oInputWithValueState.setValueState("Information");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oAccDomRef = document.getElementById(oInputWithValueState.getValueStateMessageId() + "-sr");
 
 		//Assert
@@ -4712,7 +4714,7 @@ sap.ui.define([
 			});
 
 		var oPage = new Page("myPage", {content: oInput}).setModel(oData, "local").placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("New").trigger("input");
@@ -4720,7 +4722,7 @@ sap.ui.define([
 
 		var oClonedInput = oInput.clone();
 		oPage.addContent(oClonedInput);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(oClonedInput.getAggregation("suggestionRows").length, 5, "The suggestions rows should be cloned correctly");
@@ -4753,7 +4755,7 @@ sap.ui.define([
 			}
 		}).placeAt('content');
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnChangeCallback = this.spy();
 		oInput.attachChange(fnChangeCallback);
@@ -4764,7 +4766,7 @@ sap.ui.define([
 
 		oValueHelpIcon.firePress();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(2000);
 
 		assert.equal(fnChangeCallback.callCount, 0, "change event is not fired");
@@ -4774,7 +4776,7 @@ sap.ui.define([
 
 		oDialog.open();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
@@ -4814,7 +4816,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeKeydown = new jQuery.Event("keydown", { which: KeyCodes.P });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -4897,7 +4899,7 @@ sap.ui.define([
 			oPopover = oInput._getSuggestionsPopover(),
 			oPopupInput = oPopover.getInput();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oPopover.getPopover().open();
@@ -4919,7 +4921,7 @@ sap.ui.define([
 		// arrange
 		var oInput = new Input().placeAt("content");
 		var oSpy = this.spy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.attachChange(oSpy);
 
@@ -4928,7 +4930,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, "G");
 		qutils.triggerKeyup(oInput._$input, "G");
 		oInput.onsapenter();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
@@ -4936,7 +4938,7 @@ sap.ui.define([
 		// Act
 		oSpy.reset();
 		oInput.onsapenter();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
@@ -4948,7 +4950,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
 		oInput.onsapenter();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "change event has been fired");
@@ -4959,7 +4961,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
 		oInput.onsapenter();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 0, "change event has NOT been fired for the same value twice.");
@@ -4977,19 +4979,19 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
 		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("G").trigger("input");
 		qutils.triggerKeyup(oInput._$input, "G");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
 		oInput._$input.val("").trigger("input");
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible when value is empty");
 
@@ -5001,12 +5003,12 @@ sap.ui.define([
 			showClearIcon: true,
 			value: "Dryanovo"
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible when value is not empty");
 
 		oInput.setShowClearIcon(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon should not be visible after property change");
 
@@ -5019,7 +5021,7 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput._oClearButton.getVisible(), "clear icon should be visible after presetting API");
 
@@ -5032,7 +5034,7 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
@@ -5045,7 +5047,7 @@ sap.ui.define([
 		assert.notOk(oInput._oClearButton, "clear icon should not be created by default");
 
 		oInput.setShowClearIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._oClearButton.getVisible(), "clear icon is not visible");
 
@@ -5057,12 +5059,12 @@ sap.ui.define([
 			value: "test"
 		 }).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._oClearButton, "dialog's clear icon should be created");
 
 		oInput.setShowClearIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput._oClearButton.getVisible(), "dialog's clear icon should be visible after presetting API");
 
@@ -5075,12 +5077,12 @@ sap.ui.define([
 			showValueHelp: true
 		 }).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput.getAggregation("_endIcon")[0], oInput._getValueHelpIcon(), "Value help Icon should be inserted first");
 
 		oInput.setShowClearIcon(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput.getAggregation("_endIcon")[1], oInput._getValueHelpIcon(), "Value help Icon should be second");
 		assert.strictEqual(oInput.getAggregation("_endIcon")[0], oInput._oClearButton, "Clear Icon should be inserted first");
@@ -5099,7 +5101,7 @@ sap.ui.define([
 			liveChange: liveChangeHandler
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._oClearButton.firePress();
 
@@ -5115,12 +5117,12 @@ sap.ui.define([
 			showValueHelp: true
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oInput._getValueHelpIcon().getVisible(), "Icon should be visible");
 
 		oInput.setShowValueHelp(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(oInput._getValueHelpIcon().getVisible(), "Icon should not be visible");
 	});
@@ -5137,7 +5139,7 @@ sap.ui.define([
 			showClearIcon: true
 		 }).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput._openSuggestionsPopover();
 		this.clock.tick(300);
@@ -5172,7 +5174,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
@@ -5202,7 +5204,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 
@@ -5233,7 +5235,7 @@ sap.ui.define([
 			]
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		// act
@@ -5287,7 +5289,7 @@ sap.ui.define([
 				new Item({text: "Italy"})
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Arrange - open the suggestions
 		oInput._$input.trigger("focus").val("Germ").trigger("input");
@@ -5332,7 +5334,7 @@ sap.ui.define([
 		var oPopover = oInput._getSuggestionsPopover(),
 			oPopupInput = oPopover.getInput();
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act
 		oPopover.getPopover().open();
@@ -5375,10 +5377,10 @@ sap.ui.define([
 			liveChange: fnLiveChange
 		}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oInput.onsapright();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
 
@@ -5461,7 +5463,7 @@ sap.ui.define([
 		});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
 		oInput._getSuggestionsPopover().getPopover().open();
@@ -5525,18 +5527,18 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._getSuggestionsPopover().getPopover().open();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		oPopupInput = oInput._getSuggestionsPopover().getInput();
 		oPopupInput.setValue("My");
 		oPopupInput._bDoTypeAhead = true;
 		oPopupInput.focus();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oPopupInput._handleTypeAhead();
 
@@ -5545,7 +5547,7 @@ sap.ui.define([
 
 		// clean up
 		oInput._getSuggestionsPopover().getPopover().close();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		oInput.destroy();
@@ -5569,7 +5571,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -5639,7 +5641,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -5712,7 +5714,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (this.inputWithSuggestions._oValueStateMessage._oPopup) {
@@ -5840,7 +5842,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			if (this.oInput._oValueStateMessage._oPopup) {
@@ -5882,7 +5884,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		/* When value stage message containing a sap.m.FormattedText aggregation is set
 		it should override the standart plain value state text */
@@ -5928,7 +5930,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput.onfocusin();
 		this.clock.tick();
@@ -5959,7 +5961,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput.focus();
 		this.clock.tick();
@@ -5992,11 +5994,11 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput.getFocusDomRef().focus();
 		this.clock.tick();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFakeEvent = {
 			relatedTarget: this.oInput.getFormattedValueStateText().getControls()[0].getDomRef()
@@ -6031,7 +6033,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput.focus();
 		this.clock.tick();
@@ -6059,7 +6061,7 @@ sap.ui.define([
 		// Act
 		this.oInput.setValueState("Error");
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Open sugg. popover with the initialy set formatted text value state
 		// to switch the FormattedText aggregation to the value state header
@@ -6083,7 +6085,7 @@ sap.ui.define([
 		});
 
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -6110,10 +6112,10 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -6146,7 +6148,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
@@ -6179,7 +6181,7 @@ sap.ui.define([
 		// Act
 		this.oInput.setValueState("Information");
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oInput._$input.trigger("focus").val("o").trigger("input");
 		this.clock.tick(300);
@@ -6235,7 +6237,7 @@ sap.ui.define([
 			this.oInput.bindAggregation("suggestionItems", "/", new Item({text: "{userid}"}));
 
 			this.oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oInput.destroy();
@@ -6308,7 +6310,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
 
 		assert.ok(true, 'there is no endless loop');
@@ -6347,7 +6349,7 @@ sap.ui.define([
 				sorter: [new Sorter('group', false, true)],
 				template: new Item({text: "{name}", key: "{key}"})
 			});
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach : function() {
@@ -6435,7 +6437,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		// go to the header group item
@@ -6444,7 +6446,7 @@ sap.ui.define([
 		// act
 		// go to the next list item
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
@@ -6490,7 +6492,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oItem
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
@@ -6502,7 +6504,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle().substr(0, 3), "User's input is kept.");
@@ -6525,7 +6527,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oItem
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), oItem.getTitle(), "The title is autocompleted in the Input.");
@@ -6538,7 +6540,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "", "The input is reset");
@@ -6562,7 +6564,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: oGroupItem
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "User's input is not reset.");
@@ -6573,7 +6575,7 @@ sap.ui.define([
 			previousItem: null,
 			newItem: null
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "The input value should not be reset");
@@ -6604,7 +6606,7 @@ sap.ui.define([
 					}
 				}).setModel(oModel).placeAt("content");
 
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 			},
 			afterEach: function () {
@@ -6641,7 +6643,7 @@ sap.ui.define([
 	QUnit.test("Should show all the items", function (assert) {
 		// Act
 		this.oInput.showItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.clock.tick(500);
 
@@ -6654,7 +6656,7 @@ sap.ui.define([
 		this.oInput.showItems(function (sValue, oItem) {
 			return oItem.getText() === "A Item 1";
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 1, "Show only the matching items");
@@ -6700,7 +6702,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach: function () {
@@ -6719,7 +6721,7 @@ sap.ui.define([
 
 		// Act
 		this.oInput.showItems();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
@@ -6738,7 +6740,7 @@ sap.ui.define([
 		this.oInput.showItems(function (sValue, oItem) {
 			return oItem.getCells()[0].getText() === "A Item 1";
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
@@ -6759,10 +6761,10 @@ sap.ui.define([
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oLabel = new Label({text: "Label text", labelFor: this.oInput.getId()});
-		this.oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this.oRb = oCore.getLibraryResourceBundle("sap.m");
 
 		this.oInput._openSuggestionsPopover();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oDialog = this.oInput._getSuggestionsPopover().getPopover();
 		oCustomHeader = oDialog.getCustomHeader();
@@ -6793,7 +6795,7 @@ sap.ui.define([
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSuggPopover = this.oInput._getSuggestionsPopover();
 		oCloseButton = oSuggPopover.getPopover().getCustomHeader().getContentRight()[0];
@@ -6820,7 +6822,7 @@ sap.ui.define([
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oSuggPopover = this.oInput._getSuggestionsPopover();
 		oOKButton = oSuggPopover.getPopover().getBeginButton();
@@ -6865,7 +6867,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -6888,7 +6890,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -6911,7 +6913,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -6934,7 +6936,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -6956,7 +6958,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "", "selectedKey should remain");
@@ -6978,7 +6980,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oReadOnlyInput = new Input({
 			selectedKey: "{/selectedKey}",
@@ -6991,7 +6993,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7016,7 +7018,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7039,7 +7041,7 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSelectedKey(), "2", "selectedKey should remain");
@@ -7061,12 +7063,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -7089,12 +7091,12 @@ sap.ui.define([
 		})
 			.setModel(this.oModel)
 			.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -7118,16 +7120,16 @@ sap.ui.define([
 			})
 				.setModel(oModel)
 				.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.focus();
 		qutils.triggerCharacterInput(oInput._$input, "T", "This is a user input");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oModel.setData(this.oData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		// Assert
@@ -7142,7 +7144,7 @@ sap.ui.define([
 		// Setup
 		var oInput = new Input({
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput._$input.trigger("focus").val("t").trigger("input");
@@ -7155,7 +7157,7 @@ sap.ui.define([
 		oInput._$input.trigger("focus").trigger(jQuery.Event("keydown", { which: KeyCodes.BACKSPACE })).val("").trigger("input");
 		qutils.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
 		qutils.triggerKeyup(oInput._$input, KeyCodes.BACKSPACE);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInvalidationSpy.callCount, 0, "setValue is not triggered on BACKSPACE");
@@ -7185,7 +7187,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getSuggestionItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
@@ -7218,7 +7220,7 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oData));
 		oInput.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -7274,7 +7276,7 @@ sap.ui.define([
 
 		oInput.setModel(new JSONModel(oData));
 		oInput.placeAt('content');
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
@@ -7333,7 +7335,7 @@ sap.ui.define([
 			var oInput = new Input({maxLength: mSettings.maxLength, value: mSettings.value});
 
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Assert
 			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
@@ -7354,7 +7356,7 @@ sap.ui.define([
 			var fnSetValueSpy = sinon.spy(oInput, "setValue");
 
 			oInput.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var fnRerenderSpy = sinon.spy(oInput, "onAfterRendering");
 
 			// Act
@@ -7381,12 +7383,12 @@ sap.ui.define([
 		var oInput = new Input({});
 
 		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oInput.setMaxLength(5);
 		oInput.setValue("12345678");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getValue(), "12345", "Value should be cut to 5 sybmols");
@@ -7394,21 +7396,21 @@ sap.ui.define([
 		// Act
 		oInput.setValue("12345678");
 		oInput.setMaxLength(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getValue(), "12345", "Value is not updated properly, because maxLength was set after the value and it was cut with the previous maxLength value");
 
 		// Act
 		oInput.setValue("12345678");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getValue(), "12345678", "Now value is updated properly");
 
 		// Act
 		oInput.setMaxLength(0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oInput.getValue(), "12345678", "maxLength is ignored when its value is 0");
@@ -7464,7 +7466,7 @@ sap.ui.define([
 				]
 			})).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		var oSuggPopover = oInput._getSuggestionsPopover();
@@ -7475,7 +7477,7 @@ sap.ui.define([
 		oPopupInput.setValue("te");
 		oPopupInput.fireLiveChange({value: "", newValue: "te"});
 		oInput._fireValueHelpRequest();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.clock.tick(500);
 
 		// Cleanup

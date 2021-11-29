@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
 	"sap/m/WheelSliderContainer",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	Device,
 	Item,
 	WheelSlider,
 	WheelSliderContainer,
-	jQuery
+	jQuery,
+	oCore
 ) {
 		"use strict";
 
@@ -85,7 +87,7 @@ sap.ui.define([
 				oSetPropertySpy = this.spy(this.oWSC, "setProperty");
 
 			this.oWSC.setLabelText(sLabelText);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText), true, "setProperty is called with right arguments");
 		});
@@ -95,7 +97,7 @@ sap.ui.define([
 				oSetPropertySpy = this.spy(this.oWSC, "setProperty");
 
 			this.oWSC.setWidth(sWidth);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.equal(oSetPropertySpy.calledWithExactly("width", sWidth), true, "setProperty is called with right arguments");
 			assert.equal(this.oWSC.$().outerWidth() + "px", sWidth, "width is properly set");
@@ -106,7 +108,7 @@ sap.ui.define([
 				oSetPropertySpy = this.spy(this.oWSC, "setProperty");
 
 			this.oWSC.setHeight(sHeight);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.equal(oSetPropertySpy.calledWithExactly("height", sHeight), true, "setProperty is called with right arguments");
 			assert.equal(this.oWSC.$().outerHeight() + "px", sHeight, "height is properly set");
@@ -183,7 +185,7 @@ sap.ui.define([
 				});
 
 				this.oWSC.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.oWSC.destroy();
@@ -200,7 +202,7 @@ sap.ui.define([
 			oSecondSlider.setIsExpanded(true);
 			oSecondSlider.focus();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oSliderFocusSpy = this.spy(WheelSlider.prototype, "focus");
 
@@ -222,7 +224,7 @@ sap.ui.define([
 			oSecondSlider.setIsExpanded(true);
 			oSecondSlider.focus();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oSliderFocusSpy = this.spy(WheelSlider.prototype, "focus");
 
@@ -244,7 +246,7 @@ sap.ui.define([
 			oSecondSlider.setIsExpanded(true);
 			oSecondSlider.focus();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oSliderFocusSpy = this.spy(WheelSlider.prototype, "focus");
 
@@ -266,7 +268,7 @@ sap.ui.define([
 			oSecondSlider.setIsExpanded(true);
 			oSecondSlider.focus();
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oSliderFocusSpy = this.spy(WheelSlider.prototype, "focus");
 

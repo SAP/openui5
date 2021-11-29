@@ -1,9 +1,10 @@
 /*global QUnit */
 
 sap.ui.define([
-    "sap/m/Text",
-	"sap/ui/core/hyphenation/Hyphenation"
-], function(Text, Hyphenation) {
+	"sap/m/Text",
+	"sap/ui/core/hyphenation/Hyphenation",
+	"sap/ui/core/Core"
+], function(Text, Hyphenation, oCore) {
 	"use strict";
 
 	QUnit.module("Hyphenation", {
@@ -16,7 +17,7 @@ sap.ui.define([
 				wrappingType: 'Hyphenated'
 			});
 			this.text.placeAt('content');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 	});
 

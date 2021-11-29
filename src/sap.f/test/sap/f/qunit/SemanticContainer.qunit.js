@@ -1,13 +1,15 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/library',
-	"./SemanticUtil"
+	"sap/ui/core/library",
+	"./SemanticUtil",
+	"sap/ui/core/Core"
 ],
 function (
 	$,
 	coreLibrary,
-	SemanticUtil
+	SemanticUtil,
+	oCore
 ) {
 	"use strict";
 
@@ -830,7 +832,7 @@ function (
 
 		// arrange
 		oShareMenuBtn.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");

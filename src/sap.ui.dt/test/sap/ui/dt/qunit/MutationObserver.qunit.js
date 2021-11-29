@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DOMUtil",
 	"sap/base/util/includes",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	MutationObserver,
 	DesignTime,
@@ -19,7 +20,8 @@ sap.ui.define([
 	VerticalLayout,
 	DOMUtil,
 	includes,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -279,7 +281,7 @@ sap.ui.define([
 				height: "1200px"
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Makes the area where DT will be active more prominent
 			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("outline", "solid");
@@ -353,7 +355,7 @@ sap.ui.define([
 				content: [this.oVerticalLayoutInner]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Makes the area where DT will be active more prominent
 			jQuery(this.oVerticalLayoutInner.getDomRef()).css("outline", "solid");
@@ -391,7 +393,7 @@ sap.ui.define([
 		QUnit.test("when outerPanel has a scrollbar and all Elements are registered for mutations and the button is modified", function(assert) {
 			var fnDone = assert.async();
 			this.oOuterPanel.setHeight("150px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oMutationObserver.registerHandler(this.oOuterPanel.getId(), function () {
 				// First mutation is triggered by qunit
@@ -414,7 +416,7 @@ sap.ui.define([
 		QUnit.test("when outerPanel has a scrollbar, is registered and is modified", function(assert) {
 			var fnDone = assert.async();
 			this.oOuterPanel.setHeight("150px");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oMutationObserver.registerHandler(this.oOuterPanel.getId(), function () {
 				// First mutation is triggered by qunit
@@ -447,7 +449,7 @@ sap.ui.define([
 				content: [this.oButton1]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// Makes the area where DT will be active more prominent
 			jQuery(this.oVerticalLayout0.getDomRef()).css("outline", "solid");

@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/ValueHelpPanel",
 	"sap/ui/mdc/field/DefineConditionPanel",
 	"sap/ui/model/type/Integer",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ], function(
 		qutils,
 		ConditionModel,
@@ -15,7 +16,8 @@ sap.ui.define([
 		ValueHelpPanel,
 		DefineConditionPanel,
 		IntegerType,
-		Button
+		Button,
+		oCore
 		) {
 	"use strict";
 
@@ -55,7 +57,7 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "triggerSearch");
 		oValueHelpPanel.setFilterbar(oFilterBar);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oValueHelpPanel._oFilterbar != null, "filterbar added");
 
@@ -80,7 +82,7 @@ sap.ui.define([
 		var oTable = new Button("B1");
 		oValueHelpPanel.setTable(oTable);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oValueHelpPanel._oTable != null, true, "table added");
 		var oIconTabBar = oValueHelpPanel.byId("iconTabBar");
@@ -106,7 +108,7 @@ sap.ui.define([
 		oValueHelpPanel.placeAt("content");
 		var oDefineConditions = new DefineConditionPanel("DCP");
 		oValueHelpPanel.setDefineConditions(oDefineConditions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oValueHelpPanel._oDefineConditionPanel != null, true, "defineCondition added");
 		var oIconTabBar = oValueHelpPanel.byId("iconTabBar");
@@ -131,7 +133,7 @@ sap.ui.define([
 									   Condition.createCondition("GE", ["B"]),
 									   Condition.createItemCondition("X", "Test")
 									   ]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oIconTabBar = oValueHelpPanel.byId("iconTabBar");
 		assert.notOk(oIconTabBar.hasStyleClass("sapMdcNoHeader"), "Header of IconTabBar visible");
@@ -148,7 +150,7 @@ sap.ui.define([
 		assert.ok(oTokenizerPanel.getHeaderText().search("\\(3\\)") >= 0, "item count for Tokenizer title");
 
 		oHeader.setSelectedItem(aItems[1]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.notOk(!!oTable.getDomRef(), "Table not rendered");
 		assert.ok(!!oDefineConditions.getDomRef(), "DefineConditions rendered");
@@ -179,7 +181,7 @@ sap.ui.define([
 		oValueHelpPanel.setModel(oConditionModel, "cm");
 		oValueHelpPanel.setFormatOptions(oFormatOptions);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oValueHelpPanel.setShowTokenizer(false);
 		oValueHelpPanel.setShowTokenizer(true);
@@ -198,10 +200,10 @@ sap.ui.define([
 	QUnit.test("remove all tokens", function(assert) {
 
 		oValueHelpPanel.setConditions([
-		                               Condition.createCondition("EQ", ["1", "Text"]),
-		                               Condition.createCondition("EQ", ["2"])
-		                               ]);
-		sap.ui.getCore().applyChanges();
+									   Condition.createCondition("EQ", ["1", "Text"]),
+									   Condition.createCondition("EQ", ["2"])
+									   ]);
+		oCore.applyChanges();
 
 		var oButton = oValueHelpPanel.byId("removeAllBtn");
 		oButton.firePress();

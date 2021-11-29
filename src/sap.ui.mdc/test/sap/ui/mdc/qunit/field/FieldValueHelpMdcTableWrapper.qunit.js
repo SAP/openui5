@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/mdc/FilterBar"
+	"sap/ui/mdc/FilterBar",
+	"sap/ui/core/Core"
 ], function (
 		FieldValueHelpMdcTableWrapper,
 		FieldValueHelpDelegate,
@@ -23,7 +24,8 @@ sap.ui.define([
 		Column,
 		Text,
 		JSONModel,
-		FilterBar
+		FilterBar,
+		oCore
 	) {
 	"use strict";
 
@@ -175,7 +177,7 @@ sap.ui.define([
 				   {text: "Item 2", key: "I2", additionalText: "Text 2"},
 				   {text: "X-Item 3", key: "I3", additionalText: "Text 3"}]
 			});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 	};
 
 	var _teardown = function() {

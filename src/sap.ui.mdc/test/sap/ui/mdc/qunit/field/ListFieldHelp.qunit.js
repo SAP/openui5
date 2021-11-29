@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/List",
-	"sap/m/DisplayListItem"
+	"sap/m/DisplayListItem",
+	"sap/ui/core/Core"
 ], function (
 		qutils,
 		ListFieldHelp,
@@ -43,7 +44,8 @@ sap.ui.define([
 		mLibrary,
 		Popover,
 		List,
-		DisplayListItem
+		DisplayListItem,
+		oCore
 	) {
 	"use strict";
 
@@ -92,7 +94,7 @@ sap.ui.define([
 		iOpen++;
 	};
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	/* first test it without the Field to prevent loading of popup etc. */
 	/* use dummy control to simulate Field */
@@ -103,7 +105,7 @@ sap.ui.define([
 
 		oField.placeAt("content");
 		oField2.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	var _teardown = function() {
@@ -529,10 +531,10 @@ sap.ui.define([
 		beforeEach: function() {
 			oFieldHelp = new ListFieldHelp("F1-H", {
 				items: [
-				        new ListFieldHelpItem("item1", {text: "Item1", additionalText: "Text1", key: "I1", groupKey: "G1"}),
-				        new ListFieldHelpItem("item2", {text: "Item2", additionalText: "Text2", key: "I2", groupKey: "G2", groupText: "Group 2"}),
-				        new ListFieldHelpItem("item3", {text: "Item3", additionalText: "Text3", key: "I3", groupKey: "G1"})
-				        ],
+						new ListFieldHelpItem("item1", {text: "Item1", additionalText: "Text1", key: "I1", groupKey: "G1"}),
+						new ListFieldHelpItem("item2", {text: "Item2", additionalText: "Text2", key: "I2", groupKey: "G2", groupText: "Group 2"}),
+						new ListFieldHelpItem("item3", {text: "Item3", additionalText: "Text3", key: "I3", groupKey: "G1"})
+						],
 				disconnect: _myDisconnectHandler,
 				select: _mySelectHandler,
 				navigate: _myNavigateHandler,
@@ -640,8 +642,8 @@ sap.ui.define([
 		beforeEach: function() {
 			oModel = new JSONModel({
 				items:[{text: "Item1", key: "I1", additionalText: "Text1", groupKey: "G1", groupText: null},
-				       {text: "Item2", key: "I2", additionalText: "Text2", groupKey: "G2", groupText: "Group 2"},
-				       {text: "Item3", key: "I3", additionalText: "Text3", groupKey: "G1", groupText: null}]
+					   {text: "Item2", key: "I2", additionalText: "Text2", groupKey: "G2", groupText: "Group 2"},
+					   {text: "Item3", key: "I3", additionalText: "Text3", groupKey: "G1", groupText: null}]
 			});
 			var oTemplate = new ListFieldHelpItem({
 				key: "{key}",

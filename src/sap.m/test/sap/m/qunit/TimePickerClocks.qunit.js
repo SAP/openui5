@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/m/TimePickerClocks",
 	"sap/m/TimePickerInternals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
-], function(TimePickerClocks, TimePickerInternals, KeyCodes, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+], function(TimePickerClocks, TimePickerInternals, KeyCodes, jQuery, oCore) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -12,7 +13,7 @@ sap.ui.define([
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPC.destroy();
@@ -28,7 +29,7 @@ sap.ui.define([
 			oSetupControlsSpy = this.spy(this.oTPC, "_createControls");
 
 		this.oTPC.setLocaleId(sLocale);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(this.oTPC._sAM, sExpectedAM, "_sAM property should be set to proper locale AM");
 		assert.equal(this.oTPC._sPM, sExpectedPM, "_sPM property should be set to proper locale PM");
@@ -42,7 +43,7 @@ sap.ui.define([
 			oSetupControlsSpy = this.spy(this.oTPC, "_createControls");
 
 		this.oTPC.setDisplayFormat(sDisplayFormat);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("displayFormat", sDisplayFormat, true), true, "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -54,7 +55,7 @@ sap.ui.define([
 			iStep = 23;
 
 		this.oTPC.setMinutesStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("minutesStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -66,7 +67,7 @@ sap.ui.define([
 			iStep = 23;
 
 		this.oTPC.setSecondsStep(iStep);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(oSetPropertySpy.calledWithExactly("secondsStep", iStep, true), "setProperty is called with right arguments");
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
@@ -77,7 +78,7 @@ sap.ui.define([
 			oSetPropertySpy = this.spy(this.oTPC, "setProperty");
 
 		this.oTPC.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
@@ -90,7 +91,7 @@ sap.ui.define([
 		this.stub(this.oTPC, "_parseValue").returns(sExpectedDate);
 
 		this.oTPC.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
 	});
@@ -101,7 +102,7 @@ sap.ui.define([
 
 		this.oTPC.setValueFormat("HH:mm:ss");
 		this.oTPC.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
@@ -115,7 +116,7 @@ sap.ui.define([
 
 		this.oTPC.setValueFormat("HH:mm:ss");
 		this.oTPC.setValue(sValue);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, true), true, "_setTimeValues is called with parsed date");
 	});
@@ -125,7 +126,7 @@ sap.ui.define([
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPC.destroy();
@@ -508,7 +509,7 @@ sap.ui.define([
 			this.oTPC._setTimeValues(new Date(2017, 7, 8, 22, 58, 58));
 
 			this.oTPC.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oFakeEvent = {
 				target: {
 					classList: {
@@ -551,24 +552,24 @@ sap.ui.define([
 	QUnit.test("Clicking on button changes the clock", function (assert) {
 		var sId = this.oTPC.getId();
 
-		sap.ui.getCore().byId(sId + "-btnH").focus();
-		sap.ui.getCore().applyChanges();
-		assert.ok(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is visible after clicking the Hours button");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after clicking the Hours button");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after clicking the Hours button");
+		oCore.byId(sId + "-btnH").focus();
+		oCore.applyChanges();
+		assert.ok(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is visible after clicking the Hours button");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after clicking the Hours button");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after clicking the Hours button");
 
-		sap.ui.getCore().byId(sId + "-btnM").focus();
-		sap.ui.getCore().applyChanges();
+		oCore.byId(sId + "-btnM").focus();
+		oCore.applyChanges();
 
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after clicking the Minutes button");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after clicking the Minutes button");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after clicking the Minutes button");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after clicking the Minutes button");
+		assert.ok(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after clicking the Minutes button");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after clicking the Minutes button");
 
-		sap.ui.getCore().byId(sId + "-btnS").focus();
-		sap.ui.getCore().applyChanges();
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after clicking the Seconds button");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after clicking the Seconds button");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after clicking the Seconds button");
+		oCore.byId(sId + "-btnS").focus();
+		oCore.applyChanges();
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after clicking the Seconds button");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after clicking the Seconds button");
+		assert.ok(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after clicking the Seconds button");
 	});
 
 	QUnit.test("Arrows actions (covers arrows and mousewheel)", function (assert) {
@@ -606,7 +607,7 @@ sap.ui.define([
 
 		//change to minutes clock
 		this.oTPC.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent(KeyCodes.ARROW_UP));
@@ -634,7 +635,7 @@ sap.ui.define([
 
 		//change to seconds clock
 		this.oTPC.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent(KeyCodes.ARROW_UP));
@@ -764,47 +765,47 @@ sap.ui.define([
 		this.oTPC.setValueFormat("hh:mm:ss a");
 		this.oTPC.setDisplayFormat("hh:mm:ss a");
 		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("1"));
 		this.oTPC.onkeydown(this.fakeEvent("1"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getHoursClock().getSelectedValue(), 11, "Hours are set properly");
 		assert.equal(parseInt(this.oTPC._getHoursButton().getText()), 11, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering hours value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after entering hours value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering hours value");
+		assert.ok(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("2"));
 		this.oTPC.onkeydown(this.fakeEvent("2"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getMinutesClock().getSelectedValue(), 22, "Minutes are set properly");
 		assert.equal(parseInt(this.oTPC._getMinutesButton().getText()), 22, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
+		assert.ok(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("3"));
 		this.oTPC.onkeydown(this.fakeEvent("3"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getSecondsClock().getSelectedValue(), 33, "Seconds are set properly");
 		assert.equal(parseInt(this.oTPC._getSecondsButton().getText()), 33, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
+		assert.ok(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent(KeyCodes.P));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getFormatButton().getSelectedKey(), "pm", "AM/PM button is set properly");
@@ -824,46 +825,46 @@ sap.ui.define([
 		this.oTPC.setValueFormat("hh:mm:ss a");
 		this.oTPC.setDisplayFormat("hh:mm:ss a");
 		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("1"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getHoursClock().getSelectedValue(), 1, "Hours are set properly");
 		assert.equal(parseInt(this.oTPC._getHoursButton().getText()), 1, "... and Button text shows the same value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is still visible after entering hours value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering hours value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
+		assert.ok(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is still visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
 
 		// switch to the next clock
 		this.oTPC.onkeydown(this.fakeEvent(":"));
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("2"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getMinutesClock().getSelectedValue(), 2, "Minutes are set properly");
 		assert.equal(parseInt(this.oTPC._getMinutesButton().getText()), 2, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is stil visible after entering minutes value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
+		assert.ok(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is stil visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering minutes value");
 
 		// switch to the next clock
 		this.oTPC.onkeydown(this.fakeEvent(":"));
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("3"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getSecondsClock().getSelectedValue(), 3, "Seconds are set properly");
 		assert.equal(parseInt(this.oTPC._getSecondsButton().getText()), 3, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
+		assert.ok(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
 
 		oFinalDate = this.oTPC.getTimeValues();
 
@@ -886,7 +887,7 @@ sap.ui.define([
 		this.oTPC.setDisplayFormat("HH:mm:ss");
 		this.oTPC.setSupport2400(true);
 		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oHoursClock = this.oTPC._getHoursClock();
 		oMinutesClock = this.oTPC._getMinutesClock();
@@ -898,19 +899,19 @@ sap.ui.define([
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("2"));
 		this.oTPC.onkeydown(this.fakeEvent("4"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oHoursClock.getSelectedValue(), 24, "Hours are set to 24");
 		assert.equal(parseInt(oHoursButton.getText()), 24, "... and Button text shows the same value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is visible after entering hours value");
+		assert.ok(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is visible after entering hours value");
 		assert.ok(oHoursClock.getEnabled(), "Hours clock is enabled");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering hours value");
 		assert.notOk(oMinutesClock.getEnabled(), "Minutes clock is disabled");
 		assert.notOk(oMinutesButton.getEnabled(), "Minutes button is disabled");
 		assert.equal(oMinutesClock.getSelectedValue(), 0, "Minutes clock value is 00");
 		assert.equal(parseInt(oMinutesButton.getText()), 0, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
 		assert.notOk(oSecondsClock.getEnabled(), "Seconds clock is disabled");
 		assert.notOk(oSecondsButton.getEnabled(), "Seconds button is disabled");
 		assert.equal(oSecondsClock.getSelectedValue(), 0, "Seconds clock value is 00");
@@ -919,19 +920,19 @@ sap.ui.define([
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("2"));
 		this.oTPC.onkeydown(this.fakeEvent("2"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(oHoursClock.getSelectedValue(), 22, "Hours are set properly");
 		assert.equal(parseInt(oHoursButton.getText()), 22, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering hours value");
 		assert.ok(oHoursClock.getEnabled(), "Hours clock is enabled");
 		assert.ok(oHoursButton.getEnabled(), "Hours button is enabled");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after entering hours value");
+		assert.ok(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after entering hours value");
 		assert.ok(oMinutesClock.getEnabled(), "Minutes clock is enabled");
 		assert.equal(oMinutesClock.getSelectedValue(), 10, "Minutes clock value is proper");
 		assert.equal(parseInt(oMinutesButton.getText()), 10, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
 		assert.ok(oSecondsClock.getEnabled(), "Seconds clock is enabled");
 		assert.ok(oSecondsButton.getEnabled(), "Seconds button is enabled");
 		assert.equal(oSecondsClock.getSelectedValue(), 11, "Seconds clock value is proper");
@@ -946,40 +947,40 @@ sap.ui.define([
 		this.oTPC.setValueFormat("hh:mm:ss");
 		this.oTPC.setDisplayFormat("hh:mm:ss");
 		this.oTPC._setTimeValues(new Date(2017, 7, 8, 9, 10, 11));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("7"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getHoursClock().getSelectedValue(), 7, "Hours are set properly");
 		assert.equal(parseInt(this.oTPC._getHoursButton().getText()), 7, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering hours value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after entering hours value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering hours value");
+		assert.ok(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is visible after entering hours value");
+		assert.notOk(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is not visible after entering hours value");
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("7"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getMinutesClock().getSelectedValue(), 7, "Minutes are set properly");
 		assert.equal(parseInt(this.oTPC._getMinutesButton().getText()), 7, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
+		assert.ok(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent("7"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oTPC._getSecondsClock().getSelectedValue(), 7, "Seconds are set properly");
 		assert.equal(parseInt(this.oTPC._getSecondsButton().getText()), 7, "... and Button text shows the same value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
-		assert.notOk(sap.ui.getCore().byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
-		assert.ok(sap.ui.getCore().byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockH").hasStyleClass("sapMTPCActive"), "Hours clock is not visible after entering minutes value");
+		assert.notOk(oCore.byId(sId + "-clockM").hasStyleClass("sapMTPCActive"), "Minutes clock is not visible after entering minutes value");
+		assert.ok(oCore.byId(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after entering minutes value");
 
 		oFinalDate = this.oTPC.getTimeValues();
 
@@ -997,7 +998,7 @@ sap.ui.define([
 
 		this.oTPC.setMinutesStep(5);
 		this.oTPC.setSecondsStep(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oMinutesClock = this.oTPC._getMinutesClock();
 		oSecondsClock = this.oTPC._getSecondsClock();
@@ -1061,7 +1062,7 @@ sap.ui.define([
 
 		this.oTPC.setMinutesStep(5);
 		this.oTPC.setSecondsStep(10);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oMinutesClock = this.oTPC._getMinutesClock();
 		oSecondsClock = this.oTPC._getSecondsClock();
@@ -1070,7 +1071,7 @@ sap.ui.define([
 
 		//change to minutes clock
 		this.oTPC.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent(KeyCodes.PAGE_UP, false, false, true, false));
@@ -1098,7 +1099,7 @@ sap.ui.define([
 
 		//change to seconds clock
 		this.oTPC.onkeydown(this.fakeEvent(":"));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		this.oTPC.onkeydown(this.fakeEvent(KeyCodes.PAGE_DOWN, false, false, true, true));
@@ -1134,7 +1135,7 @@ sap.ui.define([
 			});
 
 			this.oTPC.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPC.destroy();
@@ -1170,7 +1171,7 @@ sap.ui.define([
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oTPC.destroy();

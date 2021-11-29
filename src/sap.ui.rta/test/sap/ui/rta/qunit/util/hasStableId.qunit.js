@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/List",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ],
 function (
 	hasStableId,
@@ -24,7 +25,8 @@ function (
 	JSONModel,
 	List,
 	XMLView,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -60,7 +62,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -108,7 +110,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -175,7 +177,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
 
@@ -240,7 +242,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
 
@@ -305,7 +307,7 @@ function (
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
 

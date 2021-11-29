@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/Core"
 ],
 function(
 	jQuery,
 	DesignTime,
 	TabHandling,
 	Button,
-	VerticalLayout
+	VerticalLayout,
+	oCore
 ) {
 	"use strict";
 
@@ -27,7 +29,7 @@ function(
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oTabHandling = new TabHandling();
 
@@ -45,7 +47,7 @@ function(
 				oOverlay.setEditable(true);
 				oOverlay.setMovable(true);
 				oOverlay.setSelectable(true);
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.OverlayRoot = jQuery("#overlay-container");
 				done();
 			}.bind(this));

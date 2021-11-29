@@ -316,7 +316,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			oBlock.attachEvent("viewInit", function(oEvent) {
 
 				// Act
-				sap.ui.getCore().byId(sCollapsedViewId).destroy();
+				Core.byId(sCollapsedViewId).destroy();
 
 				// Check
 				assert.strictEqual(oBlock._oPromisedViews[sCollapsedViewId], undefined, "the view promise is cleaned up");

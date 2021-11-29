@@ -1,13 +1,13 @@
 /*global QUnit */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	"use strict";
 
 	QUnit.module("Library", {});
 
 	QUnit.test("load", function(assert) {
 		var done = assert.async();
-		var oPromise = sap.ui.getCore().loadLibrary("sap.ui.table", {async: true});
+		var oPromise = oCore.loadLibrary("sap.ui.table", {async: true});
 		oPromise.then(function() {
 			assert.ok(!!sap.ui.table, "Table Lib loaded");
 			done();

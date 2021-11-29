@@ -100,7 +100,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oApp = new App();
 			this.oApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -125,7 +125,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oApp = new App();
 			this.oApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -141,7 +141,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sBackroungImageSrc);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Arrange
 		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
@@ -169,7 +169,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImgSrc);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Arrange
 		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
@@ -188,7 +188,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImgSrc);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Arrange
 		$oAppImageHolder = oApp.$().find('.sapUiGlobalBackgroundImage').get(0);
@@ -208,7 +208,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -225,7 +225,7 @@ sap.ui.define([
 
 		// Act
 		oApp.setBackgroundImage(sImageSrc);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Check
 		oAppDom = getBgDomElement(oApp);
@@ -237,7 +237,7 @@ sap.ui.define([
 			this.oApp = new App();
 			this.oSpy = this.spy(this.oApp, "_adjustParentsHeight");
 			this.oApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oApp.destroy();
@@ -260,7 +260,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oApp = new App({ visible: false });
 			this.oApp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oApp.destroy();

@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Button,
 	VerticalLayout,
 	DesignTime,
 	OverlayRegistry,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -26,7 +28,7 @@ sap.ui.define([
 					this.oButton2 = new Button("button2")
 				]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]

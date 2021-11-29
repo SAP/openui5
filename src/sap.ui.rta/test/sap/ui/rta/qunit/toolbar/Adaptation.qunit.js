@@ -55,12 +55,12 @@ sap.ui.define([
 			this.oGetCurrentRangeStub = sandbox.stub(Device.media, "getCurrentRange");
 
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
 
 			document.getElementById("qunit-fixture").style.width = "1600px";
 			this.oToolbar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			return this.oToolbar._pFragmentLoaded;
 		},
@@ -187,7 +187,7 @@ sap.ui.define([
 	QUnit.module("Versions Model binding & formatter for the restore button", {
 		before: function () {
 			this.oToolbarControlsModel = createToolbarControlsModel();
-			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 		},
 		after: function() {
 			this.oToolbar.destroy();
@@ -248,7 +248,7 @@ sap.ui.define([
 				displayedVersion: sap.ui.fl.Versions.Draft
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
-			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
@@ -308,7 +308,7 @@ sap.ui.define([
 				displayedVersion: sap.ui.fl.Versions.Original
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
-			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
 			this.oToolbar = new Adaptation({
 				textResources: this.oTextResources
 			});
@@ -443,7 +443,7 @@ sap.ui.define([
 	QUnit.module("Activate Version Dialog", {
 		before: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
@@ -498,7 +498,7 @@ sap.ui.define([
 	QUnit.module("Versions Button", {
 		before: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
@@ -581,7 +581,7 @@ sap.ui.define([
 	QUnit.module("Version selection", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
@@ -608,7 +608,7 @@ sap.ui.define([
 
 	QUnit.module("Formatters", {
 		beforeEach: function () {
-			this.oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			this.oMessageBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 			this.oToolbarControlsModel = createToolbarControlsModel();
 			this.oToolbar = new Adaptation({
 				textResources: this.oMessageBundle
@@ -748,7 +748,7 @@ sap.ui.define([
 	QUnit.module("Setting AppVariant properties", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta"),
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER
@@ -843,7 +843,7 @@ sap.ui.define([
 		QUnit.module("Changes list popover", {
 			before: function () {
 				this.oToolbar = new Adaptation({
-					textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+					textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 				});
 				this.oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
@@ -901,7 +901,7 @@ sap.ui.define([
 	QUnit.module("Setting different modes", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
-				textResources: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+				textResources: Core.getLibraryResourceBundle("sap.ui.rta")
 			});
 			this.oVersionsModel = new JSONModel({
 				versioningEnabled: true,

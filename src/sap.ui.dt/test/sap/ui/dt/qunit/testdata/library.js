@@ -6,6 +6,7 @@
  * Initialization Code and shared classes of test library sap.ui.testLibrary.
  */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/library"
 ],
 function () {

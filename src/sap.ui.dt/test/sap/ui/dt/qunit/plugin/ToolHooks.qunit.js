@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ],
-function (
+function(
 	ElementOverlay,
 	ToolHooks,
 	Button,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -20,7 +22,7 @@ function (
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,

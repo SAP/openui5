@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/util/showMessageBox"
+	"sap/ui/rta/util/showMessageBox",
+	"sap/ui/core/Core"
 ],
 function (
-	showMessageBox
+	showMessageBox,
+	oCore
 ) {
 	"use strict";
 
@@ -17,7 +19,7 @@ function (
 				id: "messagebox"
 			});
 
-			var oMessageBoxDialog = sap.ui.getCore().byId("messagebox");
+			var oMessageBoxDialog = oCore.byId("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function (oEvent) {
 				assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);
@@ -35,7 +37,7 @@ function (
 				id: "messagebox"
 			});
 
-			var oMessageBoxDialog = sap.ui.getCore().byId("messagebox");
+			var oMessageBoxDialog = oCore.byId("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function (oEvent) {
 				assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);
@@ -57,7 +59,7 @@ function (
 				id: "messagebox"
 			});
 
-			var oMessageBoxDialog = sap.ui.getCore().byId("messagebox");
+			var oMessageBoxDialog = oCore.byId("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function (oEvent) {
 				assert.strictEqual(oEvent.getSource().$("cont").text(), sMessage);

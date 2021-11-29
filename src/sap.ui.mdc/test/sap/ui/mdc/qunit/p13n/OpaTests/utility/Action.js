@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/mdc/integration/testlibrary/p13n/Actions",
 	"./actions/PressKey",
-	"sap/m/MessageBox"
-], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions, PressKey, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/ui/core/Core"
+], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, TestLibActions, PressKey, MessageBox, oCore) {
 	"use strict";
 
 	/**
@@ -38,7 +39,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
+						text: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog"
@@ -57,7 +58,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MSGBOX_OK")
+						text: oCore.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog",
@@ -79,7 +80,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MSGBOX_CANCEL")
+						text: oCore.getLibraryResourceBundle("sap.m").getText("MSGBOX_CANCEL")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog",
@@ -196,7 +197,7 @@ sap.ui.define([
 			var sKind = oSettings.kind;
 			var fSuccess = oSettings.success;
 
-			var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			var MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
 			var sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 			var aMatchers = [];
 

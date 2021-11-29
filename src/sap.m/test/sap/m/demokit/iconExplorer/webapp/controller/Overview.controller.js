@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/ToggleButton",
 	"sap/m/library",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Core"
 ], function(
 	BaseController,
 	IconPool,
@@ -25,7 +26,8 @@ sap.ui.define([
 	ToggleButton,
 	mobileLibrary,
 	Parameters,
-	Fragment
+	Fragment,
+	oCore
 ) {
 	"use strict";
 
@@ -375,7 +377,7 @@ sap.ui.define([
 			var oConfigs = this.getOwnerComponent()._oFontConfigs;
 			var sDownloadURI = oConfigs[sFontName].downloadURI || oConfigs[sFontName].fontURI;
 
-			if (sap.ui.getCore().getConfiguration().getTheme() === "sap_horizon") {
+			if (oCore.getConfiguration().getTheme() === "sap_horizon") {
 				sDownloadURI = oConfigs[sFontName].downloadURIV5 || sDownloadURI;
 			}
 

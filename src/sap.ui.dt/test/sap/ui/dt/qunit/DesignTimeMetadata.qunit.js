@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	sinon,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Title,
 	Button,
 	Label,
-	Input
+	Input,
+	oCore
 ) {
 	"use strict";
 
@@ -263,7 +265,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oButton.destroy();
@@ -378,7 +380,7 @@ sap.ui.define([
 			});
 
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oSimpleForm.destroy();

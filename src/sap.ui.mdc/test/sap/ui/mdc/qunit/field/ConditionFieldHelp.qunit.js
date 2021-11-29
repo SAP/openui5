@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/Toolbar",
-	"sap/m/ToolbarSpacer"
+	"sap/m/ToolbarSpacer",
+	"sap/ui/core/Core"
 ], function (
 		qutils,
 		ConditionFieldHelp,
@@ -31,7 +32,8 @@ sap.ui.define([
 		Popover,
 		Button,
 		Toolbar,
-		ToolbarSpacer
+		ToolbarSpacer,
+		oCore
 	) {
 	"use strict";
 
@@ -64,7 +66,7 @@ sap.ui.define([
 		iOpen++;
 	};
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	/* first test it without the Field to prevent loading of popup etc. */
 	/* use dummy control to simulate Field */
@@ -85,7 +87,7 @@ sap.ui.define([
 
 		oField.addDependent(oFieldHelp);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	};
 
 	var _teardown = function() {

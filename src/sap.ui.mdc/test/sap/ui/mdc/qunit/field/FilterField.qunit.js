@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
-	"sap/ui/events/KeyCodes"
-	], function (
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function (
 		jQuery,
 		qutils,
 		FilterField,
@@ -25,8 +26,9 @@ sap.ui.define([
 		FilterOperatorUtil,
 		BaseType,
 		FieldBaseDelegate,
-		KeyCodes
-		) {
+		KeyCodes,
+		oCore
+	) {
 	"use strict";
 
 	var oFilterField;
@@ -69,7 +71,7 @@ sap.ui.define([
 	QUnit.test("default rendering", function(assert) {
 
 		oFilterField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFilterField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -77,7 +79,7 @@ sap.ui.define([
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
 		assert.equal(oFilterField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
-		var oFieldHelp = sap.ui.getCore().byId(oFilterField._sDefaultFieldHelp);
+		var oFieldHelp = oCore.byId(oFilterField._sDefaultFieldHelp);
 		assert.ok(oFieldHelp && oFieldHelp instanceof FieldValueHelp, "FieldValueHelp used");
 
 	});
@@ -90,7 +92,7 @@ sap.ui.define([
 				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			oFilterField.destroy();
@@ -147,11 +149,11 @@ sap.ui.define([
 	QUnit.test("clenaup wrong input for single value", function(assert) {
 
 		var fnDone = assert.async();
-		sap.ui.getCore().getMessageManager().registerObject(oFilterField, true); // to test valueState
+		oCore.getMessageManager().registerObject(oFilterField, true); // to test valueState
 		oFilterField.setDataType("sap.ui.model.type.Integer");
 		oFilterField.setMaxConditions(1);
 		oFilterField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFilterField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -191,10 +193,10 @@ sap.ui.define([
 	QUnit.test("clenaup wrong input for multi value", function(assert) {
 
 		var fnDone = assert.async();
-		sap.ui.getCore().getMessageManager().registerObject(oFilterField, true); // to test valueState
+		oCore.getMessageManager().registerObject(oFilterField, true); // to test valueState
 		oFilterField.setDataType("sap.ui.model.type.Date");
 		oFilterField.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oFilterField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];

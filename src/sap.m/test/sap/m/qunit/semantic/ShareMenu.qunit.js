@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/semantic/SendEmailAction",
 	"sap/m/semantic/SendMessageAction",
 	"sap/m/ActionSheet",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/core/Core"
 ], function(
 	coreLibrary,
 	qutils,
@@ -24,7 +25,8 @@ sap.ui.define([
 	SendEmailAction,
 	SendMessageAction,
 	ActionSheet,
-	Button
+	Button,
+	oCore
 ) {
 	"use strict";
 
@@ -46,7 +48,7 @@ sap.ui.define([
 
 		// Act
 		oDetail.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oShareMenuBtn.getAriaHasPopup(), AriaHasPopup.Menu, "aria-haspopup is as expected");

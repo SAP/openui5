@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/m/library",
 	"sap/base/Log",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/core/Core"
 ], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary,
-			Log, Text) {
+			Log, Text, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -30,7 +31,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -74,7 +75,7 @@ sap.ui.define([
 		this.oHeaderContainer.addContent(new Label({
 			text: "test"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		this.oHeaderContainer.removeAllContent();
 		this.oHeaderContainer.addContent(new Label({
@@ -99,7 +100,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -114,7 +115,7 @@ sap.ui.define([
 
 	QUnit.test("DOM Structure should exist for vertical header container", function (assert) {
 		this.oHeaderContainer.setOrientation("Vertical");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.getElementById("headerContainer"), "HeaderContainer was rendered successfully");
 		assert.ok(document.getElementById("headerContainer-scroll-area"), "HeaderContainer scroll area was rendered successfully");
 	});
@@ -128,7 +129,7 @@ sap.ui.define([
 		//Arrange
 		this.oHeaderContainer.setOrientation(Orientation.Vertical);
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(document.getElementById("headerContainer").style.width, "auto");
 		assert.equal(document.getElementById("headerContainer").style.height, "100%");
@@ -139,7 +140,7 @@ sap.ui.define([
 		this.oHeaderContainer.setWidth("31%");
 		this.oHeaderContainer.setHeight("32%");
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(document.getElementById("headerContainer").style.width, "31%");
 		assert.equal(document.getElementById("headerContainer").style.height, "32%");
@@ -149,7 +150,7 @@ sap.ui.define([
 		//Arrange
 		var sRole = this.oHeaderContainer.$().attr( "role" );
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(sRole, "list", "HeaderContainer role is of type list");
 	});
@@ -158,7 +159,7 @@ sap.ui.define([
 		//Arrange
 		var sRole = this.oHeaderContainer.aDelegates[0].oDelegate.oDomRef.getAttribute("role");
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(sRole, "list", "scrollContainer role is of type list");
 	});
@@ -167,7 +168,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -181,7 +182,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(oHeaderContainer, "onAfterRendering");
 		//Act
 		oHeaderContainer.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.strictEqual(oSpy.callCount, 1, "HeaderContainer was rendered only once");
 		//Cleanup
@@ -257,7 +258,7 @@ sap.ui.define([
 			itemsConfiguration.forEach(function (i) {
 				this.oHeaderContainer.addContent(i === this.SMALL ? this.oItemSmall.clone() : this.oItemLarge.clone());
 			}.bind(this));
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		testOverflowVisibility: function (assert, itemsConfiguration, invisibleBeforeScroll, invisibleAfterScroll) {
 			var done = assert.async();
@@ -302,7 +303,7 @@ sap.ui.define([
 		this.oHeaderContainer.attachScroll(function (oEvent) {
 			assert.ok(oEvent, "Scroll event is fired");
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oHeaderContainer._scroll();
 	});
 
@@ -397,7 +398,7 @@ sap.ui.define([
 					]
 				});
 				this.oHeaderContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oHeaderContainer.destroy();
@@ -524,7 +525,7 @@ sap.ui.define([
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
 			sinon.stub(this.oHeaderContainer, "_handleFocusAgain");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			//Act
 			this.oHeaderContainer._oItemNavigation.fireEvent("FocusAgain");
 			//Assert
@@ -544,7 +545,7 @@ sap.ui.define([
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
 			sinon.stub(this.oHeaderContainer, "_handleFocusAgain");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			//Act
 			this.oHeaderContainer._oItemNavigation.fireEvent("FocusAgain");
 			//Assert
@@ -571,7 +572,7 @@ sap.ui.define([
 					]
 				});
 				this.oHeaderContainer.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function () {
 				this.oHeaderContainer.destroy();
@@ -665,7 +666,7 @@ sap.ui.define([
 				]
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -744,7 +745,7 @@ sap.ui.define([
 				]
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -785,7 +786,7 @@ sap.ui.define([
 				]
 			});
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oBox0.destroy();
@@ -819,7 +820,7 @@ sap.ui.define([
 		this.oHeaderContainer.destroyContent();
 		//Assert
 		assert.strictEqual(this.oHeaderContainer.getContent().length, 0, "Content aggregation has been removed");
-		assert.notOk(sap.ui.getCore().byId(sContentId), "The content control has been destroyed");
+		assert.notOk(oCore.byId(sContentId), "The content control has been destroyed");
 	});
 
 	QUnit.test("HeaderContainer removeContent is properly overwritten", function (assert) {
@@ -838,7 +839,7 @@ sap.ui.define([
 		//Arrange
 		this.oHeaderContainer.addContent(this.oBox1);
 		this.oHeaderContainer.addContent(this.oBox2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Act
 		var aRemovedContent = this.oHeaderContainer.removeAllContent();
 		//Assert
@@ -877,7 +878,7 @@ sap.ui.define([
 			Device.system.desktop = false;
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			Device.system.phone = false;
@@ -950,7 +951,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -1021,7 +1022,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -1037,7 +1038,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text());
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 
@@ -1058,7 +1059,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text());
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 
@@ -1081,7 +1082,7 @@ sap.ui.define([
 			}));
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 
@@ -1098,7 +1099,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oHeaderContainer = new HeaderContainer("headerContainer");
 			this.oHeaderContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oHeaderContainer.destroy();
@@ -1114,7 +1115,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text("testID" + i));
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
@@ -1124,7 +1125,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID0").destroy();
+		oCore.byId("testID0").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1136,7 +1137,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID1").destroy();
+		oCore.byId("testID1").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1148,7 +1149,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID2").destroy();
+		oCore.byId("testID2").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1170,7 +1171,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text("testID" + i));
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
@@ -1180,7 +1181,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID4").destroy();
+		oCore.byId("testID4").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1192,7 +1193,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID3").destroy();
+		oCore.byId("testID3").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1204,7 +1205,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID2").destroy();
+		oCore.byId("testID2").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1226,7 +1227,7 @@ sap.ui.define([
 			this.oHeaderContainer.addContent(new Text("testID" + i));
 		}
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
@@ -1236,7 +1237,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID0").destroy();
+		oCore.byId("testID0").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1248,7 +1249,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID2").destroy();
+		oCore.byId("testID2").destroy();
 
 		this.oHeaderContainer.rerender();
 
@@ -1260,7 +1261,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		sap.ui.getCore().byId("testID4").destroy();
+		oCore.byId("testID4").destroy();
 
 		this.oHeaderContainer.rerender();
 

@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Button,
 	VerticalLayout,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -31,7 +33,7 @@ sap.ui.define([
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -78,7 +80,7 @@ sap.ui.define([
 				content: oButton
 			});
 			oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime.addPlugin(this.oPlugin);
 			this.iRegisterElementOverlayCalls = 0;
@@ -340,7 +342,7 @@ sap.ui.define([
 
 			assert.equal(
 				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
-				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"then default text is returned in the menu item"
 			);
 		});
@@ -411,7 +413,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();
@@ -450,7 +452,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();

@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/initial/_internal/StorageUtils"
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	XMLHelper,
@@ -25,13 +26,14 @@ sap.ui.define([
 	AddSimpleFormGroup,
 	sinon,
 	Utils,
-	StorageUtils
+	StorageUtils,
+	oCore
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	sap.ui.getCore().loadLibrary("sap.ui.fl"); // preload lib for the spy
+	oCore.loadLibrary("sap.ui.fl"); // preload lib for the spy
 
 	var sAddedSimpleFormGroupId = "rootView--id-1504610195259-77";
 

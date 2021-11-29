@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Tokenizer",
-	"sap/ui/events/KeyCodes"
-], function(qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
+], function(qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -21,7 +22,7 @@ sap.ui.define([
 			this.token1 = new Token("t1");
 			this.token1.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.token1.destroy();
@@ -44,7 +45,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setter / getter editable", function(assert) {
-		var sTooltipText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TOKEN_ARIA_DELETABLE"),
+		var sTooltipText = oCore.getLibraryResourceBundle("sap.m").getText("TOKEN_ARIA_DELETABLE"),
 			isEditable = true;
 
 		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
@@ -79,7 +80,7 @@ sap.ui.define([
 		// Act
 		isEditableParent = false;
 		this.token1.setProperty("editableParent", isEditableParent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
@@ -90,7 +91,7 @@ sap.ui.define([
 		// Act
 		isEditableParent = true;
 		this.token1.setProperty("editableParent", isEditableParent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		aAriaDescibedByTextIds = this.token1.getDomRef().attributes["aria-describedby"].value.split(" ");
@@ -121,7 +122,7 @@ sap.ui.define([
 		isEditable = false;
 		this.token1.setEditable(isEditable);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert.equal(this.token1.$().children().length, 1, "Token does not show delete icon");
 		assert.ok(this.token1.$().hasClass("sapMTokenReadOnly"), "Token does not show delete icon");
@@ -133,11 +134,11 @@ sap.ui.define([
 		this.token1.setSelected(false);
 
 		qutils.triggerEvent("tap", this.token1.getDomRef());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 		qutils.triggerEvent("tap", this.token1.getDomRef());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
 	});
@@ -149,7 +150,7 @@ sap.ui.define([
 
 	QUnit.test("Token has attribute dir", function(assert) {
 		this.token1.setTextDirection(TextDirection.RTL);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(this.token1.$().children(0).attr("dir"), 'rtl', "Token has attribute dir equal to rtl");
 	});
@@ -164,7 +165,7 @@ sap.ui.define([
 			this.token1 = new Token("t1");
 			this.token1.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.token1.destroy();
@@ -212,7 +213,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -235,7 +236,7 @@ sap.ui.define([
 
 		// act
 		this.token1.getAggregation("deleteIcon").firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
@@ -246,7 +247,7 @@ sap.ui.define([
 			this.token1 = new Token("t1");
 			this.token1.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.token1.destroy();
@@ -272,11 +273,11 @@ sap.ui.define([
 		assert.strictEqual(this.token1.$().attr("aria-selected"), "false", "aria-selected is set to false.");
 
 		this.token1.setSelected(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.token1.$().attr("aria-selected"), "true", "aria-selected is updated correctly.");
 
 		this.token1.setSelected(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.strictEqual(this.token1.$().attr("aria-selected"), "false", "aria-selected updated correctly.");
 	});
 
@@ -287,7 +288,7 @@ sap.ui.define([
 
 		this.token1.setEditable(false);
 		this.token1.invalidate(); // simulate parent invalidation
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
 	});
@@ -299,7 +300,7 @@ sap.ui.define([
 
 		this.token1.setProperty("editableParent", false);
 		this.token1.invalidate(); // simulate parent invalidation
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
 	});
@@ -312,7 +313,7 @@ sap.ui.define([
 			this.tokenizer.addToken(this.token);
 
 			this.tokenizer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();

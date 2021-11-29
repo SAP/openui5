@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/core/Core"
 ], function (
 	ElementOverlay,
 	DesignTime,
 	OverlayRegistry,
 	Button,
 	Panel,
-	Device
+	Device,
+	oCore
 ) {
 	"use strict";
 
@@ -24,7 +26,7 @@ sap.ui.define([
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oOverlay = new ElementOverlay({
 				element: this.oButton,
@@ -83,7 +85,7 @@ sap.ui.define([
 			});
 
 			this.oOuterPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var iScrollLeftValue = -20;
 			// Chrome uses positive leftScroll
 			if (Device.browser.blink) {

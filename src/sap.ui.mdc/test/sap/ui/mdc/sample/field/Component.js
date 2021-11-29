@@ -14,8 +14,9 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/ui/core/util/MockServer',
-	'sap/ui/mdc/field/ConditionsType' // as used in XML view
-], function(jQuery, View, ViewType, UIComponent, ODataModel, MockServer, ConditionsType, ODataUtils) {
+	'sap/ui/mdc/field/ConditionsType', // as used in XML view
+	"sap/ui/core/Core"
+], function(jQuery, View, ViewType, UIComponent, ODataModel, MockServer, ConditionsType, oCore, ODataUtils) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.mdc.sample.field.Component", {
@@ -27,7 +28,7 @@ sap.ui.define([
 
 		init: function() {
 			// initialization has to be done here because parent.init() calls createContent()
-			sap.ui.getCore().loadLibrary("sap.ui.mdc");
+			oCore.loadLibrary("sap.ui.mdc");
 
 			var sMockServerUrl = "/odata/";
 

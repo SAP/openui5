@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"sap/ui/qunit/QUnitUtils",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	QUnitUtils,
 	EditorQunitUtils,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -42,7 +44,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleList").then(function (aPropertyEditor) {
 				this.oListEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oListEditorElement = this.oListEditor.getContent();
 			}.bind(this));
 		},

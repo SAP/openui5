@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/BasePanel", "sap/m/StandardListItem", "sap/ui/thirdparty/sinon", "sap/ui/base/Event","sap/ui/model/json/JSONModel", "sap/m/MessageStrip"
-], function (BasePanel, StandardListItem, sinon, Event, JSONModel, MessageStrip) {
+	"sap/ui/mdc/p13n/panels/BasePanel", "sap/m/StandardListItem", "sap/ui/thirdparty/sinon", "sap/ui/base/Event", "sap/ui/model/json/JSONModel", "sap/m/MessageStrip", "sap/ui/core/Core"
+], function (BasePanel, StandardListItem, sinon, Event, JSONModel, MessageStrip, oCore) {
 	"use strict";
 
 	QUnit.module("BasePanel API tests", {
@@ -38,7 +38,7 @@ sap.ui.define([
 				"Name", "Country", "Year"
 			]);
 			this.oBasePanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oBtnShowSelected = this.oBasePanel._oListControl.getHeaderToolbar().getContent()[6];
 		},
 		after: function() {

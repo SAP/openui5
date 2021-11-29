@@ -37,7 +37,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function (
 		qutils,
 		FieldValueHelpMTableWrapper,
@@ -71,16 +72,17 @@ sap.ui.define([
 		ODataModel,
 		ODataListBinding,
 		Device,
-		KeyCodes
+		KeyCodes,
+		oCore
 	) {
 	"use strict";
 
-	var iDialogDuration = sap.ui.getCore().getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	var iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 	var iPopoverDuration = Device.browser.firefox ? 410 : 355;
 
 	var oModel;
 
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	var oWrapper;
 	var oFieldHelp;
@@ -193,7 +195,7 @@ sap.ui.define([
 				   {text: "Item 2", key: "I2", additionalText: "Text 2", in2: null},
 				   {text: "X-Item 3", key: "I3", additionalText: "Text 3", in2: ""}]
 			});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oItemTemplate = new ColumnListItem("MyItem", {
 			type: "Active",
@@ -734,7 +736,7 @@ sap.ui.define([
 				var oData = oModel.getData();
 				oModel.setData({
 					items:[{text: "XXX", key: "X", additionalText: "XX"},
-					       {text: "YYY", key: "Y", additionalText: "YY"}]
+						   {text: "YYY", key: "Y", additionalText: "YY"}]
 				});
 
 				oResult.then(function(oResult) {
@@ -761,7 +763,7 @@ sap.ui.define([
 						assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 						oModel.setData({
 							items:[{text: "Z1", key: "Z", additionalText: "ZZ1"},
-							       {text: "Z2", key: "Z", additionalText: "ZZ2"}]
+								   {text: "Z2", key: "Z", additionalText: "ZZ2"}]
 						});
 
 						oResult.then(function(oResult) {
@@ -1105,9 +1107,9 @@ sap.ui.define([
 			var oData = oModel.getData();
 			oModel.setData({
 				items:[{text: "XX", key: "X", additionalText: "XXX"},
-				       {text: "xx", key: "x", additionalText: "xxx"},
-				       {text: "YY", key: "Y", additionalText: "YYY"},
-				       {text: "ZZ", key: "Z", additionalText: "ZZZ"}]
+					   {text: "xx", key: "x", additionalText: "xxx"},
+					   {text: "YY", key: "Y", additionalText: "YYY"},
+					   {text: "ZZ", key: "Z", additionalText: "ZZZ"}]
 			});
 
 			oResult.then(function(oResult) {
@@ -1161,7 +1163,7 @@ sap.ui.define([
 		setTimeout( function(){ // as model update is async
 			var oContent = oWrapper.getDialogContent();
 			oContent.placeAt("content"); // render table
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			iMaxConditions = 1;
 			oWrapper.fieldHelpOpen(true); // suggestion with single selection
@@ -1462,7 +1464,7 @@ sap.ui.define([
 					descriptionPath: "text"
 				});
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oField.addDependent(oFieldHelp);
 		oField.focus();

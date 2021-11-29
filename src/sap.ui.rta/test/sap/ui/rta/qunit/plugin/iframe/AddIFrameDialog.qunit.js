@@ -6,21 +6,23 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core"
 ], function (
 	AddIFrameDialog,
 	Log,
 	isEmptyObject,
 	coreLibrary,
 	AddIFrameDialogController,
-	QUnitUtils
+	QUnitUtils,
+	oCore
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
-	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
 	var aUnitsOfMeasure = [{
@@ -151,7 +153,7 @@ sap.ui.define([
 	}
 
 	function clickOnButton(sId) {
-		var oButton = sap.ui.getCore().byId(sId);
+		var oButton = oCore.byId(sId);
 		QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 	}
 
@@ -164,8 +166,8 @@ sap.ui.define([
 	}
 
 	function updateSaveButtonEnablement(bEnabled) {
-		sap.ui.getCore().byId("sapUiRtaAddIFrameDialogSaveButton").setEnabled(bEnabled);
-		sap.ui.getCore().applyChanges();
+		oCore.byId("sapUiRtaAddIFrameDialogSaveButton").setEnabled(bEnabled);
+		oCore.applyChanges();
 	}
 
 	QUnit.module("Given that a AddIFrameDialog is available...", {
@@ -286,7 +288,7 @@ sap.ui.define([
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
-					sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_PreviewFrame").getUrl(),
+					oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame").getUrl(),
 					"https://example.com/Ice%20Cream",
 					"then the preview url is encoded properly"
 				);
@@ -322,12 +324,12 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function () {
 				var oData = this.oAddIFrameDialog._oJSONModel.getData();
 				var bEnabled = !!oData.frameUrl.value;
-				assert.strictEqual(sap.ui.getCore().byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
-				assert.strictEqual(sap.ui.getCore().byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Initial state of URL-Textarea is empty");
+				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
+				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Initial state of URL-Textarea is empty");
 				oData.frameUrl.value = "https:\\www.sap.com";
 				bEnabled = !!oData.frameUrl.value;
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
-				assert.strictEqual(sap.ui.getCore().byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Button is enabled wheen URL-Textarea is not empty");
+				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Button is enabled wheen URL-Textarea is not empty");
 				clickOnCancel();
 			}, this);
 			return this.oAddIFrameDialog.open();
@@ -335,11 +337,11 @@ sap.ui.define([
 
 		QUnit.test("when a forbidden url is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
 				// eslint-disable-next-line no-script-url
 				oUrlTextArea.setValue("javascript:someJs");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				assert.strictEqual(oUrlTextArea.getValueState(), "Error", "then an error is displayed");
 				this.oAddIFrameDialog._oController.onShowPreview();
@@ -356,10 +358,10 @@ sap.ui.define([
 
 		QUnit.test("when a url with bindings is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = sap.ui.getCore().byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
 				oUrlTextArea.setValue("https://example.com/{productCategory}");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				assert.strictEqual(oUrlTextArea.getValueState(), "None", "then it is not showing an error");
 				clickOnCancel();

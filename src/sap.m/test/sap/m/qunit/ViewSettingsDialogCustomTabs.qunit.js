@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/m/ViewSettingsCustomItem",
 	"sap/m/ViewSettingsDialog",
 	"sap/m/Input",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -34,7 +35,8 @@ sap.ui.define([
 	ViewSettingsCustomItem,
 	ViewSettingsDialog,
 	Input,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -86,7 +88,7 @@ sap.ui.define([
 			checkbox_label : "lorem ipsum checkbox label"
 		}
 	});
-	sap.ui.getCore().setModel(model);
+	oCore.setModel(model);
 
 	var oVsdConfig = {
 		// Factory for the 'content' aggregation for custom tabs - with or without items in it.
@@ -259,7 +261,7 @@ sap.ui.define([
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oVSD.destroy();

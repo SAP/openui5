@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Toolbar",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	MetadataPropagationUtil,
 	OverlayRegistry,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Text,
 	Toolbar,
 	VerticalLayout,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -369,7 +371,7 @@ sap.ui.define([
 				content: [this.oButton]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
@@ -432,7 +434,7 @@ sap.ui.define([
 				content: [this.oVerticalLayout, this.oButton3]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],
@@ -575,7 +577,7 @@ sap.ui.define([
 				content: [this.oVerticalLayout]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oPage],

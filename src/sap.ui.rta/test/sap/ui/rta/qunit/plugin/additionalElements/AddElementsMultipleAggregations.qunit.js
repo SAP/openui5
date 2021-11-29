@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/Core"
 ], function(
 	Bar,
 	Button,
@@ -35,7 +36,8 @@ sap.ui.define([
 	AddElementsDialog,
 	RTAPlugin,
 	sinon,
-	RtaQunitUtils
+	RtaQunitUtils,
+	oCore
 ) {
 	"use strict";
 
@@ -71,7 +73,7 @@ sap.ui.define([
 		});
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	QUnit.module("Given a control with multiple aggregations containing compatible hidden elements", {
@@ -312,7 +314,7 @@ sap.ui.define([
 		});
 
 		this.oPage.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 	}
 
 	QUnit.module("Given an ObjectPage with headerContent and one hidden section", {

@@ -417,7 +417,7 @@ sap.ui.define([
 			{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group B" }];
 			var model = new JSONModel();
 			model.setData(data);
-			sap.ui.getCore().setModel(model);
+			Core.setModel(model);
 		var oGridList = new GridList("gListGrouping", {
 			customLayout: oGridBoxLayout,
 			items: {
@@ -432,7 +432,7 @@ sap.ui.define([
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
 		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
@@ -449,7 +449,7 @@ sap.ui.define([
 			{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group B" }];
 			var model = new JSONModel();
 			model.setData(data);
-			sap.ui.getCore().setModel(model);
+			Core.setModel(model);
 		var oGridList = new GridList("gListNoGrouping", {
 			customLayout: oGridBoxLayout,
 			items: {
@@ -463,7 +463,7 @@ sap.ui.define([
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
 		var sGridAutoRows = getComputedStyle(document.querySelector(id)).gridAutoRows;
@@ -479,7 +479,7 @@ sap.ui.define([
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
 
@@ -494,7 +494,7 @@ sap.ui.define([
 			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
 			var model = new JSONModel();
 			model.setData(data);
-			sap.ui.getCore().setModel(model);
+			Core.setModel(model);
 
 			var oGridList = new GridList("gListGrowing", {
 			customLayout: oGridBoxLayout,
@@ -511,7 +511,7 @@ sap.ui.define([
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var id = oGridList.sId + "-listUl";
 
@@ -526,7 +526,7 @@ sap.ui.define([
 			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
 			var model = new JSONModel();
 			model.setData(data);
-			sap.ui.getCore().setModel(model);
+			Core.setModel(model);
 
 			var oGridList = new GridList("gListResizing", {
 			customLayout: new GridBoxLayout({boxWidth: "100px"}),
@@ -543,7 +543,7 @@ sap.ui.define([
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oGridList.getItems()[0].getDomRef().clientWidth, 100, "boxWidth is set correctly to the GridBoxLayout");
 	});

@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/m/Button", // test custom control
 	"sap/ui/core/ListItem",
 	"sap/base/util/merge",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 		jQuery,
 		qutils,
@@ -51,11 +52,12 @@ sap.ui.define([
 		Button,
 		ListItem,
 		merge,
-		KeyCodes
+		KeyCodes,
+		oCore
 		) {
 	"use strict";
 
-	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	var oMessageBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 	var oDefineConditionPanel;
 	var oModel;
 	var oDataType;
@@ -79,7 +81,7 @@ sap.ui.define([
 		};
 
 		oModel = new ConditionModel();
-		sap.ui.getCore().setModel(oModel, "cm");
+		oCore.setModel(oModel, "cm");
 
 		oDefineConditionPanel = new DefineConditionPanel("DCP1", {
 			conditions: '{cm>/conditions/Name}',
@@ -87,7 +89,7 @@ sap.ui.define([
 		}).placeAt("content");
 
 		if (!bNoRender) {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		}
 	};
 
@@ -122,7 +124,7 @@ sap.ui.define([
 		assert.ok(aConditions[0].isEmpty, "isEmpty of empty condition");
 
 		oModel.addCondition("Name", Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		aConditions = oModel.getConditions("Name");
 		assert.equal(aConditions.length, 2, "2 conditions should exist");
 		assert.equal(aConditions[0].operator, "EQ", "Operator of first condition");
@@ -147,7 +149,7 @@ sap.ui.define([
 		oDefineConditionPanel.setFormatOptions(oFormatOptions);
 		oModel.removeAllConditions("Name");
 		oDefineConditionPanel.rerender(); // to invalidate operator texts
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
@@ -193,29 +195,29 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		setTimeout(function () {
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(oDefineConditionPanel.updateDefineConditions.calledOnce, "updateDefineConditions called once");
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 
-			var oAddBtn = sap.ui.getCore().byId("DCP1--addBtn");
+			var oAddBtn = oCore.byId("DCP1--addBtn");
 			var oGridData = oAddBtn.getLayoutData();
 			assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
 			oAddBtn.firePress();
 			setTimeout(function () { // as condition rendering is triggered async.
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				assert.equal(oModel.getConditions("Name").length, 4, "4 conditions should exist");
 				aContent = oGrid.getContent();
 				assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
 				assert.notOk(oGridData.getVisibleL(), "Add-Button is not visible");
 
-				var oRemoveBtn = sap.ui.getCore().byId("DCP1--2--removeBtnLarge");
+				var oRemoveBtn = oCore.byId("DCP1--2--removeBtnLarge");
 				oRemoveBtn.firePress();
 				setTimeout(function () { // as condition rendering is triggered async.
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
 					assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
 					assert.ok(oAddBtn.getVisible(), "Button is visible");
@@ -270,9 +272,9 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		setTimeout(function () { // for model update
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			setTimeout(function () { // for internal Controls update via ManagedObjectModel
-				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var oGrid = oCore.byId("DCP1--conditions");
 				var aContent = oGrid.getContent();
 				assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
@@ -297,10 +299,10 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		setTimeout(function () { // for model update
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 
@@ -314,7 +316,7 @@ sap.ui.define([
 
 			jQuery(oField.getFocusDomRef()).val("foo");
 			qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 			assert.equal(oModel.getConditions("Name")[0].values[0], "foo", "condition value should be changed");
@@ -335,18 +337,18 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
-			sap.ui.getCore().applyChanges();
-			var oOperatorField = sap.ui.getCore().byId("DCP1--0-operator-inner");
+			oCore.applyChanges();
+			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("BT");
 			oOperatorField.fireChange({value: "BT"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
-				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var oGrid = oCore.byId("DCP1--conditions");
 				var aContent = oGrid.getContent();
 				var oField1 = aContent[2];
 				var oField2 = aContent[3];
@@ -376,18 +378,18 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
-			sap.ui.getCore().applyChanges();
-			var oOperatorField = sap.ui.getCore().byId("DCP1--0-operator-inner");
+			oCore.applyChanges();
+			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("EQ");
 			oOperatorField.fireChange({value: "EQ"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
 
-				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var oGrid = oCore.byId("DCP1--conditions");
 				var aContent = oGrid.getContent();
 				var oField1 = aContent[2];
 
@@ -414,18 +416,18 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // wait for rendering
-			sap.ui.getCore().applyChanges();
-			var oOperatorField = sap.ui.getCore().byId("DCP1--0-operator-inner");
+			oCore.applyChanges();
+			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
 			oOperatorField.setValue("Empty");
 			oOperatorField.fireChange({value: "Empty"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, [], "Values set on condition");
 
-				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var oGrid = oCore.byId("DCP1--conditions");
 				var aContent = oGrid.getContent();
 
 				assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
@@ -449,11 +451,11 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		setTimeout(function () { // for model update
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 			assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set as default");
 
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0];
 			var oField1 = aContent[2];
@@ -465,7 +467,7 @@ sap.ui.define([
 				jQuery(oField1.getFocusDomRef()).val("B");
 				qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				oButton.focus(); // to leave FieldGroup
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				setTimeout(function() { // for FieldGroup delay
 
 					assert.equal(oField1.getValueState(), "Error", "first Field has Error state");
@@ -479,7 +481,7 @@ sap.ui.define([
 						jQuery(oField2.getFocusDomRef()).val("C");
 						qutils.triggerKeyboardEvent(oField2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 						oButton.focus(); // to leave FieldGroup
-						sap.ui.getCore().applyChanges();
+						oCore.applyChanges();
 						setTimeout(function() { // for FieldGroup delay
 
 							assert.equal(oField1.getValueState(), "None", "first Field has no Error state");
@@ -499,7 +501,7 @@ sap.ui.define([
 								oOperatorField.focus();
 								setTimeout(function() { // for FieldGroup delay
 									oButton.focus(); // to leave FieldGroup
-									sap.ui.getCore().applyChanges();
+									oCore.applyChanges();
 									setTimeout(function() { // for FieldGroup delay
 
 										assert.equal(oField1.getValueState(), "Error", "first Field has Error state");
@@ -574,11 +576,11 @@ sap.ui.define([
 		};
 
 		oDefineConditionPanel.setFormatOptions(oFormatOptions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for rendering
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 
@@ -587,7 +589,7 @@ sap.ui.define([
 			assert.equal(oField.getText(), "Test", "Value of FIeld");
 
 			var oOperatorField = aContent[0];
-			var oFH = sap.ui.getCore().byId(oOperatorField.getFieldHelp());
+			var oFH = oCore.byId(oOperatorField.getFieldHelp());
 			var aItems = oFH.getItems();
 
 			assert.equal(aItems.length, 1, "Only one Operator available");
@@ -607,14 +609,14 @@ sap.ui.define([
 		var aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
 		FilterOperatorUtil.setOperatorsForType(BaseType.String, [FilterOperatorUtil.getOperator("BT"), oCustomOperator], oCustomOperator);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for rendering
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0]; // operator
-			var oFH = sap.ui.getCore().byId(oOperatorField.getFieldHelp());
+			var oFH = oCore.byId(oOperatorField.getFieldHelp());
 			var aItems = oFH.getItems();
 			var oField = aContent[2];
 			var aConditions = oDefineConditionPanel.getConditions();
@@ -637,7 +639,7 @@ sap.ui.define([
 			oOperatorField.fireChange({value: "BT"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, [null, null], "Values set on condition");
@@ -657,7 +659,7 @@ sap.ui.define([
 				oOperatorField.fireChange({value: "MyOperator"}); // fake item select
 
 				setTimeout(function () { // as model update is async
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					aConditions = oDefineConditionPanel.getConditions();
 					assert.equal(aConditions[0].operator, "MyOperator", "Operator set on condition");
 					assert.deepEqual(aConditions[0].values, [null], "Values set on condition");
@@ -704,7 +706,7 @@ sap.ui.define([
 		};
 
 		oDefineConditionPanel.setFormatOptions(oFormatOptions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 	};
 
@@ -714,8 +716,8 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			sap.ui.getCore().applyChanges();
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			oCore.applyChanges();
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 
@@ -740,8 +742,8 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			sap.ui.getCore().applyChanges();
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			oCore.applyChanges();
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 
@@ -766,8 +768,8 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			sap.ui.getCore().applyChanges();
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			oCore.applyChanges();
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 
@@ -792,15 +794,15 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			sap.ui.getCore().applyChanges();
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			oCore.applyChanges();
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0];
 			oOperatorField.setValue("TODAY");
 			oOperatorField.fireChange({value: "TODAY"}); // fake item select
 
 			setTimeout(function () { // as model update is async
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				aContent = oGrid.getContent();
 				var oField = aContent[2];
 				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -817,7 +819,7 @@ sap.ui.define([
 				oOperatorField.fireChange({value: "NEXTDAYS"}); // fake item select
 
 				setTimeout(function () { // as model update is async
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 					aContent = oGrid.getContent();
 					oField = aContent[2];
 					assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -836,7 +838,7 @@ sap.ui.define([
 						oOperatorField.fireChange({value: "EQ"}); // fake item select
 
 						setTimeout(function () { // as model update is async
-							sap.ui.getCore().applyChanges();
+							oCore.applyChanges();
 							aContent = oGrid.getContent();
 							oField = aContent[2];
 							assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -852,7 +854,7 @@ sap.ui.define([
 							oOperatorField.fireChange({value: "TODAYFROMTO"}); // fake item select
 
 							setTimeout(function () { // as model update is async
-								sap.ui.getCore().applyChanges();
+								oCore.applyChanges();
 								aContent = oGrid.getContent();
 								oField = aContent[2];
 								assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
@@ -881,7 +883,7 @@ sap.ui.define([
 									oOperatorField.fireChange({value: "BT"}); // fake item select
 
 									setTimeout(function () { // as model update is async
-										sap.ui.getCore().applyChanges();
+										oCore.applyChanges();
 										aContent = oGrid.getContent();
 										oField = aContent[2];
 										assert.equal(aContent.length, 6, "One row with two field created - Grid contains 6 controls");
@@ -919,9 +921,9 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for condition update
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			setTimeout(function () { // to wait for renderng
-				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var oGrid = oCore.byId("DCP1--conditions");
 				var aContent = oGrid.getContent();
 				var oField = aContent[2];
 				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -946,7 +948,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -969,7 +971,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			// sap.ui.getCore().getMessageManager().registerObject(oGrid, true); // to activate message manager
 
 			var aContent = oGrid.getContent();
@@ -983,10 +985,10 @@ sap.ui.define([
 			setTimeout(function () { // as model update is async
 				assert.equal( oControl.getValueState(), "Error", "Error shown on the value field");
 
-				var oRemoveBtn = sap.ui.getCore().byId("DCP1--0--removeBtnLarge");
+				var oRemoveBtn = oCore.byId("DCP1--0--removeBtnLarge");
 				oRemoveBtn.firePress();
 				setTimeout(function () { // as condition rendering is triggered async.
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 
 					assert.equal(oControl.getValueState(), "None", "No Error shown on the value field");
 					assert.equal(oControl.getValue(), "", "value of the field is empty");
@@ -1004,7 +1006,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -1039,11 +1041,11 @@ sap.ui.define([
 		};
 
 		oDefineConditionPanel.setFormatOptions(oFormatOptions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var fnDone = assert.async();
 		setTimeout(function () { // to wait for retemplating
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 			assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
@@ -1075,8 +1077,8 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
-			sap.ui.getCore().applyChanges();
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			oCore.applyChanges();
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 			assert.equal(aContent.length, 5, "Dummy line created");
@@ -1126,8 +1128,8 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
-			sap.ui.getCore().applyChanges();
-			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			oCore.applyChanges();
+			var oGrid = oCore.byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
 			var oField = aContent[2];
 			assert.equal(aContent.length, 5, "Dummy line created");

@@ -161,7 +161,7 @@ sap.ui.define([
 			var iDelay = 50;
 			this.oSelectDialog.setBusyIndicatorDelay(iDelay);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(this.oSelectDialog._oList.getBusyIndicatorDelay(), iDelay, 'The List delay value should be ' + iDelay);
 			assert.strictEqual(this.oSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The Dialog delay value should be ' + iDelay);
 			assert.strictEqual(this.oSelectDialog.getBusyIndicatorDelay(), iDelay, 'The SelectDialog delay value should be ' + iDelay);
@@ -169,7 +169,7 @@ sap.ui.define([
 
 		QUnit.test("Setting of the Title", function (assert) {
 			this.oSelectDialog.setTitle("New title");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oSelectDialog.open();
 			assert.strictEqual(document.getElementById("selectDialog-dialog-title-inner").textContent, "New title", "The title is set correctly");
 		});
@@ -177,7 +177,7 @@ sap.ui.define([
 		QUnit.test("Setting of the ContentWidth", function (assert) {
 			assert.strictEqual(this.oSelectDialog.getContentWidth(), "", "The contentWidth is not set");
 			this.oSelectDialog.setContentWidth("400px");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.oSelectDialog.open();
 			assert.strictEqual(document.getElementById("selectDialog-dialog").offsetWidth, 400, "The width of the dialog is correctly set");
 			assert.strictEqual(this.oSelectDialog.getContentWidth(), "400px", "The contentWidth is not set");
@@ -202,7 +202,7 @@ sap.ui.define([
 		QUnit.test("growing: true (default)", function (assert) {
 			// arrange
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oSelectDialog._oList.getSelectedContextPaths(true).length, 3,
@@ -215,7 +215,7 @@ sap.ui.define([
 			// arrange
 			this.oSelectDialog.setGrowing(false);
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(this.oSelectDialog._oList.getSelectedContextPaths(true).length, 4,
@@ -295,7 +295,7 @@ sap.ui.define([
 		QUnit.test("confirmButtonText", function(assert) {
 			// assert
 			assert.equal(this.oSelectDialog._oOkButton.getText(),
-				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
+				Core.getLibraryResourceBundle("sap.m").getText("SELECT_CONFIRM_BUTTON"),
 				'The default confirmation text is set.');
 
 			// act
@@ -352,7 +352,7 @@ sap.ui.define([
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
 
 			this.oSelectDialog.open();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
 
 			assert.ok(that.oSelectDialog.$().attr("aria-labelledby").indexOf(that.oSelectDialog._oList.getInfoToolbar().getId()) > -1, "the info toolbar id is added to the dialog aria-labelledby");
@@ -379,7 +379,7 @@ sap.ui.define([
 			}, path: "/items", template: createTemplateListItem() });
 
 			this.oSelectDialog.open();
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(that.oSelectDialog._oList.getInfoToolbar().getVisible(), false, "The should be no toolbar shown");
 			assert.strictEqual(that.oSelectDialog.$().attr("aria-labelledby").indexOf(that.oSelectDialog._oList.getInfoToolbar().getId()),  -1, "the info toolbar id is not added to the dialog aria-labelledby");
 		});
@@ -392,7 +392,7 @@ sap.ui.define([
 
 			// Arrange
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function () {
 				// Reset call count of spy
@@ -467,7 +467,7 @@ sap.ui.define([
 				definition: sFragmentText
 			}).then(function(oFragment) {
 				this.oXmlViewOrFragment = oFragment;
-				this.oSelectDialog = sap.ui.getCore().byId("fragmentSelectDialog");
+				this.oSelectDialog = Core.byId("fragmentSelectDialog");
 
 				assert.strictEqual(this.oSelectDialog.getParent(), null, "Dialog's parent is null");
 				assert.strictEqual(this.oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
@@ -505,7 +505,7 @@ sap.ui.define([
 			this.oSelectDialog.setRememberSelections(true);
 
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function() {
 
@@ -525,7 +525,7 @@ sap.ui.define([
 			var fnListGetSelectedContexts = sinon.spy(this.oSelectDialog._oList, "getSelectedContexts");
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oSelectDialog.open();
 
@@ -556,7 +556,7 @@ sap.ui.define([
 			var fnListGetSelectedContexts = sinon.spy(this.oSelectDialog._oList, "getSelectedContexts");
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oSelectDialog.open();
 
@@ -617,7 +617,7 @@ sap.ui.define([
 			});
 
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem(), filters: oFilter});
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			jQuery.when(this.oSelectDialog.open('Chuck')).then(function (oEvent) {
 				assert.strictEqual(that.oSelectDialog._oSearchField.getValue(), "Chuck", 'The search field value is "Title1" after passing "Title1" to the open method');
@@ -684,11 +684,11 @@ sap.ui.define([
 
 			// act
 			oSelectDialog.open("somevalue");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			qutils.triggerKeydown(oSelectDialog._oSearchField.getDomRef().id, KeyCodes.ESCAPE);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.clock.tick(500);
 			oSelectDialog._oDialog.close();
 			this.clock.tick(500);
@@ -701,7 +701,7 @@ sap.ui.define([
 
 			this.oSelectDialog.setMultiSelect(true);
 			bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oSelectDialog.attachConfirm(function (oEvent) {
 				var oSelectedItem = oEvent.getParameter("selectedItem"),
@@ -875,14 +875,14 @@ sap.ui.define([
 			});
 
 			this.oSelectDialog.setRememberSelections(true);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Act
 			this.oSelectDialog.open();
 			this.clock.tick(350);
 
 			this.oSelectDialog.getItems()[0].$().trigger("tap");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			this.clock.tick(350);
 
 			// Assert
@@ -945,7 +945,7 @@ sap.ui.define([
 			// Arrange
 			bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
 			this.oSelectDialog.insertItem(new GroupHeaderListItem({title: "Group header"}), 0);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			// Act
 			this.oSelectDialog.open();
@@ -1395,7 +1395,7 @@ sap.ui.define([
 				var oFilter = new Filter("Title", FilterOperator.Contains, sValue);
 
 				oEvent.getSource().getBinding("items").filter([oFilter]);
-				sap.ui.getCore().applyChanges();
+				Core.applyChanges();
 
 				// Assert
 				assert.strictEqual(this.oSelectDialog._oSearchField.getFocusDomRef(), document.activeElement, 'Focus should stay on the searchfield after liveChange');
@@ -1497,7 +1497,7 @@ sap.ui.define([
 	QUnit.test("Initial loading with selected items from previous selection", function(assert) {
 		this.oSelectDialog.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//assert
@@ -1507,7 +1507,7 @@ sap.ui.define([
 	QUnit.test("Initial loading without selected items from previous selection", function(assert) {
 		this.oSelectDialog1.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//assert
@@ -1517,7 +1517,7 @@ sap.ui.define([
 	QUnit.test("Removing selection should disable button", function(assert) {
 		this.oSelectDialog.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//assert
@@ -1534,7 +1534,7 @@ sap.ui.define([
 	QUnit.test("Adding selection should enable button", function(assert) {
 		this.oSelectDialog1.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//assert
@@ -1550,7 +1550,7 @@ sap.ui.define([
 	QUnit.test("Clicking on enabled 'Clear' button should clear selection", function(assert) {
 		this.oSelectDialog.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.clock.tick(500);
 
 		//assert
@@ -1566,41 +1566,41 @@ sap.ui.define([
 	QUnit.test("Disable already enabled clear button and then enable it again", function(assert) {
 		this.oSelectDialog.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oClearButton = this.oSelectDialog._getClearButton();
 		this.oSelectDialog.setShowClearButton(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.equal(oClearButton.getVisible(), false, 'Clear button is not visible');
 		assert.notOk(oClearButton.getDomRef(), 'Clear button is not in dom');
 
 		this.oSelectDialog.setShowClearButton(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.equal(oClearButton.getVisible(), true, 'Clear button is not visible');
 		assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
-		assert.equal(oClearButton.getProperty("text"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
+		assert.equal(oClearButton.getProperty("text"), Core.getLibraryResourceBundle("sap.m").getText("SELECTDIALOG_CLEARBUTTON"), 'Text of clear button is set');
 	});
 
 	QUnit.test("There is no content in the contentRight aggregation of the header", function(assert) {
 		this.oSelectDialog2.open();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oCustomHeader = this.oSelectDialog2._oDialog.getCustomHeader();
 		var oClearButton = this.oSelectDialog2._getClearButton();
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oSelectDialog2.setShowClearButton(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oCustomHeader.getContentRight().length,  0, 'Clear button is not created');
 
 		this.oSelectDialog2.setShowClearButton(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oClearButton.getVisible(), true, 'Clear button is visible');
 		assert.ok(oClearButton.getDomRef(), 'Clear button is in dom');
@@ -1608,7 +1608,7 @@ sap.ui.define([
 
 	QUnit.test("After selection reset the focus should be returned to the dialog", function(assert) {
 		this.oSelectDialog.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oSelectDialog._oClearButton.firePress();
 		assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');

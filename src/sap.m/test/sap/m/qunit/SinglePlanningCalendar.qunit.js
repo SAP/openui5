@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	jQuery,
@@ -38,7 +39,8 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	Log,
-	coreLibrary
+	coreLibrary,
+	oCore
 ) {
 	"use strict";
 
@@ -176,18 +178,18 @@ sap.ui.define([
 			sDayViewId = oSPC.getViews()[0].getId();
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oMonthViewSegmentedButtonItem.oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
 
 		// Act
 		oDayViewSegmentedButtonItem.oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
@@ -508,7 +510,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//act
 		oSPC.getAggregation("_mvgrid")._fireSelectionEvent(oFakeEvent);
@@ -534,7 +536,7 @@ sap.ui.define([
 			fnFireHeaderDateSelect = this.spy(oSPC, "fireHeaderDateSelect");
 
 		//act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		qutils.triggerEvent("mousedown", oSPCHeaders.getId() + "-20210204");
 		qutils.triggerEvent("mouseup", oSPCHeaders.getId() + "-20210204");
 
@@ -569,11 +571,11 @@ sap.ui.define([
 			fnFireViewChange = this.spy(oSPC, "fireViewChange");
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act - simulate press on a Month View SegmentedButton
 		oMonthViewSegmentedButtonItem.oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert - selected view must be Month View, and event must be called once
 		assert.equal(oSPC.getSelectedView(), sMonthViewId, "The proper View Id is stored in selectedView association");
@@ -581,7 +583,7 @@ sap.ui.define([
 
 		// Act - simulate press on a Day View SegmentedButton
 		oDayViewSegmentedButtonItem.oButton.firePress();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert - selected view must be Day View, and event must be called once
 		assert.equal(oSPC.getSelectedView(), sDayViewId, "The proper View Id is stored in selectedView association");
@@ -596,7 +598,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = sap.ui.getCore().byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -617,7 +619,7 @@ sap.ui.define([
 	QUnit.test("startDateChange: on previous button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),
-			iScrollDays = sap.ui.getCore().byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
+			iScrollDays = oCore.byId(oSPC.getAssociation("selectedView")).getScrollEntityCount(),
 			oInitialStartDate = oSPC.getStartDate(),
 			fnFireStartDateChange = this.spy(oSPC, "fireStartDateChange");
 
@@ -769,7 +771,7 @@ sap.ui.define([
 			oGrid = oSPC.getAggregation("_mvgrid"),
 			oFakeEvent,
 			fnFireGridCellFocusSpy = this.spy(oSPC, "fireEvent");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oFakeEvent = { target: oGrid.$().find('.sapMSPCMonthDay')[3], srcControl: oGrid };
 
@@ -947,7 +949,7 @@ sap.ui.define([
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		assert.ok($oSPCRef.hasClass("sapMSinglePCActionsHidden"), "Class for hidden actions is applied when they are empty");
@@ -960,7 +962,7 @@ sap.ui.define([
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		assert.notOk($oSPCRef.hasClass("sapMSinglePCActionsHidden"),
@@ -975,7 +977,7 @@ sap.ui.define([
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -992,7 +994,7 @@ sap.ui.define([
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1009,7 +1011,7 @@ sap.ui.define([
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1026,11 +1028,11 @@ sap.ui.define([
 			$oSPCRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Act
 		oSPC.setStickyMode("All");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1039,7 +1041,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setStickyMode("NavBarAndColHeaders");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1048,7 +1050,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.setStickyMode("None");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		$oSPCRef = oSPC.$();
 
 		// Assert
@@ -1065,7 +1067,7 @@ sap.ui.define([
 			oNowMarker;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oNowMarker = oSPC.getDomRef().querySelector(".sapMSinglePCNowMarker");
 
@@ -1112,7 +1114,7 @@ sap.ui.define([
 		oModel.setData({
 			DayTitle: "Day View"
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		// act
 		oSPC.addView(new SinglePlanningCalendarDayView({
@@ -1191,7 +1193,7 @@ sap.ui.define([
 		oModel.setData({
 			DayTitle: "Day View"
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		// act
 		oSPC.insertView(new SinglePlanningCalendarDayView({
@@ -1238,7 +1240,7 @@ sap.ui.define([
 		oModel.setData({
 			DayTitle: "Day View"
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oSPC.addView(oView).placeAt('qunit-fixture');
 
@@ -1269,7 +1271,7 @@ sap.ui.define([
 			DayTitle: "Day View",
 			WeekTitle: "Week View"
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oSPC.addView(oDayView);
 		oSPC.addView(oWeekView).placeAt('qunit-fixture');
@@ -1323,7 +1325,7 @@ sap.ui.define([
 			DayTitle: "Day View",
 			WeekTitle: "Week View"
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oSPC.addView(oDayView);
 		oSPC.addView(oWeekView).placeAt('qunit-fixture');
@@ -1375,7 +1377,7 @@ sap.ui.define([
 			DayTitle: "Day View",
 			WeekTitle: "Week View"
 		});
-		sap.ui.getCore().setModel(oModel);
+		oCore.setModel(oModel);
 
 		oSPC.addView(oDayView);
 		oSPC.addView(oWeekView).placeAt('qunit-fixture');
@@ -1457,7 +1459,7 @@ sap.ui.define([
 			});
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oAppointment.$().attr("tabindex"), "0", "Appointments are tabbable");
@@ -1509,7 +1511,7 @@ sap.ui.define([
 							oSPCGrid._oFormatStartEndInfoAria.format(oEndDate) + "; ";
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oLegendItem.getText(),
@@ -1520,7 +1522,7 @@ sap.ui.define([
 
 		// Act
 		oLegend.destroy();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(jQuery("#test-appointment-Descr").html(), sAnnouncement + oAppointment.getType(),
@@ -1539,7 +1541,7 @@ sap.ui.define([
 			aAriaLabelledBy;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oSPCRef = oSPC.$();
 		aAriaLabelledBy = $oSPCRef.attr("aria-labelledby");
@@ -1567,7 +1569,7 @@ sap.ui.define([
 			sNavigationToolbarLabelId = InvisibleText.getStaticId("sap.m", "SPC_NAVIGATION_TOOLBAR");
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok(oActionsToolbar.getAriaLabelledBy().indexOf(sActionsToolbarLabelId) > -1,
@@ -1617,7 +1619,7 @@ sap.ui.define([
 			$oColumnHeadersAreaRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oColumnHeadersAreaRef = oSPC.$().find(".sapMSinglePCColumnHeader");
 
@@ -1636,7 +1638,7 @@ sap.ui.define([
 			$oBlockersAreaRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oBlockersAreaRef = oSPC.$().find(".sapMSinglePCBlockers");
 
@@ -1655,7 +1657,7 @@ sap.ui.define([
 			$oBlockersColumnsWrapperParent;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oBlockersColumnsWrapper = oSPC.$().find(".sapMSinglePCBlockersColumns");
 		$oBlockersColumnsWrapperParent = $oBlockersColumnsWrapper.parent();
@@ -1674,7 +1676,7 @@ sap.ui.define([
 			oBlockerCells;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oBlockerCells = oSPC.$().find(".sapMSinglePCBlockersColumn");
 
@@ -1692,7 +1694,7 @@ sap.ui.define([
 			$oAppointmentsCellsWrapper;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oAppointmentsCellsWrapper = oSPC.$().find(".sapMSinglePCColumn");
 
@@ -1709,7 +1711,7 @@ sap.ui.define([
 			$oAppointmentsCellsWrapper;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oAppointmentsCellsWrapper = oSPC.$().find(".sapMSinglePCColumn");
 		$oAppointmentsCells = $oAppointmentsCellsWrapper.find(".sapMSinglePCRow");
@@ -1729,7 +1731,7 @@ sap.ui.define([
 			$oAppointmentsAreaRef;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oAppointmentsAreaRef = oSPC.$().find(".sapMSinglePCColumns");
 
@@ -1767,7 +1769,7 @@ sap.ui.define([
 			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oAppointmentRef = oAppointment.$();
 		$oAppointmentsWrapperRef = oSPC.$().find(".sapMSinglePCAppointments");
@@ -1781,7 +1783,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oAppointment, true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok($oAppointmentRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected appointments have a hidden \"Selected\" text in aria-labelledby");
@@ -1814,7 +1816,7 @@ sap.ui.define([
 			sHiddenSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		$oBlockerRef = oBlocker.$();
 
@@ -1826,7 +1828,7 @@ sap.ui.define([
 
 		// Act
 		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oBlocker, true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		assert.ok($oBlockerRef.attr("aria-labelledby").indexOf(sHiddenSelectedTextId) > -1, "Selected blocker have a hidden \"Selected\" text in aria-labelledby");
@@ -1886,7 +1888,7 @@ sap.ui.define([
 	QUnit.module("Visibility of actions toolbar", {
 		beforeEach: function () {
 			this.oSPC = new SinglePlanningCalendar().placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oSPC.destroy();
@@ -1901,7 +1903,7 @@ sap.ui.define([
 	QUnit.test("The actions toolbar is visible when only title is set", function (assert) {
 		// Arrange
 		this.oSPC.setTitle("SPC title");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
@@ -1912,7 +1914,7 @@ sap.ui.define([
 		this.oSPC.addAction(new Button({
 			text: "SPC button"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
@@ -1924,7 +1926,7 @@ sap.ui.define([
 			key: "DayView",
 			title: "Day View"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), false, "the actions toolbar is not visible");
@@ -1940,7 +1942,7 @@ sap.ui.define([
 			key: "WeekView",
 			title: "Week View"
 		}));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.oSPC._getHeader()._getActionsToolbar().getProperty("visible"), true, "the actions toolbar is visible");
@@ -1952,7 +1954,7 @@ sap.ui.define([
 				startDate: new Date(2017, 10, 13, 0, 0, 0)
 			});
 			this.oSPCGrid.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oSPCGrid.destroy();
@@ -2005,7 +2007,7 @@ sap.ui.define([
 		this.oSPCGrid.setStartHour(8);
 		this.oSPCGrid.setEndHour(16);
 		this.oSPCGrid.setStartDate(new Date(2020, 4, 26, 0, 0, 0));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// act - resize appointment's end to 10:00
 		newAppPos = this.oSPCGrid._calcResizeNewHoursAppPos(oAppStartDate, oAppEndDate, 3, true);
@@ -2035,7 +2037,7 @@ sap.ui.define([
 			oSelector;
 
 		oSPC.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		oSelector = document.querySelectorAll('div[id^="' + sAppointmentId + '-"]');
@@ -2045,7 +2047,7 @@ sap.ui.define([
 
 		// act - resize appointment to continue in two days
 		oAppointment.setEndDate(new Date(2018, 6, 10, 10, 0, 0));
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// assert
 		oSelector = document.querySelectorAll('div[id^="' + sAppointmentId + '-"]');

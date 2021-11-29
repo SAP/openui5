@@ -17,7 +17,7 @@ sap.ui.define([
 	QUnit.module("Properties", {
 		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.InfoLabel.destroy();
@@ -38,7 +38,7 @@ sap.ui.define([
 	QUnit.module("Renderer", {
 		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.InfoLabel.destroy();
@@ -50,7 +50,7 @@ sap.ui.define([
 		assert.notOk(this.InfoLabel.$().hasClass("sapTntInfoLabelRenderModeNarrow"), "should not have style class \"sapTntInfoLabelRenderModeNarrow\" ");
 
 		this.InfoLabel.setRenderMode(tntLibrary.RenderMode.Narrow);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelRenderModeNarrow"), "should have style class \"sapTntInfoLabelRenderModeNarrow\" ");
 
 	});
@@ -59,7 +59,7 @@ sap.ui.define([
 		assert.notOk(this.InfoLabel.$().hasClass("sapTntInfoLabelDisplayOnly"), "should not have style class \"sapTntInfoLabelDisplayOnly\" ");
 
 		this.InfoLabel.setDisplayOnly(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelDisplayOnly"), "should have style class \"sapTntInfoLabelDisplayOnly\" ");
 	});
 
@@ -67,11 +67,11 @@ sap.ui.define([
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelNoText"), "should have style class \"sapTntInfoLabelNoText\" ");
 
 		this.InfoLabel.setText("Test text");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(this.InfoLabel.$().hasClass("sapTntInfoLabelNoText"), "should not have style class \"sapTntInfoLabelNoText\" ");
 
 		this.InfoLabel.setText("");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelNoText"), "should have style class \"sapTntInfoLabelNoText\" ");
 	});
 
@@ -79,21 +79,21 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getTextDirection(), "Inherit", "InfoLabel text initially should have text direction \"Inherit\"");
 
 		this.InfoLabel.setTextDirection(sap.ui.core.TextDirection.RTL);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getTextDirection(), "RTL", "InfoLabel should have textDirection \"RTL\"");
 		assert.strictEqual(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0]).attr("dir"), "rtl", "InfoLabel \"dir\" attribute should be \"rtl\"");
 	});
 
 	QUnit.test("testing icon", function (assert) {
 		this.InfoLabel.setIcon("sap-icon://show");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelWithIcon")[0]), "There is a span with an icon rendered");
 	});
 
 	QUnit.module("Appearance", {
 		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.InfoLabel.destroy();
@@ -118,7 +118,7 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getColorScheme(), 1, "colorScheme is set to 1");
 
 		this.InfoLabel.setColorScheme(67544);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(this.InfoLabel.$().hasClass("backgroundColor7"), "If we try to set invalid number as value color is 7");
 		assert.strictEqual(warningFunctionSpy.callCount, 1, "A warning should be raised when we try to set invalid number as value of colorScheme");
@@ -154,18 +154,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("check setting colorScheme classes ", function (assert) {
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(this.InfoLabel.$().hasClass("backgroundColor7"), "should have style class \"backgroundColor7\" ");
 
 		this.InfoLabel.setColorScheme(1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.notOk(this.InfoLabel.$().hasClass("backgroundColor7"), "should not have style class \"backgroundColor7\" ");
 		assert.ok(this.InfoLabel.$().hasClass("backgroundColor1"), "should have style class \"backgroundColor1\" ");
 	});
 
 	QUnit.test("changing width property", function (assert) {
 		this.InfoLabel.setWidth("120px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getWidth(), "120px", "width is set to 120px");
 	});
 
@@ -183,7 +183,7 @@ sap.ui.define([
 	QUnit.module("API", {
 		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.InfoLabel.destroy();
@@ -195,43 +195,43 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getText(), "", "Text is initially set to \"\" ");
 
 		this.InfoLabel.setText("Now available");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "Now available", "Text from the getter should be set to \"Now available\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "Now available", "Text from the DOM element should be set to \"Now available\"");
 
 		this.InfoLabel.setText(456567);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "456567", "Text from the getter should be set to \"456567\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "456567", "Text from the DOM element should be set to \"456567\" ");
 
 		this.InfoLabel.setText(undefined);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "", "When try to set undefined text should be with default value \"\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "", "Text from the DOM element should be with default value \"\"");
 
 		this.InfoLabel.setText(null);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "", "When try to set null text should be with default value \"\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "", "Text from the DOM element should be with default value \"\"");
 
 
 		this.InfoLabel.setText(456567);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "456567", "Text from the getter should be set to \"456567\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "456567", "Text from the DOM element should be set to \"456567\"");
 
 		this.InfoLabel.setText(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "true", "Text from the getter should be set to \"true\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "true", "Text from the DOM element should be set to \"true\"");
 
 		this.InfoLabel.setText(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "false", "Text from the getter should be set to \"false\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "false", "Text from the DOM element should be set to \"false\"");
 
 		this.InfoLabel.setText("alert('here')");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getText(), "alert('here')", "Text from the getter should be set to \"alert('here')\" ");
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0].textContent, "alert('here')", "Text from the DOM element should be set to \"alert('here')\"");
 	});
@@ -265,7 +265,7 @@ sap.ui.define([
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			this.InfoLabelNotEmpty = new InfoLabel({text: "Available"}).placeAt("qunit-fixture");
 			this.InfoLabelWithIcon = new InfoLabel({icon: "sap-icon://hide"}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.InfoLabel.destroy();
@@ -290,11 +290,11 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sEmptyText, "InfoLabel initially should have invisible text \"Empty info label\"");
 
 		this.InfoLabel.setText("available");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sDefaultText, "InfoLabel should have invisible text \"Info label\"");
 
 		this.InfoLabel.setText("");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sEmptyText, "InfoLabel should have invisible text \"Empty info label\"");
 	});
 
@@ -320,22 +320,22 @@ sap.ui.define([
 
 		// icon only
 		this.InfoLabel.setIcon("sap-icon://show");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sIconShowText + " " + sDefaultText, "InfoLabel with icon only should have invisible text \"Show Info label\"");
 
 		// text and icon
 		this.InfoLabelNotEmpty.setIcon("sap-icon://show");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sDefaultText, "InfoLabel with text and icon should have invisible text \"Info label\"");
 
 		// no text no icon
 		this.InfoLabel.setIcon("");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sEmptyText, "InfoLabel with no icon and no text should have invisible text \"Empty info label\"");
 
 		// icon only
 		this.InfoLabelNotEmpty.setText("");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sIconShowText + " " + sDefaultText, "InfoLabel with icon only should have invisible text \"Show Info label\"");
 
 	});

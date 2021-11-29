@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
-	"sap/ui/core/format/NumberFormat"
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	EditorQunitUtils,
-	NumberFormat
+	NumberFormat,
+	oCore
 ) {
 	"use strict";
 
@@ -41,7 +43,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleInteger").then(function (aPropertyEditor) {
 				this.oIntegerEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oIntegerEditorElement = this.oIntegerEditor.getContent();
 			}.bind(this));
 		},

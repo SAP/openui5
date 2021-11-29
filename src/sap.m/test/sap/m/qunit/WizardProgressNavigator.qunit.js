@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/WizardProgressNavigator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
-	"sap/ui/core/InvisibleText"
-], function(WizardProgressNavigator, JSONModel, Device, InvisibleText) {
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
+], function(WizardProgressNavigator, JSONModel, Device, InvisibleText, oCore) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
@@ -17,7 +18,7 @@ sap.ui.define([
 				stepCount: 5
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
@@ -35,7 +36,7 @@ sap.ui.define([
 	QUnit.test("stepTitles should default to an empty array when NOT ALL steps have titles", function (assert) {
 		this.oProgressNavigator.setStepCount(3);
 		this.oProgressNavigator.setStepIcons(["one", "two"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.deepEqual(this.oProgressNavigator.getStepTitles(), [], "should be and empty array");
 	});
@@ -47,7 +48,7 @@ sap.ui.define([
 	QUnit.test("stepIcons should default to an empty array when NOT ALL steps have icons", function (assert) {
 		this.oProgressNavigator.setStepCount(3);
 		this.oProgressNavigator.setStepIcons(["sap-icon://warning"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.deepEqual(this.oProgressNavigator.getStepIcons(), [], "should be and empty array");
 	});
@@ -152,7 +153,7 @@ sap.ui.define([
 			});
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
@@ -177,7 +178,7 @@ sap.ui.define([
 			});
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
@@ -199,7 +200,7 @@ sap.ui.define([
 
 	QUnit.test("Class sapMWizardProgressNavListVarying should be present once when steps ARE varying", function (assert) {
 		this.oProgressNavigator.setVaryingStepCount(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $progNav = this.oProgressNavigator.$();
 
@@ -214,7 +215,7 @@ sap.ui.define([
 
 	QUnit.test("Class sapMWizardProgressNavListNoTitles should NOT be present once when there ARE titles", function (assert) {
 		this.oProgressNavigator.setStepTitles(["1", "2", "3", "4", "5"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $progNav = this.oProgressNavigator.$();
 
@@ -251,7 +252,7 @@ sap.ui.define([
 
 	QUnit.test("When stepCount = 5 and all have titles, titles should be 5", function (assert) {
 		this.oProgressNavigator.setStepTitles(["1", "2", "3", "4", "5"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $progNav = this.oProgressNavigator.$();
 
@@ -268,7 +269,7 @@ sap.ui.define([
 
 	QUnit.test("When stepCount = 5 and all have icons, icons should be 5", function (assert) {
 		this.oProgressNavigator.setStepIcons(["sap-icon://permission", "sap-icon://permission", "sap-icon://permission", "sap-icon://permission", "sap-icon://permission"]);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $progNav = this.oProgressNavigator.$();
 
@@ -294,7 +295,7 @@ sap.ui.define([
 			});
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
@@ -309,7 +310,7 @@ sap.ui.define([
 			});
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
@@ -377,9 +378,9 @@ sap.ui.define([
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
 			this.oBranchingProgressNavigator.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
-			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();
@@ -542,7 +543,7 @@ sap.ui.define([
 
 		//Act
 		this.oBranchingProgressNavigator.setVaryingStepCount(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		for (var i = 0; i < $branchingSteps.length; i++){
@@ -558,7 +559,7 @@ sap.ui.define([
 			});
 
 			this.oProgressNavigator.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oProgressNavigator.destroy();

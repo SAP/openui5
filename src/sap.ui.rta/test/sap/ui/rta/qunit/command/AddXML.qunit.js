@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	CommandFactory,
 	AddXML,
@@ -31,7 +32,8 @@ sap.ui.define([
 	List,
 	CustomListItem,
 	RtaQunitUtils,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -197,7 +199,7 @@ sap.ui.define([
 				}
 			}).setModel(oModel);
 			this.oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oDesignTime = new DesignTime({

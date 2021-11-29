@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/Core",
 	"sap/ui/events/jquery/EventExtension" // only used indirectly?
-], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils) {
+], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore) {
 	"use strict";
 
 
@@ -120,13 +121,13 @@ sap.ui.define([
 		this.oSlideTile.setModel(oSlideTileModel);
 	}
 
-	var oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oResBundle = oCore.getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oSlideTile.destroy();
@@ -150,7 +151,7 @@ sap.ui.define([
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
@@ -164,7 +165,7 @@ sap.ui.define([
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
@@ -201,7 +202,7 @@ sap.ui.define([
 			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.setScope(GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
@@ -226,7 +227,7 @@ sap.ui.define([
 	QUnit.test("In Action Scope toggle sliding is not allowed", function(assert) {
 		//Arrange
 		this.oSlideTile.setScope("Actions");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var spy = sinon.spy(this.oSlideTile, "_toggleAnimation"),
 			oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = KeyCodes.SPACE;
@@ -253,7 +254,7 @@ sap.ui.define([
 		var spyInvalidate = sinon.spy(this.oSlideTile, "invalidate");
 		//Act
 		this.oSlideTile.setScope(GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(spyScrollToTile.calledOnce, "Function _scrollToTile is called");
 		assert.ok(spyStartAnimation.notCalled, "Function _startAnimation is not called");
@@ -271,7 +272,7 @@ sap.ui.define([
 		}
 		//Act
 		this.oSlideTile.setScope(GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		for (var i = 0; i < oTiles.length; i++) {
 			assert.ok(spy[i].calledWith(true), "The " + i + " Tile shows Actions view");
@@ -282,7 +283,7 @@ sap.ui.define([
 		this.oSlideTile.setWidth("100%");
 		this.oSlideTile.getTiles()[0].setFrameType("Stretch");
 		this.oSlideTile.getTiles()[0].setMode("ArticleMode");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSlideTile.getDomRef().style.width, "100%", "Slide tile has rendered in 100% width");
@@ -294,7 +295,7 @@ sap.ui.define([
 
 	QUnit.test("When GenericTile frametype is not Stretch", function(assert) {
 		this.oSlideTile.setWidth("100%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSlideTile.getDomRef().style.width, "100%", "Slide tile has rendered in 100% width");
@@ -311,7 +312,7 @@ sap.ui.define([
 			};
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			sinon.spy(this, "fnPressHandler");
 			sinon.spy(this, "fnSecondPressHandler");
 		},
@@ -376,7 +377,7 @@ sap.ui.define([
 		QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
 			//Arrange
 			this.oSlideTile.setScope("Actions");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
 			oEvent.which = KeyCodes.B;
@@ -414,7 +415,7 @@ sap.ui.define([
 		QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
 			//Arrange
 			this.oSlideTile.setScope("Actions");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			var spy = sinon.spy(this.oSlideTile, "_scrollToNextTile"),
 				oEvent = jQuery.Event("keyup");
 			oEvent.which = KeyCodes.F;
@@ -471,7 +472,7 @@ sap.ui.define([
 		beforeEach : function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function () {
 			this.oSlideTile.destroy();
@@ -522,7 +523,7 @@ sap.ui.define([
 	QUnit.test("Method _scrollToTile", function(assert) {
 		//Arrange
 		var iScrollToTile = 1;
-		var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+		var sDir = oCore.getConfiguration().getRTL() ? "right" : "left";
 		//Act
 		this.oSlideTile._scrollToTile(iScrollToTile);
 		//Assert
@@ -594,7 +595,7 @@ sap.ui.define([
 		//Arrange
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Act
 		var $indicator = this.oSlideTile.$("tilesIndicator");
 		//Assert
@@ -657,7 +658,7 @@ sap.ui.define([
 				tiles: [oGenericTile]
 			});
 			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oSlideTile.destroy();
@@ -673,7 +674,7 @@ sap.ui.define([
 	QUnit.test("Icon color is adapted to NewsContent", function(assert) {
 		//Act
 		this.oSlideTile.setScope("Actions");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.ok(this.oSlideTile.hasStyleClass("sapMSTDarkBackground"), "The more icon color is adapted to NewsContent");
 	});
@@ -689,7 +690,7 @@ sap.ui.define([
 			});
 
 			this.oEmptySlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 		},
 		afterEach : function() {
@@ -706,7 +707,7 @@ sap.ui.define([
 		beforeEach : function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSlideTile.destroy();
@@ -735,7 +736,7 @@ sap.ui.define([
 		beforeEach : function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSlideTile.destroy();
@@ -778,7 +779,7 @@ sap.ui.define([
 			oGenericTile = this.oSlideTile.getTiles()[0];
 		oGenericTile.attachEvent("press", handlePress);
 		this.oSlideTile.setScope(GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
 		oGenericTile.$().trigger('tap');
@@ -794,7 +795,7 @@ sap.ui.define([
 		//Arrange
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.oSlideTile.attachEvent("press", handlePress);
 
 		//Act
@@ -813,7 +814,7 @@ sap.ui.define([
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = KeyCodes.ENTER;
 		oEvent.target = {
@@ -835,7 +836,7 @@ sap.ui.define([
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = KeyCodes.SPACE;
 		oEvent.target = {
@@ -857,7 +858,7 @@ sap.ui.define([
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = KeyCodes.DELETE;
 		oEvent.target = {
@@ -879,7 +880,7 @@ sap.ui.define([
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.attachEvent("press", handlePress);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oEvent = jQuery.Event("keyup");
 		oEvent.keyCode = KeyCodes.BACKSPACE;
 		oEvent.target = {
@@ -950,7 +951,7 @@ sap.ui.define([
 					content: new NewsContent()
 				})]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oSlideTile.destroy();

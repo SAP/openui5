@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/thirdparty/jquery"
-	],
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
+],
 	function(
 		library,
 		qutils,
@@ -26,7 +27,8 @@ sap.ui.define([
 		Toolbar,
 		Label,
 		Input,
-		jQuery
+		jQuery,
+		oCore
 	) {
 	"use strict";
 
@@ -40,7 +42,7 @@ sap.ui.define([
 	// if some test breaks internal controls of test may not destroyed
 	// what leads to duplicate ID errors in next test
 	function cleanupControls(sId) {
-		var oControl = sap.ui.getCore().byId(sId);
+		var oControl = oCore.byId(sId);
 		if (oControl) {
 			oControl.destroy();
 		}
@@ -57,20 +59,20 @@ sap.ui.define([
 			layout: sLayout,
 			editable: true,
 			content: [
-			          new Title("T1", {text: "Test"}),
-			          new Label("L1", {text: "Test"}),
-			          new Input("I1"),
-			          new Input("I2"),
-			          new Title("T2", {text: "Test"}),
-			          new Label("L2", {text: "Test"}),
-			          new Input("I3"),
-			          new Label("L3", {text: "Test"}),
-			          new Input("I4"),
-			          new Input("I5"),
-			          new Input("I6")
-			          ]
+					  new Title("T1", {text: "Test"}),
+					  new Label("L1", {text: "Test"}),
+					  new Input("I1"),
+					  new Input("I2"),
+					  new Title("T2", {text: "Test"}),
+					  new Label("L2", {text: "Test"}),
+					  new Input("I3"),
+					  new Label("L3", {text: "Test"}),
+					  new Input("I4"),
+					  new Input("I5"),
+					  new Input("I6")
+					  ]
 		}).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oForm = oSimpleForm.getAggregation("form");
 		oFormLayout = oForm.getLayout();
 	}
@@ -146,7 +148,7 @@ sap.ui.define([
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainers");
 
 		oSimpleForm.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oFormLayout = oForm.getLayout();
 
 		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", layoutAfterRendering);
@@ -154,11 +156,11 @@ sap.ui.define([
 
 	QUnit.test("width", function(assert) {
 		oSimpleForm.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(!/width:/.test(oSimpleForm.$().attr("style")), "SimpleForm2: no width set");
 
 		oSimpleForm.setWidth("100%");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(/width:/.test(oSimpleForm.$().attr("style")) && /100%/.test(oSimpleForm.$().attr("style")), "SimpleForm1: width set");
 	});
 
@@ -199,7 +201,7 @@ sap.ui.define([
 	QUnit.test("AriaLabelledBy", function(assert) {
 		oSimpleForm.addAriaLabelledBy("XXX");
 		oSimpleForm.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oForm.getAriaLabelledBy(), "XXX", "Form getAriaLabelledBy");
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "XXX", "aria-labelledby");
@@ -208,16 +210,16 @@ sap.ui.define([
 	QUnit.test("_suggestTitleId", function(assert) {
 		oSimpleForm._suggestTitleId("ID1");
 		oSimpleForm.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "ID1", "aria-labelledby points to TitleID");
 
 		var oTitle = new Title("T1", {text: "Test"});
 		oSimpleForm.setTitle(oTitle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "T1", "aria-labelledby points to Title");
 
 		oSimpleForm.addAriaLabelledBy("X");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "X T1", "aria-labelledby points to AriaLabel and Title");
 	});
 
@@ -1126,7 +1128,7 @@ sap.ui.define([
 		assert.equal(aFields.length, 2, "FormElement has 2 Fields");
 		assert.equal(aFields[0].getId(), "I1", "FormElement has 1. field");
 		assert.equal(aFields[1].getId(), "I2", "FormElement has 2. field");
-		assert.notOk(sap.ui.getCore().byId(sContainerId), "old FormContainer destroyed");
+		assert.notOk(oCore.byId(sContainerId), "old FormContainer destroyed");
 
 		oTitle2.destroy();
 	});
@@ -1186,7 +1188,7 @@ sap.ui.define([
 		assert.equal(aFormContainers.length, 2, "Form has 2 FormContainers");
 		aFormElements = aFormContainers[0].getFormElements();
 		assert.equal(aFormElements.length, 0, "1. FormContainer has no FormElements");
-		assert.notOk(sap.ui.getCore().byId(sElementId), "old FormElement destroyed");
+		assert.notOk(oCore.byId(sElementId), "old FormElement destroyed");
 
 		oLabel.destroy();
 	});
@@ -1222,7 +1224,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getId(), "I1", "FormElement has 1. field");
 		assert.equal(aFields[1].getId(), "I2", "FormElement has 2. field");
 		assert.equal(aFields[2].getId(), "I3", "FormElement has 3. field");
-		assert.notOk(sap.ui.getCore().byId(sElementId), "old FormElement destroyed");
+		assert.notOk(oCore.byId(sElementId), "old FormElement destroyed");
 
 		oLabel2.destroy();
 	});
@@ -1243,7 +1245,7 @@ sap.ui.define([
 		assert.equal(aFormContainers.length, 1, "Form has 1 FormContainer");
 		var aFormElements = aFormContainers[0].getFormElements();
 		assert.equal(aFormElements.length, 0, "FormContainer has no FormElement");
-		assert.notOk(sap.ui.getCore().byId(sContainerId), "old FormContainer destroyed");
+		assert.notOk(oCore.byId(sContainerId), "old FormContainer destroyed");
 
 		oField.destroy();
 	});
@@ -1260,7 +1262,7 @@ sap.ui.define([
 		assert.equal(aContent.length, 0, "SimpleForm has no content");
 		aFormContainers = oForm.getFormContainers();
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainers");
-		assert.notOk(sap.ui.getCore().byId(sContainerId), "old FormContainer destroyed");
+		assert.notOk(oCore.byId(sContainerId), "old FormContainer destroyed");
 
 		oField.destroy();
 	});
@@ -1380,7 +1382,7 @@ sap.ui.define([
 		assert.equal(aContent.length, 0, "SimpleForm has no content");
 		aFormContainers = oForm.getFormContainers();
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainer");
-		assert.notOk(sap.ui.getCore().byId(sContainerId), "old FormContainer destroyed");
+		assert.notOk(oCore.byId(sContainerId), "old FormContainer destroyed");
 	});
 
 	QUnit.module("destroyContent", {
@@ -1420,14 +1422,14 @@ sap.ui.define([
 		assert.equal(aContent.length, 0, "SimpleForm has no content");
 		aFormContainers = oForm.getFormContainers();
 		assert.equal(aFormContainers.length, 0, "Form has no FormContainer");
-		assert.notOk(sap.ui.getCore().byId(sContainerId), "old FormContainer destroyed");
-		assert.notOk(sap.ui.getCore().byId("T1"), "Title1 destroyed");
-		assert.notOk(sap.ui.getCore().byId("T2"), "Title2 destroyed");
-		assert.notOk(sap.ui.getCore().byId("L1"), "Label1 destroyed");
-		assert.notOk(sap.ui.getCore().byId("L2"), "Label2 destroyed");
-		assert.notOk(sap.ui.getCore().byId("I1"), "Field1 destroyed");
-		assert.notOk(sap.ui.getCore().byId("I2"), "Field2 destroyed");
-		assert.notOk(sap.ui.getCore().byId("I3"), "Field3 destroyed");
+		assert.notOk(oCore.byId(sContainerId), "old FormContainer destroyed");
+		assert.notOk(oCore.byId("T1"), "Title1 destroyed");
+		assert.notOk(oCore.byId("T2"), "Title2 destroyed");
+		assert.notOk(oCore.byId("L1"), "Label1 destroyed");
+		assert.notOk(oCore.byId("L2"), "Label2 destroyed");
+		assert.notOk(oCore.byId("I1"), "Field1 destroyed");
+		assert.notOk(oCore.byId("I2"), "Field2 destroyed");
+		assert.notOk(oCore.byId("I3"), "Field3 destroyed");
 	});
 
 	QUnit.module("indexOfContent", {
@@ -1482,49 +1484,49 @@ sap.ui.define([
 	});
 
 	function defaultLayoutDataOnContent(assert) {
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
 		assert.ok(oLayoutData, "Label has LayoutData");
 		assert.ok(oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData"), "sap.ui.layout.ResponsiveFlowLayoutData used");
 		assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 
-		var oField = sap.ui.getCore().byId("I1");
+		var oField = oCore.byId("I1");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.ok(oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData"), "sap.ui.layout.ResponsiveFlowLayoutData used");
 		assert.equal(oLayoutData.getWeight(), 3, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I2");
+		oField = oCore.byId("I2");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 2, "Field LayoutData weight");
 
-		oLabel = sap.ui.getCore().byId("L2");
+		oLabel = oCore.byId("L2");
 		oLayoutData = oLabel.getLayoutData();
 		assert.ok(oLayoutData, "Label has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I3");
+		oField = oCore.byId("I3");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 5, "Field LayoutData weight");
 
-		oLabel = sap.ui.getCore().byId("L3");
+		oLabel = oCore.byId("L3");
 		oLayoutData = oLabel.getLayoutData();
 		assert.ok(oLayoutData, "Label has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I4");
+		oField = oCore.byId("I4");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 2, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I5");
+		oField = oCore.byId("I5");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 2, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I6");
+		oField = oCore.byId("I6");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 1, "Field LayoutData weight");
@@ -1536,85 +1538,85 @@ sap.ui.define([
 
 	function customLayoutDataOnContent(assert) {
 		var oLayoutData = new ResponsiveFlowLayoutData("LD2", {linebreak: true, weight: 8});
-		var oField = sap.ui.getCore().byId("I2");
+		var oField = oCore.byId("I2");
 		oField.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		oLayoutData = oLabel.getLayoutData();
 		assert.ok(oLayoutData, "Label has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I1");
+		oField = oCore.byId("I1");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 5, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I2");
+		oField = oCore.byId("I2");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getId(), "LD2", "Field custom LayoutData set");
 		assert.equal(oLayoutData.getWeight(), 8, "Field LayoutData weight");
 
 		oLayoutData = new ResponsiveFlowLayoutData("LD4", {weight: 3});
-		oField = sap.ui.getCore().byId("I4");
+		oField = oCore.byId("I4");
 		oField.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getId(), "LD4", "Field custom LayoutData set");
 		assert.equal(oLayoutData.getWeight(), 3, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I5");
+		oField = oCore.byId("I5");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 1, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I6");
+		oField = oCore.byId("I6");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 1, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I4");
+		oField = oCore.byId("I4");
 		oField.destroyLayoutData();
 		oLayoutData = new ResponsiveFlowLayoutData("LD5", {linebreak: true, weight: 3});
-		oField = sap.ui.getCore().byId("I5");
+		oField = oCore.byId("I5");
 		oField.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
-		oField = sap.ui.getCore().byId("I4");
+		oField = oCore.byId("I4");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 5, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I5");
+		oField = oCore.byId("I5");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getId(), "LD5", "Field custom LayoutData set");
 		assert.equal(oLayoutData.getWeight(), 3, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I6");
+		oField = oCore.byId("I6");
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 5, "Field LayoutData weight");
 
 		oLayoutData = new ResponsiveFlowLayoutData("LD3", {linebreak: true, weight: 8});
-		oField = sap.ui.getCore().byId("I3");
+		oField = oCore.byId("I3");
 		oField.setLayoutData(oLayoutData);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getId(), "LD3", "Field custom LayoutData set");
 		assert.equal(oLayoutData.getWeight(), 8, "Field LayoutData weight");
 
-		oField = sap.ui.getCore().byId("I6");
+		oField = oCore.byId("I6");
 		oSimpleForm.removeContent(oField);
 		oLayoutData = new ResponsiveFlowLayoutData("LD6", {linebreak: true, weight: 8});
 		oField.setLayoutData(oLayoutData);
 		oSimpleForm.addContent(oField);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = oField.getLayoutData();
 		assert.ok(oLayoutData, "Field has LayoutData");
@@ -1627,13 +1629,13 @@ sap.ui.define([
 	});
 
 	function RlDefaultLayoutDataRemovedIfContentRemoved(assert){
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		oSimpleForm.removeContent(oLabel);
 		var oLayoutData = oLabel.getLayoutData();
 		assert.notOk(oLayoutData, "Label has no LayoutData");
 		oLabel.destroy();
 
-		var oField = sap.ui.getCore().byId("I1");
+		var oField = oCore.byId("I1");
 		oSimpleForm.removeContent(oField);
 		oLayoutData = oField.getLayoutData();
 		assert.notOk(oLayoutData, "Field has no LayoutData");
@@ -1654,7 +1656,7 @@ sap.ui.define([
 	function RlDefaultLayoutDataOnFormContainer(assert) {
 		var oTitle = new Title("T3", {text: "Test"});
 		oSimpleForm.addContent(oTitle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1698,7 +1700,7 @@ sap.ui.define([
 		oSimpleForm.setMaxContainerCols(3);
 		var oTitle = new Title("T3", {text: "Test"});
 		oSimpleForm.addContent(oTitle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1709,7 +1711,7 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getLinebreak(), "LayoutData linebreak");
 
 		oSimpleForm.setMaxContainerCols(1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = aFormContainers[0].getLayoutData();
 		assert.notOk(oLayoutData.getLinebreak(), "LayoutData linebreak");
@@ -1727,7 +1729,7 @@ sap.ui.define([
 		assert.equal(oSimpleForm.getMinWidth(), -1, "default value");
 
 		oSimpleForm.setMinWidth(5000);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1743,12 +1745,12 @@ sap.ui.define([
 	function RlLabelMinWidth(assert) {
 		assert.equal(oSimpleForm.getLabelMinWidth(), 192, "default value");
 
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
 		assert.equal(oLayoutData.getMinWidth(), 192, "Label LayoutData minWidth");
 
 		oSimpleForm.setLabelMinWidth(200);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal(oLayoutData.getMinWidth(), 200, "Label LayoutData minWidth");
 	}
 
@@ -1761,7 +1763,7 @@ sap.ui.define([
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
@@ -1785,11 +1787,11 @@ sap.ui.define([
 	});
 
 	function GlNoDefaultLayoutData(assert) {
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
 		assert.notOk(oLayoutData, "Label has no LayoutData");
 
-		var oField = sap.ui.getCore().byId("I1");
+		var oField = oCore.byId("I1");
 		oLayoutData = oField.getLayoutData();
 		assert.notOk(oLayoutData, "Field has no LayoutData");
 
@@ -1823,7 +1825,7 @@ sap.ui.define([
 		oSimpleForm.setMaxContainerCols(1);
 		var oTitle = new Title("T3", {text: "Test"});
 		oSimpleForm.addContent(oTitle);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aFormContainers = oForm.getFormContainers();
 		var oLayoutData = aFormContainers[0].getLayoutData();
@@ -1834,7 +1836,7 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
 
 		oSimpleForm.setMaxContainerCols(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		oLayoutData = aFormContainers[0].getLayoutData();
 		assert.ok(oLayoutData.getHalfGrid(), "LayoutData halfGrid");
@@ -1853,7 +1855,7 @@ sap.ui.define([
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
@@ -1877,11 +1879,11 @@ sap.ui.define([
 	});
 
 	function RGlNoDefaultLayoutData(assert) {
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
 		assert.notOk(oLayoutData, "Label has no LayoutData");
 
-		var oField = sap.ui.getCore().byId("I1");
+		var oField = oCore.byId("I1");
 		oLayoutData = oField.getLayoutData();
 		assert.notOk(oLayoutData, "Field has no LayoutData");
 
@@ -1902,7 +1904,7 @@ sap.ui.define([
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
@@ -1968,7 +1970,7 @@ sap.ui.define([
 		oSimpleForm.setBreakpointXL(2000);
 		oSimpleForm.setBreakpointL(1000);
 		oSimpleForm.setBreakpointM(500);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSimpleForm.getLabelSpanXL(), 6, "LabelSpanXL: on SimpleForm");
 		assert.equal(oFormLayout.getLabelSpanXL(), 6, "LabelSpanXL: on Layout");
@@ -2022,11 +2024,11 @@ sap.ui.define([
 	});
 
 	function ClNoDefaultLayoutData(assert) {
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
 		assert.notOk(oLayoutData, "Label has no LayoutData");
 
-		var oField = sap.ui.getCore().byId("I1");
+		var oField = oCore.byId("I1");
 		oLayoutData = oField.getLayoutData();
 		assert.notOk(oLayoutData, "Field has no LayoutData");
 
@@ -2047,7 +2049,7 @@ sap.ui.define([
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Translucent, "value on Layout");
 
 		oSimpleForm.setBackgroundDesign(library.BackgroundDesign.Transparent);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSimpleForm.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on SimpleForm");
 		assert.equal(oFormLayout.getBackgroundDesign(), library.BackgroundDesign.Transparent, "value on Layout");
@@ -2080,7 +2082,7 @@ sap.ui.define([
 		oSimpleForm.setColumnsXL(4);
 		oSimpleForm.setColumnsL(3);
 		oSimpleForm.setColumnsM(2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal(oSimpleForm.getLabelSpanL(), 5, "LabelSpanL: on SimpleForm");
 		assert.equal(oFormLayout.getLabelCellsLarge(), 5, "LabelCellsLarge: on Layout");
@@ -2107,7 +2109,7 @@ sap.ui.define([
 		assert.ok(oFormLayout.isA("sap.ui.layout.form.ResponsiveLayout"), "ResponsiveLayout used");
 		assert.ok(oOldLayout._bIsBeingDestroyed, "old layout destroyed");
 
-		var oLabel = sap.ui.getCore().byId("L1");
+		var oLabel = oCore.byId("L1");
 		var oLayoutData = oLabel.getLayoutData();
 		assert.ok(oLayoutData, "Label has LayoutData");
 		assert.ok(oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData"), "sap.ui.layout.ResponsiveFlowLayoutData used");
@@ -2120,7 +2122,7 @@ sap.ui.define([
 
 		oOldLayout = oFormLayout;
 		oSimpleForm.setLayout("ResponsiveGridLayout");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		oFormLayout = oForm.getLayout();
 
 		assert.ok(oFormLayout.isA("sap.ui.layout.form.ResponsiveGridLayout"), "ResponsiveGridLayout used");
@@ -2137,7 +2139,7 @@ sap.ui.define([
 		if (oFormLayout) {
 			oOldLayout = oFormLayout;
 			oSimpleForm.setLayout("ResponsiveLayout");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			oFormLayout = oForm.getLayout();
 			if (oFormLayout) {
 				changeLayout(assert, oOldLayout);
@@ -2156,7 +2158,7 @@ sap.ui.define([
 				oFormLayout = oForm.getLayout();
 				oOldLayout = oFormLayout;
 				oSimpleForm.setLayout("ResponsiveLayout");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				oFormLayout = oForm.getLayout();
 
 				if (oFormLayout) {
@@ -2179,8 +2181,8 @@ sap.ui.define([
 		assert.ok(aFormElements[0].isVisible(), "FormElement visible");
 
 		this.spy(aFormElements[0], "invalidate");
-		var oField1 = sap.ui.getCore().byId("I1");
-		var oField2 = sap.ui.getCore().byId("I2");
+		var oField1 = oCore.byId("I1");
+		var oField2 = oCore.byId("I2");
 		oField1.setVisible(false);
 		assert.ok(aFormElements[0].isVisible(), "FormElement still visible");
 		assert.ok(aFormElements[0].invalidate.called, "FormElement invalidated");
@@ -2193,7 +2195,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("destroy of field", function(assert) {
-		var oField = sap.ui.getCore().byId("I2");
+		var oField = oCore.byId("I2");
 		oField.destroy();
 		var aContent = oSimpleForm.getContent();
 		assert.equal(aContent.length, 10, "SimpleForm has 10 content elements");
@@ -2209,7 +2211,7 @@ sap.ui.define([
 	function clone(assert) {
 		var oClone = oSimpleForm.clone("MyClone");
 		oClone.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var aContent = oClone.getContent();
 		var oCloneForm = oClone.getAggregation("form");
@@ -2249,13 +2251,13 @@ sap.ui.define([
 		assert.equal(oClone._aLayouts.length, 10, "Clone has own LayoutData");
 
 		//visibility change
-		oField = sap.ui.getCore().byId("I3");
+		oField = oCore.byId("I3");
 		aFormElements = aFormContainers[1].getFormElements();
 		oField.setVisible(false);
 		assert.ok(aFormElements[0].isVisible(), "FormElement on Clone still visible");
 		oField.setVisible(true);
 
-		var oCloneField = sap.ui.getCore().byId("I3-MyClone");
+		var oCloneField = oCore.byId("I3-MyClone");
 		oCloneField.setVisible(false);
 		assert.notOk(aFormElements[0].isVisible(), "FormElement on Clone not visible");
 		aFormContainers = oForm.getFormContainers();
@@ -2274,14 +2276,14 @@ sap.ui.define([
 		var oVD = new VariantLayoutData("VD1", {multipleLayoutData: [oGD]});
 		var oField = new Input("I7", {layoutData: oVD});
 		oSimpleForm.addContent(oField);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveLayout", clone);
 	});
 
 	QUnit.test("resize", function(assert) {
 		oSimpleForm.setLayout("ResponsiveLayout");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		this.spy(oSimpleForm, "_applyLinebreaks");
 
 		var fnDone = assert.async();

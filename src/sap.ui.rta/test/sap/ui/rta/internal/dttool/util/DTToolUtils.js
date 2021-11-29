@@ -4,10 +4,12 @@
 
 //Provides basic utils for the DT tool
 sap.ui.define([
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Core"
 ],
 function(
-	UIComponent
+	UIComponent,
+	oCore
 ) {
 	"use strict";
 	var Utils = {
@@ -22,7 +24,7 @@ function(
 		return Utils._oIframeWindow;
 	};
 	Utils.setIframeWindow = function (sIframeId) {
-		Utils._oIframeWindow = sap.ui.getCore().byId(sIframeId).getDomRef().contentWindow;
+		Utils._oIframeWindow = oCore.byId(sIframeId).getDomRef().contentWindow;
 	};
 
 	Utils.getRTAClient = function () {

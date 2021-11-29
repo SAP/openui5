@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -24,7 +25,8 @@ sap.ui.define([
 	deepEqual,
 	jQuery,
 	coreLibrary,
-	KeyCodes
+	KeyCodes,
+	oCore
 ) {
 	"use strict";
 
@@ -106,7 +108,7 @@ sap.ui.define([
 	oModel.setData({
 		dateVal : new Date(+oNow)
 	});
-	sap.ui.getCore().setModel(oModel);
+	oCore.setModel(oModel);
 
 	var sValue = "";
 	var bValid = false;
@@ -280,7 +282,7 @@ sap.ui.define([
 
 			oView.setModel(oMyLocalModel);
 			oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			aAllDateTimeInputs.forEach(function (oDTI) {
 				//Act
@@ -375,7 +377,7 @@ sap.ui.define([
 			}).then(function(oView) {
 				oView.setModel(oMyLocalModel);
 				oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 
 				return oView;
 			});

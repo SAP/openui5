@@ -3,12 +3,15 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/WheelSlider",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	Item,
 	WheelSlider,
 	KeyCodes,
-	jQuery) {
+	jQuery,
+	oCore
+) {
 		"use strict";
 
 		QUnit.module("Type to select", {
@@ -81,7 +84,7 @@ sap.ui.define([
 				});
 
 				this.oSlider.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			},
 			afterEach: function() {
 				this.oSlider.destroy();
@@ -146,7 +149,7 @@ sap.ui.define([
 
 			// act
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert - after first rendering
 			assert.ok(oAttachEventsSpy.calledOnce, "_attachEvents is called");
@@ -154,7 +157,7 @@ sap.ui.define([
 
 			// act
 			this.oSlider.invalidate();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert - after second rendering
 			assert.equal(oAttachEventsSpy.callCount, 2, "_attachEvents is called 2 times");
@@ -171,7 +174,7 @@ sap.ui.define([
 			assert.ok(oSpyUpdateConstrainedMargins.notCalled, "margins are not updated before a domref exists");
 
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.ok(oSpyUpdateConstrainedMargins.calledOnce, "margins are updated after rendering");
@@ -194,14 +197,14 @@ sap.ui.define([
 
 			// act
 			this.oSlider.setIsCyclic(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.ok(!this.oSlider.$().hasClass("sapMWSShort"), "slider styled correctly");
 
 			// act
 			this.oSlider.setIsCyclic(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assert
 			assert.ok(this.oSlider.$().hasClass("sapMWSShort"), "slider styled correctly");
@@ -243,7 +246,7 @@ sap.ui.define([
 		QUnit.test("_handleTap expands the slider", function(assert) {
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.oSlider._handleTap(null);
@@ -256,7 +259,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act - tap the 3rd value
 			this.oSlider._handleTap(this._createItemMouseUp(2));
@@ -268,7 +271,7 @@ sap.ui.define([
 		QUnit.test("_doDrag method updates the top position", function(assert) {
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.oSlider._startDrag(200);
@@ -285,7 +288,7 @@ sap.ui.define([
 		QUnit.test("_endDrag method initiates an animation on the slider's content", function(assert) {
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oAnimateScrollSpy = this.spy(this.oSlider, "_animateScroll");
 
@@ -307,7 +310,7 @@ sap.ui.define([
 
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -324,7 +327,7 @@ sap.ui.define([
 
 			// arrange
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -342,7 +345,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -360,7 +363,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oOffsetAnimateValueSpy = this.spy(this.oSlider, "_offsetAnimateValue");
 
@@ -377,7 +380,7 @@ sap.ui.define([
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.setSelectedKey("k2");
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.oSlider.onsappageup();
@@ -391,7 +394,7 @@ sap.ui.define([
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.setSelectedKey("k2");
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.oSlider.onsappagedown();
@@ -406,7 +409,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oHandleWheelScrollSpy = this.spy(this.oSlider, "_handleWheelScroll");
 
@@ -422,7 +425,7 @@ sap.ui.define([
 			// arrange
 			this.oSlider.setIsExpanded(true);
 			this.oSlider.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			this.oSlider.onfocusout({});

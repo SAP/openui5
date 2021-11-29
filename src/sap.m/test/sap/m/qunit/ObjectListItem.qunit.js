@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/ObjectMarker",
 	"sap/m/library",
-	"sap/ui/base/ManagedObjectObserver"
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +23,8 @@ sap.ui.define([
 	coreLibrary,
 	ObjectMarker,
 	mobileLibrary,
-	ManagedObjectObserver
+	ManagedObjectObserver,
+	oCore
 ) {
 	"use strict";
 
@@ -150,7 +152,7 @@ sap.ui.define([
 		});
 
 		list.addItem(lockedOlI);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(lockedOlI.getDomRef("lock"), "Locked marker should be rendered.");
 		assert.ok(lockedOlI.$("lock").hasClass("sapMObjectMarker"), "Locked is sapMObjectMarker.");
@@ -175,7 +177,7 @@ sap.ui.define([
 		});
 		list.addItem(oAttrsAndStatuseListItem);
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert ObjectListItem inner nodes ids are added to aria-labelledby attribute
 		var sAriaLabelledByValue = oAttrsAndStatuseListItem.$().attr("aria-labelledby");
@@ -229,7 +231,7 @@ sap.ui.define([
 			}).placeAt('qunit-fixture'),
 			sResultARIA;
 
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		sResultARIA = oOLI.$().attr('aria-labelledby');
 
 		//assert
@@ -266,7 +268,7 @@ sap.ui.define([
 		showTextDir.setIntroTextDirection(TextDirection.RTL);
 		showTextDir.setTitleTextDirection(TextDirection.Inherit);
 		showTextDir.setNumberTextDirection(TextDirection.Inherit);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
 		assert.equal($('#showTextDir-titleText').attr("dir"), "auto", "title has no dir attribute");
@@ -298,7 +300,7 @@ sap.ui.define([
 		});
 
 		list.addItem(markersOlI);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 		assert.ok(document.getElementById("favorite"), "marker favorite should be rendered.");
@@ -316,13 +318,13 @@ sap.ui.define([
 		var marker = new ObjectMarker({id: "draft", type: ObjectMarkerType.Draft});
 
 		list.addItem(markersOlI);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $allRows = $("#markersOlI .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
 
 		markersOlI.insertMarker(marker, 0);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("draft"), "marker draft should be rendered.");
 
@@ -341,12 +343,12 @@ sap.ui.define([
 		});
 
 		list.addItem(markersOlI);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		assert.ok(document.getElementById("flag"), "marker flag should be rendered.");
 
 		markersOlI.removeAllMarkers();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var $allRows = $("#markersOlI .sapMObjStatusMarker");
 		assert.ok($allRows.length === 0, "There are no markers");
@@ -494,7 +496,7 @@ sap.ui.define([
 			});
 
 		list.addItem(imageOLI1);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
@@ -502,7 +504,7 @@ sap.ui.define([
 
 		// Act
 		imageOLI1.setActive(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
@@ -510,7 +512,7 @@ sap.ui.define([
 
 		// Act
 		imageOLI1.setActive(false);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		// Assert
 		imageSrc = imageOLI1.$('img').attr('src');
@@ -530,7 +532,7 @@ sap.ui.define([
 			numberUnit : "EUR"
 		});
 		list.addItem(imageOLIIcon);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function() {
 			var iconWidth = imageOLIIcon.$().find('.sapMObjLIcon').width();
@@ -552,7 +554,7 @@ sap.ui.define([
 			numberUnit : "EUR"
 		});
 		list.addItem(imageOLIImg);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		setTimeout(function() {
 			var imageWidth = imageOLIImg.$('img').width();
@@ -830,29 +832,29 @@ sap.ui.define([
 	QUnit.test("TestIconExit", function(assert) {
 
 		assert.ok(!(iconOLI === null), "iconOLI is not null");
-		assert.ok(sap.ui.getCore().byId("iconOLI"), "Icon is found in UI5 Core");
-		assert.ok(sap.ui.getCore().byId("iconOLI-flag"), "Flag icon is found in UI5 Core");
-		assert.ok(sap.ui.getCore().byId("iconOLI-favorite"), "Favorite icon is found in UI5 Core");
-		assert.ok(sap.ui.getCore().byId("iconOLI-lock"), "Locked icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI"), "Icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI-flag"), "Flag icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI-favorite"), "Favorite icon is found in UI5 Core");
+		assert.ok(oCore.byId("iconOLI-lock"), "Locked icon is found in UI5 Core");
 		iconOLI.destroy();
-		assert.ok(!sap.ui.getCore().byId("iconOLI-flag"), "Flag icon removed from UI5 Core");
-		assert.ok(!sap.ui.getCore().byId("iconOLI-favorite"), "Favorite icon removed from UI5 Core");
-		assert.ok(!sap.ui.getCore().byId("iconOLI-lock"), "Locked icon removed from UI5 Core");
+		assert.ok(!oCore.byId("iconOLI-flag"), "Flag icon removed from UI5 Core");
+		assert.ok(!oCore.byId("iconOLI-favorite"), "Favorite icon removed from UI5 Core");
+		assert.ok(!oCore.byId("iconOLI-lock"), "Locked icon removed from UI5 Core");
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
 
 		assert.ok(!(imageOLI === null), "imageOLI is not null");
-		assert.ok(sap.ui.getCore().byId("imageOLI-img"), "Image is found in UI5 Core");
+		assert.ok(oCore.byId("imageOLI-img"), "Image is found in UI5 Core");
 		imageOLI.destroy();
-		assert.ok(!sap.ui.getCore().byId("imageOLI-img"), "Image is removed from UI5 Core");
+		assert.ok(!oCore.byId("imageOLI-img"), "Image is removed from UI5 Core");
 	});
 
 	QUnit.test("TestTitleExit", function(assert) {
 
 		assert.ok(!(titleOLI === null), "titleOLI is not null");
-		assert.ok(sap.ui.getCore().byId("titleOLI-titleText"), "Title text is found in UI5 Core");
+		assert.ok(oCore.byId("titleOLI-titleText"), "Title text is found in UI5 Core");
 		titleOLI.destroy();
-		assert.ok(!sap.ui.getCore().byId("titleOLI-titleText"), "Title text is removed from UI5 Core");
+		assert.ok(!oCore.byId("titleOLI-titleText"), "Title text is removed from UI5 Core");
 	});
 });

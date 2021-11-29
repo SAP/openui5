@@ -10,9 +10,10 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"test-resources/sap/m/qunit/upload/UploadSetTestUtils"
+	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
+	"sap/ui/core/Core"
 ], function (jQuery, UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device,
-			 JSONModel, TestUtils) {
+			 JSONModel, TestUtils, oCore) {
 	"use strict";
 
 	function getData() {
@@ -47,7 +48,7 @@ sap.ui.define([
 				}
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oUploadSet.destroy();

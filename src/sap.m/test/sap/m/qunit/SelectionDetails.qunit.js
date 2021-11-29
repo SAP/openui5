@@ -18,10 +18,11 @@ sap.ui.define([
 	"sap/m/SelectionDetailsItem",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Control"
+	"sap/ui/core/Control",
+	"sap/ui/core/Core"
 ], function(
 	jQuery, NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, StandardListItem,
-	FixFlex, ScrollContainer, Title, SelectionDetails, Item, SelectionDetailsItem, Device, ManagedObject, Control
+	FixFlex, ScrollContainer, Title, SelectionDetails, Item, SelectionDetailsItem, Device, ManagedObject, Control, oCore
 ) {
 	"use strict";
 
@@ -32,7 +33,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -65,7 +66,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -92,7 +93,7 @@ sap.ui.define([
 	QUnit.test("Toolbar button is up to date", function(assert) {
 		// Arrange
 		this.oSelectionDetails.addItem(new SelectionDetailsItem());
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details (1)", "The button text is up to date");
@@ -115,7 +116,7 @@ sap.ui.define([
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.setAggregation("_popover", this.oResponsivePopover, true);
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -185,7 +186,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			sinon.spy(sap.m, "ResponsivePopover");
 			sinon.spy(sap.m, "Page");
@@ -299,7 +300,7 @@ sap.ui.define([
 
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this._aGetPopoverArgs = [
 				NavContainer, ResponsivePopover, Toolbar, ToolbarSpacer, Page,
@@ -398,7 +399,7 @@ sap.ui.define([
 		Device.resize.height = 400;
 
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		var oPopover = this.oSelectionDetails._getPopover()._oControl;
 
@@ -439,7 +440,7 @@ sap.ui.define([
 			this.sTitle = "newPageTitle";
 			this.oContent = new Control();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.aHandleNavLazyArgs = [
 				this.sTitle, this.oContent,
@@ -631,7 +632,7 @@ sap.ui.define([
 		this.oSelectionDetails.setAggregation("_popover", this.oPopover, true);
 
 		this.oPopover.openBy(this.oSelectionDetails);
-		var oGetAnimationStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getAnimation").returns(false);
+		var oGetAnimationStub = sinon.stub(oCore.getConfiguration(), "getAnimation").returns(false);
 
 		var oRegisterSpy = sinon.spy(this.oPopover._oControl, "_registerContentResizeHandler");
 		var oDeregisterSpy = sinon.spy(this.oPopover._oControl, "_deregisterContentResizeHandler");
@@ -665,7 +666,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -708,7 +709,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -755,7 +756,7 @@ sap.ui.define([
 
 		// Act
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oList = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-list");
+		var oList = oCore.byId(this.oSelectionDetails.getId() + "-list");
 
 		//Assert
 		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
@@ -770,7 +771,7 @@ sap.ui.define([
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		//Assert
-		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
+		var oButton = oCore.byId(this.oSelectionDetails.getId() + "-action-0");
 		assert.equal(oButton.getText(), sText, "Button has correct text");
 		assert.equal(oButton.getEnabled(), true, "Button has correct text");
 	});
@@ -783,7 +784,7 @@ sap.ui.define([
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 		var oSpy = sinon.spy(this.oSelectionDetails, "_onActionPress");
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oButton = sap.ui.getCore().byId(oSelectionDetailsItem.getId() + "-action-0");
+		var oButton = oCore.byId(oSelectionDetailsItem.getId() + "-action-0");
 
 		// Act
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
@@ -811,7 +812,7 @@ sap.ui.define([
 		// Act
 		this.oSelectionDetails.removeItem(oSelectionDetailsItem1);
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		oButton = sap.ui.getCore().byId(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
+		oButton = oCore.byId(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
 		oButton.firePress();
 
 		//Assert
@@ -828,7 +829,7 @@ sap.ui.define([
 		var oAction = new Item();
 		this.oSelectionDetails.addAction(oAction);
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oButton = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-action-0");
+		var oButton = oCore.byId(this.oSelectionDetails.getId() + "-action-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act
@@ -863,7 +864,7 @@ sap.ui.define([
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		// Assert
-		assert.equal(sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
+		assert.equal(oCore.byId(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
 	});
 
 	QUnit.test("Press on the StandardListItem triggers action press event", function(assert) {
@@ -874,7 +875,7 @@ sap.ui.define([
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oStandardListItem = sap.ui.getCore().byId(this.oSelectionDetails.getId() + "-actionGroup-0");
+		var oStandardListItem = oCore.byId(this.oSelectionDetails.getId() + "-actionGroup-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act
@@ -1002,7 +1003,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -1050,7 +1051,7 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -1106,7 +1107,7 @@ sap.ui.define([
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			this.oDummyControl = new ManagedObject();
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -1223,7 +1224,7 @@ sap.ui.define([
 				items: [new SelectionDetailsItem()]
 			});
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();
@@ -1323,7 +1324,7 @@ sap.ui.define([
 				return [];
 			}
 		});
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getText(), "Details", "The button text is up to date");
@@ -1336,7 +1337,7 @@ sap.ui.define([
 
 		//Act
 		this.oSelectionDetails.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.ok(this.oSelectionDetails.getAggregation("_button").getText().indexOf("(10)") > -1, "The button text contains the correct number.");
@@ -1353,7 +1354,7 @@ sap.ui.define([
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.registerSelectionDetailsItemFactory(this.fnFactory);
 			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach : function() {
 			this.oSelectionDetails.destroy();

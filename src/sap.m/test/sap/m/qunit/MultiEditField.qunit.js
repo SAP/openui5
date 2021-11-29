@@ -1,15 +1,16 @@
 /*global QUnit,sinon */
 sap.ui.define([
 	"sap/m/MultiEditField",
-	"sap/ui/core/Item"
-], function (MultiEditField, Item) {
+	"sap/ui/core/Item",
+	"sap/ui/core/Core"
+], function (MultiEditField, Item, oCore) {
 	"use strict";
 
 	QUnit.module("Default values", {
 		beforeEach: function() {
 			this.oMultiEditField = new MultiEditField();
 			this.oMultiEditField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiEditField.destroy();
@@ -48,7 +49,7 @@ sap.ui.define([
 				]
 			});
 			this.oMultiEditField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			if (!this.oMultiEditField._bIsBeingDestroyed) {
@@ -96,7 +97,7 @@ sap.ui.define([
 				nullable: true
 			});
 			this.oMultiEditField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiEditField.destroy();
@@ -205,7 +206,7 @@ sap.ui.define([
 			selectedItem: oItem
 		});
 		this.oMultiEditField.invalidate();
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.equal(oSpy.callCount, 1, "The setSelectedKey function has been called once.");
@@ -245,7 +246,7 @@ sap.ui.define([
 		beforeEach: function (){
 			this.oMultiEditField = new MultiEditField();
 			this.oMultiEditField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiEditField.destroy();
@@ -257,7 +258,7 @@ sap.ui.define([
 		//Arrange
 		this.oMultiEditField.setShowValueHelp(false);
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._getValueHelp()), -1, "'Set new value' item will not be displayed.");
 	});
@@ -266,7 +267,7 @@ sap.ui.define([
 		//Arrange
 		this.oMultiEditField.setNullable(true);
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		//Assert
 		assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._getBlank()), -1, "'Leave blank' item will be displayed.");
 	});
@@ -342,7 +343,7 @@ sap.ui.define([
 	QUnit.module("Item rendering", {
 		beforeEach: function() {
 			this.oMultiEditField = new MultiEditField().placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiEditField.destroy();
@@ -363,7 +364,7 @@ sap.ui.define([
 		this.oMultiEditField.setNullable(false);
 
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.notOk(this.oMultiEditField.byId("select").getItemByKey("blank"), "The item with key 'blank' has not been added to the internal control.");
@@ -378,7 +379,7 @@ sap.ui.define([
 		this.oMultiEditField.setShowValueHelp(false);
 
 		//Act
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Assert
 		assert.notOk(this.oMultiEditField.byId("select").getItemByKey("new"), "The item with key 'new' has not been added to the internal control.");
@@ -388,7 +389,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMultiEditField = new MultiEditField();
 			this.oMultiEditField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiEditField.destroy();
@@ -399,7 +400,7 @@ sap.ui.define([
 	QUnit.test("isBlankSelection function", function(assert) {
 		//Arrange
 		this.oMultiEditField.setNullable(true);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oSelect = this.oMultiEditField.byId("select");
 		var oItem = oSelect.getItemByKey("blank");
 		//Act
@@ -422,7 +423,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMultiEditField = new MultiEditField();
 			this.oMultiEditField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oMultiEditField.destroy();
@@ -439,7 +440,7 @@ sap.ui.define([
 		var oInvalidItem = new Item();
 		this.oMultiEditField.setNullable(true);
 		this.oMultiEditField.addItem(oValidItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oKeepItem = this.oMultiEditField.byId("select").getItemByKey("keep");
 		var oBlankItem = this.oMultiEditField.byId("select").getItemByKey("blank");
 		var oValueHelpItem = this.oMultiEditField.byId("select").getItemByKey("new");
@@ -461,7 +462,7 @@ sap.ui.define([
 		var oInvalidItem = new Item();
 		this.oMultiEditField.setNullable(true);
 		this.oMultiEditField.addItem(oValidItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oKeepItem = this.oMultiEditField.byId("select").getItemByKey("keep");
 		var oBlankItem = this.oMultiEditField.byId("select").getItemByKey("blank");
 		var oValueHelpItem = this.oMultiEditField.byId("select").getItemByKey("new");
@@ -482,7 +483,7 @@ sap.ui.define([
 		});
 		var oInvalidItem = new Item();
 		this.oMultiEditField.addItem(oValidItem);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		var oValidInternalItem = this.oMultiEditField.byId("select").getItems()[3];
 
 		//Assert

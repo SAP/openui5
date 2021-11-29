@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/mdc/link/LinkItem",
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
-	"sap/m/MessageToast"
-], function(QUnit, LinkItem, Button, Link, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/core/Core"
+], function(QUnit, LinkItem, Button, Link, MessageToast, oCore) {
 	"use strict";
 
 	var aAdditionaLinkItems = [
@@ -283,7 +284,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -307,7 +308,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -376,7 +377,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -400,7 +401,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -468,7 +469,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -492,7 +493,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			fnHasVisibleMoreLinksButton(assert, oPanel, true);
 
@@ -586,7 +587,7 @@ sap.ui.define([
 
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			assert.ok(fnMessageToastSpy.notCalled);
 
 			window.addEventListener('hashchange', function(){

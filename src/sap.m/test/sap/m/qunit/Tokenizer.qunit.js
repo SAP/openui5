@@ -20,7 +20,7 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+	var oRb = Core.getLibraryResourceBundle("sap.m"),
 		TokenizerRenderMode = Library.TokenizerRenderMode;
 
 
@@ -42,7 +42,7 @@ sap.ui.define([
 
 		//arrange
 		this.tokenizer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(fnScrollToEndSpy.callCount, "scrollToEnd was called");
@@ -103,7 +103,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.removeAllTokens();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -125,12 +125,12 @@ sap.ui.define([
 	QUnit.test("DestroyTokens should call setFirstTokenTruncated with 'false'", function (assert) {
 		// arrange
 		this.tokenizer.addToken(new Token());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		var oSpy = this.spy(this.tokenizer, "setFirstTokenTruncated");
 
 		// Act
 		this.tokenizer.destroyTokens();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -146,7 +146,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.updateAggregation("tokens");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "setFirstTokenTruncated was called.");
@@ -218,7 +218,7 @@ sap.ui.define([
 			this.tokenizer.addToken(oToken);
 		}, this);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(oToken1.$().hasClass("sapMTokenReadOnly"), true, "token1 is not editable");
 		assert.equal(oToken2.$().hasClass("sapMTokenReadOnly"), true, "token2 is not editable");
@@ -241,7 +241,7 @@ sap.ui.define([
 			});
 
 		oMultiInput.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
 
@@ -249,7 +249,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oTokenizerDomRef, KeyCodes.ARROW_LEFT);
 
 		// assert
-		assert.strictEqual(sap.ui.getCore().byId("t6").getDomRef().id, document.activeElement.id,
+		assert.strictEqual(Core.byId("t6").getDomRef().id, document.activeElement.id,
 			"Token6 is selected.");
 
 		// act
@@ -274,7 +274,7 @@ sap.ui.define([
 		aFirstToken = this.tokenizer.getTokens()[0];
 		aSecondToken = this.tokenizer.getTokens()[1];
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.ok(aFirstToken.getDomRef('icon'), 'First token has icon');
@@ -283,7 +283,7 @@ sap.ui.define([
 		//act
 		this.tokenizer.setEditable(false);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//assert
 		assert.strictEqual(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
@@ -301,7 +301,7 @@ sap.ui.define([
 		[oToken1, oToken2].forEach(function(oToken) {
 			this.tokenizer.addToken(oToken);
 		}, this);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		iPaddingLeft = parseInt(this.tokenizer.$().css("padding-left"));
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
 
@@ -310,7 +310,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("3rem");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
 
 		// Assert
@@ -318,7 +318,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("99px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		sTokenizerWidth = this.tokenizer._getPixelWidth();
 
 		// Assert
@@ -363,7 +363,7 @@ sap.ui.define([
 		var oTokenDeleteSpy = this.spy(oTokenizer, "fireTokenDelete");
 		var oTokenUpdateSpy = this.spy(oTokenizer, "fireTokenUpdate");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		oModel.setData({
@@ -374,10 +374,10 @@ sap.ui.define([
 		});
 
 		oTokenizer._handleNMoreIndicatorPress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTokenizer._handleListItemDelete(oEvent);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		aItems = oTokenizer._getTokensList().getItems();
@@ -386,7 +386,7 @@ sap.ui.define([
 		assert.ok(oTokenDeleteSpy.called, "Token Delete event should be called");
 
 		oItem = aItems[0];
-		oToken = sap.ui.getCore().byId(oItem.data("tokenId"));
+		oToken = Core.byId(oItem.data("tokenId"));
 		assert.strictEqual(oItem.getTitle(), oToken.getText(), "The first item in the list should be the same as the Token" + oItem.getTitle());
 
 		// Cleanup
@@ -399,7 +399,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -415,7 +415,7 @@ sap.ui.define([
 		assert.ok(oToken.getProperty("editableParent"), "Token's parent is editable");
 
 		this.tokenizer.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.tokenizer.getEditable(), false, "The property of the Tokenizer was set.");
 		assert.strictEqual(oToken.getProperty("editableParent"), false, "The editableParent property of the Token was correctly set");
@@ -427,20 +427,20 @@ sap.ui.define([
 
 		// act
 		this.tokenizer.setWidth(S_WIDTH);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width is set to " + S_WIDTH);
 
 		// act
 		this.tokenizer.setPixelWidth("400px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width remains " + S_WIDTH);
 
 		// act
 		this.tokenizer.setPixelWidth(WIDTH);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.width, WIDTH + "px", "Tokenizer width is set to 300px");
@@ -451,7 +451,7 @@ sap.ui.define([
 
 		// act
 		this.tokenizer.setMaxWidth(MAX_WIDTH);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.equal(this.tokenizer.getDomRef().style.maxWidth, MAX_WIDTH, "Tokenizer max-width is set to " + MAX_WIDTH);
@@ -461,13 +461,13 @@ sap.ui.define([
 		var MAX_WIDTH = "300px";
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		this.tokenizer.addToken(new Token({key:"XXX", text: "XXX"}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		var spy = this.spy(Tokenizer.prototype, "_adjustTokensVisibility");
 		this.tokenizer.setMaxWidth(MAX_WIDTH);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(spy.callCount, 1, "tokenizer's _adjustTokensVisibility was called once");
@@ -476,7 +476,7 @@ sap.ui.define([
 	QUnit.test("setEnabled", function(assert) {
 		// act
 		this.tokenizer.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.ok(jQuery(this.tokenizer.getDomRef()).hasClass("sapMTokenizerDisabled"), "Tokenizer's dom has class sapMTokenizerDisabled");
@@ -522,7 +522,7 @@ sap.ui.define([
 		oUpdateTokensSpy = this.spy(this.tokenizer, "fireTokenUpdate");
 		this.tokenizer.addToken(oToken);
 		this.tokenizer.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oToken.getAggregation("deleteIcon").firePress();
@@ -545,7 +545,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -705,7 +705,7 @@ sap.ui.define([
 
 	QUnit.test("Arrow_right", function(assert) {
 		// arrange
-		sap.ui.getCore().byId("t1").focus();
+		Core.byId("t1").focus();
 
 		// act
 		qutils.triggerKeyboardEvent("t1", KeyCodes.ARROW_RIGHT);
@@ -734,7 +734,7 @@ sap.ui.define([
 			oSpy = this.spy(oTokenizer, "onsapnext"),
 			oEventArg;
 
-		sap.ui.getCore().byId("t3").focus();
+		Core.byId("t3").focus();
 
 		// act
 		qutils.triggerKeydown("t", KeyCodes.ARROW_RIGHT);
@@ -751,7 +751,7 @@ sap.ui.define([
 
 	QUnit.test("Arrow_up", function(assert) {
 		// arrange
-		sap.ui.getCore().byId("t1").focus();
+		Core.byId("t1").focus();
 
 		// act
 		qutils.triggerKeyboardEvent("t1", KeyCodes.ARROW_UP);
@@ -773,7 +773,7 @@ sap.ui.define([
 			oTokenizer.addToken(oToken);
 		}, this);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSecondToken.focus();
@@ -798,12 +798,12 @@ sap.ui.define([
 				new Token({text: "Token3", visible: true})
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer.getTokens()[0].focus();
 		qutils.triggerKeydown(oTokenizer.getTokens()[0].getDomRef(), KeyCodes.ARROW_RIGHT);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[2].getDomRef(), document.activeElement, "The navigation was successful.");
@@ -818,12 +818,12 @@ sap.ui.define([
 				new Token({text: "Token3", visible: true})
 			]
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer.getTokens()[2].focus();
 		qutils.triggerKeydown(oTokenizer.getTokens()[2].getDomRef(), KeyCodes.ARROW_LEFT);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oTokenizer.getTokens()[0].getDomRef(), document.activeElement, "The navigation was successful.");
@@ -842,7 +842,7 @@ sap.ui.define([
 			oTokenizer.addToken(oToken);
 		}, this);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oSecondToken.focus();
@@ -867,7 +867,7 @@ sap.ui.define([
 
 		aTokens = oTokenizer.getTokens();
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer.onsapend(oEvent);
@@ -885,7 +885,7 @@ sap.ui.define([
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer.onsaphome(oEvent);
@@ -902,10 +902,10 @@ sap.ui.define([
 			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oTokenizer.getTokens()[0].addStyleClass("sapMHiddenToken");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer.onsaphome(oEvent);
@@ -978,7 +978,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -1008,7 +1008,7 @@ sap.ui.define([
 
 			this.tokenizer.placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -1077,7 +1077,7 @@ sap.ui.define([
 		for (var i = 0; i < 4; i++) {
 			this.tokenizer.addToken(new Token({text: "Token " + i, key: "000" + i}));
 		}
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.tokenizer.focus();
 		this.tokenizer.selectAllTokens(true);
@@ -1124,14 +1124,14 @@ sap.ui.define([
 		});
 
 		this.tokenizer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		aTokens = this.tokenizer.getTokens();
 		aTokens.forEach(function(oToken, iIndex){
 			assert.strictEqual(oToken.$().hasClass("sapMHiddenToken"), false, "Token on position " +  iIndex +  " is visible");
 		});
 
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		aTokens = this.tokenizer.getTokens();
 		aTokens.forEach(function(oToken){
@@ -1145,7 +1145,7 @@ sap.ui.define([
 		assert.strictEqual(oIndicator.innerHTML, oRb.getText("MULTIINPUT_SHOW_MORE_TOKENS", iHiddenTokens), "N-more label's text is correct.");
 
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Loose);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		aTokens = this.tokenizer.getTokens();
 		aTokens.forEach(function(oToken, iIndex) {
@@ -1164,11 +1164,11 @@ sap.ui.define([
 		});
 
 		this.tokenizer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		this.tokenizer.setRenderMode(TokenizerRenderMode.Narrow);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		aTokens = this.tokenizer.getTokens();
@@ -1198,11 +1198,11 @@ sap.ui.define([
 		});
 
 		oTokenizer.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oTokenizer._oIndicator.hasClass("sapUiHidden"), "The indicator label is shown.");
@@ -1210,7 +1210,7 @@ sap.ui.define([
 		// act
 		oTokenizer.invalidate();
 		oTokenizer.rerender();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// assert
 		assert.notOk(oTokenizer._oIndicator.hasClass("sapUiHidden"), "The indicator label is still shown.");
@@ -1225,7 +1225,7 @@ sap.ui.define([
 			this.tokenizer = new Tokenizer();
 
 			this.tokenizer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
@@ -1242,7 +1242,7 @@ sap.ui.define([
 		assert.strictEqual(this.tokenizer.$().attr("aria-hidden"), "true", "aria-hidden attribute should be presented when no token.");
 
 		this.tokenizer.addToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(this.tokenizer.$().attr("aria-hidden"), "aria-hidden attribute should not be presented when there are tokens.");
 	});
@@ -1253,7 +1253,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setEditable(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.tokenizer.$().attr("aria-readonly"), "true", "Tokenizer has aria-readonly attribute set.");
@@ -1264,7 +1264,7 @@ sap.ui.define([
 
 		this.tokenizer.addToken(token1 = new Token("t1"));
 		this.tokenizer.addToken(token2 = new Token("t2"));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(token1.$().attr("aria-posinset"), "Token 1 has aria-posinset attribute");
 		assert.ok(token2.$().attr("aria-posinset"), "Token 2 has aria-posinset attribute");
@@ -1282,10 +1282,10 @@ sap.ui.define([
 
 		this.tokenizer.addToken(token1 = new Token());
 		this.tokenizer.addToken(token2 = new Token());
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.tokenizer.removeToken(token1);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(token2.$().attr("aria-setsize"), "1", "Token 2 has correct aria-setsize attribute");
 		assert.strictEqual(token2.$().attr("aria-posinset"), "1", "Token 2 has correct aria-posinset attribute");
@@ -1298,13 +1298,13 @@ sap.ui.define([
 		this.tokenizer.setEditable(false);
 		this.tokenizer.addToken(token1 = new Token("t1"));
 		this.tokenizer.addToken(token2 = new Token("t2"));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(!token1.$().attr("title"), "There's no title for the token");
 		assert.ok(!token2.$().attr("title"), "There's no title for the token");
 
 		this.tokenizer.setEditable(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(token1.$().attr("title"), "There's a title for the token");
 		assert.ok(token2.$().attr("title"), "There's a title for the token");
@@ -1320,7 +1320,7 @@ sap.ui.define([
 			});
 
 			this.tokenizer.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.clock = sinon.useFakeTimers();
 		},
@@ -1367,13 +1367,13 @@ sap.ui.define([
 				template: new Token({text: "{text}"})
 			}
 		}).placeAt("content").setModel(oModel);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oTokenizer.hasStyleClass("sapMTokenizerOneLongToken"), "Tokenizer does not have one long token");
 
 		oTokenizer.setRenderMode(TokenizerRenderMode.Loose);
 		oModel.setData({items:[{text:"token1"},{text:"token2"},{text:"token3"}]});
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.notOk(oTokenizer.hasStyleClass("sapMTokenizerOneLongToken"), "Tokenizer still does not have one long token");
 
@@ -1387,7 +1387,7 @@ sap.ui.define([
 
 		this.tokenizer._adjustTokensVisibility();
 		// await to set the truncation
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oToken.getTruncated(), "Token should be truncated");
@@ -1424,7 +1424,7 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("500px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.ok(oSpy.calledOnce, "Truncation function should be called once.");
@@ -1466,13 +1466,13 @@ sap.ui.define([
 
 		// Act
 		this.tokenizer.setMaxWidth("500px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), false, "Token's truncation was removed.");
 
 		this.tokenizer.setMaxWidth("100px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.tokenizer.hasOneTruncatedToken(), true, "Token's truncation was set again after resize.");
 	});

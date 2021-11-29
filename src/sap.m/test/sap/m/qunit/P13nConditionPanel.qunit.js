@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/type/Boolean",
-	"sap/ui/model/odata/type/Boolean"
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/core/Core"
 ], function(
 	createAndAppendDiv,
 	P13nConditionPanel,
@@ -34,7 +35,8 @@ sap.ui.define([
 	typeTime,
 	DateTime,
 	BooleanType,
-	EdmBooleanType
+	EdmBooleanType,
+	oCore
 ) {
 	"use strict";
 
@@ -103,7 +105,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
@@ -130,7 +132,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var nItems = 2;
@@ -189,7 +191,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var nItems = 5;
@@ -235,7 +237,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var nItems = 8;
@@ -270,7 +272,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			oP13nConditionPanel._handleRemoveCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
@@ -308,7 +310,7 @@ sap.ui.define([
 			fillConditionPanel(oP13nConditionPanel);
 			oP13nConditionPanel.setConditions([oCondition]);
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// act
 			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -334,7 +336,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
@@ -376,7 +378,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			oP13nConditionPanel._handleAddCondition(oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
@@ -400,7 +402,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oP13nConditionPanel.getAlwaysShowAddIcon(), true, "AlwaysShowAddIcon must be true!");
@@ -421,7 +423,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(oP13nConditionPanel.getLayoutMode(), "Desktop", "LayoutMode must be Desktop!");
@@ -446,7 +448,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var nItems = 2;
@@ -496,7 +498,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[2];
 			//oConditionGrid.value1.onpaste();
@@ -518,7 +520,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 			// make the between condition invalid
@@ -552,7 +554,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, false, "Paginator buttons are not shown!");
@@ -572,7 +574,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions(aConditions);
 
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(!!oP13nConditionPanel._bPaginatorButtonsVisible, true, "Paginator buttons are shown!");
@@ -591,7 +593,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
@@ -604,7 +606,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6]);
 
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -671,7 +673,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
@@ -690,7 +692,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9]);
 
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -726,7 +728,7 @@ sap.ui.define([
 
 
 			oP13nConditionPanel.setConditions([oCondition10, oCondition11]);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 			assert.equal(oConditionGrid.value1.getSelectedIndex(), 2, "value1 of condition 0 must be true");
@@ -757,7 +759,7 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
@@ -767,7 +769,7 @@ sap.ui.define([
 			oP13nConditionPanel.setConditions([oCondition0, oCondition1, oCondition2]);
 
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
@@ -798,14 +800,14 @@ sap.ui.define([
 
 			// arrange
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			var oCondition0 = { "key": "i0", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
 			oP13nConditionPanel.setConditions([oCondition0]);
 
 			oP13nConditionPanel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// assertions
 			assert.strictEqual(spy.called, true, "suggest callback called!");

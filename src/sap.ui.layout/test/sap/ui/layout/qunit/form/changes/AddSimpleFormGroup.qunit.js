@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Core"
 ], function(
 	AddSimpleFormGroup,
 	SimpleForm,
@@ -22,7 +23,8 @@ sap.ui.define([
 	Title,
 	Label,
 	Input,
-	jQuery
+	jQuery,
+	oCore
 ) {
 	"use strict";
 
@@ -40,7 +42,7 @@ sap.ui.define([
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var mCommonChangeData = {
 				"selector": {
@@ -174,7 +176,7 @@ sap.ui.define([
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var mCommonChangeData = {
 				"selector": {
@@ -330,7 +332,7 @@ sap.ui.define([
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var mCommonChangeData = {
 				"selector": {
@@ -440,7 +442,7 @@ sap.ui.define([
 				content: [this.oLabel0, this.oInput0, this.oLabel1, this.oInput1]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var mCommonChangeData = {
 				"selector": {
@@ -557,7 +559,7 @@ sap.ui.define([
 				content: [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1, this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			var mCommonChangeData = {
 				"selector": {

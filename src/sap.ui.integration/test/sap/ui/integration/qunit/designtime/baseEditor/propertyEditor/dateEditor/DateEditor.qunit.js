@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
 	"qunit/designtime/EditorQunitUtils",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	BaseEditor,
 	EditorQunitUtils,
 	DateFormat,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -43,7 +45,7 @@ sap.ui.define([
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(function (aPropertyEditor) {
 				this.oDateEditor = aPropertyEditor[0];
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				this.oDateEditorElement = this.oDateEditor.getContent();
 			}.bind(this));
 		},
@@ -162,7 +164,7 @@ sap.ui.define([
 			});
 
 			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(function (aPropertyEditor) {
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 				var oDateEditor = aPropertyEditor[0];
 				assert.strictEqual(
 					oDateEditor.getValue(),

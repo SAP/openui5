@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/App",
-	"sap/m/Page"
-], function(createAndAppendDiv, jQuery, JSONModel, Sorter, List, StandardListItem, App, Page) {
+	"sap/m/Page",
+	"sap/ui/core/Core"
+], function(createAndAppendDiv, jQuery, JSONModel, Sorter, List, StandardListItem, App, Page, oCore) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -51,7 +52,7 @@ sap.ui.define([
 
 	var model = new JSONModel();
 	model.setData(data);
-	sap.ui.getCore().setModel(model);
+	oCore.setModel(model);
 
 	// the List
 	var gl = new List("gl", {
@@ -110,7 +111,7 @@ sap.ui.define([
 
 		assert.expect(10); // incl. rendering
 		app.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.ok(document.getElementById("gl"), "GrowingList should be rendered");
 		assert.equal($ul().length, 1, "GrowingList should have its list rendered");
 		assert.equal($ul().children().length, 4, "GrowingList should have one header and three items rendered");
@@ -159,7 +160,7 @@ sap.ui.define([
 	QUnit.test("New Data", function(assert) {
 		assert.expect(7);
 		model.setData(data2);
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 		assert.equal($ul().children().length, 12, "GrowingList should have six headers and six items rendered");
 
 		assert.equal(info(0).header, true, "First item should be a header");

@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function (
 	SimpleScrollControl,
 	Bar,
@@ -51,7 +52,8 @@ sap.ui.define([
 	ObjectPageSubSection,
 	TestUtil,
 	jQuery,
-	sinon
+	sinon,
+	oCore
 ) {
 	"use strict";
 
@@ -82,7 +84,7 @@ sap.ui.define([
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,
@@ -134,7 +136,7 @@ sap.ui.define([
 			// Overlay enabled by default
 			sWidth = fnGetWidth(this.oElementOverlay);
 			this.oButton.setText("Lorem ipsum dolor sit amet...");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return this.oElementOverlay.applyStyles()
 				.then(function () {
 					assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
@@ -215,7 +217,7 @@ sap.ui.define([
 			var oLayout = new VerticalLayout();
 
 			oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// eslint-disable-next-line no-new
 			new ElementOverlay({
@@ -237,7 +239,7 @@ sap.ui.define([
 					}, this);
 
 					oLayout.addContent(this.oButton);
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 				}.bind(this)
 			});
 		});
@@ -452,7 +454,7 @@ sap.ui.define([
 			var done = assert.async();
 			this.oLabel = new Label();
 			this.oLabel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLabel]
 			});
@@ -468,7 +470,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when the control's domRef is changed to visible...", function(assert) {
 			this.oLabel.setText("test");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			return this.oOverlay.applyStyles()
 				.then(function () {
 					assert.ok(DOMUtil.isVisible(this.oOverlay.getDomRef()), "the overlay is also visible in DOM");
@@ -482,7 +484,7 @@ sap.ui.define([
 			this.oLabel = new Label({text: "text"});
 			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oVerticalLayout.$().css("display", "none");
 
 			this.oDesignTime = new DesignTime({
@@ -514,7 +516,7 @@ sap.ui.define([
 				}, this);
 			}, this);
 			this.oVerticalLayout.$().css("display", "block");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 	});
 
@@ -526,7 +528,7 @@ sap.ui.define([
 			this.oInnerLayout = new VerticalLayout({ content: [this.oLabel2] });
 			this.oVerticalLayout = new HorizontalLayout({ content: [this.oInnerLayout, this.oLabel1] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -548,9 +550,9 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			this.oVerticalLayout.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oVerticalLayout.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			// timeout is needed to handle applyStyles
 			setTimeout(function() {
@@ -591,7 +593,7 @@ sap.ui.define([
 			}, this);
 
 			this.oLabel2.setText("42");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 
 		QUnit.test("layout shifting: scenario 2", function(assert) {
@@ -622,7 +624,7 @@ sap.ui.define([
 			}, this);
 
 			this.oLabel1.setText("42");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 	});
 
@@ -640,7 +642,7 @@ sap.ui.define([
 				content: [this.oVerticalLayout1, this.oVerticalLayout2]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout]
@@ -664,7 +666,7 @@ sap.ui.define([
 
 		QUnit.test("when a control is moved from one layout to another", function(assert) {
 			this.oVerticalLayout2.addContent(this.oButton1);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			// first parent is aggregation overlay, second parent is overlay control
 			assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout2, "then the button's overlay should be inside the other layout's overlay");
 		});
@@ -676,7 +678,7 @@ sap.ui.define([
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oOverlay = new ElementOverlay({
 				element: this.oButton,
@@ -710,7 +712,7 @@ sap.ui.define([
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oOverlay = new ElementOverlay({
 				isRoot: true,
@@ -768,7 +770,7 @@ sap.ui.define([
 			this.oVerticalLayout1.placeAt("qunit-fixture");
 			this.oVerticalLayout2.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -827,7 +829,7 @@ sap.ui.define([
 				text: "Button"
 			});
 			this.oButton.placeAt("scroll-content");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oButton]
@@ -875,7 +877,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oSimpleScrollControl]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -980,7 +982,7 @@ sap.ui.define([
 				width: "300px"
 			});
 			this.oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
 					"sap.m.Panel": {
@@ -1024,7 +1026,7 @@ sap.ui.define([
 				fnDone();
 			}, this);
 			this.oPanel.addContent(oButton);
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 		});
 	});
 
@@ -1062,7 +1064,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1153,7 +1155,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oScrollControl]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1197,7 +1199,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oAnyControl]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]
@@ -1256,7 +1258,7 @@ sap.ui.define([
 			});
 
 			this.oScrollControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oScrollControl.$("content1").css({
 				height: 300,
@@ -1321,7 +1323,7 @@ sap.ui.define([
 			});
 
 			this.oScrollControl.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oScrollControl.$("content1").css({
 				height: 500,
@@ -1380,7 +1382,7 @@ sap.ui.define([
 
 
 			oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [oVerticalLayout]
@@ -1405,7 +1407,7 @@ sap.ui.define([
 						fnDone();
 					}, this);
 					this.oTextArea.setHeight("50px");
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1441,7 +1443,7 @@ sap.ui.define([
 
 
 			oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [oVerticalLayout]
@@ -1460,7 +1462,7 @@ sap.ui.define([
 						fnDone();
 					}, this);
 					this.oScrollControl.setScrollcontainerEnabled(false);
-					sap.ui.getCore().applyChanges();
+					oCore.applyChanges();
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1497,7 +1499,7 @@ sap.ui.define([
 
 
 			oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [oVerticalLayout]
@@ -1521,7 +1523,7 @@ sap.ui.define([
 				this.oScrollControlOverlay._oScrollbarSynchronizers.forEach(function (oSynchronizer) {
 					oSynchronizer.destroy();
 				});
-				sap.ui.getCore().applyChanges();
+				oCore.applyChanges();
 			}.bind(this));
 		});
 	});
@@ -1547,7 +1549,7 @@ sap.ui.define([
 			});
 
 			this.oPanel.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 			this.oPanel.$().find(">.sapMPanelContent").scrollLeft(20);
 			this.oPanel.$().find(">.sapMPanelContent").scrollTop(50);
 
@@ -1646,7 +1648,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			oCore.applyChanges();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox]

@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Core"
 ], function(
 	PlanningCalendarHeader,
 	Calendar,
 	CustomMonthPicker,
 	CustomYearPicker,
 	SegmentedButtonItem,
-	InvisibleText
+	InvisibleText,
+	oCore
 ) {
 	"use strict";
 
@@ -51,7 +53,7 @@ sap.ui.define([
 		oPlanningCalendarHeader._oViewSwitch.addItem(oSecondMockView);
 
 		oPlanningCalendarHeader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 
 		$viewSwitch = oPlanningCalendarHeader._oViewSwitch.$();

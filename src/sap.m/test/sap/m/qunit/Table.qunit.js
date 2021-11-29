@@ -977,7 +977,7 @@ sap.ui.define([
 				new Label({text: "Mustermann"})
 			]
 		});
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		this.oTable = new Table({
 			mode: "MultiSelect",
 			header: "header",

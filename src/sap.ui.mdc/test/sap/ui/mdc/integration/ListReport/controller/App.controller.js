@@ -12,15 +12,16 @@ sap.ui.define([
 	'sap/m/Text',
 	"sap/m/MessageToast",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/Core",
 	"../Operators"
-], function(Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent) {
+], function(Controller, ConditionModel, JSONModel, Dialog, Button, ButtonType, Text, MessageToast, UIComponent, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
 
 		onStartRTA: function () {
 			var oOwnerComponent = this.getOwnerComponent();
-			sap.ui.getCore().loadLibrary("sap/ui/rta", { async: true }).then(function () {
+			oCore.loadLibrary("sap/ui/rta", { async: true }).then(function () {
 				sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
 					startKeyUserAdaptation({
 						rootControl: oOwnerComponent.getAggregation("rootControl")
