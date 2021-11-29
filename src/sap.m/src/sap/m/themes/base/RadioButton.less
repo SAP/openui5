@@ -64,10 +64,15 @@
 	cursor: default;
 }
 
-.sapMRb,
-.sapMRbBLabel {
+.sapMRb:not(.sapMRbDis) {
 	&:hover {
 		cursor: pointer;
+	}
+
+	.sapMRbBLabel {
+		&:hover {
+			cursor: pointer;
+		}
 	}
 }
 
