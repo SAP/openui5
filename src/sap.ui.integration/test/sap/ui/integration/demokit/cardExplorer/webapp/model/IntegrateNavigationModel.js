@@ -43,6 +43,13 @@ sap.ui.define([
 				key: 'destinations'
 			},
 			{
+				title: 'CSRF Tokens',
+				icon: 'sap-icon://validate',
+				target: 'integrate',
+				key: 'csrfTokens',
+				experimental: true
+			},
+			{
 				title: 'Host Actions',
 				icon: 'sap-icon://overflow',
 				target: 'integrate',

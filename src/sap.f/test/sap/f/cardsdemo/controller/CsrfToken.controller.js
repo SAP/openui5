@@ -20,14 +20,17 @@ sap.ui.define([
 				]
 			});
 
-			var oHostResolveToken = new Host();
-			oHostResolveToken.getCsrfToken = function (mCSRFTokenConfig) {
+			var MyHost = Host.extend("MyHost", { });
+
+			MyHost.prototype.getCsrfToken = function (mCSRFTokenConfig) {
 				if (mCSRFTokenConfig.data.request.url === "invalid") {
 					return Promise.reject("CSRF token could not be resolved by the host");
 				}
 
 				return Promise.resolve("HostTokenValue");
 			};
+
+			var oHostResolveToken = new MyHost();
 
 			this.getView().byId('card1').setHost(oHost);
 			this.getView().byId('card2').setHost(oHost);
