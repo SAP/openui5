@@ -684,7 +684,7 @@ sap.ui.define([
 	 *   Force reload even if data is already available; for server-side models this should refetch
 	 *   the data from the server
 	 *
-	 * @return {sap.ui.model.Context}
+	 * @return {sap.ui.model.Context|undefined}
 	 *   The binding context, if it could be created synchronously
 	 * @public
 	 */
