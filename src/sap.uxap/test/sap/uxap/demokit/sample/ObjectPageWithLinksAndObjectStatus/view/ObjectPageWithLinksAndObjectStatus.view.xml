@@ -1,10 +1,12 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.uxap"
 	xmlns:m="sap.m"
+	xmlns:forms="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 	xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+	controllerName="sap.uxap.sample.ObjectPageWithLinksAndObjectStatus.controller.ObjectPageWithLinksAndObjectStatus"
 	height="100%">
 
 	<ObjectPageLayout id="ObjectPageLayout"
@@ -52,7 +54,7 @@
 
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
 					<m:Title class="sapUiTinyMarginBottom">
-						<m:Link text="Order Details"/>
+						<m:Link text="Order Details" press="onOrderDetailsPress"/>
 					</m:Title>
 
 					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
@@ -67,7 +69,7 @@
 
 					<m:HBox>
 						<m:Label text="Supplier:" class="sapUiTinyMarginEnd"/>
-						<m:Link text="Robotech (234242343)"/>
+						<m:Link text="Robotech (234242343)" press="onExternalApplicationLinkPress"/>
 					</m:HBox>
 				</m:VBox>
 
@@ -93,7 +95,7 @@
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
 					<m:HBox class="sapUiTinyMarginBottom">
 						<m:Label text="Created By:" class="sapUiSmallMarginEnd"/>
-						<m:Link text="Julie Armstrong"/>
+						<m:Link text="Julie Armstrong" press="handleTitleSelectorPress"/>
 					</m:HBox>
 
 					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
@@ -103,7 +105,7 @@
 
 					<m:HBox class="sapUiTinyMarginBottom">
 						<m:Label text="Changed By:" class="sapUiSmallMarginEnd"/>
-						<m:Link text="John Miller"/>
+						<m:Link text="John Miller" press="handleTitleSelectorPress"/>
 					</m:HBox>
 
 					<m:HBox renderType="Bare">
@@ -119,7 +121,7 @@
 
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
 					<m:Title class="sapUiTinyMarginBottom">
-						<m:Link text="Status"/>
+						<m:Link text="Status" press="onAnotherPageLinkPress"/>
 					</m:Title>
 					<m:ObjectStatus text="Delivery" state="Success" class="sapMObjectStatusLarge"/>
 				</m:VBox>
@@ -141,7 +143,7 @@
 
 				<m:VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
 					<m:Title class="sapUiTinyMarginBottom">
-						<m:Link text="Average User Rating"/>
+						<m:Link text="Average User Rating" press="onExternalApplicationLinkPress"/>
 					</m:Title>
 					<m:Label text="6 Reviews"/>
 					<m:RatingIndicator value="4" iconSize="16px" />
@@ -203,6 +205,57 @@
 							<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 							<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection titleUppercase="false" id="orderDetailsSection" title="Order Details">
+				<subSections>
+					<ObjectPageSubSection title="Order Details" showTitle="false">
+						<blocks>
+							<forms:SimpleForm class="sapUxAPObjectPageSubSectionAlignContent"
+											  layout="ColumnLayout"
+											  columnsM="2"
+											  columnsL="3"
+											  columnsXL="4">
+								<core:Title text="Order Details" />
+
+								<m:Label text="Order ID" />
+								<m:Text text="589946637" />
+
+								<m:Label text="Cotract" />
+								<m:Link text="10045876" />
+
+								<m:Label text="Transaction Date:" />
+								<m:Text text="May 6, 2018" />
+
+								<m:Label text="Expected Delivery Date" />
+								<m:Text text="June 23, 2018" />
+
+								<m:Label text="Factory" />
+								<m:Text text="Orlando, FL" />
+
+								<m:Label text="Supplier" />
+								<m:Text text="Robotech" />
+
+								<core:Title text="Configuration Accounts" />
+
+								<m:Label text="Model" />
+								<m:Text text="Robot Arm Series 9" />
+
+								<m:Label text="Color" />
+								<m:Text text="White (default)" />
+
+								<m:Label text="Socket" />
+								<m:Text text="Default Socket 10" />
+
+								<m:Label text="Leasing Instalment" />
+								<m:Text text="379.99 USD per month" />
+
+								<m:Label text="Axis" />
+								<m:Text text="6 Axis" />
+							</forms:SimpleForm>
+						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>

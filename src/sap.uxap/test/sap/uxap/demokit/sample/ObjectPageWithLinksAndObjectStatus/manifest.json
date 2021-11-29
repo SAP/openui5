@@ -25,6 +25,7 @@
 				"stretch": true,
 				"files": [
 					"view/ObjectPageWithLinksAndObjectStatus.view.xml",
+					"controller/ObjectPageWithLinksAndObjectStatus.controller.js",
 					"../SharedBlocks/employment/EmploymentBlockJob.js",
 					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
@@ -56,6 +57,8 @@
 					"../SharedBlocks/employment/BlockJobInfoPart2.view.xml",
 					"../SharedBlocks/employment/BlockJobInfoPart3.js",
 					"../SharedBlocks/employment/BlockJobInfoPart3.view.xml",
+					"view/QuickView.fragment.xml",
+				  	"model/CompanyData.json",
 					"manifest.json"
 				]
 			}
