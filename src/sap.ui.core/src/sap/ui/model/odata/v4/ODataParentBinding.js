@@ -7,12 +7,11 @@
 sap.ui.define([
 	"./Context",
 	"./ODataBinding",
-	"./SubmitMode",
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason"
-], function (Context, asODataBinding, SubmitMode, _Helper, Log, SyncPromise, ChangeReason) {
+], function (Context, asODataBinding, _Helper, Log, SyncPromise, ChangeReason) {
 	"use strict";
 
 	/**
@@ -563,52 +562,41 @@ sap.ui.define([
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID to be used for the DELETE request; if no group ID is specified, it
-	 *   defaults to <code>getUpdateGroupId()</code>()
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
+	 *   For a transient entity, the lock is ignored (use NULL)!
 	 * @param {string} sEditUrl
-	 *   The edit URL to be used for the DELETE request
+	 *   The entity's edit URL to be used for the DELETE request;  w/o a lock, this is mostly
+	 *   ignored.
 	 * @param {string} sPath
 	 *   The path of the entity relative to this binding
 	 * @param {object} [oETagEntity]
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
-	 *   binding.
+	 *   binding. W/o a lock, this is ignored.
 	 * @param {boolean} [bDoNotRequestCount]
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged
+	 *   unchanged; w/o a lock this should be true
 	 * @param {function} fnCallback
-	 *   A function which is called after the entity has been deleted from the server and from the
-	 *   cache; the index of the entity is passed as parameter
+	 *   A function which is called after a transient entity has been deleted from the cache or
+	 *   after the entity has been deleted from the server and from the cache; the index of the
+	 *   entity and the entity list are both passed as parameter, or none of them
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
-	 *   instance of <code>Error</code> in case of failure
+	 *   instance of <code>Error</code> in case of failure; returns <code>undefined</code> if the
+	 *   cache promise for this binding is not yet fulfilled
 	 * @throws {Error}
-	 *   If the group ID has {@link sap.ui.model.odata.v4.SubmitMode.Auto} or if the cache promise
-	 *   for this binding is not yet fulfilled
+	 *   If the cache is shared
 	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
 			oETagEntity, bDoNotRequestCount, fnCallback) {
-		var sGroupId;
-
-		if (this.oCache === undefined) {
-			throw new Error("DELETE request not allowed");
-		}
-
-		if (this.oCache) {
-			sGroupId = oGroupLock.getGroupId();
-			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
-				throw new Error("Illegal update group ID: " + sGroupId);
-			}
-			return this.oCache._delete(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
+		return this.withCache(function (oCache, sCachePath) {
+			return oCache._delete(oGroupLock, sEditUrl, sCachePath, oETagEntity, bDoNotRequestCount,
 				fnCallback);
-		}
-		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
-			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), oETagEntity,
-			bDoNotRequestCount, fnCallback);
+		}, sPath, /*bSync*/true);
 	};
 
 	/**
@@ -898,8 +886,7 @@ sap.ui.define([
 			oParentBinding = this.oContext.getBinding();
 			sParentUpdateGroupId = oParentBinding.getUpdateGroupId();
 			if (sParentUpdateGroupId === this.getUpdateGroupId()
-					|| this.oModel.getGroupProperty(sParentUpdateGroupId, "submit")
-						!== SubmitMode.API) {
+					|| !this.oModel.isApiGroup(sParentUpdateGroupId)) {
 				return oParentBinding.getBaseForPathReduction();
 			}
 		}

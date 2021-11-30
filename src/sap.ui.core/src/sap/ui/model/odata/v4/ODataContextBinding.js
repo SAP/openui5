@@ -196,18 +196,28 @@ sap.ui.define([
 	/**
 	 * Deletes the entity in <code>this.oElementContext</code>, identified by the edit URL.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID to be used for the DELETE request; if no group ID is specified, it
-	 *   defaults to <code>getUpdateGroupId()</code>
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
+	 *   For a transient entity, the lock is ignored (use NULL)!
 	 * @param {string} sEditUrl
-	 *   The edit URL to be used for the DELETE request
+	 *   The entity's edit URL to be used for the DELETE request;  w/o a lock, this is mostly
+	 *   ignored.
+	 * @param {sap.ui.model.odata.v4.Context} _oContext - ignored
+	 * @param {object} [_oETagEntity] - ignored
+	 * @param {boolean} [bDoNotRequestCount]
+	 *   Whether not to request the new count from the server; useful in case of
+	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
+	 *   unchanged; w/o a lock this should be true
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error}
+	 *   If the cache promise for this binding is not yet fulfilled, or if the cache is shared
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype._delete = function (oGroupLock, sEditUrl) {
+	ODataContextBinding.prototype._delete = function (oGroupLock, sEditUrl, _oContext, _oETagEntity,
+			bDoNotRequestCount) {
 		// In case the context binding has an empty path, the respective context in the parent
 		// needs to be removed as well. As there could be more levels of bindings pointing to the
 		// same entity, first go up the binding hierarchy and find the context pointing to the same
@@ -226,15 +236,16 @@ sap.ui.define([
 				// In the Cache, the request is generated with a reference to the entity data
 				// first. So, hand over the complete entity to have the ETag of the correct binding
 				// in the request.
-				return oEmptyPathParentContext._delete(oGroupLock, oEntity);
+				return oEmptyPathParentContext._delete(oGroupLock, oEntity, bDoNotRequestCount);
 			});
 			// fetchValue will fail if the entity has not been read. The same happens with the
 			// deleteFromCache call below. In Context#delete the error is reported.
 		}
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, "", null, false, function () {
-			oEmptyPathParentBinding._destroyContextAfterDelete();
-		});
+		return this.deleteFromCache(oGroupLock, sEditUrl, "", null, bDoNotRequestCount,
+			function () {
+				oEmptyPathParentBinding._destroyContextAfterDelete();
+			});
 	};
 
 	/**

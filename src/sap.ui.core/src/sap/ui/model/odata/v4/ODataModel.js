@@ -1552,6 +1552,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines whether the given group ID uses mode {@link sap.ui.model.odata.v4.SubmitMode.API}
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {boolean|undefined} Whether it is an API group
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.isApiGroup = function (sGroupId) {
+		return this.getGroupProperty(sGroupId, "submit") === SubmitMode.API;
+	};
+
+	/**
 	 * Determines whether the given group ID uses mode {@link sap.ui.model.odata.v4.SubmitMode.Auto}
 	 *
 	 * @param {string} sGroupId
