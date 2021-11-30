@@ -338,6 +338,8 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.95.0
+	 * @experimental As of version 1.95
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ValueHelp.prototype.connect = function(oControl, oConfig) {

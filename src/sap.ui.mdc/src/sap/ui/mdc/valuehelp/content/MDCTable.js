@@ -252,7 +252,6 @@ sap.ui.define([
 		}
 	}
 
-	// TODO:  @ui5-restricted sap.ui.mdc
 	/**
 	 * Constructor for a new <code>MDCTable</code> content.
 	 *
@@ -264,7 +263,9 @@ sap.ui.define([
 	 * @constructor
 	 * @abstract
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.95.0
+	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.MDCTable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

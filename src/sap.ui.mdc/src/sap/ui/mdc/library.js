@@ -135,6 +135,7 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.ITypeaheadContainer
+	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -318,6 +319,7 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -508,6 +510,7 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
+	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -593,6 +596,7 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.IDialogContainer
+	 * @experimental As of version 1.95
 	 */
 
 	/**
@@ -681,6 +685,7 @@ sap.ui.define([
 	 * @property {object} [outParameters] Out parameters of the item. For each field path a value is stored
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
+	 * @experimental As of version 1.95
 	 */
 
 	/**
