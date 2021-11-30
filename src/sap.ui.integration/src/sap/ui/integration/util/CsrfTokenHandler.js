@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel"
 ], function (
 	BaseObject,
 	isPlainObject,
+	merge,
 	JSONModel
 ) {
 	"use strict";
@@ -65,23 +67,29 @@ sap.ui.define([
 	 * @returns {Promise} A promise which resolves with the data configuration object containing resolved CSRF token values
 	 */
 	CsrfTokenHandler.prototype.resolveToken = function (oDataConfig) {
-		var sCsrfTokenName = this._findCsrfPlaceholder(oDataConfig),
-			oCsrfConfig;
+		var oCsrfTokenContext,
+			oCsrfTokenConfig;
 
-		if (!sCsrfTokenName) {
+		// clone the data configuration,
+		// so we won't change the original settings
+		oDataConfig = merge({}, oDataConfig);
+
+		oCsrfTokenContext = this._findCsrfPlaceholder(oDataConfig);
+
+		if (!oCsrfTokenContext) {
 			return Promise.resolve(oDataConfig);
 		}
 
-		oCsrfConfig = this._getCsrfConfig(sCsrfTokenName);
+		oCsrfTokenConfig = this._getCsrfConfig(oCsrfTokenContext.tokenName);
 
 		if (this._oHost) {
-			return this._oHost.getCsrfToken(oCsrfConfig)
+			return this._oHost.getCsrfToken(oCsrfTokenConfig)
 				.then(function (sTokenValue) {
 					if (!sTokenValue) {
-						return this._resolveTokenByUrl(oDataConfig);
+						return this._resolveTokenByUrl(oDataConfig, oCsrfTokenContext);
 					}
 
-					this._replaceCsrfPlaceholder(oDataConfig, sTokenValue);
+					this._replaceCsrfPlaceholder(oCsrfTokenContext, sTokenValue);
 					return oDataConfig;
 				}.bind(this))
 				.catch(function (sError) {
@@ -89,22 +97,22 @@ sap.ui.define([
 				});
 		}
 
-		return this._resolveTokenByUrl(oDataConfig);
+		return this._resolveTokenByUrl(oDataConfig, oCsrfTokenContext);
 	};
 
-	CsrfTokenHandler.prototype._resolveTokenByUrl = function (oDataConfig) {
-		var sCsrfTokenName = this._findCsrfPlaceholder(oDataConfig),
+	CsrfTokenHandler.prototype._resolveTokenByUrl = function (oDataConfig, oCsrfTokenContext) {
+		var sCsrfTokenName = oCsrfTokenContext.tokenName,
 			sCsrfUrl = this._getCsrfConfig(sCsrfTokenName).data.request.url;
 
 		if (CsrfTokenHandler._mTokens.has(sCsrfUrl)) {
 			return CsrfTokenHandler._mTokens.get(sCsrfUrl).then(function (sTokenValue) {
-				this._replaceCsrfPlaceholder(oDataConfig, sTokenValue);
+				this._replaceCsrfPlaceholder(oCsrfTokenContext, sTokenValue);
 				return oDataConfig;
 			}.bind(this));
 		}
 
 		if (sCsrfTokenName) {
-			return this._requestToken(oDataConfig);
+			return this._requestToken(oDataConfig, oCsrfTokenContext);
 		}
 
 		return Promise.resolve(oDataConfig);
@@ -149,23 +157,23 @@ sap.ui.define([
 	 * @param {object} oDataConfig Data configuration object
 	 * @returns {Promise} Promise which resolves with the CSRF token
 	 */
-	CsrfTokenHandler.prototype._requestToken = function (oDataConfig) {
-		var sCsrfTokenName = this._findCsrfPlaceholder(oDataConfig),
-			oCsrfConfig = this._getCsrfConfig(sCsrfTokenName);
+	CsrfTokenHandler.prototype._requestToken = function (oDataConfig, oCsrfTokenContext) {
+		var sCsrfTokenName = oCsrfTokenContext.tokenName,
+			oCsrfTokenConfig = this._getCsrfConfig(sCsrfTokenName);
 
-		if (!sCsrfTokenName || !oCsrfConfig) {
+		if (!sCsrfTokenName || !oCsrfTokenConfig) {
 			return Promise.reject("CSRF definition is incorrect");
 		}
 
 		var pTokenValuePromise = new Promise(function (resolve, reject) {
-			var oCsrfTokenDataProvider = this._oDataProviderFactory.create(oCsrfConfig.data);
+			var oCsrfTokenDataProvider = this._oDataProviderFactory.create(oCsrfTokenConfig.data);
 			oCsrfTokenDataProvider.getData().then(function (oData) {
 				var sTokenValue,
 					oModel;
 
-				if (oCsrfConfig.data.path) {
+				if (oCsrfTokenConfig.data.path) {
 					oModel = new JSONModel(oData);
-					sTokenValue = oModel.getProperty(oCsrfConfig.data.path);
+					sTokenValue = oModel.getProperty(oCsrfTokenConfig.data.path);
 					oModel.destroy();
 				} else {
 					sTokenValue = oCsrfTokenDataProvider.getLastJQXHR().getResponseHeader(TOKEN_DEFAULT_HEADER);
@@ -177,10 +185,10 @@ sap.ui.define([
 			});
 		}.bind(this));
 
-		this._registerToken(oCsrfConfig, pTokenValuePromise);
+		this._registerToken(oCsrfTokenConfig, pTokenValuePromise);
 
 		return pTokenValuePromise.then(function (sTokenValue) {
-			this._replaceCsrfPlaceholder(oDataConfig, sTokenValue);
+			this._replaceCsrfPlaceholder(oCsrfTokenContext, sTokenValue);
 			return oDataConfig;
 		}.bind(this));
 	};
@@ -192,12 +200,12 @@ sap.ui.define([
 	 * @param {object} oDataConfig Data configuration object
 	 */
 	CsrfTokenHandler.prototype.resetTokenByRequest = function (oDataConfig) {
-		var sCsrfTokenName = this._findCsrfPlaceholder(oDataConfig);
-		if (!sCsrfTokenName) {
+		var oCsrfTokenContext = this._findCsrfPlaceholder(oDataConfig);
+		if (!oCsrfTokenContext) {
 			return;
 		}
 
-		this._deleteRegisteredToken(this._getCsrfConfig(sCsrfTokenName));
+		this._deleteRegisteredToken(this._getCsrfConfig(oCsrfTokenContext.tokenName));
 	};
 
 	/**
@@ -211,66 +219,42 @@ sap.ui.define([
 		return this._oConfiguration[sCsrfTokenName];
 	};
 
-	/**
-	 * Searches a data configuration object's properties for the presence of a CSRF placeholder.
-	 * Currently only works with placeholders used in the 'headers' property of the oDataConfig.
-	 *
-	 * @private
-	 * @param {object} oDataConfig Data configuration object
-	 * @returns {string} The name of the CSRF placeholder.
-	 */
-	CsrfTokenHandler.prototype._findCsrfPlaceholder = function (oDataConfig) {
-		var sHeaderName = this._findCsrfInHeaders(oDataConfig);
+	CsrfTokenHandler.prototype._replaceCsrfPlaceholder = function (oCsrfTokenContext, sTokenValue) {
+		var sPlaceholder = oCsrfTokenContext.object[oCsrfTokenContext.key];
 
-		if (sHeaderName) {
-			return this._getCsrfName(oDataConfig.headers[sHeaderName]);
-		}
-
-		return null;
+		oCsrfTokenContext.object[oCsrfTokenContext.key] = sPlaceholder.replace("{{csrfTokens." + oCsrfTokenContext.tokenName + "}}", sTokenValue);
 	};
 
-	/**
-	 * Replaces the CSRF placeholder within a data configuration object with the resolved token.
-	 * Currently only works when the token is used in the 'headers' property.
-	 *
-	 * @private
-	 * @param {object} oDataConfig Data configuration object
-	 * @param {string} sTokenValue The resolved token value
-	 */
-	CsrfTokenHandler.prototype._replaceCsrfPlaceholder = function (oDataConfig, sTokenValue) {
-		oDataConfig.headers[TOKEN_DEFAULT_HEADER] = sTokenValue;
-	};
+	CsrfTokenHandler.prototype._findCsrfPlaceholder = function (oConfig) {
+		var vValue,
+			sKey,
+			sTokenName;
 
-	/**
-	 * Checks if the data config headers contain a csrf definition.
-	 *
-	 * @private
-	 * @param {object} oDataConfig Data configuration object
-	 * @returns {string} sHeaderName the header which uses the csrf definition or an empty string if there is no such header.
-	 */
-	CsrfTokenHandler.prototype._findCsrfInHeaders = function (oDataConfig) {
-		if (!oDataConfig || !oDataConfig.headers || !isPlainObject(oDataConfig.headers)) {
-			return "";
-		}
+		for (sKey in oConfig) {
+			vValue = oConfig[sKey];
 
-		for (var sKey in oDataConfig.headers) {
-			if (typeof oDataConfig.headers[sKey] === "string" && this._hasCsrf(oDataConfig.headers[sKey])) {
-				return sKey;
+			if (typeof vValue === "string") {
+				sTokenName = this._getCsrfTokenName(vValue);
+
+				if (sTokenName) {
+					return {
+						object: oConfig,
+						key: sKey,
+						tokenName: sTokenName
+					};
+				}
+			}
+
+			if (isPlainObject(vValue)) {
+				vValue = this._findCsrfPlaceholder(vValue);
+
+				if (vValue) {
+					return vValue;
+				}
 			}
 		}
 
-		return "";
-	};
-
-	/**
-	 * Returns true if the given string contains a csrf placeholder.
-	 *
-	 * @private
-	 * @param {string} sString The string to check.
-	 * @returns {boolean} True if the string contains a csrf placeholder.
-	 */
-	CsrfTokenHandler.prototype._hasCsrf = function (sString) {
-		return !!sString.match(rPattern);
+		return null;
 	};
 
 	/**
@@ -281,7 +265,7 @@ sap.ui.define([
 	 * @param {string} sString the CSRF placeholder
 	 * @returns {string} The name of the placeholder or empty string
 	 */
-	CsrfTokenHandler.prototype._getCsrfName = function (sString) {
+	CsrfTokenHandler.prototype._getCsrfTokenName = function (sString) {
 		var aMatches = sString.match(rPattern);
 		if (!aMatches) {
 			return "";

@@ -29,5 +29,10 @@
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
+		<w:Card id="card6" manifest="./cardsdemo/cardcontent/csrfTokens/cardManifestParams.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="3" />
+			</w:layoutData>
+		</w:Card>
 	</f:GridContainer>
 </mvc:View>

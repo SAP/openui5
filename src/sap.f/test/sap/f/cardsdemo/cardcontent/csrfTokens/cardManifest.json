@@ -3,8 +3,8 @@
 	"sap.app": {
 		"id": "sap.ui.CardCSRFToken.Card1",
 		"type": "card",
-		"title": "Sample of Host Actions in Cards",
-		"subTitle": "Sample of  Host Actions in Cards",
+		"title": "Cards with CSRF tokens used",
+		"subTitle": "",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
