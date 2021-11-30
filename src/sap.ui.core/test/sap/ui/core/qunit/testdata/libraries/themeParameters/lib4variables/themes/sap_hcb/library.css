@@ -1,7 +1,0 @@
-/* CSS Variables */
-:root {
-	/* marker variable, only on :root */
-	--sapUiTheme-testlibs-themeParameters-lib4variables:true;
-	/* metadata */
-	--sapThemeMetaData-UI5-testlibs-themeParameters-lib4variables:{"Path": "UI5.sample/path", "PathPattern": "/%UI5%/sample/%pattern%.css", "Extends": ["sap_hcb","base"], "Version": { "Build":"1.0.0", "Source": "1.0.0", "Engine": "1.0.0"}, "Scopes": ["TestScope1"]};
-}

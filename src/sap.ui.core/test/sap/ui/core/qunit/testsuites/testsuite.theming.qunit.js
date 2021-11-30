@@ -64,34 +64,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
-			"ThemeParameters_CSSVariables": {
-				title: "sap.ui.core.theming.Parameters - CSS Variables - General",
-				ui5: {
-					theme: "sap_hcb"
-				},
-				qunit: {
-					reorder: false
-				},
-				loader: {
-					paths: {
-						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
-					}
-				}
-			},
-			"ThemeParameters_CSSVariables_getAll": {
-				title: "sap.ui.core.theming.Parameters - CSS Variables - SYNC get-all API",
-				ui5: {
-					theme: "sap_hcb"
-				},
-				qunit: {
-					reorder: false
-				},
-				loader: {
-					paths: {
-						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
-					}
-				}
-			},
 			"ThemeHelper": {
 				title: "sap.ui.core.theming.ThemeHelper",
 				ui5: {
