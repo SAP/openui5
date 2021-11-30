@@ -9,7 +9,10 @@
 			editable="true" id="contact" layout="columnLayout" title="Field Groups"
 			validateFieldGroup="onValidateFieldGroup">
 		<Label labelFor="firstName" text="First Name"/>
-		<Input fieldGroupIds="firstNameGroup" id="firstName" value="{FirstName}"/>
+		<!-- we use a description on the same property used for the value to check that rerendering
+		does not trigger the batch without side effects request-->
+		<Input fieldGroupIds="firstNameGroup" id="firstName" value="{FirstName}"
+			   description="{FirstName}"/>
 		<Label labelFor="lastName" text="Last Name"/>
 		<Input fieldGroupIds="lastNameGroup" id="lastName" value="{LastName}"/>
 		<Label labelFor="emailAddress" text="Email Address"/>
