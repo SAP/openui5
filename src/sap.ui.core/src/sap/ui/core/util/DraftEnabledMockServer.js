@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject",
-	"jquery.sap.sjax"
-], function(jQuery, isEmptyObject /*, jQuerySapSjax*/) {
+	"sap/base/util/isEmptyObject"
+], function(jQuery, isEmptyObject) {
 	"use strict";
+
 	return {
 
 		_oDraftMetadata: {},
@@ -30,6 +30,9 @@ sap.ui.define([
 		 * @param {object} oMockServer
 		 */
 		handleDraft: function(oAnnotations, oMockServer) {
+			var MockServer = sap.ui.require("sap/ui/core/util/MockServer");
+			var syncAjax = MockServer._syncAjax;
+
 			// callback function to update draft specific properties post creation
 			var fnNewDraftPost = function(oEvent) {
 				var oNewEntity = oEvent.getParameter("oEntity");
@@ -40,7 +43,7 @@ sap.ui.define([
 			// callback function to update draft specific properties pre deletion
 			var fnDraftDelete = function(oEvent) {
 				var oXhr = oEvent.getParameter("oXhr");
-				var oEntry = jQuery.sap.sjax({
+				var oEntry = syncAjax({
 					url: oXhr.url,
 					dataType: "json"
 				}).data.d;
@@ -48,7 +51,7 @@ sap.ui.define([
 				for (var i = 0; i < this._oDraftMetadata.draftNodes.length; i++) {
 					for (var navprop in this._mEntitySets[this._oDraftMetadata.draftRootName].navprops) {
 						if (this._mEntitySets[this._oDraftMetadata.draftRootName].navprops[navprop].to.entitySet === this._oDraftMetadata.draftNodes[i]) {
-							var oResponse = jQuery.sap.sjax({
+							var oResponse = syncAjax({
 								url: oEntry[navprop].__deferred.uri,
 								dataType: "json"
 							});
@@ -56,7 +59,7 @@ sap.ui.define([
 								var oNode;
 								for (var j = 0; j < oResponse.data.d.results.length; j++) {
 									oNode = oResponse.data.d.results[j];
-									jQuery.sap.sjax({
+									syncAjax({
 										url: oNode.__metadata.uri,
 										type: "DELETE"
 									});
@@ -66,7 +69,6 @@ sap.ui.define([
 					}
 				}
 			};
-			var MockServer = sap.ui.require("sap/ui/core/util/MockServer");
 			if (oAnnotations && oAnnotations.EntityContainer) {
 				var oEntitySetsAnnotations = oAnnotations.EntityContainer[Object.keys(oAnnotations.EntityContainer)[0]];
 				//iterate over entitysets annotations
@@ -347,6 +349,8 @@ sap.ui.define([
 		 * @param {object} oEntry the draft document
 		 */
 		_activate: function(oEntry) {
+			var MockServer = sap.ui.require("sap/ui/core/util/MockServer");
+			var syncAjax = MockServer._syncAjax;
 			var oResponse;
 			var fnGrep = function(aContains, aContained) {
 				return aContains.filter(function(x) {
@@ -357,7 +361,7 @@ sap.ui.define([
 			for (var i = 0; i < this._oDraftMetadata.draftNodes.length; i++) {
 				for (var navprop in this._mEntitySets[this._oDraftMetadata.draftRootName].navprops) {
 					if (this._mEntitySets[this._oDraftMetadata.draftRootName].navprops[navprop].to.entitySet === this._oDraftMetadata.draftNodes[i]) {
-						oResponse = jQuery.sap.sjax({
+						oResponse = syncAjax({
 							url: oEntry[navprop].__deferred.uri,
 							dataType: "json"
 						});
@@ -372,7 +376,7 @@ sap.ui.define([
 								var aSemanticDraftNodeKeys = this._calcSemanticKeys(this._oDraftMetadata.draftNodes[i], this._mEntitySets);
 								var sDraftKey = fnGrep(this._mEntitySets[this._oDraftMetadata.draftNodes[i]].keys, aSemanticDraftNodeKeys);
 								oNode[sDraftKey] = this._oConstants.EMPTY_GUID;
-								jQuery.sap.sjax({
+								syncAjax({
 									url: oNode.__metadata.uri,
 									type: "PATCH",
 									data: JSON.stringify(oNode)
@@ -386,7 +390,7 @@ sap.ui.define([
 			oEntry.HasActiveEntity = false;
 			oEntry.HasDraftEntity = false;
 			oEntry[this._oDraftMetadata.draftRootKey] = this._oConstants.EMPTY_GUID;
-			jQuery.sap.sjax({
+			syncAjax({
 				url: oEntry.__metadata.uri,
 				type: "PATCH",
 				data: JSON.stringify(oEntry)
@@ -401,6 +405,7 @@ sap.ui.define([
 		setRequests: function(aRequests) {
 			var that = this;
 			var MockServer = sap.ui.require("sap/ui/core/util/MockServer");
+			var syncAjax = MockServer._syncAjax;
 			aRequests.push({
 				method: "POST",
 				path: new RegExp(that._oDraftMetadata.draftRootActivationName),
@@ -410,7 +415,7 @@ sap.ui.define([
 					for (var property in oRequestBody) {
 						aFilter.push(property + " eq " + oRequestBody[property]);
 					}
-					var oResponse = jQuery.sap.sjax({
+					var oResponse = syncAjax({
 						url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 						dataType: "json"
 					});
@@ -426,13 +431,13 @@ sap.ui.define([
 					if (oEntry.HasActiveEntity) {
 						// edit draft activiation --> delete active sibling
 						var oSiblingEntityUri = oEntry.SiblingEntity.__deferred.uri;
-						oResponse = jQuery.sap.sjax({
+						oResponse = syncAjax({
 							url: oSiblingEntityUri,
 							dataType: "json"
 						});
 						if (oResponse.success && oResponse.data && oResponse.data.d.__metadata) {
 							var oSibling = oResponse.data.d;
-							oResponse = jQuery.sap.sjax({
+							oResponse = syncAjax({
 								url: oSibling.__metadata.uri,
 								type: "DELETE"
 							});
@@ -471,7 +476,7 @@ sap.ui.define([
 								}
 							}
 						}
-						var oResponse = jQuery.sap.sjax({
+						var oResponse = syncAjax({
 							url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 							dataType: "json"
 						});
@@ -509,7 +514,7 @@ sap.ui.define([
 						});
 						that._oMockdata[that._oDraftMetadata.draftRootName].push(oDraftEntry);
 						// update the active with HasDraftEntity = true
-						oResponse = jQuery.sap.sjax({
+						oResponse = syncAjax({
 							url: oEntry.__metadata.uri,
 							type: "PATCH",
 							data: JSON.stringify({
@@ -580,7 +585,7 @@ sap.ui.define([
 						for (var property in oRequestBody) {
 							aFilter.push(property + " eq " + oRequestBody[property]);
 						}
-						var oResponse = jQuery.sap.sjax({
+						var oResponse = syncAjax({
 							url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 							dataType: "json"
 						});
