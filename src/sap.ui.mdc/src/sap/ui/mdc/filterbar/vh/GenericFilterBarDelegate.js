@@ -29,7 +29,7 @@ sap.ui.define([
 	 */
 	GenericFilterBarDelegate.fetchProperties = function(oFilterBar) {
 		if (!oFilterBar.__oObserver) {
-			oFilterBar.__oObserver = new ManagedObjectObserver(_observeChanges);
+			oFilterBar.__oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 			oFilterBar.__oObserver.observe(oFilterBar, {
 				aggregations: ["filterItems"]
 			});
@@ -39,11 +39,11 @@ sap.ui.define([
 			var aFilterItems = oFilterBar.getFilterItems();
 			oFilterBar.__aProperties = [];
 			aFilterItems.forEach(function(oFF){
-				addFilterField(oFF, oFilterBar.__aProperties);
-			});
+				addFilterField.call(this, oFF, oFilterBar.__aProperties);
+			}.bind(this));
 
 			fResolve(oFilterBar.__aProperties);
-		});
+		}.bind(this));
 
 	};
 
@@ -61,7 +61,7 @@ sap.ui.define([
 			type: oFF.getDataType(),
 			formatOptions: oFF.getDataTypeFormatOptions(),
 			constraints: oFF.getDataTypeConstraints(),
-			typeConfig: oFF._getFormatOptions().delegate.getTypeUtil().getTypeConfig(oFF.getDataType(), oFF.getDataTypeFormatOptions(), oFF.getDataTypeConstraints()),
+			typeConfig: this.getTypeUtil().getTypeConfig(oFF.getDataType(), oFF.getDataTypeFormatOptions(), oFF.getDataTypeConstraints()),
 			required: oFF.getRequired(),
 			hiddenFilter: false,
 			visible: oFF.getVisible(),
@@ -121,7 +121,7 @@ sap.ui.define([
 				var oNewFF = oChanges.child;
 				oFilterBar = oNewFF.getParent();
 				aProperties = oFilterBar.__aProperties;
-				addFilterField(oNewFF, aProperties);
+				addFilterField.call(this, oNewFF, aProperties);
 				return;
 			}
 			if (oChanges.mutation === "remove") {
