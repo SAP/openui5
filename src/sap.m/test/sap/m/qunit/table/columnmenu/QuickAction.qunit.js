@@ -1,7 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/m/table/QuickAction",
+	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/Button"
 ], function (QUnitUtils, QuickAction, Button) {
 	"use strict";

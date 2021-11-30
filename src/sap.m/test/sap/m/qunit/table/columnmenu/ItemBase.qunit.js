@@ -1,7 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/m/table/ItemBase"
+	"sap/m/table/columnmenu/ItemBase"
 ], function (QUnitUtils, ItemBase) {
 	"use strict";
 

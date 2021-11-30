@@ -241,7 +241,15 @@ sap.ui.define([
 		this.oLayout.removeAllContent();
 		this.oLayout.addContent(oNewView.getContent());
 
-		this.fireAfterViewSwitch({source: sCurrentViewKey, target: sKey});
+		if (sCurrentViewKey !== sKey) {
+			this.oAfterRenderingDelegate = {
+				onAfterRendering: function () {
+					this.removeEventDelegate(this.oAfterRenderingDelegate);
+					this.fireAfterViewSwitch({source: sCurrentViewKey, target: sKey});
+				}.bind(this)
+			};
+			this.addEventDelegate(this.oAfterRenderingDelegate, this);
+		}
 	};
 
 	/**

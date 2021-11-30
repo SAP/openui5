@@ -2,24 +2,23 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/table/ColumnMenuEntry"
+	"sap/m/table/columnmenu/Entry"
 ], function(
-	ColumnMenuEntry
+	Entry
 ) {
 	"use strict";
 
 	/**
 	 * Constructor for a new ItemBase.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] ID for the new ItemBase, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new ItemBase
 	 *
 	 * @class
-	 * The ItemBase control serves as a base class for menu items for the sap.m.table.ColumnMenu.
-	 * This base class is faceless and should be inherited by controls, which intend to be menu items
-	 * for the sap.m.table.ColumnMenu.
+	 * The ItemBase serves as a base class for menu items for the sap.m.table.columnmenu.Menu.
+	 * This base class is faceless and should be inherited by menu items for the sap.m.table.columnmenu.Menu.
 	 *
-	 * @extends sap.m.table.ColumnMenuEntry
+	 * @extends sap.m.table.columnmenu.Entry
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -27,9 +26,9 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 *
-	 * @alias sap.m.table.ItemBase
+	 * @alias sap.m.table.columnmenu.ItemBase
 	 */
-	var ItemBase = ColumnMenuEntry.extend("sap.m.table.ItemBase", {
+	var ItemBase = Entry.extend("sap.m.table.columnmenu.ItemBase", {
 		metadata: {
 			"abstract": true,
 			library: "sap.m"
@@ -48,7 +47,7 @@ sap.ui.define([
 	 * This method can be used to retrieve the effective items of the item.
 	 *
 	 * This method allows subclasses to return composition of other items, if they contain multiple items or controls.
-	 * @returns {Array<sap.m.table.ItemBase>} A composition of effective items
+	 * @returns {sap.m.table.columnmenu.ItemBase[]} A composition of effective items
 	 *
 	 * @protected
 	 */

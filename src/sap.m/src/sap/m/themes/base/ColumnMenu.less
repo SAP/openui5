@@ -4,21 +4,17 @@
 /* ======================================= */
 
 .sapMTCMenu {
-
-}
-
-.sapMTCMenu.sapMWrapper {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 
-	.sapMContainerWrapper {
+	.sapMTCMenuContainerWrapper {
 		height: 100%;
 		overflow: hidden;
 	}
 }
 
-.sapMTCMenu .sapMTQAList{
+.sapMTCMenu .sapMTCMenuQAList{
 	display: grid;
 	grid-template-columns: minmax(min-content, max-content) 2fr;
 	column-gap: 10px;
@@ -26,14 +22,14 @@
 	padding: .5rem 1rem .5rem 1rem;
 }
 
-.sapMTCMenu .sapMTQAListHidden {
+.sapMTCMenu .sapMTCMenuQAListHidden {
 	display: none;
 }
 
-.sapMTCMenu .sapMTQAList .sapMQAction {
+.sapMTCMenu .sapMTCMenuQAList .sapMTCMenuQAction {
 	display: contents;
 
-	.sapMQALabel {
+	.sapMTCMenuQALabel {
 		justify-self: end;
 		align-self: center;
 		text-align: end;

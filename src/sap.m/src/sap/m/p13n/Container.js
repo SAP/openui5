@@ -11,10 +11,8 @@ sap.ui.define([
 	"sap/m/p13n/AbstractContainerItem",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/m/StandardListItem",
-	"sap/m/CustomListItem",
-	"sap/ui/core/Control"
-], function (AbstractContainer, Bar, Button, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem, CustomListItem, Control) {
+	"sap/m/StandardListItem"
+], function (AbstractContainer, Bar, Button, List, IconTabBar, IconTabFilter, ContainerItem, Device, mLibrary, StandardListItem) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -127,7 +125,6 @@ sap.ui.define([
 		}
 		var oParent = this.getParent();
 		if (oParent && oParent.isA("sap.ui.core.Control")){
-			oParent.focus();
 			oParent.invalidate();
 
 			// invalidate dependents as well
@@ -140,7 +137,8 @@ sap.ui.define([
 				});
 			}
 		}
-		this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in default view (avoid empty space),
+		this.oLayout.setShowHeader(sKey !== this.DEFAULT_KEY); //Don't show header in default view
+		this.oLayout.setShowFooter(sKey !== this.DEFAULT_KEY); //Don't show footer in default view
 		this._getTabBar().setSelectedKey(sKey);
 		this._getNavBackBtn().setVisible(sKey !== this.DEFAULT_KEY);
 		this._getNavBackBtn().setText((this.getView(sKey) && this.getView(sKey).getText()) || sKey);

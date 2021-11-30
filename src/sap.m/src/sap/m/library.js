@@ -372,7 +372,7 @@ sap.ui.define([
 			"sap.m.p13n.SelectionPanel",
 			"sap.m.p13n.SortPanel",
 			"sap.m.p13n.Popup",
-			"sap.m.table.ColumnMenu"
+			"sap.m.table.columnmenu.Menu"
 		],
 		elements: [
 			"sap.m.BadgeCustomData",
@@ -461,11 +461,11 @@ sap.ui.define([
 			"sap.m.semantic.ShareInJamAction",
 			"sap.m.semantic.SortAction",
 			"sap.m.semantic.SortSelect",
-			"sap.m.table.ColumnMenuEntry",
-			"sap.m.table.Item",
-			"sap.m.table.ItemBase",
-			"sap.m.table.QuickAction",
-			"sap.m.table.QuickActionBase"
+			"sap.m.table.columnmenu.Entry",
+			"sap.m.table.columnmenu.Item",
+			"sap.m.table.columnmenu.ItemBase",
+			"sap.m.table.columnmenu.QuickAction",
+			"sap.m.table.columnmenu.QuickActionBase"
 		],
 		extensions: {
 			flChangeHandlers: {

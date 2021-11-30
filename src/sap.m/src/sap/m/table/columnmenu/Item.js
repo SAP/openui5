@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/table/ItemBase"
+	"sap/m/table/columnmenu/ItemBase"
 ], function(
 	ItemBase
 ) {
@@ -11,14 +11,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new Item.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] ID for the new Item, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new Item
 	 *
 	 * @class
-	 * This control serves as a menu item for the sap.m.table.ColumnMenu.
+	 * This Item serves as a menu item for the sap.m.table.columnmenu.Menu.
 	 * It can be used to specify control- and application-specific items.
 	 *
-	 * @extends sap.m.table.ItemBase
+	 * @extends sap.m.table.columnmenu.ItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -26,9 +26,9 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 *
-	 * @alias sap.m.table.Item
+	 * @alias sap.m.table.columnmenu.Item
 	 */
-	var Item = ItemBase.extend("sap.m.table.Item", {
+	var Item = ItemBase.extend("sap.m.table.columnmenu.Item", {
 		metadata: {
 			library: "sap.m",
 			properties: {
