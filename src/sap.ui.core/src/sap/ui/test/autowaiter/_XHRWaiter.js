@@ -47,7 +47,7 @@ sap.ui.define([
 	// Check if sinon is already faking the Xhr
 	hookIntoSinonRestore();
 
-	// Hook into XHR opent for sinon XHRs
+	// Hook into XHR open for sinon XHRs
 	var fnOriginalFakeOpen = sinon.FakeXMLHttpRequest.prototype.open;
 	sinon.FakeXMLHttpRequest.prototype.open = function () {
 		return fnOriginalFakeOpen.apply(this, hookIntoXHROpen.apply(this, arguments));

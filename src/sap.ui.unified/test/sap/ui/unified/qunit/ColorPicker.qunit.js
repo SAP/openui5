@@ -187,7 +187,7 @@ sap.ui.define([
 			oAssert.strictEqual(oPRGBCSpy.callCount, 0, "_processRGBChanges should not be called");
 
 			// Arrange
-			oPRGBCSpy.reset();
+			oPRGBCSpy.resetHistory();
 			this.oCP.Color.formatHSL = true; // Mock HSL output mode
 
 			// Act - change slider value and fire the event handler.
@@ -738,7 +738,7 @@ sap.ui.define([
 				"On event 'ontouchstart' the method 'handleTouch' should also be called to handle initial Color Picker box interaction");
 
 			// Arrange - reset spy counters
-			oSpy.reset();
+			oSpy.resetHistory();
 
 			// Act - emulate 'ontouchend' event with mock data
 			this.oCPBox.ontouchend(oMockEventData);
@@ -764,8 +764,8 @@ sap.ui.define([
 			oAssert.strictEqual(oEventSpy.callCount, 1, "Event 'fireSelect' called once");
 
 			// Arrange - reset spy counters
-			oSpy.reset();
-			oEventSpy.reset();
+			oSpy.resetHistory();
+			oEventSpy.resetHistory();
 
 			// Act - emulate 'ontouchmove' event with invalid mock data
 			this.oCPBox.ontouchmove({offsetX: undefined, offsetY: undefined});

@@ -9220,7 +9220,7 @@ sap.ui.define([
 		oMultiComboBox.setEnabled(true);
 		oMultiComboBox.setEditable(false);
 		Core.applyChanges();
-		oSetPropertySpy.reset();
+		oSetPropertySpy.resetHistory();
 
 		// Act
 		oMultiComboBox.handleClearIconPress();

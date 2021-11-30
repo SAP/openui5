@@ -2462,7 +2462,7 @@ sap.ui.define([
 		// Assert in Day view
 		assert.equal(oSpyFireCancel.callCount, 1, "fireCancel should be called once in Day view");
 
-		oSpyFireCancel.reset();
+		oSpyFireCancel.resetHistory();
 
 		// Act in Month view
 		oCalendar._iMode = 1;
@@ -2471,7 +2471,7 @@ sap.ui.define([
 		// Assert in Month view
 		assert.equal(oSpyFireCancel.callCount, 1, "fireCancel should be called once in Month view");
 
-		oSpyFireCancel.reset();
+		oSpyFireCancel.resetHistory();
 
 		// Act in year view
 		oCalendar._iMode = 2;

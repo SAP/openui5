@@ -82,7 +82,7 @@ sap.ui.define([
 			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: 1 })), "pageChange is fired with the correct arguments");
 
 			// arrange
-			oFirePageChangeSpy.reset();
+			oFirePageChangeSpy.resetHistory();
 
 			// act
 			this.oMP._oItemNavigation.fireEvent("BorderReached", { event: { type: "sappageup" } });
@@ -109,7 +109,7 @@ sap.ui.define([
 			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: -1 })), "pageChange is fired with the correct arguments");
 
 			// arrange
-			oFirePageChangeSpy.reset();
+			oFirePageChangeSpy.resetHistory();
 
 			// act
 			this.oMP._oItemNavigation.fireEvent("BorderReached", {
@@ -141,7 +141,7 @@ sap.ui.define([
 			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: -1 })), "pageChange is fired with the correct arguments");
 
 			// arrange
-			oFirePageChangeSpy.reset();
+			oFirePageChangeSpy.resetHistory();
 
 			// act
 			this.oMP._oItemNavigation.fireEvent("BorderReached", {

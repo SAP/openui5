@@ -160,23 +160,23 @@ sap.ui.define([
 		ControlInspector.updateSettings({preferViewId: true});
 		assert.ok(fnSpy.calledOnce, "Should get snippets again - preferViewId - single");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "second");
-		fnSpy.reset();
+		fnSpy.resetHistory();
 
 		ControlInspector.updateSettings({formatAsPOMethod: false});
 		assert.ok(fnSpy.calledOnce, "Should get snippets again - formatAsPOMethod - single");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "second");
-		fnSpy.reset();
+		fnSpy.resetHistory();
 
 		ControlInspector.updateSettings({multipleSnippets: true});
 		assert.ok(fnSpy.calledOnce, "Should get snippets again - multipleSelectors");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "second");
-		fnSpy.reset();
+		fnSpy.resetHistory();
 
 		ControlInspector.updateSettings({preferViewId: true});
 		assert.ok(fnSpy.calledTwice, "Should get snippets again - preferViewId with multi");
 		assert.strictEqual(fnSpy.getCalls()[0].args[0].domElementId, "first");
 		assert.strictEqual(fnSpy.getCalls()[1].args[0].domElementId, "second");
-		fnSpy.reset();
+		fnSpy.resetHistory();
 
 		ControlInspector.updateSettings({formatAsPOMethod: false});
 		assert.ok(fnSpy.calledTwice, "Should get snippets again - formatAsPoMethod with multi");
