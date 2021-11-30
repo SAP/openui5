@@ -1,0 +1,34 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IllustratedMessageSessionTimeout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IllustratedMessageSessionTimeout.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"controller/Main.controller.js",
+					"view/Main.view.xml",
+					"view/fragments/Dialog.fragment.xml",
+					"Component.js",
+					"i18n/i18n.properties",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

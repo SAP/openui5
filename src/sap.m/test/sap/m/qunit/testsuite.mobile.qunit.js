@@ -512,6 +512,21 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			IllustratedMessage: {
+				coverage: {
+					only: ["sap/m/IllustratedMessage"]
+				}
+			},
+			Illustration: {
+				coverage: {
+					only: ["sap/m/Illustration"]
+				}
+			},
+			IllustrationPool: {
+				coverage: {
+					only: ["sap/m/IllustrationPool"]
+				}
+			},
 			Image: {
 				title: "Image - sap.m - QUnit test"
 			},

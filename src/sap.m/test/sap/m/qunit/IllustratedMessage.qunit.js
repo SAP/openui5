@@ -1,8 +1,8 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/f/library",
+	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/f/IllustratedMessage",
+	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	"sap/ui/core/Core"
 ],
@@ -15,10 +15,10 @@ function (
 ) {
 	"use strict";
 
-	// shortcut for sap.f.IllustratedMessageSize
+	// shortcut for sap.m.IllustratedMessageSize
 	var IllustratedMessageSize = library.IllustratedMessageSize;
 
-	// shortcut for sap.f.IllustratedMessageType
+	// shortcut for sap.m.IllustratedMessageType
 	var IllustratedMessageType = library.IllustratedMessageType;
 
 	/* --------------------------- IllustratedMessage API -------------------------------------- */
@@ -55,14 +55,14 @@ function (
 		assert.strictEqual(aPublicProperties["description"].type, "string", "The type of the description property is string");
 		assert.notOk(this.oIllustratedMessage.getEnableFormattedText(), "The IllustratedMessage enableFormattedText is false by default");
 		assert.strictEqual(aPublicProperties["enableFormattedText"].type, "boolean", "The type of the enableFormattedText property is boolean");
-		assert.strictEqual(aPublicProperties["illustrationSize"].type, "sap.f.IllustratedMessageSize", "The type of the illustrationSize property is sap.f.IllustratedMessageSize");
+		assert.strictEqual(aPublicProperties["illustrationSize"].type, "sap.m.IllustratedMessageSize", "The type of the illustrationSize property is sap.m.IllustratedMessageSize");
 		assert.strictEqual(aPublicProperties["illustrationType"].type, "string", "The type of the illustrationType property is string");
 		assert.ok(this.oIllustratedMessage.getAdditionalContent(), "The IllustratedMessage additional content has instantiated successfully");
 		assert.strictEqual(aPublicAggregations["additionalContent"].type, "sap.m.Button", "The type of the additionalContent aggregation is sap.m.Button");
 		assert.notOk(this.oIllustratedMessage.getAggregation("_formattedText"), "The IllustratedMessage _formattedText is not instantiated by default");
 		assert.strictEqual(aPrivateAggregations["_formattedText"].type, "sap.m.FormattedText", "The type of the _formattedText aggregation is sap.m.FormattedText");
 		assert.ok(this.oIllustratedMessage.getAggregation("_illustration"), "The IllustratedMessage _illustration has instantiated successfully");
-		assert.strictEqual(aPrivateAggregations["_illustration"].type, "sap.f.Illustration", "The type of the _illustration aggregation is sap.f.Illustration");
+		assert.strictEqual(aPrivateAggregations["_illustration"].type, "sap.m.Illustration", "The type of the _illustration aggregation is sap.m.Illustration");
 		assert.ok(this.oIllustratedMessage.getAggregation("_text"), "The IllustratedMessage _text has instantiated successfully");
 		assert.strictEqual(this.oIllustratedMessage.getAggregation("_text").getTextAlign(), "Center", "The IllustratedMessage _text textAlign is 'Center'");
 		assert.strictEqual(aPrivateAggregations["_text"].type, "sap.m.Text", "The type of the _text aggregation is sap.m.Text");
@@ -234,13 +234,13 @@ function (
 		var oIllustration = this.oIllustratedMessage._getIllustration();
 
 		// Assert
-		assert.ok(oIllustration.isA("sap.f.Illustration"), "Internal getter _getIllustration is correctly returning an sap.f.Illustration");
+		assert.ok(oIllustration.isA("sap.m.Illustration"), "Internal getter _getIllustration is correctly returning an sap.m.Illustration");
 	});
 
 	QUnit.test("_getResourceBundle", function (assert) {
 		// Assert
-		assert.strictEqual(this.oIllustratedMessage._getResourceBundle(), Core.getLibraryResourceBundle("sap.f"),
-			"Internal getter _getResourceBundle is correctly returning the sap.f resource bundle");
+		assert.strictEqual(this.oIllustratedMessage._getResourceBundle(), Core.getLibraryResourceBundle("sap.m"),
+			"Internal getter _getResourceBundle is correctly returning the sap.m resource bundle");
 	});
 
 	QUnit.test("_getTitle", function (assert) {

@@ -43,7 +43,7 @@
 		},
 		{
 			"id": "sap.f.IllustratedMessage",
-			"name": "Illustrated Message (Experimental)",
+			"name": "Illustrated Message (sap.f)",
 			"category": "Display",
 			"since": "1.88",
 			"samples": [

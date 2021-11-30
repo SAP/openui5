@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog title="Error" contentWidth="20rem" verticalScrolling="false" state="Error">
+		<buttons>
+			<Button text="Close" press="onDialogClose"/>
+		</buttons>
+		<IllustratedMessage illustrationType="sapIllus-UnableToLoad" />
+	</Dialog>
+</core:FragmentDefinition>

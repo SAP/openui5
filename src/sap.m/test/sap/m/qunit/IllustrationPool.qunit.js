@@ -1,7 +1,7 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
-	"sap/f/IllustrationPool",
+	"sap/m/IllustrationPool",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ],

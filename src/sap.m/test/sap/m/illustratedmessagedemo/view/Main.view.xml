@@ -1,7 +1,6 @@
 <mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	xmlns:f="sap.f">
+	xmlns="sap.m">
 	<App id="app">
 		<Page>
 			<subHeader>
@@ -13,13 +12,13 @@
 			</subHeader>
 
 			<Panel>
-				<f:IllustratedMessage title="Test Title">
+				<IllustratedMessage title="Test Title">
 
-					<f:additionalContent>
+					<additionalContent>
 						<Button text="Compose" />
-					</f:additionalContent>
+					</additionalContent>
 
-				</f:IllustratedMessage>
+				</IllustratedMessage>
 			</Panel>
 		</Page>
 	</App>

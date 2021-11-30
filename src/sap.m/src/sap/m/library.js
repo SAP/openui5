@@ -25,6 +25,8 @@ sap.ui.define([
 	"./AvatarType",
 	"./AvatarColor",
 	"./AvatarImageFitType",
+	"./IllustratedMessageSize",
+	"./IllustratedMessageType",
 	"./upload/UploaderHttpRequestMethod",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/LocaleData",
@@ -50,6 +52,8 @@ sap.ui.define([
 	AvatarType,
 	AvatarColor,
 	AvatarImageFitType,
+	IllustratedMessageSize,
+	IllustratedMessageType,
 	UploaderHttpRequestMethod,
 	Parameters,
 	LocaleData
@@ -101,6 +105,8 @@ sap.ui.define([
 			"sap.m.IconTabDensityMode",
 			"sap.m.IconTabFilterDesign",
 			"sap.m.IconTabHeaderMode",
+			"sap.m.IllustratedMessageSize",
+			"sap.m.IllustratedMessageType",
 			"sap.m.ImageMode",
 			"sap.m.InputTextFormatMode",
 			"sap.m.InputType",
@@ -229,6 +235,7 @@ sap.ui.define([
 			"sap.m.IconTabBarSelectList",
 			"sap.m.IconTabFilterExpandButtonBadge",
 			"sap.m.IconTabHeader",
+			"sap.m.IllustratedMessage",
 			"sap.m.Image",
 			"sap.m.ImageContent",
 			"sap.m.Input",
@@ -4650,6 +4657,9 @@ sap.ui.define([
 	thisLib.AvatarType = AvatarType;
 	thisLib.AvatarColor = AvatarColor;
 	thisLib.AvatarImageFitType = AvatarImageFitType;
+
+	thisLib.IllustratedMessageSize = IllustratedMessageSize;
+	thisLib.IllustratedMessageType = IllustratedMessageType;
 
 		/**
 		 * Wizard rendering mode.
