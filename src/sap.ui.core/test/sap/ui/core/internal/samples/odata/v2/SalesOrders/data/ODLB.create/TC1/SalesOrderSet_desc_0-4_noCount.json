@@ -1,29 +1,6 @@
 {
 	"d": {
-		"__count" : "7",
 		"results": [{
-			"__metadata" : {
-				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('221')",
-				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('221')",
-				"type" : "GWSAMPLE_BASIC.SalesOrder"
-			},
-			"SalesOrderID" : "221",
-			"CustomerName" : "SAP",
-			"Note" : "2",
-			"CurrencyCode" : "EUR",
-			"GrossAmount" : "2410.62"
-		}, {
-			"__metadata" : {
-				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('220')",
-				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('220')",
-				"type" : "GWSAMPLE_BASIC.SalesOrder"
-			},
-			"SalesOrderID" : "220",
-			"CustomerName" : "SAP",
-			"Note" : "1",
-			"CurrencyCode" : "EUR",
-			"GrossAmount" : "8710.62"
-		}, {
 			"__metadata" : {
 				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
 				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('205')",
@@ -45,6 +22,28 @@
 			"Note" : "Inline Creation Rows 204",
 			"CurrencyCode" : "EUR",
 			"GrossAmount" : "89250.00"
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('203')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('203')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "203",
+			"CustomerName" : "Talpa",
+			"Note" : "Inline Creation Rows 203",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "98710.62"
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('202')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('202')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "202",
+			"CustomerName" : "Asia High tech",
+			"Note" : "Inline Creation Rows 202",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "4174.16"
 		}]
 	}
 }

@@ -41,14 +41,12 @@
 		</ul>
 		<h2>REALIZE and CHECK</h2>
 		<h3>(I) Create new sales orders inline</h3>
-		Create two sales orders without saving them.
+		Create two sales orders without saving them
 		<ol>
 			<li>Click the <code>Use Table</code> button on the top right side to display the Sales
-				Orders table.
-			</li>
+				Orders table.</li>
 			<li>Remember the number of sales orders for further testing. The number can be found in
-				the header line of the Sales Orders table.
-			</li>
+				the header line of the <code>Sales Orders</code> table.</li>
 			<li>Click on the <code>Create sales order</code> button in the <code>Sales Orders</code>
 				table.<br />
 				<b>Check:</b> An empty table row for the new sales order is displayed.<br />
@@ -56,41 +54,52 @@
 				over the icon to see the status text.<br />
 				<b>Check:</b> The count has been increased by 1.
 			</li>
-			<li>Enter "1" in the <code>Note</code> input field of the newly created sales order</li>
-			<li>Repeat step 3 and use "2" as the value for the <code>Note</code> in step 4.</li>
+			<li>Enter <code>1</code> in the <code>Note</code> input field of the newly created sales
+				order</li>
+			<li>Repeat step 3 and use <code>2</code> as the value for the <code>Note</code> in step
+				4.</li>
 		</ol>
-		Sort the Sales Orders table
+		Sort the <code>Sales Orders</code> table
 		<ol>
-			<li>Use the <code>Select</code> box to sort the table in <code>Ascending</code>
+			<li>Use the <code>Sort</code> select box to sort the table in <code>Ascending</code>
 				order.<br />
-				<b>Check:</b> The two transient sales orders keep their positions.
+				<b>Check:</b> The two transient sales orders keep their positions.<br />
+				<b>Check:</b> The persisted sales orders are in ascending order regarding the sales
+				order ID.<br />
+				<b>Check:</b> The count has not changed.
 			</li>
-			<li>Use the <code>Select</code> box to sort the table in <code>Descending</code>
+			<li>Use the <code>Sort</code> select box to sort the table in <code>Descending</code>
 				order.<br />
 				<b>Check:</b> The two transient sales orders keep their positions.<br />
 				<b>Check:</b> The persisted sales orders are in descending order regarding the sales
-				order id.
+				order ID.<br />
+				<b>Check:</b> The count has not changed.
 			</li>
 		</ol>
-		Filter the Sales Orders table by <code>Customer Name</code>
+		Filter the <code>Sales Orders</code> table by <code>Customer Name</code>
 		<ol>
 			<li>Remember the number of sales orders.</li>
-			<li>Enter 'SAP' in the filter input field and press <code>Go</code>.<br />
+			<li>Enter <code>SAP</code> in the filter input field of the <code>Sales Orders</code>
+				table and press <code>Go</code>.<br />
 				<b>Check:</b> The two transient sales orders keep their positions.<br />
+				<b>Check:</b> All other sales orders have <code>SAP</code> as customer name.<br />
 				<b>Check:</b> The count has been decreased to the number of sales orders with
-				customer name 'SAP' plus the two transient sales orders.
+				customer name <code>SAP</code> plus the two transient sales orders.
 			</li>
-			<li>Clear the filter input field and press <code>Go</code>.<br />
+			<li>Clear the filter input field of the <code>Sales Orders</code> table and press
+				<code>Go</code>.<br />
 				<b>Check:</b> The two transient sales orders keep their positions.<br />
+				<b>Check:</b> The table contains sales orders for different customer names.<br />
 				<b>Check:</b> The count has been increased to the same number as before filtering.
 			</li>
 		</ol>
-		Refresh the Sales Orders table
+		Refresh the <code>Sales Orders</code> table
 		<ol>
-			<li>Create and check two more sales orders as described above with the values 3 and 4
-				for the <code>Note</code>.</li>
+			<li>Create and check two more sales orders as described in steps 2-4 in section
+				'Create two sales orders without saving them' with the values 3 and 4 for the
+				<code>Note</code>.</li>
 			<li>Remember the number of sales orders.</li>
-			<li>Press the <code>Refresh Sales Orders table</code> button.<br />
+			<li>Press the <code>Refresh sales orders table</code> button.<br />
 				<b>Check:</b> The four transient sales orders keep their positions.<br />
 				<b>Check:</b> The count has not changed.
 			</li>
@@ -108,19 +117,19 @@
 		</ol>
 		Filter and save the transient sales orders
 		<ol>
-			<li>Enter 'Talpa' in the filter input field and press <code>Go</code>.
+			<li>Enter <code>Talpa</code> in the filter input field and press <code>Go</code>.<br />
 				<b>Check:</b> Only the three transient sales orders and sales orders with the
-				customer name 'Talpa' are shown.<br />
-			</li>
+				customer name <code>Talpa</code> are shown.</li>
 			<li>Remember the number of sales orders.</li>
-			<li>Press the <code>Save</code> button on the bottom right side.<br />
+			<li>Press the <code>Save</code> button on the bottom of the page.<br />
 				<b>Check:</b> The count has not been changed.<br />
-				<b>Check:</b> The three sales orders have the status "from server" and all three
-				sales orders have a sales order id now.<br />
-				<b>Check:</b> The three sales orders keep their positions.
+				<b>Check:</b> The three sales orders have the status <code>From Server</code> and
+				all three sales orders have a sales order ID.<br />
+				<b>Check:</b> The three sales orders keep their positions even if the filter does
+				not match.
 			</li>
 		</ol>
-		Delete the saved sales orders with the <code>Note</code> 4
+		Delete the saved sales order with the <code>Note</code> 4
 		<ol>
 			<li>Remember the number of sales orders.</li>
 			<li>Select the sales orders with the <code>Note</code> 4 and press the
@@ -131,14 +140,14 @@
 				<b>Check:</b> The two formerly saved sales orders keep their positions.
 			</li>
 		</ol>
-		Sort and page through the Sales Orders table
+		Sort and page through the <code>Sales Orders</code> table
 		<ol>
-			<li>Remove 'Talpa' in the filter input field and press <code>Go</code>.<br />
-				<b>Check:</b> The sales orders are displayed in descending order.
-			</li>
-			<li>Use the <code>Select</code> box to sort the table in <code>Ascending</code> order.
-				Press the <code>More</code> button of the Sales Orders table until this button is
-				not displayed anymore.<br />
+			<li>Remove <code>Talpa</code> in the filter input field and press <code>Go</code>.<br />
+				<b>Check:</b> The sales orders are displayed in descending order.</li>
+			<li>Use the <code>Sort</code> select box to sort the table in <code>Ascending</code>
+				order.</li>
+			<li>Press the <code>More</code> button of the <code>Sales Orders</code> table until this
+				button is not displayed anymore.<br />
 				<b>Check:</b> All sales orders are shown in the correct sequence.<br />
 				<b>Check:</b> No duplicate sales order is displayed.<br />
 				<b>Check:</b> The two formerly saved sales orders are at the bottom of the table.

@@ -40,10 +40,7 @@
 					items="{
 						events : {change : '.onUpdateSalesOrdersCount'},
 						path : 'SalesOrders>/SalesOrderSet',
-						filters : [
-							{path : 'SalesOrderID', operator : 'GE', value1 : '0500000000'},
-							{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}
-						],
+						filters : [{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}],
 						parameters : {
 							select : 'CurrencyCode,CustomerName,GrossAmount,LifecycleStatus,Note,SalesOrderID',
 							transitionMessagesOnly : true
@@ -53,7 +50,8 @@
 					mode="SingleSelectMaster" selectionChange="onSelectSalesOrder">
 					<headerToolbar>
 						<Toolbar>
-							<Title level="H2" text="{ui>/salesOrdersCount} Sales Orders">
+							<Title id="salesOrdersTitle" level="H2"
+								text="{ui>/salesOrdersCount} Sales Orders">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
@@ -65,24 +63,25 @@
 								tooltip="Delete selected sales order"/>
 							<Button icon="sap-icon://synchronize"
 								id="refresh::SalesOrderSet" press="onRefreshSalesOrders"
-								tooltip="Refresh sales order list" />
-							<Label text="Sort: ">
+								tooltip="Refresh sales orders table" />
+							<Label labelFor="salesOrdersSort" text="Sort: ">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Label>
-							<Select change="onSortSalesOrdersTable">
+							<Select change="onSortSalesOrdersTable" id="salesOrdersSort">
 								<core:Item key="desc" text="Descending" />
 								<core:Item key="asc" text="Ascending" />
 							</Select>
-							<Label text="Filter:">
+							<Label labelFor="salesOrdersFilter" text="Filter:">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Label>
-							<Input submit="onFilterSalesOrdersTable" value="{ui>/salesOrdersFilter}"
-								width="12em" />
-							<Button press="onFilterSalesOrdersTable" text="Go" type="Emphasized" />
+							<Input id="salesOrdersFilter" submit="onFilterSalesOrdersTable"
+								value="{ui>/salesOrdersFilter}" width="12em" />
+							<Button id="salesOrdersFilterGo" press="onFilterSalesOrdersTable"
+								text="Go" type="Emphasized" />
 							<ToolbarSpacer />
 							<Button id="showSalesOrderInput" press="onShowTable" text="Use Input"
 								tooltip="Show sales order input field" />
