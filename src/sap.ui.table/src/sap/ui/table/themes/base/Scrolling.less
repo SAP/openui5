@@ -15,8 +15,8 @@
 @_sap_ui_table_Scrolling_HScrollbarHeight: @_sap_ui_table_Scrolling_ScrollbarSize;
 @_sap_ui_table_Scrolling_HScrollbarHeightMobile: @_sap_ui_table_Scrolling_ScrollbarSizeMobile;
 
-@_sap_ui_table_Scrolling_VScrollbarWidth: calc(@_sap_ui_table_Scrolling_HScrollbarHeight ~"+" @_sap_ui_table_BaseBorderWidth);
-@_sap_ui_table_Scrolling_VScrollbarWidthMobile: calc(@_sap_ui_table_Scrolling_HScrollbarHeightMobile ~"+" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_Scrolling_VScrollbarWidth: calc(@_sap_ui_table_Scrolling_ScrollbarSize ~"+" @_sap_ui_table_BaseBorderWidth);
+@_sap_ui_table_Scrolling_VScrollbarWidthMobile: calc(@_sap_ui_table_Scrolling_ScrollbarSizeMobile ~"+" @_sap_ui_table_BaseBorderWidth);
 
 @_sap_ui_table_Scrolling_ScrollbarBackground: @sapUiListHeaderBackground;
 
@@ -25,9 +25,7 @@
 ._sap_ui_table_Scrolling_NativeScrollbarDesktop() {}
 ._sap_ui_table_Scrolling_NativeScrollbarMobile() {}
 
-.sapUiTableVSb,
-.sapUiTableVSbBg {
-	display: none;
+.sapUiTableVSbContainer {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -35,22 +33,17 @@
 	width: @_sap_ui_table_Scrolling_VScrollbarWidth;
 	box-sizing: border-box;
 	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
+	background-color: @_sap_ui_table_Scrolling_ScrollbarBackground;
+	z-index: 4; /* Ensure that the resize/reorder bars do not become visible/active when hovering the scrollbar. */
+
+	&.sapUiTableVSbExternal {
+		position: relative;
+	}
 }
 
 .sapUiTableVSb {
-	overflow-x: hidden;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: auto;
-	background-color: @sapUiListBackground;
-	z-index: 4; /* Ensure scrollbar before Resize/Reorder bars*/
-}
-
-.sapUiTableVSbBg {
-	background-color: @_sap_ui_table_Scrolling_ScrollbarBackground;
-}
-
-.sapUiTableVSbExternal {
-	width: @_sap_ui_table_Scrolling_VScrollbarWidth;
+	width: 100%;
+	position: absolute;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: auto;
@@ -78,15 +71,9 @@
 }
 
 .sapUiTableVScr {
-
-	.sapUiTableVSb, .sapUiTableVSbBg {
-		display: block;
-	}
-
 	.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr, .sapUiTableRowActionScr, .sapUiTableRowWithAction {
 		margin-right: @_sap_ui_table_Scrolling_VScrollbarWidth;
 	}
-
 }
 
 ._sapUiTableVScrWithActionsInnerMixin(@variant:"Width") {
@@ -252,7 +239,6 @@
 
 .sapUiTableVSb,
 .sapUiTableHSb,
-.sapUiTableVSbExternal,
 .sapUiTableHSbExternal {
 	&::-webkit-scrollbar-thumb {
 		background-color: @sapUiScrollBarFaceColor !important;
@@ -268,15 +254,13 @@
 html.sap-desktop {
 	.sapUiTableVSb,
 	.sapUiTableHSb,
-	.sapUiTableVSbExternal,
 	.sapUiTableHSbExternal {
 		._sap_ui_table_Scrolling_NativeScrollbarDesktop();
 	}
 
-	.sapUiTableVSb,
-	.sapUiTableVSbExternal {
+	.sapUiTableVSb {
 		&::-webkit-scrollbar:vertical {
-			width: @_sap_ui_table_Scrolling_HScrollbarHeight !important;
+			width: @_sap_ui_table_Scrolling_ScrollbarSize !important;
 		}
 
 		&::-webkit-scrollbar-thumb:vertical {
@@ -288,7 +272,7 @@ html.sap-desktop {
 	.sapUiTableHSb,
 	.sapUiTableHSbExternal {
 		&::-webkit-scrollbar:horizontal {
-			height: @_sap_ui_table_Scrolling_HScrollbarHeight !important;
+			height: @_sap_ui_table_Scrolling_ScrollbarSize !important;
 		}
 
 		&::-webkit-scrollbar-thumb:horizontal {
@@ -302,16 +286,14 @@ html.sap-tablet:not(.sap-desktop),
 html.sap-phone {
 	.sapUiTableVSb,
 	.sapUiTableHSb,
-	.sapUiTableVSbExternal,
 	.sapUiTableHSbExternal {
 		-webkit-appearance: none;
 		._sap_ui_table_Scrolling_NativeScrollbarMobile();
 	}
 
-	.sapUiTableVSb,
-	.sapUiTableVSbExternal {
+	.sapUiTableVSb {
 		&::-webkit-scrollbar:vertical {
-			width: @_sap_ui_table_Scrolling_HScrollbarHeightMobile !important;
+			width: @_sap_ui_table_Scrolling_ScrollbarSizeMobile !important;
 		}
 
 		&::-webkit-scrollbar-thumb:vertical {
@@ -325,7 +307,7 @@ html.sap-phone {
 	.sapUiTableHSb,
 	.sapUiTableHSbExternal {
 		&::-webkit-scrollbar:horizontal {
-			height: @_sap_ui_table_Scrolling_HScrollbarHeightMobile !important;
+			height: @_sap_ui_table_Scrolling_ScrollbarSizeMobile !important;
 		}
 
 		&::-webkit-scrollbar-thumb:horizontal {
@@ -336,9 +318,7 @@ html.sap-phone {
 		}
 	}
 
-	.sapUiTableVSb,
-	.sapUiTableVSbBg,
-	.sapUiTableVSbExternal,
+	.sapUiTableVSbContainer,
 	.sapUiTableVSbHeader {
 		width: @_sap_ui_table_Scrolling_VScrollbarWidthMobile;
 	}

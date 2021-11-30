@@ -539,6 +539,7 @@ sap.ui.define([
 		var Div = document.createElement("div");
 		var oInternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 		var sInternalVSbId = oInternalVSb.getAttribute("id");
+		var oExternalVSbContainer;
 		var oTableInvalidate = sinon.spy(oTable, "invalidate");
 		var oSyncInterface;
 
@@ -551,6 +552,7 @@ sap.ui.define([
 
 			// The table will be invalidated.
 			oSyncInterface.placeVerticalScrollbarAt(Div);
+			oExternalVSbContainer = Div.firstChild;
 
 			assert.ok(oTableInvalidate.calledOnce, "The table was invalidated");
 			assert.strictEqual(Div.childElementCount, 1, "The container contains only one element");
@@ -565,7 +567,7 @@ sap.ui.define([
 
 			assert.notEqual(oExternalVSb, oInternalVSb, "The new external and the old internal scrollbars are different elements");
 			assert.strictEqual(sExternalVSbId, sInternalVSbId, "The external scrollbar has the same id as the old internal scrollbar");
-			assert.equal(Div.firstElementChild.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
+			assert.ok(Div.contains(oExternalVSb), "The external scrollbar is placed in the correct container");
 			assert.equal(oDomRef.querySelector(sInternalVSbId), null, "The table's DOM does not contain the vertical scrollbar");
 			assert.ok(!oDomRef.classList.contains("sapUiTableVScr"), "The table's element does not contain the 'sapUiTableVScr' CSS class");
 
@@ -574,16 +576,17 @@ sap.ui.define([
 			// still have the reference to the external scrollbar in this situation and insert it back into the DOM.
 			oTable.invalidate();
 			oTableInvalidate.resetHistory();
-			Div.firstElementChild.removeChild(oExternalVSb);
+			Div.firstChild.remove();
 
 			oCore.applyChanges();
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			oSyncInterface.placeVerticalScrollbarAt(Div.firstElementChild);
+			oSyncInterface.placeVerticalScrollbarAt(Div);
 
-			assert.ok(oTableInvalidate.notCalled, "The table was not invalidated");
-			assert.equal(Div.firstElementChild.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
+			assert.ok(oTableInvalidate.notCalled, "Insert existing scrollbar back into DOM: The table was not invalidated");
+			assert.equal(Div.firstChild, oExternalVSbContainer, "Insert existing scrollbar back into DOM: Same element was inserted");
+			assert.ok(Div.contains(oExternalVSb), "Insert existing scrollbar back into DOM: External scrollbar is placed in the correct container");
 
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
@@ -595,17 +598,17 @@ sap.ui.define([
 			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "Scrolling the external scrollbar correctly changes the table's first visible row");
 
 			var oOldExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			Div.firstElementChild.removeChild(oOldExternalVSb);
-			oSyncInterface.placeVerticalScrollbarAt(Div.firstElementChild);
+			Div.firstChild.remove();
+			oSyncInterface.placeVerticalScrollbarAt(Div);
 
 			assert.ok(oTableInvalidate.notCalled, "The table was not invalidated");
-			assert.equal(Div.firstElementChild.firstElementChild, oOldExternalVSb, "The new external and the old external scrollbars are the same elements");
+			assert.ok(Div.contains(oOldExternalVSb), "The new external and the old external scrollbars are the same elements");
 
 		}).then(TableQUnitUtils.$wait(100)).then(function() {
 			var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			assert.strictEqual(oVSb.scrollTop, oTable._getBaseRowHeight() * 2, "The scrollbar has the correct scroll position");
 
-			document.getElementById("qunit-fixture").removeChild(Div);
+			Div.remove();
 		});
 	});
 

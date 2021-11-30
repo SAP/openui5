@@ -85,7 +85,7 @@ sap.ui.define([
 		var oTotalRowCountChangeSpy = sinon.spy(oScrollIOSExtension, "onTotalRowCountChanged");
 		var oUpdatePositionSpy = sinon.spy(oScrollIOSExtension, "updateVerticalScrollbarThumbPosition");
 
-		assert.ok(oVSbIOS.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
+		assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
 			"Table content fits height -> Vertical scrollbar is not visible");
 
 		oTable.setVisibleRowCount(3);
@@ -102,7 +102,7 @@ sap.ui.define([
 			oTable.getBinding().filter(new Filter("A", "EQ", "A1"));
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.ok(oTotalRowCountChangeSpy.calledOnce, "onTotalRowCountChanged hook has been called once");
-			assert.ok(oVSbIOS.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
+			assert.ok(oVSbIOS.parentElement.classList.contains("sapUiTableHidden") && oVSbThumb.style.height === "0px",
 				"Table content fits height -> Vertical scrollbar is not visible");
 		});
 	});
