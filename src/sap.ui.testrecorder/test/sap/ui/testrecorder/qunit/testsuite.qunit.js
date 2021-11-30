@@ -34,11 +34,20 @@ sap.ui.define([
 	var oTestSuite = {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/TEST RECORDER",
 		defaults: {
+			loader: {
+					map: {
+						"*": {
+							// override sinon with sinon-4 for code that depends on OPA (which has a hard dependency to sinon)
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+			},
 			qunit: {
 				noglobals: false
 			},
 			sinon: {
-				version: 1,
+				version: 4,
 				qunitBridge: true
 			},
 			ui5: {

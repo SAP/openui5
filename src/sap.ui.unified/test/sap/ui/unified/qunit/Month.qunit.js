@@ -464,8 +464,8 @@ sap.ui.define([
 			var oTarget = document.createElement("span"),
 				oTargetParent = document.createElement("div"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
-				deviceStub = this.stub(Device.support, "touch").value(true),
 				oMonthSelectSpy = this.spy(this.oM, "fireSelect");
+			this.stub(Device.support, "touch").value(true);
 
 			oTarget.classList.add("sapUiCalDayName");
 			oTargetParent.setAttribute('data-sap-day', "20170101");
@@ -478,10 +478,6 @@ sap.ui.define([
 
 			// Assert
 			assert.equal(oMonthSelectSpy.callCount, 1, "select was fired");
-
-			// Cleanup
-			deviceStub.restore();
-			oMonthSelectSpy.reset();
 		});
 
 		QUnit.test("select event is also called when click on sapUiCalItemText", function (assert) {
@@ -489,8 +485,8 @@ sap.ui.define([
 			var oTarget = document.createElement("span"),
 				oTargetParent = document.createElement("div"),
 				oMouseEvent = { clientX: 10, clientY: 10, target: oTarget},
-				deviceStub = this.stub(Device.support, "touch").value(true),
 				oMonthSelectSpy = this.spy(this.oM, "fireSelect");
+			this.stub(Device.support, "touch").value(true);
 
 			oTarget.classList.add("sapUiCalItemText");
 			oTargetParent.setAttribute('data-sap-day', "20170101");
@@ -503,10 +499,6 @@ sap.ui.define([
 
 			// Assert
 			assert.equal(oMonthSelectSpy.callCount, 1, "select was fired");
-
-			// Cleanup
-			deviceStub.restore();
-			oMonthSelectSpy.reset();
 		});
 
 		QUnit.test("setting startDate doesn't apply focus", function (assert) {
@@ -524,9 +516,6 @@ sap.ui.define([
 
 			// Assert
 			assert.equal(oMonthFocusDateSpy.callCount, 0, "select was fired");
-
-			// Cleanup
-			oMonthFocusDateSpy.reset();
 		});
 
 		QUnit.module("Aria", {

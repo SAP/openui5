@@ -1,31 +1,23 @@
 /* global QUnit, sinon */
-sap.ui.define(["sap/ui/core/Component"], function (Component) {
+sap.ui.define([
+	"sap/ui/core/Component",
+	"sap/ui/core/Manifest",
+	"sap/ui/core/Core" // provides sap.ui.core.Core
+], function (Component, Manifest) {
 	"use strict";
 
 	QUnit.module("Async dependency loading", {
-		before: function () {
-			window.sap.ui.test.testScriptForUnitTest = sinon.stub();
+		beforeEach: function () {
+			window.sap.ui.test.testScriptForUnitTest = this.stub();
 
-			this.oLoadLibrariesSpy = sinon.spy(sap.ui.core.Core.prototype, "loadLibraries");
-			this.oLoadLibrarySpy = sinon.spy(sap.ui.core.Core.prototype, "loadLibrary");
-			this.oLoadDependeciesAndIncludesSpy = sinon.spy(sap.ui.core.Manifest.prototype, "loadDependenciesAndIncludes");
+			// spy loadLibrary calls directly on prototype as implementation bypasses Core facade
+			this.oLoadLibrariesSpy = this.spy(sap.ui.core.Core.prototype, "loadLibraries");
+			this.oLoadLibrarySpy = this.spy(sap.ui.core.Core.prototype, "loadLibrary");
+			this.oLoadDependeciesAndIncludesSpy = this.spy(Manifest.prototype, "loadDependenciesAndIncludes");
 		},
 		afterEach: function (assert) {
-			window.sap.ui.test.testScriptForUnitTest.reset();
-
-			this.oLoadLibrariesSpy.resetHistory();
-			this.oLoadLibrarySpy.resetHistory();
-			this.oLoadDependeciesAndIncludesSpy.resetHistory();
-
 			var aCssDomElements = document.querySelectorAll("link[data-sap-ui-manifest-uid");
 			assert.strictEqual(aCssDomElements.length, 0, "No CSS files with given pattern found in DOM");
-		},
-		after: function () {
-			delete window.sap.ui.test.testScriptForUnitTest;
-
-			this.oLoadLibrariesSpy.restore();
-			this.oLoadLibrarySpy.restore();
-			this.oLoadDependeciesAndIncludesSpy.restore();
 		}
 	});
 
@@ -132,26 +124,16 @@ sap.ui.define(["sap/ui/core/Component"], function (Component) {
 	});
 
 	QUnit.module("Sync dependency loading", {
-		before: function () {
-			window.sap.ui.test.testScriptForUnitTest = sinon.stub();
+		beforeEach: function () {
+			window.sap.ui.test.testScriptForUnitTest = this.stub();
 
-			this.oLoadLibrarySpy = sinon.spy(sap.ui.core.Core.prototype, "loadLibrary");
-			this.oLoadDependeciesAndIncludesSpy = sinon.spy(sap.ui.core.Manifest.prototype, "loadDependenciesAndIncludes");
+			// spy loadLibrary calls directly on prototype as implementation bypasses Core facade
+			this.oLoadLibrarySpy = this.spy(sap.ui.core.Core.prototype, "loadLibrary");
+			this.oLoadDependeciesAndIncludesSpy = this.spy(Manifest.prototype, "loadDependenciesAndIncludes");
 		},
 		afterEach: function (assert) {
-			window.sap.ui.test.testScriptForUnitTest.reset();
-
-			this.oLoadLibrarySpy.resetHistory();
-			this.oLoadDependeciesAndIncludesSpy.resetHistory();
-
 			var aCssDomElements = document.querySelectorAll("link[data-sap-ui-manifest-uid");
 			assert.strictEqual(aCssDomElements.length, 0, "No CSS files with given pattern found in DOM");
-		},
-		after: function () {
-			delete window.sap.ui.test.testScriptForUnitTest;
-
-			this.oLoadLibrarySpy.restore();
-			this.oLoadDependeciesAndIncludesSpy.restore();
 		}
 	});
 

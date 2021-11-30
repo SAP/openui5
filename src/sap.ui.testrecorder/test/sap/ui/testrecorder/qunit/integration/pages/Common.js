@@ -26,7 +26,7 @@ sap.ui.define([
 			});
 		},
 		iStartRecorder: function () {
-			// start the recorder programatically, instead of waiting for the url param to be read,
+			// start the recorder programmatically, instead of waiting for the url param to be read,
 			// so that the recorder will also be started when the browser tab isn't active
 			this.waitFor({
 				timeout: 30,

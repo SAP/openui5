@@ -608,7 +608,7 @@ sap.ui.define([
 		assert.ok(this.fnLayoutChangeHandler.called, "'layoutChange' event is fired initially");
 
 		// Act
-		this.fnLayoutChangeHandler.reset();
+		this.fnLayoutChangeHandler.resetHistory();
 		this.oGridLayout.onGridAfterRendering(oGridMock);
 
 		// Assert
@@ -648,8 +648,8 @@ sap.ui.define([
 			assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSGridRCL-Layout" + oCfg.expectedClass, "Class name for current range is correct");
 
 			// Clean up
-			this.fnLayoutChangeHandler.reset();
-			this.oGridLayout._applyLayout.reset();
+			this.fnLayoutChangeHandler.resetHistory();
+			this.oGridLayout._applyLayout.resetHistory();
 		}.bind(this));
 	});
 

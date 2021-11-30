@@ -878,7 +878,7 @@ sap.ui.define([
 				"FormData.append method is called with only two parameters when the Blob object has no 'name' property");
 
 		// Act - add name property to the oBlob object
-		oAppendSpy.reset();
+		oAppendSpy.resetHistory();
 		oBlob.name = sExpectedFileName;
 		oFileUploader._appendFileToFormData(oFormData, 'test', oBlob);
 

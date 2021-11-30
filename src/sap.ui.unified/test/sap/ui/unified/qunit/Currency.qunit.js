@@ -355,7 +355,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Resetting counters after modification
-		this.sandbox.reset();
+		this.sandbox.resetHistory();
 
 		// Act
 		this.oCurrency.setCurrency("USD");
@@ -366,7 +366,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
 
 		// Resetting counters after modification
-		this.sandbox.reset();
+		this.sandbox.resetHistory();
 
 		// Act
 		this.oCurrency.setCurrency("*");
@@ -386,7 +386,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Resetting counters after modification
-		this.sandbox.reset();
+		this.sandbox.resetHistory();
 
 		// Act
 		this.oCurrency.setCurrency("JPY");
@@ -399,7 +399,7 @@ sap.ui.define([
 				"decimals should be removed and value padded according to precision");
 
 		// Act
-		this.sandbox.reset(); // Resetting counters
+		this.sandbox.resetHistory(); // Resetting counters
 		this.oCurrency.setCurrency("EUR");
 
 		// Assert
@@ -410,7 +410,7 @@ sap.ui.define([
 				"decimals should be added again and value padded according to precision");
 
 		// Act
-		this.sandbox.reset(); // Resetting counters
+		this.sandbox.resetHistory(); // Resetting counters
 		this.oCurrency.setCurrency("BGN");
 
 		// Assert

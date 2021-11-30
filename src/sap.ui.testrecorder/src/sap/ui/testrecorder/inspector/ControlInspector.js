@@ -227,7 +227,7 @@ sap.ui.define([
 
 	function _isAnySet(mData, vKey) {
 		// are the vKey properties defined in the mData object
-		var aKey = $.isArray(vKey) ? vKey : [vKey];
+		var aKey = Array.isArray(vKey) ? vKey : [vKey];
 		return aKey.filter(function (sKey) {
 			return mData[sKey] !== null && mData[sKey] !== undefined;
 		}).length;
