@@ -40,7 +40,7 @@ sap.ui.define([], function () {
 		sValue = '(?:[-+:./\\w"]|%2[bB])+',
 		// A Token: either an operator, a delimiter, a GUID (in aMatches[4]), a path (in
 		// aMatches[5]), a value (in aMatches[6]) or a system query option (in aMatches[7])
-		rToken = new RegExp("^(?:" + sOperators +  "|" + sDelimiters + "|(" + sGuid + ")|("
+		rToken = new RegExp("^(?:" + sOperators + "|" + sDelimiters + "|(" + sGuid + ")|("
 			+ sPath + ")|(" + sValue + ")|(" + sSystemQueryOption + "))"),
 		// The two hex digits of a %-escape
 		rEscapeDigits = /^[0-9a-f]{2}$/i,
@@ -278,7 +278,7 @@ sap.ui.define([], function () {
 
 		if (oToken) {
 			sValue = oToken.value;
-			sMessage += "'" + (sValue === " " ?  sValue : sValue.replace(rRws, "")) + "' at "
+			sMessage += "'" + (sValue === " " ? sValue : sValue.replace(rRws, "")) + "' at "
 				+ oToken.at;
 		} else {
 			sMessage += "end of input";
@@ -384,7 +384,7 @@ sap.ui.define([], function () {
 	_FilterParser.prototype.getSymbolValue = function (oToken, sWhat, vDefault) {
 		var oSymbol = mFilterParserSymbols[oToken.id];
 
-		return oSymbol && sWhat in oSymbol ?  oSymbol[sWhat] : vDefault;
+		return oSymbol && sWhat in oSymbol ? oSymbol[sWhat] : vDefault;
 	};
 
 	/**
@@ -452,7 +452,7 @@ sap.ui.define([], function () {
 	 * @alias sap.ui.model.odata.v4.lib._SystemQueryOptionParser
 	 * @constructor
 	 */
-	function _SystemQueryOptionParser () {
+	function _SystemQueryOptionParser() {
 	}
 
 	_SystemQueryOptionParser.prototype = Object.create(_Parser.prototype);
@@ -644,7 +644,7 @@ sap.ui.define([], function () {
 			return c;
 		}
 
-		for (i = 1; i < sNext.length; ) {
+		for (i = 1; i < sNext.length;) {
 			if (nextChar(true) === "'") {
 				if (nextChar(false) !== "'") {
 					return sNext.slice(0, i);

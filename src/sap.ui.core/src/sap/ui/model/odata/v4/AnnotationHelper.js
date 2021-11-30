@@ -500,7 +500,7 @@ sap.ui.define([
 				var iIndexOfAt;
 
 				// Whether the given value is exactly <code>true</code>
-				function isTrue (vValue) {
+				function isTrue(vValue) {
 					return vValue === true;
 				}
 

@@ -89,7 +89,7 @@ sap.ui.define([
 				getServiceUrl : function () { return "/~/"; },
 				hasChanges : function () {},
 				isActionBodyOptional : function () {},
-				lockGroup : function () {throw new Error("lockGroup mock missing");},
+				lockGroup : function () { throw new Error("lockGroup mock missing"); },
 				relocate : function () {},
 				relocateAll : function () {},
 				removePatch : function () {},
@@ -215,7 +215,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSentRequest, false);
 		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
-		assert.strictEqual(oCache.sReportedMessagesPath , undefined);
+		assert.strictEqual(oCache.sReportedMessagesPath, undefined);
 		assert.ok(oCache.hasOwnProperty("sReportedMessagesPath"));
 
 		assert.throws(function () {
@@ -3280,7 +3280,7 @@ sap.ui.define([
 		// code under test
 		oCache.replaceElement(aElements, undefined, "('42')", oNewElement, mTypeForMetaPath, "~");
 
-		assert.deepEqual(aElements,[{a : "doNotTouch"}]);
+		assert.deepEqual(aElements, [{a : "doNotTouch"}]);
 		assert.deepEqual(aElements.$byPredicate,
 			{doNotTouch : aElements[0], "('42')" : oNewElement});
 	});
@@ -3445,9 +3445,9 @@ sap.ui.define([
 			that = this;
 
 		aElements.$byPredicate = {};
-		aElements.$byPredicate[sKeyPredicate] =  oElement;
+		aElements.$byPredicate[sKeyPredicate] = oElement;
 		if (oFixture.bWithTransientPredicate) {
-			aElements.$byPredicate[sTransientPredicate] =  oElement;
+			aElements.$byPredicate[sTransientPredicate] = oElement;
 			_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 		}
 		oCache.fetchValue = function () {};
@@ -3623,7 +3623,7 @@ sap.ui.define([
 				sinon.match.same(mTypeForMetaPath), "~");
 		oRemoveExpectation = oCacheMock.expects("removeElement")
 			.exactly(oFixture.inCollection ? 0 : 1)
-			.withExactArgs(sinon.match.same(aElements), 0 , "('13')", "~");
+			.withExactArgs(sinon.match.same(aElements), 0, "('13')", "~");
 
 		// code under test
 		return oCache.refreshSingleWithRemove(oGroupLock, "~", 0, "('13')", true,
@@ -4080,7 +4080,7 @@ sap.ui.define([
 			.returns("~/");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock),  undefined,
+			.withExactArgs("GET", "~/?~", sinon.match.same(oRequestGroupLock), undefined,
 				undefined, undefined, undefined, oCache.sMetaPath + "/entity/path", undefined,
 				false, mRequestQueryOptions)
 			.resolves(oData);
@@ -5383,7 +5383,7 @@ sap.ui.define([
 		iStart : 42,
 		sResourcePath : "Employees?$skip=42"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("CollectionCache#getResourcePathWithQuery: " + i , function (assert) {
+		QUnit.test("CollectionCache#getResourcePathWithQuery: " + i, function (assert) {
 			var oCache = this.createCache("Employees");
 
 			oCache.sQueryString = oFixture.sQueryString;
@@ -5456,7 +5456,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#getResourcePathWithQuery: not for created!" , function (assert) {
+	QUnit.test("CollectionCache#getResourcePathWithQuery: not for created!", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oCreateGroupLock0 = {getGroupId : function () {}},
 			oCreateGroupLock1 = {getGroupId : function () {}};
@@ -5860,7 +5860,7 @@ sap.ui.define([
 		oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
 		oCacheMock.expects("handleResponse").never();
 		oExpectation = oCacheMock.expects("fill")
-			.withExactArgs(sinon.match.instanceOf(SyncPromise),iStart, iEnd);
+			.withExactArgs(sinon.match.instanceOf(SyncPromise), iStart, iEnd);
 		oCacheMock.expects("fill").withExactArgs(undefined, iStart, iEnd);
 
 		// code under test
@@ -9102,7 +9102,7 @@ sap.ui.define([
 			oPromise = Promise.resolve(oEntity),
 			that = this;
 
-		function unexpected () {
+		function unexpected() {
 			assert.ok(false);
 		}
 
@@ -10202,29 +10202,29 @@ sap.ui.define([
 [{
 	sTitle : "refreshKeptElements with one kept context",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : { key : "Foo" }
+		"('Foo')" : {key : "Foo"}
 	},
 	sFilter : "~Foo~"
 }, {
 	sTitle : "refreshKeptElements with two kept contexts",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : { key : "Foo" },
-		"('Bar')" : { key : "Bar" }
+		"('Foo')" : {key : "Foo"},
+		"('Bar')" : {key : "Bar"}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
 }, {
 	sTitle : "refreshKeptElements with one kept context; after refresh kept element is deleted",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : { bDeleted : true, key : "Foo" }
+		"('Foo')" : {bDeleted : true, key : "Foo"}
 	},
 	sFilter : "~Foo~"
 }, {
 	sTitle : "refreshKeptElements with two kept contexts;"
 		+ " after refresh one kept element is deleted",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : { bDeleted : true, key : "Foo" },
-		"('Bar')" : { key : "Bar" }
+		"('Foo')" : {bDeleted : true, key : "Foo"},
+		"('Bar')" : {key : "Bar"}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
@@ -10232,12 +10232,12 @@ sap.ui.define([
 	sTitle : "refreshKeptElements with two kept contexts;"
 		+ " after refresh all kept elements are deleted",
 	mKeptAliveElementsByPredicate : {
-		"('Foo')" : { bDeleted : true, key : "Foo" },
-		"('Bar')" : { bDeleted : true, key : "Bar" }
+		"('Foo')" : {bDeleted : true, key : "Foo"},
+		"('Bar')" : {bDeleted : true, key : "Bar"}
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
-}].forEach(function (oFixture){
+}].forEach(function (oFixture) {
 	QUnit.test(oFixture.sTitle, function (assert) {
 		var mByPredicate = {},
 			oCache = _Cache.create(this.oRequestor, "Employees", {}),
@@ -10314,13 +10314,13 @@ sap.ui.define([
 
 		// code under test
 		return oCache.refreshKeptElements(oGroupLock, fnOnRemove).then(function (oResult) {
-			var mByPredicateAfterRefresh  = {},
+			var mByPredicateAfterRefresh = {},
 				iCallCount = 0;
 
 			assert.deepEqual(oResult, undefined);
 			Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
 				if (!oFixture.mKeptAliveElementsByPredicate[sPredicate].bDeleted) {
-					mByPredicateAfterRefresh [sPredicate]
+					mByPredicateAfterRefresh[sPredicate]
 						= oFixture.mKeptAliveElementsByPredicate[sPredicate];
 				} else {
 					iCallCount += 1;

@@ -19,7 +19,22 @@
 			],
 			"rules": {
 				"consistent-return": "off",
-				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}]
+				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
+
+				// stylistic (JIRA: CPOUI5ODATAV4-1325)
+				"array-bracket-spacing": "error",
+				"block-spacing": "error",
+				"comma-spacing": "error",
+				"computed-property-spacing": "error",
+				"eol-last": "error",
+				"no-multiple-empty-lines": "error",
+				"no-multi-spaces": "error",
+				"no-whitespace-before-property": "error",
+				"object-curly-spacing": "error",
+				"space-before-blocks": "error",
+				"space-before-function-paren": ["error", {"named": "never"}],
+				"space-in-parens": "error",
+				"switch-colon-spacing": "error"
 			}
 		},
 		{

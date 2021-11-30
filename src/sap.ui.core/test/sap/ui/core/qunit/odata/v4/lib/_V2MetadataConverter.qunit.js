@@ -948,14 +948,14 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="name"',
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"fn" : { "$Path" : "Bar" }
+				"fn" : {"$Path" : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="note"',
 		expectedSemanticsV4 : {
 			'@com.sap.vocabularies.Communication.v1.Contact' : {
-				"note" : { "$Path" : "Bar" }
+				"note" : {"$Path" : "Bar"}
 			}
 		}
 	}, {
@@ -1070,29 +1070,29 @@ sap.ui.define([
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
 						"adr" : {
-							"code" : { "$Path" : "P19" },
-							"country" : { "$Path" : "P17" },
-							"locality" : { "$Path" : "P15" },
-							"pobox" : { "$Path" : "P20" },
-							"region" : { "$Path" : "P18" },
-							"street" : { "$Path" : "P16" }
+							"code" : {"$Path" : "P19"},
+							"country" : {"$Path" : "P17"},
+							"locality" : {"$Path" : "P15"},
+							"pobox" : {"$Path" : "P20"},
+							"region" : {"$Path" : "P18"},
+							"street" : {"$Path" : "P16"}
 						},
-						"bday" : { "$Path" : "P14" },
-						"fn" : { "$Path" : "P01" },
+						"bday" : {"$Path" : "P14"},
+						"fn" : {"$Path" : "P01"},
 						"n" : {
-							"given" : { "$Path" : "P02" },
-							"additional" : { "$Path" : "P03" },
-							"surname" : { "$Path" : "P04" },
-							"prefix" : { "$Path" : "P06" },
-							"suffix" : { "$Path" : "P07" }
+							"given" : {"$Path" : "P02"},
+							"additional" : {"$Path" : "P03"},
+							"surname" : {"$Path" : "P04"},
+							"prefix" : {"$Path" : "P06"},
+							"suffix" : {"$Path" : "P07"}
 						},
-						"nickname" : { "$Path" : "P05" },
-						"note" : { "$Path" : "P08" },
-						"photo" : { "$Path" : "P09" },
-						"org" : { "$Path" : "P10" },
-						"orgunit" : { "$Path" : "P11" },
-						"role" : { "$Path" : "P12" },
-						"title" : { "$Path" : "P13" }
+						"nickname" : {"$Path" : "P05"},
+						"note" : {"$Path" : "P08"},
+						"photo" : {"$Path" : "P09"},
+						"org" : {"$Path" : "P10"},
+						"orgunit" : {"$Path" : "P11"},
+						"role" : {"$Path" : "P12"},
+						"title" : {"$Path" : "P13"}
 					}
 				}
 			});
@@ -1115,7 +1115,7 @@ sap.ui.define([
 							uri : {"$Path" : "P01"}
 						}],
 						"address" : [{
-							uri : { "$Path" : "P02" }
+							uri : {"$Path" : "P02"}
 						}]
 					}
 				},
@@ -1261,14 +1261,14 @@ sap.ui.define([
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Event" : {
 						"dtstart" : {"$Path" : "P01"},
-						"dtend" : { "$Path" : "P02" },
-						"duration" : { "$Path" : "P03" },
-						"class" : { "$Path" : "P04" },
-						"status" : { "$Path" : "P05" },
-						"transp" : { "$Path" : "P06" },
-						"fbtype" : { "$Path" : "P07" },
-						"wholeday" : { "$Path" : "P08" },
-						"location" : { "$Path" : "P09" }
+						"dtend" : {"$Path" : "P02"},
+						"duration" : {"$Path" : "P03"},
+						"class" : {"$Path" : "P04"},
+						"status" : {"$Path" : "P05"},
+						"transp" : {"$Path" : "P06"},
+						"fbtype" : {"$Path" : "P07"},
+						"wholeday" : {"$Path" : "P08"},
+						"location" : {"$Path" : "P09"}
 					}
 				}
 			});
@@ -1290,9 +1290,9 @@ sap.ui.define([
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Task" : {
 						"due" : {"$Path" : "P01"},
-						"completed" : { "$Path" : "P02" },
-						"percentcomplete" : { "$Path" : "P03" },
-						"priority" : { "$Path" : "P04" }
+						"completed" : {"$Path" : "P02"},
+						"percentcomplete" : {"$Path" : "P03"},
+						"priority" : {"$Path" : "P04"}
 					}
 				}
 			});
@@ -1315,10 +1315,10 @@ sap.ui.define([
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Message" : {
 						"from" : {"$Path" : "P01"},
-						"sender" : { "$Path" : "P02" },
-						"subject" : { "$Path" : "P03" },
-						"body" : { "$Path" : "P04" },
-						"received" : { "$Path" : "P05" }
+						"sender" : {"$Path" : "P02"},
+						"subject" : {"$Path" : "P03"},
+						"body" : {"$Path" : "P04"},
+						"received" : {"$Path" : "P05"}
 					}
 				}
 			});
@@ -1339,16 +1339,16 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"fn" : { "$Path" : "P01" }
+						"fn" : {"$Path" : "P01"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtend" : { "$Path" : "P02" }
+						"dtend" : {"$Path" : "P02"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"percentcomplete" : { "$Path" : "P03" }
+						"percentcomplete" : {"$Path" : "P03"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"body" : { "$Path" : "P04" }
+						"body" : {"$Path" : "P04"}
 					}
 				}
 			});
@@ -1862,8 +1862,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("mergeAnnotations called", function (assert) {
 		this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations")
-			.withExactArgs({ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : true } },
-				{ "GWSAMPLE_BASIC.Foo/P01" : { "@Org.OData.Core.V1.IsURL" : false } }
+			.withExactArgs({"GWSAMPLE_BASIC.Foo/P01" : {"@Org.OData.Core.V1.IsURL" : true}},
+				{"GWSAMPLE_BASIC.Foo/P01" : {"@Org.OData.Core.V1.IsURL" : false}}
 			);
 
 		testAnnotationConversion(assert, '\
@@ -2253,10 +2253,10 @@ sap.ui.define([
 			"GWSAMPLE_BASIC.0001.Product/Width", sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" , sClassName);
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1", sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Path 'Parts/MissingUnit/Foo' for sap:unit cannot be resolved",
-			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0" , sClassName);
+			"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit0", sClassName);
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported annotation 'sap:semantics'",
 			sinon.match(/<Property.*sap:semantics="invalid".*\/>/),

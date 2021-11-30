@@ -1105,9 +1105,9 @@ sap.ui.define([
 	filter : and(f("a1"), and(f("a2"), f("b"))),
 	result : [and(f("a1"), f("a2")), f("b")]
 }].forEach(function (oFixture, i) {
-	QUnit.test("splitFilter: " + i , function (assert) {
+	QUnit.test("splitFilter: " + i, function (assert) {
 		assert.deepEqual(
-			_AggregationHelper.splitFilter(oFixture.filter, {aggregate : {a1 : {}, a2 : {} }}),
+			_AggregationHelper.splitFilter(oFixture.filter, {aggregate : {a1 : {}, a2 : {}}}),
 			oFixture.result
 		);
 	});

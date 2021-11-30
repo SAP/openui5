@@ -157,7 +157,7 @@ sap.ui.define([
 		} else {
 			iOffsetSign = aMatches[2] === "-" ? -1 : 1;
 			iTicks += iOffsetSign * (iOffsetHours * 60 * 60 * 1000 + iOffsetMinutes * 60 * 1000);
-			sOffset = aMatches[2] + aMatches[3] + ":"  + aMatches[4];
+			sOffset = aMatches[2] + aMatches[3] + ":" + aMatches[4];
 		}
 		if (iPrecision > 0) {
 			sPattern += "." + "".padEnd(iPrecision, "S");

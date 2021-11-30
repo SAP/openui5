@@ -203,7 +203,7 @@ sap.ui.define([
 				"BONUS_CURR" : "EUR"
 			}
 		},
-		oNewTeamBody =  {
+		oNewTeamBody = {
 			"Team_Id" : "TEAM_04",
 			"Name" : "UI2 Services",
 			"MEMBER_COUNT" : 9,
@@ -1351,11 +1351,12 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 	if (TestUtils.isRealOData()) {
 		// integration tests serialization/deserialization
 		// --------------------------------------------
-		[{  testTitle : "two get request for employees and departments",
+		[{
+			testTitle : "two get request for employees and departments",
 			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
-				headers : { "Accept" : "application/json" }
+				headers : {"Accept" : "application/json"}
 			}, {
 				method : "GET",
 				url : "Departments",
@@ -1380,11 +1381,12 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			}]
 		},
 		// --------------------------------------------
-		{   testTitle : "get, delete and post request",
+		{
+			testTitle : "get, delete and post request",
 			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
-				headers : { "Accept" : "application/json"}
+				headers : {"Accept" : "application/json"}
 			}, {
 				method : "DELETE",
 				url : "EMPLOYEES('1')",
@@ -1456,19 +1458,20 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			}]
 		},
 		// --------------------------------------------
-		{   testTitle : "GET not existing entity set",
+		{
+			testTitle : "GET not existing entity set",
 			batchRequests : [{
 				method : "GET",
 				url : "Departments",
-				headers : { "Accept" : "application/json"}
+				headers : {"Accept" : "application/json"}
 			}, {
 				method : "GET",
 				url : "Unknown",
-				headers : { "Accept" : "application/json"}
+				headers : {"Accept" : "application/json"}
 			}, {
 				method : "GET",
 				url : "TEAMS",
-				headers : { "Accept" : "application/json"}
+				headers : {"Accept" : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1488,11 +1491,12 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			}]
 		},
 		// --------------------------------------------
-		{   testTitle : "POST to not existing entity within change set",
+		{
+			testTitle : "POST to not existing entity within change set",
 			batchRequests : [{
 				method : "GET",
 				url : "Departments",
-				headers : { "Accept" : "application/json"}
+				headers : {"Accept" : "application/json"}
 			},
 			[
 				{
@@ -1515,7 +1519,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			{
 				method : "GET",
 				url : "TEAMS",
-				headers : { "Accept" : "application/json"}
+				headers : {"Accept" : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1535,12 +1539,13 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			}]
 		},
 		// --------------------------------------------
-		{   testTitle : "POST to not exist. entity within change set (odata.continue-on-error)",
+		{
+			testTitle : "POST to not exist. entity within change set (odata.continue-on-error)",
 			continueOnError : true,
 			batchRequests : [{
 					method : "GET",
 					url : "Departments",
-					headers : { "Accept" : "application/json"}
+					headers : {"Accept" : "application/json"}
 				},
 				[
 					{
@@ -1563,7 +1568,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				{
 					method : "GET",
 					url : "TEAMS",
-					headers : { "Accept" : "application/json"}
+					headers : {"Accept" : "application/json"}
 				}
 			],
 			expectedResponses : [{
@@ -1619,7 +1624,8 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			}]
 		},
 		// --------------------------------------------
-		{   testTitle : "changesets and individual requests",
+		{
+			testTitle : "changesets and individual requests",
 			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
@@ -1844,7 +1850,8 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			]]
 		},
 		// --------------------------------------------
-		{   testTitle : "changeset with Content-ID reference",
+		{
+			testTitle : "changeset with Content-ID reference",
 			// TODO: remove skip as soon as gateway supports Content-ID references
 			skip : true,
 			batchRequests : [
@@ -1942,7 +1949,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					aBatchRequests = [{
 						method : "GET",
 						url : "EMPLOYEES('9')",
-						headers : { "Accept" : "application/json" }
+						headers : {"Accept" : "application/json"}
 					}];
 
 				oBatchRequestContent = _Batch.serializeBatchRequest(aBatchRequests);

@@ -484,14 +484,14 @@ sap.ui.define([
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 				oChildNode = aChildNodes[j];
 				switch (oChildNode.nodeName) {
-					case "columns" :
+					case "columns":
 						bHasColumns = true;
 						break;
 					case "dependents":
 						break; // leave alone
-					case "items" :
+					case "items":
 						throw new Error("Do not use <items> in sap.m.Table");
-					case "ColumnListItem" :
+					case "ColumnListItem":
 						aColumnNodes = oChildNode.childNodes;
 						bHasListItem = true;
 						for (k = aColumnNodes.length - 1; k >= 0; k -= 1) {
@@ -2120,7 +2120,7 @@ sap.ui.define([
 							+ JSON.stringify(that.mChanges[sControlId][i]) + " (not set)");
 					}
 				}
-				that.mChanges =  {};
+				that.mChanges = {};
 				for (sControlId in that.mListChanges) {
 					// Note: This may be a sparse array
 					aExpectedValuesPerRow = that.mListChanges[sControlId];
@@ -6685,7 +6685,7 @@ sap.ui.define([
 					method : "POST",
 					url : "EntitiesWithComplexKey",
 					payload : {}
-				},  createErrorInsideBatch({target : "Value"}))
+				}, createErrorInsideBatch({target : "Value"}))
 				.expectMessages([{
 					message : "Foo error",
 					target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
@@ -9942,7 +9942,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			return that.checkValueState(assert, oTable.getItems()[0].getCells()[1] , "Error",
+			return that.checkValueState(assert, oTable.getItems()[0].getCells()[1], "Error",
 				"Enter a product ID");
 		});
 	});
@@ -11505,7 +11505,7 @@ sap.ui.define([
 					}, {
 						message : "Unexpected Error w/o target",
 						"@Common.numericSeverity" : 4
-					} ]
+					}]
 				});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
@@ -13875,7 +13875,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Enable auto-$expand/$select mode for an ODataContextBinding with relative
 	// ODataPropertyBindings to a advertised action
-	testViewStart("Auto-$expand/$select: relative ODPB to advertised action",'\
+	testViewStart("Auto-$expand/$select: relative ODPB to advertised action", '\
 <FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
 	<Text id="name" text="{Name}"/>\
 	<Text id="adAction1"\
@@ -17034,7 +17034,7 @@ sap.ui.define([
 						{AccountResponsible : "c", SalesAmount : "30", SalesNumber : 3}
 					]
 				})
-				.expectChange("groupLevelCount", [4, , , , ])
+				.expectChange("groupLevelCount", [4])
 				.expectChange("isExpanded", [true, undefined, undefined])
 				.expectChange("isTotal", [/*true*/, false, false])
 				.expectChange("level", [/*1*/, 2, 2])
@@ -17112,7 +17112,7 @@ sap.ui.define([
 				.expectChange("isExpanded", [false, /*false*/, false, false, false, false])
 				.expectChange("isTotal", [, /*true*/, true, true, true, true])
 				.expectChange("level", [, /*1*/, 1, 1, 1, 1])
-				.expectChange("region", [,/*"Y"*/, "X", "W", "V", "U"])
+				.expectChange("region", [, /*"Y"*/, "X", "W", "V", "U"])
 				.expectChange("accountResponsible", [, /*""*/, "", "", "", ""])
 				.expectChange("salesAmount", [, /*"200"*/, "300", "400", "500", "600"])
 				.expectChange("salesNumber", [, /*null*/, null, null, null, null])
@@ -17333,7 +17333,7 @@ sap.ui.define([
 					]
 				})
 				.expectResets(oTable, 3, 1, 3)
-				.expectChange("isExpanded", [,,,,,,,,, /*undefined*/, /*undefined*/, /*undefined*/])
+				// .expectChange("isExpanded", [])
 				.expectChange("isTotal", [,,,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,,,, 2, 2, 2])
 				.expectChange("region", [,,,,,,,,, "Y", "Y", "Y"])
@@ -17347,10 +17347,10 @@ sap.ui.define([
 			return that.waitForChanges(assert, "scroll to the middle of 'Y': "
 				+ "'Y-d', 'Y-e', 'Y-f' visible");
 		}).then(function () {
-			that.expectChange("groupLevelCount", [4, /*undefined*/, /*undefined*/])
-				.expectChange("isExpanded", [true, /*undefined*/, /*undefined*/])
-				.expectChange("isTotal", [true, /*false*/, /*false*/])
-				.expectChange("level", [1, /*2*/, /*2*/])
+			that.expectChange("groupLevelCount", [4])
+				.expectChange("isExpanded", [true])
+				.expectChange("isTotal", [true])
+				.expectChange("level", [1])
 				.expectChange("region", ["Z", "Z", "Z"])
 				.expectChange("accountResponsible", ["", "a", "b"])
 				.expectChange("salesAmount", ["100", "10", "20"])
@@ -17485,7 +17485,7 @@ sap.ui.define([
 				that.expectChange("isExpanded", [,,,, false, false, false])
 					.expectChange("isTotal", [,,,, true, true, true])
 					.expectChange("level", [,,,, 1, 1, 1])
-					.expectChange("region", [/*Z*/,/*Y*/,/*Y*/,/*X*/, "W", "V", "U"])
+					.expectChange("region", [/*Z*/, /*Y*/, /*Y*/, /*X*/, "W", "V", "U"])
 					.expectChange("accountResponsible", [,,,, "", "", ""])
 					.expectChange("salesAmount", [,,,, "400", "500", "600"])
 					.expectChange("salesNumber", [,,,, null, null, null])
@@ -17502,7 +17502,7 @@ sap.ui.define([
 				that.expectChange("isExpanded", [,,,, false, false, false])
 					.expectChange("isTotal", [,,,, true, true, true])
 					.expectChange("level", [,,,, 1, 1, 1])
-					.expectChange("region", [/*Z*/,/*Y*/,/*X*/,/*W*/, "V", "U", "T"])
+					.expectChange("region", [/*Z*/, /*Y*/, /*X*/, /*W*/, "V", "U", "T"])
 					.expectChange("accountResponsible", [,,,, "", "", ""])
 					.expectChange("salesAmount", [,,,, "500", "600", "700"])
 					.expectChange("salesNumber", [,,,, null, null, null]);
@@ -18788,7 +18788,7 @@ sap.ui.define([
 			if (!bSecondScroll) {
 				that.expectResets(oTable, 2, 0, 2)
 					.expectChange("region", [,, "X"]) // "client side scrolling"
-					.expectChange("groupLevelCount", [,,])
+					// .expectChange("groupLevelCount", [])
 					.expectChange("isExpanded", [,, undefined])
 					.expectChange("level", [,, 2])
 					.expectChange("region", [,, "Y"])
@@ -18819,8 +18819,8 @@ sap.ui.define([
 				});
 
 			if (!bSecondScroll) {
-				that.expectChange("groupLevelCount", [,,,,])
-					.expectChange("isExpanded", [,,, false, false])
+				// that.expectChange("groupLevelCount", [])
+				that.expectChange("isExpanded", [,,, false, false])
 					.expectChange("isTotal", [,,, false, false])
 					.expectChange("level", [,,, 1, 1])
 					.expectChange("region", [,,, "X", "W"])
@@ -20045,7 +20045,7 @@ sap.ui.define([
 					]
 				})
 				.expectResets(oTable, 3, 1, 2)
-				.expectChange("isExpanded", [,,,,,,, /*undefined*/, /*undefined*/, /*undefined*/])
+				// .expectChange("isExpanded", [])
 				.expectChange("isTotal", [,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,, 2, 2, 2])
 				.expectChange("country", [,,,,,,, "A", "A", "A"])
@@ -30955,7 +30955,7 @@ sap.ui.define([
 			that.expectRequest({
 					headers : mExpectedHeaders,
 					url : "EMPLOYEES(0)/Name"
-				} , {value : "Frederic Fall"});
+				}, {value : "Frederic Fall"});
 
 			that.oView.byId("name").getBinding("text").refresh();
 
@@ -31479,7 +31479,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			var sErrorMessage = sODCB + ": /TEAMS('TEAM_02')|"
-					+ " is ignoring response from inactive cache: "  + sTeaBusi
+					+ " is ignoring response from inactive cache: " + sTeaBusi
 					+ "TEAMS('TEAM_01')?$select=Name,Team_Id",
 				oPromise,
 				fnRespond;
@@ -31779,7 +31779,7 @@ sap.ui.define([
 		var="field">\
 			<Input value="{field>@@format}"/>\
 	</template:repeat>\
-</template:alias>','\
+</template:alias>', '\
 <Input value="{Binary}"/>\
 <Input value="{Duration}"/>');
 
@@ -32189,7 +32189,7 @@ sap.ui.define([
 	// "Prefer:handling=strict" HTTP header set. bConfirm controls how the callback is resolved.
 	//
 	// JIRA: CPOUI5ODATAV4-943
-[true, false].forEach(function(bConfirm) {
+[true, false].forEach(function (bConfirm) {
 	QUnit.test("CPOUI5ODATAV4-943: handling=strict, confirm=" + bConfirm, function (assert) {
 		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
 			oActionPromise,
@@ -32565,7 +32565,7 @@ sap.ui.define([
 			that.expectRequest("MANAGERS?$select=ID&$orderby=ID desc&$skip=0&$top=3", {
 					value : [{ID : "M9"}, {ID : "M8"}, {ID : "M7"}]
 				})
-				.expectChange("id1", ["M9", "M8" , "M7"]);
+				.expectChange("id1", ["M9", "M8", "M7"]);
 
 			// code under test - sort 1st list
 			that.oView.byId("list1").getBinding("items").sort(new Sorter("ID", true));
@@ -32575,7 +32575,7 @@ sap.ui.define([
 			that.expectRequest("MANAGERS?$select=ID&$skip=3&$top=3", {
 					value : [{ID : "M4"}, {ID : "M5"}, {ID : "M6"}]
 				})
-				.expectChange("id2", [,,, "M4", "M5" , "M6"]);
+				.expectChange("id2", [,,, "M4", "M5", "M6"]);
 
 			// code under test
 			that.oView.byId("list2").requestItems();

@@ -202,7 +202,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("bindProperty with relative path and !v4.Context", function (assert) {
 		var oBinding,
-			oContext = {getPath : function () {return "/EMPLOYEES(ID='1')";}},
+			oContext = {getPath : function () { return "/EMPLOYEES(ID='1')"; }},
 			oExpectation = this.mock(this.oModel).expects("bindingCreated"),
 			sPath = "Name";
 
@@ -1529,7 +1529,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
-		QUnit.test("checkUpdateInternal, binding group ID " + sGroupId , function () {
+		QUnit.test("checkUpdateInternal, binding group ID " + sGroupId, function () {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
 				sExpectedGroupId = sGroupId,
 				oGroupLock = {},

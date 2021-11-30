@@ -550,12 +550,12 @@ sap.ui.define([
 		}
 	}, {
 		aggregatedQueryOptions : {$select : ["Team_Id"]},
-		childQueryOptions : {$select : ["*"] },
-		expectedQueryOptions : {$select : ["Team_Id", "*"] }
+		childQueryOptions : {$select : ["*"]},
+		expectedQueryOptions : {$select : ["Team_Id", "*"]}
 	}, {
 		aggregatedQueryOptions : {$select : ["*"]},
 		childQueryOptions : {$select : ["Team_Id"]},
-		expectedQueryOptions : {$select : ["*", "Team_Id"] }
+		expectedQueryOptions : {$select : ["*", "Team_Id"]}
 	}, {
 		aggregatedQueryOptions : {},
 		childQueryOptions : {$count : true},
@@ -657,7 +657,7 @@ sap.ui.define([
 		aggregatedQueryOptions : {$orderby : "Category"},
 		childQueryOptions : {$orderby : "Category desc"}
 	}, { // aggregated query options remain unchanged on conflict ($select is not added)
-		aggregatedQueryOptions : {$orderby : "Category" },
+		aggregatedQueryOptions : {$orderby : "Category"},
 		childQueryOptions : {
 			$orderby : "Category desc",
 			$select : ["Name"]
@@ -1332,7 +1332,7 @@ sap.ui.define([
 					getReducedPath : function () {}
 				},
 				fnFetchMetadata = function () {},
-				mOriginalAggregatedQueryOptions = {$expand : { "foo" : {$select : ["bar"]}}},
+				mOriginalAggregatedQueryOptions = {$expand : {"foo" : {$select : ["bar"]}}},
 				oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : mOriginalAggregatedQueryOptions,
 					bAggregatedQueryOptionsInitial : false,
@@ -1412,7 +1412,7 @@ sap.ui.define([
 				setQueryOptions : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : {$expand : { "foo" : {$select : ["bar"]}}},
+				mAggregatedQueryOptions : {$expand : {"foo" : {$select : ["bar"]}}},
 				bAggregatedQueryOptionsInitial : false,
 				oCache : bImmutable ? oCache : undefined,
 				oCachePromise : SyncPromise.resolve(bImmutable ? oCache : Promise.resolve(oCache)),
@@ -2007,11 +2007,11 @@ sap.ui.define([
 			oBinding = new ODataParentBinding({
 				oCache : oCache,
 				getUpdateGroupId : function () {},
-				oModel : {isAutoGroup : function () {return true;}}
+				oModel : {isAutoGroup : function () { return true; }}
 			}),
 			fnCallback = {},
 			oETagEntity = {},
-			oGroupLock =  {getGroupId : function () {}},
+			oGroupLock = {getGroupId : function () {}},
 			oResult = {};
 
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
@@ -2042,7 +2042,7 @@ sap.ui.define([
 				oCache : null,
 				oContext : oContext,
 				getUpdateGroupId : function () {},
-				oModel : {isAutoGroup : function () {return true;}},
+				oModel : {isAutoGroup : function () { return true; }},
 				sPath : "TEAM_2_EMPLOYEES"
 			}),
 			fnCallback = {},

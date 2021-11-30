@@ -551,7 +551,7 @@ sap.ui.define([
 		}
 
 		// parent cache is ignored or (quasi-)absolute binding
-		if (bIgnoreParentCache || !this.bRelative || !oContext.fetchValue)  {
+		if (bIgnoreParentCache || !this.bRelative || !oContext.fetchValue) {
 			// the binding shall create its own cache
 			return wrapQueryOptions(oQueryOptionsPromise);
 		}
@@ -1233,7 +1233,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataBinding.prototype.toString = function () {
-		return this.getMetadata().getName() + ": " + (this.bRelative  ? this.oContext + "|" : "")
+		return this.getMetadata().getName() + ": " + (this.bRelative ? this.oContext + "|" : "")
 			+ this.sPath;
 	};
 
