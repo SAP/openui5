@@ -142,7 +142,6 @@ sap.ui.define([
 
 		return configureInnerTable(oTable).then(function() {
 			setAggregation(oTable);
-			setUpTableObserver(oTable);
 		});
 	};
 
@@ -273,23 +272,32 @@ sap.ui.define([
 	};
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
-		if (!isInnerTableReadyForAnalytics(oTable)) {
-			return [];
-		}
-
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var oProperty = oPropertyHelper.getProperty(oMDCColumn.getDataProperty());
+		var oAggregatePopoverItem;
+		var oGroupPopoverItem;
 
 		if (!oProperty) {
 			return [];
 		}
 
-		var aGroupProperties = oProperty.getGroupableProperties();
-		var aAggregateProperties = oProperty.getAggregatableProperties();
-		var oPopover = oTable._oPopover;
-		var oAggregatePopoverItem;
-		var oGroupPopoverItem;
+		if (oTable.isGroupingEnabled() && supportsGrouping(oTable)) {
+			var aGroupProperties = oProperty.getGroupableProperties();
 
+			if (aGroupProperties.length > 0) {
+				oGroupPopoverItem = createGroupPopoverItem(aGroupProperties, oMDCColumn);
+			}
+		}
+
+		if (oTable.isAggregationEnabled() && supportsAggregation(oTable)) {
+			var aAggregateProperties = oProperty.getAggregatableProperties();
+
+			if (aAggregateProperties.length > 0) {
+				oAggregatePopoverItem = createAggregatePopoverItem(aAggregateProperties, oMDCColumn);
+			}
+		}
+
+		var oPopover = oTable._oPopover;
 		if (oPopover) {
 			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
 				var sLabel = oItem.getLabel();
@@ -303,14 +311,6 @@ sap.ui.define([
 					oPopover.destroy();
 				}
 			});
-		}
-
-		if (oTable.isGroupingEnabled() && aGroupProperties.length > 0) {
-			oGroupPopoverItem = createGroupPopoverItem(aGroupProperties, oMDCColumn);
-		}
-
-		if (oTable.isAggregationEnabled() && aAggregateProperties.length > 0) {
-			oAggregatePopoverItem = createAggregatePopoverItem(aAggregateProperties, oMDCColumn);
 		}
 
 		return [oGroupPopoverItem, oAggregatePopoverItem];
@@ -433,26 +433,32 @@ sap.ui.define([
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} [oBindingInfo] The binding info object to be used to bind the table to the model
 	 */
 	function setAggregation(oTable, oBindingInfo) {
-		if (isInnerTableReadyForAnalytics(oTable)) {
-			var aAggregates = Object.keys(oTable._getAggregatedProperties());
-			var sSearch = oBindingInfo && oBindingInfo.parameters["$search"] || undefined;
-			if (sSearch ) {
-				delete oBindingInfo.parameters["$search"];
-			}
-			var aGroupLevels = oTable._getGroupedProperties().map(function (mGroupLevel) {
-				return mGroupLevel.name;
-			});
-			var oAggregationInfo = {
-				visible: getVisibleProperties(oTable),
-				groupLevels: aGroupLevels,
-				grandTotal: aAggregates,
-				subtotals: aAggregates,
-				columnState: getColumnState(oTable, aAggregates),
-				search: sSearch
-			};
+		var oPlugin = TableMap.get(oTable).plugin;
 
-			TableMap.get(oTable).plugin.setAggregationInfo(oAggregationInfo);
+		if (!oPlugin || oPlugin.isDestroyed()) {
+			return;
 		}
+
+		var aGroupLevels = oTable._getGroupedProperties().map(function (mGroupLevel) {
+			return mGroupLevel.name;
+		});
+		var aAggregates = Object.keys(oTable._getAggregatedProperties());
+		var sSearch = oBindingInfo ? oBindingInfo.parameters["$search"] : undefined;
+
+		if (sSearch ) {
+			delete oBindingInfo.parameters["$search"];
+		}
+
+		var oAggregationInfo = {
+			visible: getVisibleProperties(oTable),
+			groupLevels: aGroupLevels,
+			grandTotal: aAggregates,
+			subtotals: aAggregates,
+			columnState: getColumnState(oTable, aAggregates),
+			search: sSearch
+		};
+
+		oPlugin.setAggregationInfo(oAggregationInfo);
 	}
 
 	function getVisibleProperties(oTable) {
@@ -582,7 +588,7 @@ sap.ui.define([
 	 *
 	 * @param {Object} oBaseState Message set by the base <code>TableDelegate</code>
 	 * @param {Object} oValidationState Message set by the <code>ODataV4Delegate</code>
-	 * @return {Object} The message with higher priority
+	 * @returns {Object} The message with higher priority
 	 * @private
 	 */
 	function mergeValidation(oBaseState, oValidationState) {
@@ -596,39 +602,56 @@ sap.ui.define([
 	}
 
 	/**
-	 * Configures the inner table to support the personalization settings of the MDC table.
+	 * Checks whether the inner table supports grouping.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @return {Promise} A <code>Promise</code> that revolves when the inner table is configured
+	 * @returns {boolean} Whether the inner table supports grouping
 	 */
-	function configureInnerTable(oTable) {
-		return oTable._isOfType(TableType.Table) ? configureGridTable(oTable) : configureResponsiveTable(oTable);
+	function supportsGrouping(oTable) {
+		return oTable._isOfType(TableType.Table);
 	}
 
 	/**
-	 * Checks whether the inner table supports the "analytical" p13n modes <code>Group</code> and <code>Aggregate</code>.
+	 * Checks whether the inner table supports aggregation.
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
-	 * @return {boolean} Whether the inner table supports the "analytical" p13n modes
+	 * @returns {boolean} Whether the inner table supports aggregation
 	 */
-	function isInnerTableReadyForAnalytics(oTable) {
-		if (oTable._isOfType(TableType.Table)) {
-			var oPlugin = TableMap.get(oTable).plugin;
-			return oPlugin != null && !oPlugin.bIsDestroyed;
-		} else {
-			return false;
-		}
+	function supportsAggregation(oTable) {
+		return oTable._isOfType(TableType.Table);
 	}
 
-	function configureGridTable(oTable) {
-		return isAnalyticsEnabled(oTable) ? enableGridTablePlugin(oTable) : disableGridTablePlugin(oTable);
+	/**
+	 * Checks whether aggregation features of the model are used.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @returns {boolean} Whether aggregation features are used
+	 * @see sap.ui.model.odata.v4.ODataListBinding#setAggregation
+	 */
+	function isAnalyticsEnabled(oTable) {
+		return (oTable.isGroupingEnabled() || oTable.isAggregationEnabled()) && oTable._isOfType(TableType.Table);
+	}
+
+	/**
+	 * Configures the inner table to support the personalization settings of the MDC table.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @returns {Promise} A <code>Promise</code> that revolves when the inner table is configured
+	 */
+	function configureInnerTable(oTable) {
+		if (oTable._isOfType(TableType.Table)) {
+			return (isAnalyticsEnabled(oTable) ? enableGridTablePlugin(oTable) : disableGridTablePlugin(oTable)).then(function() {
+				return setUpTableObserver(oTable);
+			});
+		}
+		return Promise.resolve();
 	}
 
 	function enableGridTablePlugin(oTable) {
 		var mTableMap = TableMap.get(oTable);
 		var oPlugin = mTableMap.plugin;
 
-		if (oPlugin && !oPlugin.bIsDestroyed) {
+		if (oPlugin && !oPlugin.isDestroyed()) {
 			oPlugin.activate();
 			return Promise.resolve();
 		}
@@ -666,10 +689,6 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function configureResponsiveTable(oTable) {
-		return Promise.resolve();
-	}
-
 	function fetchPropertyHelperForBinding(oTable) {
 		var mTableMap = TableMap.get(oTable);
 
@@ -704,20 +723,17 @@ sap.ui.define([
 					if (mTableMap.oPropertyHelperForBinding) {
 						mTableMap.oPropertyHelperForBinding.destroy();
 					}
+
 				} else {
 					configureInnerTable(oTable);
 				}
 			});
+
+			mTableMap.observer.observe(oTable, {
+				properties: ["p13nMode"],
+				destroy: true
+			});
 		}
-
-		mTableMap.observer.observe(oTable, {
-			properties: ["p13nMode"],
-			destroy: true
-		});
-	}
-
-	function isAnalyticsEnabled(oTable) {
-		return oTable.isGroupingEnabled() || oTable.isAggregationEnabled();
 	}
 
 	return Delegate;
