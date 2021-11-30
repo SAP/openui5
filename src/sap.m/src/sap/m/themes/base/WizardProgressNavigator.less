@@ -5,6 +5,7 @@
 
 @_sap_m_WizardProgressNavigator_NavHeight: 4rem;
 @_sap_m_WizardProgressNavigator_ListHeight: 2rem;
+@_sap_m_WizardProgressNavigator_ListItemHeight: 3rem;
 @_sap_m_WizardProgressNavigator_StepWidth: 2rem;
 @_sap_m_WizardProgressNavigator_StepPadding: 0.5rem;
 @_sap_m_WizardProgressNavigator_SmallSeparator: 0.25rem;
@@ -14,7 +15,7 @@
 .sapMWizardProgressNav {
 	box-sizing: border-box;
 	height: @_sap_m_WizardProgressNavigator_NavHeight;
-	padding: 0.875rem 1rem;
+	padding: 1rem 1rem 0 1rem;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
@@ -32,7 +33,7 @@
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	height: @_sap_m_WizardProgressNavigator_ListHeight;
+	height: @_sap_m_WizardProgressNavigator_ListItemHeight;
 }
 
 .sapMWizardProgressNavStepContainer {
@@ -85,18 +86,18 @@
 // the currently selected step
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
 
-// the current step is underlined as to have a visual cue
-.sapMWizardProgressNavStepContainer::after {
-	content: "";
-	display: block;
-	position: absolute;
-	width: 100%;
-	height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
+	// the current step is underlined as to have a visual cue
+	.sapMWizardProgressNavStepContainer::after {
+		content: "";
+		display: block;
+		position: absolute;
+		width: 100%;
+		height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
 
-	// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
-	// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
-	bottom: (@_sap_m_WizardProgressNavigator_ListHeight - @_sap_m_WizardProgressNavigator_NavHeight) / 2 - @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
-}
+		// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
+		// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
+		bottom: (@_sap_m_WizardProgressNavigator_ListHeight - @_sap_m_WizardProgressNavigator_NavHeight) / 2;
+	}
 	//all steps after the current one are right aligned so that they dont overflow to the right
 	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavStepContainer {
 		right: 0;
@@ -183,11 +184,11 @@
 }
 
 .sapMSplitContainerDetail .sapMWizardProgressNav {
-	padding: 0.875rem 1rem;
+	padding: 1rem 1rem 0 1rem;
 }
 
 html.sap-phone .sapMWizardProgressNav {
-	padding: 0.875rem 0.5rem;
+	padding: 1rem 0.5rem;
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
@@ -231,7 +232,7 @@ html.sap-phone .sapMWizardProgressNav {
 	display: inline-block;
 	overflow: hidden;
 	max-width: 100%;
-	max-height: @_sap_m_WizardProgressNavigator_ListHeight;
+	max-height: 2.875rem;
 	line-height: @_sap_m_WizardProgressNavigator_ListHeight  / 2;
 	font-size: @sapMFontMediumSize;
 	color: @sapUiGroupTitleTextColor;
