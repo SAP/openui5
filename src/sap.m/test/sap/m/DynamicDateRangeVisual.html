@@ -47,7 +47,6 @@
 					items: [
 						new Label("DDR1-label", {text: "Group headers disabled when there are more then ten options available", labelFor: "DDR1"}),
 						new DynamicDateRange("DDR1", {
-							enableGroupHeaders: false,
 							change: handleChange,
 							width: '300px',
 							options: DynamicDateUtil.getAllOptionKeys()
@@ -66,6 +65,7 @@
 						}),
 						new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),
 						new DynamicDateRange("DDR3", {
+							enableGroupHeaders: false,
 							width: '300px',
 							change: handleChange,
 							options: [

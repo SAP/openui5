@@ -418,7 +418,13 @@ sap.ui.define([
 				this._removeAllListItemDelegates();
 				this._oOptionsList.destroyAggregation("items");
 
-				this._createValueHelpItems().forEach(function(oItem) {
+				this._collectValueHelpItems(this._getOptions(), true).map(function(vOption) {
+					// check if it's a group header
+					if (typeof (vOption) === "string") {
+						return this._createHeaderListItem(vOption);
+					}
+					return this._createListItem(vOption);
+				}, this).forEach(function(oItem) {
 					oItem.addDelegate(this._oListItemDelegate, this);
 					this._oOptionsList.addItem(oItem);
 				}, this);
@@ -493,9 +499,13 @@ sap.ui.define([
 				return iIndexOfQuery === 0 || (iIndexOfQuery > 0 && sSuggestedValue[iIndexOfQuery - 1] === " ");
 			}, this);
 
-			aSuggestionItems.forEach(function(option) {
-				var oSuggestValue = { operator: option.getKey(), values: [] };
-				this._addSuggestionItem(oSuggestValue);
+			this._collectValueHelpItems(aSuggestionItems, true).forEach(function(option) {
+				if (option.getKey) {
+					var oSuggestValue = { operator: option.getKey(), values: [] };
+					this._addSuggestionItem(oSuggestValue);
+				} else {
+					this._addSuggestionGroupItem(option);
+				}
 			}, this);
 
 			var aMatchDigit = sQuery.match(/\d+/);
@@ -508,14 +518,18 @@ sap.ui.define([
 				return option.getValueHelpUITypes(this).length === 1 && option.getValueHelpUITypes(this)[0].getType() === "int";
 			}, this);
 
-			aSuggestionItems.forEach(function(option) {
-				var oSuggestValue = {
-					operator: option.getKey(),
-					values: [
-						parseInt(aMatchDigit[0])
-					]
-				};
-				this._addSuggestionItem(oSuggestValue);
+			this._collectValueHelpItems(aSuggestionItems, false).forEach(function(option) {
+				if (option.getKey) {
+					var oSuggestValue = {
+						operator: option.getKey(),
+						values: [
+							parseInt(aMatchDigit[0])
+						]
+					};
+					this._addSuggestionItem(oSuggestValue);
+				} else {
+					this._addSuggestionGroupItem(option);
+				}
 			}, this);
 		};
 
@@ -573,6 +587,16 @@ sap.ui.define([
 			});
 
 			this._oInput.addSuggestionItem(oItem);
+		};
+
+		/**
+		 * Creates and adds a suggestion group item to the internal input, based on a given value.
+		 *
+		 * @param {string} sGroupValue The value to be set
+		 * @private
+		 */
+		DynamicDateRange.prototype._addSuggestionGroupItem = function(sGroupValue) {
+			this._oInput.addSuggestionItemGroup({text: sGroupValue});
 		};
 
 		/**
@@ -683,13 +707,21 @@ sap.ui.define([
 			}
 		};
 
-		DynamicDateRange.prototype._createValueHelpItems = function() {
+		/**
+		 * Sorts, groups and reduces the items to be shown as suggestions.
+		 *
+		 * @param {array} aArray The array to be reworked
+		 * @param {boolean} bReduce If reducing is needed
+		 * @returns {array} The array with the objects to be displayed
+		 * @private
+		 */
+		DynamicDateRange.prototype._collectValueHelpItems = function(aArray, bReduce) {
 			var lastXOption;
 			var nextXOption;
 			var aGroupHeaders = [];
 
 			// get the control options' metadata
-			var aOptions = this._getOptions();
+			var aOptions = aArray;
 			var aStandardDynamicDateRangeKeysArray = DynamicDateUtil.getStandardKeys();
 
 			// sort by group
@@ -703,28 +735,30 @@ sap.ui.define([
 				return aStandardDynamicDateRangeKeysArray.indexOf(a.getKey()) - aStandardDynamicDateRangeKeysArray.indexOf(b.getKey());
 			});
 
-			// for last x/next x options leave only the first of each, remove the rest
-			aOptions = aOptions.reduce(function(aResult, oCurrent) {
-				if (StandardDynamicDateOption.LastXKeys.indexOf(oCurrent.getKey()) !== -1) {
-					if (lastXOption) {
-						return aResult;
+			if (bReduce) {
+				// for last x/next x options leave only the first of each, remove the rest
+				aOptions = aOptions.reduce(function(aResult, oCurrent) {
+					if (StandardDynamicDateOption.LastXKeys.indexOf(oCurrent.getKey()) !== -1) {
+						if (lastXOption) {
+							return aResult;
+						}
+
+						lastXOption = true;
 					}
 
-					lastXOption = true;
-				}
+					if (StandardDynamicDateOption.NextXKeys.indexOf(oCurrent.getKey()) !== -1) {
+						if (nextXOption) {
+							return aResult;
+						}
 
-				if (StandardDynamicDateOption.NextXKeys.indexOf(oCurrent.getKey()) !== -1) {
-					if (nextXOption) {
-						return aResult;
+						nextXOption = true;
 					}
 
-					nextXOption = true;
-				}
+					aResult.push(oCurrent);
 
-				aResult.push(oCurrent);
-
-				return aResult;
-			}, []);
+					return aResult;
+				}, []);
+			}
 
 			if (this.getEnableGroupHeaders()) {
 				// insert a group header string before the options from each group
@@ -741,16 +775,7 @@ sap.ui.define([
 				}, []);
 			}
 
-			// create a list item for each option
-			// and a group header list item for each group header
-			return aOptions.map(function(vOption) {
-				// check if it's a group header
-				if (typeof (vOption) === "string") {
-					return this._createHeaderListItem(vOption);
-				}
-
-				return this._createListItem(vOption);
-			}, this);
+			return aOptions;
 		};
 
 		DynamicDateRange.prototype._createListItem = function(oOption) {
