@@ -152,11 +152,13 @@ sap.ui.define([
 	 * <code>$inlinecount=allpages</code> is not part of the url, the count will be removed from the
 	 * response.
 	 *
-	 * @param {object[]} aMatch The match array from the matching URL
+	 * @param {object[]} aMatch The match array from the matching URL containing the complete match,
+	 *   the values of <code>$skip</code>, <code>$top</code> and optionally
+	 *   <code>$inlinecount</code>.
 	 * @param {object} oResponse The response which will be sent to the client
 	 */
 	function applySkipTopCount(aMatch, oResponse) {
-		var bCount = !!aMatch[3],
+		var bCount = aMatch[3] === "allpages",
 			oResponseBody = JSON.parse(oResponse.message),
 			aLineItems = oResponseBody.d.results,
 			iSkip = parseInt(aMatch[1]),
@@ -722,7 +724,7 @@ sap.ui.define([
 
 				/* Test Case III */
 				regExp :
-					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(&\$inlinecount=allpages)?/,
+					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(?:&\$inlinecount=(allpages))?/,
 				response : [{
 					buildResponse : function (aMatch, oResponse) {
 						applySkipTopCount(aMatch, oResponse);
@@ -745,7 +747,7 @@ sap.ui.define([
 
 				/* Test Case IV */
 				regExp :
-					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(&\$inlinecount=allpages)?/,
+					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(?:&\$inlinecount=(allpages))?/,
 				response : [{
 					buildResponse : function (aMatch, oResponse) {
 						applySkipTopCount(aMatch, oResponse);
