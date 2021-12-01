@@ -1205,16 +1205,27 @@ function(
 			this._fireValueHelpRequestForValueHelpOnly();
 		}
 
-		if (this.isMobileDevice()
-			 && this.getEditable()
-			 && this.getEnabled()
-			 && this.getShowSuggestion()
-			 && (!this._bClearButtonPressed)
-			 && oEvent.target.id !== this.getId() + "-vhi") {
+		if (this.shouldSuggetionsPopoverOpenOnMobile(oEvent)) {
 				this._openSuggestionsPopover();
 		}
 
 		this._bClearButtonPressed = false;
+	};
+
+	/**
+	 * A helper function calculating if the SuggestionsPopover should be opened on mobile.
+	 *
+	 * @protected
+	 * @param {jQuery.Event} oEvent Ontap event.
+	 * @returns {Boolean} If the popover should be openened.
+	 */
+	Input.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
+		return this.isMobileDevice()
+			&& this.getEditable()
+			&& this.getEnabled()
+			&& this.getShowSuggestion()
+			&& (!this._bClearButtonPressed)
+			&& oEvent.target.id !== this.getId() + "-vhi";
 	};
 
 	/**

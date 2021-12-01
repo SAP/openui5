@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/DynamicDateValueHelpUIType",
 	"sap/m/DynamicDateUtil",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/format/DateFormat"
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Icon"
 ], function(
 	DynamicDateRange,
 	CustomDynamicDateOption,
@@ -14,7 +15,8 @@ sap.ui.define([
 	DynamicDateValueHelpUIType,
 	DynamicDateUtil,
 	DateRange,
-	DateFormat
+	DateFormat,
+	Icon
 ) {
 	"use strict";
 
@@ -53,6 +55,26 @@ sap.ui.define([
 			this.ddr.getAggregation("_input").getFocusDomRef().id,
 			"getFocusDomRef returns the DOM of the inner input control"
 		);
+	});
+
+	QUnit.module("basic functionality", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("suggestions popover should not be opened on icon click on mobile", function(assert) {
+		//arrange
+		var oCustomEvent = { srcControl : new Icon()};
+		this.stub(this.ddr._oInput, "isMobileDevice").returns(true);
+
+		// assert
+		assert.strictEqual(this.ddr._oInput.shouldSuggetionsPopoverOpenOnMobile(oCustomEvent), false, "the suggestions popover is not opened on mobile when the icon is clicked");
 	});
 
 	QUnit.module("CustomDynamicDateOption", {
