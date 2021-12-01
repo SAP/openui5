@@ -376,7 +376,7 @@ sap.ui.define([
 			oRequestPromise = oFixture.iStatus === 200
 				? Promise.resolve().then(function () {
 					that.oModelInterfaceMock.expects("reportStateMessages")
-						.withExactArgs(oCache.sResourcePath, [],
+						.withExactArgs(oCache.sResourcePath, {},
 							["EMPLOYEE_2_EQUIPMENTS('1')"]);
 				})
 				: Promise.reject(oError);
@@ -497,7 +497,7 @@ sap.ui.define([
 				"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
 			.returns(Promise.resolve().then(function () {
 				that.oModelInterfaceMock.expects("reportStateMessages")
-					.withExactArgs(oCache.sResourcePath, [],
+					.withExactArgs(oCache.sResourcePath, {},
 						["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 			}));
 		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLock));
@@ -549,7 +549,7 @@ sap.ui.define([
 				}, undefined, undefined, undefined, undefined, "EMPLOYEES('1')")
 			.returns(Promise.resolve().then(function () {
 				that.oModelInterfaceMock.expects("reportStateMessages")
-					.withExactArgs(oCache.sResourcePath, [], ["('1')"]);
+					.withExactArgs(oCache.sResourcePath, {}, ["('1')"]);
 				bDeleted = true;
 			}));
 		this.mock(oCache).expects("requestCount").exactly(bDoNotRequestCount ? 0 : 1)
@@ -3496,8 +3496,7 @@ sap.ui.define([
 						"EMPLOYEE_2_EQUIPMENTS");
 				that.oModelInterfaceMock.expects("reportStateMessages")
 					.exactly(bRemoved ? 1 : 0)
-					.withExactArgs(oCache.sResourcePath, [],
-						["EMPLOYEE_2_EQUIPMENTS('13')"]);
+					.withExactArgs(oCache.sResourcePath, {}, ["EMPLOYEE_2_EQUIPMENTS('13')"]);
 				oCacheMock.expects("replaceElement").exactly(bRemoved ? 0 : 1)
 					.withExactArgs(sinon.match.same(aElements), 1, sKeyPredicate,
 						sinon.match.same(oResponse.value[0]),
@@ -7773,7 +7772,7 @@ sap.ui.define([
 					undefined, undefined, undefined, undefined, "Employees('4711')")
 				.returns(Promise.resolve().then(function () {
 					that.mock(oRequestor.oModelInterface).expects("reportStateMessages")
-						.withExactArgs(oCache.sResourcePath, [], ["('4711')"]);
+						.withExactArgs(oCache.sResourcePath, {}, ["('4711')"]);
 				}));
 
 			// code under test
@@ -9185,7 +9184,7 @@ sap.ui.define([
 					undefined, undefined, undefined, undefined, "Employees('42')")
 				.returns(Promise.resolve().then(function () {
 					that.oModelInterfaceMock.expects("reportStateMessages")
-						.withExactArgs(oCache.sResourcePath, [], [""]);
+						.withExactArgs(oCache.sResourcePath, {}, [""]);
 				}));
 			that.mock(oCache).expects("requestCount")
 				.withExactArgs(sinon.match.same(oDeleteGroupLock));
