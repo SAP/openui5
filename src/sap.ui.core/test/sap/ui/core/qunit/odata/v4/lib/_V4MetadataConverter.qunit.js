@@ -377,7 +377,7 @@ sap.ui.define([
 						"p3" : {
 							"$kind" : "Property",
 							"$Type" : "Edm.Geometry",
-							"$SRID" :"42"
+							"$SRID" : "42"
 						},
 						"p4" : {
 							"$kind" : "Property",

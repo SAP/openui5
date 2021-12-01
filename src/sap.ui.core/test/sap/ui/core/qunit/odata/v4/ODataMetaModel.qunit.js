@@ -1681,7 +1681,7 @@ sap.ui.define([
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/tea_busi.DefaultContainer/@DefaultContainer" // w/o $Type, slash makes no difference!
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
-		"/$EntityContainer@DefaultContainer" // Note: we could change this
+		"/$EntityContainer@DefaultContainer" // we could change this
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/$EntityContainer/@DefaultContainer" // w/o $Type, slash makes no difference!
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -1731,7 +1731,7 @@ sap.ui.define([
 		"/ChangeManagerOfTeam/ManagerID@Common.Label" : "New Manager ID",
 		"/OverloadedAction/parameter0@Common.Label" : "Zero",
 		"/T€AMS/name.space.OverloadedAction/parameter1@Common.Label" : "My 1st label",
-		"/T€AMS/name.space.OverloadedAction/parameter1@" // Note: strictEqual!
+		"/T€AMS/name.space.OverloadedAction/parameter1@" // strictEqual!
 			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)/parameter1"],
 		"/T€AMS/tea_busi.NewAction/Team_Id@Common.Label" : "New Team ID",
 		"/T€AMS/tea_busi.NewAction/Team_Id@" : sinon.match(function (oActual) {
@@ -1758,7 +1758,7 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
 			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)"]
 				["@Core.OperationAvailable"],
-		"/T€AMS/name.space.OverloadedAction@" // Note: strictEqual!
+		"/T€AMS/name.space.OverloadedAction@" // strictEqual!
 			: mScope.$Annotations["name.space.OverloadedAction(tea_busi.TEAM)"],
 		"/T€AMS/tea_busi.NewAction@Common.Label" : "Create New Team",
 		"/T€AMS/tea_busi.NewAction/@$ui5.overload@Common.Label" : "Create New Team", // "explicit"
@@ -4372,7 +4372,7 @@ sap.ui.define([
 		// Iterate all OData path segments, i.e. entity sets and imports.
 		// Implicit scope lookup happens here!
 		metaPath : "/",
-		result :[
+		result : [
 			"/ChangeManagerOfTeam",
 			"/EMPLOYEES",
 			"/EQUIPM€NTS",

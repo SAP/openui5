@@ -504,7 +504,7 @@ sap.ui.define([
 		output : "A-A-"
 	}, {
 		input : "A/A/",
-		output :"A_A_"
+		output : "A_A_"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("convertBinary, " + i, function (assert) {
 			var oRequestor = {};

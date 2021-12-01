@@ -1668,7 +1668,7 @@ sap.ui.define([
 			}), sResourcePath)
 			.returns("~UI5msg1~");
 		oModelMock.expects("fireMessageChange")
-			.withExactArgs(sinon.match({newMessages: ["~UI5msg0~", "~UI5msg1~"]}));
+			.withExactArgs(sinon.match({newMessages : ["~UI5msg0~", "~UI5msg1~"]}));
 
 		// code under test
 		oModel.reportTransitionMessages(aMessages, sResourcePath);

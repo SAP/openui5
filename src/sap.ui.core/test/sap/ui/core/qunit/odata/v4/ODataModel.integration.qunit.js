@@ -6722,11 +6722,11 @@ sap.ui.define([
 				value : [{
 					ItemPosition : "0010",
 					SalesOrderID : "42",
-					Quantity :  "1"
+					Quantity : "1"
 				}, {
 					ItemPosition : "0020",
 					SalesOrderID : "42",
-					Quantity :  "3"
+					Quantity : "3"
 				}]
 			})
 			.expectChange("salesOrderID", "42")
@@ -6756,7 +6756,7 @@ sap.ui.define([
 				+ "&$skip=0&$top=100", {
 				value : [{
 					ItemPosition : "0010",
-					Quantity :  "1",
+					Quantity : "1",
 					SalesOrderID : "42"
 				}]
 			});
@@ -12289,7 +12289,7 @@ sap.ui.define([
 	// BCP: 2180177518
 	QUnit.test("BCP: 2180177518", function (assert) {
 		var oInput,
-			oModel = createTeaBusiModel({updateGroupId: "noSubmit"}),
+			oModel = createTeaBusiModel({updateGroupId : "noSubmit"}),
 			oTransientContext,
 			sView = '<Input id="budgetCurrency" value="{BudgetCurrency}"/>',
 			that = this;
@@ -22548,7 +22548,7 @@ sap.ui.define([
 				oActiveArtistContext, {$$inheritExpandSelect : true});
 
 			that.expectRequest({
-					headers : bAction ? {"If-Match": "activETag"} : {},
+					headers : bAction ? {"If-Match" : "activETag"} : {},
 					method : bAction ? "POST" : "GET",
 					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases."
 						+ sDraftOperation + (bAction ? "" : "()")
@@ -22634,7 +22634,7 @@ sap.ui.define([
 					.expectRequest({
 						batchNo : 6,
 						headers : {
-							"If-Match": "inactivETag"
+							"If-Match" : "inactivETag"
 						},
 						method : "POST",
 						url : "Artists(ArtistID='42',IsActiveEntity=false)"
@@ -29605,11 +29605,11 @@ sap.ui.define([
 				.expectChange("type", ["42"])
 				.expectChange("company", ["Nestle"])
 				.expectMessages([{
-					"message": "The entity will be created via group 'update'. Cannot patch via"
+					"message" : "The entity will be created via group 'update'. Cannot patch via"
 						+ " group '$direct'",
-					"persistent": true,
-					"technical": true,
-					"type": "Error"
+					"persistent" : true,
+					"technical" : true,
+					"type" : "Error"
 				}]);
 
 			that.oLogMock.expects("error"); // don't care about console here
@@ -30830,7 +30830,7 @@ sap.ui.define([
 			mExpectedHeaders = {
 				SomeSecurityTokenHeader : "foo",
 				SomeOtherSecurityTokenHeader : "bar",
-				"X-CSRF-Token": undefined // Note: this is not sent by jQuery.ajax()
+				"X-CSRF-Token" : undefined // Note: this is not sent by jQuery.ajax()
 			},
 			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}"/>',
 			that = this;
@@ -31280,10 +31280,10 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.Context");
 
 			that.expectMessages([{
-				"message": "Unexpected request: GET TEAMS('42')",
-				"persistent": true,
-				"technical": true,
-				"type": "Error"
+				"message" : "Unexpected request: GET TEAMS('42')",
+				"persistent" : true,
+				"technical" : true,
+				"type" : "Error"
 			}]);
 
 			return Promise.all([
@@ -35507,8 +35507,8 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 5,
 					headers : {
-						"If-Match": "etag.draft1",
-						"Prefer": "return=minimal"
+						"If-Match" : "etag.draft1",
+						"Prefer" : "return=minimal"
 					},
 					method : "PATCH",
 					payload : {

@@ -2055,7 +2055,7 @@ sap.ui.define([
 				getResponseHeader : function () {
 					return "application/json";
 				},
-				headers : {"Content-Type" :"application/json"},
+				headers : {"Content-Type" : "application/json"},
 				responseText : JSON.stringify(oError),
 				status : 404,
 				statusText : "Not found"
@@ -2110,7 +2110,7 @@ sap.ui.define([
 				getResponseHeader : function () {
 					return "application/json";
 				},
-				headers : {"Content-Type" :"application/json"},
+				headers : {"Content-Type" : "application/json"},
 				responseText : JSON.stringify({error : {message : "400 Bad Request"}}),
 				status : 400,
 				statusText : "Bad Request"

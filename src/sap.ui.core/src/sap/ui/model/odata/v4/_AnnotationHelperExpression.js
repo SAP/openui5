@@ -55,7 +55,7 @@ sap.ui.define([
 			Bool : "Edm.Boolean",
 			Float : "Edm.Double",
 			Date : "Edm.Date",
-			DateTimeOffset :"Edm.DateTimeOffset",
+			DateTimeOffset : "Edm.DateTimeOffset",
 			Decimal : "Edm.Decimal",
 			Guid : "Edm.Guid",
 			Int : "Edm.Int64",

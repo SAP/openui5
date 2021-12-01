@@ -479,8 +479,8 @@ sap.ui.define([
 	// parsed: the syntax tree
 	// converted: the resulting filter string after parsing and rebuilding (if different to string)
 	[{ // logical operators, precedence, brackets
-		string :"foo eq bar ne baz",
-		parsed :{
+		string : "foo eq bar ne baz",
+		parsed : {
 			id : "ne",
 			left : {
 				id : "eq",
@@ -490,8 +490,8 @@ sap.ui.define([
 			right : {value : "baz"}
 		}
 	}, {
-		string :"foo eq '1' and bar gt 2",
-		parsed :{
+		string : "foo eq '1' and bar gt 2",
+		parsed : {
 			id : "and",
 			left : {
 				id : "eq",
@@ -505,14 +505,14 @@ sap.ui.define([
 			}
 		}
 	}, {
-		string :"not foo",
-		parsed :{
+		string : "not foo",
+		parsed : {
 			id : "not",
 			right : {value : "foo"}
 		}
 	}, {
-		string :"not%20foo and%20bar",
-		parsed :{
+		string : "not%20foo and%20bar",
+		parsed : {
 			id : "and",
 			left : {
 				id : "not",
@@ -521,8 +521,8 @@ sap.ui.define([
 			right : {value : "bar"}
 		}
 	}, {
-		string :"not  (foo  and  bar)",
-		parsed :{
+		string : "not  (foo  and  bar)",
+		parsed : {
 			id : "not",
 			right : {
 				id : "and",
@@ -531,8 +531,8 @@ sap.ui.define([
 			}
 		}
 	}, {
-		string :"foo and not bar",
-		parsed :{
+		string : "foo and not bar",
+		parsed : {
 			id : "and",
 			left : {value : "foo"},
 			right : {
@@ -541,8 +541,8 @@ sap.ui.define([
 			}
 		}
 	}, {
-		string :"foo and ( \t bar or baz %09%20 )",
-		parsed :{
+		string : "foo and ( \t bar or baz %09%20 )",
+		parsed : {
 			id : "and",
 			left : {value : "foo"},
 			right : {

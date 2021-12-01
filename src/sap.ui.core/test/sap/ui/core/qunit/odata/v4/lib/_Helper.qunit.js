@@ -1012,7 +1012,7 @@ sap.ui.define([
 			BusinessPartnerID : "42",
 			Address : {
 				City : "St. Ingbert",
-				Foo :  null
+				Foo : null
 			}
 		});
 	});
@@ -1309,7 +1309,7 @@ sap.ui.define([
 				},
 				b3 : null,
 				b4 : ["s1", "s2", "s3"],
-				b5 : {s1: "s1"},
+				b5 : {s1 : "s1"},
 				s1 : "s1"
 			},
 			oTarget = {

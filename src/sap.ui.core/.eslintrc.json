@@ -36,6 +36,7 @@
 				"eol-last": "error",
 				"implicit-arrow-linebreak": "error", // let's see...
 				"jsx-quotes": "error", // let's see...
+				"key-spacing": ["error", {"beforeColon": true}],
 				"lines-between-class-members": "error",
 				"no-lonely-if": "error", // override "warn"
 				"no-multiple-empty-lines": "error",

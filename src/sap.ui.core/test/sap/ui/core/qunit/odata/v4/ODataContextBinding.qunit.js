@@ -1453,7 +1453,7 @@ sap.ui.define([
 	}].forEach(function (oFixture, i) {
 		QUnit.test("_execute: #" + i + " - " + oFixture.error, function (assert) {
 			var oGroupLock = {
-					getGroupId :  function () {},
+					getGroupId : function () {},
 					unlock : function () {}
 				},
 				oMetaModelMock = this.mock(this.oModel.getMetaModel());
@@ -3638,15 +3638,15 @@ sap.ui.define([
 	{
 		own : {foo : "bar"}, // some custom query option which have to survive always
 		inherited : {$select : ["prop"], $expand : {Nav : {}}},
-		expected: {foo : "bar", $select : ["prop"], $expand : {Nav : {}}}
+		expected : {foo : "bar", $select : ["prop"], $expand : {Nav : {}}}
 	}, {
 		own : {foo : "bar", $select : []},
 		inherited : {$select : ["prop"]},
-		expected: {foo : "bar", $select : ["prop"]}
+		expected : {foo : "bar", $select : ["prop"]}
 	}, {
 		own : {foo : "bar"},
 		inherited : {$expand : {Nav : {}}},
-		expected: {foo : "bar", $expand : {Nav : {}}}
+		expected : {foo : "bar", $expand : {Nav : {}}}
 	}, {
 		own : {foo : "bar", $select : ["own", "both"]},
 		inherited : {$select : ["inh", "both"]},
@@ -4805,7 +4805,7 @@ sap.ui.define([
 	QUnit.test("moveEntityTo", function (assert) {
 		var oBinding = this.bindContext("/Entity('1')"),
 			oListBinding = {
-				moveEntityHere: function () {}
+				moveEntityHere : function () {}
 			};
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);

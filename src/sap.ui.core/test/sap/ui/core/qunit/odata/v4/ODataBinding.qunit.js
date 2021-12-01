@@ -717,7 +717,7 @@ sap.ui.define([
 		{
 			oContext : Context.create({}, {}, "/v4Context"),
 			oTemplate : {
-				oModel : {resolve :function () {}},
+				oModel : {resolve : function () {}},
 				sPath : "relativeWithNoParameters",
 				bRelative : true
 			}
@@ -2171,7 +2171,7 @@ sap.ui.define([
 				getRootBinding : function () {}
 			},
 			oBinding = new ODataBinding({
-				oContext :  { // sap.ui.model.odata.v4.Context
+				oContext : { // sap.ui.model.odata.v4.Context
 					getBinding : function () { return oParentBinding; }
 				},
 				sPath : "SO_2_SCHEDULE",
