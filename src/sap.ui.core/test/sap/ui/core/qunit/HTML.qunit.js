@@ -148,6 +148,7 @@ sap.ui.define([
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
+			assert.strictEqual(document.getElementById("html1").getAttribute("data-sap-ui-preserve"), null);
 		});
 	});
 
@@ -250,6 +251,7 @@ sap.ui.define([
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
+			assert.strictEqual(document.getElementById("html3").getAttribute("data-sap-ui-preserve"), "html3");
 		});
 	});
 

@@ -245,8 +245,11 @@ sap.ui.define([
 				}
 			}
 
-			// set a marker that identifies all root nodes in $newContent as 'to-be-preserved'
-			RenderManager.markPreservableContent($newContent, this.getId());
+			if (this.getPreferDOM()) {
+				// set a marker that identifies all root nodes in $newContent as 'to-be-preserved'
+				RenderManager.markPreservableContent($newContent, this.getId());
+			}
+
 			// and if no node has the control id, search the first without an id and set it
 			if ( $newContent.find("#" + this.getId().replace(/(:|\.)/g,'\\$1')).length === 0 ) {
 				$newContent.filter(":not([id])").first().attr("id", this.getId());
