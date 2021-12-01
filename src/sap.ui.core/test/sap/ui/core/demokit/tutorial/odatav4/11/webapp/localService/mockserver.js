@@ -676,6 +676,9 @@ sap.ui.define([
 					aResponse = handleDeleteUserRequests(oXhr);
 				}
 				break;
+			case "HEAD":
+				aResponse = [204, {}];
+				break;
 			default:
 				break;
 		}

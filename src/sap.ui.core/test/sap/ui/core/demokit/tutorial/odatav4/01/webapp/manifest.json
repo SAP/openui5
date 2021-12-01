@@ -1,6 +1,7 @@
 {
 	"_version": "1.21.0",
 	"sap.app": {
+		"ach" : "CA-UI5-COR",
 		"id": "sap.ui.core.tutorial.odatav4",
 		"type": "application",
 		"i18n": {
@@ -65,10 +66,11 @@
 			},
 			"": {
 				"dataSource": "default",
+				"preload": true,
 				"settings": {
 					"autoExpandSelect": true,
+					"earlyRequests": true,
 					"operationMode": "Server",
-					"groupId": "$direct",
 					"synchronizationMode": "None"
 				}
 			}
