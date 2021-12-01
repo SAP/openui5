@@ -1198,25 +1198,19 @@ sap.ui.define([
 	 * Sets the content density.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {string} sDensity The content density value to be set.
+	 * @param {string} [sDensity] The content density value to be set.
 	 */
 	TableQUnitUtils.setDensity = function(oTable, sDensity) {
-		if (!oTable) {
-			return;
-		}
-
-		var oBody = document.body;
-
-		oBody.classList.remove("sapUiSizeCozy");
-		oBody.classList.remove("sapUiSizeCompact");
+		document.body.classList.remove("sapUiSizeCozy");
+		document.body.classList.remove("sapUiSizeCompact");
 		oTable.removeStyleClass("sapUiSizeCondensed");
 
 		if (sDensity != null) {
 			if (sDensity === "sapUiSizeCondensed") {
-				oBody.classList.add("sapUiSizeCompact");
+				document.body.classList.add("sapUiSizeCompact");
 				oTable.addStyleClass("sapUiSizeCondensed");
 			} else {
-				oBody.classList.add(sDensity);
+				document.body.classList.add(sDensity);
 			}
 		}
 

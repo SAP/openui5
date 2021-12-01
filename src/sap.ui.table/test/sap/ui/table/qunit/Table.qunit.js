@@ -652,208 +652,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Column header height", function(assert) {
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
-		var sequence = Promise.resolve();
-		var iPadding = 14;
-
-		oTable.removeAllColumns();
-		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
-		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
-		oTable.setFixedColumnCount(1);
-		oTable.setRowActionCount(1);
-		oTable.setRowActionTemplate(new RowAction());
-
-		function test(mTestSettings) {
-			sequence = sequence.then(function() {
-				oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
-				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
-				oTable.setRowHeight(mTestSettings.rowHeight || 0);
-				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
-				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
-
-				return new Promise(function(resolve) {
-					oTable.attachEventOnce("rowsUpdated", resolve);
-				});
-			}).then(function() {
-				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
-			});
-		}
-
-		test({
-			title: "Default height",
-			density: "sapUiSizeCozy",
-			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
-		});
-
-		test({
-			title: "Default height",
-			density: "sapUiSizeCompact",
-			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
-		});
-
-		test({
-			title: "Default height",
-			density: "sapUiSizeCondensed",
-			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
-		});
-
-		test({
-			title: "Default height",
-			density: undefined,
-			expectedHeight: TableUtils.DefaultRowHeight.undefined
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Default height with large content",
-				density: sDensity,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight)",
-				density: sDensity,
-				rowHeight: 55,
-				expectedHeight: 56
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (columnHeaderHeight)",
-				density: sDensity,
-				columnHeaderHeight: 55,
-				expectedHeight: 55
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight = columnHeaderHeight)",
-				density: sDensity,
-				rowHeight: 55,
-				columnHeaderHeight: 55,
-				expectedHeight: 55
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight < columnHeaderHeight)",
-				density: sDensity,
-				rowHeight: 55,
-				columnHeaderHeight: 80,
-				expectedHeight: 80
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight > columnHeaderHeight)",
-				density: sDensity,
-				rowHeight: 80,
-				columnHeaderHeight: 55,
-				expectedHeight: 55
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight) with large content",
-				density: sDensity,
-				rowHeight: 55,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (columnHeaderHeight) with large content",
-				density: sDensity,
-				columnHeaderHeight: 55,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight = columnHeaderHeight) with large content",
-				density: sDensity,
-				rowHeight: 55,
-				columnHeaderHeight: 55,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight < columnHeaderHeight) with large content",
-				density: sDensity,
-				rowHeight: 55,
-				columnHeaderHeight: 80,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-		});
-
-		aDensities.forEach(function(sDensity) {
-			test({
-				title: "Application defined height (rowHeight > columnHeaderHeight) with large content",
-				density: sDensity,
-				rowHeight: 80,
-				columnHeaderHeight: 55,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-		});
-
-		sequence = sequence.then(function() {
-			oTable.insertColumn(new Column({
-				label: new Text({text: "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"}),
-				template: new HeightTestControl(),
-				width: "100px"
-			}), 1);
-
-			oCore.applyChanges();
-
-			return new Promise(function(resolve) {
-				oTable.attachEventOnce("rowsUpdated", resolve);
-			});
-		}).then(function() {
-			var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
-			var iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
-			var iFixedPartHeight;
-			var iScrollablePartHeight;
-
-			oTable.getColumns()[1].setSorted(true);
-			oTable.getColumns()[1].setFiltered(true);
-			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
-			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
-			assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
-			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after adding icons");
-
-			oTable.getColumns()[1].setSorted(false);
-			oTable.getColumns()[1].setFiltered(false);
-			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
-			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
-			assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
-			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after removing icons");
-		}).then(function() {
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
-		});
-
-		return sequence;
-	});
-
 	QUnit.test("Skip _updateTableSizes if table has no width", function(assert) {
 		var oDomRef = oTable.getDomRef();
 		var oResetRowHeights = sinon.spy(oTable, "_resetRowHeights"); // _resetRowHeights is used to check if a layout update was performed
@@ -1896,30 +1694,26 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("Multiple header rows", {
+	QUnit.module("Column header", {
 		beforeEach: function() {
 			createTable({}, function(oTable) {
-				var oControl = new Text({text: "lastName"});
-				var oColumn = new Column({
+				oTable.addColumn(new Column({
 					multiLabels: [
 						new Label({text: "Last Name"}),
 						new Label({text: "Second level header"})
-					], template: oControl, sortProperty: "lastName", filterProperty: "lastName"
-				});
-				oTable.addColumn(oColumn);
-				oControl = new Input({value: "name"});
+					],
+					template: new Text({text: "lastName"})
+				}));
 				oTable.addColumn(new Column({
 					multiLabels: [
 						new Label({text: "First Name", textAlign: "Right"}),
 						new Label({text: "Name of the person"})
-					], template: oControl, sortProperty: "name", filterProperty: "name"
+					],
+					template: new Input({value: "name"})
 				}));
-				oControl = new CheckBox({selected: true});
 				oTable.addColumn(new Column({
 					label: new Label({text: "Checked (very long label text to show wrapping behavior)"}),
-					template: oControl,
-					sortProperty: "checked",
-					filterProperty: "checked",
+					template: new CheckBox({selected: true}),
 					hAlign: "Center"
 				}));
 			});
@@ -1929,8 +1723,193 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Headers", function(assert) {
-		assert.equal(oTable.$().find(".sapUiTableColHdrTr .sapUiTableHeaderCell").length, 6, "Total count of headers");
+	QUnit.test("Row and cell count", function(assert) {
+		assert.equal(oTable.$().find(".sapUiTableColHdrTr").length, 2, "Header row count");
+		assert.equal(oTable.$().find(".sapUiTableColHdrTr .sapUiTableHeaderCell").length, 6, "Cell count");
+	});
+
+	QUnit.test("Height", function(assert) {
+		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
+		var pSequence = Promise.resolve();
+		var iPadding = 14;
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		oTable.addColumn(new Column({label: new HeightTestControl(), template: new HeightTestControl()}));
+		oTable.setFixedColumnCount(1);
+		oTable.setRowActionCount(1);
+		oTable.setRowActionTemplate(new RowAction());
+
+		function test(mTestSettings) {
+			pSequence = pSequence.then(function() {
+				oTable.setVisibleRowCountMode(VisibleRowCountMode.Fixed);
+				oTable.setColumnHeaderHeight(mTestSettings.columnHeaderHeight || 0);
+				oTable.setRowHeight(mTestSettings.rowHeight || 0);
+				oTable.getColumns()[1].setLabel(new HeightTestControl({height: (mTestSettings.labelHeight || 1) + "px"}));
+				TableQUnitUtils.setDensity(oTable, mTestSettings.density);
+
+				return new Promise(function(resolve) {
+					oTable.attachEventOnce("rowsUpdated", resolve);
+				});
+			}).then(function() {
+				TableQUnitUtils.assertColumnHeaderHeights(assert, oTable, mTestSettings);
+			});
+		}
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Default height",
+				density: sDensity,
+				expectedHeight: TableUtils.DefaultRowHeight[sDensity === "sapUiSizeCondensed" ? "sapUiSizeCompact" : sDensity]
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Default height with large content",
+				density: sDensity,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight)",
+				density: sDensity,
+				rowHeight: 55,
+				expectedHeight: 56
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (columnHeaderHeight)",
+				density: sDensity,
+				columnHeaderHeight: 55,
+				expectedHeight: 55
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight = columnHeaderHeight)",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 55,
+				expectedHeight: 55
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight < columnHeaderHeight)",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 80,
+				expectedHeight: 80
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight > columnHeaderHeight)",
+				density: sDensity,
+				rowHeight: 80,
+				columnHeaderHeight: 55,
+				expectedHeight: 55
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight) with large content",
+				density: sDensity,
+				rowHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (columnHeaderHeight) with large content",
+				density: sDensity,
+				columnHeaderHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight = columnHeaderHeight) with large content",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight < columnHeaderHeight) with large content",
+				density: sDensity,
+				rowHeight: 55,
+				columnHeaderHeight: 80,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height (rowHeight > columnHeaderHeight) with large content",
+				density: sDensity,
+				rowHeight: 80,
+				columnHeaderHeight: 55,
+				labelHeight: 87,
+				expectedHeight: 87 + iPadding
+			});
+		});
+
+		pSequence = pSequence.then(function() {
+			oTable.insertColumn(new Column({
+				label: new Text({text: "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"}),
+				template: new HeightTestControl(),
+				width: "100px"
+			}), 1);
+
+			oCore.applyChanges();
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("rowsUpdated", resolve);
+			});
+		}).then(function() {
+			var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
+			var iHeightWithoutIcons = aRowDomRefs[0].getBoundingClientRect().height;
+			var iFixedPartHeight;
+			var iScrollablePartHeight;
+
+			oTable.getColumns()[1].setSorted(true);
+			oTable.getColumns()[1].setFiltered(true);
+			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
+			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
+			assert.ok(iFixedPartHeight > iHeightWithoutIcons, "Height increased after adding icons");
+			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after adding icons");
+
+			oTable.getColumns()[1].setSorted(false);
+			oTable.getColumns()[1].setFiltered(false);
+			iFixedPartHeight = aRowDomRefs[0].getBoundingClientRect().height;
+			iScrollablePartHeight = aRowDomRefs[1].getBoundingClientRect().height;
+			assert.strictEqual(iFixedPartHeight, iHeightWithoutIcons, "After removing the icons, the height is the same as before");
+			assert.strictEqual(iFixedPartHeight, iScrollablePartHeight, "Fixed and scrollable part have the same height after removing icons");
+		}).then(function() {
+			TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
+		});
+
+		return pSequence;
 	});
 
 	QUnit.test("Equal widths", function(assert) {

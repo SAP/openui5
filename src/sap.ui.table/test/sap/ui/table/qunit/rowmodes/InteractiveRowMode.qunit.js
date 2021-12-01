@@ -16,20 +16,15 @@ sap.ui.define([
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
+	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
 	QUnit.module("Legacy support", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				visibleRowCountMode: VisibleRowCountMode.Interactive,
-				visibleRowCount: 5,
-				fixedRowCount: 1,
-				fixedBottomRowCount: 2,
-				minAutoRowCount: 3,
-				rowHeight: 9,
 				rows: {path: "/"},
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
 			});
-			this.oMode = this.oTable._getRowMode();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -37,13 +32,20 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instance", function(assert) {
-		assert.ok(TableUtils.isA(this.oMode, "sap.ui.table.rowmodes.InteractiveRowMode"),
+		assert.ok(TableUtils.isA(this.oTable._getRowMode(), "sap.ui.table.rowmodes.InteractiveRowMode"),
 			"The table creates an instance of sap.ui.table.rowmodes.InteractiveRowMode");
 	});
 
 	QUnit.test("Property getters", function(assert) {
-		var oTable = this.oTable;
-		var oMode = this.oMode;
+		var oTable = TableQUnitUtils.createTable({
+			visibleRowCountMode: VisibleRowCountMode.Interactive,
+			visibleRowCount: 5,
+			fixedRowCount: 1,
+			fixedBottomRowCount: 2,
+			minAutoRowCount: 3,
+			rowHeight: 9
+		});
+		var oMode = oTable._getRowMode();
 
 		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
@@ -57,11 +59,16 @@ sap.ui.define([
 		oMode.setMinRowCount(10);
 		oMode.setRowContentHeight(10);
 
-		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
-		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 2, "The fixed bottom row count is taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 3, "The minimum row count is taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 9, "The row content height is taken from the table");
+		assert.strictEqual(oMode.getRowCount(), 5,
+			"After setting the property on the mode, the row count is still taken from the table");
+		assert.strictEqual(oMode.getFixedTopRowCount(), 1,
+			"After setting the property on the mode, the fixed row count is still taken from the table");
+		assert.strictEqual(oMode.getFixedBottomRowCount(), 2,
+			"After setting the property on the mode, the fixed bottom row count is still taken from the table");
+		assert.strictEqual(oMode.getMinRowCount(), 3,
+			"After setting the property on the mode, the minimum row count is still taken from the table");
+		assert.strictEqual(oMode.getRowContentHeight(), 9,
+			"After setting the property on the mode, the row content height is still taken from the table");
 
 		oTable.setVisibleRowCount(10);
 		oTable.setFixedRowCount(2);
@@ -69,17 +76,20 @@ sap.ui.define([
 		oTable.setMinAutoRowCount(4);
 		oTable.setRowHeight(14);
 
-		assert.strictEqual(oMode.getRowCount(), 10, "The row count is taken from the table");
-		assert.strictEqual(oMode.getFixedTopRowCount(), 2, "The fixed row count is taken from the table");
-		assert.strictEqual(oMode.getFixedBottomRowCount(), 3, "The fixed bottom row count is taken from the table");
-		assert.strictEqual(oMode.getMinRowCount(), 4, "The minimum row count is taken from the table");
-		assert.strictEqual(oMode.getRowContentHeight(), 14, "The row content height is taken from the table");
+		assert.strictEqual(oMode.getRowCount(), 10,
+			"After setting the property on the table, the new row count is taken from the table");
+		assert.strictEqual(oMode.getFixedTopRowCount(), 2,
+			"After setting the property on the table, the new fixed row count is taken from the table");
+		assert.strictEqual(oMode.getFixedBottomRowCount(), 3,
+			"After setting the property on the table, the new fixed bottom row count is taken from the table");
+		assert.strictEqual(oMode.getMinRowCount(), 4,
+			"After setting the property on the table, the new minimum row count is taken from the table");
+		assert.strictEqual(oMode.getRowContentHeight(), 14,
+			"After setting the property on the table, the new row content height is taken from the table");
 	});
 
 	QUnit.test("Row height", function(assert) {
 		var oTable = this.oTable;
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var sequence = Promise.resolve();
 
 		oTable.addColumn(new Column({template: new HeightTestControl()}));
@@ -100,65 +110,67 @@ sap.ui.define([
 			});
 		}
 
-		test({
-			title: "Default height",
-			density: "sapUiSizeCozy",
-			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCozy
-		});
-
-		test({
-			title: "Default height",
-			density: "sapUiSizeCompact",
-			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCompact
-		});
-
-		test({
-			title: "Default height",
-			density: "sapUiSizeCondensed",
-			expectedHeight: TableUtils.DefaultRowHeight.sapUiSizeCondensed
-		});
-
-		test({
-			title: "Default height",
-			density: undefined,
-			expectedHeight: TableUtils.DefaultRowHeight.undefined
-		});
-
 		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Default height with large content",
+				title: "Default height",
 				density: sDensity,
-				templateHeight: 87,
-				expectedHeight: 88
+				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
 			});
 		});
 
 		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Application defined height",
+				title: "Default height; With large content",
 				density: sDensity,
-				rowHeight: 55,
-				expectedHeight: 56
+				templateHeight: TableUtils.DefaultRowHeight[sDensity] * 2,
+				expectedHeight: TableUtils.DefaultRowHeight[sDensity] * 2 + 1
 			});
 		});
 
 		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Application defined height with large content",
+				title: "Application-defined height; Less than default",
 				density: sDensity,
-				rowHeight: 55,
-				templateHeight: 87,
-				expectedHeight: 88
+				rowHeight: 20,
+				expectedHeight: 21
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height; Less than default; With large content",
+				density: sDensity,
+				rowHeight: 20,
+				templateHeight: 100,
+				expectedHeight: 101
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height; Greater than default",
+				density: sDensity,
+				rowHeight: 100,
+				expectedHeight: 101
+			});
+		});
+
+		aDensities.forEach(function(sDensity) {
+			test({
+				title: "Application-defined height; Greater than default; With large content",
+				density: sDensity,
+				rowHeight: 100,
+				templateHeight: 120,
+				expectedHeight: 121
 			});
 		});
 
 		return sequence.then(function() {
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
+			TableQUnitUtils.setDensity(oTable, "sapUiSizeCozy");
 		});
 	});
 
-	QUnit.module("Row heights", {
+	QUnit.module("Row height", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new InteractiveRowMode(),
@@ -174,14 +186,13 @@ sap.ui.define([
 			});
 		},
 		afterEach: function() {
+			TableQUnitUtils.setDensity(this.oTable, "sapUiSizeCozy");
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("Content row height", function(assert) {
+	QUnit.test("Content", function(assert) {
 		var oTable = this.oTable;
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
 
 		function test(mTestSettings) {
@@ -199,42 +210,52 @@ sap.ui.define([
 
 		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Row height should be fixed to default height",
+				title: "Default height",
 				density: sDensity,
 				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Row height should be fixed to default height",
+				title: "Default height; With large content",
 				density: sDensity,
 				templateHeight: TableUtils.DefaultRowHeight[sDensity] * 2,
 				expectedHeight: TableUtils.DefaultRowHeight[sDensity]
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Application defined height should override default height",
+				title: "Application-defined height; Less than default",
 				density: sDensity,
 				rowContentHeight: 20,
 				expectedHeight: 21
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Application defined height should override default height",
+				title: "Application-defined height; Less than default; With large content",
 				density: sDensity,
 				rowContentHeight: 20,
 				templateHeight: 100,
 				expectedHeight: 21
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Application defined height should override default height",
+				title: "Application-defined height; Greater than default",
 				density: sDensity,
 				rowContentHeight: 100,
 				expectedHeight: 101
 			});
+		});
 
+		aDensities.forEach(function(sDensity) {
 			test({
-				title: "Application defined height should override default height",
+				title: "Application-defined height; Greater than default; With large content",
 				density: sDensity,
 				rowContentHeight: 100,
 				templateHeight: 120,
@@ -242,19 +263,12 @@ sap.ui.define([
 			});
 		});
 
-		return pSequence.then(function() {
-			oTable.destroy();
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
-		});
+		return pSequence;
 	});
 
-	QUnit.test("Header row height", function(assert) {
+	QUnit.test("Header", function(assert) {
 		var oTable = this.oTable;
-		var oBody = document.body;
-		var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 		var pSequence = Promise.resolve();
-		var iPadding = 14;
 
 		function test(mTestSettings) {
 			pSequence = pSequence.then(function() {
@@ -274,30 +288,12 @@ sap.ui.define([
 			test({
 				title: "Row content height should not apply to header rows",
 				density: sDensity,
-				labelHeight: 87,
-				expectedHeight: 87 + iPadding
-			});
-
-			test({
-				title: "Row content height should not apply to header rows",
-				density: sDensity,
 				rowContentHeight: 55,
 				expectedHeight: TableUtils.DefaultRowHeight[sDensity === "sapUiSizeCondensed" ? "sapUiSizeCompact" : sDensity]
 			});
-
-			test({
-				title: "Row content height should not apply to header rows",
-				density: sDensity,
-				columnHeaderHeight: 55,
-				expectedHeight: 55
-			});
 		});
 
-		return pSequence.then(function() {
-			oTable.destroy();
-			oBody.classList.remove("sapUiSizeCompact");
-			oBody.classList.add("sapUiSizeCozy");
-		});
+		return pSequence;
 	});
 
 	QUnit.module("Get contexts", {
