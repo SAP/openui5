@@ -21,7 +21,6 @@ sap.ui.define([
 			});
 
 			this.getView().setModel(oViewModel, "view");
-			this.getView().setModel("cm", new ConditionModel());
 
 			UIComponent.getRouterFor(this).getRoute("authordetails").attachPatternMatched(this._onRouteMatched, this);
 
