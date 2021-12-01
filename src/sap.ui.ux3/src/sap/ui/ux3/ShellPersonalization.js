@@ -132,20 +132,43 @@ sap.ui.define([
 		if (!ShellPersonalization._bOriginalSettingsInitialized) {
 			ShellPersonalization._bOriginalSettingsInitialized = true;
 
-			var mAllParameters = Parameters.get();
-			var gradientTop = mAllParameters["sap.ui.ux3.Shell:sapUiUx3ShellGradientTop"];
-			var gradientBottom = mAllParameters["sap.ui.ux3.Shell:sapUiUx3ShellGradientBottom"];
+			var sGradientColorTop,
+				sGradientColorBottom,
+				mParams = Object.assign({
+					// add base styles as default
+					"sapUiUx3ShellGradientTop": "#000000",
+					"sapUiUx3ShellGradientBottom": "#000000"
+				}, Parameters.get({
+					name: ["sapUiUx3ShellGradientTop", "sapUiUx3ShellGradientBottom"],
+					callback: function (_mParams) {
+						this._calcGradient(_mParams["sapUiUx3ShellGradientTop"], _mParams["sapUiUx3ShellGradientBottom"]);
+						this.invalidate();
+					}.bind(this)
+				}));
 
-			if (Device.browser.firefox) {
-				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-moz-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
-			} else if (Device.browser.webkit) {
-				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-webkit-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
-			}
+			sGradientColorTop = mParams["sapUiUx3ShellGradientTop"];
+			sGradientColorBottom = mParams["sapUiUx3ShellGradientBottom"];
+
+			this._calcGradient(sGradientColorTop, sGradientColorBottom);
 		}
 
 		return ShellPersonalization.ORIGINAL_SETTINGS;
 	};
 
+	/**
+	 * Calculates the gradient style setting.
+	 *
+	 * @param {string} sGradientColorTop The top setting
+	 * @param {string} sGradientColorBottom The bottom setting
+	 * @private
+	 */
+	ShellPersonalization.prototype._calcGradient = function(sGradientColorTop, sGradientColorBottom) {
+		if (Device.browser.firefox) {
+			ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-moz-linear-gradient(top, " + sGradientColorTop + " 0, " + sGradientColorBottom + " 108px, " + sGradientColorBottom + ")";
+		} else if (Device.browser.webkit) {
+			ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-webkit-linear-gradient(top, " + sGradientColorTop + " 0, " + sGradientColorBottom + " 108px, " + sGradientColorBottom + ")";
+		}
+	};
 
 
 	/**
