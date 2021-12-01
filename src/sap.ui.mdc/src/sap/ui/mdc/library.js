@@ -120,12 +120,26 @@ sap.ui.define([
 		noLibraryCSS: false
 	});
 
+	/* eslint-disable no-undef */
+	/**
+	 * The SAPUI5 library that contains the metadata-driven controls and other entities.
+	 *
+	 * SAP Internal
+	 * This library is restricted to use by SAP internal projects only.
+	 *
+	 * @namespace
+	 * @alias sap.ui.mdc
+	 * @author SAP SE
+	 * @version ${version}
+	 * @since 1.80
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement. A general availability of sap.ui.mdc will be announced via the usual channels.
+	 */
+	 var thisLib = sap.ui.mdc;
+	 /* eslint-enable no-undef */
 
-
-
-
-
-/**
+	 /**
 	 *
 	 * Interface for valuehelp containers / contents supporting typeahead functionality
 	 *
@@ -752,25 +766,6 @@ sap.ui.define([
 	 * @private
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
-
-	/* eslint-disable no-undef */
-	/**
-	 * The SAPUI5 library that contains the metadata-driven controls and other entities.
-	 *
-	 * SAP Internal
-	 * This library is restricted to use by SAP internal projects only.
-	 *
-	 * @namespace
-	 * @alias sap.ui.mdc
-	 * @author SAP SE
-	 * @version ${version}
-	 * @since 1.80
-	 * @private
-	 * @ui5-restricted sap.fe
-	 * @experimental As of version 1.54 Disclaimer: Usage Restrictions: The components of this library are under development and documented as private. Their APIs are subject to change and should not be used in productive scenarios without further agreement. A general availability of sap.ui.mdc will be announced via the usual channels.
-	 */
-	var thisLib = sap.ui.mdc;
-	/* eslint-enable no-undef */
 
 	/**
 	 * Defines the personalization mode of the filter bar.
