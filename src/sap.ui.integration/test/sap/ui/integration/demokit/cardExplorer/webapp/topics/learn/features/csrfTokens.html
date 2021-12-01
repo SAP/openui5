@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>CSRF Tokens</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1>
+				CSRF Tokens
+			</h1>
+			<h2 id="overview">
+				Overview
+			</h2>
+			<p>
+				A CSRF (Cross Site Request Forgery) Token is a secret, unique and unpredictable value a
+				server-side application generates in order to protect CSRF vulnerable resources.
+
+				The tokens are generated and submitted by the server-side
+				application in a subsequent HTTP request made by the client.
+			</p>
+			<h2 id="inTheManifest">
+				In the manifest
+			</h2>
+			<p>
+				Card developers describe the CSRF Tokens in the <code>configuration</code> section,
+				<code>csrfTokens</code> subsection of the manifest.
+				These tokens can be referred inside a data request using a placeholder like
+				<code>{{CSRFTokens.myCSRFToken}}</code>. See the example below.
+			</p>
+			<h3>CSRF Token properties:</h3>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>data</td>
+						<td><a href="../../../index.html#/learn/features/data"
+							   target="_parent">Data</a></td>
+						<td>Yes</td>
+						<td>The data section</td>
+						<td>1.23.0</td>
+						<td>1.97</td>
+					</tr>
+				</table>
+			</div>
+			<h2 id="inTheHostEnvironment">
+				In the host environment
+			</h2>
+			<p>
+				The CSRF Tokens can be resolved by the host application developer.
+				For detailed information about the contribution from host environment, see
+				<a href="../../../index.html#/integrate/csrfTokens" target="_parent">Integrate CSRF Tokens</a>.
+			</p>
+			<h2 id="examples">
+				Example
+			</h2>
+			<p>An example with a card which fetches data and uses CSRF Tokens:</p>
+			<pre class="lang-json">
+"sap.card": {
+	"type": "List",
+	"configuration": {
+		"destinations": {
+			"ProductsMockServerWithCSRF": {
+				"name": "ProductsMockServerWithCSRF",
+				"label": "Products Mock CSRF",
+				"defaultUrl": "/getDataWithCSRF"
+			}
+		},
+		"csrfTokens": {
+			"token1": {
+				"data": {
+					"request": {
+						"url": "{{destinations.ProductsMockServerWithCSRF}}/Token",
+						"method": "HEAD",
+						"headers": {
+							"X-CSRF-Token": "Fetch"
+						}
+					}
+				}
+			}
+		}
+	},
+	"data": {
+		"request": {
+			"url": "{{destinations.ProductsMockServerWithCSRF}}/Products",
+			"parameters": {
+				"$format": "json"
+			},
+			"method": "GET",
+			"headers": {
+				"X-CSRF-Token": "{{csrfTokens.token1}}"
+			}
+		},
+		"path": "/data"
+	},
+	"header": {
+		"title": "Products",
+		"subTitle": "Weight Information",
+		"icon": {
+			"src": "sap-icon://product"
+		}
+	},
+	"content": {
+		"item": {
+			"title": "{Name}",
+			"info": {
+				"value": "{= format.unit(${Weight}, ${WeightUnit})}"
+			}
+		},
+		"maxItems": 4
+	}
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/data/csrf" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#inTheManifest">In The Manifest</a></div>
+			<div><a href="#inTheHostEnvironment">In The Host Environment</a></div>
+			<div><a href="#examples">Example</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

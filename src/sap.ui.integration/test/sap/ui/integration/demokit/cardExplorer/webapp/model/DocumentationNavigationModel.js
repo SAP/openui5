@@ -124,6 +124,12 @@ sap.ui.define([
 						key: 'cardActions'
 					},
 					{
+						title: 'CSRF Tokens',
+						target: 'learnDetail',
+						key: 'csrfTokens',
+						experimental: true
+					},
+					{
 						title: 'Data',
 						target: 'learnDetail',
 						key: 'data'
