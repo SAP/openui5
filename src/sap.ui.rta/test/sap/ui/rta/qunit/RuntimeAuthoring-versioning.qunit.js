@@ -232,7 +232,7 @@ sap.ui.define([
 			});
 			this.mParsedHash = {
 				params: {
-					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
 				}
 			};
 			this.oReloadInfo = {
@@ -503,7 +503,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when something can be undone", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
-				version: 1
+				version: "1"
 			});
 
 			sandbox.stub(this.oRta, "canUndo").returns(true);
@@ -517,10 +517,10 @@ sap.ui.define([
 
 		QUnit.test("when the displayed version and the in the event are the same", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
-				version: 1
+				version: "1"
 			});
 
-			this.oRta._oVersionsModel.setProperty("/displayedVersion", 1);
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", "1");
 
 			this.oRta._onSwitchVersion(oEvent);
 
@@ -530,7 +530,7 @@ sap.ui.define([
 		QUnit.test("when no version is in the url and the app", function (assert) {
 			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
-				version: 1
+				version: "1"
 			});
 
 			var oCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation").resolves();
@@ -542,7 +542,7 @@ sap.ui.define([
 				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
 				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
 				assert.equal(oLoadVersionArguments.selector, this.oRootControl, "with the selector");
-				assert.equal(oLoadVersionArguments.version, 1, ", the version number");
+				assert.equal(oLoadVersionArguments.version, "1", ", the version number");
 				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
 				assert.equal(oCrossAppNavigationStub.callCount, 1, "a cross app navigation was triggered");
 				fnDone();
@@ -766,6 +766,7 @@ sap.ui.define([
 			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
 			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
 			var oStopStub = sandbox.stub(this.oRta, "stop");
+			var oCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation").resolves();
 			var mParsedHash = {
 				params: {
 					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
@@ -797,7 +798,7 @@ sap.ui.define([
 					assert.equal(oDiscardCallPropertyBag.selector, this.oRta.getRootControlInstance(), "with the correct selector");
 					assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
 					assert.equal(oStopStub.callCount, 1, "then stop was called");
-					assert.equal(this.oRestartFlpStub.callCount, 1, "a restart was triggered");
+					assert.equal(oCrossAppNavigationStub.callCount, 1, "a restart was triggered");
 				}.bind(this));
 		});
 	});
@@ -824,7 +825,7 @@ sap.ui.define([
 		QUnit.test("when no version is in the url and the app", function (assert) {
 			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
-				version: 1
+				version: "1"
 			});
 
 			var oSetUriParameterStub = sandbox.stub(this.oRta, "_setUriParameter").resolves();
@@ -846,7 +847,7 @@ sap.ui.define([
 		QUnit.test("when version parameter is in the url no hard reload is triggered", function (assert) {
 			var fnDone = assert.async();
 			var oEvent = new Event("someEventId", undefined, {
-				version: 1
+				version: "1"
 			});
 
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);

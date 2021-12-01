@@ -939,16 +939,16 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._onSwitchVersion = function (oEvent) {
-		var nVersion = oEvent.getParameter("version");
-		var nDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
+		var sVersion = oEvent.getParameter("version");
+		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
 
-		if (nVersion === nDisplayedVersion) {
+		if (sVersion === sDisplayedVersion) {
 			// already displayed version needs no switch
 			return;
 		}
 
 		if (this.canUndo()) {
-			this._nSwitchToVersion = nVersion;
+			this._sSwitchToVersion = sVersion;
 			Utils.showMessageBox("warning", "MSG_SWITCH_VERSION_DIALOG", {
 				titleKey: "TIT_SWITCH_VERSION_DIALOG",
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO, MessageBox.Action.CANCEL],
@@ -956,22 +956,20 @@ sap.ui.define([
 			}).then(function (sAction) {
 				if (sAction === MessageBox.Action.YES) {
 					this._serializeToLrep(this)
-						.then(this._switchVersion.bind(this, this._nSwitchToVersion));
+						.then(this._switchVersion.bind(this, this._sSwitchToVersion));
 				} else if (sAction === MessageBox.Action.NO) {
 					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
 					this.getCommandStack().removeAllCommands(true);
-					this._switchVersion(this._nSwitchToVersion);
+					this._switchVersion(this._sSwitchToVersion);
 				}
 				return undefined;
 			}.bind(this));
 			return;
 		}
-		this._switchVersion(nVersion);
+		this._switchVersion(sVersion);
 	};
 
-	RuntimeAuthoring.prototype._switchVersion = function (nVersion) {
-		var sVersion = nVersion.toString();
-
+	RuntimeAuthoring.prototype._switchVersion = function (sVersion) {
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 
 		if (!FlexUtils.getUshellContainer()) {
@@ -988,7 +986,7 @@ sap.ui.define([
 		VersionsAPI.loadVersionForApplication({
 			selector: this.getRootControlInstance(),
 			layer: this.getLayer(),
-			version: nVersion
+			version: sVersion
 		});
 		var aVersionsParameter = mParsedHash.params[sap.ui.fl.Versions.UrlParameter];
 		if (

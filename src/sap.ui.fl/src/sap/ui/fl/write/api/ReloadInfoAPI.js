@@ -230,7 +230,7 @@ sap.ui.define([
 		 */
 		initialDraftGotActivated: function(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
-				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, oReloadInfo.URLParsingService);
+				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft}, oReloadInfo.URLParsingService);
 				return !VersionsAPI.isDraftAvailable(oReloadInfo) && bUrlHasVersionParameter;
 			}
 			return false;
@@ -260,10 +260,10 @@ sap.ui.define([
 
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, oReloadInfo.URLParsingService);
+			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft}, oReloadInfo.URLParsingService);
 
-			if (oReloadInfo.activeVersion > sap.ui.fl.Versions.Original) {
-				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion.toString()}, oReloadInfo.URLParsingService);
+			if (oReloadInfo.activeVersion !== sap.ui.fl.Versions.Original) {
+				oReloadInfo.activeVersionNotSelected = oReloadInfo.activeVersion && !ReloadInfoAPI.hasVersionParameterWithValue({value: oReloadInfo.activeVersion}, oReloadInfo.URLParsingService);
 			}
 			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer}, oReloadInfo.URLParsingService);
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);

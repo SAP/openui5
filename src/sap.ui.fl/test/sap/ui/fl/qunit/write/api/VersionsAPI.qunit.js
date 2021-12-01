@@ -145,8 +145,8 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
 				{version: sap.ui.fl.Versions.Draft},
-				{version: 2},
-				{version: 1}
+				{version: "2"},
+				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
@@ -164,8 +164,8 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{version: 2},
-				{version: 1}
+				{version: "2"},
+				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
@@ -249,8 +249,8 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
 				{version: sap.ui.fl.Versions.Draft},
-				{version: 2},
-				{version: 1}
+				{version: "2"},
+				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
@@ -268,8 +268,8 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{version: 2},
-				{version: 1}
+				{version: "2"},
+				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 
@@ -292,8 +292,8 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			var aReturnedVersions = [
-				{version: 2},
-				{version: 1}
+				{version: "2"},
+				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
 

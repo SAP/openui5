@@ -657,10 +657,10 @@ sap.ui.define([
 	 * @param {boolean} [bSkipUpdateCache] - If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
-	 * @param {number} nParentVersion - Parent version
+	 * @param {string} sParentVersion - Parent version
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, nParentVersion) {
+	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, sParentVersion) {
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
 		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges);
 		var bIsCondensingEnabled = (
@@ -688,7 +688,7 @@ sap.ui.define([
 						layer: sLayer,
 						transport: sRequest,
 						isLegacyVariant: false,
-						parentVersion: nParentVersion
+						parentVersion: sParentVersion
 					}).then(function(oResponse) {
 						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache, true);
 						return oResponse;
@@ -700,7 +700,7 @@ sap.ui.define([
 						flexObjects: this._prepareDirtyChanges(aCondensedChanges),
 						transport: sRequest,
 						isLegacyVariant: false,
-						parentVersion: nParentVersion
+						parentVersion: sParentVersion
 					}).then(function(oResponse) {
 						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache);
 						return oResponse;
@@ -710,7 +710,7 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache, nParentVersion);
+		return this.saveSequenceOfDirtyChanges(aDirtyChangesClone, bSkipUpdateCache, sParentVersion);
 	};
 
 	/**
@@ -721,12 +721,12 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change[]} aDirtyChanges - Array of dirty changes to be saved
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
-	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
+	 * @param {string} [sParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, nParentVersion) {
+	ChangePersistence.prototype.saveSequenceOfDirtyChanges = function(aDirtyChanges, bSkipUpdateCache, sParentVersion) {
 		var oFirstNewChange;
-		if (nParentVersion) {
+		if (sParentVersion) {
 			// in case of changes saved for a draft only the first writing operation must have the parentVersion targeting the basis
 			// followup changes must point the the existing draft created with the first request
 			var aNewChanges = aDirtyChanges.filter(function (oChange) {
@@ -737,23 +737,23 @@ sap.ui.define([
 
 		return aDirtyChanges.reduce(function(oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
-				.then(this._performSingleSaveAction(oDirtyChange, oFirstNewChange, nParentVersion))
+				.then(this._performSingleSaveAction(oDirtyChange, oFirstNewChange, sParentVersion))
 				.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
-	ChangePersistence.prototype._performSingleSaveAction = function(oDirtyChange, oFirstChange, nParentVersion) {
+	ChangePersistence.prototype._performSingleSaveAction = function(oDirtyChange, oFirstChange, sParentVersion) {
 		return function() {
 			switch (oDirtyChange.getState()) {
 				case Change.states.NEW:
-					if (nParentVersion !== undefined) {
-						nParentVersion = oDirtyChange === oFirstChange ? nParentVersion : sap.ui.fl.Versions.Draft;
+					if (sParentVersion !== undefined) {
+						sParentVersion = oDirtyChange === oFirstChange ? sParentVersion : sap.ui.fl.Versions.Draft;
 					}
 					return Storage.write({
 						layer: oDirtyChange.getLayer(),
 						flexObjects: [oDirtyChange.getDefinition()],
 						transport: oDirtyChange.getRequest(),
-						parentVersion: nParentVersion
+						parentVersion: sParentVersion
 					});
 				case Change.states.DELETED:
 					return Storage.remove({

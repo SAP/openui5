@@ -269,7 +269,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given only a draft is present in the back end", function (assert) {
 			var aVersions = [{
-				version: 0,
+				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			}];
 			var sText = this.oToolbar.formatVersionButtonText(aVersions, sap.ui.fl.Versions.Draft);
@@ -285,7 +285,7 @@ sap.ui.define([
 				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			}, {
-				version: 1,
+				version: "1",
 				title: "Version Title",
 				type: "active"
 			}];
@@ -329,10 +329,10 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given a version without any title is the first and active version in the list", function(assert) {
 			var aVersions = [{
-				version: 1,
+				version: "1",
 				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, "1");
 			var sExpectedText = this.oTextResources.getText("TIT_VERSION_1");
 			assert.equal(sText, sExpectedText, "then the button text matches 'Version 1'");
 			assert.equal(this.oVersionButton.hasStyleClass(this.sDraftVersionAccent), false, "and the button color is not a draft accent");
@@ -342,11 +342,11 @@ sap.ui.define([
 		QUnit.test("Given a version with a title is the first and active version in the list", function(assert) {
 			var sTitle = "Version Title";
 			var aVersions = [{
-				version: 1,
+				version: "1",
 				title: sTitle,
 				type: "active"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, "1");
 			this.oVersionsModel.updateBindings();
 
 			assert.equal(sText, sTitle, "then the button text matches the version title");
@@ -359,7 +359,7 @@ sap.ui.define([
 				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			}, {
-				version: 1,
+				version: "1",
 				title: "Version Title",
 				type: "active"
 			}];
@@ -391,15 +391,15 @@ sap.ui.define([
 				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			}, {
-				version: 2,
+				version: "2",
 				title: sVersionTitle2,
 				type: "active"
 			}, {
-				version: 1,
+				version: "1",
 				title: "Version Title 1",
 				type: "inactive"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, 2);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, "2");
 
 			assert.equal(sText, sVersionTitle2, "then the button text matches 'Draft'");
 			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
@@ -413,15 +413,15 @@ sap.ui.define([
 				version: sap.ui.fl.Versions.Draft,
 				type: "draft"
 			}, {
-				version: 2,
+				version: "2",
 				title: "Version Title 2",
 				type: "active"
 			}, {
-				version: 1,
+				version: "1",
 				title: sVersionTitle1,
 				type: "inactive"
 			}];
-			var sText = this.oToolbar.formatVersionButtonText(aVersions, 1);
+			var sText = this.oToolbar.formatVersionButtonText(aVersions, "1");
 
 			assert.equal(sText, sVersionTitle1, "then the button text matches 'Draft'");
 			assert.notOk(this.oDiscardDraftButton.getVisible(), "the discard button is hidden");
@@ -546,12 +546,12 @@ sap.ui.define([
 		});
 	});
 
-	function createControlWithStubbedBindingContextFireSwitchAndAssert(assert, oToolbar, nVersion) {
+	function createControlWithStubbedBindingContextFireSwitchAndAssert(assert, oToolbar, sVersion) {
 		var done = assert.async();
 
 		oToolbar.attachSwitchVersion(function (oEvent) {
-			if (nVersion !== undefined) {
-				assert.equal(oEvent.getParameter("version"), nVersion, "the event was fired with the bound version number");
+			if (sVersion !== undefined) {
+				assert.equal(oEvent.getParameter("version"), sVersion, "the event was fired with the bound version number");
 			} else {
 				assert.equal(oEvent.getParameter("version"), sap.ui.fl.Versions.Original, "the event was fired with the original app number");
 			}
@@ -562,12 +562,12 @@ sap.ui.define([
 			getSource: function () {
 				return {
 					getBindingContext: function () {
-						if (!Number.isInteger(nVersion)) {
+						if (!sVersion) {
 							return undefined;
 						}
 						return {
 							getProperty: function () {
-								return nVersion;
+								return sVersion;
 							}
 						};
 					}
@@ -602,7 +602,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a version entry of an created version was selected", function(assert) {
-			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar, 5);
+			createControlWithStubbedBindingContextFireSwitchAndAssert(assert, this.oToolbar, "5");
 		});
 	});
 

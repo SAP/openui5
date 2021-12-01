@@ -364,7 +364,7 @@ sap.ui.define([
 				assert.deepEqual(oResponse, [{
 					version: sap.ui.fl.Versions.Draft
 				}, {
-					version: 1
+					version: "1"
 				}], "the versions list is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], "/flexKeyuser/flex/keyuser/v1/versions/com.sap.test.app?sap-language=en&limit=10", "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
@@ -402,7 +402,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
 			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, {
-					version: 1
+					version: "1"
 				}, "the activated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
@@ -434,7 +434,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
 			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, {
-					version: 1
+					version: "1"
 				}, "the reactivated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
@@ -466,7 +466,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
 			return KeyUserConnector.versions.activate(mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, {
-					version: 1
+					version: "1"
 				}, "the activated version is returned correctly");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");

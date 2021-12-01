@@ -358,7 +358,7 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: 2
+				activeVersion: "2"
 			};
 
 			var mParsedHash = {
@@ -383,7 +383,7 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: 2,
+				activeVersion: "2",
 				URLParsingService: {
 					parseShellHash: function() {
 						return {
@@ -675,7 +675,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft.toString()}, this.oURLParsingService);
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: sap.ui.fl.Versions.Draft}, this.oURLParsingService);
 			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
 		});
 

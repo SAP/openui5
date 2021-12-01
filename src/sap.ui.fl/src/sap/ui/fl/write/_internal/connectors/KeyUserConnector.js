@@ -74,7 +74,7 @@ sap.ui.define([
 	}
 
 	function renameVersionNumberProperty(oVersion) {
-		oVersion.version = oVersion.versionNumber;
+		oVersion.version = oVersion.versionNumber.toString();
 		delete oVersion.versionNumber;
 		return oVersion;
 	}

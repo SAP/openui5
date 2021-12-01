@@ -225,7 +225,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions with entries", function (assert) {
-			var nActiveVersion = 2;
+			var sActiveVersion = "2";
 
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -235,13 +235,13 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a long while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oSecondVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: nActiveVersion
+				version: sActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -256,12 +256,12 @@ sap.ui.define([
 				assert.deepEqual(aVersions, aReturnedVersions, "then the versions list is returned");
 				assert.deepEqual(aVersions[0].type, "active", "the first version is the 'active' one");
 				assert.deepEqual(aVersions[1].type, "inactive", "the second version is the 'inactive' one");
-				assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
+				assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 			});
 		});
 
 		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function (assert) {
-			var nActiveVersion = 2;
+			var sActiveVersion = "2";
 			//set displayedVersion to 1
 			_prepareUriParametersFromQuery("1");
 			var mPropertyBag = {
@@ -272,13 +272,13 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a long while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oSecondVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: nActiveVersion
+				version: sActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -303,12 +303,12 @@ sap.ui.define([
 				assert.equal(oData.draftAvailable, false, "as well as draftAvailable false");
 				assert.equal(oData.activateEnabled, true, "as well as activateEnabled true");
 				assert.equal(oData.displayedVersion, "1", "the displayedVersion set 1");
-				assert.equal(oData.activeVersion, nActiveVersion, "and the activeVersion set to 2");
+				assert.equal(oData.activeVersion, sActiveVersion, "and the activeVersion set to 2");
 			});
 		});
 
 		QUnit.test("and a connector is configured which returns a list of versions with entries and a draft", function (assert) {
-			var nActiveVersion = 2;
+			var sActiveVersion = "2";
 
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -318,13 +318,13 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a long while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oSecondVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: nActiveVersion
+				version: sActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -342,7 +342,7 @@ sap.ui.define([
 				assert.deepEqual(aVersions[1].type, "active", "the second version is the 'active' one");
 				assert.deepEqual(aVersions[2].type, "inactive", "the third version is the 'inactive' one");
 				assert.equal(oResponse.getProperty("/displayedVersion"), sap.ui.fl.Versions.Draft, ", a displayedVersion property set to the draft version");
-				assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
+				assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 			});
 		});
 	});
@@ -370,9 +370,9 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function (assert) {
-			var nActiveVersion = 2;
+			var sActiveVersion = 2;
 			//set displayedVersion to draft
-			_prepareUriParametersFromQuery(sap.ui.fl.Versions.Draft.toString());
+			_prepareUriParametersFromQuery(sap.ui.fl.Versions.Draft);
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -384,17 +384,17 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a long while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oSecondVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 2
+				version: "2"
 			};
 
 			var aReturnedVersions = [
-				{version: 0},
+				{version: sap.ui.fl.Versions.Draft},
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -404,7 +404,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				version: nActiveVersion
+				version: sActiveVersion
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -421,15 +421,15 @@ sap.ui.define([
 					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
 					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
 					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
-					assert.equal(oResponse.getProperty("/displayedVersion"), nActiveVersion, ", a displayedVersion property set to the active version");
-					assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, ", the active version was determined correct");
-					assert.equal(oResponse.getProperty("/persistedVersion"), nActiveVersion, "and the persisted version was determined correct");
+					assert.equal(oResponse.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
+					assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, ", the active version was determined correct");
+					assert.equal(oResponse.getProperty("/persistedVersion"), sActiveVersion, "and the persisted version was determined correct");
 				});
 		});
 
 		QUnit.test("to reactivate an old version and a connector is configured which returns a list of versions while a draft does NOT exists", function (assert) {
 			var sReference = "com.sap.app";
-			var nActiveVersion = 3;
+			var sActiveVersion = "3";
 			//set displayedVersion to 1
 			_prepareUriParametersFromQuery("1");
 			var mPropertyBag = {
@@ -442,13 +442,13 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oSecondVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 2
+				version: "2"
 			};
 
 			var aReturnedVersions = [
@@ -461,7 +461,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				version: nActiveVersion
+				version: sActiveVersion
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -478,8 +478,8 @@ sap.ui.define([
 					assert.equal(aVersions[1], oSecondVersion, "where the old version is the second");
 					assert.equal(aVersions[2], oFirstVersion, "where the older version is the third");
 					assert.equal(oResponse.getProperty("/backendDraft"), false, "backendDraft property was set to false");
-					assert.equal(oResponse.getProperty("/displayedVersion"), nActiveVersion, ", a displayedVersion property set to the active version");
-					assert.equal(oResponse.getProperty("/activeVersion"), nActiveVersion, "and the active version was determined correct");
+					assert.equal(oResponse.getProperty("/displayedVersion"), sActiveVersion, ", a displayedVersion property set to the active version");
+					assert.equal(oResponse.getProperty("/activeVersion"), sActiveVersion, "and the active version was determined correct");
 				});
 		});
 
@@ -495,7 +495,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var aReturnedVersions = [
@@ -507,7 +507,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				version: 2
+				version: "2"
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -530,7 +530,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oDraft = {
@@ -547,7 +547,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				version: 2
+				version: "2"
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -600,7 +600,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oDraft = {
@@ -618,7 +618,7 @@ sap.ui.define([
 			var oActivatedVersion = {
 				activatedBy: "qunit",
 				activatedAt: "just now",
-				version: 2
+				version: "2"
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -697,7 +697,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oDraft = {
@@ -764,7 +764,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var aReturnedVersions = [
@@ -809,7 +809,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var aReturnedVersions = [
@@ -842,7 +842,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var aReturnedVersions = [
@@ -871,7 +871,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var aReturnedVersions = [
@@ -904,7 +904,7 @@ sap.ui.define([
 			var oFirstVersion = {
 				activatedBy: "qunit",
 				activatedAt: "a while ago",
-				version: 1
+				version: "1"
 			};
 
 			var oDraft = {

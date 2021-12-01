@@ -29,7 +29,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Further properties
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.reference Flexibility reference
-		 * @param {number} [mPropertyBag.version] Version number of the adaptation to be loaded
+		 * @param {string} [mPropertyBag.version] Version of the adaptation to be loaded
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
