@@ -27,7 +27,8 @@ sap.ui.define([
 		appdescr_ovp_addNewCard: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ovp/AddNewCard"),
 		appdescr_ovp_removeCard: requireAsync.bind(this, "sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard"),
 		appdescr_ui_generic_app_addNewObjectPage: requireAsync.bind(this, "sap/suite/ui/generic/template/manifestMerger/AddNewObjectPage"),
-		appdescr_ui_generic_app_changePageConfiguration: requireAsync.bind(this, "sap/suite/ui/generic/template/manifestMerger/ChangePageConfiguration")
+		appdescr_ui_generic_app_changePageConfiguration: requireAsync.bind(this, "sap/suite/ui/generic/template/manifestMerger/ChangePageConfiguration"),
+		appdescr_fe_changePageConfiguration: requireAsync.bind(this, "sap/fe/core/manifestMerger/ChangePageConfiguration")
 	};
 	return Registration;
 });
