@@ -378,15 +378,19 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderDayNames = function(oRm, oControl, oLocaleData) {
-			var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek(),
+			var iAPIFirstDayOfWeek = oControl.getFirstDayOfWeek(),
+				iFirstDayOfWeek = iAPIFirstDayOfWeek > 0 ? iAPIFirstDayOfWeek : oLocaleData.getFirstDayOfWeek(),
 				sId = oControl.getId(),
 				sDayId,
 				sCalendarType = Core.getConfiguration().getCalendarType(),
 				aWeekDays = oLocaleData.getDaysStandAlone("abbreviated", sCalendarType),
 				aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType),
-				oFirstRenderedDate = CalendarUtils._getFirstDateOfWeek(CalendarDate.fromLocalJSDate(oControl.getStartDate())),
+				oStartDate = new Date(oControl.getStartDate()),
+				oFirstRenderedDate,
 				iDayIndex;
 
+			oStartDate.setDate(oStartDate.getDate() - oStartDate.getDay() + iFirstDayOfWeek);
+			oFirstRenderedDate = CalendarDate.fromLocalJSDate(oStartDate);
 			oRm.openStart("div", sId + "-Names");
 			oRm.class("sapMSPCMonthDayNames");
 			oRm.openEnd(); // span element

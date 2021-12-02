@@ -46,7 +46,18 @@ function (library, Log, Element) {
 				/**
 				 * Adds a title for the view
 				 */
-				title : { type : "string", group : "Appearance" }
+				title : { type : "string", group : "Appearance" },
+
+				/**
+				 * If set, the first day of the displayed week is this day. Valid values are 0 to 6 starting on Sunday.
+				 * If there is no valid value set, the default of the used locale is used.
+				 *
+				 * Note: This property will only have effect in Week view and Month view of the SinglePlanningCalendar,
+				 * but it wouldn't have effect in WorkWeek view.
+				 *
+				 * @since 1.98
+				 */
+				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
 
 			}
 		}
