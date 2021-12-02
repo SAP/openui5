@@ -314,19 +314,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns contexts for the list.
+	 * Returns contexts for the list without gaps.
 	 *
 	 * @param {number} [iStartIndex=0]
 	 *   The start index of the requested contexts
 	 * @param {number} [iLength]
 	 *   The requested amount of contexts
 	 * @return {sap.ui.model.odata.v2.Context[]}
-	 *   The available contexts for the given range
+	 *   The available contexts for the given range; if there is no context for an index in this
+	 *   range, the succeeding indexes are not considered so that the returned array has no gaps
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype._getContexts = function (iStartIndex, iLength) {
-		var oContext, i, sKey,
+		var oContext, i, iEndIndex, sKey,
+			bAtEnd = this.isCreationAreaAtEnd(),
 			aContexts = [],
 			aCreatedContexts = this._getCreatedContexts(),
 			iCreated = aCreatedContexts.length,
@@ -338,21 +340,24 @@ sap.ui.define([
 		if (!iLength) {
 			iLength = this._getMaximumLength();
 		}
-		for (i = iStartIndex; i < iCreated && iLength > 0; i += 1) {
-			aContexts.push(aCreatedContexts[i]);
-			iLength -= 1;
-		}
-		iStartIndex = Math.max(0, iStartIndex - iCreated);
-		// Loop through known data and check whether we already have all rows loaded
-		for (i = iStartIndex; iLength > 0; i += 1) {
-			sKey = this.aKeys[i];
-			if (!sKey) {
-				break;
+		iEndIndex = iStartIndex + iLength;
+		for (i = iStartIndex; i < iEndIndex; i += 1) {
+			if (!bAtEnd && i < iCreated) { // creation area at the start
+				oContext = aCreatedContexts[i];
+			} else if (bAtEnd && i >= this.iLength) { // creation area at the end
+				if (i - this.iLength >= iCreated) {
+					break;
+				}
+				oContext = aCreatedContexts[i - this.iLength];
+			} else { // backend contexts
+				sKey = this.aKeys[bAtEnd ? i : i - iCreated];
+				if (!sKey) {
+					break; // avoid gaps
+				}
+				oContext = this.oModel.getContext('/' + sKey,
+					sDeepPath + sKey.substr(sKey.indexOf("(")));
 			}
-			oContext = this.oModel.getContext('/' + sKey,
-				sDeepPath + sKey.substr(sKey.indexOf("(")));
 			aContexts.push(oContext);
-			iLength -= 1;
 		}
 
 		return aContexts;
@@ -1673,8 +1678,11 @@ sap.ui.define([
 	 *   The initial data for the created entity; see <code>mParameters.properties</code> parameter
 	 *   of {@link sap.ui.model.odata.v2.ODataModel#createEntry}
 	 * @param {boolean} [bAtEnd=false]
-	 *   Whether the entity is inserted at the end of the list. When creating multiple entities,
-	 *   this parameter must have the same value for each entity.
+	 *   Whether the entity is inserted at the end of the list. The first insertion determines the
+	 *   overall position of created contexts within the binding's context list. Every succeeding
+	 *   insertion is relative to the created contexts within this list. Note: the order of created
+	 *   contexts in the binding does not necessarily correspond to the order of the resulting back
+	 *   end creation requests
 	 * @param {object} mParameters
 	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#createEntry}
 	 *   where only the following subset of these is supported.
@@ -1694,9 +1702,9 @@ sap.ui.define([
 	 *   The context representing the created entity
 	 * @throws {Error}
 	 *   If a relative binding is unresolved, if the binding's context is transient, if
-	 *   <code>bAtEnd</code> is truthy, if the collection data has been read via
-	 *   <code>$expand</code> together with the parent entity, if the metadata is not yet available,
-	 *   or if there are unsupported parameters in the given parameters map; see
+	 *   <code>bAtEnd</code> is truthy and the binding's length is not final, if the collection data
+	 *   has been read via <code>$expand</code> together with the parent entity, if the metadata is
+	 *   not yet available, or if there are unsupported parameters in the given parameters map; see
 	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry} for additional errors thrown
 	 *
 	 * @private
@@ -1708,10 +1716,15 @@ sap.ui.define([
 				context : this.oContext,
 				properties : oInitialData,
 				refreshAfterChange : false
-			};
+			},
+			bCreationAreaAtEnd = this.isCreationAreaAtEnd();
 
-		if (bAtEnd === true) {
-			throw new Error("Option 'bAtEnd' is not supported");
+		bAtEnd = !!bAtEnd;
+		if (bCreationAreaAtEnd === undefined) {
+			bCreationAreaAtEnd = bAtEnd;
+		}
+		if (bCreationAreaAtEnd && !this.bLengthFinal) {
+			throw new Error("Must know the final length to create at the end");
 		}
 		Object.keys(mParameters || {}).forEach(function (sParameterKey) {
 			if (!aCreateParametersAllowlist.includes(sParameterKey)) {
@@ -1734,7 +1747,7 @@ sap.ui.define([
 		Object.assign(mCreateParameters, mParameters);
 		oCreatedContext = this.oModel.createEntry(this.sPath, mCreateParameters);
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
-			this.sCreatedEntitiesKey);
+			this.sCreatedEntitiesKey, bAtEnd);
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oCreatedContext;
@@ -1803,6 +1816,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether the overall position of created contexts is at the end of the binding's
+	 * context list; this is determined by the first call to
+	 * {@link sap.ui.model.odata.v2.ODataListBinding#create}.
+	 *
+	 * @returns {boolean|undefined}
+	 *   Whether the overall position of created contexts is at the end; <code>undefined</code> if
+	 *   there are no created contexts
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.isCreationAreaAtEnd = function () {
+		return this.oModel._getCreatedContextsCache()
+			.isAtEnd(this.getResolvedPath(), this.sCreatedEntitiesKey);
+	};
+
+	/**
 	 * Gets the array of contexts for created entities, created via {@link #create}.
 	 *
 	 * @returns {sap.ui.model.odata.v2.Context[]} The array of contexts for created entities
@@ -1817,8 +1846,8 @@ sap.ui.define([
 	/**
 	 * Gets an object with the values for system query options $skip and $top based on the given
 	 * start index and length, both from control point of view. The number of entities created via
-	 * {@link #create} is considered for the <code>$skip</code> value, but it is not considered
-	 * for the <code>$top</code> value.
+	 * {@link #create} is considered for the <code>$skip</code> value if created at the beginning,
+	 * but it is not considered for the <code>$top</code> value.
 	 *
 	 * @param {number} iStartIndex The start index from control point of view
 	 * @param {number} iLength The length
@@ -1829,9 +1858,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength) {
-		var iSkip = Math.max(0, iStartIndex - this._getCreatedContexts().length),
+		var iCreatedContextsLength = this._getCreatedContexts().length,
+			iSkip = this.isCreationAreaAtEnd()
+				? iStartIndex
+				: Math.max(0, iStartIndex - iCreatedContextsLength),
 			iTop = this.bLengthFinal && iSkip + iLength >= this.iLength
-				? this.iLength - iSkip
+				? Math.max(0, this.iLength - iSkip)
 				: iLength;
 
 		return {skip : iSkip, top : iTop};

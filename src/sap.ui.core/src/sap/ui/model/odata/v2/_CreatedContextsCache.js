@@ -31,10 +31,14 @@ sap.ui.define([
 	 *   The resolved binding path
 	 * @param {string} sListID
 	 *   The identifier for the list showing the data
+	 * @param {boolean} bAtEnd
+	 *   Whether the context is added at the end; if set to <code>false</code>, the context is added
+	 *   at the beginning. The first call determines the overall position of the contexts.
 	 *
 	 * @private
 	 */
-	_CreatedContextsCache.prototype.addContext = function (oCreatedContext, sPath, sListID) {
+	_CreatedContextsCache.prototype.addContext = function (oCreatedContext, sPath, sListID,
+			bAtEnd) {
 		var aContexts, mListIDToContexts;
 
 		mListIDToContexts = this.mCache[sPath];
@@ -44,9 +48,14 @@ sap.ui.define([
 		aContexts = mListIDToContexts[sListID];
 		if (!aContexts) {
 			aContexts = mListIDToContexts[sListID] = [];
+			// store bAtEnd initially because it will determine the overall position of the contexts
+			aContexts.bAtEnd = bAtEnd;
 		}
-		// currently we support only bAtEnd === false in ODataListBinding#create
-		aContexts.unshift(oCreatedContext);
+		if (bAtEnd) {
+			aContexts.push(oCreatedContext);
+		} else {
+			aContexts.unshift(oCreatedContext);
+		}
 	};
 
 	/**
@@ -102,7 +111,7 @@ sap.ui.define([
 	/**
 	 * Gets the contexts for created entities for the given path and list ID.
 	 *
-	 * @param {string} [sPath]
+	 * @param {string} sPath
 	 *   The resolved binding path
 	 * @param {string} sListID
 	 *   The identifier for the list showing the data
@@ -117,6 +126,27 @@ sap.ui.define([
 			aContexts = mListIDToContexts && mListIDToContexts[sListID];
 
 		return aContexts ? aContexts.slice() : [];
+	};
+
+	/**
+	 * Returns whether the contexts for created entities for the given path and list ID are added
+	 * at the end.
+	 *
+	 * @param {string} sPath
+	 *   The resolved binding path
+	 * @param {string} sListID
+	 *   The identifier for the list showing the data
+	 * @returns {boolean|undefined}
+	 *   Whether the contexts are added at the end; <code>undefined</code> if there are no contexts
+	 *   for the given path and list ID
+	 *
+	 * @private
+	 */
+	_CreatedContextsCache.prototype.isAtEnd = function (sPath, sListID) {
+		var mListIDToContexts = this.mCache[sPath],
+			aContexts = mListIDToContexts && mListIDToContexts[sListID];
+
+		return aContexts && aContexts.bAtEnd;
 	};
 
 	/**
