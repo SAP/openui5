@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, asODataParentBinding,
 	SubmitMode, _Helper) {
+	/*eslint camelcase: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";

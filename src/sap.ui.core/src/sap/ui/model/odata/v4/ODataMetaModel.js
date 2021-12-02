@@ -47,7 +47,6 @@ sap.ui.define([
 		EdmDate, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, Raw, SByte, Single,
 		Stream, String, TimeOfDay, URI) {
 	"use strict";
-	/*global Map */
 	/*eslint max-nested-callbacks: 0 */
 
 	var Any = ManagedObject.extend("sap.ui.model.odata.v4._any", {

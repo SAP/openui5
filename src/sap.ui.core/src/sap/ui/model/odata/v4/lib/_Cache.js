@@ -951,6 +951,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
+	// eslint-disable-next-line valid-jsdoc -- in the subclasses the function does return a value
 	_Cache.prototype.getValue = function (_sPath) {
 		throw new Error("Unsupported operation");
 	};
