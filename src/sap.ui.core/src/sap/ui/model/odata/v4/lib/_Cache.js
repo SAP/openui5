@@ -215,7 +215,7 @@ sap.ui.define([
 							fnCallback();
 						}
 						that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
-							[], [sEntityPath]);
+							{}, [sEntityPath]);
 					}),
 				iIndex === undefined // single element or kept-alive not in list
 					&& !bDoNotRequestCount
@@ -1242,7 +1242,7 @@ sap.ui.define([
 				} else if (aReadResult.length === 0) {
 					that.removeElement(aElements, iIndex, sPredicate, sPath);
 					that.oRequestor.getModelInterface()
-						.reportStateMessages(that.sResourcePath, [], [sPath + sPredicate]);
+						.reportStateMessages(that.sResourcePath, {}, [sPath + sPredicate]);
 					fnOnRemove(false);
 				} else if (bRemoveFromCollection) {
 					that.removeElement(aElements, iIndex, sPredicate, sPath);
