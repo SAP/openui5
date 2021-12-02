@@ -1536,9 +1536,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets the security token handlers for an OData V4 model. See chapter "Security Token
-		 * Handling" in
-		 * {@link topic:9613f1f2d88747cab21896f7216afdac Model Instantiation and Data Access}.
+		 * Sets the security token handlers for an OData V4 model. See chapter
+		 * {@link topic:9613f1f2d88747cab21896f7216afdac/section_STH Security Token Handling}.
 		 *
 		 * @param {function[]} aSecurityTokenHandlers - The security token handlers
 		 * @public
