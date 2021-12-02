@@ -78,13 +78,15 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 // adds space underneath the footer (when page in non-scrollable mode)
-.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer:first-child {
-	max-height: ~"calc(100% - 4rem)";
+.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer > div::after {
+	content: '';
+	display: block;
+	height: 4rem;
 }
 
 .sapUiSizeCompact {
-	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer:first-child {
-		max-height: ~"calc(100% - 3.5rem)";
+	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer > div::after {
+		height: 3.5rem;
 	}
 }
 
