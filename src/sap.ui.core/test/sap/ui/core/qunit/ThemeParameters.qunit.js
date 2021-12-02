@@ -505,4 +505,36 @@ sap.ui.define([
 		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
 		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon2, true), [], "InnerIcon2 - TestScope1 - no scope defined ==> empty scope chain");
 	});
+
+
+	QUnit.test("After Theme Change: Using async Parameters.get", function(assert) {
+		var done = assert.async();
+		var fnContinue = function() {
+			sap.ui.getCore().detachThemeChanged(fnContinue);
+			done();
+		};
+
+		var fnThemeChanged = function () {
+			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
+
+			sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib14"]).then(function () {
+				Parameters.get({
+					name: "sapUiThemeParamForLib14",
+					callback: function (oParamResult) {
+						assert.deepEqual(oParamResult, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
+						assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
+
+						sap.ui.getCore().attachThemeChanged(fnContinue);
+						sap.ui.getCore().applyTheme("sap_hcb");
+					}
+				});
+				assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
+				sap.ui.getCore().applyTheme("base");
+			});
+		};
+
+		sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib13"]).then(function () {
+			sap.ui.getCore().attachThemeChanged(fnThemeChanged);
+		});
+	});
 });
