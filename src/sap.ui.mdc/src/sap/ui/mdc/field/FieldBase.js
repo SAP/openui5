@@ -2696,6 +2696,7 @@ sap.ui.define([
 			var oContent = this.getControlForSuggestion();
 			this._bIgnoreInputValue = false;
 			oContent.setDOMValue("");
+			this._sFilterValue = "";
 			if (this.getMaxConditions() !== 1 && !this._oContentFactory.getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
 				// clear "value" property of MultiInput as there might be an old value from a invalid input before
 				oContent.setValue();
