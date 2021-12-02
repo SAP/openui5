@@ -61,6 +61,7 @@ sap.ui.define([
 			oDeliveryDate.setFullYear(oDeliveryDate.getFullYear() + 1);
 			oDeliveryDate.setMilliseconds(0);
 			this.byId("SO_2_SOITEM").getBinding("items").create({
+				CurrencyCode : "EUR",
 				DeliveryDate : oDeliveryDate.toJSON(),
 				GrossAmount : "42.0",
 				ProductID : "HT-1000",
