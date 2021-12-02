@@ -26,8 +26,8 @@
  * @class sap.ui.support.ExecutionScope
  */
 sap.ui.define(
-	["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/Element"],
-	function (jQuery, Component, Element) {
+	["sap/base/Log", "sap/ui/core/Component", "sap/ui/core/Element"],
+	function (Log, Component, Element) {
 		"use strict";
 
 		var _context = null,
@@ -291,7 +291,7 @@ sap.ui.define(
 				 * @alias sap.ui.support.ExecutionScope.getLoggedObjects
 				 */
 				getLoggedObjects: function (type) {
-					var log = jQuery.sap.log.getLogEntries(),
+					var log = Log.getLogEntries(),
 						loggedObjects = [], elemIds;
 
 					// Add logEntries that have support info object,
@@ -312,7 +312,7 @@ sap.ui.define(
 								logEntry.supportInfo.type === type || type === undefined,
 							scopeMatch =
 								!hasElemId ||
-								jQuery.inArray(logEntry.supportInfo.elementId, elemIds) > -1;
+								elemIds.indexOf(logEntry.supportInfo.elementId) > -1;
 
 						/**
 						 * Give the developer the ability to pass filtering function

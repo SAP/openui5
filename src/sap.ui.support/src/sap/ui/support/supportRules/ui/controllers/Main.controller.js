@@ -94,7 +94,7 @@ sap.ui.define([
 			VersionInfo.load({ library: "sap.ui.core" }).then(function (oCoreLibInfo) {
 				CommunicationBus.publish(channelNames.POST_UI_INFORMATION, {
 					version: oCoreLibInfo,
-					location: new URI(jQuery.sap.getModulePath("sap.ui.support"), window.location.origin + window.location.pathname).toString()
+					location: new URI(sap.ui.require.toUrl("sap/ui/support"), window.location.origin + window.location.pathname).toString()
 				});
 			});
 

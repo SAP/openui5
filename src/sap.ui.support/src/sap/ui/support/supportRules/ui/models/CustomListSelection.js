@@ -78,7 +78,7 @@ sap.ui.define([
 
 	function doCallOnHelper(sName, oHelper) {
 		return function() {
-			//jQuery.sap.log.warning("Function called on helper: " + sName);
+			//Log.warning("Function called on helper: " + sName);
 			return TABLESELECTIONADAPTER[sName].apply(oHelper, arguments);
 		};
 	}

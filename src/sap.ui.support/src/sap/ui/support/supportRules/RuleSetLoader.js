@@ -8,7 +8,9 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/CommunicationBus",
@@ -16,9 +18,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/util/EvalUtils",
-	"sap/ui/support/supportRules/util/Utils"
+	"sap/ui/support/supportRules/util/Utils",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/URI"
 ], function (
-	jQuery,
+	Log,
+	extend,
+	ObjectPath,
 	VersionInfo,
 	RuleSet,
 	CommunicationBus,
@@ -26,7 +32,9 @@ sap.ui.define([
 	RuleSerializer,
 	constants,
 	EvalUtils,
-	Utils
+	Utils,
+	jQuery,
+	URI
 	) {
 		"use strict";
 
@@ -46,7 +54,7 @@ sap.ui.define([
 		})();
 
 		var sCustomSuffix = "sprt";
-		var sSupportModulePath = jQuery.sap.getModulePath("sap.ui.support");
+		var sSupportModulePath = sap.ui.require.toUrl("sap/ui/support");
 		var sSupportModuleRootPath = sSupportModulePath.replace('/sap/ui/support', '');
 		var sAbsUrl = getAbsoluteUrl(sSupportModuleRootPath);
 
@@ -213,7 +221,7 @@ sap.ui.define([
 		RuleSetLoader._fetchLibraryFiles = function (aLibNames, fnProcessFile, bSupressProgressReporting) {
 			var aAjaxPromises = [],
 				that = this,
-				supportModulePath = jQuery.sap.getModulePath("sap.ui.support"),
+				supportModulePath = sap.ui.require.toUrl("sap/ui/support"),
 				supportModulesRoot = supportModulePath.replace("sap/ui/support", ""),
 				bCanLoadInternalRules = Utils.canLoadInternalRules(),
 				bHasInternalRules = bCanLoadInternalRules && aLibNames.internalRules.length > 0,
@@ -290,26 +298,30 @@ sap.ui.define([
 				return null;
 			}
 
-			var libPath = libraryName.replace(/\./g, "/");
-			var customizableLibName = libraryName;
+			var libResourceName = libraryName.replace(/\./g, "/");
+			var customizableLibResourceName = libResourceName;
 			var loadFromSupportOrigin = this._getLoadFromSupportOrigin();
+			var pathsConfig = {};
 
 			// Prepare modules root string
 			if (loadFromSupportOrigin) {
 				// In order to avoid module name collision
 				// we need to generate an internal library name
-				customizableLibName += '.' + sCustomSuffix;
-				jQuery.sap.registerModulePath(customizableLibName, supportModulesRoot + libraryName.replace(/\./g, "/"));
+				customizableLibResourceName += '/' + sCustomSuffix;
+				pathsConfig[customizableLibResourceName] = supportModulesRoot + libResourceName;
 			}
 
-			var internalLibName = customizableLibName + '.internal';
-			var libraryInternalResourceRoot = supportModulesRoot.replace('resources/', '') + 'test-resources/' + libPath + '/internal';
+			var internalLibResourceName = customizableLibResourceName + '/internal';
+			var libraryInternalResourceRoot = supportModulesRoot.replace('resources/', '') + 'test-resources/' + libResourceName + '/internal';
+			pathsConfig[internalLibResourceName] = libraryInternalResourceRoot;
 
-			jQuery.sap.registerModulePath(internalLibName, libraryInternalResourceRoot);
+			sap.ui.loader.config({
+				paths: pathsConfig
+			});
 
 			return {
-				internalLibName: internalLibName,
-				customizableLibName: customizableLibName
+				internalLibName: internalLibResourceName.replace(/\//g, "."),
+				customizableLibName: customizableLibResourceName.replace(/\//g, ".")
 			};
 		};
 
@@ -346,7 +358,7 @@ sap.ui.define([
 				var sNormalizedLibName,
 					oLibSupportCopy,
 					oLibrary,
-					oLibSupport = jQuery.sap.getObject(sLibName).library.support;
+					oLibSupport = ObjectPath.get(sLibName).library.support;
 
 				if (!oLibSupport) {
 					// This case usually happens when the library flag bExport is set to true.
@@ -354,7 +366,7 @@ sap.ui.define([
 				}
 
 				sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", "");
-				oLibSupportCopy = jQuery.extend({}, oLibSupport);
+				oLibSupportCopy = extend({}, oLibSupport);
 				oLibrary = this._mRuleSets[sNormalizedLibName];
 
 				if (!(oLibSupportCopy.ruleset instanceof RuleSet)) {
@@ -362,14 +374,14 @@ sap.ui.define([
 				}
 
 				if (oLibrary) {
-					oLibrary.ruleset._mRules = jQuery.extend(oLibrary.ruleset._mRules, oLibSupportCopy.ruleset._mRules);
+					oLibrary.ruleset._mRules = extend(oLibrary.ruleset._mRules, oLibSupportCopy.ruleset._mRules);
 				} else {
 					oLibrary = oLibSupportCopy;
 				}
 
 				this._mRuleSets[sNormalizedLibName] = oLibrary;
 			} catch (e) {
-				jQuery.sap.log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Failed to load RuleSet for " + sLibName + " library", e);
+				Log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Failed to load RuleSet for " + sLibName + " library", e);
 			}
 		};
 
@@ -381,8 +393,8 @@ sap.ui.define([
 		 */
 		RuleSetLoader._getLoadFromSupportOrigin = function () {
 			var bLoadFromSupportOrigin = false;
-			var coreUri = new window.URI(jQuery.sap.getModulePath("sap.ui.core"));
-			var supportUri = new window.URI(jQuery.sap.getModulePath("sap.ui.support"));
+			var coreUri = new URI(sap.ui.require.toUrl("sap/ui/core"));
+			var supportUri = new URI(sap.ui.require.toUrl("sap/ui/support"));
 
 			// If loading support tool from different origin,
 			// i.e. protocol or host (host name + port) different
@@ -488,7 +500,7 @@ sap.ui.define([
 			var mRules = {};
 
 			Object.keys(this._mRuleSets).map(function (sLibName) {
-				mRules = jQuery.extend(mRules, this._mRuleSets[sLibName].ruleset.getRules());
+				mRules = extend(mRules, this._mRuleSets[sLibName].ruleset.getRules());
 			}, this);
 
 			return mRules;

@@ -1,9 +1,10 @@
 /*global QUnit,sinon*/
 sap.ui.define([
+		"sap/base/Log",
 		"sap/ui/support/Bootstrap",
 		"sap/ui/support/supportRules/RuleSet",
 		"sap/ui/support/supportRules/Storage"],
-	function (Bootstrap, RuleSet, Storage) {
+	function (Log, Bootstrap, RuleSet, Storage) {
 		"use strict";
 
 	var createValidRule = function (id) {
@@ -23,7 +24,7 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			var done = assert.async();
 
-			sinon.spy(jQuery.sap.log, "error");
+			sinon.spy(Log, "error");
 			this.ruleSet = new RuleSet({
 				name: "sap.ui.testName"
 			});
@@ -36,72 +37,72 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			RuleSet.clearAllRuleSets();
-			jQuery.sap.log.error.restore();
+			Log.error.restore();
 		}
 	});
 
 	QUnit.test("Creating rule set with no name", function (assert) {
 		var ruleSet = new RuleSet();
 		assert.strictEqual(ruleSet._oSettings.name, undefined, "There is no set name in the RuleSet !");
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error.");
+		assert.equal(Log.error.calledOnce, true, "should throw an error.");
 	});
 
 	QUnit.test("Adding a rule", function (assert) {
 		this.ruleSet.addRule(createValidRule("id1"));
-		assert.equal(jQuery.sap.log.error.callCount, 0, "should not throw an error");
+		assert.equal(Log.error.callCount, 0, "should not throw an error");
 	});
 
 	QUnit.test("Adding a rule withoutId", function (assert) {
 		this.ruleSet.addRule({ id: undefined });
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule with duplicated ID", function (assert) {
 		this.ruleSet.addRule(createValidRule("id1"));
 		this.ruleSet.addRule({ id: 'id1' });
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without check function", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.check;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without title", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.title;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without description", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.description;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule without resolution", function (assert) {
 		var settingsObj = createValidRule("id1");
 		delete settingsObj.resolution;
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule with wrong audience", function (assert) {
 		var settingsObj = createValidRule("id1");
 		settingsObj.audiences.push("Non existing audience");
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Adding a rule with wrong category", function (assert) {
 		var settingsObj = createValidRule("id1");
 		settingsObj.categories.push("Non existing category");
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.test("Rule minversion check", function (assert) {
@@ -150,7 +151,7 @@ sap.ui.define([
 		var settingsObj = createValidRule("id1");
 		settingsObj.categories.push("Non existing category");
 		this.ruleSet.addRule(settingsObj);
-		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+		assert.equal(Log.error.calledOnce, true, "should throw an error");
 	});
 
 	QUnit.module("RuleSet static functions test", {

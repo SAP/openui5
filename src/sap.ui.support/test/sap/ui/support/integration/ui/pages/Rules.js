@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Opa5, AggregationFilled, Press, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/thirdparty/jquery"
+], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, jQuery) {
 	"use strict";
 
 	var sTreeTableId = "ruleList",

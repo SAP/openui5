@@ -5,8 +5,8 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
-	function (jQuery, Component, ToolsAPI, URI) {
+sap.ui.define(["sap/base/util/LoaderExtensions", 'sap/base/security/encodeXML', "sap/ui/core/Component", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
+	function (LoaderExtensions, encodeXML, Component, ToolsAPI, URI) {
 	"use strict";
 
 	/**
@@ -44,9 +44,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/suppor
 		this._oSupportAssistantInfo.versionAsString = "not available";
 
 		if (oVersion) {
-			this._oSupportAssistantInfo.versionAsString = jQuery.sap.escapeHTML(oVersion.version || "");
-			this._oSupportAssistantInfo.versionAsString += " (built at " + jQuery.sap.escapeHTML(oVersion.buildTimestamp || "");
-			this._oSupportAssistantInfo.versionAsString += ", last change " + jQuery.sap.escapeHTML(oVersion.scmRevision || "") + ")";
+			this._oSupportAssistantInfo.versionAsString = encodeXML(oVersion.version || "");
+			this._oSupportAssistantInfo.versionAsString += " (built at " + encodeXML(oVersion.buildTimestamp || "");
+			this._oSupportAssistantInfo.versionAsString += ", last change " + encodeXML(oVersion.scmRevision || "") + ")";
 		}
 	};
 
@@ -112,13 +112,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Component", "sap/ui/core/suppor
 		};
 
 		//add absolute paths for resources
-		var aModules = jQuery.sap.getAllDeclaredModules();
+		var aModules = LoaderExtensions.getAllRequiredModules();
 		var aResults = [];
 		for (var i = 0; i < aModules.length; i++) {
 			aResults.push({
 				moduleName : aModules[i],
-				relativePath: jQuery.sap.getResourcePath(aModules[i]),
-				absolutePath: URI(jQuery.sap.getResourcePath(aModules[i])).absoluteTo(document.location.origin + document.location.pathname).toString()
+				relativePath: sap.ui.require.toUrl(aModules[i]),
+				absolutePath: URI(sap.ui.require.toUrl(aModules[i])).absoluteTo(document.location.origin + document.location.pathname).toString()
 			});
 		}
 		oTechData.resourcePaths = aResults;

@@ -1,8 +1,9 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
+	'sap/base/Log',
 	'sap/ui/support/supportRules/report/Archiver'],
-	function(Archiver) {
+	function(Log, Archiver) {
 		'use strict';
 
 		var createTestInfo = function (title) {
@@ -35,11 +36,11 @@ sap.ui.define([
 
 		QUnit.module('Archiver API test', {
 			beforeEach: function () {
-				sinon.spy(jQuery.sap.log, 'error');
+				sinon.spy(Log, 'error');
 				this.Archiver = new Archiver();
 			},
 			afterEach: function () {
-				jQuery.sap.log.error.restore();
+				Log.error.restore();
 				this.Archiver.clear();
 				delete this.Archiver;
 			}

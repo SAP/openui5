@@ -5,10 +5,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon",
-	"jquery.sap.sjax", // provides jQuery.sap.syncGet
 	"sap/ui/core/date/Gregorian" // indirect dependency, used by DateFormat for western locales
-], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, DateFormat, sinon, jQuery) {
+], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, DateFormat, jQuery, sinon) {
 	"use strict";
 
 	var sViewName = "Analysis",
@@ -143,7 +143,15 @@ sap.ui.define([
 					return this.waitFor({
 						id: "presetImport--fileUpload",
 						success: function(oFileUploader) {
-							var sFileContent = jQuery.sap.syncGet("test-resources/sap/ui/support/integration/ui/data/Presets/" + sFileName).data;
+							var sFileContent;
+							jQuery.ajax({
+								url: "test-resources/sap/ui/support/integration/ui/data/Presets/" + sFileName,
+								dataType: "text",
+								async: false,
+								success: function(data) {
+									sFileContent = data;
+								}
+							});
 
 							var oFile = new Blob(
 								[sFileContent],

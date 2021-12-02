@@ -5,10 +5,10 @@
 /**
  * Contains functionality that may be used trough the whole Support Assistant
  */
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/thirdparty/jquery"],
+	function(jQuery) {
 		"use strict";
-		var sInternalPingFilePath = jQuery.sap.getModulePath("sap.ui.support").replace(/(^|\/)resources\//, "$1test-resources/") + "/internal/.ping";
+		var sInternalPingFilePath = sap.ui.require.toUrl("sap/ui/support").replace(/(^|\/)resources\//, "$1test-resources/") + "/internal/.ping";
 
 		var Utils = {
 			bCanLoadInternalRules: null,

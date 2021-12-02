@@ -12,7 +12,8 @@ sap.ui.define([
 		'sap/m/Input',
 		'sap/m/List',
 		'sap/m/StandardListItem',
-		'sap/ui/core/Core'],
+		'sap/ui/core/Core',
+		'sap/base/Log'],
 	function(ExecutionScope,
 			 JSONModel,
 			 CustomData,
@@ -25,7 +26,8 @@ sap.ui.define([
 			 Input,
 			 List,
 			 StandardListItem,
-			 oCore) {
+			 oCore,
+			 Log) {
 		'use strict';
 
 		// list setup code copied from list.qunit
@@ -313,7 +315,7 @@ sap.ui.define([
 					]
 				});
 				this.page.placeAt("qunit-fixture");
-				sinon.stub(jQuery.sap.log, "getLogEntries", function fakeGetLog() {
+				sinon.stub(Log, "getLogEntries", function fakeGetLog() {
 					return [
 						{supportInfo: {type: "panel", elementId: "innerPanel"}},
 						{supportInfo: {}},
@@ -353,7 +355,7 @@ sap.ui.define([
 				this.es = null;
 				this.filteringFunction = null;
 				this.page.destroy();
-				jQuery.sap.log.getLogEntries.restore();
+				Log.getLogEntries.restore();
 			}
 		});
 
@@ -414,8 +416,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Containing none valid logs", function (assert) {
-			jQuery.sap.log.getLogEntries.restore();
-			sinon.stub(jQuery.sap.log, "getLogEntries", function fakeGetLog() {
+			Log.getLogEntries.restore();
+			sinon.stub(Log, "getLogEntries", function fakeGetLog() {
 				return [
 					{
 						component: "",

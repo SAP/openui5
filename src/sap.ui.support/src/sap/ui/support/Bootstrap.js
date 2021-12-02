@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.support.Bootstrap.
-sap.ui.define(["jquery.sap.global", "sap/base/Log"],
-	function (jQuery, Log) {
+sap.ui.define(["sap/base/Log"],
+	function (Log) {
 	"use strict";
 
 	Log.setLogEntriesLimit(Infinity);
@@ -33,9 +33,7 @@ sap.ui.define(["jquery.sap.global", "sap/base/Log"],
 					 * allowing the developers to pass custom data, that is later going to be added
 					 * to the executionScope of the rules
 					 */
-					if ('logSupportInfo' in jQuery.sap.log) {
-						jQuery.sap.log.logSupportInfo(true);
-					}
+					Log.logSupportInfo(true);
 				}
 			});
 		}

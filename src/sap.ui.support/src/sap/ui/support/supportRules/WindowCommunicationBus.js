@@ -8,8 +8,8 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/Log",
-	"jquery.sap.script"
-], function (BaseObject, Log, jQuery) {
+	"sap/base/util/isEmptyObject"
+], function (BaseObject, Log, isEmptyObject) {
 	"use strict";
 
 	/**
@@ -148,7 +148,7 @@ sap.ui.define([
 	 * @returns {boolean} true if the message is valid
 	 */
 	WindowCommunicationBus.prototype._validate = function (eMessage) {
-		if (jQuery.isEmptyObject(this._frame)) {
+		if (isEmptyObject(this._frame)) {
 			// there are no channels associated with this bus, or
 			// when loaded in a tool frame, the CommumnicationBus class will always have an empty 'frame' object.
 			// in this case, a message is sent from the opener to the tool frame and no validation is necessary

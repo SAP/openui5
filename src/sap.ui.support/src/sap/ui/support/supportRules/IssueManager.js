@@ -6,8 +6,8 @@
  * The IssueManager interface stores, groups and converts issues from the Core Object to a usable model by the Support Assistant.
  * Issues can be added only through the IssueManager using <code>addIssue</code> method.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/library", "sap/ui/support/supportRules/Constants"],
-	function (jQuery, BaseObject, library, constants) {
+sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/support/library", "sap/ui/support/supportRules/Constants"],
+	function (deepExtend, BaseObject, library, constants) {
 		"use strict";
 		/**
 		 * @type {object[]} _aIssues Issues stored in the IssueManager
@@ -136,11 +136,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/librar
 					group = {},
 					library = {},
 					rule = {},
-					rulesCopy = jQuery.extend(true, {}, rules),
-					issuesCopy = jQuery.extend(true, {}, issues);
+					rulesCopy = deepExtend({}, rules),
+					issuesCopy = deepExtend({}, issues);
 
 				for (group in rulesCopy) {
-					rulesViewModel[group] = jQuery.extend(true, {}, rulesCopy[group].ruleset._mRules);
+					rulesViewModel[group] = deepExtend({}, rulesCopy[group].ruleset._mRules);
 					library = rulesViewModel[group];
 
 					// Create non-enumerable properties
@@ -158,7 +158,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/librar
 					});
 
 					for (rule in rulesCopy[group].ruleset._mRules) {
-						library[rule] = jQuery.extend(true, [], library[rule]);
+						library[rule] = deepExtend([], library[rule]);
 
 						// Create non-enumerable properties
 						Object.defineProperty(library[rule], 'selected', {

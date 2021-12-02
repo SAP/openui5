@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global"],
-	function (jQuery) {
+sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function (Log, jQuery) {
 		"use strict";
 
 		function _isObject(data) {
@@ -210,7 +210,7 @@ sap.ui.define(["jquery.sap.global"],
 			var isDataAnObject = _isObject(data);
 
 			if (isDataAnObject === false) {
-				jQuery.sap.log.warning("The parameter should be an Object");
+				Log.warning("The parameter should be an Object");
 				return;
 			}
 
@@ -255,14 +255,14 @@ sap.ui.define(["jquery.sap.global"],
 			var selectedElement;
 
 			if (typeof elementID !== "string") {
-				jQuery.sap.log.warning("Please use a valid string parameter");
+				Log.warning("Please use a valid string parameter");
 				return;
 			}
 
 			selectedElement = this._ElementTreeContainer.querySelector("[data-id='" + elementID + "']");
 
 			if (selectedElement === null) {
-				jQuery.sap.log.warning("The selected element is not a child of the ElementTree");
+				Log.warning("The selected element is not a child of the ElementTree");
 				return;
 			}
 
@@ -291,7 +291,7 @@ sap.ui.define(["jquery.sap.global"],
 			html += this._createTreeContainer();
 
 			this._ElementTreeContainer.innerHTML = html;
-			// Save reverences for future use
+			// Save references for future use
 			this._setReferences();
 
 			if (this.getData() !== undefined) {

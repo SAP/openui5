@@ -5,15 +5,15 @@
 /**
  * Renders issues
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['sap/base/Log', 'sap/base/security/encodeXML'], function(Log, encodeXML) {
 	'use strict';
 
 	function getEscapedString(value) {
 		if (value) {
 			if (Array.isArray(value)) {
-				return jQuery.sap.escapeHTML(value.join(', '));
+				return encodeXML(value.join(', '));
 			} else {
-				return jQuery.sap.escapeHTML(value);
+				return encodeXML(value);
 			}
 		} else {
 			return '';
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			content += '</table>';
 		} catch (ex) {
-			jQuery.sap.log.warning('There was a problem extracting issues info.');
+			Log.warning('There was a problem extracting issues info.');
 			content = '';
 		}
 
@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			content += getSeverityFilter('Medium', severities['Medium'], false);
 			content += getSeverityFilter('Low', severities['Low'], false);
 		} catch (ex) {
-			jQuery.sap.log.warning('There was a problem creating severity filters.');
+			Log.warning('There was a problem creating severity filters.');
 			content = '';
 		}
 

@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/IssueManager",
-	"sap/ui/support/supportRules/RuleSerializer"
-], function (CommunicationBus, Channels, IssueManager, RuleSerializer) {
+	"sap/ui/support/supportRules/RuleSerializer",
+	"sap/ui/thirdparty/jquery"
+], function (CommunicationBus, Channels, IssueManager, RuleSerializer, jQuery) {
 	"use strict";
 
 	var CommunicationMock = {};
