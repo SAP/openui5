@@ -1158,15 +1158,13 @@ sap.ui.define([
 			"it does not contain the property 'ControllingArea'"
 		]
 	}, {
+		// CostElementText is the text for the dimension CostElement which gets automatically
+		// selected by the binding; CostElement does not need to be in the select, but
+		// CostElementText has to be
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
-			oCostElementText], // CostElementText is text for dimension CostElement which gets
-			// automatically selected by the binding
+			oCostElementText],
 		select : "CostCenter,Currency,ActualCosts,CostCenterText",
-		warnings : [
-			// only the associated property is contained in analytical info
-			"it does not contain the property 'CostElement'",
-			"it does not contain the property 'CostElementText'"
-		]
+		warnings : ["it does not contain the property 'CostElementText'"]
 	}, {
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostElementText,CostCenterText",
@@ -1251,10 +1249,6 @@ sap.ui.define([
 			"it contains the dimension property 'CostElement' which is not contained in the"
 				+ " analytical info (see updateAnalyticalInfo)"
 		]
-	}, {
-		analyticalInfo : [oCostCenterGrouped, oActualCostsTotal],
-		select : "CostCenter,ActualCosts,CostCenterText",
-		warnings : ["it does not contain the property 'Currency'"]
 	}, { // duplicate entries in select binding parameter
 		analyticalInfo : [oCostCenterGrouped, oActualCostsTotal, oPlannedCostsTotal],
 		select : "CostCenter,ActualCosts,Currency,CostCenterText,PlannedCosts,Currency,"
@@ -1353,6 +1347,19 @@ sap.ui.define([
 		additionalSelects : ["CostCenter Text"], // whitespace is not removed -> server error
 		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal],
 		select : "CostCenter,Currency,ActualCosts,CostCenter Text"
+	}, {
+		additionalSelects : [],
+		// CostElementText is text for dimension CostElement which gets automatically selected by
+		// the binding; CostElement does not need to be part of the select parameter
+		analyticalInfo : [oCostCenterGrouped, oCurrencyGrouped, oActualCostsTotal,
+			oCostElementText],
+		select : "CostCenter,Currency,ActualCosts,CostElementText"
+	}, {
+		additionalSelects : ["CostCenterText"],
+		// the oActualCostsTotal has the associated unit Currency which gets automatically selected
+		// by the binding; Currency does not need to be part of the select parameter
+		analyticalInfo : [oCostCenterGrouped, oActualCostsTotal],
+		select : "CostCenter,ActualCosts,CostCenterText"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAnalyticalInfo: additional selects - " + i, function (assert) {
 			var oBinding,
