@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon*/
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -1551,7 +1551,9 @@ sap.ui.define([
 	}
 
 	QUnit.test("showCurrentDateButton", function (assert) {
-		var oFocusDateSpy;
+		var oFakeNow = new Date(2021, 11, 31),
+			clock = sinon.useFakeTimers(oFakeNow.getTime()),
+			oFocusDateSpy;
 
 		// Prepare - day view
 		this.oCal1.displayDate(new Date(2020, 0, 1));
@@ -1607,6 +1609,30 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oCal1.getProperty("_currentPicker"), "month", "Navigation from year range to day view performed");
 		assert.strictEqual(oFocusDateSpy.callCount, 4, "Today is focused when used in year range view");
+
+		// Prepare
+		this.oCal1.setMaxDate(new Date(2020, 11, 31));
+
+		// Act
+		qutils.triggerEvent("click", this.oCal1.getId() + "--Head-today");
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery(document.activeElement).attr("id"), "Cal1--Month0-20201231", "Focused date is correct");
+
+		// Prepare
+		this.oCal1.setMaxDate(null);
+		this.oCal1.setMinDate(new Date(2022, 11, 31));
+
+		// Act
+		qutils.triggerEvent("click", this.oCal1.getId() + "--Head-today");
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(jQuery(document.activeElement).attr("id"), "Cal1--Month0-20221231", "Focused date is correct");
+
+		// Clean up
+		clock.restore();
 	});
 
 	QUnit.module("Misc");

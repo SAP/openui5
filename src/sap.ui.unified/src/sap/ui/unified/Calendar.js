@@ -1746,8 +1746,19 @@ sap.ui.define([
 	 * @private
 	 */
 	Calendar.prototype._handleCurrentDate = function() {
+		var oNow = new Date(),
+			oMaxDate = this.getMaxDate(),
+			oMinDate = this.getMinDate();
+
 		this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
-		this.focusDate(new Date());
+
+		if (oMaxDate && oMaxDate.getTime() < oNow.getTime()) {
+			this.focusDate(oMaxDate);
+		} else if (oMinDate && oMinDate.getTime() > oNow.getTime()) {
+			this.focusDate(oMinDate);
+		} else {
+			this.focusDate(oNow);
+		}
 	};
 
 	Calendar.prototype._getYearString = function () {
