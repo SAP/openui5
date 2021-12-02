@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/mvc/Controller",
 	"sap/f/FlexibleColumnLayout"
-], function (JSONModel, ResizeHandler, Controller, FlexibleColumnLayout) {
+], function (JSONModel, Controller, FlexibleColumnLayout) {
 	"use strict";
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.FlexibleColumnLayout", {
@@ -11,7 +10,6 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
 			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
-			ResizeHandler.register(this.getView().byId("fcl"), this._onResize.bind(this));
 		},
 
 		onBeforeRouteMatched: function(oEvent) {
@@ -87,11 +85,6 @@ sap.ui.define([
 			var oModel = this.getOwnerComponent().getModel();
 			var oUIState = this.getOwnerComponent().getHelper().getCurrentUIState();
 			oModel.setData(oUIState, true);
-		},
-
-		_onResize: function(oEvent) {
-			var bPhone = (oEvent.size.width < FlexibleColumnLayout.TABLET_BREAKPOINT);
-			this.getOwnerComponent().getModel().setProperty("/isPhone", bPhone);
 		},
 
 		onExit: function () {
