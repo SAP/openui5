@@ -222,7 +222,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 				},
 				plural: function() {
-					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL__PLURAL");
+					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME_PLURAL");
 				}
 			},
 			aggregations: {
