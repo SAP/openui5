@@ -343,7 +343,7 @@ function(
 
 		this.setShowValueHelp(true);
 		this.setShowSuggestion(true);
-		this._getSuggestionsPopoverInstance()._oPopover
+		this._getSuggestionsPopover().getPopover()
 			.attachBeforeOpen(function () {
 				if (that.isMobileDevice() !== true) {
 					return;
@@ -354,6 +354,11 @@ function(
 				this.addContent(oTokensList);
 
 				that._manageListsVisibility(!!oTokenizer.getTokens().length);
+			})
+			.attachAfterOpen(function () {
+				var sTokensText = that.getTokens().length ? oRb.getText("MULTIINPUT_NAVIGATION_TOKENS") : "";
+
+				that._oInvisibleMessage.announce(oRb.getText("MULTIINPUT_NAVIGATION_POPUP", [sTokensText]));
 			});
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
@@ -596,7 +601,7 @@ function(
 				oScroll.scrollTo(0, 0, 0);
 			}
 
-			this._getSuggestionsPopoverInstance().getInput().focus();
+			this._getSuggestionsPopover().getInput().focus();
 		}
 		this._bTokenIsAdded = false;
 	};
@@ -900,7 +905,7 @@ function(
 	 */
 	MultiInput.prototype._validationCallback = function (iOldLength, bValidated) {
 		var iNewLength = this.getAggregation("tokenizer").getTokens().length;
-		var oSuggestionsPopover = this._getSuggestionsPopoverInstance();
+		var oSuggestionsPopover = this._getSuggestionsPopover();
 
 		this._bIsValidating = false;
 		if (bValidated) {
@@ -1144,7 +1149,7 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._getIsSuggestionPopupOpen = function () {
-		var oSuggestionsPopover = this._getSuggestionsPopoverInstance(),
+		var oSuggestionsPopover = this._getSuggestionsPopover(),
 			oSuggestionsPopoverPopup = this._getSuggestionsPopoverPopup();
 
 		return oSuggestionsPopover && oSuggestionsPopoverPopup && oSuggestionsPopoverPopup.isOpen();
@@ -1345,7 +1350,7 @@ function(
 	 */
 	MultiInput.prototype.updateInputField = function(sNewValue) {
 		Input.prototype.updateInputField.call(this, sNewValue);
-		var oSuggestionsPopover = this._getSuggestionsPopoverInstance();
+		var oSuggestionsPopover = this._getSuggestionsPopover();
 
 		this.setDOMValue('');
 
@@ -1564,19 +1569,9 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._getSuggestionsList = function() {
-		var oSuggestionsPopover = this._getSuggestionsPopoverInstance();
+		var oSuggestionsPopover = this._getSuggestionsPopover();
 
 		return oSuggestionsPopover && oSuggestionsPopover.getItemsContainer();
-	};
-
-	/**
-	 * Returns the <code>SuggestionsPopover</code> instance.
-	 *
-	 * @returns {sap.m.SuggestionsPopover} A suggestion popover instance.
-	 * @private
-	 */
-	MultiInput.prototype._getSuggestionsPopoverInstance = function () {
-		return this._oSuggPopover;
 	};
 
 	/**
