@@ -23,21 +23,6 @@ describe("sap.m.DateTimePicker", function() {
 		_takeScreenshot("year_changed");
 	});
 
-	it("focus cells", function () {
-		if (browser.testrunner.runtime.platformName === "android" && browser.testrunner.runtime.platformName === "ios") {
-			// Navigate to pickers part
-			element(by.id("DTP1_v0-PC-Switch-Sli-button")).click();
-			// Focus cell
-			element(by.css("[class='sapMTimePickerItem sapMTimePickerItemSelected']")).click();
-		} else {
-			// Focus cell
-			element(by.css("[class='sapMTimePickerItem']")).click();
-		}
-
-		//Assert
-		_takeScreenshot("cell_focused");
-	});
-
 	function _takeScreenshot(img) {
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
 			var oCalendar = element(by.css("#DTP1_v0-RP-popover"));
