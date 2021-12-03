@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/ODataUtils"
 ], function (DataProvider, jQuery, Log, ODataUtils) {

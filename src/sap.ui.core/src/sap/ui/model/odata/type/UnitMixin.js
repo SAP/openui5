@@ -355,4 +355,4 @@ sap.ui.define([
 		oPrototype.parseValue = parseValue;
 		oPrototype.validateValue = validateValue;
 	};
-}, /* bExport= */ false);
+});

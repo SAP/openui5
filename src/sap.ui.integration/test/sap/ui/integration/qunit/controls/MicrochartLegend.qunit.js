@@ -5,15 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/integration/controls/MicrochartLegend",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/integration/controls/MicrochartLegend"
 ], function (
 	mLibrary,
 	Core,
 	Control,
 	Parameters,
-	MicrochartLegend,
-	waitForThemeApplied
+	MicrochartLegend
 ) {
 	"use strict";
 
@@ -135,6 +133,4 @@ sap.ui.define([
 		// clean up
 		oMicrochartLegend.destroy();
 	});
-
-	return waitForThemeApplied();
 });

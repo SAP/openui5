@@ -1,15 +1,15 @@
-/*global document, HTMLScriptElement, HTMLLinkElement, QUnit, sinon, sap, window */
+/*global document, HTMLScriptElement, HTMLLinkElement, QUnit, sinon, sap, window, XMLHttpRequest */
 
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/AppCacheBuster',
 	'sap/ui/core/Control',
 	'sap/ui/core/_IconRegistry',
 	'sap/base/Log',
-	'jquery.sap.dom',
-	'jquery.sap.sjax'
-	], function(jQuery, ManagedObject, AppCacheBuster, Control, _IconRegistry, Log) {
+	'sap/ui/dom/includeScript',
+	'sap/ui/dom/includeStylesheet'
+	], function(jQuery, ManagedObject, AppCacheBuster, Control, _IconRegistry, Log, includeScript, includeStylesheet) {
 		"use strict";
 
 	// create a control with an URI property to validate URI replacement
@@ -34,7 +34,7 @@ sap.ui.define([
 	QUnit.test("check method interception", function(assert) {
 		assert.expect(10);
 
-		var fnXhrOpenOrig = window.XMLHttpRequest.prototype.open,
+		var fnXhrOpenOrig = XMLHttpRequest.prototype.open,
 			fnValidateProperty = ManagedObject.prototype.validateProperty,
 			descScriptSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'),
 			descLinkHref = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'),
@@ -42,7 +42,7 @@ sap.ui.define([
 
 		AppCacheBuster.init();
 
-		assert.notEqual(fnXhrOpenOrig, window.XMLHttpRequest.prototype.open, "window.XMLHttpRequest.prototype.open is intercepted");
+		assert.notEqual(fnXhrOpenOrig, XMLHttpRequest.prototype.open, "XMLHttpRequest.prototype.open is intercepted");
 		assert.notEqual(fnValidateProperty, ManagedObject.prototype.validateProperty, "ManagedObject.prototype.validateProperty is intercepted");
 		assert.notDeepEqual(Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'), descScriptSrc, "Property 'src' of HTMLScriptElement is intercepted");
 		assert.notDeepEqual(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'), descLinkHref, "Property 'href' of HTMLLinkElement is intercepted");
@@ -50,7 +50,7 @@ sap.ui.define([
 
 		AppCacheBuster.exit();
 
-		assert.equal(fnXhrOpenOrig, window.XMLHttpRequest.prototype.open, "window.XMLHttpRequest.prototype.open is restored");
+		assert.equal(fnXhrOpenOrig, XMLHttpRequest.prototype.open, "XMLHttpRequest.prototype.open is restored");
 		assert.equal(fnValidateProperty, ManagedObject.prototype.validateProperty, "ManagedObject.prototype.validateProperty is restored");
 		assert.deepEqual(Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src'), descScriptSrc, "Property 'src' of HTMLScriptElement is restored");
 		assert.deepEqual(Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, 'href'), descLinkHref, "Property 'href' of HTMLLinkElement is restored");
@@ -109,10 +109,11 @@ sap.ui.define([
 
 				// initialize the cachebuster and register three components
 				AppCacheBuster.init();
-				AppCacheBuster.register("./"); //jQuery.sap.getModulePath("") + "/../");
+				AppCacheBuster.register("./"); //sap.ui.require.toUrl("") + "/../");
 				AppCacheBuster.register("./comp1/");
 				AppCacheBuster.register("./comp2/");
 
+				this.server.respond();
 			},
 			afterEach : function() {
 
@@ -136,6 +137,10 @@ sap.ui.define([
 				assert.ok(window.location.href, sOriginalLocation, "window.location.href should be the original location");
 			}
 
+		});
+
+		QUnit.test("ACB requests", function(assert) {
+			assert.strictEqual(this.server.requests.length, 3, "ACB init + registration has created 3 requests");
 		});
 
 		QUnit.test("check basic URL handling", function(assert) {
@@ -178,30 +183,60 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("check AJAX handling", function(assert) {
-			assert.expect(2);
+		QUnit.test("jQuery.ajax to an application resource...", function(assert) {
+			assert.expect(1);
 
-			// fake the script
+			// fake response for a cachebusted application resource
 			this.server.respondWith(/.*\/~1234567890~\/js\/script.js/, function (xhr, id) {
 				xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 			});
-			// the script1 will not be covered by the AppCacheBuster and therefore not prefixed!
+
+			// check AJAX request for that resource
+			var done = assert.async();
+			jQuery.ajax({
+				url: "js/script.js",
+				dataType: "text",
+				success: function(data, textStatus, xhr) {
+					assert.strictEqual(xhr.status, 200,
+						"...should be cache busted");
+					done();
+				},
+				error: function(xhr) {
+					assert.strictEqual(xhr.status, 200,
+						"...failed, maybe because cache busting failed?");
+					done();
+				}
+			});
+
+			this.server.respond();
+		});
+
+		QUnit.test("jQuery.ajax to a non-application resource...", function(assert) {
+			assert.expect(1);
+
+			// fake response for a non-application resource (no cache buster token expected)
+			// (the 'js/script1.js' will not be covered by the AppCacheBuster and therefore not prefixed!)
 			this.server.respondWith(/js\/script1.js/, function (xhr, id) {
 				xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 			});
 
 			// check normal URLs
-			var oResult = jQuery.sap.sjax({
-				url: "js/script.js"
+			var done = assert.async();
+			jQuery.ajax({
+				url: "js/script1.js",
+				success: function(data, textStatus, xhr) {
+					assert.strictEqual(xhr.status, 200,
+						"...should not be cache busted");
+					done();
+				},
+				error: function(xhr) {
+					assert.strictEqual(xhr.status, 200,
+						"...failed, maybe because the URL was cache busted?");
+					done();
+				}
 			});
-			assert.ok(oResult.success, "URL is correctly prefixed!");
 
-			// check normal URLs
-			var oResult = jQuery.sap.sjax({
-				url: "js/script1.js"
-			});
-			assert.ok(oResult.success, "URL is correctly ignored!");
-
+			this.server.respond();
 		});
 
 		QUnit.test("check includeScript handling", function(assert) {
@@ -217,20 +252,18 @@ sap.ui.define([
 			};
 
 			// check script prefixing
-			jQuery.sap.includeScript("js/script.js", "myjs");
+			includeScript("js/script.js", "myjs");
 			var sSource = jQuery("#myjs").attr("src");
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
-
 		});
 
-		QUnit.test("check includeStyleSheet handling", function(assert) {
+		QUnit.test("check includeStylesheet handling", function(assert) {
 			assert.expect(1);
 
 			// check script prefixing
-			jQuery.sap.includeStyleSheet("css/style.css", "mycss");
+			includeStylesheet("css/style.css", "mycss");
 			var sSource = jQuery("#mycss").attr("href");
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
-
 		});
 
 		QUnit.test("check sap.ui.core.URI.type handling", function(assert) {
@@ -243,7 +276,6 @@ sap.ui.define([
 			var sSource = oControl.getSrc();
 			assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 			oControl.destroy();
-
 		});
 
 		QUnit.test("check _loadJSResourceAsync handling", function(assert) {
@@ -255,9 +287,10 @@ sap.ui.define([
 			// check normal URLs
 			var done = assert.async();
 			Promise.all([
-			  jQuery.sap._loadJSResourceAsync("anyapp/js/script.js"),
-			  jQuery.sap._loadJSResourceAsync("anyapp/js/script1.js")
+				sap.ui.loader._.loadJSResourceAsync("anyapp/js/script.js"),
+				sap.ui.loader._.loadJSResourceAsync("anyapp/js/script1.js")
 			]).then(function(aResults) {
+				// success is a fail as the scripts don't exist (covered by expect(2))
 				done();
 			}, function(aResults) {
 				// check for script.js
@@ -273,7 +306,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("check XMLHttpRequest handling", function(assert) {
+		QUnit.test("check native XMLHttpRequest handling", function(assert) {
 			assert.expect(2);
 
 			var oReq = new XMLHttpRequest();
@@ -321,6 +354,7 @@ sap.ui.define([
 			AppCacheBuster.init();
 			AppCacheBuster.register(document.baseURI + "anyapp/");
 
+			this.server.respond();
 		},
 		afterEach : function() {
 
@@ -354,46 +388,77 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check AJAX handling", function(assert) {
-		assert.expect(2);
+	QUnit.test("jQuery.ajax to an application resource...", function(assert) {
+		assert.expect(1);
 
-		// fake the script
+		// fake response for a cachebusted application resource
 		this.server.respondWith(/anyapp\/~1234567890~\/js\/script.js/, function (xhr, id) {
 			xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 		});
+
+		// check AJAX request for that resource
+		var done = assert.async();
+		jQuery.ajax({
+			url: document.baseURI + "anyapp/js/script.js",
+			dataType: "text",
+			success: function(data, textStatus, xhr) {
+				assert.strictEqual(xhr.status, 200,
+					"...should be cache busted");
+				done();
+			},
+			error: function(xhr) {
+				assert.strictEqual(xhr.status, 200,
+					"...failed, maybe because cache busting failed?");
+				done();
+			}
+		});
+
+		this.server.respond();
+	});
+
+	QUnit.test("jQuery.ajax to a non-application resource...", function(assert) {
+		assert.expect(1);
+
+		// fake response for a non-application resource (no cache buster token expected)
+		// (the 'js/script1.js' will not be covered by the AppCacheBuster and therefore not prefixed!)
 		this.server.respondWith(/anyapp\/js\/script1.js/, function (xhr, id) {
 			xhr.respond(200, { "Content-Type": "text/javascript" }, '');
 		});
 
 		// check normal URLs
-		var oResult = jQuery.sap.sjax({
-			url: document.baseURI + "anyapp/js/script.js"
+		var done = assert.async();
+		jQuery.ajax({
+			url: document.baseURI + "anyapp/js/script1.js",
+			success: function(data, textStatus, xhr) {
+				assert.strictEqual(xhr.status, 200,
+					"...should not be cache busted");
+				done();
+			},
+			error: function(xhr) {
+				assert.strictEqual(xhr.status, 200,
+					"...failed, maybe because the URL was cache busted?");
+				done();
+			}
 		});
-		assert.ok(oResult.success, "URL is correctly prefixed!");
 
-		// check normal URLs
-		var oResult = jQuery.sap.sjax({
-			url: document.baseURI + "anyapp/js/script1.js"
-		});
-		assert.ok(oResult.success, "URL is correctly ignored!");
-
+		this.server.respond();
 	});
 
 	QUnit.test("check includeScript handling", function(assert) {
 		assert.expect(1);
 
 		// check script prefixing
-		jQuery.sap.includeScript(document.baseURI + "anyapp/js/script.js", "myjs");
+		includeScript(document.baseURI + "anyapp/js/script.js", "myjs");
 		var sSource = jQuery("#myjs").attr("src");
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
 	});
 
-	QUnit.test("check includeStyleSheet handling", function(assert) {
+	QUnit.test("check includeStylesheet handling", function(assert) {
 		assert.expect(1);
 
 		// check script prefixing
-		jQuery.sap.includeStyleSheet(document.baseURI + "anyapp/css/style.css", "mycss");
+		includeStylesheet(document.baseURI + "anyapp/css/style.css", "mycss");
 		var sSource = jQuery("#mycss").attr("href");
 		assert.ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
 
@@ -421,8 +486,8 @@ sap.ui.define([
 		// check normal URLs
 		var done = assert.async();
 		Promise.all([
-		  jQuery.sap._loadJSResourceAsync("remoteanyapp/js/script.js"),
-		  jQuery.sap._loadJSResourceAsync("remoteanyapp/js/script1.js")
+		  sap.ui.loader._.loadJSResourceAsync("remoteanyapp/js/script.js"),
+		  sap.ui.loader._.loadJSResourceAsync("remoteanyapp/js/script1.js")
 		]).then(function(aResults) {
 			done();
 		}, function(aResults) {
@@ -439,7 +504,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("check XMLHttpRequest handling", function(assert) {
+	QUnit.test("check native XMLHttpRequest handling", function(assert) {
 		assert.expect(2);
 
 		var oReq = new XMLHttpRequest();

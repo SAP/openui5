@@ -35,7 +35,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	'sap/base/Log',
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes"
@@ -75,7 +74,6 @@ sap.ui.define([
 	Core,
 	Element,
 	InvisibleText,
-	waitForThemeApplied,
 	BaseLog,
 	deepEqual,
 	KeyCodes
@@ -4182,6 +4180,4 @@ sap.ui.define([
 
 		return iAppointments;
 	}
-
-	return waitForThemeApplied();
 });

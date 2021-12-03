@@ -1,18 +1,17 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Item",
 	"sap/m/MessageToast",
 	"model/formatter",
 	"sap/ui/core/Core"
-], function (jQuery, Controller, Fragment, Item, MessageToast, formatter, oCore) {
+], function (Controller, Fragment, Item, MessageToast, formatter, oCore) {
 	"use strict";
 
 	return Controller.extend("teamCalendar.controller.Main", {
 
 		myformatter : formatter,
-		imagePath : (jQuery.sap.getModulePath("sap.m.demokit.teamCalendar.webapp") + '/').replace('/resources/', '/test-resources/'),
+		imagePath : sap.ui.require.toUrl("sap/m/demokit/teamCalendar/webapp/").replace('/resources/', '/test-resources/'),
 
 		// Initial setup
 		onInit: function() {

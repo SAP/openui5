@@ -9,16 +9,15 @@ sap.ui.define([
 	"sap/m/SplitApp",
 	"sap/m/Page",
 	"sap/ui/util/Mobile",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/Core"
-], function(qutils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, waitForThemeApplied, oCore) {
+], function(qutils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	createAndAppendDiv("content");
-
+	createAndAppendDiv("bg-reference").className = "sapUiGlobalBackgroundImage";
 
 	var oShell = new Shell("myShell", {
 		title: "Test Shell",
@@ -94,192 +93,194 @@ sap.ui.define([
 	});
 
 
-	if (window.getComputedStyle) {
-		// bg image std
-		QUnit.test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function(assert) {
-			var bgDiv = oShell.$("BG"),
-				style = window.getComputedStyle(bgDiv[0]);
+	// bg image std
+	QUnit.test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function(assert) {
+		var bgDiv = oShell.getDomRef("BG"),
+			style = window.getComputedStyle(bgDiv),
+			bgReferenceDiv = document.getElementById("bg-reference"),
+			bgReferenceStyle = window.getComputedStyle(bgReferenceDiv);
 
-			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
-			assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
-			assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
-		});
+		assert.ok(bgDiv, "Background image div should be rendered");
+		assert.strictEqual(style.backgroundImage, bgReferenceStyle.backgroundImage, "Background image property should be the same as in the theme default");
+		assert.strictEqual(style.backgroundRepeat, bgReferenceStyle.backgroundRepeat, "Background repeat property should be the same as in the theme default");
+	});
 
-		// bg image - and make it custom
-		QUnit.test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function(assert) {
-			oShell.setBackgroundImage("test/x.png");
-			oShell.setBackgroundRepeat(false);
-			oShell.setBackgroundColor("#0f0");
-			oShell.setBackgroundOpacity(0.5);
+	// bg image - and make it custom
+	QUnit.test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function(assert) {
+		oShell.setBackgroundImage("test/x.png");
+		oShell.setBackgroundRepeat(false);
+		oShell.setBackgroundColor("#0f0");
+		oShell.setBackgroundOpacity(0.5);
 
-			oCore.applyChanges();
+		oCore.applyChanges();
 
-			var bgDiv = oShell.$("BG"),
-				style = window.getComputedStyle(bgDiv[0]);
+		var bgDiv = oShell.getDomRef("BG"),
+			style = window.getComputedStyle(bgDiv);
 
-			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
-			assert.ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
-			assert.equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
-			assert.equal(window.getComputedStyle(bgDiv[0].parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
-			assert.equal(style.opacity, "0.5", "Background opacity should be set");
-		});
+		assert.ok(bgDiv, "Background image div should be rendered");
+		assert.ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
+		assert.equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
+		assert.equal(window.getComputedStyle(bgDiv.parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
+		assert.equal(style.opacity, "0.5", "Background opacity should be set");
+	});
 
-		// bg image - revert to standard again
-		QUnit.test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function(assert) {
-			oShell.setBackgroundImage(null);
-			oShell.setBackgroundRepeat(true);
-			oShell.setBackgroundColor(null);
-			oShell.setBackgroundOpacity(1);
+	// bg image - revert to standard again
+	QUnit.test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function(assert) {
+		oShell.setBackgroundImage(null);
+		oShell.setBackgroundRepeat(true);
+		oShell.setBackgroundColor(null);
+		oShell.setBackgroundOpacity(1);
 
-			oCore.applyChanges();
+		oCore.applyChanges();
 
-			var bgDiv = oShell.$("BG"),
-				style = window.getComputedStyle(bgDiv[0]);
+		var bgDiv = oShell.getDomRef("BG"),
+			style = window.getComputedStyle(bgDiv),
+			bgReferenceDiv = document.getElementById("bg-reference"),
+			bgReferenceStyle = window.getComputedStyle(bgReferenceDiv);
 
-			assert.equal(bgDiv.length, 1, "Background image div should be rendered");
-			assert.ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
-			assert.equal(style.backgroundRepeat, "repeat", "Background should be repeated");
-			assert.equal(style.opacity, "1", "Background opacity should be set");
-		});
+		assert.ok(bgDiv, "Background image div should be rendered");
+		assert.strictEqual(style.backgroundImage, bgReferenceStyle.backgroundImage, "Background image property should be the same as in the theme default");
+		assert.strictEqual(style.backgroundRepeat, bgReferenceStyle.backgroundRepeat, "Background repeat property should be the same as in the theme default");
+		assert.equal(style.opacity, "1", "Background opacity should be set");
+	});
 
-		QUnit.module("custom setters");
+	QUnit.module("custom setters");
 
-		QUnit.test("setTitle modifies the dom, sets the property and doesn't re-render", function(assert) {
-			var $Dom,
-				sExampleTitle = "example title",
+	QUnit.test("setTitle modifies the dom, sets the property and doesn't re-render", function(assert) {
+		var $Dom,
+			sExampleTitle = "example title",
+			oSetPropertySpy;
+
+		//arrange
+		oCore.applyChanges();
+		oSetPropertySpy = this.spy(oShell, "setProperty");
+
+		//act
+		oShell.setTitle(sExampleTitle);
+		$Dom = oShell.$("hdrTxt");
+
+		//assert
+		assert.equal($Dom.html(), sExampleTitle, "dom is modified");
+		assert.equal(oShell.getTitle(), sExampleTitle, "property is changed");
+
+		assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+		assert.equal(oSetPropertySpy.args[0][0], "title", "setProperty called for 'title' property");
+		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+	});
+
+	QUnit.test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function(assert) {
+		var $Dom,
+			sExampleHeaderText = "username",
+			oSetPropertySpy;
+
+		//arrange
+		oCore.applyChanges();
+		oSetPropertySpy = this.spy(oShell, "setProperty");
+
+		//act
+		oShell.setHeaderRightText(sExampleHeaderText);
+		$Dom = oShell.$("hdrRightTxt");
+
+		//assert
+		assert.equal($Dom.text(), sExampleHeaderText, "dom is modified");
+		assert.equal(oShell.getHeaderRightText(), sExampleHeaderText, "property is changed");
+
+		assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+		assert.equal(oSetPropertySpy.args[0][0], "headerRightText", "setProperty called for 'headerRightText' property");
+		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+	});
+
+	QUnit.test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function(assert) {
+		var $Dom,
+			oSetPropertySpy;
+
+		//arrange
+		oCore.applyChanges();
+		oSetPropertySpy = this.spy(oShell, "setProperty");
+
+		//act
+		oShell.setAppWidthLimited(false);
+		$Dom = oShell.$();
+
+		//assert
+		assert.equal($Dom.hasClass("sapMShellAppWidthLimited"), false, "dom is modified");
+		assert.equal(oShell.getAppWidthLimited(), false, "property is changed");
+
+		assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+		assert.equal(oSetPropertySpy.args[0][0], "appWidthLimited", "setProperty called for 'appWidthLimited' property");
+		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+
+		oShell.setAppWidthLimited(true);
+		assert.equal($Dom.hasClass("sapMShellAppWidthLimited"), true, "dom is modified");
+		assert.equal(oShell.getAppWidthLimited(), true, "property is changed");
+
+		assert.equal(oSetPropertySpy.callCount, 2, "setProperty called second time");
+		assert.equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
+	});
+
+	QUnit.test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function(assert) {
+		var $Dom,
+				sExampleValidOpacity = 0.5,
+				sExampleInvalidOpacity = 2.5,
 				oSetPropertySpy;
 
-			//arrange
-			oCore.applyChanges();
-			oSetPropertySpy = this.spy(oShell, "setProperty");
+		//arrange
+		oCore.applyChanges();
+		oSetPropertySpy = this.spy(oShell, "setProperty");
 
-			//act
-			oShell.setTitle(sExampleTitle);
-			$Dom = oShell.$("hdrTxt");
+		//act
+		oShell.setBackgroundOpacity(sExampleInvalidOpacity);
+		$Dom = oShell.$("BG");
 
-			//assert
-			assert.equal($Dom.html(), sExampleTitle, "dom is modified");
-			assert.equal(oShell.getTitle(), sExampleTitle, "property is changed");
+		//assert
+		assert.notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
+		assert.notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
 
-			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-			assert.equal(oSetPropertySpy.args[0][0], "title", "setProperty called for 'title' property");
-			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-		});
-
-		QUnit.test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function(assert) {
-			var $Dom,
-				sExampleHeaderText = "username",
-				oSetPropertySpy;
-
-			//arrange
-			oCore.applyChanges();
-			oSetPropertySpy = this.spy(oShell, "setProperty");
-
-			//act
-			oShell.setHeaderRightText(sExampleHeaderText);
-			$Dom = oShell.$("hdrRightTxt");
-
-			//assert
-			assert.equal($Dom.text(), sExampleHeaderText, "dom is modified");
-			assert.equal(oShell.getHeaderRightText(), sExampleHeaderText, "property is changed");
-
-			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-			assert.equal(oSetPropertySpy.args[0][0], "headerRightText", "setProperty called for 'headerRightText' property");
-			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-		});
-
-		QUnit.test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function(assert) {
-			var $Dom,
-				oSetPropertySpy;
-
-			//arrange
-			oCore.applyChanges();
-			oSetPropertySpy = this.spy(oShell, "setProperty");
-
-			//act
-			oShell.setAppWidthLimited(false);
-			$Dom = oShell.$();
-
-			//assert
-			assert.equal($Dom.hasClass("sapMShellAppWidthLimited"), false, "dom is modified");
-			assert.equal(oShell.getAppWidthLimited(), false, "property is changed");
-
-			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-			assert.equal(oSetPropertySpy.args[0][0], "appWidthLimited", "setProperty called for 'appWidthLimited' property");
-			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-
-			oShell.setAppWidthLimited(true);
-			assert.equal($Dom.hasClass("sapMShellAppWidthLimited"), true, "dom is modified");
-			assert.equal(oShell.getAppWidthLimited(), true, "property is changed");
-
-			assert.equal(oSetPropertySpy.callCount, 2, "setProperty called second time");
-			assert.equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
-		});
-
-		QUnit.test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function(assert) {
-			var $Dom,
-					sExampleValidOpacity = 0.5,
-					sExampleInvalidOpacity = 2.5,
-					oSetPropertySpy;
-
-			//arrange
-			oCore.applyChanges();
-			oSetPropertySpy = this.spy(oShell, "setProperty");
-
-			//act
-			oShell.setBackgroundOpacity(sExampleInvalidOpacity);
-			$Dom = oShell.$("BG");
-
-			//assert
-			assert.notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
-			assert.notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
-
-			assert.equal(oSetPropertySpy.callCount, 0, "setProperty is not called");
+		assert.equal(oSetPropertySpy.callCount, 0, "setProperty is not called");
 
 
-			//act
-			oShell.setBackgroundOpacity(sExampleValidOpacity);
+		//act
+		oShell.setBackgroundOpacity(sExampleValidOpacity);
 
-			//assert
-			assert.equal($Dom.css("opacity"), sExampleValidOpacity.toString(), "dom is modified");
-			assert.equal(oShell.getBackgroundOpacity(), sExampleValidOpacity, "property is changed");
+		//assert
+		assert.equal($Dom.css("opacity"), sExampleValidOpacity.toString(), "dom is modified");
+		assert.equal(oShell.getBackgroundOpacity(), sExampleValidOpacity, "property is changed");
 
-			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-			assert.equal(oSetPropertySpy.args[0][0], "backgroundOpacity", "setProperty called for 'backgroundOpacity' property");
-			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-		});
+		assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+		assert.equal(oSetPropertySpy.args[0][0], "backgroundOpacity", "setProperty called for 'backgroundOpacity' property");
+		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+	});
 
-		QUnit.test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function(assert) {
-			var oSetPropertySpy,
-				oMobileSetIconSpy,
-				oExampleIcons = {
-					'phone': 'phone-icon_57x57.png',
-					'phone@2': 'phone-retina_114x114.png',
-					'tablet': 'tablet-icon_72x72.png',
-					'tablet@2': 'tablet-retina_144x144.png',
-					'precomposed': true,
-					'favicon': 'favicon.ico'
-				};
+	QUnit.test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function(assert) {
+		var oSetPropertySpy,
+			oMobileSetIconSpy,
+			oExampleIcons = {
+				'phone': 'phone-icon_57x57.png',
+				'phone@2': 'phone-retina_114x114.png',
+				'tablet': 'tablet-icon_72x72.png',
+				'tablet@2': 'tablet-retina_144x144.png',
+				'precomposed': true,
+				'favicon': 'favicon.ico'
+			};
 
-			//arrange
-			oCore.applyChanges();
-			oSetPropertySpy = this.spy(oShell, "setProperty");
-			oMobileSetIconSpy = this.spy(Mobile, "setIcons");
+		//arrange
+		oCore.applyChanges();
+		oSetPropertySpy = this.spy(oShell, "setProperty");
+		oMobileSetIconSpy = this.spy(Mobile, "setIcons");
 
-			//act
-			oShell.setHomeIcon(oExampleIcons);
+		//act
+		oShell.setHomeIcon(oExampleIcons);
 
-			//assert
-			assert.equal(oShell.getHomeIcon(), oExampleIcons, "property is changed");
+		//assert
+		assert.equal(oShell.getHomeIcon(), oExampleIcons, "property is changed");
 
-			assert.equal(oMobileSetIconSpy.callCount, 1, "Mobile.setIcons called once");
-			assert.equal(oMobileSetIconSpy.args[0][0], oExampleIcons, "Mobile.setIcons called with the icons object");
+		assert.equal(oMobileSetIconSpy.callCount, 1, "Mobile.setIcons called once");
+		assert.equal(oMobileSetIconSpy.args[0][0], oExampleIcons, "Mobile.setIcons called with the icons object");
 
-			assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
-			assert.equal(oSetPropertySpy.args[0][0], "homeIcon", "setProperty called for 'homeIcon' property");
-			assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
-		});
-	}
+		assert.equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+		assert.equal(oSetPropertySpy.args[0][0], "homeIcon", "setProperty called for 'homeIcon' property");
+		assert.equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+	});
 
 	QUnit.module("Shell's 'titleLevel' property is configurable which prevents adding an invalid HTML header level for some scenarios.");
 
@@ -359,6 +360,4 @@ sap.ui.define([
 		// cleanup
 		oShell.destroy();
 	});
-
-	return waitForThemeApplied();
 });

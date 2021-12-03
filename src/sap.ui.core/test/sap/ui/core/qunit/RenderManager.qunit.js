@@ -213,6 +213,9 @@ sap.ui.define([
 		assert.strictEqual(rm.getConfiguration(), sap.ui.getCore().getConfiguration(), "getConfiguration should return the same like Core.getConfiguration");
 	});
 
+	/**
+	 * @deprecated Since version 0.15.0.
+	 */
 	QUnit.test("Core.getRenderManager", function(assert) {
 		var c = sap.ui.getCore();
 		assert.notStrictEqual(c.getRenderManager(), c.getRenderManager(), "Core.getRenderManager should always returns a new RenderManager instance");

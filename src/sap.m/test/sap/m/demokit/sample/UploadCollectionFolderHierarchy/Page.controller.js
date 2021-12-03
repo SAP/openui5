@@ -1,5 +1,5 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/m/MessageBox",

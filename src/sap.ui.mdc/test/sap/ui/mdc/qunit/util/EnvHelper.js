@@ -29,4 +29,4 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 		skipSapUI5: isSapUI5 ? "skip" : "test"
 	};
 
-}, /* bExport= */false);
+});

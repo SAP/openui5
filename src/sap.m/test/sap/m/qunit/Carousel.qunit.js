@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/F6Navigation"
 ], function (
 	jQuery,
@@ -32,7 +31,6 @@ sap.ui.define([
 	ResponsivePopover,
 	Core,
 	JSONModel,
-	waitForThemeApplied,
 	F6Navigation
 ) {
 	'use strict';
@@ -1606,7 +1604,4 @@ sap.ui.define([
 
 		assert.ok(true, 'error is not thrown');
 	});
-
-
-	return waitForThemeApplied();
 });

@@ -1,5 +1,5 @@
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'./Formatter',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',

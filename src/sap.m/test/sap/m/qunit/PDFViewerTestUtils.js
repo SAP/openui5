@@ -141,4 +141,4 @@ sap.ui.define([
 	};
 
 	return testUtils;
-}, true);
+});

@@ -1,5 +1,5 @@
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/core/mvc/Controller"
 ], function ($, Device, Controller) {

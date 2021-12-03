@@ -1,10 +1,12 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
+	"sap/f/library",
 	"sap/f/FlexibleColumnLayoutSemanticHelper"
-], function (jQuery, UIComponent, JSONModel, FlexibleColumnLayoutSemanticHelper) {
+], function (UIComponent, JSONModel, fioriLibrary, FlexibleColumnLayoutSemanticHelper) {
 	"use strict";
+
+	var LayoutType = fioriLibrary.LayoutType;
 
 	var Component = UIComponent.extend("sap.m.TableScrollToIndex.Component", {
 		metadata: {
@@ -39,10 +41,10 @@ sap.ui.define([
 		 */
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl"),
-				oParams = jQuery.sap.getUriParameters(),
+				oParams = new URLSearchParams(window.location.search),
 				oSettings = {
-					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
-					//defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded,
+					defaultTwoColumnLayoutType: LayoutType.TwoColumnsMidExpanded,
+					//defaultThreeColumnLayoutType: LayoutType.ThreeColumnsMidExpanded,
 					mode: oParams.get("mode"),
 					maxColumnsCount: oParams.get("max")
 				};
@@ -51,4 +53,4 @@ sap.ui.define([
 		}
 	});
 	return Component;
-}, true);
+});

@@ -478,13 +478,16 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 			files: this.aFiles,
 			newValue: "file1"// needed to enable IE9 support and non failing tests
 		});
-		var oButtonFU = this.oUploadCollection._oHeaderToolbar.getContent()[2].$().find("button");
-		var oStubFUFocus = this.stub(jQuery.sap, "focus");
+		var oStubJQTrigger = this.stub(jQuery.prototype, "trigger");
 		oCore.applyChanges();
+		var oButtonFU = this.oUploadCollection._oHeaderToolbar.getContent()[2].$().find("button");
 
 		//Act
 		//Assert
-		assert.ok(oStubFUFocus.withArgs(oButtonFU), "Set focus on FileUploader called");
+		// there should be at least one call equivalent to jQuery(oButtonFU[0]).trigger("focus");
+		assert.ok(oStubJQTrigger.getCalls().some(function(oCall) {
+			return oCall.calledWith("focus") && oCall.thisValue[0] === oButtonFU[0];
+		}), "trigger(\"focus\") on FileUploader button called");
 	});
 
 	QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {

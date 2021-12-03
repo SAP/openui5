@@ -37,4 +37,4 @@ sap.ui.define([
 			this.getView().byId("productsTable").getBinding("items").filter(oTableSearchState, "Application");
 		}
 	});
-}, true);
+});

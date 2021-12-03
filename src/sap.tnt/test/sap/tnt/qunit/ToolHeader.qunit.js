@@ -1,7 +1,7 @@
 /*global QUnit sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	'jquery.sap.global',
+	'sap/ui/thirdparty/jquery',
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/m/Button',

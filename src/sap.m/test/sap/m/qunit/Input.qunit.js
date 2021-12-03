@@ -26,7 +26,6 @@ sap.ui.define([
 	"sap/m/SuggestionItem",
 	"sap/m/SuggestionsPopover",
 	"sap/ui/core/IconPool",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/m/Link",
 	"sap/m/Text",
@@ -65,7 +64,6 @@ sap.ui.define([
 	SuggestionItem,
 	SuggestionsPopover,
 	IconPool,
-	waitForThemeApplied,
 	KeyCodes,
 	Link,
 	Text,
@@ -7485,6 +7483,4 @@ sap.ui.define([
 		this.clock.tick(500);
 		oInput.destroy();
 	});
-
-	return waitForThemeApplied(this.oInput);
 });

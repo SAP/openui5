@@ -945,4 +945,4 @@ sap.ui.define([
 	Expression._setDateTimeFormatter();
 
 	return Expression;
-}, /* bExport= */ false);
+});

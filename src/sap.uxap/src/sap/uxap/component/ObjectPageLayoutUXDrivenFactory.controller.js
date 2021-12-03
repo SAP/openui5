@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/base/ManagedObject",
@@ -12,14 +11,13 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	jQuery,
 	BindingMode,
 	Context,
 	ManagedObject,
 	Controller,
 	Log,
 	ObjectPath,
-	jQueryDOM
+	jQuery
 ) {
 	"use strict";
 
@@ -31,12 +29,12 @@ sap.ui.define([
 		 */
 		connectToComponent: function (oModel) {
 
-			var bHasPendingRequest = jQueryDOM.isEmptyObject(oModel.getData());
+			var bHasPendingRequest = jQuery.isEmptyObject(oModel.getData());
 
 			//ensure a 1 way binding otherwise it cause any block property change to update the entire subSections
 			oModel.setDefaultBindingMode(BindingMode.OneWay);
 
-			var fnHeaderFactory = jQueryDOM.proxy(function () {
+			var fnHeaderFactory = jQuery.proxy(function () {
 
 				if (bHasPendingRequest) {
 					oModel.detachRequestCompleted(fnHeaderFactory);
@@ -82,7 +80,7 @@ sap.ui.define([
 				oControlMetadata = oControlClass.getMetadata();
 
 				//pre-processing: substitute event handler as strings by their function instance
-				jQueryDOM.each(oControlMetadata._mAllEvents, jQueryDOM.proxy(function (sEventName, oEventProperties) {
+				jQuery.each(oControlMetadata._mAllEvents, jQuery.proxy(function (sEventName, oEventProperties) {
 					if (typeof oControlInfo[sEventName] == "string") {
 						oControlInfo[sEventName] = this.convertEventHandler(oControlInfo[sEventName]);
 					}
@@ -92,7 +90,7 @@ sap.ui.define([
 				oControl = ManagedObject.create(oControlInfo);
 
 				//post-processing: bind properties on the objectPageLayoutMetadata model
-				jQueryDOM.each(oControlMetadata._mAllProperties, jQueryDOM.proxy(function (sPropertyName, oProperty) {
+				jQuery.each(oControlMetadata._mAllProperties, jQuery.proxy(function (sPropertyName, oProperty) {
 					if (oControlInfo[sPropertyName]) {
 						oControl.bindProperty(sPropertyName, "objectPageLayoutMetadata>" + oBindingContext.getPath() + "/" + sPropertyName);
 					}
@@ -114,7 +112,7 @@ sap.ui.define([
 			var fnNameSpace = window, aNameSpaceParts = sStaticHandlerName.split('.');
 
 			try {
-				jQueryDOM.each(aNameSpaceParts, function (iIndex, sNameSpacePart) {
+				jQuery.each(aNameSpaceParts, function (iIndex, sNameSpacePart) {
 					fnNameSpace = fnNameSpace[sNameSpacePart];
 				});
 			} catch (sError) {

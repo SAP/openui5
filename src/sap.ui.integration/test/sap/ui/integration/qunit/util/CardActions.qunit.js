@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/core/Core",
 	"sap/base/Log",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/integration/util/CardActions",
 	"sap/ui/qunit/QUnitUtils"
 ],
@@ -19,6 +20,7 @@ sap.ui.define([
 		Host,
 		Core,
 		Log,
+		KeyCodes,
 		CardActions,
 		qutils
 	) {
@@ -1678,7 +1680,7 @@ sap.ui.define([
 
 				//Act
 				var oLink = oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)").control(0);
-				qutils.triggerKeydown(oLink.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
 
 				Core.applyChanges();
 
@@ -1835,7 +1837,7 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				//Act
 				var oLink = this.oCard.getCardContent().$().find(".sapMLnk:not(.sapMLnkDsbl)").control(0);
-				qutils.triggerKeydown(oLink.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
 			}.bind(this));
 
 			// Act

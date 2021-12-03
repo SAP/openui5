@@ -263,4 +263,4 @@ sap.ui.define([
 	};
 
 	return Context;
-}, /* bExport= */ false);
+});

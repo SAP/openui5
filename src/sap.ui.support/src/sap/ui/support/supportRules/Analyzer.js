@@ -187,4 +187,4 @@ sap.ui.define(["sap/base/Log", "sap/ui/support/supportRules/IssueManager","sap/u
 		};
 
 		return Analyzer;
-	}, false);
+	});

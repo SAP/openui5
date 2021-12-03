@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/test/actions/EnterText",
 	"cp/opa/test/env/integration/actions/SwatchColorPress",
 	"cp/opa/test/env/integration/matchers/SwatchColor",
-	"sap/ui/core/Core",
-	"jquery.sap.keycodes"
-], function (Opa5, opaTest, Press, EnterText, SwatchColorPress, SwatchColor, oCore /*, jquerySapKeyCodes */) {
+	"sap/ui/core/Core"
+], function (Opa5, opaTest, Press, EnterText, SwatchColorPress, SwatchColor, oCore) {
 	"use strict";
 
 	var COMPONENT_VIEW_PREFFIX = "__component0---myHomeView--",

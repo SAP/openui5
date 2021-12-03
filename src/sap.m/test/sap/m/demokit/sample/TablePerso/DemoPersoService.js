@@ -1,4 +1,4 @@
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(['sap/ui/thirdparty/jquery'],
 	function(jQuery) {
 	"use strict";
 

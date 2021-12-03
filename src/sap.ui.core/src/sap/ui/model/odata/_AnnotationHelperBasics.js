@@ -498,4 +498,4 @@ sap.ui.define([
 
 	return Basics;
 
-}, /* bExport= */ false);
+});

@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/library",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -28,7 +27,6 @@ sap.ui.define([
 	Device,
 	coreLibrary,
 	EventExtension,
-	waitForThemeApplied,
 	KeyCodes,
 	oCore
 ) {
@@ -1527,6 +1525,4 @@ sap.ui.define([
 		}
 		return oSelection;
 	}
-
-	return waitForThemeApplied();
 });

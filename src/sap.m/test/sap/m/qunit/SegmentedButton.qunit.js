@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/core/LayoutData",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/core/Core"
@@ -41,7 +40,6 @@ sap.ui.define([
 	LayoutData,
 	InvisibleText,
 	XMLView,
-	waitForThemeApplied,
 	KeyCodes,
 	Log,
 	oCore
@@ -3517,6 +3515,4 @@ sap.ui.define([
 		assert.strictEqual(this.oSB.getButtons()[0].$().data(this.oCD.getKey()), undefined,
 			"There should be new CustomData with key 'yours' rendered on the first button");
 	});
-
-	return waitForThemeApplied();
 });

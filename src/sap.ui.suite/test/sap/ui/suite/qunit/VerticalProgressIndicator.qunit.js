@@ -106,7 +106,7 @@ sap.ui.define([
 	QUnit.test("Default Values [Control 1]: ", function(assert) {
 		assert.expect(4);
 		var percentage = 0;
-		this.oBar = jQuery.sap.domById(sCtrlId + "1-bar");
+		this.oBar = document.getElementById(sCtrlId + "1-bar");
 		var BarHeight = jQuery(this.oBar).css("height");
 		var BarTop    = jQuery(this.oBar).css("top");
 		var BarWidth  = jQuery(this.oBar).css("width");
@@ -121,7 +121,7 @@ sap.ui.define([
 	QUnit.test("Percentage set to 30 percent [Control 2]: ", function(assert) {
 		assert.expect(4);
 		var percentage = 30;
-		this.oBar = jQuery.sap.domById(sCtrlId + "2-bar");
+		this.oBar = document.getElementById(sCtrlId + "2-bar");
 		var BarHeight = jQuery(this.oBar).css("height");
 		var BarTop    = jQuery(this.oBar).css("top");
 		var BarWidth  = jQuery(this.oBar).css("width");
@@ -136,7 +136,7 @@ sap.ui.define([
 	QUnit.test("Percentage set to 0 percent [Control 3]: ", function(assert) {
 		assert.expect(4);
 		var percentage = 0;
-		this.oBar = jQuery.sap.domById(sCtrlId + "3-bar");
+		this.oBar = document.getElementById(sCtrlId + "3-bar");
 		var BarHeight = jQuery(this.oBar).css("height");
 		var BarTop    = jQuery(this.oBar).css("top");
 		var BarWidth  = jQuery(this.oBar).css("width");
@@ -151,7 +151,7 @@ sap.ui.define([
 	QUnit.test("Percentage set to 100 percent [Control 4]: ", function(assert) {
 		assert.expect(4);
 		var percentage = 100;
-		this.oBar = jQuery.sap.domById(sCtrlId + "4-bar");
+		this.oBar = document.getElementById(sCtrlId + "4-bar");
 		var BarHeight = jQuery(this.oBar).css("height");
 		var BarTop    = jQuery(this.oBar).css("top");
 		var BarWidth  = jQuery(this.oBar).css("width");
@@ -166,7 +166,7 @@ sap.ui.define([
 	QUnit.test("Percentage set to -30 percent [Control 5]: ", function(assert) {
 		assert.expect(4);
 		var percentage = -30;
-		this.oBar = jQuery.sap.domById(sCtrlId + "5-bar");
+		this.oBar = document.getElementById(sCtrlId + "5-bar");
 		var BarHeight = jQuery(this.oBar).css("height");
 		var BarTop    = jQuery(this.oBar).css("top");
 		var BarWidth  = jQuery(this.oBar).css("width");
@@ -181,7 +181,7 @@ sap.ui.define([
 	QUnit.test("Percentage set to 111 percent [Control 6]: ", function(assert) {
 		assert.expect(4);
 		var percentage = 111;
-		this.oBar = jQuery.sap.domById(sCtrlId + "6-bar");
+		this.oBar = document.getElementById(sCtrlId + "6-bar");
 		var BarHeight = jQuery(this.oBar).css("height");
 		var BarTop    = jQuery(this.oBar).css("top");
 		var BarWidth  = jQuery(this.oBar).css("width");
@@ -240,7 +240,7 @@ sap.ui.define([
 	QUnit.test("Automatic Tooltip [Control 2]: ", function(assert) {
 		assert.expect(1);
 		if (!this.oThis){
-			this.oThis = jQuery.sap.byId(sCtrlId + "2");
+			this.oThis = jQuery(document.getElementById(sCtrlId + "2"));
 		}
 		var AriaValue = this.oThis.attr('aria-valuenow');
 		var Tooltip   = this.oThis.attr('title');
@@ -259,7 +259,7 @@ sap.ui.define([
 		assert.expect(3);
 		var percentage = 0;
 		if (!this.oThis){
-			this.oThis = jQuery.sap.byId(sCtrlId + "1");
+			this.oThis = jQuery(document.getElementById(sCtrlId + "1"));
 		}
 		var ValueNow = this.oThis.attr('aria-valuenow');
 		var ValueMax = this.oThis.attr('aria-valuemax');
@@ -272,9 +272,9 @@ sap.ui.define([
 	//Testcase 12: ARIA-Value for Percentage in Range (0-100)
 	QUnit.test("ARIA-Value for Percentage in Range [Controls 2,3,4]: ", function(assert) {
 		assert.expect(3);
-		this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
-		this.oThis3 = jQuery.sap.byId(sCtrlId + "3");
-		this.oThis4 = jQuery.sap.byId(sCtrlId + "4");
+		this.oThis2 = jQuery(document.getElementById(sCtrlId + "2"));
+		this.oThis3 = jQuery(document.getElementById(sCtrlId + "3"));
+		this.oThis4 = jQuery(document.getElementById(sCtrlId + "4"));
 		var ValueNow2   = this.oThis2.attr('aria-valuenow');
 		var ValueNow3   = this.oThis3.attr('aria-valuenow');
 		var ValueNow4   = this.oThis4.attr('aria-valuenow');
@@ -287,8 +287,8 @@ sap.ui.define([
 	//Testcase 13: ARIA-Value for Percentage out of Range (<0 or >100)
 	QUnit.test("ARIA-Value for Percentage out of Range [Controls 5,6]: ", function(assert) {
 		assert.expect(2);
-		this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
-		this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
+		this.oThis5 = jQuery(document.getElementById(sCtrlId + "5"));
+		this.oThis6 = jQuery(document.getElementById(sCtrlId + "6"));
 		var ValueNow5   = this.oThis5.attr('aria-valuenow');
 		var ValueNow6   = this.oThis6.attr('aria-valuenow');
 		assert.equal(ValueNow5, determineAria(-30) + "%",   "ARIA-value for -30%: ");

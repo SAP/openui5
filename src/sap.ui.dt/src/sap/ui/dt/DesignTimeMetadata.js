@@ -221,7 +221,7 @@ function(
 	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer
 	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key).
 	 * For more details on this replacement mechanism refer also:
-	 * @see jQuery.sap.formatMessage
+	 * @see {@link module:sap/base/strings/formatMessage formatMessage}
 	 *
 	 * @param {sap.ui.core.Element} oElement Element for which the text is being retrieved
 	 * @param {string} sKey Key

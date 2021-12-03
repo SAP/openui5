@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/integration/controls/Microchart",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/integration/controls/Microchart"
 ], function (
 	Core,
-	Microchart,
-	waitForThemeApplied
+	Microchart
 ) {
 	"use strict";
 
@@ -30,6 +28,4 @@ sap.ui.define([
 		// clean up
 		oMicrochart.destroy();
 	});
-
-	return waitForThemeApplied();
 });

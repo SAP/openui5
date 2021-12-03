@@ -246,4 +246,4 @@ sap.ui.define([
 	};
 
 	return ToolPage;
-}, /* bExport= */ true);
+});

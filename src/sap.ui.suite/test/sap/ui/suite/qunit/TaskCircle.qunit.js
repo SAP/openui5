@@ -141,7 +141,7 @@ sap.ui.define([
 	QUnit.test("Automatic Tooltip [Control 2]: ", function(assert) {
 		assert.expect(1);
 		if (!this.oThis){
-			this.oThis = jQuery.sap.byId(sCtrlId + "2");
+			this.oThis = jQuery(document.getElementById(sCtrlId + "2"));
 		}
 		var AriaValue = this.oThis.attr('aria-valuenow');
 		var Tooltip   = this.oThis.attr('title');
@@ -158,7 +158,7 @@ sap.ui.define([
 	QUnit.test("Default ARIA-Values [Control 1]: ", function(assert) {
 		assert.expect(3);
 		if (!this.oThis){
-			this.oThis = jQuery.sap.byId(sCtrlId + "1");
+			this.oThis = jQuery(document.getElementById(sCtrlId + "1"));
 		}
 		var ValueNow = this.oThis.attr('aria-valuenow');
 		var ValueMax = this.oThis.attr('aria-valuemax');
@@ -171,9 +171,9 @@ sap.ui.define([
 	//Testcase 12: ARIA-Value for positive values
 	QUnit.test("ARIA-Value for positive values [Controls 2,4,6]: ", function(assert) {
 		assert.expect(3);
-		this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
-		this.oThis4 = jQuery.sap.byId(sCtrlId + "4");
-		this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
+		this.oThis2 = jQuery(document.getElementById(sCtrlId + "2"));
+		this.oThis4 = jQuery(document.getElementById(sCtrlId + "4"));
+		this.oThis6 = jQuery(document.getElementById(sCtrlId + "6"));
 		var ValueNow2 = this.oThis2.attr('aria-valuenow');
 		var ValueNow4 = this.oThis4.attr('aria-valuenow');
 		var ValueNow6 = this.oThis6.attr('aria-valuenow');
@@ -186,7 +186,7 @@ sap.ui.define([
 	//Testcase 13: ARIA-Value for negative values
 	QUnit.test("ARIA-Value for negative values [Control 5]: ", function(assert) {
 		assert.expect(1);
-		this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
+		this.oThis5 = jQuery(document.getElementById(sCtrlId + "5"));
 		var ValueNow5 = this.oThis5.attr('aria-valuenow');
 		assert.equal(ValueNow5, "0",   "ARIA-value for -30 percent: ");
 	});

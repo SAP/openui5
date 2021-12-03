@@ -9,4 +9,4 @@ sap.ui.define([
 			this.oModel = this.getOwnerComponent().getModel();
 		}
 	});
-}, true);
+});

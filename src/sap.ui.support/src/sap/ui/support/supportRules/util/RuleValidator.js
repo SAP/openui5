@@ -123,4 +123,4 @@ sap.ui.define([],
 };
 
 return RuleValidator;
-}, false);
+});

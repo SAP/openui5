@@ -244,7 +244,7 @@ sap.ui.define([
 						oController: this
 					});
 					//check the controls type
-					assert.strictEqual((oControl instanceof jQuery.sap.getObject(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
+					assert.strictEqual((oControl instanceof ObjectPath.get(sControlName)) ||  , true, sCreateTemplate + " created a control with the right type " + sControlName + "/" + oControl.getMetadata().getName());
 					*/
 				}
 			}

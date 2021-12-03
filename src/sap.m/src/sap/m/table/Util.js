@@ -187,4 +187,4 @@ sap.ui.define([
 
 	return Util;
 
-}, false);
+});
