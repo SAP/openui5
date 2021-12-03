@@ -1355,7 +1355,8 @@ sap.ui.define([
 	DynamicPage.prototype._measureScrollBarOffsetHeight = function () {
 		var iHeight = 0,
 			bSnapped = !this.getHeaderExpanded(),
-			bHeaderInTitle = this._bHeaderInTitleArea;
+			bHeaderInTitle = this._bHeaderInTitleArea,
+			$oStickySubHeader = this._oStickySubheader && this._oStickySubheader.$();
 
 		if (this._preserveHeaderStateOnScroll() || this._bPinned || (!bSnapped && this._bHeaderInTitleArea)) {
 			iHeight = this._getTitleAreaHeight();
@@ -1365,7 +1366,13 @@ sap.ui.define([
 
 		if (bSnapped || !exists(this.getTitle()) || !this._canSnapHeaderOnScroll()) {
 			iHeight = this._getTitleHeight();
+
+			if (this._bStickySubheaderInTitleArea && $oStickySubHeader.length) {
+				iHeight += $oStickySubHeader.height();
+			}
+
 			Log.debug("DynamicPage :: header snapped :: title height " + iHeight, this);
+
 			return iHeight;
 		}
 
