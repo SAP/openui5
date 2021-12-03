@@ -781,8 +781,7 @@ sap.ui.define([
 	 *   The context object for the created entity; its method
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
 	 *   creation is finished
-	 * @throws {Error}
-	 *   If
+	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> a relative binding is unresolved,

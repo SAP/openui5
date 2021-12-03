@@ -703,15 +703,14 @@ sap.ui.define([
 	 *   this binding (or its relevant parent binding) is used, see {@link #getUpdateGroupId}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
-	 * @throws {Error}
-	 *   If one of the following situations occurs:
+	 * @throws {Error} If
 	 *   <ul>
-	 *     <li> The binding's root binding is suspended.
-	 *     <li> The new value is not primitive.
-	 *     <li> No value has been read before and the binding does not have the parameter
+	 *     <li> the binding's root binding is suspended.
+	 *     <li> the new value is not primitive.
+	 *     <li> no value has been read before and the binding does not have the parameter
 	 *       <code>$$noPatch</code>.
-	 *     <li> The binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
-	 *     <li> The binding has the parameter <code>$$noPatch</code> and a group ID has been given.
+	 *     <li> the binding is not relative to a {@link sap.ui.model.odata.v4.Context}.
+	 *     <li> the binding has the parameter <code>$$noPatch</code> and a group ID has been given.
 	 *   </ul>
 	 *
 	 * @public

@@ -329,14 +329,14 @@ sap.ui.define([
 		 *   </ul>
 		 *   If the specified <code>sResponseBody</code> contains responses for change sets, then
 		 *   the corresponding response objects will be returned in a nested array.
-		 * @throws {Error}
+		 * @throws {Error} If
 		 *   <ul>
-		 *     <li> If the <code>sContentType</code> parameter does not represent a
-		 *       "multipart/mixed" media type with "boundary" parameter
-		 *     <li> If the "charset" parameter of the "Content-Type" header of a nested response has
-		 *       a value other than "UTF-8"
-		 *     <li> If there is no "Content-ID" header for a change set response or its value is not
-		 *       a number
+		 *     <li> the <code>sContentType</code> parameter does not represent a "multipart/mixed"
+		 *       media type with "boundary" parameter
+		 *     <li> the "charset" parameter of the "Content-Type" header of a nested response has a
+		 *       value other than "UTF-8"
+		 *     <li> there is no "Content-ID" header for a change set response or its value is not a
+		 *       number
 		 *   </ul>
 		 */
 		deserializeBatchResponse : function (sContentType, sResponseBody) {

@@ -601,8 +601,7 @@ sap.ui.define([
 	 *   Callback for strict handling; supported for actions only
 	 * @returns {SyncPromise}
 	 *   The request promise
-	 * @throws {Error}
-	 *   If
+	 * @throws {Error} If
 	 *   <ul>
 	 *    <li> the given metadata is neither an "Action" nor a "Function" nor a
 	 *      "NavigationProperty",
@@ -1259,8 +1258,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding
 	 *   The list binding to take the entity
-	 * @throws {Error}
-	 *   If
+	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> this binding is not a root binding,
 	 *     <li> this binding has not finished loading yet,
