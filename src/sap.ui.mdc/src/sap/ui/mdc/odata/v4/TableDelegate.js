@@ -230,7 +230,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding) {
-		if (!oBinding || oBinding.hasPendingChanges() || oBinding.getPath() != oBindingInfo.path) {
+		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
 			this.rebindTable(oTable, oBindingInfo);
 			return;
 		}

@@ -1366,6 +1366,7 @@ sap.ui.define([
 	QUnit.test("Filter", function(assert) {
 		var aFilters = [new Filter("Name", "EQ", "a")];
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+
         oUpdateBindingInfoStub.callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
 			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
 			oBindingInfo.path = oMetadataInfo.collectionPath;
@@ -1390,7 +1391,7 @@ sap.ui.define([
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 	});
 
-	QUnit.test("Aggregates", function(assert) {
+	QUnit.test("Aggregate", function(assert) {
 		this.oTable.setAggregateConditions({ Name: {} }).rebind();
 		assert.ok(this.oSetAggregationSpy.firstCall.calledWithMatch({
 		    grandTotal: [ "Name" ],
@@ -1402,7 +1403,7 @@ sap.ui.define([
 		assert.equal(this.oRebindTableSpy.callCount, 0);
 	});
 
-	QUnit.test("Paramaters", function(assert) {
+	QUnit.test("Parameters", function(assert) {
 		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
         oUpdateBindingInfoStub.onCall(0).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
@@ -1444,4 +1445,19 @@ sap.ui.define([
 		assert.equal(this.oRebindTableSpy.callCount, 1);
 	});
 
+	QUnit.test("Change path", function(assert) {
+		var oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
+
+		oUpdateBindingInfoStub.onCall(1).callsFake(function (oMDCTable, oMetadataInfo, oBindingInfo) {
+			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
+			oBindingInfo.path = oBindingInfo.path + "something_else";
+		});
+
+		this.oTable.rebind();
+		this.oRebindTableSpy.resetHistory();
+		this.oTable.rebind();
+		assert.equal(this.oRebindTableSpy.callCount, 1, "Changing the path forces a rebind");
+
+		oUpdateBindingInfoStub.restore();
+	});
 });
