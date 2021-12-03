@@ -438,6 +438,10 @@ sap.ui.define([
 			bShowAll = this.getShowAll(),
 			sTextDir = this.getTextDirection();
 
+		if (this._isOverflow()){
+			mAriaParams.role = "button";
+		}
+
 		if (bHasIconTabBar) {
 			mAriaParams.controls = oIconTabBar.getId() + "-content";
 		}
@@ -512,7 +516,9 @@ sap.ui.define([
 				.attr("aria-disabled", true);
 		}
 
-		oRM.attr("aria-selected", false);
+		if (!this._isOverflow()) {
+			oRM.attr("aria-selected", false);
+		}
 
 		var sTooltip = this.getTooltip_AsString();
 		if (sTooltip) {
