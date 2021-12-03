@@ -22,6 +22,7 @@
 						sorter: {
 							path: 'group',
 							descending: false,
+							comparator: '.compareGroups',
 							group: true
 						}
 					}">

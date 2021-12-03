@@ -262,8 +262,7 @@ sap.ui.define([
 						host: this._oCard.getHostInstance(),
 						action: mCurrSettings,
 						parameters: mCurrSettings.parameters,
-						source: oEvent.getSource(),
-						url: mCurrSettings.url
+						source: oEvent.getSource()
 					});
 				}.bind(this)
 			});

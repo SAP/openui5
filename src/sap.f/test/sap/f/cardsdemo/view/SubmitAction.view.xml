@@ -1,0 +1,32 @@
+<mvc:View xmlns:f="sap.f"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:l="sap.ui.layout"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.SubmitAction">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Submit Action" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+
+		<f:GridContainer class="sapUiSmallMargin">
+			<w:Card manifest="{submitActionManifests>/adaptiveDefaultPayload}" action=".onCardAction">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{submitActionManifests>/adaptiveCustomPayload}" action=".onCardAction">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="3" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+		
+	</Page>
+</mvc:View>

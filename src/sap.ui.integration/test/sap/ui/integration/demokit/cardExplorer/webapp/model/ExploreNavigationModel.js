@@ -112,6 +112,17 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Submit Action with Custom Payload',
+								key: 'adaptive-action-submit-custom-payload',
+								files: [
+									{
+										url: '/samples/adaptive/action-submit-custom-payload.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: 'Submit with Extension',
 								key: 'extension',
 								files: [

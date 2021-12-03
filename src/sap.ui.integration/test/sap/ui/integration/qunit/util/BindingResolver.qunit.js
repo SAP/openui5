@@ -203,7 +203,6 @@ function (JSONModel, ManagedObject, BindingResolver, BindingHelper) {
 	});
 
 	QUnit.test("Incorrect values - with model", function (assert) {
-
 		// Arrange
 		var oModel = new JSONModel();
 		oModel.setData({
@@ -217,6 +216,16 @@ function (JSONModel, ManagedObject, BindingResolver, BindingHelper) {
 		assert.equal(BindingResolver.resolveValue(false, oModel), false, "Should have correctly resolved false.");
 		assert.deepEqual(BindingResolver.resolveValue({}, oModel), {}, "Should have correctly resolved empty object.");
 		assert.deepEqual(BindingResolver.resolveValue([], oModel), [], "Should have correctly resolved empty array.");
+	});
+
+	QUnit.test("Resolving instances of Date", function (assert) {
+		// Arrange
+		var oData = {
+			value: new Date()
+		};
+
+		// Assert
+		assert.strictEqual(BindingResolver.resolveValue(oData, new JSONModel()).value, oData.value, "Date instance is not modified");
 	});
 
 	QUnit.module("Resolve values that are already parsed");

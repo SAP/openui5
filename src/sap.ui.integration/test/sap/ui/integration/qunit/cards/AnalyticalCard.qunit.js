@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/integration/cards/AnalyticalContent",
+	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/CardActions",
 	"../services/SampleServices"
 ], function (
 	AnalyticalContent,
+	NavigationAction,
 	Card,
 	Core,
 	CardActions,
@@ -888,7 +890,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -918,7 +920,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -949,7 +951,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();

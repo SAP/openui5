@@ -4,6 +4,8 @@ sap.ui.define([
 	"../services/SampleServices",
 	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/cards/actions/NavigationAction",
+	"sap/ui/integration/cards/actions/SubmitAction",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/Host",
 	"sap/ui/core/Core",
@@ -16,6 +18,8 @@ sap.ui.define([
 		SampleServices,
 		library,
 		Card,
+		NavigationAction,
+		SubmitAction,
 		RequestDataProvider,
 		Host,
 		Core,
@@ -987,7 +991,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1021,7 +1025,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { });
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () { });
 
 			this.oCard.attachEvent("_ready", function () {
 
@@ -1056,7 +1060,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { });
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () { });
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1166,7 +1170,7 @@ sap.ui.define([
 		QUnit.test("Action URL should navigate", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1195,7 +1199,7 @@ sap.ui.define([
 
 		QUnit.test("Action URL should navigate without parameters", function (assert) {
 			var done = assert.async(),
-				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () {
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1409,7 +1413,7 @@ sap.ui.define([
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1505,7 +1509,7 @@ sap.ui.define([
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1579,7 +1583,7 @@ sap.ui.define([
 		QUnit.test("On pressing link, action should be fired", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () { });
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1626,7 +1630,7 @@ sap.ui.define([
 		QUnit.test("Pressing a field with type 'action' should fire an action", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () { });
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1672,7 +1676,7 @@ sap.ui.define([
 		QUnit.test("Pressing a table row column with type 'action' should fire an action", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () { });
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1715,7 +1719,7 @@ sap.ui.define([
 			var mEventArguments,
 				done = assert.async(),
 				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
-				oSpyActionHandler = this.spy(CardActions, "handleSubmitAction");
+				oSpyActionHandler = this.spy(SubmitAction.prototype, "execute");
 
 			// Setup
 			this.oCard.setManifest(oManifestActionSubmit);
@@ -1735,10 +1739,9 @@ sap.ui.define([
 				CardActions.fireAction(mEventArguments);
 
 				Core.applyChanges();
-
 				assert.ok(oStubRequest.called, "DataProvider's getData should have been called.");
 				assert.ok(oSpyActionHandler.called, "Submit Action's handler should have been called.");
-				assert.ok(oSpyActionHandler.calledWith(mEventArguments), "Submit Action's handler should have been called with the event configuration.");
+				assert.deepEqual(oSpyActionHandler.thisValues[0].getParameters(), mEventArguments.parameters, "Submit Action's handler should have been called with the event configuration.");
 
 				done();
 			}.bind(this));
@@ -1748,7 +1751,7 @@ sap.ui.define([
 			var mEventArguments,
 				done = assert.async(),
 				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
-				oSpyActionHandler = this.spy(CardActions, "handleSubmitAction"),
+				oSpyActionHandler = this.spy(SubmitAction.prototype, "execute"),
 				oHostActionHandlerSpy1 = this.spy(),
 				oHost1 = new Host({
 					action: oHostActionHandlerSpy1
@@ -1784,7 +1787,7 @@ sap.ui.define([
 				assert.ok(oHostActionHandlerSpy1.calledOnce, "Host's action handler should have been called");
 				assert.ok(oStubRequest.calledOnce, "DataProvider's getData should have been called.");
 				assert.ok(oSpyActionHandler.calledOnce, "Submit Action's handler should have been called.");
-				assert.ok(oSpyActionHandler.calledWith(mEventArguments), "Submit Action's handler should have been called with the event configuration.");
+				assert.deepEqual(oSpyActionHandler.thisValues[0].getParameters(), mEventArguments.parameters, "Submit Action's handler should have been called with the event configuration.");
 
 				// Act
 				this.oCard.setHost(oHost2);
@@ -1798,6 +1801,104 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
+		});
+
+		QUnit.test("Binding in action handler parameters", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Arrange
+				this.oCard.getModel("form").setProperty("/", { userName: "DonnaMoore"});
+				this.stub(CardActions, "fireAction");
+
+				// Act
+				this.oCard.getCardContent().getActions().fireAction(
+					this.oCard,
+					CardActionType.Submit,
+					{
+						configuration: {
+							parameters: {
+								user: {
+									name: "My name is {form>/userName}"
+								}
+							}
+						},
+						data: {}
+					}
+				);
+
+				// Assert
+				assert.strictEqual(
+					CardActions.fireAction.args[0][0].parameters.configuration.parameters.user.name,
+					"My name is DonnaMoore",
+					"Binding should be resolved"
+				);
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.payload.binding",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"item": {}
+					}
+				}
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Expression binding in action handler parameters", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Arrange
+				this.oCard.getModel("form").setProperty("/", { userName: "DonnaMoore"});
+				this.stub(CardActions, "fireAction");
+
+				// Act
+				this.oCard.getCardContent().getActions().fireAction(
+					this.oCard,
+					CardActionType.Submit,
+					{
+						configuration: {
+							parameters: {
+								user: {
+									name: "The winner is {= 1 > 2 ? 'first player' : 'second player'}"
+								}
+							}
+						},
+						data: {}
+					}
+				);
+
+				// Assert
+				assert.strictEqual(
+					CardActions.fireAction.args[0][0].parameters.configuration.parameters.user.name,
+					"The winner is second player",
+					"Expression binding should be resolved"
+				);
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.payload.binding",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"item": {}
+					}
+				}
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
 		QUnit.module("Card API", {
@@ -1814,7 +1915,7 @@ sap.ui.define([
 		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", function (assert) {
 			var done = assert.async(2),
 				oCardFireActionSpy = sinon.spy(this.oCard, "fireAction"),
-				oFurtherProcessingSpy = sinon.spy(CardActions, "_doPredefinedAction");
+				oFurtherProcessingSpy = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () { });
 
 			// Arrange
 			this.oCard.attachEvent("action", function (oEvent) {
@@ -1851,7 +1952,7 @@ sap.ui.define([
 			var done = assert.async(),
 				oCard = this.oCard,
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () { });
+				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "_openUrl").callsFake(function () { });
 
 			oCard.attachEvent("_ready", function () {
 				// Act
@@ -1896,7 +1997,7 @@ sap.ui.define([
 			QUnit.test("Timeline should be actionable ", function (assert) {
 				var done = assert.async(),
 					oActionSpy = sinon.spy(CardActions, "fireAction"),
-					oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
+					oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
 						Log.error(LOG_MESSAGE);
 					});
 

@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/Model",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/base/util/extend"
-], function (ManagedObject, Log, Model, BindingHelper, extend) {
+	"sap/base/util/extend",
+	"sap/base/util/isPlainObject"
+], function (ManagedObject, Log, Model, BindingHelper, extend, isPlainObject) {
 		"use strict";
 
 		/**
@@ -64,7 +65,7 @@ sap.ui.define([
 			}
 
 			// iterates objects
-			if (vValue && typeof vValue === "object" && !BindingResolver.isBindingInfo(vValue)) {
+			if (vValue && isPlainObject(vValue) && !BindingResolver.isBindingInfo(vValue)) {
 				var oNewObj = {};
 				for (var sProp in vValue) {
 					oNewObj[sProp] = process(vValue[sProp], vModelOrObject, sPath, iCurrentLevel + 1, iMaxLevel);

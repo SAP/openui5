@@ -5,18 +5,28 @@ sap.ui.define([
 	"./BindingResolver",
 	"../library",
 	"sap/base/Log",
-	"sap/ui/util/openWindow",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/integration/cards/actions/CustomAction",
+	"sap/ui/integration/cards/actions/SubmitAction",
+	"sap/ui/integration/cards/actions/NavigationAction",
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/Utils",
 	"sap/base/strings/capitalize"
 ], function (
 	BindingResolver,
 	library,
 	Log,
-	openWindow,
 	ManagedObject,
+	CustomAction,
+	SubmitAction,
+	NavigationAction,
+	BindingHelper,
+	Utils,
 	capitalize
 ) {
 		"use strict";
+
+		// TODO: Move this module to sap/ui/integration/cards/actions/
 
 		function _getServiceName(vService) {
 			if (vService && typeof vService === "object") {
@@ -335,20 +345,14 @@ sap.ui.define([
 
 		CardActions.prototype._processAction = function (oSource, oAction, sPath) {
 			var oHost = this._getHostInstance(),
-				oCard = this.getCard(),
-				sUrl = oAction.url;
-
-			if (sUrl) {
-				sUrl = BindingResolver.resolveValue(sUrl, oSource, sPath);
-			}
+				oCard = this.getCard();
 
 			CardActions.fireAction({
 				card: oCard,
 				host: oHost,
 				action: oAction,
 				parameters: BindingResolver.resolveValue(oAction.parameters, oSource, sPath),
-				source: oSource,
-				url: sUrl
+				source: oSource
 			});
 		};
 
@@ -364,28 +368,36 @@ sap.ui.define([
 		CardActions.prototype.fireAction = function (oSource, sType, mParameters) {
 			var oHost = this._getHostInstance(),
 				oCard = this.getCard(),
-				oActionHandlingConfiguration = this._extractActionConfigurations(oCard, mParameters),
-				oEventData = {
-					card: oCard,
-					host: oHost,
-					action: {
-						type: sType
-					},
-					parameters: oActionHandlingConfiguration,
-					source: oSource
-				};
+				oActionHandlingConfiguration = this._extractActionConfigurations(oCard, mParameters);
 
-			CardActions.fireAction(oEventData);
+			oActionHandlingConfiguration = BindingHelper.createBindingInfos(oActionHandlingConfiguration, oCard.getBindingNamespaces());
+			oActionHandlingConfiguration = BindingResolver.resolveValue(oActionHandlingConfiguration, oSource);
+
+			// TODO: refactor and move this to SubmitAction
+			if (sType === CardActionType.Submit && oActionHandlingConfiguration.configuration) {
+				Utils.makeUndefinedValuesNull(oActionHandlingConfiguration.configuration.parameters);
+			}
+
+			CardActions.fireAction({
+				card: oCard,
+				host: oHost,
+				action: {
+					type: sType
+				},
+				parameters: oActionHandlingConfiguration,
+				source: oSource
+			});
 		};
 
+		// TODO: make this method private and allow usage only through an instance, i.e. new CardActions(...).fireAction(...)
+		// Benefit: extract action handlers, resolve parameters bindings, make undefined values null in a single place
 		CardActions.fireAction = function (mConfig) {
 			var oHost = mConfig.host,
 				oCard = mConfig.card,
 				oExtension = oCard.getAggregation("_extension"),
-				oAction = mConfig.action,
 				mParameters = mConfig.parameters || {},
 				mActionParams = {
-					type: oAction.type,
+					type: mConfig.action.type,
 					card: oCard,
 					actionSource: mConfig.source,
 					parameters: mParameters
@@ -412,95 +424,14 @@ sap.ui.define([
 			}
 
 			if (bActionResult) {
-				CardActions._doPredefinedAction(mConfig);
+				var oHandler = CardActions._createHandler(mConfig);
+
+				if (oHandler) {
+					oHandler.execute();
+				}
 			}
 
 			return bActionResult;
-		};
-
-		CardActions._doPredefinedAction = function (mConfig) {
-			var oAction = mConfig.action,
-				mParameters = mConfig.parameters,
-				sType = oAction.type,
-				sUrl,
-				sTarget,
-				sParametersUrl,
-				sParametersTarget;
-
-			if (mParameters) {
-				sParametersUrl = mParameters.url;
-				sParametersTarget = mParameters.target;
-			}
-
-			switch (sType) {
-				case CardActionType.Navigation:
-					if (oAction.service) {
-						break;
-					}
-					sUrl = mConfig.url || sParametersUrl;
-					sTarget = oAction.target || sParametersTarget || "_blank";
-					if (sUrl) {
-						CardActions.openUrl(sUrl, sTarget);
-					}
-					break;
-				case CardActionType.Custom:
-					if (typeof oAction.action === "function") {
-						oAction.action(mConfig.card, mConfig.source);
-					}
-					break;
-				case CardActionType.Submit:
-					if (mConfig.source && mConfig.source.isA("sap.ui.integration.cards.BaseContent")) {
-						CardActions.handleSubmitAction(mConfig);
-					}
-					break;
-				default: break;
-			}
-		};
-
-		/**
-		 * Navigates to url
-		 *
-		 * @param sUrl url to navigate to.
-		 * @param sTarget target of the url
-		 * @private
-		 */
-		CardActions.openUrl = function (sUrl, sTarget) {
-			openWindow(sUrl, sTarget);
-		};
-
-		/**
-		 * Handles Submit action
-		 *
-		 * @param mConfig
-		 * @private
-		 * @static
-		 */
-		CardActions.handleSubmitAction = function (mConfig) {
-			var oDataProvider,
-				oCard = mConfig.card,
-				oDataProviderFactory = oCard._oDataProviderFactory,
-				oBaseContentInstance = mConfig.source,
-				oActionParameters = mConfig.parameters;
-
-			if (!oActionParameters.configuration) {
-				return;
-			}
-
-			oBaseContentInstance.onActionSubmitStart(oActionParameters);
-
-			oDataProvider = oDataProviderFactory.create({request: oActionParameters.configuration});
-
-			oDataProvider.getData()
-				.then(function (oResponse) {
-					oBaseContentInstance.onActionSubmitEnd(oResponse, null);
-				}, function (oError) {
-					Log.error(oError);
-					oBaseContentInstance.onActionSubmitEnd(null, {error: oError});
-				})
-				.finally(function () {
-					// Cleanup the data provider
-					oDataProviderFactory.remove(oDataProvider);
-				});
 		};
 
 		/**
@@ -525,7 +456,7 @@ sap.ui.define([
 					"mode": oRequestConfig.mode || "cors",
 					"url": oRequestConfig.url,
 					"method": oRequestConfig.method || "POST",
-					"parameters": Object.assign({}, oData, oRequestConfig.parameters),
+					"parameters": oRequestConfig.parameters || oData,
 					"headers": oRequestConfig.headers,
 					"xhrFields": {
 						"withCredentials": !!oRequestConfig.withCredentials
@@ -543,6 +474,34 @@ sap.ui.define([
 				ActionArea.Content,
 				ActionArea.ContentItemDetail,
 				ActionArea.ActionsStrip].indexOf(sActionArea) > -1;
+		};
+
+		CardActions._createHandler = function (mConfig) {
+			var _ActionClass = null;
+
+			// TODO: There are some actions like "MonthChange" that are not type of the enum. Add them
+			switch (mConfig.action.type) {
+				case CardActionType.Custom:
+					_ActionClass = CustomAction; break;
+				case CardActionType.Navigation:
+					_ActionClass = NavigationAction; break;
+				case CardActionType.Submit:
+					_ActionClass = SubmitAction; break;
+				default:
+					// TODO: Log error for unknown type
+					break;
+			}
+
+			if (_ActionClass) {
+				return new _ActionClass({
+					config: mConfig.action,
+					parameters: mConfig.parameters,
+					card: mConfig.card,
+					source: mConfig.source
+				});
+			}
+
+			return null;
 		};
 
 		return CardActions;
