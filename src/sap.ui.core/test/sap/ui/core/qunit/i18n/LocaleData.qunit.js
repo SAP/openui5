@@ -23,21 +23,48 @@ sap.ui.define([
 	});
 
 	QUnit.test("LocaleData mapping", function(assert) {
-		// sr Latin
-		// sr_Latn
-		LocaleData.getInstance(new Locale("sr_Latn"));
+		// Serbian Latin
+		// sr_Latn -> sr-Latn
+		var oLocaleData = LocaleData.getInstance(new Locale("sr_Latn"));
 		assert.equal(this.loadResourceSpy.callCount, 1, "called for sr_Latn");
 		assert.equal(this.loadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn is loaded");
+		assert.equal(oLocaleData.sCLDRLocaleId, "sr-Latn");
 
-		// sh maps to sr_Latn
-		LocaleData.getInstance(new Locale("sh"));
+		// sh -> sr-Latn
+		oLocaleData = LocaleData.getInstance(new Locale("sh"));
 		assert.equal(this.loadResourceSpy.callCount, 1, "not called for sh because sr_Latn already loaded");
 		assert.equal(this.loadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn already loaded");
+		assert.equal(oLocaleData.sCLDRLocaleId, "sr-Latn");
 
-		// sr
-		LocaleData.getInstance(new Locale("sr"));
+		// sr -> sr
+		oLocaleData = LocaleData.getInstance(new Locale("sr"));
 		assert.equal(this.loadResourceSpy.callCount, 2, "called for sr");
 		assert.equal(this.loadResourceSpy.getCall(1).args[0], "sap/ui/core/cldr/sr.json", "sr is loaded");
+		assert.equal(oLocaleData.sCLDRLocaleId, "sr");
+
+		// zh_Hant -> zh-TW
+		oLocaleData = LocaleData.getInstance(new Locale("zh_Hant"));
+		assert.equal(oLocaleData.sCLDRLocaleId, "zh-TW");
+
+		// zh_Hans -> zh-CN
+		oLocaleData = LocaleData.getInstance(new Locale("zh_Hans"));
+		assert.equal(oLocaleData.sCLDRLocaleId, "zh-CN");
+
+		// no -> nb
+		oLocaleData = LocaleData.getInstance(new Locale("no"));
+		assert.equal(oLocaleData.sCLDRLocaleId, "nb");
+
+		// de_CH (with region) -> de-CH
+		oLocaleData = LocaleData.getInstance(new Locale("de_CH"));
+		assert.equal(oLocaleData.sCLDRLocaleId, "de-CH");
+
+		// de (without region) -> de
+		oLocaleData = LocaleData.getInstance(new Locale("de"));
+		assert.equal(oLocaleData.sCLDRLocaleId, "de");
+
+		// invalid (falls back to en) -> en
+		oLocaleData = LocaleData.getInstance(new Locale("invalid"));
+		assert.equal(oLocaleData.sCLDRLocaleId, "en");
 	});
 
 

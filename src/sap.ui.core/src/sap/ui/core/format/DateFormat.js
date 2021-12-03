@@ -677,21 +677,81 @@ sap.ui.define([
 
 			return sValue.substr(0, iLength);
 		},
-		findEntry: function (sValue, aList) {
+
+		/**
+		 * Returns if the given string starts with another given string ignoring the case.
+		 *
+		 * Takes the locale into account to ensure the characters are interpreted the right way.
+		 *
+		 * First, an exact case check is performed to remain backward compatible, then a case-insensitive check
+		 * based on the locale is done.
+		 *
+		 * When during the case conversion the length of the string changes we cannot safely match
+		 * it and return <code>false</code>.
+		 *
+		 * @param {string} sValue the value to check, e.g. "März 2013"
+		 * @param {string} sSubstring the string to compare it with, e.g. "MÄRZ"
+		 * @param {string} sLocale the locale, e.g. "de-DE"
+		 * @returns {boolean} true if the given string <code>sValue</code> starts with <code>sSubstring</code>
+		 * @private
+		 */
+		startsWithIgnoreCase: function (sValue, sSubstring, sLocale) {
+			// exact case comparison (backward compatible)
+			if (sValue.startsWith(sSubstring)) {
+				return true;
+			}
+			try {
+				// Use String#toLocaleUpperCase instead of String#toLocaleLowerCase because there
+				// are known cases where an upper case letter has 2 lower case variants, e.g. Greek sigma.
+				var sSubToLocaleUpperCase = sSubstring.toLocaleUpperCase(sLocale);
+				var sValueUpperCase = sValue.toLocaleUpperCase(sLocale);
+
+				// During the upper-case conversion there are cases where length changes, e.g. ß -> SS.
+				// This cannot be properly determined without probing therefore we do not support this case.
+				if (sSubToLocaleUpperCase.length !== sSubstring.length || sValueUpperCase.length !== sValue.length) {
+					return false;
+				}
+				return sValueUpperCase.startsWith(sSubToLocaleUpperCase);
+			} catch (e) {
+				// Can fail for String#toLocaleUpperCase with an invalid locale
+				// the API fails in the case with: Incorrect locale information provided
+				return false;
+			}
+		},
+
+		/**
+		 * Finds the longest matching entry for which the following applies:
+		 * * <code>sValue</code> starts with the found entry
+		 *
+		 * The index of the finding in <code>aList</code> and the length of the match is returned.
+		 * The case is ignored and the given locale is used for the string comparison.
+		 *
+		 * @example
+		 * findEntry("MÄRZ 2013", ["Januar", "Februar", "März", "April", ...], "de-DE");
+		 * // {length: 4, index: 2}
+		 *
+		 * @param {string} sValue the input value, e.g. "MÄRZ 2013"
+		 * @param {string[]} aList, the list of values to check, e.g. ["Januar", "Februar", "März", "April", ...]
+		 * @param {string} sLocale the locale which is used for the string comparison, e.g. "de-DE"
+		 * @returns {{length: number, index: number}} the length of the match in sValue, the index in the list of values
+		 *   e.g. length: 4, index: 2 ("MÄRZ")
+		 * @private
+		 */
+		findEntry: function (sValue, aList, sLocale) {
 			var iFoundIndex = -1,
 				iMatchedLength = 0;
-
 			for (var j = 0; j < aList.length; j++) {
-				if (aList[j] && aList[j].length > iMatchedLength && sValue.indexOf(aList[j]) === 0) {
+				if (aList[j] && aList[j].length > iMatchedLength && this.startsWithIgnoreCase(sValue, aList[j], sLocale)) {
 					iFoundIndex = j;
 					iMatchedLength = aList[j].length;
 				}
 			}
 			return {
 				index: iFoundIndex,
-				value: iFoundIndex === -1 ? null : aList[iFoundIndex]
+				length: iMatchedLength
 			};
 		},
+
 		/**
 		 * Parses a given timezone
 		 *
@@ -815,11 +875,11 @@ sap.ui.define([
 
 				for (var i = 0; i < aErasVariants.length; i++) {
 					var aVariants = aErasVariants[i];
-					var oFound = oParseHelper.findEntry(sValue, aVariants);
+					var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 					if (oFound.index !== -1) {
 						return {
 							era: oFound.index,
-							length: oFound.value.length
+							length: oFound.length
 						};
 					}
 				}
@@ -978,11 +1038,11 @@ sap.ui.define([
 				} else {
 					for (var i = 0; i < aMonthsVariants.length; i++) {
 						var aVariants = aMonthsVariants[i];
-						var oFound = oParseHelper.findEntry(sValue, aVariants);
+						var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 						if (oFound.index !== -1) {
 							return {
 								month: oFound.index,
-								length: oFound.value.length
+								length: oFound.length
 							};
 						}
 					}
@@ -1025,11 +1085,11 @@ sap.ui.define([
 				} else {
 					for (var i = 0; i < aMonthsVariants.length; i++) {
 						var aVariants = aMonthsVariants[i];
-						var oFound = oParseHelper.findEntry(sValue, aVariants);
+						var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 						if (oFound.index !== -1) {
 							return {
 								month: oFound.index,
-								length: oFound.value.length
+								length: oFound.length
 							};
 						}
 					}
@@ -1157,11 +1217,11 @@ sap.ui.define([
 				} else {
 					for (var i = 0; i < aQuartersVariants.length; i++) {
 						var aVariants = aQuartersVariants[i];
-						var oFound = oParseHelper.findEntry(sValue, aVariants);
+						var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 						if (oFound.index !== -1) {
 							return {
 								quarter: oFound.index,
-								length: oFound.value.length
+								length: oFound.length
 							};
 						}
 					}
@@ -1205,11 +1265,11 @@ sap.ui.define([
 				} else {
 					for (var i = 0; i < aQuartersVariants.length; i++) {
 						var aVariants = aQuartersVariants[i];
-						var oFound = oParseHelper.findEntry(sValue, aVariants);
+						var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 						if (oFound.index !== -1) {
 							return {
 								quarter: oFound.index,
-								length: oFound.value.length
+								length: oFound.length
 							};
 						}
 					}
@@ -1252,12 +1312,12 @@ sap.ui.define([
 
 				for (var i = 0; i < aDaysVariants.length; i++) {
 					var aVariants = aDaysVariants[i];
-					var oFound = oParseHelper.findEntry(sValue, aVariants);
+					var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 					if (oFound.index !== -1) {
 						return {
 							// gets translated to dayOfWeek where the day of week is relative to the week
 							dayOfWeek: oFound.index,
-							length: oFound.value.length
+							length: oFound.length
 						};
 					}
 				}
@@ -1282,11 +1342,11 @@ sap.ui.define([
 
 				for (var i = 0; i < aDaysVariants.length; i++) {
 					var aVariants = aDaysVariants[i];
-					var oFound = oParseHelper.findEntry(sValue, aVariants);
+					var oFound = oParseHelper.findEntry(sValue, aVariants, oFormat.oLocaleData.sCLDRLocaleId);
 					if (oFound.index !== -1) {
 						return {
 							day: oFound.index,
-							length: oFound.value.length
+							length: oFound.length
 						};
 					}
 				}
