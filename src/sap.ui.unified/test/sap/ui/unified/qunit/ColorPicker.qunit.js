@@ -912,6 +912,7 @@ sap.ui.define([
 			assert.equal(this.oCP.oHueField.getEnabled(), false, "hue is disabled");
 			assert.equal(this.oCP.oSatField.getEnabled(), false, "sat is disabled");
 			assert.equal(this.oCP.oLitField.getEnabled(), false, "lit is disabled");
+			assert.equal(this.oCP.oValField.getEnabled(), false, "val is disabled");
 
 			// act
 			this.oCP.oRGBorHSLRBUnifiedGroup.fireSelect({
@@ -925,6 +926,7 @@ sap.ui.define([
 			assert.equal(this.oCP.oHueField.getEnabled(), true, "hue is enabled");
 			assert.equal(this.oCP.oSatField.getEnabled(), true, "sat is enabled");
 			assert.equal(this.oCP.oLitField.getEnabled(), true, "lit is enabled");
+			assert.equal(this.oCP.oValField.getEnabled(), true, "val is enabled");
 		});
 
 		QUnit.module("values conversions", {
