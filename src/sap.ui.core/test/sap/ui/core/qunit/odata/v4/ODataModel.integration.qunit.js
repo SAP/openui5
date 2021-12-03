@@ -2088,14 +2088,11 @@ sap.ui.define([
 				// Resolve to have the missing requests and changes reported
 				setTimeout(function () {
 					if (oPromise.isPending()) {
-						assert.ok(false,
-							"Timeout in waitForChanges" + (sTitle ? " of " + sTitle : "")
-								+ " (" + iTimeout + " ms)");
-						resolve();
+						resolve(true);
 					}
 				}, iTimeout);
-				that.checkFinish(assert);
-			}).then(function () {
+				that.checkFinish();
+			}).then(function (bTimeout) {
 				var sControlId, aExpectedValuesPerRow, i, j;
 
 				// Report (and forget about) missing requests
@@ -2134,7 +2131,8 @@ sap.ui.define([
 				that.mListChanges = {};
 				assert.strictEqual(that.aExpectedEvents.length, 0, "no missing events");
 				that.checkMessages(assert);
-				assert.ok(true, "waitForChanges: Done" + (sTitle ? " with " + sTitle : "")
+				assert.ok(!bTimeout, "waitForChanges(" + (sTitle || "") + "): "
+					+ (bTimeout ? "Timeout (" + iTimeout + " ms)" : "Done")
 					+ " *".repeat(25));
 			});
 
