@@ -149,6 +149,16 @@
 							</mdc:dialog>
 						</mdc:ValueHelp>
 
+						<mdc:ValueHelp id="FH-Currency"
+							delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+							<mdc:typeahead>
+								<mdcv:Popover>
+									<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
+										<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}"/>
+									</mdcvc:FixedList>
+								</mdcv:Popover>
+							</mdc:typeahead>
+						</mdc:ValueHelp>
 					</mdc:dependents>
                 <mdc:basicSearchField>
                     <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
@@ -176,7 +186,7 @@
 						header="Orders"
 						filter="ordersFilterBar"
 						p13nMode="Sort,Column,Filter"
-						delegate='{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": { "collectionName": "Orders" } }'
+						delegate='{"name": "sap/ui/v4demo/delegate/Orders.Table.delegate", "payload": { "collectionName": "Orders" } }'
 						showRowCount="true"
 						rowPress="onRowPress"
 						threshold="50"
@@ -199,9 +209,9 @@
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cOrderNo"
-									header="OrderNo"
+									header="Order Number"
 									dataProperty="OrderNo"
-									width="10rem"
+									width="5rem"
 								>
                             <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="Display"/>
                         </mdc:table.Column>
@@ -223,7 +233,7 @@
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cCreatedAt"
-									header="createdAt"
+									header="Created On"
 									dataProperty="createdAt"
 									width="13rem"
 								>
@@ -231,7 +241,7 @@
                         </mdc:table.Column>
 						<mdc:table.Column
 									id="cModifiedAt"
-									header="modifiedAt"
+									header="Modified On"
 									dataProperty="modifiedAt"
 									width="13rem"
 								>

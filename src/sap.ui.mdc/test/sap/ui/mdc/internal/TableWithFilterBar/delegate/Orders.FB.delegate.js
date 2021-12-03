@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier) {
+	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay'
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay) {
 	"use strict";
 
 	var FilterBarOrdersSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -31,6 +31,11 @@ sap.ui.define([
 					oPropertyInfo.label = "Order Number";
 				} else if (oPropertyInfo.name === "orderTime") {
 					oPropertyInfo.label = "Order Time";
+				} else if (oPropertyInfo.name === "currency_code") {
+					oPropertyInfo.fieldHelp = "FH-Currency";
+					oPropertyInfo.display = FieldDisplay.Value; // for currencies description key is the name
+					oPropertyInfo.maxConditions = 1; // normally only one currency should be used, otherwise it makes no sense related to price
+					oPropertyInfo.filterOperators = ["EQ"]; // for currency only fixed values make sense
 				}
 
 			});

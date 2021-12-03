@@ -583,6 +583,16 @@
 								</mdc:dialog>
 							</mdc:ValueHelp>
 
+							<mdc:ValueHelp id="FH-Currency"
+								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+								<mdc:typeahead>
+									<mdcv:Popover>
+										<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
+											<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}"/>
+										</mdcvc:FixedList>
+									</mdcv:Popover>
+								</mdc:typeahead>
+							</mdc:ValueHelp>
 						</mdc:dependents>
 
 						<mdc:basicSearchField>
