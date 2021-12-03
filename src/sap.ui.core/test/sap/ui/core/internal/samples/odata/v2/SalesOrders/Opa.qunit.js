@@ -21,7 +21,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/MessagesReturnedFromAFunctionImport",
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/IgnoredMessages",
 		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/CloneSalesOrderItem",
-		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/ODataListBinding.create/TC1_SalesOrders"
+		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/ODataListBinding.create/TC1_SalesOrders",
+		"sap/ui/core/internal/samples/odata/v2/SalesOrders/tests/ODataListBinding.create/TC2_CreateItems"
 	], function () {
 		QUnit.start();
 	});

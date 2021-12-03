@@ -141,6 +141,10 @@ sap.ui.define([
 						actions : new EnterText({text : sNewNote}),
 						id : "note::createSalesOrderItemDialog",
 						searchOpenDialogs : true,
+						success : function () {
+							Opa5.assert.ok(true, "Changed the note of the new sales order item to "
+								+ "'" + sNewNote + "'.");
+						},
 						viewName : sViewName
 					});
 				},
@@ -154,6 +158,10 @@ sap.ui.define([
 						actions : new EnterText({text : sNewId}),
 						id : "productID::createSalesOrderItemDialog",
 						searchOpenDialogs : true,
+						success : function () {
+							Opa5.assert.ok(true, "Changed the product ID of the new sales order"
+								+ " item to '" + sNewId + "'.");
+						},
 						viewName : sViewName
 					});
 				},
@@ -217,6 +225,37 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Filters the sales order items table as given.
+				 *
+				 * @param {string} sFilter The filter value
+				 */
+				filterItems : function (sFilter) {
+					this.waitFor({
+						actions: new Press(),
+						id : "grossAmountColumn",
+						success : function (oSelect) {
+							this.waitFor({
+								actions : new EnterText({
+									clearTextFirst : true,
+									pressEnterKey : true,
+									text : sFilter
+								}),
+								controlType: "sap.ui.unified.MenuTextFieldItem",
+								matchers: [
+									new Ancestor(oSelect),
+									new Properties({icon : "sap-icon://filter"})
+								],
+								success : function (oMenuTextField) {
+									Opa5.assert.ok(true, "Filter sales order items by \""
+										+ sFilter + "\".");
+								},
+								viewName : sViewName
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Opens the technical details of a message. Only works if the message popover is
 				 * open and a message is selected.
 				 */
@@ -277,6 +316,12 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Presses the "Refresh sales order items table" button.
+				 */
+				pressItemsRefreshButton : function () {
+					pressButton(this, "refresh::ToLineItems");
+				},
+				/*
 				 * Presses the "Show more details" button in the specified line in the table.
 				 *
 				 * @param {number} iRow The row in which the button should be pressed
@@ -305,6 +350,12 @@ sap.ui.define([
 						viewName : sViewName,
 						visible : false
 					});
+				},
+				/*
+				 * Presses the Close button in the "Create new item" Dialog.
+				 */
+				pressNewItemCloseButton : function () {
+					pressButton(this, "closeCreatedItem::createSalesOrderItemDialog");
 				},
 				/*
 				 * Presses the Discard button in the "Create new item" Dialog.
@@ -366,10 +417,15 @@ sap.ui.define([
 				rememberCurrentItemCount : function () {
 					iCurrentItemCount = 0;
 
-					loopTableRows(this, function (aCells, sItemPosition) {
-						if (sItemPosition !== "") {
-							iCurrentItemCount += 1;
-						}
+					this.waitFor({
+						id : "salesOrderItemsTitle",
+						success : function (oTitle) {
+							var sNumber = oTitle.getText().split(" ")[0];
+
+							iCurrentItemCount = parseInt(sNumber);
+							Opa5.assert.ok(true, "Current number of sales order items: " + sNumber);
+						},
+						viewName : sViewName
 					});
 				},
 				/*
@@ -521,6 +577,35 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Sort the sales order items table as given.
+				 *
+				 * @param {string} sSortOrder The sort order "asc" or "desc"
+				 */
+				sortItems : function (sSortOrder) {
+					this.waitFor({
+						actions: new Press(),
+						id : "itemPositionColumn",
+						success : function (oColumn) {
+							this.waitFor({
+								actions: new Press(),
+								controlType: "sap.ui.unified.MenuItem",
+								matchers: [
+									new Ancestor(oColumn),
+									new Properties({icon : sSortOrder === "asc"
+										? "sap-icon://sort-ascending"
+										: "sap-icon://sort-descending"})
+								],
+								success : function () {
+									Opa5.assert.ok(true, "Sort sales order items \"" + sSortOrder
+										+ "\".");
+								},
+								viewName : sViewName
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Sort the sales orders table as given.
 				 *
 				 * @param {string} sSortOrder The sort order "asc" or "desc"
@@ -644,6 +729,92 @@ sap.ui.define([
 					});
 				},
 				/*
+				 * Checks whether the sales order item in the given row has the content.
+				 *
+				 * @param {number} iRow
+				 *   The position of the sales order item in the table, with the top being 0
+				 * @param {Object<string,string>} mExpectedValues
+				 * @param {string} [mExpectedValues.Currency=""]
+				 *   The expected currency
+				 * @param {string} [mExpectedValues.GrossAmount=""]
+				 *   The expected gross amount
+				 * @param {string} [mExpectedValues.ItemPosition=""]
+				 *   The expected sale order item position
+				 * @param {string} [mExpectedValues.Note=""]
+				 *   The expected note
+				 * @param {string} [mExpectedValues.ProductID=""]
+				 *   The expected product ID
+				 * @param {string} [mExpectedValues.Quantity=""]
+				 *   The expected quantity
+				 * @param {string} [mExpectedValues.SalesOrderID=""]
+				 *   The expected sales order ID
+				 * @param {string} [mExpectedValues.Status="From Server"]
+				 *   The expected status
+				 * @param {string} [mExpectedValues.Unit="EA"]
+				 *   The expected unit
+				 */
+				checkItemAtRow : function (iRow, mExpectedValues) {
+					this.waitFor({
+						id : "ToLineItems",
+						success : function (oTable) {
+							var sMsgPrefix = "The sales order item in row " + iRow
+									+ " has the expected ",
+								oRow = oTable.getRows()[iRow],
+								aCells = oRow.getCells();
+
+							Object.keys(mColumn).forEach(function (sColumn) {
+								var sExpectedValue,
+									iColumn = mColumn[sColumn],
+									sCurrentValueGetter = "getValue";
+
+								switch (sColumn) {
+									case "Status":
+										sCurrentValueGetter = "getTooltip";
+										sExpectedValue = mExpectedValues[sColumn] || "From Server";
+										break;
+									case "SalesOrderID":
+									case "ItemPosition":
+									case "ProductID":
+									case "Quantity":
+									case "GrossAmount":
+									case "Currency":
+									case "Note":
+										sExpectedValue = mExpectedValues[sColumn] || "";
+										break;
+									case "Unit":
+										sExpectedValue = mExpectedValues[sColumn] || "EA";
+										break;
+									default:
+										return;
+								}
+								Opa5.assert.strictEqual(aCells[iColumn][sCurrentValueGetter](),
+									sExpectedValue, sMsgPrefix + sColumn + ": " + sExpectedValue);
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				/*
+				 * Checks if the item count has changed by a specifed value.
+				 *
+				 * @param {number} iDelta
+				 *   The supposed difference between the current and the old item count
+				 */
+				checkItemCountChangedBy : function (iDelta) {
+					this.waitFor({
+						id : "salesOrderItemsTitle",
+						success : function (oTitle) {
+							var iCount = parseInt(oTitle.getText().split(" ")[0]);
+
+							iCurrentItemCount += iDelta;
+							Opa5.assert.equal(iCount, iCurrentItemCount,
+								"Sales order itens count has changed by " + iDelta + " to "
+									+ iCount);
+						},
+						viewName : sViewName
+					});
+				},
+				/*
 				 * Checks if all item quantities are as described in the MIT. All HT-1000 items need
 				 * a quantity of at least two, all other items a quantity of at least one.
 				 */
@@ -660,27 +831,6 @@ sap.ui.define([
 								"Quantity for item " + sItemPosition + " is ok.");
 						}
 					});
-				},
-				/*
-				 * Checks if the item count has changed by a specifed value.
-				 *
-				 * @param {number} iDelta
-				 *   The supposed difference between the current and the old item count
-				 */
-				checkItemCountChangedBy : function (iDelta) {
-					var iItemCount = 0,
-						fnCheckRows = function (aCells, sItemPosition) {
-							if (sItemPosition !== "") {
-								iItemCount += 1;
-							}
-						},
-						fnCheckResult = function () {
-							iCurrentItemCount += iDelta;
-							Opa5.assert.equal(iItemCount, iCurrentItemCount,
-								"Item count has changed by " + iDelta);
-						};
-
-					loopTableRows(this, fnCheckRows, fnCheckResult);
 				},
 				/*
 				 * Checks if all items in the table match the selected filter.

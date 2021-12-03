@@ -1,0 +1,82 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"ToHeader" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "230",
+			"Note" : "ODataListBinding#create - TC 2",
+			"NoteLanguage" : "EN",
+			"CustomerID" : "0100000000",
+			"CustomerName" : "SAP",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "4124.54",
+			"NetAmount" : "3466.00",
+			"TaxAmount" : "658.54",
+			"LifecycleStatus" : "N",
+			"LifecycleStatusDescription" : "New",
+			"BillingStatus" : "",
+			"BillingStatusDescription" : "Initial",
+			"DeliveryStatus" : "",
+			"DeliveryStatusDescription" : "Initial",
+			"CreatedAt" : "\/Date(1638459616199)\/",
+			"ChangedAt" : "\/Date(1638805935610)\/",
+			"ToBusinessPartner" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')/ToBusinessPartner"
+				}
+			},
+			"ToLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')/ToLineItems"
+				}
+			}
+		},
+		"ToProduct" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1060')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1060')",
+				"type" : "GWSAMPLE_BASIC.Product",
+				"etag" : "W/\"datetime'2021-06-24T14%3A22%3A35.0000000'\""
+			},
+			"ProductID" : "HT-1060",
+			"TypeCode" : "PR",
+			"Category" : "Mice",
+			"Name" : "Cordless Mouse",
+			"NameLanguage" : "EN",
+			"Description" : "Cordless Optical USB Mice, Laptop, Color: Black, Plug&Play",
+			"DescriptionLanguage" : "EN",
+			"SupplierID" : "0100000071",
+			"SupplierName" : "Tessile Casa Di Roma",
+			"TaxTarifCode" : 1,
+			"MeasureUnit" : "EA",
+			"WeightMeasure" : "0.090",
+			"WeightUnit" : "KG",
+			"CurrencyCode" : "EUR",
+			"Price" : "9.00",
+			"Width" : "6.000",
+			"Depth" : "14.500",
+			"Height" : "3.500",
+			"DimUnit" : "CM",
+			"CreatedAt" : "\/Date(1624544555000)\/",
+			"ChangedAt" : "\/Date(1624544555000)\/",
+			"ToSupplier" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSupplier"
+				}
+			},
+			"ToSalesOrderLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSalesOrderLineItems"
+				}
+			}
+		}
+	}
+}

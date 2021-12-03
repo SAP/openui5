@@ -85,6 +85,8 @@ sap.ui.define([
 				severity : "warning"
 			}
 		},
+		rContentID = /id(?:-[0-9]+){2}/,
+		mContentID2Key = {}, // maps a content ID reference to key identifying the entity
 		oCurrentMessages = {
 			aMessages : [],
 			/**
@@ -254,7 +256,7 @@ sap.ui.define([
 					source : "metadata.xml"
 				},
 
-				/* Test Case I */
+				/* Messages: Test Case I */
 				"SalesOrderSet('101')" : {
 					source : "Messages/TC1/SalesOrderSet.json"
 				},
@@ -353,7 +355,7 @@ sap.ui.define([
 					source : "Messages/TC1/SalesOrderSet.json"
 				}],
 
-				/* Test Case II */
+				/* Messages: Test Case II */
 				"SalesOrderSet('102')" : {
 					source : "Messages/TC2/SalesOrderSet.json"
 				},
@@ -402,7 +404,7 @@ sap.ui.define([
 				"MERGE SalesOrderLineItemSet(SalesOrderID='102',ItemPosition='020')" :
 					getSaveResponseIncreasingCallCount(),
 
-				/* Test Case II Section II */
+				/* Messages: Test Case II Section II */
 				"SalesOrderSet('102.2')" : {
 					source : "Messages/TC2/SalesOrderSet-2.json",
 					headers : getMessageHeader(undefined,
@@ -432,7 +434,7 @@ sap.ui.define([
 				"MERGE SalesOrderLineItemSet(SalesOrderID='102.2',ItemPosition='010')" :
 					getSaveResponseIncreasingCallCount(),
 
-				/* Test Case III */
+				/* Messages: Test Case III */
 				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('103')" : {
 					headers : getMessageHeader(undefined, oCurrentMessages.reset()
@@ -463,7 +465,7 @@ sap.ui.define([
 					source : "Messages/TC3/SalesOrderSet-1.json"
 				},
 
-				/* Test Case IV */
+				/* Messages: Test Case IV */
 				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('104')" : {
 					source : "Messages/TC4/SalesOrderSet.json"
@@ -488,7 +490,7 @@ sap.ui.define([
 				"MERGE SalesOrderLineItemSet(SalesOrderID='104',ItemPosition='050')" :
 					getSaveResponseIncreasingCallCount(),
 
-				/* Test Case V */
+				/* Messages: Test Case V */
 				"SalesOrderSet('105')" : {
 					headers : getMessageHeader(undefined, oCurrentMessages.reset().add("error",
 							"ToLineItems(SalesOrderID='105',ItemPosition='020')/Note")
@@ -511,7 +513,7 @@ sap.ui.define([
 						undefined, 2, 1)
 				},
 
-				/* Test Case VI */
+				/* Messages: Test Case VI */
 				/* More responses in the aRegExpFixture! */
 				"SalesOrderSet('106')" : {
 					source : "Messages/TC6/SalesOrderSet.json"
@@ -542,7 +544,7 @@ sap.ui.define([
 					source : "Messages/TC6/SalesOrderLineItem.json"
 				}],
 
-				/* Test Case VII */
+				/* Messages: Test Case VII */
 				"SalesOrderSet('107')" : {
 					headers : getMessageHeader(undefined,
 						oCurrentMessages.reset().add("system", undefined)),
@@ -552,7 +554,7 @@ sap.ui.define([
 					source : "Messages/TC7/SalesOrderSet-ToLineItems.json"
 				}],
 
-				/* Test Case VIII */
+				/* Messages: Test Case VIII */
 				"SalesOrderSet('108')" : {
 					source : "Messages/TC8/SalesOrderSet.json"
 				},
@@ -584,7 +586,7 @@ sap.ui.define([
 					source : "Messages/TC8/SalesOrderSet.json"
 				}],
 
-				/* Test Case IX */
+				/* Messages: Test Case IX */
 				"SalesOrderSet('109')" : {
 					source : "Messages/TC9/SalesOrderSet.json"
 				},
@@ -615,7 +617,7 @@ sap.ui.define([
 					ifMatch : increaseSaveCount.bind(),
 					source : "Messages/TC9/SalesOrderSet-ToLineItems.json"
 				},
-				/* Test Case X */
+				/* Messages: Test Case X */
 				"SalesOrderSet('110')" : {
 					headers : getMessageHeader(undefined, oCurrentMessages.reset()
 						.add("infoCurrency",
@@ -626,7 +628,7 @@ sap.ui.define([
 					source : "Messages/TC10/SalesOrderSet-ToLineItems.json"
 				},
 
-				/* Test Case XI */
+				/* Messages: Test Case XI */
 				"SalesOrderSet('111')" : {
 					ifMatch : function (request) {
 						// start with 110 to be able respond properly for the GET request with the
@@ -718,11 +720,100 @@ sap.ui.define([
 				},
 				"SalesOrderSet?$skip=4&$top=3&$orderby=SalesOrderID%20asc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID" : {
 					source : "ODLB.create/TC1/SalesOrderSet_asc_4-3_after_save.json"
+				},
+
+				/* ODataListBinding#create: Test Case II */
+				"SalesOrderSet('230')" : {
+					source : "ODLB.create/TC2/SalesOrder('230').json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=2&$orderby=ItemPosition%20desc" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_desc.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=2&$orderby=ItemPosition%20asc" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_asc.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$filter=GrossAmount%20lt%201000m&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_asc_filter.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$inlinecount=allpages" : [{
+					ifMatch : ithCall.bind(null, 0),
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4.json"
+				}, {
+					ifMatch : ithCall.bind(null, 1),
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_asc_after_save.json"
+				}],
+				"SalesOrderSet('230.1')" : {
+					source : "ODLB.create/TC2/SalesOrder('230.1').json"
+				},
+				"SalesOrderSet('230.1')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230.1')_ToLineItems_0_4_asc_count.json"
+				},
+				"SalesOrderSet('230')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+					ifMatch : ithCall.bind(null, 0),
+					source : "ODLB.create/TC2/SalesOrder('230').json"
+				}, {
+					ifMatch : ithCall.bind(null, 1),
+					source : "ODLB.create/TC2/SalesOrder('230')_after_save.json"
+				}],
+				"POST SalesOrderSet('230')/ToLineItems" : [{
+					ifMatch : function (oRequest) {
+						if (JSON.parse(oRequest.requestBody).Note === "4") {
+							// all POST requests are contained in one $batch; increase the save
+							// counter only with the last matching POST request
+							iTimesSaved += 1;
+							mContentID2Key[oRequest.requestHeaders["Content-ID"]] =
+								"(SalesOrderID='230',ItemPosition='050')";
+
+							return true;
+						}
+
+						return false;
+					},
+					code : 201,
+					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='050').json"
+				}, {
+					ifMatch : function (oRequest) {
+						if (JSON.parse(oRequest.requestBody).Note === "2") {
+							mContentID2Key[oRequest.requestHeaders["Content-ID"]] =
+								"(SalesOrderID='230',ItemPosition='040')";
+
+							return true;
+						}
+
+						return false;
+					},
+					code : 201,
+					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040').json"
+				}, {
+					ifMatch : function (oRequest) {
+						if (JSON.parse(oRequest.requestBody).Note === "1") {
+							mContentID2Key[oRequest.requestHeaders["Content-ID"]] =
+								"(SalesOrderID='230',ItemPosition='030')";
+
+							return true;
+						}
+
+						return false;
+					},
+					code : 201,
+					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030').json"
+				}],
+				"DELETE SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='050')" : {
+					code : 204
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$filter=not((SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27050%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27040%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27030%27))&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4.json"
+				},
+				"SalesOrderSet('230.1')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
+					source : "ODLB.create/TC2/SalesOrder('230.1').json"
 				}
 			},
 			aRegExpFixture : [{
 
-				/* Test Case III */
+				/* Messages: Test Case III */
 				regExp :
 					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(?:&\$inlinecount=(allpages))?/,
 				response : [{
@@ -745,7 +836,7 @@ sap.ui.define([
 				}
 			}, {
 
-				/* Test Case IV */
+				/* Messages: Test Case IV */
 				regExp :
 					/GET .*\/SalesOrderSet\('104'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(?:&\$inlinecount=(allpages))?/,
 				response : [{
@@ -812,7 +903,7 @@ sap.ui.define([
 				}
 			}, {
 
-				/* Test Case VI and XI*/
+				/* Messages: Test Case VI and XI*/
 				regExp :
 					/GET .*\$id(?:-[0-9]+){2}\?\$expand=ToProduct%2CToHeader&\$select=ToProduct%2CToHeader/,
 				response : [{
@@ -820,7 +911,7 @@ sap.ui.define([
 						.add("note", "Note").add("order", "Quantity")),
 					ifMatch : ithCall.bind(null, 3),
 					source : "Messages/TC6/SalesOrderLineItem-ToProduct-ToHeader.json"
-				}, { // used in Test Case XI
+				}, { // used in Messages: Test Case XI
 					headers : Object.assign(
 						getMessageHeader(undefined,
 							oCurrentMessages.reset().add("order", "Quantity")),
@@ -830,7 +921,25 @@ sap.ui.define([
 						}),
 					ifMatch : ithCall.bind(null, 111),
 					source : "Messages/TC11/SalesOrderLineItem-ToProduct-ToHeader.json"
+				}, { // ODataListBinding#create: Test Case II
+					ifMatch : function (oRequest) {
+						return  mContentID2Key[oRequest.requestLine.match(rContentID)[0]] ===
+							"(SalesOrderID='230',ItemPosition='030')";
+					},
+					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')_expand.json"
 				}, {
+					ifMatch : function (oRequest) {
+						return  mContentID2Key[oRequest.requestLine.match(rContentID)[0]] ===
+							"(SalesOrderID='230',ItemPosition='040')";
+					},
+					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')_expand.json"
+				}, {
+					ifMatch : function (oRequest) {
+						return  mContentID2Key[oRequest.requestLine.match(rContentID)[0]] ===
+							"(SalesOrderID='230',ItemPosition='050')";
+					},
+					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='050')_expand.json"
+				}, { // default match
 					code : 424,
 					source : "Messages/TC6/error-1.json"
 				}]

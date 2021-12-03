@@ -192,7 +192,8 @@
 					</t:dependents>
 					<t:extension>
 						<Toolbar design="Transparent">
-							<Title level="H2" text="{ui>/salesOrderItemsCount} Sales Order Items">
+							<Title id="salesOrderItemsTitle" level="H2"
+								text="{ui>/salesOrderItemsCount} Sales Order Items">
 								<layoutData>
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
@@ -205,7 +206,7 @@
 								tooltip="Delete the selected sales order item" />
 							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://synchronize"
 								id="refresh::ToLineItems" press="onRefreshItems"
-								tooltip="Refresh" />
+								tooltip="Refresh sales order items table" />
 							<ToolbarSpacer/>
 							<Label labelFor="itemFilter" text="Filter">
 								<layoutData>
@@ -261,8 +262,8 @@
 								<Input editable="false" value="{SalesOrderID}" />
 							</t:template>
 						</t:Column>
-						<t:Column sorted="true" sortOrder="Ascending" sortProperty="ItemPosition"
-							width="8em">
+						<t:Column id="itemPositionColumn" sorted="true" sortOrder="Ascending"
+							sortProperty="ItemPosition" width="8em">
 							<Label text="Item Position" />
 							<t:template>
 								<Input editable="false" value="{ItemPosition}" />
@@ -318,7 +319,7 @@
 								}" />
 							</t:template>
 						</t:Column>
-						<t:Column filterProperty="GrossAmount" width="10em">
+						<t:Column id="grossAmountColumn" filterProperty="GrossAmount" width="10em">
 							<Label text="Gross Amount" />
 							<t:template>
 								<Input textAlign="Right" value="{
