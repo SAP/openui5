@@ -1058,14 +1058,13 @@ sap.ui.define([
 			iLastVisible,
 			i;
 
-		oOverflow.$().addClass("sapMITHOverflowVisible");
-		this.$().addClass("sapMITHEndOverflowList");
-
-		// width has changed after the overflow became visible
-		iTabStripWidth = oTabStrip.offsetWidth;
-
 		// has "end", but no "start" overflow
 		if (!bHasStartOverflow) {
+			oOverflow.$().addClass("sapMITHOverflowVisible");
+			this.$().addClass("sapMITHEndOverflowList");
+			// width has changed after the overflow became visible
+			iTabStripWidth = oTabStrip.offsetWidth;
+
 			iLastVisible = this._findLastVisibleItem(aItems, iTabStripWidth, mSelectedItem.width);
 
 			for (i = iLastVisible + 1; i < aItems.length; i++) {
@@ -1077,16 +1076,13 @@ sap.ui.define([
 			return;
 		}
 
-		oStartOverflow.$().addClass("sapMITHOverflowVisible");
-		this.$().addClass("sapMITHStartOverflowList");
-
-		oOverflow.$().removeClass("sapMITHOverflowVisible");
-		this.$().removeClass("sapMITHEndOverflowList");
-
-		iTabStripWidth = oTabStrip.offsetWidth;
-
 		// has "start", but no "end" overflow
 		if (!bHasEndOverflow) {
+			oStartOverflow.$().addClass("sapMITHOverflowVisible");
+			this.$().addClass("sapMITHStartOverflowList");
+			// width has changed after the overflow became visible
+			iTabStripWidth = oTabStrip.offsetWidth;
+
 			iFirstVisible = this._findFirstVisibleItem(aItems, iTabStripWidth, mSelectedItem.width);
 
 			for (i = iFirstVisible - 1; i >= 0; i--) {
@@ -1099,17 +1095,13 @@ sap.ui.define([
 		}
 
 		// has "start" and "end" overflows
+		oStartOverflow.$().addClass("sapMITHOverflowVisible");
+		this.$().addClass("sapMITHStartOverflowList");
+
 		oOverflow.$().addClass("sapMITHOverflowVisible");
 		this.$().addClass("sapMITHEndOverflowList");
-
+		// width has changed after the overflow became visible
 		iTabStripWidth = oTabStrip.offsetWidth;
-
-		var aLeftItems = [],
-			iIndex;
-
-		for (iIndex = 0; iIndex < mSelectedItem.index; iIndex++) {
-			aLeftItems.push(aItems[iIndex]);
-		}
 
 		iFirstVisible = this._findFirstVisibleItem(aItems, iTabStripWidth, mSelectedItem.width, mSelectedItem.index - 1);
 		iLastVisible = this._findLastVisibleItem(aItems, iTabStripWidth, mSelectedItem.width, iFirstVisible);
@@ -1129,7 +1121,6 @@ sap.ui.define([
 	};
 
 	IconTabHeader.prototype._hasStartOverflow = function (iTabStripWidth, aItems, mSelectedItem) {
-
 		if (mSelectedItem.index === 0) {
 			return false;
 		}
@@ -1141,11 +1132,25 @@ sap.ui.define([
 			iLeftItemsWidth += this._getItemSize(aItems[i]);
 		}
 
-		return iTabStripWidth < iLeftItemsWidth + mSelectedItem.width;
+		var bHasStartOverflow = iTabStripWidth < iLeftItemsWidth + mSelectedItem.width;
+
+		// if there is no "start" overflow, it has "end" overflow
+		// check it again with the "end" overflow
+		if (!bHasStartOverflow) {
+			this._getOverflow().$().addClass("sapMITHOverflowVisible");
+			this.$().addClass("sapMITHEndOverflowList");
+
+			iTabStripWidth = this.getDomRef("head").offsetWidth;
+			bHasStartOverflow = iTabStripWidth < iLeftItemsWidth + mSelectedItem.width;
+
+			this._getOverflow().$().removeClass("sapMITHOverflowVisible");
+			this.$().removeClass("sapMITHEndOverflowList");
+		}
+
+		return bHasStartOverflow;
 	};
 
 	IconTabHeader.prototype._hasEndOverflow = function (iTabStripWidth, aItems, mSelectedItem) {
-
 		if (mSelectedItem.index >= aItems.length) {
 			return false;
 		}
@@ -1157,7 +1162,22 @@ sap.ui.define([
 			iRightItemsWidth += this._getItemSize(aItems[i]);
 		}
 
-		return iTabStripWidth < iRightItemsWidth + mSelectedItem.width;
+		var bHasEndOverflow = iTabStripWidth < iRightItemsWidth + mSelectedItem.width;
+
+		// if there is no "end" overflow, it has "start" overflow
+		// check it again with the "start" overflow
+		if (!bHasEndOverflow) {
+			this._getStartOverflow().$().addClass("sapMITHOverflowVisible");
+			this.$().addClass("sapMITHStartOverflowList");
+
+			iTabStripWidth = this.getDomRef("head").offsetWidth;
+			bHasEndOverflow = iTabStripWidth < iRightItemsWidth + mSelectedItem.width;
+
+			this._getStartOverflow().$().removeClass("sapMITHOverflowVisible");
+			this.$().removeClass("sapMITHStartOverflowList");
+		}
+
+		return bHasEndOverflow;
 	};
 
 	IconTabHeader.prototype._getSelectedItemIndexAndSize = function (aItems, oSelectedItemDomRef) {
@@ -1175,6 +1195,7 @@ sap.ui.define([
 		// if previous item is a separator - remove it
 		if (oSelectedSeparator) {
 			aItems.splice(iSelectedItemIndex - 1, 1);
+			iSelectedItemIndex--;
 		}
 
 		return {
@@ -1184,13 +1205,15 @@ sap.ui.define([
 	};
 
 	IconTabHeader.prototype._findFirstVisibleItem = function (aItems, iTabStripWidth, iSelectedItemWidth, iStartIndex) {
-		var iLastVisible = aItems.length,
+		var iLastVisible,
 			iIndex,
 			iItemSize;
 
 		if (iStartIndex === undefined) {
 			iStartIndex = aItems.length - 1;
 		}
+
+		iLastVisible = iStartIndex + 1;
 
 		for (iIndex = iStartIndex; iIndex >= 0; iIndex--) {
 			iItemSize = this._getItemSize(aItems[iIndex]);
@@ -1207,11 +1230,12 @@ sap.ui.define([
 	};
 
 	IconTabHeader.prototype._findLastVisibleItem = function (aItems, iTabStripWidth, iSelectedItemWidth, iStartIndex) {
-		var iLastVisible = -1,
+		var iLastVisible,
 			iIndex,
 			iItemSize;
 
 		iStartIndex = iStartIndex || 0;
+		iLastVisible = iStartIndex - 1;
 
 		for (iIndex = iStartIndex; iIndex < aItems.length; iIndex++) {
 			iItemSize = this._getItemSize(aItems[iIndex]);

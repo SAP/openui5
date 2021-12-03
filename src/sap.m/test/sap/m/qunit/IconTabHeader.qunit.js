@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/IconTabHeader",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabSeparator",
+	"sap/m/ScrollContainer",
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/core/Core",
@@ -22,6 +23,7 @@ sap.ui.define([
 	IconTabHeader,
 	IconTabFilter,
 	IconTabSeparator,
+	ScrollContainer,
 	Text,
 	VBox,
 	Core,
@@ -888,16 +890,24 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oITH = new IconTabHeader({
 				tabsOverflowMode: TabsOverflowMode.StartAndEnd
+			}).addStyleClass("sapUiResponsiveContentPadding");
+
+			this.oScrollContainer = new ScrollContainer({
+				width: "380px",
+				content: this.oITH
 			});
+
+			// make sure the padding won't change depending on window width
+			this.oScrollContainer.addStyleClass("sapFDynamicPage-Std-Tablet");
 
 			// Arrange
 			fillWithItems(this.oITH, 100);
 
-			this.oITH.placeAt(DOM_RENDER_LOCATION);
+			this.oScrollContainer.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {
-			this.oITH.destroy();
+			this.oScrollContainer.destroy();
 		}
 	});
 
@@ -942,6 +952,25 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual("+" + iOverflownTabsInStartOverflow, oStartOverflowText, "start overflow has correct tab count: " + iOverflownTabsInStartOverflow);
 		assert.strictEqual("+" + iOverflownTabsInEndOverflow, oEndOverflowText, "end overflow has correct tab count: " + iOverflownTabsInEndOverflow);
+	});
+
+	QUnit.test("Start overflow button is visible when fourth item is selected", function (assert) {
+		// Arrange
+		this.oITH.setSelectedKey("3");
+		Core.applyChanges();
+
+		assert.ok(this.oITH._getStartOverflow().$().hasClass("sapMITHOverflowVisible"), "start overflow button is visible");
+		assert.strictEqual(this.oITH._getStartOverflow().getText(), "+2", "start overflow button text is correct");
+	});
+
+	QUnit.test("End overflow button is visible when the before last item is selected", function (assert) {
+		// Arrange
+		this.oITH.setSelectedKey("98");
+		this.oScrollContainer.setWidth("220px");
+		Core.applyChanges();
+
+		assert.ok(this.oITH._getOverflow().$().hasClass("sapMITHOverflowVisible"), "end overflow button is visible");
+		assert.strictEqual(this.oITH._getOverflow().getText(), "+1", "end overflow button text is correct");
 	});
 
 	QUnit.module("Badges - Start overflow", {
