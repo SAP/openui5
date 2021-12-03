@@ -210,7 +210,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 	 	 * @param {boolean} bCtrlKey Indicates whether the ctrl key is down in addition
 		 * @private
 		 */
-		_createAndDispatchMouseEvent: function (sName, oDomRef, bShiftKey, bAltKey, bCtrlKey) {
+		_createAndDispatchMouseEvent: function (sName, oDomRef, bShiftKey, bAltKey, bCtrlKey, iClientX, iClientY) {
 			// ignore scrolled down stuff (client X, Y not set)
 			// and assume stuff is over the whole screen (screen X, Y not set)
 			// See file jquery.sap.events.js for some insights to the magic
@@ -228,7 +228,9 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				type: sName, // include the type so jQuery.event.fixHooks can copy properties properly
 				shiftKey: bShiftKey,
 				altKey: bAltKey,
-				ctrlKey: bCtrlKey
+				ctrlKey: bCtrlKey,
+				clientX: iClientX,
+				clientY: iClientY
 			});
 
 			oDomRef.dispatchEvent(oMouseEvent);

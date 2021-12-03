@@ -36,7 +36,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ObjectIdentifier",
-	"sap/m/inputUtils/ListHelpers"
+	"sap/m/inputUtils/ListHelpers",
+	"sap/m/Slider",
+	"sap/m/RatingIndicator"
 ],
 function(Press,
 		 Button,
@@ -74,7 +76,9 @@ function(Press,
 		 Log,
 		 $,
 		 ObjectIdentifier,
-		 ListHelpers
+		 ListHelpers,
+		 Slider,
+		 RatingIndicator
 ){
 	"use strict";
 
@@ -236,6 +240,58 @@ function(Press,
 
 		// Act
 		oPressAction.executeOn(oButton);
+	});
+
+	QUnit.test("Should use X percent for selecting slider value", function(assert) {
+		var done = assert.async();
+
+		// Arrange
+		var oSlider = new Slider();
+		oSlider.placeAt("qunit-fixture");
+
+		aControlsToClean.push(oSlider);
+
+		//Make sure that button is rendered
+		sap.ui.getCore().applyChanges();
+
+		// System under Test
+		var oPressAction = new Press({idSuffix: "inner", xPercentage: 80});
+
+		oSlider.attachEvent("liveChange", function(oControl){
+			assert.ok(true, "Press Event has been triggered");
+			assert.ok(oControl.mParameters.value === 80, "Slider has value of 80");
+
+			done();
+		});
+
+		// Act
+		oPressAction.executeOn(oSlider);
+	});
+
+	QUnit.test("Should use X perecent value for RatingIndicator", function(assert) {
+		var done = assert.async();
+
+		// Arrange
+		var oRatingIndicator = new RatingIndicator();
+		oRatingIndicator.placeAt("qunit-fixture");
+
+		aControlsToClean.push(oRatingIndicator);
+
+		//Make sure that button is rendered
+		sap.ui.getCore().applyChanges();
+
+		// System under Test
+		var oPressAction = new Press({xPercentage: 15});
+
+		oRatingIndicator.attachEvent("change", function(oControl){
+			assert.ok(true, "Press Event has been triggered");
+			assert.ok(oControl.mParameters.value === 1, "RatingIndicator has value of 1 star");
+
+			done();
+		});
+
+		// Act
+		oPressAction.executeOn(oRatingIndicator);
 	});
 
 	QUnit.test("List should fire selection change event", function(assert) {

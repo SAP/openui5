@@ -100,6 +100,7 @@
 			</form:SimpleForm>
 			<Label text="MultiInput with tokens" labelFor="multiInput1"/>
 			<MultiInput id="multiInput1" width="100%" showValueHelp="false"/>
+			<Slider id="slider"/>
 			<Button text="Press here to trigger a press on the page" press="onPressPage"/>
 			<Button text="Press here to open a popover" press="onPressOpenPopover"/>
 			<List
