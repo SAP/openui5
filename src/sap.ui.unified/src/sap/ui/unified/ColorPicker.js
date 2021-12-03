@@ -1359,6 +1359,7 @@ sap.ui.define([
 		this.oHueField.setEnabled(!!bHSL);
 		this.oSatField.setEnabled(!!bHSL);
 		this.oLitField.setEnabled(!!bHSL);
+		this.oValField.setEnabled(!!bHSL);
 	};
 
 	/**
