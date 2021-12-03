@@ -735,12 +735,10 @@ sap.ui.define([
 				return;
 			}
 			for (sControlId in this.mChanges) {
-				if (!this.hasOnlyOptionalChanges(sControlId)) {
-					if (this.mChanges[sControlId].length) {
-						return;
-					}
-					delete this.mChanges[sControlId];
+				if (this.mChanges[sControlId].length) {
+					return;
 				}
+				delete this.mChanges[sControlId];
 			}
 			for (sControlId in this.mListChanges) {
 				// Note: This may be a sparse array
@@ -1885,19 +1883,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether expected changes for the control are only optional null values.
-		 *
-		 * @param {string} sControlId The control ID
-		 * @returns {boolean} Whether expected changes for the control are only optional null values
-		 */
-		hasOnlyOptionalChanges : function (sControlId) {
-			return this.bNullOptional &&
-				this.mChanges[sControlId].every(function (vValue) {
-					return vValue === null;
-				});
-		},
-
-		/**
 		 * Allows that the property "text" of the control with the given ID is set to undefined or
 		 * null. This may happen when the property is part of a list, this list is reset and the
 		 * request to deliver the new value is slowed down due to a group lock. (Then the row
@@ -2071,19 +2056,17 @@ sap.ui.define([
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} [sTitle] Title for this section of a test
-		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
 		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded and
 		 *   all expected values for controls have been set
 		 */
-		waitForChanges : function (assert, sTitle, bNullOptional, iTimeout) {
+		waitForChanges : function (assert, sTitle, iTimeout) {
 			var oPromise,
 				that = this;
 
 			iTimeout = iTimeout || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
-				that.bNullOptional = bNullOptional;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
 				setTimeout(function () {
@@ -2111,10 +2094,6 @@ sap.ui.define([
 				that.aExpectedCanceledErrors = [];
 				// Report (and forget about) missing changes
 				for (sControlId in that.mChanges) {
-					if (that.hasOnlyOptionalChanges(sControlId)) {
-						delete that.mChanges[sControlId];
-						continue;
-					}
 					for (i in that.mChanges[sControlId]) {
 						assert.ok(false, sControlId + ": "
 							+ JSON.stringify(that.mChanges[sControlId][i]) + " (not set)");
@@ -7832,15 +7811,13 @@ sap.ui.define([
 			assert.strictEqual(aRows[0].getBindingContext(), oCreatedContext2);
 			assert.strictEqual(aRows[1].getBindingContext(), oCreatedContext1);
 
-			that.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", [, "43"])
+			that.expectChange("id", [, "43"])
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				checkCanceled(assert, oCreatedContext1.created()),
 				oCreatedContext1.delete(),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			that.expectChange("id", [, "43", "42"])
@@ -7987,14 +7964,12 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('44')"
 				})
-				.expectChange("id", null)
-				.expectChange("note", null)
 				.expectChange("id", [, "43"])
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -8384,14 +8359,12 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
 					+ "&$filter=SalesOrderID eq '44'", {value : []})
-				.expectChange("id", null) // for the deleted row
-				.expectChange("note", null)
 				.expectChange("id", [, "43"])
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.requestRefresh("$auto", true/*bAllowRemoval*/),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			that.expectChange("id", [, "43", "42"])
@@ -8474,11 +8447,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", ["42", "43"])
+			that.expectChange("id", ["42", "43"])
 				.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
 			oModel.resetChanges();
@@ -8487,7 +8456,7 @@ sap.ui.define([
 				checkCanceled(assert, oCreatedContext0.created()),
 				checkCanceled(assert, oCreatedContext1.created()),
 				checkCanceled(assert, oCreatedContext2.created()),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 			// scrolling not possible: only one entry
 		});
@@ -8717,11 +8686,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", ["42", "41"])
+			that.expectChange("id", ["42", "41"])
 				.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
 			return Promise.all([
@@ -8729,7 +8694,7 @@ sap.ui.define([
 				checkCanceled(assert, oCreatedContext0.created()),
 				checkCanceled(assert, oCreatedContext1.created()),
 				checkCanceled(assert, oCreatedContext2.created()),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -8976,11 +8941,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("note", ["New 1", "First SalesOrder"])
+			that.expectChange("note", ["New 1", "First SalesOrder"])
 				.expectChange("id", ["43", "42"]);
 
 			oModel.resetChanges();
@@ -8988,7 +8949,7 @@ sap.ui.define([
 			return Promise.all([
 				checkCanceled(assert, oCreatedContext1.created()),
 				checkCanceled(assert, oCreatedContext2.created()),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -9088,14 +9049,12 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('44')"
 				})
-				.expectChange("id", null)
-				.expectChange("note", null)
 				.expectChange("id", [, "43"])
 				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -9300,7 +9259,7 @@ sap.ui.define([
 			return Promise.all([
 				checkCanceled(assert, oCreatedContext1.created()),
 				oCreatedContext1.delete(),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -9711,14 +9670,12 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('44')"
 				})
-				.expectChange("id", null)
-				.expectChange("note", null)
 				.expectChange("id", [,, ""])
 				.expectChange("note", [,, "New 3"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
-				that.waitForChanges(assert, "", true)
+				that.waitForChanges(assert, "")
 			]);
 		}).then(function () {
 			var aRows = oTable.getRows();
@@ -13687,7 +13644,7 @@ sap.ui.define([
 			});
 
 			// Increase the timeout for this test to run also in FF
-			return that.waitForChanges(assert, "", undefined, 25000/*ms*/);
+			return that.waitForChanges(assert, "", 25000/*ms*/);
 		});
 	});
 
