@@ -77,7 +77,7 @@ sap.ui.define([
 				assert.strictEqual(mSelector.property, "text", "Should not throw error if relative selector throws error but there are other matching selectors");
 				fnAncestorStub.returns(oTestControl);
 				return _ControlSelectorGenerator._generate({control: this.oText});
-			}).then(function (mSelector) {
+			}.bind(this)).then(function (mSelector) {
 				assert.strictEqual(mSelector.property, "text", "Should not throw error if generation for ancestor throws error but there are other matching selectors");
 				fnAncestorStub.restore();
 				fnValidationRootStub.restore();

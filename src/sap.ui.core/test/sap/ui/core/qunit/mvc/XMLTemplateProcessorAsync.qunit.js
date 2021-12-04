@@ -1,37 +1,30 @@
 /*global sinon QUnit */
 sap.ui.define([
 	"sap/m/Button",
-	"sap/ui/core/library",
 	'sap/ui/core/Component',
 	'sap/ui/core/UIComponent',
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/mvc/XMLProcessingMode",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery"
-], function(Button, coreLibrary, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, jQuery) {
+], function(Button, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, XMLView, jQuery) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 	QUnit.module("enrichTemplateIdsPromise", {
 		beforeEach: function(assert) {
-			var done = assert.async();
-			this.oRootView = sap.ui.xmlview({
-				viewName: "testdata/view/XMLTemplateProcessorAsync_root",
-				id: "root",
-				async: true
-			});
-			this.oView = sap.ui.xmlview({
-				viewName: "testdata/view/XMLTemplateProcessorAsync",
-				id: "view",
-				async: true
-			});
-
-			this.oRootView.loaded().then(function() {
-				this.oView.loaded().then(function() {
-					this.xView = this.oView._xContent;
-					done();
-				}.bind(this));
+			return Promise.all([
+				XMLView.create({
+					id: "root",
+					viewName: "testdata/view/XMLTemplateProcessorAsync_root"
+				}),
+				XMLView.create({
+					id: "view",
+					viewName: "testdata/view/XMLTemplateProcessorAsync"
+				})
+			]).then(function(aViews) {
+				this.oRootView = aViews[0];
+				this.oView = aViews[1];
+				this.xView = this.oView._xContent;
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -100,21 +93,22 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+
+
 	QUnit.module("General");
 
 	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
 		assert.expect(7);
-		var done = assert.async();
-		var fnOrigGetDesignMode = sap.ui.getCore().getConfiguration().getDesignMode;
-		sap.ui.getCore().getConfiguration().getDesignMode = function () {
-			return true;
-		};
-		var oView = sap.ui.view({
-			viewName: "my.View",
-			type: ViewType.XML
-		});
-		sap.ui.getCore().getConfiguration().getDesignMode = fnOrigGetDesignMode;
-		oView.loaded().then(function () {
+
+		// Arrange
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDesignMode").returns(true);
+
+		// Act
+		return XMLView.create({
+			viewName: "my.View"
+		}).then(function(oView) {
+			// Assert
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");
 			assert.equal(oButton._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "Button");
@@ -125,49 +119,57 @@ sap.ui.define([
 			assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.fragmentName, "my.Fragment");
 			assert.equal(oLabel._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
 			assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
+
+			// Cleanup
 			oView.destroy();
-			done();
 		});
 	});
 
 	QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
 		assert.expect(3);
-		var done = assert.async();
-		sap.ui.view({
-			viewName: "my.View",
-			type: ViewType.XML
-		}).loaded().then(function(oView) {
+
+		// Arrange
+		var oConfig = sap.ui.getCore().getConfiguration();
+		this.stub(oConfig, "getDesignMode").returns(false);
+
+		// Act
+		return XMLView.create({
+			viewName: "my.View"
+		}).then(function(oView) {
+			// Assert
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");
 			assert.notOk(oButton.hasOwnProperty("_sapui_declarativeSourceInfo"));
 			var oLabel = oView.byId("namedName");
 			assert.notOk(oLabel.hasOwnProperty("_sapui_declarativeSourceInfo"));
+
+			// Cleanup
 			oView.destroy();
-			done();
 		});
 	});
+
+
 
 	QUnit.module("Metadata Contexts");
 
 	QUnit.test("On regular controls with metadataContexts the XMLTemplateProcessorAsync._preprocessMetadataContexts is called", function (assert) {
 		assert.expect(2);
-		var done = assert.async();
-		var mMetadataContexts = {};
 
-		XMLTemplateProcessor._preprocessMetadataContexts = function(sClassName, mSettings, oContext) {
-			mMetadataContexts = mSettings.metadataContexts;
-		};
+		// Arrange
+		this.stub(XMLTemplateProcessor, "_preprocessMetadataContexts").value(this.stub());
 
-		sap.ui.view({
-			viewName: "my.View",
-			type: ViewType.XML
-		}).loaded().then(function (oView) {
+		// Act
+		return XMLView.create({
+			viewName: "my.View"
+		}).then(function (oView) {
+
+			// Assert
 			var oButton = oView.byId("button");
 			assert.ok(oButton instanceof Button, "Button found.");
-			assert.ok(mMetadataContexts,"XMLTemplateProcessorAsync._preprocessMetadataContexts is called");
-			XMLTemplateProcessor._preprocessMetadataContexts = null;
+			assert.ok(XMLTemplateProcessor._preprocessMetadataContexts.called, "XMLTemplateProcessorAsync._preprocessMetadataContexts is called");
+
+			// Cleanup
 			oView.destroy();
-			done();
 		});
 	});
 
@@ -243,6 +245,8 @@ sap.ui.define([
 
 		assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
 	});
+
+
 
 	QUnit.module("Propagation of processingMode: 'Sequential'", {
 		beforeEach: function() {

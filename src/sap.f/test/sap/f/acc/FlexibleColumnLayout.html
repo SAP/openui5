@@ -7,39 +7,17 @@
 	<script
 			id='sap-ui-bootstrap'
 			src='../../../../resources/sap-ui-core.js'
-			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.m, sap.f'
+			data-sap-ui-async="true"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-libs='sap.m, sap.f'
 			data-sap-ui-resourceroots='{
-			"flexiblecolumnlayout" : "./flexiblecolumnlayout",
-			"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-		}'>
+				"flexiblecolumnlayout" : "./flexiblecolumnlayout",
+				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'
+			data-sap-ui-theme='sap_belize'
+			>
 	</script>
-
-	<script>
-		sap.ui.getCore().attachInit(function () {
-					sap.ui.require([
-						"sap/m/Shell",
-						"sap/ui/core/ComponentContainer"
-					], function (Shell, ComponentContainer) {
-
-						new Shell("Shell", {
-							title : "FlexibleColumnLayout demo",
-							app : new ComponentContainer({
-								name : 'flexiblecolumnlayout',
-								height : "100%",
-								settings : {
-									id : "flexiblecolumnlayout"
-								}
-							}),
-							backgroundOpacity: 0,
-							appWidthLimited: false //false
-						}).placeAt('content');
-					})
-				}
-		);
-	</script>
-
+	<script src="FlexibleColumnLayout.js"></script>
 </head>
 <body class='sapUiBody' id='content'>
 </body>

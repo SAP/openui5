@@ -1,4 +1,4 @@
-<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayoutHighlighting.Detail"
+<mvc:View xmlns="sap.uxap" xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayoutHighlighting.Detail"
 		height="100%">
 	<m:Page id="detailPage" title="Detail page">
 		<m:SearchField search="onSearchFieldSearch"/>
@@ -234,4 +234,4 @@
 			</sections>
 		</ObjectPageLayout>
 	</m:Page>
-</m:View>
+</mvc:View>

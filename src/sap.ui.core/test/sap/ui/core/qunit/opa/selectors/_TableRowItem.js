@@ -3,21 +3,16 @@ sap.ui.define([
 	"sap/ui/test/selectors/_TableRowItem",
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
 	"sap/m/App",
-	"sap/ui/core/mvc/View",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/library"
-], function (_TableRowItem, _ControlSelectorGenerator, App, View, JSONModel, library) {
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/model/json/JSONModel"
+], function (_TableRowItem, _ControlSelectorGenerator, App, XMLView, JSONModel) {
 	"use strict";
 
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
-
-	var iTest = 0; // workaround for duplicate ids even after everything is destroyed
 	function getViewContent() {
 		return '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" viewName="myView">' +
 			'<App id="myApp">' +
 				'<Page id="page1">' +
-					'<Table id="myTable" items="{/items}" width="300px">' +
+					'<Table id="myTable" items="{path: &quot;/items\&quot;, templateShareable:false}" width="300px">' +
 						'<columns>' +
 							'<Column><Text text="Name"/></Column>' +
 							'<Column><Text text="Button"/></Column>' +
@@ -25,8 +20,8 @@ sap.ui.define([
 						'<items>' +
 							'<ColumnListItem>' +
 								'<cells>' +
-									'<ObjectIdentifier id="objectId' + iTest + '" title="{id}" text="{name}"/>' +
-									'<Button id="press' + iTest + '" text="Press"></Button>' +
+									'<ObjectIdentifier id="objectId" title="{id}" text="{name}"/>' +
+									'<Button id="press" text="Press"></Button>' +
 								'</cells>' +
 							'</ColumnListItem>' +
 						'</items>' +
@@ -37,28 +32,30 @@ sap.ui.define([
 	}
 
 	QUnit.module("_TableRow", {
-		beforeEach: function () {
+		beforeEach: function (assert) {
 			var oJSONModel = new JSONModel({
 				items: [{id: "ID1", name: "Item 11"}, {id: "ID2", name: "Item 22"}]
 			});
-			sap.ui.getCore().setModel(oJSONModel);
-			sap.ui.controller("myController", {});
-			this.oView = sap.ui.view("myView", {
-				viewContent: getViewContent(iTest++),
-				type: ViewType.XML
-			});
-			this.oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			// Note: This test is executed with QUnit 1 and QUnit 2.
+			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
+			var done = assert.async();
+			XMLView.create({
+				id: "myView",
+				definition: getViewContent()
+			}).then(function(oView) {
+				this.oView = oView.setModel(oJSONModel).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
-			sap.ui.getCore().setModel();
 			this.oView.destroy();
 		}
 	});
 
 	QUnit.test("Should select a control in table row", function (assert) {
 		var fnDone = assert.async();
-		var oControl = sap.ui.getCore().byId("myView--objectId" + iTest + "-myView--myTable-0");
+		var oControl = sap.ui.getCore().byId("myView--objectId-myView--myTable-0");
 		_ControlSelectorGenerator._generate({control: oControl._getTextControl(), includeAll: true})
 			.then(function (aSelectors) {
 				var mTableSelector = aSelectors[1][0];
@@ -71,7 +68,7 @@ sap.ui.define([
 
 	QUnit.test("Should find control table and row", function (assert) {
 		var oGenerator = new _TableRowItem();
-		var oControl = sap.ui.getCore().byId("myView--objectId" + iTest + "-myView--myTable-0");
+		var oControl = sap.ui.getCore().byId("myView--objectId-myView--myTable-0");
 		var oRow = oGenerator._getValidationRoot(oControl);
 		var oTable = oGenerator._getAncestor(oControl);
 		assert.ok(oGenerator._isAncestorRequired());

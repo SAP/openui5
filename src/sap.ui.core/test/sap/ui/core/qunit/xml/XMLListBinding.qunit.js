@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery",
-	"jquery.sap.xml" // used only indirectly (jQuery.sap.isEqualNode)
+	"sap/ui/thirdparty/jquery"
 ], function(XMLModel, ChangeReason, Filter, FilterOperator, Sorter, Device, jQuery) {
 	"use strict";
 
@@ -161,7 +160,7 @@ sap.ui.define([
 		oBinding.refresh();
 	});
 
-	QUnit.test("ListBinding refresh with getContexts und length change", function(assert) {
+	QUnit.test("ListBinding refresh with getContexts and length change", function(assert) {
 		assert.expect(3);
 		var oBinding = this.oModel.bindList("/teamMembers/member");
 		var aContexts = oBinding.getContexts(0,5);
@@ -300,7 +299,7 @@ sap.ui.define([
 		assert.equal(sorted[0], "Funzel", "ListBinding after sort");
 		assert.equal(sorted[1], "Fuß", "ListBinding after sort");
 		assert.equal(sorted[2], "Fußball", "ListBinding after sort");
-		// browsers have differnt ideas about lexical sorting
+		// browsers have different ideas about lexical sorting
 		if (Device.browser.chrome  && Device.browser.version < 24.0) {
 			assert.equal(sorted[3], "Fussel", "ListBinding after sort");
 			assert.equal(sorted[4], "Füße", "ListBinding after sort");
@@ -760,11 +759,11 @@ sap.ui.define([
 		// check if nodes from different listbindings are the same/have the same reference
 		assert.equal(this.oModel.getProperty("nodes1/0/nodes2/0/@name", binding0.getContexts()[0]), "subsubitem1");
 		assert.equal(this.oModel.getProperty("@name", binding1.getContexts()[0]), "subsubitem1");
-		assert.ok(jQuery.sap.isEqualNode(binding0.oList[0].childNodes[0].childNodes[0], binding1.oList[0]));
+		assert.ok(binding0.oList[0].childNodes[0].childNodes[0].isEqualNode(binding1.oList[0]));
 
 		assert.equal(this.oModel.getProperty("nodes1/0", binding0.getContexts()[1]), "subitem3");
 		assert.equal(this.oModel.getProperty("", binding2.getContexts()[0]), "subitem3");
-		assert.ok(jQuery.sap.isEqualNode(binding0.oList[1].childNodes[0], binding2.oList[0].childNodes[0]));
+		assert.ok(binding0.oList[1].childNodes[0].isEqualNode(binding2.oList[0].childNodes[0]));
 	});
 
 	QUnit.test("ListBinding getDistinctValues", function(assert) {

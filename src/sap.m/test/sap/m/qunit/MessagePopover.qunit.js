@@ -14,9 +14,7 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core",
-	"sap/ui/core/mvc/Controller", // provides sap.ui.controller
-	"sap/ui/core/mvc/JSView" // provides sap.ui.jsview
+	"sap/ui/core/Core"
 ], function(
 	qutils,
 	MessagePopover,
@@ -47,9 +45,6 @@ sap.ui.define([
 
 	// shortcut for sap.m.VerticalPlacementType
 	var VerticalPlacementType = mobileLibrary.VerticalPlacementType;
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = coreLibrary.mvc.ViewType;
 
 
 
@@ -157,41 +152,22 @@ sap.ui.define([
 
 	QUnit.test("HeaderButton aggregation binding", function (assert) {
 
-		sap.ui.controller("test.controller", {
-			onInit: function(){
-				var oModel = new JSONModel({
-					deleteIcon: "sap-icon://delete"
-				});
-				this.getView().setModel(oModel);
-			}
-		});
-
-		sap.ui.jsview("test.view", {
-			getControllerName: function() {
-				return "test.controller";
-			},
-			createContent: function(oController) {
-				return [
-					new Button({id: "idOpenBtn"}),
-					new MessagePopover({
-						headerButton: new Button({
-							id: "idHeaderButton",
-							icon: "{/deleteIcon}"
-						})
-					})
-				];
-			}
-		});
-
-		var JSView = sap.ui.view({type:ViewType.JS, viewName:"test.view"});
-		JSView.placeAt("qunit-fixture");
+		var oMessagePopover = new MessagePopover({
+			models: new JSONModel({
+				deleteIcon: "sap-icon://delete"
+			}),
+			headerButton: new Button({
+				id: "idHeaderButton",
+				icon: "{/deleteIcon}"
+			})
+		}).placeAt("qunit-fixture");
 
 		Core.applyChanges();
 
 		assert.strictEqual(Core.byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
 
 		// clean up
-		JSView.destroy();
+		oMessagePopover.destroy();
 	});
 
 	QUnit.test("setDescription() property", function (assert) {

@@ -1,9 +1,8 @@
-<mvc:View controllerName="patternApp.view.PatternTable"
+<mvc:View controllerName="patternApp.controller.PatternTable"
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:f="sap.ui.layout.form"
-		xmlns:html="http://www.w3.org/1999/xhtml">
+		xmlns:f="sap.ui.layout.form">
 			<f:SimpleForm editable="false" title="Hash">
 				<Label labelFor="current" text="Current hash"></Label>
 				<Text text="{

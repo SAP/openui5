@@ -1,6 +1,6 @@
 sap.ui.define([
-	"sap/m/Button"
-], function (Button) {
+	"sap/ui/core/mvc/XMLView"
+], function (XMLView) {
 	"use strict";
 
 	return {
@@ -17,11 +17,14 @@ sap.ui.define([
 				_getFragment(mFragment),
 				'</mvc:View>'
 			].join('');
-			var oView;
 
-			oView = sap.ui.xmlview({id: sViewId, viewContent: sView});
-			oView.setViewName(sViewName);
-			return oView;
+			return XMLView.create({
+				id: sViewId,
+				definition: sView
+			}).then(function(oView) {
+				oView.setViewName(sViewName);
+				return oView;
+			});
 		}
 	};
 

@@ -14,4 +14,4 @@ sap.ui.define([
 			this.oRouter.navTo("master", {layout: sNextLayout});
 		}
 	});
-}, true);
+});

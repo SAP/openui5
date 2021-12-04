@@ -1,6 +1,6 @@
 /*global QUnit */
 sap.ui.define([
-	"jquery.sap.dom",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/suite/VerticalProgressIndicator"
 ], function(jQuery, createAndAppendDiv, VerticalProgressIndicator) {

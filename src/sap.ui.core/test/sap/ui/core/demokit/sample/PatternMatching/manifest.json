@@ -16,11 +16,12 @@
 				"iframe": "Patterns.html",
 				"stretch": true,
 				"files": [
-					"patternApp/view/PatternTable.controller.js",
+					"patternApp/controller/PatternTable.controller.js",
 					"patternApp/view/PatternTable.view.xml",
 					"patternApp/view/Dialog.fragment.xml",
 					"patternApp/model/Pattern.js",
 					"patternApp/Component.js",
+					"patternApp/manifest.json",
 					"Patterns.html",
 					"manifest.json"
 				]

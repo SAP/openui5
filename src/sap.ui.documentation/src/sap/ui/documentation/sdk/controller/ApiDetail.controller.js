@@ -112,7 +112,7 @@ sap.ui.define([
 
 			/**
 			 * Init the Sub View and controller
-			 * @param {sap.ui.view} oView the pre-processed sub view
+			 * @param {sap.ui.core.mvc.View} oView the pre-processed sub view
 			 * @private
 			 */
 			_initSubView: function (oView) {
@@ -151,7 +151,7 @@ sap.ui.define([
 			 * Create the JSON model and the Sub View. The model will be used in both lifecycle phases of the sub view
 			 * by the preprocessor and by the view initiation afterwards.
 			 * @param {object} oBorrowedData the data extracted by the borrowed methods promise
-			 * @return {Promise} sap.ui.view.loaded promise
+			 * @return {Promise} promise returned by <code>XMLView.create</code>
 			 * @private
 			 */
 			_createModelAndSubView: function (oBorrowedData) {

@@ -13,6 +13,11 @@
 		"config": {
 			"fullWidth": true
 		},
+		"rootView": {
+			"async": true,
+			"type": "XML",
+			"viewName": "flexiblecolumnlayout.FlexibleColumnLayout"
+		},
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",

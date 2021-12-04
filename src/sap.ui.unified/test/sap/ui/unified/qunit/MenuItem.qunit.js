@@ -3,14 +3,14 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/Label",
-	"sap/ui/commons/RichTooltip",
+	"sap/ui/core/TooltipBase",
 	"sap/ui/core/Core"
-], function(Menu, MenuItem, Label, RichTooltip, oCore) {
+], function(Menu, MenuItem, Label, TooltipBase, oCore) {
 	"use strict";
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Default labelling", function(assert) {
+	QUnit.test("Default labeling", function(assert) {
 		// Prepare
 		var oMenuItem = new MenuItem(),
 			oMenu = new Menu({ items: oMenuItem }).placeAt("qunit-fixture");
@@ -71,11 +71,22 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	var Tooltip = TooltipBase.extend("Tooltip", {
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oTooltip) {
+				oRm.openStart("div", oTooltip)
+					.openEnd()
+					.close("div");
+			}
+		}
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.oMenuItem = new MenuItem({
 				text: "Some MenuItem",
-				tooltip: new RichTooltip({
+				tooltip: new Tooltip({
 					title: "Test"
 				})
 			});

@@ -7,43 +7,10 @@
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
+			data-sap-ui-async="true"
 			data-sap-ui-libs="sap.m, sap.f">
 	</script>
-
-
-	<script>
-
-		var aPages = [],
-		iBusyStateDuration = 3000; // ms
-
-		for (var i = 0; i <= 20; i++) {
-			aPages.push(new sap.m.Page("page" + i, {
-				title: "Page " + i,
-				content: [new sap.m.Button("button" + i, {
-					text: "Press me",
-					press: function () {
-						oFCL.setBusy(true);
-						setTimeout(oFCL.setBusy.bind(oFCL), iBusyStateDuration, false);
-					}
-				})]
-			}));
-		}
-
-		var oFCL = new sap.f.FlexibleColumnLayout("fcl", {
-			beginColumnPages: [aPages[1], aPages[2], aPages[3]],
-			initialBeginColumnPage: "page2",
-
-			midColumnPages: [aPages[4], aPages[5], aPages[6]],
-			initialMidColumnPage: "page6",
-
-			endColumnPages: [aPages[7], aPages[8], aPages[9]],
-			initialEndColumnPage: "page7",
-
-			layout: sap.f.LayoutType.ThreeColumnsMidExpanded
-		});
-
-		oFCL.placeAt("content");
-	</script>
+	<script src="FlexibleColumnLayout.js"></script>
 </head>
 
 <body id="body" class="sapUiBody" style="height: 100%">
