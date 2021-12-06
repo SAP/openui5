@@ -255,5 +255,29 @@
         ]
       }
     ]
+  },
+  "1.90.9": {
+    "date": "December 2021",
+    "notes": [
+      {
+        "id": "42b6d1df2e3dcbb0db08423d8199519bb432ebc2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Heading level is now announced only once by screen readers and references in aria-labelledBy are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700018876752021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170009554"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170285545"
+          }
+        ]
+      }
+    ]
   }
 }
