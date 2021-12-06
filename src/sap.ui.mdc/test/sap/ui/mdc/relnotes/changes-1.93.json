@@ -72,5 +72,21 @@
         ]
       }
     ]
+  },
+  "1.93.4": {
+    "date": "December 2021",
+    "notes": [
+      {
+        "id": "c9ebbc67b0a68a18c9dcc4d2bd1fac7e028d99a4",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: correct event sequence during submit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006861692021"
+          }
+        ]
+      }
+    ]
   }
 }
