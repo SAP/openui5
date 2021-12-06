@@ -19,56 +19,55 @@ sap.ui.define([
 	var MIN_ODATA_DATE = new Date("1753-01-01");
 	var MAX_DATE = new Date(8640000000000000);
 	var MAX_ODATA_DATE = new Date("9999-12-31");
+	var mOptions = {
+		"DATE": "date",
+		"TODAY": "today",
+		"YESTERDAY": "yesterday",
+		"TOMORROW": "tomorrow",
+
+		"DATERANGE": "dateRange",
+		"FROM": "from",
+		"TO": "to",
+		"YEARTODATE": "yearToDate",
+		"LASTDAYS": "lastDays",
+		"LASTWEEKS": "lastWeeks",
+		"LASTMONTHS": "lastMonths",
+		"LASTQUARTERS": "lastQuarters",
+		"LASTYEARS": "lastYears",
+		"NEXTDAYS": "nextDays",
+		"NEXTWEEKS": "nextWeeks",
+		"NEXTMONTHS": "nextMonths",
+		"NEXTQUARTERS": "nextQuarters",
+		"NEXTYEARS": "nextYears",
+		"TODAYFROMTO": "todayFromTo",
+
+		"THISWEEK": "thisWeek",
+		"LASTWEEK": "lastWeek",
+		"NEXTWEEK": "nextWeek",
+
+		"SPECIFICMONTH": "specificMonth",
+		"THISMONTH": "thisMonth",
+		"LASTMONTH": "lastMonth",
+		"NEXTMONTH": "nextMonth",
+
+		"THISQUARTER": "thisQuarter",
+		"LASTQUARTER": "lastQuarter",
+		"NEXTQUARTER": "nextQuarter",
+		"QUARTER1": "quarter1",
+		"QUARTER2": "quarter2",
+		"QUARTER3": "quarter3",
+		"QUARTER4": "quarter4",
+
+		"THISYEAR": "thisYear",
+		"LASTYEAR": "lastYear",
+		"NEXTYEAR": "nextYear"
+	};
 
 	/**
 	 * @param {string} sOption sap.m.StandardDynamicDateRangeKeys option in upper case
 	 * @returns {string} Option in camel case
 	 */
 	function optionToCamelCase(sOption) {
-		var mOptions = {
-			"DATE": "date",
-			"TODAY": "today",
-			"YESTERDAY": "yesterday",
-			"TOMORROW": "tomorrow",
-
-			"DATERANGE": "dateRange",
-			"FROM": "from",
-			"TO": "to",
-			"YEARTODATE": "yearToDate",
-			"LASTDAYS": "lastDays",
-			"LASTWEEKS": "lastWeeks",
-			"LASTMONTHS": "lastMonths",
-			"LASTQUARTERS": "lastQuarters",
-			"LASTYEARS": "lastYears",
-			"NEXTDAYS": "nextDays",
-			"NEXTWEEKS": "nextWeeks",
-			"NEXTMONTHS": "nextMonths",
-			"NEXTQUARTERS": "nextQuarters",
-			"NEXTYEARS": "nextYears",
-			"TODAYFROMTO": "todayFromTo",
-
-			"THISWEEK": "thisWeek",
-			"LASTWEEK": "lastWeek",
-			"NEXTWEEK": "nextWeek",
-
-			"SPECIFICMONTH": "specificMonth",
-			"THISMONTH": "thisMonth",
-			"LASTMONTH": "lastMonth",
-			"NEXTMONTH": "nextMonth",
-
-			"THISQUARTER": "thisQuarter",
-			"LASTQUARTER": "lastQuarter",
-			"NEXTQUARTER": "nextQuarter",
-			"QUARTER1": "quarter1",
-			"QUARTER2": "quarter2",
-			"QUARTER3": "quarter3",
-			"QUARTER4": "quarter4",
-
-			"THISYEAR": "thisYear",
-			"LASTYEAR": "lastYear",
-			"NEXTYEAR": "nextYear"
-		};
-
 		return mOptions[sOption];
 	}
 
@@ -226,6 +225,10 @@ sap.ui.define([
 			"lastWeeks",
 			"nextWeeks"
 		];
+	};
+
+	DateRangeFilter.prototype.getOptions = function () {
+		return mOptions;
 	};
 
 	return DateRangeFilter;

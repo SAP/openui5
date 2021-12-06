@@ -137,6 +137,15 @@ sap.ui.define([
 					"path": "configuration/destinations",
 					"type": "destinations",
 					"allowedValues": ["Northwind", "JAM"]
+				},
+				"filters": {
+					"tags": ["general"],
+					"label": "{i18n>CARD_EDITOR.FILTERS}",
+					"itemLabel": "{key}",
+					"addItemLabel": "{i18n>CARD_EDITOR.FILTER}",
+					"path": "configuration/filters",
+					"type": "filters",
+					"allowedTypes": ["Select", "DateRange"]
 				}
 			},
 			HeaderConfig,
@@ -151,6 +160,7 @@ sap.ui.define([
 			// base editors:
 			"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
 			"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
+			"multiSelect": "sap/ui/integration/designtime/baseEditor/propertyEditor/multiSelectEditor/MultiSelectEditor",
 			"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 			"simpleicon": "sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor",
 			"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
@@ -169,7 +179,8 @@ sap.ui.define([
 			// card editors
 			"icon": "sap/ui/integration/designtime/cardEditor/propertyEditor/iconEditor/IconEditor",
 			"complexMap": "sap/ui/integration/designtime/cardEditor/propertyEditor/complexMapEditor/ComplexMapEditor",
-			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor"
+			"destinations": "sap/ui/integration/designtime/cardEditor/propertyEditor/destinationsEditor/DestinationsEditor",
+			"filters": "sap/ui/integration/designtime/cardEditor/propertyEditor/filtersEditor/FiltersEditor"
 		},
 		"validators": {
 			"patternList": "sap/ui/integration/designtime/cardEditor/validator/IsPatternMatchList"

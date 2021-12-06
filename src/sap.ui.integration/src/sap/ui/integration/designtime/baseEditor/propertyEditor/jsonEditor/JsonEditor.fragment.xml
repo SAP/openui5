@@ -8,5 +8,6 @@
 		showSuggestion="true"
 		showValueHelp="true"
 		valueHelpRequest="_openJsonEditor"
+		enabled="{config/enabled}"
 	/>
 </core:FragmentDefinition>

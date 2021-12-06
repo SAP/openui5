@@ -70,6 +70,11 @@ sap.ui.define([
 						this._oEditor.getInternalEditorInstance().focus();
 						this._oEditor.getInternalEditorInstance().navigateFileEnd();
 					}, this);
+					this._oDialog.attachAfterClose(function () {
+						this._oDialog.close();
+						this._oDialog.destroy();
+						this._oDialog = null;
+					}, this);
 					this.addDependent(this._oDialog);
 					this._openDialog();
 					return this._oDialog;
