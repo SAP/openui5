@@ -1,7 +1,39 @@
 {
   "1.98.0": {
-    "date": "November 2021",
+    "date": "December 2021",
     "notes": [
+      {
+        "id": "14360af7a27554ad4aaf12513fae6ba4f455811b",
+        "type": "FIX",
+        "text": "sap.m.DynamicDateRange: Suggestions popover not opened on Icon click",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170318108"
+          }
+        ]
+      },
+      {
+        "id": "6f1c1ff995cb294068ae5c81e0590ee271436737",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now opens when enter pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321416"
+          }
+        ]
+      },
+      {
+        "id": "4d5450c3e1b26109ba7d21a62839c5e1e2f19533",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: visual adjustments in SelectList"
+      },
+      {
+        "id": "5d94234c5a8fbed41c081646406e3fec8be20d5e",
+        "type": "FEATURE",
+        "text": " sap.m.MultiInput: Navigation between elements is announced"
+      },
       {
         "id": "7d5937065ca58e8454ae8cd429366077c9b936f3",
         "type": "FIX",
@@ -114,6 +146,17 @@
           {
             "type": "BCP",
             "reference": "2170322236"
+          }
+        ]
+      },
+      {
+        "id": "0fa2c5e035189ef977d87b8be9d7862854e4c913",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected alignment in header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170322525"
           }
         ]
       },
