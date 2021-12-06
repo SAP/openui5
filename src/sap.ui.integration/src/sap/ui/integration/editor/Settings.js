@@ -569,12 +569,14 @@ sap.ui.define([
 		var oBox = new VBox().addStyleClass("commonSettings");
 		oSettingsPanel.addItem(oBox);
 		oBox.addItem(new Title({
-			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN")
+			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN"),
+			wrapping: true
 		}).addStyleClass("stitle"));
 		oBox.addItem(new HBox({
 			items: [
 				new Label({
-					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VISIBLE")
+					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_VISIBLE"),
+					wrapping: true
 				}),
 				new CheckBox({
 					selected: "{= ${currentSettings>_next/visible} !== false}",
@@ -587,7 +589,8 @@ sap.ui.define([
 		oBox.addItem(new HBox({
 			items: [
 				new Label({
-					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_EDIT")
+					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_EDIT"),
+					wrapping: true
 				}),
 				new CheckBox({
 					selected: "{= ${currentSettings>_next/editable} !== false}",
@@ -602,7 +605,8 @@ sap.ui.define([
 			visible: "{= ${currentSettings>allowDynamicValues}!== false}",
 			items: [
 				new Label({
-					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_DYN")
+					text: oResourceBundle.getText("EDITOR_MORE_SETTINGS_P_ADMIN_DYN"),
+					wrapping: true
 				}),
 				new CheckBox({
 					selected: "{= ${currentSettings>_next/allowDynamicValues} !== false}",
