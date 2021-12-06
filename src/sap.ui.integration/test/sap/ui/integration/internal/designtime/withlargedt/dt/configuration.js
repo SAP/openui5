@@ -851,6 +851,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
 						}
+					},
+					"maxOrdersShown": {
+						"manifestpath": "/sap.card/configuration/parameters/maxOrdersShown/value",
+						"type": "integer",
+						"label": "Number of orders",
+						"description": "How many orders to show in the list."
+					},
+					"selectedShipperID": {
+						"manifestpath": "/sap.card/configuration/parameters/selectedShipperID/value",
+						"type": "integer",
+						"label": "The default selected shipper"
 					}
 				}
 			},

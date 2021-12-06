@@ -713,6 +713,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/cardEditor/propertyEditor/filtersEditor/FiltersEditor": {
+				group: "Card DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/cardEditor/propertyEditor/filtersEditor/FiltersEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/cardEditor/propertyEditor/iconEditor/IconEditor": {
 				group: "Card DesignTime Editor",
 				coverage: {
