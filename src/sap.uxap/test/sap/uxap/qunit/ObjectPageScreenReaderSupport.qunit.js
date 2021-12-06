@@ -50,25 +50,24 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 	QUnit.test("Root element aria-label", function (assert) {
 		var oHeader = this.objectPageView.byId("objectPageHeader"),
 			sTitleText = oHeader.getTitleText(),
-			sBundleTextWithTitle = getResourceBundleText("ROOT_ARIA_LABEL_WITH_TITLE"),
 			sBundleTextWithoutTitle = getResourceBundleText("ROOT_ARIA_LABEL_WITHOUT_TITLE");
 
-		assert.strictEqual(this.oObjectPage.$().attr("aria-label"), sTitleText + " "
-			+ sBundleTextWithTitle, "The root element has correct aria-label set");
+		assert.strictEqual(this.oObjectPage.$().attr("aria-label"), sBundleTextWithoutTitle,
+			"The root element has correct aria-label set");
 
 		// Update title's text
 		sTitleText = "Updated title";
 		oHeader.setObjectTitle(sTitleText);
 
-		assert.strictEqual(this.oObjectPage.$().attr("aria-label"), sTitleText + " "
-				+ sBundleTextWithTitle, "The root element has correctly updated it's aria-label");
+		assert.strictEqual(this.oObjectPage.$().attr("aria-label"), sBundleTextWithoutTitle,
+			"The root element has the correct aria-label after header title is updated");
 
 		// Remove title's text
 		sTitleText = "";
 		oHeader.setObjectTitle(sTitleText);
 
 		assert.strictEqual(this.oObjectPage.$().attr("aria-label"), sBundleTextWithoutTitle,
-			"The aria-label on the root element now indicates that there is no title");
+			"The root element has the correct aria-label on empty header title");
 	});
 
 	QUnit.test("Header element role", function (assert) {

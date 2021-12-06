@@ -4813,7 +4813,7 @@ sap.ui.define([
 			sTitleText = oHeader ? oHeader.getTitleText() : null,
 			sAriaLabelText;
 
-		if (oHeader && sTitleText) {
+		if (oHeader && sTitleText && sElement !== "ROOT") {
 			sAriaLabelText = sTitleText;
 
 			if (bAddResourceBundleText) {
