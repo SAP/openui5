@@ -1,7 +1,18 @@
 {
   "1.98.0": {
-    "date": "November 2021",
+    "date": "December 2021",
     "notes": [
+      {
+        "id": "f4cbab9e34fc5fdf8957a8c1f1b5b934eb92d203",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fixed width of subsections in phone size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170323095"
+          }
+        ]
+      },
       {
         "id": "7d5937065ca58e8454ae8cd429366077c9b936f3",
         "type": "FIX",
@@ -10,6 +21,17 @@
           {
             "type": "BCP",
             "reference": "2170316918"
+          }
+        ]
+      },
+      {
+        "id": "0fa2c5e035189ef977d87b8be9d7862854e4c913",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected alignment in header content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170322525"
           }
         ]
       },

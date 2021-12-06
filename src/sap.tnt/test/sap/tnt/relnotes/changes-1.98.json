@@ -1,7 +1,17 @@
 {
   "1.98.0": {
-    "date": "November 2021",
+    "date": "December 2021",
     "notes": [
+      {
+        "id": "a305ab93060d5410b5a0ac5e3e9d3dceece9c22b",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: new ariaLabel property added"
+      },
+      {
+        "id": "4d5450c3e1b26109ba7d21a62839c5e1e2f19533",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: visual adjustments in SelectList"
+      },
       {
         "id": "23793b685e9efe83cf9c8570fc6e6e936908e854",
         "type": "FIX",
