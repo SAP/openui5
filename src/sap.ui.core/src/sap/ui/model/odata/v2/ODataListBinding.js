@@ -1707,8 +1707,8 @@ sap.ui.define([
 			mCreateParameters = {
 				context : this.oContext,
 				properties : oInitialData,
-				refreshAfterChange : false},
-			that = this;
+				refreshAfterChange : false
+			};
 
 		if (bAtEnd === true) {
 			throw new Error("Option 'bAtEnd' is not supported");
@@ -1733,12 +1733,6 @@ sap.ui.define([
 		oCreatedContextsCache = this.oModel._getCreatedContextsCache();
 		Object.assign(mCreateParameters, mParameters);
 		oCreatedContext = this.oModel.createEntry(this.sPath, mCreateParameters);
-		oCreatedContext.created().catch(function () {
-			oCreatedContextsCache.removeContext(oCreatedContext, sResolvedPath,
-				that.sCreatedEntitiesKey);
-			that._fireChange({reason : ChangeReason.Remove});
-		});
-
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
 			this.sCreatedEntitiesKey);
 		this._fireChange({reason : ChangeReason.Add});

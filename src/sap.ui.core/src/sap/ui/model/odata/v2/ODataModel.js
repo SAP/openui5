@@ -6021,6 +6021,9 @@ sap.ui.define([
 			that.abortInternalRequest(sGroupId, {requestKey : sKey});
 		});
 		if (bDeleteCreatedEntities && oCreated) {
+			// remove context synchronously from the list of created contexts to avoid a temporary
+			// empty table row
+			this.oCreatedContextsCache.findAndRemoveContext(this.mContexts["/" + sKey]);
 			this._removeEntity(sKey);
 			if (oCreated.abort) {
 				oCreated.abort(ODataModel._createAbortedError());
