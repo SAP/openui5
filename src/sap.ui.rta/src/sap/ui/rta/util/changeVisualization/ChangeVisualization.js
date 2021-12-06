@@ -74,6 +74,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * When clicking anywhere on the application, the menu must close
+	 */
+	function _onClick() {
+		if (this.oMenuButton) {
+			this.oMenuButton.getMenu().close();
+		}
+	}
+
+	/**
 	 * @class
 	 * Root control for RTA change visualization.
 	 *
@@ -120,6 +129,9 @@ sap.ui.define([
 			this._oChangeVisualizationModel.setDefaultBindingMode("OneWay");
 			this._sSelectedCommandCategory = "all";
 			this._bSetModeChanged = false;
+
+			// For the event handlers to work, the function instance has to remain stable
+			this._fnOnClickHandler = _onClick.bind(this);
 		}
 	});
 
@@ -150,7 +162,7 @@ sap.ui.define([
 	ChangeVisualization.prototype.exit = function () {
 		this._oChangeIndicatorRegistry.destroy();
 		if (this.oRootOverlay) {
-			this.oRootOverlay.getDomRef().removeEventListener("click", onClick.bind(null, this.oMenuButton), {capture: true});
+			this.oRootOverlay.getDomRef().removeEventListener("click", this._fnOnClickHandler, {capture: true});
 		}
 	};
 
@@ -532,10 +544,6 @@ sap.ui.define([
 		aVisibleIndicators[iIndexToSelect].focus();
 	};
 
-	function onClick(oMenuButton) {
-		oMenuButton.getMenu().close();
-	}
-
 	/**
 	 * Triggers the mode switch (on/off).
 	 *
@@ -549,12 +557,12 @@ sap.ui.define([
 		if (this.getIsActive()) {
 			this.setIsActive(false);
 			if (this.oRootOverlay) {
-				this.oRootOverlay.getDomRef().removeEventListener("click", onClick.bind(null, this.oMenuButton), {capture: true});
+				this.oRootOverlay.getDomRef().removeEventListener("click", this._fnOnClickHandler, {capture: true});
 			}
 			return;
 		}
 		if (this.oRootOverlay) {
-			this.oRootOverlay.getDomRef().addEventListener("click", onClick.bind(null, this.oMenuButton), {capture: true});
+			this.oRootOverlay.getDomRef().addEventListener("click", this._fnOnClickHandler, {capture: true});
 		}
 		if (!this.getRootControlId()) {
 			this.setRootControlId(oRootControl);

@@ -7,20 +7,16 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/dt/Overlay",
 	"sap/base/util/restricted/_intersection",
-	"sap/m/InstanceManager",
-	"sap/ui/Device"
+	"sap/m/InstanceManager"
 ],
 function (
 	Plugin,
 	Utils,
 	OverlayRegistry,
 	KeyCodes,
-	Overlay,
 	_intersection,
-	InstanceManager,
-	Device
+	InstanceManager
 ) {
 	"use strict";
 
@@ -121,6 +117,18 @@ function (
 			}
 		}
 		return false;
+	};
+
+	/**
+	 * Sets the value of the isActive property.
+	 * When set to false, de-select all overlays.
+	 * @param {boolean} bValue - Value to be set
+	 */
+	Selection.prototype.setIsActive = function(bValue) {
+		this.setProperty("isActive", bValue);
+		if (bValue === false) {
+			this._deselectOverlays();
+		}
 	};
 
 	/**
@@ -286,25 +294,6 @@ function (
 				}
 			});
 			return;
-		}
-		// set focus after clicking, needed only for internet explorer
-		if (Device.browser.name === "ie") {
-			// when the EasyAdd Button is clicked, we don't want to focus/stopPropagation.
-			// but when the OverlayScrollContainer is the target, we want it to behave like a click on an overlay
-			var oTarget = OverlayRegistry.getOverlay(oEvent.target.id);
-			var bTargetIsScrollContainer = jQuery(oEvent.target).hasClass("sapUiDtOverlayScrollContainer");
-			var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
-			if (
-				oOverlay
-				&& (bTargetIsScrollContainer || oTarget instanceof Overlay)
-			) {
-				if (oOverlay.getSelectable()) {
-					oOverlay.focus();
-					oEvent.stopPropagation();
-				} else {
-					oOverlay.getDomRef().blur();
-				}
-			}
 		}
 	};
 

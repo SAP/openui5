@@ -439,25 +439,6 @@ sap.ui.define([
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
 
-		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable", function (assert) {
-			sandbox.stub(Device.browser, "name").value("ie");
-			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
-			var oMouseEvent = new Event("mousedown");
-			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
-			assert.ok(document.activeElement === oOverlay.getDomRef(), "then the Overlay is focused");
-		});
-
-		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable and isActive is false", function (assert) {
-			sandbox.stub(Device.browser, "name").value("ie");
-			this.oSelectionPlugin.setIsActive(false);
-			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
-			var oMouseEvent = new Event("mousedown");
-			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
-			assert.notOk(document.activeElement === oOverlay.getDomRef(), "then the Overlay is not focused afterwards");
-		});
-
 		QUnit.test("Invoking Mouse-Down on an Overlay which is selectable and isActive is false and two PopOvers are open", function (assert) {
 			var fnDone = assert.async();
 			this.oSelectionPlugin.setIsActive(false);
@@ -476,16 +457,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Invoking Mouse-Down on an Overlay which is not selectable", function (assert) {
-			sandbox.stub(Device.browser, "name").value("ie");
+		QUnit.test("When selecting an Overlay and then setting isActive to false", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			oOverlay.setSelectable(false);
-			oOverlay.setFocusable(true);
-			oOverlay.focus();
-			assert.ok(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initialy focused");
-			var oMouseEvent = new Event("mousedown");
-			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
-			assert.notOk(document.activeElement === oOverlay.getDomRef(), "then the Overlay is not focused any more");
+			oOverlay.setSelected(true);
+			this.oSelectionPlugin.setIsActive(false);
+			assert.notOk(oOverlay.isSelected(), "then the Overlay is no longer selected");
 		});
 
 		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable", function (assert) {
