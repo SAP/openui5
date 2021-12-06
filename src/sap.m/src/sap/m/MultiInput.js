@@ -978,6 +978,7 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
+		var sDOMValue = this.getDOMValue();
 		Input.prototype.onsapenter.apply(this, arguments);
 
 		var bValidateFreeText = true,
@@ -995,7 +996,7 @@ function(
 			this._validateCurrentText();
 		}
 
-		if (oEvent && oEvent.setMarked && (this._bTokenIsValidated || this.getDOMValue())) {
+		if (oEvent && oEvent.setMarked && (this._bTokenIsValidated || sDOMValue)) {
 			oEvent.setMarked();
 		}
 
