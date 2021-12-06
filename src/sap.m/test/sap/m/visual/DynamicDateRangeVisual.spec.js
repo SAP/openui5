@@ -51,7 +51,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	});
 
 	it("Group headers disabled when there are more then ten options available", function() {
-		var oDDRInputField = element(by.id("DDR1-input-inner")),
+		var oDDRInputField = element(by.id("DDR3-input-inner")),
 			sAltArrowDown = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_DOWN),
 			sAltArrowUp = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_UP),
 			oPopover;
