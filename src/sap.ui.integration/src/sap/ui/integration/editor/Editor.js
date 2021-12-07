@@ -797,27 +797,21 @@ sap.ui.define([
 		}
 
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-		this._enhanceI18nModel(oResourceBundle);
-		this._defaultTranslationsLoaded = true;
-	};
-
-	Editor.prototype._enhanceI18nModel = function (oResourceBundle) {
-		var oResourceModel = this.getModel("i18n");
-
-		if (oResourceModel) {
-			if (oResourceModel.getResourceBundle().oUrlInfo.url !== oResourceBundle.oUrlInfo.url) {
-				oResourceModel.enhance(oResourceBundle);
-				this._oResourceBundle = oResourceModel.getResourceBundle();
-			}
-			return;
-		}
-
-		oResourceModel = new ResourceModel({
+		var oResourceModel = new ResourceModel({
 			bundle: oResourceBundle
 		});
 
 		this.setModel(oResourceModel, "i18n");
 		this._oResourceBundle = oResourceBundle;
+		this._defaultTranslationsLoaded = true;
+	};
+
+	Editor.prototype._enhanceI18nModel = function (oResourceBundle) {
+		var oResourceModel = this.getModel("i18n");
+		if (oResourceModel.getResourceBundle().oUrlInfo.url !== oResourceBundle.oUrlInfo.url) {
+			oResourceModel.enhance(oResourceBundle);
+			this._oResourceBundle = oResourceModel.getResourceBundle();
+		}
 	};
 
 	Editor.prototype._loadExtension = function () {
@@ -981,8 +975,7 @@ sap.ui.define([
 		this._language = sValue.replaceAll('_', '-');
 		if (this.getLanguage() != sValue) {
 			//reload resource bundler if language changed
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-			this._enhanceI18nModel(oResourceBundle);
+			this._loadDefaultTranslations();
 		}
 		this.setProperty("language", sValue, bSuppress);
 		if (!Editor._languages[this._language]) {

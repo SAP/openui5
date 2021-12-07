@@ -3,6 +3,9 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 
 	var DataExtension = Extension.extend("card.test.editor.extension.getData.DataExtension");
 
+	DataExtension.prototype.init = function () {
+	};
+
 	// should return a promise
 	DataExtension.prototype.getData = function () {
 		// Get information about trainings, trainers, and locations, then combine them in a way that it suitable for the card.
