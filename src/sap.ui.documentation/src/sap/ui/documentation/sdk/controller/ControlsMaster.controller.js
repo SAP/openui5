@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/util/Storage",
 	"sap/ui/core/Core",
-	"sap/ui/documentation/sdk/controller/util/Highlighter"
+	"sap/ui/documentation/sdk/controller/util/Highlighter",
+	"sap/ui/documentation/sdk/util/Resources"
 ], function(
 	jQuery,
 	Device,
@@ -33,7 +34,8 @@ sap.ui.define([
 	UriParameters,
 	Storage,
 	Core,
-	Highlighter
+	Highlighter,
+	ResourcesUtil
 ) {
 		"use strict";
 
@@ -278,7 +280,7 @@ sap.ui.define([
 				}
 
 				// Apply theme and compact mode also to iframe samples if there is actually a change
-				if (bRTLChanged || bContentDensityChanged || bThemeChanged) {
+				if ((bRTLChanged || bContentDensityChanged || bThemeChanged) && !ResourcesUtil.getHasProxy()) {
 
 					$SampleFrame = jQueryDOM("#sampleFrame");
 					if ($SampleFrame.length > 0) {

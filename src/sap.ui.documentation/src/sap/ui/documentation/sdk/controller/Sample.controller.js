@@ -15,6 +15,7 @@ sap.ui.define([
     "sap/ui/core/HTML",
     "sap/m/library",
     "sap/base/Log",
+	"sap/base/util/UriParameters",
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources"
 ], function(
@@ -29,6 +30,7 @@ sap.ui.define([
 	HTML,
 	mobileLibrary,
 	Log,
+	UriParameters,
 	Fragment,
 	ResourcesUtil
 ) {
@@ -36,6 +38,10 @@ sap.ui.define([
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper;
+
+		var COZY = "cozy",
+			COMPACT = "compact",
+			CONDENSED = "condensed";
 
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 			/* =========================================================== */
@@ -52,6 +58,11 @@ sap.ui.define([
 					showNewTab: false,
 					rtaLoaded: false
 				});
+				this._oSampleIframeSettings = {
+					densityMode: COMPACT,
+					themeActive: "sap_fiori_3",
+					rtl: false
+				};
 
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
@@ -156,6 +167,7 @@ sap.ui.define([
 						oModelData.name = oSample.name;
 						oModelData.details = oSample.details;
 						oModelData.description = oSample.description;
+						oModelData.showSettings = !!ResourcesUtil.getHasProxy();
 
 						if (oSampleConfig) {
 
@@ -215,6 +227,141 @@ sap.ui.define([
 							oPage.setBusy(false);
 						}, 0);
 					});
+			},
+
+			/**
+			 * Opens the View settings dialog
+			 * @public
+			 */
+			handleSettings: function () {
+				var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
+					oSampleFrameCore = oSampleFrame.sap.ui.getCore(),
+					oView;
+
+				if (!this._oMessageBundle) {
+					this._oMessageBundle = new oSampleFrame.sap.ui.model.resource.ResourceModel({
+						bundleName: "sap.ui.documentation.messagebundle"
+					});
+				}
+
+				if (!this._oSettingsDialog) {
+					this._oSettingsDialog = new oSampleFrame.sap.ui.xmlfragment("sap.ui.documentation.sdk.view.appSettingsDialog", this);
+
+					oView = oSampleFrameCore.byId("__xmlview0");
+					oView.setModel(this._oMessageBundle, "i18n");
+					oView.addDependent(this._oSettingsDialog);
+				}
+
+				setTimeout(function () {
+					var oAppSettings = oSampleFrameCore.getConfiguration(),
+						oThemeSelect = oSampleFrameCore.byId("ThemeSelect"),
+						sUriParamTheme = UriParameters.fromQuery(window.location.search).get("sap-theme"),
+						bDensityMode = this._oSampleIframeSettings.densityMode;
+
+					// Theme select
+					oThemeSelect.setSelectedKey(sUriParamTheme ? sUriParamTheme : oAppSettings.getTheme());
+
+					// RTL
+					oSampleFrameCore.byId("RTLSwitch").setState(oAppSettings.getRTL());
+
+					// Density mode select
+					oSampleFrameCore.byId("DensityModeSwitch").setSelectedKey(bDensityMode);
+
+					this._oSettingsDialog.open();
+				}.bind(this), 0);
+			},
+
+			/**
+			 * Closes the View settings dialog
+			 * @public
+			 */
+			handleCloseAppSettings: function () {
+				this._oSettingsDialog.close();
+			},
+
+			handleSaveAppSettings: function () {
+				var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
+					oSampleFrameCore = oSampleFrame.sap.ui.getCore(),
+					sDensityMode = oSampleFrameCore.byId("DensityModeSwitch").getSelectedKey(),
+					sTheme = oSampleFrameCore.byId("ThemeSelect").getSelectedKey(),
+					bRTL = oSampleFrameCore.byId("RTLSwitch").getState(),
+					oView = oSampleFrameCore.byId("__xmlview0");
+
+				this._oSettingsDialog.close();
+
+				// Lazy loading of busy dialog
+				if (!this._oBusyDialog) {
+					oSampleFrame.sap.ui.require(["sap/m/BusyDialog"], function () {
+						this._oBusyDialog = new oSampleFrame.sap.m.BusyDialog();
+						oView.addDependent(this._oBusyDialog);
+						this._handleBusyDialog();
+					}.bind(this));
+				} else {
+					this._handleBusyDialog();
+				}
+
+				// handle settings change
+				this._applyAppConfiguration(sTheme, sDensityMode, bRTL);
+			},
+
+			/**
+			 * Apply content configuration
+			 * @param {string} sThemeActive name of the theme
+			 * @param {string} sDensityMode content density mode
+			 * @param {boolean} bRTL right to left mode
+			 * @private
+			 */
+			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
+				var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
+					oSampleFrameCore = oSampleFrame.sap.ui.getCore();
+
+				if (this._oSampleIframeSettings.densityMode !== sDensityMode) {
+					this._oSampleIframeSettings.densityMode = sDensityMode;
+					this._toggleContentDensityClasses(oSampleFrame.jQuery("body"), sDensityMode);
+				}
+
+				if (this._oSampleIframeSettings.rtl !== bRTL) {
+					oSampleFrameCore.getConfiguration().setRTL(bRTL);
+					this._oSampleIframeSettings.rtl = bRTL;
+				}
+
+				if (oSampleFrameCore.getConfiguration().getTheme() !== sThemeActive) {
+					oSampleFrameCore.applyTheme(sThemeActive);
+					this._oSampleIframeSettings.themeActive = sThemeActive;
+				} else if (this._oSampleIframeSettings.densityMode !== sDensityMode) {
+					// Notify Core for content density change only if no theme change happened
+					oSampleFrameCore.notifyContentDensityChanged();
+				}
+			},
+
+			/**
+			 * Toggles content density classes in the provided html body
+			 * @param {object} oBody the html body to set the correct class on
+			 * @param {string} sDensityMode content density mode
+			 * @private
+			 */
+			_toggleContentDensityClasses: function(oBody, sDensityMode){
+				switch (sDensityMode) {
+					case COMPACT:
+						oBody.toggleClass("sapUiSizeCompact", true).toggleClass("sapUiSizeCozy", false).toggleClass("sapUiSizeCondensed", false);
+						break;
+					case CONDENSED:
+						oBody.toggleClass("sapUiSizeCondensed", true).toggleClass("sapUiSizeCozy", false).toggleClass("sapUiSizeCompact", true);
+						break;
+					default:
+						oBody.toggleClass("sapUiSizeCozy", true).toggleClass("sapUiSizeCondensed", false).toggleClass("sapUiSizeCompact", false);
+				}
+			},
+
+			/**
+			 * Handles View settings dialog
+			 * @public
+			 */
+			_handleBusyDialog : function () {
+				this._oBusyDialog.open();
+				setTimeout(function () {
+					this._oBusyDialog.close();
+				}.bind(this), 1000);
 			},
 
 			_updateFileContent: function(sRef, sFile) {
@@ -331,6 +478,20 @@ sap.ui.define([
 				}
 
 				if (!this._oHtmlControl) {
+					var oComponent = this.getOwnerComponent();
+
+					// Guarantees the sample initially to have the same content density, as the whole Demo Kit
+					switch (oComponent.getContentDensityClass()) {
+						case "sapUiSizeCompact":
+							this._oSampleIframeSettings.densityMode = COMPACT;
+							break;
+						case "sapUiSizeCondensed":
+							this._oSampleIframeSettings.densityMode = CONDENSED;
+							break;
+						default:
+							this._oSampleIframeSettings.densityMode = COZY;
+					}
+
 					this._oHtmlControl = new HTML({
 						id : "sampleFrame",
 						content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
@@ -343,6 +504,10 @@ sap.ui.define([
 									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
 										oSampleFrameCore = oSampleFrame.sap.ui.getCore(),
 										oFrame = document.getElementById("sampleFrame");
+
+									this._oMessageBundle = null;
+									this._oSettingsDialog = null;
+									this._oBusyDialog = null;
 
 									if (this.oModel.getData().iframe) {
 										Promise.all([
@@ -384,13 +549,11 @@ sap.ui.define([
 
 									// Apply theme settings to iframe sample
 									oSampleFrame.sap.ui.getCore().attachInit(function () {
-										var bCompact = jQuery(document.body).hasClass("sapUiSizeCompact");
-
-										oSampleFrameCore.applyTheme(ResourcesUtil.getHasProxy() ? this._sDefaultSampleTheme : this._oCore.getConfiguration().getTheme());
-										oSampleFrameCore.getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
-										oSampleFrame.jQuery('body')
-											.toggleClass("sapUiSizeCompact", bCompact)
-											.toggleClass("sapUiSizeCozy", !bCompact);
+										oSampleFrameCore.applyTheme(ResourcesUtil.getHasProxy() ?
+											this._oSampleIframeSettings.themeActive : this._oCore.getConfiguration().getTheme());
+										oSampleFrameCore.getConfiguration().setRTL(ResourcesUtil.getHasProxy() ?
+											this._oSampleIframeSettings.rtl : this._oCore.getConfiguration().getRTL());
+										this._toggleContentDensityClasses(oSampleFrame.jQuery('body'), this._oSampleIframeSettings.densityMode);
 
 										// Notify Core for content density change
 										oSampleFrameCore.notifyContentDensityChanged();
@@ -440,7 +603,7 @@ sap.ui.define([
 			},
 
 			onDemoKitThemeChanged: function(sChannelId, sEventId, oData) {
-				if (this._oHtmlControl) {
+				if (this._oHtmlControl && !ResourcesUtil.getHasProxy()) {
 					this._oHtmlControl.$()[0].contentWindow.sap.ui.getCore().applyTheme(oData.sThemeActive);
 				}
 				this.setDefaultSampleTheme();
