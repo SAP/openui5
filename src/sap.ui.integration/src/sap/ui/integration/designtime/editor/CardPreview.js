@@ -128,9 +128,9 @@ sap.ui.define([
 	};
 
 	CardPreview.prototype.onAfterRendering = function () {
-		var oPreview = this._getCardPreview(),
+		var oPreview = this.getAggregation("cardPreview"),
 		    sModes = this._getModes();
-		if (sModes.indexOf("Live") > -1 && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
+		if (sModes.indexOf("Live") > -1 && oPreview && oPreview.getDomRef() && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
 			window.setTimeout(function() {
 				try {
 					var vizFrameId = oPreview.getDomRef().getElementsByClassName("sapVizFrame")[0].id;

@@ -5,11 +5,19 @@
 sap.ui.define([
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/core/Core",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/editor/Merger",
+	"sap/ui/model/json/JSONModel",
+	"sap/base/util/merge",
+	"sap/ui/model/resource/ResourceModel"
 ], function (
 	Editor,
 	Core,
-	Card
+	Card,
+	Merger,
+	JSONModel,
+	merge,
+	ResourceModel
 ) {
 	"use strict";
 
@@ -119,6 +127,47 @@ sap.ui.define([
 				this.setJson(vCardIdOrSettings, bSuppressRerendering);
 			}.bind(this));
 		}
+	};
+
+	CardEditor.prototype.createManifest = function (vIdOrSettings, bSuppress) {
+		this._isManifestReady = false;
+		if (this._oEditorManifest) {
+			this._oEditorManifest.destroy();
+		}
+		this.destroyAggregation("_extension");
+		var iCurrentModeIndex = Merger.layers[this.getMode()];
+
+		this._oEditorManifest = this._oEditorCard._oCardManifest;
+		this._registerManifestModulePath();
+		this._oInitialManifestModel = new JSONModel(this._oEditorManifest._oInitialJson);
+		this.setProperty("json", this._oEditorManifest._oInitialJson, bSuppress);
+		var oManifestJson = this._oEditorManifest._oManifest.getRawJson();
+		var _beforeCurrentLayer = merge({}, oManifestJson);
+		this._beforeManifestModel = new JSONModel(_beforeCurrentLayer);
+		if (iCurrentModeIndex < Merger.layers["translation"] && this._currentLayerManifestChanges) {
+			//merge if not translation
+			oManifestJson = Merger.mergeDelta(oManifestJson, [this._currentLayerManifestChanges]);
+		}
+		//create a manifest model after the changes are merged
+		this._manifestModel = new JSONModel(oManifestJson);
+		this._isManifestReady = true;
+		this.fireManifestReady();
+		//add a context model
+		this._createContextModel();
+		if (this._oEditorManifest.getResourceBundle()) {
+			var oResourceBundle = this._oEditorManifest.getResourceBundle();
+			var oResourceModel = new ResourceModel({
+				bundle: oResourceBundle
+			});
+			this.setModel(oResourceModel, "i18n");
+			this._oResourceBundle = oResourceBundle;
+		} else {
+			this._loadDefaultTranslations();
+		}
+
+		return this._loadExtension().then(function() {
+			this._initInternal();
+		}.bind(this));
 	};
 
 	/**
