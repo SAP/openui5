@@ -210,6 +210,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles the start of <code>ProgressIndicator</code> press event and marks the event as handled
+	 * by <code>ProgressIndicator</code> to prevent event bubbling when the information popover should be opened.
+	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
+	 * @private
+	 */
+	ProgressIndicator.prototype.ontouchstart = function (oEvent) {
+		if (this._isHoverable()) {
+			oEvent.setMarked();
+		}
+	};
+
+	/**
 	 * Handles the <code>ProgressIndicator</code> press event.
 	 * @param {jQuery.Event} oEvent The <code>tap</code> event object
 	 */
