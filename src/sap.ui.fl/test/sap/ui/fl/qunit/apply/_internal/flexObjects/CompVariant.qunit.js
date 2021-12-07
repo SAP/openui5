@@ -3,16 +3,16 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
 	CompVariant,
-	Change,
 	Settings,
+	Change,
 	Layer,
 	UriParameters,
 	sinon
@@ -230,7 +230,7 @@ sap.ui.define([
 	}
 
 	function createVariant(oVariantData) {
-		var mVariantData = Change.createInitialFileContent(merge(oVariantData, {
+		var mVariantData = CompVariant.createInitialFileContent(merge(oVariantData, {
 			fileType: "variant",
 			fileName: "testVariant_123",
 			namespace: "testNamespace"
@@ -245,8 +245,6 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given isEditEnabled/isRenameEnabled/isDeleteEnabled is called", {
-		beforeEach: function () {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -259,10 +257,12 @@ sap.ui.define([
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
+			// non-persisted variants do not have any layer information
+			oVariant.getDefinition().layer = "";
 
-			assert.equal(false, oVariant.isRenameEnabled(), "then the boolean for renameEnabled was determined correct");
-			assert.equal(false, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
-			assert.equal(false, oVariant.isDeleteEnabled(), "then the boolean for deleteEnabled was determined correct");
+			assert.strictEqual(oVariant.isRenameEnabled(), false, "then the boolean for renameEnabled was determined correct");
+			assert.strictEqual(oVariant.isEditEnabled(), false, "then the boolean for editEnabled was determined correct");
+			assert.strictEqual(oVariant.isDeleteEnabled(), false, "then the boolean for deleteEnabled was determined correct");
 		});
 
 		QUnit.test("Given a standard variant and the active layer is CUSTOMER", function(assert) {
@@ -273,10 +273,12 @@ sap.ui.define([
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
+			// non-persisted variants do not have any layer information
+			oVariant.getDefinition().layer = "";
 
-			assert.equal(false, oVariant.isRenameEnabled(Layer.CUSTOMER), "then the boolean for renameEnabled was determined correct");
-			assert.equal(false, oVariant.isEditEnabled(Layer.CUSTOMER), "then the boolean for editEnabled was determined correct");
-			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER), "then the boolean for deleteEnabled was determined correct");
+			assert.equal(oVariant.isRenameEnabled(Layer.CUSTOMER), false, "then the boolean for renameEnabled was determined correct");
+			assert.equal(oVariant.isEditEnabled(Layer.CUSTOMER), false, "then the boolean for editEnabled was determined correct");
+			assert.equal(oVariant.isDeleteEnabled(Layer.CUSTOMER), false, "then the boolean for deleteEnabled was determined correct");
 		});
 
 		QUnit.test("Given a standard variant and the active layer is CUSTOMER_BASE", function(assert) {
@@ -287,10 +289,12 @@ sap.ui.define([
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
+			// non-persisted variants do not have any layer information
+			oVariant.getDefinition().layer = "";
 
-			assert.equal(false, oVariant.isRenameEnabled(Layer.CUSTOMER_BASE), "then the boolean for renameEnabled was determined correct");
-			assert.equal(true, oVariant.isEditEnabled(Layer.CUSTOMER_BASE), "then the boolean for editEnabled was determined correct");
-			assert.equal(false, oVariant.isDeleteEnabled(Layer.CUSTOMER_BASE), "then the boolean for deleteEnabled was determined correct");
+			assert.equal(oVariant.isRenameEnabled(Layer.CUSTOMER_BASE), false, "then the boolean for renameEnabled was determined correct");
+			assert.equal(oVariant.isEditEnabled(Layer.CUSTOMER_BASE), true, "then the boolean for editEnabled was determined correct");
+			assert.equal(oVariant.isDeleteEnabled(Layer.CUSTOMER_BASE), false, "then the boolean for deleteEnabled was determined correct");
 		});
 
 		QUnit.test("Given a standard variant and the active layer is VENDOR", function(assert) {
@@ -301,10 +305,12 @@ sap.ui.define([
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
+			// non-persisted variants do not have any layer information
+			oVariant.getDefinition().layer = "";
 
-			assert.equal(false, oVariant.isRenameEnabled(Layer.VENDOR), "then the boolean for renameEnabled was determined correct");
-			assert.equal(true, oVariant.isEditEnabled(Layer.VENDOR), "then the boolean for editEnabled was determined correct");
-			assert.equal(false, oVariant.isDeleteEnabled(Layer.VENDOR), "then the boolean for deleteEnabled was determined correct");
+			assert.equal(oVariant.isRenameEnabled(Layer.VENDOR), false, "then the boolean for renameEnabled was determined correct");
+			assert.equal(oVariant.isEditEnabled(Layer.VENDOR), true, "then the boolean for editEnabled was determined correct");
+			assert.equal(oVariant.isDeleteEnabled(Layer.VENDOR), false, "then the boolean for deleteEnabled was determined correct");
 		});
 
 		aScenarios.forEach(function (mTestSetup) {
@@ -322,16 +328,14 @@ sap.ui.define([
 
 				var oVariant = createVariant(mTestSetup.variant);
 
-				assert.equal(mTestSetup.expectedRenameEnabled, oVariant.isRenameEnabled(), "then the boolean for renameEnagbled was determined correct");
-				assert.equal(mTestSetup.expectedEditEnabled, oVariant.isEditEnabled(), "then the boolean for editEnabled was determined correct");
-				assert.equal(mTestSetup.expectedDeleteEnabled, oVariant.isDeleteEnabled(), "then the boolean for deleteEnabled was determined correct");
+				assert.equal(oVariant.isRenameEnabled(), mTestSetup.expectedRenameEnabled, "then the boolean for renameEnagbled was determined correct");
+				assert.equal(oVariant.isEditEnabled(), mTestSetup.expectedEditEnabled, "then the boolean for editEnabled was determined correct");
+				assert.equal(oVariant.isDeleteEnabled(), mTestSetup.expectedDeleteEnabled, "then the boolean for deleteEnabled was determined correct");
 			});
 		});
 	});
 
 	QUnit.module("Given the constructor is called", {
-		beforeEach: function () {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
