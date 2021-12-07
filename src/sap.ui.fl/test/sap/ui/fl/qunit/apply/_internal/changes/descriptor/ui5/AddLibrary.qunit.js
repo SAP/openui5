@@ -50,7 +50,7 @@ sap.ui.define([
 			};
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVerison is updated correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVersion is updated correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], true, "the sap.me lazy is updated correctly.");
 		});
 
@@ -65,7 +65,7 @@ sap.ui.define([
 			};
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVerison is updated correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVersion is updated correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], true, "the sap.me lazy is updated correctly.");
 		});
 
@@ -87,7 +87,7 @@ sap.ui.define([
 
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVerison is updated correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVersion is updated correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], false, "the sap.me lazy is updated correctly.");
 		});
 
@@ -108,7 +108,7 @@ sap.ui.define([
 
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.100.0", "the sap.me minVerison is updated correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.100.0", "the sap.me minVersion is updated correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], false, "the sap.me lazy is updated correctly.");
 		});
 
@@ -128,7 +128,7 @@ sap.ui.define([
 
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVerison is updated correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVersion is updated correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], false, "the sap.me lazy is updated correctly.");
 		});
 
@@ -150,7 +150,7 @@ sap.ui.define([
 
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.58", "the sap.me minVerison is not downgraded correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.58", "the sap.me minVersion is not downgraded correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], true, "the sap.me lazy is not downgraded correctly.");
 		});
 
@@ -171,10 +171,10 @@ sap.ui.define([
 
 			var oNewManifest = AddLibrary.applyChange(oManifest, this.oChange);
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.ushell"]["minVersion"], "1.35", "the sap.me minVerison is not changed correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.ushell"]["minVersion"], "1.35", "the sap.me minVersion is not changed correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.ushell"]["lazy"], undefined, "the sap.me lazy is not changed correctly.");
 
-			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVerison is added  correctly.");
+			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["minVersion"], "1.44", "the sap.me minVersion is added  correctly.");
 			assert.strictEqual(oNewManifest["sap.ui5"]["dependencies"]["libs"]["sap.me"]["lazy"], true, "the sap.me lazy is added correctly.");
 		});
 
