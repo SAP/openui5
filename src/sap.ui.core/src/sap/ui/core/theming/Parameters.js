@@ -299,8 +299,6 @@ sap.ui.define([
 				// Merge an empty parameter set to initialize the internal object
 				mergeParameters({}, "");
 
-				sTheme = sap.ui.getCore().getConfiguration().getTheme();
-
 				forEachStyleSheet(function (sId) {
 					if (bAsync) {
 						if (ThemeCheck.checkStyle(sId)) {
@@ -608,6 +606,9 @@ sap.ui.define([
 					"Consider using the API only when required, e.g. onBeforeRendering.");
 			}
 
+			if (!sTheme) {
+				sTheme = sap.ui.getCore().getConfiguration().getTheme();
+			}
 			// Parameters.get() without arguments returns
 			// copy of complete default parameter set
 			if (arguments.length === 0) {
@@ -689,6 +690,7 @@ sap.ui.define([
 			if (bAsync && fnAsyncCallback && Object.keys(vResult).length !== aNames.length) {
 				if (!sap.ui.getCore().isThemeApplied()) {
 					resolveWithParameter = function () {
+						sap.ui.getCore().detachThemeChanged(resolveWithParameter);
 						var vParams = this.get({ // Don't pass callback again
 							name: vName.name,
 							scopeElement: vName.scopeElement
@@ -700,7 +702,6 @@ sap.ui.define([
 
 						fnAsyncCallback(vParams);
 						aCallbackRegistry.splice(aCallbackRegistry.findIndex(findRegisteredCallback), 1);
-						sap.ui.getCore().detachThemeChanged(resolveWithParameter);
 					}.bind(this);
 
 					// Check if identical callback is already registered and reregister with current parameters
@@ -760,6 +761,8 @@ sap.ui.define([
 			// hidden parameter {boolean} bOnlyWhenNecessary
 			var bOnlyWhenNecessary = arguments[0] === true;
 			if ( !bOnlyWhenNecessary || sap.ui.getCore().getConfiguration().getTheme() !== sTheme ) {
+				sTheme = sap.ui.getCore().getConfiguration().getTheme();
+				aParametersToLoad = [];
 				mParameters = null;
 				ThemeHelper.reset();
 			}
