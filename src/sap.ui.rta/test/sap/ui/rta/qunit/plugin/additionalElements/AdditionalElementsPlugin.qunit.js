@@ -225,50 +225,6 @@ sap.ui.define([
 				},
 				sibling: true,
 				msg: " when the control's dt metadata has a reveal action with changeOnRelevantContainer"
-			},
-			{
-				dtMetadata: {
-					add: {
-						custom: {
-							getItems: getCustomItems.bind(null, 2)
-						}
-					}
-				},
-				sibling: true,
-				msg: " when the control's dt metadata has an add action with a custom sub-action"
-			},
-			{
-				dtMetadata: {
-					add: {
-						custom: {
-							getItems: getCustomItems.bind(null, 2)
-						}
-					}
-				},
-				sibling: false,
-				msg: " when the control's dt metadata has an add action with a custom sub-action"
-			},
-			{
-				dtMetadata: {
-					add: {
-						custom: {
-							getItems: getCustomItemsInPromise.bind(null, 2)
-						}
-					}
-				},
-				sibling: true,
-				msg: " when the control's dt metadata has an add action with a custom sub-action returning a promise"
-			},
-			{
-				dtMetadata: {
-					add: {
-						custom: {
-							getItems: getCustomItemsInPromise.bind(null, 2)
-						}
-					}
-				},
-				sibling: false,
-				msg: " when the control's dt metadata has an add action with a custom sub-action returning a promise"
 			}
 		].forEach(function (test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
@@ -440,7 +396,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when the control's dt metadata has reveal, addViaCustom and addViaDelegate actions", function (assert) {
+		QUnit.test("when the control's dt metadata has reveal and addViaDelegate actions", function (assert) {
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -448,7 +404,6 @@ sap.ui.define([
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1),
 					delegate: {
 						changeType: "addFields"
 					}
@@ -464,7 +419,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when the control's dt metadata has reveal, addViaCustom and addViaDelegate actions with changeOnRelevantContainer", function (assert) {
+		QUnit.test("when the control's dt metadata has reveal and addViaDelegate actions with changeOnRelevantContainer", function (assert) {
 			var fnElementModifiedStub = sandbox.stub();
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -473,7 +428,6 @@ sap.ui.define([
 					changeOnRelevantContainer: true
 				},
 				add: {
-					custom: getCustomItems.bind(null, 2),
 					delegate: {
 						changeType: "addFields",
 						changeOnRelevantContainer: true
@@ -590,102 +544,7 @@ sap.ui.define([
 					}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has only a custom add action resolving to 2 items, one with a stable ID and the other with a randomly generated ID", function (assert) {
-				var done = assert.async();
-				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
-				var aCustomItems = getCustomItems(2).reverse();
-				var sAggregationName = "contentLeft";
-
-				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
-					var oCompositeCommand = oEvent.getParameter("command");
-					var aCommands = oCompositeCommand.getCommands();
-					var sChangeType = "customAdd";
-
-					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
-
-					aCommands.forEach(
-						function (oCommand, iIndex) {
-							assert.strictEqual(oCommand.getName(), sChangeType, "then created command is customAdd");
-							assert.strictEqual(oCommand.getChangeType(), sChangeType, "then the customAdd command has the right changeType");
-							assert.deepEqual(oCommand.getAddElementInfo(), aCustomItems[iIndex].changeSpecificData.content, "then the customAdd command has the correct additional element info");
-							assert.strictEqual(oCommand.getAggregationName(), sAggregationName, "then the customAdd command has the correct aggregation");
-
-							if (test.sibling) {
-								assert.equal(oCommand.getIndex(), 1, "then the customAdd command has the right index");
-							} else {
-								assert.equal(oCommand.getIndex(), 0, "then the customAdd command has the right index");
-							}
-						}
-					);
-					done();
-				});
-
-				// mock item selection from add dialog
-				aCustomItems[1].selected = true;
-				aCustomItems[0].selected = true;
-				aCustomItems[0].changeSpecificData.changeOnRelevantContainer = true; // to mock change on relevant container
-
-				return test.overlay.call(this, {
-					add: {
-						custom: {
-							getItems: sandbox.stub().resolves(aCustomItems)
-						}
-					}
-				}, test.sibling ? ON_SIBLING : ON_CHILD)
-
-					.then(function (oCreatedOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
-							.then(function () {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay], sAggregationName), true, "then isEnabled() returns true");
-							}.bind(this));
-					}.bind(this))
-
-					.then(function () {
-						assert.ok(this.fnGetCustomAddItemsSpy.calledOnce, "then the analyzer is called to return the custom add elements");
-						assert.ok(this.fnEnhanceInvisibleElementsStub.notCalled, "then the analyzer is NOT called to return the invisible elements");
-						assert.ok(this.fnGetUnrepresentedDelegateProperties.notCalled, "then the analyzer is NOT called to return the unbound odata properties");
-						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
-						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
-						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
-					}.bind(this));
-			});
-
-			QUnit.test(sPrefix + "when the control's dt metadata has only a custom add action returning 2 items, one with a stable ID and the other with a randomly generated ID", function (assert) {
-				var done = assert.async();
-				// to preserve sorting done in AdditionalElementsPlugin._createCommands()
-				var aCustomItems = getCustomItems(2).reverse();
-				var sAggregationName = "contentLeft";
-
-				this.oPlugin.attachEventOnce("elementModified", function (oEvent) {
-					var oCompositeCommand = oEvent.getParameter("command");
-					var aCommands = oCompositeCommand.getCommands();
-					assert.strictEqual(aCommands.length, 2, "then two commands ware created");
-					done();
-				});
-
-				// mock item selection from add dialog
-				aCustomItems[1].selected = true;
-				aCustomItems[0].selected = true;
-
-				return test.overlay.call(this, {
-					add: {
-						custom: {
-							getItems: sandbox.stub().returns(aCustomItems)
-						}
-					}
-				}, test.sibling ? ON_SIBLING : ON_CHILD)
-					.then(function (oCreatedOverlay) {
-						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay]);
-					}.bind(this))
-
-					.then(function () {
-						assertDialogModelLength.call(this, assert, 2, "then both custom add elements are part of the dialog model");
-						assert.equal(this.oPlugin.getDialog().getElements()[0].label, aCustomItems[0].label, "then the first element is a custom add item");
-						assert.equal(this.oPlugin.getDialog().getElements()[1].label, aCustomItems[1].label, "then the second element is a custom add item");
-					}.bind(this));
-			});
-
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate or reveal or custom add actions", function (assert) {
+			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate or reveal add actions", function (assert) {
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
 				var sAggregationName = test.sibling ? "content" : "contentLeft";
@@ -769,7 +628,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
 							return oElement.label === "delegate" + iIndex;
@@ -843,7 +701,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
 							return oElement.label === "delegate" + iIndex;
@@ -878,7 +735,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 1, "then the analyzer was called once for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 						var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function (oElement, iIndex) {
 							return oElement.label === "delegate" + iIndex;
@@ -914,7 +770,6 @@ sap.ui.define([
 					.then(function () {
 						assert.equal(this.fnGetUnrepresentedDelegateProperties.callCount, 0, "then the analyzer was not called for addViaDelegate elements");
 						assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
-						assert.equal(this.fnGetCustomAddItemsSpy.callCount, 0, "then the analyzer was not called for addViaCustom items");
 						assertDialogModelLength.call(this, assert, 0, "then no elements are part of the dialog model");
 					}.bind(this));
 			});
@@ -1036,28 +891,6 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has a custom add action on the responsible element and getActions() is called", function (assert) {
-			return createOverlayWithAggregationActions.call(this,
-				{
-					add: {
-						custom: {
-							getItems: getCustomItems.bind(null, 2)
-						}
-					},
-					responsibleElement: {
-						target: this.oSibling,
-						source: this.oPseudoPublicParent,
-						actionsFromResponsibleElement: ["add.custom"]
-					}
-				}, ON_CONTAINER)
-				.then(function (oCreatedOverlay) {
-					return AdditionalElementsActionExtractor.getActions(true, oCreatedOverlay, this.oPlugin);
-				}.bind(this)).then(function (mActions) {
-					assert.equal(mActions['contentLeft'].addViaCustom.items.length, 2, "then the custom add action has two elements from the responsible element");
-					assert.ok(typeof mActions['contentLeft'].addViaCustom.action.getItems === "function", "then the custom add action was retrieved from the responsible element");
-				});
-		});
-
 		QUnit.test("when the control's dt metadata has an addViaDelegate action on the responsible element and _isEditableCheck is called", function (assert) {
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -1079,7 +912,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when the control's dt metadata has addViaDelegate, a reveal and a custom add actions", function (assert) {
+		QUnit.test("when the control's dt metadata has addViaDelegate and a reveal actions", function (assert) {
 			var oOriginalRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
 			var sAggregationName = "contentLeft";
@@ -1098,9 +931,6 @@ sap.ui.define([
 				add: {
 					delegate: {
 						changeType: "addFields"
-					},
-					custom: {
-						getItems: getCustomItems.bind(null, 2)
 					}
 				},
 				reveal: {
@@ -1129,9 +959,6 @@ sap.ui.define([
 				add: {
 					delegate: {
 						changeType: "addFields"
-					},
-					custom: {
-						getItems: getCustomItems.bind(null, 2)
 					}
 				},
 				reveal: {
@@ -1148,7 +975,6 @@ sap.ui.define([
 				}.bind(this)).then(function (mActions) {
 					assert.notOk(mActions["contentLeft"].hasOwnProperty("addViaDelegate"), "then the invalid add via delegate action is filtered");
 					assert.ok(mActions["contentLeft"].hasOwnProperty("reveal"), "then the reveal action is still available");
-					assert.ok(mActions["contentLeft"].hasOwnProperty("addViaCustom"), "then the custom add action is still available");
 				});
 		});
 
@@ -1549,7 +1375,6 @@ sap.ui.define([
 		QUnit.test("when 'getActions' is called multiple times without invalidate", function (assert) {
 			var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
 			var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
-			var oGetAddCustomActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getCustomAddActions");
 
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -1570,7 +1395,6 @@ sap.ui.define([
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
 							assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was calculated once");
-							assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was calculated once");
 						})
 						.then(function () {
 							return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, false);
@@ -1578,7 +1402,6 @@ sap.ui.define([
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was not calculated again");
 							assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was not calculated again");
-							assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was not calculated again");
 						});
 				}.bind(this));
 		});
@@ -1586,7 +1409,6 @@ sap.ui.define([
 		QUnit.test("when 'getActions' is called multiple times with invalidate", function (assert) {
 			var oGetRevealActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getRevealActions");
 			var oGetAddActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getAddViaDelegateActions");
-			var oGetAddCustomActionsSpy = sandbox.spy(AdditionalElementsActionExtractor, "_getCustomAddActions");
 
 			return createOverlayWithAggregationActions.call(this,
 				{
@@ -1607,7 +1429,6 @@ sap.ui.define([
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 1, "the reveal action was calculated once");
 							assert.equal(oGetAddActionsSpy.callCount, 1, "the add action was calculated once");
-							assert.equal(oGetAddCustomActionsSpy.callCount, 1, "the add custom action was calculated once");
 						})
 						.then(function () {
 							return AdditionalElementsActionExtractor.getActions(true, oOverlay, this.oPlugin, true);
@@ -1615,7 +1436,6 @@ sap.ui.define([
 						.then(function () {
 							assert.equal(oGetRevealActionsSpy.callCount, 2, "the reveal action was calculated again");
 							assert.equal(oGetAddActionsSpy.callCount, 2, "the add action was calculated again");
-							assert.equal(oGetAddCustomActionsSpy.callCount, 2, "the add custom action was calculated again");
 						});
 				}.bind(this));
 		});
@@ -1849,7 +1669,6 @@ sap.ui.define([
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1),
 					delegate: {
 						changeType: "addFields"
 					}
@@ -1868,8 +1687,7 @@ sap.ui.define([
 				add: {
 					delegate: {
 						changeType: "addFields"
-					},
-					custom: getCustomItems.bind(null, 1)
+					}
 				},
 				reveal: {
 					changeType: "unhideControl"
@@ -1890,7 +1708,6 @@ sap.ui.define([
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1),
 					delegate: {
 						changeType: "addFields"
 					}
@@ -1912,7 +1729,6 @@ sap.ui.define([
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1),
 					delegate: {
 						changeType: "addFields"
 					}
@@ -1936,7 +1752,6 @@ sap.ui.define([
 					changeType: "unhideControl"
 				},
 				add: {
-					custom: getCustomItems.bind(null, 1),
 					delegate: {
 						changeType: "addFields"
 					}
@@ -2044,8 +1859,6 @@ sap.ui.define([
 				sourceAggregation: "contentLeft"
 			}
 		]);
-
-		this.fnGetCustomAddItemsSpy = sandbox.spy(AdditionalElementsAnalyzer, "getCustomAddItems");
 
 		function getAddItems(sType) {
 			return [
@@ -2284,48 +2097,6 @@ sap.ui.define([
 	function assertDialogModelLength(assert, iExpectedLength, sMsg) {
 		var aElements = this.oPlugin.getDialog().getElements();
 		assert.equal(aElements.length, iExpectedLength, sMsg);
-	}
-
-	function getCustomItems(iNumber) {
-		var aCustomItems = [];
-		[{
-			//dialog item specific data
-			label: "CustomLabel1",
-			tooltip: "Custom Entry 1",
-			id: "stableId",
-			//change specific data
-			changeSpecificData: {
-				changeOnRelevantContainer: false,
-				changeType: "customAdd",
-				content: {
-					text: "Custom Text 1",
-					foo: "CustomLabel1"
-				}
-			}
-		}, {
-			//dialog item specific data
-			label: "CustomLabel2",
-			tooltip: "Custom Entry 2",
-			id: uid(),
-			//change specific data
-			changeSpecificData: {
-				changeOnRelevantContainer: false,
-				changeType: "customAdd",
-				content: {
-					text: "Custom Text 2",
-					foo: "CustomLabel2"
-				}
-			}
-		}].forEach(function (oCustomItem, iIndex) {
-			if (iIndex < iNumber) {
-				aCustomItems.push(oCustomItem);
-			}
-		});
-		return aCustomItems;
-	}
-
-	function getCustomItemsInPromise(iNumber) {
-		return Promise.resolve(getCustomItems(iNumber));
 	}
 
 	QUnit.done(function () {

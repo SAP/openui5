@@ -26,8 +26,7 @@ sap.ui.define([
 	* @returns {sap.ui.dt.ElementDesignTimeMetadata} Design time metadata
 	*/
 	function getDTMetadataFromActions(mActions) {
-		return (mActions["addViaDelegate"] && mActions["addViaDelegate"].designTimeMetadata)
-			|| (mActions["addViaCustom"] && mActions["addViaCustom"].designTimeMetadata);
+		return mActions["addViaDelegate"] && mActions["addViaDelegate"].designTimeMetadata;
 	}
 
 	/**
@@ -40,7 +39,7 @@ sap.ui.define([
 	AdditionalElementsUtils.getParents = function(bSibling, oOverlay, oPlugin) {
 		var oParentOverlay;
 		var oResponsibleElementOverlay = oOverlay;
-		var bResponsibleElementAvailable = ["add.delegate", "reveal", "add.custom"].some(function(vActionName) {
+		var bResponsibleElementAvailable = ["add.delegate", "reveal"].some(function(vActionName) {
 			return oPlugin.isResponsibleElementActionAvailable(oOverlay, vActionName);
 		});
 		if (bResponsibleElementAvailable) {

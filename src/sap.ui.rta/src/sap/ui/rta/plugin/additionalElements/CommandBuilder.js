@@ -162,47 +162,6 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function createCommandsForCustomElement(mPropertyBag) {
-		var oCompositeCommand = mPropertyBag.compositeCommand;
-		var oSelectedElement = mPropertyBag.selectedElement;
-		var mParents = mPropertyBag.parents;
-		var oSiblingElement = mPropertyBag.siblingElement;
-		var mActions = mPropertyBag.actions;
-		var iIndex = mPropertyBag.index;
-		var oPlugin = mPropertyBag.plugin;
-		var oElement = mParents.parent;
-		var oParentAggregationDTMetadata = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation).getDesignTimeMetadata();
-		var oActionSettings = Object.assign(
-			{
-				changeOnRelevantContainer: oSelectedElement.changeSpecificData.changeOnRelevantContainer,
-				aggregationName: mActions.aggregation,
-				changeType: oSelectedElement.changeSpecificData.changeType,
-				addElementInfo: oSelectedElement.changeSpecificData.content,
-				index: iIndex || Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation)
-			},
-			oSelectedElement.itemId && { customItemId: oSelectedElement.itemId }
-		);
-
-		var sVariantManagementReference;
-		if (mParents.relevantContainerOverlay) {
-			sVariantManagementReference = oPlugin.getVariantManagementReference(mParents.relevantContainerOverlay);
-		}
-
-		return oPlugin.getCommandFactory().getCommandFor(
-			oElement,
-			"customAdd",
-			oActionSettings,
-			oParentAggregationDTMetadata,
-			sVariantManagementReference
-		)
-			.then(function (oCustomAddCommand) {
-				if (oCustomAddCommand) {
-					oCompositeCommand.addCommand(oCustomAddCommand);
-				}
-				return oCompositeCommand;
-			});
-	}
-
 	function createCommandsForAddViaDelegate(mPropertyBag) {
 		var oCompositeCommand = mPropertyBag.compositeCommand;
 		var mAddViaDelegateAction = mPropertyBag.actions.addViaDelegate.action;
@@ -316,10 +275,6 @@ sap.ui.define([
 								case "delegate":
 									oPromise = oPromise.then(
 										createCommandsForAddViaDelegate.bind(this, mPropertyBag));
-									break;
-								case "custom":
-									oPromise = oPromise.then(
-										createCommandsForCustomElement.bind(this, mPropertyBag));
 									break;
 								default:
 									Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
