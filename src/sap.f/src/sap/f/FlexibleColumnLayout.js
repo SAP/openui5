@@ -172,6 +172,14 @@ sap.ui.define([
 				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
 				endColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getEndColumn", aggregation: "pages"}},
+				/**
+				 * Accessible landmark settings to be applied on the containers of the <code>sap.f.FlexibleColumnLayout</code> control.
+				 *
+				 * If not set, no landmarks will be written.
+				 * Note: This is a downported feature introduced in version 1.95.0.
+	 			 * @since 1.84.22
+				 */
+				landmarkInfo : {type : "sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo", multiple : false},
 
 				_beginColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
 				_midColumnNav: {type : "sap.m.NavContainer", multiple : false, visibility : "hidden"},
@@ -633,6 +641,12 @@ sap.ui.define([
 		}
 	});
 
+	FlexibleColumnLayout.DEFAULT_COLUMN_LABELS = {
+		"FirstColumn" : "FCL_BEGIN_COLUMN_REGION_TEXT",
+		"MiddleColumn" : "FCL_MID_COLUMN_REGION_TEXT",
+		"LastColumn" : "FCL_END_COLUMN_REGION_TEXT"
+	};
+
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
 	FlexibleColumnLayout.COLUMN_ORDER = ["begin", "mid", "end"]; // natural order of the columns in FCL
@@ -718,6 +732,26 @@ sap.ui.define([
 		oNavContainer.addEventDelegate(this["_" + sColumn + 'ColumnFocusOutDelegate'], this);
 
 		return oNavContainer;
+	};
+
+	/**
+	 * Formats <code>FlexibleColumnLayoutAccessibleLandmarkInfo</code> role and label of the provided <code>FlexibleColumnLayout</code> column.
+	 *
+	 * @param {sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo} oLandmarkInfo FlexibleColumnLayout LandmarkInfo
+	 * @param {string} sColumnName column of the layout
+	 * @returns {sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo} The formatted landmark info
+	 * @private
+	 */
+	 FlexibleColumnLayout.prototype._formatLandmarkInfo = function (oLandmarkInfo, sColumnName) {
+		var sLabel = null;
+		if (oLandmarkInfo) {
+			sLabel = oLandmarkInfo["get" + sColumnName + "Label"]();
+		}
+
+		return {
+			role: "region",
+			label: sLabel || FlexibleColumnLayout._getResourceBundle().getText(FlexibleColumnLayout.DEFAULT_COLUMN_LABELS[sColumnName])
+		};
 	};
 
 	/**

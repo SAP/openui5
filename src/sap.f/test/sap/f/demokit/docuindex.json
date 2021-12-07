@@ -51,6 +51,7 @@
 			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
 			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
 			"sap.f.sample.FlexibleColumnLayoutColumnResize",
+			"sap.f.sample.FlexibleColumnLayoutLandmarkInfo",
 			"sap.f.sample.FlexibleColumnLayoutSimple",
 			"sap.f.sample.ShellBarWithFlexibleColumnLayout"
 		  ]
@@ -186,6 +187,11 @@
 		  "name": "Flexible Column Layout with programmatic scrolling to an item",
 		  "description": "FlexibleColumnLayout where the app programmatically scrolls to some item within the newly navigated column, once the column is fully resized"
 		},
+		{
+			"id": "sap.f.sample.FlexibleColumnLayoutLandmarkInfo",
+			"name": "Flexible Column Layout Landmark Info",
+			"description": "Flexible Column Layout where the first and the last columns have custom Landmark Info"
+		  },
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
 		  "name": "Flexible Column Layout (with Event Bus)",
