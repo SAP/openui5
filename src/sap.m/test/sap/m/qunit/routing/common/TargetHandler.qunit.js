@@ -352,11 +352,11 @@ sap.ui.define([
 
 	function viewLevelDirectionTestcase(assert, oTestOptions) {
 		// Arrange
-		this.oTargetHandler._iCurrentViewLevel = oTestOptions.currentViewLevel;
+		this.oTargetHandler._iCurrentLevel = oTestOptions.currentLevel;
 
 		// Act
 		var bResult = this.oTargetHandler._getDirection({
-			viewLevel: oTestOptions.newViewLevel
+			level: oTestOptions.newViewLevel
 		});
 
 		// Assert
@@ -366,7 +366,7 @@ sap.ui.define([
 	QUnit.test("Should be backwards if the new viewlevel is lower than the current one", function (assert) {
 
 		viewLevelDirectionTestcase.call(this, assert, {
-			currentViewLevel : 1,
+			currentLevel : 1,
 			newViewLevel : 0,
 			expectedBackwards : true
 		});
@@ -376,7 +376,7 @@ sap.ui.define([
 	QUnit.test("Should be forwards if the new viewlevel is greater than the current one", function (assert) {
 
 		viewLevelDirectionTestcase.call(this, assert, {
-			currentViewLevel : 0,
+			currentLevel : 0,
 			newViewLevel : 1,
 			expectedBackwards : false
 		});
@@ -386,7 +386,7 @@ sap.ui.define([
 	QUnit.test("Should be forwards if the new viewlevel is equal to the current one", function (assert) {
 
 		viewLevelDirectionTestcase.call(this, assert, {
-			currentViewLevel : 0,
+			currentLevel : 0,
 			newViewLevel : 0,
 			expectedBackwards : false
 		});
@@ -397,7 +397,7 @@ sap.ui.define([
 
 
 		viewLevelDirectionTestcase.call(this, assert, {
-			currentViewLevel : 0,
+			currentLevel : 0,
 			newViewLevel : undefined,
 			expectedBackwards : false
 		});
@@ -407,7 +407,7 @@ sap.ui.define([
 	QUnit.test("Should be forwards if the new viewlevel is defined but the last one is undefined", function (assert) {
 
 		viewLevelDirectionTestcase.call(this, assert, {
-			currentViewLevel : undefined,
+			currentLevel : undefined,
 			newViewLevel : 0,
 			expectedBackwards : false
 		});
@@ -417,7 +417,7 @@ sap.ui.define([
 	QUnit.test("Should be forwards if both are undefined", function (assert) {
 
 		viewLevelDirectionTestcase.call(this, assert, {
-			currentViewLevel : undefined,
+			currentLevel : undefined,
 			newViewLevel : undefined,
 			expectedBackwards : false
 		});
@@ -468,14 +468,14 @@ sap.ui.define([
 	QUnit.test("Should not ask viewLevel or history if direction is given", function (assert) {
 
 		// Arrange
-		this.oTargetHandler._iCurrentViewlevel = 0;
+		this.oTargetHandler._iCurrentLevel = 0;
 		var oStub = this.stub(History.prototype, "getDirection").returns(HistoryDirection.Forwards);
 
 		// Act
 		var bBackwards = this.oTargetHandler._getDirection({
 			askHistory: true,
 			direction: HistoryDirection.Backwards,
-			viewLevel: 1
+			level: 1
 		});
 
 		// Assert
@@ -488,13 +488,13 @@ sap.ui.define([
 	QUnit.test("Should not ask history if viewLevel is given", function (assert) {
 
 		// Arrange
-		this.oTargetHandler._iCurrentViewLevel = 1;
+		this.oTargetHandler._iCurrentLevel = 1;
 		var oStub = this.stub(History.prototype, "getDirection").returns(HistoryDirection.Forwards);
 
 		// Act
 		var bBackwards = this.oTargetHandler._getDirection({
 			askHistory: true,
-			viewLevel: 0
+			level: 0
 		});
 
 		// Assert
@@ -518,13 +518,13 @@ sap.ui.define([
 
 	QUnit.test("Should remember the viewlevel after a direction is determined", function (assert) {
 		this.oTargetHandler._getDirection({
-			viewLevel: 1,
+			level: 1,
 			direction: HistoryDirection.Forwards
 		});
 
 		// Act
 		var bResult = this.oTargetHandler._getDirection({
-			viewLevel: 0
+			level: 0
 		});
 
 		assert.strictEqual(bResult, true, "Did do a backwards navigation because view level was 1 then it is 0");

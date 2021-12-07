@@ -135,7 +135,7 @@ sap.ui.define(['sap/ui/base/Object', './TargetHandler', './Router', "sap/base/Lo
 		var iTargetViewLevel = +oEvent.getParameter("config").viewLevel;
 
 		this._oTargetHandler.navigate({
-			viewLevel: iTargetViewLevel,
+			level: iTargetViewLevel,
 			navigationIdentifier : oEvent.getParameter("name"),
 			askHistory: true
 		});

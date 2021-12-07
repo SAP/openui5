@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 *
 		 * @class
 		 * SAPUI5 mobile <code>Router</code>.
-		 * The difference to the {@link sap.ui.core.routing.Router} are the <code>viewLevel</code>,
+		 * The difference to the {@link sap.ui.core.routing.Router} are the <code>level</code>,
 		 * <code>transition</code>, and <code>transitionParameters</code> properties that you can
 		 * specify in every Route or Target created by this router.
 		 *
@@ -269,17 +269,17 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 			fireRoutePatternMatched : function (mArguments) {
 				var sRouteName = mArguments.name,
 					oRoute = this.getRoute(sRouteName),
-					iViewLevel;
+					iLevel;
 
 				// only if a route has a private target and does not use the targets instance of the router we need to inform the targethandler
 				if (oRoute._oTarget) {
 					if (this._oTargets && this._oTargets._oLastDisplayedTarget) {
-						iViewLevel = this._oTargets._getViewLevel(this._oTargets._oLastDisplayedTarget);
+						iLevel = this._oTargets._getLevel(this._oTargets._oLastDisplayedTarget);
 					}
 
 					this._oTargetHandler.navigate({
 						navigationIdentifier: sRouteName,
-						viewLevel: iViewLevel,
+						level: iLevel,
 						askHistory: true
 					});
 				}
