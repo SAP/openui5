@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',
-	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type) {
+	"sap/ui/model/odata/type/Int32",
+	"sap/m/Text"
+], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -57,18 +58,20 @@ sap.ui.define([
 					if (sPropertyName === "classification_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHClassification"));
 						oFilterField.setDisplay(FieldDisplay.Description);
-					}
-					if (sPropertyName === "genre_code") {
+					} else if (sPropertyName === "genre_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHGenre"));
 						oFilterField.setDisplay(FieldDisplay.Description);
-					}
-					if (sPropertyName === "subgenre_code") {
+					} else if (sPropertyName === "subgenre_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHSubGenre"));
 						oFilterField.setDisplay(FieldDisplay.Description);
-					}
-					if (sPropertyName === "detailgenre_code") {
+					} else if (sPropertyName === "detailgenre_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHDetailGenre"));
 						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "currency_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FH-Currency"));
+						oFilterField.setDisplay(FieldDisplay.Value);
+						oFilterField.setMaxConditions(1);
+						oFilterField.setOperators(["EQ"]);
 					}
 					return oFilterField;
 				});
@@ -77,6 +80,13 @@ sap.ui.define([
 	};
 
 	BooksTableDelegate._createColumnTemplate = function (oTable, oProperty) {
+
+		if (oProperty.name === "currency_code") { // Just use text to test rendering Text vs Field
+			return new Text({
+				text: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
+				width:"100%"
+			});
+		}
 
 		var oCtrlProperties = {
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
@@ -165,6 +175,8 @@ sap.ui.define([
 
 			if (oProperty.name === "title") {
 				oColumn.setWidth("15rem");
+			} else if (oProperty.name === "currency_code") {
+				oColumn.setWidth("5rem");
 			} else if (oProperty.name != "descr") {
 				oColumn.setWidth(["actions", "stock", "ID"].indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
 			}

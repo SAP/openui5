@@ -439,7 +439,8 @@ sap.ui.define([
 
 		var oItem = aItems[iSelectedIndex];
 		if (oItem) {
-			if (oItem !== oSelectedItem) {
+			var bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
+			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus)) {
 				var oOriginalItem = _getOriginalItem.call(this, oItem);
 				var vKey = _getKey.call(this, oOriginalItem);
 

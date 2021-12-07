@@ -71,6 +71,11 @@ sap.ui.define([
 				} else if (oPropertyInfo.name === "author/dateOfDeath") {
 					oPropertyInfo.fieldHelp = "fhAdod";
 					oPropertyInfo.maxConditions = 1;
+				} else if (oPropertyInfo.name === "currency_code") {
+					oPropertyInfo.fieldHelp = "FH-Currency";
+					oPropertyInfo.display = FieldDisplay.Value; // for currencies description key is the name
+					oPropertyInfo.maxConditions = 1; // normally only one currency should be used, otherwise it makes no sense related to price
+					oPropertyInfo.filterOperators = ["EQ"]; // for currency only fixed values make sense
 				}
 
 			});
