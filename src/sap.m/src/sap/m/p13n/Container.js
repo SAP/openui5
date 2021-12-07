@@ -30,13 +30,9 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This control serves as base class for personalization implementations.
-	 * This base class is faceless and should be inherited to implement control specific personalization panels.
-	 * Constructor for a new Container. The Container can be used
-	 * to dynamically add personalization content to a switchable
-	 * layout container, by allowing to switch the content using
-	 * an <code>IconTabBar</code> or a <code>List</code> control,
-	 * depending on the desired layout mode.
+	 * Constructor for a new <code>Container</code>. The <code>Container</code> class can be used to dynamically add personalization content to a switchable
+	 * layout container. The <code>Container</code> class provides an option for switching content by using an <code>IconTabBar</code> or a <code>List</code> control
+	 * respectively, depending on the desired layout mode. See also {@link sap.m.p13n.AbstractContainer}.
 	 *
 	 * @extends sap.m.p13n.AbstractContainer
 	 *
@@ -74,11 +70,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether a <code>List</code> control should be used
-	 * as inner layout or a <code>IconTabBar</code> to display the different views.
+	 * Determines whether a <code>List</code> control or code>IconTabBar</code> is used as the inner layout to display the different views.
 	 *
-	 * @param {boolean} bListLayout Defines which layout mode should be used.
-	 * @returns {sap.ui.core.Control} The <code>Container</code> instance.
+	 * @param {boolean} bListLayout Defines which layout mode is used
+	 * @returns {sap.m.p13n.Container} The <code>Container</code> instance
 	 */
 	Container.prototype.setListLayout = function (bListLayout) {
 		this.setProperty("listLayout", bListLayout);

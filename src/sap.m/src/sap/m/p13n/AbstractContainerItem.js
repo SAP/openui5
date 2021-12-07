@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/core/Element', "sap/ui/core/Control"],
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A <code>AbstractContainerItem</code> element which defines a unique key for a content.
+		 * An <code>AbstractContainerItem</code> element which defines a unique key for a content.
 		 *
 		 * @extends sap.ui.core.Element
 		 *
@@ -21,13 +21,14 @@ sap.ui.define(['sap/ui/core/Element', "sap/ui/core/Control"],
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @alias sap.m.AbstractContainerItem
+		 * @alias sap.m.p13n.AbstractContainerItem
 		 * @author SAP SE
 		 * @version ${version}
 		 * @since 1.96.0
 		 *
 		 * @private
 		 * @experimental
+		 * @ui5-restricted
 		 */
 		var AbstractContainerItem = Element.extend("sap.m.p13n.AbstractContainerItem", {
 			metadata: {

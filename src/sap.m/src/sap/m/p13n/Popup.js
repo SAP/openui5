@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This control can be used to show personalization related content in different popup controls.
+	 * This control can be used to show personalization-related content in different popup controls.
 	 *
 	 * @class
 	 * @extends sap.ui.core.Control
@@ -34,8 +34,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @ui5-restricted
+	 * @public
 	 * @experimental
 	 *
 	 * @since 1.97
@@ -45,7 +44,7 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				/**
-				 * Text describing the selected content
+				 * Text describing the personalization popup.
 				 */
 				title: {
 					type: "string"
@@ -81,7 +80,7 @@ sap.ui.define([
 					multiple: true
 				},
 				/**
-				 * Additional set of <code>sap.m.Button</code> that are added to the existing Ok and Cancel buttons.
+				 * Additional set of <code>sap.m.Button</code> controls that are added to the existing Ok and Cancel buttons.
 				 */
 				additionalButtons: {
 					type: "sap.m.Button",
@@ -90,11 +89,11 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fires upon closing the Dialog.
+				 * This event is fired after the dialog has been closed.
 				 */
 				close: {
 					/**
-					 * The corresponding reason for closing the Dialog (Ok & Cancel).
+					 * The corresponding reason for closing the dialog (Ok & Cancel).
 					 */
 					reason: {
 						type: "string"
@@ -122,17 +121,17 @@ sap.ui.define([
 	/**
 	 * Checks whether there is an open <code>Popup</code> control.
 	 *
-	 * @returns {boolean} Flag that indicates if there is an open popup.
+	 * @returns {boolean} Flag that indicates if there is an open popup
 	 */
 	Popup.prototype.isOpen = function() {
 		return !!this._bIsOpen;
 	};
 
 	/**
-	 * Set the desired popup mode, see also {@link sap.m.P13nPopupMode}.
+	 * Sets the desired popup mode, see also {@link sap.m.P13nPopupMode}.
 	 *
 	 * @param {sap.m.P13nPopupMode} sMode The mode used for the popup creation
-	 * @returns {sap.m.p13n.Popup} The Popup instance
+	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
 	Popup.prototype.setMode = function(sMode) {
 		this.setProperty("mode", sMode);
@@ -149,7 +148,7 @@ sap.ui.define([
 	/**
 	 * Opens the <code>Popup</code> control.
 	 *
-	 * @param {sap.ui.core.Control} oSource The references control instance (e.g. used as anchor for example on Popovers)
+	 * @param {sap.ui.core.Control} oSource The referenced control instance (used as anchor, for example, on popovers)
 	 * @param {object} [mSettings] Configuration for the related popup container
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentHeight] Height configuration for the related popup container
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentWidth] Width configuration for the related popup container
@@ -176,9 +175,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a new panel to the <code>Popup</code> <code>panels</code> aggregation.
+	 * Adds a new panel to the <code>panels</code> aggregation.
 	 *
-	 * @param {sap.m.p13n.IContent} oPanel The panel instsance
+	 * @param {sap.m.p13n.IContent} oPanel The panel instance
 	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
 	Popup.prototype.addPanel = function(oPanel) {
@@ -194,7 +193,7 @@ sap.ui.define([
 	/**
 	 * Removes a panel instance.
 	 *
-	 * @param {sap.m.p13n.IContent} oPanel The panel instsance
+	 * @param {sap.m.p13n.IContent} oPanel The panel instance
 	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
 	Popup.prototype.removePanel = function(oPanel) {
@@ -206,7 +205,7 @@ sap.ui.define([
 	/**
 	 * Removes the current panels in the <code>panels</code> aggregation.
 	 *
-	 * @returns {sap.m.p13n.IContent[]} An array of panel instances.
+	 * @returns {sap.m.p13n.IContent[]} An array of panel instances
 	 */
 	Popup.prototype.getPanels = function() {
 		return this._aPanels;
