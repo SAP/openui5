@@ -253,13 +253,6 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * If this flag is set to <code>true</code>, a Windows Phone operating system is used.
-	 *
-	 * @name sap.ui.Device.os.windows_phone
-	 * @type boolean
-	 * @public
-	 */
-	/**
 	 * Windows operating system name.
 	 *
 	 * @see sap.ui.Device.os.name
@@ -301,13 +294,6 @@ if (typeof window.sap.ui !== "object") {
 	 * @name sap.ui.Device.os.OS.BLACKBERRY
 	 * @public
 	 */
-	/**
-	 * Windows Phone operating system name.
-	 *
-	 * @see sap.ui.Device.os.name
-	 * @name sap.ui.Device.os.OS.WINDOWS_PHONE
-	 * @public
-	 */
 
 	var OS = {
 		"WINDOWS": "win",
@@ -315,8 +301,7 @@ if (typeof window.sap.ui !== "object") {
 		"LINUX": "linux",
 		"IOS": "iOS",
 		"ANDROID": "Android",
-		"BLACKBERRY": "bb",
-		"WINDOWS_PHONE": "winphone"
+		"BLACKBERRY": "bb"
 	};
 
 	function getOS() { // may return null!!
@@ -365,16 +350,6 @@ if (typeof window.sap.ui !== "object") {
 			}
 			oLogger.log(INFO, "OS detection returned no result");
 			return null;
-		}
-
-		// Windows Phone. User agent includes other platforms and therefore must be checked first:
-		rPlatform = /Windows Phone (?:OS )?([\d.]*)/;
-		aMatches = userAgent.match(rPlatform);
-		if (aMatches) {
-			return ({
-				"name": OS.WINDOWS_PHONE,
-				"versionStr": aMatches[1]
-			});
 		}
 
 		// BlackBerry 10:
