@@ -21,12 +21,82 @@ sap.ui.define([
 
 			return this.oDataModel.metadataLoaded();
 		},
+		beforeEach: function() {
+			this.oGetContextsSpy.resetHistory();
+		},
 		after: function() {
 			this.oMockServer.destroy();
 			this.oDataModel.destroy();
 			this.oGetContextsSpy.restore();
 			TableQUnitUtils.setDefaultSettings();
 		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oTable = TableQUnitUtils.createTable();
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		// refreshRows, render, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 100);
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Initialization; With fixed rows", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
+			fixedRowCount: 1,
+			fixedBottomRowCount: 1
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 4, "Call count of method to get contexts");
+
+			// The initial getContexts call does not consider fixed row counts, because binding is initialized before properties for fixed row counts
+			// are set (see ManagedObject#applySettings).
+
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 100); // refreshRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 9, 100); // render
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 9, 100); // updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(3), 15, 1, 0, true); // fixed bottom rows
+
+			oTable.destroy();
+			window.breaky = false;
+		});
+	});
+
+	QUnit.test("Initialization; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
+			visibleRowCount: 5,
+			fixedRowCount: 1,
+			fixedBottomRowCount: 1,
+			firstVisibleRow: 1,
+			threshold: 1
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			assert.equal(oGetContextsSpy.callCount, 6, "Call count of method to get contexts");
+
+			// The initial getContexts call does not consider fixed row counts and the threshold, because the binding is initialized before
+			// the corresponding properties are set (see ManagedObject#applySettings).
+			// Fixed bottom rows can't be requested if the count is unknown. As soon as the binding receives a getContexts call that triggers a
+			// request, it ignores subsequent calls.
+
+			// refreshRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 100); // scrollable rows
+			// render
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 1, 0, true); // fixed top rows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 2, 3, 3); // scrollable rows
+			// updateRows: Received rows requested in refreshRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(3), 0, 1, 0, true); // fixed top rows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(4), 2, 3, 3); // scrollable rows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(5), 15, 1, 0, true); // fixed bottom rows
+
+			oTable.destroy();
+		});
 	});
 
 	QUnit.test("Refresh", function(assert) {
@@ -37,16 +107,15 @@ sap.ui.define([
 			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100), "Second call");
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 100);
 			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh; With fixed rows", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
-			fixedTopRowCount: 1,
+			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
@@ -55,10 +124,10 @@ sap.ui.define([
 			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 9, 100), "First call");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 9, 100), "Second call");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(15, 1, 0, true), "Third call");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 9, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 9, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 15, 1, 0, true);
 			oTable.destroy();
 		});
 	});
@@ -66,7 +135,7 @@ sap.ui.define([
 	QUnit.test("Refresh; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
-			fixedTopRowCount: 1,
+			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
 			firstVisibleRow: 1,
 			threshold: 1
@@ -79,12 +148,26 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
-					assert.equal(oGetContextsSpy.callCount, 5, "Method to get contexts called 5 times");
-					assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(1, 4, 5), "First call"); // refreshRows
-					assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(1, 4, 5), "Second call"); // updateRows
-					assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(15, 1, 0, true), "Third call"); // fixed bottom contexts
-					assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(1, 4, 5), "Fourth call"); // updateRows
-					assert.ok(oGetContextsSpy.getCall(4).calledWithExactly(15, 1, 0, true), "Fifth call"); // fixed bottom contexts
+					assert.equal(oGetContextsSpy.callCount, 11, "Call count of method to get contexts");
+					// Fixed bottom rows can't be requested if the count is unknown, e.g. during refresh. As soon as the binding receives a
+					// getContexts call that triggers a request, it ignores subsequent calls. Therefore, only fixed top rows are loaded initially.
+
+					// refreshRows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 1, 0, true); // fixed top rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 2, 3, 3); // scrollable rows
+					// updateRows: Received fixed top rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 1, 0, true); // fixed top rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(3), 2, 3, 3); // scrollable rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(4), 15, 1, 0, true); // fixed bottom rows
+					// updateRows: Received scrollable rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(5), 0, 1, 0, true); // fixed top rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(6), 2, 3, 3); // scrollable rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(7), 15, 1, 0, true); // fixed bottom rows
+					// updateRows: Received fixed bottom rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(8), 0, 1, 0, true); // fixed top rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(9), 2, 3, 3); // scrollable rows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(10), 15, 1, 0, true); // fixed bottom rows
+
 					oTable.destroy();
 					resolve();
 				}, 500);
@@ -100,16 +183,15 @@ sap.ui.define([
 			oGetContextsSpy.resetHistory();
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100), "Second call");
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 100);
 			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Sort; With fixed rows", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
-			fixedTopRowCount: 1,
+			fixedRowCount: 1,
 			fixedBottomRowCount: 1
 		});
 		var oGetContextsSpy = this.oGetContextsSpy;
@@ -120,11 +202,11 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
-					assert.equal(oGetContextsSpy.callCount, 4, "Method to get contexts called 4 times");
-					assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 9, 100), "First call");
-					assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(15, 1, 0, true), "Second call");
-					assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 9, 100), "Third call");
-					assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(15, 1, 0, true), "Fourth call");
+					assert.equal(oGetContextsSpy.callCount, 4, "Call count of method to get contexts");
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 9, 100);
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 15, 1, 0, true);
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 9, 100);
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(3), 15, 1, 0, true);
 					oTable.destroy();
 					resolve();
 				}, 500);
@@ -135,7 +217,7 @@ sap.ui.define([
 	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
-			fixedTopRowCount: 1,
+			fixedRowCount: 1,
 			fixedBottomRowCount: 1,
 			firstVisibleRow: 1,
 			threshold: 1
@@ -148,18 +230,17 @@ sap.ui.define([
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
-					assert.equal(oGetContextsSpy.callCount, 6, "Method to get contexts called 6 times");
-					assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 4, 5), "First call"); // refreshRows
-					assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(15, 1, 0, true), "Second call"); // fixed bottom contexts
-					assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 4, 5), "Third call"); // updateRows
-					assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(15, 1, 0, true), "Fourth call"); // fixed bottom contexts
-					assert.ok(oGetContextsSpy.getCall(4).calledWithExactly(0, 4, 5), "Fifth call"); // updateRows
-					assert.ok(oGetContextsSpy.getCall(5).calledWithExactly(15, 1, 0, true), "Sixth call"); // fixed bottom contexts
+					assert.equal(oGetContextsSpy.callCount, 6, "Call count of method to get contexts");
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 4, 3); // refreshRows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 15, 1, 0, true); // fixed bottom contexts
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 4, 3); // updateRows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(3), 15, 1, 0, true); // fixed bottom contexts
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(4), 0, 4, 3); // updateRows
+					sinon.assert.calledWithExactly(oGetContextsSpy.getCall(5), 15, 1, 0, true); // fixed bottom contexts
 					oTable.destroy();
 					resolve();
 				}, 500);
 			});
-
 		});
 	});
 

@@ -374,17 +374,33 @@ sap.ui.define([
 		}
 	};
 
-	TreeTable.prototype._getRowContexts = function() {
-		var iOldTotalRowCount = this._getTotalRowCount();
-		var aRowContexts = Table.prototype._getRowContexts.apply(this, arguments);
-		var iNewTotalRowCount = this._getTotalRowCount();
+	TreeTable.prototype._getRowContexts = function(iRequestLength) {
+		return getRowContexts(this, iRequestLength);
+	};
 
-		if (TableUtils.isVariableRowHeightEnabled(this) && iOldTotalRowCount !== iNewTotalRowCount) {
-			return Table.prototype._getRowContexts.apply(this, arguments);
+	function getRowContexts(oTable, iRequestLength, bSecondCall) {
+		var iOldTotalRowCount = oTable._getTotalRowCount();
+		var aRowContexts = Table.prototype._getRowContexts.call(oTable, iRequestLength);
+
+		if (bSecondCall === true) {
+			return aRowContexts;
+		}
+
+		var iNewTotalRowCount = oTable._getTotalRowCount();
+		var iFirstVisibleRow = oTable._getFirstRenderedRowIndex();
+		var iMaxRowIndex = oTable._getMaxFirstRenderedRowIndex();
+
+		oTable._adjustToTotalRowCount();
+
+		if (iMaxRowIndex < iFirstVisibleRow && oTable._bContextsAvailable) {
+			// Get the contexts again, this time with the maximum possible value for the first visible row.
+			aRowContexts = getRowContexts(oTable, iRequestLength, true);
+		} else if (iOldTotalRowCount !== iNewTotalRowCount) {
+			aRowContexts = getRowContexts(oTable, iRequestLength, true);
 		}
 
 		return aRowContexts;
-	};
+	}
 
 	TreeTable.prototype._onGroupHeaderChanged = function(iRowIndex, bExpanded) {
 		this.fireToggleOpenState({

@@ -5,14 +5,12 @@ sap.ui.define([
 	"../library",
 	"../utils/TableUtils",
 	"./RowMode",
-	"sap/ui/Device",
-	"sap/base/Log"
+	"sap/ui/Device"
 ], function(
 	library,
 	TableUtils,
 	RowMode,
-	Device,
-	Log
+	Device
 ) {
 	"use strict";
 
@@ -395,12 +393,12 @@ sap.ui.define([
 			if (!isRowCountInitial(this)) {
 				this.initTableRowsAfterDataRequested(iConfiguredRowCount);
 			}
-			this.getRowContexts(iConfiguredRowCount, true); // Trigger data request.
+			this.getRowContexts(iConfiguredRowCount); // Trigger data request.
 		}
 	};
 
 	/**
-	 * Gets the row count as configured with the <code>rowCount</code>, <code>minRowCount</code> and <code>maxRowCount</code> properties.
+	 * Gets the row count as configured with the <code>minRowCount</code> and <code>maxRowCount</code> properties.
 	 *
 	 * @returns {int} The configured row count.
 	 * @private

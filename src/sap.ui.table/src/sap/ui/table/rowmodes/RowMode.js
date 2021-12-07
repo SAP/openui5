@@ -667,19 +667,13 @@ sap.ui.define([
 	 * Gets contexts from the table's rows aggregation binding. Requests at least as many contexts as the table has rows or as is returned
 	 * by {@link RowMode#getMinRequestLength}.
 	 *
-	 * @param {int} [iRequestLength] The number of context to request.
-	 * @param {boolean} [bSuppressAdjustToBindingLength=false] Whether the table should be adjusted to a possibly new binding length.
+	 * @param {int} [iRequestLength] The number of contexts to request.
 	 * @returns {Object[]} The contexts returned from the binding.
 	 * @private
 	 */
-	RowMode.prototype.getRowContexts = function(iRequestLength, bSuppressAdjustToBindingLength) {
+	RowMode.prototype.getRowContexts = function(iRequestLength) {
 		var oTable = this.getTable();
-
-		if (!oTable) {
-			return [];
-		}
-
-		return oTable._getRowContexts(iRequestLength, bSuppressAdjustToBindingLength === true);
+		return oTable ? oTable._getRowContexts(iRequestLength) : [];
 	};
 
 	/**

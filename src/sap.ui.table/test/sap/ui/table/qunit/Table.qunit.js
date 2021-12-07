@@ -2907,7 +2907,7 @@ sap.ui.define([
 	QUnit.test("Select All on Binding Change", function(assert) {
 		var done = assert.async();
 		var oModel;
-		oTable.attachRowSelectionChange(function() {
+		oTable.attachEventOnce("rowSelectionChange",function() {
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 
 			oTable.attachEventOnce("rowsUpdated", function() {
@@ -4487,10 +4487,10 @@ sap.ui.define([
 
 	QUnit.test("Check for Fixed Rows and Fixed Bottom Rows", function(assert) {
 		var fnError = sinon.spy(Log, "error");
-		assert.equal(oTable._getFixedRowContexts().length, 0, "fixedRowContexts returned an empty array");
+		assert.equal(oTable._getFixedTopRowContexts().length, 0, "fixedRowContexts returned an empty array");
 		oTable.setFixedRowCount(5);
 		assert.equal(oTable.getFixedRowCount(), 5, "fixedRowCount is set to 5");
-		assert.equal(oTable._getFixedRowContexts().length, 5,
+		assert.equal(oTable._getFixedTopRowContexts().length, 5,
 			"fixedRowContexts returned non empty array when fixedRowCount is set");
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.setFixedRowCount(-1);
@@ -4844,14 +4844,20 @@ sap.ui.define([
 	QUnit.test("_getTotalRowCount with OData binding", function(assert){
 		var oMockServer = TableQUnitUtils.startMockServer();
 
-		oTable.bindRows({path: "/Products"});
 		oTable.setModel(TableQUnitUtils.createODataModel());
-		assert.strictEqual(oTable._getTotalRowCount(), 200, "On rebind, the last known binding length of the previous binding is returned");
+		oTable.bindRows({path: "/Products"});
 
 		return new Promise(function(resolve) {
-			oTable.getBinding().attachEventOnce("change", function() {
-				assert.strictEqual(oTable._getTotalRowCount(), 16, "After rebind, the new binding length is returned");
-				resolve();
+			oTable.attachEventOnce("rowsUpdated", resolve);
+		}).then(function() {
+			oTable.bindRows({path: "/Products"});
+			assert.strictEqual(oTable._getTotalRowCount(), 200, "On rebind, the last known binding length of the previous binding is returned");
+
+			return new Promise(function(resolve) {
+				oTable.getBinding().attachEventOnce("change", function() {
+					assert.strictEqual(oTable._getTotalRowCount(), 16, "After rebind, the new binding length is returned");
+					resolve();
+				});
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {

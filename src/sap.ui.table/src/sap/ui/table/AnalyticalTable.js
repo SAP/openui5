@@ -169,15 +169,11 @@ sap.ui.define([
 	}, renderer: "sap.ui.table.TableRenderer"});
 
 	/**
-	 * This function retrieves the grand total context, in case of an analytical table
-	 * Overidden from Table.js
-	 * @overrides
+	 * @inheritDoc
 	 */
 	AnalyticalTable.prototype._getFixedBottomRowContexts = function() {
 		var oBinding = this.getBinding();
-		if (oBinding) {
-			return [oBinding.getGrandTotalNode()];
-		}
+		return oBinding ? [oBinding.getGrandTotalNode()] : [];
 	};
 
 	AnalyticalTable.prototype._getContexts = TreeTable.prototype._getContexts;
@@ -296,19 +292,11 @@ sap.ui.define([
 		return oModel;
 	};
 
-	/**
-	 * handler for change events of the binding
-	 * @param {sap.ui.base.Event} oEvent change event
-	 * @private
-	 */
-	AnalyticalTable.prototype._onBindingChange = function(oEvent) {
-		Table.prototype._onBindingChange.apply(this, arguments);
-		// the column menus have to be invalidated when the amount
-		// of data changes in the Table; this happens on normal changes
-		// of the Table as well as when filtering
-		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
+	AnalyticalTable.prototype.updateRows = function(sReason) {
+		Table.prototype.updateRows.apply(this, arguments);
+
 		if (sReason !== "sort") {
-			this._invalidateColumnMenus();
+			this._invalidateColumnMenus(); // TODO: Is this needed?
 		}
 	};
 
@@ -321,14 +309,13 @@ sap.ui.define([
 		Table.prototype._bindRows.call(this, oBindingInfo);
 	};
 
-	/**
-	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
-	 *
-	 * @override {@link sap.ui.table.Table#_bindAggregation}
+	/*
+	 * This function will be called either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
+	 * If only the model has been changed, ManagedObject only calls _bindAggregation, while bindAggregation / bindRows is not called.
+	 * @see sap.ui.base.ManagedObject#_bindAggregation
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
-			// If only the model has been changed, the ManagedObject only calls _bindAggregation while bindAggregation / bindRows is not called.
 			this._invalidateColumnMenus(); // Metadata might change.
 			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 

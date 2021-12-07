@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	var iDeviceHeight = 550;
-	var iComputedRequestLength = 22;
+	var iComputedRequestLength = 22; // Based on the device height.
 
 	QUnit.module("Get contexts", {
 		before: function() {
@@ -45,13 +45,10 @@ sap.ui.define([
 
 		// auto rerender, refreshRows, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
-				"The third call considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -67,13 +64,10 @@ sap.ui.define([
 
 		// auto rerender, refreshRows, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100),
-				"The third call considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count + 1, 100);
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -86,13 +80,10 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
-				"The third call considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -105,13 +96,10 @@ sap.ui.define([
 
 		// refreshRows, auto rerender, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100),
-				"The third call considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, oTable.getRowMode().getComputedRowCounts().count + 1, 100);
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -126,14 +114,11 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 100, because binding is initialized before 'threshold' property is set (see ManagedObject#applySettings).
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, iComputedRowCount),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRowCount, iComputedRowCount),
-				"The third call considers the row count");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -148,14 +133,11 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 100, because binding is initialized before 'threshold' property is set (see ManagedObject#applySettings).
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, iComputedRowCount + 1),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRowCount + 1, iComputedRowCount + 1),
-				"The third call considers the row count");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount + 1);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount + 1, iComputedRowCount + 1);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -172,14 +154,11 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 5),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, iComputedRowCount),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRowCount, iComputedRowCount),
-				"The third call considers the row count");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -196,14 +175,68 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
 
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
 			// Threshold is 5, because of the value of the "minRowCount" property.
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 5),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, iComputedRowCount),
-				"The second call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRowCount, iComputedRowCount),
-				"The third call considers the device height for the length");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength, iComputedRowCount);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, iComputedRowCount, iComputedRowCount);
+			assert.notEqual(iComputedRowCount, iComputedRequestLength,
+				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Initialization if metadata already loaded; Bound after rendering; With fixed rows; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
+			threshold: 1,
+			rows: undefined,
+			rowMode: new AutoRowMode({
+				fixedTopRowCount: 1,
+				fixedBottomRowCount: 1
+			})
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.bindRows({path : "/Products"});
+
+		// refreshRows, auto rerender, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var mRowCounts = oTable.getRowMode().getComputedRowCounts();
+
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			// Threshold is 5, because of the value of the "minRowCount" property.
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 5);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
+			assert.notEqual(mRowCounts.count, iComputedRequestLength,
+				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Initialization if metadata already loaded; Bound after rendering; With fixed rows; threshold = 1, minRowCount: 30", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
+			threshold: 1,
+			rows: undefined,
+			rowMode: new AutoRowMode({
+				fixedTopRowCount: 1,
+				fixedBottomRowCount: 1,
+				minRowCount: 30
+			})
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		oTable.bindRows({path : "/Products"});
+
+		// refreshRows, auto rerender, updateRows
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			var iComputedRowCount = oTable.getRowMode().getComputedRowCounts().count;
+
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			// Threshold is 30, because of the value of the "minRowCount" property.
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 30, 30);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 29, 28);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 29, 28);
 			assert.notEqual(iComputedRowCount, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -218,14 +251,12 @@ sap.ui.define([
 			oGetContextsSpy.resetHistory();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
-				"The call considers the row count");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
 			oGetContextsSpy.resetHistory();
 
 		}).then(oTable.qunit.resetSize).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
-				"The call considers the row count");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
 			oTable.destroy();
 		});
 	});
@@ -238,11 +269,9 @@ sap.ui.define([
 			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
-				"The second call considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, oTable.getRowMode().getComputedRowCounts().count, 100);
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -257,13 +286,55 @@ sap.ui.define([
 			oGetContextsSpy.resetHistory();
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
-				"The first call considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100),
-				"The second call considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength, 100);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, oTable.getRowMode().getComputedRowCounts().count + 1, 100);
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Refresh; With fixed rows; threshold = 1", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
+			threshold: 1,
+			rowMode: new AutoRowMode({
+				fixedTopRowCount: 1,
+				fixedBottomRowCount: 1
+			})
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getBinding().refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			var mRowCounts = oTable.getRowMode().getComputedRowCounts();
+
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, iComputedRequestLength - 1, mRowCounts.scrollable);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, mRowCounts.scrollable + 1, mRowCounts.scrollable);
+			oTable.destroy();
+		});
+	});
+
+	QUnit.test("Refresh; With fixed rows; threshold = 1, minRowCount: 30", function(assert) {
+		var oTable = TableQUnitUtils.createTable({
+			threshold: 1,
+			rowMode: new AutoRowMode({
+				fixedTopRowCount: 1,
+				fixedBottomRowCount: 1,
+				minRowCount: 30
+			})
+		});
+		var oGetContextsSpy = this.oGetContextsSpy;
+
+		return oTable.qunit.whenRenderingFinished().then(function() {
+			oGetContextsSpy.resetHistory();
+			oTable.getBinding().refresh();
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts"); // refreshRows, updateRows
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 29, 28);
 			oTable.destroy();
 		});
 	});

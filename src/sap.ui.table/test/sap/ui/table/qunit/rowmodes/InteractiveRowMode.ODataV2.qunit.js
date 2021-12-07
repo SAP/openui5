@@ -38,8 +38,8 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 100);
 			oTable.destroy();
 		});
 	});
@@ -50,8 +50,8 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 100);
 			oTable.destroy();
 		});
 	});
@@ -62,10 +62,10 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call"); // #applySettings: Binding init before setThreshold
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 10), "Second call");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 10, 10), "Third call");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(0), 0, 10, 100); // #applySettings: Binding init before setThreshold
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(1), 0, 10, 10);
+			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(2), 0, 10, 10);
 			oTable.destroy();
 		});
 	});
@@ -78,8 +78,8 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 10), "All calls consider the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 10);
 			oTable.destroy();
 		});
 	});
@@ -92,8 +92,8 @@ sap.ui.define([
 
 		// refreshRows, updateRows
 		return oTable.qunit.whenRenderingFinished().then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 10), "All calls consider the row count");
+			assert.equal(oGetContextsSpy.callCount, 2, "Call count of method to get contexts");
+			sinon.assert.alwaysCalledWithExactly(oGetContextsSpy, 0, 10, 10);
 			oTable.destroy();
 		});
 	});
