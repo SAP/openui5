@@ -40,7 +40,7 @@ sap.ui.define([
         var oSelectionPanel = new SelectionPanel({
             fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
             enableCount: true,
-            linkPressed: this._onLinkPressed
+            linkPressed: this._onLinkPressed.bind(this)
         });
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
         oSelectionPanel.setP13nData(oAdaptationData.items);
@@ -51,13 +51,14 @@ sap.ui.define([
     };
 
     LinkPanelController.prototype._onLinkPressed = function(oEvent) {
-        var sTarget = oEvent.getSource().getTarget();
+        var oSource = oEvent.getParameter("oSource");
+        var sTarget = oSource.getTarget();
 
         if (sTarget !== "_blank") {
             oEvent.preventDefault();
 
             var oPanel = this.getAdaptationControl();
-            var sHref = oEvent.getSource().getHref();
+            var sHref = oSource.getHref();
 
             if (oPanel.getBeforeNavigationCallback) {
                 oPanel.getBeforeNavigationCallback()(oEvent).then(function (bNavigate) {

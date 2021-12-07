@@ -1,8 +1,13 @@
 /* globals opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
+	'sap/ui/test/Opa5',
+	'sap/ui/test/opaQunit',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Action',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion, testLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -37,17 +42,17 @@ sap.ui.define([
 	});
 
 	opaTest("When I click on 'Power Projector 4713' link in the 'Name' column, popover should open with main link and with link personalization button", function(Given, When, Then) {
-		When.iClickOnLink("Power Projector 4713");
+		When.onTheMDCLink.iPressTheLink({text: "Power Projector 4713"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Power Projector 4713"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
 	opaTest("When I click on 'Flat S' link in the 'Name' column, popover should open with main link and with link personalization button", function(Given, When, Then) {
-		Given.closeAllNavigationPopovers();
-		When.iClickOnLink("Flat S");
+		When.onTheMDCLink.iCloseThePopover();
+		When.onTheMDCLink.iPressTheLink({text: "Flat S"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat S"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -60,30 +65,30 @@ sap.ui.define([
 	});
 
 	opaTest("When I click on '1239102' link in the 'Product ID' column, popover should open with main link and with link personalization button", function(Given, When, Then) {
-		Given.closeAllNavigationPopovers();
-		When.iClickOnLink("1239102");
+		When.onTheMDCLink.iCloseThePopover();
+		When.onTheMDCLink.iPressTheLink({text: "1239102"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "1239102"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
 	opaTest("When I click on 'Laptop' link in the 'Category' column, popover should open with main link and with link personalization button", function(Given, When, Then) {
-		Given.closeAllNavigationPopovers();
-		When.iClickOnLink("Laptop");
+		When.onTheMDCLink.iCloseThePopover();
+		When.onTheMDCLink.iPressTheLink({text: "Laptop"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Laptop"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
-		Given.closeAllNavigationPopovers();
+		When.onTheMDCLink.iCloseThePopover();
 		Then.iTeardownMyAppFrame();
 	});
 
 	opaTest("When I click on 'Flat S' link in the 'Name' column and click 'Select all Links' in the selection dialog I should see all links on the popup", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html');
 
-		When.iClickOnLink("Flat S");
+		When.onTheMDCLink.iPressTheLink({text: "Flat S"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat S"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
 		When.iPressOnLinkPersonalizationButton();
@@ -92,7 +97,7 @@ sap.ui.define([
 		When.iSelectAllLinks(true);
 		When.iPressOkButton();
 
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Flat S"}, [
 			"FactSheet of Name",
 			"Name Link2 (Superior)",
 			"Name Link3"
@@ -100,10 +105,10 @@ sap.ui.define([
 	});
 
 	opaTest("When I click on 'Flat S' link in the 'Name' column and deselect 'Select all Links' in the selection dialog I should see no links on the popup", function(Given, When, Then) {
-		Given.closeAllNavigationPopovers();
-		When.iClickOnLink("Flat S");
+		When.onTheMDCLink.iCloseThePopover();
+		When.onTheMDCLink.iPressTheLink({text: "Flat S"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat S"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
 		When.iPressOnLinkPersonalizationButton();
@@ -112,7 +117,8 @@ sap.ui.define([
 		When.iSelectAllLinks(false);
 		When.iPressOkButton();
 
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Flat S"}, []);
 		Then.iTeardownMyAppFrame();
 	});
+
 });

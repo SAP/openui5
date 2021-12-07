@@ -1,8 +1,13 @@
 /* global QUnit, opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
+	'sap/ui/test/Opa5',
+	'sap/ui/test/opaQunit',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Action',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion, testlibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -71,9 +76,9 @@ sap.ui.define([
 	// Test: select an item for one link and check that this item is shown also for another link
 	// ------------------------------------------------------
 	opaTest("When I click on '1239102' link in the 'Product ID' column, popover should open with no links", function(Given, When, Then) {
-		When.iClickOnLink("1239102");
+		When.onTheMDCLink.iPressTheLink({text: "1239102"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "1239102"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -88,10 +93,19 @@ sap.ui.define([
 	});
 
 	opaTest("When I select the 'Edit Description' item, the 'Restore' button should be enabled", function(Given, When, Then) {
-		When.iSelectLink("Edit Description");
+		When.onTheMDCLink.iPersonalizeTheLinks({text: "1239102"}, [
+			"Edit Description"
+		]);
+
+		Then.thePersonalizationDialogShouldBeClosed();
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
 
 		// Position value doesn't change yet as we have to close the dialog before it takes effect
 		this.mItems["Edit Description"].selected = true;
+		this.mItems["Edit Description"].position = 0;
+		this.mItems["1239102"].position = 1;
+		this.mItems["Review Description"].position = 2;
 
 		fnCheckLinks(Then, this.mItems);
 
@@ -102,17 +116,17 @@ sap.ui.define([
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "1239102"}, [
 			"Edit Description"
 		]);
 	});
 
 	opaTest("When I click on '977700-11' link in the 'Product ID' column, popover should open with link 'Edit Description'", function(Given, When, Then) {
-		Given.closeAllNavigationPopovers();
-		When.iClickOnLink("977700-11");
+		When.onTheMDCLink.iCloseThePopover();
+		When.onTheMDCLink.iPressTheLink({text: "977700-11"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "977700-11"});
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "977700-11"}, [
 			"Edit Description"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -123,15 +137,11 @@ sap.ui.define([
 
 		// Delete this entry as we open another link
 		delete this.mItems["1239102"];
-
-		// Change the position value as we open the dialog again
-		this.mItems["Edit Description"].position = 0;
 		this.mItems["977700-11"] = {
 			position: 1,
 			selected: false,
 			enabled: true
 		};
-		this.mItems["Review Description"].position = 2;
 
 		Then.thePersonalizationDialogOpens();
 
@@ -144,7 +154,7 @@ sap.ui.define([
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "977700-11"}, [
 			"Edit Description"
 		]);
 

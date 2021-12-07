@@ -8,25 +8,6 @@ sap.ui.define([
 	"use strict";
 
 	return Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Arrangement", {
-		closeAllNavigationPopovers: function() {
-			return this.waitFor({
-				controlType: "sap.m.Popover",
-				success: function(aPopovers) {
-					aPopovers.forEach(function(oPopover) {
-						oPopover.close();
-					});
-					return this.waitFor({
-						check: function() {
-							return !Opa5.getPlugin().getMatchingControls({
-								controlType: "sap.m.Popover",
-								visible: true,
-								interactable: true
-							}).length;
-						}
-					});
-				}
-			});
-		},
 		iEnableTheLocalLRep: function() {
 			// Init LRep for VariantManagement (we have to fake the connection to LRep in order to be independent from backend)
 			FakeLrepConnectorLocalStorage.enableFakeConnector();

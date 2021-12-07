@@ -1,8 +1,13 @@
 /* global QUnit, opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
+	'sap/ui/test/Opa5',
+	'sap/ui/test/opaQunit',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Action',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion, testLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -66,10 +71,10 @@ sap.ui.define([
 	// Test: select an item and restore
 	// ------------------------------------------------------
 	opaTest("When I click on 'Gladiator MX' link in the 'Name' column, popover should open with initiallyVisible link", function(Given, When, Then) {
-		When.iClickOnLink("Gladiator MX");
+		When.onTheMDCLink.iPressTheLink({text: "Gladiator MX"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Gladiator MX"});
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -82,19 +87,22 @@ sap.ui.define([
 		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		When.iPressOkButton();
 	});
 
 	opaTest("When I deselect the 'Name Link2 (Superior)' item and select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
-		When.iSelectLink("Name Link2 (Superior)");
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
-
-		When.iSelectLink("FactSheet of Name");
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		When.onTheMDCLink.iPersonalizeTheLinks({text: "Gladiator MX"}, [
+			"FactSheet of Name"
+		]);
 
 		// Position value doesn't change yet as we have to close the dialog before it takes effect
 		this.mItems["Name Link2 (Superior)"].selected = false;
 		this.mItems["FactSheet of Name"].selected = true;
+		this.mItems["FactSheet of Name"].position = 0;
+		this.mItems["Name Link2 (Superior)"].position = 1;
+		this.mItems["Name Link3"].position = 2;
 
+		When.iPressOnLinkPersonalizationButton();
 		fnCheckLinks(Then, this.mItems);
 	});
 
@@ -102,17 +110,17 @@ sap.ui.define([
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
 			"FactSheet of Name"
 		]);
 	});
 
 	opaTest("When I click on 'Flat Medium' link in the 'Name' column, popover should open", function(Given, When, Then) {
-		Given.closeAllNavigationPopovers();
-		When.iClickOnLink("Flat Medium");
+		When.onTheMDCLink.iCloseThePopover();
+		When.onTheMDCLink.iPressTheLink({text: "Flat Medium"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat Medium"});
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Flat Medium"}, [
 			"FactSheet of Name"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -122,18 +130,14 @@ sap.ui.define([
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
 
-		// Change the position value as we open the dialog again
-		this.mItems["FactSheet of Name"].position = 0;
-		this.mItems["Name Link2 (Superior)"].position = 1;
-		this.mItems["Name Link3"].position = 2;
-
 		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		When.iPressOkButton();
 	});
 
 	opaTest("When I press 'Restore' and then 'OK' button, popover should show previous link selection again", function(Given, When, Then) {
-		When.iPressRestoreButton().and.iPressOkButtonOnTheWarningDialog();
+		When.onTheMDCLink.iResetThePersonalization({text: "Flat Medium"});
 
 		// Change the position value as we reset the personalization
 		this.mItems["Name Link2 (Superior)"].selected = true;
@@ -143,13 +147,13 @@ sap.ui.define([
 		this.mItems["FactSheet of Name"].position = 2;
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Flat Medium"});
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Flat Medium"}, [
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
-		Given.closeAllNavigationPopovers();
+		When.onTheMDCLink.iCloseThePopover();
 		Then.iTeardownMyAppFrame();
 	});
 
@@ -158,10 +162,10 @@ sap.ui.define([
 		Given.iEnableTheLocalLRep();
 		Given.iClearTheLocalStorageFromRtaRestart();
 
-		When.iClickOnLink("Gladiator MX");
+		When.onTheMDCLink.iPressTheLink({text: "Gladiator MX"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Gladiator MX"});
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -174,58 +178,72 @@ sap.ui.define([
 		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		When.iPressOkButton();
 	});
 
 	opaTest("When I select the 'FactSheet of Name' item, the 'Restore' button should be enabled", function(Given, When, Then) {
-		When.iSelectLink("FactSheet of Name");
+		When.onTheMDCLink.iPersonalizeTheLinks({text: "Gladiator MX"}, [
+			"Name Link2 (Superior)",
+			"FactSheet of Name"
+		]);
+		When.iPressOnLinkPersonalizationButton();
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 
 		this.mItems["FactSheet of Name"].selected = true;
-
-		fnCheckLinks(Then, this.mItems);
-
-		When.iPressOkButton();
-
-		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			"FactSheet of Name",
-			"Name Link2 (Superior)"
-		]);
-	});
-
-	opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
-		When.iPressOnLinkPersonalizationButton();
-		Then.thePersonalizationDialogOpens();
-
-		// Change the position value as we open the dialog again
 		this.mItems["FactSheet of Name"].position = 0;
 		this.mItems["Name Link2 (Superior)"].position = 1;
 		this.mItems["Name Link3"].position = 2;
 
 		fnCheckLinks(Then, this.mItems);
 
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
-	});
-
-	opaTest("When I press 'Restore' then select 'FactSheet of Name' again and then 'OK' button, popover should show the same link selection again", function(Given, When, Then) {
-		When.iPressRestoreButton().and.iPressOkButtonOnTheWarningDialog();
-		Then.thePersonalizationDialogShouldBeClosed();
-
-		When.iPressOnLinkPersonalizationButton();
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
-		When.iSelectLink("FactSheet of Name");
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 		When.iPressOkButton();
 
 		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeNavigationPopoverOpens();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+			"FactSheet of Name",
+			"Name Link2 (Superior)"
+		]);
+	});
+
+	opaTest("When I click on 'More Links' button, the selection dialog opens", function(Given, When, Then) {
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
+
+		fnCheckLinks(Then, this.mItems);
+
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		When.iPressOkButton();
+	});
+
+	opaTest("When I press 'Restore' then select 'FactSheet of Name' again and then 'OK' button, popover should show the same link selection again", function(Given, When, Then) {
+		When.onTheMDCLink.iResetThePersonalization({text: "Gladiator MX"});
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
+			"Name Link2 (Superior)"
+		]);
+
+		Then.thePersonalizationDialogShouldBeClosed();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Gladiator MX"});
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		When.iPressOkButton();
+
+		When.onTheMDCLink.iPersonalizeTheLinks({text: "Gladiator MX"}, [
+			"Name Link2 (Superior)",
+			"FactSheet of Name"
+		]);
+
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Gladiator MX"}, [
 			"FactSheet of Name",
 			"Name Link2 (Superior)"
 		]);
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
+		When.iPressOnLinkPersonalizationButton();
+		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 
-		Given.closeAllNavigationPopovers();
+		When.onTheMDCLink.iCloseThePopover();
 		Then.iTeardownMyAppFrame();
 	});
 });
