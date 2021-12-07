@@ -42,6 +42,12 @@
 				<GenericTag text="Shortage Expected" status="Warning" class="sapUiSmallMarginBottom" />
 				<GenericTag text="Material Shortage" status="Warning" class="sapUiSmallMarginBottom" />
 			</FlexBox>
+			<FlexBox direction="Column" fitContainer="true" alignItems="Start" justifyContent="Start">
+				<Text text="Generic Tag with label" id="genericTagLabel" class="sapUiSmallMarginBottom" />
+				<GenericTag ariaLabelledBy="genericTagLabel" text="Project Cost" design="StatusIconHidden" status="Error"  class="sapUiSmallMarginBottom">
+					<ObjectNumber state="Error" emphasized="false" number="3.5M" unit="EUR"/>
+				</GenericTag>
+			</FlexBox>
 		</l:Grid>
 	</l:VerticalLayout>
 </mvc:View>
