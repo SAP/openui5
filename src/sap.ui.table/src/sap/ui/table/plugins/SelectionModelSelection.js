@@ -77,7 +77,7 @@ sap.ui.define([
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
 		this.oSelectionModel.attachSelectionChanged(onSelectionChange, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.TotalRowCountChanged, onTotalRowCountChanged, this);
-		this._bIgnoreNextTotalRowCountChange = oTable._getTotalRowCount() === 0;
+		this._iTotalRowCount = oTable._getTotalRowCount();
 	};
 
 	/**
@@ -292,12 +292,6 @@ sap.ui.define([
 	 */
 	SelectionModelSelection.prototype.onTableRowsBound = function(oBinding) {
 		SelectionPlugin.prototype.onTableRowsBound.apply(this, arguments);
-		if (!this.hasOwnProperty("_bIgnoreNextTotalRowCountChange")) {
-			this._bIgnoreNextTotalRowCountChange = true;
-		}
-		if (!this.getTable()._bContextsAvailable) {
-			this._bWaitForBindingChange = true;
-		}
 		attachToBinding(this, oBinding);
 	};
 
@@ -339,20 +333,18 @@ sap.ui.define([
 		if (sReason === "sort" || sReason === "filter") {
 			this.clearSelection();
 		}
-
-		if (this._bWaitForBindingChange) {
-			this._bIgnoreNextTotalRowCountChange = true;
-			delete this._bWaitForBindingChange;
-		}
 	}
 
 	function onTotalRowCountChanged() {
-		if (!this._bIgnoreNextTotalRowCountChange) {
-			// If rows are added or removed, the index-based selection of the SelectionModel is invalid and needs to be cleared.
-			// The initial change is ignored for compatibility, so it is possible to select something before the initial rows update is done.
+		var iTotalRowCount = this.getTable()._getTotalRowCount();
+
+		// If rows are added or removed, the index-based selection of the SelectionModel is invalid and needs to be cleared.
+		// Changes from 0 are ignored for compatibility, so it is possible to select something before the initial rows update is done.
+		if (this._iTotalRowCount > 0 && this._iTotalRowCount !== iTotalRowCount) {
 			this.clearSelection();
 		}
-		delete this._bIgnoreNextTotalRowCountChange;
+
+		this._iTotalRowCount = iTotalRowCount;
 	}
 
 	return SelectionModelSelection;

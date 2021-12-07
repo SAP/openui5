@@ -395,7 +395,7 @@ sap.ui.define([
 			if (!isRowCountInitial(this)) {
 				this.initTableRowsAfterDataRequested(iConfiguredRowCount);
 			}
-			this.getRowContexts(iConfiguredRowCount, true); // Trigger data request.
+			this.getRowContexts(iConfiguredRowCount); // Trigger data request.
 		}
 	};
 
