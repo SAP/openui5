@@ -2148,6 +2148,14 @@ sap.ui.define([
 			if (oConfig.hint) {
 				this._addHint(oConfig.hint);
 			}
+			//add "aria-label" for each panel to make the landmark uniquely
+			var oDelegate = {
+				onAfterRendering: function() {
+					var ePanel = document.getElementById(oPanel.getId());
+					ePanel.setAttribute("aria-label", oConfig.label);
+				}
+			};
+			oPanel.addEventDelegate(oDelegate);
 			return;
 		}
 		if (oConfig.type === "separator") {
