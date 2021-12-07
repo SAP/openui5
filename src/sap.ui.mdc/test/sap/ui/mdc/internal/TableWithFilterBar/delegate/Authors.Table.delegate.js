@@ -3,8 +3,9 @@ sap.ui.define([
 	"./Authors.FB.delegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/enum/FieldDisplay",
+	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, Int32Type) {
+], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, EditMode, Int32Type) {
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
@@ -74,21 +75,23 @@ sap.ui.define([
 		};
 	};
 
-	AuthorsTableDelegate._createColumnTemplate = function (oProperty) {
+	AuthorsTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
-		var oCtrlProperties = { value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance}, editMode: "Display", multipleLines: false};
+		var oCtrlProperties = {
+			id: getFullId(oTable, "F_" + oProperty.name),
+			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
+			editMode: EditMode.Display,
+			width:"100%",
+			multipleLines: false // set always to have property not initial
+		};
 
 		if (oProperty.name === "countryOfOrigin_code") {
 			oCtrlProperties.additionalValue = "{countryOfOrigin/descr}";
 			oCtrlProperties.display = FieldDisplay.Description;
-		}
-
-		if (oProperty.name === "regionOfOrigin_code") {
+		} else if (oProperty.name === "regionOfOrigin_code") {
 			oCtrlProperties.additionalValue = "{regionOfOrigin/text}";
 			oCtrlProperties.display = FieldDisplay.Description;
-		}
-
-		if (oProperty.name === "cityOfOrigin_city") {
+		} else if (oProperty.name === "cityOfOrigin_city") {
 			oCtrlProperties.additionalValue = "{cityOfOrigin/text}";
 			oCtrlProperties.display = FieldDisplay.Description;
 		}
@@ -112,7 +115,7 @@ sap.ui.define([
 			// 	delete oColumn._oTemplateClone;
 			// }
 
-			var oTemplate = AuthorsTableDelegate._createColumnTemplate(oProperty);
+			var oTemplate = AuthorsTableDelegate._createColumnTemplate(oTable, oProperty);
 			oColumn.setTemplate(oTemplate);
 
 			return oColumn;

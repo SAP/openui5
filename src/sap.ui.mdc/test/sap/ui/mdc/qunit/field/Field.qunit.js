@@ -168,8 +168,8 @@ sap.ui.define([
 
 		oField.setEditMode(EditMode.ReadOnly);
 		oCore.applyChanges();
-		var aContent = oField.getAggregation("_content");
-		var oContent = aContent && aContent.length > 0 && aContent[0];
+		aContent = oField.getAggregation("_content");
+		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
 		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 		assert.notOk(oContent.getEditable(), "Input is not editable");
@@ -203,6 +203,18 @@ sap.ui.define([
 
 		assert.ok(oSlider.getDomRef(), "Slider rendered");
 		assert.equal(oSlider.getValue(), 70, "Value of Slider");
+
+	});
+
+	QUnit.test("internal control creation", function(assert) {
+
+		var fnDone = assert.async();
+		setTimeout(function() { // async control creation in applySettings
+			var aContent = oField.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+			assert.notOk(oContent, "no content exist before rendering"); // as no data type can be determined
+			fnDone();
+		}, 0);
 
 	});
 
@@ -1081,6 +1093,75 @@ sap.ui.define([
 					fnDone();
 				}, 50); // as different Timeout-0 are involved
 			}, 50); // as different Timeout-0 are involved
+		}, 0);
+
+	});
+
+	QUnit.test("internal control creation", function(assert) {
+
+		oField.destroy();
+		oField = new Field("F1", {
+			value: { path: "/value", type: oType },
+			change: _myChangeHandler
+		});
+
+		var fnDone = assert.async();
+		setTimeout(function() { // async control creation in applySettings
+			var aContent = oField.getAggregation("_content");
+			var oContent = aContent && aContent.length > 0 && aContent[0];
+			assert.notOk(oContent, "no content exist before rendering"); // as edit mode is not explicit defined
+
+			oField.setMultipleLines(false);
+			oField.setEditMode(EditMode.Display);
+			setTimeout(function() { // async control creation in observeChanges
+				aContent = oField.getAggregation("_content");
+				oContent = aContent && aContent.length > 0 && aContent[0];
+				assert.ok(oContent, "content exist after setting editMode and multipleLines");
+
+				oField.destroy();
+				oField = new Field("F1", {
+					value: { path: "/value", type: oType },
+					editMode: EditMode.Editable,
+					multipleLines: true,
+					change: _myChangeHandler
+				});
+
+				setTimeout(function() { // async control creation in applySettings
+					aContent = oField.getAggregation("_content");
+					oContent = aContent && aContent.length > 0 && aContent[0];
+					assert.ok(oContent, "content exist before rendering");
+
+					oField.destroy();
+					oField = new Field("F1", {
+						value: { path: "/value", type: oType },
+						editMode: { path: "/editMode"},
+						multipleLines: true,
+						change: _myChangeHandler
+					});
+
+					setTimeout(function() { // async control creation in applySettings
+						aContent = oField.getAggregation("_content");
+						oContent = aContent && aContent.length > 0 && aContent[0];
+						assert.notOk(oContent, "content not exist before rendering"); // as editMode has not set by binding right now
+
+						oField.destroy();
+						oField = new Field("F1", {
+							value: { path: "/value", type: oType },
+							editMode: { path: "/editMode"},
+							multipleLines: true,
+							change: _myChangeHandler
+						});
+						oField.setModel(oModel);
+
+						setTimeout(function() { // async control creation in applySettings
+							aContent = oField.getAggregation("_content");
+							oContent = aContent && aContent.length > 0 && aContent[0];
+							assert.ok(oContent, "content exist before rendering");
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
 		}, 0);
 
 	});

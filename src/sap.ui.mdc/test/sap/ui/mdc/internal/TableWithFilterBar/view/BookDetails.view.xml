@@ -42,9 +42,9 @@
 							<f:SimpleForm id="detailForm" layout="ColumnLayout" editable="{view>/editMode}">
 								<f:content>
 									<Label text="ID" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{path: 'ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" />
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{path: 'ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" multipleLines="false"/>
 									<Label text="Author ID" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" fieldHelp="FH1" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" fieldHelp="FH1" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"  multipleLines="false">
 										<mdc:dependents>
 											<mdc:ValueHelp id="FH1"
 												delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
@@ -143,7 +143,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Title"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false">
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fTitle"
@@ -156,9 +156,9 @@
 									<Label text="Description"/>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fDescr" multipleLines="true" value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 									<Label text="Stock"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fStock" value="{path: 'stock', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fStock" value="{path: 'stock', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 									<Label text="Price"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false">
 										<mdc:dependents>
 											<mdc:ValueHelp id="FVH-Currency"
 												delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
@@ -173,7 +173,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Link" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" multipleLines="false">
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fLink"
@@ -181,9 +181,9 @@
 										</mdc:fieldInfo>
 									</mdc:Field>
 									<Label text="Genre" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fGenre" value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHGenre" display="Description"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fGenre" value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHGenre" display="Description" multipleLines="false"/>
 									<Label text="SubGenre" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fSubGenre" value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHSubGenre" display="Description"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fSubGenre" value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHSubGenre" display="Description" multipleLines="false"/>
 								</f:content>
 								<f:dependents>
 									<mdc:ValueHelp id="FHGenre"

@@ -186,7 +186,9 @@ sap.ui.define([
 				this._oBindingContext = oBindingContext;
 				this._oContentFactory.updateConditionType();
 				if (this._bParseError || this.getFieldHelp()) { // In FieldHelp case InParameters might need an update
-					this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
+					if (this._oManagedObjectModel) {
+						this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates
+					}
 					this._bParseError = false;
 				}
 			}
@@ -214,7 +216,9 @@ sap.ui.define([
 
 		if (sPropertyName === "value" && this._bParseError && deepEqual(this.getValue(), this.validateProperty(sPropertyName, oValue))) {
 			// in parse error and same value - no update on property - so remove error here
-			this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
+			if (this._oManagedObjectModel) {
+				this._oManagedObjectModel.checkUpdate(true, true); // async. to reduce updates (additionalValue will follow)
+			}
 			this._bParseError = false;
 		}
 
@@ -530,6 +534,17 @@ sap.ui.define([
 		return false;
 
 	}
+
+	Field.prototype._checkCreateInternalContent = function() {
+
+		if (!this.bIsDestroyed && this._oContentFactory.getDataType() && !this._isPropertyInitial("editMode") && !this._isPropertyInitial("multipleLines")) {
+			// If DataType is provided via Binding and EditMode is set the internal control can be created
+			// TODO: no control needed if just template for cloning
+			FieldBase.prototype._checkCreateInternalContent.apply(this, arguments);
+		}
+
+	};
+
 	/**
 	 * Sets conditions to the property <code>conditions</code>.
 	 *

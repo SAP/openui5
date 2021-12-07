@@ -565,8 +565,6 @@ sap.ui.define([
 
 		Control.prototype.init.apply(this, arguments);
 
-		this._oManagedObjectModel = new ManagedObjectModel(this);
-
 		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
@@ -575,8 +573,6 @@ sap.ui.define([
 			aggregations: ["fieldInfo", "content", "contentEdit", "contentDisplay"],
 			associations: ["fieldHelp", "ariaLabelledBy"]
 		});
-
-		this._oDatePickerRequested = {};
 
 		this.attachEvent("modelContextChange", this._handleModelContextChange, this);
 
@@ -623,8 +619,10 @@ sap.ui.define([
 			_detachContentHandlers.call(this, oContentDisplay);
 		}
 
-		this._oManagedObjectModel.destroy();
-		delete this._oManagedObjectModel;
+		if (this._oManagedObjectModel) {
+			this._oManagedObjectModel.destroy();
+			delete this._oManagedObjectModel;
+		}
 
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
@@ -655,6 +653,9 @@ sap.ui.define([
 		if (!this.bDelegateInitialized && !this.bDelegateLoading) {
 			this.initControlDelegate();
 		}
+		this._triggerCheckCreateInternalContent();
+
+		this._bSettingsApplied = true;
 
 		return this;
 	};
@@ -1150,6 +1151,10 @@ sap.ui.define([
 
 		if (oChanges.name === "editMode") {
 			_refreshLabel.call(this); // as required-idicator might set or removed on Label
+			if (this._bSettingsApplied && (oChanges.old === EditMode.Display || oChanges.old === EditMode.EditableDisplay || oChanges.current === EditMode.Display || oChanges.current === EditMode.EditableDisplay)) {
+				// edit mode changed after settings applied (happens if edit mode is bound and binding updates after control initialization)
+				this._triggerCheckCreateInternalContent();
+			}
 		}
 	};
 
@@ -1586,6 +1591,34 @@ sap.ui.define([
 		}
 	}
 
+	/*
+	 * Check if all needed information are provided. If possible create internal controls
+	 */
+	FieldBase.prototype._checkCreateInternalContent = function() {
+
+		if (this.getVisible() && this._oContentFactory.getDataType()) {
+			_createInternalContentWrapper.call(this);
+		}
+
+	};
+
+	/*
+	 * To be sure that the check is not called multiple times it needs
+	 * to be checked if there is a pending check.
+	 * Multiple calls might happen if properties are cheged oftten or
+	 * the chck is triggered in BindingContext update (what is often called in propagation).
+	 */
+	FieldBase.prototype._triggerCheckCreateInternalContent = function() {
+
+		if (!this._oCheckCreateInternalContentPromise) {
+			this._oCheckCreateInternalContentPromise = this.awaitControlDelegate().then(function() {
+				delete this._oCheckCreateInternalContentPromise;
+				this._checkCreateInternalContent();
+			}.bind(this));
+		}
+
+	};
+
 	function _createInternalContent() {
 		var sEditMode = this.getEditMode();
 		var oContent = this.getContent();
@@ -1665,6 +1698,7 @@ sap.ui.define([
 				}
 
 				_refreshLabel.call(this);
+				delete this._oCreateContentPromise; // after finished new creation request can be sync again
 			}.bind(this));
 		}
 	}
@@ -1702,6 +1736,9 @@ sap.ui.define([
 	};
 
 	function _setModelOnContent(oContent) {
+		if (!this._oManagedObjectModel && !this._bIsBeingDestroyed) {
+			this._oManagedObjectModel = new ManagedObjectModel(this);
+		}
 		oContent.setModel(this._oManagedObjectModel, "$field");
 	}
 
@@ -2751,7 +2788,8 @@ sap.ui.define([
 		//		// also in display mode to get right text
 		//		_handleConditionsChange.call(this, this.getConditions());
 		if (!isEditing && !this._bPendingConditionUpdate && this.getConditions().length > 0 &&
-			(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._bParseError))) {
+			(this.getMaxConditions() !== 1 || (this.getDisplay() !== FieldDisplay.Value && !this._bParseError))
+			&& this._oManagedObjectModel) {
 			// update tokens in MultiValue
 			// update text/value only if no parse error, otherwise wrong value would be removed
 			// don't update if contidions are outdated (updated async in Field)
@@ -3156,6 +3194,17 @@ sap.ui.define([
 		return {name: sName, model: oConditionModel};
 
 	}
+
+	FieldBase.prototype._isPropertyInitial = function(sPropertyName) {
+
+		// as bound propertys are never initial even if there is no existing binding right now check the binding too
+		if (this.isBound(sPropertyName) && !this.getBinding(sPropertyName)) {
+			return !Object.prototype.hasOwnProperty.call(this.mProperties, sPropertyName);
+		} else {
+			return this.isPropertyInitial(sPropertyName);
+		}
+
+	};
 
 	return FieldBase;
 

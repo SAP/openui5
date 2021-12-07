@@ -1830,6 +1830,9 @@ sap.ui.define([
 								// ignore empty conditions for filtering
 								oHelpParameters[sHelpPath] = [];
 								if (bUseConditions) { // just use conditions
+									if (!vValue) {
+										vValue = []; // if ConditionModel Binding not initilaized in the moment
+									}
 									for (j = 0; j < vValue.length; j++) {
 										oCondition = merge({}, vValue[j]);
 										// change paths of in- and out-parameters

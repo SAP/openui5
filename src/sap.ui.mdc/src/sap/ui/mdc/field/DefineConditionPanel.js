@@ -278,6 +278,12 @@ sap.ui.define([
 				}
 			}
 
+			if (aConditions.length === 1 && iIndex === 0) {
+				// the only one existing condition is removed. -> add dummy condition to have it in update in one step
+				this.addDummyCondition(1); // TODO: without setProperty to update condition at once?
+				aConditions = this.getConditions();
+			}
+
 			aConditions.splice(iIndex, 1);
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 			_checkInvalidInput.call(this, undefined); // check if invalid condition was removed
@@ -698,6 +704,7 @@ sap.ui.define([
 				delegate: _getDelegate.call(this),
 				value: { path: "$this>", type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
 				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
+				multipleLines: false,
 				width: "100%"
 			});
 		}
@@ -1165,7 +1172,9 @@ sap.ui.define([
 		var oOperatorField = new Field(sIdPrefix + "-operator", {
 			value: {path: "$this>operator", type: this._oOperatorFieldType},
 			width: "100%",
-			display: "Description",
+			display: FieldDisplay.Description,
+			editMode: EditMode.Editable,
+			multipleLines: false,
 			fieldHelp: this.getId() + "--rowSelect-help",
 			change: this.onSelectChange.bind(this),
 			ariaLabelledBy: this.getId() + "--ivtOperator"

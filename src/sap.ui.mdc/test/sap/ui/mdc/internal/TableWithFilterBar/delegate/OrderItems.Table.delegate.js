@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
+	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/mdc/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
@@ -11,7 +12,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, EditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -67,8 +68,9 @@ sap.ui.define([
 	OrderItemssTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
 		var oCtrlProperties = {
+			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
-			editMode: "Display",
+			editMode: EditMode.Display,
 			width:"100%",
 			multipleLines: false
 		};
