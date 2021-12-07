@@ -63,7 +63,8 @@ sap.ui.define([
 					selectedKey: {type: "string", group: "Data"},
 					/**
 					 * Specifies an optional aria-label that can be used by the screen readers.
-					 * @since 1.98
+					 *
+                                         * @since 1.96.2
 					 */
 					ariaLabel: {type : "string", group : "Accessibility", defaultValue : null}
 				},
