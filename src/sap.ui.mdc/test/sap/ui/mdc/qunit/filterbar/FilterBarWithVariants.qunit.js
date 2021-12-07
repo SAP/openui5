@@ -700,7 +700,7 @@ var oVariantMap = {
 				getId: function() {
 					return "CompId";
 				},
-				getManifest: function() {
+				getManifestObject: function() {
 					return oManifest;
 				},
 				getLocalId: function() { return "VMId"; },

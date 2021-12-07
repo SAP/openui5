@@ -26,15 +26,12 @@ sap.ui.define([
 				};
 			},
 			getComponentData: function () {},
-			getManifest: function () {
+			getManifestObject: function () {
 				return {
 					getEntry: function () {
 						return {
 							appVariantId: "appId"
 						};
-					},
-					"sap.ui5": {
-						id: "appId"
 					}
 				};
 			}
@@ -136,6 +133,64 @@ sap.ui.define([
 			};
 			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
 			assert.equal(oGetAppIdStub.callCount, 1, "the function was called");
+		});
+
+		QUnit.test("with manifest object at design time and getComponentName is available", function (assert) {
+			var mPropertyBag = {
+				manifest: {
+					getEntry: function () {
+						return {
+							id: Utils.APP_ID_AT_DESIGN_TIME
+						};
+					},
+					getComponentName: function() {
+						return "appId";
+					}
+				}
+			};
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
+		});
+
+		QUnit.test("with manifest object at design time and getComponentName is not available", function (assert) {
+			var mPropertyBag = {
+				manifest: {
+					getEntry: function () {
+						return {
+							id: Utils.APP_ID_AT_DESIGN_TIME
+						};
+					}
+				}
+			};
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), Utils.APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
+		});
+
+		QUnit.test("with manifest raw at design time and name property available", function (assert) {
+			var mPropertyBag = {
+				manifest: {
+					"sap-ui6": {
+						appVariantId: "appVarId"
+					},
+					"sap.app": {
+						id: Utils.APP_ID_AT_DESIGN_TIME
+					},
+					name: "appId.Component"
+				}
+			};
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), "appId.Component", "the app id is returned");
+		});
+
+		QUnit.test("with manifest raw at design time and name property is not available", function (assert) {
+			var mPropertyBag = {
+				manifest: {
+					"sap-ui6": {
+						appVariantId: "appVarId"
+					},
+					"sap.app": {
+						id: Utils.APP_ID_AT_DESIGN_TIME
+					}
+				}
+			};
+			assert.equal(ManifestUtils.getFlexReference(mPropertyBag), Utils.APP_ID_AT_DESIGN_TIME + ".Component", "the app id at design time is returned");
 		});
 	});
 

@@ -662,7 +662,7 @@ sap.ui.define([
 		/**
 		 * Returns the descriptor Id, which is always the reference for descriptor changes
 		 *
-		 * @param {object} oManifest - Manifest of the component
+		 * @param {object|sap.ui.core.Manifest} oManifest - Manifest of the component
 		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
 		 * @public
 		 */
@@ -670,8 +670,13 @@ sap.ui.define([
 			if (oManifest) {
 				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
 				var sAppId = oSapApp && oSapApp.id;
-				if (sAppId === Utils.APP_ID_AT_DESIGN_TIME && oManifest.getComponentName) {
-					sAppId = oManifest.getComponentName();
+				if (sAppId === Utils.APP_ID_AT_DESIGN_TIME) {
+					if (oManifest.getComponentName) {
+						return oManifest.getComponentName();
+					}
+					if (oManifest.name) {
+						return oManifest.name;
+					}
 				}
 				return sAppId;
 			}
