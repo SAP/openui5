@@ -483,7 +483,29 @@ function (
 				}
 			}, this);
 		}, this);
+	});
 
+	/* --------------------------- IllustratedMessage Accessibility -------------------------------------- */
+	QUnit.module("IllustratedMessage - Accessibility ", {
+		beforeEach: function () {
+			// Arrange
+			this.oIllustratedMessage = new IllustratedMessage();
+			this.oIllustratedMessage.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			// Clean
+			this.oIllustratedMessage.destroy();
+			this.oIllustratedMessage = null;
+		}
+	});
+
+	QUnit.test("getAccessibilityReferences", function (assert) {
+		assert.strictEqual(this.oIllustratedMessage._getTitle().getId(),
+		this.oIllustratedMessage.getAccessibilityReferences().title, "Title reference is correct");
+
+		assert.strictEqual(this.oIllustratedMessage._getDescription().getId(),
+		this.oIllustratedMessage.getAccessibilityReferences().description, "Description reference is correct");
 	});
 
 });
