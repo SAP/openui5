@@ -136,7 +136,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			var oObjectContent = this.oCard.getAggregation("_content");
 			var oContent = oObjectContent.getAggregation("_content");
-			var aGroups = oContent.getContent();
+			var aGroups = oContent.getItems()[0].getContent();
 
 			Core.applyChanges();
 

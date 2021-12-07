@@ -2,9 +2,11 @@
 * ${copyright}
 */
 sap.ui.define([
+	"./BaseContent",
+	"./ObjectContentRenderer",
 	"sap/ui/integration/library",
-	"sap/ui/integration/cards/BaseContent",
 	"sap/m/library",
+	"sap/m/FlexItemData",
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/m/Text",
@@ -12,16 +14,21 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/Link",
 	"sap/m/Label",
+	"sap/m/ObjectStatus",
 	"sap/base/Log",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/f/cards/NumericIndicators",
+	"sap/f/cards/NumericSideIndicator"
 ], function (
-	library,
 	BaseContent,
+	ObjectContentRenderer,
+	library,
 	mLibrary,
+	FlexItemData,
 	HBox,
 	VBox,
 	Text,
@@ -29,12 +36,15 @@ sap.ui.define([
 	Avatar,
 	Link,
 	Label,
+	ObjectStatus,
 	Log,
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
 	BindingHelper,
-	Utils
+	Utils,
+	NumericIndicators,
+	NumericSideIndicator
 ) {
 	"use strict";
 
@@ -65,98 +75,14 @@ sap.ui.define([
 	 * @constructor
 	 * @experimental
 	 * @since 1.64
-	 * @see {@link TODO Card}
 	 * @alias sap.ui.integration.cards.ObjectContent
 	 */
 	var ObjectContent = BaseContent.extend("sap.ui.integration.cards.ObjectContent", {
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		renderer: {
-			apiVersion: 2
-		}
+		renderer: ObjectContentRenderer
 	});
-
-	ObjectContent.prototype._getRootContainer = function () {
-		if (this._bIsBeingDestroyed) {
-			return null;
-		}
-
-		var oAlignedFlowLayout = this.getAggregation("_content");
-		if (!oAlignedFlowLayout) {
-			oAlignedFlowLayout = new AlignedFlowLayout();
-			this.setAggregation("_content", oAlignedFlowLayout);
-		}
-		// registration ID used for deregistering the resize handler
-		this._sResizeListenerId = ResizeHandler.register(oAlignedFlowLayout, this.onAlignedFlowLayoutResize.bind(this));
-
-		oAlignedFlowLayout.addEventDelegate({
-			"onAfterRendering": function() {
-				this.getContent().forEach(function(oElement){
-					if (!oElement.getVisible()) {
-						document.getElementById("sap-ui-invisible-" + oElement.getId()).parentElement.classList.add("sapFCardInvisibleContent");
-					}
-				});
-			}
-		}, oAlignedFlowLayout);
-
-		return oAlignedFlowLayout;
-	};
-
-	ObjectContent.prototype.onAlignedFlowLayoutResize = function (oEvent) {
-		if (oEvent && (oEvent.size.width === oEvent.oldSize.width) && !oEvent.control) {
-			return;
-		}
-
-		var oControl = oEvent.control,
-			sMinItemWidth = oControl.getMinItemWidth(),
-			iNumberOfGroups = oControl.getContent().length,
-			iMinItemWidth;
-
-		// the CSS unit of the minItemWidth control property is in rem
-		if (sMinItemWidth.lastIndexOf("rem") !== -1) {
-			iMinItemWidth = Rem.toPx(sMinItemWidth);
-			// the CSS unit of the minItemWidth control property is in px
-		} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
-			iMinItemWidth = parseFloat(sMinItemWidth);
-		}
-
-		var iColumns = Math.floor(oEvent.size.width / iMinItemWidth);
-
-		// This check is to catch the case when the width of the card is bigger and
-		// can have more columns than groups
-		if (iColumns > iNumberOfGroups) {
-			iColumns = iNumberOfGroups;
-		}
-
-		//Optimization
-		if (this._iColsOld === iColumns) {
-			return;
-		}
-
-		this._iColsOld = iColumns;
-
-		var lastColIndex = iColumns - 1,
-			iRows = Math.ceil(iNumberOfGroups / iColumns);
-
-		oControl.getContent().forEach(function (oItem, iIndex) {
-			// Add spacing on every group
-			oItem.addStyleClass("sapFCardObjectSpaceBetweenGroup");
-
-			// remove the class only when the group is last on its row
-			if (lastColIndex === iIndex && lastColIndex < iNumberOfGroups) {
-				oItem.removeStyleClass("sapFCardObjectSpaceBetweenGroup");
-				lastColIndex += iColumns;
-			}
-
-			// change bottom padding of the last item in each column
-			if (iIndex + 1 > (iRows - 1) * iColumns) {
-				oItem.addStyleClass("sapFCardObjectGroupLastInColumn");
-			} else {
-				oItem.removeStyleClass("sapFCardObjectGroupLastInColumn");
-			}
-		});
-	};
 
 	ObjectContent.prototype.exit = function() {
 		BaseContent.prototype.exit.apply(this, arguments);
@@ -182,36 +108,50 @@ sap.ui.define([
 		return this;
 	};
 
+	ObjectContent.prototype._getRootContainer = function () {
+		var oRootContainer = this.getAggregation("_content");
+
+		if (!oRootContainer) {
+			oRootContainer = new VBox({
+				renderType: FlexRendertype.Bare
+			});
+			this.setAggregation("_content", oRootContainer);
+			// registration ID used for deregistering the resize handler
+			this._sResizeListenerId = ResizeHandler.register(oRootContainer, this._onResize.bind(this));
+		}
+
+		return oRootContainer;
+	};
+
 	ObjectContent.prototype._addGroups = function (oConfiguration) {
 		var oContainer = this._getRootContainer(),
+			oAFLayout,
+			bNextAFLayout = true,
 			aGroups = oConfiguration.groups || [];
 
-		aGroups.forEach(function (oGroup) {
-			var vVisible;
+		aGroups.forEach(function (oGroupConfiguration, i) {
+			var oGroup = this._createGroup(oGroupConfiguration);
 
-			if (typeof oGroup.visible == "string") {
-				vVisible = !Utils.hasFalsyValueAsString(oGroup.visible);
+			if (oGroupConfiguration.alignment === "Stretch") {
+				oGroup.setLayoutData(new FlexItemData({
+					growFactor: 1
+				}));
+
+				if (i === aGroups.length - 1) {
+					oGroup.addStyleClass("sapFCardObjectGroupLastInColumn");
+				}
+
+				oContainer.addItem(oGroup);
+				bNextAFLayout = true;
 			} else {
-				vVisible = oGroup.visible;
+				if (bNextAFLayout) {
+					oAFLayout = this._createAFLayout();
+					oContainer.addItem(oAFLayout);
+					bNextAFLayout = false;
+				}
+				oAFLayout.addContent(oGroup);
 			}
 
-			var oGroupContainer = new VBox({
-				visible: vVisible,
-				renderType: FlexRendertype.Bare
-			}).addStyleClass("sapFCardObjectGroup");
-
-			if (oGroup.title) {
-				oGroupContainer.addItem(new Title({
-					text: oGroup.title
-				}).addStyleClass("sapFCardObjectItemTitle"));
-
-				oGroupContainer.addStyleClass("sapFCardObjectGroupWithTitle");
-			}
-
-			oGroup.items.forEach(function (oItem) {
-				this._createGroupItems(oItem).forEach(oGroupContainer.addItem, oGroupContainer);
-			}, this);
-			oContainer.addContent(oGroupContainer);
 		}, this);
 
 		this._oActions.attach({
@@ -221,14 +161,40 @@ sap.ui.define([
 		});
 	};
 
+	ObjectContent.prototype._createGroup = function (oGroupConfiguration) {
+		var vVisible;
+
+		if (typeof oGroupConfiguration.visible == "string") {
+			vVisible = !Utils.hasFalsyValueAsString(oGroupConfiguration.visible);
+		} else {
+			vVisible = oGroupConfiguration.visible;
+		}
+
+		var oGroup = new VBox({
+			visible: vVisible,
+			renderType: FlexRendertype.Bare
+		}).addStyleClass("sapFCardObjectGroup");
+
+		if (oGroupConfiguration.title) {
+			oGroup.addItem(new Title({
+				text: oGroupConfiguration.title
+			}).addStyleClass("sapFCardObjectItemTitle"));
+
+			oGroup.addStyleClass("sapFCardObjectGroupWithTitle");
+		}
+
+		oGroupConfiguration.items.forEach(function (oItem) {
+			this._createGroupItems(oItem).forEach(oGroup.addItem, oGroup);
+		}, this);
+
+		return oGroup;
+	};
+
 	ObjectContent.prototype._createGroupItems = function (oItem) {
 		var vLabel = oItem.label,
-			vValue = oItem.value,
 			oLabel,
 			vVisible,
-			oControl,
-			vHref,
-			aBindingParts = [];
+			oControl;
 
 		if (typeof oItem.visible == "string") {
 			vVisible = !Utils.hasFalsyValueAsString(oItem.visible);
@@ -247,85 +213,10 @@ sap.ui.define([
 			}).addStyleClass("sapFCardObjectItemLabel");
 		}
 
-		if (vValue && oItem.actions) {
-			oControl = new Link({
-				text: vValue,
-				visible: BindingHelper.reuse(vVisible)
-			});
-
-			if (oLabel) {
-				oControl.addAriaLabelledBy(oLabel);
-			} else {
-				Log.warning("Missing label for Object group item with actions.", null, "sap.ui.integration.widgets.Card");
-			}
-
-			this._oActions.attach({
-				area: ActionArea.ContentItemDetail,
-				actions: oItem.actions,
-				control: this,
-				actionControl: oControl,
-				enabledPropertyName: "enabled"
-			});
-		}
-
-		// deprecated "type" property
-		if (vValue && !oItem.actions && oItem.type) {
-			Log.warning("Usage of Object Group Item property 'type' is deprecated. Use Card Actions for navigation.", null, "sap.ui.integration.widgets.Card");
-
-			switch (oItem.type) {
-				case 'link':
-					oControl = new Link({
-						href: oItem.url || vValue,
-						text: vValue,
-						target: oItem.target || '_blank',
-						visible: BindingHelper.reuse(vVisible)
-					});
-					break;
-				case 'email':
-					if (oItem.value) {
-						aBindingParts.push(oItem.value);
-					}
-					if (oItem.emailSubject) {
-						aBindingParts.push(oItem.emailSubject);
-					}
-
-					vHref = BindingHelper.formattedProperty(aBindingParts, function (sValue, sEmailSubject) {
-							if (sEmailSubject) {
-								return "mailto:" + sValue + "?subject=" + sEmailSubject;
-							} else {
-								return "mailto:" + sValue;
-							}
-						});
-
-					oControl = new Link({
-						href: vHref,
-						text: vValue,
-						visible: BindingHelper.reuse(vVisible)
-					});
-					break;
-				case 'phone':
-					vHref = BindingHelper.formattedProperty(vValue, function (sValue) {
-						return "tel:" + sValue;
-					});
-					oControl = new Link({
-						href: vHref,
-						text: vValue,
-						visible: BindingHelper.reuse(vVisible)
-					});
-					break;
-				default:
-			}
-		}
-
-		if (vValue && !oControl) {
-			oControl = new Text({
-				text: vValue,
-				visible: BindingHelper.reuse(vVisible)
-			});
-		}
+		oControl = this._createItem(oItem, vVisible, oLabel);
 
 		if (oControl) {
-			oControl.addStyleClass("sapFCardObjectItemText");
+			oControl.addStyleClass("sapFCardObjectItemValue");
 		}
 
 		if (oItem.icon) {
@@ -365,6 +256,226 @@ sap.ui.define([
 		}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
 
 		return oAvatar;
+	};
+
+	ObjectContent.prototype._createItem = function (oItem, vVisible, oLabel) {
+		var oControl,
+			vValue = oItem.value,
+			vHref;
+
+		switch (oItem.type) {
+			case "NumericData":
+				oControl = this._createNumericDataItem(oItem);
+				break;
+			case "Status":
+				oControl = this._createStatusItem(oItem, vVisible);
+				break;
+
+			// deprecated types
+			case "link":
+				Log.warning("Usage of Object Group Item property 'type' with value 'link' is deprecated. Use Card Actions for navigation instead.", null, "sap.ui.integration.widgets.Card");
+				oControl = new Link({
+					href: oItem.url || vValue,
+					text: vValue,
+					target: oItem.target || '_blank',
+					visible: BindingHelper.reuse(vVisible)
+				});
+				break;
+			case "email":
+				Log.warning("Usage of Object Group Item property 'type' with value 'email' is deprecated. Use Card Actions for navigation instead.", null, "sap.ui.integration.widgets.Card");
+				var aBindingParts = [];
+				if (oItem.value) {
+					aBindingParts.push(oItem.value);
+				}
+				if (oItem.emailSubject) {
+					aBindingParts.push(oItem.emailSubject);
+				}
+
+				vHref = BindingHelper.formattedProperty(aBindingParts, function (sValue, sEmailSubject) {
+						if (sEmailSubject) {
+							return "mailto:" + sValue + "?subject=" + sEmailSubject;
+						} else {
+							return "mailto:" + sValue;
+						}
+					});
+
+				oControl = new Link({
+					href: vHref,
+					text: vValue,
+					visible: BindingHelper.reuse(vVisible)
+				});
+				break;
+			case "phone":
+				Log.warning("Usage of Object Group Item property 'type' with value 'phone' is deprecated. Use Card Actions for navigation instead.", null, "sap.ui.integration.widgets.Card");
+				vHref = BindingHelper.formattedProperty(vValue, function (sValue) {
+					return "tel:" + sValue;
+				});
+				oControl = new Link({
+					href: vHref,
+					text: vValue,
+					visible: BindingHelper.reuse(vVisible)
+				});
+				break;
+
+			default:
+				oControl = this._createTextItem(oItem, vVisible, oLabel);
+		}
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createNumericDataItem = function (oItem) {
+		var oVbox = new VBox();
+		var oNumericIndicators = new NumericIndicators({
+			number: oItem.mainIndicator.number,
+			numberSize: oItem.mainIndicator.size,
+			scale: oItem.mainIndicator.unit,
+			trend: oItem.mainIndicator.trend,
+			state: oItem.mainIndicator.state
+		}).addStyleClass("sapUiIntOCNumericIndicators");
+
+		oVbox.addItem(oNumericIndicators);
+
+		if (oItem.sideIndicators) {
+			oItem.sideIndicators.forEach(function (oIndicator) {
+				oNumericIndicators.addSideIndicator(
+					new NumericSideIndicator({
+						title: oIndicator.title,
+						number: oIndicator.number,
+						unit: oIndicator.unit,
+						state: oIndicator.state
+					})
+				);
+			});
+		}
+
+		if (oItem.details) {
+			oVbox.addItem(new Text({
+				text: oItem.details,
+				maxLines: 1
+			}).addStyleClass("sapUiIntOCNumericIndicatorsDetails"));
+		}
+
+		return oVbox;
+	};
+
+	ObjectContent.prototype._createStatusItem = function (oItem, vVisible) {
+		var oControl = new ObjectStatus({
+			text: oItem.value,
+			visible: BindingHelper.reuse(vVisible),
+			state: oItem.state
+		});
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createTextItem = function (oItem, vVisible, oLabel) {
+		var vValue = oItem.value,
+			oControl;
+
+		if (vValue && oItem.actions) {
+			oControl = new Link({
+				text: vValue,
+				visible: BindingHelper.reuse(vVisible)
+			});
+
+			if (oLabel) {
+				oControl.addAriaLabelledBy(oLabel);
+			} else {
+				Log.warning("Missing label for Object group item with actions.", null, "sap.ui.integration.widgets.Card");
+			}
+
+			this._oActions.attach({
+				area: ActionArea.ContentItemDetail,
+				actions: oItem.actions,
+				control: this,
+				actionControl: oControl,
+				enabledPropertyName: "enabled"
+			});
+		} else if (vValue) {
+			oControl = new Text({
+				text: vValue,
+				visible: BindingHelper.reuse(vVisible),
+				maxLines: oItem.maxLines
+			});
+		}
+
+		return oControl;
+	};
+
+	ObjectContent.prototype._createAFLayout = function () {
+		var oAlignedFlowLayout = new AlignedFlowLayout();
+
+		oAlignedFlowLayout.addEventDelegate({
+			"onAfterRendering": function() {
+				this.getContent().forEach(function(oElement){
+					if (!oElement.getVisible()) {
+						document.getElementById("sap-ui-invisible-" + oElement.getId()).parentElement.classList.add("sapFCardInvisibleContent");
+					}
+				});
+			}
+		}, oAlignedFlowLayout);
+
+		return oAlignedFlowLayout;
+	};
+
+	ObjectContent.prototype._onResize = function (oEvent) {
+		if (oEvent.size.width === oEvent.oldSize.width) {
+			return;
+		}
+
+		var aItems = this._getRootContainer().getItems();
+
+		aItems.forEach(function (oItem, i) {
+			if (oItem.isA("sap.ui.layout.AlignedFlowLayout")) {
+				this._onAlignedFlowLayoutResize(oItem, oEvent, i === aItems.length - 1);
+			}
+		}.bind(this));
+	};
+
+	ObjectContent.prototype._onAlignedFlowLayoutResize = function (oAFLayout, oEvent, bLast) {
+		var sMinItemWidth = oAFLayout.getMinItemWidth(),
+			iMinItemWidth,
+			iNumberOfGroups = oAFLayout.getContent().filter(function (oContent) {
+				return oContent.getVisible();
+			}).length;
+
+		// the CSS unit of the minItemWidth control property is in rem
+		if (sMinItemWidth.lastIndexOf("rem") !== -1) {
+			iMinItemWidth = Rem.toPx(sMinItemWidth);
+			// the CSS unit of the minItemWidth control property is in px
+		} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
+			iMinItemWidth = parseFloat(sMinItemWidth);
+		}
+
+		var iColumns = Math.floor(oEvent.size.width / iMinItemWidth);
+
+		// This check is to catch the case when the width of the card is bigger and
+		// can have more columns than groups
+		if (iColumns > iNumberOfGroups) {
+			iColumns = iNumberOfGroups;
+		}
+
+		var lastColIndex = iColumns - 1,
+			iRows = Math.ceil(iNumberOfGroups / iColumns);
+
+		oAFLayout.getContent().forEach(function (oItem, iIndex) {
+			// Add spacing on every group
+			oItem.addStyleClass("sapFCardObjectSpaceBetweenGroup");
+
+			// remove the class only when the group is last on its row
+			if (lastColIndex === iIndex && lastColIndex < iNumberOfGroups) {
+				oItem.removeStyleClass("sapFCardObjectSpaceBetweenGroup");
+				lastColIndex += iColumns;
+			}
+
+			// change bottom padding of the last item in each column
+			if (bLast && iIndex + 1 > (iRows - 1) * iColumns) {
+				oItem.addStyleClass("sapFCardObjectGroupLastInColumn");
+			} else {
+				oItem.removeStyleClass("sapFCardObjectGroupLastInColumn");
+			}
+		});
 	};
 
 	return ObjectContent;

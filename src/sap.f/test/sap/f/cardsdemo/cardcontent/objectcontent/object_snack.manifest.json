@@ -1,0 +1,169 @@
+
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.object.card",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"type": "Numeric",
+			"title": "Julia Neil",
+			"subTitle": "Complete your time recording",
+			"mainIndicator": {
+				"number": "35",
+				"unit": "h",
+				"state": "Error",
+				"trend": "Up"
+			},
+			"sideIndicators": [
+				{
+					"title": "Target",
+					"number": "100",
+					"unit": "K"
+				},
+				{
+					"title": "Deviation",
+					"number": "34.7",
+					"unit": "%"
+				}
+			],
+			"details": "Project Nanga Prabat (Ingo) 0 hours recorded."
+		},
+		"content": {
+			"groups": [
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"type": "NumericData",
+							"mainIndicator": {
+								"number": "35",
+								"unit": "h",
+								"state": "Error",
+								"trend": "Up"
+							},
+							"sideIndicators": [
+								{
+									"title": "Target",
+									"number": "100",
+									"unit": "K"
+								},
+								{
+									"title": "Deviation",
+									"number": "34.7",
+									"unit": "%"
+								}
+							],
+							"details": "Project Nanga Prabat (Ingo) 0 hours recorded."
+						}
+					]
+				},
+				{
+					"title": "Group",
+					"items": [
+						{
+							"label": "Project",
+							"value": "Nanga Prabat"
+						},
+						{
+							"label": "Work Package",
+							"value": "Base Camp"
+						},
+						{
+							"label": "Activity Type",
+							"value": "Junior Consultant"
+						},
+						{
+							"label": "Planned Effort",
+							"value": "35.00h"
+						}
+					]
+				},
+				{
+					"title": "Group",
+					"items": [
+						{
+							"label": "Recorded Hours",
+							"value": "0.00h"
+						},
+						{
+							"label": "maxLines - 2",
+							"value": "Establish the new central entry point experience with relevant content for the user to appear on the landing page and take actions accordingly.",
+							"maxLines": 2
+						},
+						{
+							"value": "Fact 1 - 1 lines, truncation with elipsis",
+							"maxLines": 3,
+							"type": "Status",
+							"state": "Success"
+						}
+					]
+				},
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Establish the new central entry point experience with relevant content for the user to appear on the landing page and take actions accordingly.",
+							"maxLines": 3,
+							"state": "Error",
+							"type": "Status"
+						}
+					]
+				},
+				{
+					"title": "Group",
+					"items": [
+						{
+							"label": "Project",
+							"value": "Nanga Prabat"
+						}
+					]
+				},
+				{
+					"title": "Group",
+					"items": [
+						{
+							"label": "Recorded Hours",
+							"value": "0.00h"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Join",
+					"buttonType": "Accept"
+				},
+				{
+					"text": "Decline",
+					"buttonType": "Reject"
+				}
+			]
+		}
+	}
+}

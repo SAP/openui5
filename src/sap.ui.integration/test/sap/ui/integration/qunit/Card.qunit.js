@@ -1588,9 +1588,9 @@ sap.ui.define([
 				assert.equal(oHeader.getAggregation("sideIndicators").length, 0, "Card header should have no Side indicators.");
 
 				assert.equal(document.getElementsByClassName("sapFCardHeaderDetails").length, 0, "Card header Details are not rendered.");
-				assert.equal(document.getElementsByClassName("sapFCardHeaderIndicators").length, 0, "Card header Indicators are not rendered.");
-				assert.equal(document.getElementsByClassName("sapFCardHeaderMainIndicator").length, 0, "Card header Main Indicator is not rendered.");
-				assert.equal(document.getElementsByClassName("sapFCardHeaderSideIndicators").length, 0, "Card header Side Indicator is not rendered.");
+				assert.equal(document.getElementsByClassName("sapFCardNumericIndicators").length, 0, "Card header Indicators are not rendered.");
+				assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsMain").length, 0, "Card header Main Indicator is not rendered.");
+				assert.equal(document.getElementsByClassName("sapFCardNumericIndicatorsSide").length, 0, "Card header Side Indicator is not rendered.");
 
 				done();
 			}.bind(this));
@@ -2186,7 +2186,7 @@ sap.ui.define([
 
 			this.oCard.attachEvent("_ready", function () {
 				var oContent = this.oCard.getAggregation("_content"),
-				oLayout = oContent.getAggregation("_content");
+				oLayout = oContent.getAggregation("_content").getItems()[0];
 
 				Core.applyChanges();
 

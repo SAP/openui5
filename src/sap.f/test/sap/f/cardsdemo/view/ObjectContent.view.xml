@@ -44,7 +44,11 @@
 				class="sapUiTinyMargin" />
 			<w:Card
 				id="card2"
-				manifest="./cardsdemo/cardcontent/objectcontent/staticData.json" 
+				manifest="./cardsdemo/cardcontent/objectcontent/staticData.json"
+				width="auto"
+				class="sapUiTinyMargin" />
+			<w:Card
+				manifest="./cardsdemo/cardcontent/objectcontent/object_snack.manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />
 		</Panel>
