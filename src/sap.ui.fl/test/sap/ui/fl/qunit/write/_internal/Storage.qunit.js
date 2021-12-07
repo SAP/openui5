@@ -985,14 +985,14 @@ sap.ui.define([
 			};
 
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
 			var aReturnedVersions = [];
-			sandbox.stub(JsObjectConnector.versions, "load").resolves(aReturnedVersions);
+			sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedVersions});
 
 			return Storage.versions.load(mPropertyBag).then(function (aVersions) {
-				assert.equal(aVersions, aReturnedVersions);
+				assert.deepEqual(aVersions, aReturnedVersions);
 			});
 		});
 
@@ -1002,6 +1002,10 @@ sap.ui.define([
 				reference: "reference",
 				layer: Layer.CUSTOMER
 			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"}
+			]);
 
 			return Storage.versions.load(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "versions.load is not implemented", "then the rejection message is passed");
@@ -1021,14 +1025,14 @@ sap.ui.define([
 			};
 
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
-			var oActivatedVersion = {};
-			sandbox.stub(JsObjectConnector.versions, "activate").resolves(oActivatedVersion);
+			var oActivatedVersion = {versionNumber: 1};
+			sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
 
 			return Storage.versions.activate(mPropertyBag).then(function (oReturnedActivatedVersion) {
-				assert.equal(oReturnedActivatedVersion, oActivatedVersion);
+				assert.deepEqual(oReturnedActivatedVersion, oActivatedVersion);
 			});
 		});
 
@@ -1038,6 +1042,10 @@ sap.ui.define([
 				reference: "reference",
 				layer: Layer.CUSTOMER
 			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"}
+			]);
 
 			return Storage.versions.activate(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "versions.activate is not implemented", "then the rejection message is passed");
@@ -1057,10 +1065,10 @@ sap.ui.define([
 			};
 
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
-			var oDiscardStub = sandbox.stub(JsObjectConnector.versions, "discardDraft").resolves();
+			var oDiscardStub = sandbox.stub(WriteKeyUserConnector.versions, "discardDraft").resolves();
 
 			return Storage.versions.discardDraft(mPropertyBag).then(function () {
 				assert.equal(oDiscardStub.callCount, 1, "the discarding of the connector was called");
@@ -1073,6 +1081,10 @@ sap.ui.define([
 				reference: "reference",
 				layer: Layer.CUSTOMER
 			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "JsObjectConnector"}
+			]);
 
 			return Storage.versions.discardDraft(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "versions.discardDraft is not implemented", "then the rejection message is passed");

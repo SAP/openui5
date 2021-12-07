@@ -379,7 +379,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("activate draft", function (assert) {
-			var sActivateVersion = sap.ui.fl.Versions.Draft.toString();
+			var sActivateVersion = sap.ui.fl.Versions.Draft;
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "com.sap.test.app",
@@ -443,7 +443,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("reactivate original app", function (assert) {
-			var sActivateVersion = sap.ui.fl.Versions.Original.toString();
+			var sActivateVersion = sap.ui.fl.Versions.Original;
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "com.sap.test.app",

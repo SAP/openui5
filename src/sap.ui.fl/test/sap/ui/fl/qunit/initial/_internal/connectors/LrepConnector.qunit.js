@@ -147,6 +147,24 @@ sap.ui.define([
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
 			}.bind(this));
 		});
+
+		QUnit.test("when loading flex data with version parameter", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", version: "versionGUID"}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=versionGUID&sap-language=en", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when loading flex data with version and all context parameter", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", allContexts: true, version: "0"}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&allContexts=true&sap-language=en", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("LrepConnector without fake server", {
