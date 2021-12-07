@@ -64,14 +64,6 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Whether the current operating system is BlackBerry
-		 * @type {boolean}
-		 * @public
-		 * @deprecated since 1.20 use {@link sap.ui.Device.os.blackberry} instead
-		 * @name jQuery.os.blackberry
-		 */
-
-		/**
 		 * Whether the current operating system is Apple iOS
 		 * @type {boolean}
 		 * @public

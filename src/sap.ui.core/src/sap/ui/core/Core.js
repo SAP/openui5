@@ -807,9 +807,6 @@ sap.ui.define([
 			case Device.os.OS.ANDROID:
 				osCSS = "sap-android";
 				break;
-			case Device.os.OS.BLACKBERRY:
-				osCSS = "sap-bb";
-				break;
 		}
 		if (osCSS) {
 			html.classList.add(osCSS);

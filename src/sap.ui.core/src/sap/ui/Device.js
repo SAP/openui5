@@ -246,13 +246,6 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
-	 * If this flag is set to <code>true</code>, a Blackberry operating system is used.
-	 *
-	 * @name sap.ui.Device.os.blackberry
-	 * @type boolean
-	 * @public
-	 */
-	/**
 	 * Windows operating system name.
 	 *
 	 * @see sap.ui.Device.os.name
@@ -287,21 +280,13 @@ if (typeof window.sap.ui !== "object") {
 	 * @name sap.ui.Device.os.OS.ANDROID
 	 * @public
 	 */
-	/**
-	 * Blackberry operating system name.
-	 *
-	 * @see sap.ui.Device.os.name
-	 * @name sap.ui.Device.os.OS.BLACKBERRY
-	 * @public
-	 */
 
 	var OS = {
 		"WINDOWS": "win",
 		"MACINTOSH": "mac",
 		"LINUX": "linux",
 		"IOS": "iOS",
-		"ANDROID": "Android",
-		"BLACKBERRY": "bb"
+		"ANDROID": "Android"
 	};
 
 	function getOS() { // may return null!!
@@ -352,29 +337,10 @@ if (typeof window.sap.ui !== "object") {
 			return null;
 		}
 
-		// BlackBerry 10:
-		if (userAgent.indexOf("(BB10;") > 0) {
-			rPlatform = /\sVersion\/([\d.]+)\s/;
-			aMatches = userAgent.match(rPlatform);
-			if (aMatches) {
-				return {
-					"name": OS.BLACKBERRY,
-					"versionStr": aMatches[1]
-				};
-			} else {
-				return {
-					"name": OS.BLACKBERRY,
-					"versionStr": '10'
-				};
-			}
-		}
-
-		// iOS, Android, BlackBerry 6.0+:
 		rPlatform = /\(([a-zA-Z ]+);\s(?:[U]?[;]?)([\D]+)((?:[\d._]*))(?:.*[\)][^\d]*)([\d.]*)\s/;
 		aMatches = userAgent.match(rPlatform);
 		if (aMatches) {
 			var rAppleDevices = /iPhone|iPad|iPod/;
-			var rBbDevices = /PlayBook|BlackBerry/;
 			if (aMatches[0].match(rAppleDevices)) {
 				aMatches[3] = aMatches[3].replace(/_/g, ".");
 				//result[1] contains info of devices
@@ -387,11 +353,6 @@ if (typeof window.sap.ui !== "object") {
 				return ({
 					"name": OS.ANDROID,
 					"versionStr": aMatches[3]
-				});
-			} else if (aMatches[0].match(rBbDevices)) {
-				return ({
-					"name": OS.BLACKBERRY,
-					"versionStr": aMatches[4]
 				});
 			}
 		}
