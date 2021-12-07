@@ -366,6 +366,330 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(beforeMs, oDate.getTime(), "date instance should not be modified, after DateFormat#format call");
 		});
 
+		QUnit.module("DateFormat relative date (1st jan 2021)", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-01-01T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("format relative to Jan 1st", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+
+			[{
+				inputDate: "2021-01-29T09:59:00Z", // jan 29th
+				outputRelative: "in 4 weeks"
+			}, {
+				inputDate: "2021-01-30T09:59:00Z", // jan 30th
+				outputRelative: "in 4 weeks"
+			}, {
+				inputDate: "2021-01-31T09:59:00Z", // jan 31th
+				outputRelative: "this month"
+			}, {
+				inputDate: "2021-02-01T09:59:00Z", // feb 1st
+				outputRelative: "in 1 month"
+			}].forEach(function (oFixture) {
+				var oDate = new Date(oFixture.inputDate);
+				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
+			});
+		});
+
+		QUnit.module("DateFormat relative date (jan 14th 2021)", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-01-14T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("format relative date to jan 14th", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+
+			[{
+				inputDate: "2021-01-29T09:59:00Z", // jan 14th - jan 29th
+				outputRelative: "in 2 weeks"
+			}, {
+				inputDate: "2021-01-30T09:59:00Z", // jan 14th - jan 30th
+				outputRelative: "in 2 weeks"
+			}, {
+				inputDate: "2021-01-31T09:59:00Z", // jan 14th - jan 31th
+				outputRelative: "in 3 weeks"
+			}, {
+				inputDate: "2021-02-01T09:59:00Z", // jan 14th - feb 1st
+				outputRelative: "in 3 weeks"
+			}, {
+				inputDate: "2021-02-12T09:59:00Z", // jan 14th - feb 12th
+				outputRelative: "in 4 weeks"
+			}, {
+				inputDate: "2021-02-13T09:59:00Z", // jan 14th - feb 13th
+				outputRelative: "in 4 weeks"
+			}, {
+				inputDate: "2021-02-14T09:59:00Z", // jan 14th - feb 14th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-02-15T09:59:00Z", // jan 14th - feb 15th
+				outputRelative: "in 1 month"
+			}].forEach(function (oFixture) {
+				var oDate = new Date(oFixture.inputDate);
+				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
+			});
+		});
+
+		QUnit.module("DateFormat relative date (feb 1st 2021)", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-02-01T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("format relative date to feb 1st", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+
+			[{
+				inputDate: "2021-02-28T09:59:00Z", // feb 1st - feb 28th
+				outputRelative: "in 4 weeks"
+			}, {
+				inputDate: "2021-03-01T09:59:00Z", // feb 1st - mar 1st
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-02T09:59:00Z", // feb 1st - mar 2nd
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-03T09:59:00Z", // feb 1st - mar 3rd
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-04T09:59:00Z", // feb 1st - mar 4th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-05T09:59:00Z", // feb 1st - mar 5th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-06T09:59:00Z", // feb 1st - mar 6th
+				outputRelative: "in 1 month"
+			}].forEach(function (oFixture) {
+				var oDate = new Date(oFixture.inputDate);
+				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
+			});
+		});
+
+		QUnit.module("DateFormat relative date (feb 14th 2021)", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-02-14T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("format relative date to feb 14th", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+
+			[{
+				inputDate: "2021-01-13T09:59:00Z", // feb 14th - jan 13th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-01-14T09:59:00Z", // feb 14th - jan 14th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-01-15T09:59:00Z", // feb 14th - jan 15th
+				outputRelative: "5 weeks ago"
+			}, {
+				inputDate: "2021-01-16T09:59:00Z", // feb 14th - jan 16th
+				outputRelative: "5 weeks ago"
+			}, {
+				inputDate: "2021-01-17T09:59:00Z", // feb 14th - jan 17th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-01-18T09:59:00Z", // feb 14th - jan 18th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-01-19T09:59:00Z", // feb 14th - jan 19th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-02-28T09:59:00Z", // feb 14th - feb 28th
+				outputRelative: "in 2 weeks"
+			}, {
+				inputDate: "2021-03-01T09:59:00Z", // feb 14th - mar 1st
+				outputRelative: "in 2 weeks"
+			}, {
+				inputDate: "2021-03-13T09:59:00Z", // feb 14th - mar 13th
+				outputRelative: "in 3 weeks"
+			}, {
+				inputDate: "2021-03-14T09:59:00Z", // feb 14th - mar 14th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-15T09:59:00Z", // feb 14th - mar 15th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-16T09:59:00Z", // feb 14th - mar 16th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-17T09:59:00Z", // feb 14th - mar 17th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-18T09:59:00Z", // feb 14th - mar 18th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-03-19T09:59:00Z", // feb 14th - mar 19th
+				outputRelative: "in 1 month"
+			}].forEach(function (oFixture) {
+				var oDate = new Date(oFixture.inputDate);
+				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
+			});
+		});
+
+		QUnit.module("DateFormat relative date (mar 1st 2021)", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-03-01T09:59:00Z").getTime()); // Mon Mar 01 2021 10:59:00 GMT+0100
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("format relative date to mar 1st", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+
+			[{
+				inputDate: "2021-01-28T09:59:00Z", // mar 1st - jan 28th
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-29T09:59:00Z", // mar 1st - jan 29th
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-30T09:59:00Z", // mar 1st - jan 30th
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-31T09:59:00Z", // mar 1st - jan 31st
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-02-01T09:59:00Z", // mar 1st - feb 1st
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-13T09:59:00Z", // mar 1st - feb 13th
+				outputRelative: "3 weeks ago"
+			}, {
+				inputDate: "2021-02-14T09:59:00Z", // mar 1st - feb 14th
+				outputRelative: "2 weeks ago"
+			}, {
+				inputDate: "2021-02-15T09:59:00Z", // mar 1st - feb 15th
+				outputRelative: "2 weeks ago"
+			}].forEach(function (oFixture) {
+				var oDate = new Date(oFixture.inputDate);
+				assert.equal( oDateFormat.format(oDate), oFixture.outputRelative, "relative date: " + oDate);
+			});
+		});
+
+		QUnit.module("DateFormat relative date (mar 14th 2021)", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2021-03-14T09:59:00Z").getTime());
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("format relative date to mar 14th", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				relative: true,
+				relativeScale: "auto"
+			});
+
+			[{
+				inputDate: "2021-01-01T09:59:00Z", // mar 14th - jan 1st
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-12T09:59:00Z", // mar 14th - jan 12th
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-13T09:59:00Z", // mar 14th - jan 13th
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-14T09:59:00Z", // mar 14th - jan 14th
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-01-31T09:59:00Z", // mar 14th - jan 31st
+				outputRelative: "2 months ago"
+			}, {
+				inputDate: "2021-02-01T09:59:00Z", // mar 14th - feb 1st
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-08T09:59:00Z", // mar 14th - feb 8th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-09T09:59:00Z", // mar 14th - feb 9th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-10T09:59:00Z", // mar 14th - feb 10th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-11T09:59:00Z", // mar 14th - feb 11th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-12T09:59:00Z", // mar 14th - feb 12th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-13T09:59:00Z", // mar 14th - feb 13th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-14T09:59:00Z", // mar 14th - feb 14th
+				outputRelative: "1 month ago"
+			}, {
+				inputDate: "2021-02-15T09:59:00Z", // mar 14th - feb 15th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-02-16T09:59:00Z", // mar 14th - feb 16th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-02-17T09:59:00Z", // mar 14th - feb 17th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-02-18T09:59:00Z", // mar 14th - feb 18th
+				outputRelative: "4 weeks ago"
+			}, {
+				inputDate: "2021-04-13T09:59:00Z", // mar 14th - apr 13th
+				outputRelative: "in 4 weeks"
+			}, {
+				inputDate: "2021-04-14T09:59:00Z", // mar 14th - apr 14th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-04-15T09:59:00Z", // mar 14th - apr 15th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-04-16T09:59:00Z", // mar 14th - apr 16th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-04-30T09:59:00Z", // mar 14th - apr 30th
+				outputRelative: "in 1 month"
+			}, {
+				inputDate: "2021-05-01T09:59:00Z", // mar 14th - may 1st
+				outputRelative: "in 2 months"
+			}].forEach(function (oFixture) {
+				var oDate = new Date(oFixture.inputDate);
+				assert.equal(oFixture.outputRelative, oDateFormat.format(oDate), "relative date: " + oDate);
+			});
+		});
+
 		QUnit.module("DateFormat#parse (anno 1978)", {
 			beforeEach: function () {
 				// 2 digit years require the current year to be fixed
