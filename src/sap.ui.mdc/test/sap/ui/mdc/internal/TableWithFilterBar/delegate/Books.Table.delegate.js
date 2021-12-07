@@ -55,6 +55,15 @@ sap.ui.define([
 			addItem: function(sPropertyName, oTable) {
 				return BooksFBDelegate.addItem(sPropertyName, oTable)
 				.then(function(oFilterField) {
+
+					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
+
+					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
+					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
+
+					oFilterField.setDataTypeConstraints(oConstraints);
+					oFilterField.setDataTypeFormatOptions(oFormatOptions);
+
 					if (sPropertyName === "classification_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHClassification"));
 						oFilterField.setDisplay(FieldDisplay.Description);
