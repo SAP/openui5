@@ -203,6 +203,17 @@ sap.ui.define([
 			) {
 				var aFileNames = [];
 
+				Object.keys(window.localStorage).map(function(sKey) {
+					if (sKey.startsWith("sap.ui.fl")) {
+						var oChange = JSON.parse(window.localStorage.getItem(sKey));
+						if (
+							oChange.projectId === "sap.ui.rta.test"
+						) {
+							aFileNames.push(oChange.fileName);
+						}
+					}
+				});
+
 				Stack.initializeWithChanges(oCore.byId("Comp1---idMain1"), aFileNames).then(function(oStack) {
 					//expose undo/redo test function to console
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
