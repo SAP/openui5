@@ -40,7 +40,7 @@
 			"body": [
 				{
 					"type": "TextBlock",
-					"text": "{description}",
+					"text": "${description}",
 					"wrap": true
 				},
 				{
@@ -48,19 +48,19 @@
 					"facts": [
 						{
 							"title": "First Name:",
-							"value": "{firstName}"
+							"value": "${firstName}"
 						},
 						{
 							"title": "Last Name:",
-							"value": "{lastName}"
+							"value": "${lastName}"
 						},
 						{
 							"title": "Company:",
-							"value": "{company.name}"
+							"value": "${company.name}"
 						},
 						{
 							"title": "Address:",
-							"value": "{company.address}"
+							"value": "${company.address}"
 						}
 					]
 				}

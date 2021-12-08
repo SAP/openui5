@@ -464,12 +464,11 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._setTemplating = function (oTemplate, oData) {
-			var oCardTemplate = new ACData.Template(oTemplate),
-				oContext = new ACData.EvaluationContext();
+			var oCardTemplate = new ACData.Template(oTemplate);
 
-			oContext.$root = oData;
-
-			return oCardTemplate.expand(oContext);
+			return oCardTemplate.expand({
+				$root: oData
+			});
 		};
 
 		/**

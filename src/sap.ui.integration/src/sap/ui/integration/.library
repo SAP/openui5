@@ -69,10 +69,15 @@
             <pattern>sap/ui/integration/thirdparty/adaptivecards.js</pattern>
             <pattern>sap/ui/integration/schemas/adaptive-card.json</pattern>
         </lib>
-        <lib name="adaptive-cards-templating" displayName="Adaptive Cards Templating" version="0.1.1-alpha.0" homepage="https://adaptivecards.io/">
+        <lib name="adaptive-cards-templating" displayName="Adaptive Cards Templating" version="2.2.0" homepage="https://adaptivecards.io/">
             <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
             <copyright>2017 Microsoft</copyright>
             <pattern>sap/ui/integration/thirdparty/adaptivecards-templating.js</pattern>
+        </lib>
+        <lib name="adaptive-expressions" displayName="Adaptive Expressions" version="4.15.0" homepage="https://www.npmjs.com/package/adaptive-expressions">
+            <license url="https://github.com/microsoft/botbuilder-js/blob/main/LICENSE" type="MIT"></license>
+            <copyright>Microsoft</copyright>
+            <pattern>sap/ui/integration/thirdparty/adaptive-expressions.js</pattern>
         </lib>
         <lib name="markdown-it" displayName="Markdown-it" version="10.0.0" homepage="https://github.com/markdown-it/markdown-it">
             <license url="https://github.com/markdown-it/markdown-it/blob/master/LICENSE" type="MIT"></license>
