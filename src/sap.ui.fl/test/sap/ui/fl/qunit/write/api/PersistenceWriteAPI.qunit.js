@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/registry/Settings"
 ], function(
 	_omit,
 	JsControlTreeModifier,
@@ -37,7 +38,8 @@ sap.ui.define([
 	Utils,
 	jQuery,
 	sinon,
-	Log
+	Log,
+	Settings
 ) {
 	"use strict";
 
@@ -740,6 +742,53 @@ sap.ui.define([
 				assert.equal(oCondenserStub.callCount, 0, "the condenser was not called");
 				assert.equal(oError.message, "Invalid array of changes");
 			});
+		});
+
+		QUnit.test("when getChangesWarning is called without mixed changes", function (assert) {
+			var aChanges = [
+				new Change({})
+			];
+			var mPropertyBag = {};
+
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
+
+			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
+				.then(function (oMessage) {
+					assert.notOk(oMessage.showWarning, "then no Warning should not be shown");
+				});
+		});
+
+		QUnit.test("when getChangesWarning is called in a P System with no changes", function (assert) {
+			var aChanges = [];
+			var mPropertyBag = {};
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystem: function() {return true;}});
+			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
+				.then(function (oMessage) {
+					assert.ok(oMessage.showWarning, "then the warning is shown");
+					assert.strictEqual(oMessage.warningType, "noChangesAndPSystemWarning", "then the no changes and p system warning type is returned");
+				});
+		});
+
+		QUnit.test("when getChangesWarning is called with changes from other system", function (assert) {
+			var aChanges = [
+				new Change({sourceSystem: "qSystem", sourceClient: "test"}),
+				new Change({}),
+				new Change({})
+			];
+			var mPropertyBag = {};
+
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isProductiveSystem: function() {return true;},
+				getSystem: function() {return "pSystem";},
+				getClient: function() {return "bar";}
+			});
+			return	PersistenceWriteAPI.getChangesWarning(mPropertyBag)
+				.then(function (oMessage) {
+					assert.ok(oMessage.showWarning, "then the warning is shown");
+					assert.strictEqual(oMessage.warningType, "mixedChangesWarning", "then the show mixed change warning type is returned");
+				});
 		});
 	});
 });

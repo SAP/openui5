@@ -165,7 +165,8 @@ sap.ui.define([
 		loadFeatures: function() {
 			return Promise.resolve({
 				isKeyUser: true,
-				isVariantSharingEnabled: true
+				isVariantSharingEnabled: true,
+				isProductiveSystem: false
 			});
 		},
 

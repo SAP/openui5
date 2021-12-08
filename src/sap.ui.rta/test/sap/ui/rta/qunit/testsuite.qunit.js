@@ -702,6 +702,11 @@ sap.ui.define([
 						}
 					}
 				},
+				"util/adaptationStarter": {
+					coverage: {
+						only: ["sap/ui/rta/util/adaptationStarter"]
+					}
+				},
 				"util/BindingsExtractor": {
 					coverage: {
 						only: ["sap/ui/rta/util/BindingsExtractor"]

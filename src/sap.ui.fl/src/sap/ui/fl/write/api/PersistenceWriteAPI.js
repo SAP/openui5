@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/registry/Settings"
 ], function(
 	includes,
 	_omit,
@@ -29,7 +30,8 @@ sap.ui.define([
 	ManifestUtils,
 	FeaturesAPI,
 	Layer,
-	LayerUtils
+	LayerUtils,
+	Settings
 ) {
 	"use strict";
 
@@ -284,6 +286,41 @@ sap.ui.define([
 				oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
 				return undefined;
 			});
+	};
+
+	/**
+	 * Decides which warning should be shown if changes were made
+	 * in a different system or in a P system with no changes at all.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
+	 * @param {string} [mPropertyBag.layer] - Layer for which changes are to be deleted
+	 * @param {string} [mPropertyBag.generator] - Generator of changes
+	 * @param {string[]} [mPropertyBag.selectorIds] - Selector IDs in local format
+	 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
+	 * @returns {Promise} Resolves with object that decides if warning should be shown
+	 *
+	 */
+	 PersistenceWriteAPI.getChangesWarning = function (mPropertyBag) {
+		return this._getUIChanges(mPropertyBag).then(function (aChanges) {
+			var bHasChangesFromOtherSystem = aChanges.some(function (oChange) {
+				return oChange.isChangeFromOtherSystem();
+			});
+
+			var oSettingsInstance = Settings.getInstanceOrUndef();
+			var bIsProdSystem = oSettingsInstance && oSettingsInstance.isProductiveSystem();
+			var bHasNoChanges = aChanges.length === 0;
+			var oChangesWarning = {showWarning: false};
+
+			if (bHasChangesFromOtherSystem) {
+				oChangesWarning = {showWarning: true, warningType: "mixedChangesWarning"};
+			}
+
+			if (bIsProdSystem && bHasNoChanges) {
+				oChangesWarning = {showWarning: true, warningType: "noChangesAndPSystemWarning"};
+			}
+			return oChangesWarning;
+		});
 	};
 
 	/**
