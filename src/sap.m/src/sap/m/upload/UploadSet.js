@@ -695,6 +695,7 @@ sap.ui.define([
 	/**
 	 * Attaches all necessary handlers to the given uploader instance, so that the progress and status of the upload can be
 	 * displayed and monitored.
+	 * This is necessary in case when custom uploader is used.
 	 * @param {sap.m.upload.Uploader} oUploader Instance of <code>sap.m.upload.Uploader</code> to which the default request handlers are attached.
 	 * @public
 	 */
