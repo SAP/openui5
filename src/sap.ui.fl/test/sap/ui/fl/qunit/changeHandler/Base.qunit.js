@@ -157,7 +157,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("When applying the change on a xml control tree with viewId and without prefix", function(assert) {
-			this.oChange.setProjectId(undefined);
+			this.oChange._oDefinition.projectId = undefined;
 			this.oChange.setModuleName(this.sFragmentMultiplePath);
 			this.mPropertyBag.viewId = undefined;
 			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
@@ -167,7 +167,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with viewId and without projectId & fragmentId available as prefix", function(assert) {
-			this.oChange.setProjectId(undefined);
+			this.oChange._oDefinition.projectId = undefined;
 			this.oChange.setModuleName(this.sFragmentMultiplePath);
 			return Base.instantiateFragment(this.oChange, this.mPropertyBag)
 				.then(function () {
@@ -176,7 +176,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When applying the change on a xml control tree with viewId & fragmentId and without projectId available as prefix", function(assert) {
-			this.oChange.setProjectId(undefined);
+			this.oChange._oDefinition.projectId = undefined;
 			this.oChange.setModuleName(this.sFragmentMultiplePath);
 			this.oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
 			return Base.instantiateFragment(this.oChange, this.mPropertyBag)

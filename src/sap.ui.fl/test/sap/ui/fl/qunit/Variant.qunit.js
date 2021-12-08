@@ -138,17 +138,6 @@ sap.ui.define([
 			assert.equal(this.oVariant.getState(), Variant.states.DIRTY);
 		});
 
-		QUnit.test("when _isReadOnlyDueToLayer is called for different layer", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
-			assert.equal(this.oVariant._isReadOnlyDueToLayer(), true);
-		});
-
-		QUnit.test("when _isReadOnlyDueToLayer is called for same layer", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
-			this.oVariant = new Variant(this.oVariantDef);
-			assert.equal(this.oVariant._isReadOnlyDueToLayer(), false);
-		});
-
 		QUnit.test("when markForDeletion is called", function(assert) {
 			this.oVariant.markForDeletion();
 			assert.equal(this.oVariant.getState(), Variant.states.DELETED);
@@ -173,10 +162,6 @@ sap.ui.define([
 			assert.equal(this.oVariant.getComponent(), "sap.ui.rta.test.Demo.md.Component");
 			this.oVariant.setComponent("AppVariantId");
 			assert.equal(this.oVariant.getComponent(), "AppVariantId", "the component has been changed");
-		});
-
-		QUnit.test("when isUserDependent is called", function(assert) {
-			assert.ok(!this.oVariant.isUserDependent());
 		});
 
 		QUnit.test("when getState is called", function(assert) {
@@ -286,12 +271,6 @@ sap.ui.define([
 			assert.deepEqual(oVariantFileContent, oExpectedInfo, "then correct initial file content set with generator");
 		});
 
-		QUnit.test("when _isReadOnlyDueToOriginalLanguage ", function(assert) {
-			sandbox.stub(Utils, "getCurrentLanguage").returns("EN");
-			var bIsReadOnly = this.oVariant._isReadOnlyDueToOriginalLanguage();
-			assert.strictEqual(bIsReadOnly, false, "then original language compared with the current language");
-		});
-
 		QUnit.test("when setResponse is called", function(assert) {
 			var sampleResponse = {
 				content: {
@@ -325,59 +304,6 @@ sap.ui.define([
 
 			assert.deepEqual(this.oVariant._oDefinition.content, sampleResponse.content, "then response set correctly");
 			assert.equal(this.oVariant.getState(), Variant.states.PERSISTED);
-		});
-
-		QUnit.test("when _isReadOnlyDueToOriginalLanguage is called when original language is not set", function(assert) {
-			this.oVariantDef.content.originalLanguage = "";
-
-			var bIsReadOnly = this.oVariant._isReadOnlyDueToOriginalLanguage();
-
-			assert.strictEqual(bIsReadOnly, false, "then not read only returned");
-		});
-
-		QUnit.test("when isReadOnly is called", function(assert) {
-			//false false
-			this.oVariant._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			this.oVariant._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			assert.strictEqual(this.oVariant.isReadOnly(), false);
-
-			//true false
-			this.oVariant._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			this.oVariant._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			assert.strictEqual(this.oVariant.isReadOnly(), true);
-
-			//false true
-			this.oVariant._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			this.oVariant._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			assert.strictEqual(this.oVariant.isReadOnly(), true);
-
-			//true true
-			this.oVariant._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			this.oVariant._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			assert.strictEqual(this.oVariant.isReadOnly(), true);
-		});
-
-		QUnit.test("when _isReadOnlyWhenNotKeyUser is called", function(assert) {
-			var oGetInstanceOrUndefStub = sandbox.stub(Settings, "getInstanceOrUndef");
-			oGetInstanceOrUndefStub.returns(new Settings({isKeyUser: false}));
-			assert.strictEqual(this.oVariant._isReadOnlyWhenNotKeyUser(), true, "then true is returned when not a key user");
-
-			oGetInstanceOrUndefStub.returns(new Settings({isKeyUser: true}));
-			assert.strictEqual(this.oVariant._isReadOnlyWhenNotKeyUser(), false, "then false is returned when a key user");
-		});
-
-		QUnit.test("when _isReadOnlyWhenNotKeyUser for user dependent cases", function(assert) {
-			var oIsUserDependentStub = sandbox.stub(this.oVariant, 'isUserDependent').returns(false);
-
-			var oGetInstanceOrUndefStub = sandbox.stub(Settings, "getInstanceOrUndef");
-
-			oIsUserDependentStub.returns(true);
-			oGetInstanceOrUndefStub.returns(new Settings({isKeyUser: true}));
-			assert.strictEqual(this.oVariant._isReadOnlyWhenNotKeyUser(), false, "then false returned when key user and user dependent");
-
-			oIsUserDependentStub.returns(false);
-			oGetInstanceOrUndefStub.returns(new Settings({isKeyUser: false}));
-			assert.strictEqual(this.oVariant._isReadOnlyWhenNotKeyUser(), true, "then true returned when not key user and user is not determined");
 		});
 	});
 

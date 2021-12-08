@@ -279,37 +279,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if the change is valid
-	 * @returns {boolean} <code>true</code> if the change is valid (all mandatory fields are filled, etc.)
-	 *
-	 * @public
-	 */
-	Change.prototype.isValid = function () {
-		var bIsValid = true;
-
-		if (typeof (this._oDefinition) !== "object") {
-			bIsValid = false;
-		}
-		if (!this._oDefinition.fileType) {
-			bIsValid = false;
-		}
-		if (!this._oDefinition.fileName) {
-			bIsValid = false;
-		}
-		if (!this._oDefinition.changeType) {
-			bIsValid = false;
-		}
-		if (!this._oDefinition.layer) {
-			bIsValid = false;
-		}
-		if (!this._oDefinition.originalLanguage) {
-			bIsValid = false;
-		}
-
-		return bIsValid;
-	};
-
-	/**
 	 * Returns if the type of the change is <code>variant</code>.
 	 * @returns {boolean} <code>true</code> if the <code>fileType</code> of the change file is a variant
 	 *
@@ -350,23 +319,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getFileType = function () {
-		if (this._oDefinition) {
-			return this._oDefinition.fileType;
-		}
-	};
-
-	/**
-	 * Returns the original language in ISO 639-1 format.
-	 *
-	 * @returns {String} Original language
-	 *
-	 * @public
-	 */
-	Change.prototype.getOriginalLanguage = function () {
-		if (this._oDefinition && this._oDefinition.originalLanguage) {
-			return this._oDefinition.originalLanguage;
-		}
-		return "";
+		return this._oDefinition.fileType;
 	};
 
 	/**
@@ -449,17 +402,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the project ID.
-	 *
-	 * @param {string} sProjectId - Project ID of the change file
-	 *
-	 * @public
-	 */
-	Change.prototype.setProjectId = function (sProjectId) {
-		this._oDefinition.projectId = sProjectId;
-	};
-
-	/**
 	 * Returns the ID of the change.
 	 * @returns {string} ID of the change file
 	 *
@@ -528,38 +470,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the source system of the change.
-	 *
-	 * @returns {String} Source system of the change file
-	 *
-	 * @public
-	 */
-	Change.prototype.getSourceSystem = function () {
-		return this._oDefinition.sourceSystem;
-	};
-
-	/**
-	 * Returns the source client of the change.
-	 *
-	 * @returns {String} Source client of the change file
-	 *
-	 * @public
-	 */
-	Change.prototype.getSourceClient = function () {
-		return this._oDefinition.sourceClient;
-	};
-
-	/**
-	 * Returns the user ID of the owner.
-	 * @returns {string} ID of the owner
-	 *
-	 * @public
-	 */
-	Change.prototype.getOwnerId = function () {
-		return this._oDefinition.support ? this._oDefinition.support.user : "";
-	};
-
-	/**
 	 * Returns the text in the current language for a given ID.
 	 *
 	 * @param {string} sTextId - Text ID which was used as part of the <code>oTexts</code> object
@@ -612,70 +522,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the current layer is the same as the layer in which the change was created, or if the change is from the end-user layer and was created for this user.
-	 * @returns {boolean} <code>true</code> if the change file is read only
-	 *
-	 * @deprecated
-	 * @public
-	 */
-	Change.prototype.isReadOnly = function () {
-		return this._isReadOnlyDueToLayer() || this._isReadOnlyWhenNotKeyUser() || this.isChangeFromOtherSystem();
-	};
-
-	/**
-	 * Checks if the change is read only, because the current user is not a key user and the change is "shared".
-	 * @returns {boolean} <code>true</code> if the change is read only
-	 *
-	 * @deprecated
-	 * @private
-	 */
-	Change.prototype._isReadOnlyWhenNotKeyUser = function () {
-		if (this.isUserDependent()) {
-			return false; // the user always can edit its own changes
-		}
-
-		var sReference = this.getDefinition().reference;
-		if (!sReference) {
-			return true; // without a reference the right to edit or delete a change cannot be determined
-		}
-
-		var oSettings = Settings.getInstanceOrUndef();
-		if (!oSettings) {
-			return true; // without settings the right to edit or delete a change cannot be determined
-		}
-		// a key user can edit changes
-		return !oSettings.isKeyUser();
-	};
-
-	/**
-	 * Returns <code>true</code> if the label is read only. The label might be read only because of the current layer or because the logon language differs from the original language of the change file.
-	 *
-	 * @returns {boolean} <code>true</code> if the label is read only
-	 *
-	 * @deprecated
-	 * @public
-	 */
-	Change.prototype.isLabelReadOnly = function () {
-		if (this._isReadOnlyDueToLayer()) {
-			return true;
-		}
-		return this._isReadOnlyDueToOriginalLanguage();
-	};
-
-	/**
-	 * Checks if the layer allows modifying the file.
-	 * @returns {boolean} <code>true</code> if the change is read only
-	 *
-	 * @deprecated
-	 * @private
-	 */
-	Change.prototype._isReadOnlyDueToLayer = function () {
-		var sCurrentLayer;
-		sCurrentLayer = this._bUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
-		return (this._oDefinition.layer !== sCurrentLayer);
-	};
-
-	/**
 	 * Checks if change is read only because of its source system.
 	 * @returns {boolean} <code>true</code> if the change is from another system
 	 *
@@ -683,8 +529,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.isChangeFromOtherSystem = function () {
-		var sSourceSystem = this.getSourceSystem();
-		var sSourceClient = this.getSourceClient();
+		var sSourceSystem = this._oDefinition.sourceSystem;
+		var sSourceClient = this._oDefinition.sourceClient;
 		if (!sSourceSystem || !sSourceClient) {
 			return false;
 		}
@@ -700,28 +546,6 @@ sap.ui.define([
 		return (sSourceSystem !== sSystem || sSourceClient !== sClient);
 	};
 
-	/**
-	 * A change can only be modified if the current language equals the original language.
-	 * Returns <code>false</code> if the current language does not equal the original language of the change file.
-	 * Returns <code>false</code> if the original language is initial.
-	 *
-	 * @deprecated
-	 * @returns {boolean} <code>true</code> if the current logon language equals the original language of the change file
-	 *
-	 * @private
-	 */
-	Change.prototype._isReadOnlyDueToOriginalLanguage = function () {
-		var sCurrentLanguage;
-		var sOriginalLanguage;
-
-		sOriginalLanguage = this.getOriginalLanguage();
-		if (!sOriginalLanguage) {
-			return false;
-		}
-
-		sCurrentLanguage = Utils.getCurrentLanguage();
-		return (sCurrentLanguage !== sOriginalLanguage);
-	};
 
 	/**
 	 * Marks the current change to be deleted persistently.
@@ -837,15 +661,6 @@ sap.ui.define([
 			this._oDefinition = JSON.parse(sResponse);
 			this.setState(Change.states.PERSISTED);
 		}
-	};
-
-	Change.prototype.getFullFileIdentifier = function () {
-		var sLayer = this.getLayer();
-		var sNamespace = this.getNamespace();
-		var sFileName = this.getDefinition().fileName;
-		var sFileType = this.getDefinition().fileType;
-
-		return sLayer + "/" + sNamespace + "/" + sFileName + "." + sFileType;
 	};
 
 	/**
@@ -1143,7 +958,7 @@ sap.ui.define([
 			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, sFileType), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			projectId: oPropertyBag.projectId || (oPropertyBag.reference && oPropertyBag.reference.replace(".Component", "")) || "",
 			creation: "",
-			originalLanguage: Utils.getCurrentLanguage(),
+			originalLanguage: Utils.getCurrentLanguage() || "",
 			support: {
 				generator: oPropertyBag.generator || "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
