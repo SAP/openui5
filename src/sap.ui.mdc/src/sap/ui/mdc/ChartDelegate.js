@@ -378,6 +378,31 @@ sap.ui.define([
     ChartDelegate.setChartTooltipVisibility = function (bFlag) {
     };
 
+    /**
+     * This function returns an id which should be used in the internal chart for the measure/dimension
+     * In the standard case, this is just the id of the property.
+     * If it is necessary to use another id internally inside the chart (e.g. on duplicate property ids) this method can be overwritten.
+     * In this case, <code>getPropertyFromNameAndKind</code> needs to be overwritten aswell.
+     * @param {string} sName ID of the property
+     * @param {string} sKind Kind of the Property (Measure/Dimension)
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
+     * @returns {string} internal id for the sap.chart.Chart
+     */
+    ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function(sName, sKind, oMDCChart) {
+
+    };
+
+    /**
+     * This maps an id of an internal chart dimension/measure & kind of a property to its coresponding property entry.
+     * @param {string} sName the id of internal chart measure/dimension
+     * @param {string} sKind the kind of the property
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
+     * @returns {object} the property object
+     */
+    ChartDelegate.getPropertyFromNameAndKind = function(sName, sKind, oMDCChart) {
+
+    };
+
 
     /**
      * Initializes a new chart property helper for V4 analytics with the property extensions merged into the property infos.
