@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/Log"
 ], function(
 	FlexUtils,
 	AppVariantUtils,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Settings,
 	AppVariantFactory,
 	FeaturesAPI,
-	merge
+	merge,
+	Log
 ) {
 	"use strict";
 
@@ -146,9 +148,8 @@ sap.ui.define([
 			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
 				return oResult.response;
 			}).catch(function(oError) {
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_APP_VARIANT_FEATURE_FAILED", oError);
-				oErrorInfo.overviewDialog = true;
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
+				Log.error("Response status code is: " + oError.status, "Stacktrace: " + oError.stack);
+				return false;
 			});
 		},
 		/**

@@ -43,10 +43,9 @@ sap.ui.define([
 				if (xhr.status >= 200 && xhr.status < 400) {
 					resolve(xhr.response);
 				} else {
-					reject({
-						status: xhr.status,
-						message: xhr.statusText
-					});
+					var oError = new Error(xhr.statusText);
+					oError.status = xhr.status;
+					reject(oError);
 				}
 			};
 		});
