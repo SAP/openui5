@@ -46,7 +46,8 @@ sap.ui.define([
 					} else if (oProperty.name === "dateOfBirth") {
 						oProperty.fieldHelp = "fhAdob";
 					} else if (oProperty.name === "dateOfDeath") {
-						oProperty.fieldHelp = "fhAdod";
+						// oProperty.fieldHelp = "fhAdod";
+						oProperty.maxConditions = 1;
 					} else if (oProperty.name === "countryOfOrigin_code") {
 						oProperty.fieldHelp = "IOFFVHCountry";
 						oProperty.display = FieldDisplay.ValueDescription;
