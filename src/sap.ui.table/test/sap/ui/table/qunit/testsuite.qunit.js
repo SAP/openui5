@@ -72,7 +72,8 @@ sap.ui.define([
 				ui5: {
 					// Test has dependencies to sap.ui.unified and sap.m modules
 					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"],
-					rtl: true
+					rtl: true,
+					"xx-waitForTheme": "init"
 				}
 			},
 			"Table with ODataV2": {
@@ -186,7 +187,8 @@ sap.ui.define([
 				group: "Extensions",
 				module: "./extensions/{name}.qunit",
 				ui5: {
-					rtl: true
+					rtl: true,
+					"xx-waitForTheme": "init"
 				}
 			},
 			"ScrollingIOS": {
