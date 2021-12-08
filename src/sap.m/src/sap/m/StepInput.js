@@ -4,45 +4,34 @@
 
 // Provides control sap.m.StepInput.
 sap.ui.define([
-	"sap/ui/core/Icon",
-	"./Input",
-	"./InputBase",
-	"./InputRenderer",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
-	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/message/MessageMixin",
+	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/ValidateException",
 	"sap/ui/Device",
 	"sap/ui/core/library",
-	"sap/ui/core/Renderer",
 	"sap/m/library",
+	"./NumericInput",
 	"./StepInputRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log"
 ],
 function(
-	Icon,
-	Input,
-	InputBase,
-	InputRenderer,
 	Control,
 	IconPool,
-	LabelEnablement,
 	MessageMixin,
+	NumberFormat,
 	ValidateException,
 	Device,
 	coreLibrary,
-	Renderer,
 	library,
+	NumericInput,
 	StepInputRenderer,
 	KeyCodes,
 	Log
 ) {
 		"use strict";
-
-		// shortcut for sap.m.InputType
-		var InputType = library.InputType;
 
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
@@ -323,117 +312,6 @@ function(
 		 */
 		var aForwardableProps = ["enabled", "editable", "name", "placeholder", "required", "valueStateText", "description", "fieldWidth", "textAlign"];
 
-
-		/****************************************** NUMERIC INPUT CONTROL ****************************************************/
-
-		var NumericInputRenderer = Renderer.extend(InputRenderer);
-
-		NumericInputRenderer.apiVersion = 2;
-
-		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
-			var oStepInput = oControl.getParent(),
-				mAccAttributes = this.getAccessibilityState(oControl);
-			// inside the Input this function also sets explicitly textAlign to "End" if the type
-			// of the Input is Numeric (our case)
-			// so we have to overwrite it by leaving only the text direction
-			// and the textAlign will be controlled by textAlign property of the StepInput
-			oRm.attr("type", oControl.getType().toLowerCase());
-
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
-				oRm.attr("dir", "ltr");
-			}
-			// prevent rendering of aria-disabled attribute to avoid having
-			// both aria-disabled and disabled at the same time
-			mAccAttributes.disabled = null;
-
-			oRm.accessibilityState(oStepInput,  mAccAttributes);
-		};
-
-		//Accessibility behavior of the Input needs to be extended
-		/**
-		 * Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
-		 *
-		 * @param {NumericInput} oNumericInput The numeric input instance
-		 * @returns {Array} mAccessibilityState
-		 */
-		NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
-			var mAccessibilityState = InputRenderer.getAccessibilityState(oNumericInput),
-				oStepInput = oNumericInput.getParent(),
-				fMin = oStepInput._getMin(),
-				fMax = oStepInput._getMax(),
-				fNow = oStepInput.getValue(),
-				sDescription = oStepInput.getDescription(),
-				aAriaLabelledByRefs = oStepInput.getAriaLabelledBy(),
-				// If we don't check this manually, we won't have the labels, which were referencing SI,
-				// in aria-labelledby (which normally comes out of the box). This is because writeAccessibilityState
-				// is called for NumericInput, while any labels will be for the parent StepInput.
-				aReferencingLabels = LabelEnablement.getReferencingLabels(oStepInput),
-				sDescribedBy = oStepInput.getAriaDescribedBy().join(" "),
-				sResultingLabelledBy;
-
-				mAccessibilityState.valuenow = fNow;
-
-			if (sDescription) {
-				// If there is a description, we should add a reference to it in the aria-labelledby
-				aAriaLabelledByRefs.push(oStepInput._getInput().getId() + "-descr");
-			}
-
-			sResultingLabelledBy = aReferencingLabels.concat(aAriaLabelledByRefs).join(" ");
-
-			if (typeof fMin === "number") {
-				mAccessibilityState.valuemin = fMin;
-			}
-
-			if (typeof fMax === "number") {
-				mAccessibilityState.valuemax = fMax;
-			}
-
-			if (!oStepInput.getEditable()) {
-				mAccessibilityState.readonly = true;
-			}
-
-			if (sDescribedBy){
-				mAccessibilityState.describedby = sDescribedBy;
-			}
-
-			if (sResultingLabelledBy){
-				mAccessibilityState.labelledby = sResultingLabelledBy;
-			}
-
-			return mAccessibilityState;
-		};
-
-		var NumericInput = Input.extend("sap.m.internal.NumericInput", {
-			metadata: {
-				library: "sap.m"
-			},
-			constructor: function(sId, mSettings) {
-				return Input.apply(this, arguments);
-			},
-			renderer: NumericInputRenderer
-		});
-
-		NumericInput.prototype.onBeforeRendering = function() {
-			InputBase.prototype.onBeforeRendering.call(this);
-
-			// The Input is handling its width in its onBeforeRendering method - if noting is set, the width is 100%.
-			// As the NumericInput is using the InputBase's onBeforeRendering method, the width must be handled here too.
-			// The real width of the StepInput is handled from its width property, so the NumericInput's width should be 100%.
-			this.setWidth("100%");
-
-			this._deregisterEvents();
-		};
-
-		NumericInput.prototype.setValue = function(sValue) {
-			Input.prototype.setValue.apply(this, arguments);
-
-			if (this.getDomRef()) {
-				this.getDomRef("inner").setAttribute("aria-valuenow", sValue);
-			}
-
-			return this;
-		};
-
 		MessageMixin.call(StepInput.prototype);
 
 		/**
@@ -570,7 +448,8 @@ function(
 		 * @returns {this} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setDisplayValuePrecision = function (number) {
-			var vValuePrecision;
+			var vValuePrecision,
+				oInstance;
 
 			if (isValidPrecisionValue(number)) {
 				vValuePrecision = parseInt(number);
@@ -579,7 +458,11 @@ function(
 				Log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
 			}
 
-			return this.setProperty("displayValuePrecision", vValuePrecision);
+			var oInstance = this.setProperty("displayValuePrecision", vValuePrecision);
+
+			this._getNumberFormatter(true);
+
+			return oInstance;
 		};
 
 		/**
@@ -629,7 +512,7 @@ function(
 				});
 
 			oIcon.getEnabled = function () {
-				return !this._shouldDisableIncrementButton(Number(this._getInput().getValue()), this._getMax());
+				return !this._shouldDisableIncrementButton(this._parseNumber(this._getInput().getValue()), this._getMax());
 			}.bind(this);
 
 			oIcon.$().attr("tabindex", "-1");
@@ -662,7 +545,7 @@ function(
 				});
 
 			oIcon.getEnabled = function () {
-				return !this._shouldDisableDecrementButton(Number(this._getInput().getValue()), this._getMin());
+				return !this._shouldDisableDecrementButton(this._parseNumber(this._getInput().getValue()), this._getMin());
 			}.bind(this);
 
 			oIcon.$().attr("tabindex", "-1");
@@ -690,7 +573,6 @@ function(
 				var oNumericInput = new NumericInput({
 					id: this.getId() + "-input",
 					textAlign: this.getTextAlign(),
-					type: InputType.Number,
 					editable: this.getEditable(),
 					enabled: this.getEnabled(),
 					description: this.getDescription(),
@@ -718,7 +600,7 @@ function(
 			} else {
 				// just update the visual value and buttons
 				this._applyValue(this._fTempValue);
-				this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
+				this._disableButtons(this._parseNumber(this._getInput().getValue()), this._getMax(), this._getMin());
 			}
 			return this;
 		};
@@ -776,7 +658,7 @@ function(
 
 			if (this._bDelayedEventFire) {
 				this._applyValue(fNewValue);
-				this._disableButtons(Number(this._getFormattedValue(fNewValue)), this._getMax(), this._getMin());
+				this._disableButtons(this._parseNumber(this._getFormattedValue(fNewValue)), this._getMax(), this._getMin());
 				this._bNeedsVerification = true;
 			}
 
@@ -920,7 +802,7 @@ function(
 
 			this._sOriginalValue = oValue;
 			this._applyValue(oValue);
-			this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
+			this._disableButtons(this._parseNumber(this._getInput().getValue()), this._getMax(), this._getMin());
 
 			if (oValue !== this._fOldValue) {
 				// save current value (for ESC restoring)
@@ -936,11 +818,19 @@ function(
 			return oResult;
 		};
 
+		StepInput.prototype._getNumberFormatter = function(bReset) {
+			if (!this._formatter || bReset) {
+				this._formatter = NumberFormat.getFloatInstance({ decimals: this.getDisplayValuePrecision() });
+			}
+
+			return this._formatter;
+		};
+
 		/**
 		 * Formats the <code>vValue</code> accordingly to the <code>displayValuePrecision</code> property.
-		 * if vValue is undefined or null, the property <code>value</code> will be used.
+		 * If vValue is undefined or null, the property <code>value</code> will be used.
 		 *
-		 * @returns formated value as a String
+		 * @returns formatted value as a String
 		 * @private
 		 */
 		StepInput.prototype._getFormattedValue = function (vValue) {
@@ -950,6 +840,10 @@ function(
 
 			if (vValue == undefined) {
 				vValue = this.getValue();
+			}
+
+			if (Device.system.desktop) {
+				return this._getNumberFormatter().format(vValue);
 			}
 
 			if (iPrecision <= 0) {
@@ -968,7 +862,6 @@ function(
 			} else {
 				return vValue.toString() + "." + this._padZeroesRight("0", iPrecision);
 			}
-
 		};
 
 		/**
@@ -1008,12 +901,12 @@ function(
 
 			// fix the entered value if the precision is 0; and filter 'e/E' meanwhile
 			if (this.getDisplayValuePrecision() === 0) {
-				sInputValue = Math.round(Number(sInputValue.toLowerCase().split('e')[0])).toString();
+				sInputValue = Math.round(this._parseNumber(sInputValue.toLowerCase().split('e')[0])).toString();
 			}
 
 			// calculates delta (difference) between input value and real control value
 			if (this._getFormattedValue(this._fTempValue) !== sInputValue) {
-				fDelta = Number(sInputValue) - this._fTempValue;
+				fDelta = this._parseNumber(sInputValue) - this._fTempValue;
 			}
 			return fDelta;
 		};
@@ -1058,7 +951,7 @@ function(
 		StepInput.prototype.onsappageupmodifiers = function (oEvent) {
 			if (this.getEditable() && this._isNumericLike(this._getMax()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
 				this._bDelayedEventFire = true;
-				this._fTempValue = Number(this._getInput().getValue());
+				this._fTempValue = this._parseNumber(this._getInput().getValue());
 				this._changeValueWithStep(this._getMax() - this._fTempValue);
 			}
 		};
@@ -1071,7 +964,7 @@ function(
 		StepInput.prototype.onsappagedownmodifiers = function (oEvent) {
 			if (this.getEditable() && this._isNumericLike(this._getMin()) && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) {
 				this._bDelayedEventFire = true;
-				this._fTempValue = Number(this._getInput().getValue());
+				this._fTempValue = this._parseNumber(this._getInput().getValue());
 				this._changeValueWithStep(-(this._fTempValue - this._getMin()));
 			}
 		};
@@ -1142,11 +1035,11 @@ function(
 
 			if (oEvent.which === KeyCodes.ARROW_UP && !oEvent.altKey && oEvent.shiftKey && (oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+up
 				fMax = this._getMax();
-				this._fTempValue = Number(this._getInput().getValue());
+				this._fTempValue = this._parseNumber(this._getInput().getValue());
 				fStep = (fMax !== undefined) ? fMax - this._fTempValue : 0;
 			} else if (oEvent.which === KeyCodes.ARROW_DOWN && !oEvent.altKey && oEvent.shiftKey && (oEvent.ctrlKey || oEvent.metaKey)) { //ctrl+shift+down
 				fMin = this._getMin();
-				this._fTempValue = Number(this._getInput().getValue());
+				this._fTempValue = this._parseNumber(this._getInput().getValue());
 				fStep = (fMin !== undefined) ? -(this._fTempValue - fMin) : 0;
 			} else if (oEvent.which === KeyCodes.ARROW_UP && !(oEvent.ctrlKey || oEvent.metaKey || oEvent.altKey) && oEvent.shiftKey) { //shift+up
 				fStep = this.getLargerStep();
@@ -1213,7 +1106,7 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._liveChange = function () {
-			this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
+			this._disableButtons(this._parseNumber(this._getInput().getValue()), this._getMax(), this._getMin());
 			this._verifyValue();
 		};
 
@@ -1230,7 +1123,7 @@ function(
 			if (!this._isButtonFocused() ) {
 
 				if (!this._btndown || bIsNotInValidRange) {
-					fOldValue = Number(this._getFormattedValue());
+					fOldValue = this._parseNumber(this._getFormattedValue());
 					if (this._fOldValue === undefined) {
 						this._fOldValue = fOldValue;
 					}
@@ -1240,7 +1133,7 @@ function(
 					this._changeValue();
 					this._bNeedsVerification = true;
 				} else {
-					this._fTempValue = Number(this._getInput().getValue());
+					this._fTempValue = this._parseNumber(this._getInput().getValue());
 				}
 			}
 		};
@@ -1366,30 +1259,31 @@ function(
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 * @private
 		 */
-		StepInput.prototype._restrictCharsWhenDecimal = function (oEvent) {
-			var iDecimalMark = oEvent.getParameter("value").indexOf("."),
+		StepInput.prototype._restrictCharsWhenDecimal = function(oEvent) {
+			var sDecimalSeparator = Device.system.desktop ? this._getNumberFormatter().oFormatOptions.decimalSeparator : ".";
+			var iDecimalMark = oEvent.getParameter("value").indexOf(sDecimalSeparator),
 				iCharsSet = this.getDisplayValuePrecision(),
 				sEventValue = oEvent.getParameter("value"),
 				sValue;
 
 			if (iDecimalMark > 0 && iCharsSet >= 0) { //only for decimals
-				var sEventValueAfterTheDecimal = sEventValue.split('.')[1],
+				var sEventValueAfterTheDecimal = sEventValue.split(sDecimalSeparator)[1],
 					iCharsAfterTheDecimalSign = sEventValueAfterTheDecimal ? sEventValueAfterTheDecimal.length : 0,
-					sCharsBeforeTheEventDecimalValue = sEventValue.split('.')[0],
-					sCharsAfterTheEventDecimalValue = iCharsSet > 0 ? sEventValue.substring(sEventValue.indexOf('.') + 1, sEventValue.length) : '';
+					sCharsBeforeTheEventDecimalValue = sEventValue.split(sDecimalSeparator)[0],
+					sCharsAfterTheEventDecimalValue = iCharsSet > 0 ? sEventValue.substring(sEventValue.indexOf(sDecimalSeparator) + 1, sEventValue.length) : '';
 
 				//scenario 1 - user typing after the decimal mark:
 				if (!this._bPaste) {
 					//if the characters after the decimal are more than the displayValuePrecision -> keep the current value after the decimal
 					if (iCharsAfterTheDecimalSign > iCharsSet) {
-						sValue = sCharsBeforeTheEventDecimalValue + (iCharsSet > 0 ? "." + sCharsAfterTheEventDecimalValue.substr(0, iCharsSet) : '');
+						sValue = sCharsBeforeTheEventDecimalValue + (iCharsSet > 0 ? sDecimalSeparator + sCharsAfterTheEventDecimalValue.substr(0, iCharsSet) : '');
 						this._showWrongValueVisualEffect();
 					}
 
 					//scenario 2 - paste - cut the chars with length, bigger than displayValuePrecision
 				} else {
-					if (sEventValue.indexOf(".")){
-						sValue = sEventValue.split('.')[0] + (iCharsSet > 0 ? "." + sEventValueAfterTheDecimal.substring(0, iCharsSet) : '');
+					if (sEventValue.indexOf(sDecimalSeparator)){
+						sValue = sEventValue.split(sDecimalSeparator)[0] + (iCharsSet > 0 ? sDecimalSeparator + sEventValueAfterTheDecimal.substring(0, iCharsSet) : '');
 					}
 					this._bPaste = false;
 				}
@@ -1431,7 +1325,7 @@ function(
 		 */
 		StepInput.prototype._getDefaultValue = function (value, max, min) {
 			if (value !== "" && value !== undefined) {
-				return Number(this._getInput().getValue());
+				return this._parseNumber(this._getInput().getValue());
 			}
 
 			if (this._isNumericLike(min) && min > 0) {
@@ -1562,7 +1456,7 @@ function(
 					this._bSpinStarted = true;
 					this._bDelayedEventFire = true;
 					this._changeValueWithStep(bIncrementButton ? 1 : -1);
-					this._disableButtons(Number(this._getInput().getValue()), this._getMax(), this._getMin());
+					this._disableButtons(this._parseNumber(this._getInput().getValue()), this._getMax(), this._getMin());
 					if ((this._getIncrementButton().getEnabled() && bIncrementButton) || (this._getDecrementButton().getEnabled() && !bIncrementButton)) {
 						this._spinValues(bIncrementButton);
 					}
@@ -1705,6 +1599,14 @@ function(
 				enabled: this.getEnabled(),
 				editable: this.getEnabled() && this.getEditable()
 			};
+		};
+
+		StepInput.prototype._parseNumber = function(sValue) {
+			if (Device.system.desktop) {
+				return this._getNumberFormatter().parse(sValue);
+			}
+
+			return Number(sValue);
 		};
 
 		return StepInput;
