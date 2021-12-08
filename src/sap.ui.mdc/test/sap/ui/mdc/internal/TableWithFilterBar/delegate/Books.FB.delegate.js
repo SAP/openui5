@@ -42,9 +42,10 @@ sap.ui.define([
 					oPropertyInfo.fieldHelp = "FHPublished";
 					oPropertyInfo.label = "Published";
 					oPropertyInfo.filterOperators = ["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"];
-				} else if (oPropertyInfo.name === "language") {
+				} else if (oPropertyInfo.name === "language_code") {
 					oPropertyInfo.fieldHelp = "FHLanguage";
-					oPropertyInfo.label = "Language";
+					oPropertyInfo.display = FieldDisplay.Description;
+					oPropertyInfo.constraints = {nullable: false, maxLength: 3}; // to test not nullable
 				} else if (oPropertyInfo.name === "stock") {
 					oPropertyInfo.label = "Stock range";
 					oPropertyInfo.maxConditions = 1;
