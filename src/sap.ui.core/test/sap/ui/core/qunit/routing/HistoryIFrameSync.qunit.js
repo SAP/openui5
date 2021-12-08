@@ -1,16 +1,24 @@
 /*global QUnit*/
 sap.ui.define([
 	"test/routing/target/historyIframe/script",
-	"sap/ui/Device"
-], function(oApp, Device) {
+	"sap/ui/Device",
+	"./HistoryUtils"
+], function(oApp, Device, HistoryUtils) {
 	"use strict";
 
 	var bWithinFrame = window.self !== window.top;
 
 	function test() {
+		// Initialize the HistoryUtils
+		QUnit.begin(HistoryUtils.init);
+
+		// Resets the HistoryUtils
+		QUnit.done(HistoryUtils.exit);
+
 		QUnit.start();
 
 		QUnit.module("basic", {
+			before: HistoryUtils.check,
 			beforeEach: function() {
 				return oApp.setHash("");
 			}
