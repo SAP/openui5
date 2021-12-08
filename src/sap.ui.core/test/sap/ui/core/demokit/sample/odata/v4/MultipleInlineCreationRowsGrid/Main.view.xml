@@ -55,11 +55,17 @@
 							}"
 							selectionMode="None"
 							visibleRowCount="20">
+						<t:extension>
+							<Toolbar design="Transparent" class="sapMTBHeader-CTX">
+								<Text id="partCount" text="{headerContext>$count} Parts"/>
+							</Toolbar>
+						</t:extension>
 						<t:columns>
 							<t:Column width="4em" hAlign="Center">
 								<Label text="State" />
 								<t:template>
 									<core:Icon
+										id="partState"
 										src="{= %{@$ui5.context.isInactive}
 											? 'sys-minus'
 											: (%{@$ui5.context.isTransient}

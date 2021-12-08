@@ -78,6 +78,7 @@ sap.ui.define([
 				iMessages : 0
 			});
 			oView.setModel(this.oUIModel, "ui");
+			oView.setModel(oView.getModel(), "headerContext");
 			oProductsBinding = oView.byId("products").getBinding("items");
 			oProductsBinding.attachDataRequested(this.showLoading, this);
 			oProductsBinding.attachDataReceived(this.showNothing, this);
@@ -131,6 +132,9 @@ sap.ui.define([
 		setPartsContext : function (oContext) {
 			this.resetChanges();
 			this.getView().byId("parts").setBindingContext(oContext);
+			this.byId("partCount").setBindingContext(
+				this.byId("parts").getBinding("rows").getHeaderContext(),
+				"headerContext");
 			this.createEmptyRows(iEmptyRowCount);
 			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 		},

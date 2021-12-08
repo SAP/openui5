@@ -329,7 +329,8 @@ sap.ui.define([
 
 			if (bReadCount) {
 				that.iMaxLength = that.fetchValue("$count", undefined, true).getResult()
-					- that.iCreatedContexts;
+					- that.iActiveContexts;
+
 				// Note: Although we know that oContext is not in aContexts, a "change" event needs
 				// to be fired in order to notify the control about the new length, for example, to
 				// update the 'More' button or the scrollbar.
@@ -794,6 +795,9 @@ sap.ui.define([
 	 *       length,
 	 *     <li> <code>bInactive</code> is <code>true</code> and the update group ID does not have
 	 *       {@link sap.ui.model.odata.v4.SubmitMode.Auto}.
+	 *     <li> <code>bInactive</code> is <code>true</code>, the list binding is relative and does
+	 *       not use the <code>$$ownRequest</code> parameter
+	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
 	 *   </ul>
 	 * @public
 	 * @since 1.43.0
@@ -823,15 +827,21 @@ sap.ui.define([
 		if (this.bCreatedAtEnd !== undefined && this.bCreatedAtEnd !== bAtEnd) {
 			throw new Error("Creating entities at the start and at the end is not supported.");
 		}
-		this.bCreatedAtEnd = bAtEnd;
 
 		if (bInactive) {
+			if (this.isRelative() && !this.mParameters.$$ownRequest) {
+				throw new Error("Missing $$ownRequest at " + this);
+			}
 			if (!this.oModel.isAutoGroup(sGroupId)) {
 				throw new Error("bInactive only supported for update group with SubmitMode.Auto: "
 					+ this);
 			}
 			sGroupId = "$inactive." + sGroupId;
+		} else {
+			this.iActiveContexts += 1;
 		}
+
+		this.bCreatedAtEnd = bAtEnd;
 
 		// only for createInCache
 		oGroupLock = this.lockGroup(sGroupId, true, true, function () {
@@ -954,7 +964,9 @@ sap.ui.define([
 					// reuse the previous context, unless it is created and persisted
 					delete this.mPreviousContextsByPath[sContextPath];
 					if (oContext.isTransient() && !this.iCreatedContexts) {
-						this.iCreatedContexts = -oContext.iIndex;
+						// this can only happen in bindings w/o cache, where all created contexts
+						// are active
+						this.iCreatedContexts = this.iActiveContexts = -oContext.iIndex;
 					} else {
 						oContext.iIndex = i$skipIndex;
 					}
@@ -972,7 +984,7 @@ sap.ui.define([
 		}
 		if (iCount !== undefined) { // server count is available or "non-empty short read"
 			this.bLengthFinal = true;
-			this.iMaxLength = iCount - this.iCreatedContexts;
+			this.iMaxLength = iCount - this.iActiveContexts;
 			shrinkContexts();
 		} else {
 			if (!aResults.length) { // "empty short read"
@@ -1045,6 +1057,9 @@ sap.ui.define([
 			i;
 
 		this.iCreatedContexts -= 1;
+		if (!oContext.isInactive()) {
+			this.iActiveContexts -= 1;
+		}
 		for (i = 0; i < iIndex; i += 1) {
 			this.aContexts[i].iIndex += 1;
 		}
@@ -1737,6 +1752,19 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Fires the 'createActivate' event.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} _oContext
+	 *   The context being activated
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fireCreateActivate = function (_oContext) {
+		this.iActiveContexts += 1;
+		this.fireEvent("createActivate");
 	};
 
 	/**
@@ -2528,7 +2556,8 @@ sap.ui.define([
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			var iCreatedContexts = that.iCreatedContexts,
+			var iActiveContexts = that.iActiveContexts,
+				iCreatedContexts = that.iCreatedContexts,
 				aDependentBindings,
 				oKeptElementsPromise,
 				oPromise = that.oRefreshPromise;
@@ -2552,6 +2581,7 @@ sap.ui.define([
 							if (!that.bRelative || oCache.getResourcePath() === sResourcePath) {
 								that.oCache = oCache;
 								that.oCachePromise = SyncPromise.resolve(oCache);
+								that.iActiveContexts = iActiveContexts;
 								that.iCreatedContexts = iCreatedContexts;
 								oCache.setActive(true);
 								that._fireChange({reason : ChangeReason.Change});
@@ -2964,7 +2994,9 @@ sap.ui.define([
 			that = this;
 
 		if (!bKeepCreated) {
-			this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+			// number of active (client-side) created contexts in aContexts
+			this.iActiveContexts = 0;
+			this.iCreatedContexts = 0; // number of all (client-side) created contexts in aContexts
 			// true if contexts have been created at the end, false if contexts have been created at
 			// the start, undefined if there are no created contexts
 			this.bCreatedAtEnd = undefined;

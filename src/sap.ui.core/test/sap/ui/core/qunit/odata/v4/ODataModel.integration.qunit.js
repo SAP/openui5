@@ -809,7 +809,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks the text of the 'More' button for a sap.m.Table with the ID "listReport".
+		 * Checks the text of the 'More' button for a sap.m.Table with the ID "listReport". The
+		 * button is invisible if all elements of a collection are visible. It is not necessarily
+		 * updated in this case.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {string} sExpected The expected count as text w/o "More" without spaces,
@@ -819,6 +821,7 @@ sap.ui.define([
 			assert.strictEqual(this.oView.byId("listReport-trigger").getDomRef().innerText
 				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
 		},
+
 
 		/**
 		 * Creates a view with a numeric property, "enters" incorrect text to reach an invalid data
@@ -7068,11 +7071,6 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {Note : "new4"}
 				}/* response does not matter here */)
-				.expectRequest({
-					method : "POST",
-					url : "SalesOrderList",
-					payload : {Note : "new5"}
-				}/* response does not matter here */)
 				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100"
 					/* response does not matter here */)
 				.expectMessages([{
@@ -7086,7 +7084,7 @@ sap.ui.define([
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
 					sinon.match(oError.error.message), "sap.ui.model.odata.v4.ODataListBinding")
-				.exactly(3);
+				.exactly(2);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to get contexts for " + sSalesOrderService + "SalesOrderList"
 					+ " with start index 0 and length 100",
@@ -7095,7 +7093,10 @@ sap.ui.define([
 
 			aCreatedContexts.push(oBinding.create({Note : "new3"}, /*bSkipRefresh*/true));
 			aCreatedContexts.push(oBinding.create({Note : "new4"}, /*bSkipRefresh*/true));
-			aCreatedContexts.push(oBinding.create({Note : "new5"}, /*bSkipRefresh*/true));
+			aCreatedContexts.push(oBinding.create({Note : "new5"}, /*bSkipRefresh*/true,
+				/*bAtEnd*/false, /*bInactive*/true));
+
+			assert.strictEqual(oBinding.getCount(), 5);
 
 			return Promise.all([
 				oBinding.getHeaderContext().requestSideEffects([""])
@@ -7110,6 +7111,7 @@ sap.ui.define([
 		}).then(function () {
 			var aCurrentContexts = oBinding.getCurrentContexts();
 
+			assert.strictEqual(oBinding.getCount(), 5);
 			assertIndices(assert, aCurrentContexts, [-5, -4, -3, -2, -1, 0]);
 
 			// 3. the list binding is properly restored
@@ -33365,7 +33367,8 @@ sap.ui.define([
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<t:Table id="table" rows="{path : \'SO_2_SOITEM\', parameters : {$count : true}}">\
+<t:Table id="table" rows="{path : \'SO_2_SOITEM\',\
+		parameters : {$count : true, $$ownRequest : true}}">\
 	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
 	<Text id="position" text="{ItemPosition}"/>\
 	<Input id="note" value="{Note}"/>\
@@ -33386,7 +33389,7 @@ sap.ui.define([
 					"@odata.count" : "1",
 					value : [{ItemPosition : "0010", Note : "Note 10", SalesOrderID : "42"}]
 				})
-				.expectChange("count", "4") // TODO: not the final state, should be 1!
+				.expectChange("count", "1")
 				.expectChange("inactive", [undefined,,, true])
 				.expectChange("position", ["0010",,, ""])
 				.expectChange("note", ["Note 10", "default note",, ""]);
@@ -33415,16 +33418,17 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(1)");
 		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 1);
 			assert.strictEqual(oBinding.getLength(), 4);
-			assert.strictEqual(oBinding.getCount(), 4); // TODO: not the final state, should be 1!
+			assert.strictEqual(oBinding.isLengthFinal(), true);
 
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
 					+ "will be repeated automatically",
 					sinon.match("Request intentionally failed"),
 					"sap.ui.model.odata.v4.ODataListBinding");
-			that.expectChange("note", [, "Note 1"])
-				//.expectChange("count", "2") // TODO: not the final state
+			that.expectChange("count", "2")
+				.expectChange("note", [, "Note 1"])
 				.expectChange("inactive", [, false])
 				.expectRequest({
 					method : "POST",
@@ -33442,8 +33446,9 @@ sap.ui.define([
 			// code under test
 			oContext1.setProperty("Note", "Note 1");
 
+			assert.strictEqual(oBinding.getCount(), 2);
 			assert.strictEqual(oBinding.getLength(), 4);
-			assert.strictEqual(oBinding.getCount(), 4); // TODO: not the final state, should be 2!
+			assert.strictEqual(oBinding.isLengthFinal(), true);
 			assert.strictEqual(oContext1.hasPendingChanges(), true);
 			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), true);
@@ -33477,8 +33482,6 @@ sap.ui.define([
 			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), false);
 
-			that.expectChange("count", "3"); // TODO: not the final state, should be "2"
-
 			// code under test
 			oContext2.delete();
 
@@ -33487,10 +33490,12 @@ sap.ui.define([
 				that.waitForChanges(assert, "(4)")
 			]);
 		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 2);
 			assert.strictEqual(oBinding.getLength(), 3);
-			assert.strictEqual(oBinding.getCount(), 3); // TODO: not the final state, should be 2!
+			assert.strictEqual(oBinding.isLengthFinal(), true);
 
-			that.expectChange("note", [,, "Note 3"])
+			that.expectChange("count", "3")
+				.expectChange("note", [,, "Note 3"])
 				.expectChange("inactive", [,, false])
 				.expectRequest({
 					method : "POST",
@@ -33498,10 +33503,10 @@ sap.ui.define([
 					payload : {Note : "Note 3"}
 				}, {
 					SalesOrderID : "42",
-					ItemPosition : "0020",
+					ItemPosition : "0030",
 					Note : "Note 3"
 				})
-				.expectChange("position", [,, "0020"]);
+				.expectChange("position", [,, "0030"]);
 
 			// code under test
 			oContext3.setProperty("Note", "Note 3");
@@ -33516,12 +33521,100 @@ sap.ui.define([
 				that.waitForChanges(assert, "(5)")
 			]);
 		}).then(function () {
-			assert.strictEqual(oBinding.getLength(), 3);
 			assert.strictEqual(oBinding.getCount(), 3);
+			assert.strictEqual(oBinding.getLength(), 3);
+			assert.strictEqual(oBinding.isLengthFinal(), true);
 			assert.strictEqual(oContext3.hasPendingChanges(), false);
 			assert.strictEqual(oContext3.isInactive(), false);
 			assert.strictEqual(oContext3.isTransient(), false);
 			assert.strictEqual(iEventCount, 2, "no further createActivate events");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a row and delete it again. Then request more data and check the count.
+	//
+	// JIRA: CPOUI5ODATAV4-1321
+	QUnit.test("create, delete and paging", function (assert) {
+		var oBinding,
+			oContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<Table growing="true" growingThreshold="2" id="listReport"\
+		items="{path : \'/BusinessPartnerList\', parameters : {$count : true}}">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList?$count=true&$select=BusinessPartnerID"
+				+ "&$skip=0&$top=2", {
+				"@odata.count" : "3",
+				value : [
+					{BusinessPartnerID : "4711"},
+					{BusinessPartnerID : "4712"}
+				]
+			})
+			.expectChange("count")
+			.expectChange("id", ["4711", "4712"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("listReport").getBinding("items");
+
+			that.expectChange("count", "3");
+			that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("count", "4")
+				.expectChange("id", ["", ""])
+				.expectRequest({
+					method : "POST",
+					payload : {},
+					url : "BusinessPartnerList"
+				}, {BusinessPartnerID : "new1"})
+				.expectChange("id", [, "new1"]);
+
+			oContext = oBinding.create({}, true);
+			oBinding.create({}, true, false, /*bInactive*/true);
+
+			that.checkMoreButton(assert, "[2/5]");
+
+			return Promise.all([
+				oContext.created(),
+				that.waitForChanges(assert, "create")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 4, "count of elements");
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "BusinessPartnerList('new1')"
+				})
+				.expectChange("count", "3")
+				.expectChange("id", [, "4711"]);
+
+			return Promise.all([
+				oContext.delete(),
+				that.waitForChanges(assert, "delete")
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3, "count of elements");
+			that.checkMoreButton(assert, "[2/4]");
+
+			that.expectRequest("BusinessPartnerList?$count=true&$select=BusinessPartnerID"
+					+ "&$skip=2&$top=1", {
+					"@odata.count" : "3",
+					value : [{BusinessPartnerID : "4713"}]
+				})
+				.expectChange("id", [/*inactive*/, /*4711*/, "4712", "4713"]);
+
+			that.oView.byId("listReport").requestItems();
+
+			return that.waitForChanges(assert, "paging");
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3, "count of elements");
+			assert.strictEqual(oBinding.getLength(), 4, "length of elements");
 		});
 	});
 
@@ -33868,7 +33961,7 @@ sap.ui.define([
 	// 3. (optional) Filter the list by gross amount, so that the context drops out of it. This
 	//    implies that the new count must be requested after deleting the context. This request can
 	//    result in a changed or unchanged count.
-	// 4. Create and save a new sales order.
+	// 4. Create and save a new sales order, add an inactive context.
 	// 5. Delete the kept-alive context. Check that the context is deleted and a request for $count
 	//    is sent (filtering out the new sales order) if the context was not in the list anymore.
 	// JIRA: CPOUI5ODATAV4-365
@@ -33892,19 +33985,18 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
-<Table id="listReport" growing="true" growingThreshold="2"\
+<Table id="listReport" growing="true" growingThreshold="3"\
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>',
 			that = this;
 
-
-		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=2", {
+		this.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=0&$top=3", {
 				"@odata.count" : "102",
-				value : [{SalesOrderID : "1"}, {SalesOrderID : "2"}]
+				value : [{SalesOrderID : "1"}, {SalesOrderID : "2"}, {SalesOrderID : "3"}]
 			})
 			.expectChange("count")
-			.expectChange("id", ["1", "2"]);
+			.expectChange("id", ["1", "2", "3"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("listReport");
@@ -33914,7 +34006,7 @@ sap.ui.define([
 
 			that.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "count");
 		}).then(function () {
 			oKeptContext = oTable.getItems()[0].getBindingContext();
 
@@ -33923,11 +34015,11 @@ sap.ui.define([
 
 			if (oFixture.bFilter) {
 				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
-						+ "&$filter=GrossAmount gt 1000&$skip=0&$top=2", {
+						+ "&$filter=GrossAmount gt 1000&$skip=0&$top=3", {
 						"@odata.count" : "42",
-						value : [{SalesOrderID : "3"}, {SalesOrderID : "4"}]
+						value : [{SalesOrderID : "3"}, {SalesOrderID : "4"}, {SalesOrderID : "5"}]
 					})
-					.expectChange("id", ["3", "4"])
+					.expectChange("id", [, "4", "5"])
 					.expectChange("count", "42");
 
 				oListBinding.filter(new Filter("GrossAmount", FilterOperator.GT, 1000));
@@ -33935,24 +34027,30 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(3)");
 		}).then(function () {
-			that.checkMoreButton(assert, oFixture.bFilter ? "[2/42]" : "[2/102]");
+			var oCreatedPromise;
 
-			that.expectChange("id", [""])
+			that.checkMoreButton(assert, oFixture.bFilter ? "[3/42]" : "[3/102]");
+
+			that.expectChange("id", ["", ""])
 				.expectRequest({
 					method : "POST",
 					url : "SalesOrderList",
 					payload : {}
 				}, {SalesOrderID : "new"})
 				.expectChange("count", oFixture.bFilter ? "43" : "103")
-				.expectChange("id", ["new"]);
+				.expectChange("id", [, "new"]);
 
-			oListBinding.create({}, true);
+				oCreatedPromise = oListBinding.create({}, true);
+				oListBinding.create({}, true, false, true);
 
-			return that.waitForChanges(assert, "(4)");
+			return Promise.all([
+				oCreatedPromise,
+				that.waitForChanges(assert, "(4)")
+			]);
 		}).then(function () {
 			var iBatch = oFixture.bFilter ? 4 : 3;
 
-			that.checkMoreButton(assert, oFixture.bFilter ? "[2/43]" : "[2/103]");
+			that.checkMoreButton(assert, oFixture.bFilter ? "[3/44]" : "[3/104]");
 
 			that.expectRequest({
 					batchNo : iBatch,
@@ -33971,9 +34069,8 @@ sap.ui.define([
 						value : []
 					});
 			} else {
-				that.expectChange("id", [/*"new"*/, "2"]);
+				that.expectChange("id", [, /*new*/, "2"]);
 			}
-
 
 			if (oFixture.bCountHasChanged) {
 				that.expectChange("count", oFixture.bFilter ? "42" : "102");
@@ -33986,9 +34083,9 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			if (oFixture.bFilter) {
-				that.checkMoreButton(assert, oFixture.bCountHasChanged ? "[2/42]" : "[2/43]");
+				that.checkMoreButton(assert, oFixture.bCountHasChanged ? "[3/43]" : "[3/44]");
 			} else {
-				that.checkMoreButton(assert, "[2/102]");
+				that.checkMoreButton(assert, "[3/103]");
 			}
 
 			if (oFixture.bCountHasChanged) {

@@ -20,9 +20,32 @@ sap.ui.define([
 				"Products(ID=10,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=120" : {
 					source : "Product_10_Parts.json"
 				},
-				"POST /MyProducts/Products(ID=10,IsActiveEntity=false)/_Parts" : {
-					source : "Create_Part_10_99.json"
-				}
+				"POST /MyProducts/Products(ID=10,IsActiveEntity=false)/_Parts" : [{
+					ifMatch : /"ID":99/,
+					message : {
+						ID : 99,
+						description : null,
+						quantity : null,
+						_Product_ID : 10
+					}
+				}, {
+					code : 400,
+					ifMatch : /"ID":100/,
+					message : {
+						error : {
+							message : "Key exists already",
+							"@SAP__common.numericSeverity" : 4,
+							target : "ID"
+						}
+					}
+				}, {
+					message : {
+						ID : 101,
+						description : null,
+						quantity : null,
+						_Product_ID : 10
+					}
+				}]
 			},
 			sFilterBase : "/MyProducts/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/data"

@@ -331,7 +331,10 @@ sap.ui.define([
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
 			aCollection.splice(aCollection.indexOf(oEntityData), 1);
 			aCollection.$created -= 1;
-			addToCount(that.mChangeListeners, sPath, aCollection, -1);
+			if (!oEntityData["@$ui5.context.isInactive"]) {
+				that.iActiveElements -= 1;
+				addToCount(that.mChangeListeners, sPath, aCollection, -1);
+			}
 			delete aCollection.$byPredicate[sTransientPredicate];
 			if (!sPath) {
 				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
@@ -427,11 +430,13 @@ sap.ui.define([
 		oEntityData["@$ui5.context.isTransient"] = true;
 		if (sGroupId.startsWith("$inactive.")) {
 			oEntityData["@$ui5.context.isInactive"] = true;
+		} else {
+			this.iActiveElements += 1;
+			addToCount(this.mChangeListeners, sPath, aCollection, 1);
 		}
 
 		aCollection.unshift(oEntityData);
 		aCollection.$created += 1;
-		addToCount(this.mChangeListeners, sPath, aCollection, 1);
 		// if the nested collection is empty $byPredicate is not available, create it on demand
 		aCollection.$byPredicate = aCollection.$byPredicate || {};
 		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
@@ -1310,6 +1315,9 @@ sap.ui.define([
 		sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 		if (sTransientPredicate) {
 			aElements.$created -= 1;
+			if (!sPath) {
+				this.iActiveElements -= 1;
+			}
 			delete aElements.$byPredicate[sTransientPredicate];
 		} else if (!sPath) {
 			// Note: sPath is empty only in a CollectionCache, so we may use iLmit and
@@ -1435,7 +1443,7 @@ sap.ui.define([
 					}
 					throw oError;
 				}).then(function (oResult) {
-					var iCount = parseInt(oResult["@odata.count"]) + that.aElements.$created;
+					var iCount = parseInt(oResult["@odata.count"]) + that.iActiveElements;
 
 					setCount(that.mChangeListeners, "", that.aElements, iCount);
 					that.iLimit = iCount;
@@ -1808,6 +1816,8 @@ sap.ui.define([
 				_Helper.updateAll({}, sEntityPath, oPostBody, oUpdateData);
 				if (oEntity["@$ui5.context.isInactive"]) {
 					oUpdateData["@$ui5.context.isInactive"] = false;
+					that.iActiveElements += 1;
+					addToCount(that.mChangeListeners, "", that.aElements, 1);
 				}
 			}
 			// write the changed value into the cache
@@ -2057,11 +2067,13 @@ sap.ui.define([
 				return sDeepResourcePath;
 			}, bSharedRequest);
 
+		this.iActiveElements = 0; // number of active (client-side) created elements
 		this.sContext = undefined; // the "@odata.context" from the responses
 		this.aElements = []; // the available elements
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // see setCount
-		this.aElements.$created = 0; // number of (client-side) created elements
+		// number of all (client-side) created elements (active or inactive)
+		this.aElements.$created = 0;
 		this.aElements.$tail = undefined; // promise for a read w/o $top
 		// upper limit for @odata.count, maybe sharp; assumes #getQueryString can $filter out all
 		// created elements
@@ -2330,11 +2342,11 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
-		var iCount = -1,
-			sCount,
+		var sCount,
 			iCreated = this.aElements.$created,
 			oElement,
 			oKeptElement,
+			iLimit = -1,
 			iOld$count = this.aElements.$count,
 			sPredicate,
 			iResultLength = oResult.value.length,
@@ -2362,7 +2374,7 @@ sap.ui.define([
 		}
 		sCount = oResult["@odata.count"];
 		if (sCount) {
-			this.iLimit = iCount = parseInt(sCount);
+			this.iLimit = iLimit = parseInt(sCount);
 		}
 		if (oResult["@odata.nextLink"]) { // server-driven paging
 			this.bServerDrivenPaging = true;
@@ -2374,25 +2386,26 @@ sap.ui.define([
 				this.aElements.length = iStart + iResultLength;
 			}
 		} else if (iResultLength < iEnd - iStart) { // short read
-			if (iCount === -1) {
+			if (iLimit === -1) {
 				// use formerly computed $count
-				iCount = iOld$count && iOld$count - iCreated;
+				iLimit = iOld$count && iOld$count - this.iActiveElements;
 			}
-			iCount = Math.min(
-				iCount !== undefined ? iCount : Infinity,
+			iLimit = Math.min(
+				iLimit !== undefined ? iLimit : Infinity,
+				// length determined from the short read
 				iStart - iCreated + iResultLength);
-			this.aElements.length = iCreated + iCount;
-			this.iLimit = iCount;
+			this.aElements.length = iCreated + iLimit;
+			this.iLimit = iLimit;
 			// If the server did not send a count, the calculated count is greater than 0
 			// and the element before has not been read yet, we do not know the count:
 			// The element might or might not exist.
-			if (!sCount && iCount > 0 && !this.aElements[iCount - 1]) {
-				iCount = undefined;
+			if (!sCount && iLimit > 0 && !this.aElements[iLimit - 1]) {
+				iLimit = undefined;
 			}
 		}
-		if (iCount !== -1) {
+		if (iLimit !== -1) {
 			setCount(this.mChangeListeners, "", this.aElements,
-				iCount !== undefined ? iCount + iCreated : undefined);
+				iLimit !== undefined ? iLimit + this.iActiveElements : undefined);
 		}
 	};
 
@@ -2766,6 +2779,7 @@ sap.ui.define([
 			mByPredicate = this.aElements.$byPredicate,
 			that = this;
 
+		this.iActiveElements = 0;
 		this.mChangeListeners = {};
 		this.sContext = undefined;
 		this.aElements = [];

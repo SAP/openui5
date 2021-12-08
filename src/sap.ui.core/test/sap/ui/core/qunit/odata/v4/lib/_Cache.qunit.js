@@ -628,6 +628,8 @@ sap.ui.define([
 				}
 				aCacheData.$byPredicate = {"('1')" : aCacheData[1]};
 				aCacheData.$count = bCount ? 3 : undefined;
+				aCacheData.$created = bCreated ? 2 : 0;
+				oCache.iActiveElements = bCreated && !sParentPath ? 1 : 0;
 				if (bCreated) {
 					aCacheData[1]["@$ui5._"].transientPredicate = "$uid=1-23";
 					aCacheData.$byPredicate["$uid=1-23"] = aCacheData[1];
@@ -646,6 +648,8 @@ sap.ui.define([
 				// code under test
 				iIndex = oCache.removeElement(aCacheData, 2, "('1')", sParentPath);
 
+				assert.strictEqual(aCacheData.$created, bCreated ? 1 : 0);
+				assert.strictEqual(oCache.iActiveElements, 0);
 				assert.strictEqual(iIndex, 1);
 				assert.strictEqual(aCacheData.$count, bCount ? 2 : undefined);
 				assert.deepEqual(aCacheData, [{
@@ -4481,7 +4485,8 @@ sap.ui.define([
 			oGroupLockCopy = {},
 			sQueryOptions = JSON.stringify(oCache.mQueryOptions);
 
-		oCache.aElements.$created = oFixture.created ? 1 : 0;
+		oCache.aElements.$created = oFixture.created ? 2 : 0;
+		oCache.iActiveElements = oFixture.created ? 1 : 0;
 		this.mock(oCache).expects("getFilterExcludingCreated").withExactArgs()
 			.returns(oFixture.created ? "~filter~" : undefined);
 		this.mock(this.oRequestor).expects("buildQueryString")
@@ -4638,6 +4643,7 @@ sap.ui.define([
 		assert.ok(typeof oCache.fnGetOriginalResourcePath, "function");
 		assert.strictEqual(oCache.fnGetOriginalResourcePath(), "deep/resource/path");
 		assert.strictEqual(oCache.bSharedRequest, bSharedRequest ? true : undefined);
+		assert.strictEqual(oCache.iActiveElements, 0);
 	});
 });
 
@@ -5532,7 +5538,7 @@ sap.ui.define([
 
 			oCache.mChangeListeners = mChangeListeners;
 			aElements.$byPredicate = {};
-			aElements.$created = 2;
+			oCache.iActiveElements = aElements.$created = 2;
 			oCache.aElements = aElements;
 			oCache.iLimit = iLimit;
 
@@ -5597,13 +5603,25 @@ sap.ui.define([
 		iExpectedLength : 30,
 		iExpectedLimit : 30
 	}, {
+		iActive : 1,
 		iCount : 3,
 		iCreated : 3,
-		iExpectedCount : 6,
+		iExpectedCount : 4,
 		iExpectedLength : 6,
 		iExpectedLimit : 3,
 		iStart : 5,
 		sTitle : "short read while created elements are present, @odata.count OK",
+		vValue : [{}]
+	}, {
+		iActive : 2,
+		iCreated : 3,
+		aElements : [{}, {}, {}, {}, {}, {}],
+		iExpectedCount : 5,
+		iExpectedLength : 6,
+		iExpectedLimit : 3,
+		iOldCount : 5,
+		iStart : 5,
+		sTitle : "short read while created and inactive elements are present",
 		vValue : [{}]
 	}, {
 		iCount : 4, // maybe unrealistic, but spec allows for this
@@ -5618,7 +5636,7 @@ sap.ui.define([
 		QUnit.test("CollectionCache#handleResponse: " + oFixture.sTitle, function (assert) {
 			var oCache = this.createCache("Employees"),
 				oCacheMock = this.mock(oCache),
-				aElements = [],
+				aElements = oFixture.aElements || [],
 				oFetchTypesResult = {},
 				oHelperMock = this.mock(_Helper),
 				oResult = {
@@ -5628,8 +5646,9 @@ sap.ui.define([
 
 			oCache.mChangeListeners = {};
 			oCache.aElements = aElements;
-			oCache.aElements.$count = undefined;
+			oCache.aElements.$count = oFixture.iOldCount;
 			oCache.aElements.$created = oFixture.iCreated || 0;
+			oCache.iActiveElements = oFixture.iActive || oCache.aElements.$created;
 
 			if (oFixture.iCount) {
 				oResult["@odata.count"] = "" + oFixture.iCount;
@@ -6448,44 +6467,71 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#read: $count & create", function (assert) {
+[false, true].forEach(function (bInactive) {
+	QUnit.test("CollectionCache#read: $count & create, bInactive=" + bInactive, function (assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
+			iCountAfterCreate = bInactive ? 26 : 27,
+			oCountChangeListener = {onChange : function () {}},
+			oCountChangeListenerMock = this.mock(oCountChangeListener),
+			oGroupLock = {
+				cancel : function () {},
+				getGroupId : function () {},
+				unlock : function () {}
+			},
+			oPostRequest,
 			sTransientPredicate = "($uid=id-1-23)",
 			that = this;
 
 		return this.mockRequestAndRead(oCache, 0, sResourcePath, 0, 10, 10, undefined, "26")
 			.then(function (oResult) {
-				var oGroupLock = {
-						getGroupId : function () {},
-						unlock : function () {}
-					};
-
 				assert.strictEqual(oCache.aElements.$count, 26);
 				assert.strictEqual(oResult.value.$count, 26);
+				assert.strictEqual(oCache.iActiveElements, 0);
 				assert.strictEqual(oCache.iLimit, 26);
 
-				that.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("$direct");
-				that.oRequestorMock.expects("request")
+				that.mock(oGroupLock).expects("getGroupId").withExactArgs()
+					.returns(bInactive ? "$inactive.$auto" : "$direct");
+				oPostRequest = that.oRequestorMock.expects("request")
 					.withExactArgs("POST", "Employees", sinon.match.same(oGroupLock), null,
 						sinon.match.object, sinon.match.func, sinon.match.func, undefined,
 						sResourcePath + sTransientPredicate)
 					.callsArg(5) // fnSubmit
 					.resolves({});
-				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-						sTransientPredicate, {}, null, function fnSubmitCallback() {})
-					.then(function () {
-						var oReadGroupLock = {unlock : function () {}};
+				oCountChangeListenerMock.expects("onChange").exactly(bInactive ? 0 : 1)
+					.withExactArgs(iCountAfterCreate);
+				oCache.registerChange("$count", oCountChangeListener);
 
-						that.mock(oReadGroupLock).expects("unlock").withExactArgs();
-						assert.strictEqual(
-							oCache.read(0, 10, 0, oReadGroupLock).getResult().value.$count, 27,
-							"now including the created element");
-						assert.strictEqual(oCache.iLimit, 26,
-							"created element cannot be reached via paging");
-					});
+				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
+					sTransientPredicate, {}, null, function fnSubmitCallback() {});
+			})
+			.then(function () {
+				var oReadGroupLock = {unlock : function () {}};
+
+				that.mock(oReadGroupLock).expects("unlock").twice().withExactArgs();
+				assert.strictEqual(
+					oCache.read(0, 10, 0, oReadGroupLock).getResult().value.$count,
+					iCountAfterCreate);
+				assert.strictEqual(oCache.aElements.$count, iCountAfterCreate);
+				assert.strictEqual(oCache.iLimit, 26);
+				assert.strictEqual(oCache.iActiveElements, bInactive ? 0 : 1);
+
+				oCountChangeListenerMock.expects("onChange").exactly(bInactive ? 0 : 1)
+					.withExactArgs(26);
+				that.mock(oGroupLock).expects("cancel").withExactArgs();
+
+				// code under test - cancel the create
+				oPostRequest.args[0][6]();
+
+				assert.strictEqual(
+					oCache.read(0, 10, 0, oReadGroupLock).getResult().value.$count,
+					26);
+				assert.strictEqual(oCache.aElements.$count, 26);
+				assert.strictEqual(oCache.iLimit, 26);
+				assert.strictEqual(oCache.iActiveElements, 0);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: $count & delete, top level", function (assert) {
@@ -7386,6 +7432,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees"),
+			oCountChangeListener = {onChange : function () {}},
 			oCreateGroupLock = {getGroupId : function () {}},
 			oHelperMock = this.mock(_Helper),
 			oPromise,
@@ -7396,6 +7443,7 @@ sap.ui.define([
 				unlock : function () {}
 			};
 
+		oCache.aElements.$count = 42;
 		this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs()
 			.returns(bInactive ? "$inactive.updateGroup" : "updateGroup");
 		this.oRequestorMock.expects("request")
@@ -7426,6 +7474,7 @@ sap.ui.define([
 				"@$ui5.context.isInactive" : true,
 				"@$ui5.context.isTransient" : true
 			});
+			assert.strictEqual(oCache.iActiveElements, 0);
 		} else {
 			assert.deepEqual(oCache.aElements[0], {
 				"@$ui5._" : {
@@ -7435,6 +7484,7 @@ sap.ui.define([
 				},
 				"@$ui5.context.isTransient" : true
 			});
+			assert.strictEqual(oCache.iActiveElements, 1);
 		}
 
 		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
@@ -7442,13 +7492,16 @@ sap.ui.define([
 			.withExactArgs("$inactive.updateGroup",
 				sinon.match.same(oCache.aElements[0]["@$ui5._"].postBody), "updateGroup");
 		oHelperMock.expects("updateAll")
+			.withExactArgs({}, sTransientPredicate, sinon.match.object, {Name : "foo"});
+		this.mock(oCountChangeListener).expects("onChange").exactly(bInactive ? 1 : 0)
+			.withExactArgs(43);
+		oCache.registerChange("$count", oCountChangeListener);
+		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), bInactive
 					? {Name : "foo", "@$ui5.context.isInactive" : false}
 					: {Name : "foo"}
 				);
-		oHelperMock.expects("updateAll")
-			.withExactArgs({}, sTransientPredicate, sinon.match.object, {Name : "foo"});
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[0]), sinon.match.same(oResponseData), undefined);
@@ -7458,6 +7511,7 @@ sap.ui.define([
 		oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined, sTransientPredicate);
 
 		assert.strictEqual(oCache.aElements[0]["@$ui5._"].transient, "updateGroup");
+		assert.strictEqual(oCache.iActiveElements, 1);
 
 		return oPromise;
 	});
@@ -8523,6 +8577,7 @@ sap.ui.define([
 		var oCache = this.createCache("Employees"),
 			oElement = {};
 
+		oCache.iActiveElements = 1;
 		oCache.mChangeListeners = {
 			bar : [],
 			foo : [],
@@ -8556,6 +8611,7 @@ sap.ui.define([
 		if (i) {
 			assert.strictEqual(oCache.aElements.$byPredicate["('0')"], oElement);
 		}
+		assert.strictEqual(oCache.iActiveElements, 0);
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.ok("$count" in oCache.aElements); // needed for setCount()
 		assert.strictEqual(oCache.aElements.$created, 0);

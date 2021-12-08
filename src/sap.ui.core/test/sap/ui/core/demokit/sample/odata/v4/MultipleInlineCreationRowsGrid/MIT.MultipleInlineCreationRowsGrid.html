@@ -23,14 +23,34 @@
 		<ol>
 			<li><b>Check</b>: A list with three products appears.</li>
 			<li>Select the first product with ID 10.</li>
-			<li><b>Check</b>: A table with three product parts appears, followed by three empty
-				rows.</li>
+			<li><b>Check</b>: A table with title "3 Parts" appears. It contains three product parts,
+				followed by three empty rows.</li>
 			<li><b>Check</b>: The delete button is active for the parts and inactive for the empty
 				rows.</li>
+
 			<li>Enter "99" into the ID field of the first empty row and press
 				<code>Enter</code>.</li>
 			<li><b>Check</b>: The delete button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "4 Parts".</li>
 			<li><b>Check</b>: A new empty row appears.</li>
+
+			<li>Enter "100" into the ID field of the first empty row and press
+				<code>Enter</code>.</li>
+			<li><b>Check</b>: An error message "Key exists already" appears.</li>
+			<li><b>Check</b>: The delete button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "5 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+
+			<li>Enter "101" into the ID field of the first empty row and press
+				<code>Enter</code>.</li>
+			<li><b>Check</b>: The delete button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "6 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+
+			<li>Click on the delete button of the fifth row with the ID "100"</li>
+			<li>Confirm the dialog with clicking on "Ok"</li>
+			<li><b>Check</b>: The table title changes to "5 Parts".</li>
+			<li><b>Check</b>: The row disappears.</li>
 		</ol>
 	</body>
 </html>

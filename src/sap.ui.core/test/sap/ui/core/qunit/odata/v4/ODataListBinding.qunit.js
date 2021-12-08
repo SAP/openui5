@@ -195,6 +195,7 @@ sap.ui.define([
 		var oParentBindingSpy = this.spy(asODataParentBinding, "call"),
 			oBinding = this.bindList("/EMPLOYEES");
 
+		assert.ok(oBinding.hasOwnProperty("iActiveContexts"));
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
 		assert.ok(oBinding.hasOwnProperty("bCreatedAtEnd"));
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
@@ -879,6 +880,7 @@ sap.ui.define([
 		oBinding.iCurrentEnd = 19;
 		oBinding.bLengthFinal = true;
 		oBinding.iMaxLength = 42;
+		oBinding.iActiveContexts = 2;
 		oBinding.iCreatedContexts = 2;
 		oBinding.bCreatedAtEnd = "~bCreatedAtEnd~";
 
@@ -907,6 +909,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iCurrentEnd, 0);
 		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
+		assert.strictEqual(oBinding.iActiveContexts, bKeepCreated ? 2 : 0);
 		assert.strictEqual(oBinding.iCreatedContexts, bKeepCreated ? 2 : 0);
 		assert.strictEqual(oBinding.bCreatedAtEnd, bKeepCreated ? "~bCreatedAtEnd~" : undefined);
 
@@ -2402,6 +2405,7 @@ sap.ui.define([
 			oReadPromise = Promise.reject(oError),
 			that = this;
 
+		oBinding.iActiveContexts = 40;
 		oBinding.iCreatedContexts = 42;
 		oBinding.iCurrentEnd = 1;
 		this.mock(oBinding).expects("isRootBindingSuspended").exactly(iNoOfCalls).returns(false);
@@ -2421,6 +2425,7 @@ sap.ui.define([
 					.callsFake(function () {
 						if (bKeepCacheOnError) {
 							assert.strictEqual(oBinding.oCache, oCache);
+							assert.strictEqual(oBinding.iActiveContexts, 40);
 							assert.strictEqual(oBinding.iCreatedContexts, 42);
 							assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 						} else {
@@ -2431,6 +2436,7 @@ sap.ui.define([
 			});
 		});
 		this.mock(oBinding).expects("reset").exactly(iNoOfCalls).callsFake(function () {
+			oBinding.iActiveContexts = 0;
 			oBinding.iCreatedContexts = 0;
 			if (!bAsync) {
 				// simulate #getContexts call sync to "Refresh" event
@@ -3309,32 +3315,35 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("destroyCreated", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-25)", -3,
-				SyncPromise.resolve(Promise.resolve())),
+				SyncPromise.resolve(Promise.resolve()), /*bInactive*/true),
 			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-26)", -4,
 				SyncPromise.resolve(Promise.resolve()));
 
 		// simulate 4 created entities
 		oBinding.aContexts.unshift(oContext3, oContext2, oContext1, oContext0);
+		oBinding.iActiveContexts = 3;
 		oBinding.iCreatedContexts = 4;
 		assert.strictEqual(oBinding.getLength(), 14, "length");
-		this.mock(oBinding).expects("destroyLater").withExactArgs(sinon.match.same(oContext1));
+		oBindingMock.expects("destroyLater").withExactArgs(sinon.match.same(oContext1));
+		oBindingMock.expects("destroyLater").withExactArgs(sinon.match.same(oContext2));
 
 		// code under test
 		oBinding.destroyCreated(oContext1);
+		oBinding.destroyCreated(oContext2);
 
-		assert.strictEqual(oBinding.getLength(), 13);
-		assert.strictEqual(oBinding.iCreatedContexts, 3);
+		assert.strictEqual(oBinding.getLength(), 12);
+		assert.strictEqual(oBinding.iActiveContexts, 2);
+		assert.strictEqual(oBinding.iCreatedContexts, 2);
 		assert.strictEqual(oBinding.aContexts[0], oContext3);
 		assert.strictEqual(oContext3.getIndex(), 0);
-		assert.strictEqual(oBinding.aContexts[1], oContext2);
-		assert.strictEqual(oContext2.getIndex(), 1);
-		assert.strictEqual(oBinding.aContexts[2], oContext0);
-		assert.strictEqual(oContext0.getIndex(), 2);
+		assert.strictEqual(oBinding.aContexts[1], oContext0);
+		assert.strictEqual(oContext0.getIndex(), 1);
 
 		return Promise.all([
 			oContext0.created(),
@@ -3467,11 +3476,12 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
-				iCreatedContexts = bCreated ? 1 : 0,
+				iCreatedContexts = bCreated ? 2 : 0,
 				i,
 				aResults;
 
 			function result(iLength, iCount) {
+				// only active created contexts add to $count
 				iCount = iCount && iCount + (bCreated ? 1 : 0);
 				return createData(iLength, 0, true, iCount);
 			}
@@ -3481,9 +3491,11 @@ sap.ui.define([
 			assert.strictEqual(oBinding.iMaxLength, Infinity);
 
 			if (bCreated) {
-				// simulate created entity which may be transient or already persisted
+				// simulate an active (poss. persisted) and an inactive created entity
 				oBinding.aContexts.unshift({});
-				oBinding.iCreatedContexts = 1;
+				oBinding.aContexts.unshift({});
+				oBinding.iActiveContexts = 1;
+				oBinding.iCreatedContexts = 2;
 			}
 
 			// code under test: set length and length final flag
@@ -3679,6 +3691,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aContexts[1], oContextMinus1);
 		assert.strictEqual(oBinding.aContexts[2], oContext1);
 		assert.strictEqual(oBinding.aContexts[3], oContext2);
+		assert.strictEqual(oBinding.iActiveContexts, 2, "lost + found ;-)");
 		assert.strictEqual(oBinding.iCreatedContexts, 2, "lost + found ;-)");
 		assert.strictEqual(oContextMinus2.getModelIndex(), 0);
 		assert.strictEqual(oContextMinus1.getModelIndex(), 1);
@@ -3908,8 +3921,9 @@ sap.ui.define([
 			},
 			that = this;
 
-		// simulate created entities which are already persisted
+		// simulate an active and an inactive created entity
 		oBinding.aContexts = aContexts;
+		oBinding.iActiveContexts = 1;
 		oBinding.iCreatedContexts = 2;
 		oBinding.bLengthFinal = oFixture.lengthFinal;
 		oBinding.iMaxLength = oFixture.lengthFinal ? 42 : Infinity;
@@ -3928,7 +3942,7 @@ sap.ui.define([
 				that.mock(oBinding).expects("fetchValue")
 					.exactly(oFixture.lengthFinal ? 1 : 0)
 					.withExactArgs("$count", undefined, true)
-					.returns(SyncPromise.resolve(oFixture.newMaxLength + 2));
+					.returns(SyncPromise.resolve(oFixture.newMaxLength + 1));
 			}));
 		this.mock(oKeptAliveContext).expects("isKeepAlive").returns(true);
 		this.mock(oKeptAliveContext).expects("resetKeepAlive").withExactArgs();
@@ -3996,6 +4010,7 @@ sap.ui.define([
 		oContext0 = oBinding.create(oInitialData0, true);
 
 		assert.strictEqual(oBinding.iCreatedContexts, 1);
+		assert.strictEqual(oBinding.iActiveContexts, 1);
 		assert.strictEqual(oBinding.aContexts[0], oContext0);
 		assert.strictEqual(oContext0.getIndex(), 0);
 		assert.strictEqual(oContext0.iIndex, -1);
@@ -4020,6 +4035,7 @@ sap.ui.define([
 		oContext1 = oBinding.create(oInitialData1, true);
 
 		assert.strictEqual(oBinding.iCreatedContexts, 2);
+		assert.strictEqual(oBinding.iActiveContexts, 2);
 		assert.strictEqual(oBinding.aContexts[0], oContext1);
 		assert.strictEqual(oContext1.getIndex(), 0);
 		assert.strictEqual(oContext1.iIndex, -2);
@@ -4418,6 +4434,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: missing $$ownRequest", function (assert) {
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES", {
+				getPath : function () { return "/TEAMS('1')"; }
+			});
+
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("$auto");
+
+		// code under test
+		assert.throws(function () {
+			oBinding.create({}, false, false, true);
+		}, new Error("Missing $$ownRequest at " + oBinding));
+
+		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: bInactive for non-auto groups", function (assert) {
 		var oBinding = this.bindList("/TEAMS");
 
@@ -4429,6 +4461,8 @@ sap.ui.define([
 			oBinding.create({}, false, false, true);
 		}, new Error("bInactive only supported for update group with SubmitMode.Auto: "
 			+ oBinding));
+
+		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
 	});
 
 	//*********************************************************************************************
@@ -8337,6 +8371,23 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.doReplaceWith(oOldContext, {}, "('1')"), oOldContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fireCreateActivate", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.iActiveContexts = 40;
+
+		this.mock(oBinding).expects("fireEvent").withExactArgs("createActivate")
+			.callsFake(function () {
+				assert.strictEqual(oBinding.iActiveContexts, 41);
+			});
+
+		// code under test
+		oBinding.fireCreateActivate();
+
+		assert.strictEqual(oBinding.iActiveContexts, 41);
 	});
 
 	//*********************************************************************************************

@@ -440,7 +440,7 @@ sap.ui.define([
 					}
 
 					if (that.isInactive()) {
-						oBinding.fireEvent("createActivate");
+						oBinding.fireCreateActivate(that);
 						that.bInactive = false;
 					}
 
