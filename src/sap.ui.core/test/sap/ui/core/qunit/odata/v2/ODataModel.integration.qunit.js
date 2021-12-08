@@ -5822,8 +5822,6 @@ usePreliminaryContext : false}}">\
 		}).then(function () {
 			assert.strictEqual(oTable.getItems().length, 1);
 
-			that.expectValue("SalesOrderNote", [""]);
-
 			return Promise.all([
 				// code under test
 				oModel.resetChanges([oCreatedContext.getPath()], undefined, true),
@@ -10823,8 +10821,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectValue("note", [""])
-				.expectValue("itemPosition", ["10"])
+			that.expectValue("itemPosition", ["10"])
 				.expectValue("note", ["Position 10"])
 				.expectMessages([{
 					code : "code-0",

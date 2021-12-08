@@ -1381,8 +1381,7 @@ sap.ui.define([
 			},
 			oCreatedContext = {created : function () {}},
 			oCreatedContextsCache = {addContext : function () {}},
-			mCreateParameters,
-			oCreatePromise = {"catch" : function () {}};
+			mCreateParameters;
 
 		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
@@ -1405,8 +1404,6 @@ sap.ui.define([
 				return mParam === mCreateParameters;
 			}))
 			.returns(oCreatedContext);
-		this.mock(oCreatedContext).expects("created").withExactArgs().returns(oCreatePromise);
-		this.mock(oCreatePromise).expects("catch").withExactArgs(sinon.match.func);
 
 		this.mock(oCreatedContextsCache).expects("addContext")
 			.withExactArgs(sinon.match.same(oCreatedContext), "~resolvedPath",
@@ -1418,69 +1415,6 @@ sap.ui.define([
 			"~bAtEnd", mParameters), oCreatedContext);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("create: discard creation", function (assert) {
-		var fnCatchHandler,
-			oModel = {
-				oMetadata : {isLoaded : function () {}},
-				_getCreatedContextsCache : function () {},
-				createEntry : function () {}
-			},
-			oBinding = {
-				oContext : "~oContext",
-				sCreatedEntitiesKey : "~sCreatedEntitiesKey",
-				oModel : oModel,
-				sPath : "~sPath",
-				_fireChange : function () {},
-				getResolvedPath : function () {}
-			},
-			oBindingMock = this.mock(oBinding),
-			oCreatedContext = {created : function () {}},
-			oCreatedContextsCache = {
-				addContext : function () {},
-				removeContext : function () {}
-			},
-			oCreatePromise = {"catch" : function () {}};
-
-
-		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
-		this.mock(oModel).expects("_getCreatedContextsCache")
-			.withExactArgs()
-			.returns(oCreatedContextsCache);
-		this.mock(oModel).expects("createEntry")
-			.withExactArgs("~sPath", {
-				context : "~oContext",
-				properties : "~oInitialData",
-				refreshAfterChange : false
-			})
-			.returns(oCreatedContext);
-		this.mock(oCreatedContext).expects("created").withExactArgs().returns(oCreatePromise);
-		this.mock(oCreatePromise).expects("catch")
-			.withExactArgs(sinon.match(function (fnCatchHandler0) {
-				fnCatchHandler = fnCatchHandler0;
-
-				return true;
-			}));
-
-		this.mock(oCreatedContextsCache).expects("addContext")
-			.withExactArgs(sinon.match.same(oCreatedContext), "~resolvedPath",
-				"~sCreatedEntitiesKey");
-		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Add});
-
-		// code under test
-		assert.strictEqual(ODataListBinding.prototype.create.call(oBinding, "~oInitialData",
-			/*bAtEnd*/undefined, /*mParameters*/undefined), oCreatedContext);
-
-		this.mock(oCreatedContextsCache).expects("removeContext")
-			.withExactArgs(sinon.match.same(oCreatedContext), "~resolvedPath",
-				"~sCreatedEntitiesKey");
-		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Remove});
-
-		// code under test
-		fnCatchHandler();
-	});
 
 	//*********************************************************************************************
 [

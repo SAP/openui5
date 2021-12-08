@@ -5088,7 +5088,8 @@ sap.ui.define([
 			+ ", oEntityMetadata=" + JSON.stringify(oFixture.oEntityMetadata);
 
 	QUnit.test(sTitle, function (assert) {
-		var oMessageManagerMock = this.mock(sap.ui.getCore().getMessageManager()),
+		var oFindAndRemoveContext, oRemoveEntity, fnResolve,
+			oMessageManagerMock = this.mock(sap.ui.getCore().getMessageManager()),
 			oMetadata = {
 				loaded : function () {}
 			},
@@ -5096,6 +5097,10 @@ sap.ui.define([
 				mChangedEntities : {
 					foo : "bar",
 					"~sKey" : "~changes"
+				},
+				mContexts : { "/~sKey" : "~oContext"},
+				oCreatedContextsCache : {
+					findAndRemoveContext : function () {}
 				},
 				oMetadata : oMetadata,
 				_createAbortedError : function () {},
@@ -5105,14 +5110,17 @@ sap.ui.define([
 				getMessagesByEntity : function () {}
 			},
 			oModelMock = this.mock(oModel),
-			fnResolve,
 			oPromise = new Promise(function (resolve) {
 				fnResolve = resolve;
 			});
 
 		oModelMock.expects("_resolveGroup").withExactArgs("~sKey").returns({groupId : "~groupId"});
 		this.mock(oMetadata).expects("loaded").withExactArgs().returns(oPromise);
-		oModelMock.expects("_removeEntity")
+		oFindAndRemoveContext = this.mock(oModel.oCreatedContextsCache)
+			.expects("findAndRemoveContext")
+			.withExactArgs("~oContext")
+			.exactly(oFixture.bCallRemove ? 1 : 0);
+		oRemoveEntity = oModelMock.expects("_removeEntity")
 			.withExactArgs("~sKey")
 			.exactly(oFixture.bCallRemove ? 1 : 0)
 			.callsFake(function (sKey) {
@@ -5138,6 +5146,9 @@ sap.ui.define([
 				bDeleteCreatedEntities, oFixture.oEntityMetadata),
 			oPromise);
 
+		if (oFixture.bCallRemove) {
+			assert.ok(oRemoveEntity.calledImmediatelyAfter(oFindAndRemoveContext));
+		}
 		assert.deepEqual(oModel.mChangedEntities, {foo : "bar"});
 
 		oModelMock.expects("abortInternalRequest")
