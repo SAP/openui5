@@ -40,7 +40,8 @@ sap.ui.define([
 			saveAsEnabled: false,
 			manageAppsVisible: false,
 			manageAppsEnabled: false,
-			modeSwitcher: "adaptation"
+			modeSwitcher: "adaptation",
+			visualizationButtonVisible: false
 		});
 	}
 
@@ -898,6 +899,7 @@ sap.ui.define([
 			});
 		});
 	});
+
 	QUnit.module("Setting different modes", {
 		beforeEach: function () {
 			this.oToolbar = new Adaptation({
@@ -940,6 +942,7 @@ sap.ui.define([
 					assert.ok(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is visible");
 				}.bind(this));
 		});
+
 		QUnit.test("Given a toolbar is created and mode is set to 'navigation'", function(assert) {
 			this.oControlsModel.setProperty("/modeSwitcher", "navigation");
 			this.oToolbar.animation = false;
@@ -958,6 +961,7 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
 				}.bind(this));
 		});
+
 		QUnit.test("Given a toolbar is created and mode is set to 'visualization'", function(assert) {
 			this.oControlsModel.setProperty("/modeSwitcher", "visualization");
 			this.oVersionsModel.setProperty("/versioningEnabled", false);
@@ -975,6 +979,24 @@ sap.ui.define([
 					assert.notOk(this.oToolbar.getControl("manageApps").getVisible(), "manageApps is not visible");
 					assert.notOk(this.oToolbar.getControl("appVariantOverview").getVisible(), "appVariantOverview is not visible");
 					assert.notOk(this.oToolbar.getControl("saveAs").getVisible(), "saveAs is not visible");
+				}.bind(this));
+		});
+
+		QUnit.test("Given a toolbar is created and visualizationButtonVisible is set to 'true'", function(assert) {
+			this.oControlsModel.setProperty("/visualizationButtonVisible", true);
+			this.oToolbar.animation = false;
+			return this.oToolbar.show()
+				.then(function() {
+					assert.ok(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is visible");
+				}.bind(this));
+		});
+
+		QUnit.test("Given a toolbar is created and visualizationButtonVisible is set to 'false'", function(assert) {
+			this.oControlsModel.setProperty("/visualizationButtonVisible", false);
+			this.oToolbar.animation = false;
+			return this.oToolbar.show()
+				.then(function() {
+					assert.notOk(this.oToolbar.getControl("visualizationSwitcherButton").getVisible(), "visualizationSwitcherButton is not visible");
 				}.bind(this));
 		});
 	});

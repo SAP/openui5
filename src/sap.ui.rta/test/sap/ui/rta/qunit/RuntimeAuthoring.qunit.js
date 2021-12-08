@@ -103,6 +103,21 @@ sap.ui.define([
 		window.sessionStorage.removeItem("sap.ui.fl.info." + sFlexReference);
 	}
 
+	/**
+	 * Stubs the return value of UriParameter's "has" function
+	 * when called with "fiori-tools-rta-mode".
+	 * This has to be stubbed like this because "has" is not static, nor is it part of the prototype
+	 *
+	 * @param {boolean} bValue the return value for "has"
+	 */
+	function stubUriParametersHasFioriToolsParam(bValue) {
+		sandbox.stub(UriParameters, "fromURL").callsFake(function() {
+			var oUriParameters = UriParameters.fromURL.wrappedMethod.apply(this, arguments);
+			sandbox.stub(oUriParameters, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(bValue);
+			return oUriParameters;
+		});
+	}
+
 	QUnit.module("Given that RuntimeAuthoring is available with a component as rootControl...", {
 		before: function () {
 			this.oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
@@ -410,7 +425,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP developer) but the manifest of an app is not supported", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but the manifest of an app is not supported", function(assert) {
 			sandbox.stub(this.oRta, "_getToolbarButtonsVisibility").returns(Promise.resolve({
 				publishAvailable: true,
 				saveAsAvailable: true,
@@ -452,7 +467,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when RTA gets initialized,", function(assert) {
-			assert.ok(this.oRta, " then RuntimeAuthoring is created");
+			assert.ok(this.oRta, "then RuntimeAuthoring is created");
 			assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "then Toolbar is not visible.");
 		});
 	});
@@ -931,7 +946,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is created but not started", {
+	QUnit.module("Given that RuntimeAuthoring is created without a toolbar but not started", {
 		before: function () {
 			this.oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
 			return oComponentPromise;
@@ -1306,6 +1321,80 @@ sap.ui.define([
 				.then(function () {
 					assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is going to start once");
 				});
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is created with a toolbar but not started", {
+		before: function () {
+			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			return oComponentPromise;
+		},
+		beforeEach: function() {
+			this.oRootControl = oComp;
+			var oService = {
+				toExternal: function() {
+					return true;
+				},
+				parseShellHash: function () {
+					return {
+						params: {
+							"sap-ui-fl-version": [Layer.CUSTOMER]
+						}
+					};
+				}
+			};
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getServiceAsync: function () {
+					return Promise.resolve(oService);
+				}
+			});
+			this.oRta = new RuntimeAuthoring({
+				rootControl: this.oRootControl,
+				showToolbars: true,
+				flexSettings: {
+					layer: Layer.CUSTOMER
+				}
+			});
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.resolve());
+			sandbox.stub(Utils, "getUShellService").returns(Promise.resolve(oService));
+		},
+		afterEach: function() {
+			cleanInfoSessionStorage();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the URL parameter set by Fiori tools is set to 'true'", function(assert) {
+			stubUriParametersHasFioriToolsParam(true);
+
+			sandbox.stub(UriParameters.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("true");
+
+			return this.oRta.start()
+				.then(function() {
+					var oToolbar = this.oRta.getToolbar();
+					assert.notOk(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is not visible");
+				}.bind(this));
+		});
+
+		QUnit.test("when the URL parameter set by Fiori tools is set to 'false'", function(assert) {
+			stubUriParametersHasFioriToolsParam(true);
+			sandbox.stub(UriParameters.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("false");
+
+			return this.oRta.start()
+				.then(function() {
+					var oToolbar = this.oRta.getToolbar();
+					assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
+				}.bind(this));
+		});
+
+		QUnit.test("when the URL parameter used by Fiori tools is not set", function(assert) {
+			stubUriParametersHasFioriToolsParam(false);
+
+			return this.oRta.start()
+				.then(function() {
+					var oToolbar = this.oRta.getToolbar();
+					assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
+				}.bind(this));
 		});
 	});
 

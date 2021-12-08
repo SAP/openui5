@@ -70,6 +70,7 @@
 								key="navigation" />
 						<SegmentedButtonItem
 								id="sapUiRta_visualizationSwitcherButton"
+								visible="{controls>/visualizationButtonVisible}"
 								text="{i18n>BTN_VISUALIZATION}"
 								width="auto"
 								key="visualization" />

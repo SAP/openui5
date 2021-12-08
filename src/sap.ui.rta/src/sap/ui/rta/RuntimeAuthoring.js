@@ -1049,6 +1049,14 @@ sap.ui.define([
 			return oToolbar.onFragmentLoaded().then(function() {
 				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
 				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
+				var oUriParameters = UriParameters.fromURL(window.location.href);
+				// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
+				var bVisualizationButtonVisible;
+				if (oUriParameters.has("fiori-tools-rta-mode") && oUriParameters.get("fiori-tools-rta-mode") !== "false") {
+					bVisualizationButtonVisible = false;
+				} else {
+					bVisualizationButtonVisible = true;
+				}
 
 				this._oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
@@ -1064,7 +1072,8 @@ sap.ui.define([
 					saveAsEnabled: false,
 					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
-					modeSwitcher: this.getMode()
+					modeSwitcher: this.getMode(),
+					visualizationButtonVisible: bVisualizationButtonVisible
 				});
 
 				if (bSaveAsAvailable) {
