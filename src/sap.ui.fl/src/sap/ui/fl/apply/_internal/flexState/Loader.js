@@ -44,7 +44,11 @@ sap.ui.define([
 						// do the same for dependentSelectors
 						if (oFlexItemCopy.dependentSelector) {
 							Object.keys(oFlexItemCopy.dependentSelector).forEach(function (oFlexItemCopy, sCategory) {
-								oFlexItemCopy.dependentSelector[sCategory] = oFlexItemCopy.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
+								if (Array.isArray(oFlexItemCopy.dependentSelector[sCategory])) {
+									oFlexItemCopy.dependentSelector[sCategory] = oFlexItemCopy.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
+								} else {
+									oFlexItemCopy.dependentSelector[sCategory] = getIdIsLocalTrueObject(oFlexItemCopy.dependentSelector[sCategory]);
+								}
 							}.bind(undefined, oFlexItemCopy));
 						}
 
