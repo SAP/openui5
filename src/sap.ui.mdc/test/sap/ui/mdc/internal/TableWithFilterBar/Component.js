@@ -24,7 +24,7 @@ sap.ui.define([
 					links: [
 						{
 							action: "action_01",
-							intent: self.location.pathname + (self.location.search && self.location.search) + "#/Books/{ID}",
+							intent: self.location.pathname + (self.location.search && self.location.search) + "#/Books/{path: 'ID', targetType: 'raw'}",
 							text: "Manage book",
 							icon: "/testsuite/test-resources/sap/ui/documentation/sdk/images/HT-1031.jpg",
 							description: "{title}",
@@ -34,7 +34,7 @@ sap.ui.define([
 						},
 						{
 							action: "action_02",
-							intent: self.location.pathname + (self.location.search && self.location.search) + "#/Authors/{author_ID}",
+							intent: self.location.pathname + (self.location.search && self.location.search) + "#/Authors/{path: 'author_ID', targetType: 'raw'}",
 							text: "Manage author",
 							description: "{author/name}"
 						}
