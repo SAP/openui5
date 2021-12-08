@@ -499,6 +499,7 @@ function(
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
 				window.onbeforeunload = this._onUnload.bind(this);
+				return undefined;
 			}.bind(this))
 			.then(function () {
 				if (this.getShowToolbars()) {
@@ -506,6 +507,7 @@ function(
 					return this._getToolbarButtonsVisibility()
 						.then(this._createToolsMenu.bind(this));
 				}
+				return undefined;
 			}.bind(this))
 			// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
 			.then(this._onStackModified.bind(this))
@@ -524,6 +526,7 @@ function(
 					// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 					return this.getToolbar().show();
 				}
+				return undefined;
 			}.bind(this))
 			.then(function () {
 				if (Device.browser.name === "ff") {
@@ -554,8 +557,10 @@ function(
 					this.destroy();
 					return Promise.reject(vError);
 				}
+				return undefined;
 			}.bind(this));
 		}
+		return undefined;
 	};
 
 	function _ffContextMenuHandler() {
@@ -710,6 +715,7 @@ function(
 		if (this.getShowToolbars() && this.getToolbar && this.getToolbar()) {
 			return this.getToolbar()[sName](vValue);
 		}
+		return undefined;
 	};
 
 	/**
@@ -746,6 +752,7 @@ function(
 						oReloadInfo.triggerHardReload = (oReloadInfo.reloadMethod === this._RELOAD.RELOAD_PAGE); // StandAlone or AppDescriptorChanges case
 						return this._handleUrlParameterOnExit(oReloadInfo);
 					}
+					return undefined;
 				}.bind(this));
 			}.bind(this))
 			.catch(fnShowTechnicalError)
@@ -838,6 +845,7 @@ function(
 			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
 		}
 		window.onbeforeunload = this._oldUnloadHandler;
+		return undefined;
 	};
 
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
@@ -1216,7 +1224,8 @@ function(
 
 	/**
 	 * Shows a message toast.
-	 * @param  {string} sMessageKey The text key for the message
+	 * @param  {string} sMessageKey - The text key for the message
+	 * @param  {object} mOptions - Options for message toast
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._showMessageToast = function(sMessageKey, mOptions) {
@@ -1511,6 +1520,7 @@ function(
 		if (oReloadInfo.triggerHardReload) {
 			this._reloadPage();
 		}
+		return undefined;
 	};
 
 	/**
@@ -1586,6 +1596,7 @@ function(
 		if (oReloadInfo.allContexts) {
 			return "MSG_RELOAD_WITHOUT_ALL_CONTEXT";
 		}
+		return undefined;
 	};
 
 	/**
@@ -1626,24 +1637,25 @@ function(
 		if (!sReason) {
 			return Promise.resolve();
 		}
-		return Utils.showMessageBox("information", sReason)
-		.then(function() {
-			RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
-			// allContexts do not change the url parameter to trigger a reload
-			if (
-				oReloadInfo.allContexts &&
-				!oReloadInfo.hasHigherLayerChanges &&
-				this._getUShellService("AppLifeCycle")
-			) {
-				this._getUShellService("AppLifeCycle").reloadCurrentApp();
-			}
-			if (FlexUtils.getUshellContainer()) {
-				// clears FlexState and triggers reloading of the flex data without blocking
-				var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-				return this._triggerCrossAppNavigation(oParsedHash);
-			}
-			return this._triggerHardReload(oReloadInfo);
-		}.bind(this));
+		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
+		return (this.getFlexSettings().developerMode ? Promise.resolve() : Utils.showMessageBox("information", sReason))
+			.then(function() {
+				RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
+				// allContexts do not change the url parameter to trigger a reload
+				if (
+					oReloadInfo.allContexts &&
+					!oReloadInfo.hasHigherLayerChanges &&
+					this._getUShellService("AppLifeCycle")
+				) {
+					this._getUShellService("AppLifeCycle").reloadCurrentApp();
+				}
+				if (FlexUtils.getUshellContainer()) {
+					// clears FlexState and triggers reloading of the flex data without blocking
+					var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
+					return this._triggerCrossAppNavigation(oParsedHash);
+				}
+				return this._triggerHardReload(oReloadInfo);
+			}.bind(this));
 	};
 
 	/**
@@ -1790,6 +1802,7 @@ function(
 		if (ServicesIndex.hasOwnProperty(sName)) {
 			return ServicesIndex[sName].replace(/\./g, "/");
 		}
+		return undefined;
 	}
 
 	/**
