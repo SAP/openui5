@@ -67,17 +67,33 @@ sap.ui.define([
 		 * @public
 		 */
 		Navigation: "Navigation",
+
 		/**
 		 * Used for submit actions
 		 * @public
 		 */
 		Submit: "Submit",
+
 		/**
 		 * Used for custom actions
 		 * @public
 		 * @experimental Since 1.76
 		 */
-		Custom: 'Custom'
+		Custom: "Custom",
+
+		/**
+		 * Date selection. Available only for Calendar cards.
+		 * @public
+		 * @experimental Since 1.87
+		 */
+		DateChange: "DateChange",
+
+		/**
+		 * Month selection. Available only for Calendar cards.
+		 * @public
+		 * @experimental Since 1.87
+		 */
+		MonthChange: "MonthChange"
 	};
 
 	/**
