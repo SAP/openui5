@@ -6,7 +6,6 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Control',
-	'sap/ui/core/IconPool',
 	'sap/ui/core/util/PasteHelper',
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
@@ -33,7 +32,6 @@ sap.ui.define([
 	function(
 		Device,
 		Control,
-		IconPool,
 		PasteHelper,
 		ChangeReason,
 		Filter,
@@ -907,8 +905,6 @@ sap.ui.define([
 	// =============================================================================
 	// BASIC CONTROL API
 	// =============================================================================
-
-	IconPool.insertFontFaceStyle();
 
 	/**
 	 * Initialization of the Table control
