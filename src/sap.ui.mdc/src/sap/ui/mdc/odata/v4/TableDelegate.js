@@ -37,12 +37,14 @@ sap.ui.define([
 	 * Enables additional analytical capabilities.
 	 *
 	 * @author SAP SE
+	 * @namespace
+	 * @alias module:sap/ui/mdc/odata/v4/TableDelegate
+	 * @extends module:sap/ui/mdc/TableDelegate
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.85
-	 * @alias sap.ui.mdc.odata.v4.TableDelegate
 	 */
 	var Delegate = Object.assign({}, TableDelegate);
 
