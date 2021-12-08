@@ -463,13 +463,22 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft, sLayer, bRemoveOtherLayerChanges) {
-		var sParentVersion = bDraft ? Versions.getVersionsModel({
-			reference: Utils.normalizeReference(this._sComponentName),
-			layer: Layer.CUSTOMER // only the customer layer has draft active
-		}).getProperty("/persistedVersion") : undefined;
-
+		var sParentVersion;
+		var aDraftFilenames;
+		if (bDraft) {
+			var oVersionModel = Versions.getVersionsModel({
+				reference: Utils.normalizeReference(this._sComponentName),
+				layer: Layer.CUSTOMER // only the customer layer has draft active
+			});
+			sParentVersion = oVersionModel.getProperty("/persistedVersion");
+			var aVersions = oVersionModel.getProperty("/versions");
+			if (aVersions && aVersions.length > 0) {
+				var oLatestVersion = aVersions[0];
+				aDraftFilenames = oLatestVersion.version === sap.ui.fl.Versions.Draft ? oLatestVersion.filenames : undefined;
+			}
+		}
 		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)
-			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion))
+			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion, aDraftFilenames))
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;

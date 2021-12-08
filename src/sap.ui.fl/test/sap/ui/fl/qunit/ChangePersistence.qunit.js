@@ -2068,6 +2068,160 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("Shall call the condense route of the storage in case of dirty change and persisted draft filename", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+
+				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getFileName(), this.oChangePersistence._mChanges.aChanges[1].getFileName()];
+				var oChangeContent = {
+					fileName: "NewFileName",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE"
+				};
+				var oChangeContent2 = {
+					fileName: "NewFileName2",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE"
+				};
+				var aDirtyChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance), this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance)];
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, sap.ui.fl.Versions.Draft, aFilenames);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called");
+				assert.equal(this.oCondenserStub.lastCall.args[1].length, 4, "four changes were passed to the condenser");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall call the condense route of the storage in case of dirty change and one persisted draft filename", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+
+				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getFileName(), "newDraftFileName"];
+				var oChangeContent = {
+					fileName: "NewFileName",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE"
+				};
+				var oChangeContent2 = {
+					fileName: "NewFileName2",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE"
+				};
+				var aDirtyChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance), this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance)];
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, sap.ui.fl.Versions.Draft, aFilenames);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called");
+				assert.equal(this.oCondenserStub.lastCall.args[1].length, 3, "tree changes were passed to the condenser");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall call the condense route of the storage in case of dirty change and no persisted draft filename", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+
+				var aFilenames = ["draftFileName", "draftFileName2"];
+				var oChangeContent = {
+					fileName: "NewFileName",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE"
+				};
+				var oChangeContent2 = {
+					fileName: "NewFileName2",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE"
+				};
+				var aDirtyChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance), this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance)];
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aDirtyChanges, sap.ui.fl.Versions.Draft, aFilenames);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called");
+				assert.equal(this.oCondenserStub.lastCall.args[1].length, 2, "two changes were passed to the condenser");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall not call the condense route of the storage in case one dirty change and no equal persisted draft filename", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			setURLParameterForCondensing("true");
+			var oChangeContent = {
+				fileName: "Gizorillus",
+				layer: Layer.CUSTOMER,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+			var aChanges = [this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance)];
+			var aFilenames = ["filename", "not", "in", "draft"];
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, undefined, aChanges, sap.ui.fl.Versions.Draft, aFilenames).then(function() {
+				assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
+				assert.equal(this.oStorageCondenseStub.callCount, 0, "the condense route of the storage is not called");
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
 		QUnit.test("Shall not call condenser when no appcomponent gets passed to saveDirtyChanges", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
