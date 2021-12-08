@@ -13,11 +13,15 @@ sap.ui.define([
 ], function (BaseObject, FlexUtil, P13nBuilder, merge, deepEqual, JSONModel, SelectionPanel) {
 	"use strict";
 
-	/**
-	 * Constructor for a new BaseController. The BaseController serves as
-     * base class to create control specific personalization implementations.
+    /**
+	 * Constructor for a new <code>BaseController</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * The <code>BaseController</code> serves as base class to create control specific personalization implementations.
+	 *
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
@@ -64,7 +68,7 @@ sap.ui.define([
     /**
      * Defines whether a Dialog (Change creation on 'OK') or a Popover (liveChanges) should be used.
      *
-     * @returns {boolean}
+     * @returns {boolean} Determines if the livemode should be enabled
      */
     BaseController.prototype.getLiveMode = function(){
         return this._bLiveMode;
@@ -86,7 +90,7 @@ sap.ui.define([
     /**
      * Defines whether the container should include a reset.
      *
-     * @returns {boolean}
+     * @returns {boolean} Determines if the reset should be enabled
      */
     BaseController.prototype.getResetEnabled = function() {
         return this._bResetEnabled;
@@ -99,6 +103,7 @@ sap.ui.define([
     /**
      * The actual UI used for personalization.
      *
+     * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
      * @returns {sap.ui.core.Control|string|Promise} The control which is going to be used in the p13n container.
      */
     BaseController.prototype.getAdaptationUI = function(oPropertyHelper){
@@ -136,7 +141,6 @@ sap.ui.define([
 
     };
 
-    //TODO: check if this can be avoided
     BaseController.prototype._getPresenceAttribute = function(bexternalAppliance){
         return "visible";
     };
@@ -155,6 +159,7 @@ sap.ui.define([
      * Initialized the inner model for the Personalization.
      *
      * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The propertyhelper that should be utilized for property determination.
+     * @returns {object} The personalization model data
      */
     BaseController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
@@ -189,6 +194,8 @@ sap.ui.define([
 
     /**
      * Can be used to trigger update after UI interactions such as "Ok" and "Reset"
+     *
+     * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
      */
     BaseController.prototype.update = function(oPropertyHelper) {
         if (this._oPanel) {
@@ -202,8 +209,6 @@ sap.ui.define([
         }
     };
 
-
-    //TODO: move to FlexUtil? --> Split FlexUtil<>DeltaUtil
     BaseController.prototype._getFilledArray = function(aPreviousItems, aNewItems, sRemoveProperty) {
 		var aNewItemsPrepared = merge([], aPreviousItems);
 		var aNewItemState = merge([], aNewItems);
@@ -233,6 +238,10 @@ sap.ui.define([
 	};
 
     /**
+     *
+     * Getter for the personalization model
+     *
+     * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
      * @returns {sap.ui.model.json.JSONModel} The personalization model.
      *
      */
