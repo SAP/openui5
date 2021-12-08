@@ -1,18 +1,20 @@
 sap.ui.loader.config({
 	shim: {
-		"sap/ui/demo/cardExplorer/thirdparty/ajv/ajv.min": {
+		"sap/ui/demo/cardExplorer/thirdparty/CfWorkerJsonSchemaValidator": {
 			amd: true,
-			exports: "Ajv"
+			exports: "JsonSchemaValidator"
 		}
 	}
 });
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/deepExtend"
 ], function (
 	jQuery,
-	Log
+	Log,
+	deepExtend
 ) {
 	"use strict";
 
@@ -22,6 +24,12 @@ sap.ui.define([
 	 */
 	var SchemaValidator = {};
 
+	/**
+	 * Version of the JSON Schema draft that the manifest is written in.
+	 * @constant
+	 * @private
+	 */
+	var SCHEMA_DRAFT_VERSION = "7";
 	/**
 	 * Reference to "validate" function.
 	 * @function
@@ -36,9 +44,6 @@ sap.ui.define([
 	 * @private
 	 */
 	SchemaValidator._loadSchema = function (sUri) {
-		if (sUri.endsWith("adaptive-card.json")) {
-			sUri = sap.ui.require.toUrl("sap/ui/integration/schemas/adaptive-card.json");
-		}
 
 		// Wrapped in promise as jQuery is not resolving properly and thus creating two requests
 		return new Promise(function (resolve, reject) {
@@ -55,41 +60,21 @@ sap.ui.define([
 
 	/**
 	 * Wrapper of sap.ui.require
-	 * @returns {Promise} Promise, which will be resolved with the Ajv class
+	 * @returns {Promise} Promise, which will be resolved with the JsonSchemaValidator class
 	 * @private
 	 */
-	SchemaValidator._requireAjv = function () {
+	SchemaValidator._requireJsonSchemaValidator = function () {
 		return new Promise(function (resolve) {
 			sap.ui.require([
-				"sap/ui/demo/cardExplorer/thirdparty/ajv/ajv.min"
-			], function (Ajv) {
-				resolve(Ajv);
+				"sap/ui/demo/cardExplorer/thirdparty/CfWorkerJsonSchemaValidator"
+			], function (JsonSchemaValidator) {
+				resolve(JsonSchemaValidator);
 			});
 		});
 	};
 
 	/**
-	 * Creates Ajv instance and adds meta-schemas to it
-	 * @param {Ajv} Ajv Class
-	 * @param {object} oDraft06Schema Draft 06 meta schema
-	 * @returns {Promise} Resolved with new instance
-	 * @private
-	 */
-	SchemaValidator._initAjv = function (Ajv, oDraft06Schema) {
-		return new Promise(function (resolve) {
-			var oAjv = new Ajv({
-				loadSchema: SchemaValidator._loadSchema,
-				schemaId: "auto",
-				meta: true // by default add draft 07 meta schema, needed for sap-card
-			});
-
-			oAjv.addMetaSchema(oDraft06Schema); // needed for AdaptiveCards
-			resolve(oAjv);
-		});
-	};
-
-	/**
-	 * Loads meta schemas, loads "sap-card" schema, creates Ajv instance and compiles "sap-card" schema to "validate" function
+	 * Loads meta schemas, loads "sap-card" schema, creates JsonSchemaValidator instance and compiles "sap-card" schema to "validate" function
 	 * @return {Promise} Resolved with the "validate" function
 	 * @private
 	 */
@@ -99,26 +84,25 @@ sap.ui.define([
 		}
 
 		return Promise.all([
-				SchemaValidator._requireAjv(),
-				SchemaValidator._loadSchema("https://json-schema.org/draft-06/schema#") // needed for AdaptiveCards
+				SchemaValidator._requireJsonSchemaValidator(),
+				SchemaValidator._loadSchema(sap.ui.require.toUrl("sap/ui/integration/schemas/sap-card.json")),
+				SchemaValidator._loadSchema(sap.ui.require.toUrl("sap/ui/integration/schemas/adaptive-card.json"))
 			])
 			.then(function (aArgs) {
-				var Ajv = aArgs[0],
-					oDraft06Schema = aArgs[1];
+				var JsonSchemaValidator = aArgs[0],
+					oCardSchema = aArgs[1],
+					oAdaptiveCardsSchema = aArgs[2],
+					oValidator = new JsonSchemaValidator(oCardSchema, SCHEMA_DRAFT_VERSION);
 
-				return Promise.all([
-					SchemaValidator._initAjv(Ajv, oDraft06Schema),
-					SchemaValidator._loadSchema(sap.ui.require.toUrl("sap/ui/integration/schemas/sap-card.json"))
-				]);
-			})
-			.then(function (aArgs) {
-				var oAjv = aArgs[0],
-					oSapCardSchema = aArgs[1];
+				oValidator.addSchema(oAdaptiveCardsSchema);
 
-				return oAjv.compileAsync(oSapCardSchema);
-			})
-			.then(function (fnValidate) {
-				SchemaValidator._fnValidate = fnValidate;
+				// also add adaptive cards schema with https
+				var oAdaptiveCardsHttpsSchema = deepExtend({}, oAdaptiveCardsSchema);
+				oAdaptiveCardsHttpsSchema["id"] = "https://adaptivecards.io/schemas/adaptive-card.json";
+				oValidator.addSchema(oAdaptiveCardsHttpsSchema);
+
+				SchemaValidator._fnValidate = oValidator.validate.bind(oValidator);
+
 				return SchemaValidator._fnValidate;
 			});
 	};
@@ -127,7 +111,7 @@ sap.ui.define([
 	 * Validates manifest against "sap-card" schema asynchronously.
 	 * @param {object} oManifest The manifest, which will be validated.
 	 * @returns {Promise} If manifest is valid, resolves without any value, else throws exception with the array of errors.
-	 *                    Also throws, if there is a problem with validator initialization.
+	 *                    Also throws, if there is a problem with initialization of the validator.
 	 * @public
 	 */
 	SchemaValidator.validate = function (oManifest) {
@@ -137,10 +121,10 @@ sap.ui.define([
 				throw "Could not initialize Validator. Schema validation skipped!";
 			})
 			.then(function (fnValidate) {
-				var bValid = fnValidate(oManifest);
+				var oResult = fnValidate(oManifest);
 
-				if (!bValid) {
-					throw fnValidate.errors;
+				if (!oResult.valid) {
+					throw oResult.errors;
 				} else {
 					return "Validation Successful";
 				}
