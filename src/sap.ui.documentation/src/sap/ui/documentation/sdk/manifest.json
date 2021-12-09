@@ -489,6 +489,10 @@
 					"viewName": "NotFound",
 					"viewId": "notFound"
 				},
+				"versionNotFound": {
+					"viewName": "VersionNotFound",
+					"viewId": "versionNotFound"
+				},
 				"sitemap": {
 					"viewName": "Sitemap",
 					"viewId": "sitemap"
