@@ -100,7 +100,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: "$TMP"
 				})
 			});
@@ -119,7 +119,7 @@ sap.ui.define([
 				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).packageName, "$TMP");
 				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).reference, "a.reference");
 				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).id, "a.id");
-				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).layer, "CUSTOMER");
+				assert.equal(JSON.parse(oNewConnectorStub.getCall(1).args[2].payload).layer, Layer.CUSTOMER);
 				assert.equal(oNewConnectorStub.getCall(1).args[1], "PUT");
 			});
 		});
@@ -129,7 +129,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				})
 			});
 			var oStubOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: "aTransport"});
@@ -153,7 +153,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				})
 			});
 			return AppVariantFactory.prepareDelete({
@@ -185,7 +185,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: ""
 				})
 			});
@@ -210,7 +210,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: ""
 				})
 			});
@@ -366,7 +366,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.CUSTOMER
 			}).then(function(oVariant) {
-				assert.equal(oVariant._getMap().layer, "CUSTOMER");
+				assert.equal(oVariant._getMap().layer, Layer.CUSTOMER);
 			});
 		});
 
@@ -376,7 +376,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.CUSTOMER_BASE
 			}).then(function(oVariant) {
-				assert.equal(oVariant._getMap().layer, "CUSTOMER_BASE");
+				assert.equal(oVariant._getMap().layer, Layer.CUSTOMER_BASE);
 			});
 		});
 
@@ -386,7 +386,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.PARTNER
 			}).then(function(oVariant) {
-				assert.equal(oVariant._getMap().layer, "PARTNER");
+				assert.equal(oVariant._getMap().layer, Layer.PARTNER);
 			});
 		});
 
@@ -396,7 +396,7 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: Layer.VENDOR
 			}).then(function(oVariant) {
-				assert.equal(oVariant._getMap().layer, "VENDOR");
+				assert.equal(oVariant._getMap().layer, Layer.VENDOR);
 			});
 		});
 
@@ -641,7 +641,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
@@ -656,12 +656,33 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("When prepareCreate is called with versioning and variant is saved into the backend", function(assert) {
+			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
+				response: JSON.stringify({
+					id: "a.id",
+					reference: "a.reference",
+					layer: Layer.CUSTOMER,
+					packageName: "YY1_DEFAULT_123"
+				})
+			});
+			return AppVariantFactory.prepareCreate({
+				id: "a.id",
+				reference: "a.reference",
+				parentVersion: "versionGUID"
+			}).then(function(oVariant) {
+				return oVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(oNewConnectorStub.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&sap-language=en');
+			});
+		});
+
 		QUnit.test("SmartBusiness: When prepareCreate is called and variant is saved into the backend", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
@@ -682,7 +703,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
@@ -701,7 +722,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER",
+					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
@@ -720,7 +741,7 @@ sap.ui.define([
 				response: JSON.stringify({
 					id: "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER"
+					layer: Layer.CUSTOMER
 				})
 			});
 			var oSpyOpenTransportSelection = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves({transport: ""});

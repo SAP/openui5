@@ -5,11 +5,15 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector"
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/_internal/Versions"
 ], function(
 	ChangesController,
 	SaveAs,
-	LrepConnector
+	LrepConnector,
+	FeaturesAPI,
+	Versions
 ) {
 	"use strict";
 
@@ -57,8 +61,13 @@ sap.ui.define([
 			}
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
-
-			return SaveAs.saveAs(mPropertyBag);
+			return FeaturesAPI.isVersioningEnabled(mPropertyBag.layer)
+				.then(function (bVersioningEnabled) {
+					if (bVersioningEnabled) {
+						mPropertyBag.parentVersion = Versions.getVersionsModel(mPropertyBag).getProperty("/displayedVersion");
+					}
+					return SaveAs.saveAs(mPropertyBag);
+				});
 		},
 
 		/**

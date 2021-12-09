@@ -299,6 +299,10 @@ sap.ui.define([
 			mPropertyBag.isForSmartBusiness = this._oDefinition.isForSmartBusiness;
 		}
 
+		if (this._oDefinition.parentVersion) {
+			mPropertyBag.parentVersion = this._oDefinition.parentVersion;
+		}
+
 		if (mMap.layer) {
 			mPropertyBag.layer = mMap.layer;
 		}
