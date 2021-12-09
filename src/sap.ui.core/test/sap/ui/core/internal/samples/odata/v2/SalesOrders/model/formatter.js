@@ -37,7 +37,15 @@ sap.ui.define([], function () {
 		formatStatusIcon : function () {
 			var oContext = this.getBinding("src").getContext();
 
-			if (oContext && oContext.isTransient()) {
+			if (oContext && (oContext.isTransient()
+					// after the context has been removed from created contexts cache all bindings
+					// are updated, so the formatter is called for a context which has been removed
+					// from the OData model; in that case oContext.isTransient() returns false as
+					// the created promise has been rejected; formatStatusIcon must not return
+					// "sap-icon://cloud" in that case otherwise all transient entities that are
+					// displayed in that row are getting a wrong icon as the binding refers only to
+					// the item position which does not change so the icon does not change too.
+					|| !oContext.getObject())) {
 				return "sap-icon://alert";
 			}
 
@@ -47,7 +55,9 @@ sap.ui.define([], function () {
 		formatStatusToolTip : function () {
 			var oContext = this.getBinding("src").getContext();
 
-			if (oContext && oContext.isTransient()) {
+			if (oContext && (oContext.isTransient()
+					// see #formatStatusIcon
+					|| !oContext.getObject())) {
 				return "Transient";
 			}
 

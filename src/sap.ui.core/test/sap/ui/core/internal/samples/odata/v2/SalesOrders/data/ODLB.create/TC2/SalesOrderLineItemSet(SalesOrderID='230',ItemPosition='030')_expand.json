@@ -1,0 +1,82 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"ToHeader" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')",
+				"type" : "GWSAMPLE_BASIC.SalesOrder"
+			},
+			"SalesOrderID" : "230",
+			"Note" : "ODataListBinding#create - TC 2",
+			"NoteLanguage" : "EN",
+			"CustomerID" : "0100000000",
+			"CustomerName" : "SAP",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "4124.54",
+			"NetAmount" : "3466.00",
+			"TaxAmount" : "658.54",
+			"LifecycleStatus" : "N",
+			"LifecycleStatusDescription" : "New",
+			"BillingStatus" : "",
+			"BillingStatusDescription" : "Initial",
+			"DeliveryStatus" : "",
+			"DeliveryStatusDescription" : "Initial",
+			"CreatedAt" : "\/Date(1638459616199)\/",
+			"ChangedAt" : "\/Date(1638805935610)\/",
+			"ToBusinessPartner" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')/ToBusinessPartner"
+				}
+			},
+			"ToLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet('230')/ToLineItems"
+				}
+			}
+		},
+		"ToProduct" : {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1010')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1010')",
+				"type" : "GWSAMPLE_BASIC.Product",
+				"etag" : "W/\"datetime'2021-06-24T14%3A22%3A35.0000000'\""
+			},
+			"ProductID" : "HT-1010",
+			"TypeCode" : "PR",
+			"Category" : "Notebooks",
+			"Name" : "Notebook Professional 15",
+			"NameLanguage" : "EN",
+			"Description" : "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+			"DescriptionLanguage" : "EN",
+			"SupplierID" : "0100000051",
+			"SupplierName" : "TECUM",
+			"TaxTarifCode" : 1,
+			"MeasureUnit" : "EA",
+			"WeightMeasure" : "4.300",
+			"WeightUnit" : "KG",
+			"CurrencyCode" : "EUR",
+			"Price" : "1999.00",
+			"Width" : "33.000",
+			"Depth" : "20.000",
+			"Height" : "3.000",
+			"DimUnit" : "CM",
+			"CreatedAt" : "\/Date(1624544555000)\/",
+			"ChangedAt" : "\/Date(1624544555000)\/",
+			"ToSupplier" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSupplier"
+				}
+			},
+			"ToSalesOrderLineItems" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSalesOrderLineItems"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,31 @@
+{
+	"d" : {
+		"__metadata" : {
+			"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')",
+			"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')",
+			"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+		},
+		"SalesOrderID" : "230",
+		"ItemPosition" : "040",
+		"ProductID" : "HT-1060",
+		"Note" : "2",
+		"NoteLanguage" : "EN",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "10.71",
+		"NetAmount" : "9.00",
+		"TaxAmount" : "1.71",
+		"DeliveryDate" : "\/Date(1640015432585)\/",
+		"Quantity" : "1",
+		"QuantityUnit" : "EA",
+		"ToHeader" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')/ToHeader"
+			}
+		},
+		"ToProduct" : {
+			"__deferred" : {
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')/ToProduct"
+			}
+		}
+	}
+}
