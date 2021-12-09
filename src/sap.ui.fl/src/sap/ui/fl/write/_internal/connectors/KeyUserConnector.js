@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
-	 var KeyUserConnector = merge({}, BackendConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
+	var KeyUserConnector = merge({}, BackendConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
 		layers: InitialConnector.layers,
 
 		ROUTES: {
@@ -47,7 +47,8 @@ sap.ui.define([
 				UPLOAD: PREFIX + API_VERSION + "/translation/texts",
 				DOWNLOAD: PREFIX + API_VERSION + "/translation/texts/",
 				GET_SOURCELANGUAGE: PREFIX + API_VERSION + "/translation/sourcelanguages/"
-			}
+			},
+			CONTEXTS: PREFIX + API_VERSION + "/contexts/"
 		},
 		isLanguageInfoRequired: true,
 		loadFeatures: function (mPropertyBag) {
@@ -56,6 +57,27 @@ sap.ui.define([
 				oFeatures.isPublicLayerAvailable = oFeatures.isPublicLayerAvailable && !oFeatures.isVariantAdaptationEnabled;
 				return oFeatures;
 			});
+		},
+
+		getContexts: function (mPropertyBag) {
+			var aParameters = ["type", "$skip", "$filter"];
+			var mParameters = _pick(mPropertyBag, aParameters);
+
+			var sContextsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.CONTEXTS, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sContextsUrl).then(function (oResult) {
+				return oResult.response;
+			});
+		},
+
+		loadContextDescriptions: function (mPropertyBag) {
+			var mParameters = {};
+			InitialUtils.addLanguageInfo(mParameters);
+			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			var sContextsUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.CONTEXTS, mPropertyBag, mParameters);
+			mPropertyBag.payload = JSON.stringify(mPropertyBag.flexObjects);
+			mPropertyBag.dataType = "json";
+			mPropertyBag.contentType = "application/json; charset=utf-8";
+			return WriteUtils.sendRequest(sContextsUrl, "POST", mPropertyBag);
 		}
 	});
 
