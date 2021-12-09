@@ -32,7 +32,7 @@
 														"technicalName": "sap.uxap.ObjectPageLayout",
 														"editable": true,
 														"type": "element",
-														"name": "LAYOUT_CONTROL_NAME",
+														"name": "Object Page Layout",
 														"visible": true,
 														"elements": [
 															{
