@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/ODataParentBinding",
-	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, asODataParentBinding,
-	SubmitMode, _Helper) {
+	_Helper) {
 	/*eslint camelcase: 0 */
 	"use strict";
 
@@ -2001,112 +2000,31 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("deleteFromCache: binding w/ cache", function (assert) {
-		var oCache = {
-				_delete : function () {}
+	QUnit.test("deleteFromCache", function (assert) {
+		var oBinding = new ODataParentBinding(),
+			oCache = {
+				_delete : function () { throw new Error(); }
 			},
-			oBinding = new ODataParentBinding({
-				oCache : oCache,
-				getUpdateGroupId : function () {},
-				oModel : {isAutoGroup : function () { return true; }}
-			}),
-			fnCallback = {},
-			oETagEntity = {},
-			oGroupLock = {getGroupId : function () {}},
-			oResult = {};
+			oWithCacheExpectation;
 
-		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
-		this.mock(oCache).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity), "~bDoNotRequestCount~",
-				sinon.match.same(fnCallback))
-			.returns(SyncPromise.resolve(oResult));
+		oWithCacheExpectation = this.mock(oBinding).expects("withCache")
+			.withExactArgs(sinon.match.func, "~sPath~", true).returns("~oResult~");
 
 		assert.strictEqual(
-			oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					oETagEntity, "~bDoNotRequestCount~", fnCallback).getResult(),
-			oResult);
-	});
+			// code under test
+			oBinding.deleteFromCache("~oGroupLock~", "EMPLOYEES('1')", "~sPath~",
+				"~oETagEntity~", "~bDoNotRequestCount~", "~fnCallback~"),
+			"~oResult~");
 
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: binding w/o cache", function (assert) {
-		var oParentBinding = {
-				deleteFromCache : function () {}
-			},
-			oContext = {
-				getBinding : function () {
-					return oParentBinding;
-				},
-				iIndex : 42
-			},
-			oBinding = new ODataParentBinding({
-				oCache : null,
-				oContext : oContext,
-				getUpdateGroupId : function () {},
-				oModel : {isAutoGroup : function () { return true; }},
-				sPath : "TEAM_2_EMPLOYEES"
-			}),
-			fnCallback = {},
-			oETagEntity = {},
-			oGroupLock = {},
-			oResult = {};
-
-		this.mock(_Helper).expects("buildPath")
-			.withExactArgs(42, "TEAM_2_EMPLOYEES", "1/EMPLOYEE_2_EQUIPMENTS/3")
-			.returns("~");
-		this.mock(oParentBinding).expects("deleteFromCache")
-			.withExactArgs(sinon.match.same(oGroupLock), "EQUIPMENTS('3')", "~",
-				sinon.match.same(oETagEntity), "~bDoNotRequestCount~", sinon.match.same(fnCallback))
-			.returns(SyncPromise.resolve(oResult));
+		this.mock(oCache).expects("_delete")
+			.withExactArgs("~oGroupLock~", "EMPLOYEES('1')", "~sCachePath~", "~oETagEntity~",
+				"~bDoNotRequestCount~", "~fnCallback~")
+			.returns("~oDeleteResult~");
 
 		assert.strictEqual(
-			oBinding.deleteFromCache(oGroupLock, "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					oETagEntity, "~bDoNotRequestCount~", fnCallback).getResult(),
-			oResult);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: check submit mode", function (assert) {
-		var oCache = {_delete : function () {}},
-			oBinding = new ODataParentBinding({
-				oCache : oCache,
-				getUpdateGroupId : function () {},
-				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
-			}),
-			oETagEntity = {},
-			oGroupLock = {getGroupId : function () {}},
-			oGroupLockMock = this.mock(oGroupLock),
-			oModelMock = this.mock(oBinding.oModel),
-			fnCallback = {};
-
-		oGroupLockMock.expects("getGroupId").withExactArgs().returns("myGroup");
-		oModelMock.expects("isAutoGroup").withExactArgs("myGroup").returns(false);
-		assert.throws(function () {
-			oBinding.deleteFromCache(oGroupLock);
-		}, new Error("Illegal update group ID: myGroup"));
-
-		oGroupLockMock.expects("getGroupId").withExactArgs().returns("$direct");
-		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
-		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
-		this.mock(oCache).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "42",
-				sinon.match.same(oETagEntity), "~bDoNotRequestCount~", sinon.match.same(fnCallback))
-			.returns(SyncPromise.resolve());
-
-		return oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "42", oETagEntity,
-			"~bDoNotRequestCount~", fnCallback).then();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deleteFromCache: cache is not yet available", function (assert) {
-		var oBinding = new ODataParentBinding({
-				// simulate pending cache creation
-				oCache : undefined
-			});
-
-		assert.throws(function () {
-			oBinding.deleteFromCache("$auto");
-		}, new Error("DELETE request not allowed"));
+			// code under test
+			oWithCacheExpectation.firstCall.args[0](oCache, "~sCachePath~"),
+			"~oDeleteResult~");
 	});
 
 	//*********************************************************************************************
@@ -3637,14 +3555,13 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{parentGroup : "groupId", delegate : true},
-	{parentGroup : "otherGroupId", submitMode : SubmitMode.API, delegate : false},
-	{parentGroup : "otherGroupId", submitMode : SubmitMode.Auto, delegate : true},
-	{parentGroup : "otherGroupId", submitMode : SubmitMode.Direct, delegate : true}
+	{parentGroup : "otherGroupId", isApiGroup : true, delegate : false},
+	{parentGroup : "otherGroupId", isApiGroup : false, delegate : true}
 ].forEach(function (oFixture) {
 	QUnit.test("getBaseForPathReduction: delegate to parent binding: " + JSON.stringify(oFixture),
 			function (assert) {
 		var oModel = {
-				getGroupProperty : function () {}
+				isApiGroup : function () {}
 			},
 			oParentBinding = new ODataParentBinding({oModel : oModel}),
 			oContext = {
@@ -3665,9 +3582,9 @@ sap.ui.define([
 			.exactly(oFixture.delegate ? 1 : 0)
 			.withExactArgs()
 			.returns("/base/path");
-		this.mock(oModel).expects("getGroupProperty").atLeast(0)
-			.withExactArgs(oFixture.parentGroup, "submit")
-			.returns(oFixture.submitMode);
+		this.mock(oModel).expects("isApiGroup").exactly("isApiGroup" in oFixture ? 1 : 0)
+			.withExactArgs(oFixture.parentGroup)
+			.returns(oFixture.isApiGroup);
 		this.mock(oBinding).expects("getResolvedPath").exactly(oFixture.delegate ? 0 : 1)
 			.withExactArgs().returns("/resolved/path");
 

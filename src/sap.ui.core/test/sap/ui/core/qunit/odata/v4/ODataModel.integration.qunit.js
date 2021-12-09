@@ -22568,6 +22568,8 @@ sap.ui.define([
 	// <code>fnOnBeforeDestroy</code>.
 	// JIRA: CPOUI5ODATAV4-347
 	// The "items" table is refreshed after activation (JIRA: CPOUI5ODATAV4-1355)
+	// oInactiveArtistContext.delete(null); can be used to remove messages for the draft that
+	// has been activated w/o sending a DELETE request (JIRA: CPOUI5ODATAV4-1342)
 	//
 	// - An invalid value is entered. Editing is canceled via v4.Context#replaceWith with a known
 	// active version. The draft is DELETEd afterwards.
@@ -22580,12 +22582,15 @@ sap.ui.define([
 ["EditAction", "GetDraft"].forEach(function (sDraftOperation) {
 	[false, true].forEach(function (bCancel) {
 		[false, true].forEach(function (bWithActive) {
-			var sTitle = "CPOUI5ODATAV4-347: draft operation = " + sDraftOperation + ", cancel = "
-					+ bCancel + ", known active version = " + bWithActive;
+			[false, true].forEach(function (bRefresh) {
+				var sTitle = "CPOUI5ODATAV4-347: draft operation = " + sDraftOperation
+						+ ", cancel = " + bCancel
+						+ ", known active version = " + bWithActive
+						+ ", refresh after activation = " + bRefresh;
 
-			if (!bCancel && !bWithActive) {
-				return;
-			}
+				if (!bCancel && !bWithActive || bCancel && !bRefresh) {
+					return;
+				}
 
 	QUnit.test(sTitle, function (assert) {
 		var oActiveArtistContext,
@@ -22775,7 +22780,7 @@ sap.ui.define([
 						message : sMessage2,
 						target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
 						type : "Success"
-					}]); //TODO how to get rid of message for draft?
+					}]);
 
 				return Promise.all([
 					// code under test
@@ -22787,8 +22792,6 @@ sap.ui.define([
 				]).then(function (aResults) {
 					assert.ok(aResults[1] === oActiveArtistContext, "active context preserved");
 					assert.strictEqual(oActiveArtistContext.getIndex(), 0);
-					assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"),
-						"inactivETag*");
 
 					that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
 							+ "?$select=Price,PublicationID&$skip=0&$top=100", {
@@ -22803,8 +22806,35 @@ sap.ui.define([
 
 					return that.waitForChanges(assert, "items for new active");
 				}).then(function () {
+					var oHeaderContext = oInactiveArtistContext.getBinding().getHeaderContext();
+
+					if (!bRefresh) {
+						that.expectMessages([]);
+
+						assert.strictEqual(
+							oHeaderContext.getProperty("(ArtistID='42',IsActiveEntity=false)/Name"),
+							"Mrs Eliot");
+
+						return Promise.all([
+							// code under test (get rid of message for draft)
+							oInactiveArtistContext.delete(null),
+							that.waitForChanges(assert, "DELETE draft after activation")
+						]).then(function () {
+							assert.strictEqual(oInactiveArtistContext.getBinding(), undefined);
+							assert.strictEqual(oInactiveArtistContext.getModel(), undefined);
+							that.oLogMock.expects("error").withArgs("Failed to drill-down into"
+								+ " (ArtistID='42',IsActiveEntity=false)/Name, invalid segment:"
+								+ " (ArtistID='42',IsActiveEntity=false)");
+							assert.strictEqual(oHeaderContext.getProperty(
+									"(ArtistID='42',IsActiveEntity=false)/Name"),
+								undefined, "data has been deleted from cache");
+						});
+					}
+
 					// Note: oInactiveArtistContext.setKeepAlive(false); would be realistic, but we
 					// prefer to check fnOnBeforeDestroy in this test
+					assert.strictEqual(oInactiveArtistContext.getProperty("@odata.etag"),
+						"inactivETag*");
 
 					// Note: draft operation is relative to ODLB and function is refreshed, too
 					oDraftOperation.setContext(null);
@@ -22835,15 +22865,16 @@ sap.ui.define([
 						// code under test
 						oListBinding.requestRefresh(),
 						that.waitForChanges(assert, "refresh")
-					]);
-				}).then(function () {
-					assert.strictEqual(fnOnBeforeDestroy.callCount, 2);
-					assert.ok(fnOnBeforeDestroy.alwaysCalledOn(that), "Function#bind still works");
-					assert.ok(fnOnBeforeDestroy.calledWithExactly(), "still no args here");
-					assert.ok(
-						fnOnBeforeDestroy.calledWithExactly(
-							sinon.match.same(oInactiveArtistContext)),
-						"for the 'clone', we need the context to distinguish");
+					]).then(function () {
+						assert.strictEqual(fnOnBeforeDestroy.callCount, 2);
+						assert.ok(fnOnBeforeDestroy.alwaysCalledOn(that),
+							"Function#bind still works");
+						assert.ok(fnOnBeforeDestroy.calledWithExactly(), "still no args here");
+						assert.ok(
+							fnOnBeforeDestroy.calledWithExactly(
+								sinon.match.same(oInactiveArtistContext)),
+							"for the 'clone', we need the context to distinguish");
+					});
 				});
 			} else { // cancel
 				oInput = oTable.getItems()[0].getCells()[2];
@@ -22966,6 +22997,7 @@ sap.ui.define([
 		});
 	});
 
+			});
 		});
 	});
 });

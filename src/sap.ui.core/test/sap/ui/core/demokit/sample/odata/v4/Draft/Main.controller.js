@@ -132,8 +132,9 @@ sap.ui.define([
 		},
 
 		onSave : function () {
-			this.toggleDraft("draftActivate");
-			//TODO what to do with oDraftContext now?
+			this.toggleDraft("draftActivate").then(function (oDraftContext) {
+				oDraftContext.delete(null);
+			});
 		},
 
 		onSortByProductID : function () {
@@ -161,7 +162,7 @@ sap.ui.define([
 				oProductsTable = this.getView().byId("Products"),
 				that = this;
 
-			oContext.getModel().bindContext("SampleService." + sAction + "(...)",
+			return oContext.getModel().bindContext("SampleService." + sAction + "(...)",
 				oContext, {$$inheritExpandSelect : true})
 				.execute("$auto", false, null, true)
 				.then(function (oSiblingContext) {
@@ -171,6 +172,8 @@ sap.ui.define([
 					oObjectPage.setBindingContext(oSiblingContext);
 					oProductsTable.setSelectedItem(
 						oProductsTable.getItems()[oSiblingContext.getIndex()], true);
+
+					return oContext;
 				});
 		}
 	});

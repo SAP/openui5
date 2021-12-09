@@ -333,9 +333,9 @@ sap.ui.define([
 				"$direct" : {submit : SubmitMode.Direct}
 			},
 			oGroupProperties = {
-				"myGroup0" : {submit : SubmitMode.API},
-				"myGroup1" : {submit : SubmitMode.Auto},
-				"myGroup2" : {submit : SubmitMode.Direct}
+				"myAPIGroup" : {submit : SubmitMode.API},
+				"myAutoGroup" : {submit : SubmitMode.Auto},
+				"myDirectGroup" : {submit : SubmitMode.Direct}
 			},
 			oModel;
 
@@ -352,14 +352,14 @@ sap.ui.define([
 		assert.strictEqual(oModel.getGroupProperty("$auto", "submit"), SubmitMode.Auto);
 		assert.strictEqual(oModel.getGroupProperty("$auto.foo", "submit"), SubmitMode.Auto);
 		assert.strictEqual(oModel.getGroupProperty("$direct", "submit"), SubmitMode.Direct);
-		assert.strictEqual(oModel.getGroupProperty("myGroup0", "submit"), SubmitMode.API);
-		assert.strictEqual(oModel.getGroupProperty("myGroup1", "submit"), SubmitMode.Auto);
-		assert.strictEqual(oModel.getGroupProperty("myGroup2", "submit"), SubmitMode.Direct);
+		assert.strictEqual(oModel.getGroupProperty("myAPIGroup", "submit"), SubmitMode.API);
+		assert.strictEqual(oModel.getGroupProperty("myAutoGroup", "submit"), SubmitMode.Auto);
+		assert.strictEqual(oModel.getGroupProperty("myDirectGroup", "submit"), SubmitMode.Direct);
 		assert.strictEqual(oModel.getGroupProperty("unknown", "submit"), SubmitMode.API);
 
 		assert.throws(function () {
 			// code under test
-			oModel.getGroupProperty("myGroup0", "unknown");
+			oModel.getGroupProperty("myAPIGroup", "unknown");
 		}, new Error("Unsupported group property: 'unknown'"));
 	});
 
@@ -391,41 +391,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isAutoGroup", function (assert) {
-		var oModel = this.createModel("", {
-				groupProperties : {
-					"myAPIGroup" : {submit : SubmitMode.API},
-					"myAutoGroup" : {submit : SubmitMode.Auto},
-					"myDirectGroup" : {submit : SubmitMode.Direct}
-				}
-			});
+[SubmitMode.API, SubmitMode.Auto, SubmitMode.Direct].forEach(function (sSubmitMode) {
+	var sTitle = "isApiGroup, isAutoGroup, isDirectGroup: getGroupProperty returns " + sSubmitMode;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = this.createModel("");
+
+		this.mock(oModel).expects("getGroupProperty").thrice().withExactArgs("myGroup", "submit")
+			.returns(sSubmitMode);
 
 		// code under test
-		assert.ok(oModel.isAutoGroup("$auto"));
-		assert.ok(oModel.isAutoGroup("$auto.foo"));
-		assert.notOk(oModel.isAutoGroup("Unknown"));
-		assert.ok(oModel.isAutoGroup("myAutoGroup"));
-		assert.notOk(oModel.isAutoGroup("myAPIGroup"));
-		assert.notOk(oModel.isAutoGroup("myDirectGroup"));
+		assert.strictEqual(oModel.isApiGroup("myGroup"), sSubmitMode === SubmitMode.API);
+		assert.strictEqual(oModel.isAutoGroup("myGroup"), sSubmitMode === SubmitMode.Auto);
+		assert.strictEqual(oModel.isDirectGroup("myGroup"), sSubmitMode === SubmitMode.Direct);
 	});
-
-	//*********************************************************************************************
-	QUnit.test("isDirectGroup", function (assert) {
-		var oModel = this.createModel("", {
-				groupProperties : {
-					"myAPIGroup" : {submit : SubmitMode.API},
-					"myAutoGroup" : {submit : SubmitMode.Auto},
-					"myDirectGroup" : {submit : SubmitMode.Direct}
-				}
-			});
-
-		// code under test
-		assert.ok(oModel.isDirectGroup("$direct"));
-		assert.notOk(oModel.isDirectGroup("Unknown"));
-		assert.ok(oModel.isDirectGroup("myDirectGroup"));
-		assert.notOk(oModel.isDirectGroup("myAPIGroup"));
-		assert.notOk(oModel.isDirectGroup("myAutoGroup"));
-	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Model construction with autoExpandSelect", function (assert) {

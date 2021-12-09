@@ -129,26 +129,29 @@ sap.ui.define([
 	/**
 	 * Deletes an entity on the server and in the cached data.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
+	 *   For a transient entity, the lock is ignored (use NULL)!
 	 * @param {string} sEditUrl
-	 *   The entity's edit URL
+	 *   The entity's edit URL to be used for the DELETE request;  w/o a lock, this is mostly
+	 *   ignored.
 	 * @param {string} sPath
 	 *   The entity's path within the cache (as used by change listeners)
 	 * @param {object} [oETagEntity]
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
-	 *   binding.
+	 *   binding. W/o a lock, this is ignored.
 	 * @param {boolean} [bDoNotRequestCount]
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged
+	 *   unchanged; w/o a lock this should be true
 	 * @param {function} fnCallback
 	 *   A function which is called after a transient entity has been deleted from the cache or
 	 *   after the entity has been deleted from the server and from the cache; the index of the
-	 *   entity and the entity list are passed as parameter
+	 *   entity and the entity list are both passed as parameter, or none of them
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise for the DELETE request
+	 *   A promise which is resolved without a result in case of success, or rejected with an
+	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
@@ -179,7 +182,6 @@ sap.ui.define([
 				throw new Error("No 'delete' allowed while waiting for server response");
 			}
 			if (sTransientGroup) {
-				oGroupLock.unlock();
 				that.oRequestor.removePost(sTransientGroup, oEntity);
 				return undefined;
 			}
@@ -190,38 +192,38 @@ sap.ui.define([
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return SyncPromise.all([
-				that.oRequestor.request("DELETE", sEditUrl, oGroupLock.getUnlockedCopy(), mHeaders,
-						undefined, undefined, undefined, undefined,
-						_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
-					.catch(function (oError) {
-						if (oError.status !== 404) {
-							delete oEntity["$ui5.deleting"];
-							throw oError;
-						} // else: map 404 to 200
-					})
-					.then(function () {
-						if (Array.isArray(vCacheData)) {
-							fnCallback(
-								that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath),
-								vCacheData);
-						} else {
-							if (vDeleteProperty) {
-								// set to null and notify listeners
-								_Helper.updateExisting(that.mChangeListeners, sParentPath,
-									vCacheData, _Cache.makeUpdateData([vDeleteProperty], null));
-							} else { // deleting at root level
-								oEntity["$ui5.deleted"] = true;
-							}
-							fnCallback();
-						}
-						that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
-							{}, [sEntityPath]);
-					}),
+				oGroupLock
+					&& that.oRequestor.request("DELETE", sEditUrl, oGroupLock.getUnlockedCopy(),
+							mHeaders, undefined, undefined, undefined, undefined,
+							_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
+						.catch(function (oError) {
+							if (oError.status !== 404) {
+								delete oEntity["$ui5.deleting"];
+								throw oError;
+							} // else: map 404 to 200
+						}),
 				iIndex === undefined // single element or kept-alive not in list
 					&& !bDoNotRequestCount
 					&& that.requestCount(oGroupLock),
-				oGroupLock.unlock() // unlock when all requests have been queued
-			]);
+				oGroupLock && oGroupLock.unlock() // unlock when all requests have been queued
+			]).then(function () {
+				if (Array.isArray(vCacheData)) {
+					fnCallback(
+						that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath),
+						vCacheData);
+				} else {
+					if (vDeleteProperty) {
+						// set to null and notify listeners
+						_Helper.updateExisting(that.mChangeListeners, sParentPath,
+							vCacheData, _Cache.makeUpdateData([vDeleteProperty], null));
+					} else { // deleting at root level
+						oEntity["$ui5.deleted"] = true;
+					}
+					fnCallback();
+				}
+				that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
+					{}, [sEntityPath]);
+			});
 		}).finally(function () {
 			that.removePendingRequest();
 		});

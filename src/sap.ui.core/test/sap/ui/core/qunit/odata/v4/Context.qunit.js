@@ -923,8 +923,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bTransient) {
-	[undefined, "myGroup"].forEach(function (sGroupId) {
-		var sTitle = "delete: success, transient = " + bTransient + ", group ID = " + sGroupId;
+	["myGroup", null].forEach(function (sGroupId) {
+		var sTitle = "delete: success, transient = " + bTransient + ", sGroupId = " + sGroupId;
+
+		if (!bTransient && sGroupId === null) {
+			return;
+		}
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
@@ -936,25 +940,33 @@ sap.ui.define([
 				{removeCachesAndMessages : function () {}},
 				{removeCachesAndMessages : function () {}}
 			],
-			oGroupLock = {},
+			oGroupLock = {
+				getGroupId : function () {}
+			},
 			oModel = {
 				checkGroupId : function () {},
-				getAllBindings : function () {}
+				getAllBindings : function () {},
+				isApiGroup : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42),
 			oPromise = Promise.resolve(),
 			that = this;
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
 		this.mock(oContext).expects("hasPendingChanges").exactly(bTransient ? 0 : 1).withExactArgs()
 			.returns(false);
-		this.mock(oBinding).expects("lockGroup")
-			.withExactArgs(!sGroupId && bTransient ? "$direct" : sGroupId, true, true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("checkGroupId").exactly(bTransient ? 0 : 1)
+			.withExactArgs("myGroup");
+		this.mock(oBinding).expects("lockGroup").exactly(bTransient ? 0 : 1)
+			.withExactArgs("myGroup", true, true).returns(oGroupLock);
+		this.mock(oGroupLock).expects("getGroupId").exactly(bTransient ? 0 : 1)
+			.returns("myResultingGroup");
+		this.mock(oModel).expects("isApiGroup").exactly(bTransient ? 0 : 1)
+			.withExactArgs("myResultingGroup").returns(false);
 		this.mock(oContext).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
+			.withExactArgs(bTransient ? null : sinon.match.same(oGroupLock), null,
+				bTransient ? true : "~bDoNotRequestCount~")
 			.returns(oPromise);
 		oPromise.then(function () {
 			that.mock(oModel).expects("getAllBindings").withExactArgs().returns(aBindings);
@@ -973,7 +985,6 @@ sap.ui.define([
 			assert.notOk(true);
 		});
 	});
-
 	});
 });
 
@@ -984,21 +995,24 @@ sap.ui.define([
 				lockGroup : function () {}
 			},
 			oError = new Error(),
-			oGroupLock = {unlock : function () {}},
+			oGroupLock = {
+				getGroupId : function () {},
+				unlock : function () {}
+			},
 			oModel = {
 				checkGroupId : function () {},
+				isApiGroup : function () {},
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isTransient").withExactArgs()
-			// check before deletion and twice while reporting the error
-			.exactly(3)
-			.returns(true);
+		this.mock(oContext).expects("hasPendingChanges").returns(false);
+		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
 			.returns(oGroupLock);
+		this.mock(oGroupLock).expects("getGroupId").returns("myResultingGroup");
+		this.mock(oModel).expects("isApiGroup").withExactArgs("myResultingGroup").returns(false);
 		this.mock(oContext).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), null, "~bDoNotRequestCount~")
 			.returns(Promise.reject(oError));
@@ -1017,33 +1031,130 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: error in checkGroupId and checkSuspended", function (assert) {
+	QUnit.test("delete: failure w/o lock", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oBindingMock = this.mock(oBinding),
-			sGroupId = "$invalid",
+			oError = new Error(),
 			oModel = {
-				checkGroupId : function () {}
+				reportError : function () {}
 			},
-			oModelMock = this.mock(oModel),
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
-			oError0 = new Error("invalid group"),
-			oError1 = new Error("suspended");
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('1')", undefined);
 
-		oModelMock.expects("checkGroupId").withExactArgs(sGroupId).throws(oError0);
-		oBindingMock.expects("checkSuspended").never();
+		oContext.bKeepAlive = true;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("hasPendingChanges").returns(false);
+		this.mock(oContext).expects("_delete").withExactArgs(null, null, true)
+			.returns(Promise.reject(oError));
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
+				oError);
 
+		// code under test
+		return oContext.delete(null, "~bDoNotRequestCount~").then(function () {
+			assert.notOk(true);
+		}, function (oError0) {
+			assert.ok(true);
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: no lock, but not a kept-alive context", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("hasPendingChanges").returns(false);
+
+		// code under test
 		assert.throws(function () {
-			oContext.delete(sGroupId);
-		}, oError0);
+			oContext.delete(null);
+		}, new Error("Cannot delete " + oContext));
+	});
 
-		oModelMock.expects("checkGroupId").withExactArgs("$auto");
-		oBindingMock.expects("checkSuspended").withExactArgs().throws(oError1);
+	//*********************************************************************************************
+	QUnit.test("delete: no lock, but kept-alive context in the collection", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/0", 0);
+
+		oContext.bKeepAlive = true;
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("hasPendingChanges").returns(false);
+
+		// code under test
+		assert.throws(function () {
+			oContext.delete(null);
+		}, new Error("Cannot delete " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: error in checkSuspended", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42),
+			oError = new Error("suspended");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
+		this.mock(oContext).expects("hasPendingChanges").never();
 
 		assert.throws(function () {
 			oContext.delete("$auto");
-		}, oError1);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: error in checkGroupId", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
+			oError = new Error("invalid group");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+
+		assert.throws(function () {
+			oContext.delete("$invalid");
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("delete: API group", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {},
+				lockGroup : function () {}
+			},
+			oGroupLock = {
+				getGroupId : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				isApiGroup : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
+		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
+			.returns(oGroupLock);
+		// #lockGroup is where the defaulting to #getUpdateGroupId takes place!
+		this.mock(oGroupLock).expects("getGroupId").returns("myResultingGroup");
+		this.mock(oModel).expects("isApiGroup").withExactArgs("myResultingGroup").returns(true);
+
+		assert.throws(function () {
+			oContext.delete("myGroup");
+		}, new Error("Illegal update group ID: myResultingGroup"));
 	});
 
 	//*********************************************************************************************
@@ -1051,19 +1162,17 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			sGroupId = "$auto",
 			oModel = {
 				checkGroupId : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(true);
 
 		assert.throws(function () {
-			oContext.delete(sGroupId);
+			oContext.delete();
 		}, new Error("Cannot delete due to pending changes"));
 	});
 
@@ -1072,48 +1181,37 @@ sap.ui.define([
 		var oBinding = {
 				_delete : function () {}
 			},
-			oETagEntity = {},
-			oGroupLock = {},
-			oModel = {},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				sinon.match.same(oContext), sinon.match.same(oETagEntity), "~bDoNotRequestCount~")
-			.returns(Promise.resolve());
-
-		// code under test
-		return oContext._delete(oGroupLock, oETagEntity, "~bDoNotRequestCount~")
-			.then(function (oResult) {
-				assert.strictEqual(oResult, undefined);
-				assert.strictEqual(oContext.oBinding, oBinding);
-				assert.strictEqual(oContext.oModel, oModel);
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_delete: transient", function (assert) {
-		var oBinding = {
-				_delete : function () {}
-			},
-			oModel = {},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				new SyncPromise(function () {}));
-
-		this.mock(oBinding).expects("_delete")
-			.withExactArgs("~oGroupLock~", "n/a", sinon.match.same(oContext),
+			.withExactArgs("~oGroupLock~", "EMPLOYEES('1')", sinon.match.same(oContext),
 				"~oETagEntity~", "~bDoNotRequestCount~")
-			.returns(Promise.resolve());
+			.returns("~result~");
 
 		// code under test
 		return oContext._delete("~oGroupLock~", "~oETagEntity~", "~bDoNotRequestCount~")
 			.then(function (oResult) {
-				assert.strictEqual(oResult, undefined);
-				assert.strictEqual(oContext.oBinding, oBinding);
-				assert.strictEqual(oContext.oModel, oModel);
+				assert.strictEqual(oResult, "~result~");
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: no lock", function (assert) {
+		var oBinding = {
+				_delete : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
+
+		this.mock(oBinding).expects("_delete")
+			.withExactArgs(null, "n/a", sinon.match.same(oContext), null, true)
+			.returns("~result~");
+
+		assert.strictEqual(
+			// code under test
+			oContext._delete(undefined, "~oETagEntity~", "~bDoNotRequestCount~"),
+			"~result~");
 	});
 
 	//*********************************************************************************************
@@ -1122,45 +1220,33 @@ sap.ui.define([
 				_delete : function () {}
 			},
 			oError = new Error(),
-			oGroupLock = {},
-			oModel = {
-				reportError : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
-				sinon.match.same(oContext), undefined, undefined)
+			.withExactArgs("~oGroupLock~", "EMPLOYEES('1')", sinon.match.same(oContext), undefined,
+				undefined)
 			.returns(Promise.reject(oError));
 
 		// code under test
-		return oContext._delete(oGroupLock).then(function () {
+		return oContext._delete("~oGroupLock~").then(function () {
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
-			assert.strictEqual(oContext.getBinding(), oBinding);
-			assert.strictEqual(oContext.getModelIndex(), 42);
-			assert.strictEqual(oContext.getModel(), oModel);
-			assert.strictEqual(oContext.getPath(), "/EMPLOYEES/42");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("_delete: failure in fetchCanonicalPath", function (assert) {
-		var oBinding = {},
-			oError = new Error(),
-			oModel = {
-				reportError : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+		var oError = new Error(),
+			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs().returns(SyncPromise.reject(oError));
+		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
+			.returns(SyncPromise.reject(oError));
 
 		// code under test
-		return oContext._delete({}).then(function () {
+		return oContext._delete("~oGroupLock~").then(function () {
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
