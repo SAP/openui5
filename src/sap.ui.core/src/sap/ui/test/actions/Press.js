@@ -68,7 +68,7 @@ sap.ui.define([
 				 * @since 1.98
 				 */
 				xPercentage: {
-					type: "number"
+					type: "float"
 				},
 				/**
 				 * Provide percent value for the Y coordinate axis to calculate the position of the click event.
@@ -76,7 +76,7 @@ sap.ui.define([
 				 * @since 1.98
 				 */
 				yPercentage: {
-					type: "number"
+					type: "float"
 				}
 			},
 			publicMethods : [ "executeOn" ]
