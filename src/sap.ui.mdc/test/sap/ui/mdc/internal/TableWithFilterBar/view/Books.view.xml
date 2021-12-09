@@ -636,7 +636,7 @@
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
 								id="ff5" label="Language" display="Description"
 								dataType="Edm.String"
-								dataTypeConstraints= "{nullable: false}"
+								dataTypeConstraints= "{nullable: false, maxLength: 3}"
 								conditions="{$filters>/conditions/language_code}"
 								maxConditions="-1" fieldHelp="FHLanguage"/>
 
