@@ -192,7 +192,9 @@ sap.ui.define([
 					var oTextAnnotation = oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"];
 					var bTextIsFromNavigationProperty = oTextAnnotation != null && oTextAnnotation.$Path.includes("/")[0];
 					var bIsUpperCase = !!oPropertyAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"];
-					var mConstraints = {};
+					var mConstraints = {
+						isDigitSequence: !!oPropertyAnnotations["@com.sap.vocabularies.Common.v1.IsDigitSequence"]
+					};
 					if (oDataObject.$MaxLength > 0) {
 						mConstraints.maxLength = oDataObject.$MaxLength;
 					}
