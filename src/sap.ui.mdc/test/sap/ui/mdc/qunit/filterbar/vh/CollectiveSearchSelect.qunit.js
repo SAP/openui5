@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Item"
 ], function (
 	CollectiveSearchSelect,
 	createAndAppendDiv,
 	keyCodes,
-	oCore
+	oCore,
+	Item
 ) {
 	"use strict";
 
@@ -42,9 +44,9 @@ sap.ui.define([
 		assert.equal(this.oColSearch.getSelectedItemKey(), "foo", "should be foo");
 		assert.equal(this.oColSearch.getItems().length, 0, "items aggregation should be empty");
 
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs1", text: "col Search 1"}));
+		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
 		assert.equal(this.oColSearch.getItems().length, 1, "one item exist");
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
+		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 		assert.equal(this.oColSearch.getItems().length, 2, "two items exist");
 
 		this.oColSearch.setSelectedItemKey("cs2");
@@ -61,8 +63,8 @@ sap.ui.define([
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs1", text: "col Search 1"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
+		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
+		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 
 		// Assert
 		assert.ok(!this.oColSearch.oList, "List should not exist");
@@ -77,15 +79,15 @@ sap.ui.define([
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs1", text: "col Search 1"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
+		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
+		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 
 		this.oColSearch.onclick();
 
 		// Assert
 		assert.ok(!this.oColSearch.oPage.getShowSubHeader(), "Subheader should not be visible");
 		for (var i = 3; i < 11; i++) {
-			this.oColSearch.addItem(new sap.ui.core.Item({key: "cs" + i, text: "col Search " + i}));
+			this.oColSearch.addItem(new Item({key: "cs" + i, text: "col Search " + i}));
 		}
 		this.oColSearch.onclick();
 		assert.ok(this.oColSearch.oPage.getShowSubHeader(), "Subheader should be visible when more than 9 items exist");
@@ -98,10 +100,10 @@ sap.ui.define([
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs1", text: "col Search 1"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
+		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
+		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 		for (var i = 3; i < 11; i++) {
-			this.oColSearch.addItem(new sap.ui.core.Item({key: "cs" + i, text: "col Search " + i}));
+			this.oColSearch.addItem(new Item({key: "cs" + i, text: "col Search " + i}));
 		}
 		this.oColSearch.onclick();
 
@@ -126,8 +128,8 @@ sap.ui.define([
 
 		// Act
 		this.oColSearch.setSelectedItemKey("cs2");
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs1", text: "col Search 1"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
+		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
+		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 
 		this.oColSearch.onkeyup({which : keyCodes.F4});
 		oCore.applyChanges();
@@ -143,10 +145,10 @@ sap.ui.define([
 
 		// Prepare
 		this.oColSearch.setSelectedItemKey("cs2");
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs1", text: "col Search 1"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs2", text: "col Search 2"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs3", text: "col Search 3"}));
-		this.oColSearch.addItem(new sap.ui.core.Item({key: "cs4", text: "col Search 4"}));
+		this.oColSearch.addItem(new Item({key: "cs1", text: "col Search 1"}));
+		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
+		this.oColSearch.addItem(new Item({key: "cs3", text: "col Search 3"}));
+		this.oColSearch.addItem(new Item({key: "cs4", text: "col Search 4"}));
 		this.oColSearch.onclick();
 
 		// Act
@@ -157,7 +159,7 @@ sap.ui.define([
 
 
 		var oFakeEvent = {
-			item: new sap.ui.core.Item({key: "cs2", text: "col Search 2"})
+			item: new Item({key: "cs2", text: "col Search 2"})
 		};
 		this.oColSearch.oList.fireItemPress(oFakeEvent);
 		oCore.applyChanges();
@@ -168,7 +170,7 @@ sap.ui.define([
 
 		// Act
 		oFakeEvent = {
-			item: new sap.ui.core.Item({key: "cs3", text: "col Search 3"})
+			item: new Item({key: "cs3", text: "col Search 3"})
 		};
 		this.oColSearch.oList.fireItemPress(oFakeEvent);
 		oCore.applyChanges();

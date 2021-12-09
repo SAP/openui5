@@ -1,7 +1,11 @@
 sap.ui.define([
 	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate",
-	"sap/base/util/UriParameters"
-], function (ODataFieldValueHelpDelegate, UriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Table",
+	"sap/m/Text"
+], function (ODataFieldValueHelpDelegate, UriParameters, ResponsiveTableColumn, ColumnListItem, ResponsiveTable, Text) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataFieldValueHelpDelegate);
 
@@ -16,20 +20,20 @@ sap.ui.define([
 			var oParamSuspended = oParams.get("suspended");
 			var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-			var oTable = new sap.m.Table(oFieldHelp.getId() + "--mTable", {
+			var oTable = new ResponsiveTable(oFieldHelp.getId() + "--mTable", {
 				growing: true, growingScrollToLoad: true, growingThreshold: 20,
 				columns: [
-					new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-					new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+					new ResponsiveTableColumn({header: new Text({text : "ID"})}),
+					new ResponsiveTableColumn({header: new Text({text : "Name"})})
 				],
 				items: {
 					path : "/Authors",
 					suspended: bSuspended,
-					template : new sap.m.ColumnListItem({
+					template : new ColumnListItem({
 						type: "Active",
 						cells: [
-							new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-							new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+							new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
+							new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
 						]
 					})
 				},

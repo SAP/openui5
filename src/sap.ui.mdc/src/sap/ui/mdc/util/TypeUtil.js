@@ -4,8 +4,9 @@
 
 sap.ui.define([
 		'sap/ui/mdc/enum/BaseType',
-		'sap/base/util/ObjectPath'
-	], function(BaseType, ObjectPath) {
+		'sap/base/util/ObjectPath',
+		'sap/ui/model/SimpleType'
+	], function(BaseType, ObjectPath, SimpleType) {
 	"use strict";
 
 	/**
@@ -152,7 +153,7 @@ sap.ui.define([
 
 			var oType, sDataType;
 
-			if (vType instanceof sap.ui.model.SimpleType) {
+			if (vType instanceof SimpleType) {
 				oType = vType;
 			} else {
 				var sDataTypeClass = this.getDataTypeClassName(vType);
@@ -170,4 +171,4 @@ sap.ui.define([
 
 	return TypeUtil;
 
-}, /* bExport= */ true);
+});

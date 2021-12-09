@@ -365,4 +365,4 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 		this.getPropertyHelper = DelegateMixin.getPropertyHelper;
 	};
 
-}, /* bExport= */ true);
+});

@@ -8,13 +8,11 @@
  * @version@
  */
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/mdc/field/FieldHelpBase',
 	'sap/ui/mdc/condition/Condition',
 	'sap/m/VBox',
 	'sap/m/Button'
 ], function(
-		jQuery,
 		FieldHelpBase,
 		Condition,
 		VBox,

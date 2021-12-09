@@ -2,9 +2,12 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
-], function(Controller, Message, Fragment, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/library"
+], function(Controller, Message, Fragment, oCore, coreLibrary) {
 	"use strict";
+
+	var ValueState = coreLibrary.ValueState;
 
 	return Controller.extend("sap.ui.mdc.sample.ResponsiveTable.Controller", {
 
@@ -49,7 +52,7 @@ sap.ui.define([
 		},
 
 		showRandomMessage: function() {
-			var sTypes = Object.keys(sap.ui.core.ValueState);
+			var sTypes = Object.keys(ValueState);
 			var sRandomType = sTypes[Math.floor(Math.random() * (sTypes.length - 1))];
 			var sRandomText = Math.random().toString(36).substring(2);
 			this.oDataStatePlugin.showMessage("Psst! This secret message is coming from the DataStateIndicator plugin: " + sRandomText, sRandomType);
@@ -87,4 +90,4 @@ sap.ui.define([
 		}
 
 	});
-}, true);
+});

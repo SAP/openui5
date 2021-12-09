@@ -92,4 +92,4 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 		}
 	});
 	return LinkDelegate;
-}, /* bExport= */ true);
+});

@@ -1,12 +1,13 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/mdc/table/ResponsiveTableType',
 	'sap/ui/mdc/table/RowSettings',
 	'sap/ui/core/Fragment',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/m/MessageBox',
 	'sap/m/MessageToast',
 	'sap/ui/core/Core'
-], function(Controller, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore) {
+], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
@@ -162,14 +163,14 @@ sap.ui.define([
 			var oMCBButtonSetting = oCore.byId("mcb-detailsButtonSetting");
 
 			if (vType === "ResponsiveTable") {
-				oTable.setType(new sap.ui.mdc.table.ResponsiveTableType({
+				oTable.setType(new ResponsiveTableType({
 					showDetailsButton: bSelected
 				}));
 				oFEButtonSetting.setVisible(bSelected);
 				if (!bSelected) {
 					oMCBButtonSetting.removeAllSelectedItems();
 				}
-			} else if (vType.constructor === sap.ui.mdc.table.ResponsiveTableType) {
+			} else if (vType.constructor === ResponsiveTableType) {
 				vType.setShowDetailsButton(bSelected);
 				oFEButtonSetting.setVisible(bSelected);
 				if (!bSelected) {
@@ -198,7 +199,7 @@ sap.ui.define([
 			var oTable = this.byId("mdcTable");
 			var sKey = oEvent.getParameter("selectedItem").getKey();
 
-			oTable.setType(new sap.ui.mdc.table.ResponsiveTableType({
+			oTable.setType(new ResponsiveTableType({
 				growingMode: sKey
 			}));
 		},
@@ -263,4 +264,4 @@ sap.ui.define([
 			}.bind(this));
 		}
 	});
-}, true);
+});

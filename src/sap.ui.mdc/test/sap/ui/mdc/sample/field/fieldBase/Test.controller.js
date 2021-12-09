@@ -458,4 +458,4 @@ sap.ui.define([
 		return sText;
 	}
 
-}, true);
+});

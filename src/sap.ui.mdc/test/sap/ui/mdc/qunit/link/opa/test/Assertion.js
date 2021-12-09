@@ -2,6 +2,7 @@
  * ! ${copyright}
  */
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/core/library",
 	"sap/ui/core/format/DateFormat",
@@ -9,7 +10,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"./waitForPersonalizationDialog"
-], function(Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals, Ancestor, waitForPersonalizationDialog) {
+], function(Device, Opa5, coreLibrary, DateFormat, TestUtil, PropertyStrictEquals, Ancestor, waitForPersonalizationDialog) {
 	"use strict";
 	var Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
 		isTabSelected: function(oSegmentedButton, sTabName) {
@@ -31,7 +32,7 @@ sap.ui.define([
 				return null;
 			}
 			var oNavigationItem = null;
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				oNavigationControl.getItems().some(function(oNavigationItem_) {
 					if (oNavigationItem_.getTitle() === sPanelName) {
 						oNavigationItem = oNavigationItem_;
@@ -53,7 +54,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: sControlType,
 				viewName: "Main",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "icon",
 					value: "sap-icon://action-settings"
 				}),
@@ -86,7 +87,7 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeNavigationControl: function() {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return this.waitFor({
 					controlType: "sap.m.List",
 					success: function(aLists) {
@@ -105,7 +106,7 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeNavigationControlWithPanels: function(iNumberOfPanels) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return this.waitFor({
 					controlType: "sap.m.List",
 					success: function(aLists) {
@@ -121,7 +122,7 @@ sap.ui.define([
 			});
 		},
 		iShouldSeePanelsInOrder: function(aOrderedPanelNames) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return this.waitFor({
 					controlType: "sap.m.List",
 					success: function(aLists) {
@@ -142,7 +143,7 @@ sap.ui.define([
 		},
 		iShouldSeeSelectedTab: function(sPanelType) {
 			// On desktop we can check if the tap is selected. On phone we do not have SegmentedButtons on the top of panel.
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return;
 			}
 			return this.waitFor({
@@ -287,7 +288,7 @@ sap.ui.define([
 			return this.waitFor({
 				searchOpenDialogs: true,
 				controlType: "sap.m.ComboBox",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "value",
 					value: sChartTypeText
 				}),
@@ -300,7 +301,7 @@ sap.ui.define([
 		iShouldSeeChartTypeButtonWithIcon: function(sIcon) {
 			return this.waitFor({
 				controlType: "sap.m.OverflowToolbarButton",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "icon",
 					value: sIcon
 				}),
@@ -498,7 +499,7 @@ sap.ui.define([
 		theComboBoxShouldHaveItemWithText: function(sValue, sItemText) {
 			return this.waitFor({
 				controlType: "sap.m.ComboBox",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "value",
 					value: sValue
 				}),
@@ -634,7 +635,7 @@ sap.ui.define([
 		// iShouldSeeSelectedVariant: function(sVariantName) {
 		// 	return this.waitFor({
 		// 		controlType: "sap.ui.comp.smartvariants.SmartVariantManagement",
-		// 		matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+		// 		matchers: new PropertyStrictEquals({
 		// 			name: "defaultVariantKey",
 		// 			value: "*standard*"
 		// 		}),
@@ -705,7 +706,7 @@ sap.ui.define([
 		iShouldSeeOnNavigationPopoverPersonalizationLinkText: function() {
 			return this.waitFor({
 				controlType: "sap.m.Button",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "text",
 					value: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "info.POPOVER_DEFINE_LINKS")
 				}),
@@ -763,7 +764,7 @@ sap.ui.define([
 		iShouldSeeStartRtaButton: function() {
 			return this.waitFor({
 				controlType: "sap.m.Button",
-				matchers: new sap.ui.test.matchers.PropertyStrictEquals({
+				matchers: new PropertyStrictEquals({
 					name: "icon",
 					value: "sap-icon://wrench"
 				}),
@@ -888,4 +889,4 @@ sap.ui.define([
 		}
 	});
 	return Assertion;
-}, true);
+});

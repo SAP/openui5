@@ -148,6 +148,5 @@ sap.ui.define(
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
         };
-    },
-    /* bExport= */ true
+    }
 );

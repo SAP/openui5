@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
-	"sap/ui/mdc/Field"
-], function (ODataTableDelegate, Field) {
+	"sap/ui/mdc/Field",
+	"sap/ui/mdc/Link"
+], function (ODataTableDelegate, Field, Link) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -43,7 +44,7 @@ sap.ui.define([
 
 		if (oInfo.name === "language_code") {
 
-			return new sap.ui.mdc.Field({
+			return new Field({
 				id: "tFieldLink",
 				value: "{language/name}",
 				editMode: "Display"
@@ -53,13 +54,13 @@ sap.ui.define([
 
 		if (oInfo.name === "title") {
 
-			return new sap.ui.mdc.Field({
+			return new Field({
 				id: "tFieldLinkTitle",
 				value: "{title}",
 				editMode: "Display",
 
 				multipleLines: true,
-				fieldInfo: new sap.ui.mdc.Link({ sourceControl:"fTitle", delegate: {
+				fieldInfo: new Link({ sourceControl:"fTitle", delegate: {
 					name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: {
 						semanticObjects: ["FakeFlpSemanticObject"],
 						mainSemanticObject: "FakeFlpSemanticObject"
@@ -71,12 +72,12 @@ sap.ui.define([
 
 		if (oInfo.name === "author_name") {
 
-			return new sap.ui.mdc.Field({
+			return new Field({
 				id: "tFieldLink",
 				value: "{author/name}",
 				editMode: "Display",
 				multipleLines: true,
-				fieldInfo: new sap.ui.mdc.Link({ delegate: { name: 'sap/ui/v4demo/delegate/Books.Link.delegate' } })
+				fieldInfo: new Link({ delegate: { name: 'sap/ui/v4demo/delegate/Books.Link.delegate' } })
 			});
 
 		}

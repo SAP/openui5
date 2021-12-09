@@ -1,8 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
-	"sap/m/MessageToast"
-], function (Controller, UIComponent, MessageToast) {
+	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/MessageToast",
+	"sap/m/Table",
+	"sap/m/Text"
+], function (Controller, UIComponent, FilterField, FilterBar, Column, ColumnListItem, MessageToast, Table, Text) {
 
 	"use strict";
 
@@ -45,22 +51,22 @@ sap.ui.define([
 			var oFieldHelp = oEvent.getSource();
 
 			if (!oFieldHelp.getFilterBar()) {
-				var oFilterBar = new sap.ui.mdc.filterbar.vh.FilterBar({
+				var oFilterBar = new FilterBar({
 					liveMode: false,
 					filterItems: [
-						new sap.ui.mdc.FilterField({
+						new FilterField({
 							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Code",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/code}"
 						}),
-						new sap.ui.mdc.FilterField({
+						new FilterField({
 							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Title",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/title}"
 						}),
-						new sap.ui.mdc.FilterField({
+						new FilterField({
 							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Classification",
 							dataType: "Edm.String",
@@ -72,20 +78,20 @@ sap.ui.define([
 
 			if (!oFieldHelp.getContent().getTable()) {
 				oFieldHelp.getContent().setTable(
-					new sap.m.Table({
+					new Table({
 						growing: true, growingScrollToLoad: true, growingThreshold: 20,
 						columns: [
-							new sap.m.Column({header: new sap.m.Text({text : "Code"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Title"})}),
-							new sap.m.Column({header: new sap.m.Text({text : "Classification"})})
+							new Column({header: new Text({text : "Code"})}),
+							new Column({header: new Text({text : "Title"})}),
+							new Column({header: new Text({text : "Classification"})})
 						],
 						items: {
 							path : "/Genres",
-							template : new sap.m.ColumnListItem({
+							template : new ColumnListItem({
 								type: "Active",
-								cells: [new sap.m.Text({text: "{code}"}),
-										new sap.m.Text({text: "{title}"}),
-										new sap.m.Text({text: "{classification_code}"})]
+								cells: [new Text({text: "{code}"}),
+										new Text({text: "{title}"}),
+										new Text({text: "{classification_code}"})]
 							})
 						},
 						width: "30rem"

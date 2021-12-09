@@ -77,4 +77,4 @@ sap.ui.define([], function() {
 
 	return FormatUtil;
 
-}, /* bExport= */true);
+});

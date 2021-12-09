@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/Item",
 	"sap/ui/core/format/ListFormat",
+	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/Sorter",
 	"sap/ui/dom/containsOrEquals",
@@ -57,6 +58,7 @@ sap.ui.define([
 	DragDropInfo,
 	Item,
 	ListFormat,
+	coreLibrary,
 	KeyCodes,
 	Sorter,
 	containsOrEquals,
@@ -83,6 +85,7 @@ sap.ui.define([
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
 	var MultiSelectMode = library.MultiSelectMode;
+	var TitleLevel = coreLibrary.TitleLevel;
 	var internalMap = new window.WeakMap();
 	var internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -194,7 +197,7 @@ sap.ui.define([
 				headerLevel: {
 					type: "sap.ui.core.TitleLevel",
 					group: "Appearance",
-					defaultValue: sap.ui.core.TitleLevel.Auto
+					defaultValue: TitleLevel.Auto
 				},
 				/**
 				 * Determines whether to bind the table automatically after the initial creation or re-creation of the table.

@@ -7,21 +7,35 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
 	"sap/m/Table",
+	"sap/m/Text",
 	"sap/base/util/UriParameters",
+	"sap/ui/core/Item",
+	"sap/ui/mdc/Field",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
-	'sap/m/library',
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column",
+	"sap/m/library",
 	"sap/ui/mdc/table/ResponsiveTableType"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
 	MDCTable,
 	Conditions,
+	Column,
+	ColumnListItem,
 	Table,
+	Text,
 	UriParameters,
+	Item,
+	Field,
 	FilterBar,
 	FilterField,
+	mdcTable,
+	mdcColumn,
 	mLibrary,
 	ResponsiveTableType
 ) {
@@ -54,18 +68,18 @@ sap.ui.define([
 					width: "30rem",
 					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
 					columns: [
-						new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-						new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+						new Column({header: new Text({text : "ID"})}),
+						new Column({header: new Text({text : "Name"})})
 					],
 					items: {
 						path : "/Authors",
 						length: 10,
 						suspended: bSuspended,
-						template : new sap.m.ColumnListItem({
+						template : new ColumnListItem({
 							type: "Active",
 							cells: [
-								new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-								new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+								new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
+								new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
 							]
 						})
 					}
@@ -78,8 +92,8 @@ sap.ui.define([
 			if (!oCurrentContent) {
 
 				oCurrentContent = new MDCTable({title: "Select from List", keyPath: "ID", descriptionPath: "name", filterFields: "$search", collectiveSearchItems: [
-					new sap.ui.core.Item({text: "Default Search Template", key: "default"}),
-					new sap.ui.core.Item({text: "Search Template 1", key: "template1"})
+					new Item({text: "Default Search Template", key: "default"}),
+					new Item({text: "Search Template 1", key: "template1"})
 				]});
 
 				oCurrentContent.setFilterBar(
@@ -139,7 +153,7 @@ sap.ui.define([
 
 			switch (sCollectiveSearchKey) {
 				case "template1":
-					oCollectiveSearchContent = new sap.ui.mdc.Table(oValueHelp.getId() + "--mdcTable--template1", {
+					oCollectiveSearchContent = new mdcTable(oValueHelp.getId() + "--mdcTable--template1", {
 						header: "",
 						p13nMode: ['Column','Sort'],
 						autoBindOnInit: !bSuspended,
@@ -154,16 +168,16 @@ sap.ui.define([
 							}
 						},
 						columns: [
-							new sap.ui.mdc.table.Column({importance: "High", header: "ID", dataProperty: "ID", template: new sap.ui.mdc.Field({value: "{ID}", editMode: "Display"})}),
-							new sap.ui.mdc.table.Column({importance: "High", header: "Name", dataProperty: "name", template: new sap.ui.mdc.Field({value: "{name}", editMode: "Display"})}),
-							new sap.ui.mdc.table.Column({importance: "Low", header: "Country", dataProperty: "countryOfOrigin_code", template: new sap.ui.mdc.Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
-							new sap.ui.mdc.table.Column({importance: "Low", header: "Region", dataProperty: "regionOfOrigin_code", template: new sap.ui.mdc.Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
-							new sap.ui.mdc.table.Column({importance: "Low", header: "City", dataProperty: "cityOfOrigin_city", template: new sap.ui.mdc.Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
+							new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
+							new mdcColumn({importance: "High", header: "Name", dataProperty: "name", template: new Field({value: "{name}", editMode: "Display"})}),
+							new mdcColumn({importance: "Low", header: "Country", dataProperty: "countryOfOrigin_code", template: new Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
+							new mdcColumn({importance: "Low", header: "Region", dataProperty: "regionOfOrigin_code", template: new Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
+							new mdcColumn({importance: "Low", header: "City", dataProperty: "cityOfOrigin_city", template: new Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
 						]
 					});
 					break;
 				default:
-					oCollectiveSearchContent = new sap.ui.mdc.Table(oValueHelp.getId() + "--mdcTable--default", {
+					oCollectiveSearchContent = new mdcTable(oValueHelp.getId() + "--mdcTable--default", {
 						header: "",
 						p13nMode: ['Column','Sort'],
 						autoBindOnInit: !bSuspended,
@@ -178,8 +192,8 @@ sap.ui.define([
 							}
 						},
 						columns: [
-							new sap.ui.mdc.table.Column({importance: "High", header: "ID", dataProperty: "ID", template: new sap.ui.mdc.Field({value: "{ID}", editMode: "Display"})}),
-							new sap.ui.mdc.table.Column({importance: "High", header: "Name", dataProperty: "name", template: new sap.ui.mdc.Field({value: "{name}", editMode: "Display"})})
+							new mdcColumn({importance: "High", header: "ID", dataProperty: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
+							new mdcColumn({importance: "High", header: "Name", dataProperty: "name", template: new Field({value: "{name}", editMode: "Display"})})
 						]
 					});
 					break;

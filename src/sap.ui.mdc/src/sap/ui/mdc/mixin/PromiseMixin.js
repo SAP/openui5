@@ -87,6 +87,5 @@ sap.ui.define(
 			this._retrievePromises = _noop(PromiseMixin.retrievePromises);
 			this.exit = PromiseMixin.exit(this.exit);
 		};
-	},
-	/* bExport= */ true
+	}
 );

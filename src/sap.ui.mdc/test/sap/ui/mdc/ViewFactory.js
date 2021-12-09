@@ -3,13 +3,15 @@
 */
 
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/model/json/JSONModel',
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/Device',
 	'sap/ui/core/mvc/View'
-], function (jQuery, JSONModel, View) {
+], function (jQuery, JSONModel, Device, View) {
 	"use strict";
 	function create(oViewSettings, oModel, oComp) {
 		var oMetaModel = oModel.getMetaModel(),
-		oDeviceModel = new JSONModel(sap.ui.Device);
+		oDeviceModel = new JSONModel(Device);
 		oDeviceModel.setDefaultBindingMode("OneWay");
 
 		return oMetaModel.requestObject("/").then(function() {

@@ -21,4 +21,4 @@ sap.ui.define([], function() {
 
 	return Common;
 
-}, /* bExport= */true);
+});

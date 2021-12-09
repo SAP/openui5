@@ -8,6 +8,7 @@ sap.ui.define([
     "sap/m/HBox",
     "sap/m/VBox",
     "sap/ui/core/Icon",
+    "sap/ui/core/library",
     "sap/m/Text",
     "sap/m/Column",
     "sap/m/Table",
@@ -16,7 +17,7 @@ sap.ui.define([
     "sap/m/Button",
     "sap/m/OverflowToolbar",
     "sap/ui/model/Filter"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter) {
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, coreLibrary, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter) {
 	"use strict";
 
     // shortcut for sap.m.ListKeyboardMode
@@ -27,6 +28,9 @@ sap.ui.define([
 
     // shortcut for sap.m.ListType
     var ListType = mLibrary.ListType;
+
+    // shortcut for sap.ui.core.IconColor;
+    var IconColor = coreLibrary.IconColor;
 
     /**
 	 * Constructor for a new ListView
@@ -110,7 +114,7 @@ sap.ui.define([
                         new Icon({
                             src: "sap-icon://circle-task-2",
                             size: "0.5rem",
-                            color: sap.ui.core.IconColor.Neutral,
+                            color: IconColor.Neutral,
                             visible: {
                                 path: this.P13N_MODEL + ">isFiltered",
                                 formatter: function(bIsFiltered) {

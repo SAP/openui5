@@ -105,4 +105,4 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	});
 
 	return AggregationBaseDelegate;
-}, /* bExport= */ true);
+});

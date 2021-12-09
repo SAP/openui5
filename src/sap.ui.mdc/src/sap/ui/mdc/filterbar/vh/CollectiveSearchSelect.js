@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Item",
 	"sap/ui/core/Control",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/m/SearchField",
@@ -26,6 +27,7 @@ sap.ui.define([
 	FilterOperator,
 	Device,
 	InvisibleText,
+	Item,
 	Control,
 	HorizontalLayout,
 	SearchField,
@@ -298,7 +300,7 @@ sap.ui.define([
 		this.oList.bindAggregation("items", {
 			path: "/items",
 			model: "$mdcColSearch",
-			template: new sap.ui.core.Item({
+			template: new Item({
 				key: "{$mdcColSearch>key}",
 				text: "{$mdcColSearch>text}"
 			})

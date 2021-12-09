@@ -11,4 +11,4 @@ sap.ui.define([
 			oCore.getMessageManager().registerObject(this.getView(), true);
 		}
 	});
-}, true);
+});

@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay) {
+	"sap/ui/mdc/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enum/FieldDisplay', 'sap/ui/model/odata/type/Int32'
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, TypeInt32) {
 	"use strict";
 
 	var FilterBarOrdersSampleDelegate = Object.assign({}, FilterBarDelegate);
@@ -49,7 +49,7 @@ sap.ui.define([
 					typeConfig: {
 						baseType: "Numeric",
 						className: "Edm.In32",
-						typeInstance: new sap.ui.model.odata.type.Int32()
+						typeInstance: new TypeInt32()
 					}
 				});
 			}
@@ -62,7 +62,7 @@ sap.ui.define([
 					typeConfig: {
 						baseType: "Numeric",
 						className: "Edm.Int32",
-						typeInstance: new sap.ui.model.odata.type.Int32()
+						typeInstance: new TypeInt32()
 					}
 				});
 			}
@@ -81,7 +81,7 @@ sap.ui.define([
 		// groupLabel: "none",
 		// label: "Author ID",
 		// type: "Edm.Int32",
-		// baseType:new sap.ui.model.odata.type.Int32(),
+		// baseType:new TypeInt32(),
 		// required: false,
 		// hiddenFilter: false,
 		// visible: true,

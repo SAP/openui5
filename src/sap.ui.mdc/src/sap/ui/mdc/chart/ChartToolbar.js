@@ -244,4 +244,4 @@ sap.ui.define([
 
         };
         return ChartToolbar;
-    }, true);
+    });

@@ -1,9 +1,16 @@
 sap.ui.define([
 	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate",
 	"sap/base/util/UriParameters",
+	"sap/ui/mdc/Field",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/ResponsiveTableType",
-	"sap/ui/mdc/table/GridTableType"
-], function (ODataFieldValueHelpDelegate, UriParameters, ResponsiveTableType, GridTableType) {
+	"sap/ui/mdc/table/GridTableType",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Table",
+	"sap/m/Text"
+], function (ODataFieldValueHelpDelegate, UriParameters, Field, Table, Column, ResponsiveTableType, GridTableType, ResponsiveTableColumn, ColumnListItem, ResponsiveTable, Text) {
 	"use strict";
 
 	var Delegate = Object.assign({}, ODataFieldValueHelpDelegate);
@@ -18,20 +25,20 @@ sap.ui.define([
 
 		if (bSuggestion && !oWrapper.getTable()) {
 
-			var oSuggestionTable = new sap.m.Table(oFieldHelp.getId() + "--suggest--mTable", {
+			var oSuggestionTable = new ResponsiveTable(oFieldHelp.getId() + "--suggest--mTable", {
 				growing: true, growingScrollToLoad: true, growingThreshold: 20,
 				columns: [
-					new sap.m.Column({header: new sap.m.Text({text : "ID"})}),
-					new sap.m.Column({header: new sap.m.Text({text : "Name"})})
+					new ResponsiveTableColumn({header: new Text({text : "ID"})}),
+					new ResponsiveTableColumn({header: new Text({text : "Name"})})
 				],
 				items: {
 					path : "/Authors",
 					suspended: bSuspended,
-					template : new sap.m.ColumnListItem({
+					template : new ColumnListItem({
 						type: "Active",
 						cells: [
-							new sap.m.Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
-							new sap.m.Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
+							new Text({text: "{path: 'ID', type:'sap.ui.model.odata.type.String'}"}),
+							new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})
 						]
 					})
 				},
@@ -43,7 +50,7 @@ sap.ui.define([
 
 		if (!bSuggestion && !oWrapper.getTable()) {
 
-			var oDialogTable =  new sap.ui.mdc.Table(oFieldHelp.getId() + "--dialog--mdcTable", {
+			var oDialogTable =  new Table(oFieldHelp.getId() + "--dialog--mdcTable", {
 				header: "",
 				p13nMode: ['Column','Sort'],
 				autoBindOnInit: !bSuspended,
@@ -57,11 +64,11 @@ sap.ui.define([
 					}
 				},
 				columns: [
-					new sap.ui.mdc.table.Column({importance: "High", header: "ID", dataProperty: "ID", template: new sap.ui.mdc.Field({value: "{ID}", editMode: "Display"})}),
-					new sap.ui.mdc.table.Column({importance: "High", header: "Name", dataProperty: "name", template: new sap.ui.mdc.Field({value: "{name}", editMode: "Display"})}),
-					new sap.ui.mdc.table.Column({importance: "Low", header: "Country", dataProperty: "countryOfOrigin_code", template: new sap.ui.mdc.Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
-					new sap.ui.mdc.table.Column({importance: "Low", header: "Region", dataProperty: "regionOfOrigin_code", template: new sap.ui.mdc.Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
-					new sap.ui.mdc.table.Column({importance: "Low", header: "City", dataProperty: "cityOfOrigin_city", template: new sap.ui.mdc.Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
+					new Column({importance: "High", header: "ID", dataProperty: "ID", template: new Field({value: "{ID}", editMode: "Display"})}),
+					new Column({importance: "High", header: "Name", dataProperty: "name", template: new Field({value: "{name}", editMode: "Display"})}),
+					new Column({importance: "Low", header: "Country", dataProperty: "countryOfOrigin_code", template: new Field({value: "{countryOfOrigin_code}", additionalValue: "{countryOfOrigin/descr}", display: "Description", editMode: "Display"})}),
+					new Column({importance: "Low", header: "Region", dataProperty: "regionOfOrigin_code", template: new Field({value: "{regionOfOrigin_code}", additionalValue: "{regionOfOrigin/text}", display: "Description", editMode: "Display"})}),
+					new Column({importance: "Low", header: "City", dataProperty: "cityOfOrigin_city", template: new Field({value: "{cityOfOrigin_city}", additionalValue: "{cityOfOrigin/text}", display: "Description", editMode: "Display"})})
 				]
 			});
 

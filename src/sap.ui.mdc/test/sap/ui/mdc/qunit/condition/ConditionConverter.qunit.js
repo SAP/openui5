@@ -5,7 +5,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/mdc/condition/ConditionConverter",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/odata/v4/TypeUtil",
@@ -25,7 +24,6 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Double",
 	"sap/ui/model/odata/type/Decimal"
 ], function(
-	jQuery,
 	ConditionConverter,
 	Condition,
 	TypeUtil,

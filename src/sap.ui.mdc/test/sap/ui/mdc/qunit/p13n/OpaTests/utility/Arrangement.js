@@ -115,4 +115,4 @@ sap.ui.define([
 	};
 
 	return Arrangement;
-}, true);
+});

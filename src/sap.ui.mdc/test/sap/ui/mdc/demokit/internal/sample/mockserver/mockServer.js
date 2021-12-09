@@ -1,6 +1,6 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon"
 ], function (ManagedObject, jQuery, sinon) {
 	"use strict";
@@ -31,7 +31,7 @@ sap.ui.define([
 			});
 			function generateResponse(fServer) {
 				fServer.respondWith("GET", /\/sap\/opu\/odata4\/IWBEP\/V4_SAMPLE\/default\/IWBEP\/V4_GW_SAMPLE_BASIC\/0001\//, function (xhr, id) {
-					var oParams = jQuery.sap.getUriParameters(xhr.url), sFilter = oParams.get("$filter");
+					var oParams = new URLSearchParams(xhr.url), sFilter = oParams.get("$filter");
 					var oFilteredData = jQuery.extend({}, (mockData));
 					if (xhr.url.indexOf("metadata") > -1) {
 						return xhr.respond(200, {

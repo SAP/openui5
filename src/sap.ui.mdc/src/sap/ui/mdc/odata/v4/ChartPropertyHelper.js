@@ -34,4 +34,4 @@ sap.ui.define([
     var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.odata.v4.ChartPropertyHelper");
 
     return PropertyHelper;
-},true);
+});

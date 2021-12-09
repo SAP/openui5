@@ -441,4 +441,4 @@ sap.ui.define([
 	};
 
 	return FlpLinkDelegate;
-}, /* bExport= */ true);
+});
