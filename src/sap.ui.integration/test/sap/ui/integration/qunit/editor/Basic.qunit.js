@@ -485,6 +485,50 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 string array parameter with values (as json) with value missing", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringarray",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringArrayParameter": {
+									"value": ["key1", "key4"]
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					setTimeout(function () {
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+						var oMultiComboBox = oField.getAggregation("_field");
+						assert.ok(oMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
+						assert.ok(oMultiComboBox.getItems().length === 5, "Field: MultiComboBox items lenght is OK");
+						assert.ok(oMultiComboBox.getSelectedKeys().length === 1, "Field: Selected Keys length correct");
+						assert.ok(oMultiComboBox.getSelectedKeys()[0] === "key1", "Field: Selected Keys correct");
+						var aValue = this.oEditor.getCurrentSettings()["/sap.card/configuration/parameters/stringArrayParameter/value"];
+						assert.ok(aValue.length === 1, "Field: value length correct");
+						assert.ok(aValue[0] === "key1", "Field: value correct");
+						resolve();
+					}.bind(this), 500);
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("1 string array parameter with no values (as json)", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,

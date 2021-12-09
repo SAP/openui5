@@ -118,6 +118,7 @@ sap.ui.define([
 		var oControl = this.getAggregation("_field");
 		if (oControl instanceof MultiComboBox) {
 			var oConfig = this.getConfiguration();
+			var oModel = this.getModel();
 			this.prepareFieldsInKey(oConfig);
 			if (this.isFilterBackend()) {
 				this.onInput = _debounce(this.onInput, 500);
@@ -126,13 +127,14 @@ sap.ui.define([
 				//listen to the selectionChange event of MultiComboBox
 				oControl.attachSelectionChange(this.onSelectionChangeForFilterBackend);
 				//listen to the selectionFinish event of MultiComboBox
-				oControl.attachSelectionFinish(this.onSelectionFinish);
-				var oModel = this.getModel();
+				oControl.attachSelectionFinish(this.onSelectionFinishForFilterBackend);
 				//merge the previous selected items with new items got from request
-				oModel.attachPropertyChange(this.onPropertyChange, this);
+				oModel.attachPropertyChange(this.onPropertyChangeForFilterBackend, this);
 			} else {
 				//listen to the selectionChange event of MultiComboBox
 				oControl.attachSelectionChange(this.onSelectionChange);
+				//clean the selected keys with the items got from request
+				oModel.attachPropertyChange(this.onPropertyChange, this);
 			}
 		}
 	};
@@ -167,7 +169,7 @@ sap.ui.define([
 		return sItemKey;
 	};
 
-	ListField.prototype.onPropertyChange = function(oEvent) {
+	ListField.prototype.onPropertyChangeForFilterBackend = function(oEvent) {
 		var oConfig = this.getConfiguration();
 		if (!oConfig.valueItems) {
 			oConfig.valueItems = [];
@@ -194,6 +196,19 @@ sap.ui.define([
 		}
 		oValueModel.setData(oData);
 		this.setSuggestValue();
+	};
+
+	ListField.prototype.onPropertyChange = function(oEvent) {
+		var oControl = this.getAggregation("_field");
+		//get the keys of the selected items
+		var aSelectedItemKeys = oControl.getSelectedItems().map(function (oSelectedItem) {
+			return oSelectedItem.getKey();
+		});
+
+		var sSettingspath = this.getBindingContext("currentSettings").sPath;
+		var oSettingsModel = this.getModel("currentSettings");
+		//save the selected keys as field value
+		oSettingsModel.setProperty(sSettingspath + "/value", aSelectedItemKeys);
 	};
 
 	ListField.prototype.mergeSelectedItems = function(oConfig, oData) {
@@ -365,7 +380,7 @@ sap.ui.define([
 		this.getModel().checkUpdate(true);
 	};
 
-	ListField.prototype.onSelectionFinish = function(oEvent) {
+	ListField.prototype.onSelectionFinishForFilterBackend = function(oEvent) {
 		var oField = this.getParent();
 		var oConfig = oField.getConfiguration();
 
