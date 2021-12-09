@@ -158,15 +158,18 @@ sap.ui.define([
 
 				var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
 
-				if (!oControl._bHasXConfig) {
-					oControl._bHasXConfig = true;
-					return oModifier.createAndAddCustomData(oControl, "xConfig", oConfig, oAppComponent)
-					.then(function() {
+				if (!oControl._pXConfigCreation) {
+					oControl._pXConfigCreation = oModifier.createAndAddCustomData(oControl, "xConfig", oConfig, oAppComponent);
+					return oControl._pXConfigCreation
+					.then(function(){
 						return oConfig;
 					});
 				} else {
-					oModifier.setProperty(oXConfig, "value", oConfig);
-					return oConfig;
+					oControl._pXConfigCreation
+					.then(function(oCustomData){
+						oModifier.setProperty(oCustomData, "value", oConfig);
+						return oConfig;
+					});
 				}
 			});
 	};
