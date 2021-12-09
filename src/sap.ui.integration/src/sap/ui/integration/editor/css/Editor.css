@@ -21,13 +21,14 @@
 }
 .sapUiIntegrationEditor .sapMPanelContent {
 	padding-top: 0;
+	padding-bottom: 0.625rem;
 }
 .sapUiIntegrationEditor .sapUiIntegrationEditorTranslationPanel .sapMPanelContent {
 	padding: 0.625rem 1rem 1.375rem 0rem;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorTranslationSubPanel .sapMPanelContent {
-	padding: 0.625rem 1rem 1.375rem 1rem;
+.sapUiIntegrationEditor .sapUiIntegrationEditorSubPanel .sapMPanelContent {
+	padding: 0.625rem 1rem 0rem 1rem;
 }
 .sapUiIntegrationEditor .sapMPanel > .sapMPanelHdr, .sapUiIntegrationEditor .sapMPanelWrappingDiv, .sapUiIntegrationEditor .sapMPanelWrappingDivTb {
 	border: none;
@@ -440,7 +441,7 @@
 	vertical-align:top;
 }
 
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip {
 	margin: -0.3rem 0 0 0.1rem;
 	padding: 0 0.5rem;
 	position: absolute;
@@ -449,20 +450,49 @@
 	transition: opacity 0.3s;
 	z-index:1;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMText {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapMText {
 	font-size: 0.75rem;
 	vertical-align: middle;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapUiIcon {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapUiIcon {
 	font-size: 0.75rem;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMMsgStripIcon {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapMMsgStripIcon {
 	width: 1.4rem;
 	margin: 0.20rem 0.4rem;
 	vertical-align: top;
 	padding-top: 6px;
 }
-.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorFieldMessageStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+    margin-left: 0.85rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelHeader {
+	margin-right: 1rem;
+	padding-right: 0;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorPanelHeader .sapMTitle {
+    margin-top: 0;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip {
+	margin: -0.3rem 1rem 0 2rem;
+	padding: 0 0.5rem;
+	min-height: 1.2rem;
+	transition: opacity 0.3s;
+	z-index:1;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapMText {
+	font-size: 0.75rem;
+	vertical-align: middle;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapUiIcon {
+	font-size: 0.75rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapMMsgStripIcon {
+	width: 1.4rem;
+	vertical-align: top;
+	padding-top: 0.4375rem;
+}
+.sapUiIntegrationEditor .sapUiIntegrationEditorForm .sapUiIntegrationEditorPanelMessageStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
     margin-left: 0.85rem;
 }
 

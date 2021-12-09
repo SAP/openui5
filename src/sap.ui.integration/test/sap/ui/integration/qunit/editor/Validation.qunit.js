@@ -151,7 +151,7 @@ sap.ui.define([
 							wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -178,7 +178,7 @@ sap.ui.define([
 						return new Promise(function (resolve) {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[3];
 							oField1.getAggregation("_field").focus();
-							var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+							var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 							var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 							assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip invisible");
 							oField1._settingsButton.focus();
@@ -300,7 +300,7 @@ sap.ui.define([
 							wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -328,7 +328,7 @@ sap.ui.define([
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[3];
 							oField1.getAggregation("_field").focus();
 							wait(500).then(function () {
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -353,7 +353,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this);
 					var fTest3 = function () {
@@ -361,7 +361,7 @@ sap.ui.define([
 							wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[5];
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Warning", "Message strip Warning");
@@ -450,7 +450,7 @@ sap.ui.define([
 							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -462,7 +462,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									resolve();
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -539,7 +539,7 @@ sap.ui.define([
 							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -551,7 +551,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									resolve();
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -614,7 +614,7 @@ sap.ui.define([
 							oField1.getAggregation("_field").fireChange({ value: ""});
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -626,7 +626,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									resolve();
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -689,7 +689,7 @@ sap.ui.define([
 							oField1.getAggregation("_field").fireChange({ value: ""});
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -701,7 +701,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									resolve();
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -789,7 +789,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -800,7 +800,7 @@ sap.ui.define([
 									assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 									resolve();
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -884,7 +884,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -902,7 +902,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -986,7 +986,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
@@ -1006,7 +1006,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1157,13 +1157,13 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "The parameter is not allowed to edit", "Message text correct");
 								assert.ok(!oMultiComboBox.getEditable(), "Editable is false");
 								resolve();
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1266,13 +1266,13 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "The parameter is not allowed to edit", "Message text correct");
 								assert.ok(!oMultiComboBox.getEditable(), "Editable is false");
 								resolve();
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1358,7 +1358,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select at least 2 items!", "Message text correct");
@@ -1377,7 +1377,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1463,7 +1463,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
 								oMultiComboBox.setSelectedKeys(["key1", "key2", "key3", "key4"]);
 								oField1._settingsButton.focus();
@@ -1480,7 +1480,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1574,7 +1574,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
@@ -1593,7 +1593,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1687,7 +1687,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
@@ -1704,7 +1704,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);
@@ -1798,7 +1798,7 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oEditor.getAggregation("_messageStrip");
+								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "Please select items in key1,key3,key6", "Message text correct");
@@ -1817,7 +1817,7 @@ sap.ui.define([
 										resolve();
 									});
 								});
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oEditor);

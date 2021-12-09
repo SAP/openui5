@@ -471,6 +471,15 @@ sap.ui.define([
 				}
 			}
 		}
+		// add hasError property for error handling of panel
+		if (this._message && (this._message.type === "error" || this._message.type === "warning")) {
+			var sErrorType = this._message.type === "error" ? "Error" : "Warning";
+			this._setCurrentProperty("hasError", true);
+			this._setCurrentProperty("errorType", sErrorType);
+		} else {
+			this._setCurrentProperty("hasError", false);
+			this._setCurrentProperty("errorType", "None");
+		}
 	};
 
 	BaseField.prototype._showValueState = function (sType, sMessage, bFromDataRequest) {
@@ -581,9 +590,9 @@ sap.ui.define([
 					oMessageStrip.getDomRef().style.marginTop = "0";
 					oMessageStrip.getDomRef().style.marginLeft = "0";
 				}
-				var width = oField.getDomRef().offsetWidth - 5;
-				if (width < 100) {
-					width = oField.getParent().getDomRef().offsetWidth - 35;
+				var width = oField.getDomRef() ? oField.getDomRef().offsetWidth - 5 : 100;
+				if (width <= 100) {
+					width = oField.getParent().getDomRef() ? oField.getParent().getDomRef().offsetWidth - 35 : 100;
 				}
 				oMessageStrip.getDomRef().style.width = width + "px";
 			};

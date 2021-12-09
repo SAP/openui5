@@ -530,13 +530,14 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(iWaitTimeout).then(function () {
 								oMultiComboBox.focus();
-								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+								var sMsgStripId = oField1.getAssociation("_messageStrip");
+								var oMsgStrip = Core.byId(sMsgStripId);
 								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
 								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
 								assert.ok(oMsgStrip.getText() === "The parameter is not allowed to edit", "Message text correct");
 								assert.ok(!oMultiComboBox.getEditable(), "Editable is false");
 								resolve();
-							}.bind(this));
+							});
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oCardEditor);
