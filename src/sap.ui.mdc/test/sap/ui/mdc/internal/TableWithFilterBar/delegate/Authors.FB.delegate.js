@@ -43,6 +43,8 @@ sap.ui.define([
 						bSearchExists = true;
 					} else if (oProperty.name === "ID") {
 						oProperty.formatOptions = {groupingEnabled: false};
+					} else if (oProperty.name === "name") {
+						oProperty.fieldHelp = "fhName";
 					} else if (oProperty.name === "dateOfBirth") {
 						oProperty.fieldHelp = "fhAdob";
 					} else if (oProperty.name === "dateOfDeath") {

@@ -1,6 +1,6 @@
 sap.ui.define([
 	"./GridTable.delegate",
-	"./Books.FB.delegate",
+	"./Orders.FB.delegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text"
-], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
 
@@ -43,8 +43,16 @@ sap.ui.define([
 	OrdersTableDelegate.getFilterDelegate = function() {
 		return {
 			addItem: function(sPropertyName, oTable) {
-				return BooksFBDelegate.addItem(sPropertyName, oTable)
+				return OrdersFBDelegate.addItem(sPropertyName, oTable)
 				.then(function(oFilterField) {
+					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
+
+					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
+					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
+
+					oFilterField.setDataTypeConstraints(oConstraints);
+					oFilterField.setDataTypeFormatOptions(oFormatOptions);
+
 					if (sPropertyName === "OrderNo") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FH1"));
 					} else if (sPropertyName === "currency_code") {
