@@ -414,13 +414,12 @@
 				</table>
 			</div>
 
-			<h2 id="actions">Actions</h2>
+			<h2 id="actions">Built-In Actions</h2>
 
-			<p>The Calendar Card has few actions fired by user interaction.</p>
-
-			<h4>Calendar actions</h4>
-
-			<p>Using an extension, you can attach handlers to the following actions. Thus, you can set data fetching to
+			<p>The Calendar Card has <code>DateChange</code> and <code>MonthChange</code> built-in actions.
+				They are fired once the calendar is ready and then upon user interaction.
+			</p>
+			<p>Using an extension, you can attach handlers to them. Thus, you can set data fetching to
 				be dependent to the selected date/month. See the sample about
 				<a data-demokit-href="../../../index.html#/explore/calendar/extension" target="_blank">Fetch Data with Extension</a>.
 			</p>
@@ -428,15 +427,13 @@
 			<div class="tableWrapper">
 				<table>
 					<tr>
-						<th>Action</th>
-						<th>Type</th>
+						<th>Action Type</th>
 						<th>Description</th>
 						<th>Schema Version</th>
 						<th>Since</th>
 					</tr>
 					<tr>
 						<td>DateChange</td>
-						<td>Navigation</td>
 						<td>An action fired when a date in the calendar is selected.<br>
 							<b>Note:</b> This action is experimental and may change!</td>
 						<td>1.31.0</td>
@@ -444,7 +441,6 @@
 					</tr>
 					<tr>
 						<td>MonthChange</td>
-						<td>Navigation</td>
 						<td>An action fired when the currently displayed month in the calendar is changed.<br>
 							<b>Note:</b> This action is experimental and may change!</td>
 						<td>1.31.0</td>
@@ -686,6 +682,7 @@
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Calendar Card</a></div>
 			<div><a href="#properties">Properties</a></div>
+			<div><a href="#actions">Built-In Actions</a></div>
 			<div><a href="#example">Example</a></div>
 		</div>
 	</div>

@@ -93,6 +93,35 @@ sap.ui.define([
 				experimental: true
 			},
 			{
+				title: 'Card Configuration',
+				key: 'configuration',
+				target: 'learnDetail',
+				icon: 'sap-icon://settings',
+				items: [
+					{
+						title: 'Action Handlers',
+						target: 'learnDetail',
+						key: 'actionHandlers'
+					},
+					{
+						title: 'CSRF Tokens',
+						target: 'learnDetail',
+						key: 'csrfTokens',
+						experimental: true
+					},
+					{
+						title: 'Destinations',
+						target: 'learnDetail',
+						key: 'destinations'
+					},
+					{
+						title: 'Manifest Parameters',
+						target: 'learnDetail',
+						key: 'manifestParameters'
+					}
+				]
+			},
+			{
 				title: 'Card Filters',
 				key: "filters",
 				target: 'learnDetail',
@@ -124,12 +153,6 @@ sap.ui.define([
 						key: 'cardActions'
 					},
 					{
-						title: 'CSRF Tokens',
-						target: 'learnDetail',
-						key: 'csrfTokens',
-						experimental: true
-					},
-					{
 						title: 'Data',
 						target: 'learnDetail',
 						key: 'data'
@@ -139,11 +162,6 @@ sap.ui.define([
 						target: 'learnDetail',
 						key: 'dateRanges',
 						experimental: true
-					},
-					{
-						title: 'Destinations',
-						target: 'learnDetail',
-						key: 'destinations'
 					},
 					{
 						title: 'Dynamic Counter',
@@ -159,11 +177,6 @@ sap.ui.define([
 						title: 'Extension',
 						target: 'learnDetail',
 						key: 'extension'
-					},
-					{
-						title: 'Manifest Parameters',
-						target: 'learnDetail',
-						key: 'manifestParameters'
 					},
 					{
 						title: 'Microcharts',
