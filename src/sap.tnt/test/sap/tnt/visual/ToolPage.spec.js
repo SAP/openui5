@@ -29,13 +29,13 @@ describe('sap.tnt.ToolPage', function() {
 
 	// collapse NavigationListItem
 	it('should visualize collapse NavigationListItem', function () {
-		element(by.css('#NList > li:first-of-type .sapUiIcon[title=Collapse]')).click();
+		element(by.css('#NList > li:first-of-type .sapUiIcon[aria-label=Collapse]')).click();
 		expect(takeScreenshot(sideNav)).toLookAs('2_collapsedNavigation_List_Item');
 	});
 
 	// long list of items
 	it('should visualize long list of items', function () {
-		element(by.css('#NList > li:nth-of-type(3) .sapUiIcon[title=Expand]')).click();
+		element(by.css('#NList > li:nth-of-type(3) .sapUiIcon[aria-label=Expand]')).click();
 		expect(takeScreenshot(sideNav)).toLookAs('3_long_list_of_items');
 	});
 
@@ -81,7 +81,7 @@ describe('sap.tnt.ToolPage', function() {
 	// no side navigation
 	it('should NOT display side navigation', function () {
 		element(by.id('menuToggleButton')).click();
-		element(by.css('#NList > li:first-of-type .sapUiIcon[title=Expand]')).click();
+		element(by.css('#NList > li:first-of-type .sapUiIcon[aria-label=Expand]')).click();
 		element(by.css('#NList > li:first-of-type > .sapTntNavLIGroupItems > li:nth-of-type(4)')).click();
 		expect(takeScreenshot(element(by.id('page3')))).toLookAs('9_no_side_navigation');
 	});
