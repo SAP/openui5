@@ -28,6 +28,7 @@ sap.ui.define([
 				if (oPropertyInfo.name === "$search") {
 					bSearchExists = true;
 				} else if (oPropertyInfo.name === "OrderNo") {
+					oPropertyInfo.fieldHelp = "FH1";
 					oPropertyInfo.label = "Order Number";
 				} else if (oPropertyInfo.name === "orderTime") {
 					oPropertyInfo.label = "Order Time";

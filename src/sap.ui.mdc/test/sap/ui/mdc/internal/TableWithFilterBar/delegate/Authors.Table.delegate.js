@@ -1,12 +1,21 @@
 sap.ui.define([
 	"./GridTable.delegate",
+	"./Authors.FB.delegate",
 	"sap/ui/mdc/Field",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/model/odata/type/Int32"
-], function (ODataTableDelegate, Field, FieldDisplay, Int32Type) {
+], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, Int32Type) {
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
+
+	var getFullId = function(oControl, sVHId) {
+		var oView = oControl.getParent();
+		while (!oView.isA("sap.ui.core.mvc.View")) {
+			oView = oView.getParent();
+		}
+		return oView.getId() + "--" + sVHId;
+	};
 
 	AuthorsTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
@@ -23,6 +32,46 @@ sap.ui.define([
 
 			return aProperties;
 		});
+	};
+
+	AuthorsTableDelegate.getFilterDelegate = function() {
+		return {
+			addItem: function(sPropertyName, oTable) {
+				return AuthorsFBDelegate.addItem(sPropertyName, oTable)
+				.then(function(oFilterField) {
+
+					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
+
+					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
+					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
+
+					oFilterField.setDataTypeConstraints(oConstraints);
+					oFilterField.setDataTypeFormatOptions(oFormatOptions);
+
+					if (sPropertyName === "name") {
+						oFilterField.setFieldHelp(getFullId(oTable, "fhName"));
+					} else if (sPropertyName === "dateOfBirth") {
+						oFilterField.setFieldHelp(getFullId(oTable, "fhAdob"));
+					} else if (sPropertyName === "dateOfDeath") {
+						oFilterField.setMaxConditions(1);
+					} else if (sPropertyName === "countryOfOrigin_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "IOFFVHCountry"));
+						oFilterField.setDisplay(FieldDisplay.ValueDescription);
+					} else if (sPropertyName === "regionOfOrigin_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "IOFFVHRegion"));
+						oFilterField.setDisplay(FieldDisplay.ValueDescription);
+					} else if (sPropertyName === "cityOfOrigin_city") {
+						oFilterField.setFieldHelp(getFullId(oTable, "IOFFVHCity"));
+						oFilterField.setDisplay(FieldDisplay.ValueDescription);
+					}
+
+					if (oFilterField.getMaxConditions() === -1 && !oFilterField.getFieldHelp()) {
+						oFilterField.setFieldHelp(getFullId(oTable, "FVH_Generic_Multi"));
+					}
+					return oFilterField;
+				});
+			}
+		};
 	};
 
 	AuthorsTableDelegate._createColumnTemplate = function (oProperty) {

@@ -43,10 +43,9 @@
 				<mdc:dependents>
 					<mdc:ValueHelp
 						id="FVH_Generic_Multi"
-						title="Conditions"
 						delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 						<mdc:dialog>
-							<mdcv:Popover>
+							<mdcv:Popover title="Conditions">
 								<mdcvc:Conditions label="Conditions"/>
 							</mdcv:Popover>
 						</mdc:dialog>

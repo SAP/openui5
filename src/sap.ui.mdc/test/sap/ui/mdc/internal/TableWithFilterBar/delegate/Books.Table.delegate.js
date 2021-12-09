@@ -64,7 +64,21 @@ sap.ui.define([
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
 
-					if (sPropertyName === "classification_code") {
+					if (sPropertyName === "author_ID") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FH1"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "title") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FH4"));
+					} else if (sPropertyName === "published") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHPublished"));
+						oFilterField.setOperators(["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]);
+					} else if (sPropertyName === "language_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHLanguage"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "stock") {
+						oFilterField.setMaxConditions(1);
+						oFilterField.setOperators(["BT"]);
+					} else if (sPropertyName === "classification_code") {
 						oFilterField.setFieldHelp(getFullId(oTable, "FHClassification"));
 						oFilterField.setDisplay(FieldDisplay.Description);
 					} else if (sPropertyName === "genre_code") {
