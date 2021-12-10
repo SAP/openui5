@@ -11281,4 +11281,38 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Simple test for creation at the end of the list; more complex cases are tested in
+	// all pairs tests for multi create.
+	// JIRA: CPOUI5MODELS-617
+	QUnit.test("Creation at the end of a list", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="2">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectValue("id", ["42", ""])
+			.expectValue("note", ["First SalesOrder", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("note", "New 1", 1);
+
+			// code under test
+			that.oView.byId("table").getBinding("rows").create({Note : "New 1"}, /*bAtEnd*/true);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

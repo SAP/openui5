@@ -56,6 +56,8 @@ sap.ui.define([
 			oModel.setMessageScope(MessageScope.BusinessObject);
 
 			this.setModel(new JSONModel({
+				createSalesOrderAtTheEnd : false,
+				createSalesOrderItemAtTheEnd : false,
 				itemFilter : aItemFilter,
 				itemSelected : false,
 				messageCount : 0,

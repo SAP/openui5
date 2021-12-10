@@ -61,6 +61,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
+	bAtEnd : false,
+	bAtEndExpected : false,
 	sListID : "",
 	sPath : "/bar",
 	oResult : {
@@ -68,6 +70,8 @@ sap.ui.define([
 		"/foo" : {"" : ["~oContext"], "id" : ["~oContextId"]}
 	}
 }, {
+	bAtEnd : false,
+	bAtEndExpected : false,
 	sListID : "id1",
 	sPath : "/bar",
 	oResult : {
@@ -75,38 +79,72 @@ sap.ui.define([
 		"/foo" : {"" : ["~oContext"], "id" : ["~oContextId"]}
 	}
 }, {
+	bAtEnd : true,
+	bAtEndExpected : true,
+	sListID : "id1",
+	sPath : "/bar",
+	oResult : {
+		"/bar" : {"id1" : ["~oNewContext"]},
+		"/foo" : {"" : ["~oContext"], "id" : ["~oContextId"]}
+	}
+}, {
+	bAtEnd : false,
+	bAtEndExpected : false,
 	sListID : "id1",
 	sPath : "/foo",
 	oResult : {
 		"/foo" : {"" : ["~oContext"], "id" : ["~oContextId"], "id1" : ["~oNewContext"]}
 	}
 }, {
+	bAtEnd : false,
+	bAtEndExpected : true,
 	sListID : "",
 	sPath : "/foo",
 	oResult : {
 		"/foo" : {"" : ["~oNewContext", "~oContext"], "id" : ["~oContextId"]}
 	}
 }, {
+	bAtEnd : false,
+	bAtEndExpected : false,
 	sListID : "id",
 	sPath : "/foo",
 	oResult : {
 		"/foo" : {"" : ["~oContext"], "id" : ["~oNewContext", "~oContextId"]}
 	}
-}].forEach(function (oFixture) {
-	var sTitle = "addContext: " + oFixture.sPath
-			+ (oFixture.sListID ? ", key=" + oFixture.sListID : "");
+}, {
+	bAtEnd : true,
+	bAtEndExpected : true,
+	sListID : "",
+	sPath : "/foo",
+	oResult : {
+		"/foo" : {"" : ["~oContext", "~oNewContext"], "id" : ["~oContextId"]}
+	}
+}, {
+	bAtEnd : true,
+	bAtEndExpected : false,
+	sListID : "id",
+	sPath : "/foo",
+	oResult : {
+		"/foo" : {"" : ["~oContext"], "id" : ["~oContextId", "~oNewContext"]}
+	}
+}].forEach(function (oFixture, i) {
+	QUnit.test("addContext: #" + i, function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			aContexts = ["~oContext"],
+			aContextIds = ["~oContextId"];
 
-	QUnit.test(sTitle, function (assert) {
-		var oCache = new _CreatedContextsCache();
-
+		aContexts.bAtEnd = true;
+		aContextIds.bAtEnd = false;
 		oCache.mCache = {
-			"/foo" : {"" : ["~oContext"], "id" : ["~oContextId"]}
+			"/foo" : {"" : aContexts, "id" : aContextIds}
 		};
 
 		// code under test
-		oCache.addContext("~oNewContext", oFixture.sPath, oFixture.sListID);
+		oCache.addContext("~oNewContext", oFixture.sPath, oFixture.sListID, oFixture.bAtEnd);
 
 		assert.deepEqual(oCache.mCache, oFixture.oResult);
+		assert.strictEqual(oCache.mCache[oFixture.sPath][oFixture.sListID].bAtEnd,
+			oFixture.bAtEndExpected);
 	});
 });
 
@@ -280,5 +318,19 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oCache.removePersistedContexts("~sPath", "~sListID"),
 			[oContext0, oContext2]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isAtEnd", function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			aContexts = ["~oContextId"];
+
+		aContexts.bAtEnd = "~bAtEnd";
+		oCache.mCache = {"/foo" : {"id" : aContexts}};
+
+		// code under test
+		assert.strictEqual(oCache.isAtEnd("/foo", "id"), "~bAtEnd");
+		assert.strictEqual(oCache.isAtEnd("/unknown", "id"), undefined);
+		assert.strictEqual(oCache.isAtEnd("/foo", "unknown"), undefined);
 	});
 });

@@ -98,7 +98,8 @@ sap.ui.define([
 		},
 
 		onCreateItem : function () {
-			var oBindingContext = this.byId("objectPage").getBindingContext(),
+			var bAtEnd = this.getView().getModel("ui").getProperty("/createSalesOrderItemAtTheEnd"),
+				oBindingContext = this.byId("objectPage").getBindingContext(),
 				oCreatedContext,
 				oCreateDialog = this.byId("createSalesOrderItemDialog");
 
@@ -109,7 +110,7 @@ sap.ui.define([
 				Quantity : "1",
 				QuantityUnit : "EA",
 				SalesOrderID : oBindingContext.getProperty("SalesOrderID")
-			}, /*bAtEnd*/false, {
+			}, bAtEnd, {
 				error : function (oError) {
 					Log.info("Error Handler: Failed to created sales order item",
 						JSON.stringify(oError), sClassname);
@@ -140,10 +141,11 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrder : function () {
-			var oCreatedContext = this.byId("SalesOrderSet").getBinding("items").create({
+			var bAtEnd = this.getView().getModel("ui").getProperty("/createSalesOrderAtTheEnd"),
+				oCreatedContext = this.byId("SalesOrderSet").getBinding("items").create({
 					CustomerID : "0100000000",
 					LifecycleStatus : "N"
-				}, /*bAtEnd*/false);
+				}, bAtEnd);
 
 			oCreatedContext.created().then(function () {
 				MessageToast.show("Created sales order "
