@@ -24,7 +24,7 @@
 
 		<Label text="time Field"></Label>
 		<!-- TODO No property on books with this type available -->
-		<mdc:Field id="F4" value="{path:'', type:'sap.ui.model.odata.type.Time', formatOptions: {style: 'long'}, constraints: {}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F4" value="{path:'', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}, constraints: {}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="date Field"></Label>
 		<mdc:Field id="F5" value="{path:'published', type:'sap.ui.model.odata.type.Date', formatOptions: {}, constraints: {V4: true}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
