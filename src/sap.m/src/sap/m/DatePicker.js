@@ -1271,18 +1271,22 @@ sap.ui.define([
 					this._oPopup.getBeginButton().setEnabled(false);
 				}
 			}
-			this._oCalendarAfterRenderDelegate = {
-				onAfterRendering: function() {
-					var oPopup = this._oPopup && this._oPopup._getPopup();
-					oPopup && oPopup._oLastPosition && oPopup._applyPosition(oPopup._oLastPosition);
-
-					if (this._oPopup.isOpen()) {
-						this._oCalendar.focus();
-					}
-				}.bind(this)
-			};
-			this._oCalendar.addDelegate(this._oCalendarAfterRenderDelegate);
+			this._attachAfterRenderingDelegate();
 		}
+	};
+
+	DatePicker.prototype._attachAfterRenderingDelegate = function()	{
+		this._oCalendarAfterRenderDelegate = {
+			onAfterRendering: function() {
+				var oPopup = this._oPopup && this._oPopup._getPopup();
+				oPopup && oPopup._oLastPosition && oPopup._applyPosition(oPopup._oLastPosition);
+
+				if (this._oPopup.isOpen()) {
+					this._oCalendar.focus();
+				}
+			}.bind(this)
+		};
+		this._oCalendar.addDelegate(this._oCalendarAfterRenderDelegate);
 	};
 
 	/**

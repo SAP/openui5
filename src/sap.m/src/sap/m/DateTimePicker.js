@@ -246,7 +246,7 @@ sap.ui.define([
 					selectedKey: "Cal",
 					items: [
 						new SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
-						new SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
+						new SegmentedButtonItem(this.getId() + "-Switch-Clk", {key: "Clk", text: sTimeText})
 					]
 				});
 				oSwitcher.attachSelect(this._handleSelect, this);
@@ -264,30 +264,39 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
+
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
 				this._switchVisibility(sKey);
 			}
+
 		},
 
 		_handleSelect: function(oEvent) {
 
-			this._switchVisibility(oEvent.getParameter("key"));
+			var sKey = oEvent.getParameter("key");
+
+			this._switchVisibility(sKey);
+			if (sKey === "Clk") {
+				this.getClocks()._focusActiveButton();
+			}
+
 		},
 
 		_switchVisibility: function(sKey) {
 
-			var oCalendar = this.getCalendar();
-			var oClocks = this.getClocks();
+			var oCalendar = this.getCalendar(),
+				oClocks = this.getClocks();
 
 			if (!oCalendar || !oClocks) {
 				return;
 			}
 
-			if (sKey == "Cal") {
+			if (sKey === "Cal") {
 				oCalendar.$().css("display", "");
 				oClocks.$().css("display", "none");
+				oCalendar.getFocusDomRef() && oCalendar.getFocusDomRef().focus();
 			} else {
 				oCalendar.$().css("display", "none");
 				oClocks.$().css("display", "");
@@ -299,8 +308,8 @@ sap.ui.define([
 
 			var oSwitcher = this.getAggregation("_switcher");
 			if (oSwitcher && oSwitcher.getVisible()) {
-				oSwitcher.setSelectedKey("Sli");
-				this._switchVisibility("Sli");
+				oSwitcher.setSelectedKey("Clk");
+				this._switchVisibility("Clk");
 			}
 
 		},
@@ -623,6 +632,10 @@ sap.ui.define([
 
 	};
 
+	/* Override of the DatePicker method - this delegate is not needed in DateTimePicker */
+	DateTimePicker.prototype._attachAfterRenderingDelegate = function()	{
+	};
+
 	DateTimePicker.prototype._selectFocusedDateValue = function (oDateRange) {
 		var oCalendar = this._oCalendar;
 
@@ -793,12 +806,15 @@ sap.ui.define([
 	}
 
 	function _handleCalendarSelect(oEvent) {
-		this._oPopupContent.getCalendar().getAggregation("month")[0].addEventDelegate({
+		var oDelegate = {
 			onAfterRendering: function () {
+				this._oPopupContent.getCalendar().getAggregation("month")[0].removeEventDelegate(oDelegate, this);
 				this._oOKButton.setEnabled(true);
 				this._oPopupContent.switchToTime();
+				this._oPopupContent.getClocks()._focusActiveButton();
 			}
-		}, this);
+		};
+		this._oPopupContent.getCalendar().getAggregation("month")[0].addEventDelegate(oDelegate, this);
 	}
 
 	return DateTimePicker;
