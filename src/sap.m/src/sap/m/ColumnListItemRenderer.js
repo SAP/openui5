@@ -309,6 +309,10 @@ sap.ui.define([
 			rm.openStart("div");
 			rm.class("sapMListTblSubCntRow");
 
+			if (sPopinDisplay == PopinDisplay.Inline) {
+				rm.class("sapMListTblSubCntRowInline");
+			}
+
 			aStyleClass && aStyleClass.forEach(function(sClassName) {
 				rm.class(sClassName);
 			});
@@ -321,10 +325,9 @@ sap.ui.define([
 				oColumn.addDependent(oHeader);
 				oLI._addClonedHeader(oHeader);
 				rm.renderControl(oHeader);
-				rm.close("div");
-
-				rm.openStart("div").class("sapMListTblSubCntSpr").openEnd();
-				rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_POPIN_LABEL_COLON"));
+				rm.openStart("span").class("sapMListTblSubCntSpr");
+				rm.attr("data-popin-colon", Core.getLibraryResourceBundle("sap.m").getText("TABLE_POPIN_LABEL_COLON"));
+				rm.openEnd().close("span");
 				rm.close("div");
 			}
 
