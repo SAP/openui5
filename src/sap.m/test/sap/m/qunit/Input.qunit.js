@@ -1476,7 +1476,7 @@ sap.ui.define([
 
 		assert.ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Two Value Suggestion Popup is open now");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, aNames.length, "Suggestions are inserted");
+		assert.equal(getPopupItemsContent(oPopup).getItems().length, 2, "Only enabled suggestions are inserted");
 		assert.ok(getPopupItemsContent(oPopup).getItems()[0] instanceof sap.m.StandardListItem, "Suggestion item is a StandardListItem");
 		assert.ok(getPopupItemsContent(oPopup).getItems()[0].getTitle(), aNames[0], "Suggestion item has a title set equal to the ListItem's text");
 		assert.ok(getPopupItemsContent(oPopup).getItems()[0].getInfo(), aDescription[0], "Suggestion item has an info set equal to the ListItem's additionalText");
@@ -1488,16 +1488,8 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is selected after pressing keyDown once");
 
 		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown twice");
-		assert.ok(!oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
-
-		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_DOWN);
-		assert.ok(oInput._oSuggPopover._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is still selected after pressing keyDown three times");
-		assert.ok(!oInput._oSuggPopover._oList.getItems()[3].$().hasClass("sapMLIBSelected"), "The fourth item is not selected because it is disabled");
-
-		qutils.triggerKeydown(oInput.getDomRef(), KeyCodes.ARROW_UP);
-		assert.ok(oInput._oSuggPopover._oList.getItems()[0].$().hasClass("sapMLIBSelected"), "The first item is now selected after pressing keyUp once");
-		assert.ok(!oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is not selected because it is disabled");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[1].getTitle(), aNames[2], "The second item in the list, should have a title as the second enabled item");
+		assert.ok(oInput._oSuggPopover._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyDown twice");
 
 		oInput.destroy();
 	});

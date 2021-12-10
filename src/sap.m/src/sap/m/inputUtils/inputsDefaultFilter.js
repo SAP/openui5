@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @returns {boolean} true for items that start with the parameter sValue, false for non matching items.
 	 */
 	var defaultFilterFn = function (sValue, oItem, bFilterAdditionalText) {
-		if (!oItem) {
+		if (!oItem || !(oItem.getEnabled && oItem.getEnabled())) {
 			return false;
 		}
 
