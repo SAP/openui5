@@ -77,22 +77,21 @@ sap.ui.define([
 
 		this.oServer.respondWithJSONContent(this.oManifest);
 
-		var oComponent = sap.ui.component({
+		return Component.create({
 			id : "dummy",
-			manifestUrl : "/anylocation/manifest.json"
+			manifest : "/anylocation/manifest.json"
+		}).then(function (oComponent) {
+			var sPrefixedId = oComponent.createId("anyid");
+			var sLocalId = oComponent.getLocalId(sPrefixedId);
+			var sOtherId = oComponent.getLocalId("anyview---anyid");
+			assert.equal(sPrefixedId, "dummy---anyid");
+			assert.equal(sLocalId, "anyid");
+			assert.equal(sOtherId, null);
+			assert.ok(oComponent.isPrefixedId(sPrefixedId));
+			assert.notOk(oComponent.isPrefixedId(sLocalId));
+
+			oComponent.destroy();
 		});
-
-		var sPrefixedId = oComponent.createId("anyid");
-		var sLocalId = oComponent.getLocalId(sPrefixedId);
-		var sOtherId = oComponent.getLocalId("anyview---anyid");
-		assert.equal(sPrefixedId, "dummy---anyid");
-		assert.equal(sLocalId, "anyid");
-		assert.equal(sOtherId, null);
-		assert.ok(oComponent.isPrefixedId(sPrefixedId));
-		assert.notOk(oComponent.isPrefixedId(sLocalId));
-
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent initialization callback hook", function(assert) {
@@ -103,58 +102,55 @@ sap.ui.define([
 			assert.equal(oComponent.getId(), "myComponent", "Initialization hook was called!");
 		};
 
-		var oComponent = sap.ui.component({
+		return Component.create({
 			id : "myComponent",
-			manifestUrl : "/anylocation/manifest.json"
+			manifest : "/anylocation/manifest.json"
+		}).then(function (oComponent) {
+			delete UIComponent._fnOnInstanceInitialized;
+
+			oComponent.destroy();
 		});
-
-		delete UIComponent._fnOnInstanceInitialized;
-
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent destruction callback hook", function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);
 
-		var oComponent = sap.ui.component({
+		return Component.create({
 			id : "myComponent",
-			manifestUrl : "/anylocation/manifest.json"
+			manifest : "/anylocation/manifest.json"
+		}).then(function (oComponent) {
+			UIComponent._fnOnInstanceDestroy = function(oComponent) {
+				assert.equal(oComponent.getId(), "myComponent", "Destruction hook was called!");
+			};
+
+			oComponent.destroy();
+
+			delete UIComponent._fnOnInstanceDestroy;
 		});
-
-		UIComponent._fnOnInstanceDestroy = function(oComponent) {
-			assert.equal(oComponent.getId(), "myComponent", "Destruction hook was called!");
-		};
-
-		oComponent.destroy();
-
-		delete UIComponent._fnOnInstanceDestroy;
-
 	});
 
 	QUnit.test("UIComponent check for no autoPrefixId", function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);
 
-		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
+		return Component.create({
+			manifest : "/anylocation/manifest.json"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
+
+			var oButton = sap.ui.getCore().byId("theButton");
+			assert.ok(!!oButton, "Button was prefixed with Component id!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
-
-		var oButton = sap.ui.getCore().byId("theButton");
-		assert.ok(!!oButton, "Button was prefixed with Component id!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent check for autoPrefixId=true", function(assert) {
@@ -162,24 +158,23 @@ sap.ui.define([
 		this.oManifest["sap.ui5"]["autoPrefixId"] = true;
 		this.oServer.respondWithJSONContent(this.oManifest);
 
-		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
+		return Component.create({
+			manifest : "/anylocation/manifest.json"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oComponent.getAutoPrefixId(), true, "AutoPrefixId is true!");
+
+			var oButton = sap.ui.getCore().byId(oComponent.createId("theButton"));
+			assert.ok(!!oButton, "Button was prefixed with Component id!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oComponent.getAutoPrefixId(), true, "AutoPrefixId is true!");
-
-		var oButton = sap.ui.getCore().byId(oComponent.createId("theButton"));
-		assert.ok(!!oButton, "Button was prefixed with Component id!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent check for autoPrefixId=false", function(assert) {
@@ -187,24 +182,23 @@ sap.ui.define([
 		this.oManifest["sap.ui5"]["autoPrefixId"] = false;
 		this.oServer.respondWithJSONContent(this.oManifest);
 
-		var oComponent = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json"
+		return Component.create({
+			manifest : "/anylocation/manifest.json"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
+
+			var oButton = sap.ui.getCore().byId("theButton");
+			assert.ok(!!oButton, "Button was not prefixed with Component id!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
-
-		var oButton = sap.ui.getCore().byId("theButton");
-		assert.ok(!!oButton, "Button was not prefixed with Component id!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("forwarding RouterHashChanger to the creation of Router", function(assert) {
@@ -219,53 +213,55 @@ sap.ui.define([
 		// scenario 1 - "_routerHashChanger"-property is being defined - via component load
 		// the "_routerHashChanger"-property is being removed from the component settings
 		var oRouterHashChanger = {};
-		var oComponent1 = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json",
+		return Component.create({
+			manifest : "/anylocation/manifest.json",
 			settings: {
 				_routerHashChanger: oRouterHashChanger
 			}
-		});
+		}).then(function (oComponent1) {
 
-		var oRouter1 = oComponent1.getRouter();
-		assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The constructor was called");
-		assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {}, "The settings object of the constructor is empty");
-		assert.strictEqual(oRouter1.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is forwarded to the created Router");
+			var oRouter1 = oComponent1.getRouter();
+			assert.strictEqual(oComponentConstructorSpy.callCount, 2, "The constructor was called");
+			assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {}, "The settings object of the constructor is empty");
+			assert.deepEqual(oRouter1.getHashChanger(), oRouterHashChanger, "The RouterHashChanger is forwarded to the created Router");
 
-		// destroy the component
-		oComponent1.destroy();
+			// destroy the component
+			oComponent1.destroy();
 
-		// scenario 2 - "_routerHashChanger"-property is set but with value undefined
-		// the "_routerHashChanger"-property is being removed from the component settings
-		var oComponent2 = new UIComponent("component1", {
-			_routerHashChanger: undefined
-		});
-
-		var oRouter2 = oComponent2.getRouter();
-		assert.strictEqual(oComponentConstructorSpy.callCount, 3, "The constructor was called");
-		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
-		assert.strictEqual(oRouter2, undefined, "The router is undefined");
-
-		// destroy the component
-		oComponent2.destroy();
-
-		// scenario 3 - "_routerHashChanger"-property is set but with value undefined - via component load
-		// the "_routerHashChanger"-property is being removed however a new RouterHashChanger is being created
-		var oComponent3 = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json",
-			settings: {
+			// scenario 2 - "_routerHashChanger"-property is set but with value undefined
+			// the "_routerHashChanger"-property is being removed from the component settings
+			var oComponent2 = new UIComponent("component1", {
 				_routerHashChanger: undefined
-			}
+			});
+
+			var oRouter2 = oComponent2.getRouter();
+			assert.strictEqual(oComponentConstructorSpy.callCount, 3, "The constructor was called");
+			assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
+			assert.strictEqual(oRouter2, undefined, "The router is undefined");
+
+			// destroy the component
+			oComponent2.destroy();
+
+			// scenario 3 - "_routerHashChanger"-property is set but with value undefined - via component load
+			// the "_routerHashChanger"-property is being removed however a new RouterHashChanger is being created
+			return Component.create({
+				manifest : "/anylocation/manifest.json",
+				settings: {
+					_routerHashChanger: undefined
+				}
+			}).then(function (oComponent3) {
+				var oRouter3 = oComponent3.getRouter();
+				assert.strictEqual(oComponentConstructorSpy.callCount, 5, "The constructor was called");
+				assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
+				assert.strictEqual(oRouter3.getHashChanger().getMetadata().getName(), "sap.ui.core.routing.RouterHashChanger","The RouterHashChanger is created by the Router");
+
+				// destroy the component
+				oComponent3.destroy();
+
+				// remove the spy
+				oComponentConstructorSpy.restore();
+			});
 		});
-		var oRouter3 = oComponent3.getRouter();
-		assert.strictEqual(oComponentConstructorSpy.callCount, 5, "The constructor was called");
-		assert.deepEqual(oComponentConstructorSpy.getCall(2).args[0], {}, "The settings object of the constructor is empty");
-		assert.strictEqual(oRouter3.getHashChanger().getMetadata().getName(), "sap.ui.core.routing.RouterHashChanger","The RouterHashChanger is created by the Router");
-
-		// destroy the component
-		oComponent3.destroy();
-
-		// remove the spy
-		oComponentConstructorSpy.restore();
 	});
 
 	QUnit.test("forwarding propagateTitle to the creation of Router", function(assert) {
@@ -307,10 +303,8 @@ sap.ui.define([
 
 		oComponentConstructorSpy.resetHistory();
 
-		var done = assert.async();
-
 		// _propagateTitle is true - via component load
-		Component.create({
+		return Component.create({
 			id: "component1b",
 			manifest : "/anylocation/manifest.json",
 			settings: {
@@ -325,7 +319,7 @@ sap.ui.define([
 			oComponentConstructorSpy.resetHistory();
 
 			// _propagateTitle is false - via component load
-			Component.create({
+			return Component.create({
 				id: "component2b",
 				manifest : "/anylocation/manifest.json",
 				settings: {
@@ -340,7 +334,7 @@ sap.ui.define([
 				oComponentConstructorSpy.resetHistory();
 
 				// _propagateTitle is undefined - via component load
-				Component.create({
+				return Component.create({
 					id: "component3b",
 					manifest : "/anylocation/manifest.json",
 					settings: {
@@ -351,8 +345,6 @@ sap.ui.define([
 					assert.strictEqual(oComponent._bRoutingPropagateTitle, undefined, "The propagateTitle flag should be stored successfully in the component");
 					assert.deepEqual(oComponentConstructorSpy.getCall(1).args[0], {id: "component3b"}, "The settings object of the constructor should contains only the id, the propagateTitle flag should be removed from the settings");
 					oComponent.destroy();
-
-					done();
 
 					// remove the spy
 					oComponentConstructorSpy.restore();
@@ -600,125 +592,117 @@ sap.ui.define([
 	QUnit.test("UIComponent that no error is logged for View-Types other than XML when processingMode is set", function(assert) {
 		var oSpy = sinon.spy(ManagedObject.prototype, "applySettings");
 
-		var oComponent = sap.ui.component({
+		return Component.create({
 			name: "error.test"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oSpy.calledWith({
+				async: true,
+				viewName: "error.test.JSView",
+				type: "JS"
+			}));
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
+			oSpy.restore();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		assert.ok(oSpy.calledWith({
-			async: true,
-			viewName: "error.test.JSView",
-			type: "JS"
-		}));
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-		oSpy.restore();
 	});
 
 	QUnit.test("UIComponent check for not prefixing the views' auto id", function(assert) {
-
-		var oComponent = sap.ui.component({
+		return Component.create({
 			name: "my.own.autoid"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			var oRootControl = oComponent.getRootControl();
+			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
+			assert.ok(!oRootControl.getId().startsWith(oComponent.getId()), "View id doesn't start with component id!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		var oRootControl = oComponent.getRootControl();
-		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(!oRootControl.getId().startsWith(oComponent.getId()), "View id doesn't start with component id!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent check for not prefixing the views' auto id (manifest first)", function(assert) {
+		return Component.create({
+			manifest: "/anylocation/mf1st/autoid/manifest.json"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
 
-		var oComponent = sap.ui.component({
-			manifestUrl: "/anylocation/mf1st/autoid/manifest.json"
+			sap.ui.getCore().applyChanges();
+
+			var oRootControl = oComponent.getRootControl();
+			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
+			assert.ok(!oRootControl.getId().startsWith(oComponent.getId()), "View id doesn't start with component id!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		var oRootControl = oComponent.getRootControl();
-		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(!oRootControl.getId().startsWith(oComponent.getId()), "View id doesn't start with component id!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent check for prefixing view id", function(assert) {
-
-		var oComponent = sap.ui.component({
+		return Component.create({
 			name: "my.own.prefixid"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			var oRootControl = oComponent.getRootControl();
+			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
+			assert.ok(oRootControl.getId().startsWith(oComponent.getId() + "---"), "View id starts with component id!");
+
+			assert.ok(!!oComponent.byId("theView"), "View can be accessed with byId of Component!");
+			assert.equal(oComponent.byId("theView").getId(), oComponent.createId("theView"), "View ID is prefixed with Component ID!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		var oRootControl = oComponent.getRootControl();
-		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(oRootControl.getId().startsWith(oComponent.getId() + "---"), "View id starts with component id!");
-
-		assert.ok(!!oComponent.byId("theView"), "View can be accessed with byId of Component!");
-		assert.equal(oComponent.byId("theView").getId(), oComponent.createId("theView"), "View ID is prefixed with Component ID!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent check for prefixing view id (manifest first)", function(assert) {
+		return Component.create({
+			manifest: "/anylocation/mf1st/prefixid/manifest.json"
+		}).then(function (oComponent) {
+			var oComponentContainer = new ComponentContainer({
+				component: oComponent
+			}).placeAt("content");
 
-		var oComponent = sap.ui.component({
-			manifestUrl: "/anylocation/mf1st/prefixid/manifest.json"
+			sap.ui.getCore().applyChanges();
+
+			var oRootControl = oComponent.getRootControl();
+			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
+			assert.ok(oRootControl.getId().startsWith(oComponent.getId() + "---"), "View id starts with component id!");
+
+			assert.ok(!!oComponent.byId("theView"), "View can be accessed with byId of Component!");
+			assert.equal(oComponent.byId("theView").getId(), oComponent.createId("theView"), "View ID is prefixed with Component ID!");
+
+			oComponentContainer.destroy();
+			oComponent.destroy();
 		});
-
-		var oComponentContainer = new ComponentContainer({
-			component: oComponent
-		}).placeAt("content");
-
-		sap.ui.getCore().applyChanges();
-
-		var oRootControl = oComponent.getRootControl();
-		assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
-		assert.ok(oRootControl.getId().startsWith(oComponent.getId() + "---"), "View id starts with component id!");
-
-		assert.ok(!!oComponent.byId("theView"), "View can be accessed with byId of Component!");
-		assert.equal(oComponent.byId("theView").getId(), oComponent.createId("theView"), "View ID is prefixed with Component ID!");
-
-		oComponentContainer.destroy();
-		oComponent.destroy();
-
 	});
 
 	QUnit.test("UIComponent - getRootControl returns the root view", function (assert) {
-		var oComponent = sap.ui.component({
-			manifestUrl: "/anylocation/mf1st/prefixid/manifest.json"
+		return Component.create({
+			manifest: "/anylocation/mf1st/prefixid/manifest.json"
+		}).then(function (oComponent) {
+			assert.strictEqual(oComponent.getRootControl(), oComponent.getAggregation("rootControl"));
+
+			oComponent.destroy();
 		});
-
-		assert.strictEqual(oComponent.getRootControl(), oComponent.getAggregation("rootControl"));
-
-		oComponent.destroy();
 	});
 
 	QUnit.test("UIComponent check for defaulting of root-view type", function(assert) {
@@ -973,7 +957,7 @@ sap.ui.define([
 			return Router.extend("someCustomRouter", {});
 		});
 
-		return sap.ui.component({
+		return Component.create({
 			name: "manifestModules.scenario2",
 			manifest: true
 		});
@@ -1004,7 +988,7 @@ sap.ui.define([
 			});
 		});
 
-		return sap.ui.component({
+		return Component.create({
 			name: "manifestModules.scenario3",
 			manifest: true
 		});
@@ -1055,7 +1039,7 @@ sap.ui.define([
 			});
 		});
 
-		return sap.ui.component({
+		return Component.create({
 			name: "manifestModules.scenario4",
 			manifest: true
 		}).catch(function() {
@@ -1282,50 +1266,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Component with createContent returning view", function(assert) {
-		assert.expect(6);
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario9");
-
-		sap.ui.predefine("manifestModules/scenario9/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
-			return UIComponent.extend("manifestModules.scenario9.Component", {
-				metadata: {
-					manifest: "json",
-					interfaces: [
-						"sap.ui.core.IAsyncContentCreation"
-					]
-				},
-				constructor: function() {
-					UIComponent.apply(this, arguments);
-				},
-				createContent: function() {
-					return sap.ui.view({
-						"viewName" : "testdata.view.MainAsync",
-						"type" : "XML"
-					});
-				}
-			});
-		});
-
-		return Component.create({
-			name: "manifestModules.scenario9",
-			manifest: true
-		}).then(function(oComponent){
-			var oView = oComponent.getRootControl();
-
-			assert.ok(oComponent.getRootControl(), "root control created");
-			assert.ok(oView, "view created");
-			assert.ok(oView.getContent().length > 0, "view content created");
-			assert.equal(this.oViewCreateSpy.callCount, 0, "async view factory is not called");
-		}.bind(this)).catch(function() {
-			assert.ok(false, "Modules could not be loaded and an error occured.");
-		});
-	});
-
 	QUnit.test("Component with createContent returning view created with asynchronous view processing", function(assert) {
 		assert.expect(6);
 		var oManifest = {
@@ -1347,10 +1287,9 @@ sap.ui.define([
 					UIComponent.apply(this, arguments);
 				},
 				createContent: function() {
-					return sap.ui.view({
+					return View.create({
 						"viewName" : "testdata.view.MainAsync",
-						"type" : "XML",
-						"async": true
+						"type" : "XML"
 					});
 				}
 			});
@@ -1365,7 +1304,7 @@ sap.ui.define([
 			assert.ok(oComponent.getRootControl(), "root control created");
 			assert.ok(oView, "view created");
 			assert.ok(oView.getContent().length > 0, "view content created");
-			assert.equal(this.oViewCreateSpy.callCount, 1, "async view factory is called once");
+			assert.equal(this.oViewCreateSpy.callCount, 2, "async view factory is called twice (rootView and nested View)");
 		}.bind(this)).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
@@ -1555,10 +1494,11 @@ sap.ui.define([
 			sap.ui.predefine("my/AsyncComponent/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 				return UIComponent.extend("my.AsyncComponent.Component", {
 					metadata: {
+						interfaces: ["sap.ui.core.IAsyncContentCreation"], // Needed to load JSView async
 						manifest: {
 							"sap.ui5": {
 								"rootView": {
-									async: true,
+									async: true, // async flag has no effect on JSView
 									viewName: "module:my/AsyncJSView"
 								}
 							}
@@ -1579,13 +1519,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component should resolve with completed async rootView", function(assert) {
-		assert.expect(2);
+		var oSyncXhrSpy = sinon.spy(XMLHttpRequest.prototype, "send");
+		assert.expect(3);
 		return Component.create({
 			name: "my.AsyncComponent",
 			manifest: false
 		}).then(function(oComponent) {
+			assert.equal(oSyncXhrSpy.callCount, 0, "No sync request");
 			assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.View"), "root view created");
 			assert.ok(oComponent.getRootControl().byId("myPanel"), "View content created on Component resolve");
+			oSyncXhrSpy.restore();
 		});
 	});
 });

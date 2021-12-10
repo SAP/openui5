@@ -1,18 +1,15 @@
 sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
-	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
 	'samples/components/routing/Component',
 	'samples/components/routing/RouterExtension',
-	'sap/ui/thirdparty/URI',
-	'sap/ui/base/ManagedObjectRegistry',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
+], function (Component, ComponentContainer, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -602,51 +599,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
-
-		var oServer = this.oServer, oManifest = this.oManifest;
-
-		//start test
-		var oComponent = sap.ui.component({
-			manifestUrl : "anylocation/manifest.json"
-		});
-
-		assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-		assert.ok(oComponent.getManifest(), "Manifest is available");
-		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
-
-		var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
-		assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
-
-	});
-
-	QUnit.test("Manifest delegation to component instance (sync, delayed instantiation)", function(assert) {
-
-		var oServer = this.oServer, oManifest = this.oManifest;
-
-		//start test
-		var fnComponentClass = sap.ui.component.load({
-			manifestUrl : "anylocation/manifest.json"
-		});
-
-		assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-		assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-		assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
-		assert.throws(function() {
-			fnComponentClass.extend("new.Component", {});
-		}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
-
-		var oComponent = new fnComponentClass();
-
-		assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-		assert.ok(oComponent.getManifest(), "Manifest is available");
-		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
-
-		var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
-		assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
-
-	});
-
 	QUnit.test("Manifest delegation to component instance (async)", function(assert) {
 
 		var oServer = this.oServer;
@@ -720,37 +672,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Alternate URL for component (sync)", function(assert) {
-
-		var oServer = this.oServer, oManifest = this.oAltManifest1;
-
-		// create an invalid registration for samples.components.config to see that the "url" parameter works
-		sap.ui.loader.config({paths:{"samples/components/config":"test-resources/invalid/"}});
-
-		//start test
-		var fnComponentClass = sap.ui.component.load({
-			manifestUrl : "anyotherlocation1/manifest.json",
-			url : "test-resources/sap/ui/core/samples/components/config/"
-		});
-
-		assert.ok(fnComponentClass.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-		assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
-		assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
-		assert.throws(function() {
-			fnComponentClass.extend("new.Component", {});
-		}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
-
-		var oComponent = new fnComponentClass();
-
-		assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-		assert.ok(oComponent.getManifest(), "Manifest is available");
-		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
-
-		var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
-		assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
-
-	});
-
 	QUnit.test("Alternate URL for component (async)", function(assert) {
 
 		var oServer = this.oServer;
@@ -794,55 +715,6 @@ sap.ui.define([
 			done();
 
 		});
-
-	});
-
-	QUnit.test("On instance created callback / hook (sync)", function(assert) {
-
-		var oCallbackComponent;
-
-		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
-			oCallbackComponent = oComponent;
-
-			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");
-			assert.ok(oComponent.getMetadata() instanceof UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
-			assert.deepEqual(vCallbackConfig, oConfig, "sap.ui.core.Component._fnOnInstanceCreated oConfig passed!");
-
-			// Promise should be ignored in sync case
-			return new Promise(function(resolve, reject) {
-				setTimeout(function() {
-					resolve(true);
-				}, 0);
-			});
-		};
-
-		var oConfig = {
-			manifestUrl: "anylocation/manifest.json"
-		};
-
-		var oComponent = sap.ui.component(oConfig);
-
-		assert.equal(oComponent, oCallbackComponent, "Returned component instances should be the same as within callback.");
-
-	});
-
-	QUnit.test("On instance created callback / hook (sync, error)", function(assert) {
-
-		// set the instance created callback hook
-		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
-			throw new Error("Error from _fnOnInstanceCreated");
-		};
-
-		assert.throws(
-			function() {
-				sap.ui.component({
-					manifestUrl: "anylocation/manifest.json"
-				});
-			},
-			/Error from _fnOnInstanceCreated/,
-			"Error from hook should not be caught internally"
-		);
 
 	});
 
@@ -952,7 +824,7 @@ sap.ui.define([
 				createContent: function() {
 					this.attachAfterInit(function() {
 						bAfterInitCalled = true;
-						assert.equal(bAfterInitCalled, true, "AfterInit called");
+						assert.ok(bAfterInitCalled, "AfterInit called");
 
 					});
 					return Promise.resolve(new Button());
@@ -1052,35 +924,6 @@ sap.ui.define([
 		});
 
 	});
-
-	QUnit.test("Usage of manifest property in component configuration for URL (sync)", function(assert) {
-
-		var oComponent = sap.ui.component({
-			manifest: "anylocation/manifest.json",
-			async: false
-		});
-
-		assert.ok(oComponent instanceof UIComponent, "Component is loaded properly!");
-		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.button", "The proper component has been loaded!");
-
-	});
-
-	QUnit.test("Usage of manifest property in component configuration for manifest object (sync)", function(assert) {
-
-		var oComponent = sap.ui.component({
-			manifest: {
-				"sap.app" : {
-					"id" : "samples.components.oneview"
-				}
-			},
-			async: false
-		});
-
-		assert.ok(oComponent instanceof UIComponent, "Component is loaded properly!");
-		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
-
-	});
-
 
 	QUnit.module("Component Usage", {
 		beforeEach : function() {
@@ -1316,32 +1159,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Propagate cacheTokens: Sync creation of sub component via createComponent()", function(assert) {
-		var oComponent = sap.ui.component({
-			name : "my.usage",
-			asyncHints: {
-				cacheTokens: {
-					someToken: {}
-				}
-			}
-		});
-
-		assert.ok(oComponent instanceof Component, "Component should be created");
-		assert.ok(oComponent._mCacheTokens, "_mCacheTokens should be available");
-		assert.deepEqual(oComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
-
-		var oSubComponent = oComponent.createComponent({
-			usage: "mySubUsage",
-			async: false,
-			anything: "else"
-		});
-
-		assert.ok(oSubComponent instanceof Component, "SubComponent should be created");
-		assert.deepEqual(oSubComponent._mCacheTokens, oComponent._mCacheTokens, "_mCacheTokens of the SubComponent should be equal to the parent component (content-wise)");
-		oComponent.destroy();
-		oSubComponent.destroy();
-	});
-
 	QUnit.test("Propagate cacheTokens: Async creation of sub component via createComponent()", function(assert) {
 		return Component.create({
 			name : "my.usage",
@@ -1378,60 +1195,6 @@ sap.ui.define([
 				});
 			});
 		});
-	});
-
-	QUnit.test("Propagate cacheTokens: Sync creation of sub component via sap.ui.component()", function(assert) {
-		var oRootComponent = sap.ui.component({
-			name : "my.usage",
-			asyncHints: {
-				cacheTokens: {
-					someToken: {}
-				}
-			}
-		});
-
-		assert.ok(oRootComponent instanceof Component, "Component should be created");
-		assert.ok(oRootComponent._mCacheTokens, "_mCacheTokens should be available");
-		assert.deepEqual(oRootComponent._mCacheTokens.someToken, {}, "_mCacheTokens.someToken should be available");
-
-		var oSubComponent1,
-			oSubComponent2,
-			oSubComponent1_1;
-
-		oRootComponent.runAsOwner(function() {
-			oSubComponent1 = sap.ui.component({
-				name: "my.used",
-				asyncHints: {
-					cacheTokens: {
-						myOwnTokens: {}
-					}
-				}
-			});
-
-			oSubComponent1.runAsOwner(function() {
-				oSubComponent1_1 = sap.ui.component({
-					name: "my.used"
-				});
-			});
-
-			oSubComponent2 = sap.ui.component({
-				name: "my.used"
-			});
-		});
-
-		assert.ok(oSubComponent1 instanceof Component, "oSubComponent1 should be created");
-		assert.ok(oSubComponent2 instanceof Component, "oSubComponent2 should be created");
-		assert.ok(oSubComponent1_1 instanceof Component, "oSubComponent1_1 should be created");
-
-		assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1 shouldn't be propagated from parent component oRootComponent");
-		assert.deepEqual(oSubComponent2._mCacheTokens, {someToken: {}}, "_mCacheTokens of the oSubComponent2 should be equal to the parent component oRootComponent (content-wise)");
-		assert.deepEqual(oSubComponent1_1._mCacheTokens, {myOwnTokens: {}}, "_mCacheTokens of the oSubComponent1_1 should be equal to the parent component oSubComponent1 (content-wise)");
-
-		// cleanup
-		oRootComponent.destroy();
-		oSubComponent1.destroy();
-		oSubComponent2.destroy();
-		oSubComponent1_1.destroy();
 	});
 
 	QUnit.test("Propagate cacheTokens: Async creation of sub component via Component.create()", function(assert) {
@@ -1592,56 +1355,6 @@ sap.ui.define([
 				});
 
 			});
-		});
-
-	});
-
-	QUnit.test("Sync creation of component usage", function(assert) {
-
-		var oComponent = sap.ui.component({
-			name : "my.usage"
-		});
-		var oSpy = sinon.spy(sap.ui, "component"); // legacy factory for sync calls only
-
-		var done = (function() {
-			var asyncDone = assert.async();
-			return function cleanup() {
-				oSpy.restore();
-				oComponent.destroy();
-				asyncDone();
-			};
-		})();
-
-		sap.ui.require([
-			"my/used/Component"
-		], function(UsedComponent) {
-
-			var mConfig = {
-				usage: "myUsage",
-				settings: {
-					"key1": "value1"
-				},
-				componentData: {
-					"key2": "value2"
-				},
-				async: false,
-				asyncHints: {},
-				anything: "else"
-			};
-			var mSettings = deepExtend({}, mConfig.settings, { componentData: mConfig.componentData });
-			var oComponentUsage = oComponent.createComponent(mConfig);
-			assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
-			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
-			assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
-			assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
-			assert.equal(false, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
-			assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
-			assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
-			assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
-			assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
-			assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
-			done();
-
 		});
 
 	});
@@ -2206,7 +1919,7 @@ sap.ui.define([
 
 		// loading manifest from default location
 		return Component.create({
-			name: "sap.ui.test.v2"
+			name: "sap.ui.test.v2asyncRootView"
 		}).then(function(oComponent) {
 			// check if the modification was correctly taken over
 			var oModel = oComponent.getModel("sfapi");
@@ -2264,7 +1977,7 @@ sap.ui.define([
 		};
 
 		return Component.create({
-			name: "sap.ui.test.v2",
+			name: "sap.ui.test.v2asyncRootView",
 			manifest: sManifestUrl
 		}).then(function(oComponent) {
 			// check if the modification was correctly taken over
@@ -2298,7 +2011,7 @@ sap.ui.define([
 		var oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
 
 		return Component.create({
-			name: "sap.ui.test.v2",
+			name: "sap.ui.test.v2asyncRootView",
 			manifest: sManifestUrl
 		}).then(function(oComponent) {
 			// check if the new dependency is correctly taken over
