@@ -216,7 +216,8 @@ function(
 			showSuggestion : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect
+			 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
+			 * In this scenario, the <code>showItems</code> API will not work.
 			 * @since 1.21.0
 			 */
 			valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -1921,6 +1922,8 @@ function(
 
 	/**
 	 * Helper function that refreshes list all items.
+	 *
+	 * @returns {null|undefined} null or undefined
 	 */
 	Input.prototype._refreshListItems = function () {
 		var bShowSuggestion = this.getShowSuggestion(),
@@ -1947,7 +1950,7 @@ function(
 		oFilterResults = this._getFilteredSuggestionItems(sTypedChars);
 		iSuggestionsLength = oFilterResults.items.length;
 
-		if (iSuggestionsLength > 0) {
+		if (iSuggestionsLength > 0 && !this.getValueHelpOnly()) {
 			this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
 		} else {
 			this._hideSuggestionPopup();
@@ -2987,6 +2990,7 @@ function(
 
 	/**
 	 * Opens the <code>SuggestionsPopover</code> with the available items.
+	 * <b>Note:</b> When <code>valueHelpOnly</code> property is set to true, the <code>SuggestionsPopover</code> will not open.
 	 *
 	 * @param {function} fnFilter Function to filter the items shown in the SuggestionsPopover
 	 * @returns {void}
@@ -3000,7 +3004,7 @@ function(
 			fnFilterStore = this._getFilterFunction();
 
 		// in case of a non-editable or disabled, the popup cannot be opened
-		if (!this.getEnabled() || !this.getEditable()) {
+		if (!this.getEnabled() || !this.getEditable() || this.getValueHelpOnly()) {
 			return;
 		}
 

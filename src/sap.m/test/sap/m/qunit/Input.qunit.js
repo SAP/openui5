@@ -3090,7 +3090,7 @@ sap.ui.define([
 
 		oInput._$input.trigger("focus").val("25").trigger("input");
 		this.clock.tick(400);
-		assert.equal(spy.callCount, 2, "2 letters shouldn fire suggest event");
+		assert.equal(spy.callCount, 2, "2 letters should'n fire suggest event");
 
 		oInput._$input.trigger("blur");
 		oInput._$input.trigger("focus");
@@ -3100,6 +3100,36 @@ sap.ui.define([
 		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.equal(spy.callCount, 3, "no text should fire suggest event again");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Property startSuggestion on Desktop (Zero, valueHelpOnly)",  function(assert) {
+		var oSystem = {
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
+
+		this.stub(Device, "system", oSystem);
+
+		var oSuggSpy = this.spy();
+		var oInput = new Input({
+			valueHelpOnly: true,
+			showSuggestion: true,
+			startSuggestion: 0,
+			suggest: oSuggSpy
+		});
+		var oOpenSpy = this.spy(oInput, "_openSuggestionPopup");
+
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput._$input.trigger("focus");
+		this.clock.tick(400);
+		assert.strictEqual(oSuggSpy.callCount, 1, "Focus should fire suggest event");
+		assert.strictEqual(oOpenSpy.callCount, 0, "SuggestionsPopover should not be opened");
+
 
 		oInput.destroy();
 	});
@@ -6577,6 +6607,67 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oInput.getValue(), "A I", "The input value should not be reset");
+	});
+
+	QUnit.module("showItems functionality", {
+		beforeEach: function () {
+			var aData = [
+					{
+						name: "A Item 1", key: "a-item-1", group: "A"
+					}, {
+						name: "A Item 2", key: "a-item-2", group: "A"
+					}, {
+						name: "B Item 1", key: "a-item-1", group: "B"
+					}, {
+						name: "B Item 2", key: "a-item-2", group: "B"
+					}, {
+						name: "Other Item", key: "ab-item-1", group: "A B"
+					}
+				],
+				oModel = new JSONModel(aData);
+
+			this.oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: {
+					path: "/",
+					template: new Item({text: "{name}", key: "{group}"})
+				}
+			}).setModel(oModel).placeAt("content");
+
+			oCore.applyChanges();
+
+		},
+		afterEach: function () {
+			this.oInput.destroy();
+			this.oInput = null;
+		}
+	});
+
+	QUnit.test("showItems should not open the picker when valueHelpOnly is set to 'true'", function (assert) {
+		// Arrange
+		var oSpy = this.spy(this.oInput, "_openSuggestionPopup");
+
+		this.oInput.setValueHelpOnly(true);
+		oCore.applyChanges();
+
+		// Act
+		this.oInput.showItems();
+
+		// Assert
+		assert.strictEqual(oSpy.called, false, "The picker was not opened");
+
+		// Arrange
+		this.oInput.setValueHelpOnly(false);
+		oCore.applyChanges();
+
+		// Act
+		this.oInput.showItems();
+
+		// Assert
+		assert.strictEqual(oSpy.calledOnce, true, "After setting the valueHelpOnly back to 'false', the picker was opened once");
+
+		// Clean
+		oSpy.reset();
 	});
 
 	QUnit.module("showItems functionality: List", {
