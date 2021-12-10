@@ -269,6 +269,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the default text for the title aggregation.
+	 * @private
+	 * @returns {string} The default text.
+	 */
+	IllustratedMessage.prototype._getDefaultTitle = function () {
+		return this._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this._sIllustrationType, null, true);
+	};
+
+	/**
 	 * Gets the correct aggregation for the description.
 	 * If the enableFormattedText property is true, the function returns
 	 * sap.m.FormattedText. If it's false, it returns sap.m.Text.
@@ -366,7 +375,7 @@ sap.ui.define([
 			oTitle.setText(sTitle);
 		} else {
 			// Use default text for the title if applicable
-			oTitle.setText(this._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this._sIllustrationType, null, true));
+			oTitle.setText(this._getDefaultTitle());
 		}
 
 		return oTitle;
@@ -526,6 +535,23 @@ sap.ui.define([
 			this[sHandler] = null;
 		}
 	};
+
+	/**
+	 * Returns object with ID references of the title and description containers.
+	 *
+	 * <b>Note:</b> Changing the value of the <code>enableFormattedText</code> property changes the references of
+	 * of title and description containers.
+	 * @protected
+	 * @since 1.98.0
+	 * @returns {object} Object with 2 fields representing the ID references of the title and description in the IllustratedMessage
+	 */
+	 IllustratedMessage.prototype.getAccessibilityReferences = function () {
+		return {
+			title: this._getTitle().getId(),
+			description: this._getDescription().getId()
+		};
+	};
+
 
 	return IllustratedMessage;
 
