@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/m/MessageBox"
+	"sap/ui/rta/util/showMessageBox"
 ], function(
 	RuntimeAuthoring,
 	Control,
@@ -20,7 +20,7 @@ sap.ui.define([
 	UIComponent,
 	Log,
 	PersistenceWriteAPI,
-	MessageBox
+	showMessageBox
 ) {
 	"use strict";
 
@@ -103,9 +103,13 @@ sap.ui.define([
 										title: "TIT_ADAPTATION_STARTER_NO_CHANGES_IN_P_TITLE"
 									};
 
-								MessageBox.warning(oRtaResourceBundle.getText(oMessageProps.text), {
-									title: oRtaResourceBundle.getText(oMessageProps.title)
-								});
+								showMessageBox(
+									oRtaResourceBundle.getText(oMessageProps.text),
+									{
+										title: oRtaResourceBundle.getText(oMessageProps.title)
+									},
+									"warning"
+								);
 							}
 						});
 				}

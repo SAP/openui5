@@ -36,7 +36,8 @@ sap.ui.define([
 						icon: MessageBox.Icon[sIconType],
 						title: oRta._getTextResources().getText(sTitle),
 						styleClass: Utils.getRtaStyleClassName()
-					}
+					},
+					"show"
 				);
 				_setMessageBoxShow(sComponentId, true);
 			}

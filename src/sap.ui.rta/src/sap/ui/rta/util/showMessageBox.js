@@ -99,15 +99,16 @@ sap.ui.define([
 
 
 	/**
-	 * Shows sap.m.MessageBox and interprets markdown links in the messages.
+	 * Displays sap.m.MessageBox and interprets markdown links in the messages.
 	 *
 	 * Example:
 	 * "Your app is not enabled for UI adaptation. Check the prerequisites described [here](https://ui5.sap.com/#/topic/f1430c0337534d469da3a56307ff76af)."
 	 *
 	 * @param {string} sMessage - Message text which may contain markdown links
 	 * @param {string} mOptions - See {@link sap.m.MessageBox} for more details
+	 * @param {string} [sMessageType="show"] - Decides the type of the MessageBox that should be shown with (see different types at {@link sap.m.MessageBox})
 	 */
-	return function showMessageBox(sMessage, mOptions) {
+	return function showMessageBox(sMessage, mOptions, sMessageType) {
 		var vMessage;
 
 		if (hasLinks(sMessage)) {
@@ -117,6 +118,6 @@ sap.ui.define([
 			vMessage = sMessage;
 		}
 
-		MessageBox.show(vMessage, mOptions);
+		MessageBox[sMessageType || "show"](vMessage, mOptions);
 	};
 });
