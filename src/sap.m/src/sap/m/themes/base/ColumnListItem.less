@@ -96,10 +96,6 @@
 	padding-top: 1px;
 }
 
-.sapMListTblSubCntSpr {
-	font-size: @sapMFontMediumSize;
-}
-
 .sapMListTblSubCntRow + .sapMListTblSubCntRow {
 	margin-top: .5rem;
 }
@@ -114,11 +110,12 @@
 	max-width: 100%;
 }
 
-.sapMListTblSubCntRow > .sapMListTblSubCntSpr,
+.sapMListTblSubCntHdr > .sapMListTblSubCntSpr,
 .sapMListTblSubCntRow > .sapMListTblSubCntHdr .sapMText,
 .sapMListTblSubCntRow > .sapMListTblSubCntHdr .sapMLabel {
 	color: @sapUiContentLabelColor;
 	padding-top: 0;
+	display: inline;
 }
 
 .sapMListTblSubCntRow > .sapMListTblSubCntVal .sapMText,
@@ -128,7 +125,18 @@
 }
 
 .sapMListTblSubCntSpr {
+	font-size: @sapMFontMediumSize;
 	padding-right: .5rem;
+	&::before {
+		content: attr(data-popin-colon);
+		vertical-align: top;
+	}
+}
+
+.sapMListTblSubCntRowInline {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 }
 
  /* separators */

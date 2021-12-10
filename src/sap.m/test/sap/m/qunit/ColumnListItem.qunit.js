@@ -214,6 +214,56 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.test("PopinDisplay inline should have correct class to render items inline", function(assert) {
+		// SUT
+		var sut = new ColumnListItem({
+			cells : [new Text({
+				text: "Cell1"
+			}), new Text({
+				text: "Cell2"
+			})]
+		}),
+		column1 = new Column({
+			header : new Text({
+				text : "Header1"
+			}),
+
+			// make the size bigger than the screen to force to go to popin
+			minScreenWidth : "48000px",
+			demandPopin : true,
+			popinDisplay: "Inline"
+		}),
+		column2 = new Column({
+			header : new Text({
+				text : "Header2"
+			})
+		}),
+		column3 = new Column({
+			header : new Text({
+				text : "Header2"
+			}),
+			// make the size bigger than the screen to force to go to popin
+			minScreenWidth : "48000px",
+			demandPopin : true
+		}),
+		table = new Table({
+			columns : [column1, column2, column3],
+			items : sut
+		});
+
+		table.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(sut.hasPopin(), "Popin is generated");
+		var $oSubCntRow = sut.$("subcell").find(".sapMListTblSubCntRow");
+		assert.strictEqual($oSubCntRow.length, 2, "2 popins items found");
+		assert.ok($oSubCntRow[0].classList.contains("sapMListTblSubCntRowInline"), "sapMListTblSubCntRowInline styleClass added since column's popinLayout=Inline");
+		assert.notOk($oSubCntRow[1].classList.contains("sapMListTblSubCntRowInline"), "sapMListTblSubCntRowInline styleClass not added since column's popinLayou=Block");
+
+		table.destroy();
+	});
+
 	QUnit.module("Dummy Column", {
 		beforeEach: function() {
 			this.sut = new ColumnListItem({
