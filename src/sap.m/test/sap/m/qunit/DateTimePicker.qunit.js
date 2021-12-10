@@ -667,6 +667,9 @@ sap.ui.define([
 						oCore.applyChanges();
 						assert.strictEqual(jQuery("#DTP5-cal").css("display"), "none", "Calendar is not visible");
 						assert.strictEqual(jQuery("#DTP5-Clocks").css("display"), "block", "Clocks are visible");
+						assert.strictEqual(document.activeElement.id,
+											oDTP5._oPopupContent.getClocks().getAggregation("_buttons")[0].getId(),
+											"First button of the TimePicker is focused");
 						oDTP5.destroy();
 						jQuery("html").addClass("sapUiMedia-Std-Desktop");
 						jQuery("html").removeClass("sapUiMedia-Std-Phone");
