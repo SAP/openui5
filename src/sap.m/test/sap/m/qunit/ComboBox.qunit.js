@@ -2781,7 +2781,7 @@ sap.ui.define([
 			assert.strictEqual(document.activeElement, oComboBox.getFocusDomRef(), "The ComboBox should get the focus");
 		}
 
-		assert.ok(oComboBox.hasStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
+		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
 
 		if (Device.system.desktop || Device.system.tablet) {
 			assert.strictEqual(oComboBox.$().outerWidth(), oComboBox.getPicker().$().outerWidth(), "The width of the picker pop-up is strictEqual to the width of the input");
@@ -2830,7 +2830,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// assert
-		assert.ok(oComboBox.hasStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
+		assert.ok(oComboBox.hasStyleClass(InputBase.ICON_PRESSED_CSS_CLASS), "The correct CSS class was added to the control.");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5004,6 +5004,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(aEndIcons.length, 2, "There are two end icons.");
 		assert.strictEqual(aEndIcons[0].getAlt(), sClearIconAltText, "The first icon is the clear icon.");
+		assert.ok(aEndIcons[0].hasStyleClass("sapMComboBoxBaseClearIcon"), "The correct CSS class was added to the clear icon.");
 		assert.strictEqual(aEndIcons[0].getVisible(), false, "The clear icon is not visible");
 		assert.strictEqual(aEndIcons[1].getVisible(), true, "The arrow icon is visible");
 
@@ -11021,7 +11022,7 @@ sap.ui.define([
 		oComboBox._handlePopupOpenAndItemsLoad(false);
 
 		assert.ok(oComboBox.isOpen(), "ComboBox is open");
-		assert.ok(oComboBox.$().hasClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS));
+		assert.ok(oComboBox.$().hasClass(InputBase.ICON_PRESSED_CSS_CLASS));
 
 		oComboBox.destroy();
 	});
@@ -12437,7 +12438,7 @@ sap.ui.define([
 	QUnit.test("Should call toggleStyleClass correctly in the process of showing items", function (assert) {
 		// Setup
 		var oSpy = this.spy(this.oCombobox, "toggleStyleClass"),
-			sClassName = ComboBoxBase.ARROW_PRESSED_CSS_CLASS;
+			sClassName = InputBase.ICON_PRESSED_CSS_CLASS;
 
 		// Act
 		this.oCombobox.showItems(function () {
@@ -12480,7 +12481,7 @@ sap.ui.define([
 				},
 				srcControl: this.oCombobox
 			},
-			sClassName = ComboBoxBase.ARROW_PRESSED_CSS_CLASS;
+			sClassName = InputBase.ICON_PRESSED_CSS_CLASS;
 
 		// Act
 		this.oCombobox.showItems(function () {
