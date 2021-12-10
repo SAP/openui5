@@ -32,14 +32,13 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} sLayer - Layer of the variant
 	 * @param {sap.ui.fl.Layer} [sActiveLayer] - Layer in which the operation may take place
 	 * @param {string} sUserId - ID of the variants creator
-	 * @param {boolean} bAllowedForAnyLayer - Flag if the operation is also allowed on objects from any layers
 	 * @returns {boolean} <code>true</code> if the variant is read only
 	 *
 	 * @private
 	 */
-	 function checkLayerAndUserAuthorization(sLayer, sActiveLayer, sUserId, bAllowedForAnyLayer) {
+	 function checkLayerAndUserAuthorization(sLayer, sActiveLayer, sUserId) {
 		if (sActiveLayer) {
-			return bAllowedForAnyLayer || sLayer === sActiveLayer;
+			return sLayer === sActiveLayer;
 		} else if (sLayer === Layer.USER) {
 			return true;
 		}
@@ -179,14 +178,14 @@ sap.ui.define([
 	/**
 	 * Checks whenever the variant can be renamed updating the entity or crating an <code>updateChange</code>.
 	 *
-	 * @param {sap.ui.fl.Layer} sLayer - Layer in which the edition may take place
+	 * @param {sap.ui.fl.Layer} [sLayer] - Layer in which the edition may take place
 	 *
 	 * @returns {boolean} <code>true</code> if the variant can be updated
 	 *
 	 * @public
 	 */
 	CompVariant.prototype.isRenameEnabled = function (sLayer) {
-		return this.isEditEnabled(sLayer) && isRenameEnableDueToOriginalLanguage(this.getOriginalLanguage()) && !this.getStandardVariant();
+		return !this.getStandardVariant() && this.isEditEnabled(sLayer) && isRenameEnableDueToOriginalLanguage(this.getOriginalLanguage());
 	};
 
 	/**
@@ -199,15 +198,16 @@ sap.ui.define([
 	 * @public
 	 */
 	CompVariant.prototype.isEditEnabled = function (sActiveLayer) {
-		return isOriginSystem(this.getSourceSystem(), this.getSourceClient())
-			&& checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId(), true)
-			&& (sActiveLayer && LayerUtils.isDeveloperLayer(sActiveLayer) || !this.getStandardVariant());
+		var bDeveloperLayer = sActiveLayer && LayerUtils.isDeveloperLayer(sActiveLayer);
+		var bOriginSystem = isOriginSystem(this.getSourceSystem(), this.getSourceClient());
+		var bUserAuthorized = checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId());
+		return bDeveloperLayer || bOriginSystem && bUserAuthorized;
 	};
 
 	/**
 	 * Checks whenever the variant can be deleted.
 	 *
-	 * @param {sap.ui.fl.Layer} sLayer - Layer in which the deletion may take place
+	 * @param {sap.ui.fl.Layer} [sLayer] - Layer in which the deletion may take place
 	 *
 	 * @returns {boolean} <code>true</code> if the variant file can be deleted
 	 *
