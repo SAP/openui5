@@ -22,7 +22,7 @@
 									   		collectionName: "Books"
 										}
 									}'
-								p13nMode="Item,Sort,Type"
+								p13nMode="Item,Sort,Type,Filter"
 								autoBindOnInit="true" 
 								header="MDC: Chart Sample"
 								height="400px"

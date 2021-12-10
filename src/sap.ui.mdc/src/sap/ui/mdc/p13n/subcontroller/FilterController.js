@@ -26,9 +26,15 @@ sap.ui.define([
             afterClose: function(oEvt) {
                 var oDialog = oEvt.getSource();
                 if (oDialog) {
-                    oDialog.removeAllContent();
-                    oDialog.destroy();
+                    var oDialogContent = oDialog.getContent()[0];
+                    if (oDialogContent.isA("sap.m.p13n.Container")) {
+                        oDialogContent.removeView("Filter");
+                    } else {
+                        oDialog.removeAllContent();
+                    }
                 }
+
+                oDialog.destroy();
             }
         };
     };

@@ -975,12 +975,18 @@ sap.ui.define([
 		 * @public
 		 */
 		Sort: "Sort",
-				/**
+		/**
 		 * Chart type personalization is enabled.
 		 *
 		 * @public
 		 */
-		Type: "Type"
+		Type: "Type",
+		/**
+		 * Filter personalization is enabled.
+		 *
+		 * @public
+		 */
+		 Filter: "Filter"
 	};
 
 	/**

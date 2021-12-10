@@ -17,6 +17,7 @@ sap.ui.define([
         "sap/ui/mdc/mixin/FilterIntegrationMixin",
         "sap/ui/model/base/ManagedObjectModel",
         "sap/ui/mdc/p13n/subcontroller/ChartItemController",
+        "sap/ui/mdc/p13n/subcontroller/FilterController",
         "sap/ui/mdc/p13n/subcontroller/SortController",
         "sap/ui/base/ManagedObjectObserver",
         "sap/ui/mdc/chart/DrillBreadcrumbs",
@@ -37,6 +38,7 @@ sap.ui.define([
         FilterIntegrationMixin,
         ManagedObjectModel,
         ChartItemController,
+        FilterController,
         SortController,
         ManagedObjectObserver,
         Breadcrumbs,
@@ -69,6 +71,7 @@ sap.ui.define([
                 library: "sap.ui.mdc",
                 designtime: "sap/ui/mdc/designtime/chart/Chart.designtime",
                 interfaces: [
+                    "sap.ui.mdc.IFilterSource",
                     "sap.ui.mdc.IxState"
                 ],
                 defaultAggregation: "items",
@@ -124,7 +127,8 @@ sap.ui.define([
                      * @since 1.88
                      */
                     p13nMode: {
-                        type: "sap.ui.mdc.ChartP13nMode[]"
+                        type: "sap.ui.mdc.ChartP13nMode[]",
+                        defaultValue: []
                     },
 
                     /**
@@ -174,6 +178,16 @@ sap.ui.define([
                      * @since 1.88
                      */
                     sortConditions: {
+                        type: "object"
+                    },
+                    /**
+                     * Defines the filter conditions.
+                     *
+                     * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+                     *
+                     * @since 1.99
+                     */
+                     filterConditions: {
                         type: "object"
                     },
                     /**
@@ -345,6 +359,9 @@ sap.ui.define([
                 if (mKeys.Sort) {
                     aSortedKeys.push("Sort");
                 }
+                if (mKeys.Filter) {
+                    aSortedKeys.push("Filter");
+                }
                 if (mKeys.Type) {
                     this._typeBtnActive = true;
                 } else {
@@ -368,7 +385,8 @@ sap.ui.define([
 
             var mRegistryOptions = {
                 Item: ChartItemController,
-                Sort: SortController
+                Sort: SortController,
+                Filter: FilterController
             };
 
             if (aMode && aMode.length > 0) {
@@ -383,6 +401,33 @@ sap.ui.define([
                 this.getEngine().registerAdaptation(this, oRegisterConfig);
             }
 
+        };
+
+
+        Chart.prototype.isFilteringEnabled = function() {
+            return this.getP13nMode().indexOf("Filter") > -1;
+        };
+
+        Chart.prototype.setFilterConditions = function(mConditions) {
+            this.setProperty("filterConditions", mConditions, true);
+
+            var oP13nFilter = this.getInbuiltFilter();
+            if (oP13nFilter) {
+                oP13nFilter.setFilterConditions(mConditions);
+            }
+
+            return this;
+        };
+
+        Chart.prototype.getConditions = function() {
+            //may only return conditions if the inner FilterBar has already been initialized
+            return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
+        };
+
+        Chart.prototype._registerInnerFilter = function(oFilter) {
+            oFilter.attachSearch(function() {
+                this._rebind();
+            }, this);
         };
 
         /**
@@ -408,18 +453,25 @@ sap.ui.define([
             }.bind(this));
 
             //load required modules before init of inner controls
-            this._loadDelegate().then(function (oDelegate) {
-                this.initControlDelegate(oDelegate).then(function () {
-                    this._initInnerControls();
-
-
-                }.bind(this)).catch(function (error) {
-                    this._fnRejectInitialized(error);
-                }.bind(this));
+            var pLoadDelegate = this._loadDelegate().then(function(oDelegate){
+                return oDelegate;
+            }).then(function(oDelegate){
+                return this.initControlDelegate(oDelegate);
             }.bind(this)).catch(function (error) {
                 this._fnRejectInitialized(error);
             }.bind(this));
 
+            var aInitPromises = [
+                pLoadDelegate
+            ];
+
+            if (this.isFilteringEnabled()) {
+                aInitPromises.push(this.retrieveInbuiltFilter());
+            }
+
+            Promise.all(aInitPromises).then(function(){
+                this._initInnerControls();
+            }.bind(this));
 
         };
 
@@ -535,7 +587,7 @@ sap.ui.define([
          * @ui5-restricted Fiori Elements
          */
         Chart.prototype.isFilteringEnabled = function () {
-
+            return this.getP13nMode().indexOf("Filter") > -1;
         };
 
         /**
@@ -971,6 +1023,10 @@ sap.ui.define([
 
                 if (aP13nMode.indexOf("Sort") > -1) {
                     oState.sorters = this._getSortedProperties();
+                }
+
+                if (aP13nMode.indexOf("Filter") > -1) {
+                    oState.filter = this.getFilterConditions();
                 }
             }
 

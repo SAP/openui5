@@ -20,7 +20,10 @@ sap.ui.define([
     "sap/ui/base/ManagedObjectObserver",
     "sap/ui/core/ResizeHandler",
     "sap/ui/mdc/p13n/panels/ChartItemPanel",
-    "sap/m/MessageStrip"
+    "sap/m/MessageStrip",
+    "../TypeUtil",
+    "../FilterBarDelegate",
+    "sap/ui/model/Filter"
 ], function (
     V4ChartDelegate,
     loadModules,
@@ -39,7 +42,10 @@ sap.ui.define([
     ManagedObjectObserver,
     ResizeHandler,
     ChartItemPanel,
-    MessageStrip
+    MessageStrip,
+    V4TypeUtil,
+    V4FilterBarDelegate,
+    Filter
 ) {
     "use strict";
     /**
@@ -78,6 +84,14 @@ sap.ui.define([
 
     ChartDelegate._setState = function(oMDCChart, oState) {
         mStateMap.set(oMDCChart, oState);
+    };
+
+    ChartDelegate.getTypeUtil = function() {
+        return V4TypeUtil;
+    };
+
+    ChartDelegate.getFilterDelegate = function() {
+        return V4FilterBarDelegate;
     };
 
     ChartDelegate._deleteState = function(oMDCChart) {
@@ -174,36 +188,6 @@ sap.ui.define([
      * ...
      */
 
-    /**
-     * Provides the table's filter delegate that provides basic filter functionality such as adding filter fields.
-     * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
-     * to enable the table for inbuilt filtering.
-     *
-     * @example <caption>Example usage of <code>getFilterDelegate</code></caption>
-     * oFilterDelegate = {
-     * 		addItem: function() {
-     * 			var oFilterFieldPromise = new Promise(...);
-     * 			return oFilterFieldPromise;
-     * 		}
-     * }
-     * @returns {Object} Object for the chart filter personalization
-     * @public
-     */
-    ChartDelegate.getFilterDelegate = function () {
-        return {
-            /**
-             *
-             * @param {String} sPropertyName The property name
-             * @param {Object} oMDCChart Instance of the chart TODO: Which one? MDC or inner?
-             *
-             * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
-             * For more information, see {@link sap.ui.mdc.AggregationBaseDelegate#addItem AggregationBaseDelegate}.
-             */
-            addItem: function (sPropertyName, oMDCChart) {
-                return Promise.resolve(null);
-            }
-        };
-    };
 
     ChartDelegate.exit = function(oMDCChart) {
         if (this._getInnerStructure(oMDCChart)){
@@ -1274,48 +1258,73 @@ sap.ui.define([
      * @param {Object} oBindingInfo The binding info of the chart
      */
     ChartDelegate.updateBindingInfo = function (oMDCChart, oBindingInfo) {
-        var oFilter = Core.byId(oMDCChart.getFilter());
-        if (oFilter) {
-            var mConditions = oFilter.getConditions();
-
-            if (mConditions) {
-
-                if (!oBindingInfo) {
-                    oBindingInfo = {};
-                }
-
-                var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-                var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-                var oFilterInfo = FilterUtil.getFilterInfo(ChartDelegate.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
-                if (oFilterInfo) {
-                    oBindingInfo.filters = oFilterInfo.filters;
-                }
-
-                var sParameterPath = DelegateUtil.getParametersInfo(oFilter);
-                if (sParameterPath) {
-                    oBindingInfo.path = sParameterPath;
-                }
-            }
-
-            // get the basic search
-            var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
-            if (sSearchText) {
-
-                if (!oBindingInfo) {
-                    oBindingInfo = {};
-                }
-
-                if (!oBindingInfo.parameters) {
-                    oBindingInfo.parameters = {};
-                }
-                // add basic search parameter as expected by v4.ODataListBinding
-                oBindingInfo.parameters.$search = sSearchText;
-            } else if (oBindingInfo.parameters && oBindingInfo.parameters.$search) {
-                delete oBindingInfo.parameters.$search;
-            }
-
-        }
+        var aFilters = createInnerFilters.call(this, oMDCChart).concat(createOuterFilters.call(this, oMDCChart));
+        addSearchParameter(oMDCChart, oBindingInfo);
+		oBindingInfo.filters = new Filter(aFilters, true);
     };
+
+    function createInnerFilters(oChart) {
+		var bFilterEnabled = oChart.getP13nMode().indexOf("Filter") > -1;
+		var aFilters = [];
+
+		if (bFilterEnabled) {
+			var aChartProperties = oChart.getPropertyHelper().getProperties();
+			var oInnerFilterInfo = FilterUtil.getFilterInfo(this.getTypeUtil(), oChart.getConditions(), aChartProperties);
+
+			if (oInnerFilterInfo.filters) {
+				aFilters.push(oInnerFilterInfo.filters);
+			}
+		}
+
+		return aFilters;
+	}
+
+	function createOuterFilters(oChart) {
+		var oFilter = Core.byId(oChart.getFilter());
+		var aFilters = [];
+
+		if (!oFilter) {
+			return aFilters;
+		}
+
+		var mConditions = oFilter.getConditions();
+
+		if (mConditions) {
+			var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
+			var aParameterNames = DelegateUtil.getParameterNames(oFilter);
+			var oOuterFilterInfo = FilterUtil.getFilterInfo(this.getTypeUtil(), mConditions, aPropertiesMetadata, aParameterNames);
+
+			if (oOuterFilterInfo.filters) {
+				aFilters.push(oOuterFilterInfo.filters);
+			}
+		}
+
+		return aFilters;
+	}
+
+	function addSearchParameter(oChart, oBindingInfo) {
+		var oFilter = Core.byId(oChart.getFilter());
+		if (!oFilter) {
+			return;
+		}
+
+		var mConditions = oFilter.getConditions();
+		// get the basic search
+		var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
+
+		if (mConditions) {
+			var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
+			if (sParameterPath) {
+				oBindingInfo.path = sParameterPath;
+			}
+		}
+
+        if (!oBindingInfo.parameters) {
+            oBindingInfo.parameters = {};
+        }
+
+		oBindingInfo.parameters["$search"] = sSearchText || undefined;
+	}
 
     ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oMDCItem){
         return this.getInternalChartNameFromPropertyNameAndKind(oMDCItem.getName(), "aggregatable", oMDCItem.getParent());
@@ -1572,7 +1581,7 @@ sap.ui.define([
                     }
 
                     if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]){
-                        aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oFilterRestrictionsInfo, oSortRestrictionsInfo));
+                        aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
                     }
 
                     if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
@@ -1587,6 +1596,7 @@ sap.ui.define([
                             aggregatable: false,
                             maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                             sortKey: sKey,
+                            typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
                             kind:  "Groupable", //TODO: Rename in type; Only needed for P13n Item Panel
                             availableRoles: this._getLayoutOptionsForType("groupable"), //for p13n
                             role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
@@ -1601,7 +1611,7 @@ sap.ui.define([
         }.bind(this));
     };
 
-    ChartDelegate._createPropertyInfosForAggregatable = function(sKey, oPropertyAnnotations, oFilterRestrictionsInfo, oSortRestrictionsInfo) {
+    ChartDelegate._createPropertyInfosForAggregatable = function(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo) {
         var aProperties = [];
 
         if (oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"]){
@@ -1617,6 +1627,7 @@ sap.ui.define([
                     aggregationMethod: sAggregationMethod,
                     maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                     sortKey: oPropertyAnnotations["@Org.OData.Aggregation.V1.RecommendedAggregationMethod"] + sKey,
+                    typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
                     kind: "Aggregatable",//Only needed for P13n Item Panel
                     availableRoles: this._getLayoutOptionsForType("aggregatable"), //for p13n
                     role: MDCLib.ChartItemRoleType.axis1,

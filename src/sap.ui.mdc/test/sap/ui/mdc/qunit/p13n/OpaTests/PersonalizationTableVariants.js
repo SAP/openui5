@@ -265,7 +265,7 @@ sap.ui.define([
 		Then.iShouldSeeSelectedVariant("FilterVariantTest");
 
 		//Check Table conditions
-		Then.iShouldSeeTableConditions(oTableConditions);
+		Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
 
 		//restart app
 		Then.iTeardownMyAppFrame();
@@ -293,7 +293,7 @@ sap.ui.define([
 		When.iSelectVariant("FilterVariantTest");
 
 		//Recheck default variant appliance
-		Then.iShouldSeeTableConditions(oTableConditions);
+		Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
 
 		Then.iShouldSeeVisibleItemsInTable(2);
 
@@ -330,7 +330,7 @@ sap.ui.define([
 		Then.iShouldSeeVisibleItemsInTable(2);
 
 		//Check Table conditions
-		Then.iShouldSeeTableConditions(oTableConditions);
+		Then.iShouldSeeConditons("sap.ui.mdc.Table",oTableConditions);
 	});
 
 	opaTest("Check if Variant remains unchanged after dialog closes", function (Given, When, Then) {
@@ -345,7 +345,7 @@ sap.ui.define([
 		When.iSelectVariant("Standard");
 
 		//no filters on standard
-		Then.iShouldSeeTableConditions({filter: {}});
+		Then.iShouldSeeConditons("sap.ui.mdc.Table",{filter: {}});
 
 		//open Dialog
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);

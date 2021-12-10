@@ -628,9 +628,9 @@ sap.ui.define([
 			});
 		},
 
-		iShouldSeeTableConditions: function(oFilterConditions) {
+		iShouldSeeConditons: function(sControlType, oFilterConditions) {
 			return this.waitFor({
-				controlType: "sap.ui.mdc.Table",
+				controlType: sControlType,
 				success: function(aTables) {
 					Opa5.assert.ok(aTables.length == 1);
 					var oTable = aTables[0];

@@ -336,7 +336,7 @@ sap.ui.define([
 		} else {
 			aCells.push(this._getNameComboBox(oObject.getObject().kind, oObject.getObject().name));
 			aCells.push(this._getRoleSelect());
-			sRemoveBtnId = oObject.getObject().kind + "-RemoveBtn-" + oObject.getObject().name;
+			sRemoveBtnId = this.getId() + oObject.getObject().kind + "-RemoveBtn-" + oObject.getObject().name;
 
 			aCells.push(new HBox({
 				justifyContent: FlexJustifyContent.End,
