@@ -125,7 +125,7 @@ sap.ui.define([
 	 * @override
 	 */
 	ListContent.prototype.loadDependencies = function (oCardManifest) {
-		if (oCardManifest.get("/sap.card/content/item/chart")) {
+		if (!this.isSkeleton() && oCardManifest.get("/sap.card/content/item/chart")) {
 			return Microchart.loadDependencies();
 		}
 
@@ -159,23 +159,40 @@ sap.ui.define([
 	 * @override
 	 */
 	ListContent.prototype.getStaticConfiguration = function () {
-		var oConfiguration = this.getParsedConfiguration();
-		var sPath = this._sContentBindingPath || "/";
-		var aItems = this.getModel().getProperty(sPath);
-		var aResolvedItems = [];
-		var maxIndex = oConfiguration.maxItems || aItems.length;
+		var aListItems = this.getInnerList().getItems(),
+			oConfiguration = this.getParsedConfiguration(),
+			bHasGroups = aListItems[0] && aListItems[0].isA("sap.m.GroupHeaderListItem"),
+			aResolvedItems = [],
+			aResolvedGroups = [],
+			oResolvedGroup;
 
-		for (var iIndex = 0; iIndex < maxIndex; iIndex++) {
-			if (sPath === "/") {
-				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + iIndex));
+		aListItems.forEach(function (oItem) {
+			if (oItem.isA("sap.m.GroupHeaderListItem")) {
+				if (oResolvedGroup) {
+					aResolvedGroups.push(oResolvedGroup);
+				}
+
+				aResolvedItems = [];
+				oResolvedGroup = {
+					title: oItem.getTitle(),
+					items: aResolvedItems
+				};
 			} else {
-				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, sPath + "/" + iIndex));
+				aResolvedItems.push(BindingResolver.resolveValue(oConfiguration.item, this, oItem.getBindingContext().getPath()));
 			}
+		}.bind(this));
+
+		if (oResolvedGroup) {
+			aResolvedGroups.push(oResolvedGroup);
 		}
 
-		var oStaticConfiguration = Object.assign({}, oConfiguration);
-		delete oStaticConfiguration.item;
-		oStaticConfiguration.items = aResolvedItems;
+		var oStaticConfiguration = {};
+
+		if (bHasGroups) {
+			oStaticConfiguration.groups = aResolvedGroups;
+		} else {
+			oStaticConfiguration.items = aResolvedItems;
+		}
 
 		return oStaticConfiguration;
 	};
@@ -217,8 +234,9 @@ sap.ui.define([
 	 * @param {Object} oConfiguration Parsed configuration object.
 	 */
 	ListContent.prototype._setItem = function (oConfiguration) {
-		var mItem = oConfiguration.item;
-		var oList = this._getList(),
+		var mItem = oConfiguration.item,
+			oList = this._getList(),
+			bIsSkeleton = this.isSkeleton(),
 			mSettings = {
 				iconDensityAware: false,
 				title: mItem.title && (mItem.title.value || mItem.title),
@@ -261,15 +279,17 @@ sap.ui.define([
 			});
 		}
 
-		if (mItem.chart) {
-			mSettings.microchart = this._createChartAndAddLegend(mItem.chart);
-		}
+		if (!bIsSkeleton) {
+			if (mItem.chart) {
+				mSettings.microchart = this._createChartAndAddLegend(mItem.chart);
+			}
 
-		if (mItem.actionsStrip) {
-			mSettings.actionsStrip = ActionsStrip.create(this.getCardInstance(), mItem.actionsStrip);
-			oList.setShowSeparators(ListSeparators.All);
-		} else {
-			oList.setShowSeparators(ListSeparators.None);
+			if (mItem.actionsStrip) {
+				mSettings.actionsStrip = ActionsStrip.create(this.getCardInstance(), mItem.actionsStrip);
+				oList.setShowSeparators(ListSeparators.All);
+			} else {
+				oList.setShowSeparators(ListSeparators.None);
+			}
 		}
 
 		this._oItemTemplate = new ListContentItem(mSettings);

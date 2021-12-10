@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/ui/integration/widgets/Card",
-    "sap/ui/integration/util/ManifestResolver"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/ManifestResolver"
 ], function (Card, ManifestResolver) {
 	"use strict";
 
@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @since 1.98
 	 * @alias sap.ui.integration.util.SkeletonCard
 	 */
-    var SkeletonCard = Card.extend("sap.ui.integration.util.SkeletonCard");
+	var SkeletonCard = Card.extend("sap.ui.integration.util.SkeletonCard");
 
 	/**
 	 * Resolves the card manifest to a static manifest.
@@ -35,6 +35,13 @@ sap.ui.define([
 	 */
 	SkeletonCard.prototype.resolveManifest = function () {
 		return ManifestResolver.resolveCard(this);
+	};
+
+	/**
+	 * @private
+	 */
+	SkeletonCard.prototype.isSkeleton = function () {
+		return true;
 	};
 
 	return SkeletonCard;

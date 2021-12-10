@@ -2,12 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Utils"
 ], function (
-	Card,
 	BindingHelper,
 	BindingResolver,
 	Utils
@@ -25,30 +23,10 @@ sap.ui.define([
 	var ManifestResolver = {};
 
 	/**
-	 * Resolves manifest.
-	 * @memberof sap.ui.integration.util.ManifestResolver
-	 * @alias sap.ui.integration.util.ManifestResolver.resolve
-	 * @param {object} oManifest Card manifest
-	 * @param {string} sBaseUrl The base URL of the card manifest
-	 * @returns {Promise<string>} Promise which resolves with stringified manifest with resolved bindings and translations or rejects with an error message if there is an error.
-	 * @private
-	 * @ui5-restricted Mobile SDK
-	 */
-	ManifestResolver.resolve = function (oManifest, sBaseUrl) {
-		var oCard = new Card({
-			baseUrl: sBaseUrl,
-			manifest: oManifest
-		});
-
-		return ManifestResolver.resolveCard(oCard);
-	};
-
-	/**
 	 * Resolves a card and returns its resolved manifest.
 	 * @memberof sap.ui.integration.util.ManifestResolver
 	 * @alias sap.ui.integration.util.ManifestResolver.resolveCard
 	 * @param {sap.ui.integration.widgets.Card} oCard The card to resolve.
-	 * @param {string} sBaseUrl The base URL of the card manifest
 	 * @returns {Promise<string>} Promise which resolves with stringified manifest with resolved bindings and translations or rejects with an error message if there is an error.
 	 * @private
 	 * @ui5-restricted Mobile SDK

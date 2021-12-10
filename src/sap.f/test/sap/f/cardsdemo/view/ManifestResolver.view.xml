@@ -2,10 +2,11 @@
 	controllerName="sap.f.cardsdemo.controller.ManifestResolver"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns:w="sap.ui.integration.widgets"
 	xmlns:editor="sap.ui.codeeditor"
 	displayBlock="true">
-	<Page title="{i18n>appTitle}">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer />
@@ -13,19 +14,48 @@
 				<ToolbarSpacer />
 			</Toolbar>
 		</subHeader>
+		<VBox renderType="Bare" height="100%">
+			<VBox>
+				<HBox alignItems="Center">
+					<Label text="Manifest:"></Label>
+					<Select id="manifestId" selectedKey="objectCard" change=".onManifestChange">
+						<layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</layoutData>
+						<items>
+							<core:Item text="Object Card" key="objectCard" />
+							<core:Item text="List Card" key="listCard" />
+							<core:Item text="List Card with Grouping" key="listCardGrouping" />
+							<core:Item text="List Card No Data" key="listCardNoData" />
+							<core:Item text="List Card with Bullet Graph and Actions" key="listCardBulletGraphActions" />
+							<core:Item text="List Card with Stacked Bar Chart" key="stackedBar" />
+						</items>
+					</Select>
+				</HBox>
+				<HBox alignItems="Center">
+					<Label text="baseUrl:"></Label>
+					<Input id="baseUrlInp">
+						<layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</layoutData>
+					</Input>
+				</HBox>
+				<Button text="Resolve manifest" press=".onResolveManifestPress"></Button>
+				<MessageStrip id="error" type="Error" visible="false" />
+			</VBox>
 			<HBox>
+				<layoutData>
+					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>
+				</layoutData>
 				<VBox>
 					<Title text="Manifest" class="sapUiTinyMargin" />
 					<editor:CodeEditor
-						height="450px"
 						id="editor"
 						type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
 					</editor:CodeEditor>
-					<HBox>
-						<Label text="baseUrl:"></Label>
-						<Input id="baseUrlInp" change=".onBaseUrlChange"></Input>
-					</HBox>
-					<Button text="Resolve manifest" press=".onResolveManifestPress"></Button>
 					<layoutData>
 						<FlexItemData growFactor="1"></FlexItemData>
 					</layoutData>
@@ -33,15 +63,17 @@
 				<VBox>
 					<Title text="Output" class="sapUiTinyMargin" />
 					<editor:CodeEditor
-						height="450px"
 						id="output"
 						type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
 					</editor:CodeEditor>
-					<MessageStrip id="error" type="Error" visible="false" />
 					<layoutData>
 						<FlexItemData growFactor="1"></FlexItemData>
 					</layoutData>
 				</VBox>
 			</HBox>
+		</VBox>
 	</Page>
 </mvc:View>
