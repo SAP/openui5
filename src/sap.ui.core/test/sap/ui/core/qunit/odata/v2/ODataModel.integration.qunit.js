@@ -613,7 +613,7 @@ sap.ui.define([
 		 * Removes the found request from the list.
 		 *
 		 * @param {object} oActualRequest The actual request
-		 * @returns {object} The matching expected request or undefined if none was found
+		 * @returns {object|undefined} The matching expected request or undefined if none was found
 		 */
 		consumeExpectedRequest : function (oActualRequest) {
 			var oExpectedRequest, i;
@@ -625,9 +625,12 @@ sap.ui.define([
 				oExpectedRequest = this.aRequests[i];
 				if (oExpectedRequest.requestUri === oActualRequest.requestUri) {
 					this.aRequests.splice(i, 1);
+
 					return oExpectedRequest;
 				}
 			}
+
+			return undefined;
 		},
 
 		/**
@@ -1129,6 +1132,13 @@ sap.ui.define([
 		 * Implementation of methods {@link #expectChange} and {@link #expectValue}; see
 		 * documentation of these for a description. Only the return statement is overridden.
 		 *
+		 * @param {string} sControlId
+		 *   The control ID
+		 * @param {string|string[]|boolean|null} [vValue]
+		 *   The expected value, see {@link #expectChange} and {@link #expectValue}
+		 * @param {number|string} [vRow]
+		 *   The row index, see {@link #expectChange} and {@link #expectValue}
+		 *
 		 * @returns {boolean} Whether the expected change is for a list element
 		 */
 		expectChangeInternal : function (sControlId, vValue, vRow) {
@@ -1485,7 +1495,7 @@ sap.ui.define([
 			 * in case the given item control is no table item
 			 *
 			 * @param {any} oItem The table item control
-			 * @returns {number} The index of the item control or <code>undefined</code>
+			 * @returns {number|undefined} The index of the item control or <code>undefined</code>
 			 */
 			function getItemIndex(oItem) {
 				if (oItem.getIndex) { // sap.ui.table.Row
@@ -1493,6 +1503,8 @@ sap.ui.define([
 				} else if (oItem.getList) { // sap.m.ListItemBase
 					return oItem.getList().getItems().indexOf(oItem);
 				}
+
+				return undefined;
 			}
 
 			/**
@@ -7897,7 +7909,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oCompanyNameError2_Update = that.createResponseMessage("('2')/CompanyName"),
+			var oCompanyNameError2Update = that.createResponseMessage("('2')/CompanyName"),
 				oToProductADescriptionError2
 					= that.createResponseMessage("('2')/ToProducts('B')/Description"),
 				oProductADescriptionError2 = cloneODataMessage(oToProductADescriptionError2,
@@ -7917,12 +7929,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					}]
 				}, {
 					"sap-message" : getMessageHeader([
-						oCompanyNameError2_Update,
+						oCompanyNameError2Update,
 						oToProductADescriptionError2
 					])
 				})
 				.expectValue("companyName2", "companyName2New")
-				.expectMessage(oCompanyNameError2_Update, "/BusinessPartnerSet", undefined, true)
+				.expectMessage(oCompanyNameError2Update, "/BusinessPartnerSet", undefined, true)
 				.expectMessage(oProductADescriptionError2, "/ProductSet",
 					"/BusinessPartnerSet('2')/ToProducts")
 				.expectMessage(oCompanyNameError1, "/BusinessPartnerSet('1')/")
