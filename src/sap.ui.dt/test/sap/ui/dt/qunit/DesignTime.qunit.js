@@ -67,15 +67,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	DOMUtil.insertStyles('\
+	DOMUtil.insertStyles("\
 		.hidden {\
 			display: none !important;\
 		}\
-	', document.head);
+	", document.head);
 
 	var sandbox = sinon.createSandbox();
 
-	function _isOverlayVisible(oElementOverlay) {
+	function isOverlayVisible(oElementOverlay) {
 		return oElementOverlay.$().width() > 0 && oElementOverlay.$().height() > 0;
 	}
 
@@ -98,7 +98,6 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("syncing", function() {
 				bSyncingCalled = true;
 			});
-
 
 			this.oDesignTime.addRootElement(this.oButton);
 
@@ -165,6 +164,47 @@ sap.ui.define([
 			this.oDesignTime.addPlugin(oCustomPlugin1);
 			this.oDesignTime.addPlugin(oCustomPlugin2);
 			assert.deepEqual(this.oDesignTime.getBusyPlugins(), [oCustomPlugin2]);
+		});
+	});
+
+	QUnit.module("Given a Designtime with plugins", {
+		beforeEach: function () {
+			this.oTabHandlingPlugin = new TabHandling();
+			this.oContextMenuPlugin = new ContextMenuPlugin();
+			this.oDragDropPlugin = new DragDrop();
+			this.oDesignTime = new DesignTime({
+				plugins: [
+					this.oTabHandlingPlugin, this.oContextMenuPlugin, this.oDragDropPlugin
+				]
+			});
+		},
+		afterEach: function () {
+			this.oDesignTime.destroy();
+		}
+	}, function() {
+		QUnit.test("when several plugins are busy", function(assert) {
+			var done = assert.async();
+			this.oTabHandlingPlugin.setBusy(true);
+			this.oContextMenuPlugin.setBusy(true);
+
+			assert.strictEqual(this.oDesignTime.getBusyPlugins().length, 2, "two plugins are busy");
+
+			this.oDesignTime.waitForBusyPlugins().then(function() {
+				assert.strictEqual(this.oDesignTime.getBusyPlugins().length, 0, "no plugin is busy anymore");
+				done();
+			}.bind(this));
+
+			this.oTabHandlingPlugin.setBusy(false);
+			this.oContextMenuPlugin.setBusy(false);
+		});
+
+		QUnit.test("when no plugin is busy", function(assert) {
+			var aBusyPlugins = this.oDesignTime.getBusyPlugins();
+			assert.strictEqual(aBusyPlugins.length, 0, "no plugin is busy");
+
+			return this.oDesignTime.waitForBusyPlugins().then(function() {
+				assert.ok(true, "the function resolves directly");
+			});
 		});
 	});
 
@@ -853,41 +893,41 @@ sap.ui.define([
 		QUnit.test("when the DesignTime is disabled and then enabled again", function(assert) {
 			this.oDesignTime.setEnabled(false);
 			assert.strictEqual(
-				jQuery(Overlay.getOverlayContainer()).filter(':visible').length,
+				jQuery(Overlay.getOverlayContainer()).filter(":visible").length,
 				0,
-				'then the overlay container has been hidden'
+				"then the overlay container has been hidden"
 			);
 			assert.strictEqual(
 				OverlayRegistry.getOverlay(this.oOuterLayout).getVisible(),
 				false,
-				'then the outer overlay has been disabled'
+				"then the outer overlay has been disabled"
 			);
 			assert.strictEqual(
 				OverlayRegistry.getOverlay(this.oOuterLayout).isVisible(),
 				false,
-				'then the outer overlay is not visible'
+				"then the outer overlay is not visible"
 			);
 			assert.strictEqual(
 				OverlayRegistry.getOverlay(this.oOuterLayout).getChildren()[0].isVisible(),
 				false,
-				'then the aggregation overlay of outer overlay is disabled'
+				"then the aggregation overlay of outer overlay is disabled"
 			);
 
 			this.oDesignTime.setEnabled(true);
 			assert.strictEqual(
-				jQuery(Overlay.getOverlayContainer()).filter(':visible').length,
+				jQuery(Overlay.getOverlayContainer()).filter(":visible").length,
 				1,
-				'then after enabling it again the overlay container is displayed'
+				"then after enabling it again the overlay container is displayed"
 			);
 			assert.strictEqual(
 				OverlayRegistry.getOverlay(this.oOuterLayout).getVisible(),
 				true,
-				'and the outer overlay is visible'
+				"and the outer overlay is visible"
 			);
 			assert.strictEqual(
 				OverlayRegistry.getOverlay(this.oOuterLayout).getChildren()[0].isVisible(),
 				true,
-				'and the aggregation overlay of outer overlay is visible'
+				"and the aggregation overlay of outer overlay is visible"
 			);
 		});
 
@@ -898,7 +938,7 @@ sap.ui.define([
 			oOuterLayoutOverlay.attachEventOnce("geometryChanged", function () {
 				var oContentAggregationOverlay = oOuterLayoutOverlay.getAggregationOverlay("content");
 				var oContentAggregationOverlayDomRef = oContentAggregationOverlay.getDomRef();
-				var oContentAggregationDomRef = this.oOuterLayout.$('content').get(0);
+				var oContentAggregationDomRef = this.oOuterLayout.$("content").get(0);
 
 				assert.strictEqual(oContentAggregationDomRef.scrollTop, oContentAggregationOverlayDomRef.scrollTop);
 				this.oDesignTime.setEnabled(false);
@@ -1174,7 +1214,7 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var oModel = getJsonModelWithData(2);
-			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: '{text}'})]});
+			this.oCustomListItemTemplate = new CustomListItem("boundListItem", {content: [new Button("boundListItem-btn", {text: "{text}"})]});
 			this.oBoundList = new List("boundlist").setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
 				path: "/",
@@ -1184,8 +1224,8 @@ sap.ui.define([
 
 			//create list with unbound items
 			this.oUnBoundList = new List("unboundlist");
-			this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: 'item1-unbound'})]}));
-			this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: 'item2-unbound'})]}));
+			this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: "item1-unbound"})]}));
+			this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: "item2-unbound"})]}));
 
 			//create a HorizontalLayout containing the two lists
 			this.oHorizontalLayout = new HorizontalLayout("horLyout", {
@@ -1408,7 +1448,7 @@ sap.ui.define([
 					},
 					rootElements: [this.oPage]
 				});
-				this.oDesignTime.attachEventOnce('synced', function () {
+				this.oDesignTime.attachEventOnce("synced", function () {
 					this.oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 					fnDone();
 				}, this);
@@ -1443,7 +1483,7 @@ sap.ui.define([
 	QUnit.module("Given that the DesignTime is created with hidden layout", {
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
-			this.oButton1 = new Button({ text: 'Button1' });
+			this.oButton1 = new Button({ text: "Button1" });
 			this.oLayout1 = new VerticalLayout({
 				content: [this.oButton1]
 			});
@@ -1466,7 +1506,7 @@ sap.ui.define([
 				rootElements: [this.oLayoutOuter]
 			});
 
-			this.oDesignTime.attachEventOnce('synced', function () {
+			this.oDesignTime.attachEventOnce("synced", function () {
 				fnDone();
 			}, this);
 		},
@@ -1477,25 +1517,25 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when hidden layout becomes visible", function(assert) {
 			var fnDone = assert.async();
-			this.oButton2 = new Button({ text: 'Button2' });
+			this.oButton2 = new Button({ text: "Button2" });
 			this.oLayout2 = new VerticalLayout({
 				content: [this.oButton2]
 			});
-			this.oLayout2.addStyleClass('hidden');
+			this.oLayout2.addStyleClass("hidden");
 
-			this.oDesignTime.attachEventOnce('synced', function () {
+			this.oDesignTime.attachEventOnce("synced", function () {
 				this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
-				assert.ok(!!this.oOverlayLayout2, 'then layout2 overlay is created');
-				assert.notOk(_isOverlayVisible(this.oOverlayLayout2), 'the overlay has no size');
+				assert.ok(!!this.oOverlayLayout2, "then layout2 overlay is created");
+				assert.notOk(isOverlayVisible(this.oOverlayLayout2), "the overlay has no size");
 
 				this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
-				assert.ok(!!this.oOverlayButton2, 'then button2 overlay is created');
+				assert.ok(!!this.oOverlayButton2, "then button2 overlay is created");
 
-				this.oOverlayLayout2.attachEventOnce('geometryChanged', function () {
-					assert.ok(_isOverlayVisible(this.oOverlayLayout2), 'the overlay has non-zero width/height');
+				this.oOverlayLayout2.attachEventOnce("geometryChanged", function () {
+					assert.ok(isOverlayVisible(this.oOverlayLayout2), "the overlay has non-zero width/height");
 					fnDone();
 				}, this);
-				this.oLayout2.removeStyleClass('hidden');
+				this.oLayout2.removeStyleClass("hidden");
 			}, this);
 
 			this.oLayoutOuter.removeContent(this.oLayout1);
@@ -1504,39 +1544,39 @@ sap.ui.define([
 
 		QUnit.test("when switching between layouts", function(assert) {
 			var fnDone = assert.async();
-			this.oButton2 = new Button({ text: 'Button2' });
+			this.oButton2 = new Button({ text: "Button2" });
 			this.oLayout2 = new VerticalLayout({
 				content: [this.oButton2]
 			});
-			this.oLayout1.addStyleClass('hidden');
-			this.oLayout2.addStyleClass('hidden');
+			this.oLayout1.addStyleClass("hidden");
+			this.oLayout2.addStyleClass("hidden");
 
-			this.oDesignTime.attachEventOnce('synced', function () {
+			this.oDesignTime.attachEventOnce("synced", function () {
 				this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
-				assert.ok(!!this.oOverlayLayout2, 'layout2 overlay is created');
+				assert.ok(!!this.oOverlayLayout2, "layout2 overlay is created");
 				this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
-				assert.ok(!!this.oOverlayButton2, 'then button2 overlay is created');
-				assert.notOk(_isOverlayVisible(this.oOverlayLayout2), 'the layout2 overlay has no size when hidden');
+				assert.ok(!!this.oOverlayButton2, "then button2 overlay is created");
+				assert.notOk(isOverlayVisible(this.oOverlayLayout2), "the layout2 overlay has no size when hidden");
 
-				this.oOverlayLayout2.attachEventOnce('geometryChanged', function () {
-					assert.ok(_isOverlayVisible(this.oOverlayLayout2), 'the layout2 overlay has non-zero width/height when made visible');
+				this.oOverlayLayout2.attachEventOnce("geometryChanged", function () {
+					assert.ok(isOverlayVisible(this.oOverlayLayout2), "the layout2 overlay has non-zero width/height when made visible");
 
 					this.oOverlayLayout2.attachEventOnce("destroyed", function() {
 						this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
-						assert.notOk(!!this.oOverlayLayout2, 'layout2 overlay is removed');
+						assert.notOk(!!this.oOverlayLayout2, "layout2 overlay is removed");
 
-						this.oDesignTime.attachEventOnce('synced', function () {
+						this.oDesignTime.attachEventOnce("synced", function () {
 							this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
-							assert.ok(!!this.oOverlayLayout1, 'then layout1 overlay is created');
+							assert.ok(!!this.oOverlayLayout1, "then layout1 overlay is created");
 							this.oOverlayButton1 = OverlayRegistry.getOverlay(this.oButton1);
-							assert.ok(!!this.oOverlayButton1, 'then button1 overlay is created');
-							assert.notOk(_isOverlayVisible(this.oOverlayButton1), 'the layout1 overlay has no size when hidden');
+							assert.ok(!!this.oOverlayButton1, "then button1 overlay is created");
+							assert.notOk(isOverlayVisible(this.oOverlayButton1), "the layout1 overlay has no size when hidden");
 
-							this.oOverlayLayout1.attachEventOnce('geometryChanged', function () {
-								assert.ok(_isOverlayVisible(this.oOverlayLayout1), 'the layout1 overlay has non-zero width/height when made visible');
+							this.oOverlayLayout1.attachEventOnce("geometryChanged", function () {
+								assert.ok(isOverlayVisible(this.oOverlayLayout1), "the layout1 overlay has non-zero width/height when made visible");
 								fnDone();
 							}, this);
-							this.oLayout1.removeStyleClass('hidden');
+							this.oLayout1.removeStyleClass("hidden");
 						}, this);
 
 						this.oLayoutOuter.addContent(this.oLayout1);
@@ -1545,7 +1585,7 @@ sap.ui.define([
 					this.oLayoutOuter.removeContent(this.oLayout2);
 				}, this);
 
-				this.oLayout2.removeStyleClass('hidden');
+				this.oLayout2.removeStyleClass("hidden");
 			}, this);
 
 			this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
@@ -1702,7 +1742,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module('Public API - createOverlay()', {
+	QUnit.module("Public API - createOverlay()", {
 		beforeEach: function () {
 			this.oDesignTime = new DesignTime();
 		},
@@ -1779,7 +1819,7 @@ sap.ui.define([
 				function (oError) {
 					assert.ok(true, "promise is rejected");
 					assert.ok(oError instanceof Error, "proper error object is provided");
-					assert.ok(oError.message.includes("Cannot create overlay — no element is specified"), 'proper rejection reason is provided');
+					assert.ok(oError.message.includes("Cannot create overlay — no element is specified"), "proper rejection reason is provided");
 					fnDone();
 				}
 			);
@@ -1798,7 +1838,7 @@ sap.ui.define([
 				function (oError) {
 					assert.ok(true, "promise is rejected");
 					assert.ok(oError instanceof Error, "proper error object is provided");
-					assert.ok(oError.message.includes("Cannot create overlay without a valid element"), 'proper rejection reason is provided');
+					assert.ok(oError.message.includes("Cannot create overlay without a valid element"), "proper rejection reason is provided");
 					fnDone();
 				}
 			);
@@ -1817,7 +1857,7 @@ sap.ui.define([
 				function (oError) {
 					assert.ok(true, "promise is rejected");
 					assert.ok(oError instanceof Error, "proper error object is provided");
-					assert.ok(oError.message.includes("Cannot create overlay without a valid element"), 'proper rejection reason is provided');
+					assert.ok(oError.message.includes("Cannot create overlay without a valid element"), "proper rejection reason is provided");
 					fnDone();
 				}
 			);
@@ -1890,7 +1930,7 @@ sap.ui.define([
 
 			return this.oDesignTime.createOverlay(oButton).then(function (oElementOverlay) {
 				return this.oDesignTime.createOverlay(oButton).then(function (oElementOverlay2) {
-					assert.strictEqual(oElementOverlay, oElementOverlay2, 'then exactly same overlay was returned');
+					assert.strictEqual(oElementOverlay, oElementOverlay2, "then exactly same overlay was returned");
 					oButton.destroy();
 				});
 			}.bind(this));
@@ -1912,10 +1952,10 @@ sap.ui.define([
 			var oPromise1 = this.oDesignTime.createOverlay(oButton);
 			var oPromise2 = this.oDesignTime.createOverlay(oButton);
 
-			assert.ok(oPromise1 === oPromise2, 'then second promise is exactly the same');
+			assert.ok(oPromise1 === oPromise2, "then second promise is exactly the same");
 
 			var oPromiseAll = Promise.all([oPromise1, oPromise2]).then(function (aElementOverlays) {
-				assert.strictEqual(aElementOverlays[0].getId(), aElementOverlays[1].getId(), 'then created element overlays are the same');
+				assert.strictEqual(aElementOverlays[0].getId(), aElementOverlays[1].getId(), "then created element overlays are the same");
 				oButton.destroy();
 			});
 
@@ -1929,8 +1969,8 @@ sap.ui.define([
 			var oButton2;
 			var oLayout = new VerticalLayout({
 				content: [
-					oButton1 = new Button('button1'),
-					oButton2 = new Button('button2')
+					oButton1 = new Button("button1"),
+					oButton2 = new Button("button2")
 				]
 			});
 			oLayout.placeAt("qunit-fixture");
@@ -1942,10 +1982,10 @@ sap.ui.define([
 				.callsFake(function () {
 					return new Promise(function (fnResolve) {
 						// By using timeout we make sure that overlay for Button1 is already created and waits
-						// in the waiting batch until it's being registered.
+						// in the waiting batch until it"s being registered.
 						setTimeout(function () {
 							this.oPromise2 = this.oDesignTime.createOverlay(oButton1);
-							assert.ok(this.oPromise1 === this.oPromise2, 'then the promises for the pending overlays are the same');
+							assert.ok(this.oPromise1 === this.oPromise2, "then the promises for the pending overlays are the same");
 							fnResolve({});
 							fnDone();
 						}.bind(this), 20);
@@ -1960,7 +2000,7 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("synced", function () {
 				// Check values in Promises
 				Promise.all([this.oPromise1, this.oPromise2]).then(function (aElementOverlays) {
-					assert.strictEqual(aElementOverlays[0].getId(), aElementOverlays[1].getId(), 'then created element overlays are the same');
+					assert.strictEqual(aElementOverlays[0].getId(), aElementOverlays[1].getId(), "then created element overlays are the same");
 					oLayout.destroy();
 					fnDone();
 				});
@@ -1974,8 +2014,8 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			return this.oDesignTime.createOverlay(oButton).then(function (oElementOverlay) {
-				assert.ok(oElementOverlay, 'then the overlay is created');
-				assert.ok(oElementOverlay.getIsRoot(), 'then  isRoot property automatically set to true');
+				assert.ok(oElementOverlay, "then the overlay is created");
+				assert.ok(oElementOverlay.getIsRoot(), "then  isRoot property automatically set to true");
 				oButton.destroy();
 			});
 		});
@@ -1990,8 +2030,8 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			return this.oDesignTime.createOverlay(oButton).then(function (oElementOverlay) {
-				assert.ok(oElementOverlay, 'then the overlay is created');
-				assert.ok(fnElementOverlayCreatedSpy.called, 'elementOverlayCreated event is triggered');
+				assert.ok(oElementOverlay, "then the overlay is created");
+				assert.ok(fnElementOverlayCreatedSpy.called, "elementOverlayCreated event is triggered");
 				oButton.destroy();
 			});
 		});
@@ -2002,8 +2042,8 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			return this.oDesignTime.createOverlay(oButton).then(function (oElementOverlay) {
-				assert.ok(oElementOverlay, 'then the overlay is created');
-				assert.strictEqual(OverlayRegistry.getOverlay(oButton), oElementOverlay, 'element overlay is registered and exactly the same as returned into the promise');
+				assert.ok(oElementOverlay, "then the overlay is created");
+				assert.strictEqual(OverlayRegistry.getOverlay(oButton), oElementOverlay, "element overlay is registered and exactly the same as returned into the promise");
 				oButton.destroy();
 			});
 		});
@@ -2014,7 +2054,7 @@ sap.ui.define([
 			var oButton = new Button();
 			oLayout.addContent(oButton);
 
-			sandbox.stub(DesignTime.prototype, '_createChildren').callsFake(function () {
+			sandbox.stub(DesignTime.prototype, "_createChildren").callsFake(function () {
 				oLayout.destroy();
 				return Promise.resolve();
 			});
@@ -2027,19 +2067,19 @@ sap.ui.define([
 			this.oDesignTime.createOverlay(oLayout).then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called');
+					assert.ok(false, "this must never be called");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'promise is rejected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper rejection reason is provided");
 					assert.ok(
 						oError.toString().indexOf("while creating children overlays, its parent overlay has been destroyed") !== -1,
-						'proper rejection reason is provided'
+						"proper rejection reason is provided"
 					);
-					assert.notOk(OverlayRegistry.getOverlay(oLayout), 'no overlay for Layout is registered');
-					assert.notOk(OverlayRegistry.getOverlay(oButton), 'no overlay for Button is registered');
-					assert.notOk(fnElementOverlayCreatedSpy.called, 'elementOverlayCreated event is not triggered');
+					assert.notOk(OverlayRegistry.getOverlay(oLayout), "no overlay for Layout is registered");
+					assert.notOk(OverlayRegistry.getOverlay(oButton), "no overlay for Button is registered");
+					assert.notOk(fnElementOverlayCreatedSpy.called, "elementOverlayCreated event is not triggered");
 					fnDone();
 				}
 			);
@@ -2059,7 +2099,7 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
 
 			var fnRegisterOriginal = OverlayRegistry.register;
-			sandbox.stub(OverlayRegistry, 'register').callsFake(function (oOverlay) {
+			sandbox.stub(OverlayRegistry, "register").callsFake(function (oOverlay) {
 				if (oOverlay instanceof AggregationOverlay && oOverlay.getElement() === oLayout) {
 					oContentAggregtionOverlay = oOverlay;
 				}
@@ -2067,7 +2107,7 @@ sap.ui.define([
 			});
 
 			var fnCreateOverlayOriginal = this.oDesignTime.createOverlay;
-			sandbox.stub(this.oDesignTime, 'createOverlay').callsFake(function (mParams) {
+			sandbox.stub(this.oDesignTime, "createOverlay").callsFake(function (mParams) {
 				if (mParams.element === oButton) {
 					oLayout.destroy();
 				}
@@ -2092,25 +2132,25 @@ sap.ui.define([
 			.then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called');
+					assert.ok(false, "this must never be called");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'then the Promise is rejected as expected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "then the Promise is rejected as expected");
+					assert.ok(oError instanceof Error, "proper rejection reason is provided");
 					assert.ok(
-						oError.message.indexOf('while creating children overlays, its parent overlay has been destroyed') > -1,
-						'then the error contains right rejection information'
+						oError.message.indexOf("while creating children overlays, its parent overlay has been destroyed") > -1,
+						"then the error contains right rejection information"
 					);
-					assert.strictEqual(oContentAggregtionOverlay.bIsDestroyed, true, 'aggregation overlay for content aggregation was properly destroyed');
-					assert.notOk(OverlayRegistry.getOverlay(oContentAggregtionOverlay.getId()), 'aggregation overlay was properly unregistered');
-					assert.notOk(fnElementOverlayCreatedSpy.called, 'elementOverlayCreated event is not triggered');
+					assert.strictEqual(oContentAggregtionOverlay.bIsDestroyed, true, "aggregation overlay for content aggregation was properly destroyed");
+					assert.notOk(OverlayRegistry.getOverlay(oContentAggregtionOverlay.getId()), "aggregation overlay was properly unregistered");
+					assert.notOk(fnElementOverlayCreatedSpy.called, "elementOverlayCreated event is not triggered");
 					assert.notOk(fnElementOverlayDestroyedSpy.called, "elementOverlayDestroyed event is not triggered");
 					fnDone();
 				}
 			)
 			.catch(function () {
-				assert.ok(false, 'catch must never be called');
+				assert.ok(false, "catch must never be called");
 			});
 		});
 
@@ -2118,7 +2158,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			sandbox.stub(ElementOverlay.prototype, "asyncInit").callsFake(function () {
-				throw new Error('some unexpected error');
+				throw new Error("some unexpected error");
 			});
 
 			var oButton = new Button();
@@ -2127,21 +2167,21 @@ sap.ui.define([
 			.then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called');
+					assert.ok(false, "this must never be called");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'promise is rejected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper rejection reason is provided");
 					assert.ok(
 						oError.toString().indexOf("some unexpected error") !== -1,
-						'error contains information about original failure'
+						"error contains information about original failure"
 					);
 					fnDone();
 				}
 			)
 			.catch(function () {
-				assert.ok(false, 'catch must never be called');
+				assert.ok(false, "catch must never be called");
 			});
 		});
 
@@ -2165,7 +2205,7 @@ sap.ui.define([
 				// Rejected
 				function (oError) {
 					assert.ok(true, "then the Promise is rejected as expected");
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(oError instanceof Error, "proper rejection reason is provided");
 					assert.ok(oError.message.includes("Can't load designtime metadata data for overlay"), "then the error message is correct");
 					assert.ok(oError.message.includes("some error occurred"), "then the error contains information about original failure");
 					fnDone();
@@ -2192,7 +2232,7 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
 
 			sandbox.stub(Log, "error").callsFake(function () {
-				assert.ok(false, 'then the error must not be raised');
+				assert.ok(false, "then the error must not be raised");
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -2203,11 +2243,11 @@ sap.ui.define([
 			this.oDesignTime.createOverlay(oButton)
 			.then(
 				function () {
-					assert.ok(false, 'resolve() must not ever happen');
+					assert.ok(false, "resolve() must not ever happen");
 				},
 				function (oError) {
-					assert.ok(true, 'then Promise is rejected as expected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "then Promise is rejected as expected");
+					assert.ok(oError instanceof Error, "proper rejection reason is provided");
 					assert.ok(oError.message.includes("Can't set metadata to overlay which element has been destroyed already"));
 					assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' wasn't called");
 					assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' wasn't called");
@@ -2216,7 +2256,7 @@ sap.ui.define([
 				}
 			)
 			.catch(function () {
-				assert.ok(false, 'catch() must not ever happen');
+				assert.ok(false, "catch() must not ever happen");
 			});
 		});
 
@@ -2240,17 +2280,17 @@ sap.ui.define([
 			.then(
 				// Fulfilled
 				function () {
-					assert.ok(false, 'this must never be called');
+					assert.ok(false, "this must never be called");
 				},
 				// Rejected
 				function (oError) {
-					assert.ok(true, 'promise is rejected');
-					assert.ok(oError instanceof Error, 'proper rejection reason is provided');
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper rejection reason is provided");
 					assert.ok(
 						oError.toString().indexOf("while creating overlay, DesignTime instance has been destroyed") !== -1,
-						'proper rejection reason is provided'
+						"proper rejection reason is provided"
 					);
-					assert.notOk(OverlayRegistry.getOverlay(oButton), 'no overlay for Button is registered');
+					assert.notOk(OverlayRegistry.getOverlay(oButton), "no overlay for Button is registered");
 					assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' is not called");
 					assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' is not called");
 					fnDone();
@@ -2263,8 +2303,8 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oPanel = new Panel({
-				width: '300px',
-				height: '100px'
+				width: "300px",
+				height: "100px"
 			});
 			this.oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -2273,7 +2313,7 @@ sap.ui.define([
 				rootElements: [this.oPanel]
 			});
 
-			this.oDesignTime.attachEventOnce('synced', fnDone, this);
+			this.oDesignTime.attachEventOnce("synced", fnDone, this);
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
@@ -2283,7 +2323,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when adding new control into an aggregation", function (assert) {
 			var fnDone = assert.async();
-			var oButton = new Button({ text: 'New Button' });
+			var oButton = new Button({ text: "New Button" });
 			var fnMetadataResolve;
 
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
@@ -2292,10 +2332,10 @@ sap.ui.define([
 				});
 			});
 
-			this.oDesignTime.attachEventOnce('synced', function () {
+			this.oDesignTime.attachEventOnce("synced", function () {
 				var oElementOverlay = OverlayRegistry.getOverlay(oButton);
-				assert.ok(oElementOverlay.isRendered(), 'the overlay is rendered');
-				assert.ok(_isOverlayVisible(oElementOverlay), 'the overlay has non-zero width/height');
+				assert.ok(oElementOverlay.isRendered(), "the overlay is rendered");
+				assert.ok(isOverlayVisible(oElementOverlay), "the overlay has non-zero width/height");
 				fnDone();
 			}, this);
 

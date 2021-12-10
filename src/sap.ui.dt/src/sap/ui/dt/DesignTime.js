@@ -506,6 +506,17 @@ function (
 	};
 
 	/**
+	 * Resolves when all the currently busy plugins are not busy anymore
+	 * @returns {Promise} Resolves with undefined when no plugin is busy anymore
+	 */
+	DesignTime.prototype.waitForBusyPlugins = function() {
+		var aBusyPlugins = this.getBusyPlugins();
+		return Promise.all(aBusyPlugins.map(function(oPlugin) {
+			return oPlugin.waitForBusyAction();
+		}));
+	};
+
+	/**
 	 * Adds new plugin to use with the DesignTime
 	 * @param {sap.ui.dt.Plugin} oPlugin to add
 	 * @return {sap.ui.dt.DesignTime} this

@@ -207,6 +207,52 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when RTA is stopped it waits for pending actions", function(assert) {
+			assert.expect(3);
+			var done = assert.async();
+			var fnResolve;
+			var fnResolve2;
+			var fnResolve3;
+			var pPromise = new Promise(function(resolve) {
+				fnResolve = resolve;
+			});
+
+			var oPushAndExecuteStub = sandbox.stub(this.oRta.getCommandStack(), "pushAndExecute").callsFake(function() {
+				return new Promise(function(resolve) {
+					fnResolve3 = resolve;
+				});
+			});
+
+			var oWaitForBusyStub = sandbox.stub(this.oRta._oDesignTime, "waitForBusyPlugins").callsFake(function() {
+				return new Promise(function(resolve) {
+					fnResolve2 = resolve;
+
+					var oEvent = {
+						getParameter: function(sParameter) {
+							if (sParameter === "command") {
+								return new RTABaseCommand();
+							}
+						}
+					};
+					this.oRta._handleElementModified(oEvent);
+
+					fnResolve();
+				}.bind(this));
+			}.bind(this));
+
+			this.oRta.stop().then(function() {
+				assert.ok(true, "the function resolves");
+				done();
+			});
+
+			pPromise.then(function() {
+				assert.strictEqual(oWaitForBusyStub.callCount, 1, "the wait function was already called");
+				assert.strictEqual(oPushAndExecuteStub.callCount, 1, "the command was pushed");
+				fnResolve2();
+				fnResolve3();
+			});
+		});
+
 		QUnit.test("when Mode is changed from adaptation to navigation and back to adaptation", function(assert) {
 			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
 			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
