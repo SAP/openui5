@@ -672,8 +672,8 @@ sap.ui.define([
 	});
 
 	/*
-	//the tests work only with enablemend of mdc change handlers
-	QUnit.module("Condenserwith MDC changes", {
+	//the tests work only with enablement of mdc change handlers
+	QUnit.module("Condenser with MDC changes", {
 		before: function() {
 			var UIComp = UIComponent.extend("mdcComponent", {
 				metadata: {

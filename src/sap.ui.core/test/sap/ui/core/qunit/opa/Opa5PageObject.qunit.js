@@ -174,12 +174,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("Page Object - ViewName", {
-		beforeEach: function () {
-			this.oView = viewUtils.createXmlView("foo", "myFooView");
-			this.oView2 = viewUtils.createXmlView("bar", "myBarView");
-			this.oView.placeAt("qunit-fixture");
-			this.oView2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		beforeEach: function (assert) {
+			// Note: This test is executed with QUnit 1 and QUnit 2.
+			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
+			var done = assert.async();
+			Promise.all([
+				viewUtils.createXmlView("foo", "myFooView"),
+				viewUtils.createXmlView("bar", "myBarView")
+			]).then(function (aViews) {
+				this.oView = aViews[0].placeAt("qunit-fixture");
+				this.oView2 = aViews[1].placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();

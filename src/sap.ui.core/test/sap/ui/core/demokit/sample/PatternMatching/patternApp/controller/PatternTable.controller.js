@@ -9,7 +9,7 @@ sap.ui.define([
 	], function(Pattern, Fragment, Controller, HashChanger, Router, Filter, FilterOperator) {
 	"use strict";
 
-	var PatternTableController = Controller.extend("patternApp.view.PatternTable", {
+	var PatternTableController = Controller.extend("patternApp.controller.PatternTable", {
 
 		onInit : function () {
 			var oRouter = new Router();

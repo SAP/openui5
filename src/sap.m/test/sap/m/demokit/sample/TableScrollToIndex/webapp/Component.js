@@ -28,13 +28,6 @@ sap.ui.define([
 			this.getRouter().initialize();
 		},
 
-		createContent: function () {
-			return sap.ui.view({
-				viewName: "sap.m.TableScrollToIndex.view.FlexibleColumnLayout",
-				type: "XML"
-			});
-		},
-
 		/**
 		 * Returns an instance of the semantic helper
 		 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper} An instance of the semantic helper

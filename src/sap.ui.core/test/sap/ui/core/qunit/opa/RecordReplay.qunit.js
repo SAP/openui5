@@ -4,28 +4,31 @@ sap.ui.define([
 	'sap/m/SearchField',
 	"sap/ui/thirdparty/jquery",
 	'sap/m/App',
-	'sap/ui/core/mvc/View',
-	'sap/ui/core/library'
-], function (RecordReplay, SearchField, $, App, View, library) {
+	'sap/ui/core/mvc/XMLView'
+], function (RecordReplay, SearchField, $, App, XMLView) {
 	"use strict";
 
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
-
 	QUnit.module("RecordReplay - control selector", {
-		beforeEach: function () {
-			sap.ui.controller("myController", {});
-			this.oView = sap.ui.view("myView", {
-				viewContent: '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" viewName="myView">' +
-				'<App id="myApp"><Page id="page1">' +
-				'<SearchField id="mySearch" placeholder="Test"></SearchField>' +
-				'<SearchField placeholder="Placeholder"></SearchField>' +
-				'</Page></App>' +
-				'</mvc:View>',
-				type: ViewType.XML
-			});
-			this.oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		beforeEach: function (assert) {
+			// Note: This test is executed with QUnit 1 and QUnit 2.
+			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
+			var done = assert.async();
+			XMLView.create({
+				id: "myView",
+				definition:
+					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'  <App id="myApp">' +
+					'    <Page id="page1">' +
+					'      <SearchField id="mySearch" placeholder="Test"/>' +
+					'      <SearchField placeholder="Placeholder"/>' +
+					'    </Page>' +
+					'  </App>' +
+					'</mvc:View>'
+			}).then(function(oView) {
+				this.oView = oView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();

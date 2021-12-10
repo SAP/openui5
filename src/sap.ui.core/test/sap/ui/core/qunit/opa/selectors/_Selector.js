@@ -2,18 +2,15 @@
 sap.ui.define([
 	"sap/ui/test/selectors/_Selector",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/library",
+	"sap/ui/core/mvc/XMLView",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/NumericContent",
 	"sap/m/GenericTile",
 	"sap/m/TileContent"
-], function (_Selector, View, library, Button, Dialog, JSONModel, NumericContent, GenericTile, TileContent) {
+], function (_Selector, View, XMLView, Button, Dialog, JSONModel, NumericContent, GenericTile, TileContent) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
 
 	var singleStub = sinon.stub();
 	var multiStub = sinon.stub();
@@ -25,17 +22,22 @@ sap.ui.define([
 	});
 
 	QUnit.module("_Selector", {
-		beforeEach: function () {
-			sap.ui.controller("myController", {});
-			this.oView = sap.ui.view("myView", {
-				viewContent: '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" viewName="myView">' +
+		beforeEach: function (assert) {
+			// Note: This test is executed with QUnit 1 and QUnit 2.
+			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
+			var done = assert.async();
+			XMLView.create({
+				id: "myView",
+				definition:
+					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'<App id="myApp"><Page id="page1"><Input id="myInput"></Input></Page></App>' +
-					'</mvc:View>',
-				type: ViewType.XML
-			});
-			this.oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-			this.oInput = sap.ui.getCore().byId("myView--myInput");
+					'</mvc:View>'
+			}).then(function(oView) {
+				this.oView = oView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				this.oInput = this.oView.byId("myInput");
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -137,7 +139,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("_Selector - views", {
-		beforeEach: function () {
+		beforeEach: function (assert) {
 			sap.ui.controller("myController", {});
 			// create 3 new numeric tiles.
 			// simulate the way generic tiles are rendered inside a JS view in certain apps
@@ -158,18 +160,24 @@ sap.ui.define([
 				}
 			});
 
-			this.oView = sap.ui.view("myView", {
-				viewContent: '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController">' +
-				'<App id="myApp"><Page id="page1">' +
-					'<mvc:JSView viewName="tileWrapperView"/>' +
-					'<mvc:JSView viewName="tileWrapperView"/>' +
-					'<mvc:JSView viewName="tileWrapperView"/>' +
-				'</Page></App>' +
-				'</mvc:View>',
-				type: ViewType.XML
-			});
-			this.oView.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			// Note: This test is executed with QUnit 1 and QUnit 2.
+			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
+			var done = assert.async();
+			XMLView.create({
+				id: "myView",
+				definition:
+					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'  <App id="myApp"><Page id="page1">' +
+					'    <mvc:JSView viewName="tileWrapperView"/>' +
+					'    <mvc:JSView viewName="tileWrapperView"/>' +
+					'    <mvc:JSView viewName="tileWrapperView"/>' +
+					'  </Page></App>' +
+					'</mvc:View>'
+			}).then(function(oView) {
+				this.oView = oView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oView.destroy();

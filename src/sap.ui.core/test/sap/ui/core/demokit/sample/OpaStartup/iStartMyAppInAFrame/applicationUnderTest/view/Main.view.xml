@@ -1,8 +1,7 @@
 <mvc:View
 		controllerName="appUnderTest.controller.Main"
 		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		id="mainView">
+		xmlns:mvc="sap.ui.core.mvc">
 	<Shell>
 		<App>
 			<Page title="List Page">
@@ -15,7 +14,7 @@
 						<headerToolbar>
 							<OverflowToolbar>
 								<ToolbarSpacer/>
-								<SearchField id="maxPrice" liveChange="onFilter">
+								<SearchField id="maxPrice">
 									<layoutData><OverflowToolbarLayoutData minWidth="200px" maxWidth="300px" shrinkable="false"/></layoutData>
 								</SearchField>
 								<Button type="Transparent" text="Sort 2" icon="sap-icon://sort" width="100px"/>

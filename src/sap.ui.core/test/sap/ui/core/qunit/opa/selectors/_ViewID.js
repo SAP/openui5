@@ -4,30 +4,31 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	'sap/m/App',
-	'sap/ui/core/mvc/View',
-	'sap/ui/core/library'
-], function (_ControlSelectorGenerator, $, Button, App, View, library) {
+	'sap/ui/core/mvc/XMLView'
+], function (_ControlSelectorGenerator, $, Button, App, XMLView) {
 	"use strict";
 
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
-
 	QUnit.module("_ViewID", {
-		beforeEach: function () {
-			sap.ui.controller("myController", {});
-			this.oViewWithId = sap.ui.view("myView", {
-				viewContent: createViewContent("myView"),
-				type: ViewType.XML
-			});
-			this.oViewNoId = sap.ui.view({
-				viewContent: createViewContent("myViewWithoutId"),
-				type: ViewType.XML
-			});
-			this.oButton = new Button("myButton");
-			this.oButton.placeAt("qunit-fixture");
-			this.oViewWithId.placeAt("qunit-fixture");
-			this.oViewNoId.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		beforeEach: function (assert) {
+			// Note: This test is executed with QUnit 1 and QUnit 2.
+			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
+			var done = assert.async();
+			Promise.all([
+				XMLView.create({
+					id: "myView",
+					definition: createViewContent("myView")
+				}),
+				XMLView.create({
+					definition: createViewContent("myViewWithoutId")
+				})
+			]).then(function(aViews) {
+				this.oButton = new Button("myButton");
+				this.oButton.placeAt("qunit-fixture");
+				this.oViewWithId = aViews[0].placeAt("qunit-fixture");
+				this.oViewNoId = aViews[1].placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				done();
+			}.bind(this));
 		},
 		afterEach: function () {
 			this.oViewWithId.destroy();
@@ -78,8 +79,7 @@ sap.ui.define([
 	});
 
 	function createViewContent (sViewName) {
-		return '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" ' +
-			'controllerName="myController" viewName="' + sViewName + '">' +
+		return '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" viewName="' + sViewName + '">' +
 			'<App id="myApp">' +
 				'<Page id="page1">' +
 					'<SearchField id="mySearch" placeholder="Test"></SearchField>' +

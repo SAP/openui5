@@ -1,18 +1,11 @@
-sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
-	function(UIComponent, View) {
+sap.ui.define(['sap/ui/core/UIComponent'],
+	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("patternApp.Component", {
-
-		createContent : function () {
-			return sap.ui.view({
-				viewName : "patternApp.view.PatternTable",
-				type : "XML"
-			});
+	return UIComponent.extend("patternApp.Component", {
+		metadata: {
+			manifest: "json"
 		}
-
 	});
-
-	return Component;
 
 });

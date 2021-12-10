@@ -19,6 +19,7 @@
 					"iStartMyUIComponent.html",
 					"iStartMyUIComponent.js",
 					"applicationUnderTest/Component.js",
+					"applicationUnderTest/manifest.json",
 					"applicationUnderTest/view/Main.view.xml",
 					"applicationUnderTest/controller/Main.controller.js",
 					"manifest.json"

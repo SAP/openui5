@@ -1,6 +1,6 @@
 {
 	"sap.ui5": {
-        "rootView": {
+		"rootView": {
 			"viewName": "sap.m.TableScrollToIndex.view.FlexibleColumnLayout",
 			"type": "XML",
 			"async": true,
