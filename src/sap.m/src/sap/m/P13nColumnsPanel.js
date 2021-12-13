@@ -38,6 +38,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
+	 * @deprecated as of version 1.98. Use the {@link sap.m.p13n.SelectionPanel} instead.
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nColumnsPanel
@@ -46,6 +47,7 @@ sap.ui.define([
 	var P13nColumnsPanel = P13nPanel.extend("sap.m.P13nColumnsPanel", /** @lends sap.m.P13nColumnsPanel.prototype */
 	{
 		metadata: {
+			deprecated:true,
 			library: "sap.m",
 			properties: {
 				/**

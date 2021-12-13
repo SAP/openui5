@@ -60,6 +60,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
+	 * @deprecated as of version 1.98. Use the {@link sap.m.p13n.Popup} instead.
 	 * @public
 	 * @since 1.26.0
 	 * @alias sap.m.P13nDialog
@@ -69,7 +70,7 @@ sap.ui.define([
 	var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.prototype */
 	{
 		metadata: {
-
+			deprecated:true,
 			library: "sap.m",
 			properties: {
 				/**
