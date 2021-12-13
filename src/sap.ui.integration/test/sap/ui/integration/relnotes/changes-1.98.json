@@ -3,6 +3,11 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
         "id": "0756b277e5670dffe0699b87e728c1e3177997c1",
         "type": "FIX",
         "text": " CalendarCard: Appointments times and card display match",

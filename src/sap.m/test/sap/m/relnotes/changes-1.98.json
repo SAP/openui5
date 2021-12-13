@@ -3,6 +3,55 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "cd846524e3ce82d2cfd0cc3ac1f8757a2992a6de",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: popover doesn't close on date selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180411065"
+          }
+        ]
+      },
+      {
+        "id": "30bbfae22a05ee02af682d6e190d32b518b6aedc",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Increase visual tests coverage"
+      },
+      {
+        "id": "91c6d7c3869e9ec61b3a55eebd0379edb36b3202",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Navigation with grouped item fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170270256"
+          }
+        ]
+      },
+      {
+        "id": "6cd5db10ec4aa166e99fbbbfdfc839259595e41e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Apply the correct number formatting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006327302021"
+          }
+        ]
+      },
+      {
+        "id": "f54ac484faa9d9fa1437fd964bfd76167b1f8ecc",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow issues are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180406329"
+          }
+        ]
+      },
+      {
         "id": "14360af7a27554ad4aaf12513fae6ba4f455811b",
         "type": "FIX",
         "text": "sap.m.DynamicDateRange: Suggestions popover not opened on Icon click",
@@ -23,6 +72,11 @@
             "reference": "2170321416"
           }
         ]
+      },
+      {
+        "id": "4c15c80dbd58dd41bb41ad7c9375a61b8711a2be",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: grouping is available for suggestion items"
       },
       {
         "id": "4d5450c3e1b26109ba7d21a62839c5e1e2f19533",
@@ -93,6 +147,17 @@
         "id": "4c01c1353a3dba8f2b1569bcad9b968e08635f1b",
         "type": "FEATURE",
         "text": " sap.m.TimePicker: can fast-forward to current time"
+      },
+      {
+        "id": "0a829bfdb911df9babc62df3c6cf9b0085833b95",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent focus bubling when there's user input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170213855"
+          }
+        ]
       },
       {
         "id": "f017bc1ab25f3aa8c252f2140639ca623f0376c5",

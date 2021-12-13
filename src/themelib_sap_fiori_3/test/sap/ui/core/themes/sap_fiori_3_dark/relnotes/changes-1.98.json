@@ -1,7 +1,12 @@
 {
   "1.98.0": {
-    "date": "November 2021",
+    "date": "December 2021",
     "notes": [
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
       {
         "id": "66dbd6a164458177f812a352e37436300abe10de",
         "type": "FIX",

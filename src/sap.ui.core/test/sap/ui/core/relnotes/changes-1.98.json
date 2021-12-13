@@ -3,6 +3,28 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "e473521b360191620828467c72264aa6109fc807",
+        "type": "FIX",
+        "text": " strengthen CSS Classes for Theme Parameters with !important",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170198976"
+          }
+        ]
+      },
+      {
+        "id": "be71b0750686d9779a03eec7281f36b957a6ea6f",
+        "type": "FIX",
+        "text": " theming.Parameters: Fix async usage after theme change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180393575"
+          }
+        ]
+      },
+      {
         "id": "ec6a4bd4a6e59c00246036715931a5c3c62cc776",
         "type": "FIX",
         "text": " sap.ui.model.analytics.AnalyticalBinding: no need to include automatically added columns to select",

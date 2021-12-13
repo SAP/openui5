@@ -3,6 +3,28 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "4c800f1f9db8b83964587eab3731b2b44d800084",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed redundant accessibility readout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700022310422021"
+          }
+        ]
+      },
+      {
+        "id": "5e210bb5746638f2a8b638c599a53248c9032238",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix aligment of large ObjectStatus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180402579"
+          }
+        ]
+      },
+      {
         "id": "f4cbab9e34fc5fdf8957a8c1f1b5b934eb92d203",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: Fixed width of subsections in phone size",
