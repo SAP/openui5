@@ -1,0 +1,118 @@
+{
+	"d" : {
+		"__count" : "4",
+		"results" : [{
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')",
+				"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			},
+			"SalesOrderID" : "230",
+			"ItemPosition" : "040",
+			"ProductID" : "HT-1060",
+			"Note" : "2",
+			"NoteLanguage" : "EN",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "10.71",
+			"NetAmount" : "9.00",
+			"TaxAmount" : "1.71",
+			"DeliveryDate" : "\/Date(1640015432585)\/",
+			"Quantity" : "1",
+			"QuantityUnit" : "EA",
+			"ToHeader" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')/ToHeader"
+				}
+			},
+			"ToProduct" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='040')/ToProduct"
+				}
+			}
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')",
+				"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			},
+			"SalesOrderID" : "230",
+			"ItemPosition" : "030",
+			"ProductID" : "HT-1010",
+			"Note" : "1",
+			"NoteLanguage" : "EN",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "2378.81",
+			"NetAmount" : "1999.00",
+			"TaxAmount" : "379.81",
+			"DeliveryDate" : "\/Date(1640015412458)\/",
+			"Quantity" : "1",
+			"QuantityUnit" : "EA",
+			"ToHeader" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')/ToHeader"
+				}
+			},
+			"ToProduct" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030')/ToProduct"
+				}
+			}
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')",
+				"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			},
+			"SalesOrderID" : "230",
+			"ItemPosition" : "020",
+			"ProductID" : "HT-1052",
+			"Note" : "Item 020",
+			"NoteLanguage" : "EN",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "404.60",
+			"NetAmount" : "340.00",
+			"TaxAmount" : "64.60",
+			"DeliveryDate" : "\/Date(1639669337804)\/",
+			"Quantity" : "2",
+			"QuantityUnit" : "EA",
+			"ToHeader" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')/ToHeader"
+				}
+			},
+			"ToProduct" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')/ToProduct"
+				}
+			}
+		}, {
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='010')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='010')",
+				"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			},
+			"SalesOrderID" : "230",
+			"ItemPosition" : "010",
+			"ProductID" : "HT-7000",
+			"Note" : "Item 010",
+			"NoteLanguage" : "EN",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "1306.62",
+			"NetAmount" : "1098.00",
+			"TaxAmount" : "208.62",
+			"DeliveryDate" : "\/Date(1639669234615)\/",
+			"Quantity" : "2",
+			"QuantityUnit" : "EA",
+			"ToHeader" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='010')/ToHeader"
+				}
+			},
+			"ToProduct" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='010')/ToProduct"
+				}
+			}
+		}]
+	}
+}

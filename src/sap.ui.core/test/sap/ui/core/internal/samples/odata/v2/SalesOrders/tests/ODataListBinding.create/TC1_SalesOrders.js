@@ -32,22 +32,22 @@ sap.ui.define([
 			When.onMainPage.changeSalesOrderNoteOfRow(0, "1");
 			// Step 5 - repeat steps 3 and 4
 			When.onMainPage.pressSalesOrdersCreateButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "", "Transient");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(1);
-			When.onMainPage.changeSalesOrderNoteOfRow(0, "2");
+			When.onMainPage.changeSalesOrderNoteOfRow(1, "2");
 
 			// Sort the Sales Orders table
 			// Step 1
 			When.onMainPage.sortSalesOrders("asc");
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(2, "201", "Telecomunicaciones Star",
 				"Inline Creation Rows 201", "From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(0);
 			// Step 2
 			When.onMainPage.sortSalesOrders("desc");
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(2, "205", "SAP", "Inline Creation Rows 205",
 				"From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(0);
@@ -58,16 +58,16 @@ sap.ui.define([
 			// Step 2
 			When.onMainPage.changeSalesOrdersFilter("SAP");
 			When.onMainPage.pressSalesOrdersFilterGoButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(2, "205", "SAP", "Inline Creation Rows 205",
 				"From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(-4);
 			// Step 3
 			When.onMainPage.changeSalesOrdersFilter("");
 			When.onMainPage.pressSalesOrdersFilterGoButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(2, "205", "SAP", "Inline Creation Rows 205",
 				"From Server");
 			Then.onMainPage.checkSalesOrderAtRow(3, "204", "Telecomunicaciones Star",
@@ -78,33 +78,33 @@ sap.ui.define([
 			// Step 1
 			When.onMainPage.rememberSalesOrdersCount();
 			When.onMainPage.pressSalesOrdersCreateButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "", "Transient");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(1);
-			When.onMainPage.changeSalesOrderNoteOfRow(0, "3");
+			When.onMainPage.changeSalesOrderNoteOfRow(2, "3");
 			When.onMainPage.pressSalesOrdersCreateButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(3, "", "", "", "Transient");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(1);
-			When.onMainPage.changeSalesOrderNoteOfRow(0, "4");
+			When.onMainPage.changeSalesOrderNoteOfRow(3, "4");
 			// Step 2 count already remembered
 			// Step 3
 			When.onMainPage.pressSalesOrdersRefreshButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "4", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "3", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(3, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "3", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(3, "", "", "4", "Transient");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(0);
 
 			// Delete a transient sales order
 			// Step 1
 			When.onMainPage.rememberSalesOrdersCount();
 			// Step 2
-			When.onMainPage.selectSalesOrderAtRow(1);
+			When.onMainPage.selectSalesOrderAtRow(2);
 			When.onMainPage.pressSalesOrdersDelete();
 			// Step 3
 			When.onMainPage.confirmDialog();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "4", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "4", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(3, "205", "SAP", "Inline Creation Rows 205",
 				"From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(-1);
@@ -113,9 +113,9 @@ sap.ui.define([
 			// Step 1
 			When.onMainPage.changeSalesOrdersFilter("Talpa");
 			When.onMainPage.pressSalesOrdersFilterGoButton();
-			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "4", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(0, "", "", "1", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(1, "", "", "2", "Transient");
-			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "1", "Transient");
+			Then.onMainPage.checkSalesOrderAtRow(2, "", "", "4", "Transient");
 			Then.onMainPage.checkSalesOrderAtRow(3, "203", "Talpa", "Inline Creation Rows 203",
 				"From Server");
 			// Step 2
@@ -123,9 +123,9 @@ sap.ui.define([
 			// Step 3
 			When.onMainPage.pressSalesOrderSaveButton();
 			Then.onMainPage.checkSalesOrdersCountChangedBy(0);
-			Then.onMainPage.checkSalesOrderAtRow(0, "222", "SAP", "4", "From Server");
+			Then.onMainPage.checkSalesOrderAtRow(0, "220", "SAP", "1", "From Server");
 			Then.onMainPage.checkSalesOrderAtRow(1, "221", "SAP", "2", "From Server");
-			Then.onMainPage.checkSalesOrderAtRow(2, "220", "SAP", "1", "From Server");
+			Then.onMainPage.checkSalesOrderAtRow(2, "222", "SAP", "4", "From Server");
 			Then.onMainPage.checkSalesOrderAtRow(3, "203", "Talpa", "Inline Creation Rows 203",
 				"From Server");
 
@@ -133,12 +133,12 @@ sap.ui.define([
 			// Step 1
 			When.onMainPage.rememberSalesOrdersCount();
 			// Step 2
-			When.onMainPage.selectSalesOrderAtRow(0);
+			When.onMainPage.selectSalesOrderAtRow(2);
 			When.onMainPage.pressSalesOrdersDelete();
 			// Step 3
 			When.onMainPage.confirmDialog();
-			Then.onMainPage.checkSalesOrderAtRow(0, "221", "SAP", "2", "From Server");
-			Then.onMainPage.checkSalesOrderAtRow(1, "220", "SAP", "1", "From Server");
+			Then.onMainPage.checkSalesOrderAtRow(0, "220", "SAP", "1", "From Server");
+			Then.onMainPage.checkSalesOrderAtRow(1, "221", "SAP", "2", "From Server");
 			Then.onMainPage.checkSalesOrderAtRow(2, "203", "Talpa", "Inline Creation Rows 203",
 				"From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(-1);

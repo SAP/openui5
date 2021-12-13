@@ -715,7 +715,7 @@ sap.ui.define([
 					message : { "d" : {"__count" : "0", "results" : []}}
 				},
 				"DELETE SalesOrderSet" : {code : 204},
-				"GET SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=(substringof(%27Talpa%27,CustomerName)%20and%20LifecycleStatus%20eq%20%27N%27)%20and%20not(SalesOrderID%20eq%20%27222%27%20or%20SalesOrderID%20eq%20%27221%27%20or%20SalesOrderID%20eq%20%27220%27)&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID&$inlinecount=allpages" : {
+				"GET SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$filter=(substringof(%27Talpa%27,CustomerName)%20and%20LifecycleStatus%20eq%20%27N%27)%20and%20not(SalesOrderID%20eq%20%27220%27%20or%20SalesOrderID%20eq%20%27221%27%20or%20SalesOrderID%20eq%20%27222%27)&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID&$inlinecount=allpages" : {
 					source : "ODLB.create/TC1/SalesOrderSet_desc_0-4_Talpa.json"
 				},
 				"SalesOrderSet?$skip=4&$top=3&$orderby=SalesOrderID%20asc&$filter=LifecycleStatus%20eq%20%27N%27&$select=CurrencyCode%2cCustomerName%2cGrossAmount%2cLifecycleStatus%2cNote%2cSalesOrderID" : {
@@ -738,18 +738,20 @@ sap.ui.define([
 				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$filter=GrossAmount%20lt%201000m&$inlinecount=allpages" : {
 					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_asc_filter.json"
 				},
-				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$inlinecount=allpages" : [{
-					ifMatch : ithCall.bind(null, 0),
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$inlinecount=allpages" : {
 					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4.json"
-				}, {
-					ifMatch : ithCall.bind(null, 1),
-					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_asc_after_save.json"
-				}],
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=2&$top=4&$orderby=ItemPosition%20asc&$inlinecount=allpages" : {
+					message : { "d" : {"__count" : "2", "results" : []}}
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=1&$top=1&$orderby=ItemPosition%20asc" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_1_1.json"
+				},
 				"SalesOrderSet('230.1')" : {
 					source : "ODLB.create/TC2/SalesOrder('230.1').json"
 				},
 				"SalesOrderSet('230.1')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$inlinecount=allpages" : {
-					source : "ODLB.create/TC2/SalesOrder('230.1')_ToLineItems_0_4_asc_count.json"
+					source : "ODLB.create/TC2/SalesOrder('230.1')_ToLineItems_0_4_count.json"
 				},
 				"SalesOrderSet('230')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
 					ifMatch : ithCall.bind(null, 0),
@@ -801,8 +803,23 @@ sap.ui.define([
 					code : 201,
 					source : "ODLB.create/TC2/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='030').json"
 				}],
+				"SalesOrderSet('230')/ToLineItems?$skip=1&$top=4&$orderby=ItemPosition%20desc&$filter=not((SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27030%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27040%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27050%27))&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_1_4_desc_after_save.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=1&$orderby=ItemPosition%20desc&$filter=not((SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27030%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27040%27))" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_1_desc_after_save.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=1&$orderby=ItemPosition%20asc&$filter=not((SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27030%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27040%27))" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_1.json"
+				},
 				"DELETE SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='050')" : {
 					code : 204
+				},
+				"SalesOrderSet('230.1')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20desc&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230.1')_ToLineItems_0_4_count.json"
+				},
+				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20desc&$inlinecount=allpages" : {
+					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4_desc_after_save.json"
 				},
 				"SalesOrderSet('230')/ToLineItems?$skip=0&$top=4&$orderby=ItemPosition%20asc&$filter=not((SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27050%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27040%27)%20or%20(SalesOrderID%20eq%20%27230%27%20and%20ItemPosition%20eq%20%27030%27))&$inlinecount=allpages" : {
 					source : "ODLB.create/TC2/SalesOrder('230')_ToLineItems_0_4.json"

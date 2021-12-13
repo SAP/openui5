@@ -58,8 +58,6 @@
 							</Title>
 							<Button icon="sap-icon://add" id="createSalesOrder"
 								press="onCreateSalesOrder" tooltip="Create sales order" />
-							<CheckBox selected="{ui>/createSalesOrderAtTheEnd}" text="At end"
-								tooltip="Create new sales order at the end of the table"/>
 							<Button enabled="{ui>/salesOrderSelected}" icon="sap-icon://delete"
 								id="delete::SalesOrderList" press="onDeleteSalesOrder"
 								tooltip="Delete selected sales order"/>
@@ -203,8 +201,6 @@
 							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://add"
 								id="createItem::ToLineItems" press="onCreateItem"
 								tooltip="Create a sales order item" />
-							<CheckBox selected="{ui>/createSalesOrderItemAtTheEnd}" text="At end"
-								tooltip="Create new sales order item at the end of the table"/>
 							<Button enabled="{ui>/itemSelected}" icon="sap-icon://delete"
 								id="deleteItem::ToLineItems" press="onDeleteItem"
 								tooltip="Delete the selected sales order item" />
