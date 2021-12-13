@@ -262,6 +262,10 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * @override
+	 * @public
+	 */
 	SelectionPanel.prototype.setP13nData = function() {
 		BasePanel.prototype.setP13nData.apply(this, arguments);
 		this._updateCount();

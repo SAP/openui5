@@ -121,6 +121,7 @@ sap.ui.define([
 	/**
 	 * Checks whether there is an open <code>Popup</code> control.
 	 *
+	 * @public
 	 * @returns {boolean} Flag that indicates if there is an open popup
 	 */
 	Popup.prototype.isOpen = function() {
@@ -130,6 +131,7 @@ sap.ui.define([
 	/**
 	 * Sets the desired popup mode, see also {@link sap.m.P13nPopupMode}.
 	 *
+	 * @public
 	 * @param {sap.m.P13nPopupMode} sMode The mode used for the popup creation
 	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
@@ -148,6 +150,7 @@ sap.ui.define([
 	/**
 	 * Opens the <code>Popup</code> control.
 	 *
+	 * @public
 	 * @param {sap.ui.core.Control} oSource The referenced control instance (used as anchor, for example, on popovers)
 	 * @param {object} [mSettings] Configuration for the related popup container
 	 * @param {sap.ui.core.CSSSize} [mSettings.contentHeight] Height configuration for the related popup container
@@ -177,6 +180,7 @@ sap.ui.define([
 	/**
 	 * Adds a new panel to the <code>panels</code> aggregation.
 	 *
+	 * @public
 	 * @param {sap.m.p13n.IContent} oPanel The panel instance
 	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
@@ -193,6 +197,7 @@ sap.ui.define([
 	/**
 	 * Removes a panel instance.
 	 *
+	 * @public
 	 * @param {sap.m.p13n.IContent} oPanel The panel instance
 	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
@@ -204,7 +209,7 @@ sap.ui.define([
 
 	/**
 	 * Removes the current panels in the <code>panels</code> aggregation.
-	 *
+	 * @public
 	 * @returns {sap.m.p13n.IContent[]} An array of panel instances
 	 */
 	Popup.prototype.getPanels = function() {
