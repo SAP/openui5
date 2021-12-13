@@ -89,21 +89,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Apparently, the middle page stays hidden on phone devices when it is navigated to a second time
-		 * @private
-		 */
-		_unhideMiddlePage: function () {
-			// TODO: bug in sap.f router, open ticket and remove this method afterwards
-			setTimeout(function () {
-				this.getOwnerComponent().getRootControl().byId("layout").getCurrentMidColumnPage().removeStyleClass("sapMNavItemHidden");
-			}.bind(this), 0);
-		},
-
-		/**
 		 * Navigates back in browser history or to the home screen
 		 */
 		onBack: function () {
-			this._unhideMiddlePage();
 			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {

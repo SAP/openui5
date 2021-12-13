@@ -150,8 +150,6 @@ sap.ui.define([
 				id: sCategoryId,
 				productId: sProductId
 			}, !Device.system.phone);
-
-			this._unhideMiddlePage();
 		},
 
 		/** Apply selected filters to the category list and update text and visibility of the info toolbar
