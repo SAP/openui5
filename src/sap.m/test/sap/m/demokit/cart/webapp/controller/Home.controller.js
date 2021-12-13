@@ -73,7 +73,6 @@ sap.ui.define([
 			var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
 
 			this._router.navTo("category", {id: sCategoryId});
-			this._unhideMiddlePage();
 		},
 
 		onProductListSelect: function (oEvent) {
