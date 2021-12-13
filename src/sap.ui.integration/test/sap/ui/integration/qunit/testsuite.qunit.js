@@ -233,14 +233,13 @@ sap.ui.define(function () {
 			"cards/Footer": {},
 			"cards/actions/CardActions": {
 				module: [
-					"./cards/actions/SubmitAction.qunit",
-					"./util/CardActions.qunit"
+					"./cards/actions/CardActions.qunit",
+					"./cards/actions/SubmitAction.qunit"
 				],
 				coverage: {
 					only: [
-						"sap/ui/integration/cards/filters/",
-						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/util/CardActions"
+						"sap/ui/integration/cards/actions/",
+						"sap/ui/integration/widgets/Card"
 					]
 				}
 			},

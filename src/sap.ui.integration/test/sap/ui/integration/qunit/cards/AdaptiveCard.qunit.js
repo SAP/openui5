@@ -6,7 +6,7 @@ sap.ui.define([
 		"sap/ui/integration/cards/AdaptiveContent",
 		"sap/ui/integration/util/RequestDataProvider",
 		"sap/ui/integration/util/DataProvider",
-		"sap/ui/integration/util/CardActions",
+		"sap/ui/integration/cards/actions/CardActions",
 		"sap/ui/integration/thirdparty/adaptivecards",
 		"sap/ui/core/library",
 		"sap/ui/core/Core"

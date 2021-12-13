@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/ActionSheet",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Core",
-	"sap/ui/integration/util/CardActions"
+	"sap/ui/integration/cards/actions/CardActions"
 
 ], function (
 	ActionsToolbarRenderer,

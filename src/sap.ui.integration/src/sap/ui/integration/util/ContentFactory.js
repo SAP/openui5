@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"./BaseFactory",
-	"./CardActions",
+	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/cards/AdaptiveContent",
 	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/cards/AnalyticsCloudContent",

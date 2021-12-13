@@ -1,9 +1,10 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"../services/SampleServices",
+	"../../services/SampleServices",
 	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/cards/actions/SubmitAction",
 	"sap/ui/integration/util/RequestDataProvider",
@@ -11,13 +12,13 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/integration/util/CardActions",
 	"sap/ui/qunit/QUnitUtils"
 ],
 	function (
 		SampleServices,
 		library,
 		Card,
+		CardActions,
 		NavigationAction,
 		SubmitAction,
 		RequestDataProvider,
@@ -25,7 +26,6 @@ sap.ui.define([
 		Core,
 		Log,
 		KeyCodes,
-		CardActions,
 		qutils
 	) {
 		"use strict";

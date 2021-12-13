@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	"sap/ui/integration/util/CardActions",
+	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/m/Button",
 	"sap/m/OverflowToolbarButton",
