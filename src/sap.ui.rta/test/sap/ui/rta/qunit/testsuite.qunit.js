@@ -131,6 +131,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/additionalElements/AddElementsDialog"]
 				}
 			},
+			"plugin/additionalElements/ActionExtractor": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/additionalElements/ActionExtractor"]
+				}
+			},
 			"plugin/additionalElements/AdditionalElementsPlugin": {
 				group: "Plugin",
 				coverage: {

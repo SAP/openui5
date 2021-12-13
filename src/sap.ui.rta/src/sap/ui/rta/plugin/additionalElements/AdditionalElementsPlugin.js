@@ -171,7 +171,6 @@ sap.ui.define([
 				if (
 					mActions &&
 					((mActions.reveal && mActions.reveal.elements.length > 0)
-					|| mActions.addViaCustom
 					|| mActions.addViaDelegate)
 				) {
 					bIsEnabled = true;
@@ -355,7 +354,7 @@ sap.ui.define([
 										if (mActions[sAggregationName].addViaDelegate) {
 											bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "add", undefined, "delegate");
 										}
-										if (!bEditable && (mActions[sAggregationName].reveal || mActions[sAggregationName].addViaCustom)) {
+										if (!bEditable && mActions[sAggregationName].reveal) {
 											return true;
 										}
 										return bEditable;
@@ -408,8 +407,7 @@ sap.ui.define([
 							aggregation: sAggregationName,
 							elementPromises: [
 								mActions.reveal ? AdditionalElementsAnalyzer.enhanceInvisibleElements(mParents.parent, mActions) : Promise.resolve([]),
-								mActions.addViaDelegate ? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([]),
-								mActions.addViaCustom ? AdditionalElementsAnalyzer.getCustomAddItems(mParents.parent, mActions.addViaCustom, mActions.aggregation) : Promise.resolve([])
+								mActions.addViaDelegate ? AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(mParents.parent, mActions.addViaDelegate) : Promise.resolve([])
 							]
 						});
 					});
@@ -565,16 +563,14 @@ sap.ui.define([
 		// 		aggregation: "aggregation1",
 		// 		elementPromises: [
 		// 			revealPromise,
-		// 			addViaDelegatePromise,
-		// 			addViaCustomPromise
+		// 			addViaDelegatePromise
 		// 		]
 		// 	},
 		// 	{
 		// 		aggregation: "aggregation2",
 		// 		elementPromises: [
 		// 			revealPromise,
-		// 			addViaDelegatePromise,
-		// 			addViaCustomPromise
+		// 			addViaDelegatePromise
 		// 		]
 		// 	}
 		// 	...
@@ -597,9 +593,12 @@ sap.ui.define([
 			aAllPromises.forEach(function(aPromisesByAggregation) {
 				aCollectedPromises.push(
 					Promise.all(aPromisesByAggregation.elementPromises).then(function(aAnalyzerValues) {
+						var aRevealElements = aAnalyzerValues[0];
+						var aAddViaDelegateElements = aAnalyzerValues[1];
+						var aAllElements = aRevealElements.concat(aAddViaDelegateElements);
 						return {
 							aggregation: aPromisesByAggregation.aggregation,
-							elements: AdditionalElementsAnalyzer.getFilteredItemsList(aAnalyzerValues)
+							elements: aAllElements
 						};
 					})
 				);

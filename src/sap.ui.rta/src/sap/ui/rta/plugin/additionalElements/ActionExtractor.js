@@ -80,12 +80,20 @@ sap.ui.define([
 	function checkInvalidAddActions(bSibling, oSourceElementOverlay, oPlugin) {
 		var mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
 		var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
-		var aActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) : [];
-		if (aActions.length > 0) {
+		var aAddODataPropertyActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("addODataProperty", mParents.parent) : [];
+		if (aAddODataPropertyActions.length > 0) {
 			Log.error("Outdated addODataProperty action in designtime metadata in "
 				+ oDesignTimeMetadata.getData().designtimeModule
 				+ " or propagated or via instance specific designtime metadata.");
 		}
+		var aAddActions = oDesignTimeMetadata ? oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent) : [];
+		aAddActions.forEach(function(mAddAction) {
+			if (mAddAction["custom"]) {
+				Log.error("Outdated custom add action in designtime metadata in "
+					+ oDesignTimeMetadata.getData().designtimeModule
+					+ " or propagated or via instance specific designtime metadata.");
+			}
+		});
 	}
 
 	function getInvisibleElements (oParentOverlay, sAggregationName, oPlugin) {
@@ -286,7 +294,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Calculate a structure with all "add/reveal/custom" action relevant data collected per aggregation:
+	 * Calculate a structure with all "add/reveal" action relevant data collected per aggregation:
 	 * <pre>
 	 * {
 	 *	<aggregationName> : {
@@ -302,11 +310,6 @@ sap.ui.define([
 	 *				sourceAggregation: <aggregation where this element is currently located>
 	 *			}],
 	 *			controlTypeNames : string[] <all controlTypeNames collected via designTimeMetadata>
-	 *		},
-	 *		addViaCustom : {
-	 *			designTimeMetadata : <sap.ui.dt.ElementDesignTimeMetadata of parent>,
-	 *			action : <add.custom action section from designTimeMetadata>
-	 *			items : <add.custom action's array of items from the getItems() function>
 	 *		}
 	 *	},
 	 *	<aggregationName2> : ...
@@ -318,7 +321,7 @@ sap.ui.define([
 	 * @param {sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin} oPlugin - Instance of the AdditionalElementsPlugin
 	 * @param {boolean} [bInvalidate] - Option to prevent cached actions to be returned
 	 *
-	 * @return {Promise} Resolving to a structure with all "add/reveal/custom" action relevant data collected
+	 * @return {Promise} Resolving to a structure with all "add/reveal" action relevant data collected
 	 */
 	ActionExtractor.getActions = function(bSibling, oSourceElementOverlay, oPlugin, bInvalidate) {
 		var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
@@ -328,16 +331,14 @@ sap.ui.define([
 
 		var oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin);
 		var oAddPropertyActionsPromise = this._getAddViaDelegateActions(bSibling, oSourceElementOverlay, oPlugin);
-		var oCustomAddActionsPromise = this._getCustomAddActions(bSibling, oSourceElementOverlay, oPlugin);
 
 		return Promise.all([
 			oRevealActionsPromise,
 			oAddPropertyActionsPromise,
-			oCustomAddActionsPromise,
 			checkInvalidAddActions(bSibling, oSourceElementOverlay, oPlugin)
 		]).then(function(aAllActions) {
 			//join and condense all action data
-			var mAllActions = merge(aAllActions[0], aAllActions[1], aAllActions[2]);
+			var mAllActions = merge(aAllActions[0], aAllActions[1]);
 			oSourceElementOverlay._mAddActions = oSourceElementOverlay._mAddActions || {asSibling: {}, asChild: {}};
 			oSourceElementOverlay._mAddActions[sSiblingOrChild] = mAllActions;
 			return mAllActions;
@@ -348,7 +349,7 @@ sap.ui.define([
 	 * Returns the already calculated actions of an Overlay, or undefined if no actions available
 	 * @param {boolean} bSibling - Indicates if the elements should be added as sibling (true) or child (false) to the overlay
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Elements will be added in relation (sibling/parent) to this overlay
-	 * @returns {object/undefined} - Object with all "add/reveal/custom" action relevant data collected or undefined if no actions available
+	 * @returns {object/undefined} - Object with all "add/reveal" action relevant data collected or undefined if no actions available
 	 */
 	ActionExtractor.getActionsOrUndef = function(bSibling, oOverlay) {
 		var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
@@ -427,76 +428,6 @@ sap.ui.define([
 						}.bind(this));
 				}.bind(this), Promise.resolve({}));
 			}.bind(this));
-	};
-
-	/**
-	 * Return the CustomAdd action data (parameters + elements) for an Overlay.
-	 * @param {boolean} bSibling - If source element overlay should be sibling or parent to the newly added fields
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay where the action is triggered
-	 * @param {sap.ui.rta.plugin.additionalElements.AdditionalElementsPlugin} oPlugin - Instance of the AdditionalElementsPlugin
-	 *
-	 * @returns {Promise<object>} CustomAdd action data
-	 */
-	ActionExtractor._getCustomAddActions = function(bSibling, oOverlay, oPlugin) {
-		var mParents = AdditionalElementsUtils.getParents(bSibling, oOverlay, oPlugin);
-		var oDesignTimeMetadata = mParents.parentOverlay && mParents.parentOverlay.getDesignTimeMetadata();
-		var aActions = oDesignTimeMetadata && oDesignTimeMetadata.getActionDataFromAggregations("add", mParents.parent, undefined, "custom") || [];
-
-		function getAction(mAction, oCheckElement) {
-			var aItems = [];
-			return Promise.resolve()
-				.then(function () {
-					if (mAction && typeof mAction.getItems === "function") {
-						var oCheckElementOverlay = OverlayRegistry.getOverlay(oCheckElement);
-						if (oPlugin.hasStableId(oCheckElementOverlay)) {
-							return mAction.getItems(oCheckElement);
-						}
-					}
-					return aItems;
-				})
-				.then(function (aItemsFromAction) {
-					aItems = aItemsFromAction || [];
-					var aChangeHandlerPromises = aItems.reduce(function (aPromises, oItem) {
-						// adjust relevant container
-						if (oItem.changeSpecificData.changeOnRelevantContainer) {
-							oCheckElement = mParents.relevantContainer;
-						}
-						if (oItem.changeSpecificData.changeType) {
-							aPromises.push(oPlugin.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement));
-						}
-						return aPromises;
-					}, []);
-
-					return Promise.all(aChangeHandlerPromises);
-				})
-				.then(function (aHasChangeHandlerForCustomItems) {
-					if (aHasChangeHandlerForCustomItems.indexOf(false) === -1) {
-						return {
-							aggregationName: mAction.aggregation,
-							addViaCustom: {
-								designTimeMetadata: oDesignTimeMetadata,
-								action: mAction,
-								items: aItems
-							}
-						};
-					}
-					return undefined;
-				});
-		}
-
-		var oCheckElement = mParents.parent;
-		return aActions.reduce(function(oPreviousPromise, oAction) {
-			return oPreviousPromise.then(function(oReturn) {
-				return getAction.call(this, oAction, oCheckElement).then(function(mAction) {
-					if (mAction) {
-						oReturn[mAction.aggregationName] = {
-							addViaCustom: mAction.addViaCustom
-						};
-					}
-					return oReturn;
-				});
-			}.bind(this));
-		}.bind(this), Promise.resolve({}));
 	};
 
 	return ActionExtractor;

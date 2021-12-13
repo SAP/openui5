@@ -124,15 +124,6 @@ sap.ui.define([
 		});
 	}
 
-	function _assignCustomItemIds(sParentId, oCustomItem) {
-		oCustomItem.type = "custom";
-		if (oCustomItem.id) {
-			oCustomItem.itemId = sParentId + "-" + oCustomItem.id;
-			oCustomItem.key = oCustomItem.itemId;
-		}
-		return oCustomItem;
-	}
-
 	function _oPropertyToAdditionalElementInfo (oProperty) {
 		return {
 			selected: false,
@@ -407,18 +398,6 @@ sap.ui.define([
 		return bIncludeElement;
 	}
 
-	function _enhanceByCustomItems(oInvisibleElement, mActions, bIncludeElement, oElement) {
-		var mCustom = mActions.addViaCustom;
-		if (mCustom && bIncludeElement) {
-			mCustom.items.forEach(function(oCustomItem) {
-				_assignCustomItemIds(oElement.getParent().getId(), oCustomItem);
-				if (oCustomItem.itemId === oInvisibleElement.getId()) {
-					_enhanceInvisibleElement(oInvisibleElement, oCustomItem);
-				}
-			});
-		}
-	}
-
 	function _getModelName(mAddViaDelegate) {
 		//ManagedObject jsdoc tells to use undefined for default model, therefore it
 		//is necessary to return undefined if modelName or whole delegateInfo is missing
@@ -459,8 +438,6 @@ sap.ui.define([
 						oInvisibleElement.__label = ElementUtil.getLabelForElement(oInvisibleElement, mRevealAction.getLabel);
 
 						var bIncludeElement = _enhanceByMetadata(oElement, sAggregationName, oInvisibleElement, mActions, aRepresentedProperties, aProperties);
-
-						_enhanceByCustomItems(oInvisibleElement, mActions, bIncludeElement, oElement);
 
 						if (bIncludeElement) {
 							aAllElementData.push({
@@ -516,50 +493,6 @@ sap.ui.define([
 				}).then(function(aUnrepresentedProperties) {
 					return aUnrepresentedProperties.map(_oPropertyToAdditionalElementInfo);
 				});
-		},
-
-		getCustomAddItems: function(oElement, mAction) {
-			return new Promise(function(fnResolve) {
-				if (Array.isArray(mAction.items)) {
-					// remove items already rendered
-					fnResolve(
-						mAction.items
-							.map(_assignCustomItemIds.bind(null, oElement.getParent().getId()))
-							.filter(function(oCustomItem) {
-								if (!oCustomItem.id) {
-									Log.error("CustomAdd item with label " + oCustomItem.label + " does not contain an 'id' property", "sap.ui.rta.plugin.AdditionalElementsAnalyzer#showAvailableElements");
-									return false;
-								}
-								return !ElementUtil.getElementInstance(oCustomItem.itemId);
-							})
-					);
-				} else {
-					fnResolve();
-				}
-			});
-		},
-
-		getFilteredItemsList: function(aAnalyzerValues) {
-			// promise index 0: invisible, 1: addViaOData/addViaDelegate, 2: custom
-			var aInvisibleElements = aAnalyzerValues[0];
-			var iCustomItemsIndex = 2;
-			var aCustomItems = aAnalyzerValues[iCustomItemsIndex];
-			if (aCustomItems) {
-				var aInvisibleElementIds = aInvisibleElements.map(
-					function (oInvisibleItem) {
-						return oInvisibleItem.elementId;
-					}
-				);
-				// filter for hidden custom items in the array
-				aAnalyzerValues[iCustomItemsIndex] = aCustomItems
-					.filter(function(oCustomItem) {
-						return !oCustomItem.itemId || aInvisibleElementIds.indexOf(oCustomItem.itemId) === -1;
-					});
-			}
-			return aAnalyzerValues
-				.reduce(function (aAllElements, aAnalyzerValue) {
-					return aAllElements.concat(aAnalyzerValue);
-				}, []);
 		}
 	};
 	return oAnalyzer;

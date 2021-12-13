@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
-	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
 	FieldExtensibility,
 	AddElementsDialog,
-	Log,
 	sinon,
 	oCore
 ) {
@@ -56,14 +54,7 @@ sap.ui.define([
 				selected: false,
 				label: "label5",
 				tooltip: "tooltip5",
-				key: "field5",
-				type: "custom"
-			},
-			{
-				selected: false,
-				label: "label6",
-				tooltip: "tooltip6",
-				name: "field6",
+				name: "field5",
 				type: "delegate"
 			}
 		];
@@ -125,8 +116,8 @@ sap.ui.define([
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(true, "then dialog pops up,");
 				assert.equal(this.getTitle(), "hugo", "then the title is set");
-				assert.equal(this._oList.getItems().length, 6, "then 6 elements internally known");
-				assert.equal(this.getElements().length, 6, "then 6 elements externally known");
+				assert.equal(this._oList.getItems().length, 5, "then 5 elements internally known");
+				assert.equal(this.getElements().length, 5, "then 5 elements externally known");
 				assert.equal(this.getSelectedElements().length, 2, "then 2 selected elements");
 				assert.equal(this.getCustomFieldEnabled(), false, "then the customField-button is disabled");
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[1].getText(), "was original", "then the originalLabel is set");
@@ -256,11 +247,11 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oAddElementsDialog.attachOpened(function () {
-				assert.equal(this._oList.getItems().length, 6, "then initially 6 entries are there");
+				assert.equal(this._oList.getItems().length, 5, "then initially 5 entries are there");
 				this._updateModelFilter({getParameter: function() {return "2";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for '2' then 1 entry is shown");
 				this._updateModelFilter({getParameter: function() {return null;}});
-				assert.equal(this._oList.getItems().length, 6, "then after clearing 6 entries are there");
+				assert.equal(this._oList.getItems().length, 5, "then after clearing 5 entries are there");
 				this._updateModelFilter({getParameter: function() {return "complex";}});
 				assert.equal(this._oList.getItems().length, 1, "when filtering for 'complex' then 1 entry is shown");
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label4 (duplicateComplexPropName)", "then only label4 where complex is part of the label (duplicateName)");
@@ -279,7 +270,7 @@ sap.ui.define([
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label1", "then label1 is first");
 				this._resortList();
-				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label6", "then last label is first");
+				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label5", "then last label is first");
 				done();
 			});
 			this.oAddElementsDialog.open();
