@@ -483,12 +483,10 @@ sap.ui.define([
 				return;
 			}
 			for (sControlId in this.mChanges) {
-				if (!this.hasOnlyOptionalChanges(sControlId)) {
-					if (this.mChanges[sControlId].length) {
-						return;
-					}
-					delete this.mChanges[sControlId];
+				if (this.mChanges[sControlId].length) {
+					return;
 				}
+				delete this.mChanges[sControlId];
 			}
 			for (sControlId in this.mListChanges) {
 				// Note: This may be a sparse array
@@ -1384,19 +1382,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether expected changes for the control are only optional null values.
-		 *
-		 * @param {string} sControlId The control ID
-		 * @returns {boolean} Whether expected changes for the control are only optional null values
-		 */
-		hasOnlyOptionalChanges : function (sControlId) {
-			return this.bNullOptional &&
-				this.mChanges[sControlId].every(function (vValue) {
-					return vValue === null;
-				});
-		},
-
-		/**
 		 * Allows that the property "text" of the control with the given ID is set to undefined or
 		 * null. This may happen when bindings are initialized before the model value is available.
 		 *
@@ -1596,19 +1581,17 @@ sap.ui.define([
 		 * states.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
 		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded,
 		 *   all expected values for controls have been set, all expected messages and all value
 		 *   states have been checked
 		 */
-		waitForChanges : function (assert, bNullOptional, iTimeout) {
+		waitForChanges : function (assert, iTimeout) {
 			var oPromise,
 				that = this;
 
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
-				that.bNullOptional = bNullOptional;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
 				setTimeout(function () {
@@ -1628,10 +1611,6 @@ sap.ui.define([
 				});
 				// Report missing changes
 				for (sControlId in that.mChanges) {
-					if (that.hasOnlyOptionalChanges(sControlId)) {
-						delete that.mChanges[sControlId];
-						continue;
-					}
 					for (i in that.mChanges[sControlId]) {
 						assert.ok(false, sControlId + ": "
 							+ JSON.stringify(that.mChanges[sControlId][i]) + " (not set)");
