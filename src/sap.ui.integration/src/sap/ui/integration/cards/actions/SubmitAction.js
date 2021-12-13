@@ -3,10 +3,16 @@
  */
 sap.ui.define([
 	"./BaseAction",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/util/Utils"
 ], function (
 	BaseAction,
-	Log
+	Log,
+	BindingHelper,
+	BindingResolver,
+	Utils
 ) {
 	"use strict";
 
@@ -20,23 +26,20 @@ sap.ui.define([
 	 * @override
 	 */
 	SubmitAction.prototype.execute = function () {
-		var oSource = this.getSourceInstance();
+		var oSource = this.getSourceInstance(),
+			oSubmitActionHandler = this.getActionHandler();
 
-		if (!oSource.isA("sap.ui.integration.cards.BaseContent")) {
+		if (!oSubmitActionHandler || !oSource.isA("sap.ui.integration.cards.BaseContent")) {
 			return;
 		}
 
-		var oDataProvider,
-			oDataProviderFactory = this.getCardInstance()._oDataProviderFactory,
+		var oDataProviderFactory = this.getCardInstance()._oDataProviderFactory,
 			oParameters = this.getParameters();
 
-		if (!oParameters.configuration) {
-			return;
-		}
-
 		oSource.onActionSubmitStart(oParameters);
-		oDataProvider = oDataProviderFactory.create({
-			request: oParameters.configuration
+
+		var oDataProvider = oDataProviderFactory.create({
+			request: this._createRequest(oSubmitActionHandler, oParameters)
 		});
 
 		oDataProvider.getData()
@@ -51,6 +54,33 @@ sap.ui.define([
 				oDataProviderFactory.remove(oDataProvider);
 			});
 
+	};
+
+	SubmitAction.prototype._createRequest = function (oSubmitActionHandler, oDefaultParameters) {
+		return {
+			mode: oSubmitActionHandler.mode || "cors",
+			url: oSubmitActionHandler.url,
+			method: oSubmitActionHandler.method || "POST",
+			parameters: this._resolveActionHandlerParams(oSubmitActionHandler.parameters, oDefaultParameters) || oDefaultParameters,
+			headers: oSubmitActionHandler.headers,
+			xhrFields: {
+				withCredentials: !!oSubmitActionHandler.withCredentials
+			}
+		};
+	};
+
+	SubmitAction.prototype._resolveActionHandlerParams = function (oActionHandlerParameters, oDefaultParameters) {
+		var oCard = this.getCardInstance();
+
+		oCard.getModel("form").setProperty("/", oDefaultParameters.data);
+
+		oActionHandlerParameters = BindingResolver.resolveValue(
+			BindingHelper.createBindingInfos(oActionHandlerParameters, oCard.getBindingNamespaces()),
+			this.getSourceInstance()
+		);
+		Utils.makeUndefinedValuesNull(oActionHandlerParameters);
+
+		return oActionHandlerParameters;
 	};
 
 	return SubmitAction;

@@ -29,6 +29,13 @@ sap.ui.define([
 				 */
 				parameters: {
 					type: "object"
+				},
+
+				/**
+				 * Action handler for this action
+				 */
+				actionHandler: {
+					type: "object"
 				}
 			},
 			associations: {
