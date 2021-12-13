@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/cards/ListContent",
-	"sap/ui/integration/util/CardActions",
+	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/MemoryLeakCheck"
 ], function (

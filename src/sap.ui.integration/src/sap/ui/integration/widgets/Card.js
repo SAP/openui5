@@ -32,7 +32,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/cards/filters/FilterBarFactory",
-	"sap/ui/integration/util/CardActions",
+	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/CardObserver"
 ], function (
 	CardRenderer,

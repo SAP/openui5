@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
-	"sap/ui/integration/util/CardActions",
+	"sap/ui/integration/cards/actions/CardActions",
 	"../services/SampleServices"
 ], function (
 	AnalyticalContent,
