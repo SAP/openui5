@@ -377,7 +377,9 @@ sap.ui.define([
 				this.oView = oView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 
 			this.oPlugin = new OpaPlugin();
 			this.fnLogSpy = sinon.spy(this.oPlugin._oLogger, "debug");
@@ -784,7 +786,9 @@ sap.ui.define([
 					.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -1006,7 +1010,9 @@ sap.ui.define([
 				this.oView = oView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 
 			this.oPlugin = new OpaPlugin();
 		},
@@ -1060,7 +1066,9 @@ sap.ui.define([
 				this.oDifferentView = aViews[2].placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 		},
 		afterEach: function () {
 			this.fnLogSpy.restore();
@@ -1097,7 +1105,9 @@ sap.ui.define([
 			sinon.assert.calledWith(this.fnLogSpy, "Found 1 visible views with viewName '" + this.sViewName + "'");
 
 			done();
-		}.bind(this));
+		}.bind(this), function(oErr) {
+			assert.strictEqual(oErr, undefined, "failed to load view");
+		});
 	});
 
 	QUnit.test("Should return nothing when more than one visible views have the same name", function (assert) {
@@ -1132,7 +1142,9 @@ sap.ui.define([
 				this.oView = oView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -1162,7 +1174,9 @@ sap.ui.define([
 				this.oView = oView.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 		},
 		afterEach: function () {
 			this.oView.destroy();

@@ -186,7 +186,9 @@ sap.ui.define([
 				this.oView2 = aViews[1].placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 		},
 		afterEach: function () {
 			this.oView.destroy();
