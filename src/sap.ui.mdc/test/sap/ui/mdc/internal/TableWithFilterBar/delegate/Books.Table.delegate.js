@@ -194,24 +194,26 @@ sap.ui.define([
 
 	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
-			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+			if (oColumn) { // in XML templating there is no column
+				var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
 
-			if (oProperty.name === "title") {
-				oColumn.setWidth("15rem");
-			} else if (oProperty.name === "currency_code") {
-				oColumn.setWidth("5rem");
-			} else if (oProperty.name != "descr") {
-				oColumn.setWidth(["actions", "stock", "ID"].indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
+				if (oProperty.name === "title") {
+					oColumn.setWidth("15rem");
+				} else if (oProperty.name === "currency_code") {
+					oColumn.setWidth("5rem");
+				} else if (oProperty.name != "descr") {
+					oColumn.setWidth(["actions", "stock", "ID"].indexOf(oProperty.name) != -1 ? "6rem" : "10rem");
+				}
+
+				//oColumn.getTemplate().destroy();
+				// if (oColumn._oTemplateClone) {
+				// 	oColumn._oTemplateClone.destroy();
+				// 	delete oColumn._oTemplateClone;
+				// }
+
+				var oTemplate = BooksTableDelegate._createColumnTemplate(oTable, oProperty);
+				oColumn.setTemplate(oTemplate);
 			}
-
-			//oColumn.getTemplate().destroy();
-			// if (oColumn._oTemplateClone) {
-			// 	oColumn._oTemplateClone.destroy();
-			// 	delete oColumn._oTemplateClone;
-			// }
-
-			var oTemplate = BooksTableDelegate._createColumnTemplate(oTable, oProperty);
-			oColumn.setTemplate(oTemplate);
 
 			return oColumn;
 		});
