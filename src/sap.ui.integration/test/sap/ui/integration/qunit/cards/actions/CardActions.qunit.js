@@ -1119,6 +1119,25 @@ sap.ui.define([
 			assert.ok(stubResolver.calledWith(oFakeEvent), "Custom binding path resolver should be called with the action event");
 		});
 
+		QUnit.test("Unknown action type", function (assert) {
+			// Arrange
+			var oCard = new Card();
+			this.oActions.setCard(oCard);
+			var oLogSpy = this.spy(Log, "error");
+
+			// Act
+			this.oActions.fireAction({}, "Unknown Type", {});
+
+			// Assert
+			assert.ok(
+				oLogSpy.calledWith("Unknown action type 'Unknown Type'. Expected one of " + Object.values(CardActionType).join(", "), sinon.match.any, "sap.ui.integration.widgets.Card"),
+				"Error should be logged when attempted to fire unknown action"
+			);
+
+			// Clean up
+			oCard.destroy();
+		});
+
 		QUnit.module("Action Enablement - Header", {
 			beforeEach: function () {
 				this.oCard = new Card({
