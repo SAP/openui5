@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	function getViewContent() {
-		return '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" viewName="myView">' +
+		return '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" viewName="myView">' +
 			'<App id="myApp">' +
 				'<Page id="page1">' +
 					'<Table id="myTable" items="{path: &quot;/items\&quot;, templateShareable:false}" width="300px">' +
@@ -46,7 +46,9 @@ sap.ui.define([
 				this.oView = oView.setModel(oJSONModel).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 				done();
-			}.bind(this));
+			}.bind(this), function(oErr) {
+				assert.strictEqual(oErr, undefined, "failed to load view");
+			});
 		},
 		afterEach: function () {
 			this.oView.destroy();
