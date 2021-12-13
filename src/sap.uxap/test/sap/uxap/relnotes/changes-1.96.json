@@ -47,5 +47,21 @@
         ]
       }
     ]
+  },
+  "1.96.3": {
+    "date": "December 2021",
+    "notes": [
+      {
+        "id": "9500f7cef9d638603d129999513b4400e6aea252",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected media update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272703"
+          }
+        ]
+      }
+    ]
   }
 }

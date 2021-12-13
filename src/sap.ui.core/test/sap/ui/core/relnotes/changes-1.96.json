@@ -287,5 +287,43 @@
         ]
       }
     ]
+  },
+  "1.96.3": {
+    "date": "December 2021",
+    "notes": [
+      {
+        "id": "06e986b3b7a3eeb3fb31d0d006fc6c75d16ae9bb",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: no need to include automatically added columns to select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007616402021"
+          }
+        ]
+      },
+      {
+        "id": "780f0d6d4750cd82f980c1bd7290638ac49d2270",
+        "type": "FIX",
+        "text": " theming.Parameters: Fix async usage after theme change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180393575"
+          }
+        ]
+      },
+      {
+        "id": "53bf93bedb7a56683d990f1916b2963bdc4e0d84",
+        "type": "FIX",
+        "text": " sap.ui.core.util.reflection - performance improvement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180376343"
+          }
+        ]
+      }
+    ]
   }
 }

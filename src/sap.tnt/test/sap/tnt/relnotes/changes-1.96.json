@@ -19,5 +19,32 @@
         "text": " sap.tnt.InfoLabel: Redesign"
       }
     ]
+  },
+  "1.96.3": {
+    "date": "December 2021",
+    "notes": [
+      {
+        "id": "6030bcd4e802217ad660f5eeef59ea3f8da80b90",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Corrected \"since\" label for ariaLabel property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "512de4c7a03922473f562dad25ed271dddf51654",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: new ariaLabel property added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

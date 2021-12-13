@@ -763,5 +763,21 @@
         ]
       }
     ]
+  },
+  "1.96.3": {
+    "date": "December 2021",
+    "notes": [
+      {
+        "id": "e5e10ba310b7920e95f9c985a087ad7ace18d386",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Apply the correct number formatting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006327302021"
+          }
+        ]
+      }
+    ]
   }
 }
