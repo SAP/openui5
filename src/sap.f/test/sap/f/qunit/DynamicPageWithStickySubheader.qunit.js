@@ -497,4 +497,23 @@ sap.ui.define([
 			// Assert
 			assert.ok(oUtil.getChildPosition(oElement, $wrapper.get(0)).top >= $wrapper.scrollTop(), "element is visible");
 		});
+
+		QUnit.test("Scrollbar's contentSize is enough the user to be able to scroll to last element", function(assert) {
+			var oIconTabBar = this.oDynamicPage.getContent(),
+				oElement = oIconTabBar.getItems()[0].getContent()[0].getContent()[199].getDomRef(),
+				fnDone = assert.async();
+
+			assert.expect(1);
+
+			// Act
+			this.oDynamicPage.getScrollDelegate().scrollToElement(oElement);
+
+			setTimeout(function() {
+				// Assert
+				assert.strictEqual(this.oDynamicPage._getScrollBar().$("sbcnt").height(),
+					this.oDynamicPage._getTitleHeight() + this.oDynamicPage._oStickySubheader.$().height() + this.oDynamicPage.$wrapper[0].scrollHeight,
+					"Scrollbar content size includes title, scrollheight of wrapper and the sticky subheader");
+				fnDone();
+			}.bind(this), 200);
+		});
 	});
