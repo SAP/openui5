@@ -762,11 +762,22 @@ sap.ui.define([
 			var aChanges = [];
 			var mPropertyBag = {};
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystem: function() {return true;}});
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports: function() {return true;}});
 			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 				.then(function (oMessage) {
 					assert.ok(oMessage.showWarning, "then the warning is shown");
 					assert.strictEqual(oMessage.warningType, "noChangesAndPSystemWarning", "then the no changes and p system warning type is returned");
+				});
+		});
+
+		QUnit.test("when getChangesWarning is called in a not P System with no changes", function (assert) {
+			var aChanges = [];
+			var mPropertyBag = {};
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports: function() {return false;}});
+			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
+				.then(function (oMessage) {
+					assert.equal(oMessage.showWarning, false);
 				});
 		});
 
@@ -781,6 +792,7 @@ sap.ui.define([
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isProductiveSystem: function() {return true;},
+				isProductiveSystemWithTransports: function() {return true;},
 				getSystem: function() {return "pSystem";},
 				getClient: function() {return "bar";}
 			});
