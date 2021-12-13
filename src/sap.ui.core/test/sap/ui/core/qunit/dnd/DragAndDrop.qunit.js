@@ -16,7 +16,8 @@ sap.ui.define([
 	var DivControl = Control.extend("sap.ui.core.dnd.test.DivControl", {
 		metadata: {
 			properties: {
-				elementTag: {type: "string", defaultValue: "div"}
+				elementTag: {type: "string", defaultValue: "div"},
+				renderSomething: {type: "function"}
 			}
 		},
 		renderer: {
@@ -39,6 +40,9 @@ sap.ui.define([
 					} else {
 						rm.openEnd();
 						rm.close(sElementTag);
+					}
+					if (oControl.getRenderSomething()) {
+						oControl.getRenderSomething()(rm);
 					}
 				rm.close("div");
 			}
@@ -781,7 +785,7 @@ sap.ui.define([
 				dragDropConfig: [
 					this.oDragInfo = new DragInfo({
 						sourceAggregation: "topItems",
-						dragStart: this.fnDragStartSpy = sinon.spy(function() {})
+						dragStart: this.fnDragStartSpy = sinon.spy()
 					}),
 					this.oDropInfo = new DropInfo({
 						targetAggregation: "bottomItems",
@@ -844,6 +848,54 @@ sap.ui.define([
 		assert.ok(this.fnDragEnterSpy.calledOnce, "dragEnter event is called once.");
 
 		this.oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
+	});
+
+	QUnit.module("Parent traverse", {
+		beforeEach: function() {
+			this.oContainer = new DragAndDropControl({
+				topItems: [this.oSourceControl = new DivControl()],
+				bottomItems: [this.oTargetControl = new DivControl({
+					renderSomething: function(rm) {
+						this.oInnerDiv = new DivControl({
+							elementTag: "b"
+						});
+						rm.renderControl(this.oInnerDiv);
+					}.bind(this)
+				})],
+				dragDropConfig: [
+					this.oDragInfo = new DragDropInfo({
+						sourceAggregation: "topItems",
+						targetAggregation: "bottomItems",
+						dragStart: this.fnDragStartSpy = sinon.spy(),
+						dragEnter: this.fnDragEnterSpy = sinon.spy(),
+						drop: this.fnDropSpy = sinon.spy()
+					})
+				]
+			});
+
+			this.oContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			this.oTargetDomRef = this.oTargetControl.getDomRef();
+			this.oSourceDomRef = this.oSourceControl.getDomRef();
+			this.oInnerDivDomRef = this.oInnerDiv.getDomRef();
+		},
+		afterEach: function() {
+			this.oInnerDiv.destroy();
+			this.oContainer.destroy();
+		}
+	});
+
+	QUnit.test("Drop control that has no parent", function(assert) {
+		this.oSourceDomRef.focus();
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oInnerDivDomRef.focus();
+		this.oInnerDivDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		assert.ok(this.fnDragEnterSpy.calledOnce, "dragEnter event is called once.");
+
+		this.oInnerDivDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
 	});
 
