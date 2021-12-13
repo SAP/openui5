@@ -11179,6 +11179,493 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (9)
+	// Number of transient: 2
+	// Delete: ODataModel.resetChanges
+	// Create at: endOfStart
+	// Table control: sap.m.Table
+	// POST request for second item: noAdditionalSubmit
+	// CPOUI5MODELS-701
+	QUnit.test("All pairs test for multi create (9)", function (assert) {
+		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" growing="true" items="{/SalesOrderSet}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		oModel.setDeferredGroups(["changes", "deleteGroup"]);
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=20", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectValue("id", ["42"])
+			.expectValue("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectValue("id", ["", "42"])
+				.expectValue("note", ["New 1", "First SalesOrder"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 1"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('43')"},
+						Note : "New 1",
+						SalesOrderID : "43"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", "43", 0);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				that.oModel.submitChanges(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 1)
+				.expectValue("note", ["New 2", "First SalesOrder"], 1);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 2)
+				.expectValue("note", ["New 3", "First SalesOrder"], 2);
+
+			oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 1)
+				.expectValue("note", ["New 3", "First SalesOrder"], 1);
+
+			// code under test
+			oModel.resetChanges([oCreatedContext1.getPath()], undefined, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3, "number of contexts");
+			assert.strictEqual(oTable.getItems().length, 3, "number of table items");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (10)
+	// Number of transient: 3
+	// Delete: ODataModel.resetChanges
+	// Create at: endOfStart
+	// Table control: sap.m.Table
+	// POST request for second item: submitWithFailure
+	// CPOUI5MODELS-701
+	QUnit.test("All pairs test for multi create (10)", function (assert) {
+		var oBinding, oCreatedContext1, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" growing="true" items="{/SalesOrderSet}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		oModel.setDeferredGroups(["changes", "deleteGroup"]);
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=20", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectValue("id", ["42"])
+			.expectValue("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectValue("id", ["", "42"])
+				.expectValue("note", ["New 1", "First SalesOrder"]);
+
+			oBinding.create({Note : "New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 1)
+				.expectValue("note", ["New 2", "First SalesOrder"], 1);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 1"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, createErrorResponse({message : "POST failed", statusCode : 400}))
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 2"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}) // Response not relevant
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderSet('~key~')",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderSet('~key~')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Request failed with status code 400: POST SalesOrderSet",
+					/*details not relevant*/ sinon.match.string, sODataMessageParserClassName)
+				.exactly(2);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 2)
+				.expectValue("note", ["New 3", "First SalesOrder"], 2);
+
+			oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 1)
+				.expectValue("note", ["New 3", "First SalesOrder"], 1)
+				.expectMessages([{
+					code : "UF0",
+					descriptionUrl : "",
+					fullTarget : "/SalesOrderSet('~key~')",
+					message : "POST failed",
+					persistent : false,
+					target : "/SalesOrderSet('~key~')",
+					technical : true,
+					type : "Error"
+				}]);
+
+			// code under test
+			oModel.resetChanges([oCreatedContext1.getPath()], undefined, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3, "number of contexts");
+			assert.strictEqual(oTable.getItems().length, 3, "number of table items");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (11)
+	// Number of transient: 1
+	// Delete: ODataModel.remove
+	// Create at: endOfStart
+	// Table control: sap.ui.table.Table
+	// POST request for second item: noAdditionalSubmit
+	// CPOUI5MODELS-701
+	QUnit.test("All pairs test for multi create (11)", function (assert) {
+		var oBinding, oCreatedContext0, oCreatedContext1, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderSet}" visibleRowCount="5">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		oModel.setDeferredGroups(["changes", "deleteGroup"]);
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=105", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectValue("id", ["42", "", "", "", ""])
+			.expectValue("note", ["First SalesOrder", "", "", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("id", ["", "42"])
+				.expectValue("note", ["New 1", "First SalesOrder"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 1)
+				.expectValue("note", ["New 2", "First SalesOrder"], 1);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 1"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('43')"},
+						Note : "New 1",
+						SalesOrderID : "43"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 2"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('44')"},
+						Note : "New 2",
+						SalesOrderID : "44"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", ["43", "44"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				that.oModel.submitChanges(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 2)
+				.expectValue("note", ["New 3", "First SalesOrder"], 2);
+
+			oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('44')",
+					method : "DELETE",
+					requestUri : "SalesOrderSet('44')"
+				}, {})
+				.expectRequest("SalesOrderSet?$skip=0&$top=105"
+					+ "&$filter=not(SalesOrderID eq '43' or SalesOrderID eq '44')", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('42')"},
+						Note : "First SalesOrder",
+						SalesOrderID : "42"
+					}]
+				})
+				// The PropertyBinding is updated synchronously, the ListBinding asynchronously
+				.expectValue("id", "", 1)
+				.expectValue("note", "", 1)
+				.expectValue("id", ["42", ""], 2)
+				.expectValue("note", ["New 3", "First SalesOrder", ""], 1);
+
+			oModel.remove("", {
+				groupId : "deleteGroup", context : oCreatedContext1, refreshAfterChange : true
+			});
+			oModel.submitChanges({groupId : "deleteGroup"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3, "number of contexts");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All pairs test for multi create (12)
+	// Number of transient: 0
+	// Delete: ODataModel.remove
+	// Create at: endOfStart
+	// Table control: sap.m.Table
+	// POST request for second item: noAdditionalSubmit
+	// CPOUI5MODELS-701
+	QUnit.test("All pairs test for multi create (12)", function (assert) {
+		var oBinding, oCreatedContext0, oCreatedContext1, oCreatedContext2, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" growing="true" items="{/SalesOrderSet}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="note" text="{Note}"/>\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=20", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					Note : "First SalesOrder",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectValue("id", ["42"])
+			.expectValue("note", ["First SalesOrder"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("items");
+
+			that.expectValue("id", ["", "42"])
+				.expectValue("note", ["New 1", "First SalesOrder"]);
+
+			oCreatedContext0 = oBinding.create({Note : "New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 1)
+				.expectValue("note", ["New 2", "First SalesOrder"], 1);
+
+			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("id", ["", "42"], 2)
+				.expectValue("note", ["New 3", "First SalesOrder"], 2);
+
+			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 1"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('43')"},
+						Note : "New 1",
+						SalesOrderID : "43"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 2"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('44')"},
+						Note : "New 2",
+						SalesOrderID : "44"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "New 3"
+					},
+					method : "POST",
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('45')"},
+						Note : "New 3",
+						SalesOrderID : "45"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", ["43", "44", "45"]);
+
+			return Promise.all([
+				oCreatedContext0.created(),
+				oCreatedContext1.created(),
+				oCreatedContext2.created(),
+				that.oModel.submitChanges(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest({
+					deepPath : "/SalesOrderSet('44')",
+					method : "DELETE",
+					requestUri : "SalesOrderSet('44')"
+				}, {})
+				.expectRequest("SalesOrderSet?$skip=0&$top=20"
+					+ "&$filter=not(SalesOrderID eq '43' or SalesOrderID eq '44'"
+					+ " or SalesOrderID eq '45')", {
+					results : [{
+						__metadata : {uri : "SalesOrderSet('42')"},
+						Note : "First SalesOrder",
+						SalesOrderID : "42"
+					}]
+				})
+				.expectValue("id", ["45", "42"], 1)
+				.expectValue("note", ["New 3", "First SalesOrder"], 1);
+
+			oModel.remove("", {context : oCreatedContext1, refreshAfterChange : true});
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.getCount(), 3, "number of contexts");
+			assert.strictEqual(oTable.getItems().length, 3, "number of table items");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Multi create with relative binding and messages
 	// CPOUI5MODELS-635
 	QUnit.test("Multi create with relative binding and messages", function (assert) {
