@@ -10,6 +10,18 @@
 	--sapIllus_NoColor: none;
 	--sapIllus_PatternShadow: ~"url(#sapIllus_PatternShadow)";
 	--sapIllus_PatternHighlight: ~"url(#sapIllus_PatternHighlight)";
+
+	.generate-illustrative-colors (20);
+}
+
+.generate-illustrative-colors (@colorsCount, @i: 1) when (@i =< @colorsCount) {
+	@illusColorLESSvar: 'sapContent_Illustrative_Color@{i}';
+	--sapContent_Illustrative_Color@{i}: @@illusColorLESSvar;
+	.generate-illustrative-colors(@colorsCount, (@i + 1));
+}
+
+.sapIllus_MaskTypeAlpha {
+	mask-type:alpha;
 }
 .sapIllus_BrandColorPrimary {
 	fill: var(--sapIllus_BrandColorPrimary);

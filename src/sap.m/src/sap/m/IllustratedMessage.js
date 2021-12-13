@@ -200,6 +200,48 @@ sap.ui.define([
 	 * STATIC MEMBERS
 	 */
 
+	IllustratedMessage.ORIGINAL_TEXTS = {
+		UnableToLoad: "UnableToLoad",
+		UnableToUpload: "UnableToUpload",
+		NoActivities: "NoActivities",
+		BeforeSearch: "BeforeSearch",
+		NoSearchResults: "NoSearchResults",
+		NoEntries: "NoEntries",
+		NoData: "NoData",
+		NoNotifications: "NoNotifications",
+		BalloonSky: "BalloonSky",
+		SuccessScreen: "SuccessScreen",
+		NoMail: "NoMail",
+		NoSavedItems: "NoSavedItems",
+		NoTasks: "NoTasks"
+	};
+
+	IllustratedMessage.FALLBACK_TEXTS = {
+		ReloadScreen: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
+		Connection: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
+		ErrorScreen: IllustratedMessage.ORIGINAL_TEXTS.UnableToUpload,
+		EmptyCalendar: IllustratedMessage.ORIGINAL_TEXTS.NoActivities,
+		SearchEarth: IllustratedMessage.ORIGINAL_TEXTS.BeforeSearch,
+		SearchFolder: IllustratedMessage.ORIGINAL_TEXTS.NoSearchResults,
+		EmptyList: IllustratedMessage.ORIGINAL_TEXTS.NoEntries,
+		Tent: IllustratedMessage.ORIGINAL_TEXTS.NoData,
+		SleepingBell: IllustratedMessage.ORIGINAL_TEXTS.NoNotifications,
+		SimpleBalloon: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky,
+		SimpleBell: IllustratedMessage.ORIGINAL_TEXTS.NoNotifications,
+		SimpleCalendar: IllustratedMessage.ORIGINAL_TEXTS.NoActivities,
+		SimpleCheckmark: IllustratedMessage.ORIGINAL_TEXTS.SuccessScreen,
+		SimpleConnection: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
+		SimpleEmptyDoc: IllustratedMessage.ORIGINAL_TEXTS.NoData,
+		SimpleEmptyList: IllustratedMessage.ORIGINAL_TEXTS.NoEntries,
+		SimpleError: IllustratedMessage.ORIGINAL_TEXTS.UnableToUpload,
+		SimpleMagnifier: IllustratedMessage.ORIGINAL_TEXTS.BeforeSearch,
+		SimpleMail: IllustratedMessage.ORIGINAL_TEXTS.NoMail,
+		SimpleNoSavedItems: IllustratedMessage.ORIGINAL_TEXTS.NoSavedItems,
+		SimpleNotFoundMagnifier: IllustratedMessage.ORIGINAL_TEXTS.NoSearchResults,
+		SimpleReload: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
+		SimpleTask: IllustratedMessage.ORIGINAL_TEXTS.NoTasks
+	};
+
 	IllustratedMessage.PREPENDS = {
 		DESCRIPTION: "IllustratedMessage_DESCRIPTION_",
 		TITLE: "IllustratedMessage_TITLE_"
@@ -265,7 +307,7 @@ sap.ui.define([
 	 * @returns {string} The default text.
 	 */
 	IllustratedMessage.prototype._getDefaultDescription = function () {
-		return this._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this._sIllustrationType, null, true);
+		return this._findDefaultText(IllustratedMessage.PREPENDS.DESCRIPTION);
 	};
 
 	/**
@@ -274,7 +316,24 @@ sap.ui.define([
 	 * @returns {string} The default text.
 	 */
 	IllustratedMessage.prototype._getDefaultTitle = function () {
-		return this._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this._sIllustrationType, null, true);
+		return this._findDefaultText(IllustratedMessage.PREPENDS.TITLE);
+	};
+
+	/**
+	 * Gets the default text for the title or the description aggregation.
+	 * @private
+	 * @param {string} sPrepend - prepend being either the title or the description for the bundle key
+	 * @returns {string} The default text.
+	 */
+	IllustratedMessage.prototype._findDefaultText = function(sPrepend) {
+		var oBundle = this._getResourceBundle();
+
+		// first we try to access the "original" text
+		// then try to fallback to "original" text without appended version (_v*** after the original type key)
+		// then try to fallback to "original" text from the IllustratedMessage.FALLBACK_TEXTS map
+		return oBundle.getText(sPrepend + this._sIllustrationType, null, true) ||
+			oBundle.getText(sPrepend + this._sIllustrationType.substr(0, this._sIllustrationType.indexOf('_v')) , null, true) ||
+			oBundle.getText(sPrepend + IllustratedMessage.FALLBACK_TEXTS[this._sIllustrationType], null, true);
 	};
 
 	/**
