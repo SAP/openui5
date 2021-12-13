@@ -52,7 +52,6 @@ sap.ui.define(function () {
 						"sap/f/cards/NumericSideIndicator",
 						"sap/f/cards/NumericSideIndicatorRenderer",
 						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/util/CardActions",
 						"sap/ui/integration/util/CardObserver",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
@@ -80,7 +79,6 @@ sap.ui.define(function () {
 					'./util/BindingHelper.qunit',
 					'./util/JSONBindingHelper.qunit',
 					'./util/BindingResolver.qunit',
-					'./util/CardActions.qunit',
 					'./cardbundle/CardStaticResources.qunit',
 					'./cards/BaseContent.qunit',
 					'./bindingFeatures/DateRange.qunit',
@@ -233,6 +231,19 @@ sap.ui.define(function () {
 				}
 			},
 			"cards/Footer": {},
+			"cards/actions/CardActions": {
+				module: [
+					"./cards/actions/SubmitAction.qunit",
+					"./util/CardActions.qunit"
+				],
+				coverage: {
+					only: [
+						"sap/ui/integration/cards/filters/",
+						"sap/ui/integration/widgets/Card",
+						"sap/ui/integration/util/CardActions"
+					]
+				}
+			},
 			"cards/filters/CardFiltering": {
 				module: [
 					"./cards/filters/CardFiltering.qunit",

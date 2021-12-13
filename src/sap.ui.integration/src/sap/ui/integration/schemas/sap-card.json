@@ -40,7 +40,7 @@
       "type": "string"
     },
     "configuration": {
-      "description": "Represents configuration with parameters, destinations, and filters, which can be used inside the card",
+      "description": "General configuration of the card. Allows to define parameters, destinations, filters and more",
       "type": "object",
       "additionalProperties": false,
       "properties": {

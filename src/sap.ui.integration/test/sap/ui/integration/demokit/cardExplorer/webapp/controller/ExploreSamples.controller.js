@@ -479,7 +479,7 @@ sap.ui.define([
 			sMessage = "Action '" + sType + "'";
 
 			if (mParameters) {
-				sMessage += " with parameters '" + JSON.stringify(mParameters) + "'";
+				sMessage += " with parameters: \n'" + JSON.stringify(mParameters) + "'";
 			}
 
 			MessageToast.show(sMessage, {

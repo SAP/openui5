@@ -170,5 +170,37 @@ sap.ui.define([
 		return oObject;
 	};
 
+	/**
+	 * @param {object|array} vData Object with 'undefined' values
+	 * @returns {object|array} The same object will all 'undefined' values replaced with 'null'
+	 */
+	Utils.makeUndefinedValuesNull = function (vData) {
+		if (Array.isArray(vData)) {
+			return vData.map(function (vValue) {
+				if (vValue === undefined) {
+					return null;
+				}
+
+				if (typeof vValue === "object") {
+					return Utils.makeUndefinedValuesNull(vValue);
+				}
+
+				return vValue;
+			});
+		}
+
+		for (var sKey in vData) {
+			if (vData.hasOwnProperty(sKey)) {
+				if (vData[sKey] === undefined) {
+					vData[sKey] = null;
+				} else if (typeof vData[sKey] === "object") {
+					vData[sKey] = Utils.makeUndefinedValuesNull(vData[sKey]);
+				}
+			}
+		}
+
+		return vData;
+	};
+
 	return Utils;
 });

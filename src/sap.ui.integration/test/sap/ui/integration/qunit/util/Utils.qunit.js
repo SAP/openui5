@@ -127,5 +127,68 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(oObject.a.b.c, "new value", "The value corresponding to the given path is properly updated");
 		});
+
+		QUnit.module("Utils.makeUndefinedValuesNull");
+
+		QUnit.test("makeUndefinedValuesNull with nested objects", function (assert) {
+			// arrange
+			var oData = {
+				a: undefined,
+				b: {
+					c: undefined
+				}
+			};
+
+			var oExpected = {
+				a: null,
+				b: {
+					c: null
+				}
+			};
+
+			// act
+			var oRes = Utils.makeUndefinedValuesNull(oData);
+
+			// assert
+			assert.deepEqual(oRes, oExpected, "Undefined values are change to 'null'");
+		});
+
+		QUnit.test("makeUndefinedValuesNull with array", function (assert) {
+			// arrange
+			var oData = {
+				a: {
+					b: [
+						1,
+						"a",
+						{
+							c: undefined
+						}
+					]
+				}
+			};
+
+			var oExpected = {
+				a: {
+					b: [
+						1,
+						"a",
+						{
+							c: null
+						}
+					]
+				}
+			};
+
+			// act
+			var oRes = Utils.makeUndefinedValuesNull(oData);
+
+			// assert
+			assert.deepEqual(oRes, oExpected, "Undefined values are change to 'null'");
+		});
+
+		QUnit.test("makeUndefinedValuesNull with 'undefined'", function (assert) {
+			// assert
+			assert.strictEqual(Utils.makeUndefinedValuesNull(undefined), undefined, "'undefined' is returned when no parameters are provided");
+		});
 	}
 );

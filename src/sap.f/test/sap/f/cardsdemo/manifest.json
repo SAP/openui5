@@ -260,6 +260,11 @@
 					"pattern": "csrfToken",
 					"name": "csrfToken",
 					"target": "csrfToken"
+				},
+				{
+					"pattern": "submitAction",
+					"name": "submitAction",
+					"target": "submitAction"
 				}
 			],
 			"targets": {
@@ -451,6 +456,11 @@
 				"csrfToken": {
 					"viewId": "csrfToken",
 					"viewName": "CsrfToken",
+					"viewLevel": 1
+				},
+				"submitAction": {
+					"viewId": "submitAction",
+					"viewName": "SubmitAction",
 					"viewLevel": 1
 				}
 			}

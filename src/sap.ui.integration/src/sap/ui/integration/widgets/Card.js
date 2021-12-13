@@ -88,7 +88,7 @@ sap.ui.define([
 	/**
 	 * @const A list of model names which are used internally by the card.
 	 */
-	var RESERVED_MODEL_NAMES = ["parameters", "filters", "context", "i18n"];
+	var RESERVED_MODEL_NAMES = ["parameters", "filters", "form", "context", "i18n"];
 
 	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
@@ -408,6 +408,7 @@ sap.ui.define([
 		this.setModel(new JSONModel()); // always create a default model to isolate the card from a propagated default model
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
+		this.setModel(new JSONModel(), "form");
 		// this.setModel(new JSONModel(), "csrfTokens");
 		this.setModel(new ContextModel(), "context");
 		this._oContentFactory = new ContentFactory(this);

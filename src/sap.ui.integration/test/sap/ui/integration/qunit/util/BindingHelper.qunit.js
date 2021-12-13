@@ -107,6 +107,17 @@ function (
 		assert.strictEqual(vBindingInfo['key3'], "noBindingText", "Should preserve value if it doesn't contain binding");
 	});
 
+	QUnit.test("Call #createBindingInfos with object containing instances of Date", function (assert) {
+		// Arrange
+		var oData = {
+			value: new Date()
+		};
+		var vBindingInfo = BindingHelper.createBindingInfos(oData);
+
+		// Assert
+		assert.strictEqual(vBindingInfo.value, oData.value, "Date instance is not modified");
+	});
+
 	QUnit.module("Static method #formattedProperty'");
 
 	QUnit.test("Call #formattedProperty with 'string'", function (assert) {

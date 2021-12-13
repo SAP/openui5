@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/base/util/extend",
+	"sap/base/util/isPlainObject",
 	"sap/ui/integration/formatters/DateTimeFormatter",
 	"sap/ui/integration/formatters/NumberFormatter",
 	"sap/ui/integration/formatters/TextFormatter",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function (
 	BindingParser,
 	extend,
+	isPlainObject,
 	DateTimeFormatter,
 	NumberFormatter,
 	TextFormatter,
@@ -104,7 +106,7 @@ sap.ui.define([
 			});
 		}
 
-		if (typeof vItem === "object") {
+		if (isPlainObject(vItem)) {
 			var oItemCopy = {};
 
 			for (var sKey in vItem) {
