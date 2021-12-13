@@ -5,40 +5,50 @@ sap.ui.define([
 ], function(SchemaValidator) {
 	"use strict";
 
+	function fnValidateSuccess() {
+		return {
+			valid: true
+		};
+	}
+
+	function fnValidateError() {
+		return {
+			valid: false,
+			errors: ["error"]
+		};
+	}
+
 	QUnit.module("SchemaValidator", {
 		beforeEach: function () {
-			this.fakeAjvClass = function () { };
+			this.fakeJSVClass = function () { };
+			this.fakeJSVClass.prototype.addSchema = function () { };
 
-			this.fakeAjvClass.prototype.addMetaSchema = function () { };
-			this._requireAjvStub = sinon.stub(SchemaValidator, "_requireAjv").returns(this.fakeAjvClass);
+			this._requireJSVStub = sinon.stub(SchemaValidator, "_requireJsonSchemaValidator").returns(this.fakeJSVClass);
 			this._loadSchema = sinon.stub(SchemaValidator, "_loadSchema").returns({});
 		},
 		afterEach: function () {
-			this._requireAjvStub.restore();
+			this._requireJSVStub.restore();
 			this._loadSchema.restore();
 			SchemaValidator._fnValidate = null; // reset cached validate function if such
 		}
 	});
 
 	QUnit.test("Initialize only once", function (assert) {
-		var done = assert.async(),
-			fnValidateSuccess = function () { return true; };
+		var done = assert.async();
 
-		this.fakeAjvClass.prototype.compileAsync = function () {
-			return Promise.resolve(fnValidateSuccess);
-		};
+		this.fakeJSVClass.prototype.validate = fnValidateSuccess;
 
 		assert.notOk(SchemaValidator._fnValidate, "Should not initialize if never required");
 
 		SchemaValidator.validate({})
 			.then(function () {
-				assert.ok(this._requireAjvStub.calledOnce, "Should call requireAjv once");
+				assert.ok(this._requireJSVStub.calledOnce, "Should call _requireJsonSchemaValidator once");
 			}.bind(this))
 			.then(function () {
 				return SchemaValidator.validate({});
 			})
 			.then(function () {
-				assert.strictEqual(this._requireAjvStub.callCount, 1, "Should NOT call requireAjv second time");
+				assert.strictEqual(this._requireJSVStub.callCount, 1, "Should NOT call _requireJsonSchemaValidator second time");
 				done();
 			}.bind(this));
 	});
@@ -46,8 +56,8 @@ sap.ui.define([
 	QUnit.test("Initialization fail", function (assert) {
 		var done = assert.async();
 
-		this.fakeAjvClass.prototype.compileAsync = function () {
-			return Promise.reject();
+		this.fakeJSVClass.prototype.addSchema = function () {
+			throw "some initialization error";
 		};
 
 		SchemaValidator.validate({})
@@ -58,12 +68,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Manifest validation success", function (assert) {
-		var done = assert.async(),
-			fnValidateSuccess = function () { return true; };
+		var done = assert.async();
 
-		this.fakeAjvClass.prototype.compileAsync = function () {
-			return Promise.resolve(fnValidateSuccess);
-		};
+		this.fakeJSVClass.prototype.validate = fnValidateSuccess;
 
 		SchemaValidator.validate({})
 			.then(function () {
@@ -73,12 +80,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Manifest validation error", function (assert) {
-		var done = assert.async(),
-			fnValidateError = function () { return false; };
+		var done = assert.async();
 
-		this.fakeAjvClass.prototype.compileAsync = function () {
-			return Promise.resolve(fnValidateError);
-		};
+		this.fakeJSVClass.prototype.validate = fnValidateError;
 
 		SchemaValidator.validate({})
 			.catch(function () {

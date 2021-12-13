@@ -15,11 +15,10 @@ sap.ui.define([
 
 		/**
 		 * Turns error into more readable text. Each error is displayed on new line.
-		 * @param {array|string} vErrors Errors provided by Ajv validation.
+		 * @param {array|string} vErrors Errors provided by CfWorkerJsonSchemaValidator's validation.
 		 * @returns {string} All formatted errors concatenated.
 		 */
 		formatSchemaErrors: function (vErrors) {
-
 			if (!vErrors) {
 				return "";
 			}
@@ -29,23 +28,11 @@ sap.ui.define([
 			}
 
 			return vErrors.reduce(function (sAccumulatedErrors, oError, i) {
-				var sError = (i + 1)  + " - " + oError.message;
+				var sError = (i + 1) + " - " + oError.error;
 
-				sError += ', path: "sap.card"';
+				sError += ' Path: "sap.card"' + oError.instanceLocation.slice(1); // removes #
 
-				if (oError.dataPath) {
-					sError += oError.dataPath;
-				}
-
-				if (oError.params.additionalProperty) {
-					sError += ", property: " + oError.params.additionalProperty;
-				}
-
-				if (oError.params.allowedValues) {
-					sError += ", allowedValues: " + oError.params.allowedValues.join(", ");
-				}
-
-				return sAccumulatedErrors + sError +  "\n";
+				return sAccumulatedErrors + sError + "\n";
 			}, "Schema Validation Error:\n");
 		}
 	};

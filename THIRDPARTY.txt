@@ -389,11 +389,11 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/markdown-it.js
 
-Component: ajv, version: 6.12.3
-Copyright: 2015-2017 Evgeny Poberezkin
+Component: @cfworker/json-schema, version: 1.6.8
+Copyright: 2020 Jeremy Danyow
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js
+Contained in: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js
 
 
 Library: sap.ui.mdc:

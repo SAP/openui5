@@ -79,10 +79,10 @@
             <copyright>2014 Vitaly Puzrin, Alex Kocharin</copyright>
             <pattern>sap/ui/integration/thirdparty/markdown-it.js</pattern>
         </lib>
-        <lib name="ajv" displayName="ajv" version="6.12.3" homepage="https://ajv.js.org/">
-            <license url="https://ajv.js.org/license.html" type="MIT"></license>
-            <copyright>2015-2017 Evgeny Poberezkin</copyright>
-            <pattern>../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js</pattern>
+        <lib name="@cfworker/json-schema" displayName="@cfworker/json-schema" version="1.6.8" homepage="https://cfworker.dev/">
+            <license url="https://github.com/cfworker/cfworker/blob/main/LICENSE.md" type="MIT"></license>
+            <copyright>2020 Jeremy Danyow</copyright>
+            <pattern>../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js</pattern>
         </lib>
     </thirdparty>
 

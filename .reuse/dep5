@@ -400,10 +400,10 @@ Copyright: 2014 Vitaly Puzrin, Alex Kocharin
 License: MIT
 Comment: these files belong to: Markdown-it
 
-Files: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/ajv/ajv.min.js
-Copyright: 2015-2017 Evgeny Poberezkin
+Files: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js
+Copyright: 2020 Jeremy Danyow
 License: MIT
-Comment: these files belong to: ajv
+Comment: these files belong to: @cfworker/json-schema
 
 
 # Library: sap.ui.mdc:
