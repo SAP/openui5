@@ -163,12 +163,13 @@ sap.ui.define([
 	 * @property {string} name The unique key of the item
 	 * @property {string} label The label describing the personalization item
 	 * @property {boolean} visible Defines the selection state of the personalization item
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 
 	/**
 	 * Sets the personalization state of the panel instance.
+	 *
+	 * @public
 	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>BasePanel</code>.
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */
@@ -178,6 +179,8 @@ sap.ui.define([
 	};
 
 	/**
+	 *
+	 * @public
 	 * @param {boolean} bOnlyActive Determines whether only the present items is included
 	 * @returns {Array} An array containing the personalization state that is currently displayed by the <code>BasePanel</code>
 	 */
@@ -194,8 +197,8 @@ sap.ui.define([
 	/**
 	 * Displays a <code>sap.m.MessageStrip</code> instance in the content area of the <code>BasePanel</code>.
 	 *
+	 * @public
 	 * @param {sap.m.MessageStrip} oStrip Instance of a sap.m.MessageStrip
-	 *
 	 * @returns {sap.m.p13n.BasePanel} The <code>BasePanel</code> instance
 	 */
 	BasePanel.prototype.setMessageStrip = function(oStrip){
@@ -217,6 +220,7 @@ sap.ui.define([
 	/**
 	 * Getter for the <code>messageStrip</code> aggregation.
 	 *
+	 * @public
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */
 	BasePanel.prototype.getMessageStrip = function(){
@@ -228,7 +232,7 @@ sap.ui.define([
 	 * the inner list. In addition, drag and drop will be enabled for the inner list control.
 	 *
 	 * @param {boolean} bEnableReorder Determines whether reordering is enabled
-	 *
+	 * @public
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */
 	BasePanel.prototype.setEnableReorder = function(bEnableReorder) {

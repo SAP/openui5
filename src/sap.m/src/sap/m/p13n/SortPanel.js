@@ -49,13 +49,13 @@ sap.ui.define([
 	 * @property {Boolean} sorted Defines the sorting state of the personalization item
 	 * @property {Boolean} descending Defines the descending state of the personalization item
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 
 	/**
 	 * Sets the personalization state of the panel instance.
 	 * @name sap.m.p13n.GroupPanel.setP13nData
+	 * @public
 	 * @method
 	 *
 	 * @param {sap.m.p13n.SortItem[]} aP13nData An array containing the personalization state

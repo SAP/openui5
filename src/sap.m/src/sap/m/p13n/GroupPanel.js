@@ -58,15 +58,14 @@ sap.ui.define([
 	 * @property {String} label The label describing the personalization item
 	 * @property {Boolean} grouped Defines the grouping state of the personalization item
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 
 	/**
 	 * Sets the personalization state of the panel instance.
 	 * @name sap.m.p13n.GroupPanel.setP13nData
 	 * @method
-	 *
+	 * @public
 	 * @param {sap.m.p13n.GroupItem[]} aP13nData An array containing the personalization state
 	 * @returns {sap.m.p13n.GroupPanel} The GroupPanel instance
 	 *
