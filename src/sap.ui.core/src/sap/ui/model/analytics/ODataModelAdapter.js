@@ -118,23 +118,10 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
 					"Register for the 'metadataLoaded' event of the ODataModel(v2) to know when the analytical extensions can be retrieved.";
 		}
 
-		var sAnnotationDoc = null;
-
-		if (arguments.length == 1) {
-			// hidden feature: load resource with additional analytical metadata
-			// defined in a JSON format
-			var sAnnotationDocURI = arguments[0];
-
-			// TODO: migration not possible. jQuery.sap.syncGetText is deprecated. Please use native <code>XMLHttpRequest</code>
-			var oResult = jQuery.sap.syncGetText(sAnnotationDocURI);
-			if (oResult.success) {
-				sAnnotationDoc = oResult.data;
-			}
-		}
-
 		// initialize API by loading the analytical OData model
 		try {
-			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(new odata4analytics.Model.ReferenceByModel(this), {sAnnotationJSONDoc: sAnnotationDoc});
+			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(
+				new odata4analytics.Model.ReferenceByModel(this));
 		} catch (exception) {
 			throw "Failed to instantiate analytical extensions for given OData model: " + exception.message;
 		}
