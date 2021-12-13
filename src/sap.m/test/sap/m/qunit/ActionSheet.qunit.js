@@ -794,7 +794,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Button should have ariaLabelledBy that points to itself and hidden text', function (assert) {
+	QUnit.test('Button should have ariaDescribedBy that points to hidden text', function (assert) {
 		var done = assert.async();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -821,7 +821,7 @@ sap.ui.define([
 		setTimeout(function () {
 			var aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
 
-			assert.strictEqual(aInvisibleTexts[0].isA("sap.ui.core.InvisibleText"), true, "Second label should be invisibleText");
+			assert.strictEqual(aInvisibleTexts[0].isA("sap.ui.core.InvisibleText"), true, "Button count label should be invisibleText");
 			assert.strictEqual(aInvisibleTexts[0].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 2]), "Text should be the index of the button");
 			assert.strictEqual(aInvisibleTexts[1].getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 2]), "Text should be the index of the button");
 
@@ -842,7 +842,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Removing a button and adding it again should not add wrong labels', function (assert) {
+	QUnit.test('Removing a button and adding it again should not add wrong descriptions', function (assert) {
 		var done = assert.async();
 		var oButton = new Button({
 			text: "Open ActionSheet",
@@ -851,7 +851,7 @@ sap.ui.define([
 			}
 		}),
 			button1 = new Button({ text: "Button1", id: "asButton1" }),
-			aInvisibleTexts, aButtonLabels,
+			aInvisibleTexts, aButtonDescriptions,
 			oActionSheet = new ActionSheet({
 				cancelButtonText: "Cancel",
 				title: "Title",
@@ -875,11 +875,11 @@ sap.ui.define([
 
 			setTimeout(function () {
 				aInvisibleTexts = oActionSheet.getAggregation("_invisibleAriaTexts");
-				aButtonLabels = button1.getAriaLabelledBy();
+				aButtonDescriptions = button1.getAriaDescribedBy();
 
 				assert.strictEqual(aInvisibleTexts.length, 1, "Invisible text should be one");
-				assert.strictEqual(aButtonLabels.length, 1, "Button should be labelled by 1 id");
-				assert.ok(aButtonLabels.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be lablled by a text from the invisibleTexts");
+				assert.strictEqual(aButtonDescriptions.length, 1, "Button should be described by 1 id");
+				assert.ok(aButtonDescriptions.indexOf(aInvisibleTexts[0].getId()) > -1, "The button should be described by a text from the invisibleTexts");
 				done();
 				oActionSheet.close();
 				oButton.destroy();
@@ -889,7 +889,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test('Inserting button should not missmatch Aria labels', function (assert) {
+	QUnit.test('Inserting button should not mismatch Aria descriptions', function (assert) {
 		//Setup
 		var done = assert.async();
 		var oButton = new Button({
@@ -917,7 +917,7 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			var sInvisibleTextId = oASButton2.getAriaLabelledBy()[0],
+			var sInvisibleTextId = oASButton2.getAriaDescribedBy()[0],
 				oInvisibleText = oCore.byId(sInvisibleTextId);
 
 			//Assert
@@ -957,7 +957,7 @@ sap.ui.define([
 		oButton.firePress();
 
 		setTimeout(function () {
-			var sInvisibleText = oCore.byId('asButton1').getAriaLabelledBy()[0],
+			var sInvisibleText = oCore.byId('asButton1').getAriaDescribedBy()[0],
 				oInvisibleTextObj = oCore.byId(sInvisibleText);
 
 			assert.strictEqual(oInvisibleTextObj.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [1, 1]), "Total amount of buttons should be 1");

@@ -508,17 +508,17 @@ sap.ui.define([
 			oInvisibleText = new InvisibleText(sButtonId + "-actionSheetHiddenText");
 
 			this.addAggregation("_invisibleAriaTexts", oInvisibleText, false);
-			oButton.addAriaLabelledBy(oInvisibleText.getId());
+			oButton.addAriaDescribedBy(oInvisibleText.getId());
 		}
 	};
 
 	ActionSheet.prototype._removeAriaHiddenTexts = function(oButton) {
-		oButton.getAriaLabelledBy().forEach(function(sId) {
+		oButton.getAriaDescribedBy().forEach(function(sId) {
 			var oControl = sap.ui.getCore().byId(sId);
 
 			if (oControl instanceof InvisibleText && sId.indexOf("actionSheetHiddenText") > -1) {
 				this.removeAggregation("_invisibleAriaTexts", oControl, false);
-				oButton.removeAriaLabelledBy(oControl);
+				oButton.removeAriaDescribedBy(oControl);
 				oControl.destroy();
 			}
 		}, this);
