@@ -630,4 +630,136 @@ sap.ui.define([
 		// assert
 		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
 	});
+
+	QUnit.module("StandardDynamicDateOption DateTime (single)", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.setOptions([]);
+
+			this.ddr.addOption("DATETIME");
+
+			this.ddr.placeAt("qunit-fixture");
+
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("DateTime text", function(assert) {
+		var oDateTimeOption = new StandardDynamicDateOption({ key: "DATETIME" }),
+			sText = oDateTimeOption.getText(this.ddr),
+			sOptionText = oRb.getText("DYNAMIC_DATE_DATETIME_TITLE");
+
+		assert.strictEqual(sText, sOptionText, "the text is correct");
+
+		oDateTimeOption.destroy();
+	});
+
+	QUnit.test("DateTime creating value help UI", function(assert) {
+		var oDateTimeOption = new StandardDynamicDateOption({ key: "DATETIME" }),
+			aControls;
+
+		// leave only one option
+		this.ddr.setOptions(["DATETIME"]);
+
+		aControls = oDateTimeOption.createValueHelpUI(this.ddr);
+
+		assert.strictEqual(aControls.length, 1, "control is only 1");
+		assert.ok(aControls[0].isA("sap.m.internal.DateTimePickerPopup"), "is a sap.m.internal.DateTimePickerPopup");
+
+		oDateTimeOption.destroy();
+	});
+
+	QUnit.test("DateTime - values update callback", function(assert) {
+		var oDateTimeOption = new StandardDynamicDateOption({ key: "DATETIME" }),
+			fnUpdateCallback = this.spy(),
+			aControls,
+			oCalendar,
+			oClocks;
+
+		aControls = oDateTimeOption.createValueHelpUI(this.ddr, fnUpdateCallback);
+		oCalendar = aControls[0].getCalendar();
+		oClocks = aControls[0].getClocks();
+
+		//simulate input interaction
+		oCalendar.fireSelect();
+
+		assert.strictEqual(fnUpdateCallback.callCount, 1, "value update callback was called on date selection");
+
+		//simulate radio button interaction
+		oClocks.getAggregation("_clocks")[0].fireChange();
+
+		assert.strictEqual(fnUpdateCallback.callCount, 2, "value update callback was called on time change");
+
+		oDateTimeOption.destroy();
+	});
+
+	QUnit.test("DateTime - getValueHelpOutput", function(assert) {
+		var oDateTimeOption = new StandardDynamicDateOption({ key: "DATETIME" }),
+			oDate = new Date(),
+			aControls,
+			oOutput;
+
+		aControls = oDateTimeOption.createValueHelpUI(this.ddr);
+
+		aControls[0].getCalendar().addSelectedDate(new DateRange({startDate: oDate}));
+		aControls[0].getClocks().setValue(oDate);
+
+		oOutput = oDateTimeOption.getValueHelpOutput(this.ddr);
+
+		assert.strictEqual(oOutput.operator, "DATETIME", "returns the correct option key");
+		assert.strictEqual(oOutput.values.length, 1, "returns the correct parameters");
+		assert.strictEqual(oOutput.values[0], oDate, "returns the correct parameters");
+
+		oDateTimeOption.destroy();
+	});
+
+	QUnit.test("getGroup and getGroupHeader - several options", function(assert) {
+		var oOption = new StandardDynamicDateOption({ key: "DATETIME" });
+
+		assert.strictEqual(oOption.getGroup(), 1, "the group is correct");
+		assert.strictEqual(oOption.getGroupHeader(), "Single Dates", "the group is correct");
+
+		oOption.destroy();
+	});
+
+	QUnit.test("toDates - DATETIME", function(assert) {
+		// arrange
+		var oDateFormatter = DateFormat.getDateTimeInstance(),
+			oDate = new Date(2021, 11, 20, 15, 50, 0),
+			oResult;
+
+		//act
+		oResult = DynamicDateUtil.toDates({ operator: "DATETIME", values: [oDate] });
+
+		// assert
+		assert.equal(oDateFormatter.format(oResult[0]), "Dec 20, 2021, 3:50:00 PM", "correct date/time");
+	});
+
+	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
+		// arrange
+		var oDateTimeOption = new StandardDynamicDateOption({ key: "DATETIME" }),
+			aValueHelpUITypes1, aValueHelpUITypes2;
+
+		// act
+		aValueHelpUITypes1 = oDateTimeOption.getValueHelpUITypes(this.ddr);
+
+		// assert
+		assert.strictEqual(aValueHelpUITypes1.length, 1, "there are UI types, describing the UI for some of the standard options");
+
+		// act
+		aValueHelpUITypes2 = oDateTimeOption.getValueHelpUITypes(this.ddr);
+
+		// assert
+		assert.equal(aValueHelpUITypes1[0], aValueHelpUITypes2[0], "UI types for the standard options are reused");
+
+		// act
+		oDateTimeOption.destroy();
+
+		// assert
+		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
+	});
+
 });

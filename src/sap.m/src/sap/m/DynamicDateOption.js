@@ -9,6 +9,7 @@ sap.ui.define([
 	'./StepInput',
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/DateRange',
+	'sap/m/DateTimePicker',
 	'sap/ui/unified/calendar/MonthPicker'],
 	function(
 		Element,
@@ -16,6 +17,7 @@ sap.ui.define([
 		StepInput,
 		Calendar,
 		DateRange,
+		DateTimePicker,
 		MonthPicker) {
 		"use strict";
 
@@ -94,10 +96,11 @@ sap.ui.define([
 		 * @public
 		 */
 		DynamicDateOption.prototype.createValueHelpUI = function(oControl, fnControlsUpdated) {
-			var oValue = oControl.getValue();
-			var aParams = this.getValueHelpUITypes(oControl);
-			var aControls = [];
-			var oInputControl;
+			var oValue = oControl.getValue(),
+				aParams = this.getValueHelpUITypes(oControl),
+				valueHelpUiTypesCount = aParams.length,
+				aControls = [],
+				oInputControl;
 
 			if (!oControl.aControlsByParameters) {
 				oControl.aControlsByParameters = {};
@@ -114,7 +117,7 @@ sap.ui.define([
 					);
 				}
 
-				oInputControl = this._createControl(i, aParams[i].getType(), oValue, fnControlsUpdated);
+				oInputControl = this._createControl(i, aParams[i].getType(), oValue, fnControlsUpdated, valueHelpUiTypesCount);
 
 				aControls.push(oInputControl);
 				oControl.aControlsByParameters[this.getKey()].push(oInputControl);
@@ -279,7 +282,7 @@ sap.ui.define([
 
 		// PRIVATE
 
-		DynamicDateOption.prototype._createControl = function(iIndex, sUIType, oValue, fnControlsUpdated) {
+		DynamicDateOption.prototype._createControl = function(iIndex, sUIType, oValue, fnControlsUpdated, valueHelpUiTypesCount) {
 			var oInputControl;
 
 			switch (sUIType) {
@@ -288,6 +291,12 @@ sap.ui.define([
 					break;
 				case "date":
 					oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated);
+					break;
+				case "datetime":
+					if (valueHelpUiTypesCount === 1) {
+						// Returns DateTimePicker PopupContent control (single "datetime" option)
+						oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+					}
 					break;
 				case "daterange":
 					oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated);
@@ -336,6 +345,53 @@ sap.ui.define([
 			}
 
 			return oControl;
+		};
+
+		/**
+		 * Returns DateTimePicker PopupContent control (single "datetime" option)
+		 */
+		DynamicDateOption.prototype._createDateTimeInnerControl = function(oValue, iIndex, fnControlsUpdated) {
+			var oControl = new DateTimePicker({
+					width: "100%"
+				}),
+				oPopupContent;
+
+			// DateTimePicker is created, but only its internal PopupContent control is used
+			oControl._createPopup();
+			oControl._createPopupContent();
+			oPopupContent = oControl._oPopupContent;
+			oPopupContent.setForcePhoneView(true);
+			oPopupContent.getCalendar().removeAllSelectedDates();
+
+			if (oValue && this.getKey() === oValue.operator) {
+				var oValueCopy = new Date(oValue.values[iIndex]); // a copy is used to prevent time setting on pressing Cancel button
+				oPopupContent.getCalendar().addSelectedDate(new DateRange({
+					startDate: oValueCopy
+				}));
+				oPopupContent.getClocks()._setTimeValues(oValueCopy);
+			}
+
+			if (fnControlsUpdated instanceof Function) {
+				// capture live clock changes and update the value
+				oPopupContent.getClocks().getAggregation("_clocks").forEach(function(oClock) {
+					oClock.attachChange(function(oEvent) {
+						fnControlsUpdated(this);
+					}.bind(this));
+				}.bind(this));
+
+				// capture live AM/PM changes and update the value
+				if (oPopupContent.getClocks().getAggregation("_buttonAmPm")) {
+					oPopupContent.getClocks().getAggregation("_buttonAmPm").attachSelectionChange(function(oEvent) {
+						fnControlsUpdated(this);
+					}.bind(this));
+				}
+
+				oPopupContent.getCalendar().attachSelect(function() {
+					fnControlsUpdated(this);
+				}, this);
+			}
+
+			return oPopupContent;
 		};
 
 		DynamicDateOption.prototype._createDateRangeControl = function(oValue, iIndex, fnControlsUpdated) {

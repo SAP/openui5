@@ -268,7 +268,8 @@ sap.ui.define([
 							"QUARTER4",
 							"THISYEAR",
 							"LASTYEAR",
-							"NEXTYEAR"
+							"NEXTYEAR",
+							"DATETIME"
 						]
 					}
 				},
@@ -553,11 +554,22 @@ sap.ui.define([
 		};
 
 		DynamicDateRange.prototype._getDatesLabelFormatter = function() {
-			if (!this._oDatesLabelFormatter) {
-				var oFormatOptions = Object.create(this._getFormatter()._dateFormatter.oFormatOptions);
-				oFormatOptions.interval = true;
+			var oFormatOptions,
+				aValueHelpTypes = this._oSelectedOption ? this._oSelectedOption.getValueHelpUITypes() : [],
+				sType = aValueHelpTypes && aValueHelpTypes.length ? aValueHelpTypes[0].getType() : "";
 
-				this._oDatesLabelFormatter = DateFormat.getInstance(oFormatOptions);
+			if (!this._oDatesLabelFormatter) {
+				switch (sType) {
+					case "datetime":
+						oFormatOptions = Object.create(this._getFormatter()._dateTimeFormatter.oFormatOptions);
+						oFormatOptions.interval = true;
+						this._oDatesLabelFormatter = DateFormat.getDateTimeInstance(oFormatOptions);
+						break;
+					default:
+						oFormatOptions = Object.create(this._getFormatter()._dateFormatter.oFormatOptions);
+						oFormatOptions.interval = true;
+						this._oDatesLabelFormatter = DateFormat.getInstance(oFormatOptions);
+				}
 			}
 
 			return this._oDatesLabelFormatter;
@@ -657,7 +669,7 @@ sap.ui.define([
 			if (!this._oPopup) {
 				this._oPopup = new ResponsivePopover(this.getId() + "-RP", {
 					//read the documentation about those two - the page addapts its size to its container...
-					contentHeight: '470px',
+					contentHeight: '512px',
 					contentWidth: _isCompact(this.getDomRef()) ? '272px' : '320px',
 					showCloseButton: false,
 					showArrow: false,
@@ -686,6 +698,7 @@ sap.ui.define([
 				}, this);
 
 				this._oPopup.attachAfterClose(function() {
+					this._oPreviousSelectedOption = this._oSelectedOption;
 					this._setFooterVisibility(false);
 					this.invalidate();
 				}, this);
@@ -698,7 +711,11 @@ sap.ui.define([
 
 				this._oPopup.setEndButton(new Button({
 					text: oResourceBundle.getText("DYNAMIC_DATE_RANGE_CANCEL"),
-					press: this._closePopup.bind(this)
+					press: function() {
+						this._oSelectedOption = this._oPreviousSelectedOption;
+						this._oDatesLabelFormatter = null;
+						this._closePopup();
+					}.bind(this)
 				}));
 
 				this._setFooterVisibility(false);
@@ -803,6 +820,11 @@ sap.ui.define([
 		DynamicDateRange.prototype._handleOptionPress = function(oEvent) {
 			var sOptionKey = oEvent.getSource().getOptionKey(),
 				oOption = DynamicDateUtil.getOption(sOptionKey);
+
+			if (this._oPreviousSelectedOption && this._oPreviousSelectedOption.getKey() !== sOptionKey)	{
+				this._oDatesLabelFormatter = null;
+			}
+			this._oPreviousSelectedOption = this._oSelectedOption;
 
 			this._oSelectedOption = oOption;
 			if (this._isFixedOption(oOption)) {
@@ -1027,7 +1049,7 @@ sap.ui.define([
 			if (oToPage === oOptionDetailsPage) {
 				this.aInputControls.forEach(function(oControl) {
 					if (jQuery(oControl.getDomRef()).firstFocusableDomRef()) {
-						oControl.addAriaLabelledBy(oToPage.getAggregation("_internalHeader"));
+						oControl.addAriaLabelledBy && oControl.addAriaLabelledBy(oToPage.getAggregation("_internalHeader"));
 
 						if (!this._isCalendarBasedControl(oControl) && oControl.addAriaDescribedBy) {
 							oControl.addAriaDescribedBy(oToPage.getFooter().getContent()[0]);
@@ -1276,13 +1298,17 @@ sap.ui.define([
 		// Overwrite the sap.m.StandardListItem.getNavigationControl method, in order to change the navigation icon URI
 		DynamicDateRangeListItem.prototype.getNavigationControl = function() {
 			var oNavControl = StandardListItem.prototype.getNavigationControl.apply(this, arguments),
-				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "FROM", "TO"].includes(this.getOptionKey()),
-				sNavgationIconURI = bDateOption
-					? IconPool.getIconURI("appointment-2")
-					: IconPool.getIconURI("slim-arrow-right");
+				sOptionKey = this.getOptionKey(),
+				aValueTypes = DynamicDateUtil.getOption(sOptionKey).getValueTypes(),
+				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "FROM", "TO"].includes(sOptionKey),
+				bDateTimeOption = aValueTypes && aValueTypes.length && aValueTypes[0] === "datetime",
+				sNavgationIconURI;
 
-			if (bDateOption) {
+			if (bDateOption || bDateTimeOption) {
 				oNavControl.addStyleClass("sapMDDRDateOption");
+				sNavgationIconURI = bDateOption ? IconPool.getIconURI("appointment-2") : IconPool.getIconURI("date-time");
+			} else {
+				sNavgationIconURI = IconPool.getIconURI("slim-arrow-right");
 			}
 
 			oNavControl.setSrc(sNavgationIconURI);

@@ -39,6 +39,7 @@ sap.ui.define([
 		var _dynamicParameterIndexes = {};
 		var aParameterTypesByStandardOptionKey = {
 			"DATE": ["date"],
+			"DATETIME": ["datetime"],
 			"DATERANGE": ["date", "date"],
 			"LASTDAYS": ["int"],
 			"LASTWEEKS": ["int"],
@@ -107,6 +108,7 @@ sap.ui.define([
 
 		DynamicDateFormat.oDefaultDynamicDateFormat = {
 			"date": {},
+			"datetime": {},
 			"month": { pattern: "MMMM" },
 			"int": {}
 		};
@@ -142,6 +144,7 @@ sap.ui.define([
 				};
 			});
 
+			oFormat._dateTimeFormatter = DateFormat.getDateTimeInstance(oFormat.oOriginalFormatOptions["datetime"]);
 			oFormat._monthFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["month"]);
 			oFormat._numberFormatter = NumberFormat.getInstance(oFormat.oOriginalFormatOptions["int"]);
 			oFormat._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -173,6 +176,8 @@ sap.ui.define([
 			} else if ((sKey === "LASTDAYS" || sKey === "NEXTDAYS") && aParams[0] === 0) {
 				sKey = "TODAY";
 				aParams = [];
+			} else if (sKey === "DATETIME") {
+				aParams[0] = this._dateTimeFormatter.format(oObj.values[0]);
 			}
 
 			var aFormattedParams = aParams.map(function(param) {
@@ -225,6 +230,9 @@ sap.ui.define([
 						case "date":
 							oVal = this._dateFormatter.parse(sCurrentMatch);
 							break;
+						case "datetime":
+								oVal = this._dateTimeFormatter.parse(sCurrentMatch);
+								break;
 						case "month":
 							var aMonthNames = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function(i) {
 								var oDate = new Date();

@@ -183,6 +183,10 @@ sap.ui.define([
 
 		metadata: {
 			library : "sap.m",
+			properties: {
+				/* This property can be set to force the Phone view even if the device is not a phone */
+				forcePhoneView : {type : "boolean", group : "Behavior", defaultValue : false}
+			},
 			aggregations: {
 				_switcher  : {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 				calendar   : {type: "sap.ui.core.Control", multiple: false},
@@ -206,7 +210,6 @@ sap.ui.define([
 					oRm.openEnd();
 					oRm.renderControl(oSwitcher);
 					oRm.close("div");
-
 				}
 
 				var oCalendar = oPopup.getCalendar();
@@ -254,7 +257,7 @@ sap.ui.define([
 				this.setAggregation("_switcher", oSwitcher, true);
 			}
 
-			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone") || this.getForcePhoneView()) {
 				oSwitcher.setVisible(true);
 				oSwitcher.setSelectedKey("Cal");
 			} else {
@@ -264,8 +267,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function() {
-
-			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone") || this.getForcePhoneView()) {
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
 				this._switchVisibility(sKey);
@@ -317,6 +319,7 @@ sap.ui.define([
 		getSpecialDates: function() {
 
 			return this._oDateTimePicker.getSpecialDates();
+
 		},
 
 		onkeydown: function(oEvent) {
