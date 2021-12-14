@@ -25,10 +25,12 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "appUnderTest.view",
+				"path": "appUnderTest.view",
 				"controlId": "app",
-				"controlAggregation": "pages"
+				"controlAggregation": "pages",
+				"async": true
 			},
 			"routes": [{
 				"pattern": "",
@@ -37,9 +39,9 @@
 			}],
 			"targets": {
 				"home": {
-					"viewId": "myMainView",
-					"viewName": "Main",
-					"viewLevel" : 1
+					"id": "myMainView",
+					"name": "Main",
+					"level" : 1
 				}
 			}
 		}

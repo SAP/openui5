@@ -81,7 +81,8 @@
 				"controlAggregation" : "pages",
 				"controlId" : "app",
 				"routerClass" : "sap.m.routing.Router",
-				"viewPath" : "sap.ui.core.sample.odata.v4.MusicArtists",
+				"type": "View",
+				"path" : "sap.ui.core.sample.odata.v4.MusicArtists",
 				"viewType" : "XML"
 			},
 			"routes" : [
@@ -103,16 +104,16 @@
 			],
 			"targets" : {
 				"masterList" : {
-					"viewName" : "MasterList",
-					"viewLevel" : 0
+					"name" : "MasterList",
+					"level" : 0
 				},
 				"objectPage": {
-					"viewName" : "ObjectPage",
-					"viewLevel" : 1
+					"name" : "ObjectPage",
+					"level" : 1
 				},
 				"publicationObjectPage": {
-					"viewName" : "PublicationObjectPage",
-					"viewLevel" : 2
+					"name" : "PublicationObjectPage",
+					"level" : 2
 				}
 			}
 		}

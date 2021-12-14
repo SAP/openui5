@@ -72,8 +72,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.view",
+				"path": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -88,11 +89,11 @@
 			}],
 			"targets": {
 				"employee": {
-					"viewName": "Employee",
-					"viewLevel" : 1
+					"name": "Employee",
+					"level" : 1
 				},
 				"notFound": {
-					"viewName": "NotFound",
+					"name": "NotFound",
 					"transition": "show"
 				}
 			}

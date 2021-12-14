@@ -66,8 +66,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.nav.view",
+				"path": "sap.ui.demo.nav.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -91,25 +92,25 @@
 			}],
 			"targets": {
 				"home": {
-					"viewId": "home",
-					"viewName": "Home",
-					"viewLevel" : 1
+					"id": "home",
+					"name": "Home",
+					"level" : 1
 				},
 				"notFound": {
-					"viewId": "notFound",
-					"viewName": "NotFound",
+					"id": "notFound",
+					"name": "NotFound",
 					"transition": "show"
 				},
 				"employees": {
-					"viewId": "employeeList",
-					"viewPath": "sap.ui.demo.nav.view.employee",
-					"viewName": "EmployeeList",
-					"viewLevel" : 2
+					"id": "employeeList",
+					"path": "sap.ui.demo.nav.view.employee",
+					"name": "EmployeeList",
+					"level" : 2
 				},
 				"employee": {
-					"viewId": "employee",
-					"viewName": "employee.Employee",
-					"viewLevel" : 3
+					"id": "employee",
+					"name": "employee.Employee",
+					"level" : 3
 				}
 			}
 		}

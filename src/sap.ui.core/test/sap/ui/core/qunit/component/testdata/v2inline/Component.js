@@ -90,8 +90,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 
 					"routing": {
 						"config": {
+							"type": "View",
 							"viewType" : "XML",
-							"viewPath": "NavigationWithoutMasterDetailPattern.view",
+							"path": "NavigationWithoutMasterDetailPattern.view",
 							"targetParent": "myViewId",
 							"targetControl": "app",
 							"targetAggregation": "pages",

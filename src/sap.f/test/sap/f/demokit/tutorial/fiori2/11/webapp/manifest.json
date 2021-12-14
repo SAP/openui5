@@ -29,8 +29,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.fiori2.view",
+				"path": "sap.ui.demo.fiori2.view",
 				"controlId": "flexibleColumnLayout",
 				"transition": "slide",
 				"bypassed": {
@@ -72,19 +73,19 @@
 			],
 			"targets": {
 				"master": {
-					"viewName": "Master",
+					"name": "Master",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detail": {
-					"viewName": "Detail",
+					"name": "Detail",
 					"controlAggregation": "midColumnPages"
 				},
 				"detailDetail": {
-					"viewName": "DetailDetail",
+					"name": "DetailDetail",
 					"controlAggregation": "endColumnPages"
 				},
 				"page2": {
-					"viewName": "AboutPage",
+					"name": "AboutPage",
 					"controlAggregation": "endColumnPages"
 				}
 			}

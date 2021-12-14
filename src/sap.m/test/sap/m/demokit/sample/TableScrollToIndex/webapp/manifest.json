@@ -22,8 +22,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.m.TableScrollToIndex.view",
+				"path": "sap.m.TableScrollToIndex.view",
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
@@ -55,11 +56,11 @@
 			],
 			"targets": {
 				"master": {
-					"viewName": "Master",
+					"name": "Master",
 					"controlAggregation": "beginColumnPages"
 				},
 				"detail": {
-					"viewName": "Detail",
+					"name": "Detail",
 					"controlAggregation": "midColumnPages"
 				}
 			}

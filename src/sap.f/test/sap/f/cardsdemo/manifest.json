@@ -65,8 +65,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.f.cardsdemo.view",
+				"path": "sap.f.cardsdemo.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -269,199 +270,199 @@
 			],
 			"targets": {
 				"main": {
-					"viewId": "main",
-					"viewName": "Main",
-					"viewLevel": 1
+					"id": "main",
+					"name": "Main",
+					"level": 1
 				},
 				"splitter": {
-					"viewId": "splitter",
-					"viewName": "Splitter",
-					"viewLevel": 1
+					"id": "splitter",
+					"name": "Splitter",
+					"level": 1
 				},
 				"notFound": {
-					"viewId": "notFound",
-					"viewName": "NotFound",
+					"id": "notFound",
+					"name": "NotFound",
 					"transition": "show"
 				},
 				"listContent": {
-					"viewId": "listContent",
-					"viewName": "ListContent",
-					"viewLevel": 1
+					"id": "listContent",
+					"name": "ListContent",
+					"level": 1
 				},
 				"calendarContent": {
-					"viewId": "calendarContent",
-					"viewName": "calendarContent",
-					"viewLevel": 1
+					"id": "calendarContent",
+					"name": "calendarContent",
+					"level": 1
 				},
 				"tableContent": {
-					"viewId": "tableContent",
-					"viewName": "TableContent",
-					"viewLevel": 1
+					"id": "tableContent",
+					"name": "TableContent",
+					"level": 1
 				},
 				"webPageContent": {
-					"viewId": "webPageContent",
-					"viewName": "WebPageContent",
-					"viewLevel": 1
+					"id": "webPageContent",
+					"name": "WebPageContent",
+					"level": 1
 				},
 				"analyticalContent": {
-					"viewId": "analyticalContent",
-					"viewName": "AnalyticalContent",
-					"viewLevel": 1
+					"id": "analyticalContent",
+					"name": "AnalyticalContent",
+					"level": 1
 				},
 				"defaultHeader": {
-					"viewId": "defaultHeader",
-					"viewName": "DefaultHeader",
-					"viewLevel": 1
+					"id": "defaultHeader",
+					"name": "DefaultHeader",
+					"level": 1
 				},
 				"numericHeader": {
-					"viewId": "numericHeader",
-					"viewName": "NumericHeader",
-					"viewLevel": 1
+					"id": "numericHeader",
+					"name": "NumericHeader",
+					"level": 1
 				},
 				"footer": {
-					"viewId": "footer",
-					"viewName": "Footer",
-					"viewLevel": 1
+					"id": "footer",
+					"name": "Footer",
+					"level": 1
 				},
 				"manifest": {
-					"viewId": "manifest",
-					"viewName": "Manifest",
-					"viewLevel": 1
+					"id": "manifest",
+					"name": "Manifest",
+					"level": 1
 				},
 				"componentCard": {
-					"viewId": "componentCard",
-					"viewName": "ComponentCard",
-					"viewLevel": 1
+					"id": "componentCard",
+					"name": "ComponentCard",
+					"level": 1
 				},
 				"sapfCard": {
-					"viewId": "sapfCard",
-					"viewName": "sapfCard",
-					"viewLevel": 1
+					"id": "sapfCard",
+					"name": "sapfCard",
+					"level": 1
 				},
 				"gridContainer": {
-					"viewId": "GridContainer",
-					"viewName": "GridContainer",
-					"viewLevel": 1
+					"id": "GridContainer",
+					"name": "GridContainer",
+					"level": 1
 				},
 				"gridContainerQuery": {
-					"viewId": "GridContainerQuery",
-					"viewName": "GridContainerQuery",
-					"viewLevel": 1
+					"id": "GridContainerQuery",
+					"name": "GridContainerQuery",
+					"level": 1
 				},
 				"navigationService": {
-					"viewId": "navigationService",
-					"viewName": "NavigationService",
-					"viewLevel": 1
+					"id": "navigationService",
+					"name": "NavigationService",
+					"level": 1
 				},
 				"dataService": {
-					"viewId": "dataService",
-					"viewName": "DataService",
-					"viewLevel": 1
+					"id": "dataService",
+					"name": "DataService",
+					"level": 1
 				},
 				"delayedLoading": {
-					"viewId": "delayedLoading",
-					"viewName": "DelayedLoading",
-					"viewLevel": 1
+					"id": "delayedLoading",
+					"name": "DelayedLoading",
+					"level": 1
 				},
 				"timelineContent": {
-					"viewId": "timelineContent",
-					"viewName": "timelineContent",
-					"viewLevel": 1
+					"id": "timelineContent",
+					"name": "timelineContent",
+					"level": 1
 				},
 				"adaptiveCard": {
-					"viewId": "adaptiveCard",
-					"viewName": "AdaptiveCard",
-					"viewLevel": 1
+					"id": "adaptiveCard",
+					"name": "AdaptiveCard",
+					"level": 1
 				},
 				"calendarCard": {
-					"viewId": "calendarCard",
-					"viewName": "CalendarCard",
-					"viewLevel": 1
+					"id": "calendarCard",
+					"name": "CalendarCard",
+					"level": 1
 				},
 				"objectContent": {
-					"viewId": "objectContent",
-					"viewName": "ObjectContent",
-					"viewLevel": 1
+					"id": "objectContent",
+					"name": "ObjectContent",
+					"level": 1
 				},
 				"analyticsCloudContent": {
-					"viewId": "analyticsCloudContent",
-					"viewName": "AnalyticsCloudContent",
-					"viewLevel": 1
+					"id": "analyticsCloudContent",
+					"name": "AnalyticsCloudContent",
+					"level": 1
 				},
 				"dnd3": {
-					"viewId": "dnd3",
-					"viewName": "Dnd3",
-					"viewLevel": 1
+					"id": "dnd3",
+					"name": "Dnd3",
+					"level": 1
 				},
 				"noHeaderNoContent": {
-					"viewId": "noHeaderNoContent",
-					"viewName": "NoHeaderNoContent",
-					"viewLevel": 1
+					"id": "noHeaderNoContent",
+					"name": "NoHeaderNoContent",
+					"level": 1
 				},
 				"minHeight": {
-					"viewId": "minHeight",
-					"viewName": "MinHeight",
-					"viewLevel": 1
+					"id": "minHeight",
+					"name": "MinHeight",
+					"level": 1
 				},
 				"dataMode": {
-					"viewId": "dataMode",
-					"viewName": "DataMode",
-					"viewLevel": 1
+					"id": "dataMode",
+					"name": "DataMode",
+					"level": 1
 				},
 				"translation": {
-					"viewId": "translation",
-					"viewName": "Translation",
-					"viewLevel": 1
+					"id": "translation",
+					"name": "Translation",
+					"level": 1
 				},
 				"bundle": {
-					"viewId": "bundle",
-					"viewName": "Bundle",
-					"viewLevel": 1
+					"id": "bundle",
+					"name": "Bundle",
+					"level": 1
 				},
 				"manifestReady": {
-					"viewId": "manifestReady",
-					"viewName": "ManifestReady",
-					"viewLevel": 1
+					"id": "manifestReady",
+					"name": "ManifestReady",
+					"level": 1
 				},
 				"badges": {
-					"viewId": "badges",
-					"viewName": "Badges",
-					"viewLevel": 1
+					"id": "badges",
+					"name": "Badges",
+					"level": 1
 				},
 				"preview": {
-					"viewId": "preview",
-					"viewName": "Preview",
-					"viewLevel": 1
+					"id": "preview",
+					"name": "Preview",
+					"level": 1
 				},
 				"filters": {
-					"viewId": "filters",
-					"viewName": "Filters",
-					"viewLevel": 1
+					"id": "filters",
+					"name": "Filters",
+					"level": 1
 				},
 				"extensionAndHost": {
-					"viewId": "extensionAndHost",
-					"viewName": "ExtensionAndHost",
-					"viewLevel": 1
+					"id": "extensionAndHost",
+					"name": "ExtensionAndHost",
+					"level": 1
 				},
 				"parameters": {
-					"viewId": "parameters",
-					"viewName": "Parameters",
-					"viewLevel": 1
+					"id": "parameters",
+					"name": "Parameters",
+					"level": 1
 				},
 				"manifestResolver": {
-					"viewId": "manifestResolver",
-					"viewName": "ManifestResolver",
-					"viewLevel": 1
+					"id": "manifestResolver",
+					"name": "ManifestResolver",
+					"level": 1
 				},
 				"csrfToken": {
-					"viewId": "csrfToken",
-					"viewName": "CsrfToken",
-					"viewLevel": 1
+					"id": "csrfToken",
+					"name": "CsrfToken",
+					"level": 1
 				},
 				"submitAction": {
-					"viewId": "submitAction",
-					"viewName": "SubmitAction",
-					"viewLevel": 1
+					"id": "submitAction",
+					"name": "SubmitAction",
+					"level": 1
 				}
 			}
 		}

@@ -88,8 +88,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.worklist.view",
+				"path": "sap.ui.demo.worklist.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
@@ -113,24 +114,24 @@
 
 			"targets": {
 				"worklist": {
-					"viewName": "Worklist",
-					"viewId": "worklist",
-					"viewLevel": 1,
+					"name": "Worklist",
+					"id": "worklist",
+					"level": 1,
 					"title": "{i18n>worklistViewTitle}"
 				},
 				"object": {
-					"viewName": "Object",
-					"viewId": "object",
-					"viewLevel": 2,
+					"name": "Object",
+					"id": "object",
+					"level": 2,
 					"title": "{i18n>objectViewTitle}"
 				},
 				"objectNotFound": {
-					"viewName": "ObjectNotFound",
-					"viewId": "objectNotFound"
+					"name": "ObjectNotFound",
+					"id": "objectNotFound"
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}

@@ -71,8 +71,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.walkthrough.view",
+				"path": "sap.ui.demo.walkthrough.view",
 				"controlId": "app",
 				"controlAggregation": "pages"
 			},
@@ -90,12 +91,12 @@
 			],
 			"targets": {
 				"overview": {
-					"viewId": "overview",
-					"viewName": "Overview"
+					"id": "overview",
+					"name": "Overview"
 				},
 				"detail": {
-					"viewId": "detail",
-					"viewName": "Detail"
+					"id": "detail",
+					"name": "Detail"
 				}
 			}
 		}

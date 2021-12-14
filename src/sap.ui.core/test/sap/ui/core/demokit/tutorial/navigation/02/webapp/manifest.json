@@ -66,8 +66,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.nav.view",
+				"path": "sap.ui.demo.nav.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -80,9 +81,9 @@
 			}],
 			"targets": {
 				"home": {
-					"viewId": "home",
-					"viewName": "Home",
-					"viewLevel" : 1
+					"id": "home",
+					"name": "Home",
+					"level" : 1
 				}
 			}
 		}

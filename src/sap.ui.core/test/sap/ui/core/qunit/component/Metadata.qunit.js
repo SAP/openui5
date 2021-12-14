@@ -112,7 +112,8 @@ sap.ui.define([
 				"routing": {
 					"config": {
 						"viewType" : "XML",
-						"viewPath": "NavigationWithoutMasterDetailPattern.view",
+						"path": "NavigationWithoutMasterDetailPattern.view",
+						"type": "View",
 						"targetParent": "myViewId",
 						"targetControl": "app",
 						"targetAggregation": "pages",
@@ -256,7 +257,8 @@ sap.ui.define([
 							"targetAggregation": "pages",
 							"targetControl": "app",
 							"targetParent": "myViewId",
-							"viewPath": "NavigationWithoutMasterDetailPattern.view",
+							"path": "NavigationWithoutMasterDetailPattern.view",
+							"type": "View",
 							"viewType": "XML"
 						},
 						"routes": [

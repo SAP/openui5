@@ -37,8 +37,9 @@
 
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.core.samples.formatting.view",
+				"path": "sap.ui.core.samples.formatting.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"transition": "slide",
@@ -55,9 +56,9 @@
 
 			"targets": {
 				"choose": {
-					"viewId": "choose",
-					"viewName": "ChooseFormatOptions",
-					"viewLevel": 1
+					"id": "choose",
+					"name": "ChooseFormatOptions",
+					"level": 1
 				}
 			}
 

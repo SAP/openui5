@@ -86,8 +86,9 @@
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
+				"type": "View",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.iconexplorer.view",
+				"path": "sap.ui.demo.iconexplorer.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
@@ -116,18 +117,18 @@
 
 			"targets": {
 				"home": {
-					"viewName": "Home",
-					"viewId": "home",
-					"viewLevel": 1
+					"name": "Home",
+					"id": "home",
+					"level": 1
 				},
 				"overview": {
-					"viewName": "Overview",
-					"viewId": "overview",
-					"viewLevel": 2
+					"name": "Overview",
+					"id": "overview",
+					"level": 2
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"name": "NotFound",
+					"id": "notFound"
 				}
 			}
 		}
