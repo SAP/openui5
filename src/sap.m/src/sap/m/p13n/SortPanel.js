@@ -54,12 +54,12 @@ sap.ui.define([
 
 	/**
 	 * Sets the personalization state of the panel instance.
-	 * @name sap.m.p13n.GroupPanel.setP13nData
+	 * @name sap.m.p13n.SortPanel.setP13nData
 	 * @public
-	 * @method
+	 * @function
 	 *
-	 * @param {sap.m.p13n.SortItem[]} aP13nData An array containing the personalization state
-	 * @returns {sap.m.p13n.GroupPanel} The GroupPanel instance
+	 * @param {sap.m.p13n.SortItem} aP13nData An array containing the personalization state
+	 * @returns {sap.m.p13n.SortPanel} The SortPanel instance
 	 *
 	 */
 

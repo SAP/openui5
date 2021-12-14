@@ -170,7 +170,7 @@ sap.ui.define([
 	 * Sets the personalization state of the panel instance.
 	 *
 	 * @public
-	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>BasePanel</code>.
+	 * @param {sap.m.p13n.Item} aP13nData An array containing the personalization state that is represented by the <code>BasePanel</code>.
 	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
 	 */
 	BasePanel.prototype.setP13nData = function(aP13nData) {
