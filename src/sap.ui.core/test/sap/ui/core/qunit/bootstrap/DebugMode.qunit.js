@@ -37,7 +37,7 @@
 	 *
 	 * The precondition should always run, either with method 'todo' to document
 	 * what precondtion was not met or with 'test' to document the findings.
-	 * But due to limitations of qunit-junit/qunit-callback which both can't handle 'todo',
+	 * But due to restrictions of qunit-junit/qunit-callback which both can't handle 'todo',
 	 * reporting currently is also skipped when preconditions are not met.
 	 */
 	var precondition = 'skip'; // TODO should be 'todo'

@@ -197,7 +197,7 @@ sap.ui.define([
 	 * Noteworthy details:
 	 * <ul>
 	 * <li>whitespace is mandatory around a '-' or '+' operator and optional otherwise</li>
-	 * <li>parentheses are accepted but not checked for being balanced (a limitation of regexp based checks)</li>
+	 * <li>parentheses are accepted but not checked for being balanced (a restriction of regexp based checks)</li>
 	 * <li>semantic constraints like type restrictions are not checked</li>
 	 * </ul>
 	 *
@@ -889,7 +889,7 @@ sap.ui.define([
 	 * Noteworthy details:
 	 * <ul>
 	 * <li>whitespace is mandatory around a '-' or '+' operator and optional otherwise</li>
-	 * <li>parentheses are accepted but not checked for being balanced (a limitation of regexp based checks)</li>
+	 * <li>parentheses are accepted but not checked for being balanced (a restriction of regexp based checks)</li>
 	 * <li>semantic constraints like type restrictions are not checked</li>
 	 * </ul>
 	 *

@@ -2971,9 +2971,9 @@
 	 * </ul>
 	 *
 	 *
-	 * <h3>Limitations, Design Considerations</h3>
+	 * <h3>Restrictions, Design Considerations</h3>
 	 * <ul>
-	 * <li><b>Limitation</b>: as dependency management is not supported for Non-UI5 modules, the only way
+	 * <li><b>Restriction</b>: as dependency management is not supported for Non-UI5 modules, the only way
 	 *     to ensure proper execution order for such modules currently is to rely on the order in the
 	 *     dependency array. Obviously, this only works as long as <code>sap.ui.define</code> uses
 	 *     synchronous loading. It will be enhanced when asynchronous loading is implemented.</li>
@@ -3057,7 +3057,7 @@
 	 * @param {string|string[]} vDependencies Dependency (dependencies) to resolve
 	 * @param {function} [fnCallback] Callback function to execute after resolving an array of dependencies
 	 * @param {function} [fnErrback] Callback function to execute if an error was detected while loading the
-	 *                      dependencies or executing the factory function. Note that due to browser limitations
+	 *                      dependencies or executing the factory function. Note that due to browser restrictions
 	 *                      not all errors will be reported via this callback. In general, module loading is
 	 *                      designed for the non-error case. Error handling is not complete.
 	 * @returns {any|undefined} A single module export value (sync probing variant) or undefined (async loading variant)
