@@ -10,8 +10,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var NavigationAction = BaseAction.extend("sap.ui.integration.cards.actions.NavigationAction");
+	var NavigationAction = BaseAction.extend("sap.ui.integration.cards.actions.NavigationAction", {
+		metadata: {
+			library: "sap.ui.integration"
+		}
+	});
 
+	/**
+	 * @override
+	 */
 	NavigationAction.prototype.execute = function () {
 		var oResolvedConfig = this.getResolvedConfig();
 

@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/cards/actions/CustomAction",
+	"sap/ui/integration/cards/actions/DateChangeAction",
+	"sap/ui/integration/cards/actions/MonthChangeAction",
 	"sap/ui/integration/cards/actions/SubmitAction",
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/util/BindingHelper",
@@ -17,6 +19,8 @@ sap.ui.define([
 	Log,
 	ManagedObject,
 	CustomAction,
+	DateChangeAction,
+	MonthChangeAction,
 	SubmitAction,
 	NavigationAction,
 	BindingHelper,
@@ -426,6 +430,7 @@ sap.ui.define([
 
 			if (oHandler) {
 				oHandler.execute();
+				oHandler.destroy();
 			}
 		}
 
@@ -477,17 +482,23 @@ sap.ui.define([
 	CardActions._createHandler = function (mConfig) {
 		var _ActionClass = null;
 
-		// TODO: There are some actions like "MonthChange" that are not type of the enum. Add them
 		switch (mConfig.action.type) {
 			case CardActionType.Custom:
 				_ActionClass = CustomAction; break;
+			case CardActionType.DateChange:
+				_ActionClass = DateChangeAction; break;
+			case CardActionType.MonthChange:
+				_ActionClass = MonthChangeAction; break;
 			case CardActionType.Navigation:
 				_ActionClass = NavigationAction; break;
 			case CardActionType.Submit:
 				_ActionClass = SubmitAction; break;
 			default:
-				// TODO: Log error for unknown type
-				break;
+				Log.error(
+					"Unknown action type '" + mConfig.action.type + "'. Expected one of " + Object.values(CardActionType).join(", "),
+					null,
+					"sap.ui.integration.widgets.Card"
+				);
 		}
 
 		if (_ActionClass) {

@@ -8,8 +8,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var CustomAction = BaseAction.extend("sap.ui.integration.cards.actions.CustomAction");
+	var CustomAction = BaseAction.extend("sap.ui.integration.cards.actions.CustomAction", {
+		metadata: {
+			library: "sap.ui.integration"
+		}
+	});
 
+	/**
+	 * @override
+	 */
 	CustomAction.prototype.execute = function () {
 		var mConfig = this.getConfig();
 

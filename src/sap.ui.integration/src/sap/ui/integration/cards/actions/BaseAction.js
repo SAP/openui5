@@ -14,6 +14,7 @@ sap.ui.define([
 
 	var BaseAction = ManagedObject.extend("sap.ui.integration.cards.actions.BaseAction", {
 		metadata: {
+			library: "sap.ui.integration",
 			properties: {
 				/**
 				 * Configuration of the action from the manifest
@@ -45,6 +46,11 @@ sap.ui.define([
 			}
 		}
 	});
+
+	/**
+	 * Executes the default action
+	 */
+	BaseAction.prototype.execute = function () { };
 
 	/**
 	 * Resolves bindings in the configuration to the source

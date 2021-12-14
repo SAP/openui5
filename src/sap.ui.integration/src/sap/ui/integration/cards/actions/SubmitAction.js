@@ -10,8 +10,15 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SubmitAction = BaseAction.extend("sap.ui.integration.cards.actions.SubmitAction");
+	var SubmitAction = BaseAction.extend("sap.ui.integration.cards.actions.SubmitAction", {
+		metadata: {
+			library: "sap.ui.integration"
+		}
+	});
 
+	/**
+	 * @override
+	 */
 	SubmitAction.prototype.execute = function () {
 		var oSource = this.getSourceInstance();
 
