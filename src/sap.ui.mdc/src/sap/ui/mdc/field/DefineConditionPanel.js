@@ -275,6 +275,7 @@ sap.ui.define([
 
 			aConditions.splice(iIndex, 1);
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+			_checkInvalidInput.call(this, undefined); // check if invalid condition was removed
 
 			this.fireConditionProcessed();
 		},
@@ -348,6 +349,21 @@ sap.ui.define([
 
 		onSelectChange: function(oEvent) {
 			var oField = oEvent.getSource();
+			var oCondition = oField.getBindingContext("$this").getObject();
+			var aConditions = this.getConditions();
+			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+			if (iIndex >= 0) {
+				oCondition = aConditions[iIndex]; // to get right instance
+			}
+
+			if (!oEvent.getParameter("valid")) { // if Operator in error state -> don't update values
+				oCondition.invalid = true;
+				this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+				oField._sOldKey = oField.getValue();
+				_checkInvalidInput.call(this, true); // set imediately, not only if row left
+				return;
+			}
+
 			var sKey = oField.getValue();
 			var sOldKey = oField._sOldKey;
 			var oOperator = FilterOperatorUtil.getOperator(sKey); // operator must exist as List is created from valid operators
@@ -355,16 +371,11 @@ sap.ui.define([
 
 			if (oOperator && oOperatorOld) {
 				var bUpdate = false;
-				var oCondition = oField.getBindingContext("$this").getObject();
-				var aConditions = this.getConditions();
-				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 
 				if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static ) {
 					// type changed -> remove entered value (only if changed by user in Select)
 					// As Static text updated on condition change, don't delete it here.
 					if (iIndex >= 0) {
-						oCondition = aConditions[iIndex]; // to get right instance
-
 						oCondition.values.forEach(function(value, index) {
 							if (value !== null) {
 								if ((oOperator.valueTypes[index] === Operator.ValueType.Self && oOperatorOld.valueTypes[index] === Operator.ValueType.SelfNoParse) ||
@@ -389,8 +400,6 @@ sap.ui.define([
 
 				if (iIndex >= 0 && oOperator.valueDefaults) {
 					// sets the default values for the operator back to default, if the condition is inital or the value is null
-					oCondition = aConditions[iIndex];
-
 					oCondition.values.forEach(function(value, index) {
 						if ((oCondition.isInitial && value !== oOperator.valueDefaults[index]) ||  (value === null)) {
 							// set the default value and mark the condition as initial
@@ -405,7 +414,6 @@ sap.ui.define([
 				if (!oOperator.valueTypes[1] && oOperatorOld.valueTypes[1]) {
 					// switch from BT to EQ -> remove second value even if filled
 					if (iIndex >= 0) {
-						oCondition = aConditions[iIndex]; // to get right instance
 						if (oCondition.values.length > 1 && oCondition.values[1]) {
 							oCondition.values = oCondition.values.slice(0, 1);
 							bUpdate = true;
@@ -413,9 +421,14 @@ sap.ui.define([
 					}
 				}
 
+				if (oCondition.invalid) {
+					delete oCondition.invalid;
+					bUpdate = true;
+				}
 				if (bUpdate) {
 					FilterOperatorUtil.checkConditionsEmpty(oCondition, _getOperators.call(this));
 					this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+					_checkInvalidInput.call(this, false); // set imediately, not only if row left
 				}
 			}
 
@@ -672,7 +685,7 @@ sap.ui.define([
 			oControl = new Field(sId, {
 				delegate: _getDelegate.call(this),
 				value: { path: "$this>", type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
-				editMode: {path: "$condition>operator", formatter: _getEditModeFromOperator},
+				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
 				width: "100%"
 			});
 		}
@@ -1208,10 +1221,12 @@ sap.ui.define([
 
 	}
 
-	function _getEditModeFromOperator(sOperator) {
+	function _getEditModeFromOperator(sOperator, bInvalid) {
 
 		if (!sOperator) {
 			return EditMode.Display;
+		} else if (bInvalid) {
+			return EditMode.ReadOnly;
 		}
 
 		var oOperator = FilterOperatorUtil.getOperator(sOperator);
@@ -1307,6 +1322,10 @@ sap.ui.define([
 		if (oBindingContext) {
 			oOperatorField.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
 		}
+		if (oOperatorField.getValueState() === ValueState.Error && !oCondition.invalid) {
+			// remove error and show right value
+			oOperatorField.setValue(oOperatorField.getValue());
+		}
 		iIndex++;
 
 		var oRemoveButton = aGridContent[iIndex];
@@ -1321,7 +1340,7 @@ sap.ui.define([
 		var oValue0Field = aGridContent[iIndex];
 		var oValue1Field;
 		if (oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
-			var sEditMode = _getEditModeFromOperator(oCondition.operator);
+			var sEditMode = _getEditModeFromOperator(oCondition.operator, oCondition.invalid);
 			if (oCondition.values.length > 0 || sEditMode === EditMode.Display) { // as static text for display controls is created after update
 				oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/0/");
 				oValue0Field.setBindingContext(oValueBindingContext, "$this");
@@ -1419,9 +1438,9 @@ sap.ui.define([
 		var oField2; // also update second Field if exist
 		var oCondition = oBindingContext.getObject();
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-		var bInvalid = false;
+		var bInvalid = !!oCondition.invalid;
 
-		if (oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+		if (!bInvalid && oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
 			// check only not static operators
 			if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1]) {
 				// two fields exist
@@ -1465,14 +1484,26 @@ sap.ui.define([
 
 	function _checkInvalidInput(bInvalid) {
 
+		var i = 0;
+
 		if (bInvalid !== true) {
 			// if already known that invalid input exist -> no additional check needed
+			var aConditions = this.getConditions();
+			for (i = 0; i < aConditions.length; i++) {
+				if (aConditions[i].invalid) {
+					bInvalid = true;
+					break;
+				}
+			}
+		}
+
+		if (bInvalid !== true) {
 			var oGrid = this.byId("conditions");
 			var aContent = oGrid.getContent();
 			bInvalid = false;
-			for (var i = 0; i < aContent.length; i++) {
+			for (i = 0; i < aContent.length; i++) {
 				var oControl = aContent[i];
-				if (oControl instanceof Field && oControl.hasOwnProperty("_iValueIndex") && oControl.getValueState() === ValueState.Error) {
+				if (oControl.hasOwnProperty("_iValueIndex") && oControl.getValueState && oControl.getValueState() === ValueState.Error) {
 					bInvalid = true;
 					break;
 				}

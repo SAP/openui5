@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInput", // don't want to test async loading in Field here
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
+	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/Boolean",
@@ -42,6 +43,7 @@ sap.ui.define([
 		FieldInput,
 		BaseType,
 		ConditionValidated,
+		EditMode,
 		StringType,
 		DateType,
 		BooleanType,
@@ -438,6 +440,69 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("change condition operator invalid", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		var fnDone = assert.async();
+		setTimeout(function () { // wait for rendering
+			oCore.applyChanges();
+			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			oOperatorField.setDOMValue("XXX");
+			oOperatorField.setValue("XXX");
+			oOperatorField.fireChange({value: "XXX"}); // fake wrong input
+
+			setTimeout(function () { // as model update is async
+				oCore.applyChanges();
+				var aConditions = oDefineConditionPanel.getConditions();
+				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+				assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
+
+				var oGrid = oCore.byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+				var oField1 = aContent[2];
+				var oField2 = aContent[3];
+
+				assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
+				assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+				assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+				assert.equal(oField1 && oField1.getEditMode(), EditMode.ReadOnly, "Field1 is readonly");
+				assert.equal(oField2 && oField2.getEditMode(), EditMode.ReadOnly, "Field2 is readonly");
+				assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
+
+				oOperatorField.setValue("BT");
+				oOperatorField.fireChange({value: "BT"}); // fake right input
+
+				setTimeout(function () { // as model update is async
+					oCore.applyChanges();
+					aConditions = oDefineConditionPanel.getConditions();
+					assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
+					assert.deepEqual(aConditions[0].values, ["A", "Z"], "Values set on condition");
+
+					aContent = oGrid.getContent();
+					oField1 = aContent[2];
+					oField2 = aContent[3];
+
+					assert.equal(aContent.length, 6, "One row with two fields created - Grid contains 6 controls");
+					assert.ok(oField1 && oField1.isA("sap.ui.mdc.Field"), "Field1 is mdc Field");
+					assert.ok(oField2 && oField2.isA("sap.ui.mdc.Field"), "Field2 is mdc Field");
+					assert.equal(oField1 && oField1.getEditMode(), EditMode.Editable, "Field1 is editable");
+					assert.equal(oField2 && oField2.getEditMode(), EditMode.Editable, "Field2 is editable");
+					assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
+
+					fnDone();
+				}, 0);
+				}, 0);
+		}, 0);
+
+	});
+
 	QUnit.test("validate condition on user input", function(assert) {
 
 		oModel.setData({
@@ -636,7 +701,7 @@ sap.ui.define([
 
 			// switch operator
 			oOperatorField.setValue("BT");
-			oOperatorField.fireChange({value: "BT"}); // fake item select
+			oOperatorField.fireChange({value: "BT", valid: true}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
@@ -656,7 +721,7 @@ sap.ui.define([
 
 				// switch operator back
 				oOperatorField.setValue("MyOperator");
-				oOperatorField.fireChange({value: "MyOperator"}); // fake item select
+				oOperatorField.fireChange({value: "MyOperator", valid: true}); // fake item select
 
 				setTimeout(function () { // as model update is async
 					oCore.applyChanges();
@@ -751,6 +816,7 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			var oControl = aContent && aContent.length > 0 && aContent[0];
 
+			assert.equal(oField && oField.getEditMode(), EditMode.Display, "Field is in display mode");
 			assert.ok(oControl.isA("sap.m.Text"), "Field uses Text");
 			var oType = oField.getBindingInfo("value").type;
 			assert.ok(oType instanceof StringType, "Type of Field binding");
@@ -799,7 +865,7 @@ sap.ui.define([
 			var aContent = oGrid.getContent();
 			var oOperatorField = aContent[0];
 			oOperatorField.setValue("TODAY");
-			oOperatorField.fireChange({value: "TODAY"}); // fake item select
+			oOperatorField.fireChange({value: "TODAY", valid: true}); // fake item select
 
 			setTimeout(function () { // as model update is async
 				oCore.applyChanges();
@@ -816,7 +882,7 @@ sap.ui.define([
 				assert.equal(oField.getValue(), oDateType.formatValue(new Date(), "string"), "Text");
 
 				oOperatorField.setValue("NEXTDAYS");
-				oOperatorField.fireChange({value: "NEXTDAYS"}); // fake item select
+				oOperatorField.fireChange({value: "NEXTDAYS", valid: true}); // fake item select
 
 				setTimeout(function () { // as model update is async
 					oCore.applyChanges();
@@ -835,7 +901,7 @@ sap.ui.define([
 					oControl.fireChange({value: "5"}); //fake input
 					setTimeout(function () { // as model update is async
 						oOperatorField.setValue("EQ");
-						oOperatorField.fireChange({value: "EQ"}); // fake item select
+						oOperatorField.fireChange({value: "EQ", valid: true}); // fake item select
 
 						setTimeout(function () { // as model update is async
 							oCore.applyChanges();
@@ -851,7 +917,7 @@ sap.ui.define([
 							assert.notOk(oField.getValue(), "no Value");
 
 							oOperatorField.setValue("TODAYFROMTO");
-							oOperatorField.fireChange({value: "TODAYFROMTO"}); // fake item select
+							oOperatorField.fireChange({value: "TODAYFROMTO", valid: true}); // fake item select
 
 							setTimeout(function () { // as model update is async
 								oCore.applyChanges();
@@ -880,7 +946,7 @@ sap.ui.define([
 
 								setTimeout(function () { // as model update is async
 									oOperatorField.setValue("BT");
-									oOperatorField.fireChange({value: "BT"}); // fake item select
+									oOperatorField.fireChange({value: "BT", valid: true}); // fake item select
 
 									setTimeout(function () { // as model update is async
 										oCore.applyChanges();
