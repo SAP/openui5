@@ -109,32 +109,32 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 
 	/* text color */
 	QUnit.test("Should set the theme base class \"sapThemeText\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText", "color", "sapUiText");
+		cssClassTestCase.call(this, assert, "sapThemeText", "color", "sapUiBaseText");
 	});
 
 	QUnit.test("Should set the theme base class \"sapThemeText-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asColor", "color", "sapUiText");
+		cssClassTestCase.call(this, assert, "sapThemeText-asColor", "color", "sapUiBaseText");
 	});
 
 	QUnit.test("Should set the theme base class \"sapThemeText-asBackgroundColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asBackgroundColor", "background-color", "sapUiText");
+		cssClassTestCase.call(this, assert, "sapThemeText-asBackgroundColor", "background-color", "sapUiBaseText");
 	});
 
 	QUnit.test("Should set the theme base class \"sapThemeText-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asBorderColor", "border-color", "sapUiText");
+		cssClassTestCase.call(this, assert, "sapThemeText-asBorderColor", "border-color", "sapUiBaseText");
 	});
 
 	QUnit.test("Should set the theme base class \"sapThemeText-asOutlineColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeText-asOutlineColor", "outline-color", "sapUiText");
+		cssClassTestCase.call(this, assert, "sapThemeText-asOutlineColor", "outline-color", "sapUiBaseText");
 	});
 
 	/* text color inverted */
 	QUnit.test("Should set the theme base class \"sapThemeTextInverted\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeTextInverted", "color", "sapUiTextInverted");
+		cssClassTestCase.call(this, assert, "sapThemeTextInverted", "color", "sapUiContentContrastTextColor");
 	});
 
 	QUnit.test("Should set the theme base class \"sapThemeTextInverted-asColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeTextInverted-asColor", "color", "sapUiTextInverted");
+		cssClassTestCase.call(this, assert, "sapThemeTextInverted-asColor", "color", "sapUiContentContrastTextColor");
 	});
 
 	/* background color */
@@ -198,11 +198,11 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 
 	/* border color */
 	QUnit.test("Should set the theme base class \"sapThemeForegroundBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeForegroundBorderColor", "border-color", "sapContent_ForegroundBorderColor");
+		cssClassTestCase.call(this, assert, "sapThemeForegroundBorderColor", "border-color", "sapUiContentForegroundBorderColor");
 	});
 
 	QUnit.test("Should set the theme base class \"sapThemeForegroundBorderColor-asBorderColor\" correctly", function (assert) {
-		cssClassTestCase.call(this, assert, "sapThemeForegroundBorderColor-asBorderColor", "border-color", "sapContent_ForegroundBorderColor");
+		cssClassTestCase.call(this, assert, "sapThemeForegroundBorderColor-asBorderColor", "border-color", "sapUiContentForegroundBorderColor");
 	});
 
 });
