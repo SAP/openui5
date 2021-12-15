@@ -6,20 +6,21 @@ describe("sap.m.MenuButton", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.MenuButton';
 
 	it('has adequate initial width', function() {
-		var oMenuButton3 = element(by.id("mb3")),
+		var oPage = element(by.id("page0")),
 			oMenuButton4 = element(by.id("mb4"));
 
 		oMenuButton4.click();
 
-		expect(takeScreenshot(oMenuButton3)).toLookAs('menubutton_initial_width_disabled_items');
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_initial_width_disabled_items');
 	});
 
 	it('MenuButton correctly opens and focus a menu with enabled items', function() {
-		var oMenuButton = element(by.id("mb-toolbar"));
+		var oPage = element(by.id("page0")),
+			oMenuButton = element(by.id("mb-toolbar"));
 
 		oMenuButton.click();
 
-		expect(takeScreenshot(oMenuButton)).toLookAs('menubutton_menu_items_enabled');
+		expect(takeScreenshot(oPage)).toLookAs('menubutton_menu_items_enabled');
 	});
 
 	it('Menu button parts are visible and aligned', function() {
