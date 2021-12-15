@@ -140,11 +140,15 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrder : function () {
-			var oListBinding = this.byId("SalesOrderSet").getBinding("items"),
+			var oTable = this.byId("SalesOrderSet"),
+				bAtEnd = oTable.getItems()[0]
+					&& oTable.getItems()[0].getBindingContext("SalesOrders").isTransient()
+						!== undefined,
+				oListBinding = oTable.getBinding("items"),
 				oCreatedContext = oListBinding.create({
 					CustomerID : "0100000000",
 					LifecycleStatus : "N"
-				}, /*bAtEnd*/oListBinding.isCreationAreaAtEnd() !== undefined);
+				}, bAtEnd);
 
 			oCreatedContext.created().then(function () {
 				MessageToast.show("Created sales order "
