@@ -64,6 +64,23 @@ sap.ui.define([
 		});
 	}
 
+	function createHeaderWithItemsSubItems(iNum, iSubTabPosition) {
+		var aItems = [];
+		for (var i = 0; i < iNum; i++) {
+			aItems.push(new IconTabFilter({
+				text: "Tab " + i,
+				key: i,
+				items: new IconTabFilter({
+					text: iSubTabPosition === 0 ? "SubTab " + i : null
+				})
+			}));
+		}
+
+		return new IconTabHeader({
+			items: aItems
+		});
+	}
+
 	function fillWithItems(oITH, iCount) {
 		for (var i = 0; i < iCount; i++) {
 			oITH.addItem(new IconTabFilter({
@@ -244,6 +261,27 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oITH.getDomRef("head").querySelectorAll(".sapMITBFilter:not(.sapMITBFilterHidden)").length, 2, "Only two tabs should be visible");
+
+		// Clean-up
+		oITH.destroy();
+		oContainer.destroy();
+	});
+
+	QUnit.test("Tabs are correctly calculated in overflow with tabsOverflowMode=StartAndEnd", function (assert) {
+		// Arrange
+		var oITH = createHeaderWithItemsSubItems(10, 1);
+		oITH.setTabsOverflowMode(TabsOverflowMode.StartAndEnd);
+
+		var oContainer = new VBox({
+			width: "300px",
+			items: oITH
+		});
+
+		// Act
+		oContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		// Assert
+		assert.strictEqual(oITH._getOverflow().getText(), "+9", "Only main tabs should be calculated in overflow tab counter");
 
 		// Clean-up
 		oITH.destroy();

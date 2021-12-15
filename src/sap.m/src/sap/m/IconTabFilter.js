@@ -868,7 +868,7 @@ sap.ui.define([
 		}
 
 		var iTabFilters = this._getIconTabHeader()
-			._getItemsForOverflow(this._bIsStartOverflow)
+			._getItemsForOverflow(this._bIsStartOverflow, true)
 			.filter(function (oItem) { return oItem.isA("sap.m.IconTabFilter"); })
 			.length;
 

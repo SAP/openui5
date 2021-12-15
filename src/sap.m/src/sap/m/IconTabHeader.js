@@ -1551,7 +1551,7 @@ sap.ui.define([
 		}
 	};
 
-	IconTabHeader.prototype._getItemsForOverflow = function (bIsStartOverflow) {
+	IconTabHeader.prototype._getItemsForOverflow = function (bIsStartOverflow, bTopLevelTabs) {
 
 		var aItemsInStrip = this._getItemsInStrip(),
 			bIsStartAndEndMode = this.getTabsOverflowMode() === TabsOverflowMode.StartAndEnd,
@@ -1572,7 +1572,7 @@ sap.ui.define([
 			}
 
 			aItemsForList.push(oItem);
-			if (oItem.isA("sap.m.IconTabFilter")) {
+			if (oItem.isA("sap.m.IconTabFilter") && !bTopLevelTabs) {
 				oItem._getAllSubItems().forEach(function (oSubItem) {
 					aItemsForList.push(oSubItem);
 				});
