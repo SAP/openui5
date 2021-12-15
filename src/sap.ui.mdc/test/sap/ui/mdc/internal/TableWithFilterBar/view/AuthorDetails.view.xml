@@ -57,7 +57,7 @@
 												<mdc:typeahead>
 													<mdcv:Popover >
 														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
-															<Table items="{path: '/Countries'}" width="30rem">
+															<Table items="{path: '/Countries'}" width="30rem" mode="SingleSelectMaster">
 																<columns>
 																	<Column>
 																		<Label text="Country"/>
@@ -79,7 +79,7 @@
 												<mdc:dialog>
 													<mdcv:Dialog >
 														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
-															<Table items="{path: '/Countries'}" width="30rem">
+															<Table items="{path: '/Countries'}" width="30rem" mode="SingleSelectLeft">
 																<columns>
 																	<Column>
 																		<Label text="Country"/>
@@ -114,7 +114,7 @@
 												<mdc:typeahead>
 													<mdcv:Popover>
 														<mdcvc:MTable keyPath="code" descriptionPath="text" filterFields="$search">
-															<Table items="{path: '/Regions', length: 10}" width="30rem">
+															<Table items="{path: '/Regions', length: 10}" width="30rem" mode="SingleSelectMaster">
 																<columns>
 																	<Column>
 																		<Label text="Region"/>
@@ -157,7 +157,7 @@
 																</vhfb:FilterBar>
 															</mdcvc:filterBar>
 
-															<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+															<Table items="{path: '/Regions'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 																<columns>
 																	<Column>
 																		<Label text="Region"/>
@@ -198,7 +198,7 @@
 												<mdc:typeahead>
 													<mdcv:Popover>
 													<mdcvc:MTable keyPath="city" descriptionPath="text" filterFields="$search">
-														<Table items="{path: '/Cities', length: 10}" width="30rem">
+														<Table items="{path: '/Cities', length: 10}" width="30rem" mode="SingleSelectMaster">
 															<columns>
 																<Column>
 																	<Label text="City"/>
@@ -234,7 +234,7 @@
 																<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFRegion2" label="Region" editMode="Editable" display="ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" />
 															</vhfb:FilterBar>
 														</mdcvc:filterBar>
-														<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+														<Table items="{path: '/Cities'}" width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 															<columns>
 																<Column>
 																	<Label text="City"/>
@@ -273,7 +273,7 @@
 												<mdc:typeahead>
 													<mdcv:Popover title="Genre">
 														<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-															<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem">
+															<Table id="mTable1_genre" items='{path : "/Genres", length: 10}' width="30rem" mode="SingleSelectMaster">
 																<columns>
 																	<Column width="10rem">
 																		<header>
@@ -307,7 +307,7 @@
 												<mdc:dialog>
 													<mdcv:Dialog title="Genre">
 														<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-															<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+															<Table id="mTable2_genre" items='{path : "/Genres"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 																<columns>
 																	<Column width="10rem">
 																		<header>

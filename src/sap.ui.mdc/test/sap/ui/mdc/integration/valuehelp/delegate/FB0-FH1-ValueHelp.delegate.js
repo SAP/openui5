@@ -6,28 +6,28 @@ sap.ui.define([
 	"./ValueHelp.delegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
-	"sap/m/Column",
-	"sap/m/ColumnListItem",
-	"sap/m/Table",
-	"sap/m/Text",
-	"sap/base/util/UriParameters",
-	"sap/ui/core/Item",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Text",
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Item"
 ], function(
 	ODataV4ValueHelpDelegate,
 	MTable,
 	Conditions,
-	Column,
-	ColumnListItem,
-	Table,
-	Text,
-	UriParameters,
-	Item,
 	FilterBar,
 	FilterField,
-	mLibrary
+	mLibrary,
+	Table,
+	Column,
+	ColumnListItem,
+	Text,
+	UriParameters,
+	Item
 ) {
 	"use strict";
 
@@ -57,7 +57,7 @@ sap.ui.define([
 			if (!oCurrentContent.getTable()) {
 				oCurrentContent.setTable(new Table("mTable1", {
 					width: "30rem",
-					mode: bMultiSelect ? mLibrary.ListMode.MultiSelect : mLibrary.ListMode.SingleSelectLeft,
+					mode: mLibrary.ListMode.SingleSelectMaster,
 					columns: [
 						new Column({header: new Text({text : "ID"})}),
 						new Column({header: new Text({text : "Name"})})

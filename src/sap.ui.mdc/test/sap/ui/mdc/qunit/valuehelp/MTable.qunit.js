@@ -111,7 +111,7 @@ sap.ui.define([
 		}
 	};
 
-	var _init = function() {
+	var _init = function(bTypeahead) {
 		oModel = new JSONModel({
 			items: [
 				{ text: "Item 1", key: "I1", additionalText: "Text 1", inValue: "" },
@@ -129,6 +129,7 @@ sap.ui.define([
 
 		oTable = new Table("T1", {
 			width: "26rem",
+			mode: bTypeahead ? ListMode.SingleSelectMaster : ListMode.MultiSelect,
 			columns: [ new Column({header: new Label({text: "Id"})}),
 					   new Column({header: new Label({text: "Text"})}),
 					   new Column({header: new Label({text: "Info"})})],
@@ -171,7 +172,7 @@ sap.ui.define([
 		beforeEach: function() {
 			bIsTypeahead = true;
 			iMaxConditions = 1;
-			_init();
+			_init(true);
 		},
 		afterEach: _teardown
 	});
@@ -911,6 +912,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		sinon.stub(oContainer, "getScrollDelegate").returns(oScrollContainer);
 
+		oTable.setMode(ListMode.MultiSelect);
 		oMTable.setConfig({
 			maxConditions: -1,
 			operators: ["EQ", "BT"]
@@ -1110,10 +1112,16 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_isSingleSelect", function(assert) {
+
+		assert.ok(oMTable._isSingleSelect(), "singe-selection taken from Table");
+
+	});
+
 	QUnit.module("Dialog", {
 		beforeEach: function() {
 			bIsTypeahead = false;
-			_init();
+			_init(false);
 		},
 		afterEach: _teardown
 	});
@@ -1307,6 +1315,12 @@ sap.ui.define([
 		ValueHelpDelegateV4.isSearchSupported.restore();
 		ValueHelpDelegateV4.executeSearch.restore();
 		ValueHelpDelegateV4.adjustSearch.restore();
+
+	});
+
+	QUnit.test("_isSingleSelect", function(assert) {
+
+		assert.notOk(oMTable._isSingleSelect(), "multi-selection taken from Table");
 
 	});
 

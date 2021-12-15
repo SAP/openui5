@@ -57,7 +57,7 @@
 											<mdc:typeahead>
 												<mdcv:Popover title="Book">
 													<mdcvc:MTable keyPath="ID" descriptionPath="title" filterFields="$search">
-														<Table items='{path : "/Books", length: 10}' width="30rem">
+														<Table items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 															<columns>
 																<Column width="5rem">
 																	<header>
@@ -79,7 +79,7 @@
 											<mdc:dialog>
 												<mdcv:Dialog title="Book">
 													<mdcvc:MTable keyPath="ID" descriptionPath="title" filterFields="$search">
-														<Table items='{path : "/Books"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+														<Table items='{path : "/Books"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectLeft">
 															<columns>
 																<Column width="5rem">
 																	<header>
@@ -108,7 +108,7 @@
 											<mdc:typeahead>
 												<mdcv:Popover title="Parent ID">
 													<mdcvc:MTable keyPath="ID" filterFields="$search">
-														<Table items='{path : "/Orders"}' width="30rem"  growing="true" growingScrollToLoad="true" growingThreshold="20">
+														<Table items='{path : "/Orders"}' width="30rem"  growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 															<columns>
 																<Column width="5rem">
 																	<header>
