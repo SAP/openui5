@@ -2723,6 +2723,18 @@ sap.ui.define([
 		assert.strictEqual(this.stepInput._getInput().getValueStateText(), "Enter a number with a maximum value of 10", "value state text is correct");
 	});
 
+	QUnit.test("_verifyValue calculates the value state correctly", function(assert) {
+		// arrange
+		this.stepInput.setMax(6000);
+		this.stepInput._getInput().setValue("10,000");
+
+		// act
+		this.stepInput._verifyValue();
+
+		// assert
+		assert.strictEqual(this.stepInput.getValueState(), "Error", "value state is correct");
+	});
+
 	QUnit.test("_disableButtons is called with respect of min/max binding constraints", function(assert) {
 		// arrange
 		var oSpyDisableButtons;
