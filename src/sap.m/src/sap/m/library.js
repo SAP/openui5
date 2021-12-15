@@ -3485,6 +3485,12 @@ sap.ui.define([
 		DATERANGE : "DATERANGE",
 
 		/**
+		 * The range will be selected from two DateTimePicker controls.
+		 * @public
+		 */
+		DATETIMERANGE : "DATETIMERANGE",
+
+		/**
 		 * The range will start from a date selected from a calendar.
 		 * @public
 		 */

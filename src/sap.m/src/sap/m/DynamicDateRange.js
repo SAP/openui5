@@ -237,6 +237,7 @@ sap.ui.define([
 							"FIRSTDAYYEAR",
 							"LASTDAYYEAR",
 							"DATERANGE",
+							"DATETIMERANGE",
 							"FROM",
 							"TO",
 							"YEARTODATE",
@@ -673,7 +674,7 @@ sap.ui.define([
 				this._oPopup = new ResponsivePopover(this.getId() + "-RP", {
 					//read the documentation about those two - the page addapts its size to its container...
 					contentHeight: '512px',
-					contentWidth: _isCompact(this.getDomRef()) ? '272px' : '320px',
+					contentWidth: '320px',
 					showCloseButton: false,
 					showArrow: false,
 					showHeader: false,
@@ -1303,7 +1304,7 @@ sap.ui.define([
 			var oNavControl = StandardListItem.prototype.getNavigationControl.apply(this, arguments),
 				sOptionKey = this.getOptionKey(),
 				aValueTypes = DynamicDateUtil.getOption(sOptionKey).getValueTypes(),
-				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "FROM", "TO"].includes(sOptionKey),
+				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "DATETIMERANGE", "FROM", "TO"].includes(sOptionKey),
 				bDateTimeOption = aValueTypes && aValueTypes.length && aValueTypes[0] === "datetime",
 				sNavgationIconURI;
 
@@ -1318,19 +1319,6 @@ sap.ui.define([
 
 			return oNavControl;
 		};
-
-		function _isCompact(oRef) {
-			var oDomRef = oRef;
-
-			while (oDomRef && oDomRef.classList) {
-				if (oDomRef.classList.contains("sapUiSizeCompact")) {
-					return true;
-				}
-				oDomRef = oDomRef.parentNode;
-			}
-
-			return false;
-		}
 
 		return DynamicDateRange;
 	});

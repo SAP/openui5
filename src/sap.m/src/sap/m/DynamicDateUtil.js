@@ -26,6 +26,7 @@ sap.ui.define([
 		"FIRSTDAYYEAR",
 		"LASTDAYYEAR",
 		"DATERANGE",
+		"DATETIMERANGE",
 		"FROM",
 		"TO",
 		"YEARTODATE",
@@ -121,7 +122,8 @@ sap.ui.define([
 			"SPECIFICMONTHINYEAR": new StandardDynamicDateOption({ key: "SPECIFICMONTHINYEAR", valueTypes: ["int", "int"] }),
 			"DATERANGE": new StandardDynamicDateOption({ key: "DATERANGE", valueTypes: ["date", "date"] }),
 			"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] }),
-			"DATETIME": new StandardDynamicDateOption({ key: "DATETIME", valueTypes: ["datetime"] })
+			"DATETIME": new StandardDynamicDateOption({ key: "DATETIME", valueTypes: ["datetime"] }),
+			"DATETIMERANGE": new StandardDynamicDateOption({ key: "DATETIMERANGE", valueTypes: ["datetime", "datetime"] })
 		},
 		_allKeys: STANDARD_KEYS_ARRAY.slice(0)
 	};

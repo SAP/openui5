@@ -70,6 +70,7 @@ sap.ui.define([
 			"DATE": "DATE",
 			"DATETIME": "DATETIME",
 			"DATERANGE": "DATERANGE",
+			"DATETIMERANGE": "DATETIMERANGE",
 			"TODAY": "TODAY",
 			"YESTERDAY": "YESTERDAY",
 			"TOMORROW": "TOMORROW",
@@ -129,6 +130,7 @@ sap.ui.define([
 			"DATE": _Groups.SingleDates,
 			"DATETIME": _Groups.SingleDates,
 			"DATERANGE": _Groups.DateRanges,
+			"DATETIMERANGE": _Groups.DateRanges,
 			"TODAY": _Groups.SingleDates,
 			"YESTERDAY": _Groups.SingleDates,
 			"TOMORROW": _Groups.SingleDates,
@@ -325,8 +327,17 @@ sap.ui.define([
 								additionalText: _resourceBundle.getText("DDR_TODAYFROMTO_TO_ADDITIONAL_LABEL")
 							})];
 						break;
-					default:
-						break;
+					case Keys.DATETIMERANGE:
+							this.aValueHelpUITypes = [
+								new DynamicDateValueHelpUIType({
+									text: _resourceBundle.getText("DDR_DATETIMERANGE_FROM_LABEL"),
+									type: "datetime"
+								}),
+								new DynamicDateValueHelpUIType({
+									text: _resourceBundle.getText("DDR_DATETIMERANGE_TO_LABEL"),
+									type: "datetime"
+								})];
+							break;
 				}
 			}
 
@@ -392,6 +403,8 @@ sap.ui.define([
 						if (aParams.length === 1) {
 							// creates "single" DateTime option (embedded in the DynamicDateRange popup)
 							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+						} else if (aParams.length === 2) {
+							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated);
 						}
 						break;
 					case "daterange":
@@ -516,6 +529,8 @@ sap.ui.define([
 							if (!oInputControl.getCalendar().getSelectedDates() || oInputControl.getCalendar().getSelectedDates().length == 0) {
 								return false;
 							}
+						} else if (!oInputControl.getDateValue() && aParams.length === 2) {
+							return false;
 						}
 						break;
 					case "options":
@@ -598,6 +613,12 @@ sap.ui.define([
 							oTimeDate = oClocks.getTimeValues();
 							oDate.setHours(oTimeDate.getHours(), oTimeDate.getMinutes(), oTimeDate.getSeconds());
 							vOutput = oDate;
+						} else if (aParams.length === 2) {
+							if (!oInputControl.getDateValue()) {
+								return null;
+							}
+
+							vOutput = oInputControl.getDateValue();
 						}
 						break;
 					case "daterange":
@@ -668,6 +689,11 @@ sap.ui.define([
 					var oEnd = UniversalDate.getInstance(oValue.values[1]);
 
 					return [UniversalDateUtils.resetStartTime(oStart), UniversalDateUtils.resetEndTime(oEnd)];
+				case "DATETIMERANGE":
+					var oStart = UniversalDate.getInstance(oValue.values[0]);
+					var oEnd = UniversalDate.getInstance(oValue.values[1]);
+
+					return [oStart, oEnd];
 				case "TODAY":
 					return UniversalDateUtils.ranges.today();
 				case "YESTERDAY":
