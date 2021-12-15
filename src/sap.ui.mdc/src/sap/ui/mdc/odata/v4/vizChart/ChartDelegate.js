@@ -522,10 +522,12 @@ sap.ui.define([
 
             this._loadChart().then(function (aModules) {
 
+                var sVBoxHeight = this._calculateInnerChartHeight(oMDCChart);
+
                 this._setInnerStructure(oMDCChart, new VBox({
                     justifyContent: "Center",
 				    alignItems: "Center",
-                    height: "100%",
+                    height: sVBoxHeight,
                     width: "100%"
                 }));
                 var oText = new Text();
@@ -1077,7 +1079,10 @@ sap.ui.define([
      */
     ChartDelegate.adjustChartHeight = function(oMDCChart){
         if (oMDCChart.getHeight() && this._getChart(oMDCChart)){
-            this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
+            var sHeight = this._calculateInnerChartHeight(oMDCChart);
+
+            this._getInnerStructure(oMDCChart).setHeight(sHeight);
+            this._getChart(oMDCChart).setHeight(sHeight);
         }
     };
 
@@ -1503,6 +1508,7 @@ sap.ui.define([
                     }
 
                     if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
+
                         aProperties.push({
                             name: sKey,
                             propertyPath: sKey,
