@@ -822,9 +822,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			/* hide multi language function since there has a translation issue in Portal
-			"designtime/editor/multiLanguagesOfValue/InitialWithNoChange": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/InitialWithNoChange": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -833,8 +832,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByAdminForAdminAndContentModes": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/InitialWithErrorCondition": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -843,8 +842,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByAdminForTranslationAndAllModes": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByAdminForAdminAndContentModes": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -853,8 +852,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByContent": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByAdminForTranslationAndAllModes": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -863,8 +862,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByContent": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -873,8 +872,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByAdminAndContent": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByTranslation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -883,8 +882,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByAdminAndTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContent": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -893,8 +892,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByAdminAndTranslation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -903,8 +902,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/ChangeByContentAndTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -913,8 +912,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminForAdminAndContentModes": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/ChangeByContentAndTranslation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -923,8 +922,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminForTranslationAndAllModes": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/BCChangeByAdminForAdminAndContentModes": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -933,8 +932,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByContent": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/BCChangeByAdminForTranslationAndAllModes": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -943,8 +942,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminAndContent": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/BCChangeByContent": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -953,8 +952,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContent": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -963,8 +962,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByAdminAndTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndContentAndTranslation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -973,8 +972,8 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"designtime/editor/multiLanguagesOfValue/BCChangeByContentAndTranslation": {
-				group: "Runtime Card Editor",
+			"editor/multiLanguagesOfValue/BCChangeByAdminAndTranslation": {
+				group: "Runtime Editor",
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/editor",
@@ -982,7 +981,17 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
-			},*/
+			},
+			"editor/multiLanguagesOfValue/BCChangeByContentAndTranslation": {
+				group: "Runtime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor",
+						"sap/ui/integration/editor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/editor/CardEditor": {
 				group: "Runtime Editor for Card",
 				coverage: {

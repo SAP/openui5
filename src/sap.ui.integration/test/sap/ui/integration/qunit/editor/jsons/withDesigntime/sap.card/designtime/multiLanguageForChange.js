@@ -27,6 +27,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"string4": {
 						"manifestpath": "/sap.card/configuration/parameters/string4/value",
 						"type": "string",
+						"translatable": true,
 						"label": "{i18n>string4label}"
 					},
 					"string5": {

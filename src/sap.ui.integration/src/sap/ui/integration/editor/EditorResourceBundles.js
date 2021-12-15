@@ -21,44 +21,55 @@ sap.ui.define([
 	 */
 	var EditorResourceBundles = (function () {
 
-		var aEditorResourceBundles;
+		var _aEditorResourceBundles,
+			_aLanguageList,
+			_sResourceBundleURL;
+		LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
+			dataType: "json",
+			failOnError: false,
+			async: true
+		}).then(function (o) {
+			_aLanguageList = o;
+		});
 
-		function init(sResourceBundleURL) {
-			aEditorResourceBundles = [];
-			//load the language list from languages.json file
-			var aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/editor/languages.json", {
-				dataType: "json",
-				failOnError: false,
-				async: false
-			});
+		function init() {
+			_aEditorResourceBundles = [];
 			//according to the language list, load each resource bundle
-			for (var p in aLanguageList) {
-				var aFallbacks = [p];
-				if (p.indexOf("-") > -1) {
-					aFallbacks.push(p.substring(0, p.indexOf("-")));
+			for (var p in _aLanguageList) {
+				var oResourceBundleTemp;
+				if (_sResourceBundleURL) {
+					var aFallbacks = [p];
+					if (p.indexOf("-") > -1) {
+						aFallbacks.push(p.substring(0, p.indexOf("-")));
+					}
+					//add en into fallbacks
+					if (!includes(aFallbacks, "en")) {
+						aFallbacks.push("en");
+					}
+					oResourceBundleTemp = ResourceBundle.create({
+						url: _sResourceBundleURL,
+						async: false,
+						locale: p,
+						supportedLocales: aFallbacks
+					});
 				}
-				//add en into fallbacks
-				if (!includes(aFallbacks, "en")) {
-					aFallbacks.push("en");
-				}
-				var oResourceBundleTemp = ResourceBundle.create({
-					url: sResourceBundleURL,
-					async: false,
-					locale: p,
-					supportedLocales: aFallbacks,
-					fallbackLocale: "en"
-				});
-				aEditorResourceBundles[p] = {"language": aLanguageList[p], "resourceBundle": oResourceBundleTemp};
+				_aEditorResourceBundles[p] = {"language": _aLanguageList[p], "resourceBundle": oResourceBundleTemp};
 			}
-			return aEditorResourceBundles;
+			return _aEditorResourceBundles;
 		}
 
 		return {
-			getInstance: function (sResourceBundleURL) {
-				if (!aEditorResourceBundles) {
-					aEditorResourceBundles = init(sResourceBundleURL);
+			getResourceBundleURL: function() {
+				return _sResourceBundleURL;
+			},
+			setResourceBundleURL: function(sResourceBundleURL) {
+				_sResourceBundleURL = sResourceBundleURL;
+			},
+			getInstance: function () {
+				if (!_aEditorResourceBundles) {
+					_aEditorResourceBundles = init();
 				}
-				return aEditorResourceBundles;
+				return _aEditorResourceBundles;
 			}
 		};
 

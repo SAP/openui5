@@ -26,10 +26,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/core/SeparatorItem",
 	"sap/base/util/includes",
-	"sap/base/util/merge",
 	"sap/ui/core/CustomData"
 ], function (
-	BaseField, Input, Text, Title, Select, ComboBox, Popover, Button, OverflowToolbar, ToolbarSpacer, ListItem, List, CustomListItem, VBox, each, _debounce, Core, JSONModel, EditorResourceBundles, deepClone, Sorter, SeparatorItem, includes, merge, CustomData
+	BaseField, Input, Text, Title, Select, ComboBox, Popover, Button, OverflowToolbar, ToolbarSpacer, ListItem, List, CustomListItem, VBox, each, _debounce, Core, JSONModel, EditorResourceBundles, deepClone, Sorter, SeparatorItem, includes, CustomData
 ) {
 	"use strict";
 	var REGEXP_PARAMETERS = /parameters\.([^\}\}]+)/g;
@@ -97,11 +96,10 @@ sap.ui.define([
 				fnChange = function (oEvent) {
 					var sValue = oEvent.getSource().getValue();
 					var sSettingspath = this.getBindingContext("currentSettings").sPath;
-					var oSettingsModel = this.getModel("currentSettings");
 					//clean the value in data model
-					oSettingsModel.setProperty(sSettingspath + "/value", sValue);
+					this._settingsModel.setProperty(sSettingspath + "/value", sValue);
 					//update the dependent fields via bindings
-					var aBindings = oSettingsModel.getBindings();
+					var aBindings = this._settingsModel.getBindings();
 					var sParameter = sSettingspath.substring(sSettingspath.lastIndexOf("/") + 1);
 					each(aBindings, function(iIndex, oBinding) {
 						if (oBinding.sPath === "/form/items/" + sParameter + "/value") {
@@ -205,7 +203,6 @@ sap.ui.define([
 						}
 					};
 				}
-			/* hide multi language function since there has a translation issue in Portal
 			} else if (this.getMode() !== "translation" && oConfig.translatable) {
 				//use value help function of input to show the multi language popup
 				oVisualization = {
@@ -223,20 +220,23 @@ sap.ui.define([
 						valueHelpIconSrc: "sap-icon://translate",
 						showValueHelp: true,
 						valueHelpRequest: this.openTranslationListPopup,
-						liveChange: function(oEvent) {
-							//add current change into valueTranslations
-							if (!oConfig.valueTranslations) {
-								oConfig.valueTranslations = {};
-							}
+						change: function(oEvent) {
+							//add current change into translation texts
 							var oControl = oEvent.getSource();
 							var sValue = oControl.getValue();
 							var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
-							var oValueTranslations = deepClone(oConfig.valueTranslations, 500);
-							oValueTranslations[sLanguage] = sValue;
-							oConfig.valueTranslations = oValueTranslations;
+							oControl.getParent().setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
 						}
 					}
-				};*/
+				};
+				if (aParts) {
+					delete oVisualization.settings.tooltip;
+					oVisualization.settings.value = oValue;
+					oVisualization.settings.change = fnChange;
+					//if value contains {{parameters.XX}} syntax, do not show the translation button and popup
+					oVisualization.settings.showValueHelp = false;
+					delete oVisualization.settings.valueHelpRequest;
+				}
 			} else {
 				oVisualization = {
 					type: Input,
@@ -274,14 +274,14 @@ sap.ui.define([
 				oControl.attachSelectionChange(this.onSelectionChange);
 			}
 		}
+		this._settingsModel = this.getModel("currentSettings");
 	};
 
 	StringField.prototype.onSelectionChange = function(oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem") || {};
 		var sKey = oSelectedItem.getKey();
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
-		var oSettingsModel = this.getModel("currentSettings");
-		oSettingsModel.setProperty(sSettingspath + "/value", sKey);
+		this._settingsModel.setProperty(sSettingspath + "/value", sKey);
 		//oSettingsModel.setProperty(sSettingspath + "/suggestValue", "");
 	};
 
@@ -289,14 +289,13 @@ sap.ui.define([
 		//get the suggestion value in the input field of the ComoboBox
 		var sTerm = oEvent.target.value;
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
-		var oSettingsModel = this.getModel("currentSettings");
 		//set the suggestion value into data model property "suggestValue" for filter backend
-		oSettingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
-		oSettingsModel.setProperty(sSettingspath + "/_loading", true);
+		this._settingsModel.setProperty(sSettingspath + "/suggestValue", sTerm.replaceAll("'", "\'\'"));
+		this._settingsModel.setProperty(sSettingspath + "/_loading", true);
 		//clean the value in data model
-		oSettingsModel.setProperty(sSettingspath + "/value", "");
+		this._settingsModel.setProperty(sSettingspath + "/value", "");
 		//update the dependent fields via bindings
-		var aBindings = oSettingsModel.getBindings();
+		var aBindings = this._settingsModel.getBindings();
 		var sParameter = sSettingspath.substring(sSettingspath.lastIndexOf("/") + 1);
 		each(aBindings, function(iIndex, oBinding) {
 			if (oBinding.sPath === "/form/items/" + sParameter + "/value") {
@@ -315,29 +314,33 @@ sap.ui.define([
 	//get origin values in i18n files
 	StringField.prototype.getOriginTranslatedValues = function(oConfig) {
 		var aOriginTranslatedValues = [];
-		var aEditorResourceBundles = EditorResourceBundles.getInstance(oConfig._resourceBundleURL);
+		var aEditorResourceBundles = EditorResourceBundles.getInstance();
+		//get translation key of the value
+		var sKey;
+		if (oConfig._translatedDefaultPlaceholder && oConfig._translatedDefaultPlaceholder.startsWith("{i18n>") && oConfig._translatedDefaultPlaceholder.endsWith("}")) {
+			sKey = oConfig._translatedDefaultPlaceholder.substring(6, oConfig._translatedDefaultPlaceholder.length - 1);
+		} else if (oConfig._translatedDefaultPlaceholder && oConfig._translatedDefaultPlaceholder.startsWith("{{") && oConfig._translatedDefaultPlaceholder.endsWith("}}")) {
+			sKey = oConfig._translatedDefaultPlaceholder.substring(2, oConfig._translatedDefaultPlaceholder.length - 2);
+		}
 		for (var p in aEditorResourceBundles) {
 			var oResourceBundleTemp = aEditorResourceBundles[p];
-			//get translation key of the value
-			var sKey;
-			if (oConfig._translatedDefaultPlaceholder.startsWith("{i18n>") && oConfig._translatedDefaultPlaceholder.endsWith("}")) {
-				sKey = oConfig._translatedDefaultPlaceholder.substring(6, oConfig._translatedDefaultPlaceholder.length - 1);
-			} else if (oConfig._translatedDefaultPlaceholder.startsWith("{{") && oConfig._translatedDefaultPlaceholder.endsWith("}}")) {
-				sKey = oConfig._translatedDefaultPlaceholder.substring(2, oConfig._translatedDefaultPlaceholder.length - 2);
-			}
 			var sTranslatedValue = "";
 			var sOriginValue = "";
 			if (sKey && oResourceBundleTemp) {
-				var sText = oResourceBundleTemp.resourceBundle.getText(sKey, [], true);
+				var sText = oResourceBundleTemp.resourceBundle && oResourceBundleTemp.resourceBundle.getText(sKey, [], true);
 				if (sText !== undefined) {
 					sTranslatedValue = sText;
 					sOriginValue = sText;
+				} else {
+					//no value in resource bundle means the i18n setting is not correct
+					sTranslatedValue = oConfig._translatedValue || "";
+					sOriginValue = oConfig._translatedValue || "";
 				}
 			} else {
 				//if no translation key which means item defined as string value directly.
 				//set the sTranslatedValue and sOriginValue for each language with item manifest value or default value.
-				sTranslatedValue = oConfig._translatedDefaultPlaceholder;
-				sOriginValue = oConfig._translatedDefaultPlaceholder;
+				sTranslatedValue = oConfig._translatedDefaultPlaceholder || "";
+				sOriginValue = oConfig._translatedDefaultPlaceholder || "";
 			}
 			var oLanguage = {
 				"key": p,
@@ -349,6 +352,36 @@ sap.ui.define([
 			aOriginTranslatedValues.push(oLanguage);
 		}
 		return aOriginTranslatedValues;
+	};
+
+	StringField.prototype.getTranslationValueInTexts = function (sLanguage, sKey) {
+		var sTranslationPath = "/texts/" + sLanguage;
+		var oProperty = this._settingsModel.getProperty(sTranslationPath) || {};
+		return oProperty[sKey];
+	};
+
+	StringField.prototype.setTranslationValueInTexts = function (sLanguage, sKey, sValue) {
+		var sTranslationPath = "/texts";
+		var oData = this._settingsModel.getData();
+		if (!oData) {
+			return;
+		}
+		if (!oData.hasOwnProperty("texts")) {
+			var oTexts = {};
+			oTexts[sLanguage] = {};
+			oTexts[sLanguage][sKey] = sValue;
+			this._settingsModel.setProperty(sTranslationPath, oTexts);
+		} else {
+			sTranslationPath = "/texts/" + sLanguage;
+			var oLanguage;
+			if (!oData.texts.hasOwnProperty(sLanguage)) {
+				oLanguage = {};
+			} else {
+				oLanguage = oData.texts[sLanguage];
+			}
+			oLanguage[sKey] = sValue;
+			this._settingsModel.setProperty(sTranslationPath, oLanguage);
+		}
 	};
 
 	//open the translation popup
@@ -364,16 +397,22 @@ sap.ui.define([
 		}
 		var aTempTranslatedLanguages = deepClone(that._aOriginTranslatedValues, 500);
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-		//merge the value in config.valueTranslations into the value list of i18n files
+		//merge the value in texts or beforeLayerChange into the value list of i18n files
 		aTempTranslatedLanguages.forEach(function (translatedValue) {
-			if (oConfig.valueTranslations && oConfig.valueTranslations[translatedValue.key]) {
-				translatedValue.value = oConfig.valueTranslations[translatedValue.key];
+			var sTranslateText = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
+			if (sTranslateText) {
+				translatedValue.value = sTranslateText;
+				if (!includes(that._aUpdatedLanguages, translatedValue.key)) {
+					translatedValue.originValue = translatedValue.value;
+				}
+			} else if (oConfig._beforeLayerChange) {
+				translatedValue.value = oConfig._beforeLayerChange;
 				if (!includes(that._aUpdatedLanguages, translatedValue.key)) {
 					translatedValue.originValue = translatedValue.value;
 				}
 			}
 			translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_NOTUPDATED");
-			if (translatedValue.key === oResourceBundle.sLocale) {
+			if (translatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
 				translatedValue.editable = false;
 			}
 		});
@@ -388,10 +427,10 @@ sap.ui.define([
 			//check the updated language list, update the data model
 			aTempTranslatedLanguages.forEach(function (translatedValue) {
 				if (includes(that._aUpdatedLanguages, translatedValue.key)) {
-					translatedValue.value = oConfig.valueTranslations[translatedValue.key];
+					translatedValue.value = oField.getTranslationValueInTexts(translatedValue.key, oConfig.manifestpath);
 					translatedValue.status = oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_LISTITEM_GROUP_UPDATED");
 				}
-				if (translatedValue.key === oResourceBundle.sLocale) {
+				if (translatedValue.key === oResourceBundle.sLocale.replaceAll('_', '-')) {
 					translatedValue.value = oControl.getValue();
 					aTranslatedValues.currentLanguage = translatedValue;
 				} else {
@@ -433,8 +472,9 @@ sap.ui.define([
 					groupHeaderFactory: that.getGroupHeader
 				}
 			});
+			var sPlacement = oField._previewPostion === "right" ? "Right" : "Left";
 			that._oTranslationPopover = new Popover({
-				placement: "Right",
+				placement: sPlacement,
 				contentWidth: "300px",
 				contentHeight: "345px",
 				customHeader: new VBox({
@@ -471,24 +511,17 @@ sap.ui.define([
 							enabled: "{languages>/isUpdated}",
 							press: function () {
 								var aLanguages = that._oTranslationPopover.getModel("languages").getData();
-								var oCurrentValueTranslations = deepClone(oConfig.valueTranslations, 500);
 								//get changes in the popup
-								var oValueTranslations = {};
 								var aUpdatedLanguages = [];
 								aLanguages.translatedLanguages.forEach(function(oLanguage) {
 									if (oLanguage.value !== oLanguage.originValue) {
-										oValueTranslations[oLanguage.key] = oLanguage.value;
+										oField.setTranslationValueInTexts(oLanguage.key, oConfig.manifestpath, oLanguage.value);
 										aUpdatedLanguages.push(oLanguage.key);
 									}
 								});
 								if (aLanguages.currentLanguage.value != aLanguages.currentLanguage.originValue) {
-									oValueTranslations[aLanguages.currentLanguage.key] = aLanguages.currentLanguage.value;
+									oField.setTranslationValueInTexts(aLanguages.currentLanguage.key, oConfig.manifestpath, aLanguages.currentLanguage.value);
 									aUpdatedLanguages.push(aLanguages.currentLanguage.key);
-								}
-								//merge the chanegs with existing translations
-								if (oValueTranslations !== {}) {
-									oConfig.valueTranslations = merge(oCurrentValueTranslations, oValueTranslations);
-									oConfig._changed = true;
 								}
 								if (aUpdatedLanguages.length > 0) {
 									that._aUpdatedLanguages = aUpdatedLanguages;
@@ -531,7 +564,7 @@ sap.ui.define([
 			oModel.setData(aTranslatedValues);
 			oModel.checkUpdate(true);
 		}
-		that._oTranslationPopover.openBy(oControl);
+		that._oTranslationPopover.openBy(oControl._oValueHelpIcon);
 	};
 
 	StringField.prototype.getGroupHeader = function(oGroup) {

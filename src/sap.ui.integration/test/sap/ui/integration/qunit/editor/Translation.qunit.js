@@ -1153,7 +1153,7 @@ sap.ui.define([
 						assert.ok(oLabelForStringNoTrans.getText() === "stringNoTransLabel", "LabelForStringNoTrans: Label stringNoTransLabel English");
 						assert.ok(oFieldOriForStringNoTrans.getAggregation("_field").getText() === "stringNoTrans", "FieldOriForStringNoTrans: stringNoTrans");
 						assert.ok(oFieldTransForStringNoTrans.getAggregation("_field").getEditable() === true, "FieldTransForStringNoTrans: Editable");
-						assert.ok(oFieldTransForStringNoTrans.getAggregation("_field").getValue() === "", "FieldTransForStringNoTrans: Empty");
+						assert.ok(oFieldTransForStringNoTrans.getAggregation("_field").getValue() === "stringNoTrans", "FieldTransForStringNoTrans: stringNoTrans");
 					}).then(function () {
 						destroyEditor(this.oEditor);
 						resolve();
