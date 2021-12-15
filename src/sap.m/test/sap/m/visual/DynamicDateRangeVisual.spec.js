@@ -59,7 +59,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		oDDRInputField.click();
 		browser.actions().sendKeys(sAltArrowUp).perform();
 
-		oPopover = element(by.id("DDR1-RP-popover"));
+		oPopover = element(by.id("DDR3-RP-popover"));
 		expect(takeScreenshot(oPopover)).toLookAs("group_headers_disabled");
 
 		browser.actions().sendKeys(sAltArrowDown).perform();
