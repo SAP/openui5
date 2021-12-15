@@ -35,7 +35,7 @@
 					</uxap:headerTitle>
 					<uxap:sections>
 						<uxap:ObjectPageSection id="ObjectPageSectionWithForm">
-							<uxap:ObjectPageSubSection  id="ObjectPageSubSectionWithForm" title="{SubSectionTitle1}">
+							<uxap:ObjectPageSubSection id="ObjectPageSubSectionWithForm" title="{SubSectionTitle1}">
 								<form:SimpleForm class="sapUiSmallMargin"
 												title="Simple Form bound to EntityType02" id="MainForm"
 												maxContainerCols="3"
@@ -70,7 +70,7 @@
 						</uxap:ObjectPageSection>
 
 						<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}">
-							<uxap:ObjectPageSubSection>
+							<uxap:ObjectPageSubSection id="ObjectPageSectionForNavigationSubSection1" title="SubSection 1">
 								<form:SimpleForm title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
 												maxContainerCols="3"
 												editable="true"
@@ -101,7 +101,7 @@
 									</form:content>
 								</form:SimpleForm>
 							</uxap:ObjectPageSubSection>
-							<uxap:ObjectPageSubSection>
+							<uxap:ObjectPageSubSection id="ObjectPageSectionForNavigationSubSection2" title="SubSection 2">
 								<form:Form id="FormDisplay480_12120-2" editable="true">
 									<form:title>
 										<core:Title text="Form" />
