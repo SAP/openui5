@@ -308,7 +308,7 @@ sap.ui.define([
 			});
 
 			var oSettingsInstance = Settings.getInstanceOrUndef();
-			var bIsProdSystem = oSettingsInstance && oSettingsInstance.isProductiveSystem();
+			var isProductiveSystemWithTransports = oSettingsInstance && oSettingsInstance.isProductiveSystemWithTransports();
 			var bHasNoChanges = aChanges.length === 0;
 			var oChangesWarning = {showWarning: false};
 
@@ -316,7 +316,7 @@ sap.ui.define([
 				oChangesWarning = {showWarning: true, warningType: "mixedChangesWarning"};
 			}
 
-			if (bIsProdSystem && bHasNoChanges) {
+			if (isProductiveSystemWithTransports && bHasNoChanges) {
 				oChangesWarning = {showWarning: true, warningType: "noChangesAndPSystemWarning"};
 			}
 			return oChangesWarning;
