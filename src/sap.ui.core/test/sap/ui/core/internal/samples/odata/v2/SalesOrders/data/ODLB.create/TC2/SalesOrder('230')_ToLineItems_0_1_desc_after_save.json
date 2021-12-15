@@ -1,0 +1,33 @@
+{
+	"d" : {
+		"results" : [{
+			"__metadata" : {
+				"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')",
+				"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			},
+			"SalesOrderID" : "230",
+			"ItemPosition" : "020",
+			"ProductID" : "HT-1052",
+			"Note" : "Item 020",
+			"NoteLanguage" : "EN",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "404.60",
+			"NetAmount" : "340.00",
+			"TaxAmount" : "64.60",
+			"DeliveryDate" : "\/Date(1639669337804)\/",
+			"Quantity" : "2",
+			"QuantityUnit" : "EA",
+			"ToHeader" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')/ToHeader"
+				}
+			},
+			"ToProduct" : {
+				"__deferred" : {
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='230',ItemPosition='020')/ToProduct"
+				}
+			}
+		}]
+	}
+}

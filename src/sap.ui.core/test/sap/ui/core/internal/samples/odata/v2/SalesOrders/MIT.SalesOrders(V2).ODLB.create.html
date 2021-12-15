@@ -49,7 +49,8 @@
 				the header line of the <code>Sales Orders</code> table.</li>
 			<li>Click on the <code>Create sales order</code> button in the <code>Sales Orders</code>
 				table.<br />
-				<b>Check:</b> An empty table row for the new sales order is displayed.<br />
+				<b>Check:</b> An empty table row for the new sales order is displayed at the top of
+				the table at position one.<br />
 				<b>Check:</b> The empty table row is marked as transient in the first column. Hover
 				over the icon to see the status text.<br />
 				<b>Check:</b> The count has been increased by one.
@@ -57,7 +58,9 @@
 			<li>Enter <code>1</code> in the <code>Note</code> input field of the newly created sales
 				order</li>
 			<li>Repeat step 3 and use <code>2</code> as the value for the <code>Note</code> in step
-				4.</li>
+				4.<br />
+				<b>Check:</b> The newly created sales order is displayed at position two in the
+				table.</li>
 		</ol>
 		<h4>Sort the <code>Sales Orders</code> table</h4>
 		<ol>
@@ -97,7 +100,9 @@
 		<ol>
 			<li>Create and check two more sales orders as described in steps 2-4 in section
 				'Create two sales orders without saving them' with the values <code>3</code> and
-				<code>4</code> for the <code>Note</code>.</li>
+				<code>4</code> for the <code>Note</code>.<br />
+				<b>Check:</b> The newly created sales orders are displayed at position three and
+				four in the table.</li>
 			<li>Remember the number of sales orders.</li>
 			<li>Press the <code>Refresh sales orders table</code> button.<br />
 				<b>Check:</b> The four transient sales orders keep their positions.<br />
@@ -180,7 +185,8 @@
 			</li>
 			<li>In the <code>Create a New Sales Order Item</code> dialog press the
 				<code>Close</code> button.<br />
-				<b>Check:</b> A new row for the new sales order item is displayed.<br />
+				<b>Check:</b> A new row for the new sales order item is displayed at the end of the
+				table.<br />
 				<b>Check:</b> The new row is marked as transient in the first column. Hover
 				over the icon to see the status text.<br />
 				<b>Check:</b> The <code>Sales Order ID</code> is <code>230</code>.<br />
@@ -217,14 +223,16 @@
 			<li>Remember the number of sales order items.</li>
 			<li>Click on the <code>Gross Amount</code> column, enter <code>&lt;1000</code> into
 				the filter input field and press enter.<br />
-				<b>Check:</b> The two transient sales order items keep their positions.<br />
+				<b>Check:</b> The two transient sales order items keep their positions relative to
+				the persisted sales order items.<br />
 				<b>Check:</b> All other sales order items have smaller gross amount than 1000.<br />
 				<b>Check:</b> The count has been decreased to the number of sales orders with
 					smaller gross amount than 1000 plus the two transient sales order items.
 			</li>
 			<li>Click on the <code>Gross Amount</code> column, clear the filter input field and
 				press enter.<br />
-				<b>Check:</b> The two transient sales order items keep their positions.<br />
+				<b>Check:</b> The two transient sales order items keep their positions relative to
+				the persisted sales order items.<br />
 				<b>Check:</b> The table contains all sales order items as before filtering.<br />
 				<b>Check:</b> The count has been increased to the same number as before filtering.
 			</li>
@@ -235,10 +243,11 @@
 				'Create two sales order items without saving them' with <code>HT-1042</code> for the
 				<code>Product ID</code> and <code>3</code> for the <code>Note</code> and with
 				<code>HT-9996</code> for the <code>Product ID</code> and <code>4</code> for the
-				<code>Note</code></li>
+				<code>Note</code> and scroll after each sales order item creation to the end of the
+				table.</li>
 			<li>Remember the number of sales order items.</li>
 			<li>Press the <code>Refresh sales order items table</code> button.<br />
-				<b>Check:</b> The four transient sales order itmes keep their positions.<br />
+				<b>Check:</b> The four transient sales order items keep their positions.<br />
 				<b>Check:</b> The count has not changed.
 			</li>
 		</ol>
@@ -250,7 +259,8 @@
 			<li>Confirm the dialog box by choosing <code>OK</code>.<br />
 				<b>Check:</b> The selected sales order item was deleted.<br />
 				<b>Check:</b> The count has been decreased by one.<br />
-				<b>Check:</b> The three remaining transient sales orders keep their positions.
+				<b>Check:</b> The three remaining transient sales orders keep their positions
+				relative to the persisted sales order items.
 			</li>
 		</ol>
 		<h4>Context switch</h4>
@@ -268,14 +278,28 @@
 				<code>Sales Order</code> input field and press <code>Enter</code> or click the
 				<code>Show Sales Order</code> button.<br />
 				<b>Check:</b> The sales order and the sales order items are loaded and displayed in
-					the <code>Sales Order Details</code> section.<br />
+				the <code>Sales Order Details</code> section.<br />
+			</li>
+			<li>Scroll to the end of the table.<br />
 				<b>Check:</b> The three transient sales order items in the
 					<code>Sales Order Items</code> table are restored in the same order as before
 					the context switch.</li>
 		</ol>
 		<h4>Save the sales order</h4>
 		<ol>
+			<li>Use the <code>Sort</code> select box to sort the table in <code>Descending</code>
+				order.<br />
+				<b>Check:</b> The two transient sales orders keep their positions relative to the
+				persisted ones.<br />
+				<b>Check:</b> The persisted sales orders are in descending order regarding the sales
+				order ID.<br />
+				<b>Check:</b> The count has not changed.
+			</li>
 			<li>Remember the number of sales order items.</li>
+			<li>Scroll to the end of the table.<br />
+				<b>Check:</b> The three transient sales order items in the
+				<code>Sales Order Items</code> table and one persisted sales order item are
+				displayed.</li>
 			<li>Press the <code>Save</code> button on the bottom of the page.</li>
 			<li>Confirm the successful creation for the three new items.<br />
 				<b>Check:</b> The count has not been changed.<br />
@@ -313,7 +337,7 @@
 					the <code>Sales Order Details</code> section.<br />
 				<b>Check:</b> The newly created and persisted sales order items in the
 					<code>Sales Order Items</code> table are now inserted at the right position
-					based on the given (ascending) sort order.</li>
+					based on the given (descending) sort order.</li>
 		</ol>
 	</body>
 </html>

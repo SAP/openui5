@@ -499,13 +499,13 @@ sap.ui.define([
 				/*
 				 * Selects a row in the table.
 				 *
-				 * @param {number} iRow The row to select
+				 * @param {number} iRow The index of the visible row to select
 				 */
 				selectRow : function (iRow) {
 					this.waitFor({
 						id : "ToLineItems",
 						success : function (oTable) {
-							oTable.setSelectedIndex(iRow);
+							oTable.setSelectedIndex(oTable.getFirstVisibleRow() + iRow);
 						},
 						viewName : sViewName
 					});
@@ -795,7 +795,7 @@ sap.ui.define([
 					});
 				},
 				/*
-				 * Checks if the item count has changed by a specifed value.
+				 * Checks if the item count has changed by a specified value.
 				 *
 				 * @param {number} iDelta
 				 *   The supposed difference between the current and the old item count
@@ -808,7 +808,7 @@ sap.ui.define([
 
 							iCurrentItemCount += iDelta;
 							Opa5.assert.equal(iCount, iCurrentItemCount,
-								"Sales order itens count has changed by " + iDelta + " to "
+								"Sales order items count has changed by " + iDelta + " to "
 									+ iCount);
 						},
 						viewName : sViewName

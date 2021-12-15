@@ -75,7 +75,7 @@ sap.ui.define([
 			/* Step 9 is skipped in OPA tests */
 
 			/* Step 10 */
-			When.onMainPage.pressMoreDetails(0);
+			When.onMainPage.pressMoreDetails(2);
 			Then.onMainPage.checkDialogOpen("Product Details");
 			Then.onMainPage.checkDialogShowingProductIdAndName("HT-1000", "Notebook Basic 15");
 
@@ -83,7 +83,7 @@ sap.ui.define([
 			When.onMainPage.closeDialog("Product Details");
 
 			/* Step 12 */
-			When.onMainPage.selectRow(0);
+			When.onMainPage.selectRow(2);
 			When.onMainPage.pressDeleteItem();
 			Then.onMainPage.checkDialogOpen("Sales Order Item Deletion");
 
