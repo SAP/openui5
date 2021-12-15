@@ -226,7 +226,7 @@ sap.ui.define([
 //		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 //
 //		this.fireSetConditions({conditions: aConditions});
-		this.fireConfirm();
+		this.fireConfirm({close: true});
 	}
 
 	function _handleConditionProcessed(oEvent) {
