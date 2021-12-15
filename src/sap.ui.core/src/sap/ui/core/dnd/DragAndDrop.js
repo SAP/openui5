@@ -593,8 +593,8 @@ function(Device, UIArea, jQuery) {
 		var aDropInfos = [];
 		oValidDropControl = oControl;
 
-		// find the first valid drop control and corresponding valid DropInfos at the control hierarchy
-		for (var i = 0; i < 20 && oValidDropControl; i++, oValidDropControl = oValidDropControl.getParent()) {
+		// find the first valid drop control and corresponding valid DropInfos from the dom-control hierarchy
+		for (var i = 0; i < 20 && oValidDropControl; i++, oValidDropControl = oValidDropControl.$ && oValidDropControl.$().parent().control(0, true)) {
 			aDropInfos = getValidDropInfos(oValidDropControl, aValidDragInfos, oEvent);
 			if (aDropInfos.length) {
 				break;
