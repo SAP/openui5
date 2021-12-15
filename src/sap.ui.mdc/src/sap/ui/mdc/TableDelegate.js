@@ -15,9 +15,11 @@ sap.ui.define([
 	 * Base delegate class for <code>sap.ui.mdc.Table</code>.
 	 *
 	 * @author SAP SE
+	 * @namespace
+	 * @alias module:sap/ui/mdc/TableDelegate
+	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
 	 * @experimental
 	 * @since 1.60
-	 * @alias sap.ui.mdc.TableDelegate
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * MDC_PUBLIC_CANDIDATE
