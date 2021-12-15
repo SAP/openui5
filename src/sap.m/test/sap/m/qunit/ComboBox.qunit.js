@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/m/Link",
 	"sap/m/FormattedText",
+	"sap/m/List",
 	"sap/ui/core/Item",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/SeparatorItem",
@@ -28,6 +29,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/inputUtils/inputsDefaultFilter",
+	"sap/m/inputUtils/highlightDOMElements",
 	"sap/ui/Device",
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
@@ -51,6 +53,7 @@ sap.ui.define([
 	GroupHeaderListItem,
 	Link,
 	FormattedText,
+	List,
 	Item,
 	ListItem,
 	SeparatorItem,
@@ -68,6 +71,7 @@ sap.ui.define([
 	containsOrEquals,
 	createAndAppendDiv,
 	inputsDefaultFilter,
+	highlightDOMElements,
 	Device,
 	InputBase,
 	ValueStateSupport,
@@ -12966,6 +12970,24 @@ sap.ui.define([
 
 		// clean up
 		oComboBox.destroy();
+	});
+
+	QUnit.test("List event delegates", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox().placeAt("content");
+		var oListAddEventDelegatesSpy = this.spy(List.prototype, "addEventDelegate");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.open();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oListAddEventDelegatesSpy.calledOnce, "The Event Delegates should be added only by the control itself.");
+
+		// Cleanup
+		oComboBox.destroy();
+		oListAddEventDelegatesSpy.restore();
 	});
 
 	QUnit.module("setFormattedValueStateText()", {

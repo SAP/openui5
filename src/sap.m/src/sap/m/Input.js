@@ -1474,14 +1474,12 @@ function(
 					this._synchronizeSuggestions();
 					this._createSuggestionPopupContent();
 				}
-			} else {
-				if (this._oSuggPopover) {
+			} else if (this._oSuggPopover) {
 					this._oSuggPopover._destroySuggestionPopup();
 					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._oButtonToolbar = null;
 					this._oShowMoreButton = null;
 				}
-			}
 
 			return this;
 		};
@@ -2597,6 +2595,21 @@ function(
 		this._oSuggPopover._createSuggestionPopupContent(bTabular);
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
+			this._oSuggPopover._oList.addEventDelegate({
+				onAfterRendering: function () {
+					var aListItemsDomRef, sInputValue;
+
+					if (!this.getEnableSuggestionsHighlighting()) {
+						return;
+					}
+
+					aListItemsDomRef = this._oSuggPopover._oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
+					sInputValue = (this._sTypedInValue || this.getValue()).toLowerCase();
+
+					highlightDOMElements(aListItemsDomRef, sInputValue);
+				}.bind(this)
+			});
+
 			this._oSuggPopover._oList.attachItemPress(function (oEvent) {
 
 				this._oSuggPopover._resetTypeAhead();

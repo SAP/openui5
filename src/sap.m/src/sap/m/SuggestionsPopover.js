@@ -412,21 +412,6 @@ sap.ui.define([
 				busyIndicatorDelay: 0
 			});
 
-			this._oList.addEventDelegate({
-				onAfterRendering: function () {
-					var aListItemsDomRef, sInputValue;
-
-					if (!this._bEnableHighlighting) {
-						return;
-					}
-
-					aListItemsDomRef = this._oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
-					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
-
-					highlightDOMElements(aListItemsDomRef, sInputValue);
-				}.bind(this)
-			});
-
 		} else {
 			// tabular suggestions
 			this._oList = this._oInput._getSuggestionsTable();
@@ -800,16 +785,14 @@ sap.ui.define([
 		if (ColumnListItem && aListItems[iSelectedIndex] instanceof ColumnListItem) {
 			// for tabular suggestions we call a result filter function
 			sNewValue = oInput._getInputValue(oInput._fnRowResultFilter(aListItems[iSelectedIndex]));
+		} else if (aListItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) {
+			sNewValue = "";
+			aListItems[iSelectedIndex].addStyleClass("sapMInputFocusedHeaderGroup");
+			oSelectedItem && oSelectedItem.setSelected(false);
+			this._oLastSelectedHeader = aListItems[iSelectedIndex];
 		} else {
-			if (aListItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) {
-				sNewValue = "";
-				aListItems[iSelectedIndex].addStyleClass("sapMInputFocusedHeaderGroup");
-				oSelectedItem && oSelectedItem.setSelected(false);
-				this._oLastSelectedHeader = aListItems[iSelectedIndex];
-			} else {
-				// otherwise we use the item title
-				sNewValue = oInput._getInputValue(aListItems[iSelectedIndex].getTitle());
-			}
+			// otherwise we use the item title
+			sNewValue = oInput._getInputValue(aListItems[iSelectedIndex].getTitle());
 		}
 
 		this._iPopupListSelectedIndex = iSelectedIndex;
