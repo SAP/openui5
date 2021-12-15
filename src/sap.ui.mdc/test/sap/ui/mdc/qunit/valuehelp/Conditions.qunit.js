@@ -101,6 +101,7 @@ sap.ui.define([
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
 					operators: ["EQ", "BT", "Contains"],
+					defaultOperatorName: "EQ",
 					display: FieldDisplay.Description
 				}
 			});
@@ -151,6 +152,7 @@ sap.ui.define([
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
 					operators: ["EQ", "BT", "Contains"],
+					defaultOperatorName: "EQ",
 					display: FieldDisplay.Description
 				};
 				assert.deepEqual(oFormatOptions, oTestFormatOptions, "FormatOptions on DefineConditionPanel");
@@ -175,6 +177,7 @@ sap.ui.define([
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: {text: "X"},
 					operators: ["EQ", "BT", "Contains"],
+					defaultOperatorName: "EQ",
 					display: FieldDisplay.Description
 				});
 				aNewConditions = [
@@ -223,6 +226,7 @@ sap.ui.define([
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
 					operators: ["EQ", "BT", "Contains"],
+					defaultOperatorName: "EQ",
 					display: FieldDisplay.Description
 				};
 				assert.deepEqual(oFormatOptions, oTestFormatOptions, "FormatOptions on DefineConditionPanel");

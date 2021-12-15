@@ -631,7 +631,8 @@
 								dataType="Edm.Date" dataTypeConstraints="{V4: true}"
 								conditions="{$filters>/conditions/published}"
 								maxConditions="-1" fieldHelp="FHPublished"
-								operators="EQ,GT,LT,BT,MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR" />
+								operators="EQ,GT,LT,BT,MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR"
+								defaultOperator="RENAISSANCE"/>
 
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
 								id="ff5" label="Language" display="Description"
