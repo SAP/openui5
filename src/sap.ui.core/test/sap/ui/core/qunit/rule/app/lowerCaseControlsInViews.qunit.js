@@ -16,7 +16,7 @@ sap.ui.define(["sap/base/Log",
 				+ '          <ui:core.Icon src="sap-icon://search" />      ' // should not cause an issue!
 				+ '    </mvc:View>                                         ';
 
-			return Promise.all([
+			return Promise.allSettled([
 				XMLView.create({
 					viewName: 'testdata/XMLViewWithLowerCaseControl'
 				}),
@@ -27,10 +27,7 @@ sap.ui.define(["sap/base/Log",
 					id: "xmlDefinition",
 					definition: xml
 				})
-			]).catch(function(e) {
-				// requiring resources may fail based on web server response
-				// Nothing to be done.
-			});
+			]);
 		}
 	});
 
