@@ -701,7 +701,7 @@ sap.ui.define([
 			throw new Error("Must not set parameter $$inheritExpandSelect on this binding");
 		}
 		if (oOperationMetadata.$kind !== "NavigationProperty") {
-			 sMetaPath += "/@$ui5.overload/0/$ReturnType";
+			sMetaPath += "/@$ui5.overload/0/$ReturnType";
 			if (oOperationMetadata.$ReturnType
 					&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm.")) {
 				sMetaPath += "/$Type";

@@ -1759,7 +1759,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	 ODataModel.prototype.reportStateMessages = function (sResourcePath, mPathToODataMessages,
+	ODataModel.prototype.reportStateMessages = function (sResourcePath, mPathToODataMessages,
 			aCachePaths) {
 		var sDataBindingPath = "/" + sResourcePath,
 			aNewMessages = [],
