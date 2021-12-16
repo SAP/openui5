@@ -503,6 +503,7 @@ sap.ui.define([
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
 				window.onbeforeunload = this._onUnload.bind(this);
+				return undefined;
 			}.bind(this))
 			.then(function () {
 				if (this.getShowToolbars()) {
@@ -510,6 +511,7 @@ sap.ui.define([
 					return this._getToolbarButtonsVisibility()
 						.then(this._createToolsMenu.bind(this));
 				}
+				return undefined;
 			}.bind(this))
 			// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
 			.then(this._onStackModified.bind(this))
@@ -528,6 +530,7 @@ sap.ui.define([
 					// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 					return this.getToolbar().show();
 				}
+				return undefined;
 			}.bind(this))
 			.then(function () {
 				if (Device.browser.name === "ff") {
@@ -558,8 +561,10 @@ sap.ui.define([
 					this.destroy();
 					return Promise.reject(vError);
 				}
+				return undefined;
 			}.bind(this));
 		}
+		return undefined;
 	};
 
 	function _ffContextMenuHandler() {
@@ -715,6 +720,7 @@ sap.ui.define([
 		if (this.getShowToolbars() && this.getToolbar && this.getToolbar()) {
 			return this.getToolbar()[sName](vValue);
 		}
+		return undefined;
 	};
 
 	/**
@@ -759,6 +765,7 @@ sap.ui.define([
 						oReloadInfo.triggerHardReload = (oReloadInfo.reloadMethod === this._RELOAD.RELOAD_PAGE); // StandAlone or AppDescriptorChanges case
 						return this._handleUrlParameterOnExit(oReloadInfo);
 					}
+					return undefined;
 				}.bind(this));
 			}.bind(this))
 			.catch(fnShowTechnicalError)
@@ -851,6 +858,7 @@ sap.ui.define([
 			return this._getTextResources().getText("MSG_UNSAVED_CHANGES");
 		}
 		window.onbeforeunload = this._oldUnloadHandler;
+		return undefined;
 	};
 
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
@@ -1237,7 +1245,8 @@ sap.ui.define([
 
 	/**
 	 * Shows a message toast.
-	 * @param  {string} sMessageKey The text key for the message
+	 * @param  {string} sMessageKey - The text key for the message
+	 * @param  {object} mOptions - Options for message toast
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._showMessageToast = function(sMessageKey, mOptions) {
@@ -1535,6 +1544,7 @@ sap.ui.define([
 		if (oReloadInfo.triggerHardReload) {
 			this._reloadPage();
 		}
+		return undefined;
 	};
 
 	/**
@@ -1610,6 +1620,7 @@ sap.ui.define([
 		if (oReloadInfo.allContexts) {
 			return "MSG_RELOAD_WITHOUT_ALL_CONTEXT";
 		}
+		return undefined;
 	};
 
 	/**
@@ -1650,24 +1661,25 @@ sap.ui.define([
 		if (!sReason) {
 			return Promise.resolve();
 		}
-		return Utils.showMessageBox("information", sReason)
-		.then(function() {
-			RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
-			// allContexts do not change the url parameter to trigger a reload
-			if (
-				oReloadInfo.allContexts &&
-				!oReloadInfo.hasHigherLayerChanges &&
-				this._getUShellService("AppLifeCycle")
-			) {
-				this._getUShellService("AppLifeCycle").reloadCurrentApp();
-			}
-			if (FlexUtils.getUshellContainer()) {
-				// clears FlexState and triggers reloading of the flex data without blocking
-				var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
-				return this._triggerCrossAppNavigation(oParsedHash);
-			}
-			return this._triggerHardReload(oReloadInfo);
-		}.bind(this));
+		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
+		return (this.getFlexSettings().developerMode ? Promise.resolve() : Utils.showMessageBox("information", sReason))
+			.then(function() {
+				RuntimeAuthoring.enableRestart(oReloadInfo.layer, this.getRootControlInstance());
+				// allContexts do not change the url parameter to trigger a reload
+				if (
+					oReloadInfo.allContexts &&
+					!oReloadInfo.hasHigherLayerChanges &&
+					this._getUShellService("AppLifeCycle")
+				) {
+					this._getUShellService("AppLifeCycle").reloadCurrentApp();
+				}
+				if (FlexUtils.getUshellContainer()) {
+					// clears FlexState and triggers reloading of the flex data without blocking
+					var oParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
+					return this._triggerCrossAppNavigation(oParsedHash);
+				}
+				return this._triggerHardReload(oReloadInfo);
+			}.bind(this));
 	};
 
 	/**
@@ -1814,6 +1826,7 @@ sap.ui.define([
 		if (ServicesIndex.hasOwnProperty(sName)) {
 			return ServicesIndex[sName].replace(/\./g, "/");
 		}
+		return undefined;
 	}
 
 	/**
