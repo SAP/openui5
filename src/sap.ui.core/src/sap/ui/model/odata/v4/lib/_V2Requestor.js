@@ -770,7 +770,7 @@ sap.ui.define([
 	 * Formats a given internal value into a literal suitable for usage in OData V2 URLs. See
 	 * http://www.odata.org/documentation/odata-version-2-0/overview#AbstractTypeSystem.
 	 *
-	 * @param {*} vValue
+	 * @param {any} vValue
 	 *   The value
 	 * @param {object} oPropertyMetadata
 	 *   The property metadata

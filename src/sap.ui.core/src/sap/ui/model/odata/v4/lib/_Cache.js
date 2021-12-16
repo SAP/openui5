@@ -1860,7 +1860,7 @@ sap.ui.define([
 	 * predicates for all entities in the result. Collects and reports OData messages via
 	 * {@link sap.ui.model.odata.v4.lib._Requestor#reportStateMessages}.
 	 *
-	 * @param {*} oRoot An OData response, arrays or simple values are wrapped into an object as
+	 * @param {any} oRoot An OData response, arrays or simple values are wrapped into an object as
 	 *   property "value"
 	 * @param {object} mTypeForMetaPath A map from absolute meta path to entity type (as delivered
 	 *   by {@link #fetchTypes})
@@ -1918,7 +1918,7 @@ sap.ui.define([
 		 * Calls visitInstance for all object entries of the given collection and creates the map
 		 * $byPredicate from predicate to entity.
 		 *
-		 * @param {*[]} aInstances The collection
+		 * @param {any[]} aInstances The collection
 		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 		 * @param {string} sCollectionPath The path of the collection
 		 * @param {string} sContextUrl The context URL for message longtexts

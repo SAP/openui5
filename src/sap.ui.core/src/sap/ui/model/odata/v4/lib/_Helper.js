@@ -280,10 +280,10 @@ sap.ui.define([
 		 * <code>JSON.stringify</code>.
 		 * <b>Warning: <code>Date</code> objects will be turned into strings</b>
 		 *
-		 * @param {*} vValue - Any value, including <code>undefined</code>
+		 * @param {any} vValue - Any value, including <code>undefined</code>
 		 * @param {function} [fnReplacer] - The replacer function to transform the result, see
 		 *   <code>JSON.stringify</code>
-		 * @returns {*} - A clone
+		 * @returns {any} - A clone
 		 */
 		clone : function clone(vValue, fnReplacer) {
 			return vValue === undefined || vValue === Infinity || vValue === -Infinity
@@ -606,7 +606,7 @@ sap.ui.define([
 		 *   The object to start at
 		 * @param {string[]} aSegments
 		 *   Relative path to drill-down into, as array of segments
-		 * @returns {*}
+		 * @returns {any}
 		 *   The result matching to the given path, or <code>undefined</code> if the path leads
 		 *   into void
 		 */
@@ -1656,7 +1656,7 @@ sap.ui.define([
 		 * @param {string} sLiteral The literal value
 		 * @param {string} sType The type
 		 * @param {string} sPath The path for this literal (for error messages)
-		 * @returns {*} The model value
+		 * @returns {any} The model value
 		 * @throws {Error} If the type is invalid or unsupported; the function only validates when a
 		 *   conversion is required
 		 */
