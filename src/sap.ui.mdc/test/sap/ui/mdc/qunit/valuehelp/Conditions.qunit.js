@@ -239,8 +239,10 @@ sap.ui.define([
 	QUnit.test("getContainerConfig", function(assert) {
 
 		var iConfirm = 0;
+		var bClose;
 		oConditions.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
+			bClose = oEvent.getParameter("close");
 		});
 		var iCancel = 0;
 		oConditions.attachEvent("cancel", function(oEvent) {
@@ -255,7 +257,7 @@ sap.ui.define([
 		assert.ok(oPopupConfig.showArrow, "Popup config contains truthy 'showArrow'");
 		assert.ok(oPopupConfig.showHeader, "Popup config contains truthy 'showHeader'");
 
-		var oFooterContent = oContainerConfig.getFooter && oContainerConfig.getFooter();
+		var oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
 
 		if (oFooterContent) {
 			var fnDone = assert.async();
@@ -280,6 +282,7 @@ sap.ui.define([
 
 				oButtonOK.firePress();
 				assert.equal(iConfirm, 1, "Confirm event fired");
+				assert.ok(bClose, "Confirm event configured for closing");
 				oButtonCancel.firePress();
 				assert.equal(iCancel, 1, "Cancel event fired");
 
