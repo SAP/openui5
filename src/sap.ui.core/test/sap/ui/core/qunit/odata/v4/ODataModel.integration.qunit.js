@@ -1593,10 +1593,7 @@ sap.ui.define([
 		 *                                 // expect value "d" for control with ID "foo" in a
 		 *                                 // metamodel table on "/MyEntitySet/ID"
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
-		 * this.expectChange("foo", null, null); // sap.ui.table.Table sets the binding context on
-		 *                                       // an existing row to null when scrolling
-		 * this.expectChange("foo", null); // row is deleted in sap.ui.table.Table so that its
-		 *                                 // context is destroyed
+		 * this.expectChange("foo", null); // initialization due to #setContext
 		 *
 		 * @param {string} sControlId The control ID
 		 * @param {string|string[]|number|number[]} [vValue] The expected value or a list of
@@ -1619,16 +1616,12 @@ sap.ui.define([
 			}
 
 			/*
-			 * @param {boolean|undefined} bInList
+			 * @param {boolean} bInList
 			 */
 			function isList(bInList) {
 				if (sControlId in that.mIsListByControlId) {
-					if (bInList !== undefined) {
-						if (that.mIsListByControlId[sControlId] === undefined) {
-							that.mIsListByControlId[sControlId] = bInList;
-						} else if (bInList !== that.mIsListByControlId[sControlId]) {
-							throw new Error("Inconsistent usage of array values for " + sControlId);
-						}
+					if (bInList !== that.mIsListByControlId[sControlId]) {
+						throw new Error("Inconsistent usage of array values for " + sControlId);
 					}
 				} else {
 					if (that.oView) {
@@ -1651,8 +1644,7 @@ sap.ui.define([
 					array(aExpectations, i).push(vRowValue);
 				});
 			} else {
-				// Note: NULL changes may, but need not, belong to a list - we cannot tell here
-				isList(vValue === null ? undefined : false);
+				isList(false);
 				aExpectations = array(this.mChanges, sControlId);
 				if (arguments.length > 1) {
 					aExpectations.push(vValue);
@@ -1826,63 +1818,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Expect changes due to resets of the given <t:Table>'s rows after scrolling.
-		 *
-		 * @param {sap.ui.table.Table} oTable
-		 *   <t:Table> to derive columns from
-		 * @param {number} iRowCount
-		 *   Number of rows which are reset
-		 * @param {number} [iMissingExpanded=0]
-		 *   Number of changes for "isExpanded" which will be missing (because already undefined)
-		 * @param {number} [iMissingGroupLevelCount=0]
-		 *   Number of changes for "groupLevelCount" which will be missing (because already
-		 *   undefined)
-		 * @returns {object} The test instance for chaining
-		 * @throws {Error} For unsupported IDs
-		 */
-		expectResets : function (oTable, iRowCount, iMissingExpanded, iMissingGroupLevelCount) {
-			var mValuesById = {
-					accountResponsible : null,
-					amountPerSale : undefined,
-					country : null,
-					currency : null,
-					grossAmount : undefined,
-					groupLevelCount : undefined,
-					isExpanded : undefined,
-					isTotal : undefined,
-					level : undefined,
-					lifecycleStatus : null,
-					localCurrency : null,
-					region : null,
-					salesAmount : undefined,
-					salesAmountLocalCurrency : undefined,
-					salesNumber : null
-				},
-				that = this;
-
-			function expectChange(sId) {
-				var i = sId === "isExpanded" && iMissingExpanded
-						|| sId === "groupLevelCount" && iMissingGroupLevelCount
-						|| 0;
-
-				if (!(sId in mValuesById)) {
-					throw new Error("Unsupported ID: " + sId);
-				}
-				for (; i < iRowCount; i += 1) {
-					that.expectChange(sId, mValuesById[sId], null);
-				}
-			}
-
-			oTable.getColumns().map(function (oColumn) {
-				var sId = oColumn.getTemplate().getId();
-
-				return sId.slice(sId.lastIndexOf("-") + 1);
-			}).forEach(expectChange);
-
-			return this;
-		},
-
-		/**
 		 * Allows that the property "text" of the control with the given ID is set to undefined or
 		 * null. This may happen when the property is part of a list, this list is reset and the
 		 * request to deliver the new value is slowed down due to a group lock. (Then the row
@@ -1964,7 +1899,7 @@ sap.ui.define([
 			oBindingInfo.formatter = function (sValue) {
 				var oBinding,
 					oContext = bInList ? this.getBindingContext() : undefined,
-					vRow = oContext; // Note: NULL makes a difference here
+					vRow;
 
 				if (fnOriginalFormatter) {
 					sValue = fnOriginalFormatter.apply(this, arguments);
@@ -1990,6 +1925,8 @@ sap.ui.define([
 						} else { // e.g. meta model
 							vRow = oContext.getPath();
 						}
+					} else if (bInList) { // a list property that lost its row context
+						return sValue; // do not report the change event
 					}
 					that.checkValue(assert, sValue, sControlId, vRow);
 				}
@@ -4812,7 +4749,6 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectChange("name", null, null)
 				.expectChange("name", [, "Frederic Fall", "Peter Burke"])
 				.expectMessages([oMessage1, oMessage2]);
 
@@ -6206,7 +6142,6 @@ sap.ui.define([
 				// this request is sent because the length is not yet known when the change event
 				// for the delete is fired (it wouldn't come with $count)
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=5&$top=1", {value : []})
-				.expectChange("id", null) // from deleting the item '0500000002'
 				.expectChange("id", [,, "0500000004"]);
 
 			oTable = that.oView.byId("table");
@@ -16315,8 +16250,6 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('0500000000')"
 				})
-				// "note" temporarily loses its binding context and thus fires a change event
-				.expectChange("note", null, null)
 				.expectChange("note", ["Row2"])
 				.expectChange("netAmount", null)
 				.expectChange("salesOrderID", null);
@@ -16366,8 +16299,6 @@ sap.ui.define([
 						SalesOrderID : "0500000001"
 					}]
 				})
-				// "position" temporarily loses its binding context and thus fires a change event
-				.expectChange("position", null, null)
 				.expectChange("position", ["20"]);
 
 			that.oView.byId("form").bindElement("/SalesOrderList('0500000001')");
@@ -16751,7 +16682,6 @@ sap.ui.define([
 						{GrossAmount : "9", LifecycleStatus : "R"}
 					]
 				})
-				.expectResets(oTable, 3)
 				.expectChange("isExpanded", [,,,,,,, false, false, false])
 				.expectChange("isTotal", [,,,,,,, true, true, true])
 				.expectChange("level", [,,,,,,, 1, 1, 1])
@@ -17235,7 +17165,6 @@ sap.ui.define([
 						{AccountResponsible : "d", SalesAmount : "40", SalesNumber : 4}
 					]
 				})
-				.expectResets(oTable, 2, 1, 1)
 				.expectChange("isExpanded", [,,,,, false])
 				.expectChange("isTotal", [,,, false, false, true])
 				.expectChange("level", [,,, 2, 2, 1])
@@ -17284,7 +17213,6 @@ sap.ui.define([
 						{Region : "W", SalesAmount : "400"}
 					]
 				})
-				.expectResets(oTable, 2, 1, 1)
 				.expectChange("isExpanded", [,,,,,,,,,,,,, /*undefined*/, false, false])
 				.expectChange("isTotal", [,,,,,,,,,,,,, false, true, true])
 				.expectChange("level", [,,,,,,,,,,,,, 2, 1, 1])
@@ -17309,7 +17237,6 @@ sap.ui.define([
 						{AccountResponsible : "f", SalesAmount : "60", SalesNumber : 6}
 					]
 				})
-				.expectResets(oTable, 3, 1, 3)
 				// .expectChange("isExpanded", [])
 				.expectChange("isTotal", [,,,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,,,, 2, 2, 2])
@@ -17436,8 +17363,7 @@ sap.ui.define([
 							{Region : "U", SalesAmount : "600"}
 						]
 					});
-				}))
-				.expectResets(oTable, 3, 0, 3);
+				}));
 
 			oTable.setFirstVisibleRow(3);
 
@@ -17719,7 +17645,6 @@ sap.ui.define([
 						SalesAmountLocalCurrency : "400"
 					}]
 				})
-				.expectResets(oTable, 4, 0, 4)
 				.expectChange("isExpanded", [,,,,,,,,, false])
 				.expectChange("isTotal", [,,,,,, false, false, false, true])
 				.expectChange("level", [,,,,,, 2, 2, 2, 1])
@@ -18306,8 +18231,7 @@ sap.ui.define([
 		}).then(function () {
 			var oThirdRow = oTable.getRows()[2].getBindingContext();
 
-			that.expectResets(oTable, 2, 2, 2)
-				.expectChange("isExpanded", [, false]);
+			that.expectChange("isExpanded", [, false]);
 
 			// code under test
 			oTable.getRows()[1].getBindingContext().collapse();
@@ -18763,16 +18687,13 @@ sap.ui.define([
 			that.expectChange("isExpanded", [, true]);
 
 			if (!bSecondScroll) {
-				that.expectResets(oTable, 2, 0, 2)
-					.expectChange("region", [,, "X"]) // "client side scrolling"
+				that.expectChange("region", [,, "X"]) // "client side scrolling"
 					// .expectChange("groupLevelCount", [])
 					.expectChange("isExpanded", [,, undefined])
 					.expectChange("level", [,, 2])
 					.expectChange("region", [,, "Y"])
 					.expectChange("accountResponsible", [,, "a"])
 					.expectChange("salesAmount", [,, "10"]);
-			} else {
-				that.expectResets(oTable, 3, 0, 3);
 			}
 
 			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
@@ -19091,8 +19012,7 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oRowsBinding.getLength(), 1 + 26);
 
-			that.expectResets(oTable, 4, 3, 3)
-				.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 					+ "/groupby((Region),aggregate(SalesAmount))&$skip=4&$top=3",
 					function () {
 						// code under test
@@ -19253,9 +19173,6 @@ sap.ui.define([
 							{Country : "a", Region : "Z", SalesNumber : 1}
 						]
 					})
-					.expectChange("country", null, null)
-					.expectChange("region", null, null)
-					.expectChange("salesNumber", null, null)
 					.expectChange("country", [, "a", "b", "c", "d"])
 					.expectChange("region", [, "Z", "Y", "X", "W"])
 					.expectChange("salesNumber", [, "1", "2", "3", "4"]);
@@ -20021,7 +19938,6 @@ sap.ui.define([
 						{Region : "h", SalesNumber : 8}
 					]
 				})
-				.expectResets(oTable, 3, 1, 2)
 				// .expectChange("isExpanded", [])
 				.expectChange("isTotal", [,,,,,,, false, false, false])
 				.expectChange("level", [,,,,,,, 2, 2, 2])
@@ -20615,8 +20531,6 @@ sap.ui.define([
 							LifecycleStatus : "Z"
 						}]
 					});
-				that.expectChange("grossAmount", null, null)
-					.expectChange("lifecycleStatus", null, null);
 				that.expectChange("grossAmount", ["1.00", "2.00", "3.00", "4.00"])
 					.expectChange("lifecycleStatus", ["Z", "Y", "X", "W"]);
 
@@ -20731,8 +20645,6 @@ sap.ui.define([
 						AGE : 42
 					}]
 				})
-				.expectChange("text", null, null)
-				.expectChange("age", null, null)
 				.expectChange("text", ["John Field", "Jonathan Smith", "Frederic Fall"])
 				.expectChange("age", ["42", "50", "70"]);
 
@@ -25503,15 +25415,6 @@ sap.ui.define([
 						PublicationID : "42-8"
 					}]
 				})
-				// "price" temporarily loses its binding context and thus fires a change event
-				.expectChange("price", null, null)
-				.expectChange("price", null, null)
-				// "currency" temporarily loses its binding context and thus fires a change event
-				.expectChange("currency", null, null)
-				.expectChange("currency", null, null)
-				// "inProcessByUser" temporarily loses its binding context and thus fires a change
-				.expectChange("inProcessByUser", null, null)
-				.expectChange("inProcessByUser", null, null)
 				.expectChange("price", [,,,,,,, "7.77", "7.88"])
 				.expectChange("currency", [,,,,,,, "EUR", "EUR"]);
 
@@ -31068,9 +30971,6 @@ sap.ui.define([
 						{ID : "10", Name : "Daniel Red"}
 					]
 				})
-				.expectChange("text", null, null)
-				.expectChange("text", null, null)
-				.expectChange("text", null, null)
 				.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
 
 			oTable.setFirstVisibleRow(7);
@@ -31099,9 +30999,6 @@ sap.ui.define([
 						{ID : "6", Name : "Erica Brown"}
 					]
 				})
-				.expectChange("text", null, null)
-				.expectChange("text", null, null)
-				.expectChange("text", null, null)
 				.expectChange("text", [,,, "Alice Grey", "Bob Green", "Erica Brown"]);
 
 			oTable.setFirstVisibleRow(3);
@@ -33195,8 +33092,6 @@ sap.ui.define([
 						{ID : "2", Name : "Frederic Fall"}
 					]
 				})
-				.expectChange("name", null)
-				.expectChange("name", null)
 				.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
 
 			// code under test
@@ -33589,10 +33484,7 @@ sap.ui.define([
 			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), false);
 
-			that.expectChange("count", "3") // TODO: not the final state, should be "2"
-				.expectChange("inactive", undefined, null) // from the deleted row
-				.expectChange("note", null, null)
-				.expectChange("position", null, null);
+			that.expectChange("count", "3"); // TODO: not the final state, should be "2"
 
 			// code under test
 			oContext2.delete();
@@ -34565,9 +34457,6 @@ sap.ui.define([
 					})
 					.expectChange("objectPageGrossAmount", null)
 					.expectChange("objectPageNote", null)
-					// expected as context is also destroyed in the list
-					.expectChange("id", null)
-					.expectChange("grossAmount", null)
 					// as context is no longer part of aContexts the list requests a new context
 					.expectRequest({
 						batchNo : 4,
@@ -36569,9 +36458,7 @@ sap.ui.define([
 			oRootBinding.suspend();
 			oListBinding.sort(new Sorter("AGE"));
 
-			that.expectChange("age", null)
-				.expectChange("name", null, null) // addtl ODCB makes a difference here
-				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$skip=0&$top=110", {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$skip=0&$top=110", {
 					value : [{
 						AGE : 40,
 						ID : "0",
