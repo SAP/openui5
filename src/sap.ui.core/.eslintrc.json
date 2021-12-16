@@ -54,6 +54,14 @@
 		},
 		{
 			"files": [
+				"src/sap/ui/model/odata/v4/**/*.js"
+			],
+			"rules": {
+				"max-statements-per-line": "error"
+			}
+		},
+		{
+			"files": [
 				"test/sap/ui/core/qunit/odata/v4/**/*.js"
 			],
 			"globals": {
