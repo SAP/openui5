@@ -121,10 +121,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the array of this data state's messages combining the model and control messages.
-	 * The array is sorted descendingly by message severity.
+	 * Returns an array of all model and control messages, regardless of whether they are old or
+	 * new.
+	 *
+	 * @returns {sap.ui.core.Message[]} The array of all messages
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	 DataState.prototype.getAllMessages = function () {
+		var oResultSet = new Set();
+
+		this.getMessages().forEach(oResultSet.add.bind(oResultSet));
+		this._getOldMessages().forEach(oResultSet.add.bind(oResultSet));
+
+		return Array.from(oResultSet);
+	};
+
+	/**
+	 * Returns the array of this data state's current messages combining the model and control
+	 * messages. The array is sorted descendingly by message severity.
 	 *
 	 * @returns {sap.ui.core.Message[]} The sorted array of all messages
+	 *
 	 * @public
 	 */
 	DataState.prototype.getMessages = function () {
@@ -177,9 +196,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the array of state messages of the model or undefined.
+	 * Returns the array of this data state's current model messages.
 	 *
 	 * @returns {sap.ui.core.Message[]} The array of messages of the model
+	 *
 	 * @public
 	 */
 	DataState.prototype.getModelMessages = function() {
@@ -199,9 +219,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the array of state messages of the control.
+	 * Returns the array of this data state's current control messages.
 	 *
-	 * @return {sap.ui.core.Message[]} The array of control messages
+	 * @returns {sap.ui.core.Message[]} The array of control messages
+	 *
 	 * @public
 	 */
 	DataState.prototype.getControlMessages = function() {

@@ -18,6 +18,9 @@ sap.ui.define(function() {
 			MessageManager: {
 				title: "Messaging: sap.ui.core.message.MessageManager"
 			},
+			MessageMixin: {
+				title: "Messaging: sap.ui.core.message.MessageMixin"
+			},
 			messagesGeneral: {
 				title: "Messaging: General",
 				ui5: {
