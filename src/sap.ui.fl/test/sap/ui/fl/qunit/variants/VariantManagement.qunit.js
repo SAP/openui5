@@ -1271,7 +1271,7 @@ sap.ui.define([
 
 		QUnit.test("check getApplyAutomaticallyOnVariant method", function(assert) {
 			var nCount = 0;
-			var fCallBack = function() { nCount++; return true; };
+			var fCallBack = function(oVariant) { assert.ok(oVariant); nCount++; return true; };
 
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 

@@ -423,6 +423,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @since 1.93
 	 * @param {function} fCallBack Called when standard variant must be applied. It determines if apply automatically on standard variant should be considered.
+	 * As a convenience the current variant will be passed to the callback. This variant instance may not be changed in any ways. It is only intended to provide certain variant information.
 	 * @returns {this} Reference to this in order to allow method chaining.
 	 */
 	VariantManagement.prototype.registerApplyAutomaticallyOnStandardVariant = function(fCallBack) {
@@ -444,7 +445,7 @@ sap.ui.define([
 
 		if (this._fRegisteredApplyAutomaticallyOnStandardVariant && this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (oVariant.key === this.getStandardVariantKey())) {
 			try {
-				bExecuteOnSelection = this._fRegisteredApplyAutomaticallyOnStandardVariant();
+				bExecuteOnSelection = this._fRegisteredApplyAutomaticallyOnStandardVariant(oVariant);
 			} catch (ex) {
 				Log.error("callback for determination of apply automatically on standard variant failed");
 			}
