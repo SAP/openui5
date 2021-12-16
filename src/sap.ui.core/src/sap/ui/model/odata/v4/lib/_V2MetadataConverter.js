@@ -20,112 +20,112 @@ sap.ui.define([
 
 		// conversion tables
 		mV2toV4 = {
-			"creatable" : {
-				"property" : "Insertable",
-				"term" : "@Org.OData.Capabilities.V1.InsertRestrictions"
+			creatable : {
+				property : "Insertable",
+				term : "@Org.OData.Capabilities.V1.InsertRestrictions"
 			},
-			"deletable" : {
-				"property" : "Deletable",
-				"term" : "@Org.OData.Capabilities.V1.DeleteRestrictions"
+			deletable : {
+				property : "Deletable",
+				term : "@Org.OData.Capabilities.V1.DeleteRestrictions"
 			},
 			"deletable-path" : {
-				"property" : "Deletable",
-				"term" : "@Org.OData.Capabilities.V1.DeleteRestrictions"
+				property : "Deletable",
+				term : "@Org.OData.Capabilities.V1.DeleteRestrictions"
 			},
 			"field-control" : {
-				"term" : "@com.sap.vocabularies.Common.v1.FieldControl"
+				term : "@com.sap.vocabularies.Common.v1.FieldControl"
 			},
-			"heading" : {
-				"term" : "@com.sap.vocabularies.Common.v1.Heading"
+			heading : {
+				term : "@com.sap.vocabularies.Common.v1.Heading"
 			},
-			"label" : {
-				"term" : "@com.sap.vocabularies.Common.v1.Label"
+			label : {
+				term : "@com.sap.vocabularies.Common.v1.Label"
 			},
-			"precision" : {
-				"term" : "@Org.OData.Measures.V1.Scale"
+			precision : {
+				term : "@Org.OData.Measures.V1.Scale"
 			},
-			"quickinfo" : {
-				"term" : "@com.sap.vocabularies.Common.v1.QuickInfo"
+			quickinfo : {
+				term : "@com.sap.vocabularies.Common.v1.QuickInfo"
 			},
 			"requires-filter" : {
-				"property" : "RequiresFilter",
-				"term" : "@Org.OData.Capabilities.V1.FilterRestrictions"
+				property : "RequiresFilter",
+				term : "@Org.OData.Capabilities.V1.FilterRestrictions"
 			},
-			"searchable" : {
-				"property" : "Searchable",
-				"term" : "@Org.OData.Capabilities.V1.SearchRestrictions"
+			searchable : {
+				property : "Searchable",
+				term : "@Org.OData.Capabilities.V1.SearchRestrictions"
 			},
-			"text" : {
-				"term" : "@com.sap.vocabularies.Common.v1.Text"
+			text : {
+				term : "@com.sap.vocabularies.Common.v1.Text"
 			},
-			"topable" : {
-				"term" : "@Org.OData.Capabilities.V1.TopSupported"
+			topable : {
+				term : "@Org.OData.Capabilities.V1.TopSupported"
 			},
-			"updatable" : {
-				"property" : "Updatable",
-				"term" : "@Org.OData.Capabilities.V1.UpdateRestrictions"
+			updatable : {
+				property : "Updatable",
+				term : "@Org.OData.Capabilities.V1.UpdateRestrictions"
 			},
 			"updatable-path" : {
-				"property" : "Updatable",
-				"term" : "@Org.OData.Capabilities.V1.UpdateRestrictions"
+				property : "Updatable",
+				term : "@Org.OData.Capabilities.V1.UpdateRestrictions"
 			}
 		},
 		mV2toV4ComplexSemantics = {
-			"bday" : {
+			bday : {
 				TermName : "Contact"
 			},
-			"city" : {
+			city : {
 				Path : "adr",
 				TermName : "Contact",
 				V4Attribute : "locality"
 			},
-			"country" : {
+			country : {
 				Path : "adr",
 				TermName : "Contact"
 			},
-			"email" : {
+			email : {
 				Path : "address",
 				TermName : "Contact",
 				V4Attribute : "uri",
 				typeMapping : {
-					"home" : "home",
-					"pref" : "preferred",
-					"work" : "work"
+					home : "home",
+					pref : "preferred",
+					work : "work"
 				},
 				v4EnumType : "com.sap.vocabularies.Communication.v1.ContactInformationType",
 				v4PropertyAnnotation : "@com.sap.vocabularies.Communication.v1.IsEmailAddress"
 			},
-			"familyname" : {
+			familyname : {
 				Path : "n",
 				TermName : "Contact",
 				V4Attribute : "surname"
 			},
-			"givenname" : {
+			givenname : {
 				Path : "n",
 				TermName : "Contact",
 				V4Attribute : "given"
 			},
-			"honorific" : {
+			honorific : {
 				Path : "n",
 				TermName : "Contact",
 				V4Attribute : "prefix"
 			},
-			"middlename" : {
+			middlename : {
 				Path : "n",
 				TermName : "Contact",
 				V4Attribute : "additional"
 			},
-			"name" : {
+			name : {
 				TermName : "Contact",
 				V4Attribute : "fn"
 			},
-			"nickname" : {
+			nickname : {
 				TermName : "Contact"
 			},
-			"note" : {
+			note : {
 				TermName : "Contact"
 			},
-			"org" : {
+			org : {
 				TermName : "Contact"
 			},
 			"org-role" : {
@@ -136,119 +136,119 @@ sap.ui.define([
 				TermName : "Contact",
 				V4Attribute : "orgunit"
 			},
-			"photo" : {
+			photo : {
 				TermName : "Contact"
 			},
-			"pobox" : {
+			pobox : {
 				Path : "adr",
 				TermName : "Contact"
 			},
-			"region" : {
+			region : {
 				Path : "adr",
 				TermName : "Contact"
 			},
-			"street" : {
+			street : {
 				Path : "adr",
 				TermName : "Contact"
 			},
-			"suffix" : {
+			suffix : {
 				Path : "n",
 				TermName : "Contact"
 			},
-			"tel" : {
+			tel : {
 				Path : "tel",
 				TermName : "Contact",
 				V4Attribute : "uri",
 				typeMapping : {
-					"cell" : "cell",
-					"fax" : "fax",
-					"home" : "home",
-					"pref" : "preferred",
-					"video" : "video",
-					"voice" : "voice",
-					"work" : "work"
+					cell : "cell",
+					fax : "fax",
+					home : "home",
+					pref : "preferred",
+					video : "video",
+					voice : "voice",
+					work : "work"
 				},
 				v4EnumType : "com.sap.vocabularies.Communication.v1.PhoneType",
 				v4PropertyAnnotation : "@com.sap.vocabularies.Communication.v1.IsPhoneNumber"
 			},
-			"title" : {
+			title : {
 				TermName : "Contact"
 			},
-			"zip" : {
+			zip : {
 				Path : "adr",
 				TermName : "Contact",
 				V4Attribute : "code"
 			},
 			// event annotations
-			"class" : {
+			class : {
 				TermName : "Event"
 			},
-			"dtend" : {
+			dtend : {
 				TermName : "Event"
 			},
-			"dtstart" : {
+			dtstart : {
 				TermName : "Event"
 			},
-			"duration" : {
+			duration : {
 				TermName : "Event"
 			},
-			"fbtype" : {
+			fbtype : {
 				TermName : "Event"
 			},
-			"location" : {
+			location : {
 				TermName : "Event"
 			},
-			"status" : {
+			status : {
 				TermName : "Event"
 			},
-			"transp" : {
+			transp : {
 				TermName : "Event"
 			},
-			"wholeday" : {
+			wholeday : {
 				TermName : "Event"
 			},
 			// message annotations
-			"body" : {
+			body : {
 				TermName : "Message"
 			},
-			"from" : {
+			from : {
 				TermName : "Message"
 			},
-			"received" : {
+			received : {
 				TermName : "Message"
 			},
-			"sender" : {
+			sender : {
 				TermName : "Message"
 			},
-			"subject" : {
+			subject : {
 				TermName : "Message"
 			},
 			// task annotations
-			"completed" : {
+			completed : {
 				TermName : "Task"
 			},
-			"due" : {
+			due : {
 				TermName : "Task"
 			},
 			"percent-complete" : {
 				TermName : "Task",
 				V4Attribute : "percentcomplete"
 			},
-			"priority" : {
+			priority : {
 				TermName : "Task"
 			}
 		},
 		mV2toV4SimpleSemantics = {
 			// calendar annotations
-			"fiscalyear" : "@com.sap.vocabularies.Common.v1.IsFiscalYear",
-			"fiscalyearperiod" : "@com.sap.vocabularies.Common.v1.IsFiscalYearPeriod",
-			"year" : "@com.sap.vocabularies.Common.v1.IsCalendarYear",
-			"yearmonth" : "@com.sap.vocabularies.Common.v1.IsCalendarYearMonth",
-			"yearmonthday" : "@com.sap.vocabularies.Common.v1.IsCalendarDate",
-			"yearquarter" : "@com.sap.vocabularies.Common.v1.IsCalendarYearQuarter",
-			"yearweek" : "@com.sap.vocabularies.Common.v1.IsCalendarYearWeek",
+			fiscalyear : "@com.sap.vocabularies.Common.v1.IsFiscalYear",
+			fiscalyearperiod : "@com.sap.vocabularies.Common.v1.IsFiscalYearPeriod",
+			year : "@com.sap.vocabularies.Common.v1.IsCalendarYear",
+			yearmonth : "@com.sap.vocabularies.Common.v1.IsCalendarYearMonth",
+			yearmonthday : "@com.sap.vocabularies.Common.v1.IsCalendarDate",
+			yearquarter : "@com.sap.vocabularies.Common.v1.IsCalendarYearQuarter",
+			yearweek : "@com.sap.vocabularies.Common.v1.IsCalendarYearWeek",
 			// OData core annotations
-			"url" : "@Org.OData.Core.V1.IsURL"
+			url : "@Org.OData.Core.V1.IsURL"
 		};
 
 	//*********************************************************************************************
@@ -583,7 +583,7 @@ sap.ui.define([
 			oAnnotatable.consume("semantics");
 		} else if (oV2toV4ComplexSemantic) {
 			oPath = {
-				"$Path" : this.sPropertyName
+				$Path : this.sPropertyName
 			};
 			oAnnotations = oAnnotatable.oParent.getOrCreateAnnotationRecord(
 				"@com.sap.vocabularies.Communication.v1." + oV2toV4ComplexSemantic.TermName);
@@ -609,7 +609,7 @@ sap.ui.define([
 							}
 						});
 						if (aResult.length > 0) {
-							oSemantics.type = {"EnumMember" : aResult.join(" ")};
+							oSemantics.type = {EnumMember : aResult.join(" ")};
 						}
 					}
 					oAnnotations[oV2toV4ComplexSemantic.Path] = [oSemantics];
@@ -769,7 +769,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	_V2MetadataConverter.prototype.processComplexType = function (oElement) {
-		this.processType(oElement, {"$kind" : "ComplexType"});
+		this.processType(oElement, {$kind : "ComplexType"});
 	};
 
 	/**
@@ -822,7 +822,7 @@ sap.ui.define([
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.mEntityContainersOfSchema[sQualifiedName]
-			= this.entityContainer = {"$kind" : "EntityContainer"};
+			= this.entityContainer = {$kind : "EntityContainer"};
 		this.addToResult(sQualifiedName, this.entityContainer);
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
 			this.defaultEntityContainer = sQualifiedName;
@@ -870,8 +870,8 @@ sap.ui.define([
 
 		this.processType(oElement, oType);
 		this.processAttributes(oElement, oType, {
-			"Abstract" : this.setIfTrue,
-			"BaseType" : function (sType) {
+			Abstract : this.setIfTrue,
+			BaseType : function (sType) {
 				return sType ? that.resolveAlias(sType) : undefined;
 			}
 		});
@@ -901,14 +901,14 @@ sap.ui.define([
 		var that = this;
 
 		this.processAttributes(oElement, oResult, {
-			"DefaultValue" : this.setValue,
-			"MaxLength" : function (sValue) {
+			DefaultValue : this.setValue,
+			MaxLength : function (sValue) {
 				return sValue === "Max" ? undefined : that.setNumber(sValue);
 			},
-			"Nullable" : this.setIfFalse,
-			"Precision" : this.setNumber,
-			"Scale" : this.setNumber,
-			"Unicode" : this.setIfFalse
+			Nullable : this.setIfFalse,
+			Precision : this.setNumber,
+			Scale : this.setNumber,
+			Unicode : this.setIfFalse
 		});
 		if (oElement.getAttribute("FixedLength") === "false") {
 			oResult.$Scale = "variable";
@@ -938,7 +938,7 @@ sap.ui.define([
 
 		oOperationImport["$" + sKind] = sQualifiedName;
 		this.processAttributes(oElement, oOperationImport, {
-			"EntitySet" : this.setValue
+			EntitySet : this.setValue
 		});
 		if (sReturnType) {
 			oOperation.$ReturnType = oReturnType = {};
@@ -962,9 +962,9 @@ sap.ui.define([
 			if (sAnnotationActionFor) {
 				oOperation.$IsBound = true;
 				oOperation.$Parameter = [{
-					"$Name" : null,
-					"$Nullable" : false,
-					"$Type" : this.resolveAlias(sAnnotationActionFor)
+					$Name : null,
+					$Nullable : false,
+					$Type : this.resolveAlias(sAnnotationActionFor)
 				}];
 				this.aBoundOperations.push(oOperation);
 				this.consumeSapAnnotation("applicable-path");
@@ -1050,7 +1050,7 @@ sap.ui.define([
 		var sSchemaVersion = this.consumeSapAnnotation("schema-version");
 
 		this.namespace = oElement.getAttribute("Namespace") + ".";
-		this.schema = {"$kind" : "Schema"};
+		this.schema = {$kind : "Schema"};
 		this.addToResult(this.namespace, this.schema);
 		if (sSchemaVersion) {
 			this.schema["@Org.Odata.Core.V1.SchemaVersion"] = sSchemaVersion;
@@ -1159,7 +1159,7 @@ sap.ui.define([
 		this.v2annotatable(sName);
 
 		if (sCreatable) {
-			oNavigationPropertyPath = {"$NavigationPropertyPath" : sName};
+			oNavigationPropertyPath = {$NavigationPropertyPath : sName};
 			if (sCreatablePath) {
 				Log.warning("Inconsistent metadata in '" + this.url + "'",
 					"Use either 'sap:creatable' or 'sap:creatable-path' at navigation property '"
@@ -1169,10 +1169,10 @@ sap.ui.define([
 			}
 		} else if (sCreatablePath) {
 			oNavigationPropertyPath = {
-				"$If" : [{
-					"$Not" : {"$Path" : sCreatablePath}
+				$If : [{
+					$Not : {$Path : sCreatablePath}
 				}, {
-					"$NavigationPropertyPath" : sName
+					$NavigationPropertyPath : sName
 				}]
 			};
 		}
@@ -1182,11 +1182,11 @@ sap.ui.define([
 		}
 		if (sFilterable === "false") {
 			oFilterablePath = {
-				"NavigationProperty" : {
-					"$NavigationPropertyPath" : sName
+				NavigationProperty : {
+					$NavigationPropertyPath : sName
 				},
-				"FilterRestrictions" : {
-					"Filterable" : false
+				FilterRestrictions : {
+					Filterable : false
 				}
 			};
 			pushPropertyPath("@Org.OData.Capabilities.V1.NavigationRestrictions",
@@ -1206,7 +1206,7 @@ sap.ui.define([
 			vHere,
 			sName = oElement.getAttribute("Name"),
 			oProperty = {
-				"$kind" : "Property"
+				$kind : "Property"
 			},
 			that = this;
 
@@ -1222,7 +1222,7 @@ sap.ui.define([
 					that.mEntityType2EntitySetAnnotation, that.sTypeName);
 				vHere = that.getOrCreateObject(vHere, sTerm);
 				vHere = that.getOrCreateArray(vHere, sProperty);
-				vHere.push({"$PropertyPath" : sName});
+				vHere.push({$PropertyPath : sName});
 			} else {
 				Log.warning("Unsupported SAP annotation at a complex type in '"
 					+ that.url + "'", "sap:" + sAnnotation + " at property '" + oAnnotatable.sPath
@@ -1272,11 +1272,11 @@ sap.ui.define([
 					vHere = this.getOrCreateArray(
 						vHere, "@com.sap.vocabularies.Common.v1.FilterExpressionRestrictions");
 					vHere.push({
-						"AllowedExpressions" : {
-							"EnumMember" : "com.sap.vocabularies.Common.v1.FilterExpressionType/"
+						AllowedExpressions : {
+							EnumMember : "com.sap.vocabularies.Common.v1.FilterExpressionType/"
 								+ sEnumMember
 						},
-						"Property" : {"$PropertyPath" : sName}
+						Property : {$PropertyPath : sName}
 					});
 				} else {
 					Log.warning("Unsupported SAP annotation at a complex type in '"
@@ -1365,7 +1365,7 @@ sap.ui.define([
 				that.result[_Helper.namespace(sPropertyPath) + "."], "$Annotations");
 			vHere = that.getOrCreateObject(vHere, sPropertyPath);
 			if (!(sUnitAnnotation in vHere)) { // existing V4 annotations won't be overridden
-				vHere[sUnitAnnotation] = {"$Path" : sUnitPath};
+				vHere[sUnitAnnotation] = {$Path : sUnitPath};
 			}
 		});
 	};
@@ -1522,84 +1522,84 @@ sap.ui.define([
 		$$.sRootNamespace = sEdmxNamespace;
 
 		$$.oAliasConfig = {
-			"Reference" : {
+			Reference : {
 				__xmlns : _MetadataConverter.sEdmxNamespace,
-				"Include" : {
+				Include : {
 					__processor : $$.processAlias
 				}
 			},
-			"DataServices" : {
-				"Schema" : {
+			DataServices : {
+				Schema : {
 					__processor : $$.processAlias
 				}
 			}
 		};
 
 		oStructuredTypeConfig = {
-			"NavigationProperty" : {
+			NavigationProperty : {
 				__processor : $$.processTypeNavigationProperty
 			},
-			"Property" : {
+			Property : {
 				__processor : $$.processTypeProperty
 			}
 		};
 
 		$$.oFullConfig = {
 			__include : [$$.oReferenceInclude],
-			"DataServices" : {
+			DataServices : {
 				__processor : $$.processDataServices,
-				"Schema" : {
+				Schema : {
 					__postProcessor : $$.postProcessSchema,
 					__processor : $$.processSchema,
 					__include : [$$.oAnnotationsConfig],
-					"Association" : {
+					Association : {
 						__processor : $$.processAssociation,
-						"End" : {
+						End : {
 							__processor : $$.processAssociationEnd
 						},
-						"ReferentialConstraint" : {
+						ReferentialConstraint : {
 							__processor : $$.processReferentialConstraint,
-							"Dependent" : {
+							Dependent : {
 								__processor : $$.processDependent,
-								"PropertyRef" : {
+								PropertyRef : {
 									__processor : $$.processReferentialConstraintPropertyRef
 								}
 							},
-							"Principal" : {
+							Principal : {
 								__processor : $$.processPrincipal,
-								"PropertyRef" : {
+								PropertyRef : {
 									__processor : $$.processReferentialConstraintPropertyRef
 								}
 							}
 						}
 					},
-					"ComplexType" : {
+					ComplexType : {
 						__processor : $$.processComplexType,
 						__include : [oStructuredTypeConfig]
 					},
-					"EntityContainer" : {
+					EntityContainer : {
 						__processor : $$.processEntityContainer,
-						"AssociationSet" : {
+						AssociationSet : {
 							__processor : $$.processAssociationSet,
-							"End" : {
+							End : {
 								__processor : $$.processAssociationSetEnd
 							}
 						},
-						"EntitySet" : {
+						EntitySet : {
 							__processor : $$.processEntitySet
 						},
-						"FunctionImport" : {
+						FunctionImport : {
 							__processor : $$.processFunctionImport,
-							"Parameter" : {
+							Parameter : {
 								__processor : $$.processParameter
 							}
 						}
 					},
-					"EntityType" : {
+					EntityType : {
 						__processor : $$.processEntityType,
 						__include : [oStructuredTypeConfig],
-						"Key" : {
-							"PropertyRef" : {
+						Key : {
+							PropertyRef : {
 								__processor : $$.processEntityTypeKeyPropertyRef
 							}
 						}

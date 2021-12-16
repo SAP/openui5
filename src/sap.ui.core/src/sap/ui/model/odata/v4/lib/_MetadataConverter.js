@@ -341,7 +341,7 @@ sap.ui.define([
 	 */
 	_MetadataConverter.prototype.postProcessLabeledElementReference = function (oElement, _aRes) {
 		return {
-			"$LabeledElementReference" : this.resolveAlias(oElement.textContent)
+			$LabeledElementReference : this.resolveAlias(oElement.textContent)
 		};
 	};
 
@@ -566,15 +566,15 @@ sap.ui.define([
 	_MetadataConverter.prototype.processIncludeAnnotations = function (oElement) {
 		var oReference = this.reference,
 			oIncludeAnnotation = {
-				"$TermNamespace" : oElement.getAttribute("TermNamespace") + "."
+				$TermNamespace : oElement.getAttribute("TermNamespace") + "."
 			},
 			aIncludeAnnotations = this.getOrCreateArray(oReference, "$IncludeAnnotations");
 
 		this.processAttributes(oElement, oIncludeAnnotation, {
-			"TargetNamespace" : function setValue(sValue) {
+			TargetNamespace : function setValue(sValue) {
 				return sValue ? sValue + "." : sValue;
 			},
-			"Qualifier" : this.setValue
+			Qualifier : this.setValue
 		});
 
 		aIncludeAnnotations.push(oIncludeAnnotation);
@@ -809,23 +809,23 @@ sap.ui.define([
 
 		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
 		oAnnotationLeafConfig = {
-			"AnnotationPath" : {__postProcessor : $$.postProcessLeaf},
-			"Binary" : {__postProcessor : $$.postProcessLeaf},
-			"Bool" : {__postProcessor : $$.postProcessLeaf},
-			"Date" : {__postProcessor : $$.postProcessLeaf},
-			"DateTimeOffset" : {__postProcessor : $$.postProcessLeaf},
-			"Decimal" : {__postProcessor : $$.postProcessLeaf},
-			"Duration" : {__postProcessor : $$.postProcessLeaf},
-			"EnumMember" : {__postProcessor : $$.postProcessLeaf},
-			"Float" : {__postProcessor : $$.postProcessLeaf},
-			"Guid" : {__postProcessor : $$.postProcessLeaf},
-			"Int" : {__postProcessor : $$.postProcessLeaf},
-			"LabeledElementReference" : {__postProcessor : $$.postProcessLabeledElementReference},
-			"NavigationPropertyPath" : {__postProcessor : $$.postProcessLeaf},
-			"Path" : {__postProcessor : $$.postProcessLeaf},
-			"PropertyPath" : {__postProcessor : $$.postProcessLeaf},
-			"String" : {__postProcessor : $$.postProcessLeaf},
-			"TimeOfDay" : {__postProcessor : $$.postProcessLeaf}
+			AnnotationPath : {__postProcessor : $$.postProcessLeaf},
+			Binary : {__postProcessor : $$.postProcessLeaf},
+			Bool : {__postProcessor : $$.postProcessLeaf},
+			Date : {__postProcessor : $$.postProcessLeaf},
+			DateTimeOffset : {__postProcessor : $$.postProcessLeaf},
+			Decimal : {__postProcessor : $$.postProcessLeaf},
+			Duration : {__postProcessor : $$.postProcessLeaf},
+			EnumMember : {__postProcessor : $$.postProcessLeaf},
+			Float : {__postProcessor : $$.postProcessLeaf},
+			Guid : {__postProcessor : $$.postProcessLeaf},
+			Int : {__postProcessor : $$.postProcessLeaf},
+			LabeledElementReference : {__postProcessor : $$.postProcessLabeledElementReference},
+			NavigationPropertyPath : {__postProcessor : $$.postProcessLeaf},
+			Path : {__postProcessor : $$.postProcessLeaf},
+			PropertyPath : {__postProcessor : $$.postProcessLeaf},
+			String : {__postProcessor : $$.postProcessLeaf},
+			TimeOfDay : {__postProcessor : $$.postProcessLeaf}
 		};
 
 		// When oAnnotationExpressionConfig is defined, it is added to this array for the recursion
@@ -833,7 +833,7 @@ sap.ui.define([
 
 		// The configuration for an <Annotation> element to be included into other configurations
 		$$.oAnnotationConfig = {
-			"Annotation" : {
+			Annotation : {
 				__xmlns : $$.sEdmNamespace,
 				__processor : $$.processAnnotation,
 				__postProcessor : $$.postProcessAnnotation,
@@ -848,60 +848,60 @@ sap.ui.define([
 			__include : aAnnotatableExpressionInclude
 		};
 		oAnnotationExpressionConfig = {
-			"And" : oOperatorConfig,
-			"Apply" : {
+			And : oOperatorConfig,
+			Apply : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessApply,
 				__include : aAnnotatableExpressionInclude
 			},
-			"Cast" : {
+			Cast : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessCastOrIsOf,
 				__include : aAnnotatableExpressionInclude
 			},
-			"Collection" : {
+			Collection : {
 				__postProcessor : $$.postProcessCollection,
 				__include : aExpressionInclude
 			},
-			"Eq" : oOperatorConfig,
-			"Ge" : oOperatorConfig,
-			"Gt" : oOperatorConfig,
-			"If" : oOperatorConfig,
-			"IsOf" : {
+			Eq : oOperatorConfig,
+			Ge : oOperatorConfig,
+			Gt : oOperatorConfig,
+			If : oOperatorConfig,
+			IsOf : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessCastOrIsOf,
 				__include : aAnnotatableExpressionInclude
 			},
-			"LabeledElement" : {
+			LabeledElement : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessLabeledElement,
 				__include : aAnnotatableExpressionInclude
 			},
-			"Le" : oOperatorConfig,
-			"Lt" : oOperatorConfig,
-			"Ne" : oOperatorConfig,
-			"Null" : {
+			Le : oOperatorConfig,
+			Lt : oOperatorConfig,
+			Ne : oOperatorConfig,
+			Null : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessNull,
 				__include : [$$.oAnnotationConfig]
 			},
-			"Not" : {
+			Not : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessNot,
 				__include : aAnnotatableExpressionInclude
 			},
-			"Or" : oOperatorConfig,
-			"Record" : {
+			Or : oOperatorConfig,
+			Record : {
 				__processor : $$.processAnnotatableExpression,
 				__postProcessor : $$.postProcessRecord,
 				__include : [$$.oAnnotationConfig],
-				"PropertyValue" : {
+				PropertyValue : {
 					__processor : $$.processPropertyValue,
 					__postProcessor : $$.postProcessPropertyValue,
 					__include : aAnnotatableExpressionInclude
 				}
 			},
-			"UrlRef" : {
+			UrlRef : {
 				__postProcessor : $$.postProcessUrlRef,
 				__include : aExpressionInclude
 			}
@@ -909,7 +909,7 @@ sap.ui.define([
 
 		// The configuration for an <Annotations> element to be included into other configurations
 		$$.oAnnotationsConfig = {
-			"Annotations" : {
+			Annotations : {
 				__processor : $$.processAnnotations,
 				__include : [$$.oAnnotationConfig]
 			}
@@ -925,14 +925,14 @@ sap.ui.define([
 		 * The configuration for a <Reference> element to be included into other configurations
 		 */
 		$$.oReferenceInclude = {
-			"Reference" : {
+			Reference : {
 				__xmlns : $$.sEdmxNamespace,
 				__processor : $$.processReference,
 				__include : [$$.oAnnotationConfig],
-				"Include" : {
+				Include : {
 					__processor : $$.processInclude
 				},
-				"IncludeAnnotations" : {
+				IncludeAnnotations : {
 					__processor : $$.processIncludeAnnotations
 				}
 			}

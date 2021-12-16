@@ -68,9 +68,9 @@ sap.ui.define([
 		}
 
 		this.processAttributes(oElement, oOperation, {
-			"IsBound" : this.setIfTrue,
-			"EntitySetPath" : this.setValue,
-			"IsComposable" : this.setIfTrue
+			IsBound : this.setIfTrue,
+			EntitySetPath : this.setValue,
+			IsComposable : this.setIfTrue
 		});
 		aOverloads = this.getOrCreateArray(this.result, sQualifiedName);
 		if (!Array.isArray(aOverloads)) {
@@ -95,7 +95,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element
 	 */
 	_V4MetadataConverter.prototype.processComplexType = function (oElement) {
-		this.processType(oElement, {"$kind" : "ComplexType"});
+		this.processType(oElement, {$kind : "ComplexType"});
 	};
 
 	/**
@@ -105,7 +105,7 @@ sap.ui.define([
 	 */
 	_V4MetadataConverter.prototype.processEdmx = function (oElement) {
 		this.processAttributes(oElement, this.result, {
-			"Version" : this.setValue
+			Version : this.setValue
 		});
 	};
 
@@ -130,7 +130,7 @@ sap.ui.define([
 	_V4MetadataConverter.prototype.processEntityContainer = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
-		this.entityContainer = {"$kind" : "EntityContainer"};
+		this.entityContainer = {$kind : "EntityContainer"};
 		this.addToResult(sQualifiedName, this.entityContainer);
 		this.addToResult("$EntityContainer", sQualifiedName);
 		this.annotatable(sQualifiedName);
@@ -150,7 +150,7 @@ sap.ui.define([
 				this.resolveAlias(oElement.getAttribute("EntityType"))
 		};
 		this.processAttributes(oElement, this.entitySet, {
-			"IncludeInServiceDocument" : this.setIfFalse
+			IncludeInServiceDocument : this.setIfFalse
 		});
 		this.annotatable(sName);
 	};
@@ -193,12 +193,12 @@ sap.ui.define([
 	_V4MetadataConverter.prototype.processEnumType = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			oEnumType = {
-				"$kind" : "EnumType"
+				$kind : "EnumType"
 			};
 
 		this.processAttributes(oElement, oEnumType, {
-			"IsFlags" : this.setIfTrue,
-			"UnderlyingType" : function (sValue) {
+			IsFlags : this.setIfTrue,
+			UnderlyingType : function (sValue) {
 				return sValue !== "Edm.Int32" ? sValue : undefined;
 			}
 		});
@@ -243,15 +243,15 @@ sap.ui.define([
 		var that = this;
 
 		this.processAttributes(oElement, oResult, {
-			"MaxLength" : function (sValue) {
+			MaxLength : function (sValue) {
 				return sValue === "max" ? undefined : that.setNumber(sValue);
 			},
-			"Precision" : this.setNumber,
-			"Scale" : function (sValue) {
+			Precision : this.setNumber,
+			Scale : function (sValue) {
 				return sValue === "variable" ? sValue : that.setNumber(sValue);
 			},
-			"SRID" : this.setValue,
-			"Unicode" : this.setIfFalse
+			SRID : this.setValue,
+			Unicode : this.setIfFalse
 		});
 	};
 
@@ -272,10 +272,10 @@ sap.ui.define([
 		oImport["$" + sKind]
 			= this.resolveAlias(oElement.getAttribute(sKind));
 		this.processAttributes(oElement, oImport, {
-			"EntitySet" : function (sValue) {
+			EntitySet : function (sValue) {
 				return that.resolveTargetPath(sValue);
 			},
-			"IncludeInServiceDocument" : this.setIfTrue
+			IncludeInServiceDocument : this.setIfTrue
 		});
 
 		this.entityContainer[sName] = oImport;
@@ -306,8 +306,8 @@ sap.ui.define([
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oParameter);
 		this.processAttributes(oElement, oParameter, {
-			"Name" : this.setValue,
-			"Nullable" : this.setIfFalse
+			Name : this.setValue,
+			Nullable : this.setIfFalse
 		});
 		this.processFacetAttributes(oElement, oParameter);
 
@@ -326,7 +326,7 @@ sap.ui.define([
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oReturnType);
 		this.processAttributes(oElement, oReturnType, {
-			"Nullable" : this.setIfFalse
+			Nullable : this.setIfFalse
 		});
 		this.processFacetAttributes(oElement, oReturnType);
 
@@ -341,7 +341,7 @@ sap.ui.define([
 	 */
 	_V4MetadataConverter.prototype.processSchema = function (oElement) {
 		this.namespace = oElement.getAttribute("Namespace") + ".";
-		this.schema = {"$kind" : "Schema"};
+		this.schema = {$kind : "Schema"};
 		this.addToResult(this.namespace, this.schema);
 		this.annotatable(this.schema);
 	};
@@ -375,8 +375,8 @@ sap.ui.define([
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oTerm);
 		this.processAttributes(oElement, oTerm, {
-			"Nullable" : this.setIfFalse,
-			"BaseTerm" : function (sValue) {
+			Nullable : this.setIfFalse,
+			BaseTerm : function (sValue) {
 				return sValue ? that.resolveAlias(sValue) : undefined;
 			}
 		});
@@ -397,10 +397,10 @@ sap.ui.define([
 			that = this;
 
 		this.processAttributes(oElement, oType, {
-			"OpenType" : that.setIfTrue,
-			"HasStream" : that.setIfTrue,
-			"Abstract" : that.setIfTrue,
-			"BaseType" : function (sType) {
+			OpenType : that.setIfTrue,
+			HasStream : that.setIfTrue,
+			Abstract : that.setIfTrue,
+			BaseType : function (sType) {
 				return sType ? that.resolveAlias(sType) : undefined;
 			}
 		});
@@ -435,8 +435,8 @@ sap.ui.define([
 	_V4MetadataConverter.prototype.processTypeDefinition = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			oTypeDefinition = {
-				"$kind" : "TypeDefinition",
-				"$UnderlyingType" : oElement.getAttribute("UnderlyingType")
+				$kind : "TypeDefinition",
+				$UnderlyingType : oElement.getAttribute("UnderlyingType")
 			};
 
 		this.addToResult(sQualifiedName, oTypeDefinition);
@@ -457,9 +457,9 @@ sap.ui.define([
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oProperty);
 		this.processAttributes(oElement, oProperty, {
-			"Nullable" : this.setIfFalse,
-			"Partner" : this.setValue,
-			"ContainsTarget" : this.setIfTrue
+			Nullable : this.setIfFalse,
+			Partner : this.setValue,
+			ContainsTarget : this.setIfTrue
 		});
 
 		this.type[sName] = this.navigationProperty = oProperty;
@@ -499,13 +499,13 @@ sap.ui.define([
 	_V4MetadataConverter.prototype.processTypeProperty = function (oElement) {
 		var sName = oElement.getAttribute("Name"),
 			oProperty = {
-				"$kind" : "Property"
+				$kind : "Property"
 			};
 
 		this.processTypedCollection(oElement.getAttribute("Type"), oProperty);
 		this.processAttributes(oElement, oProperty, {
-			"Nullable" : this.setIfFalse,
-			"DefaultValue" : this.setValue
+			Nullable : this.setIfFalse,
+			DefaultValue : this.setValue
 		});
 		this.processFacetAttributes(oElement, oProperty);
 
@@ -552,11 +552,11 @@ sap.ui.define([
 
 		$$.oAliasConfig = {
 			__xmlns : $$.sEdmxNamespace,
-			"Reference" : {
-				"Include" : {__processor : $$.processAlias}
+			Reference : {
+				Include : {__processor : $$.processAlias}
 			},
-			"DataServices" : {
-				"Schema" : {
+			DataServices : {
+				Schema : {
 					__xmlns : $$.sEdmNamespace,
 					__processor : $$.processAlias
 				}
@@ -564,18 +564,18 @@ sap.ui.define([
 		};
 
 		oStructuredTypeConfig = {
-			"Property" : {
+			Property : {
 				__processor : $$.processTypeProperty,
 				__include : [$$.oAnnotationConfig]
 			},
-			"NavigationProperty" : {
+			NavigationProperty : {
 				__processor : $$.processTypeNavigationProperty,
 				__include : [$$.oAnnotationConfig],
-				"OnDelete" : {
+				OnDelete : {
 					__processor : $$.processTypeNavigationPropertyOnDelete,
 					__include : [$$.oAnnotationConfig]
 				},
-				"ReferentialConstraint" : {
+				ReferentialConstraint : {
 					__processor : $$.processTypeNavigationPropertyReferentialConstraint,
 					__include : [$$.oAnnotationConfig]
 				}
@@ -583,17 +583,17 @@ sap.ui.define([
 		};
 
 		oEntitySetConfig = {
-			"NavigationPropertyBinding" : {
+			NavigationPropertyBinding : {
 				__processor : $$.processNavigationPropertyBinding
 			}
 		};
 
 		oActionOrFunctionConfig = {
-			"Parameter" : {
+			Parameter : {
 				__processor : $$.processParameter,
 				__include : [$$.oAnnotationConfig]
 			},
-			"ReturnType" : {
+			ReturnType : {
 				__processor : $$.processReturnType,
 				__include : [$$.oAnnotationConfig]
 			}
@@ -603,65 +603,65 @@ sap.ui.define([
 			__xmlns : $$.sEdmxNamespace,
 			__processor : $$.processEdmx,
 			__include : [$$.oReferenceInclude],
-			"DataServices" : {
-				"Schema" : {
+			DataServices : {
+				Schema : {
 					__xmlns : $$.sEdmNamespace,
 					__processor : $$.processSchema,
 					__include : [$$.oAnnotationsConfig, $$.oAnnotationConfig],
-					"Action" : {
+					Action : {
 						__processor : $$.processActionOrFunction,
 						__include : [oActionOrFunctionConfig, $$.oAnnotationConfig]
 					},
-					"Function" : {
+					Function : {
 						__processor : $$.processActionOrFunction,
 						__include : [oActionOrFunctionConfig, $$.oAnnotationConfig]
 					},
-					"EntityType" : {
+					EntityType : {
 						__processor : $$.processEntityType,
 						__include : [oStructuredTypeConfig, $$.oAnnotationConfig],
-						"Key" : {
-							"PropertyRef" : {
+						Key : {
+							PropertyRef : {
 								__processor : $$.processEntityTypeKeyPropertyRef
 							}
 						}
 					},
-					"ComplexType" : {
+					ComplexType : {
 						__processor : $$.processComplexType,
 						__include : [oStructuredTypeConfig, $$.oAnnotationConfig]
 					},
-					"EntityContainer" : {
+					EntityContainer : {
 						__processor : $$.processEntityContainer,
 						__include : [$$.oAnnotationConfig],
-						"ActionImport" : {
+						ActionImport : {
 							__processor : $$.processImport,
 							__include : [$$.oAnnotationConfig]
 						},
-						"EntitySet" : {
+						EntitySet : {
 							__processor : $$.processEntitySet,
 							__include : [oEntitySetConfig, $$.oAnnotationConfig]
 						},
-						"FunctionImport" : {
+						FunctionImport : {
 							__processor : $$.processImport,
 							__include : [$$.oAnnotationConfig]
 						},
-						"Singleton" : {
+						Singleton : {
 							__processor : $$.processSingleton,
 							__include : [oEntitySetConfig, $$.oAnnotationConfig]
 						}
 					},
-					"EnumType" : {
+					EnumType : {
 						__processor : $$.processEnumType,
 						__include : [$$.oAnnotationConfig],
-						"Member" : {
+						Member : {
 							__processor : $$.processEnumTypeMember,
 							__include : [$$.oAnnotationConfig]
 						}
 					},
-					"Term" : {
+					Term : {
 						__processor : $$.processTerm,
 						__include : [$$.oAnnotationConfig]
 					},
-					"TypeDefinition" : {
+					TypeDefinition : {
 						__processor : $$.processTypeDefinition,
 						__include : [$$.oAnnotationConfig]
 					}

@@ -753,7 +753,7 @@ sap.ui.define([
 				that.bAggregatedQueryOptionsInitial = false;
 			}
 			if (bIsAdvertisement) {
-				mWrappedChildQueryOptions = {"$select" : [sReducedChildMetaPath.slice(1)]};
+				mWrappedChildQueryOptions = {$select : [sReducedChildMetaPath.slice(1)]};
 				return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
 						bCacheImmutable)
 					? sReducedPath

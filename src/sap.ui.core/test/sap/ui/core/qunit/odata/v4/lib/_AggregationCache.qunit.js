@@ -337,7 +337,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.oLeavesPromise.isPending(), true);
 
 			// code under test (fnLeaves)
-			oEnhanceCacheWithGrandTotalExpectation.args[0][2][0]({"UI5__leaves" : "42"});
+			oEnhanceCacheWithGrandTotalExpectation.args[0][2][0]({UI5__leaves : "42"});
 
 			assert.strictEqual(oCache.oLeavesPromise.isFulfilled(), true);
 			assert.strictEqual(oCache.oLeavesPromise.getResult(), 42);

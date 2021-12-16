@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, asODataParentBinding,
 	_Helper) {
-	/*eslint camelcase: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
@@ -296,8 +295,8 @@ sap.ui.define([
 		//code under test
 		assert.throws(function () {
 			oBinding.changeParameters({
-				"$filter" : "Amount gt 3",
-				"$$groupId" : "newGroupId"
+				$filter : "Amount gt 3",
+				$$groupId : "newGroupId"
 			});
 		}, new Error("Unsupported parameter: $$groupId"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
@@ -336,7 +335,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oBinding.changeParameters({"$filter" : "Amount gt 3"});
+			oBinding.changeParameters({$filter : "Amount gt 3"});
 		}, new Error("Cannot change parameters due to pending changes"));
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
 	});
@@ -1332,7 +1331,7 @@ sap.ui.define([
 					getReducedPath : function () {}
 				},
 				fnFetchMetadata = function () {},
-				mOriginalAggregatedQueryOptions = {$expand : {"foo" : {$select : ["bar"]}}},
+				mOriginalAggregatedQueryOptions = {$expand : {foo : {$select : ["bar"]}}},
 				oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : mOriginalAggregatedQueryOptions,
 					bAggregatedQueryOptionsInitial : false,
@@ -1412,7 +1411,7 @@ sap.ui.define([
 				setQueryOptions : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : {$expand : {"foo" : {$select : ["bar"]}}},
+				mAggregatedQueryOptions : {$expand : {foo : {$select : ["bar"]}}},
 				bAggregatedQueryOptionsInitial : false,
 				oCache : bImmutable ? oCache : undefined,
 				oCachePromise : SyncPromise.resolve(bImmutable ? oCache : Promise.resolve(oCache)),
@@ -1914,8 +1913,8 @@ sap.ui.define([
 	title : "new $select in existing $expand"
 }, {
 	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {}}},
-	childQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$expand : {TEAM_2_MANAGER : {}}}}},
-	lateQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$expand : {TEAM_2_MANAGER : {}}}}},
+	childQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$expand : {TEAM_2_MANAGER : {}}}}},
+	lateQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$expand : {TEAM_2_MANAGER : {}}}}},
 	metadata : {
 		"/base/metaPath/EMPLOYEE_2_TEAM/TEAM_2_MANAGER" : {}
 	},

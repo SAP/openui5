@@ -40,12 +40,12 @@ sap.ui.define([
 			"Content-Type" : "foo"
 		},
 		mPredefinedPartHeaders : {
-			"Accept" : "foo"
+			Accept : "foo"
 		},
 		mPredefinedRequestHeaders : {
-			"Accept" : "foo",
-			"MaxDataServiceVersion" : "foo",
-			"DataServiceVersion" : "foo",
+			Accept : "foo",
+			MaxDataServiceVersion : "foo",
+			DataServiceVersion : "foo",
 			"X-CSRF-Token" : "foo"
 		}
 	}].forEach(function (oRequestor) {
@@ -57,12 +57,12 @@ sap.ui.define([
 				"Content-Type" : "application/json;charset=UTF-8"
 			});
 			assert.deepEqual(oRequestor.mPredefinedPartHeaders, {
-				"Accept" : "application/json"
+				Accept : "application/json"
 			});
 			assert.deepEqual(oRequestor.mPredefinedRequestHeaders, {
-				"Accept" : "application/json",
-				"MaxDataServiceVersion" : "2.0",
-				"DataServiceVersion" : "2.0",
+				Accept : "application/json",
+				MaxDataServiceVersion : "2.0",
+				DataServiceVersion : "2.0",
 				"X-CSRF-Token" : "Fetch"
 			});
 		});
@@ -72,58 +72,58 @@ sap.ui.define([
 	[{
 		bIsCollection : true,
 		oResponsePayload : {
-			"d" : {
-				"__count" : "3",
-				"__next" : "...?$skiptoken=12",
-				"results" : [{
-					"__metadata" : {},
-					"String" : "foo"
+			d : {
+				__count : "3",
+				__next : "...?$skiptoken=12",
+				results : [{
+					__metadata : {},
+					String : "foo"
 				}, {
 //					"__metadata" : {},
-					"Boolean" : true
+					Boolean : true
 				}]
 			}
 		},
 		oExpectedResult : {
 			"@odata.count" : "3", // Note: v4.ODataModel uses IEEE754Compatible=true
 			"@odata.nextLink" : "...?$skiptoken=12",
-			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
+			value : [{__metadata : {}, String : "foo"}, {Boolean : true}]
 		}
 	}, {
 		bIsCollection : true,
 		oResponsePayload : {
-			"d" : {
-				"results" : [{
-					"__metadata" : {},
-					"String" : "foo"
+			d : {
+				results : [{
+					__metadata : {},
+					String : "foo"
 				}, {
 //					"__metadata" : {},
-					"Boolean" : true
+					Boolean : true
 				}]
 			}
 		},
 		oExpectedResult : {
-			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
+			value : [{__metadata : {}, String : "foo"}, {Boolean : true}]
 		}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {
-				"__metadata" : {},
-				"String" : "foo"
+			d : {
+				__metadata : {},
+				String : "foo"
 			}
 		},
 		//TODO "__metadata" : {} is actually unexpected here, in real life
-		oExpectedResult : {"__metadata" : {}, "String" : "foo"}
+		oExpectedResult : {__metadata : {}, String : "foo"}
 	}, {
 		bIsCollection : false,
 		oResponsePayload : {
-			"d" : {
-				"__metadata" : {},
-				"results" : "foo"
+			d : {
+				__metadata : {},
+				results : "foo"
 			}
 		},
-		oExpectedResult : {"__metadata" : {}, "results" : "foo"}
+		oExpectedResult : {__metadata : {}, results : "foo"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doConvertResponse, " + i, function (assert) {
 			var oRequestor = {fetchEntityContainer : function () {}},
@@ -150,10 +150,10 @@ sap.ui.define([
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/flightDetails
-				"d" : {
-					"flightDetails" : {
-						"__metadata" : {
-							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+				d : {
+					flightDetails : {
+						__metadata : {
+							type : "RMTSAMPLEFLIGHT.FlightDetails"
 						}
 					}
 				}
@@ -170,15 +170,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		"d" : {
+		d : {
 			// "An optional "__metadata" name/value pair..."
-			"readMe1st" : {}
+			readMe1st : {}
 		}
 	}, {
-		"d" : {
+		d : {
 			// "An optional "__metadata" name/value pair..."
-			"ID" : 0,
-			"Name" : "Food"
+			ID : 0,
+			Name : "Food"
 		}
 	}].forEach(function (oResponsePayload, i) {
 		QUnit.test("doConvertResponse, not 2.2.7.2.3 RetrieveComplexType: " + i, function (assert) {
@@ -206,8 +206,8 @@ sap.ui.define([
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
-				"d" : {
-					"fldate" : "/Date(1502323200000)/"
+				d : {
+					fldate : "/Date(1502323200000)/"
 				}
 			};
 
@@ -233,8 +233,8 @@ sap.ui.define([
 			oResponsePayload = {
 				// /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 				// FlightCollection(carrid='...',connid='...',fldate=datetime'...')/fldate
-				"d" : {
-					"fldate" : null
+				d : {
+					fldate : null
 				}
 			};
 
@@ -258,8 +258,8 @@ sap.ui.define([
 			},
 			oRequestorMock = this.mock(oRequestor),
 			oResponsePayload = {
-				"d" : { // Note: DataServiceVersion : 2.0
-					"results" : [
+				d : { // Note: DataServiceVersion : 2.0
+					results : [
 						"/Date(1502323200000)/",
 						"/Date(1502323201000)/"
 					]
@@ -290,8 +290,8 @@ sap.ui.define([
 			oRequestor = {},
 			oRequestorMock = this.mock(oRequestor),
 			oResponsePayload = {
-				"d" : { // Note: DataServiceVersion : 2.0
-					"results" : []
+				d : { // Note: DataServiceVersion : 2.0
+					results : []
 				}
 			};
 
@@ -324,7 +324,7 @@ sap.ui.define([
 		// code under test
 		oRequestor.convertNonPrimitive(oObject);
 
-		assert.deepEqual(oObject, {"complex" : {"property" : 42}});
+		assert.deepEqual(oObject, {complex : {property : 42}});
 	});
 
 	//*********************************************************************************************
@@ -374,9 +374,9 @@ sap.ui.define([
 		oConvertedObject = oRequestor.convertNonPrimitive(oObject);
 
 		assert.deepEqual(oConvertedObject, {
-			"complexCollection" : [
-				{"property" : 42},
-				{"property" : 77}
+			complexCollection : [
+				{property : 42},
+				{property : 77}
 			]
 		});
 	});
@@ -720,32 +720,32 @@ sap.ui.define([
 		dropSystemQueryOptions : true,
 		expectedResultHandlerCalls : [{key : "foo", value : "bar"}],
 		queryOptions : {
-			"$expand" : {"baz" : true, "nested" : {"$expand" : "xyz", "$select" : "uvw"}},
-			"$select" : "abc",
-			"$orderby" : "abc",
-			"foo" : "bar"
+			$expand : {baz : true, nested : {$expand : "xyz", $select : "uvw"}},
+			$select : "abc",
+			$orderby : "abc",
+			foo : "bar"
 		}
 	}, { // simple tests for $count
 		expectedResultHandlerCalls : [{key : "$inlinecount", value : "allpages"}],
 		expectedResultHandlerCallsSorted : [{key : "$inlinecount", value : "allpages"}],
-		queryOptions : {"$count" : true}
+		queryOptions : {$count : true}
 	}, {
 		expectedResultHandlerCalls : [{key : "$inlinecount", value : "none"}],
 		expectedResultHandlerCallsSorted : [{key : "$inlinecount", value : "none"}],
-		queryOptions : {"$count" : false}
+		queryOptions : {$count : false}
 	}, { // simple tests for $orderby
 		expectedResultHandlerCalls : [{key : "$orderby", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$orderby", value : "foo,bar"}],
-		queryOptions : {"$orderby" : "foo,bar"}
+		queryOptions : {$orderby : "foo,bar"}
 	}, { // simple tests for $select
 		expectedResultHandlerCalls : [{key : "$select", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$select", value : "bar,foo"}],
-		queryOptions : {"$select" : "foo,bar"} // $select as string
+		queryOptions : {$select : "foo,bar"} // $select as string
 	}, {
 		expectedResultHandlerCalls : [{key : "$select", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$select", value : "bar,foo"}],
 		queryOptions : {
-			"$select" : ["foo", "bar"]
+			$select : ["foo", "bar"]
 		}
 	}, { // simple $expand tests
 		expectedResultHandlerCalls : [
@@ -757,7 +757,7 @@ sap.ui.define([
 			{key : "$select", value : "*,bar/*,baz/*"}
 		],
 		queryOptions : {
-			"$expand" : {"baz" : true, "bar" : true}
+			$expand : {baz : true, bar : true}
 		}
 	}, {
 		expectedResultHandlerCalls : [
@@ -769,8 +769,8 @@ sap.ui.define([
 			{key : "$select", value : "bar/*,foo,xyz/*"}
 		],
 		queryOptions : {
-			"$select" : ["foo"],
-			"$expand" : {"xyz" : true, "bar" : true}
+			$select : ["foo"],
+			$expand : {xyz : true, bar : true}
 		}
 	}, {
 		expectedResultHandlerCalls : [
@@ -782,10 +782,10 @@ sap.ui.define([
 			{key : "$select", value : "*,bar/abc,bar/cde,baz/*"}
 		],
 		queryOptions : {
-			"$expand" : {
-				"baz" : true,
-				"bar" : {
-					"$select" : ["cde", "abc"]
+			$expand : {
+				baz : true,
+				bar : {
+					$select : ["cde", "abc"]
 				}
 			}
 		}
@@ -799,10 +799,10 @@ sap.ui.define([
 			{key : "$select", value : "*,bar/abc,bar/cde,baz/*"}
 		],
 		queryOptions : {
-			"$expand" : {
-				"baz" : true,
-				"bar" : {
-					"$select" : "cde,abc" // $select as string
+			$expand : {
+				baz : true,
+				bar : {
+					$select : "cde,abc" // $select as string
 				}
 			}
 		}
@@ -822,25 +822,25 @@ sap.ui.define([
 			{key : "$select", value : "abc,baz/*,def,foo/bar/*,foo/baz,foo/xyz"}
 		],
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$select" : ["xyz", "baz/qux", "baz/quux"],
-					"$expand" : {
-						"bar" : true
+			$expand : {
+				foo : {
+					$select : ["xyz", "baz/qux", "baz/quux"],
+					$expand : {
+						bar : true
 					}
 				},
-				"baz" : true
+				baz : true
 			},
-			"$select" : "abc,def/ghi,def/jkl",
-			"$orderby" : "foo,bar",
-			"$search" : "baz"
+			$select : "abc,def/ghi,def/jkl",
+			$orderby : "foo,bar",
+			$search : "baz"
 		}
 	}, { // garbage in, garbage out - do not touch if there is a type cast
 		expectedResultHandlerCalls : [
 			{key : "$select", value : "foo/name.space.OtherType"}
 		],
 		queryOptions : {
-			"$select" : "foo/name.space.OtherType"
+			$select : "foo/name.space.OtherType"
 		}
 	}].forEach(function (oFixture, i) {
 		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
@@ -896,47 +896,47 @@ sap.ui.define([
 
 			// code under test
 			assert.throws(function () {
-				oRequestor.doConvertSystemQueryOptions("/Foo", {"$expand" : vExpandOption});
+				oRequestor.doConvertSystemQueryOptions("/Foo", {$expand : vExpandOption});
 			}, new Error("$expand must be a valid object"));
 		});
 	});
 
 	//*********************************************************************************************
 	[{
-		queryOptions : {"$foo" : "bar"},
+		queryOptions : {$foo : "bar"},
 		error : "Unsupported system query option: $foo"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$orderby" : "bar"
+			$expand : {
+				foo : {
+					$orderby : "bar"
 				}
 			}
 		},
 		error : "Unsupported query option in $expand: $orderby"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$bar" : "baz"
+			$expand : {
+				foo : {
+					$bar : "baz"
 				}
 			}
 		},
 		error : "Unsupported query option in $expand: $bar"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"$count" : true
+			$expand : {
+				foo : {
+					$count : true
 				}
 			}
 		},
 		error : "Unsupported query option in $expand: $count"
 	}, {
 		queryOptions : {
-			"$expand" : {
-				"foo" : {
-					"bar" : "baz"
+			$expand : {
+				foo : {
+					bar : "baz"
 				}
 			}
 		},
@@ -987,8 +987,8 @@ sap.ui.define([
 		QUnit.test("formatPropertyAsLiteral: " + sType, function (assert) {
 			var sKeyPredicate = "(~)",
 				oProperty = {
-					"$kind" : "Property",
-					"$Type" : sType
+					$kind : "Property",
+					$Type : sType
 				},
 				oRequestor = {},
 				sResult,
@@ -1013,9 +1013,9 @@ sap.ui.define([
 			oFormatOptions,
 			sKeyPredicate = "(~)",
 			oProperty = {
-				"$kind" : "Property",
-				"$Type" : "Edm.Date",
-				"$v2Type" : "Edm.DateTime"
+				$kind : "Property",
+				$Type : "Edm.Date",
+				$v2Type : "Edm.DateTime"
 			},
 			oRequestor = {},
 			sResult,
@@ -1048,9 +1048,9 @@ sap.ui.define([
 				oFormatOptions,
 				sKeyPredicate = "(~)",
 				oProperty = {
-					"$kind" : "Property",
-					"$Type" : "Edm.DateTimeOffset",
-					"$v2Type" : sV2Type
+					$kind : "Property",
+					$Type : "Edm.DateTimeOffset",
+					$v2Type : sV2Type
 				},
 				oRequestor = {},
 				sResult,
@@ -1084,9 +1084,9 @@ sap.ui.define([
 			oFormatOptions,
 			sKeyPredicate = "(~)",
 			oProperty = {
-				"$kind" : "Property",
-				"$Type" : "Edm.TimeOfDay",
-				"$v2Type" : "Edm.Time"
+				$kind : "Property",
+				$Type : "Edm.TimeOfDay",
+				$v2Type : "Edm.Time"
 			},
 			oRequestor = {},
 			sResult,
@@ -1397,11 +1397,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		iCallCount : 1,
-		mHeaders : {"DataServiceVersion" : "2.0"},
+		mHeaders : {DataServiceVersion : "2.0"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 1,
-		mHeaders : {"DataServiceVersion" : "2.0;fooBar"},
+		mHeaders : {DataServiceVersion : "2.0;fooBar"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 2,
@@ -1413,11 +1413,11 @@ sap.ui.define([
 		bVersionOptional : false
 	}, {
 		iCallCount : 1,
-		mHeaders : {"DataServiceVersion" : "1.0"},
+		mHeaders : {DataServiceVersion : "1.0"},
 		bVersionOptional : true
 	}, {
 		iCallCount : 1,
-		mHeaders : {"DataServiceVersion" : "1.0;fooBar"},
+		mHeaders : {DataServiceVersion : "1.0;fooBar"},
 		bVersionOptional : true
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, success cases - " + i, function (assert) {
@@ -1442,11 +1442,11 @@ sap.ui.define([
 	[{
 		iCallCount : 1,
 		sError : "value 'foo' in response for /Foo('42')/Bar",
-		mHeaders : {"DataServiceVersion" : "foo"}
+		mHeaders : {DataServiceVersion : "foo"}
 	}, {
 		iCallCount : 1,
 		sError : "value '1.00' in response for /Foo('42')/Bar",
-		mHeaders : {"DataServiceVersion" : "1.00"}
+		mHeaders : {DataServiceVersion : "1.00"}
 	}, {
 		iCallCount : 2,
 		sError : "'OData-Version' header with value 'baz' in response for /Foo('42')/Bar",
@@ -1478,15 +1478,15 @@ sap.ui.define([
 				fetchMetadata : null // do not call!
 			},
 			oOperationMetadata = {
-				"$Parameter" : [{
-					"$Name" : "Foo",
-					"$Type" : "Edm.Int16"
+				$Parameter : [{
+					$Name : "Foo",
+					$Type : "Edm.Int16"
 				}, {
-					"$Name" : "ID",
-					"$Type" : "Edm.String"
+					$Name : "ID",
+					$Type : "Edm.String"
 				}]
 			},
-			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
+			mParameters = {ID : "1", Foo : 42, "n/a" : NaN},
 			mQueryOptions = {},
 			oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
 			oRequestorMock = this.mock(oRequestor);
@@ -1501,7 +1501,7 @@ sap.ui.define([
 			oRequestor.getPathAndAddQueryOptions("/OperationImport(...)", oOperationMetadata,
 				mParameters, mQueryOptions),
 			"OperationImport");
-		assert.deepEqual(mQueryOptions, {"ID" : "'1'", "Foo" : "42"});
+		assert.deepEqual(mQueryOptions, {ID : "'1'", Foo : "42"});
 		assert.deepEqual(mParameters, {});
 	});
 
@@ -1510,29 +1510,29 @@ sap.ui.define([
 		var sTitle = "getPathAndAddQueryOptions: bound " + (bAction ? "action" : "function");
 
 		QUnit.test(sTitle, function (assert) {
-			var oEntity = {"Foo" : 42, "ID" : "1"},
+			var oEntity = {Foo : 42, ID : "1"},
 				oModelInterface = {fetchMetadata : function () {}},
 				oOperationMetadata = {
-					"$IsBound" : true,
-					"$Parameter" : [{ // "$Name" : null, "$Nullable" : false,
-						"$Type" : "com.sap.ui5.OData.EdmTypes"
+					$IsBound : true,
+					$Parameter : [{ // "$Name" : null, "$Nullable" : false,
+						$Type : "com.sap.ui5.OData.EdmTypes"
 					}, {
-						"$Name" : "Bar" //, "$Type" : "Edm.Boolean"
+						$Name : "Bar" //, "$Type" : "Edm.Boolean"
 					}]
 				},
-				mParameters = {"Bar" : true},
+				mParameters = {Bar : true},
 				mQueryOptions = {},
 				oRequestor = _Requestor.create("/", oModelInterface, undefined, undefined, "2.0"),
 				oRequestorMock = this.mock(oRequestor),
 				oTypeMetadata = { // "$kind" : "EntityType",
-					"$Key" : ["ID", "Foo"],
-					"Foo" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.Int16"
+					$Key : ["ID", "Foo"],
+					Foo : {
+						$kind : "Property",
+						$Type : "Edm.Int16"
 					},
-					"ID" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.String"
+					ID : {
+						$kind : "Property",
+						$Type : "Edm.String"
 					}
 				};
 
@@ -1553,7 +1553,7 @@ sap.ui.define([
 					oOperationMetadata, mParameters, mQueryOptions,
 					bAction ? oEntity : function () { return oEntity; }),
 				"ResetEdmTypes");
-			assert.deepEqual(mQueryOptions, {"Bar" : "true", "Foo" : "42", "ID" : "'1'"});
+			assert.deepEqual(mQueryOptions, {Bar : "true", Foo : "42", ID : "'1'"});
 			assert.deepEqual(mParameters, {});
 		});
 	});
@@ -1596,7 +1596,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oRequestor.getPathAndAddQueryOptions("/ActionImport(...)", oOperationMetadata,
-				{"foo" : [42]});
+				{foo : [42]});
 		}, new Error("Unsupported collection-valued parameter: foo"));
 	});
 
@@ -1657,7 +1657,7 @@ sap.ui.define([
 	QUnit.test("convertKeyPredicate: named non-string predicate, encoded", function (assert) {
 		var oEntityType = {
 				$Key : ["føø"],
-				"føø" : {$Type : "Edm.Foo"}
+				føø : {$Type : "Edm.Foo"}
 			},
 			oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
 
@@ -1666,7 +1666,7 @@ sap.ui.define([
 		this.mock(oRequestor).expects("fetchTypeForPath").withExactArgs("/my/path")
 			.returns(SyncPromise.resolve(oEntityType));
 		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("(føø=42)")
-			.returns({"føø" : "42"});
+			.returns({føø : "42"});
 		this.mock(_Helper).expects("parseLiteral")
 			.withExactArgs("42", "Edm.Foo", "/my/path(f%C3%B8%C3%B8=42)")
 			.returns(42);
@@ -1696,7 +1696,7 @@ sap.ui.define([
 		oRequestorMock.expects("fetchTypeForPath").withExactArgs("/my/path")
 			.returns(SyncPromise.resolve(oEntityType));
 		oParserMock.expects("parseKeyPredicate").withExactArgs("(p1=1,p2='2',p3=3)")
-			.returns({"p1" : "1", "p2" : "'2'", "p3" : "3"});
+			.returns({p1 : "1", p2 : "'2'", p3 : "3"});
 		oHelperMock.expects("parseLiteral")
 			.withExactArgs("1", "Edm.Double", "/my/path(p1=1,p2='2',p3=3)").returns(1);
 		oRequestorMock.expects("formatPropertyAsLiteral")

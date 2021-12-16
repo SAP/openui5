@@ -694,7 +694,7 @@ sap.ui.define([
 			.withExactArgs("GET", "EMPLOYEES(ID='1')?sap-client=111", sinon.match.same(oGroupLock1),
 				undefined, undefined, sinon.match.func, undefined, "/EMPLOYEES")
 			.callsArg(5)
-			.returns(Promise.resolve({"ID" : "1"}));
+			.returns(Promise.resolve({ID : "1"}));
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
@@ -3140,7 +3140,7 @@ sap.ui.define([
 			sPath = {/*EMPLOYEES('42')*/},
 			oRefreshResult;
 
-		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
+		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {foo : "bar"});
 
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getGroupId").never();
@@ -3192,7 +3192,7 @@ sap.ui.define([
 			bKeepCacheOnError = {/*true or false*/},
 			sPath = {/*EMPLOYEES('42')*/};
 
-		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
+		oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {foo : "bar"});
 
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
 		this.mock(oBinding).expects("refreshSuspended").withExactArgs(sinon.match.same(sGroupId));
@@ -3627,10 +3627,10 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oBinding.getQueryOptionsFromParameters(), {});
 
-		oBinding = this.bindContext("foo", undefined, {"$expand" : "bar"});
+		oBinding = this.bindContext("foo", undefined, {$expand : "bar"});
 
 		// code under test
-		assert.deepEqual(oBinding.getQueryOptionsFromParameters(), {"$expand" : {"bar" : {}}});
+		assert.deepEqual(oBinding.getQueryOptionsFromParameters(), {$expand : {bar : {}}});
 	});
 
 	//*********************************************************************************************

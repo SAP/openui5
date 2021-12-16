@@ -64,13 +64,13 @@ sap.ui.define([
 			TimeOfDay : "Edm.TimeOfDay"
 		},
 		mTypeCategoryNeedsCompare = {
-			"boolean" : false,
-			"Date" : false,
-			"DateTimeOffset" : true,
-			"Decimal" : true,
-			"number" : false,
-			"string" : false,
-			"TimeOfDay" : false
+			boolean : false,
+			Date : false,
+			DateTimeOffset : true,
+			Decimal : true,
+			number : false,
+			string : false,
+			TimeOfDay : false
 		},
 		/**
 		 * This object contains helper functions to process an expression in OData V4 annotations.

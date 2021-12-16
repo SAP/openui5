@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (_Helper, escapeRegExp) {
 	"use strict";
 
-	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
+	var mAllowedChangeSetMethods = {POST : true, PUT : true, PATCH : true, DELETE : true},
 		rContentIdReference = /^\$\d+/,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/;
 

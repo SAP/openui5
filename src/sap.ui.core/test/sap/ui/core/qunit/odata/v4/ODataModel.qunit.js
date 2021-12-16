@@ -37,7 +37,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		mFixture = {
-			"TEAMS('TEAM_01')/Name" : {"message" : {"value" : "Business Suite"}},
+			"TEAMS('TEAM_01')/Name" : {message : {value : "Business Suite"}},
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
@@ -329,13 +329,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("Model construction with groupProperties, getGroupProperty", function (assert) {
 		var oDefaultGroupProperties = {
-				"$auto" : {submit : SubmitMode.Auto},
-				"$direct" : {submit : SubmitMode.Direct}
+				$auto : {submit : SubmitMode.Auto},
+				$direct : {submit : SubmitMode.Direct}
 			},
 			oGroupProperties = {
-				"myAPIGroup" : {submit : SubmitMode.API},
-				"myAutoGroup" : {submit : SubmitMode.Auto},
-				"myDirectGroup" : {submit : SubmitMode.Direct}
+				myAPIGroup : {submit : SubmitMode.API},
+				myAutoGroup : {submit : SubmitMode.Auto},
+				myDirectGroup : {submit : SubmitMode.Direct}
 			},
 			oModel;
 
@@ -365,20 +365,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		groupProperties : {"$foo" : null},
+		groupProperties : {$foo : null},
 		// only one example for an invalid application group ID
 		error : "Invalid group ID: $foo"
 	}, {
-		groupProperties : {"myGroup" : "Foo"},
+		groupProperties : {myGroup : "Foo"},
 		error : "Group 'myGroup' has invalid properties: 'Foo'"
 	}, {
-		groupProperties : {"myGroup" : undefined},
+		groupProperties : {myGroup : undefined},
 		error : "Group 'myGroup' has invalid properties: 'undefined'"
 	}, {
-		groupProperties : {"myGroup" : {submit : SubmitMode.Auto, foo : "bar"}},
+		groupProperties : {myGroup : {submit : SubmitMode.Auto, foo : "bar"}},
 		error : "Group 'myGroup' has invalid properties: '[object Object]'"
 	}, {
-		groupProperties : {"myGroup" : {submit : "foo"}},
+		groupProperties : {myGroup : {submit : "foo"}},
 		error : "Group 'myGroup' has invalid properties: '[object Object]'"
 	}].forEach(function (oFixture) {
 		QUnit.test("Model construction with groupProperties, error: " + oFixture.error,
@@ -431,7 +431,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Model construction with headers", function (assert) {
-		var mHeaders = {"abc" : "123", "accept-language" : "wx-YZ"},
+		var mHeaders = {abc : "123", "accept-language" : "wx-YZ"},
 			oModel;
 
 		this.mock(ODataModel.prototype).expects("changeHttpHeaders")
@@ -1249,7 +1249,7 @@ sap.ui.define([
 		}, new Error("Cannot create binding context from relative path 'bar' without context"),
 			"relative path, no context");
 		assert.throws(function () {
-			oModel.createBindingContext("/foo", undefined, {"param" : "bar"});
+			oModel.createBindingContext("/foo", undefined, {param : "bar"});
 		}, new Error("Only the parameters sPath and oContext are supported"),
 			"more than two parameters not allowed");
 		assert.throws(function () {
@@ -1337,32 +1337,32 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		mParameters : {
-			"$expand" : {
-				"foo" : {
-					"$count" : true,
-					"$expand" : {"bar" : {}},
-					"$filter" : "baz eq 0",
-					"$levels" : "max",
-					"$orderby" : "qux",
-					"$search" : "key",
-					"$select" : ["*"]
+			$expand : {
+				foo : {
+					$count : true,
+					$expand : {bar : {}},
+					$filter : "baz eq 0",
+					$levels : "max",
+					$orderby : "qux",
+					$search : "key",
+					$select : ["*"]
 				}
 			},
-			"$select" : ["bar"],
-			"custom" : "baz"
+			$select : ["bar"],
+			custom : "baz"
 		},
 		bSystemQueryOptionsAllowed : true
 	}, {
 		mParameters : {
-			"$apply" : "apply",
-			"$count" : true,
-			"$filter" : "foo eq 42",
-			"$orderby" : "bar",
-			"$search" : '"foo bar" AND NOT foobar'
+			$apply : "apply",
+			$count : true,
+			$filter : "foo eq 42",
+			$orderby : "bar",
+			$search : '"foo bar" AND NOT foobar'
 		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mParameters : {"custom" : "foo"}
+		mParameters : {custom : "foo"}
 	}, {
 		mParameters : undefined
 	}, {
@@ -1377,24 +1377,24 @@ sap.ui.define([
 		bSapAllowed : false // always allowed
 	}, {
 		mParameters : {
-			$expand : {"TEAM_2_MANAGER" : {}},
+			$expand : {TEAM_2_MANAGER : {}},
 			$select : "bar"
 		},
 		bSystemQueryOptionsAllowed : true,
 		expected : {
-			$expand : {"TEAM_2_MANAGER" : {}},
+			$expand : {TEAM_2_MANAGER : {}},
 			$select : ["bar"]
 		}
 	}, {
 		mParameters : {
-			$expand : {"TEAM_2_MANAGER" : {
+			$expand : {TEAM_2_MANAGER : {
 				$expand : "TEAM_2_EMPLOYEES($select=Name)",
 				$select : "Team_Id"
 			}}
 		},
 		bSystemQueryOptionsAllowed : true,
 		expected : {
-			$expand : {"TEAM_2_MANAGER" : {
+			$expand : {TEAM_2_MANAGER : {
 				$expand : {
 					TEAM_2_EMPLOYEES : {
 						$select : ["Name"]
@@ -1406,13 +1406,13 @@ sap.ui.define([
 	}, {
 		mParameters : {
 			$expand : {
-				"TEAM_2_MANAGER" : true,
-				"TEAM_2_EMPLOYEES" : null,
-				"FOO1" : 42,
-				"FOO2" : false,
+				TEAM_2_MANAGER : true,
+				TEAM_2_EMPLOYEES : null,
+				FOO1 : 42,
+				FOO2 : false,
 //TODO undefined values are removed by _Helper.clone, but should also be normalized to {}
 				//"FOO3" : undefined
-				"FOO4" : {
+				FOO4 : {
 					$count : false
 				}
 			}
@@ -1420,12 +1420,12 @@ sap.ui.define([
 		bSystemQueryOptionsAllowed : true,
 		expected : {
 			$expand : {
-				"TEAM_2_MANAGER" : {},
-				"TEAM_2_EMPLOYEES" : {},
-				"FOO1" : {},
-				"FOO2" : {},
+				TEAM_2_MANAGER : {},
+				TEAM_2_EMPLOYEES : {},
+				FOO1 : {},
+				FOO2 : {},
 //				"FOO3" : {}
-				"FOO4" : {}
+				FOO4 : {}
 			}
 		}
 	}, {
@@ -1477,14 +1477,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
-		var oExpand = {"foo" : null},
+		var oExpand = {foo : null},
 			oParserMock = this.mock(_Parser),
 			aSelect = ["bar"];
 
 		oParserMock.expects("parseSystemQueryOption")
-			.withExactArgs("$expand=foo").returns({"$expand" : oExpand});
+			.withExactArgs("$expand=foo").returns({$expand : oExpand});
 		oParserMock.expects("parseSystemQueryOption")
-			.withExactArgs("$select=bar").returns({"$select" : aSelect});
+			.withExactArgs("$select=bar").returns({$select : aSelect});
 
 		assert.deepEqual(ODataModel.prototype.buildQueryOptions({
 			$expand : "foo",
@@ -1497,7 +1497,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		mOptions : {"$foo" : "foo"},
+		mOptions : {$foo : "foo"},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $foo is not supported"
 	}, {
@@ -1505,45 +1505,45 @@ sap.ui.define([
 		bSystemQueryOptionsAllowed : true,
 		error : "Parameter @alias is not supported"
 	}, {
-		mOptions : {"$expand" : {"foo" : true}},
+		mOptions : {$expand : {foo : true}},
 		error : "System query option $expand is not supported"
 	}, {
-		mOptions : {"$expand" : {"foo" : {"$unknown" : "bar"}}},
+		mOptions : {$expand : {foo : {$unknown : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $unknown is not supported"
 	}, {
-		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
+		mOptions : {$expand : {foo : {select : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option select is not supported"
 	}, {
-		mOptions : {"$levels" : 2},
+		mOptions : {$levels : 2},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $levels is not supported"
 	}, {
-		mOptions : {"$expand" : {"foo" : {"$apply" : "bar"}}},
+		mOptions : {$expand : {foo : {$apply : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $apply is not supported"
 	}, {
-		mOptions : {"$expand" : {"foo" : {"$skip" : "10"}}},
+		mOptions : {$expand : {foo : {$skip : "10"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $skip is not supported"
 	}, {
-		mOptions : {"$expand" : {"foo" : {"$top" : "10"}}},
+		mOptions : {$expand : {foo : {$top : "10"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option $top is not supported"
 	}, {
 		mOptions : {"sap-foo" : "300"},
 		error : "Custom query option sap-foo is not supported"
 	}, {
-		mOptions : {"$count" : "foo"},
+		mOptions : {$count : "foo"},
 		bSystemQueryOptionsAllowed : true,
 		error : "Invalid value for $count: foo"
 	}, {
-		mOptions : {"$count" : {}},
+		mOptions : {$count : {}},
 		bSystemQueryOptionsAllowed : true,
 		error : "Invalid value for $count: [object Object]"
 	}, {
-		mOptions : {"$count" : undefined},
+		mOptions : {$count : undefined},
 		bSystemQueryOptionsAllowed : true,
 		error : "Invalid value for $count: undefined"
 	}].forEach(function (o) {

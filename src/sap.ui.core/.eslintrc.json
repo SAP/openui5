@@ -50,6 +50,7 @@
 				"one-var-declaration-per-line": ["error", "initializations"],
 				"operator-assignment": "error",
 				"operator-linebreak": ["error", "before"],
+				"quote-props": ["error", "as-needed", {"numbers": true}],
 				"quotes": ["error", "double", {"avoidEscape": true}],
 				"space-before-blocks": "error",
 				"space-before-function-paren": ["error", {"named": "never"}],
@@ -84,6 +85,7 @@
 				"sinon": "readonly"
 			},
 			"rules": {
+				"camelcase" : "off",
 				"max-nested-callbacks": "off",
 				"no-warning-comments": "off"
 			}

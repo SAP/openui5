@@ -71,18 +71,18 @@ sap.ui.define([
 					</Schema>\
 				</edmx:DataServices>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"Me" : {
-						"$kind" : "Singleton",
-						"$NavigationPropertyBinding" : {
-							"Manager" : "foo.Manager"
+					$kind : "EntityContainer",
+					Me : {
+						$kind : "Singleton",
+						$NavigationPropertyBinding : {
+							Manager : "foo.Manager"
 						},
-						"$Type" : "foo.Worker"
+						$Type : "foo.Worker"
 					}
 				}
 			});
@@ -102,19 +102,19 @@ sap.ui.define([
 					<edmx:Include Namespace="bla"/>\
 				</edmx:Reference>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"/qux/$metadata" : {
-						"$Include" : ["qux.foo.", "qux.bar."],
-						"$IncludeAnnotations" : [{
-							"$TermNamespace" : "qux.foo."
+						$Include : ["qux.foo.", "qux.bar."],
+						$IncludeAnnotations : [{
+							$TermNamespace : "qux.foo."
 						}, {
-							"$TermNamespace" : "qux.bar.",
-							"$TargetNamespace" : "qux.bar.",
-							"$Qualifier" : "Tablet"
+							$TermNamespace : "qux.bar.",
+							$TargetNamespace : "qux.bar.",
+							$Qualifier : "Tablet"
 						}]
 					},
 					"/bla/$metadata" : {
-						"$Include" : ["bla."]
+						$Include : ["bla."]
 					}
 				}
 			});
@@ -139,37 +139,37 @@ sap.ui.define([
 					<Schema Namespace="foo" Alias="f"/>\
 				</edmx:DataServices>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"/qux/$metadata" : {
-						"$Include" : ["qux."]
+						$Include : ["qux."]
 					}
 				},
 				"bar." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"bar.Worker" : {
-					"$kind" : "ComplexType",
-					"Something" : {
-						"$kind" : "Property",
-						"$Type" : "qux.Something"
+					$kind : "ComplexType",
+					Something : {
+						$kind : "Property",
+						$Type : "qux.Something"
 					},
-					"ManyThings" : {
-						"$kind" : "Property",
-						"$isCollection" : true,
-						"$Type" : "qux.Something"
+					ManyThings : {
+						$kind : "Property",
+						$isCollection : true,
+						$Type : "qux.Something"
 					},
-					"DefaultAddress" : {
-						"$kind" : "NavigationProperty",
-						"$Type" : "foo.Address"
+					DefaultAddress : {
+						$kind : "NavigationProperty",
+						$Type : "foo.Address"
 					},
-					"AllAddresses" : {
-						"$kind" : "NavigationProperty",
-						"$isCollection" : true,
-						"$Type" : "foo.Address"
+					AllAddresses : {
+						$kind : "NavigationProperty",
+						$isCollection : true,
+						$Type : "foo.Address"
 					}
 				},
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			});
 	});
@@ -196,25 +196,25 @@ sap.ui.define([
 					</Schema>\
 				</edmx:DataServices>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"SpecialTeams" : {
-						"$kind" : "EntitySet",
-						"$Type" : "foo.Team"
+					$kind : "EntityContainer",
+					SpecialTeams : {
+						$kind : "EntitySet",
+						$Type : "foo.Team"
 					},
-					"Teams" : {
-						"$kind" : "EntitySet",
-						"$NavigationPropertyBinding" : {
-							"Manager" : "Managers",
-							"Foo" : "other.Container/Foo",
-							"Bar" : "foo.Container/Foo/Bar",
-							"Baz" : "foo.Container/Manager/foo.Employee"
+					Teams : {
+						$kind : "EntitySet",
+						$NavigationPropertyBinding : {
+							Manager : "Managers",
+							Foo : "other.Container/Foo",
+							Bar : "foo.Container/Foo/Bar",
+							Baz : "foo.Container/Manager/foo.Employee"
 						},
-						"$Type" : "foo.Team"
+						$Type : "foo.Team"
 					}
 				}
 			});
@@ -235,24 +235,24 @@ sap.ui.define([
 					</Schema>\
 				</edmx:DataServices>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"Teams" : {
-						"$kind" : "EntitySet",
-						"$Type" : "foo.Team",
-						"$IncludeInServiceDocument" : false
+					$kind : "EntityContainer",
+					Teams : {
+						$kind : "EntitySet",
+						$Type : "foo.Team",
+						$IncludeInServiceDocument : false
 					},
-					"Teams2" : {
-						"$kind" : "EntitySet",
-						"$Type" : "foo.Team"
+					Teams2 : {
+						$kind : "EntitySet",
+						$Type : "foo.Team"
 					},
-					"Teams3" : {
-						"$kind" : "EntitySet",
-						"$Type" : "foo.Team"
+					Teams3 : {
+						$kind : "EntitySet",
+						$Type : "foo.Team"
 					}
 				}
 			});
@@ -274,23 +274,23 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "EntityType",
-					"$Key" : [
-						{"qux" : "Bar/Baz"}
+					$kind : "EntityType",
+					$Key : [
+						{qux : "Bar/Baz"}
 					],
-					"$OpenType" : true,
-					"$HasStream" : true
+					$OpenType : true,
+					$HasStream : true
 				},
 				"foo.Base" : {
-					"$kind" : "EntityType",
-					"$Abstract" : true
+					$kind : "EntityType",
+					$Abstract : true
 				},
 				"foo.Derived" : {
-					"$kind" : "EntityType",
-					"$BaseType" : "foo.Base"
+					$kind : "EntityType",
+					$BaseType : "foo.Base"
 				}
 			});
 	});
@@ -307,20 +307,20 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "ComplexType",
-					"$OpenType" : true,
-					"$HasStream" : true
+					$kind : "ComplexType",
+					$OpenType : true,
+					$HasStream : true
 				},
 				"foo.Base" : {
-					"$kind" : "ComplexType",
-					"$Abstract" : true
+					$kind : "ComplexType",
+					$Abstract : true
 				},
 				"foo.Derived" : {
-					"$kind" : "ComplexType",
-					"$BaseType" : "foo.Base"
+					$kind : "ComplexType",
+					$BaseType : "foo.Base"
 				}
 			});
 	});
@@ -354,54 +354,54 @@ sap.ui.define([
 		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
 			var oExpected = {
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Worker" : {
-						"$kind" : sType,
-						"Salary" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.Decimal",
-							"$Precision" : 8,
-							"$Scale" : 2
+						$kind : sType,
+						Salary : {
+							$kind : "Property",
+							$Type : "Edm.Decimal",
+							$Precision : 8,
+							$Scale : 2
 						},
-						"p1" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.String",
-							"$DefaultValue" : "<a>",
-							"$Unicode" : false
+						p1 : {
+							$kind : "Property",
+							$Type : "Edm.String",
+							$DefaultValue : "<a>",
+							$Unicode : false
 						},
-						"p2" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.String"
+						p2 : {
+							$kind : "Property",
+							$Type : "Edm.String"
 						},
-						"p3" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.Geometry",
-							"$SRID" : "42"
+						p3 : {
+							$kind : "Property",
+							$Type : "Edm.Geometry",
+							$SRID : "42"
 						},
-						"p4" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.Int32",
-							"$DefaultValue" : "42"
+						p4 : {
+							$kind : "Property",
+							$Type : "Edm.Int32",
+							$DefaultValue : "42"
 						},
-						"team1" : {
-							"$kind" : "NavigationProperty",
-							"$Type" : "foo.Team",
-							"$Partner" : "worker",
-							"$OnDelete" : "SetDefault",
-							"$ReferentialConstraint" : {
-								"p1" : "p1Key",
-								"p2" : "p2Key"
+						team1 : {
+							$kind : "NavigationProperty",
+							$Type : "foo.Team",
+							$Partner : "worker",
+							$OnDelete : "SetDefault",
+							$ReferentialConstraint : {
+								p1 : "p1Key",
+								p2 : "p2Key"
 							}
 						},
-						"team2" : {
-							"$kind" : "NavigationProperty",
-							"$Type" : "foo.Team",
-							"$ContainsTarget" : true
+						team2 : {
+							$kind : "NavigationProperty",
+							$Type : "foo.Team",
+							$ContainsTarget : true
 						},
-						"team3" : {
-							"$kind" : "NavigationProperty",
-							"$Type" : "foo.Team"
+						team3 : {
+							$kind : "NavigationProperty",
+							$Type : "foo.Team"
 						}
 					}
 				};
@@ -468,44 +468,44 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Bar1" : {
-					"$kind" : "EnumType",
-					"$IsFlags" : true,
-					"p_1" : 1
+					$kind : "EnumType",
+					$IsFlags : true,
+					p_1 : 1
 				},
 				"foo.Bar2" : {
-					"$kind" : "EnumType",
-					"_1" : 0,
-					"_2" : 1
+					$kind : "EnumType",
+					_1 : 0,
+					_2 : 1
 				},
 				"foo.Baz1" : {
-					"$kind" : "EnumType",
-					"$UnderlyingType" : "Edm.Int64",
-					"_1" : 9007199254740991,
-					"_2" : "9007199254740992"
+					$kind : "EnumType",
+					$UnderlyingType : "Edm.Int64",
+					_1 : 9007199254740991,
+					_2 : "9007199254740992"
 				},
 				"foo.Baz2" : {
-					"$kind" : "EnumType",
-					"$UnderlyingType" : "Edm.Int64",
-					"_1" : 0,
-					"_2" : 1
+					$kind : "EnumType",
+					$UnderlyingType : "Edm.Int64",
+					_1 : 0,
+					_2 : 1
 				},
 				"foo.Qux1" : {
-					"$kind" : "EnumType",
-					"$UnderlyingType" : "Edm.Int16",
-					"_1" : 0
+					$kind : "EnumType",
+					$UnderlyingType : "Edm.Int16",
+					_1 : 0
 				},
 				"foo.Qux2" : {
-					"$kind" : "EnumType",
-					"$UnderlyingType" : "Edm.Byte",
-					"_1" : 0
+					$kind : "EnumType",
+					$UnderlyingType : "Edm.Byte",
+					_1 : 0
 				},
 				"foo.Qux3" : {
-					"$kind" : "EnumType",
-					"$UnderlyingType" : "Edm.SByte",
-					"_1" : 0
+					$kind : "EnumType",
+					$UnderlyingType : "Edm.SByte",
+					_1 : 0
 				}
 			});
 	});
@@ -527,11 +527,11 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Bar" : {
-					"$kind" : "TypeDefinition",
-					"$UnderlyingType" : "Edm.String"
+					$kind : "TypeDefinition",
+					$UnderlyingType : "Edm.String"
 				}
 			});
 	});
@@ -555,37 +555,37 @@ sap.ui.define([
 					</edmx:DataServices>',
 				{
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Baz" : [{
-						"$kind" : sRunnable,
-						"$IsBound" : true,
-						"$EntitySetPath" : "Employees",
-						"$Parameter" : [{
-							"$Name" : "p1",
-							"$Type" : "foo.Bar",
-							"$Nullable" : false
+						$kind : sRunnable,
+						$IsBound : true,
+						$EntitySetPath : "Employees",
+						$Parameter : [{
+							$Name : "p1",
+							$Type : "foo.Bar",
+							$Nullable : false
 						}, {
-							"$Name" : "p2",
-							"$isCollection" : true,
-							"$Type" : "foo.Bar",
-							"$MaxLength" : 10,
-							"$Precision" : 2,
-							"$Scale" : "variable",
-							"$SRID" : "42"
+							$Name : "p2",
+							$isCollection : true,
+							$Type : "foo.Bar",
+							$MaxLength : 10,
+							$Precision : 2,
+							$Scale : "variable",
+							$SRID : "42"
 						}],
-						"$ReturnType" : {
-							"$isCollection" : true,
-							"$Type" : "Edm.String",
-							"$Nullable" : false,
-							"$MaxLength" : 10,
-							"$Precision" : 2,
-							"$Scale" : "variable",
-							"$SRID" : "42"
+						$ReturnType : {
+							$isCollection : true,
+							$Type : "Edm.String",
+							$Nullable : false,
+							$MaxLength : 10,
+							$Precision : 2,
+							$Scale : "variable",
+							$SRID : "42"
 						}
 					}, {
-						"$kind" : sRunnable,
-						"$IsComposable" : true
+						$kind : sRunnable,
+						$IsComposable : true
 					}]
 				});
 		});
@@ -595,26 +595,26 @@ sap.ui.define([
 	["Action", "Function"].forEach(function (sWhat) {
 		QUnit.test("convertXMLMetadata: " + sWhat + "Import", function (assert) {
 			var oExpected = {
-					"$EntityContainer" : "foo.Container",
+					$EntityContainer : "foo.Container",
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Container" : {
-						"$kind" : "EntityContainer",
-						"Baz1" : {
-							"$EntitySet" : "Employees",
-							"$IncludeInServiceDocument" : true
+						$kind : "EntityContainer",
+						Baz1 : {
+							$EntitySet : "Employees",
+							$IncludeInServiceDocument : true
 						},
-						"Baz2" : {
+						Baz2 : {
 						},
-						"Baz3" : {
-							"$EntitySet" : "Employees"
+						Baz3 : {
+							$EntitySet : "Employees"
 						},
-						"Baz4" : {
-							"$EntitySet" : "some.other.Container/Employees"
+						Baz4 : {
+							$EntitySet : "some.other.Container/Employees"
 						},
-						"Baz5" : {
-							"$EntitySet" : "foo.Container/Employees/Team"
+						Baz5 : {
+							$EntitySet : "foo.Container/Employees/Team"
 						}
 					}
 				},
@@ -660,22 +660,22 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Term1" : {
-					"$kind" : "Term",
-					"$isCollection" : true,
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 10,
-					"$Precision" : 2,
-					"$Scale" : "variable",
-					"$SRID" : "42"
+					$kind : "Term",
+					$isCollection : true,
+					$Type : "Edm.String",
+					$Nullable : false,
+					$MaxLength : 10,
+					$Precision : 2,
+					$Scale : "variable",
+					$SRID : "42"
 				},
 				"foo.Term2" : {
-					"$kind" : "Term",
-					"$Type" : "foo.Bar",
-					"$BaseTerm" : "foo.Term1"
+					$kind : "Term",
+					$Type : "foo.Bar",
+					$BaseTerm : "foo.Term1"
 				}
 			});
 	});
@@ -723,39 +723,39 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.Bar/foo.Baz" : {
-							"@foo.Binary" : {"$Binary" : "T0RhdGE"},
+							"@foo.Binary" : {$Binary : "T0RhdGE"},
 							"@foo.Bool" : false,
-							"@foo.Date" : {"$Date" : "2015-01-01"},
+							"@foo.Date" : {$Date : "2015-01-01"},
 							"@foo.DateTimeOffset" : {
-								"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+								$DateTimeOffset : "2000-01-01T16:00:00.000-09:00"
 							},
-							"@foo.Decimal" : {"$Decimal" : "3.14"},
-							"@foo.Duration" : {"$Duration" : "P11D23H59M59S"},
+							"@foo.Decimal" : {$Decimal : "3.14"},
+							"@foo.Duration" : {$Duration : "P11D23H59M59S"},
 							"@foo.EnumMember" : {
-								"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"
+								$EnumMember : "foo.Enum/Member1 foo.Enum/Member2"
 							},
 							"@foo.Float1" : 2.718,
-							"@foo.Float2" : {"$Float" : "NaN"},
-							"@foo.Float3" : {"$Float" : "INF"},
-							"@foo.Float4" : {"$Float" : "-INF"},
-							"@foo.Guid" : {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+							"@foo.Float2" : {$Float : "NaN"},
+							"@foo.Float3" : {$Float : "INF"},
+							"@foo.Float4" : {$Float : "-INF"},
+							"@foo.Guid" : {$Guid : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
 							"@foo.Int1" : 42,
 							"@foo.Int2" : 9007199254740991,
-							"@foo.Int3" : {"$Int" : "9007199254740992"},
+							"@foo.Int3" : {$Int : "9007199254740992"},
 							"@foo.String" : "foobar",
-							"@foo.TimeOfDay" : {"$TimeOfDay" : "21:45:00"},
+							"@foo.TimeOfDay" : {$TimeOfDay : "21:45:00"},
 							"@foo.AnnotationPath" : {
-								"$AnnotationPath" : "Path/foo.Bar/foo.Baz@foo.Term"
+								$AnnotationPath : "Path/foo.Bar/foo.Baz@foo.Term"
 							},
 							"@foo.NavigationPropertyPath" : {
-								"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"
+								$NavigationPropertyPath : "Path/foo.Bar/foo.Baz"
 							},
-							"@foo.Path" : {"$Path" : "Path/foo.Bar/foo.Baz"},
-							"@foo.PropertyPath" : {"$PropertyPath" : "Path/foo.Bar/foo.Baz"},
-							"@foo.UrlRef" : {"$UrlRef" : "http://foo.bar"},
+							"@foo.Path" : {$Path : "Path/foo.Bar/foo.Baz"},
+							"@foo.PropertyPath" : {$PropertyPath : "Path/foo.Bar/foo.Baz"},
+							"@foo.UrlRef" : {$UrlRef : "http://foo.bar"},
 							"@foo.Invalid" : true,
 							"@foo.Baz#Employee" : true
 						},
@@ -795,10 +795,10 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema",
+					$kind : "Schema",
 					"@foo.Term1" : "Schema",
 					"@foo.Term2" : "Schema",
-					"$Annotations" : {
+					$Annotations : {
 						"foo.EntityType" : {
 							"@foo.Term" : "EntityType"
 						},
@@ -814,24 +814,24 @@ sap.ui.define([
 					}
 				},
 				"foo.EntityType" : {
-					"$kind" : "EntityType",
-					"Property" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.String"
+					$kind : "EntityType",
+					Property : {
+						$kind : "Property",
+						$Type : "Edm.String"
 					},
-					"NavigationProperty" : {
-						"$kind" : "NavigationProperty",
-						"$Type" : "foo.Target",
-						"$ReferentialConstraint" : {
-							"p" : "r",
+					NavigationProperty : {
+						$kind : "NavigationProperty",
+						$Type : "foo.Target",
+						$ReferentialConstraint : {
+							p : "r",
 							"p@foo.Term" : "ReferentialConstraint"
 						},
-						"$OnDelete" : "a",
+						$OnDelete : "a",
 						"$OnDelete@foo.Term" : "OnDelete"
 					}
 				},
 				"foo.ComplexType" : {
-					"$kind" : "ComplexType"
+					$kind : "ComplexType"
 				}
 			});
 	});
@@ -857,8 +857,8 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.EnumType" : {
 							"@foo.Term" : "EnumType"
 						},
@@ -874,16 +874,16 @@ sap.ui.define([
 					}
 				},
 				"foo.EnumType" : {
-					"$kind" : "EnumType",
-					"Member" : 0
+					$kind : "EnumType",
+					Member : 0
 				},
 				"foo.Term" : {
-					"$kind" : "Term",
-					"$Type" : "Edm.String"
+					$kind : "Term",
+					$Type : "Edm.String"
 				},
 				"foo.TypeDefinition" : {
-					"$kind" : "TypeDefinition",
-					"$UnderlyingType" : "Edm.String"
+					$kind : "TypeDefinition",
+					$UnderlyingType : "Edm.String"
 				}
 			});
 	});
@@ -926,7 +926,7 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$Annotations" : {
+					$Annotations : {
 						"foo.Action(Edm.String)" : {
 							"@foo.Term" : "Action1"
 						},
@@ -952,51 +952,51 @@ sap.ui.define([
 							"@foo.Term" : "Function3"
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Action" : [{
-					"$kind" : "Action",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : "_it",
-						"$Type" : "Edm.String"
+					$kind : "Action",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "_it",
+						$Type : "Edm.String"
 					}],
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$ReturnType : {
+						$Type : "Edm.String"
 					}
 				}, {
-					"$kind" : "Action"
+					$kind : "Action"
 				}, {
-					"$kind" : "Action",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : "_it",
-						"$Type" : "foo.Type",
-						"$isCollection" : true
+					$kind : "Action",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "_it",
+						$Type : "foo.Type",
+						$isCollection : true
 					}, {
-						"$Name" : "NonBinding",
-						"$Type" : "Edm.Int"
+						$Name : "NonBinding",
+						$Type : "Edm.Int"
 					}]
 				}],
 				"foo.Function" : [{
-					"$kind" : "Function"
+					$kind : "Function"
 				}, {
-					"$kind" : "Function",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : "Parameter",
-						"$Type" : "foo.Type"
+					$kind : "Function",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "Parameter",
+						$Type : "foo.Type"
 					}]
 				}, {
-					"$kind" : "Function",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : "A",
-						"$Type" : "foo.Type"
+					$kind : "Function",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "A",
+						$Type : "foo.Type"
 					}, {
-						"$Name" : "B",
-						"$Type" : "foo.Int",
-						"$isCollection" : true
+						$Name : "B",
+						$Type : "foo.Int",
+						$isCollection : true
 					}]
 				}]
 			});
@@ -1028,10 +1028,10 @@ sap.ui.define([
 					</Schema>\
 				</edmx:DataServices>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.Container" : {
 							"@foo.Term" : "EntityContainer"
 						},
@@ -1051,22 +1051,22 @@ sap.ui.define([
 					}
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"EntitySet" : {
-						"$kind" : "EntitySet",
-						"$Type" : "foo.EntityType"
+					$kind : "EntityContainer",
+					EntitySet : {
+						$kind : "EntitySet",
+						$Type : "foo.EntityType"
 					},
-					"Singleton" : {
-						"$kind" : "Singleton",
-						"$Type" : "foo.EntityType"
+					Singleton : {
+						$kind : "Singleton",
+						$Type : "foo.EntityType"
 					},
-					"ActionImport" : {
-						"$kind" : "ActionImport",
-						"$Action" : "foo.Action"
+					ActionImport : {
+						$kind : "ActionImport",
+						$Action : "foo.Action"
 					},
-					"FunctionImport" : {
-						"$kind" : "FunctionImport",
-						"$Function" : "foo.Function"
+					FunctionImport : {
+						$kind : "FunctionImport",
+						$Function : "foo.Function"
 					}
 				}
 			});
@@ -1079,7 +1079,7 @@ sap.ui.define([
 					<Annotation Term="foo.Term" String="Reference"/>\
 				</edmx:Reference>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"qux/$metadata" : {
 						"@foo.Term" : "Reference"
 					}
@@ -1106,11 +1106,11 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema",
+					$kind : "Schema",
 					"@foo.Term1#q1" : "Schema",
 					"@foo.Term1#q1@foo.Term2#q2" : "Annotation2",
 					"@foo.Term1#q1@foo.Term2#q2@foo.Term3#q3" : "Annotation3",
-					"$Annotations" : {
+					$Annotations : {
 						"foo.ComplexType" : {
 							"@foo.Term1" : "ComplexType",
 							"@foo.Term1@foo.Term2" : "Annotation"
@@ -1118,7 +1118,7 @@ sap.ui.define([
 					}
 				},
 				"foo.ComplexType" : {
-					"$kind" : "ComplexType"
+					$kind : "ComplexType"
 				}
 			});
 	});
@@ -1167,10 +1167,10 @@ sap.ui.define([
 				</edmx:DataServices>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "ComplexType"
+					$kind : "ComplexType"
 					// no $OpenType
 				}
 			});
@@ -1256,83 +1256,83 @@ sap.ui.define([
 		</EntityContainer>\
 	</Schema>\
 </edmx:DataServices>', {
-			"$EntityContainer" : "duplicates.Container",
+			$EntityContainer : "duplicates.Container",
 			"duplicates." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"duplicates.Address" : {
-				"$kind" : "ComplexType",
-				"City" : {
-					"$Type" : "Edm.String",
-					"$kind" : "Property"
+				$kind : "ComplexType",
+				City : {
+					$Type : "Edm.String",
+					$kind : "Property"
 				}
 			},
 			"duplicates.ArtistsType" : {
-				"$Key" : [
+				$Key : [
 					"ArtistID",
 					"IsActiveEntity"
 				],
-				"$kind" : "EntityType",
-				"ArtistID" : {
-					"$Nullable" : false,
-					"$Type" : "Edm.String",
-					"$kind" : "Property"
+				$kind : "EntityType",
+				ArtistID : {
+					$Nullable : false,
+					$Type : "Edm.String",
+					$kind : "Property"
 				},
-				"IsActiveEntity" : {
-					"$Nullable" : false,
-					"$Type" : "Edm.Boolean",
-					"$kind" : "Property"
+				IsActiveEntity : {
+					$Nullable : false,
+					$Type : "Edm.Boolean",
+					$kind : "Property"
 				}
 			},
 			"duplicates.Container" : {
-				"$kind" : "EntityContainer",
-				"Artists" : {
-					"$Type" : "duplicates.ArtistsType",
-					"$kind" : "EntitySet"
+				$kind : "EntityContainer",
+				Artists : {
+					$Type : "duplicates.ArtistsType",
+					$kind : "EntitySet"
 				}
 			},
 			"duplicates.Enumeration" : {
-				"$kind" : "EnumType",
-				"ENO" : 0
+				$kind : "EnumType",
+				ENO : 0
 			},
 			"duplicates.GetDefaults" : [{
-				"$EntitySetPath" : "_it",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Nullable" : false,
-					"$Type" : "duplicates.ArtistsType",
-					"$isCollection" : true
+				$EntitySetPath : "_it",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Nullable : false,
+					$Type : "duplicates.ArtistsType",
+					$isCollection : true
 				}],
-				"$ReturnType" : {
-					"$Nullable" : false,
-					"$Type" : "duplicates.ArtistsType"
+				$ReturnType : {
+					$Nullable : false,
+					$Type : "duplicates.ArtistsType"
 				},
-				"$kind" : "Function"
+				$kind : "Function"
 			}, {
-				"$EntitySetPath" : "_it",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Nullable" : false,
-					"$Type" : "duplicates.ArtistsType"
+				$EntitySetPath : "_it",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Nullable : false,
+					$Type : "duplicates.ArtistsType"
 				}],
-				"$ReturnType" : {
-					"$Nullable" : false,
-					"$Type" : "duplicates.ArtistsType"
+				$ReturnType : {
+					$Nullable : false,
+					$Type : "duplicates.ArtistsType"
 				},
-				"$kind" : "Function"
+				$kind : "Function"
 			}],
 			"duplicates.Term" : {
-				"$Type" : "Edm.String",
-				"$kind" : "Term"
+				$Type : "Edm.String",
+				$kind : "Term"
 			},
 			"duplicates.TypeDefinition" : {
-				"$UnderlyingType" : "Edm.String",
-				"$kind" : "TypeDefinition"
+				$UnderlyingType : "Edm.String",
+				$kind : "TypeDefinition"
 			},
 			"duplicates.YetAnotherContainer" : {
-				"$kind" : "EntityContainer"
+				$kind : "EntityContainer"
 			}
 		});
 	});

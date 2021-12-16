@@ -965,14 +965,14 @@ sap.ui.define([
 			oError = new Error("Unsupported ..."),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
-				"$apply" : "filter(Amount gt 3)",
-				"$expand" : "foo",
-				"$orderby" : "bar",
-				"$search" : '"foo bar" AND NOT foobar',
-				"$select" : "bar",
-				"custom" : "baz"
+				$apply : "filter(Amount gt 3)",
+				$expand : "foo",
+				$orderby : "bar",
+				$search : '"foo bar" AND NOT foobar',
+				$select : "bar",
+				custom : "baz"
 			},
-			mQueryOptions = {"$orderby" : "bar"},
+			mQueryOptions = {$orderby : "bar"},
 			oV4Context = {getBinding : function () {}};
 
 		// absolute binding and binding with base context result in the same cache
@@ -984,7 +984,7 @@ sap.ui.define([
 			.returns(mQueryOptions.$orderby);
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, undefined, false)
+				{$orderby : "bar", "sap-client" : "111"}, false, undefined, false)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -1006,7 +1006,7 @@ sap.ui.define([
 
 		oCacheMock.expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false)
+				{$orderby : "bar", "sap-client" : "111"}, false, "EMPLOYEES", false)
 			.returns({});
 
 		// code under test
@@ -3670,13 +3670,13 @@ sap.ui.define([
 
 		// code under test
 		oBinding.createContexts(0, [{
-			"@$ui5._" : {"transientPredicate" : "($uid=id-1-42)"}
+			"@$ui5._" : {transientPredicate : "($uid=id-1-42)"}
 		}, {
-			"@$ui5._" : {"transientPredicate" : "($uid=id-1-23)"}
+			"@$ui5._" : {transientPredicate : "($uid=id-1-23)"}
 		}, {
-			"@$ui5._" : {"predicate" : "('B')"}
+			"@$ui5._" : {predicate : "('B')"}
 		}, {
-			"@$ui5._" : {"predicate" : "('C')"}
+			"@$ui5._" : {predicate : "('C')"}
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[0], oContextMinus2);
@@ -3759,7 +3759,7 @@ sap.ui.define([
 		this.mock(oCreatedContext).expects("destroy").withExactArgs();
 
 		oBinding.createContexts(0, [{
-			"@$ui5._" : {"predicate" : "('1')"}
+			"@$ui5._" : {predicate : "('1')"}
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[0], oNewContext);
@@ -4306,7 +4306,7 @@ sap.ui.define([
 			var oBinding = this.bindList("TEAM_2_EMPLOYEES",
 					Context.create(this.oModel, oParentBinding, "/TEAMS/1", 1)),
 				oBindingMock = this.mock(oBinding),
-				aCacheResult = [{}, {}, {"@$ui5._" : {"predicate" : "('foo')"}}, {}],
+				aCacheResult = [{}, {}, {"@$ui5._" : {predicate : "('foo')"}}, {}],
 				oContext,
 				oContext2 = Context.create(this.oModel, oParentBinding, "/TEAMS/2", 2),
 				aContexts,
@@ -5073,7 +5073,7 @@ sap.ui.define([
 			description : "no nesting",
 			expectedResult : "p0/" + sFilterOperator.toLowerCase() + "(v0:v0/p1 eq 'value1')",
 			fetchObjects : {
-				"p0" : "Type0",
+				p0 : "Type0",
 				"p0/p1" : "Edm.String"
 			},
 			filter : new Filter({
@@ -5087,7 +5087,7 @@ sap.ui.define([
 			expectedResult : "p0/" + sFilterOperator.toLowerCase() + "(v0:"
 				+ "v0/p1/" + sFilterOperator.toLowerCase() + "(v1:v1/p2 eq 'value2'))",
 			fetchObjects : {
-				"p0" : "Type0",
+				p0 : "Type0",
 				"p0/p1" : "Type1",
 				"p0/p1/p2" : "Edm.String"
 			},
@@ -5107,7 +5107,7 @@ sap.ui.define([
 			expectedResult : "p0/" + sFilterOperator.toLowerCase()
 				+ "(v0:v0/p1 eq 'value1' and v0/p2 eq 'value2')",
 			fetchObjects : {
-				"p0" : "Type0",
+				p0 : "Type0",
 				"p0/p1" : "Edm.String",
 				"p0/p2" : "Edm.String"
 			},
@@ -5128,7 +5128,7 @@ sap.ui.define([
 			expectedResult : "p0/" + sFilterOperator.toLowerCase()
 			+ "(v0:v0/p1/any(v1:v1/p2 lt 'value1') or v0/p3 eq 'value2')",
 			fetchObjects : {
-				"p0" : "Type0",
+				p0 : "Type0",
 				"p0/p1" : "Type1",
 				"p0/p1/p2" : "Edm.String",
 				"p0/p3" : "Edm.String"
@@ -5154,7 +5154,7 @@ sap.ui.define([
 			expectedResult : "p0/" + sFilterOperator.toLowerCase()
 				+ "(v0:v0/p1/any(v1:v1/p3 lt 'value1') or v0/p2/any(v1:v1/p4 gt \'value2\'))",
 			fetchObjects : {
-				"p0" : "Type0",
+				p0 : "Type0",
 				"p0/p1" : "Type1",
 				"p0/p1/p3" : "Edm.String",
 				"p0/p2" : "Type2",
@@ -5186,7 +5186,7 @@ sap.ui.define([
 			expectedResult : "p0/" + sFilterOperator.toLowerCase()
 				+ "(v0:v0/p1/" + sFilterOperator.toLowerCase() + "(v0:v0/p2 lt 'value1'))",
 			fetchObjects : {
-				"p0" : "Type0",
+				p0 : "Type0",
 				"p0/p1" : "Type1",
 				"p0/p1/p2" : "Edm.String"
 			},
@@ -5453,7 +5453,7 @@ sap.ui.define([
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
 			oContext = {},
 			mMergedQueryOptions = {},
-			mResolvedQueryOptions = {"$filter" : "staticFilter", "$orderby" : "staticSorter"};
+			mResolvedQueryOptions = {$filter : "staticFilter", $orderby : "staticSorter"};
 
 		this.mock(oBinding).expects("fetchResolvedQueryOptions")
 			.withExactArgs(sinon.match.same(oContext))
@@ -5931,7 +5931,7 @@ sap.ui.define([
 			min : true,
 			name : "SalesAmount",
 			total : false,
-			"with" : "average"
+			with : "average"
 		}],
 		oTransformedAggregation : {
 			aggregate : {
@@ -5939,7 +5939,7 @@ sap.ui.define([
 					max : true,
 					min : true,
 					name : "SalesAmount",
-					"with" : "average"
+					with : "average"
 				}
 			},
 			group : {},

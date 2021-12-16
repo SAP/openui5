@@ -19,7 +19,7 @@ sap.ui.define([
 					name : "string",
 					subtotals : "boolean",
 					unit : "string",
-					"with" : "string"
+					with : "string"
 				}
 			},
 			"grandTotal like 1.84" : "boolean",

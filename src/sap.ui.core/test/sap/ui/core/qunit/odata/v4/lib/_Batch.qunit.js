@@ -13,203 +13,203 @@ sap.ui.define([
 	var oEntity = {"@odata.etag" : "W/\"20180830000000.0000000\""},
 		oEmployeesBody = {
 			"@odata.context" : "$metadata#EMPLOYEES",
-			"value" : [{
-				"ID" : "1",
-				"Name" : "Walter\"s Win's",
-				"AGE" : 52,
-				"ENTRYDATE" : "1977-07-24",
-				"MANAGER_ID" : "",
-				"ROOM_ID" : "1",
-				"TEAM_ID" : "TEAM_01",
-				"Is_Manager" : false,
-				"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
-				"LOCATION" : {
-					"COUNTRY" : "Germany",
-					"City" : {
-						"POSTALCODE" : "69124",
-						"CITYNAME" : "Heidelberg"
+			value : [{
+				ID : "1",
+				Name : "Walter\"s Win's",
+				AGE : 52,
+				ENTRYDATE : "1977-07-24",
+				MANAGER_ID : "",
+				ROOM_ID : "1",
+				TEAM_ID : "TEAM_01",
+				Is_Manager : false,
+				LAST_MODIFIED_AT : "1977-07-24T00:00:00Z",
+				LOCATION : {
+					COUNTRY : "Germany",
+					City : {
+						POSTALCODE : "69124",
+						CITYNAME : "Heidelberg"
 					}
 				},
-				"SALARY" : {
-					"MONTHLY_BASIC_SALARY_AMOUNT" : 5000.00,
-					"BASIC_SALARY_CURR" : "EUR",
-					"YEARLY_BONUS_AMOUNT" : 5000.000,
-					"BONUS_CURR" : "KWD"
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : 5000.00,
+					BASIC_SALARY_CURR : "EUR",
+					YEARLY_BONUS_AMOUNT : 5000.000,
+					BONUS_CURR : "KWD"
 				},
-				"STATUS" : "Available"
+				STATUS : "Available"
 			}, {
-				"ID" : "2",
-				"Name" : "Frederic Fall",
-				"AGE" : 32,
-				"ENTRYDATE" : "2003-07-01",
-				"MANAGER_ID" : "2",
-				"ROOM_ID" : "2",
-				"TEAM_ID" : "TEAM_03",
-				"Is_Manager" : true,
-				"LAST_MODIFIED_AT" : "2003-07-01T00:00:00Z",
-				"LOCATION" : {
-					"COUNTRY" : "Germany",
-					"City" : {
-						"POSTALCODE" : "69190",
-						"CITYNAME" : "Walldorf"
+				ID : "2",
+				Name : "Frederic Fall",
+				AGE : 32,
+				ENTRYDATE : "2003-07-01",
+				MANAGER_ID : "2",
+				ROOM_ID : "2",
+				TEAM_ID : "TEAM_03",
+				Is_Manager : true,
+				LAST_MODIFIED_AT : "2003-07-01T00:00:00Z",
+				LOCATION : {
+					COUNTRY : "Germany",
+					City : {
+						POSTALCODE : "69190",
+						CITYNAME : "Walldorf"
 					}
 				},
-				"SALARY" : {
-					"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
-					"BASIC_SALARY_CURR" : "EUR",
-					"YEARLY_BONUS_AMOUNT" : 10000.00,
-					"BONUS_CURR" : "EUR"
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : 5100.33,
+					BASIC_SALARY_CURR : "EUR",
+					YEARLY_BONUS_AMOUNT : 10000.00,
+					BONUS_CURR : "EUR"
 				},
-				"STATUS" : "Occupied"
+				STATUS : "Occupied"
 			}, {
-				"ID" : "3",
-				"Name" : "Jonathan Smith",
-				"AGE" : 56,
-				"ENTRYDATE" : "1977-07-24",
-				"MANAGER_ID" : "1",
-				"ROOM_ID" : "2",
-				"TEAM_ID" : "TEAM_01",
-				"Is_Manager" : true,
-				"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
-				"LOCATION" : {
-					"COUNTRY" : "Germany",
-					"City" : {
-						"POSTALCODE" : "69190",
-						"CITYNAME" : "Walldorf"
+				ID : "3",
+				Name : "Jonathan Smith",
+				AGE : 56,
+				ENTRYDATE : "1977-07-24",
+				MANAGER_ID : "1",
+				ROOM_ID : "2",
+				TEAM_ID : "TEAM_01",
+				Is_Manager : true,
+				LAST_MODIFIED_AT : "1977-07-24T00:00:00Z",
+				LOCATION : {
+					COUNTRY : "Germany",
+					City : {
+						POSTALCODE : "69190",
+						CITYNAME : "Walldorf"
 					}
 				},
-				"SALARY" : {
-					"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
-					"BASIC_SALARY_CURR" : "EUR",
-					"YEARLY_BONUS_AMOUNT" : 10000.00,
-					"BONUS_CURR" : "EUR"
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : 5100.33,
+					BASIC_SALARY_CURR : "EUR",
+					YEARLY_BONUS_AMOUNT : 10000.00,
+					BONUS_CURR : "EUR"
 				},
-				"STATUS" : "Occupied"
+				STATUS : "Occupied"
 			}, {
-				"ID" : "4",
-				"Name" : "Peter Burke",
-				"AGE" : 39,
-				"ENTRYDATE" : "2004-09-12",
-				"MANAGER_ID" : "3",
-				"ROOM_ID" : "2",
-				"TEAM_ID" : "TEAM_02",
-				"Is_Manager" : false,
-				"LAST_MODIFIED_AT" : "2004-09-12T00:00:00Z",
-				"LOCATION" : {
-					"COUNTRY" : "Germany",
-					"City" : {
-						"POSTALCODE" : "69190",
-						"CITYNAME" : "Walldorf"
+				ID : "4",
+				Name : "Peter Burke",
+				AGE : 39,
+				ENTRYDATE : "2004-09-12",
+				MANAGER_ID : "3",
+				ROOM_ID : "2",
+				TEAM_ID : "TEAM_02",
+				Is_Manager : false,
+				LAST_MODIFIED_AT : "2004-09-12T00:00:00Z",
+				LOCATION : {
+					COUNTRY : "Germany",
+					City : {
+						POSTALCODE : "69190",
+						CITYNAME : "Walldorf"
 					}
 				},
-				"SALARY" : {
-					"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
-					"BASIC_SALARY_CURR" : "GBP",
-					"YEARLY_BONUS_AMOUNT" : 15000.00,
-					"BONUS_CURR" : "USD"
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : 2689.44,
+					BASIC_SALARY_CURR : "GBP",
+					YEARLY_BONUS_AMOUNT : 15000.00,
+					BONUS_CURR : "USD"
 				},
-				"STATUS" : "Available"
+				STATUS : "Available"
 			}, {
-				"ID" : "5",
-				"Name" : "John Field",
-				"AGE" : 42,
-				"ENTRYDATE" : "2001-02-01",
-				"MANAGER_ID" : "3",
-				"ROOM_ID" : "3",
-				"TEAM_ID" : "TEAM_02",
-				"Is_Manager" : true,
-				"LAST_MODIFIED_AT" : "2001-02-01T00:00:00Z",
-				"LOCATION" : {
-					"COUNTRY" : "Germany",
-					"City" : {
-						"POSTALCODE" : "69190",
-						"CITYNAME" : "Walldorf"
+				ID : "5",
+				Name : "John Field",
+				AGE : 42,
+				ENTRYDATE : "2001-02-01",
+				MANAGER_ID : "3",
+				ROOM_ID : "3",
+				TEAM_ID : "TEAM_02",
+				Is_Manager : true,
+				LAST_MODIFIED_AT : "2001-02-01T00:00:00Z",
+				LOCATION : {
+					COUNTRY : "Germany",
+					City : {
+						POSTALCODE : "69190",
+						CITYNAME : "Walldorf"
 					}
 				},
-				"SALARY" : {
-					"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
-					"BASIC_SALARY_CURR" : "GBP",
-					"YEARLY_BONUS_AMOUNT" : 15000.00,
-					"BONUS_CURR" : "USD"
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : 2689.44,
+					BASIC_SALARY_CURR : "GBP",
+					YEARLY_BONUS_AMOUNT : 15000.00,
+					BONUS_CURR : "USD"
 				},
-				"STATUS" : "Available"
+				STATUS : "Available"
 			}, {
-				"ID" : "6",
-				"Name" : "Susan Bay",
-				"AGE" : 29,
-				"ENTRYDATE" : "2010-12-01",
-				"MANAGER_ID" : "1",
-				"ROOM_ID" : "2",
-				"TEAM_ID" : "TEAM_03",
-				"Is_Manager" : false,
-				"LAST_MODIFIED_AT" : "2010-12-01T00:00:00Z",
-				"LOCATION" : {
-					"COUNTRY" : "Germany",
-					"City" : {
-						"POSTALCODE" : "69190",
-						"CITYNAME" : "Walldorf"
+				ID : "6",
+				Name : "Susan Bay",
+				AGE : 29,
+				ENTRYDATE : "2010-12-01",
+				MANAGER_ID : "1",
+				ROOM_ID : "2",
+				TEAM_ID : "TEAM_03",
+				Is_Manager : false,
+				LAST_MODIFIED_AT : "2010-12-01T00:00:00Z",
+				LOCATION : {
+					COUNTRY : "Germany",
+					City : {
+						POSTALCODE : "69190",
+						CITYNAME : "Walldorf"
 					}
 				},
-				"SALARY" : {
-					"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
-					"BASIC_SALARY_CURR" : "GBP",
-					"YEARLY_BONUS_AMOUNT" : 15000.00,
-					"BONUS_CURR" : "USD"
+				SALARY : {
+					MONTHLY_BASIC_SALARY_AMOUNT : 2689.44,
+					BASIC_SALARY_CURR : "GBP",
+					YEARLY_BONUS_AMOUNT : 15000.00,
+					BONUS_CURR : "USD"
 				},
-				"STATUS" : "Occupied"
+				STATUS : "Occupied"
 			}]
 		},
 		oDepartmentsBody = {
-			"value" : [{
-				"Sector" : "Consulting",
-				"ID" : "1",
-				"Name" : "Business Suite Consulting",
-				"MemberCount" : 100,
-				"ManagerID" : "3"
+			value : [{
+				Sector : "Consulting",
+				ID : "1",
+				Name : "Business Suite Consulting",
+				MemberCount : 100,
+				ManagerID : "3"
 			}, {
-				"Sector" : "Consulting",
-				"ID" : "2002",
-				"Name" : "BASIS Consulting",
-				"MemberCount" : 200,
-				"ManagerID" : "4"
+				Sector : "Consulting",
+				ID : "2002",
+				Name : "BASIS Consulting",
+				MemberCount : 200,
+				ManagerID : "4"
 			}, {
-				"Sector" : "Financials",
-				"ID" : "1001",
-				"Name" : "Business Suite",
-				"MemberCount" : 100,
-				"ManagerID" : "5"
+				Sector : "Financials",
+				ID : "1001",
+				Name : "Business Suite",
+				MemberCount : 100,
+				ManagerID : "5"
 			}]
 		},
 		oNewEmployeeBody = {
-			"ID" : "7",
-			"Name" : "Egon",
-			"AGE" : 17,
-			"ENTRYDATE" : "2015-10-01",
-			"MANAGER_ID" : "",
-			"ROOM_ID" : "",
-			"TEAM_ID" : "",
-			"Is_Manager" : false,
-			"LOCATION" : {
-				"COUNTRY" : "",
-				"City" : {
-					"POSTALCODE" : "",
-					"CITYNAME" : ""
+			ID : "7",
+			Name : "Egon",
+			AGE : 17,
+			ENTRYDATE : "2015-10-01",
+			MANAGER_ID : "",
+			ROOM_ID : "",
+			TEAM_ID : "",
+			Is_Manager : false,
+			LOCATION : {
+				COUNTRY : "",
+				City : {
+					POSTALCODE : "",
+					CITYNAME : ""
 				}
 			},
-			"SALARY" : {
-				"MONTHLY_BASIC_SALARY_AMOUNT" : 0.00,
-				"BASIC_SALARY_CURR" : "EUR",
-				"YEARLY_BONUS_AMOUNT" : 0.00,
-				"BONUS_CURR" : "EUR"
+			SALARY : {
+				MONTHLY_BASIC_SALARY_AMOUNT : 0.00,
+				BASIC_SALARY_CURR : "EUR",
+				YEARLY_BONUS_AMOUNT : 0.00,
+				BONUS_CURR : "EUR"
 			}
 		},
 		oNewTeamBody = {
-			"Team_Id" : "TEAM_04",
-			"Name" : "UI2 Services",
-			"MEMBER_COUNT" : 9,
-			"MANAGER_ID" : "1",
-			"BudgetCurrency" : "EUR",
-			"Budget" : 5555
+			Team_Id : "TEAM_04",
+			Name : "UI2 Services",
+			MEMBER_COUNT : 9,
+			MANAGER_ID : "1",
+			BudgetCurrency : "EUR",
+			Budget : 5555
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
@@ -316,14 +316,14 @@ sap.ui.define([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : {"TEAM_ID" : "TEAM_03"}
+				body : {TEAM_ID : "TEAM_03"}
 			}, {
 				method : "PATCH",
 				url : "Employees('2')",
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : {"TEAM_ID" : "TEAM_01"}
+				body : {TEAM_ID : "TEAM_01"}
 			}
 		]],
 		$ContentIDs : [["0.0", "1.0"]],
@@ -372,14 +372,14 @@ sap.ui.define([
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : {"TEAM_ID" : "TEAM_03"}
+					body : {TEAM_ID : "TEAM_03"}
 				}, {
 					method : "PATCH",
 					url : "Employees('2')",
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : {"TEAM_ID" : "TEAM_01"}
+					body : {TEAM_ID : "TEAM_01"}
 				}
 			],
 			{
@@ -388,7 +388,7 @@ sap.ui.define([
 				headers : {
 					"Content-Type" : "application/json"
 				},
-				body : {"TEAM_ID" : "TEAM_01"}
+				body : {TEAM_ID : "TEAM_01"}
 			},
 			[
 				{
@@ -397,14 +397,14 @@ sap.ui.define([
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : {"TEAM_ID" : "TEAM_02"}
+					body : {TEAM_ID : "TEAM_02"}
 				}, {
 					method : "PATCH",
 					url : "Employees('4')",
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : {"TEAM_ID" : "TEAM_01"}
+					body : {TEAM_ID : "TEAM_01"}
 				}
 			]
 		],
@@ -500,12 +500,12 @@ sap.ui.define([
 					"Content-Type" : "application/json"
 				},
 				body : {
-					"Team_Id" : "TEAM_05",
-					"Name" : "UI2 Services",
-					"MEMBER_COUNT" : 9,
-					"MANAGER_ID" : "1",
-					"BudgetCurrency" : "EUR",
-					"Budget" : 5555
+					Team_Id : "TEAM_05",
+					Name : "UI2 Services",
+					MEMBER_COUNT : 9,
+					MANAGER_ID : "1",
+					BudgetCurrency : "EUR",
+					Budget : 5555
 				}
 			}, {
 				method : "POST",
@@ -515,12 +515,12 @@ sap.ui.define([
 					"Content-Type" : "application/json"
 				},
 				body : {
-					"Team_Id" : "TEAM_06",
-					"Name" : "UI2 Services",
-					"MEMBER_COUNT" : 9,
-					"MANAGER_ID" : "1",
-					"BudgetCurrency" : "EUR",
-					"Budget" : 5555
+					Team_Id : "TEAM_06",
+					Name : "UI2 Services",
+					MEMBER_COUNT : 9,
+					MANAGER_ID : "1",
+					BudgetCurrency : "EUR",
+					Budget : 5555
 				}
 			}, {
 				method : "POST",
@@ -642,7 +642,7 @@ sap.ui.define([
 					"Content-Type" : "application/json",
 					"If-Match" : oEntity
 				},
-				body : {"TEAM_ID" : "TEAM_03"}
+				body : {TEAM_ID : "TEAM_03"}
 			}
 		]],
 		$ContentIDs : [["0.0"]],
@@ -674,7 +674,7 @@ sap.ui.define([
 					"Content-Type" : "application/json",
 					"If-Match" : "W/\"20151211144619.4328660\""
 				},
-				body : {"TEAM_ID" : "TEAM_03"}
+				body : {TEAM_ID : "TEAM_03"}
 			}
 		]],
 		$ContentIDs : [["0.0"]],
@@ -708,7 +708,7 @@ sap.ui.define([
 						/*"@odata.etag" : undefined*/
 					}
 				},
-				body : {"TEAM_ID" : "TEAM_03"}
+				body : {TEAM_ID : "TEAM_03"}
 			}
 		]],
 		$ContentIDs : [["0.0"]],
@@ -737,9 +737,9 @@ sap.ui.define([
 				url : "Employees('1')",
 				headers : {
 					"Content-Type" : "application/json",
-					"Foo" : ""
+					Foo : ""
 				},
-				body : {"TEAM_ID" : "TEAM_03"}
+				body : {TEAM_ID : "TEAM_03"}
 			}
 		]],
 		$ContentIDs : [["0.0"]],
@@ -1194,7 +1194,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 						"Content-Type" : "application/json;odata.metadata=minimal",
 						"Content-Length" : "491",
 						"odata-version" : "4.0",
-						"etag" : 'W/"20151211144619.4328660"'
+						etag : 'W/"20151211144619.4328660"'
 					},
 					responseText : '{\"foo1\":\"bar1\"}'
 				}, {
@@ -1204,7 +1204,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 						"Content-Type" : "application/json;odata.metadata=minimal",
 						"Content-Length" : "487",
 						"odata-version" : "4.0",
-						"etag" : 'W/"20151211144619.4430570"'
+						etag : 'W/"20151211144619.4430570"'
 					},
 					responseText : '{\"foo2\":\"bar2\"}'
 				}
@@ -1216,7 +1216,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 					"Content-Type" : "application/json;odata.metadata=minimal",
 					"Content-Length" : "484",
 					"odata-version" : "4.0",
-					"etag" : 'W/"20151211144619.4550440"'
+					etag : 'W/"20151211144619.4550440"'
 				},
 				responseText : '{\"foo3\":\"bar3\"}'
 			},
@@ -1228,7 +1228,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 						"Content-Type" : "application/json;odata.metadata=minimal",
 						"Content-Length" : "488",
 						"odata-version" : "4.0",
-						"etag" : 'W/"20151211144619.4660570"'
+						etag : 'W/"20151211144619.4660570"'
 					},
 					responseText : '{\"foo4\":\"bar4\"}'
 				}, {
@@ -1238,7 +1238,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 						"Content-Type" : "application/json;odata.metadata=minimal",
 						"Content-Length" : "486",
 						"odata-version" : "4.0",
-						"etag" : 'W/"20151211144619.4760440"'
+						etag : 'W/"20151211144619.4760440"'
 					},
 					responseText : '{\"foo5\":\"bar5\"}'
 				}
@@ -1356,11 +1356,11 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}, {
 				method : "GET",
 				url : "Departments",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1386,19 +1386,19 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}, {
 				method : "DELETE",
 				url : "EMPLOYEES('1')",
 				headers : {
-					"Accept" : "application/json",
+					Accept : "application/json",
 					"If-Match" : "W/\"19770724000000.0000000\""
 				}
 			}, {
 				method : "POST",
 				url : "EMPLOYEES",
 				headers : {
-					"Accept" : "application/json",
+					Accept : "application/json",
 					"Content-Type" : "application/json;charset=UTF-8"
 				},
 				// TODO:
@@ -1407,29 +1407,29 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				// properties are available
 				// -> we may reduce properties again if the back end provides defaulting
 				body : {
-					"ID" : "7",
-					"Name" : "Egon",
-					"AGE" : 17,
-					"ENTRYDATE" : "2015-10-01",
-					"MANAGER_ID" : "",
-					"ROOM_ID" : "",
-					"TEAM_ID" : "",
-					"Is_Manager" : false,
-					"LAST_MODIFIED_AT" : "1970-01-01T00:00:00Z",
-					"LOCATION" : {
-						"COUNTRY" : "",
-						"City" : {
-							"POSTALCODE" : "",
-							"CITYNAME" : ""
+					ID : "7",
+					Name : "Egon",
+					AGE : 17,
+					ENTRYDATE : "2015-10-01",
+					MANAGER_ID : "",
+					ROOM_ID : "",
+					TEAM_ID : "",
+					Is_Manager : false,
+					LAST_MODIFIED_AT : "1970-01-01T00:00:00Z",
+					LOCATION : {
+						COUNTRY : "",
+						City : {
+							POSTALCODE : "",
+							CITYNAME : ""
 						}
 					},
-					"SALARY" : {
-						"MONTHLY_BASIC_SALARY_AMOUNT" : 0.00,
-						"BASIC_SALARY_CURR" : "EUR",
-						"YEARLY_BONUS_AMOUNT" : 0.00,
-						"BONUS_CURR" : "EUR"
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : 0.00,
+						BASIC_SALARY_CURR : "EUR",
+						YEARLY_BONUS_AMOUNT : 0.00,
+						BONUS_CURR : "EUR"
 					},
-					"STATUS" : "Available"
+					STATUS : "Available"
 				}
 			}],
 			expectedResponses : [{
@@ -1463,15 +1463,15 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests : [{
 				method : "GET",
 				url : "Departments",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}, {
 				method : "GET",
 				url : "Unknown",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}, {
 				method : "GET",
 				url : "TEAMS",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1496,7 +1496,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests : [{
 				method : "GET",
 				url : "Departments",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			},
 			[
 				{
@@ -1506,20 +1506,20 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body : {"TEAM_ID" : "TEAM_03"}
+					body : {TEAM_ID : "TEAM_03"}
 				}, {
 					method : "POST",
 					url : "Unknown",
 					headers : {
 						"Content-Type" : "application/json"
 					},
-					body : {"bar" : "bar"}
+					body : {bar : "bar"}
 				}
 			],
 			{
 				method : "GET",
 				url : "TEAMS",
-				headers : {"Accept" : "application/json"}
+				headers : {Accept : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1545,7 +1545,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests : [{
 					method : "GET",
 					url : "Departments",
-					headers : {"Accept" : "application/json"}
+					headers : {Accept : "application/json"}
 				},
 				[
 					{
@@ -1555,20 +1555,20 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							"Content-Type" : "application/json",
 							"If-Match" : "W/\"19770724000000.0000000\""
 						},
-						body : {"TEAM_ID" : "TEAM_03"}
+						body : {TEAM_ID : "TEAM_03"}
 					}, {
 						method : "POST",
 						url : "Unknown",
 						headers : {
 							"Content-Type" : "application/json"
 						},
-						body : {"bar" : "bar"}
+						body : {bar : "bar"}
 					}
 				],
 				{
 					method : "GET",
 					url : "TEAMS",
-					headers : {"Accept" : "application/json"}
+					headers : {Accept : "application/json"}
 				}
 			],
 			expectedResponses : [{
@@ -1594,30 +1594,30 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"odata-version" : "4.0"
 				},
 				responseText : {
-					"value" : [
+					value : [
 						{
-							"Budget" : 555.55,
-							"BudgetCurrency" : "USD",
-							"MANAGER_ID" : "3",
-							"MEMBER_COUNT" : 2,
-							"Name" : "Business Suite",
-							"Team_Id" : "TEAM_01"
+							Budget : 555.55,
+							BudgetCurrency : "USD",
+							MANAGER_ID : "3",
+							MEMBER_COUNT : 2,
+							Name : "Business Suite",
+							Team_Id : "TEAM_01"
 						},
 						{
-							"Budget" : 666.666,
-							"BudgetCurrency" : "KWD",
-							"MANAGER_ID" : "5",
-							"MEMBER_COUNT" : 2,
-							"Name" : "SAP NetWeaver Gateway Core",
-							"Team_Id" : "TEAM_02"
+							Budget : 666.666,
+							BudgetCurrency : "KWD",
+							MANAGER_ID : "5",
+							MEMBER_COUNT : 2,
+							Name : "SAP NetWeaver Gateway Core",
+							Team_Id : "TEAM_02"
 						},
 						{
-							"Budget" : 4444,
-							"BudgetCurrency" : "JPY",
-							"MANAGER_ID" : "2",
-							"MEMBER_COUNT" : 2,
-							"Name" : "SAP NetWeaver Gateway Content",
-							"Team_Id" : "TEAM_03"
+							Budget : 4444,
+							BudgetCurrency : "JPY",
+							MANAGER_ID : "2",
+							MEMBER_COUNT : 2,
+							Name : "SAP NetWeaver Gateway Content",
+							Team_Id : "TEAM_03"
 						}
 					]
 				}
@@ -1630,7 +1630,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				method : "GET",
 				url : "EMPLOYEES",
 				headers : {
-					"Accept" : "application/json"
+					Accept : "application/json"
 				}
 			},
 			[
@@ -1641,7 +1641,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body : {"TEAM_ID" : "TEAM_03"}
+					body : {TEAM_ID : "TEAM_03"}
 				}, {
 					method : "PATCH",
 					url : "EMPLOYEES('2')",
@@ -1649,7 +1649,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"20030701000000.0000000\""
 					},
-					body : {"TEAM_ID" : "TEAM_01"}
+					body : {TEAM_ID : "TEAM_01"}
 				}
 			],
 			{
@@ -1659,7 +1659,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"Content-Type" : "application/json",
 					"If-Match" : "W/\"20010201000000.0000000\""
 				},
-				body : {"TEAM_ID" : "TEAM_01"}
+				body : {TEAM_ID : "TEAM_01"}
 			},
 			[
 				{
@@ -1669,7 +1669,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body : {"TEAM_ID" : "TEAM_02"}
+					body : {TEAM_ID : "TEAM_02"}
 				}, {
 					method : "PATCH",
 					url : "EMPLOYEES('4')",
@@ -1677,7 +1677,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"Content-Type" : "application/json",
 						"If-Match" : "W/\"20040912000000.0000000\""
 					},
-					body : {"TEAM_ID" : "TEAM_01"}
+					body : {TEAM_ID : "TEAM_01"}
 				}
 			]],
 			expectedResponses : [{
@@ -1698,26 +1698,26 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"ID" : "1",
-						"Name" : "Walter\"s Win's",
-						"AGE" : 52,
-						"ENTRYDATE" : "1977-07-24",
-						"MANAGER_ID" : "",
-						"ROOM_ID" : "1",
-						"TEAM_ID" : "TEAM_03",
-						"Is_Manager" : false,
-						"LOCATION" : {
-							"COUNTRY" : "Germany",
-							"City" : {
-								"POSTALCODE" : "69124",
-								"CITYNAME" : "Heidelberg"
+						ID : "1",
+						Name : "Walter\"s Win's",
+						AGE : 52,
+						ENTRYDATE : "1977-07-24",
+						MANAGER_ID : "",
+						ROOM_ID : "1",
+						TEAM_ID : "TEAM_03",
+						Is_Manager : false,
+						LOCATION : {
+							COUNTRY : "Germany",
+							City : {
+								POSTALCODE : "69124",
+								CITYNAME : "Heidelberg"
 							}
 						},
-						"SALARY" : {
-							"MONTHLY_BASIC_SALARY_AMOUNT" : 5000,
-							"BASIC_SALARY_CURR" : "EUR",
-							"YEARLY_BONUS_AMOUNT" : 5000,
-							"BONUS_CURR" : "KWD"
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : 5000,
+							BASIC_SALARY_CURR : "EUR",
+							YEARLY_BONUS_AMOUNT : 5000,
+							BONUS_CURR : "KWD"
 						}
 					}
 				},
@@ -1729,26 +1729,26 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"ID" : "2",
-						"Name" : "Frederic Fall",
-						"AGE" : 32,
-						"ENTRYDATE" : "2003-07-01",
-						"MANAGER_ID" : "2",
-						"ROOM_ID" : "2",
-						"TEAM_ID" : "TEAM_01",
-						"Is_Manager" : true,
-						"LOCATION" : {
-							"COUNTRY" : "Germany",
-							"City" : {
-								"POSTALCODE" : "69190",
-								"CITYNAME" : "Walldorf"
+						ID : "2",
+						Name : "Frederic Fall",
+						AGE : 32,
+						ENTRYDATE : "2003-07-01",
+						MANAGER_ID : "2",
+						ROOM_ID : "2",
+						TEAM_ID : "TEAM_01",
+						Is_Manager : true,
+						LOCATION : {
+							COUNTRY : "Germany",
+							City : {
+								POSTALCODE : "69190",
+								CITYNAME : "Walldorf"
 							}
 						},
-						"SALARY" : {
-							"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
-							"BASIC_SALARY_CURR" : "EUR",
-							"YEARLY_BONUS_AMOUNT" : 10000,
-							"BONUS_CURR" : "EUR"
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : 5100.33,
+							BASIC_SALARY_CURR : "EUR",
+							YEARLY_BONUS_AMOUNT : 10000,
+							BONUS_CURR : "EUR"
 						}
 					}
 				}
@@ -1761,26 +1761,26 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"odata-version" : "4.0"
 				},
 				responseText : {
-					"ID" : "5",
-					"Name" : "John Field",
-					"AGE" : 42,
-					"ENTRYDATE" : "2001-02-01",
-					"MANAGER_ID" : "3",
-					"ROOM_ID" : "3",
-					"TEAM_ID" : "TEAM_01",
-					"Is_Manager" : true,
-					"LOCATION" : {
-						"COUNTRY" : "Germany",
-						"City" : {
-							"POSTALCODE" : "69190",
-							"CITYNAME" : "Walldorf"
+					ID : "5",
+					Name : "John Field",
+					AGE : 42,
+					ENTRYDATE : "2001-02-01",
+					MANAGER_ID : "3",
+					ROOM_ID : "3",
+					TEAM_ID : "TEAM_01",
+					Is_Manager : true,
+					LOCATION : {
+						COUNTRY : "Germany",
+						City : {
+							POSTALCODE : "69190",
+							CITYNAME : "Walldorf"
 						}
 					},
-					"SALARY" : {
-						"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
-						"BASIC_SALARY_CURR" : "GBP",
-						"YEARLY_BONUS_AMOUNT" : 15000,
-						"BONUS_CURR" : "USD"
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : 2689.44,
+						BASIC_SALARY_CURR : "GBP",
+						YEARLY_BONUS_AMOUNT : 15000,
+						BONUS_CURR : "USD"
 					}
 				}
 			},
@@ -1793,26 +1793,26 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"ID" : "3",
-						"Name" : "Jonathan Smith",
-						"AGE" : 56,
-						"ENTRYDATE" : "1977-07-24",
-						"MANAGER_ID" : "1",
-						"ROOM_ID" : "2",
-						"TEAM_ID" : "TEAM_02",
-						"Is_Manager" : true,
-						"LOCATION" : {
-							"COUNTRY" : "Germany",
-							"City" : {
-								"POSTALCODE" : "69190",
-								"CITYNAME" : "Walldorf"
+						ID : "3",
+						Name : "Jonathan Smith",
+						AGE : 56,
+						ENTRYDATE : "1977-07-24",
+						MANAGER_ID : "1",
+						ROOM_ID : "2",
+						TEAM_ID : "TEAM_02",
+						Is_Manager : true,
+						LOCATION : {
+							COUNTRY : "Germany",
+							City : {
+								POSTALCODE : "69190",
+								CITYNAME : "Walldorf"
 							}
 						},
-						"SALARY" : {
-							"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
-							"BASIC_SALARY_CURR" : "EUR",
-							"YEARLY_BONUS_AMOUNT" : 10000,
-							"BONUS_CURR" : "EUR"
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : 5100.33,
+							BASIC_SALARY_CURR : "EUR",
+							YEARLY_BONUS_AMOUNT : 10000,
+							BONUS_CURR : "EUR"
 						}
 					}
 				},
@@ -1824,26 +1824,26 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"ID" : "4",
-						"Name" : "Peter Burke",
-						"AGE" : 39,
-						"ENTRYDATE" : "2004-09-12",
-						"MANAGER_ID" : "3",
-						"ROOM_ID" : "2",
-						"TEAM_ID" : "TEAM_01",
-						"Is_Manager" : false,
-						"LOCATION" : {
-							"COUNTRY" : "Germany",
-							"City" : {
-								"POSTALCODE" : "69190",
-								"CITYNAME" : "Walldorf"
+						ID : "4",
+						Name : "Peter Burke",
+						AGE : 39,
+						ENTRYDATE : "2004-09-12",
+						MANAGER_ID : "3",
+						ROOM_ID : "2",
+						TEAM_ID : "TEAM_01",
+						Is_Manager : false,
+						LOCATION : {
+							COUNTRY : "Germany",
+							City : {
+								POSTALCODE : "69190",
+								CITYNAME : "Walldorf"
 							}
 						},
-						"SALARY" : {
-							"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
-							"BASIC_SALARY_CURR" : "GBP",
-							"YEARLY_BONUS_AMOUNT" : 15000,
-							"BONUS_CURR" : "USD"
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : 2689.44,
+							BASIC_SALARY_CURR : "GBP",
+							YEARLY_BONUS_AMOUNT : 15000,
+							BONUS_CURR : "USD"
 						}
 					}
 				}
@@ -1949,7 +1949,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					aBatchRequests = [{
 						method : "GET",
 						url : "EMPLOYEES('9')",
-						headers : {"Accept" : "application/json"}
+						headers : {Accept : "application/json"}
 					}];
 
 				oBatchRequestContent = _Batch.serializeBatchRequest(aBatchRequests);

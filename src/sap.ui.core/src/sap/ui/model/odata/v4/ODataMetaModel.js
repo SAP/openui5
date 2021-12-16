@@ -78,7 +78,7 @@ sap.ui.define([
 			"Edm.Date" : {Type : EdmDate},
 			"Edm.DateTimeOffset" : {
 				constraints : {
-					"$Precision" : "precision"
+					$Precision : "precision"
 				},
 				Type : DateTimeOffset
 			},
@@ -90,8 +90,8 @@ sap.ui.define([
 					"@Org.OData.Validation.V1.Maximum/$Decimal" : "maximum",
 					"@Org.OData.Validation.V1.Maximum@Org.OData.Validation.V1.Exclusive" :
 						"maximumExclusive",
-					"$Precision" : "precision",
-					"$Scale" : "scale"
+					$Precision : "precision",
+					$Scale : "scale"
 				},
 				Type : Decimal
 			},
@@ -106,13 +106,13 @@ sap.ui.define([
 			"Edm.String" : {
 				constraints : {
 					"@com.sap.vocabularies.Common.v1.IsDigitSequence" : "isDigitSequence",
-					"$MaxLength" : "maxLength"
+					$MaxLength : "maxLength"
 				},
 				Type : String
 			},
 			"Edm.TimeOfDay" : {
 				constraints : {
-					"$Precision" : "precision"
+					$Precision : "precision"
 				},
 				Type : TimeOfDay
 			}
@@ -683,11 +683,11 @@ sap.ui.define([
 			//   "B." : {"/B/$metadata" : true} // namespace already read
 			// }
 			this.mSchema2MetadataUrl = {};
-			this.mSupportedBindingModes = {"OneTime" : true, "OneWay" : true};
+			this.mSupportedBindingModes = {OneTime : true, OneWay : true};
 			this.bSupportReferences = bSupportReferences !== false; // default is true
 			// ClientListBinding#filter calls checkFilterOperation on the model; ClientModel does
 			// not support "All" and "Any" filters
-			this.mUnsupportedFilterOperators = {"All" : true, "Any" : true};
+			this.mUnsupportedFilterOperators = {All : true, Any : true};
 			this.sUrl = sUrl;
 		}
 	});

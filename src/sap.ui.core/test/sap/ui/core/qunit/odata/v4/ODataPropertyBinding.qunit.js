@@ -226,7 +226,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("bindProperty with parameters", function (assert) {
 		var oBinding,
-			mClonedParameters = {"custom" : "foo"},
+			mClonedParameters = {custom : "foo"},
 			oError = new Error("Unsupported ..."),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {/*...*/},

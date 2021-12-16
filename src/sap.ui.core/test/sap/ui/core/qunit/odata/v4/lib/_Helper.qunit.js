@@ -180,107 +180,107 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		message : "CSRF token validation failed",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Content-Type" : "text/plain;charset=utf-8",
 				"x-csrf-token" : "Required"
 			},
-			"responseText" : "CSRF token validation failed",
-			"status" : 403,
-			"statusText" : "Forbidden"
+			responseText : "CSRF token validation failed",
+			status : 403,
+			statusText : "Forbidden"
 		}
 	}, {
 		message : "message: 401 Unauthorized",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Content-Type" : "text/html;charset=utf-8"
 			},
-			"responseText" : "<html>...</html>",
-			"status" : 401,
-			"statusText" : "Unauthorized"
+			responseText : "<html>...</html>",
+			status : 401,
+			statusText : "Unauthorized"
 		}
 	}, {
 		// OData V4 error response body as JSON
 		// "The error response MUST be a single JSON object. This object MUST have a
 		// single name/value pair named error. The value must be a JSON object."
 		body : {
-			"error" : {
-				"code" : "/IWBEP/CM_V4_RUNTIME/021",
-				"message" :
+			error : {
+				code : "/IWBEP/CM_V4_RUNTIME/021",
+				message :
 					// Note: "a human-readable, language-dependent representation of the error"
 					"The state of the resource (entity) was already changed (If-Match)",
 				"@Common.ExceptionCategory" : "Client_Error",
 				"@Common.Application" : {
-					"ComponentId" : "OPU-BSE-BEP",
-					"ServiceRepository" : "DEFAULT",
-					"ServiceId" : "/IWBEP/TEA_BUSI",
-					"ServiceVersion" : "0001"
+					ComponentId : "OPU-BSE-BEP",
+					ServiceRepository : "DEFAULT",
+					ServiceId : "/IWBEP/TEA_BUSI",
+					ServiceVersion : "0001"
 				},
 				"@Common.TransactionId" : "5617D1F235DE73F0E10000000A60180C",
 				"@Common.Timestamp" : "20151009142600.103179",
 				"@Common.ErrorResolution" : {
-					"Analysis" : "Run transaction /IWFND/ERROR_LOG [...]",
-					"Note" : "See SAP Note 1797736 for error analysis "
+					Analysis : "Run transaction /IWFND/ERROR_LOG [...]",
+					Note : "See SAP Note 1797736 for error analysis "
 						+ "(https://service.sap.com/sap/support/notes/1797736)"
 				}
 			}
 		},
 		isConcurrentModification : true,
 		message : "The state of the resource (entity) was already changed (If-Match)",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Content-Type" : "application/json; odata.metadata=minimal;charset=utf-8"
 			},
 //			"responseText" : JSON.stringify(this.body)
-			"status" : 412,
-			"statusText" : "Precondition Failed"
+			status : 412,
+			statusText : "Precondition Failed"
 		}
 	}, {
 		strictHandlingFailed : true,
 		message : "message: 412 Precondition Failed",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				// https://datatracker.ietf.org/doc/html/rfc7240#section-3
 				// ABNF: "Preference-Applied" ":" token [ BWS "=" BWS word ]
 				"Preference-Applied" : "handling\t=  strict"
 			},
-			"status" : 412,
-			"statusText" : "Precondition Failed"
+			status : 412,
+			statusText : "Precondition Failed"
 		}
 	}, {
 		message : "message: 999 Invalid JSON",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Content-Type" : "application/json"
 			},
-			"responseText" : "<html>...</html>",
-			"status" : 999,
-			"statusText" : "Invalid JSON"
+			responseText : "<html>...</html>",
+			status : 999,
+			statusText : "Invalid JSON"
 		},
 		warning : sinon.match(/SyntaxError/)
 	}, {
 		message : "message: 403 Forbidden",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Content-Type" : "text/plain-not-quite-right"
 			},
-			"status" : 403,
-			"statusText" : "Forbidden",
-			"responseText" : "ignore this!"
+			status : 403,
+			statusText : "Forbidden",
+			responseText : "ignore this!"
 		}
 	}, {
 		message : "Network error",
-		"response" : {
-			"headers" : {},
-			"status" : 0,
-			"statusText" : "error"
+		response : {
+			headers : {},
+			status : 0,
+			statusText : "error"
 		}
 	}, {
 		message : "message: 404 Not Found",
-		"response" : {
-			"headers" : {},
-			"status" : 404,
-			"statusText" : "Not Found"
+		response : {
+			headers : {},
+			status : 404,
+			statusText : "Not Found"
 		}
 	}, {
 		// V2 error
@@ -294,42 +294,42 @@ sap.ui.define([
 			}
 		},
 		message : "An unknown internal server error occurred",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Content-Type" : "application/json;charset=UTF-8"
 			},
-			"status" : 500,
-			"statusText" : "Internal Server Error"
+			status : 500,
+			statusText : "Internal Server Error"
 		}
 	}, {
 		retryAfter : new Date(1234567890),
 		message : "message: 503 Service Unavailable",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Retry-After" : "0"
 			},
-			"status" : 503,
-			"statusText" : "Service Unavailable"
+			status : 503,
+			statusText : "Service Unavailable"
 		}
 	}, {
 		retryAfter : new Date(1234567890 + 42 * 1000),
 		message : "message: 503 Service Unavailable",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Retry-After" : "42"
 			},
-			"status" : 503,
-			"statusText" : "Service Unavailable"
+			status : 503,
+			statusText : "Service Unavailable"
 		}
 	}, {
 		retryAfter : new Date("Fri, 16 Jul 2021 14:04:39 GMT"),
 		message : "message: 503 Service Unavailable",
-		"response" : {
-			"headers" : {
+		response : {
+			headers : {
 				"Retry-After" : "Fri, 16 Jul 2021 14:04:39 GMT"
 			},
-			"status" : 503,
-			"statusText" : "Service Unavailable"
+			status : 503,
+			statusText : "Service Unavailable"
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
@@ -338,9 +338,9 @@ sap.ui.define([
 					getResponseHeader : function (sName) {
 						return oFixture.response.headers[sName];
 					},
-					"status" : oFixture.response.status,
-					"statusText" : oFixture.response.statusText,
-					"responseText" : oFixture.response.responseText || JSON.stringify(oFixture.body)
+					status : oFixture.response.status,
+					statusText : oFixture.response.statusText,
+					responseText : oFixture.response.responseText || JSON.stringify(oFixture.body)
 				};
 
 			if (oFixture.retryAfter) {
@@ -857,25 +857,25 @@ sap.ui.define([
 	QUnit.test("updateExisting: collection valued properties (messages)", function (assert) {
 		var aNoMessages = [],
 			aMessages = [{
-				"code" : "42",
-				"longtextUrl" : "any/URL",
-				"message" : "message 1",
-				"transition" : false,
-				"target" : "Foo",
-				"numericSeverity" : 3
+				code : "42",
+				longtextUrl : "any/URL",
+				message : "message 1",
+				transition : false,
+				target : "Foo",
+				numericSeverity : 3
 			}, {
-				"code" : "17",
-				"longtextUrl" : "any/URL/2",
-				"message" : "message 2",
-				"transition" : true,
-				"target" : "Bar",
-				"numericSeverity" : 4
+				code : "17",
+				longtextUrl : "any/URL/2",
+				message : "message 2",
+				transition : true,
+				target : "Bar",
+				numericSeverity : 4
 			}],
 			sMessages,
 			oCacheData = {
 				BusinessPartnerID : "42",
-				"__CT__FAKE__Message" : {
-					"__FAKE__Messages" : aNoMessages
+				__CT__FAKE__Message : {
+					__FAKE__Messages : aNoMessages
 				}
 			};
 
@@ -885,8 +885,8 @@ sap.ui.define([
 
 		// code under test
 		_Helper.updateExisting(null, "SO_2_BP", oCacheData, {
-			"__CT__FAKE__Message" : {
-				"__FAKE__Messages" : aMessages
+			__CT__FAKE__Message : {
+				__FAKE__Messages : aMessages
 			}
 		});
 
@@ -896,8 +896,8 @@ sap.ui.define([
 
 		// code under test
 		_Helper.updateExisting({}, "SO_2_BP", oCacheData, {
-			"__CT__FAKE__Message" : {
-				"__FAKE__Messages" : aNoMessages
+			__CT__FAKE__Message : {
+				__FAKE__Messages : aNoMessages
 			}
 		});
 
@@ -1070,14 +1070,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		sKeyPredicate : "('4%2F2')",
-		mKeyProperties : {"ID" : "'4/2'"}
+		mKeyProperties : {ID : "'4/2'"}
 	}, {
 		bKeepSingleProperty : true,
 		sKeyPredicate : "(ID='4%2F2')",
-		mKeyProperties : {"ID" : "'4/2'"}
+		mKeyProperties : {ID : "'4/2'"}
 	}, {
 		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
-		mKeyProperties : {"Bar" : "42", "Fo=o" : "'Walter\"s Win''s'"}
+		mKeyProperties : {Bar : "42", "Fo=o" : "'Walter\"s Win''s'"}
 	}, {
 		sKeyPredicate : undefined,
 		mKeyProperties : undefined
@@ -1183,7 +1183,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		oResult : {"qux" : "~1", "bar/baz" : "~2"},
+		oResult : {qux : "~1", "bar/baz" : "~2"},
 		bReturnAlias : false
 	}, {
 		oResult : {qux : "~1", foo : "~2"},
@@ -1191,17 +1191,17 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyProperties: bReturnAlias=" + oFixture.bReturnAlias, function (assert) {
 			var oComplexType = {
-					"baz" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.Int16"
+					baz : {
+						$kind : "Property",
+						$Type : "Edm.Int16"
 					}
 				},
 				oEntityInstance = {},
 				oEntityType = {
-					"$Key" : ["qux", {"foo" : "bar/baz"}],
-					"qux" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.String"
+					$Key : ["qux", {foo : "bar/baz"}],
+					qux : {
+						$kind : "Property",
+						$Type : "Edm.String"
 					}
 				},
 				oHelperMock = this.mock(_Helper),
@@ -1880,11 +1880,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("drillDown", function (assert) {
 		var oObject = {
-				"foo" : "bar",
-				"bar" : {
-					"baz" : "qux"
+				foo : "bar",
+				bar : {
+					baz : "qux"
 				},
-				"null" : null
+				null : null
 			};
 
 		assert.strictEqual(_Helper.drillDown(oObject, []), oObject);
@@ -1995,7 +1995,7 @@ sap.ui.define([
 	QUnit.test("getPrivateAnnotation", function (assert) {
 		var oObject = {
 				"@$ui5._" : {
-					"transient" : "foo"
+					transient : "foo"
 				}
 			};
 
@@ -2008,7 +2008,7 @@ sap.ui.define([
 	QUnit.test("hasPrivateAnnotation", function (assert) {
 		var oObject = {
 				"@$ui5._" : {
-					"transient" : undefined
+					transient : undefined
 				}
 			};
 
@@ -2183,33 +2183,33 @@ sap.ui.define([
 		var mMap = {};
 
 		_Helper.addByPath(mMap, "path1", "item1");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
+		assert.deepEqual(mMap, {path1 : ["item1"]});
 
 		_Helper.addByPath(mMap, "path2", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"], "path2" : ["item2"]});
+		assert.deepEqual(mMap, {path1 : ["item1"], path2 : ["item2"]});
 
 		_Helper.addByPath(mMap, "path3", undefined);
-		assert.deepEqual(mMap, {"path1" : ["item1"], "path2" : ["item2"]});
+		assert.deepEqual(mMap, {path1 : ["item1"], path2 : ["item2"]});
 
 		_Helper.addByPath(mMap, "path1", "item3");
-		assert.deepEqual(mMap, {"path1" : ["item1", "item3"], "path2" : ["item2"]});
+		assert.deepEqual(mMap, {path1 : ["item1", "item3"], path2 : ["item2"]});
 
 		_Helper.addByPath(mMap, "path2", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1", "item3"], "path2" : ["item2"]});
+		assert.deepEqual(mMap, {path1 : ["item1", "item3"], path2 : ["item2"]});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("removeByPath", function (assert) {
-		var mMap = {"path1" : ["item1", "item2"]};
+		var mMap = {path1 : ["item1", "item2"]};
 
 		_Helper.removeByPath(mMap, "path1", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
+		assert.deepEqual(mMap, {path1 : ["item1"]});
 
 		_Helper.removeByPath(mMap, "path2", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
+		assert.deepEqual(mMap, {path1 : ["item1"]});
 
 		_Helper.removeByPath(mMap, "path1", "item2");
-		assert.deepEqual(mMap, {"path1" : ["item1"]});
+		assert.deepEqual(mMap, {path1 : ["item1"]});
 
 		_Helper.removeByPath(mMap, "path1", "item1");
 		assert.deepEqual(mMap, {});
@@ -2227,7 +2227,7 @@ sap.ui.define([
 	}, {
 		aChildren : ["A", "B"],
 		aAncestors : ["C", "A"],
-		mChildren : {"A" : true}
+		mChildren : {A : true}
 	}, {
 		aChildren : ["Address/City"],
 		aAncestors : ["Address"],
@@ -2279,7 +2279,7 @@ sap.ui.define([
 	QUnit.test("intersectQueryOptions: real intersection", function (assert) {
 		var aCacheSelects = [/*"A", "B/b", "C", ...*/],
 			mCacheQueryOptions = {
-				$expand : {"to1" : null},
+				$expand : {to1 : null},
 				$select : aCacheSelects,
 				"sap-client" : "123"
 			},
@@ -2355,7 +2355,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		$expand : {
-			"toN" : null
+			toN : null
 		},
 		aPaths : ["toN/a"],
 		sNavigationProperty : "/Me/toN"
@@ -2387,7 +2387,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		sPrefix : undefined,
-		mExpectedNavigationPropertyPaths : {"A/toN" : true, "toN" : true}
+		mExpectedNavigationPropertyPaths : {"A/toN" : true, toN : true}
 	}, {
 		sPrefix : "~",
 		mExpectedNavigationPropertyPaths : {"~/A/toN" : true, "~/toN" : true}
@@ -2400,12 +2400,12 @@ sap.ui.define([
 				mCacheQueryOptions = {
 					$expand : {
 						"A/toN" : null,
-						"toN" : null
+						toN : null
 					},
 					$select : []
 				},
 				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
-				mExpectedResult = {$expand : {"A/toN" : null, "toN" : null}, $select : ["A/toN"]},
+				mExpectedResult = {$expand : {"A/toN" : null, toN : null}, $select : ["A/toN"]},
 				oType = {},
 				fnFetchMetadata = getFetchMetadata({
 					"/Me" : {},
@@ -2454,7 +2454,7 @@ sap.ui.define([
 		aPaths : ["A", "toC"],
 		mResult : {
 			$expand : {
-				"toC" : null
+				toC : null
 			},
 			$select : ["A"],
 			"sap-client" : "123"
@@ -2463,8 +2463,8 @@ sap.ui.define([
 		aPaths : ["toA", "toC"], // toB omitted
 		mResult : {
 			$expand : {
-				"toA" : null,
-				"toC" : null
+				toA : null,
+				toC : null
 			},
 			$select : ["toA"], // avoid $select= in URL, use any navigation property
 			"sap-client" : "123"
@@ -2473,8 +2473,8 @@ sap.ui.define([
 		aPaths : ["toC", "toB", "toB/b", "D"], // Note "toB" is stronger than "toB/b"!
 		mResult : {
 			$expand : {
-				"toB" : {$select : ["a"]},
-				"toC" : null,
+				toB : {$select : ["a"]},
+				toC : null,
 				"D/E/toD" : {$select : ["d"]}
 			},
 			$select : ["toB"], // avoid $select= in URL, use any navigation property
@@ -2484,7 +2484,7 @@ sap.ui.define([
 		aPaths : ["toA/a", "toB/z"],
 		mResult : {
 			$expand : {
-				"toA" : {
+				toA : {
 					$select : ["a"]
 				}
 			},
@@ -2498,7 +2498,7 @@ sap.ui.define([
 		aPaths : ["A", "toA/a"],
 		mResult : {
 			$expand : {
-				"toA" : {
+				toA : {
 					$select : ["a"]
 				}
 			},
@@ -2512,10 +2512,10 @@ sap.ui.define([
 		aPaths : ["toE/e", "toG/g"],
 		mResult : {
 			$expand : {
-				"toE" : {
+				toE : {
 					$select : ["e"]
 				},
-				"toG" : {
+				toG : {
 					$select : ["g"]
 				}
 			},
@@ -2544,7 +2544,7 @@ sap.ui.define([
 		aPaths : ["toA/$count"], // Note: must not request metadata for $count!
 		mResult : {
 			$expand : {
-				"toA" : {
+				toA : {
 					$select : ["$count"]
 				}
 			},
@@ -2557,12 +2557,12 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var mCacheQueryOptions = {
 					$expand : {
-						"toA" : null,
-						"toB" : {$select : ["a"]},
-						"toC" : null,
+						toA : null,
+						toB : {$select : ["a"]},
+						toC : null,
 						"D/E/toD" : {$select : ["d"]},
-						"toE" : {},
-						"toG" : true
+						toE : {},
+						toG : true
 					},
 					$select : ["A", "B", "C", "E/toF"],
 					"sap-client" : "123"
@@ -2618,7 +2618,7 @@ sap.ui.define([
 	QUnit.test("intersectQueryOptions with empty $select allowed", function (assert) {
 		var mCacheQueryOptions = {
 				$expand : {
-					"toA" : null
+					toA : null
 				},
 				$select : ["A"],
 				"sap-client" : "123"
@@ -2636,7 +2636,7 @@ sap.ui.define([
 				mNavigationPropertyPaths, "", true),
 			{
 				$expand : {
-					"toA" : null
+					toA : null
 				},
 				$select : [],
 				"sap-client" : "123"
@@ -2654,7 +2654,7 @@ sap.ui.define([
 		QUnit.test("intersectQueryOptions: recursion; prefix = " + sPrefix, function (assert) {
 			var mCacheQueryOptions = {
 					$expand : {
-						"toC" : null,
+						toC : null,
 						"D/E/toD" : {$select : ["d"]}
 					},
 					$select : [],
@@ -2664,7 +2664,7 @@ sap.ui.define([
 				mCacheQueryOptions1 = {},
 				mExpectedResult = {
 					$expand : {
-						"toC" : mCacheQueryOptions0,
+						toC : mCacheQueryOptions0,
 						"D/E/toD" : mCacheQueryOptions1
 					},
 					$select : ["toC"],
@@ -2832,7 +2832,7 @@ sap.ui.define([
 		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function () {
 			var aKeyProperties = ["foo", "path/to/key"],
 				mQueryOptions = {},
-				oType = bKeys ? {$Key : ["foo", {"alias" : "path/to/key"}]} : {};
+				oType = bKeys ? {$Key : ["foo", {alias : "path/to/key"}]} : {};
 
 			this.mock(_Helper).expects("addToSelect").exactly(bKeys ? 1 : 0)
 				.withExactArgs(sinon.match.same(mQueryOptions), aKeyProperties);
@@ -2862,7 +2862,7 @@ sap.ui.define([
 		},
 		expected : {
 			$expand : {
-				"NavigationProperty" : {
+				NavigationProperty : {
 					$select : ["Property", "Property_1", "Property_2"]
 				}
 			}
@@ -2872,7 +2872,7 @@ sap.ui.define([
 		childQueryOptions : {},
 		expected : {
 			$expand : {
-				"NavigationProperty" : {
+				NavigationProperty : {
 					$select : ["Property_1", "Property_2", "Property"]
 				}
 			}
@@ -2882,7 +2882,7 @@ sap.ui.define([
 		childQueryOptions : {},
 		expected : {
 			$expand : {
-				"NavigationProperty" : {
+				NavigationProperty : {
 					$select : ["Property_1", "Property_2"]
 				}
 			}
@@ -2906,9 +2906,9 @@ sap.ui.define([
 		childQueryOptions : {$foo : "bar"}, // will be taken as is
 		expected : {
 			$expand : {
-				"NavigationProperty_1" : {
+				NavigationProperty_1 : {
 					$expand : {
-						"NavigationProperty_2" : {
+						NavigationProperty_2 : {
 							$foo : "bar",
 							$select : ["Property_1", "Property_2"]
 						}
@@ -3777,7 +3777,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getAnnotation: failure", function (assert) {
-		var oMessage = {"undefined" : "~value~"};
+		var oMessage = {undefined : "~value~"};
 
 		this.mock(_Helper).expects("getAnnotationKey")
 			.withExactArgs(sinon.match.same(oMessage), "~sName~").returns(undefined);
@@ -4195,7 +4195,7 @@ sap.ui.define([
 		oError.resourcePath = "some/resource/path"; // required for bound message
 		oError.requestUrl = "the/requestUrl";
 		oError.error = {
-			"$ignoreTopLevel" : true,
+			$ignoreTopLevel : true,
 			message : "ignored",
 			details : [{
 				numericSeverity : "does-not-fit",

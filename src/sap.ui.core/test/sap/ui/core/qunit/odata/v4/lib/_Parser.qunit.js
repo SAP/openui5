@@ -36,54 +36,54 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		string : "SO_2_BP",
-		parsed : {"SO_2_BP" : null}
+		parsed : {SO_2_BP : null}
 	}, {
 		string : "SO_2_BP/BP_2_CONTACTS,SO_2_SÖITEM,ĕ",
-		parsed : {"SO_2_BP/BP_2_CONTACTS" : null, "SO_2_SÖITEM" : null, "ĕ" : null}
+		parsed : {"SO_2_BP/BP_2_CONTACTS" : null, SO_2_SÖITEM : null, ĕ : null}
 	}, {
 		string : "SO_2_BP($expand=BP_2_CONTACT)",
-		parsed : {"SO_2_BP" : {"$expand" : {"BP_2_CONTACT" : null}}}
+		parsed : {SO_2_BP : {$expand : {BP_2_CONTACT : null}}}
 	}, {
 		string : "SO_2_BP($expand=BP_2_CONTACT;$select=BusinessPartnerID;$skip=0;$top=10)",
 		parsed : {
-			"SO_2_BP" : {
-				"$expand" : {
-					"BP_2_CONTACT" : null
+			SO_2_BP : {
+				$expand : {
+					BP_2_CONTACT : null
 				},
-				"$select" : ["BusinessPartnerID"],
-				"$skip" : "0",
-				"$top" : "10"
+				$select : ["BusinessPartnerID"],
+				$skip : "0",
+				$top : "10"
 			}
 		}
 	}, {
 		string : "SO_2_BP($select=*;$levels=max)",
-		parsed : {"SO_2_BP" : {"$select" : ["*"], "$levels" : "max"}}
+		parsed : {SO_2_BP : {$select : ["*"], $levels : "max"}}
 	}, {
 		string : "*",
 		parsed : {"*" : null}
 	}, {
 		string : "*($levels=42)",
-		parsed : {"*" : {"$levels" : "42"}}
+		parsed : {"*" : {$levels : "42"}}
 	}, {
 		string : "*($levels=max)",
-		parsed : {"*" : {"$levels" : "max"}}
+		parsed : {"*" : {$levels : "max"}}
 	}, {
 		string : "*/$ref",
 		parsed : {"*/$ref" : null}
 	}, {
 		string : "foo/$ref($search=bar)",
-		parsed : {"foo/$ref" : {"$search" : "bar"}}
+		parsed : {"foo/$ref" : {$search : "bar"}}
 	}, {
 		string : "foo/$count($search=bar)",
-		parsed : {"foo/$count" : {"$search" : "bar"}}
+		parsed : {"foo/$count" : {$search : "bar"}}
 	}].forEach(function (oFixture) {
 		QUnit.test("_Parser: $expand=" + oFixture.string, function (assert) {
 			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.string),
-				{"$expand" : oFixture.parsed});
+				{$expand : oFixture.parsed});
 			// verify that the parsed result is consumable
 			assert.deepEqual(_Requestor.create("/~/")
-					.convertQueryOptions("Foo", {"$expand" : oFixture.parsed}),
-				{"$expand" : oFixture.string});
+					.convertQueryOptions("Foo", {$expand : oFixture.parsed}),
+				{$expand : oFixture.string});
 		});
 	});
 
@@ -118,17 +118,17 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 		QUnit.test("_Parser: $select=" + oFixture.string, function (assert) {
 			assert.deepEqual(_Parser.parseSystemQueryOption("$select=" + oFixture.string),
-					{"$select" : oFixture.parsed});
+					{$select : oFixture.parsed});
 			// verify that the parsed result is consumable
 			assert.deepEqual(_Requestor.create("/~/")
-					.convertQueryOptions("Foo", {"$select" : oFixture.parsed}),
-				{"$select" : oFixture.string});
+					.convertQueryOptions("Foo", {$select : oFixture.parsed}),
+				{$select : oFixture.string});
 		});
 	});
 
 	//*********************************************************************************************
 	var mValuesForOption = {
-			"$filter" : [
+			$filter : [
 				"SalesOrderID eq 1",
 				"DeliveryDate gt 2016-04-23",
 				"CreatedAt eq 2016-01-13T14:08:31Z",
@@ -175,14 +175,14 @@ sap.ui.define([
 				"startswith($it, 'T')",
 				"$it/member"
 			],
-			"$orderby" : [
+			$orderby : [
 				"SalesOrderID",
 				"SalesOrder/ID,GrossAmount desc",
 				"SalesOrderID asc,GrossAmount",
 				"name.space.func(';') mod foo/bar asc" // ABNF: orderbyItem may be an expression
 			],
-			"$count" : ["false", "true"],
-			"$search" : [
+			$count : ["false", "true"],
+			$search : [
 				"blue",
 				"blue OR green",
 				'( NOT "foo;bar" OR bär ) AND "bä\\"z"',
@@ -195,7 +195,7 @@ sap.ui.define([
 			QUnit.test("_Parser: " + sOption + "=" + sValue, function (assert) {
 				var sAssignment = sOption + "=" + sValue,
 					oExpand = {
-						"$select" : ["*"]
+						$select : ["*"]
 					},
 					oRequestor = _Requestor.create("/~/"),
 					oResult = {};
@@ -207,37 +207,37 @@ sap.ui.define([
 
 				assert.deepEqual(
 					_Parser.parseSystemQueryOption("$expand=foo(" + sAssignment + ")"), {
-						"$expand" : {
-							"foo" : oResult
+						$expand : {
+							foo : oResult
 						}
 					},
 					"as only/last option in an expand, terminated by ')'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
 					oRequestor.convertQueryOptions("Foo", {
-						"$expand" : {
-							"foo" : oResult
+						$expand : {
+							foo : oResult
 						}
 					}),
-					{"$expand" : "foo(" + sAssignment + ")"});
+					{$expand : "foo(" + sAssignment + ")"});
 
 				assert.deepEqual(
 					_Parser.parseSystemQueryOption(
 						"$expand=foo(" + sAssignment + ";$select=*)"), {
-						"$expand" : {
-							"foo" : oExpand
+						$expand : {
+							foo : oExpand
 						}
 					},
 					"as first/inner option in an expand, terminated by ';'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
 					oRequestor.convertQueryOptions("Foo", {
-						"$expand" : {
-							"foo" : oExpand
+						$expand : {
+							foo : oExpand
 						}
 					}),
 					// Note: We added $select to oExpand before sOption
-					{"$expand" : "foo($select=*;" + sAssignment + ")"});
+					{$expand : "foo($select=*;" + sAssignment + ")"});
 			});
 		});
 	});
@@ -323,14 +323,14 @@ sap.ui.define([
 			string : "SO_2_BP,"
 				+ "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;$select=ID,Name))",
 			parsed : {
-				"SO_2_BP" : null,
-				"SO_2_SOITEM" : {
-					"$expand" : {
-						"SOITEM_2_PRODUCT" : {
-							"$expand" : {
-								"PRODUCT_2_BP" : null
+				SO_2_BP : null,
+				SO_2_SOITEM : {
+					$expand : {
+						SOITEM_2_PRODUCT : {
+							$expand : {
+								PRODUCT_2_BP : null
 							},
-							"$select" : ["ID", "Name"]
+							$select : ["ID", "Name"]
 						}
 					}
 				}
@@ -338,16 +338,16 @@ sap.ui.define([
 		}, {
 			string : "TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER",
 			parsed : {
-				"TEAM_2_EMPLOYEES" : {
-					"$expand" : {
-						"EMPLOYEE_2_EQUIPMENTS" : null
+				TEAM_2_EMPLOYEES : {
+					$expand : {
+						EMPLOYEE_2_EQUIPMENTS : null
 					}
 				},
-				"TEAM_2_MANAGER" : null
+				TEAM_2_MANAGER : null
 			}
 		}].forEach(function (oFixture) {
 			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.string),
-				{"$expand" : oFixture.parsed}, oFixture.string);
+				{$expand : oFixture.parsed}, oFixture.string);
 		});
 	});
 
@@ -355,66 +355,66 @@ sap.ui.define([
 	QUnit.test("_Parser: %-encoding", function (assert) {
 		[{
 			string : "$select=a%2Cb%2cc,d,e.%2a",
-			parsed : {"$select" : ["a", "b", "c", "d", "e.*"]},
-			converted : {"$select" : "a,b,c,d,e.*"}
+			parsed : {$select : ["a", "b", "c", "d", "e.*"]},
+			converted : {$select : "a,b,c,d,e.*"}
 		}, {
 			string : "$select=%2a",
-			parsed : {"$select" : ["*"]},
-			converted : {"$select" : "*"}
+			parsed : {$select : ["*"]},
+			converted : {$select : "*"}
 		}, {
 			string : "$select=%2A",
-			parsed : {"$select" : ["*"]},
-			converted : {"$select" : "*"}
+			parsed : {$select : ["*"]},
+			converted : {$select : "*"}
 		}, {
 			string : "$expand=%2a",
-			parsed : {"$expand" : {"*" : null}},
-			converted : {"$expand" : "*"}
+			parsed : {$expand : {"*" : null}},
+			converted : {$expand : "*"}
 		}, {
 			string : "$expand=%2a/$ref",
-			parsed : {"$expand" : {"*/$ref" : null}},
-			converted : {"$expand" : "*/$ref"}
+			parsed : {$expand : {"*/$ref" : null}},
+			converted : {$expand : "*/$ref"}
 		}, {
 			string : "$expand=foo/%2A",
-			parsed : {"$expand" : {"foo/*" : null}},
-			converted : {"$expand" : "foo/*"}
+			parsed : {$expand : {"foo/*" : null}},
+			converted : {$expand : "foo/*"}
 		}, {
 			//       "$filter=foo eq  + 1e + 10"
 			string : "$filter=foo eq %2b1e%2B10",
-			parsed : {"$filter" : "foo eq %2b1e%2B10"},
-			converted : {"$filter" : "foo eq %2b1e%2B10"}
+			parsed : {$filter : "foo eq %2b1e%2B10"},
+			converted : {$filter : "foo eq %2b1e%2B10"}
 		}, {
 			//       "$filter=foo eq  ' a '  '  ' "
 			string : "$filter=foo eq %27a%27%27%27",
-			parsed : {"$filter" : "foo eq %27a%27%27%27"},
-			converted : {"$filter" : "foo eq %27a%27%27%27"}
+			parsed : {$filter : "foo eq %27a%27%27%27"},
+			converted : {$filter : "foo eq %27a%27%27%27"}
 		}, {
 			//       "$expand=foo ( $filter=a   eq    ' b; '  ; $orderby=c   desc ; $count=true ) ",
 			string : "$expand=foo%28$filter=a%20eq%20%27b;%27%3b$orderby=c%20desc%3B$count=true%29",
 			parsed : {
-				"$expand" : {
-					"foo" : {
-						"$filter" : "a%20eq%20%27b;%27",
-						"$orderby" : "c%20desc",
-						"$count" : "true"
+				$expand : {
+					foo : {
+						$filter : "a%20eq%20%27b;%27",
+						$orderby : "c%20desc",
+						$count : "true"
 					}
 				}
 			},
-			converted : {"$expand" : "foo($filter=a%20eq%20%27b;%27;$orderby=c%20desc;$count=true)"}
+			converted : {$expand : "foo($filter=a%20eq%20%27b;%27;$orderby=c%20desc;$count=true)"}
 		}, {
 			//       "$filter=((foo eq '' )    and  ( bar gt 1 )  ) ",
 			string : "$filter=((foo eq ''%29   and %28bar gt 1%29%29",
-			parsed : {"$filter" : "((foo eq ''%29   and %28bar gt 1%29%29"},
-			converted : {"$filter" : "((foo eq ''%29   and %28bar gt 1%29%29"}
+			parsed : {$filter : "((foo eq ''%29   and %28bar gt 1%29%29"},
+			converted : {$filter : "((foo eq ''%29   and %28bar gt 1%29%29"}
 		}, {
 			//       "$search= " foo \  " bar \ \ baz ",
 			string : "$search=%22foo%5c%22bar%5C\\baz%22",
-			parsed : {"$search" : "%22foo%5c%22bar%5C\\baz%22"},
-			converted : {"$search" : "%22foo%5c%22bar%5C\\baz%22"}
+			parsed : {$search : "%22foo%5c%22bar%5C\\baz%22"},
+			converted : {$search : "%22foo%5c%22bar%5C\\baz%22"}
 		}, {
 			//       "$search= " foo \  " bar \ \ baz% ",
 			string : "$search=%22foo%5c%22bar%5C\\baz%%22",
-			parsed : {"$search" : "%22foo%5c%22bar%5C\\baz%%22"},
-			converted : {"$search" : "%22foo%5c%22bar%5C\\baz%%22"}
+			parsed : {$search : "%22foo%5c%22bar%5C\\baz%%22"},
+			converted : {$search : "%22foo%5c%22bar%5C\\baz%%22"}
 		}].forEach(function (oFixture) {
 			assert.deepEqual(_Parser.parseSystemQueryOption(oFixture.string), oFixture.parsed,
 				oFixture.string);
@@ -844,9 +844,9 @@ sap.ui.define([
 			var sPredicate = "(" + sValue + ")";
 			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"" : sValue}, sPredicate);
 			sPredicate = "(foo=" + sValue + ")";
-			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"foo" : sValue}, sPredicate);
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {foo : sValue}, sPredicate);
 			sPredicate = "(foo=" + sValue + ",bar='baz')";
-			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"foo" : sValue, bar : "'baz'"},
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {foo : sValue, bar : "'baz'"},
 				sPredicate);
 		});
 	});

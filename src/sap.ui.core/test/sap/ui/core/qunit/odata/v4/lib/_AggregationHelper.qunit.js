@@ -136,7 +136,7 @@ sap.ui.define([
 				Amount : {
 					grandTotal : true,
 					unit : "Currency",
-					"with" : "average"
+					with : "average"
 				},
 				NetAmountAggregate : { // Note: intentionally no "with", although spec requires it
 					name : "NetAmount"
@@ -144,7 +144,7 @@ sap.ui.define([
 				GrossAmountCount : {
 					grandTotal : true,
 					name : "GrossAmount",
-					"with" : "countdistinct"
+					with : "countdistinct"
 				}
 			},
 			grandTotalAtBottomOnly : false, // just to check validation
@@ -311,7 +311,7 @@ sap.ui.define([
 	}, {
 		oAggregation : {
 			aggregate : {
-				SalesNumberSum : {grandTotal : true, name : "SalesNumber", "with" : "sum"}
+				SalesNumberSum : {grandTotal : true, name : "SalesNumber", with : "sum"}
 			},
 			group : {
 				Region : {}
@@ -454,7 +454,7 @@ sap.ui.define([
 				Amount1Avg : {
 					min : true,
 					name : "Amount1",
-					"with" : "average"
+					with : "average"
 				}
 			},
 			group : {
@@ -478,7 +478,7 @@ sap.ui.define([
 				Amount1Avg : {
 					min : true,
 					name : "Amount1",
-					"with" : "average"
+					with : "average"
 				},
 				Amount2 : {
 					max : true,
@@ -575,7 +575,7 @@ sap.ui.define([
 					grandTotal : true,
 					name : "SalesAmount",
 					unit : "Currency", // Note: unsupported in 1.84
-					"with" : "sum"
+					with : "sum"
 				}
 			},
 			"grandTotal like 1.84" : true,
@@ -783,13 +783,13 @@ sap.ui.define([
 		sError : "Cannot combine visual grouping with grand total"
 	}, {
 		oAggregation : {
-			aggregate : {A : {grandTotal : true, "with" : "average"}},
+			aggregate : {A : {grandTotal : true, with : "average"}},
 			"grandTotal like 1.84" : true
 		},
 		sError : "Cannot aggregate totals with 'average'"
 	}, {
 		oAggregation : {
-			aggregate : {A : {grandTotal : true, "with" : "countdistinct"}},
+			aggregate : {A : {grandTotal : true, with : "countdistinct"}},
 			"grandTotal like 1.84" : true
 		},
 		sError : "Cannot aggregate totals with 'countdistinct'"
@@ -817,7 +817,7 @@ sap.ui.define([
 						name : "string",
 						subtotals : "boolean",
 						unit : "string",
-						"with" : "string"
+						with : "string"
 					}
 				},
 				"grandTotal like 1.84" : "boolean",

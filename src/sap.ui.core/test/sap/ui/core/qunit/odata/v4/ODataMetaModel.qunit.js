@@ -38,64 +38,64 @@ sap.ui.define([
 	// tea_busi_supplier.v0001 := com.sap.gateway.default.iwbep.tea_busi_supplier.v0001
 	// UI := com.sap.vocabularies.UI.v1
 	var mMostlyEmptyScope = {
-			"$Annotations" : {}, // simulate ODataMetaModel#_mergeAnnotations
-			"$EntityContainer" : "empty.DefaultContainer",
-			"$Version" : "4.0",
+			$Annotations : {}, // simulate ODataMetaModel#_mergeAnnotations
+			$EntityContainer : "empty.DefaultContainer",
+			$Version : "4.0",
 			"empty." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"empty.DefaultContainer" : {
-				"$kind" : "EntityContainer"
+				$kind : "EntityContainer"
 			}
 		},
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		mProductScope = {
-			"$EntityContainer" : "tea_busi_product.v0001.DefaultContainer",
-			"$Reference" : {
+			$EntityContainer : "tea_busi_product.v0001.DefaultContainer",
+			$Reference : {
 				"../../../../default/iwbep/tea_busi_supplier/0001/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"tea_busi_supplier.v0001."
 					]
 				}
 			},
-			"$Version" : "4.0",
+			$Version : "4.0",
 			"tea_busi_product.v0001." : {
-				"$kind" : "Schema",
-				"$Annotations" : { // Note: simulate result of _MetadataRequestor#read
+				$kind : "Schema",
+				$Annotations : { // Note: simulate result of _MetadataRequestor#read
 					"tea_busi_product.v0001.Category/CategoryName" : {
 						"@Common.Label" : "CategoryName from tea_busi_product.v0001."
 					}
 				}
 			},
 			"tea_busi_product.v0001.Category" : {
-				"$kind" : "EntityType",
-				"CategoryName" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				CategoryName : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				}
 			},
 			"tea_busi_product.v0001.DefaultContainer" : {
-				"$kind" : "EntityContainer"
+				$kind : "EntityContainer"
 			},
 			"tea_busi_product.v0001.Product" : {
-				"$kind" : "EntityType",
-				"Name" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				Name : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"PRODUCT_2_CATEGORY" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi_product.v0001.Category"
+				PRODUCT_2_CATEGORY : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi_product.v0001.Category"
 				},
-				"PRODUCT_2_SUPPLIER" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi_supplier.v0001.Supplier"
+				PRODUCT_2_SUPPLIER : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi_supplier.v0001.Supplier"
 				}
 			}
 		},
 		sSampleServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		mScope = {
-			"$Annotations" : {
+			$Annotations : {
 				"name.space.EnumType" : {
 					"@Common.Label" : "EnumType label"
 				},
@@ -108,7 +108,7 @@ sap.ui.define([
 				"name.space.EnumType64/Z" : {
 					"@Common.Label" : "Label of Z",
 					"@Common.Text" : {
-						"$Path" : "Z@Common.Label" // CSDL does not specify this case
+						$Path : "Z@Common.Label" // CSDL does not specify this case
 					}
 				},
 				"name.space.Id" : {
@@ -119,10 +119,10 @@ sap.ui.define([
 				},
 				"name.space.OverloadedAction()" : {
 					"@Core.OperationAvailable" : {
-						"$Path" : "parameter0/-1" // Note: parameter0 is a collection
+						$Path : "parameter0/-1" // Note: parameter0 is a collection
 					},
 					"@Core.OperationAvailable#1" : {
-						"$Path" : "$ReturnType"
+						$Path : "$ReturnType"
 					},
 					"@Core.OperationAvailable#2" : false
 				},
@@ -131,16 +131,16 @@ sap.ui.define([
 				},
 				"name.space.OverloadedAction(tea_busi.TEAM)" : {
 					"@Core.OperationAvailable" : {
-						"$Path" : "_it/Name"
+						$Path : "_it/Name"
 					}
 				},
 				"name.space.OverloadedAction(tea_busi.TEAM)/parameter1" : {
 					"@Common.Label" : "My 1st label",
 					"@Common.Text" : {
-						"$Path" : "_it/Name"
+						$Path : "_it/Name"
 					},
 					"@Core.OperationAvailable" : {
-						"$Path" : "_it/TEAM_2_CONTAINED_S/Id"
+						$Path : "_it/TEAM_2_CONTAINED_S/Id"
 					}
 				},
 				"name.space.OverloadedBoundFunction/_it" : {
@@ -155,15 +155,15 @@ sap.ui.define([
 				"name.space.OverloadedFunction/B" : {
 					"@Common.Label" : "B's own label",
 					"@Common.Text" : {
-						"$Path" : "A/Road_2_Nowhere"
+						$Path : "A/Road_2_Nowhere"
 					},
 					"@Common.Text@UI.TextArrangement" : {
-						"$EnumMember" : "UI.TextArrangementType/TextLast"
+						$EnumMember : "UI.TextArrangementType/TextLast"
 					}
 				},
 				"name.space.VoidAction" : {
 					"@Core.OperationAvailable" : {
-						"$Path" : "$ReturnType"
+						$Path : "$ReturnType"
 					}
 				},
 				"name.space.VoidAction/$ReturnType" : {
@@ -184,13 +184,13 @@ sap.ui.define([
 				"tea_busi.DefaultContainer/Me" : {
 					"@Singleton" : {
 						Age : {
-							"$Path" : "AGE"
+							$Path : "AGE"
 						},
 						EMPLOYEE_2_TEAM : {
-							"$Path" : "EMPLOYEE_2_TEAM"
+							$Path : "EMPLOYEE_2_TEAM"
 						},
 						Empty : {
-							"$Path" : "" // "an empty path resolves to the entity set or singleton"
+							$Path : "" // "an empty path resolves to the entity set or singleton"
 						}
 					}
 				},
@@ -201,10 +201,10 @@ sap.ui.define([
 					"@Capabilities.DeleteRestrictions" : {
 						Deletable : {
 							// in real life, path would point to Edm.Boolean, but never mind
-							"$Path" : "TEAM_2_MANAGER/TEAM_ID"
+							$Path : "TEAM_2_MANAGER/TEAM_ID"
 						},
 						Empty : {
-							"$Path" : "" // "an empty path resolves to the entity set or singleton"
+							$Path : "" // "an empty path resolves to the entity set or singleton"
 						}
 					},
 					"@Session.StickySessionSupported" : {
@@ -217,13 +217,13 @@ sap.ui.define([
 					"@Common.Label" : "n/a",
 					"@Common.QuickInfo" : "Hello, world!",
 					"@Core.OperationAvailable" : {
-						"$PropertyPath" : "n/a"
+						$PropertyPath : "n/a"
 					}
 				},
 				"tea_busi.NewAction/Team_Id" : {
 					"@Common.Label" : "n/a",
 					"@Common.Text" : {
-						"$Path" : "_it/Name"
+						$Path : "_it/Name"
 					},
 					"@Common.ValueListWithFixedValues" : true
 				},
@@ -233,13 +233,13 @@ sap.ui.define([
 				"tea_busi.NewAction(Collection(tea_busi.TEAM))" : {
 					"@Common.Label" : "Create New Team",
 					"@Core.OperationAvailable" : {
-						"$Path" : "_it/Name"
+						$Path : "_it/Name"
 					}
 				},
 				"tea_busi.NewAction(Collection(tea_busi.TEAM))/Team_Id" : {
 					"@Common.Label" : "New Team ID",
 					"@Common.Text" : {
-						"$AnnotationPath" : "_it/Name@Common.Label"
+						$AnnotationPath : "_it/Name@Common.Label"
 					}
 				},
 				"tea_busi.NewAction(Collection(tea_busi.TEAM))/$ReturnType" : {
@@ -252,48 +252,48 @@ sap.ui.define([
 				},
 				"tea_busi.TEAM" : {
 					"@Common.Text" : {
-						"$Path" : "Name"
+						$Path : "Name"
 					},
 					"@Common.Text@UI.TextArrangement" : {
-						"$EnumMember" : "UI.TextArrangementType/TextLast"
+						$EnumMember : "UI.TextArrangementType/TextLast"
 					},
 					"@Session.StickySessionSupported#EntityType" : {
 						NewAction : "tea_busi.NewAction"
 					},
 					"@Type" : {
 						Empty : {
-							"$Path" : "" // "an empty path resolves to the type"
+							$Path : "" // "an empty path resolves to the type"
 						}
 					},
 					"@UI.Badge" : {
 						"@Common.Label" : "Label inside",
-						"$Type" : "UI.BadgeType",
-						"HeadLine" : {
-							"$Type" : "UI.DataField",
-							"Value" : {
-								"$Path" : "Name"
+						$Type : "UI.BadgeType",
+						HeadLine : {
+							$Type : "UI.DataField",
+							Value : {
+								$Path : "Name"
 							}
 						},
-						"Title" : {
-							"$Type" : "UI.DataField",
-							"Value" : {
-								"$Path" : "Team_Id"
+						Title : {
+							$Type : "UI.DataField",
+							Value : {
+								$Path : "Team_Id"
 							}
 						}
 					},
 					"@UI.Badge@Common.Label" : "Best Badge Ever!",
 					"@UI.LineItem" : [{
 						"@UI.Importance" : {
-							"$EnumMember" : "UI.ImportanceType/High"
+							$EnumMember : "UI.ImportanceType/High"
 						},
-						"$Type" : "UI.DataFieldWithNavigationPath",
-						"Label" : "Team ID",
+						$Type : "UI.DataFieldWithNavigationPath",
+						Label : "Team ID",
 						"Label@Common.Label" : "Team ID's Label",
-						"Target" : {
-							"$NavigationPropertyPath" : "TEAM_2_EMPLOYEES"
+						Target : {
+							$NavigationPropertyPath : "TEAM_2_EMPLOYEES"
 						},
-						"Value" : {
-							"$Path" : "Team_Id"
+						Value : {
+							$Path : "Team_Id"
 						}
 					}]
 				},
@@ -306,54 +306,54 @@ sap.ui.define([
 				"tea_busi.TEAM/Team_Id" : {
 					"@Common.Label" : "Team ID",
 					"@Common.Text" : {
-						"$Path" : "Name"
+						$Path : "Name"
 					},
 					"@Common.Text@UI.TextArrangement" : {
-						"$EnumMember" : "UI.TextArrangementType/TextLast"
+						$EnumMember : "UI.TextArrangementType/TextLast"
 					}
 				},
 				"tea_busi.Worker" : {
 					"@Common.Text" : {
-						"$If" : [true, {
-							"$Path" : "Name"
+						$If : [true, {
+							$Path : "Name"
 						}] // "else" is missing!
 					},
 					"@Type" : {
 						Empty : {
-							"$Path" : "" // "an empty path resolves to the type"
+							$Path : "" // "an empty path resolves to the type"
 						}
 					},
 					"@UI.Facets" : [{
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// term cast
-							"$AnnotationPath" : "@UI.LineItem"
+							$AnnotationPath : "@UI.LineItem"
 						}
 					}, {
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// term cast at navigation property itself
-							"$AnnotationPath" : "EMPLOYEE_2_TEAM@Common.Label"
+							$AnnotationPath : "EMPLOYEE_2_TEAM@Common.Label"
 						}
 					}, {
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// navigation property and term cast
-							"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem"
+							$AnnotationPath : "EMPLOYEE_2_TEAM/@UI.LineItem"
 						}
 					}, {
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// type cast, navigation properties and term cast (at its type)
-							"$AnnotationPath"
-								: "tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
+							$AnnotationPath :
+								"tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
 						}
 					}],
 					"@UI.LineItem" : [{
-						"$Type" : "UI.DataField",
-						"Label" : "Team ID",
-						"Value" : {
-							"$Path" : "EMPLOYEE_2_TEAM/Team_Id"
+						$Type : "UI.DataField",
+						Label : "Team ID",
+						Value : {
+							$Path : "EMPLOYEE_2_TEAM/Team_Id"
 						}
 					}]
 				},
@@ -361,658 +361,658 @@ sap.ui.define([
 					"@Common.Label" : "Employee's Team"
 				}
 			},
-			"$EntityContainer" : "tea_busi.DefaultContainer",
+			$EntityContainer : "tea_busi.DefaultContainer",
 			"empty." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"name.space." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"tea_busi." : {
-				"$kind" : "Schema",
+				$kind : "Schema",
 				"@Schema" : {}
 			},
 			"empty.Container" : {
-				"$kind" : "EntityContainer"
+				$kind : "EntityContainer"
 			},
 			"name.space.BadContainer" : {
-				"$kind" : "EntityContainer",
-				"DanglingActionImport" : {
-					"$kind" : "ActionImport",
-					"$Action" : "not.Found"
+				$kind : "EntityContainer",
+				DanglingActionImport : {
+					$kind : "ActionImport",
+					$Action : "not.Found"
 				},
-				"DanglingFunctionImport" : {
-					"$kind" : "FunctionImport",
-					"$Function" : "not.Found"
+				DanglingFunctionImport : {
+					$kind : "FunctionImport",
+					$Function : "not.Found"
 				}
 			},
 			"name.space.Broken" : {
-				"$kind" : "Term",
-				"$Type" : "not.Found"
+				$kind : "Term",
+				$Type : "not.Found"
 			},
 			"name.space.BrokenFunction" : [{
-				"$kind" : "Function",
-				"$ReturnType" : {
-					"$Type" : "not.Found"
+				$kind : "Function",
+				$ReturnType : {
+					$Type : "not.Found"
 				}
 			}],
 			"name.space.BrokenOverloads" : [{
-				"$kind" : "Operation"
+				$kind : "Operation"
 			}],
 			"name.space.DerivedPrimitiveFunction" : [{
-				"$kind" : "Function",
-				"$ReturnType" : {
-					"$Type" : "name.space.Id"
+				$kind : "Function",
+				$ReturnType : {
+					$Type : "name.space.Id"
 				}
 			}],
 			"name.space.EmptyOverloads" : [],
 			"name.space.EnumType" : {
-				"$kind" : "EnumType",
-				"A" : 0,
-				"B" : 1
+				$kind : "EnumType",
+				A : 0,
+				B : 1
 			},
 			"name.space.EnumType64" : {
-				"$kind" : "EnumType",
-				"$UnderlyingType" : "Edm.Int64",
-				"Z" : "0"
+				$kind : "EnumType",
+				$UnderlyingType : "Edm.Int64",
+				Z : "0"
 			},
 			"name.space.Id" : {
-				"$kind" : "TypeDefinition",
-				"$UnderlyingType" : "Edm.String",
-				"$MaxLength" : 10
+				$kind : "TypeDefinition",
+				$UnderlyingType : "Edm.String",
+				$MaxLength : 10
 			},
 			"name.space.Term" : { // only case with a qualified name and a $Type
-				"$kind" : "Term",
-				"$Type" : "tea_busi.Worker"
+				$kind : "Term",
+				$Type : "tea_busi.Worker"
 			},
 			"name.space.OverloadedAction" : [{
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "tea_busi.EQUIPMENT"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "tea_busi.EQUIPMENT"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.EQUIPMENT"
+				$ReturnType : {
+					$Type : "tea_busi.EQUIPMENT"
 				}
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "tea_busi.TEAM"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "tea_busi.TEAM"
 				}, {
-					"$Name" : "parameter1",
-					"$Type" : "Edm.String"
+					$Name : "parameter1",
+					$Type : "Edm.String"
 				}, {
-					"$Name" : "parameter2",
-					"$Type" : "Edm.Decimal"
+					$Name : "parameter2",
+					$Type : "Edm.Decimal"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.TEAM"
+				$ReturnType : {
+					$Type : "tea_busi.TEAM"
 				}
 			}, { // "An unbound action MAY have the same name as a bound action."
-				"$kind" : "Action",
-				"$Parameter" : [{
-					"$isCollection" : true,
-					"$Name" : "parameter0",
-					"$Type" : "Edm.String"
+				$kind : "Action",
+				$Parameter : [{
+					$isCollection : true,
+					$Name : "parameter0",
+					$Type : "Edm.String"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.ComplexType_Salary"
+				$ReturnType : {
+					$Type : "tea_busi.ComplexType_Salary"
 				}
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "tea_busi.Worker"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "tea_busi.Worker"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.Worker"
+				$ReturnType : {
+					$Type : "tea_busi.Worker"
 				}
 			}],
 			"name.space.OverloadedBoundFunction" : [{
-				"$kind" : "Function",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "tea_busi.Worker"
+				$kind : "Function",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "tea_busi.Worker"
 				}, {
-					"$Name" : "A",
-					"$Type" : "Edm.Boolean"
+					$Name : "A",
+					$Type : "Edm.Boolean"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.Worker"
+				$ReturnType : {
+					$Type : "tea_busi.Worker"
 				}
 			}, {
-				"$kind" : "Function",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "tea_busi.TEAM"
+				$kind : "Function",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "tea_busi.TEAM"
 				}, {
-					"$Name" : "B",
-					"$Type" : "Edm.Date"
+					$Name : "B",
+					$Type : "Edm.Date"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.TEAM"
+				$ReturnType : {
+					$Type : "tea_busi.TEAM"
 				}
 			}, {
-				"$kind" : "Function",
-				"$Parameter" : [{
-					"$Name" : "C",
-					"$Type" : "Edm.String"
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "C",
+					$Type : "Edm.String"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.ComplexType_Salary"
+				$ReturnType : {
+					$Type : "tea_busi.ComplexType_Salary"
 				}
 			}],
 			"name.space.OverloadedFunction" : [{
-				"$kind" : "Function",
-				"$Parameter" : [{
-					"$Name" : "A",
-					"$Type" : "Edm.String"
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "A",
+					$Type : "Edm.String"
 				}],
-				"$ReturnType" : {
-					"$Type" : "Edm.String"
+				$ReturnType : {
+					$Type : "Edm.String"
 				}
 			}, {
-				"$kind" : "Function",
-				"$Parameter" : [{
-					"$Name" : "B",
-					"$Type" : "Edm.String"
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "B",
+					$Type : "Edm.String"
 				}],
-				"$ReturnType" : {
-					"$Type" : "Edm.String"
+				$ReturnType : {
+					$Type : "Edm.String"
 				}
 			}],
 			"name.space.VoidAction" : [{
-				"$kind" : "Action"
+				$kind : "Action"
 			}],
 			"tea_busi.AcChangeManagerOfTeam" : [{
-				"$kind" : "Action",
-				"$Parameter" : [{
-					"$Name" : "TEAM",
-					"$Type" : "tea_busi.TEAM"
+				$kind : "Action",
+				$Parameter : [{
+					$Name : "TEAM",
+					$Type : "tea_busi.TEAM"
 				}, {
-					"$Name" : "ManagerID",
-					"$Type" : "Edm.String"
+					$Name : "ManagerID",
+					$Type : "Edm.String"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.TEAM"
+				$ReturnType : {
+					$Type : "tea_busi.TEAM"
 				}
 			}],
 			"tea_busi.ComplexType_Salary" : {
-				"$kind" : "ComplexType",
-				"AMOUNT" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.Decimal"
+				$kind : "ComplexType",
+				AMOUNT : {
+					$kind : "Property",
+					$Type : "Edm.Decimal"
 				},
-				"CURRENCY" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				CURRENCY : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				}
 			},
 			"tea_busi.ContainedC" : {
-				"$kind" : "EntityType",
-				"$Key" : ["Id"],
-				"Id" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				$Key : ["Id"],
+				Id : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"C_2_EMPLOYEE" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.Worker"
+				C_2_EMPLOYEE : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.Worker"
 				},
-				"C_2_S" : {
-					"$ContainsTarget" : true,
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.ContainedS"
+				C_2_S : {
+					$ContainsTarget : true,
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.ContainedS"
 				}
 			},
 			"tea_busi.ContainedS" : {
-				"$kind" : "EntityType",
-				"$Key" : ["Id"],
-				"Id" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				$Key : ["Id"],
+				Id : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"S_2_C" : {
-					"$ContainsTarget" : true,
-					"$kind" : "NavigationProperty",
-					"$isCollection" : true,
-					"$Type" : "tea_busi.ContainedC"
+				S_2_C : {
+					$ContainsTarget : true,
+					$kind : "NavigationProperty",
+					$isCollection : true,
+					$Type : "tea_busi.ContainedC"
 				},
-				"S_2_EMPLOYEE" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.Worker"
+				S_2_EMPLOYEE : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.Worker"
 				}
 			},
 			"tea_busi.DefaultContainer" : {
-				"$kind" : "EntityContainer",
-				"ChangeManagerOfTeam" : {
-					"$kind" : "ActionImport",
-					"$Action" : "tea_busi.AcChangeManagerOfTeam"
+				$kind : "EntityContainer",
+				ChangeManagerOfTeam : {
+					$kind : "ActionImport",
+					$Action : "tea_busi.AcChangeManagerOfTeam"
 				},
-				"EMPLOYEES" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
+				EMPLOYEES : {
+					$kind : "EntitySet",
+					$NavigationPropertyBinding : {
 						"EMPLOYEE_2_EQUIPM€NTS" : "EQUIPM€NTS",
-						"EMPLOYEE_2_TEAM" : "T€AMS"
+						EMPLOYEE_2_TEAM : "T€AMS"
 					},
-					"$Type" : "tea_busi.Worker"
+					$Type : "tea_busi.Worker"
 				},
 				"EQUIPM€NTS" : {
-					"$kind" : "EntitySet",
-					"$Type" : "tea_busi.EQUIPMENT"
+					$kind : "EntitySet",
+					$Type : "tea_busi.EQUIPMENT"
 				},
 				// Note: our JsDoc uses similar examples: GetOldestAge and GetOldestWorker
-				"GetEmployeeMaxAge" : {
-					"$kind" : "FunctionImport",
-					"$Function" : "tea_busi.FuGetEmployeeMaxAge"
+				GetEmployeeMaxAge : {
+					$kind : "FunctionImport",
+					$Function : "tea_busi.FuGetEmployeeMaxAge"
 				},
-				"MANAGERS" : {
-					"$kind" : "EntitySet",
-					"$Type" : "tea_busi.MANAGER"
+				MANAGERS : {
+					$kind : "EntitySet",
+					$Type : "tea_busi.MANAGER"
 				},
-				"Me" : {
-					"$kind" : "Singleton",
-					"$NavigationPropertyBinding" : {
-						"EMPLOYEE_2_TEAM" : "T€AMS",
+				Me : {
+					$kind : "Singleton",
+					$NavigationPropertyBinding : {
+						EMPLOYEE_2_TEAM : "T€AMS",
 						"EMPLOYEE_2_EQUIPM€NTS" : "EQUIPM€NTS"
 					},
-					"$Type" : "tea_busi.Worker"
+					$Type : "tea_busi.Worker"
 				},
-				"OverloadedAction" : {
-					"$kind" : "ActionImport",
-					"$Action" : "name.space.OverloadedAction"
+				OverloadedAction : {
+					$kind : "ActionImport",
+					$Action : "name.space.OverloadedAction"
 				},
-				"OverloadedFunctionImport" : {
-					"$kind" : "FunctionImport",
-					"$Function" : "name.space.OverloadedBoundFunction"
+				OverloadedFunctionImport : {
+					$kind : "FunctionImport",
+					$Function : "name.space.OverloadedBoundFunction"
 				},
-				"ServiceGroups" : {
-					"$kind" : "EntitySet",
-					"$Type" : "tea_busi.ServiceGroup"
+				ServiceGroups : {
+					$kind : "EntitySet",
+					$Type : "tea_busi.ServiceGroup"
 				},
-				"TEAMS" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
+				TEAMS : {
+					$kind : "EntitySet",
+					$NavigationPropertyBinding : {
 						"TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "EMPLOYEES",
 						"TEAM_2_CONTAINED_S/S_2_C/C_2_S/S_2_EMPLOYEE" : "EMPLOYEES",
-						"TEAM_2_EMPLOYEES" : "EMPLOYEES",
-						"TEAM_2_MANAGER" : "MANAGERS"
+						TEAM_2_EMPLOYEES : "EMPLOYEES",
+						TEAM_2_MANAGER : "MANAGERS"
 					},
-					"$Type" : "tea_busi.TEAM"
+					$Type : "tea_busi.TEAM"
 				},
 				"T€AMS" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
-						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
+					$kind : "EntitySet",
+					$NavigationPropertyBinding : {
+						TEAM_2_EMPLOYEES : "EMPLOYEES"
 					},
-					"$Type" : "tea_busi.TEAM"
+					$Type : "tea_busi.TEAM"
 				},
-				"VoidAction" : {
-					"$kind" : "ActionImport",
-					"$Action" : "name.space.VoidAction"
+				VoidAction : {
+					$kind : "ActionImport",
+					$Action : "name.space.VoidAction"
 				}
 			},
 			"tea_busi.EQUIPMENT" : {
-				"$kind" : "EntityType",
-				"$Key" : ["ID"],
-				"ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.Int32",
-					"$Nullable" : false
+				$kind : "EntityType",
+				$Key : ["ID"],
+				ID : {
+					$kind : "Property",
+					$Type : "Edm.Int32",
+					$Nullable : false
 				}
 			},
 			"tea_busi.FuGetEmployeeMaxAge" : [{
-				"$kind" : "Function",
-				"$ReturnType" : {
-					"$Type" : "Edm.Int16"
+				$kind : "Function",
+				$ReturnType : {
+					$Type : "Edm.Int16"
 				}
 			}],
 			"tea_busi.MANAGER" : {
-				"$kind" : "EntityType",
-				"$Key" : ["ID"],
-				"ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 4
+				$kind : "EntityType",
+				$Key : ["ID"],
+				ID : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false,
+					$MaxLength : 4
 				},
-				"TEAM_ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 10
+				TEAM_ID : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false,
+					$MaxLength : 10
 				}
 			},
 			// "NewAction" is overloaded by collection of type, returning instance of type
 			//TODO There can be one overload with "$isCollection" : true and another w/o, for the
 			// same binding parameter $Type! How to tell these apart?
 			"tea_busi.NewAction" : [{
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$isCollection" : true,
-					"$Name" : "_it",
-					"$Type" : "tea_busi.EQUIPMENT"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$isCollection : true,
+					$Name : "_it",
+					$Type : "tea_busi.EQUIPMENT"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.EQUIPMENT"
+				$ReturnType : {
+					$Type : "tea_busi.EQUIPMENT"
 				}
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$isCollection" : true,
-					"$Name" : "_it",
-					"$Type" : "tea_busi.TEAM"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$isCollection : true,
+					$Name : "_it",
+					$Type : "tea_busi.TEAM"
 				}, {
-					"$Name" : "Team_Id",
-					"$Type" : "name.space.Id"
+					$Name : "Team_Id",
+					$Type : "name.space.Id"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.TEAM"
+				$ReturnType : {
+					$Type : "tea_busi.TEAM"
 				}
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
 					//"$isCollection" : false,
-					"$Name" : "_it",
-					"$Type" : "tea_busi.Worker"
+					$Name : "_it",
+					$Type : "tea_busi.Worker"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.Worker"
+				$ReturnType : {
+					$Type : "tea_busi.Worker"
 				}
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$isCollection" : true,
-					"$Name" : "_it",
-					"$Type" : "tea_busi.Worker"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$isCollection : true,
+					$Name : "_it",
+					$Type : "tea_busi.Worker"
 				}],
-				"$ReturnType" : {
-					"$Type" : "tea_busi.Worker"
+				$ReturnType : {
+					$Type : "tea_busi.Worker"
 				}
 			}],
 			"tea_busi.ServiceGroup" : {
-				"$kind" : "EntityType",
-				"DefaultSystem" : {
-					"$ContainsTarget" : true,
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.System"
+				$kind : "EntityType",
+				DefaultSystem : {
+					$ContainsTarget : true,
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.System"
 				}
 			},
 			"tea_busi.System" : {
-				"$kind" : "EntityType",
-				"SystemAlias" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				SystemAlias : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				}
 			},
 			"tea_busi.TEAM" : {
-				"$kind" : "EntityType",
-				"$Key" : ["Team_Id"],
-				"Team_Id" : {
-					"$kind" : "Property",
-					"$Type" : "name.space.Id",
-					"$Nullable" : false,
-					"$MaxLength" : 10
+				$kind : "EntityType",
+				$Key : ["Team_Id"],
+				Team_Id : {
+					$kind : "Property",
+					$Type : "name.space.Id",
+					$Nullable : false,
+					$MaxLength : 10
 				},
-				"Name" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 40
+				Name : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false,
+					$MaxLength : 40
 				},
-				"TEAM_2_MANAGER" : {
-					"$kind" : "NavigationProperty",
-					"$ReferentialConstraint" : {
-						"foo" : "bar",
+				TEAM_2_MANAGER : {
+					$kind : "NavigationProperty",
+					$ReferentialConstraint : {
+						foo : "bar",
 						"foo@Common.Label" : "Just a Gigolo",
 						"Address/Country" : "WorkAddress/Country",
 						"Address/Country@Common.Label" : "Common Country"
 					},
-					"$Type" : "tea_busi.MANAGER"
+					$Type : "tea_busi.MANAGER"
 				},
-				"TEAM_2_EMPLOYEES" : {
-					"$kind" : "NavigationProperty",
-					"$isCollection" : true,
-					"$OnDelete" : "None",
+				TEAM_2_EMPLOYEES : {
+					$kind : "NavigationProperty",
+					$isCollection : true,
+					$OnDelete : "None",
 					"$OnDelete@Common.Label" : "None of my business",
-					"$Type" : "tea_busi.Worker"
+					$Type : "tea_busi.Worker"
 				},
-				"TEAM_2_CONTAINED_S" : {
-					"$ContainsTarget" : true,
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.ContainedS"
+				TEAM_2_CONTAINED_S : {
+					$ContainsTarget : true,
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.ContainedS"
 				},
-				"TEAM_2_CONTAINED_C" : {
-					"$ContainsTarget" : true,
-					"$kind" : "NavigationProperty",
-					"$isCollection" : true,
-					"$Type" : "tea_busi.ContainedC"
+				TEAM_2_CONTAINED_C : {
+					$ContainsTarget : true,
+					$kind : "NavigationProperty",
+					$isCollection : true,
+					$Type : "tea_busi.ContainedC"
 				},
 				// Note: "value" is a symbolic name for an operation's return type iff it is
 				// primitive
-				"value" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				value : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				}
 			},
 			"tea_busi.Worker" : {
-				"$kind" : "EntityType",
-				"$Key" : ["ID"],
-				"ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 4
+				$kind : "EntityType",
+				$Key : ["ID"],
+				ID : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false,
+					$MaxLength : 4
 				},
-				"AGE" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.Int16",
-					"$Nullable" : false
+				AGE : {
+					$kind : "Property",
+					$Type : "Edm.Int16",
+					$Nullable : false
 				},
-				"EMPLOYEE_2_CONTAINED_S" : {
-					"$ContainsTarget" : true,
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.ContainedS"
+				EMPLOYEE_2_CONTAINED_S : {
+					$ContainsTarget : true,
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.ContainedS"
 				},
 				"EMPLOYEE_2_EQUIPM€NTS" : {
-					"$kind" : "NavigationProperty",
-					"$isCollection" : true,
-					"$Type" : "tea_busi.EQUIPMENT",
-					"$Nullable" : false
+					$kind : "NavigationProperty",
+					$isCollection : true,
+					$Type : "tea_busi.EQUIPMENT",
+					$Nullable : false
 				},
-				"EMPLOYEE_2_TEAM" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.TEAM",
-					"$Nullable" : false
+				EMPLOYEE_2_TEAM : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.TEAM",
+					$Nullable : false
 				},
-				"SALÃRY" : {
-					"$kind" : "Property",
-					"$Type" : "tea_busi.ComplexType_Salary"
+				SALÃRY : {
+					$kind : "Property",
+					$Type : "tea_busi.ComplexType_Salary"
 				}
 			},
-			"$$Loop" : "$$Loop/", // some endless loop
-			"$$Term" : "name.space.Term" // replacement for any reference to the term
+			$$Loop : "$$Loop/", // some endless loop
+			$$Term : "name.space.Term" // replacement for any reference to the term
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		aOverloadedAction = mScope["name.space.OverloadedAction"],
 		aOverloadedBoundFunction = mScope["name.space.OverloadedBoundFunction"],
 		mReducedPathScope = {
-			"$Annotations" : {},
-			"$EntityContainer" : "reduce.path.DefaultContainer",
+			$Annotations : {},
+			$EntityContainer : "reduce.path.DefaultContainer",
 			"reduce.path." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"reduce.path.A" : {
-				"$kind" : "EntityType",
-				"AValue" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				AValue : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"AtoB" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "BtoA",
-					"$Type" : "reduce.path.B"
+				AtoB : {
+					$kind : "NavigationProperty",
+					$Partner : "BtoA",
+					$Type : "reduce.path.B"
 				},
-				"AtoC" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "CtoA",
-					"$Type" : "reduce.path.C"
+				AtoC : {
+					$kind : "NavigationProperty",
+					$Partner : "CtoA",
+					$Type : "reduce.path.C"
 				},
-				"AtoDs" : {
-					"$isCollection" : true,
-					"$kind" : "NavigationProperty",
-					"$Partner" : "DtoA",
-					"$Type" : "reduce.path.D"
+				AtoDs : {
+					$isCollection : true,
+					$kind : "NavigationProperty",
+					$Partner : "DtoA",
+					$Type : "reduce.path.D"
 				}
 			},
 			"reduce.path.B" : {
-				"$kind" : "EntityType",
-				"BValue" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				BValue : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"BtoA" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "AtoB",
-					"$Type" : "reduce.path.A"
+				BtoA : {
+					$kind : "NavigationProperty",
+					$Partner : "AtoB",
+					$Type : "reduce.path.A"
 				},
-				"BtoC" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "CtoB",
-					"$Type" : "reduce.path.C"
+				BtoC : {
+					$kind : "NavigationProperty",
+					$Partner : "CtoB",
+					$Type : "reduce.path.C"
 				},
-				"BtoD" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "DtoBs",
-					"$Type" : "reduce.path.D"
+				BtoD : {
+					$kind : "NavigationProperty",
+					$Partner : "DtoBs",
+					$Type : "reduce.path.D"
 				}
 			},
 			"reduce.path.C" : {
-				"$kind" : "EntityType",
-				"CValue" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				CValue : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"CtoA" : {
-					"$kind" : "NavigationProperty",
+				CtoA : {
+					$kind : "NavigationProperty",
 					// no $Partner (could be in a derived type)
-					"$Type" : "reduce.path.A"
+					$Type : "reduce.path.A"
 				},
-				"CtoB" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "BtoC",
-					"$Type" : "reduce.path.B"
+				CtoB : {
+					$kind : "NavigationProperty",
+					$Partner : "BtoC",
+					$Type : "reduce.path.B"
 				}
 			},
 			"reduce.path.D" : {
-				"$kind" : "EntityType",
-				"DValue" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				DValue : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"DtoA" : {
-					"$kind" : "NavigationProperty",
-					"$Partner" : "AtoDs",
-					"$Type" : "reduce.path.A"
+				DtoA : {
+					$kind : "NavigationProperty",
+					$Partner : "AtoDs",
+					$Type : "reduce.path.A"
 				},
-				"DtoBs" : {
-					"$isCollection" : true,
-					"$kind" : "NavigationProperty",
-					"$Partner" : "BtoD",
-					"$Type" : "reduce.path.B"
+				DtoBs : {
+					$isCollection : true,
+					$kind : "NavigationProperty",
+					$Partner : "BtoD",
+					$Type : "reduce.path.B"
 				},
-				"DtoCs" : {
-					"$isCollection" : true,
-					"$kind" : "NavigationProperty",
-					"$Type" : "reduce.path.C"
+				DtoCs : {
+					$isCollection : true,
+					$kind : "NavigationProperty",
+					$Type : "reduce.path.C"
 				}
 			},
 			"reduce.path.Action" : [{
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "reduce.path.A"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "reduce.path.A"
 				}, {
-					"$Name" : "foo",
-					"$Type" : "Edm.String"
+					$Name : "foo",
+					$Type : "Edm.String"
 				}]
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "Value",
-					"$Type" : "reduce.path.D"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "Value",
+					$Type : "reduce.path.D"
 				}]
 			}, {
-				"$kind" : "Action",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$isCollection" : true,
-					"$Name" : "_it",
-					"$Type" : "reduce.path.B"
+				$kind : "Action",
+				$IsBound : true,
+				$Parameter : [{
+					$isCollection : true,
+					$Name : "_it",
+					$Type : "reduce.path.B"
 				}]
 			}],
 			"reduce.path.Function" : [{
-				"$kind" : "Function",
-				"$Parameter" : [{
-					"$Name" : "foo",
-					"$Type" : "reduce.path.A"
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "foo",
+					$Type : "reduce.path.A"
 				}]
 			}, {
-				"$kind" : "Function",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "reduce.path.D"
+				$kind : "Function",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "reduce.path.D"
 				}]
 			}, {
-				"$kind" : "Function",
-				"$IsBound" : true,
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Type" : "reduce.path.D"
+				$kind : "Function",
+				$IsBound : true,
+				$Parameter : [{
+					$Name : "_it",
+					$Type : "reduce.path.D"
 				}, {
-					"$Name" : "Value",
-					"$Type" : "Edm.Int"
+					$Name : "Value",
+					$Type : "Edm.Int"
 				}]
 			}],
 			"reduce.path.DefaultContainer" : {
-				"$kind" : "EntityContainer",
-				"As" : {
-					"$kind" : "EntitySet",
-					"$Type" : "reduce.path.A"
+				$kind : "EntityContainer",
+				As : {
+					$kind : "EntitySet",
+					$Type : "reduce.path.A"
 				},
-				"Ds" : {
-					"$kind" : "EntitySet",
-					"$Type" : "reduce.path.D"
+				Ds : {
+					$kind : "EntitySet",
+					$Type : "reduce.path.D"
 				},
-				"FunctionImport" : {
-					"$kind" : "FunctionImport",
-					"$Function" : "reduce.path.Function"
+				FunctionImport : {
+					$kind : "FunctionImport",
+					$Function : "reduce.path.Function"
 				}
 			}
 		},
 		mSupplierScope = {
-			"$Version" : "4.0",
+			$Version : "4.0",
 			"tea_busi_supplier.v0001." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"tea_busi_supplier.v0001.Supplier" : {
-				"$kind" : "EntityType",
-				"Supplier_Name" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				$kind : "EntityType",
+				Supplier_Name : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				}
 			}
 		},
@@ -1020,45 +1020,45 @@ sap.ui.define([
 		oTeamLineItem = mScope.$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"],
 		mXServiceScope = {
-			"$Version" : "4.0",
-			"$Annotations" : {}, // simulate ODataMetaModel#_mergeAnnotations
-			"$EntityContainer" : "tea_busi.v0001.DefaultContainer",
-			"$Reference" : {
+			$Version : "4.0",
+			$Annotations : {}, // simulate ODataMetaModel#_mergeAnnotations
+			$EntityContainer : "tea_busi.v0001.DefaultContainer",
+			$Reference : {
 				// Note: Do not reference tea_busi_supplier directly from here! We want to test the
 				// special case that it is only indirectly referenced.
 				"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"tea_busi_foo.v0001."
 					]
 				},
 				"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"ignore.me.",
 						"tea_busi_product.v0001."
 					]
 				},
 				"/empty/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"empty.",
 						"I.still.haven't.found.what.I'm.looking.for."
 					]
 				}
 			},
 			"tea_busi.v0001." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"tea_busi.v0001.DefaultContainer" : {
-				"$kind" : "EntityContainer",
+				$kind : "EntityContainer",
 				"EQUIPM€NTS" : {
-					"$kind" : "EntitySet",
-					"$Type" : "tea_busi.v0001.EQUIPMENT"
+					$kind : "EntitySet",
+					$Type : "tea_busi.v0001.EQUIPMENT"
 				}
 			},
 			"tea_busi.v0001.EQUIPMENT" : {
-				"$kind" : "EntityType",
-				"EQUIPMENT_2_PRODUCT" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi_product.v0001.Product"
+				$kind : "EntityType",
+				EQUIPMENT_2_PRODUCT : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi_product.v0001.Product"
 				}
 			}
 		},
@@ -1741,7 +1741,7 @@ sap.ui.define([
 				// - "tea_busi.NewAction(Collection(tea_busi.TEAM))/Team_Id"
 				"@Common.Label" : "New Team ID",
 				"@Common.Text" : {
-					"$AnnotationPath" : "_it/Name@Common.Label"
+					$AnnotationPath : "_it/Name@Common.Label"
 					// Note: "$Path" : "_it/Name" must not appear here! PUT semantics, not PATCH
 				},
 				"@Common.ValueListWithFixedValues" : true
@@ -1770,7 +1770,7 @@ sap.ui.define([
 				"@Common.Label" : "Create New Team",
 				"@Common.QuickInfo" : "Hello, world!",
 				"@Core.OperationAvailable" : {
-					"$Path" : "_it/Name"
+					$Path : "_it/Name"
 					// Note: "$PropertyPath" : "n/a" must not appear here! PUT semantics, not PATCH
 				}
 			});
@@ -2630,10 +2630,10 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var mScope0 = {
-					"$Version" : "4.0",
-					"$Reference" : {
+					$Version : "4.0",
+					$Reference : {
 						"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
-							"$Include" : [
+							$Include : [
 								"not.found.",
 								"tea_busi_product.v0001.",
 								"tea_busi_supplier.v0001."
@@ -2642,15 +2642,15 @@ sap.ui.define([
 					}
 				},
 				mReferencedScope = {
-					"$Version" : "4.0",
+					$Version : "4.0",
 					"must.not.be.included." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"tea_busi_product.v0001." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"tea_busi_supplier.v0001." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					}
 				},
 				oRequestorMock = this.mock(this.oMetaModel.oRequestor),
@@ -2751,41 +2751,41 @@ sap.ui.define([
 		var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
 			// root service includes both A and B, A also includes B
 			mScope0 = {
-				"$Version" : "4.0",
-				"$Reference" : {
+				$Version : "4.0",
+				$Reference : {
 					"/A/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"A."
 						]
 					},
 					"/B/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"B."
 						]
 					}
 				}
 			},
 			mScopeA = {
-				"$Version" : "4.0",
-				"$Reference" : {
+				$Version : "4.0",
+				$Reference : {
 					"/B/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"B.",
 							"B.B." // includes additional namespace from already read document
 						]
 					}
 				},
 				"A." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			},
 			mScopeB = {
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"B." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"B.B." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			},
 			that = this;
@@ -3417,7 +3417,7 @@ sap.ui.define([
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
-				var oEntityInstance = {"@$ui5._" : {"predicate" : oRequest.predicate}};
+				var oEntityInstance = {"@$ui5._" : {predicate : oRequest.predicate}};
 
 				oContextMock.expects("fetchValue")
 					.withExactArgs(oRequest.path || oFixture.dataPath)
@@ -3597,7 +3597,7 @@ sap.ui.define([
 					that.oMetaModelMock.expects("fetchEntityContainer")
 						.returns(SyncPromise.resolve(mScope));
 					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, i) {
-						var oEntityInstance = {"@$ui5._" : {"predicate" : "(~" + i + ")"}};
+						var oEntityInstance = {"@$ui5._" : {predicate : "(~" + i + ")"}};
 
 						// Note: the entity instance is delivered asynchronously
 						oContextMock.expects("fetchValue")
@@ -3632,7 +3632,7 @@ sap.ui.define([
 		// Note: we try to "calculate key predicate" because context path alone is no indication
 		// that entity is still transient! @see "@$ui5.keepTransientPath"
 		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS($uid=id-1-23)")
-			.returns(SyncPromise.resolve({"@$ui5._" : {"transient" : "update"}}));
+			.returns(SyncPromise.resolve({"@$ui5._" : {transient : "update"}}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData("Name", oContext).then(function (oResult) {
@@ -4521,23 +4521,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("validate: mSchema2MetadataUrl", function (assert) {
 		var mScope = {
-				"$Version" : "4.0",
-				"$Reference" : {
+				$Version : "4.0",
+				$Reference : {
 					"/A/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"A.", "A.A."
 						]
 					},
 					"/B/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"B.", "B.B."
 						]
 					},
 					"/C/$metadata" : {
-						"$Include" : ["C."]
+						$Include : ["C."]
 					},
 					"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"tea_busi_product."
 						]
 					}
@@ -4574,17 +4574,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getLastModified", function (assert) {
 		var mEmptyScope = {
-				"$Version" : "4.0"
+				$Version : "4.0"
 			},
 			mNewScope = {
-				"$Version" : "4.0",
-				"$Date" : "Tue, 18 Apr 2017 14:40:29 GMT"
+				$Version : "4.0",
+				$Date : "Tue, 18 Apr 2017 14:40:29 GMT"
 			},
 			iNow = Date.now(),
 			mOldScope = {
-				"$Version" : "4.0",
-				"$Date" : "Tue, 18 Apr 2017 14:40:29 GMT", // $LastModified wins!
-				"$LastModified" : "Fri, 07 Apr 2017 11:21:50 GMT"
+				$Version : "4.0",
+				$Date : "Tue, 18 Apr 2017 14:40:29 GMT", // $LastModified wins!
+				$LastModified : "Fri, 07 Apr 2017 11:21:50 GMT"
 			},
 			mOldScopeClone = clone(mOldScope),
 			sUrl = "/~/$metadata"; // Note: in real life, each URL is read at most once!
@@ -4638,19 +4638,19 @@ sap.ui.define([
 		assert.deepEqual(this.oMetaModel.getETags(), {}, "initial value");
 
 		codeUnderTest("/~/A", {
-			"$Version" : "4.0",
-			"$LastModified" : "Fri, 07 Apr 2017 11:21:50 GMT"
+			$Version : "4.0",
+			$LastModified : "Fri, 07 Apr 2017 11:21:50 GMT"
 		});
 		codeUnderTest("/~/B", {
-			"$Version" : "4.0",
-			"$LastModified" : "Tue, 18 Apr 2017 14:40:29 GMT"
+			$Version : "4.0",
+			$LastModified : "Tue, 18 Apr 2017 14:40:29 GMT"
 		});
 		codeUnderTest("/~/C", {
-			"$Version" : "4.0"
+			$Version : "4.0"
 		});
 		codeUnderTest("/~/D", {
-			"$Version" : "4.0",
-			"$ETag" : sETag
+			$Version : "4.0",
+			$ETag : sETag
 		});
 
 		// code under test
@@ -4668,16 +4668,16 @@ sap.ui.define([
 	[{
 		message : "Unsupported IncludeAnnotations",
 		scope : {
-			"$Version" : "4.0",
-			"$Reference" : {
+			$Version : "4.0",
+			$Reference : {
 				"/A/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"A."
 					]
 				},
 				"/B/$metadata" : {
-					"$IncludeAnnotations" : [{
-						"$TermNamespace" : "com.sap.vocabularies.Common.v1"
+					$IncludeAnnotations : [{
+						$TermNamespace : "com.sap.vocabularies.Common.v1"
 					}]
 				}
 			}
@@ -4686,31 +4686,31 @@ sap.ui.define([
 		message : "A schema cannot span more than one document: tea_busi."
 			+ " - is both included and defined",
 		scope : {
-			"$Version" : "4.0",
-			"$Reference" : {
+			$Version : "4.0",
+			$Reference : {
 				"/B/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"foo.", "tea_busi."
 					]
 				}
 			},
 			"tea_busi." : {
-				"$kind" : "Schema"
+				$kind : "Schema"
 			}
 		}
 	}, {
 		message : "A schema cannot span more than one document: existing."
 			+ " - expected reference URI /B/v1/$metadata but instead saw /B/v2/$metadata",
 		scope : {
-			"$Version" : "4.0",
-			"$Reference" : {
+			$Version : "4.0",
+			$Reference : {
 				"/A/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"foo.", "bar."
 					]
 				},
 				"/B/v2/$metadata" : {
-					"$Include" : [
+					$Include : [
 						"baz.", "existing."
 					]
 				}
@@ -4764,7 +4764,7 @@ sap.ui.define([
 				"same.target" : {
 					"@Common.Description" : "",
 					"@Common.Label" : {
-						"old" : true // Note: no aggregation of properties here!
+						old : true // Note: no aggregation of properties here!
 					},
 					"@Common.Text" : ""
 				},
@@ -4774,23 +4774,23 @@ sap.ui.define([
 			},
 			mScope = {
 				"A." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"same.target" : {
 							"@Common.Label" : {
-								"old" : true
+								old : true
 							},
 							"@Common.Text" : ""
 						}
 					}
 				},
 				"B." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"same.target" : {
 							"@Common.Description" : "",
 							"@Common.Label" : { // illegal overwrite within $metadata, ignored!
-								"new" : true
+								new : true
 							}
 						},
 						"another.target" : {
@@ -4923,18 +4923,18 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_mergeAnnotations: with annotation files", function (assert) {
 		var mScope0 = {
-				"$EntityContainer" : "tea_busi.DefaultContainer",
-				"$Reference" : {
+				$EntityContainer : "tea_busi.DefaultContainer",
+				$Reference : {
 					"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"tea_busi_foo.v0001."
 						]
 					}
 				},
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"tea_busi." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"tea_busi.DefaultContainer" : {
 							"@A" : "from $metadata",
 							"@B" : "from $metadata",
@@ -4948,41 +4948,41 @@ sap.ui.define([
 					}
 				},
 				"tea_busi.DefaultContainer" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				},
 				"tea_busi.EQUIPMENT" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"tea_busi.TEAM" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"tea_busi.Worker" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				}
 			},
 			mScope1 = {
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"tea_busi_foo.v0001." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"tea_busi_foo.v0001.Product/Name" : {
 							"@Common.Label" : "from $metadata"
 						}
 					}
 				},
 				"tea_busi_foo.v0001.Product" : {
-					"$kind" : "EntityType",
-					"Name" : {
-						"$kind" : "Property",
-						"$Type" : "Edm.String"
+					$kind : "EntityType",
+					Name : {
+						$kind : "Property",
+						$Type : "Edm.String"
 					}
 				}
 			},
 			mAnnotationScope1 = {
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"tea_busi.DefaultContainer" : {
 							"@B" : "from annotation #1",
 							"@C" : "from annotation #1"
@@ -4993,8 +4993,8 @@ sap.ui.define([
 						},
 						"tea_busi.Worker" : {
 							"@From.Annotation" : {
-								"$Type" : "some.Record",
-								"Label" : "from annotation #1"
+								$Type : "some.Record",
+								Label : "from annotation #1"
 							},
 							"@From.Annotation1" : "from annotation #1"
 						}
@@ -5002,10 +5002,10 @@ sap.ui.define([
 				}
 			},
 			mAnnotationScope2 = {
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"bar." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"tea_busi.DefaultContainer" : {
 							"@C" : "from annotation #2"
 						},
@@ -5017,8 +5017,8 @@ sap.ui.define([
 						},
 						"tea_busi.Worker" : {
 							"@From.Annotation" : {
-								"$Type" : "some.Record",
-								"Value" : "from annotation #2"
+								$Type : "some.Record",
+								Value : "from annotation #2"
 							}
 						},
 						"tea_busi_foo.v0001.Product/Name" : {
@@ -5028,7 +5028,7 @@ sap.ui.define([
 				}
 			},
 			mExpectedScope = {
-				"$Annotations" : {
+				$Annotations : {
 					"tea_busi.DefaultContainer" : {
 						"@A" : "from $metadata",
 						"@B" : "from annotation #1",
@@ -5044,9 +5044,9 @@ sap.ui.define([
 					},
 					"tea_busi.Worker" : {
 						"@From.Annotation" : {
-							"$Type" : "some.Record",
+							$Type : "some.Record",
 							// Note: no "Label" here!
-							"Value" : "from annotation #2"
+							Value : "from annotation #2"
 						},
 						"@From.Annotation1" : "from annotation #1"
 					},
@@ -5054,35 +5054,35 @@ sap.ui.define([
 						"@Common.Label" : "from annotation #2"
 					}
 				},
-				"$EntityContainer" : "tea_busi.DefaultContainer",
-				"$Reference" : {
+				$EntityContainer : "tea_busi.DefaultContainer",
+				$Reference : {
 					"../../../../default/iwbep/tea_busi_foo/0001/$metadata" : {
-						"$Include" : [
+						$Include : [
 							"tea_busi_foo.v0001."
 						]
 					}
 				},
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"bar." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"tea_busi." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"tea_busi.DefaultContainer" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				},
 				"tea_busi.EQUIPMENT" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"tea_busi.TEAM" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"tea_busi.Worker" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				}
 			};
 
@@ -5132,22 +5132,22 @@ sap.ui.define([
 	QUnit.test("_mergeAnnotations - error (legacy)", function (assert) {
 		var oAnnotation1 = {
 				"tea_busi.NewType1" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				}
 			},
 			oAnnotation2 = {
 				"tea_busi.NewType2" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"tea_busi.ExistingType" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				}
 			},
 			sMessage = "A schema cannot span more than one document: tea_busi.ExistingType",
 			oError = new Error("/my/annotation.xml: " + sMessage),
 			oMetadata = {
 				"tea_busi.ExistingType" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				}
 			};
 
@@ -5176,17 +5176,17 @@ sap.ui.define([
 	QUnit.test("_mergeAnnotations - a schema cannot span more than one document",
 		function (assert) {
 			var oAnnotation = {
-					"$Version" : "4.0",
+					$Version : "4.0",
 					"tea_busi." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					}
 				},
 				sMessage = "A schema cannot span more than one document: tea_busi.",
 				oError = new Error("/my/annotation.xml: " + sMessage),
 				oMetadata = {
-					"$Version" : "4.0",
+					$Version : "4.0",
 					"tea_busi." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					}
 				};
 
@@ -5200,7 +5200,7 @@ sap.ui.define([
 
 			assert.throws(function () {
 				// code under test
-				this.oMetaModel._mergeAnnotations(oMetadata, [{"$Version" : "4.0"}, oAnnotation]);
+				this.oMetaModel._mergeAnnotations(oMetadata, [{$Version : "4.0"}, oAnnotation]);
 			}, new Error("/my/annotation.xml: " + sMessage));
 		}
 	);
@@ -5417,14 +5417,14 @@ sap.ui.define([
 	}, {
 		mAnnotations : {
 			"@com.sap.vocabularies.Common.v1.ValueList#foo" : {
-				"SearchSupported" : false
+				SearchSupported : false
 			}
 		},
 		sValueListType : ValueListType.Fixed
 	}, {
 		mAnnotations : {
 			"@com.sap.vocabularies.Common.v1.ValueList#foo" : {
-				"SearchSupported" : true
+				SearchSupported : true
 			}
 		},
 		sValueListType : ValueListType.Standard
@@ -5468,7 +5468,7 @@ sap.ui.define([
 			oFooMapping = {CollectionPath : "foo"},
 			oProperty = {},
 			oValueListMetadata = {
-				"$Annotations" : {
+				$Annotations : {
 					"zui5_epm_sample.Product/Category" : oAnnotations,
 					"some.other.Target" : {}
 				}
@@ -5494,7 +5494,7 @@ sap.ui.define([
 		).then(function (oValueListMappings) {
 			assert.deepEqual(oValueListMappings, {
 				"" : oDefaultMapping,
-				"foo" : oFooMapping
+				foo : oFooMapping
 			});
 		});
 	});
@@ -5511,7 +5511,7 @@ sap.ui.define([
 			oFooMapping = {CollectionPath : "foo"},
 			sTarget = b401 ? "name.space.Action()/Category" : "name.space.Action/Category",
 			oValueListMetadata = {
-				"$Annotations" : {
+				$Annotations : {
 					"name.space.Action(name.space.DoNotUse)/Category" : {},
 					"some.other.Target" : {}
 				}
@@ -5537,7 +5537,7 @@ sap.ui.define([
 		).then(function (oValueListMappings) {
 			assert.deepEqual(oValueListMappings, {
 				"" : oDefaultMapping,
-				"foo" : oFooMapping
+				foo : oFooMapping
 			});
 		});
 	});
@@ -5578,7 +5578,7 @@ sap.ui.define([
 			oDefaultMapping = {CollectionPath : "default"},
 			oFooMapping = {CollectionPath : "foo"},
 			oValueListMetadata = {
-				"$Annotations" : {
+				$Annotations : {
 					"name.space.Action/Category" : oAnnotations4,
 					"name.space.Action(name.space.DoNotUse)/Category" : {},
 					"some.other.Target" : {}
@@ -5609,8 +5609,8 @@ sap.ui.define([
 		).then(function (oValueListMappings) {
 			assert.deepEqual(oValueListMappings, {
 				"" : oDefaultMapping,
-				"bar" : oBarMapping,
-				"foo" : oFooMapping
+				bar : oBarMapping,
+				foo : oFooMapping
 			});
 			assert.strictEqual(JSON.stringify(oValueListMetadata), sValueListMetadata);
 		});
@@ -5672,7 +5672,7 @@ sap.ui.define([
 		annotations : {
 			"zui5_epm_sample.Product/Category" : {
 				"@com.sap.vocabularies.Common.v1.ValueList" : {
-					"CollectionRoot" : "/bar/$metadata"
+					CollectionRoot : "/bar/$metadata"
 				}
 			}
 		},
@@ -5683,7 +5683,7 @@ sap.ui.define([
 		annotations : {
 			"zui5_epm_sample.Product/Category" : {
 				"@com.sap.vocabularies.Common.v1.ValueList" : {
-					"SearchSupported" : false
+					SearchSupported : false
 				}
 			}
 		},
@@ -5700,7 +5700,7 @@ sap.ui.define([
 				oMetaModelMock = this.mock(oMetaModel),
 				oProperty = {},
 				oValueListMetadata = {
-					"$Annotations" : oFixture.annotations
+					$Annotations : oFixture.annotations
 				},
 				oValueListModel = {
 					getMetaModel : function () {
@@ -5742,19 +5742,19 @@ sap.ui.define([
 				}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				oMapping = {
-					"CollectionPath" : "VH_CountrySet",
-					"Parameters" : [{"p1" : "foo"}]
+					CollectionPath : "VH_CountrySet",
+					Parameters : [{p1 : "foo"}]
 				},
 				oProperty = {
-					"$kind" : "Property"
+					$kind : "Property"
 				},
 				oMetadata = {
-					"$EntityContainer" : "value_list.Container",
+					$EntityContainer : "value_list.Container",
 					"value_list.VH_BusinessPartner" : {
-						"$kind" : "Entity",
-						"Country" : oProperty
+						$kind : "Entity",
+						Country : oProperty
 					},
-					"$Annotations" : {
+					$Annotations : {
 						// value list on value list
 						"value_list.VH_BusinessPartner/Country" : oAnnotations,
 						"value_list.VH_BusinessPartner/Foo" : {/* some other field w/ value list*/}
@@ -5826,17 +5826,17 @@ sap.ui.define([
 				}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				oProperty = {
-					"$kind" : "Property"
+					$kind : "Property"
 				},
 				sPropertyPath = "/ProductList('HT-1000')/Category",
 				aValueListRelevantQualifiers = [],
 				oMetadata = {
-					"$EntityContainer" : "zui5_epm_sample.Container",
+					$EntityContainer : "zui5_epm_sample.Container",
 					"zui5_epm_sample.Product" : {
-						"$kind" : "Entity",
-						"Category" : oProperty
+						$kind : "Entity",
+						Category : oProperty
 					},
-					"$Annotations" : {
+					$Annotations : {
 						"zui5_epm_sample.Product/Category" : {
 							"@com.sap.vocabularies.Common.v1.ValueListReferences" :
 								[sMappingUrl1, sMappingUrl2],
@@ -5850,9 +5850,9 @@ sap.ui.define([
 						}
 					},
 					"zui5_epm_sample.Container" : {
-						"ProductList" : {
-							"$kind" : "EntitySet",
-							"$Type" : "zui5_epm_sample.Product"
+						ProductList : {
+							$kind : "EntitySet",
+							$Type : "zui5_epm_sample.Product"
 						}
 					}
 				},
@@ -5866,7 +5866,7 @@ sap.ui.define([
 					"" : {CollectionPath : ""}
 				},
 				oValueListMappings2 = {
-					"foo" : {CollectionPath : "foo"}
+					foo : {CollectionPath : "foo"}
 				},
 				oValueListMappingsBar = {},
 				oValueListModel1 = {sServiceUrl : sMappingUrl1},
@@ -5910,11 +5910,11 @@ sap.ui.define([
 							$model : oValueListModel1,
 							CollectionPath : ""
 						},
-						"foo" : {
+						foo : {
 							$model : oValueListModel2,
 							CollectionPath : "foo"
 						},
-						"bar" : {
+						bar : {
 							$model : oValueListModelBar,
 							CollectionPath : "bar"
 						}
@@ -5966,32 +5966,32 @@ sap.ui.define([
 				synchronizationMode : "None"
 			}),
 			oMetadata = {
-				"$Annotations" : {
+				$Annotations : {
 					"name.space.Action/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
 					}
 				},
-				"$EntityContainer" : "zui5_epm_sample.Container",
+				$EntityContainer : "zui5_epm_sample.Container",
 				"name.space.Action" : [{
-					"$kind" : "Action",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : "_it",
-						"$Type" : "zui5_epm_sample.Product"
+					$kind : "Action",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : "_it",
+						$Type : "zui5_epm_sample.Product"
 					}, {
-						"$Name" : "Category"
+						$Name : "Category"
 					}],
-					"$ReturnType" : {
-						"$Type" : "some.other.Type"
+					$ReturnType : {
+						$Type : "some.other.Type"
 					}
 				}],
 				"zui5_epm_sample.Product" : {
-					"$kind" : "Entity"
+					$kind : "Entity"
 				},
 				"zui5_epm_sample.Container" : {
-					"ProductList" : {
-						"$kind" : "EntitySet",
-						"$Type" : "zui5_epm_sample.Product"
+					ProductList : {
+						$kind : "EntitySet",
+						$Type : "zui5_epm_sample.Product"
 					}
 				}
 			},
@@ -6036,25 +6036,25 @@ sap.ui.define([
 				synchronizationMode : "None"
 			}),
 			oMetadata = {
-				"$Annotations" : {
+				$Annotations : {
 					"name.space.Action/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
 					}
 				},
-				"$EntityContainer" : "zui5_epm_sample.Container",
+				$EntityContainer : "zui5_epm_sample.Container",
 				"name.space.Action" : [{
-					"$kind" : "Action",
-					"$Parameter" : [{
-						"$Name" : "Category"
+					$kind : "Action",
+					$Parameter : [{
+						$Name : "Category"
 					}],
-					"$ReturnType" : {
-						"$Type" : "some.other.Type"
+					$ReturnType : {
+						$Type : "some.other.Type"
 					}
 				}],
 				"zui5_epm_sample.Container" : {
-					"ActionImport" : {
-						"$kind" : "ActionImport",
-						"$Action" : "name.space.Action"
+					ActionImport : {
+						$kind : "ActionImport",
+						$Action : "name.space.Action"
 					}
 				}
 			},
@@ -6093,23 +6093,23 @@ sap.ui.define([
 					getBinding : function () {}
 				},
 				oProperty = {
-					"$kind" : "Property"
+					$kind : "Property"
 				},
 				oValueListMappingFoo = {CollectionPath : "foo"},
 				oMetadata = {
-					"$EntityContainer" : "value_list.Container",
+					$EntityContainer : "value_list.Container",
 					"value_list.Container" : {
-						"$kind" : "EntityContainer",
-						"VH_BusinessPartnerSet" : {
-							"$kind" : "EntitySet",
-							"$Type" : "value_list.VH_BusinessPartner"
+						$kind : "EntityContainer",
+						VH_BusinessPartnerSet : {
+							$kind : "EntitySet",
+							$Type : "value_list.VH_BusinessPartner"
 						}
 					},
 					"value_list.VH_BusinessPartner" : {
-						"$kind" : "Entity",
-						"Country" : oProperty
+						$kind : "Entity",
+						Country : oProperty
 					},
-					"$Annotations" : {
+					$Annotations : {
 						"value_list.VH_BusinessPartner/Country" : oAnnotations
 					}
 				},
@@ -6138,8 +6138,8 @@ sap.ui.define([
 					delete oResult.foo.$model;
 					delete oResult.bar.$model;
 					assert.deepEqual(oResult, {
-						"foo" : {CollectionPath : "foo"},
-						"bar" : {CollectionPath : "bar"}
+						foo : {CollectionPath : "foo"},
+						bar : {CollectionPath : "bar"}
 					});
 				});
 		});
@@ -6156,19 +6156,19 @@ sap.ui.define([
 						"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true
 					},
 					oMetadata = {
-						"$EntityContainer" : "value_list.Container",
+						$EntityContainer : "value_list.Container",
 						"value_list.Container" : {
-							"$kind" : "EntityContainer",
-							"VH_BusinessPartnerSet" : {
-								"$kind" : "EntitySet",
-								"$Type" : "value_list.VH_BusinessPartner"
+							$kind : "EntityContainer",
+							VH_BusinessPartnerSet : {
+								$kind : "EntitySet",
+								$Type : "value_list.VH_BusinessPartner"
 							}
 						},
 						"value_list.VH_BusinessPartner" : {
-							"$kind" : "Entity",
-							"Country" : {}
+							$kind : "Entity",
+							Country : {}
 						},
-						"$Annotations" : {
+						$Annotations : {
 							"value_list.VH_BusinessPartner/Country" : oAnnotations
 						}
 					},
@@ -6218,39 +6218,39 @@ sap.ui.define([
 			}),
 			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oProperty = {
-				"$kind" : "Property"
+				$kind : "Property"
 			},
 			oMetadata = {
-				"$Version" : "4.0",
-				"$Reference" : {
+				$Version : "4.0",
+				$Reference : {
 					"/Foo/EpmSample/$metadata" : {
-						"$Include" : ["zui5_epm_sample."]
+						$Include : ["zui5_epm_sample."]
 					}
 				},
-				"$EntityContainer" : "base.Container",
+				$EntityContainer : "base.Container",
 				"base.Container" : {
-					"BusinessPartnerList" : {
-						"$kind" : "EntitySet",
-						"$Type" : "base.BusinessPartner"
+					BusinessPartnerList : {
+						$kind : "EntitySet",
+						$Type : "base.BusinessPartner"
 					}
 				},
 				"base.BusinessPartner" : {
-					"$kind" : "EntityType",
-					"BP_2_PRODUCT" : {
-						"$kind" : "NavigationProperty",
-						"$Type" : "zui5_epm_sample.Product"
+					$kind : "EntityType",
+					BP_2_PRODUCT : {
+						$kind : "NavigationProperty",
+						$Type : "zui5_epm_sample.Product"
 					}
 				}
 			},
 			oMetadataProduct = {
-				"$Version" : "4.0",
+				$Version : "4.0",
 				"zui5_epm_sample.Product" : {
-					"$kind" : "Entity",
-					"Category" : oProperty
+					$kind : "Entity",
+					Category : oProperty
 				},
 				"zui5_epm_sample." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"zui5_epm_sample.Product/Category" : {
 							"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
 						}
@@ -6297,22 +6297,22 @@ sap.ui.define([
 					"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
 				},
 				oProperty = {
-					"$kind" : "Property"
+					$kind : "Property"
 				},
 				oMetadata = {
-					"$EntityContainer" : "zui5_epm_sample.Container",
+					$EntityContainer : "zui5_epm_sample.Container",
 					"zui5_epm_sample.Container" : {
-						"$kind" : "EntityContainer",
-						"ProductList" : {
-							"$kind" : "EntitySet",
-							"$Type" : "zui5_epm_sample.Product"
+						$kind : "EntityContainer",
+						ProductList : {
+							$kind : "EntitySet",
+							$Type : "zui5_epm_sample.Product"
 						}
 					},
 					"zui5_epm_sample.Product" : {
-						"$kind" : "Entity",
-						"Category" : oProperty
+						$kind : "Entity",
+						Category : oProperty
 					},
-					"$Annotations" : {
+					$Annotations : {
 						"zui5_epm_sample.Product/Category" : oAnnotations
 					}
 				},
@@ -6333,7 +6333,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
 					sinon.match.same(oProperty), undefined)
-				.resolves({"foo" : {}});
+				.resolves({foo : {}});
 
 			// code under test
 			return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {
@@ -6357,32 +6357,32 @@ sap.ui.define([
 			}),
 			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oProperty = {
-				"$kind" : "Property"
+				$kind : "Property"
 			},
 			sPropertyPath = "/ProductList('HT-1000')/Category",
 			oMetadata = {
-				"$EntityContainer" : "zui5_epm_sample.Container",
+				$EntityContainer : "zui5_epm_sample.Container",
 				"zui5_epm_sample.Product" : {
-					"$kind" : "Entity",
-					"Category" : oProperty
+					$kind : "Entity",
+					Category : oProperty
 				},
-				"$Annotations" : {
+				$Annotations : {
 					"zui5_epm_sample.Product/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueList#foo" : {
-							"CollectionPath" : "VH_CategorySet",
-							"CollectionRoot" : sMappingUrl,
-							"SearchSupported" : true
+							CollectionPath : "VH_CategorySet",
+							CollectionRoot : sMappingUrl,
+							SearchSupported : true
 						}
 					}
 				},
 				"zui5_epm_sample.Container" : {
-					"ProductList" : {
-						"$kind" : "EntitySet",
-						"$Type" : "zui5_epm_sample.Product"
+					ProductList : {
+						$kind : "EntitySet",
+						$Type : "zui5_epm_sample.Product"
 					}
 				}
 			},
-			oValueListModel = {"id" : "ValueListModel"}; // for deepEqual
+			oValueListModel = {id : "ValueListModel"}; // for deepEqual
 
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
@@ -6393,7 +6393,7 @@ sap.ui.define([
 		// code under test
 		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function (oResult) {
 			assert.deepEqual(oResult, {
-				"foo" : {
+				foo : {
 					$model : oValueListModel,
 					CollectionPath : "VH_CategorySet"
 				}
@@ -6410,27 +6410,27 @@ sap.ui.define([
 				+ (bOverride ? "override" : "collision"), function (assert) {
 			var sCollectionRoot = "", // unrealistic, but enforces "CollectionRoot" in ...
 				oProperty = {
-					"$kind" : "Property"
+					$kind : "Property"
 				},
 				sValueListService = "../ValueListService/$metadata",
 				oMetadata = {
-					"$EntityContainer" : "zui5_epm_sample.Container",
+					$EntityContainer : "zui5_epm_sample.Container",
 					"zui5_epm_sample.Product" : {
-						"$kind" : "Entity",
-						"Category" : oProperty
+						$kind : "Entity",
+						Category : oProperty
 					},
 					"zui5_epm_sample.Container" : {
-						"ProductList" : {
-							"$kind" : "EntitySet",
-							"$Type" : "zui5_epm_sample.Product"
+						ProductList : {
+							$kind : "EntitySet",
+							$Type : "zui5_epm_sample.Product"
 						}
 					},
-					"$Annotations" : {
+					$Annotations : {
 						"zui5_epm_sample.Product/Category" : {
 							"@com.sap.vocabularies.Common.v1.ValueList#bar" : {
-								"CollectionPath" : "foo",
-								"CollectionRoot" : sCollectionRoot,
-								"Label" : "from data service"
+								CollectionPath : "foo",
+								CollectionRoot : sCollectionRoot,
+								Label : "from data service"
 							},
 							"@com.sap.vocabularies.Common.v1.ValueListReferences" :
 								[sValueListService],
@@ -6444,12 +6444,12 @@ sap.ui.define([
 				}),
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				sPropertyPath = "/ProductList('HT-1000')/Category",
-				oValueListModel = {"id" : "ValueListModel"}, // for deepEqual
+				oValueListModel = {id : "ValueListModel"}, // for deepEqual
 				oValueListModel2 = bOverride ? oValueListModel : {},
 				oValueListMapping = {
-					"$model" : oValueListModel,
-					"CollectionPath" : "foo",
-					"Label" : "from value list service"
+					$model : oValueListModel,
+					CollectionPath : "foo",
+					Label : "from value list service"
 				};
 
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
@@ -6463,7 +6463,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
 					sinon.match.same(oProperty), undefined)
-				.resolves({"bar" : oValueListMapping});
+				.resolves({bar : oValueListMapping});
 
 			// code under test
 			return oModel.getMetaModel().requestValueListInfo(sPropertyPath, true)
@@ -6490,23 +6490,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestValueListInfo: two ValueListReferences stay in order", function (assert) {
 		var oProperty = {
-				"$kind" : "Property"
+				$kind : "Property"
 			},
 			sValueListService1 = "../FirstValueListService/$metadata",
 			sValueListService2 = "../SecondValueListService/$metadata",
 			oMetadata = {
-				"$EntityContainer" : "zui5_epm_sample.Container",
+				$EntityContainer : "zui5_epm_sample.Container",
 				"zui5_epm_sample.Product" : {
-					"$kind" : "Entity",
-					"Category" : oProperty
+					$kind : "Entity",
+					Category : oProperty
 				},
 				"zui5_epm_sample.Container" : {
-					"ProductList" : {
-						"$kind" : "EntitySet",
-						"$Type" : "zui5_epm_sample.Product"
+					ProductList : {
+						$kind : "EntitySet",
+						$Type : "zui5_epm_sample.Product"
 					}
 				},
-				"$Annotations" : {
+				$Annotations : {
 					"zui5_epm_sample.Product/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueListReferences" :
 							[sValueListService1, sValueListService2]
@@ -6522,17 +6522,17 @@ sap.ui.define([
 			fnResolve1,
 			fnResolve2,
 			oResultPromise,
-			oValueListModel1 = {"id" : "FirstValueListModel"}, // for deepEqual
-			oValueListModel2 = {"id" : "SecondValueListModel"},
+			oValueListModel1 = {id : "FirstValueListModel"}, // for deepEqual
+			oValueListModel2 = {id : "SecondValueListModel"},
 			oValueListMapping1 = {
-				"$model" : oValueListModel1,
-				"CollectionPath" : "foo",
-				"Label" : "from first value list service"
+				$model : oValueListModel1,
+				CollectionPath : "foo",
+				Label : "from first value list service"
 			},
 			oValueListMapping2 = {
-				"$model" : oValueListModel2,
-				"CollectionPath" : "bar",
-				"Label" : "from second value list service"
+				$model : oValueListModel2,
+				CollectionPath : "bar",
+				Label : "from second value list service"
 			};
 
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
@@ -6557,12 +6557,12 @@ sap.ui.define([
 			.then(function (oResult) {
 				assert.deepEqual(Object.keys(oResult), ["foo", "bar"]);
 				assert.deepEqual(oResult, {
-					"foo" : {
+					foo : {
 						$model : oValueListModel1,
 						CollectionPath : "foo",
 						Label : "from first value list service"
 					},
-					"bar" : {
+					bar : {
 						$model : oValueListModel2,
 						CollectionPath : "bar",
 						Label : "from second value list service"
@@ -6570,9 +6570,9 @@ sap.ui.define([
 				});
 			});
 
-		fnResolve2({"bar" : oValueListMapping2});
+		fnResolve2({bar : oValueListMapping2});
 		// make sure the first fetchValueListMapping call is resolved only after the second
-		setTimeout(fnResolve1, 0, {"foo" : oValueListMapping1});
+		setTimeout(fnResolve1, 0, {foo : oValueListMapping1});
 		return oResultPromise;
 	});
 
@@ -6585,19 +6585,19 @@ sap.ui.define([
 			}),
 			oMetaModelMock = this.mock(oModel.getMetaModel()),
 			oProperty = {
-				"$kind" : "Property"
+				$kind : "Property"
 			},
 			oMetadata = {
-				"$EntityContainer" : "zui5_epm_sample.Container",
+				$EntityContainer : "zui5_epm_sample.Container",
 				"zui5_epm_sample.Product" : {
-					"$kind" : "Entity",
-					"Category" : oProperty
+					$kind : "Entity",
+					Category : oProperty
 				},
-				"$Annotations" : {
+				$Annotations : {
 					"zui5_epm_sample.Product/Category" : {
 						"@com.sap.vocabularies.Common.v1.ValueList#foo" : {
-							"CollectionPath" : "VH_CategorySet",
-							"SearchSupported" : true
+							CollectionPath : "VH_CategorySet",
+							SearchSupported : true
 						},
 						// Note: SearchSupported === true is equivalent to FixedValues === false
 						// We do not accept both at once, even if they are consistent
@@ -6605,9 +6605,9 @@ sap.ui.define([
 					}
 				},
 				"zui5_epm_sample.Container" : {
-					"ProductList" : {
-						"$kind" : "EntitySet",
-						"$Type" : "zui5_epm_sample.Product"
+					ProductList : {
+						$kind : "EntitySet",
+						$Type : "zui5_epm_sample.Product"
 					}
 				}
 			},
@@ -6630,7 +6630,7 @@ sap.ui.define([
 	QUnit.test("fetchData", function (assert) {
 		var oMetaData = {
 				"some.schema." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
 
@@ -6762,7 +6762,7 @@ sap.ui.define([
 						.resolves({
 //							$kind : "EntityType",
 							$Key : bHasAlternateKey === 0
-								? [{"MyAlias" : "UnitCode"}] // special case: alias is given
+								? [{MyAlias : "UnitCode"}] // special case: alias is given
 								: ["UnitCode"]
 						});
 					oCodeListMetaModelMock.expects("getObject")
@@ -6811,13 +6811,13 @@ sap.ui.define([
 
 						if (!bEmptyResponse) {
 							oExpectedCodeList = bHasStandardCode ? {
-								"ONE" : {StandardCode : "ENO", Text : "One", UnitSpecificScale : 0},
+								ONE : {StandardCode : "ENO", Text : "One", UnitSpecificScale : 0},
 								"%" : {StandardCode : "P/C", Text : "Percentage",
 									UnitSpecificScale : 2},
 								"%O" : {StandardCode : "P/M", Text : "Per mille",
 									UnitSpecificScale : 3}
 							} : {
-								"ONE" : {Text : "One", UnitSpecificScale : 0},
+								ONE : {Text : "One", UnitSpecificScale : 0},
 								"%" : {Text : "Percentage", UnitSpecificScale : 2},
 								"%O" : {Text : "Per mille", UnitSpecificScale : 3}
 							};
@@ -7540,7 +7540,7 @@ forEach({
 				+ "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
 			aRawRelevantQualifiers = [],
 			mValueListByQualifier = {
-				"in" : {
+				in : {
 					$model : {}
 				},
 				maybe : {

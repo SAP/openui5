@@ -533,9 +533,9 @@ sap.ui.define([
 		// simulate cached caches
 		oBinding.mCacheByResourcePath = {
 			"A('42')" : {$deepResourcePath : "not considered cache"},
-			"b" : oCache0,
-			"c" : oCache1,
-			"d" : oCache2
+			b : oCache0,
+			c : oCache1,
+			d : oCache2
 		};
 
 		this.mock(oCache0).expects("hasPendingChangesForPath").withExactArgs("").returns(false);
@@ -629,7 +629,7 @@ sap.ui.define([
 		}, {
 			oContext : Context.create({}, {}, "/v4Context"),
 			oTemplate : {
-				mParameters : {"$$groupId" : "myGroup"},
+				mParameters : {$$groupId : "myGroup"},
 				sPath : "relativeWithParameters",
 				bRelative : true
 			}
@@ -638,7 +638,7 @@ sap.ui.define([
 			oTemplate : {
 				aChildCanUseCachePromises : [],
 				oModel : {bAutoExpandSelect : true},
-				mParameters : {"$$aggregation" : {/*irrelevant*/}},
+				mParameters : {$$aggregation : {/*irrelevant*/}},
 				sPath : "relativeWithAggregation",
 				bRelative : true
 			}
@@ -727,7 +727,7 @@ sap.ui.define([
 			function (assert) {
 				var oBinding = new ODataBinding(oFixture.oTemplate),
 					oBindingMock = this.mock(oBinding),
-					mQueryOptions = {"$filter" : "filterValue"};
+					mQueryOptions = {$filter : "filterValue"};
 
 				this.mock(oBinding.oModel).expects("resolve").twice()
 					.withExactArgs(oBinding.sPath, sinon.match.same(oFixture.oContext))
@@ -1304,7 +1304,7 @@ sap.ui.define([
 					mUriParameters : {}
 				},
 				sPath : "relative",
-				mParameters : {"$$canonicalPath" : true},
+				mParameters : {$$canonicalPath : true},
 				bRelative : true,
 				toString : function () { return "MyBinding"; }
 			}),
@@ -2495,14 +2495,14 @@ sap.ui.define([
 				oCache : {removeMessages : function () {}}
 			}),
 			mCacheByResourcePath = {
-				"foo1" : {
+				foo1 : {
 					$deepResourcePath : "fooDeep1"
 				},
-				"foo2" : {
+				foo2 : {
 					$deepResourcePath : "fooDeep2",
 					removeMessages : function () {}
 				},
-				"foo3" : {
+				foo3 : {
 					$deepResourcePath : "fooDeep3"
 				}
 			},
@@ -2536,8 +2536,8 @@ sap.ui.define([
 		oBinding.removeCachesAndMessages("~base~path~", bCachesOnly);
 
 		assert.deepEqual(oBinding.mCacheByResourcePath, {
-			"foo1" : {$deepResourcePath : "fooDeep1"},
-			"foo3" : {$deepResourcePath : "fooDeep3"}
+			foo1 : {$deepResourcePath : "fooDeep1"},
+			foo3 : {$deepResourcePath : "fooDeep3"}
 		});
 	});
 });

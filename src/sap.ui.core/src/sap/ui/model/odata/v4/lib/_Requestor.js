@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
-			"Accept" : "multipart/mixed"
+			Accept : "multipart/mixed"
 		},
 		sClassName = "sap.ui.model.odata.v4.lib._Requestor",
 		rSystemQueryOptionWithPlaceholder = /(\$\w+)=~/g,
@@ -104,14 +104,14 @@ sap.ui.define([
 	 * Predefined request headers in $batch parts for OData V4.
 	 */
 	_Requestor.prototype.mPredefinedPartHeaders = {
-		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
+		Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
 	};
 
 	/**
 	 * Predefined request headers for all requests for OData V4.
 	 */
 	_Requestor.prototype.mPredefinedRequestHeaders = {
-		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+		Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 		"OData-MaxVersion" : "4.0",
 		"OData-Version" : "4.0",
 		"X-CSRF-Token" : "Fetch"

@@ -209,7 +209,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getServiceUrl", function (assert) {
 		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface,
-				{"foo" : "must be ignored"});
+				{foo : "must be ignored"});
 
 		// code under test
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl);
@@ -243,10 +243,10 @@ sap.ui.define([
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		mPredefinedPartHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
+			Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
 		},
 		mPredefinedRequestHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
 			"X-CSRF-Token" : "Fetch"
@@ -257,12 +257,12 @@ sap.ui.define([
 			"Content-Type" : "application/json;charset=UTF-8"
 		},
 		mPredefinedPartHeaders : {
-			"Accept" : "application/json"
+			Accept : "application/json"
 		},
 		mPredefinedRequestHeaders : {
-			"Accept" : "application/json",
-			"MaxDataServiceVersion" : "2.0",
-			"DataServiceVersion" : "2.0",
+			Accept : "application/json",
+			MaxDataServiceVersion : "2.0",
+			DataServiceVersion : "2.0",
 			"X-CSRF-Token" : "Fetch"
 		}
 	}].forEach(function (oFixture) {
@@ -302,10 +302,10 @@ sap.ui.define([
 				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 			},
 			mPredefinedPartHeaders = {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
+				Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
 			},
 			mPredefinedRequestHeaders = {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+				Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 				"OData-MaxVersion" : "4.0",
 				"OData-Version" : "4.0",
 				"X-CSRF-Token" : "Fetch"
@@ -360,7 +360,7 @@ sap.ui.define([
 				oReadFailure = {},
 				oRequestor = _Requestor.create("/Service/", oModelInterface,
 					{"X-CSRF-Token" : "Fetch"}),
-				mResolvedHeaders = {"foo" : "bar"},
+				mResolvedHeaders = {foo : "bar"},
 				oResponsePayload = {},
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
 				oTokenRequiredResponse = {
@@ -374,7 +374,7 @@ sap.ui.define([
 							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
-					"status" : o.iStatus || 403
+					status : o.iStatus || 403
 				};
 
 			oHelperMock.expects("createError")
@@ -404,7 +404,7 @@ sap.ui.define([
 						&& oSettings.headers["X-CSRF-Token"] === "abc123") {
 						jqXHR = createMock(assert, oResponsePayload, "OK", {
 							"Content-Type" : "application/json",
-							"ETag" : "Bill",
+							ETag : "Bill",
 							"OData-Version" : "4.0",
 							"sap-messages" : "[{code : 42}]"
 						});
@@ -537,7 +537,7 @@ sap.ui.define([
 			.withExactArgs("/$batch", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
 			.returns(createMock(assert, "--batch-id...", "OK", {
 				"OData-Version" : "4.0",
-				"ETag" : "unexpected"
+				ETag : "unexpected"
 			}));
 
 		return oRequestor.sendRequest("POST", "$batch").then(function (oResult) {
@@ -593,7 +593,7 @@ sap.ui.define([
 							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
-					"status" : 500
+					status : 500
 				});
 			}, 0);
 			oJQueryMock.expects("ajax")
@@ -643,7 +643,7 @@ sap.ui.define([
 							default: assert.ok(false, "unexpected header " + sName);
 						}
 					},
-					"status" : 500
+					status : 500
 				});
 			}, 0);
 			oJQueryMock.expects("ajax")
@@ -712,7 +712,7 @@ sap.ui.define([
 					getResponseHeader : function () {
 						return "required";
 					},
-					"status" : 403
+					status : 403
 				};
 
 			if (oSettings.method === "HEAD") {
@@ -755,10 +755,10 @@ sap.ui.define([
 			var fnCancel = this.spy(),
 				oConvertedResponse = {},
 				oGroupLock,
-				oPayload = {"foo" : 42},
+				oPayload = {foo : 42},
 				oPromise,
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
-					"foo" : "URL params are ignored for normal requests"
+					foo : "URL params are ignored for normal requests"
 				}),
 				oResponse = {body : {}, messages : {}, resourcePath : "Employees?custom=value"},
 				fnSubmit = this.spy();
@@ -778,7 +778,7 @@ sap.ui.define([
 						? "~Employees~?custom=value&sap-statistics=false"
 						: "~Employees~?custom=value",
 					{
-						"header" : "value",
+						header : "value",
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 					}, "~payload~", "~Employees~?custom=value")
 				.resolves(oResponse);
@@ -790,7 +790,7 @@ sap.ui.define([
 
 			// code under test
 			oPromise = oRequestor.request("METHOD", "Employees?custom=value", oGroupLock, {
-				"header" : "value",
+				header : "value",
 				"Content-Type" : "wrong"
 			}, oPayload, fnSubmit, fnCancel, "meta/path");
 
@@ -806,10 +806,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{ // predefined headers can be overridden, but are not modified for later
-		defaultHeaders : {"Accept" : "application/json;odata.metadata=full;IEEE754Compatible=true"},
+		defaultHeaders : {Accept : "application/json;odata.metadata=full;IEEE754Compatible=true"},
 		requestHeaders : {"OData-MaxVersion" : "5.0", "OData-Version" : "4.1"},
 		result : {
-			"Accept" : "application/json;odata.metadata=full;IEEE754Compatible=true",
+			Accept : "application/json;odata.metadata=full;IEEE754Compatible=true",
 			"OData-MaxVersion" : "5.0",
 			"OData-Version" : "4.1"
 		}
@@ -827,8 +827,8 @@ sap.ui.define([
 		result : {"Accept-Language" : "ab-CD"}
 	}, {
 		defaultHeaders : {"Accept-Language" : "ab-CD"},
-		requestHeaders : {"foo" : "bar"},
-		result : {"Accept-Language" : "ab-CD", "foo" : "bar"}
+		requestHeaders : {foo : "bar"},
+		result : {"Accept-Language" : "ab-CD", foo : "bar"}
 	}].forEach(function (mHeaders) {
 		QUnit.test("request, headers: " + JSON.stringify(mHeaders), function (assert) {
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
@@ -838,7 +838,7 @@ sap.ui.define([
 				oResult = {},
 				// add predefined request headers for OData V4
 				mResultHeaders = Object.assign({}, {
-					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"OData-MaxVersion" : "4.0",
 					"OData-Version" : "4.0",
@@ -920,16 +920,16 @@ sap.ui.define([
 	[{
 		sODataVersion : "2.0",
 		mExpectedRequestHeaders : {
-			"Accept" : "application/json",
+			Accept : "application/json",
 			"Content-Type" : "application/json;charset=UTF-8",
-			"DataServiceVersion" : "2.0",
-			"MaxDataServiceVersion" : "2.0",
+			DataServiceVersion : "2.0",
+			MaxDataServiceVersion : "2.0",
 			"X-CSRF-Token" : "Fetch"
 		}
 	}, {
 		sODataVersion : "4.0",
 		mExpectedRequestHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
@@ -1012,7 +1012,7 @@ sap.ui.define([
 
 		this.mock(jQuery).expects("ajax")
 			.withArgs(sServiceUrl + "Employees")
-			.returns(createMock(assert, oResponsePayload, "OK", {"DataServiceVersion" : "2.0"}));
+			.returns(createMock(assert, oResponsePayload, "OK", {DataServiceVersion : "2.0"}));
 		this.mock(oRequestor).expects("doConvertResponse")
 			.withExactArgs(oResponsePayload, undefined)
 			.throws(oError);
@@ -1072,13 +1072,13 @@ sap.ui.define([
 
 		// Integrative test: use a real group lock because it depends on oRequestor.iSerialNumber
 		oRequestor.request("PATCH", "EntitySet1", oRequestor.lockGroup("groupId", {}),
-			{"foo" : "bar"}, {"a" : "b"});
+			{foo : "bar"}, {a : "b"});
 		oRequestor.request("PATCH", "EntitySet2", oRequestor.lockGroup("groupId", {}),
-			{"bar" : "baz"}, {"c" : "d"});
+			{bar : "baz"}, {c : "d"});
 		oRequestor.request("PATCH", "EntitySet3", oRequestor.lockGroup("$auto", {}),
-			{"header" : "value"}, {"e" : "f"});
+			{header : "value"}, {e : "f"});
 		oRequestor.request("PATCH", "EntitySet4", oRequestor.lockGroup("$auto", {}),
-			{"header" : "beAtFront"}, {"g" : "h"}, undefined, undefined, undefined, undefined,
+			{header : "beAtFront"}, {g : "h"}, undefined, undefined, undefined, undefined,
 			/*bAtFront*/true);
 		oRequestor.request("GET", "EntitySet5", oRequestor.lockGroup("$auto", {}));
 		oRequestor.request("GET", "EntitySet6", oRequestor.lockGroup("$auto", {}), undefined,
@@ -1086,67 +1086,67 @@ sap.ui.define([
 		oGroupLock = oRequestor.lockGroup("groupId", {});
 		oRequestor.addChangeSet("groupId");
 		oRequestor.request("PATCH", "EntitySet7", oRequestor.lockGroup("groupId", {}),
-			{"serialNumber" : "after change set 1"}, {"i" : "j"});
+			{serialNumber : "after change set 1"}, {i : "j"});
 		oRequestor.request("PATCH", "EntitySet8", oGroupLock,
-			{"serialNumber" : "before change set 1"}, {"k" : "l"});
+			{serialNumber : "before change set 1"}, {k : "l"});
 		oRequestor.request("PATCH", "EntitySet9", oRequestor.lockGroup("groupId", {}),
-			{"serialNumber" : "not set -> last change set"}, {"m" : "n"});
+			{serialNumber : "not set -> last change set"}, {m : "n"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
-			"groupId" : [
+			groupId : [
 				[/*change set 0*/{
 					method : "PATCH",
 					url : "EntitySet1",
 					headers : {
-						"foo" : "bar"
+						foo : "bar"
 					},
-					body : {"a" : "b"}
+					body : {a : "b"}
 				}, {
 					method : "PATCH",
 					url : "EntitySet2",
 					headers : {
-						"bar" : "baz"
+						bar : "baz"
 					},
-					body : {"c" : "d"}
+					body : {c : "d"}
 				}, {
 					method : "PATCH",
 					url : "EntitySet8",
 					headers : {
-						"serialNumber" : "before change set 1"
+						serialNumber : "before change set 1"
 					},
-					body : {"k" : "l"}
+					body : {k : "l"}
 				}],
 				[/*change set 1*/{
 					method : "PATCH",
 					url : "EntitySet7",
 					headers : {
-						"serialNumber" : "after change set 1"
+						serialNumber : "after change set 1"
 					},
-					body : {"i" : "j"}
+					body : {i : "j"}
 				}, {
 					method : "PATCH",
 					url : "EntitySet9",
 					headers : {
-						"serialNumber" : "not set -> last change set"
+						serialNumber : "not set -> last change set"
 					},
-					body : {"m" : "n"}
+					body : {m : "n"}
 				}]
 			],
-			"$auto" : [
+			$auto : [
 				[/*change set!*/{
 					method : "PATCH",
 					url : "EntitySet4",
 					headers : {
-						"header" : "beAtFront"
+						header : "beAtFront"
 					},
-					body : {"g" : "h"}
+					body : {g : "h"}
 				}, {
 					method : "PATCH",
 					url : "EntitySet3",
 					headers : {
-						"header" : "value"
+						header : "value"
 					},
-					body : {"e" : "f"}
+					body : {e : "f"}
 				}], {
 					method : "GET",
 					url : "EntitySet5"
@@ -1167,7 +1167,7 @@ sap.ui.define([
 			undefined, undefined, undefined, undefined, undefined, undefined, false, mQueryOptions);
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
-			"groupId" : [
+			groupId : [
 				[],
 				{
 					method : "GET",
@@ -1506,12 +1506,12 @@ sap.ui.define([
 				method : "POST",
 				url : "~Customers",
 				headers : {
-					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
-					"Foo" : "baz"
+					Foo : "baz"
 				},
-				body : {"ID" : 1},
+				body : {ID : 1},
 				$cancel : undefined,
 				$mergeRequests : undefined,
 				$metaPath : undefined,
@@ -1525,7 +1525,7 @@ sap.ui.define([
 				method : "DELETE",
 				url : "~SalesOrders('42')",
 				headers : {
-					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				},
@@ -1543,10 +1543,10 @@ sap.ui.define([
 				method : "GET",
 				url : "~Products('23')",
 				headers : {
-					"Accept" : "application/json;odata.metadata=full",
+					Accept : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
-					"Foo" : "bar"
+					Foo : "bar"
 				},
 				body : "~payload~",
 				$cancel : "~cancel~",
@@ -1562,7 +1562,7 @@ sap.ui.define([
 				method : "GET",
 				url : "~Products('4711')",
 				headers : {
-					"Accept" : "application/json;odata.metadata=full",
+					Accept : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				},
@@ -1580,10 +1580,10 @@ sap.ui.define([
 			sGroupId = "group1",
 			aMergedRequests,
 			aPromises = [],
-			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, {}],
+			aResults = [{foo1 : "bar1"}, {foo2 : "bar2"}, {}],
 			aBatchResults = [
 				[createResponse(aResults[1]), createResponse()],
-				createResponse(aResults[0], {"etAG" : "ETag value"}), createResponse()
+				createResponse(aResults[0], {etAG : "ETag value"}), createResponse()
 			],
 			oRequestor = _Requestor.create("/Service/", oModelInterface,
 				{"Accept-Language" : "ab-CD"}),
@@ -1600,7 +1600,7 @@ sap.ui.define([
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
 					"@odata.etag" : "ETag value",
-					"foo1" : "bar1"
+					foo1 : "bar1"
 				});
 				aResults[0] = null;
 				assert.notOk(bWaitingIsOver);
@@ -1619,7 +1619,7 @@ sap.ui.define([
 		aPromises.push(oRequestor.request("POST", "Customers", this.createGroupLock(sGroupId), {
 			Foo : "baz"
 		}, {
-			"ID" : 1
+			ID : 1
 		}).then(function (oResult) {
 			assert.deepEqual(oResult, aResults[1]);
 			aResults[1] = null;
@@ -1850,14 +1850,14 @@ sap.ui.define([
 	[{
 		sODataVersion : "2.0",
 		mExpectedRequestHeaders : {
-			"Accept" : "application/json",
+			Accept : "application/json",
 			"Content-Type" : "application/json;charset=UTF-8"
 		},
 		mProductsResponse : {d : {results : [{foo : "bar"}]}}
 	}, {
 		sODataVersion : "4.0",
 		mExpectedRequestHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		mProductsResponse : {value : [{foo : "bar"}]}
@@ -3446,7 +3446,7 @@ sap.ui.define([
 	}, {
 		iCallCount : 2,
 		sError : "'DataServiceVersion' header with value 'baz' in response for /Foo('42')/Bar",
-		mHeaders : {"DataServiceVersion" : "baz"}
+		mHeaders : {DataServiceVersion : "baz"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doCheckVersionHeader, error cases - " + i, function (assert) {
 			var oRequestor = _Requestor.create("/"),
@@ -3479,7 +3479,7 @@ sap.ui.define([
 				delete oPayload["@odata.metadataEtag"];
 				assert.deepEqual(oPayload, {
 					"@odata.context" : "$metadata#TEAMS/$entity",
-					"Team_Id" : "TEAM_01",
+					Team_Id : "TEAM_01",
 					Name : "Business Suite",
 					MEMBER_COUNT : 2,
 					MANAGER_ID : "3",
@@ -3510,7 +3510,7 @@ sap.ui.define([
 				delete oResult["@odata.metadataEtag"];
 				assert.deepEqual(oResult, {
 					"@odata.context" : "$metadata#TEAMS/$entity",
-					"Team_Id" : "TEAM_01",
+					Team_Id : "TEAM_01",
 					Name : "Business Suite",
 					MEMBER_COUNT : 2,
 					MANAGER_ID : "3",
@@ -3598,13 +3598,13 @@ sap.ui.define([
 	QUnit.test("getPathAndAddQueryOptions: Action", function (assert) {
 		var oOperationMetadata = {
 				$kind : "Action",
-				"$Parameter" : [{
-					"$Name" : "Foo"
+				$Parameter : [{
+					$Name : "Foo"
 				}, {
-					"$Name" : "ID"
+					$Name : "ID"
 				}]
 			},
-			mParameters = {"ID" : "1", "Foo" : 42, "n/a" : NaN},
+			mParameters = {ID : "1", Foo : 42, "n/a" : NaN},
 			oRequestor = _Requestor.create("/");
 
 		// code under test
@@ -3613,7 +3613,7 @@ sap.ui.define([
 				mParameters),
 			"OperationImport");
 
-		assert.deepEqual(mParameters, {"ID" : "1", "Foo" : 42}, "n/a is removed");
+		assert.deepEqual(mParameters, {ID : "1", Foo : 42}, "n/a is removed");
 
 		// code under test
 		assert.strictEqual(
@@ -3651,7 +3651,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
-				{"føø" : "bãr'1", "p2" : 42, "n/a" : NaN}),
+				{føø : "bãr'1", p2 : 42, "n/a" : NaN}),
 			"some.Function(f%C3%B8%C3%B8='b%C3%A3r''1',p2=42)");
 	});
 
@@ -3681,7 +3681,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oRequestor.getPathAndAddQueryOptions("/some.Function(...)", oOperationMetadata,
-				{"foo" : [42]});
+				{foo : [42]});
 		}, new Error("Unsupported collection-valued parameter: foo"));
 	});
 	//TODO what about actions & collections?
@@ -4062,7 +4062,7 @@ sap.ui.define([
 									assert.strictEqual(sName, "SAP-Err-Id");
 									return bErrorId ? "ICMENOSESSION" : null;
 								},
-								"status" : 500
+								status : 500
 							});
 							resolve();
 						}, 0);
@@ -4615,7 +4615,7 @@ sap.ui.define([
 				method : "POST",
 				url : "some/url",
 				headers : {
-					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+					Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				},
 				body : undefined,

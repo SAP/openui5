@@ -127,19 +127,19 @@ sap.ui.define([
 					<edmx:Include Namespace="bla"/>\
 				</edmx:Reference>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"/qux/$metadata" : {
-						"$Include" : ["qux.foo.", "qux.bar."],
-						"$IncludeAnnotations" : [{
-							"$TermNamespace" : "qux.foo."
+						$Include : ["qux.foo.", "qux.bar."],
+						$IncludeAnnotations : [{
+							$TermNamespace : "qux.foo."
 						}, {
-							"$TermNamespace" : "qux.bar.",
-							"$TargetNamespace" : "qux.bar.",
-							"$Qualifier" : "Tablet"
+							$TermNamespace : "qux.bar.",
+							$TargetNamespace : "qux.bar.",
+							$Qualifier : "Tablet"
 						}]
 					},
 					"/bla/$metadata" : {
-						"$Include" : ["bla."]
+						$Include : ["bla."]
 					}
 				}
 			});
@@ -157,17 +157,17 @@ sap.ui.define([
 				<Schema Namespace="foo" Alias="f"/>',
 			{
 				"bar." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"bar.Worker" : {
-					"$kind" : "ComplexType",
-					"Something" : {
-						"$kind" : "Property",
-						"$Type" : "bar.Something"
+					$kind : "ComplexType",
+					Something : {
+						$kind : "Property",
+						$Type : "bar.Something"
 					}
 				},
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			});
 	});
@@ -188,28 +188,28 @@ sap.ui.define([
 				<Schema Namespace="foo" Alias="f"/>\
 			</edmx:DataServices>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"/qux/$metadata" : {
-						"$Include" : ["qux."]
+						$Include : ["qux."]
 					}
 				},
 				"bar." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"bar.Worker" : {
-					"$kind" : "ComplexType",
-					"Something" : {
-						"$kind" : "Property",
-						"$Type" : "bar.Something"
+					$kind : "ComplexType",
+					Something : {
+						$kind : "Property",
+						$Type : "bar.Something"
 					},
-					"ManyThings" : {
-						"$kind" : "Property",
-						"$isCollection" : true,
-						"$Type" : "qux.Something"
+					ManyThings : {
+						$kind : "Property",
+						$isCollection : true,
+						$Type : "qux.Something"
 					}
 				},
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			});
 	});
@@ -228,19 +228,19 @@ sap.ui.define([
 				</Schema>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "EntityType",
-					"$Key" : ["Bar"]
+					$kind : "EntityType",
+					$Key : ["Bar"]
 				},
 				"foo.Base" : {
-					"$kind" : "EntityType",
-					"$Abstract" : true
+					$kind : "EntityType",
+					$Abstract : true
 				},
 				"foo.Derived" : {
-					"$kind" : "EntityType",
-					"$BaseType" : "foo.Base"
+					$kind : "EntityType",
+					$BaseType : "foo.Base"
 				}
 			});
 	});
@@ -253,10 +253,10 @@ sap.ui.define([
 				</Schema>',
 			{
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Worker" : {
-					"$kind" : "ComplexType"
+					$kind : "ComplexType"
 				}
 			});
 	});
@@ -315,49 +315,49 @@ sap.ui.define([
 						</Schema>",
 					{
 						"foo." : {
-							"$kind" : "Schema"
+							$kind : "Schema"
 						},
 						"foo.Worker" : {
-							"$kind" : sType,
-							"Salary" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Decimal",
-								"$Precision" : 8,
-								"$Scale" : 2
+							$kind : sType,
+							Salary : {
+								$kind : "Property",
+								$Type : "Edm.Decimal",
+								$Precision : 8,
+								$Scale : 2
 							},
-							"p1" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.String",
-								"$Unicode" : false
+							p1 : {
+								$kind : "Property",
+								$Type : "Edm.String",
+								$Unicode : false
 							},
-							"p2" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.String"
+							p2 : {
+								$kind : "Property",
+								$Type : "Edm.String"
 							},
-							"p3" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Int32",
-								"$DefaultValue" : "42"
+							p3 : {
+								$kind : "Property",
+								$Type : "Edm.Int32",
+								$DefaultValue : "42"
 							},
-							"p4" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.TimeOfDay",
-								"$v2Type" : "Edm.Time"
+							p4 : {
+								$kind : "Property",
+								$Type : "Edm.TimeOfDay",
+								$v2Type : "Edm.Time"
 							},
-							"p5" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.DateTimeOffset",
-								"$v2Type" : "Edm.DateTime"
+							p5 : {
+								$kind : "Property",
+								$Type : "Edm.DateTimeOffset",
+								$v2Type : "Edm.DateTime"
 							},
-							"p6" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Date",
-								"$v2Type" : "Edm.DateTime"
+							p6 : {
+								$kind : "Property",
+								$Type : "Edm.Date",
+								$v2Type : "Edm.DateTime"
 							},
-							"p7" : {
-								"$kind" : "Property",
-								"$Type" : "Edm.Single",
-								"$v2Type" : "Edm.Float"
+							p7 : {
+								$kind : "Property",
+								$Type : "Edm.Single",
+								$v2Type : "Edm.Float"
 							}
 						}
 					});
@@ -398,25 +398,25 @@ sap.ui.define([
 				</Schema>',
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
-					"$kind" : "EntityType",
-					"ToSalesOrders" : {
-						"$Type" : "GWSAMPLE_BASIC.0001.SalesOrder",
-						"$isCollection" : true,
-						"$kind" : "NavigationProperty"
+					$kind : "EntityType",
+					ToSalesOrders : {
+						$Type : "GWSAMPLE_BASIC.0001.SalesOrder",
+						$isCollection : true,
+						$kind : "NavigationProperty"
 					}
 				},
 				"GWSAMPLE_BASIC.0001.SalesOrder" : {
-					"$kind" : "EntityType",
-					"ToBusinessPartner" : {
-						"$Nullable" : false,
-						"$ReferentialConstraint" : {
-							"CustomerID" : "BusinessPartnerID"
+					$kind : "EntityType",
+					ToBusinessPartner : {
+						$Nullable : false,
+						$ReferentialConstraint : {
+							CustomerID : "BusinessPartnerID"
 						},
-						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
-						"$kind" : "NavigationProperty"
+						$Type : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						$kind : "NavigationProperty"
 					}
 				}
 			};
@@ -434,18 +434,18 @@ sap.ui.define([
 					<EntityContainer Name="Container"/>\
 				</Schema>',
 			{
-				"$EntityContainer" : "Schema1.Container",
+				$EntityContainer : "Schema1.Container",
 				"Schema1." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"Schema1.Container" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				},
 				"Schema2." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"Schema2.Container" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				}
 			});
 	});
@@ -494,57 +494,57 @@ sap.ui.define([
 					<EntityContainer Name="Container"/>\
 				</Schema>',
 			{
-				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
+				$EntityContainer : "GWSAMPLE_BASIC.0001.Container",
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.Container/BusinessPartnerSet" : {
 							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-								"Searchable" : false
+								Searchable : false
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Container/ProductSet" : {
 							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-								"Searchable" : false
+								Searchable : false
 							}
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
-					"$kind" : "EntityType",
-					"Foo" : {
-						"$kind" : "NavigationProperty",
-						"$isCollection" : true,
-						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					$kind : "EntityType",
+					Foo : {
+						$kind : "NavigationProperty",
+						$isCollection : true,
+						$Type : "GWSAMPLE_BASIC.0001.Product"
 					},
-					"ToProducts" : {
-						"$kind" : "NavigationProperty",
-						"$isCollection" : true,
-						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					ToProducts : {
+						$kind : "NavigationProperty",
+						$isCollection : true,
+						$Type : "GWSAMPLE_BASIC.0001.Product"
 					}
 				},
 				"GWSAMPLE_BASIC.0001.Product" : {
-					"$kind" : "EntityType"
+					$kind : "EntityType"
 				},
 				"GWSAMPLE_BASIC.0001.Container" : {
-					"$kind" : "EntityContainer",
-					"BusinessPartnerSet" : {
-						"$kind" : "EntitySet",
-						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
-						"$NavigationPropertyBinding" : {
-							"ToProducts" : "ProductSet"
+					$kind : "EntityContainer",
+					BusinessPartnerSet : {
+						$kind : "EntitySet",
+						$Type : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						$NavigationPropertyBinding : {
+							ToProducts : "ProductSet"
 						}
 					},
-					"ProductSet" : {
-						"$kind" : "EntitySet",
-						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					ProductSet : {
+						$kind : "EntitySet",
+						$Type : "GWSAMPLE_BASIC.0001.Product"
 					}
 				},
 				"AnotherSchema." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"AnotherSchema.Container" : {
-					"$kind" : "EntityContainer"
+					$kind : "EntityContainer"
 				}
 			});
 	});
@@ -567,33 +567,33 @@ sap.ui.define([
 						</EntityContainer>\
 					</Schema>',
 				oExpected = {
-					"$EntityContainer" : "foo.Container",
+					$EntityContainer : "foo.Container",
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Container" : {
-						"$kind" : "EntityContainer",
-						"Baz" : {
-							"$kind" : sWhat + "Import"
+						$kind : "EntityContainer",
+						Baz : {
+							$kind : sWhat + "Import"
 						}
 					},
 					"foo.Baz" : [{
-						"$kind" : sWhat,
-						"$Parameter" : [{
-							"$Name" : "p1",
-							"$Type" : "foo.Bar",
-							"$Nullable" : false
+						$kind : sWhat,
+						$Parameter : [{
+							$Name : "p1",
+							$Type : "foo.Bar",
+							$Nullable : false
 						}, {
-							"$Name" : "p2",
-							"$isCollection" : true,
-							"$Type" : "foo.Bar",
-							"$MaxLength" : 10,
-							"$Precision" : 2,
-							"$Scale" : "variable"
+							$Name : "p2",
+							$isCollection : true,
+							$Type : "foo.Bar",
+							$MaxLength : 10,
+							$Precision : 2,
+							$Scale : "variable"
 						}],
-						"$ReturnType" : {
-							"$isCollection" : true,
-							"$Type" : "Edm.String"
+						$ReturnType : {
+							$isCollection : true,
+							$Type : "Edm.String"
 						}
 					}]
 				};
@@ -617,22 +617,22 @@ sap.ui.define([
 					</EntityContainer>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"Baz" : {
-						"$EntitySet" : "Bar",
-						"$Function" : "foo.Baz",
-						"$kind" : "FunctionImport"
+					$kind : "EntityContainer",
+					Baz : {
+						$EntitySet : "Bar",
+						$Function : "foo.Baz",
+						$kind : "FunctionImport"
 					}
 				},
 				"foo.Baz" : [{
-					"$kind" : "Function",
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$kind : "Function",
+					$ReturnType : {
+						$Type : "Edm.String"
 					}
 				}]
 			});
@@ -674,67 +674,67 @@ sap.ui.define([
 					</EntityType>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
 					// Note: no "$Annotations"!
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"foo.Bar" : [{
-					"$kind" : "Function"
+					$kind : "Function"
 				}],
 				"foo.SalesOrderLineItem" : {
-					"$Key" : [
+					$Key : [
 						"SalesOrderID",
 						"ItemPosition"
 					],
-					"$kind" : "EntityType",
-					"ItemPosition" : {
-						"$Nullable" : false,
-						"$Type" : "Edm.String",
-						"$kind" : "Property"
+					$kind : "EntityType",
+					ItemPosition : {
+						$Nullable : false,
+						$Type : "Edm.String",
+						$kind : "Property"
 					},
-					"SalesOrderID" : {
-						"$Nullable" : false,
-						"$Type" : "Edm.String",
-						"$kind" : "Property"
+					SalesOrderID : {
+						$Nullable : false,
+						$Type : "Edm.String",
+						$kind : "Property"
 					}
 				},
 				"foo.SalesOrderLineItemAction" : [{
-					"$kind" : "Action",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : null,
-						"$Nullable" : false,
-						"$Type" : "foo.SalesOrderLineItem"
+					$kind : "Action",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : null,
+						$Nullable : false,
+						$Type : "foo.SalesOrderLineItem"
 					}, {
-						"$Name" : "NoteLanguage",
-						"$Nullable" : false,
-						"$Type" : "Edm.String",
+						$Name : "NoteLanguage",
+						$Nullable : false,
+						$Type : "Edm.String",
 						"@com.sap.vocabularies.Common.v1.Label" : "Note Language"
 					}],
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$ReturnType : {
+						$Type : "Edm.String"
 					},
 					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.A."
 				}],
 				"foo.SalesOrderLineItemFunction" : [{
-					"$kind" : "Function",
-					"$IsBound" : true,
-					"$Parameter" : [{
-						"$Name" : null,
-						"$Nullable" : false,
-						"$Type" : "foo.SalesOrderLineItem"
+					$kind : "Function",
+					$IsBound : true,
+					$Parameter : [{
+						$Name : null,
+						$Nullable : false,
+						$Type : "foo.SalesOrderLineItem"
 					}],
-					"$ReturnType" : {
-						"$Type" : "Edm.String"
+					$ReturnType : {
+						$Type : "Edm.String"
 					},
 					"@com.sap.vocabularies.Common.v1.Label" : "S.O.L.I.F."
 				}],
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"Bar" : {
-						"$kind" : "FunctionImport",
-						"$Function" : "foo.Bar"
+					$kind : "EntityContainer",
+					Bar : {
+						$kind : "FunctionImport",
+						$Function : "foo.Bar"
 					}
 				}
 			});
@@ -757,12 +757,12 @@ sap.ui.define([
 						</EntityContainer>\
 					</Schema>',
 				{
-					"$EntityContainer" : "foo.Container",
+					$EntityContainer : "foo.Container",
 					"foo." : {
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Container" : {
-						"$kind" : "EntityContainer"
+						$kind : "EntityContainer"
 					}
 				});
 		});
@@ -912,16 +912,16 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oExpectedResult = {
 					"GWSAMPLE_BASIC.0001." : {
-						"$Annotations" : {
+						$Annotations : {
 							"GWSAMPLE_BASIC.0001.Foo/Bar" : oFixture.expectedAnnotationsV4
 						},
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"GWSAMPLE_BASIC.0001.Foo" : {
-						"$kind" : "EntityType",
-						"Bar" : {
-							"$kind" : "Property",
-							"$Type" : "Edm.String"
+						$kind : "EntityType",
+						Bar : {
+							$kind : "Property",
+							$Type : "Edm.String"
 						}
 					}
 				},
@@ -949,23 +949,23 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="name"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"fn" : {"$Path" : "Bar"}
+				fn : {$Path : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="note"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"note" : {"$Path" : "Bar"}
+				note : {$Path : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="givenname"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"n" : {
-					"given" : {
-						"$Path" : "Bar"
+				n : {
+					given : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -974,9 +974,9 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="middlename"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"n" : {
-					"additional" : {
-						"$Path" : "Bar"
+				n : {
+					additional : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -985,9 +985,9 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="familyname"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"n" : {
-					"surname" : {
-						"$Path" : "Bar"
+				n : {
+					surname : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -996,8 +996,8 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="nickname"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"nickname" : {
-					"$Path" : "Bar"
+				nickname : {
+					$Path : "Bar"
 				}
 			}
 		}
@@ -1005,9 +1005,9 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="honorific"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"n" : {
-					"prefix" : {
-						"$Path" : "Bar"
+				n : {
+					prefix : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -1016,9 +1016,9 @@ sap.ui.define([
 		v2Semantics : 'sap:semantics="suffix"',
 		expectedSemanticsV4 : {
 			"@com.sap.vocabularies.Communication.v1.Contact" : {
-				"n" : {
-					"suffix" : {
-						"$Path" : "Bar"
+				n : {
+					suffix : {
+						$Path : "Bar"
 					}
 				}
 			}
@@ -1070,30 +1070,30 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"adr" : {
-							"code" : {"$Path" : "P19"},
-							"country" : {"$Path" : "P17"},
-							"locality" : {"$Path" : "P15"},
-							"pobox" : {"$Path" : "P20"},
-							"region" : {"$Path" : "P18"},
-							"street" : {"$Path" : "P16"}
+						adr : {
+							code : {$Path : "P19"},
+							country : {$Path : "P17"},
+							locality : {$Path : "P15"},
+							pobox : {$Path : "P20"},
+							region : {$Path : "P18"},
+							street : {$Path : "P16"}
 						},
-						"bday" : {"$Path" : "P14"},
-						"fn" : {"$Path" : "P01"},
-						"n" : {
-							"given" : {"$Path" : "P02"},
-							"additional" : {"$Path" : "P03"},
-							"surname" : {"$Path" : "P04"},
-							"prefix" : {"$Path" : "P06"},
-							"suffix" : {"$Path" : "P07"}
+						bday : {$Path : "P14"},
+						fn : {$Path : "P01"},
+						n : {
+							given : {$Path : "P02"},
+							additional : {$Path : "P03"},
+							surname : {$Path : "P04"},
+							prefix : {$Path : "P06"},
+							suffix : {$Path : "P07"}
 						},
-						"nickname" : {"$Path" : "P05"},
-						"note" : {"$Path" : "P08"},
-						"photo" : {"$Path" : "P09"},
-						"org" : {"$Path" : "P10"},
-						"orgunit" : {"$Path" : "P11"},
-						"role" : {"$Path" : "P12"},
-						"title" : {"$Path" : "P13"}
+						nickname : {$Path : "P05"},
+						note : {$Path : "P08"},
+						photo : {$Path : "P09"},
+						org : {$Path : "P10"},
+						orgunit : {$Path : "P11"},
+						role : {$Path : "P12"},
+						title : {$Path : "P13"}
 					}
 				}
 			});
@@ -1112,11 +1112,11 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"tel" : [{
-							uri : {"$Path" : "P01"}
+						tel : [{
+							uri : {$Path : "P01"}
 						}],
-						"address" : [{
-							uri : {"$Path" : "P02"}
+						address : [{
+							uri : {$Path : "P02"}
 						}]
 					}
 				},
@@ -1141,13 +1141,13 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"tel" : [{
-							"type" : {
-								"EnumMember" :
+						tel : [{
+							type : {
+								EnumMember :
 									"com.sap.vocabularies.Communication.v1.PhoneType/cell "
 									+ "com.sap.vocabularies.Communication.v1.PhoneType/work"
 							},
-							uri : {"$Path" : "P01"}
+							uri : {$Path : "P01"}
 						}]
 					}
 				},
@@ -1170,14 +1170,14 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"address" : [{
-							"type" : {
-								"EnumMember" :
+						address : [{
+							type : {
+								EnumMember :
 									sContactInformationType + "/work "
 									+ sContactInformationType + "/preferred "
 									+ sContactInformationType + "/home"
 							},
-							uri : {"$Path" : "P01"}
+							uri : {$Path : "P01"}
 						}]
 					}
 				},
@@ -1202,8 +1202,8 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"address" : [{
-							uri : {"$Path" : "P01"}
+						address : [{
+							uri : {$Path : "P01"}
 						}]
 					}
 				},
@@ -1228,10 +1228,10 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"address" : [{
-							uri : {"$Path" : "P01"},
-							"type" : {
-								"EnumMember" : sContactInformationType + "/work"
+						address : [{
+							uri : {$Path : "P01"},
+							type : {
+								EnumMember : sContactInformationType + "/work"
 							}
 						}]
 					}
@@ -1262,15 +1262,15 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtstart" : {"$Path" : "P01"},
-						"dtend" : {"$Path" : "P02"},
-						"duration" : {"$Path" : "P03"},
-						"class" : {"$Path" : "P04"},
-						"status" : {"$Path" : "P05"},
-						"transp" : {"$Path" : "P06"},
-						"fbtype" : {"$Path" : "P07"},
-						"wholeday" : {"$Path" : "P08"},
-						"location" : {"$Path" : "P09"}
+						dtstart : {$Path : "P01"},
+						dtend : {$Path : "P02"},
+						duration : {$Path : "P03"},
+						class : {$Path : "P04"},
+						status : {$Path : "P05"},
+						transp : {$Path : "P06"},
+						fbtype : {$Path : "P07"},
+						wholeday : {$Path : "P08"},
+						location : {$Path : "P09"}
 					}
 				}
 			});
@@ -1291,10 +1291,10 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"due" : {"$Path" : "P01"},
-						"completed" : {"$Path" : "P02"},
-						"percentcomplete" : {"$Path" : "P03"},
-						"priority" : {"$Path" : "P04"}
+						due : {$Path : "P01"},
+						completed : {$Path : "P02"},
+						percentcomplete : {$Path : "P03"},
+						priority : {$Path : "P04"}
 					}
 				}
 			});
@@ -1316,11 +1316,11 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"from" : {"$Path" : "P01"},
-						"sender" : {"$Path" : "P02"},
-						"subject" : {"$Path" : "P03"},
-						"body" : {"$Path" : "P04"},
-						"received" : {"$Path" : "P05"}
+						from : {$Path : "P01"},
+						sender : {$Path : "P02"},
+						subject : {$Path : "P03"},
+						body : {$Path : "P04"},
+						received : {$Path : "P05"}
 					}
 				}
 			});
@@ -1341,16 +1341,16 @@ sap.ui.define([
 			{
 				"GWSAMPLE_BASIC.Foo" : {
 					"@com.sap.vocabularies.Communication.v1.Contact" : {
-						"fn" : {"$Path" : "P01"}
+						fn : {$Path : "P01"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Event" : {
-						"dtend" : {"$Path" : "P02"}
+						dtend : {$Path : "P02"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Task" : {
-						"percentcomplete" : {"$Path" : "P03"}
+						percentcomplete : {$Path : "P03"}
 					},
 					"@com.sap.vocabularies.Communication.v1.Message" : {
-						"body" : {"$Path" : "P04"}
+						body : {$Path : "P04"}
 					}
 				}
 			});
@@ -1362,21 +1362,21 @@ sap.ui.define([
 		annotationsV2 : 'sap:creatable="false"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.InsertRestrictions" : {
-				"Insertable" : false
+				Insertable : false
 			}
 		}
 	}, { // sap:deletable and sap:deletable-path
 		annotationsV2 : 'sap:deletable="false"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-				"Deletable" : false
+				Deletable : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:deletable-path="PathExpression"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-				"Deletable" : {
+				Deletable : {
 					$Path : "PathExpression"
 				}
 			}
@@ -1385,7 +1385,7 @@ sap.ui.define([
 		annotationsV2 : 'sap:deletable="foo-bar" sap:deletable-path="PathExpression"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-				"Deletable" : false
+				Deletable : false
 			}
 		},
 		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set"
@@ -1394,7 +1394,7 @@ sap.ui.define([
 		annotationsV2 : 'sap:deletable-path="PathExpression" sap:deletable="foo-bar"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-				"Deletable" : false
+				Deletable : false
 			}
 		},
 		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set"
@@ -1417,7 +1417,7 @@ sap.ui.define([
 		annotationsV2 : 'sap:requires-filter="true"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.FilterRestrictions" : {
-				"RequiresFilter" : true
+				RequiresFilter : true
 			}
 		}
 	}, { // sap:requires-filter
@@ -1427,14 +1427,14 @@ sap.ui.define([
 		annotationsV2 : "",
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-				"Searchable" : false
+				Searchable : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:searchable="false"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-				"Searchable" : false
+				Searchable : false
 			}
 		}
 	}, {
@@ -1452,14 +1452,14 @@ sap.ui.define([
 		annotationsV2 : 'sap:updatable="false"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
-				"Updatable" : false
+				Updatable : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
-				"Updatable" : {
+				Updatable : {
 					$Path : "PathExpression"
 				}
 			}
@@ -1468,7 +1468,7 @@ sap.ui.define([
 		annotationsV2 : 'sap:updatable-path="PathExpression" sap:updatable="foo-bar"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
-				"Updatable" : false
+				Updatable : false
 			}
 		},
 		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set"
@@ -1477,7 +1477,7 @@ sap.ui.define([
 		annotationsV2 : 'sap:updatable="foo-bar" sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
 			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
-				"Updatable" : false
+				Updatable : false
 			}
 		},
 		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set"
@@ -1488,7 +1488,7 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var mAnnotations = Object.assign({
 					"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-						"Searchable" : false
+						Searchable : false
 					}
 				}, oFixture.expectedAnnotationsV4),
 				sXML = '\
@@ -1500,21 +1500,21 @@ sap.ui.define([
 							</EntityContainer>\
 					</Schema>",
 				oExpectedResult = {
-					"$EntityContainer" : "GWSAMPLE_BASIC.Container",
+					$EntityContainer : "GWSAMPLE_BASIC.Container",
 					"GWSAMPLE_BASIC." : {
-						"$Annotations" : {
+						$Annotations : {
 							"GWSAMPLE_BASIC.Container/FooSet" : mAnnotations
 						},
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"GWSAMPLE_BASIC.Foo" : {
-						"$kind" : "EntityType"
+						$kind : "EntityType"
 					},
 					"GWSAMPLE_BASIC.Container" : {
-						"$kind" : "EntityContainer",
-						"FooSet" : {
-							"$kind" : "EntitySet",
-							"$Type" : "GWSAMPLE_BASIC.Foo"
+						$kind : "EntityContainer",
+						FooSet : {
+							$kind : "EntitySet",
+							$Type : "GWSAMPLE_BASIC.Foo"
 						}
 					}
 				};
@@ -1601,7 +1601,7 @@ sap.ui.define([
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
 				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-					"Deletable" : false
+					Deletable : false
 				},
 				"@com.sap.vocabularies.Common.v1.Label" : "Label",
 				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
@@ -1614,7 +1614,7 @@ sap.ui.define([
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
 				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-					"NonDeletableNavigationProperties" : []
+					NonDeletableNavigationProperties : []
 				},
 				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
 				"@com.sap.vocabularies.Common.v1.Label" : "LabelV4"
@@ -1627,7 +1627,7 @@ sap.ui.define([
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
 				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
-					"NonDeletableNavigationProperties" : []
+					NonDeletableNavigationProperties : []
 				},
 				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
 				"@com.sap.vocabularies.Common.v1.Label" : "LabelV4",
@@ -1694,39 +1694,39 @@ sap.ui.define([
 				</Schema>',
 			{
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.Bar/foo.Baz" : {
-							"@foo.Binary" : {"$Binary" : "T0RhdGE"},
+							"@foo.Binary" : {$Binary : "T0RhdGE"},
 							"@foo.Bool" : false,
-							"@foo.Date" : {"$Date" : "2015-01-01"},
+							"@foo.Date" : {$Date : "2015-01-01"},
 							"@foo.DateTimeOffset" : {
-								"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+								$DateTimeOffset : "2000-01-01T16:00:00.000-09:00"
 							},
-							"@foo.Decimal" : {"$Decimal" : "3.14"},
-							"@foo.Duration" : {"$Duration" : "P11D23H59M59S"},
+							"@foo.Decimal" : {$Decimal : "3.14"},
+							"@foo.Duration" : {$Duration : "P11D23H59M59S"},
 							"@foo.EnumMember" : {
-								"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"
+								$EnumMember : "foo.Enum/Member1 foo.Enum/Member2"
 							},
 							"@foo.Float1" : 2.718,
-							"@foo.Float2" : {"$Float" : "NaN"},
-							"@foo.Float3" : {"$Float" : "INF"},
-							"@foo.Float4" : {"$Float" : "-INF"},
-							"@foo.Guid" : {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+							"@foo.Float2" : {$Float : "NaN"},
+							"@foo.Float3" : {$Float : "INF"},
+							"@foo.Float4" : {$Float : "-INF"},
+							"@foo.Guid" : {$Guid : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
 							"@foo.Int1" : 42,
 							"@foo.Int2" : 9007199254740991,
-							"@foo.Int3" : {"$Int" : "9007199254740992"},
+							"@foo.Int3" : {$Int : "9007199254740992"},
 							"@foo.String" : "foobar",
-							"@foo.TimeOfDay" : {"$TimeOfDay" : "21:45:00"},
+							"@foo.TimeOfDay" : {$TimeOfDay : "21:45:00"},
 							"@foo.AnnotationPath" : {
-								"$AnnotationPath" : "Path/foo.Bar/foo.Baz@foo.Term"
+								$AnnotationPath : "Path/foo.Bar/foo.Baz@foo.Term"
 							},
 							"@foo.NavigationPropertyPath" : {
-								"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"
+								$NavigationPropertyPath : "Path/foo.Bar/foo.Baz"
 							},
-							"@foo.Path" : {"$Path" : "Path/foo.Bar/foo.Baz"},
-							"@foo.PropertyPath" : {"$PropertyPath" : "Path/foo.Bar/foo.Baz"},
-							"@foo.UrlRef" : {"$UrlRef" : "http://foo.bar"},
+							"@foo.Path" : {$Path : "Path/foo.Bar/foo.Baz"},
+							"@foo.PropertyPath" : {$PropertyPath : "Path/foo.Bar/foo.Baz"},
+							"@foo.UrlRef" : {$UrlRef : "http://foo.bar"},
 							"@foo.Invalid" : true,
 							"@foo.Baz#Employee" : true
 						},
@@ -1743,7 +1743,7 @@ sap.ui.define([
 					<Annotation xmlns="' + sXmlnsEdm4 + '" Term="foo.Term" String="Reference"/>\
 				</edmx:Reference>',
 			{
-				"$Reference" : {
+				$Reference : {
 					"qux/$metadata" : {
 						"@foo.Term" : "Reference"
 					}
@@ -1759,15 +1759,15 @@ sap.ui.define([
 				</Schema>',
 				{
 					"foo." : {
-						"$Annotations" : {
+						$Annotations : {
 							"foo.Bar" : {
 								"@com.sap.vocabularies.Common.v1.Label" : "LabelEntityType"
 							}
 						},
-						"$kind" : "Schema"
+						$kind : "Schema"
 					},
 					"foo.Bar" : {
-						"$kind" : "EntityType"
+						$kind : "EntityType"
 					}
 				});
 	});
@@ -1786,27 +1786,27 @@ sap.ui.define([
 					</EntityContainer>\
 				</Schema>',
 			{
-				"$EntityContainer" : "foo.Container",
+				$EntityContainer : "foo.Container",
 				"foo." : {
-					"$kind" : "Schema",
-					"$Annotations" : {
+					$kind : "Schema",
+					$Annotations : {
 						"foo.Container/FunctionImport" : {
 							"@com.sap.vocabularies.Common.v1.Label" : "LabelFunctionImport"
 						}
 					}
 				},
 				"foo.Container" : {
-					"$kind" : "EntityContainer",
-					"FunctionImport" : {
-						"$kind" : "FunctionImport",
-						"$Function" : "foo.FunctionImport"
+					$kind : "EntityContainer",
+					FunctionImport : {
+						$kind : "FunctionImport",
+						$Function : "foo.FunctionImport"
 					}
 				},
 				"foo.FunctionImport" : [{
-					"$kind" : "Function",
-					"$Parameter" : [{
-						"$Name" : "Parameter",
-						"$Type" : "Edm.String",
+					$kind : "Function",
+					$Parameter : [{
+						$Name : "Parameter",
+						$Type : "Edm.String",
 						"@com.sap.vocabularies.Common.v1.Label" : "LabelParameter"
 					}]
 				}]
@@ -1966,103 +1966,103 @@ sap.ui.define([
 				</Schema>',
 			mAnnotations = {
 				"@com.sap.vocabularies.Common.v1.FilterExpressionRestrictions" : [{
-					"AllowedExpressions" : {
-						"EnumMember"
+					AllowedExpressions : {
+						EnumMember
 							: "com.sap.vocabularies.Common.v1.FilterExpressionType/SingleInterval"
 					},
-					"Property" : {"$PropertyPath" : "FilterRestrictionInterval"}
+					Property : {$PropertyPath : "FilterRestrictionInterval"}
 				}, {
-					"AllowedExpressions" : {
-						"EnumMember"
+					AllowedExpressions : {
+						EnumMember
 							: "com.sap.vocabularies.Common.v1.FilterExpressionType/MultiValue"
 					},
-					"Property" : {"$PropertyPath" : "FilterRestrictionMulti"}
+					Property : {$PropertyPath : "FilterRestrictionMulti"}
 				}, {
-					"AllowedExpressions" : {
-						"EnumMember"
+					AllowedExpressions : {
+						EnumMember
 							: "com.sap.vocabularies.Common.v1.FilterExpressionType/SingleValue"
 					},
-					"Property" : {"$PropertyPath" : "FilterRestrictionSingle"}
+					Property : {$PropertyPath : "FilterRestrictionSingle"}
 				}],
 				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
-					"NonFilterableProperties" : [{
-						"$PropertyPath" : "FilterableA"
+					NonFilterableProperties : [{
+						$PropertyPath : "FilterableA"
 					}, {
-						"$PropertyPath" : "FilterableSortable"
+						$PropertyPath : "FilterableSortable"
 					}],
-					"RequiredProperties" : [{
-						"$PropertyPath" : "RequiredInFilterA"
+					RequiredProperties : [{
+						$PropertyPath : "RequiredInFilterA"
 					}, {
-						"$PropertyPath" : "RequiredInFilterC"
+						$PropertyPath : "RequiredInFilterC"
 					}]
 				},
 				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
-					"NonInsertableNavigationProperties" : [{
-						"$NavigationPropertyPath" : "CreatableA"
+					NonInsertableNavigationProperties : [{
+						$NavigationPropertyPath : "CreatableA"
 					}, {
-						"$If" : [{
-							"$Not" : {
-								"$Path" : "IsCreatable"
+						$If : [{
+							$Not : {
+								$Path : "IsCreatable"
 							}
 						}, {
-							"$NavigationPropertyPath" : "CreatablePathA"
+							$NavigationPropertyPath : "CreatablePathA"
 						}]
 					}, {
-						"$NavigationPropertyPath" : "ConflictA"
+						$NavigationPropertyPath : "ConflictA"
 					}, {
-						"$NavigationPropertyPath" : "CreatableB"
+						$NavigationPropertyPath : "CreatableB"
 					}, {
-						"$If" : [{
-							"$Not" : {
-								"$Path" : "IsCreatable"
+						$If : [{
+							$Not : {
+								$Path : "IsCreatable"
 							}
 						}, {
-							"$NavigationPropertyPath" : "CreatablePathB"
+							$NavigationPropertyPath : "CreatablePathB"
 						}]
 					}, {
-						"$NavigationPropertyPath" : "ConflictB"
+						$NavigationPropertyPath : "ConflictB"
 					}]
 				},
 				"@Org.OData.Capabilities.V1.NavigationRestrictions" : {
-					"RestrictedProperties" : [{
-						"NavigationProperty" : {
-							"$NavigationPropertyPath" : "FilterableFalse"
+					RestrictedProperties : [{
+						NavigationProperty : {
+							$NavigationPropertyPath : "FilterableFalse"
 						},
-						"FilterRestrictions" : {
-							"Filterable" : false
+						FilterRestrictions : {
+							Filterable : false
 						}
 					}]
 				},
 				"@Org.OData.Capabilities.V1.SortRestrictions" : {
-					"NonSortableProperties" : [{
-						"$PropertyPath" : "FilterableSortable"
+					NonSortableProperties : [{
+						$PropertyPath : "FilterableSortable"
 					}, {
-						"$PropertyPath" : "SortableA"
+						$PropertyPath : "SortableA"
 					}]
 				}
 			},
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.Container/Customers" : _Helper.merge({
 							// converted from V2 annotations at EntitySet itself
 							"@Org.OData.Capabilities.V1.InsertRestrictions" : {
-								"Insertable" : false
+								Insertable : false
 							},
 							"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-								"Searchable" : false
+								Searchable : false
 							}
 						}, mAnnotations),
 						"GWSAMPLE_BASIC.0001.Container/Suppliers" : mAnnotations,
 						"GWSAMPLE_BASIC.0001.YetAnotherContainer/Suppliers" : mAnnotations
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0002." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0002.Container/Suppliers" : mAnnotations
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
 
@@ -2111,7 +2111,7 @@ sap.ui.define([
 				</Schema>',
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.BusinessPartner/Computed" : {
 							"@com.sap.vocabularies.Common.v1.Label" : "Computed",
 							"@Org.OData.Core.V1.Computed" : true
@@ -2121,7 +2121,7 @@ sap.ui.define([
 							"@Org.OData.Core.V1.Immutable" : true
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
@@ -2192,37 +2192,37 @@ sap.ui.define([
 				</Schema>',
 			oExpectedResult = {
 				"GWSAMPLE_BASIC.0001." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0001.Product/Depth" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "DepthUnit"
+								$Path : "DepthUnit"
 							},
 							"@com.sap.vocabularies.Common.v1.Label" : "Depth"
 						},
 						"GWSAMPLE_BASIC.0001.Product/GrossWeight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "Parts/WeightUnit"
+								$Path : "Parts/WeightUnit"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Product/PackagingWeight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "toMeasure/Parts/WeightUnit"
+								$Path : "toMeasure/Parts/WeightUnit"
 							},
 							"@com.sap.vocabularies.Common.v1.Label" : "Packaging Weight"
 						},
 						"GWSAMPLE_BASIC.0001.Product/Price" : {
 							"@Org.OData.Measures.V1.ISOCurrency" : {
-								"$Path" : "PriceCurrency"
+								$Path : "PriceCurrency"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Product/NetPrice" : {
 							"@Org.OData.Measures.V1.ISOCurrency" : {
-								"$Path" : "Foo/Bar"
+								$Path : "Foo/Bar"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.CT_Parts/Weight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "WeightUnit"
+								$Path : "WeightUnit"
 							}
 						},
 						"GWSAMPLE_BASIC.0001.Product/WeightMissingUnit1" : {
@@ -2230,22 +2230,22 @@ sap.ui.define([
 						},
 						"GWSAMPLE_BASIC.0001.Product/NetWeight" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "toMeasure/WeightUnit"
+								$Path : "toMeasure/WeightUnit"
 							},
 							"@com.sap.vocabularies.Common.v1.Label" : "Net Weight"
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				},
 				"GWSAMPLE_BASIC.0002." : {
-					"$Annotations" : {
+					$Annotations : {
 						"GWSAMPLE_BASIC.0002.Product/Depth" : {
 							"@Org.OData.Measures.V1.Unit" : {
-								"$Path" : "DepthUnit"
+								$Path : "DepthUnit"
 							}
 						}
 					},
-					"$kind" : "Schema"
+					$kind : "Schema"
 				}
 			};
 
@@ -2372,63 +2372,63 @@ sap.ui.define([
 		</FunctionImport>\
 	</EntityContainer>\
 </Schema>', {
-			"$EntityContainer" : "duplicates.Container",
+			$EntityContainer : "duplicates.Container",
 			"duplicates." : {
-				"$Annotations" : {
+				$Annotations : {
 					"duplicates.Container/Artists" : {
 						"@Org.OData.Capabilities.V1.SearchRestrictions" : {
-							"Searchable" : false
+							Searchable : false
 						}
 					}
 				},
-				"$kind" : "Schema"
+				$kind : "Schema"
 			},
 			"duplicates.Address" : {
-				"$kind" : "ComplexType",
-				"City" : {
-					"$Type" : "Edm.String",
-					"$kind" : "Property"
+				$kind : "ComplexType",
+				City : {
+					$Type : "Edm.String",
+					$kind : "Property"
 				}
 			},
 			"duplicates.ArtistsType" : {
-				"$Key" : [
+				$Key : [
 					"ArtistID",
 					"IsActiveEntity"
 				],
-				"$kind" : "EntityType",
-				"ArtistID" : {
-					"$Nullable" : false,
-					"$Type" : "Edm.String",
-					"$kind" : "Property"
+				$kind : "EntityType",
+				ArtistID : {
+					$Nullable : false,
+					$Type : "Edm.String",
+					$kind : "Property"
 				},
-				"IsActiveEntity" : {
-					"$Nullable" : false,
-					"$Type" : "Edm.Boolean",
-					"$kind" : "Property"
+				IsActiveEntity : {
+					$Nullable : false,
+					$Type : "Edm.Boolean",
+					$kind : "Property"
 				}
 			},
 			"duplicates.Container" : {
-				"$kind" : "EntityContainer",
-				"Artists" : {
-					"$Type" : "duplicates.ArtistsType",
-					"$kind" : "EntitySet"
+				$kind : "EntityContainer",
+				Artists : {
+					$Type : "duplicates.ArtistsType",
+					$kind : "EntitySet"
 				},
-				"GetDefaults" : {
-					"$Function" : "duplicates.GetDefaults",
-					"$kind" : "FunctionImport"
+				GetDefaults : {
+					$Function : "duplicates.GetDefaults",
+					$kind : "FunctionImport"
 				}
 			},
 			"duplicates.GetDefaults" : [{
-				"$Parameter" : [{
-					"$Name" : "_it",
-					"$Nullable" : false,
-					"$Type" : "duplicates.ArtistsType",
-					"$isCollection" : true
+				$Parameter : [{
+					$Name : "_it",
+					$Nullable : false,
+					$Type : "duplicates.ArtistsType",
+					$isCollection : true
 				}],
-				"$ReturnType" : {
-					"$Type" : "duplicates.ArtistsType"
+				$ReturnType : {
+					$Type : "duplicates.ArtistsType"
 				},
-				"$kind" : "Function"
+				$kind : "Function"
 			}]
 		});
 	});

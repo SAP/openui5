@@ -147,15 +147,15 @@ sap.ui.define([
 			sETag = 'W/"19700101000000.0000000"',
 			sLastModified = "Fri, 07 Apr 2017 11:21:50 GMT",
 			oExpectedJson = {
-				"$Version" : "4.0",
-				"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>"
+				$Version : "4.0",
+				$EntityContainer : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>"
 			},
 			oExpectedResult = {
-				"$Version" : "4.0",
-				"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
-				"$Date" : sDate,
-				"$ETag" : sETag,
-				"$LastModified" : sLastModified
+				$Version : "4.0",
+				$EntityContainer : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
+				$Date : sDate,
+				$ETag : sETag,
+				$LastModified : sLastModified
 			},
 			oExpectedXml = {},
 			mHeaders = {},
@@ -272,16 +272,16 @@ sap.ui.define([
 		// code under test
 		return oMetadataRequestor.read(sUrl, false, true).then(function (oResult) {
 			var oExpectedJson = {
-					"$Version" : "4.0",
-					"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>"
+					$Version : "4.0",
+					$EntityContainer : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>"
 				};
 
 			// "...have at least the same properties as..."
 			sinon.assert.match(oResult, sinon.match({
-				"$Date" : sDate,
-				"$ETag" : sETag,
-				"$LastModified" : sLastModified,
-				"$XML" : sinon.match.same(oExpectedXml)
+				$Date : sDate,
+				$ETag : sETag,
+				$LastModified : sLastModified,
+				$XML : sinon.match.same(oExpectedXml)
 			}));
 
 			assert.throws(function () {
@@ -296,17 +296,17 @@ sap.ui.define([
 			// code under test
 			return oMetadataRequestor.read(sUrl, false, false).then(function (oResult) {
 				var oNewExpectedJson = {
-						"$Version" : "4.0",
-						"$EntityContainer" : "NEW!"
+						$Version : "4.0",
+						$EntityContainer : "NEW!"
 					},
 					oNewExpectedXml = {};
 
 				assert.deepEqual(oResult, {
-					"$Date" : sDate,
-					"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
-					"$ETag" : sETag,
-					"$LastModified" : sLastModified,
-					"$Version" : "4.0"
+					$Date : sDate,
+					$EntityContainer : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
+					$ETag : sETag,
+					$LastModified : sLastModified,
+					$Version : "4.0"
 				});
 
 				oJQueryMock.expects("ajax")

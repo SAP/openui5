@@ -48,16 +48,16 @@ sap.ui.define([
 	 * Predefined request headers in $batch parts for OData V2.
 	 */
 	_V2Requestor.prototype.mPredefinedPartHeaders = {
-		"Accept" : "application/json"
+		Accept : "application/json"
 	};
 
 	/**
 	 * Predefined request headers for all requests for OData V2.
 	 */
 	_V2Requestor.prototype.mPredefinedRequestHeaders = {
-		"Accept" : "application/json",
-		"MaxDataServiceVersion" : "2.0",
-		"DataServiceVersion" : "2.0",
+		Accept : "application/json",
+		MaxDataServiceVersion : "2.0",
+		DataServiceVersion : "2.0",
 		"X-CSRF-Token" : "Fetch"
 	};
 

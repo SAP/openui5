@@ -76,8 +76,8 @@ sap.ui.define([
 				buildQueryString : function () { return ""; },
 				fetchTypeForPath : function () {
 					return SyncPromise.resolve({
-						"$Key" : ["key"],
-						"key" : {"$Type" : "Edm.String"}
+						$Key : ["key"],
+						key : {$Type : "Edm.String"}
 					});
 				},
 				getGroupSubmitMode : function (sGroupId) {
@@ -365,7 +365,7 @@ sap.ui.define([
 			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", mQueryOptions),
 			sEtag = 'W/"19770724000000.0000000"',
 			aCacheData = [{}, {
-				"@$ui5._" : {"predicate" : "('1')"},
+				"@$ui5._" : {predicate : "('1')"},
 				"@odata.etag" : sEtag
 			}, {}],
 			fnCallback = this.spy(),
@@ -472,9 +472,9 @@ sap.ui.define([
 				{$expand : {EQUIPMENT_2_EMPLOYEE : {EMPLOYEE_2_TEAM : true}}}),
 			sEtag = 'W/"19770724000000.0000000"',
 			oCacheData = {
-				"EMPLOYEE_2_TEAM" : {
+				EMPLOYEE_2_TEAM : {
 					"@$ui5._" : {
-						"predicate" : "('23')"
+						predicate : "('23')"
 					},
 					"@odata.etag" : sEtag
 				}
@@ -532,7 +532,7 @@ sap.ui.define([
 
 		aCacheData.$byPredicate = {
 			"('1')" : {
-				"@$ui5._" : {"predicate" : "('1')"},
+				"@$ui5._" : {predicate : "('1')"},
 				"@odata.etag" : "etag"
 			}
 		};
@@ -576,7 +576,7 @@ sap.ui.define([
 
 		aCacheData.$byPredicate = {
 			"('1')" : {
-				"@$ui5._" : {"predicate" : "('1')"},
+				"@$ui5._" : {predicate : "('1')"},
 				"@odata.etag" : "etag"
 			}
 		};
@@ -611,7 +611,7 @@ sap.ui.define([
 					aCacheData = [{
 						"@odata.etag" : "before"
 					}, {
-						"@$ui5._" : {"predicate" : "('1')"},
+						"@$ui5._" : {predicate : "('1')"},
 						"@odata.etag" : "etag"
 					}, {
 						"@odata.etag" : "after"
@@ -668,14 +668,14 @@ sap.ui.define([
 	QUnit.test("_Cache#removeElement for a kept-alive context", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [{
-				"@$ui5._" : {"predicate" : "('2')"},
+				"@$ui5._" : {predicate : "('2')"},
 				"@odata.etag" : "etag"
 			}],
 			iIndex;
 
 		aCacheData.$byPredicate = {
 			"('1')" : {
-					"@$ui5._" : {"predicate" : "('1')"},
+					"@$ui5._" : {predicate : "('1')"},
 					"@odata.etag" : "etag"
 				},
 			"('2')" : aCacheData[0]
@@ -692,7 +692,7 @@ sap.ui.define([
 		assert.strictEqual(aCacheData.$count, 42);
 		assert.strictEqual(oCache.iLimit, 42);
 		assert.deepEqual(aCacheData, [{
-			"@$ui5._" : {"predicate" : "('2')"},
+			"@$ui5._" : {predicate : "('2')"},
 			"@odata.etag" : "etag"
 		}]);
 		assert.deepEqual(aCacheData.$byPredicate, {"('2')" : aCacheData[0]});
@@ -789,8 +789,8 @@ sap.ui.define([
 			};
 
 		oCache.mPatchRequests = {
-			"bar" : [oPatchPromise1],
-			"foo" : [oPatchPromise1, oPatchPromise2]
+			bar : [oPatchPromise1],
+			foo : [oPatchPromise1, oPatchPromise2]
 		};
 		assert.strictEqual(oCache.hasPendingChangesForPath("bar", false), true);
 		this.mock(oPatchPromise1).expects("$isKeepAlive").withExactArgs().returns(true).twice();
@@ -841,11 +841,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#resetChangesForPath: POSTs", function (assert) {
-		var oBody0 = {"@$ui5._" : {"transient" : "update"}},
-			oBody1 = {"@$ui5._" : {"transient" : "update2"}},
-			oBody2 = {"@$ui5._" : {"transient" : "update"}},
-			oBody3 = {"@$ui5._" : {"transient" : "update"}},
-			oBody4 = {"@$ui5._" : {"transient" : "update"}},
+		var oBody0 = {"@$ui5._" : {transient : "update"}},
+			oBody1 = {"@$ui5._" : {transient : "update2"}},
+			oBody2 = {"@$ui5._" : {transient : "update"}},
+			oBody3 = {"@$ui5._" : {transient : "update"}},
+			oBody4 = {"@$ui5._" : {transient : "update"}},
 			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCall1,
 			oCall2;
@@ -886,7 +886,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
 		oCache.iActiveUsages = 99;
-		oCache.mPatchRequests = {"path" : {}};
+		oCache.mPatchRequests = {path : {}};
 
 		// code under test
 		oCache.setActive(true);
@@ -945,7 +945,7 @@ sap.ui.define([
 					empty : "",
 					emptyList : [],
 					list : [{/*created*/}, {/*created*/}, {}, {}],
-					"null" : null,
+					null : null,
 					zero : 0
 				}
 			}],
@@ -1169,7 +1169,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{
 				entity : {
-					"@$ui5._" : {"predicate" : "(23)"}, // required for fetchLateProperty
+					"@$ui5._" : {predicate : "(23)"}, // required for fetchLateProperty
 					foo : {}
 				}
 			}],
@@ -1582,8 +1582,8 @@ sap.ui.define([
 				oCacheUpdatePromise,
 				oEntity = {
 					"@odata.etag" : 'W/"19700101000000.0000000"',
-					"Address" : {
-						"City" : "Heidelberg"
+					Address : {
+						City : "Heidelberg"
 					}
 				},
 				oEntityMatcher = sinon.match.same(oEntity),
@@ -1598,9 +1598,9 @@ sap.ui.define([
 				oOldData = {},
 				oPatchResult = {
 					"@odata.etag" : 'W/"20010101000000.0000000"',
-					"foo" : "bar",
-					"ignore" : "me",
-					"me" : "too"
+					foo : "bar",
+					ignore : "me",
+					me : "too"
 				},
 				oPatchPromise = bCanceled ? Promise.reject(oError) : Promise.resolve(oPatchResult),
 				fnPatchSent = this.spy(),
@@ -1768,8 +1768,8 @@ sap.ui.define([
 					oCacheMock = this.mock(oCache),
 					oEntity = {
 						"@odata.etag" : 'W/"19700101000000.0000000"',
-						"ProductInfo" : {
-							"Amount" : "123"
+						ProductInfo : {
+							Amount : "123"
 						}
 					},
 					fnError = this.spy(),
@@ -1882,8 +1882,8 @@ sap.ui.define([
 				oCacheUpdatePromise,
 				oEntity = {
 					"@odata.etag" : 'W/"19700101000000.0000000"',
-					"Address" : {
-						"City" : "Heidelberg"
+					Address : {
+						City : "Heidelberg"
 					}
 				},
 				sEntityPath = "path/to/entity",
@@ -2051,8 +2051,8 @@ sap.ui.define([
 			oCacheUpdatePromise,
 			oEntity = {
 				"@odata.etag" : 'W/"19700101000000.0000000"',
-				"Address" : {
-					"City" : "Heidelberg"
+				Address : {
+					City : "Heidelberg"
 				}
 			},
 			fnError = this.spy(),
@@ -2063,8 +2063,8 @@ sap.ui.define([
 			oRequestCall,
 			oRequestLock = {unlock : function () {}},
 			oUpdateData = {
-				"Address" : {
-					"City" : "Walldorf"
+				Address : {
+					City : "Walldorf"
 				}
 			},
 			that = this;
@@ -2124,16 +2124,16 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "BusinessPartnerList", {}),
 			oEntity = {
 				"@odata.etag" : 'W/"19700101000000.0000000"',
-				"Address" : {
-					"City" : "Heidelberg"
+				Address : {
+					City : "Heidelberg"
 				}
 			},
 			oError = new Error(),
 			oGroupLock = {getGroupId : function () {}},
 			oPatchPromise = Promise.reject(oError),
 			oUpdateData = {
-				"Address" : {
-					"City" : "Walldorf"
+				Address : {
+					City : "Walldorf"
 				}
 			};
 
@@ -2320,8 +2320,8 @@ sap.ui.define([
 	}, {
 		options : {
 			$expand : {
-				"MANAGER" : null,
-				"TEAM_2_EMPLOYEES" : {
+				MANAGER : null,
+				TEAM_2_EMPLOYEES : {
 					$expand : {
 						"EMPLOYEE_2_EQUIPMENT/EQUIPMENT_2_PRODUCT" : null,
 						"Address/Country" : null
@@ -2569,7 +2569,7 @@ sap.ui.define([
 			},
 			mExpectedMessages = {
 				"" : aMessagesSalesOrder,
-				"SO_2_BP" : aMessagesInBusinessPartner,
+				SO_2_BP : aMessagesInBusinessPartner,
 				"SO_2_SCHDL('42')" : aMessagesSalesOrderSchedules0,
 				"SO_2_SCHDL('44')" : aMessagesSalesOrderSchedules1
 			},
@@ -2607,7 +2607,7 @@ sap.ui.define([
 				messagesInBusinessPartner : aMessagesInBusinessPartner
 			},
 			mExpectedMessages = {
-				"SO_2_BP" : aMessagesInBusinessPartner
+				SO_2_BP : aMessagesInBusinessPartner
 			},
 			mTypeForMetaPath = {
 				"/SalesOrderList/SO_2_BP" : {
@@ -2921,11 +2921,11 @@ sap.ui.define([
 	QUnit.test("_Cache#visitResponse: longtextUrl/media link, no context", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
 			oData = {
-				"id" : "1",
+				id : "1",
 				"picture1@odata.mediaReadLink" : "img_1.jpg",
 				"picture2@mediaReadLink" : "img_2.jpg", // OData V4.01 format
-				"messages" : [{
-					"longtextUrl" : "Longtext(1)"
+				messages : [{
+					longtextUrl : "Longtext(1)"
 				}]
 			},
 			mExpectedMessages = {
@@ -2959,38 +2959,38 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "EntitySet('42')/Navigation"),
 			oData = {
 				"@odata.context" : "../$metadata#foo",
-				"id" : "1",
+				id : "1",
 				"picture@odata.mediaReadLink" : "img_42.jpg",
-				"messages" : [{
-					"longtextUrl" : "Longtext(1)"
+				messages : [{
+					longtextUrl : "Longtext(1)"
 				}],
 				foo : {
 					"@odata.context" : "/foo/context",
-					"id" : "2",
+					id : "2",
 					"picture@odata.mediaReadLink" : "img_43.jpg",
-					"messages" : [{
-						"longtextUrl" : "Longtext(2)"
+					messages : [{
+						longtextUrl : "Longtext(2)"
 					}],
 					bar : {
 						id : "3",
 						"picture@odata.mediaReadLink" : "img_44.jpg",
-						"messages" : [{
-							"longtextUrl" : "Longtext(3)"
+						messages : [{
+							longtextUrl : "Longtext(3)"
 						}]
 					},
 					baz : {
 						"@odata.context" : "baz/context",
 						id : "4",
 						"picture@odata.mediaReadLink" : "img_45.jpg",
-						"messages" : [{
-							"longtextUrl" : "Longtext(4)"
+						messages : [{
+							longtextUrl : "Longtext(4)"
 						}]
 					}
 				}
 			},
 			mExpectedMessages = {
 				"" : [{longtextUrl : "/~/Longtext(1)"}],
-				"foo" : [{longtextUrl : "/foo/Longtext(2)"}],
+				foo : [{longtextUrl : "/foo/Longtext(2)"}],
 				"foo/bar" : [{longtextUrl : "/foo/Longtext(3)"}],
 				"foo/baz" : [{longtextUrl : "/foo/baz/Longtext(4)"}]
 			},
@@ -3039,24 +3039,24 @@ sap.ui.define([
 			oData = {
 				"@odata.context" : "../$metadata#foo",
 				value : [{
-					"id" : "1",
+					id : "1",
 					"picture@odata.mediaReadLink" : "img_1.jpg",
-					"messages" : [{
-						"longtextUrl" : "Longtext(1)"
+					messages : [{
+						longtextUrl : "Longtext(1)"
 					}],
 					"foo@odata.context" : "/foo/context",
-					"foo" : [{
-						"id" : "2",
+					foo : [{
+						id : "2",
 						"picture@odata.mediaReadLink" : "img_2.jpg",
-						"messages" : [{
-							"longtextUrl" : "Longtext(2)"
+						messages : [{
+							longtextUrl : "Longtext(2)"
 						}],
 						"bar@odata.context" : "bar/context",
-						"bar" : [{
-							"id" : "3",
+						bar : [{
+							id : "3",
 							"picture@odata.mediaReadLink" : "img_3.jpg",
-							"messages" : [{
-								"longtextUrl" : "Longtext(3)"
+							messages : [{
+								longtextUrl : "Longtext(3)"
 							}]
 						}]
 					}]
@@ -3332,7 +3332,7 @@ sap.ui.define([
 			mCacheQueryOptions = {},
 			fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
-			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
+			oElement = {"@$ui5._" : {predicate : sKeyPredicate}},
 			aElements = oFixture.index !== undefined ? [{}, oElement, {}] : [{}, {}],
 			oFetchValuePromise = Promise.resolve(aElements),
 			oGroupLock = {},
@@ -3340,7 +3340,7 @@ sap.ui.define([
 			mQueryOptionsCopy = {
 				$apply : "A.P.P.L.E.", // dropped
 				$count : true, // dropped
-				$expand : {"EMPLOYEE_2_TEAM" : null},
+				$expand : {EMPLOYEE_2_TEAM : null},
 				$filter : "age gt 40", // dropped
 				$orderby : "TEAM_ID desc", // dropped
 				$search : "OR", // dropped
@@ -3386,7 +3386,7 @@ sap.ui.define([
 			.returns("~");
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, {
-					$expand : {"EMPLOYEE_2_TEAM" : null},
+					$expand : {EMPLOYEE_2_TEAM : null},
 					$select : ["Name"],
 					foo : "bar",
 					"sap-client" : "123"
@@ -3419,7 +3419,7 @@ sap.ui.define([
 	mBindingQueryOptions : {
 		$apply : "A.P.P.L.E.",
 		$count : true, // dropped
-		$expand : {"EMPLOYEE_2_TEAM" : null},
+		$expand : {EMPLOYEE_2_TEAM : null},
 		$filter : "age gt 40", // is enhanced
 		$orderby : "TEAM_ID desc", // dropped
 		$search : "OR",
@@ -3429,7 +3429,7 @@ sap.ui.define([
 	},
 	mQueryOptionsForRequest : {
 		$apply : "A.P.P.L.E.",
-		$expand : {"EMPLOYEE_2_TEAM" : null},
+		$expand : {EMPLOYEE_2_TEAM : null},
 		$filter : "(age gt 40) and ~key filter~",
 		$search : "OR",
 		$select : ["Name"],
@@ -3456,7 +3456,7 @@ sap.ui.define([
 			oClonedQueryOptions = Object.assign({}, oFixture.mBindingQueryOptions),
 			fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
-			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
+			oElement = {"@$ui5._" : {predicate : sKeyPredicate}},
 			aElements = [{}, oElement, {}],
 			oFetchValuePromise = Promise.resolve(aElements),
 			oGroupLock = {},
@@ -3675,7 +3675,7 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "TEAMS", {/*mQueryOptions*/}),
 			oCacheMock = this.mock(oCache),
 			fnDataRequested = this.spy(),
-			oElement = {"@$ui5._" : {"predicate" : "('13')"}},
+			oElement = {"@$ui5._" : {predicate : "('13')"}},
 			aElements = [{a : "42"}],
 			oExistenceResponse = {value : [{}]},
 			oFetchValuePromise = Promise.resolve(aElements),
@@ -3739,12 +3739,12 @@ sap.ui.define([
 				{/*bSortExpandSelect*/}),
 			oCacheMock = this.mock(oCache),
 			fnDataRequested = this.spy(),
-			oElement = {"@$ui5._" : {"predicate" : "('13')"}},
+			oElement = {"@$ui5._" : {predicate : "('13')"}},
 			aElements = [{}, {}, {}, oElement],
 			oFetchValuePromise = Promise.resolve(aElements),
 			oGroupLock = {},
 			mQueryOptionsForPath = {},
-			oResult = {"ID" : "13"},
+			oResult = {ID : "13"},
 			mTypeForMetaPath = {};
 
 		aElements.$byPredicate = {"('13')" : oElement};
@@ -3760,7 +3760,7 @@ sap.ui.define([
 			.returns(mQueryOptionsForPath);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(mQueryOptionsForPath))
-			.returns({"$filter" : "age gt 40"});
+			.returns({$filter : "age gt 40"});
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("Employees('31')", "EMPLOYEE_2_EQUIPMENTS")
 			.returns("~");
@@ -4751,15 +4751,15 @@ sap.ui.define([
 			fnDataRequested = function () {},
 			aElements = [{ // a created element (transient or not)
 				"@$ui5._" : {
-					"transientPredicate" : "($uid=id-17-4)"
+					transientPredicate : "($uid=id-17-4)"
 				}
 			}, { // a created element (transient or not)
 				"@$ui5._" : {
-					"transientPredicate" : "($uid=id-1-23)"
+					transientPredicate : "($uid=id-1-23)"
 				}
 			}, { // a "normal" element
 				"@$ui5._" : {
-					"predicate" : "('42')"
+					predicate : "('42')"
 				}
 			}],
 			oGroupLock = {unlock : function () {}},
@@ -4780,7 +4780,7 @@ sap.ui.define([
 
 		assert.deepEqual(oSyncPromise.getResult(), {
 			"@odata.context" : undefined,
-			"value" : aElements
+			value : aElements
 		});
 	});
 
@@ -4858,13 +4858,13 @@ sap.ui.define([
 			assert.deepEqual(oCache.aElements, [
 				{
 					"@$ui5._" : {
-						"transientPredicate" : "($uid=id-1-23)"
+						transientPredicate : "($uid=id-1-23)"
 					},
 					"@$ui5.context.isTransient" : false
 				},
-				{key : "a", "@$ui5._" : {"predicate" : "('a')"}},
-				{key : "b", "@$ui5._" : {"predicate" : "('b')"}},
-				{key : "c", "@$ui5._" : {"predicate" : "('c')"}}
+				{key : "a", "@$ui5._" : {predicate : "('a')"}},
+				{key : "b", "@$ui5._" : {predicate : "('b')"}},
+				{key : "c", "@$ui5._" : {predicate : "('c')"}}
 			]);
 		});
 	});
@@ -4901,9 +4901,9 @@ sap.ui.define([
 
 		return Promise.all(aPromises).then(function () {
 			assert.deepEqual(oCache.aElements, [
-				{key : "a", "@$ui5._" : {"predicate" : "('a')"}},
-				{key : "b", "@$ui5._" : {"predicate" : "('b')"}},
-				{key : "c", "@$ui5._" : {"predicate" : "('c')"}}
+				{key : "a", "@$ui5._" : {predicate : "('a')"}},
+				{key : "b", "@$ui5._" : {predicate : "('b')"}},
+				{key : "c", "@$ui5._" : {predicate : "('c')"}}
 			]);
 		});
 	});
@@ -4941,8 +4941,8 @@ sap.ui.define([
 			assert.ok(false);
 		}, function () {
 			assert.deepEqual(oCache.aElements, [
-				{key : "a", "@$ui5._" : {"predicate" : "('a')"}},
-				{key : "c", "@$ui5._" : {"predicate" : "('c')"}},
+				{key : "a", "@$ui5._" : {predicate : "('a')"}},
+				{key : "c", "@$ui5._" : {predicate : "('c')"}},
 				undefined,
 				undefined,
 				undefined
@@ -4992,12 +4992,12 @@ sap.ui.define([
 		}).then(function () {
 			assert.deepEqual(oCache.aElements, [
 				undefined,
-				{key : "b", "@$ui5._" : {"predicate" : "('b')"}},
-				{key : "c", "@$ui5._" : {"predicate" : "('c')"}},
-				{key : "d", "@$ui5._" : {"predicate" : "('d')"}},
-				{key : "g", "@$ui5._" : {"predicate" : "('g')"}},
-				{key : "h", "@$ui5._" : {"predicate" : "('h')"}},
-				{key : "i", "@$ui5._" : {"predicate" : "('i')"}}
+				{key : "b", "@$ui5._" : {predicate : "('b')"}},
+				{key : "c", "@$ui5._" : {predicate : "('c')"}},
+				{key : "d", "@$ui5._" : {predicate : "('d')"}},
+				{key : "g", "@$ui5._" : {predicate : "('g')"}},
+				{key : "h", "@$ui5._" : {predicate : "('h')"}},
+				{key : "i", "@$ui5._" : {predicate : "('i')"}}
 			]);
 			assert.deepEqual(oCache.aReadRequests, [], "cleaned up properly");
 		});
@@ -5528,7 +5528,7 @@ sap.ui.define([
 				iLimit = {/*number*/},
 				oResult = {
 					"@odata.context" : sDataContext,
-					"value" : [oElement0, oElement1]
+					value : [oElement0, oElement1]
 				};
 
 			oCache.mChangeListeners = mChangeListeners;
@@ -5624,7 +5624,7 @@ sap.ui.define([
 				oHelperMock = this.mock(_Helper),
 				oResult = {
 					"@odata.context" : "foo",
-					"value" : oFixture.vValue || []
+					value : oFixture.vValue || []
 				};
 
 			oCache.mChangeListeners = {};
@@ -5663,7 +5663,7 @@ sap.ui.define([
 			oResult = {
 				"@odata.context" : "foo",
 				"@odata.nextLink" : "~nextLink",
-				"value" : [oElement5]
+				value : [oElement5]
 			};
 
 		oCache.mChangeListeners = {};
@@ -5701,7 +5701,7 @@ sap.ui.define([
 			oResult = {
 				"@odata.context" : "foo",
 				"@odata.nextLink" : "~nextLink",
-				"value" : [oElement5]
+				value : [oElement5]
 			};
 
 		oCache.mChangeListeners = {};
@@ -6539,8 +6539,8 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withArgs("GET", "Employees?$skip=0&$top=5", sinon.match.same(oUnlockedCopy))
 			.resolves({
-				"value" : [{
-					"list" : aList,
+				value : [{
+					list : aList,
 					"list@odata.count" : "26"
 				}]
 			});
@@ -6867,7 +6867,7 @@ sap.ui.define([
 		assert.deepEqual(aCollection, [{
 			"@$ui5._" : {
 				postBody : {},
-				"transient" : "updateGroup",
+				transient : "updateGroup",
 				transientPredicate : "($uid=id-1-23)"
 			},
 			"@$ui5.context.isTransient" : true
@@ -7051,7 +7051,7 @@ sap.ui.define([
 			name : "John Doe",
 			"@$ui5._" : {
 				postBody : {name : "John Doe"},
-				"transient" : "updateGroup",
+				transient : "updateGroup",
 				transientPredicate : sTransientPredicate
 			},
 			"@$ui5.context.isTransient" : true
@@ -7288,10 +7288,10 @@ sap.ui.define([
 				sParkedGroupId = oFixture.parkedGroupId || "$parked." + oFixture.createGroupId,
 				oParkedGroupLock = {getGroupId : function () {}},
 				mGroups = {
-					"$direct" : "Direct",
-					"$auto" : "Auto",
-					"myAuto" : "Auto",
-					"myDirect" : "Direct"
+					$direct : "Direct",
+					$auto : "Auto",
+					myAuto : "Auto",
+					myDirect : "Direct"
 				},
 				sTransientPredicate = "($uid=id-1-23)",
 				sUpdateGroupId = oFixture.updateGroupId || oFixture.createGroupId,
@@ -7421,7 +7421,7 @@ sap.ui.define([
 			assert.deepEqual(oCache.aElements[0], {
 				"@$ui5._" : {
 					postBody : {},
-					"transient" : "$inactive.updateGroup",
+					transient : "$inactive.updateGroup",
 					transientPredicate : sTransientPredicate
 				},
 				"@$ui5.context.isInactive" : true,
@@ -7431,7 +7431,7 @@ sap.ui.define([
 			assert.deepEqual(oCache.aElements[0], {
 				"@$ui5._" : {
 					postBody : {},
-					"transient" : "updateGroup",
+					transient : "updateGroup",
 					transientPredicate : sTransientPredicate
 				},
 				"@$ui5.context.isTransient" : true
@@ -7978,19 +7978,19 @@ sap.ui.define([
 						sTransientPredicate = "($uid=id-1-23)",
 						oPersisted = {
 							"@$ui5._" : { // persistent
-								"predicate" : "('@')",
-								"transientPredicate" : sTransientPredicate
+								predicate : "('@')",
+								transientPredicate : sTransientPredicate
 							},
-							"key" : "@"
+							key : "@"
 						},
 						oResult = {value : oFixture.aValues},
 						bSingle = iLength === undefined,
 						oTransient = {
 							"@$ui5._" : {
-								"transient" : true,
-								"transientPredicate" : sTransientPredicate
+								transient : true,
+								transientPredicate : sTransientPredicate
 							},
-							"key" : "@"
+							key : "@"
 						},
 						mTypeForMetaPath = {
 							"/TEAMS/Foo" : {}
@@ -8135,20 +8135,20 @@ sap.ui.define([
 			sByPredicateJSON = JSON.stringify(mByPredicate),
 			aElements = [{
 				"@$ui5._" : {
-					"predicate" : "('@')",
-					"transientPredicate" : "($uid=id-1-23)"
+					predicate : "('@')",
+					transientPredicate : "($uid=id-1-23)"
 				},
-				"key" : "@"
+				key : "@"
 			}, {
 				"@$ui5._" : {
-					"predicate" : "('a')"
+					predicate : "('a')"
 				},
-				"key" : "a"
+				key : "a"
 			}, {
 				"@$ui5._" : {
-					"predicate" : "('b')"
+					predicate : "('b')"
 				},
-				"key" : "b"
+				key : "b"
 			}],
 			sElementsJSON = JSON.stringify(aElements),
 			mNavigationPropertyPaths = {},
@@ -8525,8 +8525,8 @@ sap.ui.define([
 			oElement = {};
 
 		oCache.mChangeListeners = {
-			"bar" : [],
-			"foo" : [],
+			bar : [],
+			foo : [],
 			"('0')/bar/baz" : "~listener[]~0~",
 			"('0')/foo" : "~listener[]~1~"
 		};
@@ -9035,7 +9035,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache#toString", function (assert) {
 		var oCache,
-			mQueryOptions = {"foo" : "bar"},
+			mQueryOptions = {foo : "bar"},
 			sResourcePath = "Employees";
 
 		this.oRequestorMock.expects("buildQueryString")
@@ -9101,7 +9101,7 @@ sap.ui.define([
 					"mPatchRequests empty when both patch requests are finished");
 			});
 			assert.deepEqual(oCache.mPatchRequests, {
-				"Note" : [oPatchPromise1, oPatchPromise2]
+				Note : [oPatchPromise1, oPatchPromise2]
 			}, "mPatchRequests remembers both pending requests");
 
 			return oUpdatePromise;
@@ -9592,13 +9592,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	"in" : {value : "some value"},
+	in : {value : "some value"},
 	out : "some value"
 }, {
-	"in" : null, // null value: null is returned due to "204 No Content"
+	in : null, // null value: null is returned due to "204 No Content"
 	out : null
 }, {
-	"in" : 42, // $count: "a simple primitive integer value with media type text/plain"
+	in : 42, // $count: "a simple primitive integer value with media type text/plain"
 	out : 42
 }].forEach(function (oFixture) {
 	QUnit.test("PropertyCache#fetchValue, value = " + oFixture.out, function (assert) {
@@ -9723,7 +9723,7 @@ sap.ui.define([
 			vInstance = {},
 			sKeyPredicate = "(42)",
 			sMetaPath = "Bar/Baz",
-			mTypeForMetaPath = {"Bar/Baz" : {"$Key" : ["key"]}};
+			mTypeForMetaPath = {"Bar/Baz" : {$Key : ["key"]}};
 
 		oHelperMock.expects("getKeyPredicate")
 			.withExactArgs(sinon.match.same(vInstance), sMetaPath,
@@ -9744,7 +9744,7 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			vInstance = {},
 			sMetaPath = "Bar/Baz",
-			mTypeForMetaPath = {"Bar/Baz" : {"$Key" : ["key"]}};
+			mTypeForMetaPath = {"Bar/Baz" : {$Key : ["key"]}};
 
 		oHelperMock.expects("getKeyPredicate")
 			.withExactArgs(sinon.match.same(vInstance), sMetaPath,
@@ -9764,23 +9764,23 @@ sap.ui.define([
 			oResult = {
 				// do not call calculateKeyPredicate for instance annotations
 				"@instance.annotation" : {},
-				"foo" : "bar",
-				"list" : [{}, {}, {
-					"nestedList" : [{}]
+				foo : "bar",
+				list : [{}, {}, {
+					nestedList : [{}]
 				}],
-				"property" : {
-					"nestedList" : [{}]
+				property : {
+					nestedList : [{}]
 				},
 				// do not call calculateKeyPredicate for instance annotations
 				"property@instance.annotation" : {},
-				"list2" : [{}, {}, {}],
+				list2 : [{}, {}, {}],
 				"list2@odata.count" : "12",
 				"list2@odata.nextLink" : "List2?skip=3",
-				"list3" : [{}, {}, {}],
+				list3 : [{}, {}, {}],
 				"list3@odata.nextLink" : "List3?skip=3",
-				"collectionValuedProperty" : ["test1", "test2"],
-				"null" : null,
-				"collectionWithNullValue" : [null]
+				collectionValuedProperty : ["test1", "test2"],
+				null : null,
+				collectionWithNullValue : [null]
 			},
 			mTypeForMetaPath = {};
 
@@ -9857,26 +9857,26 @@ sap.ui.define([
 			sPredicate0 = "(13)",
 			sPredicate1 = "(42)",
 			aResult = [{
-				"foo0" : "bar0",
-				"list0" : [{}]
+				foo0 : "bar0",
+				list0 : [{}]
 			}, {
-				"foo" : "bar",
-				"list" : [{}, {}, {
-					"nestedList" : [{}]
+				foo : "bar",
+				list : [{}, {}, {
+					nestedList : [{}]
 				}],
-				"property" : {
-					"nestedList" : [{}]
+				property : {
+					nestedList : [{}]
 				},
 				// do not call calculateKeyPredicate for instance annotations
 				"property@instance.annotation" : {},
-				"list2" : [{}, {}, {}],
+				list2 : [{}, {}, {}],
 				"list2@odata.count" : "12",
 				"list2@odata.nextLink" : "List2?skip=3",
-				"list3" : [{}, {}, {}],
+				list3 : [{}, {}, {}],
 				"list3@odata.nextLink" : "List3?skip=3",
-				"collectionValuedProperty" : ["test1", "test2"],
-				"null" : null,
-				"collectionWithNullValue" : [null]
+				collectionValuedProperty : ["test1", "test2"],
+				null : null,
+				collectionWithNullValue : [null]
 			}],
 			mTypeForMetaPath = {};
 
@@ -10066,7 +10066,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getElementIndex", function (assert) {
 		var sKeyPredicate = "(~)",
-			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
+			oElement = {"@$ui5._" : {predicate : sKeyPredicate}},
 			aElements = [{}, oElement];
 
 		aElements.$byPredicate = {};
@@ -10085,9 +10085,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("makeUpdateData", function (assert) {
-		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {"Age" : 42});
+		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {Age : 42});
 		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf"),
-			{"Address" : {"City" : "Walldorf"}});
+			{Address : {City : "Walldorf"}});
 	});
 
 	//*********************************************************************************************

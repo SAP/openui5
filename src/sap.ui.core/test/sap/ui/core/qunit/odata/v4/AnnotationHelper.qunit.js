@@ -15,157 +15,157 @@ sap.ui.define([
 	"use strict";
 
 	var mScope = {
-			"$Annotations" : {
+			$Annotations : {
 				"tea_busi.DefaultContainer/EMPLOYEES" : {
 					"@Common.Text" : {
-						"$Path" : "ID"
+						$Path : "ID"
 					}
 				},
 				"tea_busi.Product" : {
 					"@UI.LineItem" : [{
-						"Value" : {
-							"$Path" : "Price"
+						Value : {
+							$Path : "Price"
 						}
 					}]
 				},
 				"tea_busi.Product/Price" : { // test requires full namespaces
 					"@Org.OData.Measures.V1.ISOCurrency" : {
-						"$Path" : "Currency"
+						$Path : "Currency"
 					},
 					"@com.sap.vocabularies.UI.v1.DoNotCheckScaleOfMeasureQuantity" : true
 				},
 				"tea_busi.TEAM" : {
 					"@UI.LineItem" : [{
 						"@UI.Importance" : {
-							"$EnumMember" : "UI.ImportanceType/High"
+							$EnumMember : "UI.ImportanceType/High"
 						},
-						"$Type" : "UI.DataFieldWithNavigationPath",
-						"Label" : "Team ID",
+						$Type : "UI.DataFieldWithNavigationPath",
+						Label : "Team ID",
 						"Label@Common.Label" : "Team ID's Label",
-						"Target" : {
-							"$NavigationPropertyPath" : "TEAM_2_EMPLOYEES"
+						Target : {
+							$NavigationPropertyPath : "TEAM_2_EMPLOYEES"
 						},
-						"Value" : {
-							"$Path" : "Team_Id"
+						Value : {
+							$Path : "Team_Id"
 						}
 					}]
 				},
 				"tea_busi.Worker" : {
 					"@UI.Facets" : [{
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// term cast
-							"$AnnotationPath" : "@UI.LineItem"
+							$AnnotationPath : "@UI.LineItem"
 						}
 					}, {
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// term cast at navigation property itself
-							"$AnnotationPath" : "EMPLOYEE_2_TEAM@Common.Label"
+							$AnnotationPath : "EMPLOYEE_2_TEAM@Common.Label"
 						}
 					}, {
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// navigation property and term cast
-							"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem"
+							$AnnotationPath : "EMPLOYEE_2_TEAM/@UI.LineItem"
 						}
 					}, {
-						"$Type" : "UI.ReferenceFacet",
-						"Target" : {
+						$Type : "UI.ReferenceFacet",
+						Target : {
 							// type cast, navigation properties and term cast (at its type)
-							"$AnnotationPath"
-								: "tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
+							$AnnotationPath :
+								"tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
 						}
 					}]
 				},
 				"tea_busi.Worker/ID" : {
 					"@Common.Label" : "Worker's ID",
 					"@Common.Text" : {
-						"$Path" : "Name"
+						$Path : "Name"
 					}
 				},
 				"tea_busi.Worker/Name" : {
 					"@Common.Label" : "Worker's Name"
 				}
 			},
-			"$EntityContainer" : "tea_busi.DefaultContainer",
+			$EntityContainer : "tea_busi.DefaultContainer",
 			// tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"tea_busi." : {
-				"$kind" : "Schema",
+				$kind : "Schema",
 				"@Schema" : {}
 			},
 			"tea_busi.DefaultContainer" : {
-				"$kind" : "EntityContainer",
-				"EMPLOYEES" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
-						"EMPLOYEE_2_TEAM" : "TEAMS"
+				$kind : "EntityContainer",
+				EMPLOYEES : {
+					$kind : "EntitySet",
+					$NavigationPropertyBinding : {
+						EMPLOYEE_2_TEAM : "TEAMS"
 					},
-					"$Type" : "tea_busi.Worker"
+					$Type : "tea_busi.Worker"
 				},
-				"Products" : {
-					"$kind" : "EntitySet",
-					"Type" : "tea_busi.Product"
+				Products : {
+					$kind : "EntitySet",
+					Type : "tea_busi.Product"
 				},
-				"TEAMS" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
-						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
+				TEAMS : {
+					$kind : "EntitySet",
+					$NavigationPropertyBinding : {
+						TEAM_2_EMPLOYEES : "EMPLOYEES"
 					},
-					"$Type" : "tea_busi.TEAM"
+					$Type : "tea_busi.TEAM"
 				}
 			},
 			"tea_busi.Product" : {
-				"$kind" : "EntityType",
-				"$Key" : ["Id"],
-				"Id" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false
+				$kind : "EntityType",
+				$Key : ["Id"],
+				Id : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false
 				},
-				"Currency" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false
+				Currency : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false
 				},
-				"Price" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.Decimal",
-					"$Nullable" : false
+				Price : {
+					$kind : "Property",
+					$Type : "Edm.Decimal",
+					$Nullable : false
 				}
 			},
 			"tea_busi.TEAM" : {
-				"$kind" : "EntityType",
-				"$Key" : ["Team_Id"],
-				"Team_Id" : {
-					"$kind" : "Property",
-					"$Type" : "name.space.Id",
-					"$Nullable" : false,
-					"$MaxLength" : 10
+				$kind : "EntityType",
+				$Key : ["Team_Id"],
+				Team_Id : {
+					$kind : "Property",
+					$Type : "name.space.Id",
+					$Nullable : false,
+					$MaxLength : 10
 				},
-				"TEAM_2_EMPLOYEES" : {
-					"$kind" : "NavigationProperty",
-					"$isCollection" : true,
-					"$Type" : "tea_busi.Worker"
+				TEAM_2_EMPLOYEES : {
+					$kind : "NavigationProperty",
+					$isCollection : true,
+					$Type : "tea_busi.Worker"
 				}
 			},
 			"tea_busi.Worker" : {
-				"$kind" : "EntityType",
-				"$Key" : ["ID"],
-				"ID" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String",
-					"$Nullable" : false,
-					"$MaxLength" : 4
+				$kind : "EntityType",
+				$Key : ["ID"],
+				ID : {
+					$kind : "Property",
+					$Type : "Edm.String",
+					$Nullable : false,
+					$MaxLength : 4
 				},
-				"Name" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
+				Name : {
+					$kind : "Property",
+					$Type : "Edm.String"
 				},
-				"EMPLOYEE_2_TEAM" : {
-					"$kind" : "NavigationProperty",
-					"$Type" : "tea_busi.TEAM",
-					"$Nullable" : false
+				EMPLOYEE_2_TEAM : {
+					$kind : "NavigationProperty",
+					$Type : "tea_busi.TEAM",
+					$Nullable : false
 				}
 			}
 		};
@@ -462,20 +462,20 @@ sap.ui.define([
 				$And : [
 					{
 						$Eq : [
-							{"$DateTimeOffset" : "1970-01-01T00:00:00.000Z"},
-							{"$DateTimeOffset" : "1970-01-01T00:00:00.000+00:00"}
+							{$DateTimeOffset : "1970-01-01T00:00:00.000Z"},
+							{$DateTimeOffset : "1970-01-01T00:00:00.000+00:00"}
 						]
 					}, {
 						$Eq : [
-							{"$DateTimeOffset" : "1970-01-01T00:00:00.000Z"},
-							{"$DateTimeOffset" : "1970-01-01T00:00:00.000-00:00"}
+							{$DateTimeOffset : "1970-01-01T00:00:00.000Z"},
+							{$DateTimeOffset : "1970-01-01T00:00:00.000-00:00"}
 						]
 					}
 				]
 			}, {
 				$Le : [
-					{"$DateTimeOffset" : "1970-01-01T00:00:00.000Z"},
-					{"$DateTimeOffset" : "1970-01-01T00:00:00.000-01:00"}
+					{$DateTimeOffset : "1970-01-01T00:00:00.000Z"},
+					{$DateTimeOffset : "1970-01-01T00:00:00.000-01:00"}
 				]
 			}]
 		}, true);

@@ -106,31 +106,31 @@ sap.ui.define([
 				+ "<bar><included1/><included2/></bar>"
 				+ "\n<bar><innerBar/><innerBar/><innerBar2/></bar></foo>"),
 			oInclude1Config = {
-				"included1" : {
+				included1 : {
 					__processor : function (oElement) {
 						this.processor("included1", oElement);
 					}
 				}
 			},
 			oInclude2Config = {
-				"included2" : {
+				included2 : {
 					__processor : function (oElement) {
 						this.processor("included2", oElement);
 					}
 				}
 			},
 			oSchemaConfig = {
-				"bar" : {
+				bar : {
 					__processor : function (oElement) {
 						this.processor("bar", oElement);
 					},
 					__include : [oInclude1Config, oInclude2Config],
-					"innerBar" : {
+					innerBar : {
 						__processor : function (oElement) {
 							this.processor("innerBar", oElement);
 						}
 					},
-					"innerBar2" : {
+					innerBar2 : {
 						__processor : function (oElement) {
 							this.processor("innerBar2", oElement);
 						}
@@ -165,7 +165,7 @@ sap.ui.define([
 				__postProcessor : function (_oElement, aResults) {
 					return {$And : aResults};
 				},
-				"Bool" : {
+				Bool : {
 					__postProcessor : function (oElement, aResults) {
 						assert.deepEqual(aResults, []);
 						return oElement.childNodes[0].nodeValue === "true";
@@ -180,7 +180,7 @@ sap.ui.define([
 		var oMetadataConverter = new _MetadataConverter();
 
 		oMetadataConverter.aliases = {
-			"display" : "org.example.vocabularies.display."
+			display : "org.example.vocabularies.display."
 		};
 
 		assert.strictEqual(oMetadataConverter.resolveAlias(undefined), undefined);
@@ -339,114 +339,114 @@ sap.ui.define([
 		testExpression(assert, "<String><!-- foo -->bar</String>", "bar");
 		testExpression(assert, "<String>foo<!-- bar -->baz</String>", "foobaz");
 
-		testExpression(assert, "<Binary>T0RhdGE</Binary>", {"$Binary" : "T0RhdGE"});
+		testExpression(assert, "<Binary>T0RhdGE</Binary>", {$Binary : "T0RhdGE"});
 		testExpression(assert, "<Bool>false</Bool>", false);
-		testExpression(assert, "<Date>2015-01-01</Date>", {"$Date" : "2015-01-01"});
+		testExpression(assert, "<Date>2015-01-01</Date>", {$Date : "2015-01-01"});
 		testExpression(assert, "<DateTimeOffset>2000-01-01T16:00:00.000-09:00</DateTimeOffset>",
-			{"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"});
-		testExpression(assert, "<Decimal>3.14</Decimal>", {"$Decimal" : "3.14"});
+			{$DateTimeOffset : "2000-01-01T16:00:00.000-09:00"});
+		testExpression(assert, "<Decimal>3.14</Decimal>", {$Decimal : "3.14"});
 		testExpression(assert, "<Duration>P11D23H59M59S</Duration>",
-			{"$Duration" : "P11D23H59M59S"});
+			{$Duration : "P11D23H59M59S"});
 		testExpression(assert, "<EnumMember> foo.Enum/Member1  foo.Enum/Member2 </EnumMember>",
-			{"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"});
+			{$EnumMember : "foo.Enum/Member1 foo.Enum/Member2"});
 		testExpression(assert, "<Float>2.718</Float>", 2.718);
-		testExpression(assert, "<Float>NaN</Float>", {"$Float" : "NaN"});
-		testExpression(assert, "<Float>-INF</Float>", {"$Float" : "-INF"});
-		testExpression(assert, "<Float>INF</Float>", {"$Float" : "INF"});
+		testExpression(assert, "<Float>NaN</Float>", {$Float : "NaN"});
+		testExpression(assert, "<Float>-INF</Float>", {$Float : "-INF"});
+		testExpression(assert, "<Float>INF</Float>", {$Float : "INF"});
 		testExpression(assert, "<Guid>21EC2020-3AEA-1069-A2DD-08002B30309D</Guid>",
-			{"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"});
+			{$Guid : "21EC2020-3AEA-1069-A2DD-08002B30309D"});
 		testExpression(assert, "<Int>42</Int>", 42);
 		testExpression(assert, "<Int>9007199254740991</Int>", 9007199254740991);
-		testExpression(assert, "<Int>9007199254740992</Int>", {"$Int" : "9007199254740992"});
-		testExpression(assert, "<TimeOfDay>21:45:00</TimeOfDay>", {"$TimeOfDay" : "21:45:00"});
+		testExpression(assert, "<Int>9007199254740992</Int>", {$Int : "9007199254740992"});
+		testExpression(assert, "<TimeOfDay>21:45:00</TimeOfDay>", {$TimeOfDay : "21:45:00"});
 		testExpression(assert, "<AnnotationPath>Path/f.Bar@f.Term</AnnotationPath>",
-			{"$AnnotationPath" : "Path/foo.Bar@foo.Term"});
+			{$AnnotationPath : "Path/foo.Bar@foo.Term"});
 		testExpression(assert,
 			"<NavigationPropertyPath>Path/f.Bar/f.Baz</NavigationPropertyPath>",
-			{"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"});
-		testExpression(assert, "<Path>Path/f.Bar/f.Baz</Path>", {"$Path" : "Path/foo.Bar/foo.Baz"});
+			{$NavigationPropertyPath : "Path/foo.Bar/foo.Baz"});
+		testExpression(assert, "<Path>Path/f.Bar/f.Baz</Path>", {$Path : "Path/foo.Bar/foo.Baz"});
 		testExpression(assert, "<PropertyPath>Path/f.Bar/f.Baz</PropertyPath>",
-			{"$PropertyPath" : "Path/foo.Bar/foo.Baz"});
+			{$PropertyPath : "Path/foo.Bar/foo.Baz"});
 		testExpression(assert, "<Null/>", null);
 		testExpression(assert,
 			"<LabeledElementReference>f.LabeledElement</LabeledElementReference>",
-			{"$LabeledElementReference" : "foo.LabeledElement"});
+			{$LabeledElementReference : "foo.LabeledElement"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: operators", function (assert) {
 		testExpression(assert, "<And><Path>IsMale</Path><Path>IsMarried</Path></And>",
-			{"$And" : [{"$Path" : "IsMale"}, {"$Path" : "IsMarried"}]});
+			{$And : [{$Path : "IsMale"}, {$Path : "IsMarried"}]});
 		testExpression(assert, "<Or><Path>IsMale</Path><Path>IsMarried</Path></Or>",
-			{"$Or" : [{"$Path" : "IsMale"}, {"$Path" : "IsMarried"}]});
-		testExpression(assert, "<Not><Path>IsMale</Path></Not>", {"$Not" : {"$Path" : "IsMale"}});
+			{$Or : [{$Path : "IsMale"}, {$Path : "IsMarried"}]});
+		testExpression(assert, "<Not><Path>IsMale</Path></Not>", {$Not : {$Path : "IsMale"}});
 		testExpression(assert, "<Eq><Null/><Path>IsMale</Path></Eq>",
-			{"$Eq" : [null, {"$Path" : "IsMale"}]});
+			{$Eq : [null, {$Path : "IsMale"}]});
 		testExpression(assert, "<Ne><Null/><Path>IsMale</Path></Ne>",
-			{"$Ne" : [null, {"$Path" : "IsMale"}]});
+			{$Ne : [null, {$Path : "IsMale"}]});
 		testExpression(assert, "<Gt><Path>Price</Path><Int>20</Int></Gt>",
-			{"$Gt" : [{"$Path" : "Price"}, 20]});
+			{$Gt : [{$Path : "Price"}, 20]});
 		testExpression(assert, "<Ge><Path>Price</Path><Int>20</Int></Ge>",
-			{"$Ge" : [{"$Path" : "Price"}, 20]});
+			{$Ge : [{$Path : "Price"}, 20]});
 		testExpression(assert, "<Le><Path>Price</Path><Int>20</Int></Le>",
-			{"$Le" : [{"$Path" : "Price"}, 20]});
+			{$Le : [{$Path : "Price"}, 20]});
 		testExpression(assert, "<Lt><Path>Price</Path><Int>20</Int></Lt>",
-			{"$Lt" : [{"$Path" : "Price"}, 20]});
+			{$Lt : [{$Path : "Price"}, 20]});
 		testExpression(assert,
 			"<If><Path>IsFemale</Path><String>Female</String><String>Male</String></If>",
-			{"$If" : [{"$Path" : "IsFemale"}, "Female", "Male"]});
+			{$If : [{$Path : "IsFemale"}, "Female", "Male"]});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: Apply", function (assert) {
 		testExpression(assert, '<Apply Function="f.Bar"/>',
-			{"$Apply" : [], "$Function" : "foo.Bar"});
+			{$Apply : [], $Function : "foo.Bar"});
 		testExpression(assert, '<Apply Function="odata.concat"><String>Product: </String>'
 			+ "<Path>ProductName</Path></Apply>",
-			{"$Apply" : ["Product: ", {"$Path" : "ProductName"}], "$Function" : "odata.concat"});
+			{$Apply : ["Product: ", {$Path : "ProductName"}], $Function : "odata.concat"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: Cast and IsOf", function (assert) {
 		testExpression(assert, '<Cast Type="Collection(f.Type)"><Path>Average</Path></Cast>', {
-			"$Cast" : {"$Path" : "Average"},
-			"$Type" : "foo.Type",
-			"$isCollection" : true
+			$Cast : {$Path : "Average"},
+			$Type : "foo.Type",
+			$isCollection : true
 		});
 		testExpression(assert, '<Cast Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2">'
 			+ "<Float>42</Float></Cast>", {
-			"$Cast" : 42,
-			"$Type" : "Edm.Decimal",
-			"$MaxLength" : 10,
-			"$Precision" : 8,
-			"$Scale" : 2
+			$Cast : 42,
+			$Type : "Edm.Decimal",
+			$MaxLength : 10,
+			$Precision : 8,
+			$Scale : 2
 		}, "2.0");
 		testExpression(assert, '<Cast Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2"'
 			+ ' SRID="42"><Float>42</Float></Cast>', {
-			"$Cast" : 42,
-			"$Type" : "Edm.Decimal",
-			"$MaxLength" : 10,
-			"$Precision" : 8,
-			"$Scale" : 2,
-			"$SRID" : "42"
+			$Cast : 42,
+			$Type : "Edm.Decimal",
+			$MaxLength : 10,
+			$Precision : 8,
+			$Scale : 2,
+			$SRID : "42"
 		}, "4.0");
 		testExpression(assert, '<Cast Type="Edm.Decimal"/>',
-			{"$Cast" : undefined, "$Type" : "Edm.Decimal"}); // do not crash
+			{$Cast : undefined, $Type : "Edm.Decimal"}); // do not crash
 		testExpression(assert, '<IsOf Type="Collection(f.Type)"><Path>Average</Path></IsOf>', {
-			"$IsOf" : {"$Path" : "Average"},
-			"$Type" : "foo.Type",
-			"$isCollection" : true
+			$IsOf : {$Path : "Average"},
+			$Type : "foo.Type",
+			$isCollection : true
 		});
 		testExpression(assert, '<IsOf Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2">'
 			+ "<Float>42</Float></IsOf>", {
-			"$IsOf" : 42,
-			"$Type" : "Edm.Decimal",
-			"$MaxLength" : 10,
-			"$Precision" : 8,
-			"$Scale" : 2
+			$IsOf : 42,
+			$Type : "Edm.Decimal",
+			$MaxLength : 10,
+			$Precision : 8,
+			$Scale : 2
 		});
 		testExpression(assert, '<IsOf Type="Edm.Decimal"/>',
-			{"$IsOf" : undefined, "$Type" : "Edm.Decimal"}); // do not crash
+			{$IsOf : undefined, $Type : "Edm.Decimal"}); // do not crash
 	});
 
 	//*********************************************************************************************
@@ -454,36 +454,36 @@ sap.ui.define([
 		testExpression(assert, "<Collection/>", []);
 		testExpression(assert,
 			"<Collection><String>Product</String><Path>Supplier</Path></Collection>",
-			["Product", {"$Path" : "Supplier"}]);
+			["Product", {$Path : "Supplier"}]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: LabeledElement", function (assert) {
 		testExpression(assert, '<LabeledElement Name="CustomerFirstName" Path="FirstName" />',
-			{"$LabeledElement" : {"$Path" : "FirstName"}, "$Name" : "CustomerFirstName"});
+			{$LabeledElement : {$Path : "FirstName"}, $Name : "CustomerFirstName"});
 		testExpression(assert,
 			'<LabeledElement Name="CustomerFirstName"><Path>FirstName</Path></LabeledElement>',
-			{"$LabeledElement" : {"$Path" : "FirstName"}, "$Name" : "CustomerFirstName"});
+			{$LabeledElement : {$Path : "FirstName"}, $Name : "CustomerFirstName"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: Record", function (assert) {
-		testExpression(assert, '<Record Type="f.Record"/>', {"$Type" : "foo.Record"});
+		testExpression(assert, '<Record Type="f.Record"/>', {$Type : "foo.Record"});
 		testExpression(assert, '\
 				<Record>\
 					<PropertyValue Property="GivenName" Path="FirstName"/>\
 					<PropertyValue Property="Surname"><Path>LastName</Path></PropertyValue>\
 				</Record>',
 			{
-				"GivenName" : {"$Path" : "FirstName"},
-				"Surname" : {"$Path" : "LastName"}
+				GivenName : {$Path : "FirstName"},
+				Surname : {$Path : "LastName"}
 			});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: UrlRef", function (assert) {
 		testExpression(assert, "<UrlRef><Path>/Url</Path></UrlRef>",
-			{"$UrlRef" : {"$Path" : "/Url"}});
+			{$UrlRef : {$Path : "/Url"}});
 	});
 	// TODO look at xml:base if the URL in UrlRef is static and relative
 
@@ -494,8 +494,8 @@ sap.ui.define([
 					<Annotation Term="f.Term" String="Apply"/>\
 				</Apply>',
 			{
-				"$Apply" : [],
-				"$Function" : "foo.Function",
+				$Apply : [],
+				$Function : "foo.Function",
 				"@foo.Term" : "Apply"
 			});
 		testExpression(assert, '\
@@ -503,8 +503,8 @@ sap.ui.define([
 					<Annotation Term="f.Term" String="Cast"/>\
 				</Cast>',
 			{
-				"$Cast" : undefined,
-				"$Type" : "Edm.String",
+				$Cast : undefined,
+				$Type : "Edm.String",
 				"@foo.Term" : "Cast"
 			});
 		["And", "Eq", "Ge", "Gt", "If", "Le", "Lt", "Ne", "Or"].forEach(
@@ -521,8 +521,8 @@ sap.ui.define([
 					<Annotation Term="f.Term" String="IsOf"/>\
 				</IsOf>',
 			{
-				"$IsOf" : undefined,
-				"$Type" : "Edm.String",
+				$IsOf : undefined,
+				$Type : "Edm.String",
 				"@foo.Term" : "IsOf"
 			});
 		testExpression(assert, '\
@@ -530,8 +530,8 @@ sap.ui.define([
 					<Annotation Term="f.Term" String="LabeledElement"/>\
 				</LabeledElement>',
 			{
-				"$Name" : "LabeledElement",
-				"$LabeledElement" : "Foo",
+				$Name : "LabeledElement",
+				$LabeledElement : "Foo",
 				"@foo.Term" : "LabeledElement"
 			});
 		testExpression(assert, '\
@@ -539,7 +539,7 @@ sap.ui.define([
 					<Annotation Term="f.Term" String="Not"/>\
 				</Not>',
 			{
-				"$Not" : undefined,
+				$Not : undefined,
 				"@foo.Term" : "Not"
 			});
 		testExpression(assert, '\
@@ -547,7 +547,7 @@ sap.ui.define([
 					<Annotation Term="f.Term" String="Null"/>\
 				</Null>',
 			{
-				"$Null" : null,
+				$Null : null,
 				"@foo.Term" : "Null"
 			});
 		testExpression(assert, '\
@@ -558,8 +558,8 @@ sap.ui.define([
 					</PropertyValue>\
 				</Record>',
 			{
-				"$Type" : "foo.Record",
-				"GivenName" : {"$Path" : "FirstName"},
+				$Type : "foo.Record",
+				GivenName : {$Path : "FirstName"},
 				"@foo.Term" : "Record",
 				"GivenName@foo.Term" : "PropertyValue"
 			});

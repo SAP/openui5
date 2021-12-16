@@ -31,7 +31,7 @@ sap.ui.define([
 		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, FilterType, Sorter,
 		OperationMode, AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils,
 		XMLHelper) {
-	/*eslint no-sparse-arrays: 0, camelcase: 0, "max-len": ["error", {"code": 100,
+	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
@@ -3834,13 +3834,13 @@ sap.ui.define([
 				})
 				.expectChange("businessPartner", null) // initialization due to #setContext
 				.expectMessages([{
-					"code" : undefined,
-					"descriptionUrl" : undefined,
-					"message" : sMessage,
-					"persistent" : true,
-					"target" : "",
-					"technical" : true,
-					"type" : "Error"
+					code : undefined,
+					descriptionUrl : undefined,
+					message : sMessage,
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
 				}]);
 
 			// code under test
@@ -6180,10 +6180,10 @@ sap.ui.define([
 				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
 				// SalesOrderId : "1,
 				SO_2_SOITEM : [
-					{SalesOrderID : "1", "ItemPosition" : "0010"},
-					{SalesOrderID : "1", "ItemPosition" : "0020"},
-					{SalesOrderID : "1", "ItemPosition" : "0030"},
-					{SalesOrderID : "1", "ItemPosition" : "0040"}
+					{SalesOrderID : "1", ItemPosition : "0010"},
+					{SalesOrderID : "1", ItemPosition : "0020"},
+					{SalesOrderID : "1", ItemPosition : "0030"},
+					{SalesOrderID : "1", ItemPosition : "0040"}
 				]
 			})
 			.expectChange("position", ["0010", "0020", "0030", "0040"]);
@@ -19464,7 +19464,7 @@ sap.ui.define([
 					+ "/groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
 					+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber),top(100))", {
 					value : [
-						{"UI5min__SalesNumber" : 0, "UI5min__SalesNumber@odata.type" : "#Int32"}
+						{UI5min__SalesNumber : 0, "UI5min__SalesNumber@odata.type" : "#Int32"}
 						// ... (don't care)
 					]
 				});
@@ -19676,7 +19676,7 @@ sap.ui.define([
 							grandTotal : true,
 							name : "SalesAmount",
 							unit : "Currency", // Note: unsupported in 1.84
-							"with" : "sum"
+							with : "sum"
 						}
 					},
 					group : {
@@ -20317,8 +20317,8 @@ sap.ui.define([
 						"@$ui5.foo" : "foo1"
 					},
 					Titles : [
-						{"short" : "Dr", "long" : "Doctor"},
-						{"short" : "Prof", "long" : "Professor", "@$ui5.foo" : "foo2"}
+						{short : "Dr", long : "Doctor"},
+						{short : "Prof", long : "Professor", "@$ui5.foo" : "foo2"}
 					]
 				};
 
@@ -20344,8 +20344,8 @@ sap.ui.define([
 							MONTHLY_BASIC_SALARY_AMOUNT : "999"
 						},
 						Titles : [
-							{"short" : "Dr", "long" : "Doctor"},
-							{"short" : "Prof", "long" : "Professor"}
+							{short : "Dr", long : "Doctor"},
+							{short : "Prof", long : "Professor"}
 						]
 					}
 				}, {
@@ -21014,12 +21014,12 @@ sap.ui.define([
 			oPublications,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			mNames = {
-				23 : "The Rolling Stones",
-				42 : "The Beatles"
+				"23" : "The Rolling Stones",
+				"42" : "The Beatles"
 			},
 			mPrices = {
-				23 : "12.99",
-				42 : "9.99"
+				"23" : "12.99",
+				"42" : "9.99"
 			},
 			oObjectPage,
 			oRowContext,
@@ -21427,7 +21427,7 @@ sap.ui.define([
 
 			that.expectChange("name", "The Beatles (modified)")
 				.expectRequest({
-					headers : {"Prefer" : "return=minimal"},
+					headers : {Prefer : "return=minimal"},
 					method : "PATCH",
 					url : "Artists(ArtistID='42',IsActiveEntity=false)",
 					payload : {Name : "The Beatles (modified)"}
@@ -21445,7 +21445,7 @@ sap.ui.define([
 
 			that.expectChange("bestFriend", "Sgt. Pepper (modified)")
 				.expectRequest({
-					headers : {"Prefer" : "return=minimal"},
+					headers : {Prefer : "return=minimal"},
 					method : "PATCH",
 					url : "Artists(ArtistID='23',IsActiveEntity=true)",
 					payload : {Name : "Sgt. Pepper (modified)"}
@@ -27930,10 +27930,10 @@ sap.ui.define([
 				"" : {
 					Label : "Price #"
 				},
-				"A" : {
+				A : {
 					Label : "Price #A"
 				},
-				"B" : {
+				B : {
 					Label : "Price #B"
 				}
 			});
@@ -29605,11 +29605,11 @@ sap.ui.define([
 				.expectChange("type", ["42"])
 				.expectChange("company", ["Nestle"])
 				.expectMessages([{
-					"message" : "The entity will be created via group 'update'. Cannot patch via"
+					message : "The entity will be created via group 'update'. Cannot patch via"
 						+ " group '$direct'",
-					"persistent" : true,
-					"technical" : true,
-					"type" : "Error"
+					persistent : true,
+					technical : true,
+					type : "Error"
 				}]);
 
 			that.oLogMock.expects("error"); // don't care about console here
@@ -31280,10 +31280,10 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.Context");
 
 			that.expectMessages([{
-				"message" : "Unexpected request: GET TEAMS('42')",
-				"persistent" : true,
-				"technical" : true,
-				"type" : "Error"
+				message : "Unexpected request: GET TEAMS('42')",
+				persistent : true,
+				technical : true,
+				type : "Error"
 			}]);
 
 			return Promise.all([
@@ -32178,7 +32178,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					headers : {
-						"Prefer" : "handling=strict"
+						Prefer : "handling=strict"
 					},
 					method : "POST",
 					url : "SalesOrderList('1')/" + sAction,
@@ -32264,7 +32264,7 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataContextBinding");
 			that.expectRequest({
 					headers : {
-						"Prefer" : "handling=strict"
+						Prefer : "handling=strict"
 					},
 					method : "POST",
 					url : "SalesOrderList('0')/" + sAction,
@@ -32275,7 +32275,7 @@ sap.ui.define([
 				})
 				.expectRequest({
 					headers : {
-						"Prefer" : "handling=strict"
+						Prefer : "handling=strict"
 					},
 					method : "POST",
 					url : "RegenerateEPMData",
@@ -32390,7 +32390,7 @@ sap.ui.define([
 				.expectChange("status", "C")
 				.expectRequest({
 					headers : {
-						"Prefer" : "handling=strict"
+						Prefer : "handling=strict"
 					},
 					method : "POST",
 					url : "SalesOrderList('42')/" + sGoodsAction,
@@ -35508,7 +35508,7 @@ sap.ui.define([
 					batchNo : 5,
 					headers : {
 						"If-Match" : "etag.draft1",
-						"Prefer" : "return=minimal"
+						Prefer : "return=minimal"
 					},
 					method : "PATCH",
 					payload : {
@@ -35747,7 +35747,7 @@ sap.ui.define([
 			that.expectRequest({
 					headers : {"If-Match" : "etag.B"},
 					method : "PATCH",
-					payload : {"Name" : "Best Friend**"},
+					payload : {Name : "Best Friend**"},
 					url : "Artists(ArtistID='B',IsActiveEntity=true)"
 				}); // no response required
 
@@ -36157,7 +36157,7 @@ sap.ui.define([
 			that.expectRequest({
 					method : "PATCH",
 					payload : {
-						"Note" : "update"
+						Note : "update"
 					},
 					url : "SalesOrderList('42')"
 				}); // no response required

@@ -46,66 +46,66 @@ sap.ui.define([], function () {
 		rEscapeDigits = /^[0-9a-f]{2}$/i,
 		// The list of built-in functions
 		mFunctions = {
-			"ceiling" : {
+			ceiling : {
 				ambiguousParameters : true
 			},
-			"concat" : {
+			concat : {
 				type : "Edm.String"
 			},
-			"contains" : {
+			contains : {
 				type : "Edm.Boolean"
 			},
-			"day" : {
+			day : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
 			},
-			"endswith" : {
+			endswith : {
 				type : "Edm.Boolean"
 			},
-			"floor" : {
+			floor : {
 				ambiguousParameters : true
 			},
-			"hour" : {
+			hour : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
 			},
-			"indexof" : {
+			indexof : {
 				type : "Edm.Int32"
 			},
-			"length" : {
+			length : {
 				type : "Edm.Int32"
 			},
-			"minute" : {
+			minute : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
 			},
-			"month" : {
+			month : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
 			},
-			"round" : {
+			round : {
 				ambiguousParameters : true
 			},
-			"second" : {
+			second : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
 			},
-			"startswith" : {
+			startswith : {
 				type : "Edm.Boolean"
 			},
-			"substring" : {
+			substring : {
 				type : "Edm.String"
 			},
-			"tolower" : {
+			tolower : {
 				type : "Edm.String"
 			},
-			"toupper" : {
+			toupper : {
 				type : "Edm.String"
 			},
-			"trim" : {
+			trim : {
 				type : "Edm.String"
 			},
-			"year" : {
+			year : {
 				type : "Edm.Int32",
 				ambiguousParameters : true
 			}
@@ -150,7 +150,7 @@ sap.ui.define([], function () {
 					return oToken;
 				}
 			},
-			"not" : {
+			not : {
 				lbp : 7,
 				nud : function (oToken) {
 					oToken.precedence = 7;
@@ -554,7 +554,7 @@ sap.ui.define([], function () {
 			oExpand[sExpandPath] = vValue;
 		} while (this.advanceIf(","));
 
-		return {"$expand" : oExpand};
+		return {$expand : oExpand};
 	};
 
 	/**
@@ -585,7 +585,7 @@ sap.ui.define([], function () {
 			aSelect.push(sPath);
 		} while (this.advanceIf(","));
 
-		return {"$select" : aSelect};
+		return {$select : aSelect};
 	};
 
 	/**
