@@ -476,6 +476,9 @@ sap.ui.define([
 						scope: this.getMetadataScope(),
 						plugins: aPlugins
 					});
+
+					addOrRemoveStyleClass(this.getRootControlInstance(), true);
+
 					//add root control is triggering overlay creation, so we need to wait for the scope to be set.
 					this._oDesignTime.addRootElement(this._oRootControl);
 
@@ -542,8 +545,6 @@ sap.ui.define([
 			.then(function() {
 				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
-
-				addOrRemoveStyleClass(this.getRootControlInstance(), true);
 			}.bind(this))
 			.then(function () {
 				this._sStatus = STARTED;
