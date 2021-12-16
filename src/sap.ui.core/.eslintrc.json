@@ -35,6 +35,7 @@
 				"no-lonely-if": "error", // override "warn"
 				"no-multiple-empty-lines": "error",
 				"no-multi-spaces": "error",
+				"no-unneeded-ternary": ["error", {"defaultAssignment": false}],
 				"no-whitespace-before-property": "error",
 				"nonblock-statement-body-position": "error", // @see "curly": ["error", "all"]
 				// "multiline" doesn't match our style
