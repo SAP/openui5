@@ -1049,12 +1049,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("bindList with sorters - error cases", function (assert) {
 		assert.throws(function () {
-			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
-				$$operationMode : OperationMode.Client});
+			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined,
+				{$$operationMode : OperationMode.Client});
 		}, new Error("Unsupported operation mode: Client"));
 		assert.throws(function () {
-			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined, {
-				$$operationMode : OperationMode.Auto});
+			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"), undefined,
+				{$$operationMode : OperationMode.Auto});
 		}, new Error("Unsupported operation mode: Auto"));
 		assert.throws(function () {
 			this.bindList("/EMPLOYEES", undefined, new Sorter("ID"));
@@ -1087,12 +1087,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("bindList with filters - error cases", function (assert) {
 		assert.throws(function () {
-			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42), {
-				$$operationMode : OperationMode.Client});
+			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42),
+				{$$operationMode : OperationMode.Client});
 		}, new Error("Unsupported operation mode: Client"));
 		assert.throws(function () {
-			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42), {
-				$$operationMode : OperationMode.Auto});
+			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42),
+				{$$operationMode : OperationMode.Auto});
 		}, new Error("Unsupported operation mode: Auto"));
 		assert.throws(function () {
 			this.bindList("/EMPLOYEES", undefined, undefined, new Filter("ID", "eq", 42));
@@ -7843,8 +7843,8 @@ sap.ui.define([
 				new Filter("key1", FilterOperator.EQ, "42"),
 				new Filter("key2", FilterOperator.EQ, 43),
 				new Filter("key3/p", FilterOperator.EQ, "44")
-			]})
-		);
+			]
+		}));
 	});
 
 	//*********************************************************************************************

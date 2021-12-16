@@ -3113,7 +3113,8 @@ sap.ui.define([
 			$$filterBeforeAggregate : "baz",
 			$filter : "foo",
 			$orderby : "bar",
-			$select : "Name"},
+			$select : "Name"
+		},
 		sOrderBy : "foo,bar",
 		aFilters : ["bar,baz"],
 		oResult : {
