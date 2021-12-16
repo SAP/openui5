@@ -29,14 +29,18 @@
 			</p>
 			<img src="../images/overviewDiagram.png" alt="Diagram" style="max-width: 100%; width: 1000px;">
 			<h2>Card Configuration</h2>
-			Based on a JSON schema definition, the card author defines either static or dynamic card content from the
-			REST services.
-			The upcoming design-time capabilities of the cards will help authors in the future.
+			The Card Developer creates a declarative manifest file in JSON format.
+			This file holds a description of the card configuration settings like destinations, parameters, filters, and action handlers.
+			Read more about <a href="../../index.html#/learn/configuration" target="_parent">Card Configuration</a>.
+			Additionally, the Card Developer specifies which configuration elements will be available for further adaptation
+			by Administrators and Page/Content Administrators using the <a href="../../index.html#/designtime/overview" target="_parent">Configuration Editor</a>.
 
 			<h2>Host Environment</h2>
-			The host environment is responsible for the card’s integration. Action events allow the host environment to
-			react on user interactions within the card.
-			For HTML environments UI5 provides two ways of integration: as a Custom Element or as a UI5 control.
+			Host Environment is where the card is integrated.
+			There are two ways of integration: as a Custom Element or as a UI5 Control.
+			The Host Developer can define action event handler to react on user interactions within the card,
+			resolves destinations, provides parameters and takes care for the layout and sizing.
+			Read more about <a href="../../index.html#/integrate/overview" target="_parent">responsibilities of the host environment</a>.
 
 			<h1 id="concept">
 				UX Concept
