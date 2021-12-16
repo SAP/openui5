@@ -355,7 +355,8 @@ sap.ui.define([
 	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel, fnAssert) {
 
 		QUnit.test(sTitle, function (assert) {
-			var sControlId, sRequest, that = this;
+			var sControlId, sRequest,
+				that = this;
 
 			function expectChanges(mValueByControl) {
 				for (sControlId in mValueByControl) {
@@ -21123,7 +21124,8 @@ sap.ui.define([
 		 *   A promise that waits for the expected changes
 		 */
 		function bindObjectPage(vSource, bUseHiddenBinding) {
-			var oBinding, oContext = vSource;
+			var oBinding,
+				oContext = vSource;
 
 			if (typeof vSource === "string") {
 				if (oFixture.hiddenBinding) {
@@ -28506,7 +28508,8 @@ sap.ui.define([
 	// group ID. The Server returns a bound message.
 	// JIRA: CPOUI5UISERVICESV3-1790
 	QUnit.test("Context#setProperty: read/write", function (assert) {
-		var oPromise, that = this;
+		var oPromise,
+			that = this;
 
 		return this.createSetPropertyScenario(assert).then(function (oContext) {
 			that.expectChange("name", "Best Team Ever");
@@ -28558,7 +28561,8 @@ sap.ui.define([
 	// The error message is reported to the message model automatically.
 	// JIRA: CPOUI5ODATAV4-1106
 	QUnit.test("Context#setProperty: rejected", function (assert) {
-		var oContext, oPromise, that = this;
+		var oContext, oPromise,
+			that = this;
 
 		return this.createSetPropertyScenario(assert).then(function (oContext0) {
 			that.expectChange("name", "Best Team Ever");

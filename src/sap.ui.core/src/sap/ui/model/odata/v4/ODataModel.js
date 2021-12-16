@@ -433,7 +433,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
-		var fnRunTasks, iTimeoutId, that = this;
+		var fnRunTasks, iTimeoutId,
+			that = this;
 
 		function runTasks(aTasks) {
 			clearTimeout(iTimeoutId);

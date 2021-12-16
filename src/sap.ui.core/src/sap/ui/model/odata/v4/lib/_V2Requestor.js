@@ -571,7 +571,8 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.lib._Requestor#doConvertResponse
 	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
-		var oCandidate, bIsArray, aKeys, oPayload, oPropertyMetadata, that = this;
+		var oCandidate, bIsArray, aKeys, oPayload, oPropertyMetadata,
+			that = this;
 
 		oResponsePayload = oResponsePayload.d;
 		// 'results' may be an array of entities in case of a collection request or the value when

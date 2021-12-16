@@ -777,7 +777,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.getValue = function (sPath) {
-		var oSyncPromise, that = this;
+		var oSyncPromise,
+			that = this;
 
 		this.oBinding.checkSuspended();
 		oSyncPromise = this.fetchValue(sPath, null, true)

@@ -701,7 +701,8 @@ sap.ui.define([
 			iCount = this.oCache.collapse(
 				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
 			iModelIndex = oContext.getModelIndex(),
-			i, that = this;
+			i,
+			that = this;
 
 		if (iCount > 0) {
 			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
@@ -915,7 +916,8 @@ sap.ui.define([
 			sPredicate,
 			aPreviousPaths,
 			bStartBeyondRange = iStart > this.aContexts.length,
-			i, that = this;
+			i,
+			that = this;
 
 		/*
 		 * Shrinks contexts to the new length, destroys unneeded contexts
@@ -3189,7 +3191,8 @@ sap.ui.define([
 	// @override sap.ui.model.Binding#setContext
 	ODataListBinding.prototype.setContext = function (oContext) {
 		var sResolvedPath,
-			i, that = this;
+			i,
+			that = this;
 
 		if (this.oContext !== oContext) {
 			if (this.bRelative) {

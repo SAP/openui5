@@ -654,7 +654,8 @@ sap.ui.define([
 	 * @returns {string} The path with aliases resolved (if there were any)
 	 */
 	_MetadataConverter.prototype.resolveAliasInPath = function (sPath, bHandleParentheses) {
-		var iAt, sTerm = "";
+		var iAt,
+			sTerm = "";
 
 		if (!sPath.includes(".")) {
 			return sPath; // no dot -> nothing to do
