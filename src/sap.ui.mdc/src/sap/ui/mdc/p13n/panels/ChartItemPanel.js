@@ -344,7 +344,9 @@ sap.ui.define([
 				new Button({
 					id: sRemoveBtnId,
 					press: [this._onPressHide, this],
-					type: "Transparent", icon: "sap-icon://decline",
+					type: "Transparent",
+					icon: "sap-icon://decline",
+					tooltip: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_REMOVE_ENTRY"),
 					customData: [new CustomData({key: "propertyName", value: "{" + this.P13N_MODEL + ">name}"}),
 								 new CustomData({key: "propertyKind", value: "{" + this.P13N_MODEL + ">kind}"})]
 				})
