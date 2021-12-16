@@ -325,7 +325,7 @@ sap.ui.define([
 							i;
 
 						if (!bIsAnnotationPath && aMatches[3]) {
-							sPrefix = sPrefix + "/";
+							sPrefix += "/";
 						} else if (!sPrefix.endsWith("/")) {
 							i = sPrefix.lastIndexOf("/");
 							sPrefix = i < 0 ? "" : sPrefix.slice(0, i + 1);

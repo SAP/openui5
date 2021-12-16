@@ -530,7 +530,7 @@ sap.ui.define([
 			sUri;
 
 		for (i = 32; i < 127; i += 1) {
-			sComplexString = sComplexString + String.fromCharCode(i);
+			sComplexString += String.fromCharCode(i);
 		}
 
 		sUri = "/" + _Helper.buildQuery({foo : sComplexString});
