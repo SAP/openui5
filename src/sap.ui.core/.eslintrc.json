@@ -18,23 +18,38 @@
 				"test/sap/ui/core/qunit/odata/v4/**/*.js"
 			],
 			"rules": {
-				"consistent-return": "off",
+				"consistent-return": "off", // override "warn"
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
 
 				// stylistic (JIRA: CPOUI5ODATAV4-1325)
 				"array-bracket-spacing": "error",
 				"block-spacing": "error",
 				"comma-spacing": "error",
+				"comma-style": ["error", "last"],
 				"computed-property-spacing": "error",
 				"eol-last": "error",
+				"implicit-arrow-linebreak": "error", // let's see...
+				"jsx-quotes": "error", // let's see...
+				"lines-between-class-members": "error",
+				"no-lonely-if": "error", // override "warn"
 				"no-multiple-empty-lines": "error",
 				"no-multi-spaces": "error",
 				"no-whitespace-before-property": "error",
+				"nonblock-statement-body-position": "error", // @see "curly": ["error", "all"]
 				"object-curly-spacing": "error",
 				"space-before-blocks": "error",
 				"space-before-function-paren": ["error", {"named": "never"}],
 				"space-in-parens": "error",
 				"switch-colon-spacing": "error"
+
+				// "array-element-newline": "off", // "consistent" doesn't match our style
+				// "capitalized-comments": "off", // cannot treat line & block comments differently
+				// "function-call-argument-newline": "off", // "consistent" doesn't match our style
+				// "function-paren-newline": "off", // "consistent" doesn't match our style
+				// "multiline-comment-style": "off", // we use both, line & block comments...
+				// "multiline-ternary": "off", // "always-multiline" doesn't match our style
+				// "newline-per-chained-call": "off", // doesn't match our style
+				// "sort-vars": "off", // cannot deal with Hungarian prefix :-(
 			}
 		},
 		{
