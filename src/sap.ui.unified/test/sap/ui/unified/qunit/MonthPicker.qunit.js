@@ -184,6 +184,16 @@ sap.ui.define([
 			assert.equal(this.MP.getSelectedDates()[0].getStartDate().getMonth(), 5, "There is a selected date");
 			assert.ok(oGridItemRefs[iFocusedIndex].classList.contains("sapUiCalItemSel"));
 
+			// Prepare
+			this.MP.setMonths(5);
+
+			// Act
+			this.MP.setMonth(11);
+
+			// Assert
+			assert.equal(this.MP.getProperty("_firstMonth"), 7, "Correct shift of the last months in the year when" +
+				"displayed months number is not multiple of 12");
+
 		});
 
 		QUnit.test("setMonth with interval selection", function(assert) {

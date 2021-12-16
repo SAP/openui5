@@ -67,10 +67,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/InvisibleTex
 			iMonths = 12;
 		} else if (iMonths < 12) {
 			// Month blocks should start with multiple of number of displayed months
-			iStartMonth = Math.floor( iMonth / iMonths) * iMonths;
-			if (iStartMonth + iMonths > 12) {
-				iStartMonth = 12 - iMonths;
-			}
+			iStartMonth = iMonth;
 		}
 
 		if (iColumns > 0) {
