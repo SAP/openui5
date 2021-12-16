@@ -43,7 +43,7 @@
 					<f2:content>
 						<mdc:FilterBar id="booksFilterBar" variantBackreference="IDVariantManagementOfTable" filtersChanged="onFiltersChanged"
 						filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}'
-						propertyInfo = '[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false\}]' 						
+						propertyInfo = '[\{"name": "stock", "dataType":"Edm.Int32", "maxConditions":-1, "required":false\}]'
 						liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 							<mdc:ValueHelp
@@ -288,7 +288,7 @@
 								<mdc:typeahead>
 									<mdcv:Popover title="Classification">
 										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-											<Table id="mTable1_classification" items='{path : "/Classification", length: 10}' width="30rem" mode="SingleSelectMaster">
+											<Table id="mTable1_classification" items='{path : "/Classification"}' width="30rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="10rem">
 														<header>
@@ -313,35 +313,6 @@
 										</mdcvc:MTable>
 									</mdcv:Popover>
 								</mdc:typeahead>
-								<mdc:dialog>
-									<mdcv:Dialog title="Classification">
-										<mdcvc:MTable keyPath="code" descriptionPath="title" filterFields="$search">
-											<Table id="mTable2_classification" items='{path : "/Classification"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="MultiSelect">
-												<columns>
-													<Column width="10rem">
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcvc:MTable>
-										<mdcvc:Conditions label="Classification"/>
-									</mdcv:Dialog>
-								</mdc:dialog>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHSubGenre"
@@ -905,7 +876,7 @@
 										<vhfb:filterItems>
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
 											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" fieldHelp="FHClassification"/>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" display="Description" fieldHelp="FHClassification"/>
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
