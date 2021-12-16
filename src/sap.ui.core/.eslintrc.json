@@ -19,6 +19,11 @@
 			],
 			"rules": {
 				"consistent-return": "off", // override "warn"
+				"max-len": ["error", {
+					"code": 100,
+					"ignorePattern": "@param|@returns|&lt;",
+					"ignoreUrls": true
+				}],
 				"no-mixed-spaces-and-tabs": "error",
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
 

@@ -1944,7 +1944,8 @@ sap.ui.define([
 	 * @returns {object}
 	 *   A new <code>_Requestor</code> instance
 	 */
-	_Requestor.create = function (sServiceUrl, oModelInterface, mHeaders, mQueryParams, sODataVersion) {
+	_Requestor.create = function (sServiceUrl, oModelInterface, mHeaders, mQueryParams,
+			sODataVersion) {
 		var oRequestor = new _Requestor(sServiceUrl, mHeaders, mQueryParams,
 			oModelInterface
 		);

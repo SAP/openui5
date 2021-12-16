@@ -31,7 +31,8 @@ sap.ui.define([
 		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, FilterType, Sorter,
 		OperationMode, AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils,
 		XMLHelper) {
-	/*eslint no-sparse-arrays: 0, camelcase: 0 */
+	/*eslint no-sparse-arrays: 0, camelcase: 0, "max-len": ["error", {"code": 100,
+		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -26303,8 +26304,8 @@ sap.ui.define([
 				that.oView.byId("form").getElementBinding().getBoundContext()
 					.requestSideEffects([{$NavigationPropertyPath : ""}])
 						.then(mustFail(assert), function (oError) {
-							assert.strictEqual(oError.message,
-								"HTTP request was not processed because the previous request failed");
+							assert.strictEqual(oError.message, "HTTP request was not processed"
+								+ " because the previous request failed");
 							assert.strictEqual(oError.cause.error.message,
 								"Request 1 intentionally failed");
 						}),
@@ -31704,7 +31705,7 @@ sap.ui.define([
 		{models : {meta : createSpecialCasesModel().getMetaModel()}},
 '<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
 	<template:repeat \
-		list="{meta>/special.cases.EntityWithUnsupportedEdmTypes/@com.sap.vocabularies.UI.v1.SelectionFields}" \
+		list="{meta>/special.cases.EntityWithUnsupportedEdmTypes/@com.sap.vocabularies.UI.v1.SelectionFields}"\
 		var="field">\
 			<Input value="{field>@@format}"/>\
 	</template:repeat>\

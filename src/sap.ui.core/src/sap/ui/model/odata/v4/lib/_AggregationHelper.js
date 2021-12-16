@@ -60,7 +60,8 @@ sap.ui.define([
 	 * @param {string[]} aAliases - Array of all applicable aggregatable property names/aliases
 	 * @throws {Error} If "average" or "countdistinct" are used together with grand totals like 1.84
 	 */
-	function aggregate(oAggregation, aGroupBy, aAggregate, bGrandTotalLike184, sAlias, i, aAliases) {
+	function aggregate(oAggregation, aGroupBy, aAggregate, bGrandTotalLike184, sAlias, i,
+			aAliases) {
 		var oDetails = oAggregation.aggregate[sAlias],
 			sAggregate = oDetails.name || sAlias,
 			sUnit = oDetails.unit,

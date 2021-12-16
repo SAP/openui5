@@ -3619,7 +3619,8 @@ sap.ui.define([
 	});
 	//TODO support collection properties (-> path containing index not leading to predicate)
 	//TODO prefer instance annotation at payload for "odata.editLink"?!
-	//TODO target URLs like "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container/Products(...)"?
+	//TODO target URLs like
+	// "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container/Products(...)"?
 	//TODO type casts, operations?
 
 	//*********************************************************************************************

@@ -2869,9 +2869,9 @@ sap.ui.define([
 	 *     This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
 	 *     the "EMPLOYEES" child of the entity container.
 	 *   <li> Afterwards, if the current object is an array, it represents overloads for an
-	 *     operation. Annotations of an operation (since 1.71.0) or a parameter (since 1.66.0) can be
-	 *     immediately addressed, no matter if they apply for a single overload or for all overloads
-	 *     at the same time, for example "/TEAMS/acme.NewAction@" or
+	 *     operation. Annotations of an operation (since 1.71.0) or a parameter (since 1.66.0) can
+	 *     be immediately addressed, no matter if they apply for a single overload or for all
+	 *     overloads at the same time, for example "/TEAMS/acme.NewAction@" or
 	 *     "/TEAMS/acme.NewAction/Team_ID@". Annotations of an unbound operation overload can be
 	 *     addressed like "/OperationImport/@$ui5.overload@", while "/OperationImport/@" addresses
 	 *     annotations of the operation import itself. The special name "$ReturnType" can be used

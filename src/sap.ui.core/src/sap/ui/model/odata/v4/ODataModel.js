@@ -1674,7 +1674,8 @@ sap.ui.define([
 		}
 		this.checkGroupId(sGroupId);
 
-		// Note: getBindings() returns an array that contains all bindings with change listeners (owned by Model)
+		// Note: getBindings() returns an array that contains all bindings with change listeners
+		// (owned by Model)
 		this.getBindings().forEach(function (oBinding) {
 			if (oBinding.isRoot()) {
 				// ignore the group ID for suspended bindings to avoid mismatches and errors; they

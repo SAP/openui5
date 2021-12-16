@@ -2112,7 +2112,8 @@ sap.ui.define([
 	});
 	//TODO discuss change in behavior for relative bindings:
 	//   $$groupId, custom query option now leads to own
-	//   cache for property binding -> adapt jsdoc for ODPB ctor, ODModel#bindProperty (remove Note: ...)
+	//   cache for property binding
+	//   -> adapt jsdoc for ODPB ctor, ODModel#bindProperty (remove Note: ...)
 
 	//*********************************************************************************************
 	QUnit.test("resetInvalidDataState", function () {

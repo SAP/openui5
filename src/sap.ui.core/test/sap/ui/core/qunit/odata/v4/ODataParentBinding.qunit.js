@@ -2758,7 +2758,8 @@ sap.ui.define([
 				oPromiseMock.expects("resolve").withExactArgs().returns(oThenable2);
 				this.mock(oThenable2).expects("then").withExactArgs(sinon.match.func).callsArg(0);
 			}
-			oExpectation = oModelMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
+			oExpectation = oModelMock.expects("addPrerenderingTask")
+				.withExactArgs(sinon.match.func);
 
 			// code under test
 			oBinding.createReadGroupLock("groupId", true, iCount);

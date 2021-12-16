@@ -1411,7 +1411,8 @@ sap.ui.define([
 			.callsFake(addElements); // so that oCache.aElements is actually filled
 
 		// code under test
-		oReadPromise = oCache.read(1, 7, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
+		oReadPromise = oCache.read(1, 7, 0, oGroupLock, "~fnDataRequested~")
+			.then(function (oResult) {
 				assert.strictEqual(oResult.value.length, 7);
 				assert.strictEqual(oResult.value[0], oFirstLeaf0);
 				assert.strictEqual(oResult.value[1], oReadResult0.value[0]);
