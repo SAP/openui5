@@ -631,6 +631,7 @@ sap.ui.define([
 					.replace(rAmpersand, "%26")
 					.replace(rHash, "%23")
 					.replace(rPlus, "%2B");
+
 			if (bEncodeEquals) {
 				sEncoded = sEncoded.replace(rEquals, "%3D");
 			}

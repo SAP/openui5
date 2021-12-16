@@ -26,6 +26,7 @@ sap.ui.define([
 	 */
 	function xml(assert, sXml) {
 		var oDocument = XMLHelper.parse(sXml);
+
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -51,6 +52,7 @@ sap.ui.define([
 
 		function convert(Converter, sXml) {
 			var oResult = new Converter().convertXMLMetadata(xml(assert, sXml));
+
 			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
 				sXml);
 		}
@@ -172,6 +174,7 @@ sap.ui.define([
 					}
 				}
 			});
+
 			assert.deepEqual(oResult, {$And : [true, false]});
 	});
 

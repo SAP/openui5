@@ -841,6 +841,7 @@ sap.ui.define([
 			"'foo/bar'", "F050568D-393C-1ED4-9D97-E65F0F3FCC23"
 		].forEach(function (sValue) {
 			var sPredicate = "(" + sValue + ")";
+
 			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"" : sValue}, sPredicate);
 			sPredicate = "(foo=" + sValue + ")";
 			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {foo : sValue}, sPredicate);

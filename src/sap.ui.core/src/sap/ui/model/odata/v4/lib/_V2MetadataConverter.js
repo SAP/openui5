@@ -601,6 +601,7 @@ sap.ui.define([
 						sEnum = aValue[1].split("=")[1];
 						sEnum.split(",").forEach(function (sType) {
 							var sTargetType = oV2toV4ComplexSemantic.typeMapping[sType];
+
 							if (sTargetType) {
 								aResult.push(oV2toV4ComplexSemantic.v4EnumType + "/" + sTargetType);
 							} else {

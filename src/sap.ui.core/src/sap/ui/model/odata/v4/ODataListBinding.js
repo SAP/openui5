@@ -2530,6 +2530,7 @@ sap.ui.define([
 
 		function onRemove(sPredicate) {
 			var sPath = that.getResolvedPath();
+
 			that.mPreviousContextsByPath[sPath + sPredicate].resetKeepAlive();
 		}
 

@@ -44,6 +44,7 @@ sap.ui.define([
 	 */
 	function xml(assert, sXml) {
 		var oDocument = XMLHelper.parse(sXml);
+
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -622,6 +623,7 @@ sap.ui.define([
 
 			Object.keys(oContainer).forEach(function (sKey) {
 				var oValue = oContainer[sKey];
+
 				if (sKey !== "$kind") {
 					oValue.$kind = sWhat + "Import";
 					oValue["$" + sWhat] = "foo.Baz";

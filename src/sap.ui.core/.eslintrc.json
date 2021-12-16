@@ -51,6 +51,10 @@
 				"operator-assignment": "error",
 				"operator-linebreak": ["error", "before"],
 				"padded-blocks": ["error", "never"],
+				"padding-line-between-statements": ["error",
+					{"blankLine": "always", "prev": "var", "next": "*"}
+					// {"blankLine": "always", "prev": "*", "next": "return"} // still in discussion
+				],
 				"quote-props": ["error", "as-needed", {"numbers": true}],
 				"quotes": ["error", "double", {"avoidEscape": true}],
 				"space-before-blocks": "error",

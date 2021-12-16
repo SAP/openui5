@@ -787,6 +787,7 @@ sap.ui.define([
 		// Parse using the given formatter and check that the result is valid
 		function parseAndCheck(oDateFormat, sValue) {
 			var oDate = oDateFormat.parse(sValue);
+
 			if (!oDate) {
 				throw new Error("Not a valid " + oPropertyMetadata.$Type + " value: " + sValue);
 			}

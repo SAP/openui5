@@ -99,6 +99,7 @@ sap.ui.define([
 	 */
 	function xml(assert, sXml) {
 		var oDocument = XMLHelper.parse(sXml);
+
 		assert.strictEqual(oDocument.parseError.errorCode, 0, "XML parsed correctly");
 		return oDocument;
 	}
@@ -294,6 +295,7 @@ sap.ui.define([
 	["ComplexType", "EntityType"].forEach(function (sType) {
 		["", "Edm."].forEach(function (sNamespace) {
 			var sTitle = "convertXMLMetadata: " + sType + ": Property, Namespace=" + sNamespace;
+
 			QUnit.test(sTitle, function (assert) {
 				testConversion(assert, '\
 						<Schema Namespace="foo">\
@@ -1025,6 +1027,7 @@ sap.ui.define([
 		}
 	}].forEach(function (oFixture) {
 		var sTitle = "convert: V2 annotation at Property: " + oFixture.v2Semantics;
+
 		QUnit.test("convert sap:semantics=" + sTitle, function (assert) {
 			// there are no $annotations yet at the schema so mergeAnnotations is not called
 			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
@@ -2124,6 +2127,7 @@ sap.ui.define([
 					$kind : "Schema"
 				}
 			};
+
 		testConversion(assert, sXML, oExpectedResult, /*bSubset*/true);
 	});
 

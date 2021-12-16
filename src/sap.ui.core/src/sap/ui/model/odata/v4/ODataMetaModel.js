@@ -384,6 +384,7 @@ sap.ui.define([
 			// @see sap.ui.model.Binding#initialize
 			initialize : function () {
 				var oElementContext = this.oModel.createBindingContext(this.sPath, this.oContext);
+
 				this.bInitial = false; // initialize() has been called
 				if (oElementContext !== this.oElementContext) {
 					this.oElementContext = oElementContext;
@@ -1683,6 +1684,7 @@ sap.ui.define([
 			// Determines the predicate from a segment (empty string if there is none)
 			function predicate(sSegment) {
 				var i = sSegment.indexOf("(");
+
 				return i >= 0 ? sSegment.slice(i) : "";
 			}
 
@@ -1695,6 +1697,7 @@ sap.ui.define([
 			// Strips off the predicate from a segment
 			function stripPredicate(sSegment) {
 				var i = sSegment.indexOf("(");
+
 				return i >= 0 ? sSegment.slice(0, i) : sSegment;
 			}
 
@@ -3206,6 +3209,7 @@ sap.ui.define([
 					// insert the returned mappings into oValueListInfo in the order of aMappingUrls
 					aMappingUrls.forEach(function (sMappingUrl, i) {
 						var mvalueListMappingByQualifier = aResults[i].valueListMappingByQualifier;
+
 						Object.keys(mvalueListMappingByQualifier).forEach(function (sQualifier) {
 							addMapping(mvalueListMappingByQualifier[sQualifier], sQualifier,
 								sMappingUrl, aResults[i].$model);

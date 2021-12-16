@@ -21847,6 +21847,7 @@ sap.ui.define([
 	</Table>\
 </FlexBox>',
 			that = this;
+
 		this.expectChange("id")
 			.expectChange("isActive")
 			.expectChange("name")
@@ -33971,6 +33972,7 @@ sap.ui.define([
 ].forEach(function (oFixture) {
 	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bFilter = "
 		+ oFixture.bFilter;
+
 	if (oFixture.bFilter) {
 		sTitle += " , bCountHasChanged = " + oFixture.bCountHasChanged;
 	}

@@ -3179,6 +3179,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, "~"].forEach(function (sReportedMessagesPath) {
 	var sTitle = "_Cache#removeMessages, sReportedMessagesPath = " + sReportedMessagesPath;
+
 	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')");
 
@@ -6444,6 +6445,7 @@ sap.ui.define([
 	[false, true].forEach(function (bCount) {
 		var sTitle = "CollectionCache#read: collection cleared after successful read, $count ="
 				+ bCount;
+
 		QUnit.test(sTitle, function (assert) {
 			var oCache = this.createCache("Employees"),
 				that = this;
