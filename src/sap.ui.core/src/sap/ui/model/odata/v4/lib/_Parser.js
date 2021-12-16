@@ -767,7 +767,6 @@ sap.ui.define([], function () {
 		 * @returns {string} The filter string
 		 */
 		buildFilterString : function (oSyntaxTree) {
-
 			function serialize(oNode, iParentPrecedence) {
 				var sFilter;
 

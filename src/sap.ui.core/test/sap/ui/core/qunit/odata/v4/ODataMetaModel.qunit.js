@@ -5541,7 +5541,6 @@ sap.ui.define([
 			});
 		});
 	});
-
 	});
 });
 
@@ -5615,7 +5614,6 @@ sap.ui.define([
 			assert.strictEqual(JSON.stringify(oValueListMetadata), sValueListMetadata);
 		});
 	});
-
 	});
 });
 
@@ -7565,7 +7563,6 @@ forEach({
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
-
 		//*****************************************************************************************
 		QUnit.test("getValueListType, requestValueListInfo: realOData", function (assert) {
 			var oModel = new ODataModel({

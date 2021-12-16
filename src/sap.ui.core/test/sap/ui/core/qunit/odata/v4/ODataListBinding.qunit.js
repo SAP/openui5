@@ -1211,7 +1211,6 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
 	[false, true].forEach(function (bGroupLock) {
-
 	QUnit.test("fetchContexts: async=" + bAsync + ", groupLock=" + bGroupLock, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			bChanged = {/*boolean*/},
@@ -1516,7 +1515,6 @@ sap.ui.define([
 
 		return oFetchContextsPromise;
 	});
-
 		});
 	});
 });
@@ -1714,7 +1712,6 @@ sap.ui.define([
 			oAddTask1.args[0][0]();
 		}
 	});
-
 	});
 });
 
@@ -2469,7 +2466,6 @@ sap.ui.define([
 
 		return Promise.all(aPromises);
 	});
-
 		});
 	});
 });
@@ -6868,7 +6864,6 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
-
 		});
 	});
 });
@@ -6992,7 +6987,6 @@ sap.ui.define([
 			assert.strictEqual(oPromise, SyncPromise.resolve());
 		}
 	});
-
 	});
 });
 
@@ -7508,7 +7502,6 @@ sap.ui.define([
 		return oPromise;
 	});
 	// TODO aContexts may be sparse
-
 		});
 	});
 });
@@ -8241,7 +8234,6 @@ sap.ui.define([
 				oOldContext.fnOnBeforeDestroy.calledOnceWithExactly(sinon.match.same(oNewContext)));
 		}
 	});
-
 	});
 });
 

@@ -2660,7 +2660,6 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.resume(), undefined);
-
 	});
 
 	//*********************************************************************************************
@@ -3861,7 +3860,6 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getGeneration(), 0);
-
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

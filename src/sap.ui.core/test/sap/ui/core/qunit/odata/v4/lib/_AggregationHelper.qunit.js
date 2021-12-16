@@ -1129,7 +1129,6 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasMinOrMax({A : {}, B : {max : true}}), true);
-
 	});
 
 	//*********************************************************************************************

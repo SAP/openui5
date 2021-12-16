@@ -48,5 +48,4 @@ sap.ui.define(function () {
 	};
 
 	return ValueListType;
-
 }, /* bExport= */ true);

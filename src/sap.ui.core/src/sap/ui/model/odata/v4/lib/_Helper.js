@@ -1661,7 +1661,6 @@ sap.ui.define([
 		 *   conversion is required
 		 */
 		parseLiteral : function (sLiteral, sType, sPath) {
-
 			function checkNaN(nValue) {
 				if (!isFinite(nValue)) { // this rejects NaN, Infinity, -Infinity
 					throw new Error(sPath + ": Not a valid " + sType + " literal: " + sLiteral);

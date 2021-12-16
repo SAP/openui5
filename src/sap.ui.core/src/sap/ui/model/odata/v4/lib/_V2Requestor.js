@@ -784,7 +784,6 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.lib._Requestor#formatPropertyAsLiteral
 	_V2Requestor.prototype.formatPropertyAsLiteral = function (vValue, oPropertyMetadata) {
-
 		// Parse using the given formatter and check that the result is valid
 		function parseAndCheck(oDateFormat, sValue) {
 			var oDate = oDateFormat.parse(sValue);

@@ -1046,7 +1046,6 @@ sap.ui.define([
 
 		assert.deepEqual(_Helper.toArray(aArray), [0]);
 		assert.notStrictEqual(_Helper.toArray(aArray), aArray);
-
 	});
 
 	//*********************************************************************************************

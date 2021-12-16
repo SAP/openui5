@@ -1598,7 +1598,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheQueryOptions, mMergedQueryOptions);
 		assert.strictEqual(oBinding.oCache, oNewCache);
 	});
-
 	});
 });
 
@@ -1682,7 +1681,6 @@ sap.ui.define([
 		assert.strictEqual(oCache.$deepResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache.$generation, bV4Context ? iGeneration : 0);
 	});
-
 			});
 		});
 	});
@@ -1767,7 +1765,6 @@ sap.ui.define([
 		);
 		assert.strictEqual(oBinding.oCache, oCache);
 	});
-
 	});
 });
 
@@ -2332,7 +2329,6 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.lockGroup(sGroupId, bLocked, bModifying, fnCancel), oGroupLock);
 	});
-
 	});
 });
 

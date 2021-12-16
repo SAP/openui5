@@ -348,7 +348,6 @@ sap.ui.define([
 		}
 
 		function request(sPostPath, oPostGroupLock) {
-
 			// mark as transient (again)
 			_Helper.setPrivateAnnotation(oEntityData, "transient", sGroupId);
 			_Helper.addByPath(that.mPostRequests, sPath, oEntityData);

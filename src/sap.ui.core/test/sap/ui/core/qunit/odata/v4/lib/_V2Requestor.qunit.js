@@ -874,7 +874,6 @@ sap.ui.define([
 					assert.strictEqual(sCurrentKey + "=" + sCurrentValue,
 							oResult.key + "=" + oResult.value);
 				});
-
 			});
 		}
 
@@ -1138,7 +1137,6 @@ sap.ui.define([
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
 			// 	result : "time'PT13H47M26.123S'"},
 		].forEach(function (oFixture) {
-
 			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
 			asV2Requestor0._setDateTimeFormatter();
 

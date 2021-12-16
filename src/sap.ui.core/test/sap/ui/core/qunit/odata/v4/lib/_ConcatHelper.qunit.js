@@ -108,7 +108,6 @@ sap.ui.define([
 		assert.strictEqual(oResult.value.length, 1, "extra rows removed");
 		assert.strictEqual(oResult.value[0], oDataRow);
 	});
-
 	});
 });
 });

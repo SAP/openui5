@@ -876,5 +876,4 @@ sap.ui.define([
 	};
 
 	return Expression;
-
 }, /* bExport= */ false);

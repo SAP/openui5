@@ -3539,7 +3539,6 @@ sap.ui.define([
 			}
 		});
 	});
-
 	});
 });
 
@@ -9028,7 +9027,6 @@ sap.ui.define([
 				assert.strictEqual(oCanceledError.canceled, true);
 			});
 	});
-
 	});
 });
 
