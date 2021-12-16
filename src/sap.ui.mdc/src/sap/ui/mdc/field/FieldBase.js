@@ -657,15 +657,21 @@ sap.ui.define([
 		return this;
 	};
 
-	FieldBase.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
+	FieldBase.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
 
 		// most properties are rendered from content controls. Only invalidate whole Field if needed
-		// (multipleLines mostly changed together with editMode -> update once om rendering)
-		if (sPropertyName !== "width" && sPropertyName !== "editMode" && sPropertyName !== "multipleLines" && sPropertyName !== "showEmptyIndicator") {
+		// (multipleLines mostly changed together with editMode -> update once on rendering)
+		if (sPropertyName === "editMode") {
+			// only invalidate if switched between edit and display, not for redonly or disabled
+			var sOld = this.getEditMode();
+			if (sOld !== EditMode.Display && sOld !== EditMode.EditableDisplay && vValue !== EditMode.Display && vValue !== EditMode.EditableDisplay) {
+				bSuppressInvalidate = true;
+			}
+		} else if (sPropertyName !== "width" && sPropertyName !== "multipleLines" && sPropertyName !== "showEmptyIndicator") {
 			bSuppressInvalidate = true;
 		}
 
-		return Control.prototype.setProperty.apply(this, [sPropertyName, oValue, bSuppressInvalidate]);
+		return Control.prototype.setProperty.apply(this, [sPropertyName, vValue, bSuppressInvalidate]);
 
 	};
 
@@ -1646,6 +1652,7 @@ sap.ui.define([
 					var oControl = aControls[iIndex];
 					oControl.attachEvent("parseError", _handleParseError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
+					oControl.attachEvent("validationSuccess", _handleValidationSuccess, this);
 					_modifyKeyboardHandler.call(this, oControl, oContentType.getUseDefaultEnterHandler());
 					_modifyFieldGroupHandler.call(this, oControl, false);
 					_setModelOnContent.call(this, oControl);
@@ -1955,6 +1962,12 @@ sap.ui.define([
 		if (bFound) {
 			this._aAsyncChanges.splice(i, 1);
 		}
+
+	}
+
+	function _handleValidationSuccess(oEvent) {
+
+		this._bParseError = false; // if last valif value is entered again no condition is updated
 
 	}
 
@@ -2534,6 +2547,7 @@ sap.ui.define([
 			aConditions.splice(0, aConditions.length - iMaxConditions);
 		}
 
+		var bChangeAfterError = false;
 		if (oContent && oContent.setDOMValue) {
 			if (this.getMaxConditionsForHelp() === 1 && aConditions.length > 0) {
 				// the focus is still in the Field. The update of the inner control is done via ManagedObjectModel binding.
@@ -2574,6 +2588,7 @@ sap.ui.define([
 			if (this._bParseError) { // only remove messages set by Field itself, message from outside should stay.
 				this._bParseError = false;
 				this._removeUIMessage();
+				bChangeAfterError = true;
 			}
 		}
 
@@ -2590,6 +2605,8 @@ sap.ui.define([
 
 				_triggerChange.call(this, aConditions, true);
 			}
+		} else if (bChangeAfterError) { // last valif value choosen again
+			_triggerChange.call(this, aConditions, true);
 		}
 
 	}

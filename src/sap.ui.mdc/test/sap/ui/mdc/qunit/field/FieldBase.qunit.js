@@ -3095,6 +3095,30 @@ sap.ui.define([
 		assert.equal(oField.getValueState(), "None", "No ValueState");
 		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
 
+		// simulate select event to see if field is updated
+		oCondition = Condition.createItemCondition("I2", "Item2");
+		iCount = 0;
+		sValue = ""; bValid = undefined;
+		oField.setValueState("Error"); // simulate wrong input before
+		oField.setValueStateText("Error");
+		oField._bParseError = true;
+		oContent.setValue("I"); // to test clearing of content
+		oFieldHelp.fireSelect({ conditions: aConditions, add: false, close: true }); // check choosing old conditions after wromg input
+		assert.equal(iCount, 1, "Change Event fired once");
+		assert.ok(bValid, "Change event valid");
+		aConditions = oCM.getConditions("Name");
+		assert.equal(aConditions.length, 2, "two condition in Codition model");
+		assert.equal(aConditions[0] && aConditions[0].values[0], "I3", "condition value");
+		assert.equal(aConditions[0] && aConditions[0].values[1], "Item3", "condition description");
+		assert.equal(aConditions[0] && aConditions[0].operator, "EQ", "condition operator");
+		assert.equal(aConditions[1] && aConditions[1].values[0], "I2", "condition value");
+		assert.equal(aConditions[1] && aConditions[1].values[1], "Item2", "condition description");
+		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
+		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
+		assert.equal(oContent.getDOMValue(), "", "value not longer shown in inner control");
+		assert.equal(oField.getValueState(), "None", "No ValueState");
+		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
+
 		// simulate close: Filter value must be removed but no change fired.
 		iCount = 0;
 		sValue = ""; bValid = undefined;
