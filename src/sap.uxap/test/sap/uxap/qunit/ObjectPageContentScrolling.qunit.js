@@ -119,7 +119,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			oSection = oObjectPage.getSections()[9],
 			fnDone = assert.async();
 
-		this.stub(this.oObjectPage, "_getClosestScrolledSectionId").callsFake(function(oSection) {
+		this.stub(this.oObjectPage, "_getClosestScrolledSectionBaseId").callsFake(function(oSection) {
 			return oObjectPage.getSections()[9].getSubSections()[0].getId(); // return a subSection of the scrolled section
 		});
 
@@ -214,6 +214,16 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		// check
 		assert.ok(oScrollSpy.calledWithMatch(storedSubSectionPositionTop + iOffsetWithinStoredSubSection),
 			"correct scroll position is restored");
+	});
+
+	QUnit.test("_isClosestScrolledSection indentifies subSections ",function(assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = oObjectPage.getSections()[0],
+			oFirstSubSection = oFirstSection.getSubSections()[0];
+
+		this.stub(oObjectPage, "_getClosestScrolledSectionBaseId").returns(oFirstSubSection.getId());
+
+		assert.ok(oObjectPage._isClosestScrolledSection(oFirstSection.getId()), "itentified current section");
 	});
 
 	QUnit.module("Scroll to snap", {
@@ -563,7 +573,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		clock.restore();
 	});
 
-	QUnit.test("_getClosestScrolledSectionId identifies target subSection", function (assert) {
+	QUnit.test("_getClosestScrolledSectionBaseId identifies target subSection", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			oTargetSection = this.oObjectPageContentScrollingView.byId("secondSection"),
 			oTargetSubSection = oTargetSection.getSubSections()[1],
@@ -577,7 +587,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			iPageHeight = oObjectPage.getDomRef().offsetHeight;
 			iTargetSubSectionScrollPosition = oObjectPage._computeScrollPosition(oTargetSubSection);
-			sClosestSectionId = oObjectPage._getClosestScrolledSectionId(iTargetSubSectionScrollPosition, iPageHeight, true);
+			sClosestSectionId = oObjectPage._getClosestScrolledSectionBaseId(iTargetSubSectionScrollPosition, iPageHeight, true);
 			assert.equal(sClosestSectionId, oTargetSubSection.getId(), "target subSection is recognized");
 			done();
 		});
@@ -1010,7 +1020,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		oObjectPage.$().outerHeight("800px"); // set page height smaller than header height
 	});
 
-	QUnit.test("_getClosestScrolledSectionId anchorBar mode", function (assert) {
+	QUnit.test("_getClosestScrolledSectionBaseId anchorBar mode", function (assert) {
 		var done = assert.async();
 		XMLView.create({
 			id: "UxAP-objectPageContentScrolling",
@@ -1032,15 +1042,15 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 				iFirstSubSectionScrollTop = oObjectPage._computeScrollPosition(oFirstSubSection);
 				iSecondSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSubSection);
 
-				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oFirstSubSection.getId(), "first subsection is closest");
-				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSubSection.getId(), "second subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionBaseId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oFirstSubSection.getId(), "first subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionBaseId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSubSection.getId(), "second subsection is closest");
 				this.oObjectPageContentScrollingView.destroy();
 				done();
 			}.bind(this));
 		}.bind(this));
 	});
 
-	QUnit.test("_getClosestScrolledSectionId tabs mode", function (assert) {
+	QUnit.test("_getClosestScrolledSectionBaseId tabs mode", function (assert) {
 		var done = assert.async();
 		XMLView.create({
 			id: "UxAP-objectPageContentScrolling",
@@ -1066,9 +1076,9 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 				iFirstSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSectionFirstSubSection);
 				iSecondSubSectionScrollTop = oObjectPage._computeScrollPosition(oSecondSectionSecondSubSection);
 
-				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, false /* sections only */), oSecondSection.getId(), "second section is closest");
-				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionFirstSubSection.getId(), "first subsection is closest");
-				assert.strictEqual(oObjectPage._getClosestScrolledSectionId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionSecondSubSection.getId(), "second subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionBaseId(iFirstSubSectionScrollTop + 10, iPageHeight, false /* sections only */), oSecondSection.getId(), "second section is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionBaseId(iFirstSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionFirstSubSection.getId(), "first subsection is closest");
+				assert.strictEqual(oObjectPage._getClosestScrolledSectionBaseId(iSecondSubSectionScrollTop + 10, iPageHeight, true /* subsections only */), oSecondSectionSecondSubSection.getId(), "second subsection is closest");
 				this.oObjectPageContentScrollingView.destroy();
 				done();
 			}.bind(this));

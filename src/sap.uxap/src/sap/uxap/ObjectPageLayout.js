@@ -2048,9 +2048,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype._isClosestScrolledSection = function (sSectionId) {
 		var iScrollTop = this._$opWrapper.length > 0 ? this._$opWrapper.scrollTop() : 0,
 			iPageHeight = this.iScreenHeight,
-			sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
+			sClosestSectionBaseId = this._getClosestScrolledSectionBaseId(iScrollTop, iPageHeight),
+			oSectionBase = this.oCore.byId(sClosestSectionBaseId),
+			oSection = ObjectPageSection._getClosestSection(oSectionBase);
 
-		return sClosestSectionId && (sSectionId === sClosestSectionId);
+		return oSection && (sSectionId === oSection.getId());
 	};
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
@@ -3326,8 +3328,8 @@ sap.ui.define([
 		}
 
 		//find the currently scrolled section = where position - iScrollTop is closest to 0
-		sClosestId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
-		sClosestSubSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight, true /* subSections only */);
+		sClosestId = this._getClosestScrolledSectionBaseId(iScrollTop, iPageHeight);
+		sClosestSubSectionId = this._getClosestScrolledSectionBaseId(iScrollTop, iPageHeight, true /* subSections only */);
 
 		if (sClosestId) {
 
@@ -3416,7 +3418,7 @@ sap.ui.define([
 		return iTitleHeightDelta;
 	};
 
-	ObjectPageLayout.prototype._getClosestScrolledSectionId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
+	ObjectPageLayout.prototype._getClosestScrolledSectionBaseId = function (iScrollTop, iPageHeight, bSubSectionsOnly) {
 		bSubSectionsOnly = !!bSubSectionsOnly;
 		iScrollTop = Math.ceil(iScrollTop);
 
@@ -4218,7 +4220,7 @@ sap.ui.define([
 		}
 
 		var iScrollTop = this._oScroller.getScrollTop(),
-			sScrolledSubSectionId = this._getClosestScrolledSectionId(
+			sScrolledSubSectionId = this._getClosestScrolledSectionBaseId(
 				this._oScroller.getScrollTop(), this.iScreenHeight, true /* subSections only */),
 			iScrollTopWithinScrolledSubSection;
 

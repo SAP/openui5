@@ -241,10 +241,10 @@ function (
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 
 			oMainSection.removeAllSubSections();
-			sClosestID = oObjectPageLayout._getClosestScrolledSectionId(0, "iPageHeight is not defined", true);
+			sClosestID = oObjectPageLayout._getClosestScrolledSectionBaseId(0, "iPageHeight is not defined", true);
 
 			// Assert
-			assert.strictEqual(sClosestID, oMainSection.sId, "check if _getClosestScrolledSectionId returns the correct value");
+			assert.strictEqual(sClosestID, oMainSection.sId, "check if _getClosestScrolledSectionBaseId returns the correct value");
 
 			// Cleanup
 			oObjectPageLayout.destroy();
