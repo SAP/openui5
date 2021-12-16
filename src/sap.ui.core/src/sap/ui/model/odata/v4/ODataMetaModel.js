@@ -1907,8 +1907,8 @@ sap.ui.define([
 			});
 
 			if (!aTargets.length) {
-				throw new Error("No annotation '" + sValueList.slice(1) + "' in " +
-					oValueListModel.sServiceUrl);
+				throw new Error("No annotation '" + sValueList.slice(1) + "' in "
+					+ oValueListModel.sServiceUrl);
 			}
 
 			if (aTargets.length === 1) {
@@ -1932,8 +1932,8 @@ sap.ui.define([
 						}
 					});
 				} else if (!bValueListOnValueList) {
-					throw new Error("Unexpected annotation '" + sTerm.slice(1) +
-						"' for target '" + aTargets[0] + "' with namespace of data service in "
+					throw new Error("Unexpected annotation '" + sTerm.slice(1)
+						+ "' for target '" + aTargets[0] + "' with namespace of data service in "
 						+ oValueListModel.sServiceUrl);
 				}
 			});
@@ -3226,8 +3226,8 @@ sap.ui.define([
 				// Each reference must have contributed at least one qualifier. So if oValueListInfo
 				// is empty, there cannot have been a reference.
 				if (isEmptyObject(oValueListInfo)) {
-					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for " +
-						sPropertyPath);
+					throw new Error("No annotation '" + sValueListReferences.slice(1) + "' for "
+						+ sPropertyPath);
 				}
 
 				return aRelevantQualifiers && oContext && oContext.getBinding

@@ -268,8 +268,8 @@ sap.ui.define([
 		// this.oAnnotatable is the Annotation itself currently.
 		var oAnnotatable = this.oAnnotatable.parent;
 
-		oAnnotatable.target[oAnnotatable.qualifiedName] =
-			aResult.length ? aResult[0] : this.getInlineAnnotationValue(oElement);
+		oAnnotatable.target[oAnnotatable.qualifiedName]
+			= aResult.length ? aResult[0] : this.getInlineAnnotationValue(oElement);
 	};
 
 	/**
@@ -325,8 +325,9 @@ sap.ui.define([
 	_MetadataConverter.prototype.postProcessLabeledElement = function (oElement, aResult) {
 		var oResult = this.oAnnotatable.target;
 
-		oResult.$LabeledElement = aResult.length ? aResult[0] :
-			this.getInlineAnnotationValue(oElement);
+		oResult.$LabeledElement = aResult.length
+			? aResult[0]
+			: this.getInlineAnnotationValue(oElement);
 		oResult.$Name = oElement.getAttribute("Name");
 		return oResult;
 	};
@@ -775,8 +776,8 @@ sap.ui.define([
 					}
 				}
 				if (oChildConfig) {
-					vChildResult =
-						this.traverse(oChildNode, oChildConfig, bUseProcessElementHook);
+					vChildResult
+						= this.traverse(oChildNode, oChildConfig, bUseProcessElementHook);
 					if (vChildResult !== undefined && oConfig.__postProcessor) {
 						// only push if the element is interested in the results and if the
 						// child element returns anything (it might be another Annotation which

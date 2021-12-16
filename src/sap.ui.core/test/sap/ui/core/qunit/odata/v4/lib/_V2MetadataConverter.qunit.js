@@ -1388,8 +1388,8 @@ sap.ui.define([
 				"Deletable" : false
 			}
 		},
-		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}, {
 		annotationsV2 : 'sap:deletable-path="PathExpression" sap:deletable="foo-bar"',
 		expectedAnnotationsV4 : {
@@ -1397,8 +1397,8 @@ sap.ui.define([
 				"Deletable" : false
 			}
 		},
-		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}, { // sap:label
 		annotationsV2 : 'sap:label="Value"',
 		expectedAnnotationsV4 : {
@@ -1471,8 +1471,8 @@ sap.ui.define([
 				"Updatable" : false
 			}
 		},
-		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}, {
 		annotationsV2 : 'sap:updatable="foo-bar" sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
@@ -1480,8 +1480,8 @@ sap.ui.define([
 				"Updatable" : false
 			}
 		},
-		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set" +
-			" 'GWSAMPLE_BASIC.Container/FooSet'"
+		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set"
+			+ " 'GWSAMPLE_BASIC.Container/FooSet'"
 	}].forEach(function (oFixture) {
 		var sTitle = "convert: V2 annotation at EntitySet: " + oFixture.annotationsV2;
 

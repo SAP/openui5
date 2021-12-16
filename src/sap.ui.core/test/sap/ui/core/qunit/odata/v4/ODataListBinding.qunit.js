@@ -1635,8 +1635,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, /*see strictEqual below*/"true"].forEach(function (bUseExtendedChangeDetection) {
 	[/*destroyed early*/undefined, false, /*destroyed late*/0, true].forEach(function (bSuspend) {
-		var sTitle = "getContexts: AddVirtualContext, suspend:" + bSuspend +
-			", use extended change detection:" + bUseExtendedChangeDetection;
+		var sTitle = "getContexts: AddVirtualContext, suspend:" + bSuspend
+				+ ", use extended change detection:" + bUseExtendedChangeDetection;
 
 	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create({/*oModel*/}, oParentBinding, "/TEAMS('1')"),
@@ -3131,8 +3131,8 @@ sap.ui.define([
 			oHelperMock.expects("toArray").withExactArgs(sinon.match.same("~filter~"))
 				.returns(aFilters);
 			oHelperMock.expects("deepEqual").withExactArgs(sinon.match.same(aFilters),
-					sinon.match.same(sFilterType === FilterType.Control ?
-						oBinding.aFilters : oBinding.aApplicationFilters))
+					sinon.match.same(sFilterType === FilterType.Control
+						? oBinding.aFilters : oBinding.aApplicationFilters))
 				.returns(true);
 
 			oBindingMock.expects("hasPendingChanges").never();
@@ -4844,8 +4844,8 @@ sap.ui.define([
 					oContext = Context.create(this.oModel, {}, "/BusinessPartnerList"),
 					oHelperMock = this.mock(_Helper),
 					oMetaModelMock = this.mock(this.oModel.oMetaModel),
-					sResolvedPath =
-						bRelative ? "/BusinessPartnerList('42')/BP_2_SO" : "/SalesOrderList";
+					sResolvedPath
+						= bRelative ? "/BusinessPartnerList('42')/BP_2_SO" : "/SalesOrderList";
 
 				this.mock(this.oModel).expects("resolve")
 					.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
@@ -8057,8 +8057,8 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oBinding.moveEntityHere(oEntityContext);
-		}, new Error("Cannot move the entity; the context binding has not finished loading: " +
-			"~entity~binding~"));
+		}, new Error("Cannot move the entity; the context binding has not finished loading: "
+			+ "~entity~binding~"));
 	});
 
 	//*********************************************************************************************

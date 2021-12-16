@@ -4892,16 +4892,16 @@ sap.ui.define([
 		oExpectedResult.$Annotations = oMetadata[sNamespace].$Annotations;
 		delete oExpectedResult[sNamespace].$Annotations;
 		// all entries with $kind are merged
-		oExpectedResult["my.schema.2.FuGetEmployeeMaxAge"] =
-			oAnnotationCopy["my.schema.2.FuGetEmployeeMaxAge"];
-		oExpectedResult["my.schema.2.Entity"] =
-			oAnnotationCopy["my.schema.2.Entity"];
-		oExpectedResult["my.schema.2.DefaultContainer"] =
-			oAnnotationCopy["my.schema.2.DefaultContainer"];
-		oExpectedResult["my.schema.2."] =
-			oAnnotationCopy["my.schema.2."];
-		oExpectedResult["another.schema.2."] =
-			oAnnotationCopy["another.schema.2."];
+		oExpectedResult["my.schema.2.FuGetEmployeeMaxAge"]
+			= oAnnotationCopy["my.schema.2.FuGetEmployeeMaxAge"];
+		oExpectedResult["my.schema.2.Entity"]
+			= oAnnotationCopy["my.schema.2.Entity"];
+		oExpectedResult["my.schema.2.DefaultContainer"]
+			= oAnnotationCopy["my.schema.2.DefaultContainer"];
+		oExpectedResult["my.schema.2."]
+			= oAnnotationCopy["my.schema.2."];
+		oExpectedResult["another.schema.2."]
+			= oAnnotationCopy["another.schema.2."];
 		// update annotations
 		oExpectedResult.$Annotations[sBasicSalaryCurr][sCommonLabel]
 			= oAnnotationCopy["my.schema.2."].$Annotations[sBasicSalaryCurr][sCommonLabel];
@@ -5234,8 +5234,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getAbsoluteServiceUrl: relative data service URL", function (assert) {
 		var sRelativePath = "../../../DataService/",
-			sAbsolutePath =
-				new URI(sRelativePath).absoluteTo(document.baseURI).pathname().toString(),
+			sAbsolutePath
+				= new URI(sRelativePath).absoluteTo(document.baseURI).pathname().toString(),
 			oModel = new ODataModel({
 				serviceUrl : sRelativePath,
 				synchronizationMode : "None"
@@ -5653,8 +5653,8 @@ sap.ui.define([
 		annotations : {
 			"zui5_epm_sample.Product/CurrencyCode/type.cast" : true
 		},
-		error : "Unexpected annotation target 'zui5_epm_sample.Product/CurrencyCode/type.cast' " +
-			"with namespace of data service in /Foo/ValueListService"
+		error : "Unexpected annotation target 'zui5_epm_sample.Product/CurrencyCode/type.cast' "
+			+ "with namespace of data service in /Foo/ValueListService"
 	}, {
 		annotations : {
 			"zui5_epm_sample.Product/Category" : {
@@ -6120,10 +6120,10 @@ sap.ui.define([
 				oMetaModelMock = this.mock(oModel.getMetaModel()),
 				sPropertyPath = "/VH_BusinessPartnerSet('0100000000')/Country";
 
-			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] =
-				oValueListMappingFoo;
-			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#bar"] =
-				{CollectionPath : "bar"};
+			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"]
+				= oValueListMappingFoo;
+			oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#bar"]
+				= {CollectionPath : "bar"};
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("filterValueListRelevantQualifiers").never();
@@ -6178,8 +6178,8 @@ sap.ui.define([
 					}),
 					sPropertyPath = "/VH_BusinessPartnerSet('42')/Country";
 
-				oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] =
-					{CollectionPath : "foo"};
+				oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"]
+					= {CollectionPath : "foo"};
 				if (bDuplicate) {
 					oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#bar"] = {};
 				}

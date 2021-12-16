@@ -535,8 +535,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	[{
 		input : "/Date(1395705600001)/",
-		expectedError : "Cannot convert Edm.DateTime value '/Date(1395705600001)/' to Edm.Date" +
-			" because it contains a time of day"
+		expectedError : "Cannot convert Edm.DateTime value '/Date(1395705600001)/' to Edm.Date"
+			+ " because it contains a time of day"
 	}, {
 		input : "a/Date(0000000000000)/",
 		expectedError : "Not a valid Edm.DateTime value 'a/Date(0000000000000)/'"

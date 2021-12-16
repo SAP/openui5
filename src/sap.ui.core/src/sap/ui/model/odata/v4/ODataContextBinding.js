@@ -336,8 +336,8 @@ sap.ui.define([
 
 					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 						oOldValue = that.oContext.getValue();
-						sContextPredicate = oOldValue &&
-							_Helper.getPrivateAnnotation(oOldValue, "predicate");
+						sContextPredicate = oOldValue
+							&& _Helper.getPrivateAnnotation(oOldValue, "predicate");
 						sResponsePredicate = _Helper.getPrivateAnnotation(
 							oResponseEntity, "predicate");
 						if (sContextPredicate === sResponsePredicate) {
