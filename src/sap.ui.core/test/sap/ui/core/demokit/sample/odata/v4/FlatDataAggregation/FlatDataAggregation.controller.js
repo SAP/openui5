@@ -84,10 +84,10 @@ sap.ui.define([
 					MessageToast.show(
 						"Grand totals and filtering for aggregated properties cannot be combined"
 							+ " - grand totals have been turned off while filtering is on", {
-						duration: 5000,
-						my: "center center",
-						at: "center center",
-						of: oTTable
+						duration : 5000,
+						my : "center center",
+						at : "center center",
+						of : oTTable
 					});
 				}
 				["AmountPerSale", "SalesAmount", "SalesAmountLocalCurrency", "SalesNumberSum"]
@@ -116,10 +116,10 @@ sap.ui.define([
 					MessageToast.show(
 						"Grand totals and filtering for aggregated properties cannot be combined"
 							+ " - grand totals have been turned off while filtering is on", {
-						duration: 5000,
-						my: "center center",
-						at: "center center",
-						of: oMTable
+						duration : 5000,
+						my : "center center",
+						at : "center center",
+						of : oMTable
 					});
 				}
 				this._oAggregation4Responsive.aggregate.SalesAmount.grandTotal = !sFilter;

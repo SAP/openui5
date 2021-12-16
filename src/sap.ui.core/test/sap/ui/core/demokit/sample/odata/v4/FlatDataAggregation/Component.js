@@ -51,7 +51,7 @@ sap.ui.define([
 					: "There have been multiple technical errors. One example: ";
 				MessageBox.error(sPrefix + aMessages[0].message, {
 					id : "serviceErrorMessageBox",
-					onClose: function () {
+					onClose : function () {
 						bMessageOpen = false;
 					}
 				});

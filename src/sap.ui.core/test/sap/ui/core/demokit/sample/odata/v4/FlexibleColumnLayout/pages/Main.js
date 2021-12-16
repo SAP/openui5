@@ -74,7 +74,7 @@ sap.ui.define([
 			actions : {
 				filterByGrossAmount : function (sGrossAmount) {
 					this.waitFor({
-						actions: new EnterText({clearTextFirst: true, text: sGrossAmount}),
+						actions : new EnterText({clearTextFirst : true, text : sGrossAmount}),
 						controlType : "sap.m.SearchField",
 						id : "filterGrossAmount",
 						success : function (oSearchField) {
@@ -106,7 +106,7 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				sortBySalesOrderID  : function () {
+				sortBySalesOrderID : function () {
 					Helper.pressButton(this, sViewName, "sortBySalesOrderId");
 				}
 			},

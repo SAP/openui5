@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel"
-], function ( library, MessageBox, Controller, Filter, FilterOperator, Sorter, JSONModel) {
+], function (library, MessageBox, Controller, Filter, FilterOperator, Sorter, JSONModel) {
 	"use strict";
 
 	var LayoutType = library.LayoutType;

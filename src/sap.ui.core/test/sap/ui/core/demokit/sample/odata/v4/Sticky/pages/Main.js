@@ -20,7 +20,7 @@ sap.ui.define([
 			actions : {
 				changeContent : function (sValue) {
 					this.waitFor({
-						actions : new EnterText({ clearTextFirst : true, text : sValue }),
+						actions : new EnterText({clearTextFirst : true, text : sValue}),
 						controlType : "sap.m.Input",
 						id : "Content::details",
 						success : function (oInput) {

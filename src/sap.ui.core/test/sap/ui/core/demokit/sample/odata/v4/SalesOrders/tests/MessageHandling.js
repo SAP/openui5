@@ -210,7 +210,7 @@ sap.ui.define([
 			}, {
 				component : "sap.ui.model.odata.v4.Context",
 				level : Log.Level.ERROR,
-				message: "Failed to update path /SalesOrderList('0500000004')/Note",
+				message : "Failed to update path /SalesOrderList('0500000004')/Note",
 				details : "Property `Note` value `RAISE_ERROR` not allowed!"
 			});
 			Then.onTheMessagePopover.checkMessages([{
@@ -237,40 +237,40 @@ sap.ui.define([
 			aExpectedLogs.push({
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
-				message: "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed; "
+				message : "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed; "
 					+ "will be repeated automatically",
 				details : "Value must be greater than 0"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to request side effects",
+				message : "Failed to request side effects",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataContextBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to request side effects",
+				message : "Failed to request side effects",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to request side effects",
+				message : "Failed to request side effects",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to read path /SalesOrderList('0500000004')/SO_2_SCHDL/$count",
+				message : "Failed to read path /SalesOrderList('0500000004')/SO_2_SCHDL/$count",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to get contexts for /sap/opu/odata4/sap/zui5_testv4/default/sap"
+				message : "Failed to get contexts for /sap/opu/odata4/sap/zui5_testv4/default/sap"
 					+ "/zui5_epm_sample/0002/SalesOrderList('0500000004')/SO_2_SCHDL "
 					+ "with start index 0 and length 100",
 				details : "HTTP request was not processed because the previous request failed"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataContextBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to request side effects",
+				message : "Failed to request side effects",
 				details : "HTTP request was not processed because the previous request failed"
 			});
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(6, "Error",
@@ -327,7 +327,7 @@ sap.ui.define([
 			}, {
 				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 				level : Log.Level.ERROR,
-				message: "Failed to read path /SalesOrderList('0500000002')/"
+				message : "Failed to read path /SalesOrderList('0500000002')/"
 					+ "com.sap.gateway.default.zui5_epm_sample.v0002."
 					+ "SalesOrderSimulateDiscount(...)/value",
 				// TODO: Addressed with CPOUI5ODATAV4-810 (same as above)

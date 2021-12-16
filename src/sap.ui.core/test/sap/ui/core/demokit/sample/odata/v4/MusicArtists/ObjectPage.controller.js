@@ -167,7 +167,7 @@ sap.ui.define([
 				this.byId("draftIndicator").showDraftSaved();
 			} else {
 				MessageBox.show("Error while saving changes", {
-					icon: MessageBox.Icon.ERROR
+					icon : MessageBox.Icon.ERROR
 				});
 			}
 		},

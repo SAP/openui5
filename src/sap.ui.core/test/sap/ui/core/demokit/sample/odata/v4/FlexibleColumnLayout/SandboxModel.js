@@ -98,7 +98,7 @@ sap.ui.define([
 					source : "SalesOrderList('0500000004')-Refresh_Existence.json"
 				},
 				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=GrossAmount,SalesOrderID" : {
-					message : {"value":[{
+					message : {"value" : [{
 						"@odata.etag" : "W/\"20210113145715.2782530 \"",
 						"GrossAmount" : "24540.06",
 						"SalesOrderID" : "0500000000"

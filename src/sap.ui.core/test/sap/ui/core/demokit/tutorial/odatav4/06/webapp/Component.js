@@ -1,13 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/tutorial/odatav4/model/models"
-], function(UIComponent, models) {
+], function (UIComponent, models) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.tutorial.odatav4.Component", {
 
-		metadata: {
-			manifest: "json"
+		metadata : {
+			manifest : "json"
 		},
 
 		/**
@@ -15,7 +15,7 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		init: function() {
+		init : function () {
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 

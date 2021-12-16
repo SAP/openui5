@@ -14,7 +14,7 @@ sap.ui.define([
 				oExpectedLog = {
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
-					message: "POST on 'SalesOrderList' failed; will be repeated automatically",
+					message : "POST on 'SalesOrderList' failed; will be repeated automatically",
 					details : "Property `Note` value `RAISE_ERROR` not allowed!"
 				};
 

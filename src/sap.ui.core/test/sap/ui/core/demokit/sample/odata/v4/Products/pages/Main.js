@@ -79,22 +79,22 @@ sap.ui.define([
 				checkMeasure : function (sValue, iRow) {
 					checkValue(this, /WeightMeasure-__clone/, sValue, iRow);
 				},
-				checkMeasureNewEntry : function (sValue){
+				checkMeasureNewEntry : function (sValue) {
 					checkValue(this, /WeightMeasure::newEntry/, sValue);
 				},
 				checkMeasureValueState : function (sState, iRow) {
 					checkValueState(this, /WeightMeasure-__clone/, sState, iRow);
 				},
-				checkName : function (sValue){
+				checkName : function (sValue) {
 					checkValue(this, /Name-__clone/, sValue);
 				},
-				checkNameNewEntry : function (sValue){
+				checkNameNewEntry : function (sValue) {
 					checkValue(this, /Name::newEntry/, sValue);
 				},
 				checkPrice : function (sValue, iRow) {
 					checkValue(this, /Price-__clone/, sValue, iRow);
 				},
-				checkPriceNewEntry : function (sValue){
+				checkPriceNewEntry : function (sValue) {
 					checkValue(this, /Price::newEntry/, sValue);
 				},
 				checkPriceValueState : function (sState, iRow) {
@@ -119,7 +119,7 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkProductIDNewEntry : function (sValue){
+				checkProductIDNewEntry : function (sValue) {
 					return checkValue(this, /ProductID::newEntry/, sValue);
 				},
 				checkProductIDValueState : function (sState, iRow) {

@@ -131,14 +131,14 @@ sap.ui.define([
 						viewName : sViewName,
 						controlType : "sap.m.ColumnListItem",
 						success : function (aListItems) {
-							aListItems.forEach(function (oListItem){
+							aListItems.forEach(function (oListItem) {
 								aSchedules.forEach(function (sSchedule) {
 									var sKey = oListItem.getCells()[0].getText();
 									if (sKey === sSchedule) {
 										new Press().executeOn(oListItem.getMultiSelectControl());
 										Opa5.assert.ok(true, "Schedule '" + sKey + "' selected");
 									}
-								} );
+								});
 							});
 						}
 					});
@@ -171,7 +171,7 @@ sap.ui.define([
 					id : /SalesOrderID/,
 					viewName : sViewName,
 					controlType : "sap.m.Text",
-					matchers : new Properties({text: sSalesOrderId}),
+					matchers : new Properties({text : sSalesOrderId}),
 					success : function (aControls) {
 						new Press().executeOn(aControls[0]);
 						Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
@@ -185,7 +185,7 @@ sap.ui.define([
 					controlType : "sap.m.CustomListItem",
 					id : /SalesOrderList-trigger/,
 					visible : false,
-					check: function (aControls) {
+					check : function (aControls) {
 						return aControls[0].$().is(":visible") === bVisible;
 					},
 					success : function (aControls) {
@@ -202,7 +202,7 @@ sap.ui.define([
 					controlType : "sap.m.Table",
 					id : "SalesOrderList",
 					check : function (oSalesOrderTable) {
-						return  oSalesOrderTable.getItems().length > 0;
+						return oSalesOrderTable.getItems().length > 0;
 					},
 					success : function (oSalesOrderTable) {
 						var sTypeName,

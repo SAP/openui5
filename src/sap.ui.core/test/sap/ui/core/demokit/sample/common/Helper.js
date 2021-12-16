@@ -41,7 +41,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 			},
 			searchOpenDialogs : bSearchOpenDialogs,
 			success : function (vControls) {
-				var oControl =  iRow === undefined ? vControls : vControls[0],
+				var oControl = iRow === undefined ? vControls : vControls[0],
 					sActual = bText ? oControl.getText() : oControl.getValue();
 
 				Opa5.assert.ok(iRow === undefined || vControls.length === 1);
@@ -94,7 +94,7 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				},
 				searchOpenDialogs : bSearchOpenDialogs,
 				success : function (vControls) {
-					var oInput =  iRow === undefined ? vControls : vControls[0];
+					var oInput = iRow === undefined ? vControls : vControls[0];
 
 					Opa5.assert.ok(iRow === undefined || vControls.length === 1);
 					Opa5.assert.strictEqual(oInput.getValue(), sValue, "Row: " + iRow + " " + sId

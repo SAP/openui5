@@ -26,22 +26,23 @@ sap.ui.define([
 		metadata : {
 			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
-				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
-				qualifier : {type: "string", defaultValue: "", bindable: "bindable"},
-				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
+				enabled : {type : "boolean", defaultValue : true, bindable : "bindable"},
+				qualifier : {type : "string", defaultValue : "", bindable : "bindable"},
+				value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"
+				}
 			},
 			aggregations : {
 				field : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 			},
-			associations: {
+			associations : {
 				/**
 				 * Association to controls / IDs that label this control (see WAI-ARIA attribute
 				 * aria-labelledby).
 				 */
-				ariaLabelledBy: {
-					type: "sap.ui.core.Control",
-					multiple: true,
-					singularName: "ariaLabelledBy"
+				ariaLabelledBy : {
+					type : "sap.ui.core.Control",
+					multiple : true,
+					singularName : "ariaLabelledBy"
 				}
 			},
 			events : {
@@ -55,8 +56,8 @@ sap.ui.define([
 		},
 
 		renderer : {
-			apiVersion: 2,
-			render : function(oRm, oValueHelp) {
+			apiVersion : 2,
+			render : function (oRm, oValueHelp) {
 				oRm.openStart("div", oValueHelp).openEnd();
 				oRm.renderControl(oValueHelp.getAggregation("field"));
 				oRm.close("div");
@@ -76,7 +77,7 @@ sap.ui.define([
 			this.attachModelContextChange(this.onModelContextChange);
 		},
 
-		addAssociation : function() {
+		addAssociation : function () {
 			var oField = this.getAggregation("field");
 
 			Control.prototype.addAssociation.apply(this, arguments);
@@ -86,13 +87,13 @@ sap.ui.define([
 			return this;
 		},
 
-		getAccessibilityInfo : function() {
+		getAccessibilityInfo : function () {
 			var oField = this.getAggregation("field");
 
 			return oField && oField.getAccessibilityInfo();
 		},
 
-		removeAssociation : function() {
+		removeAssociation : function () {
 			var oField = this.getAggregation("field");
 
 			if (oField) {
@@ -120,7 +121,7 @@ sap.ui.define([
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
-								change: that.onValueChange.bind(that),
+								change : that.onValueChange.bind(that),
 								id : sId,
 								showValueHelp : true,
 								value : that.getValue(),
@@ -165,12 +166,12 @@ sap.ui.define([
 						oBinding.getContext());
 				}
 
-				oItem.bindProperty("key", {path: sKey, model: "ValueList"});
-				oItem.bindProperty("text", {path: sText, model: "ValueList"});
+				oItem.bindProperty("key", {path : sKey, model : "ValueList"});
+				oItem.bindProperty("text", {path : sText, model : "ValueList"});
 				if (sAdditionalText) {
 					oComboBox.setShowSecondaryValues(true);
 					oItem.bindProperty("additionalText",
-						{path: sAdditionalText, model: "ValueList"});
+						{path : sAdditionalText, model : "ValueList"});
 				}
 
 				oComboBox.setModel(oValueListMapping.$model, "ValueList");
@@ -265,7 +266,7 @@ sap.ui.define([
 				that = this;
 
 			if (oField) {
-				oField.getBinding = function(sName) {
+				oField.getBinding = function (sName) {
 					return that.getBinding(sName);
 				};
 				oField.refreshDataState.call(oField, sName, oDataState);

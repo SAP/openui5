@@ -161,7 +161,7 @@ sap.ui.define([
 						id : sTableId,
 						viewName : sViewName,
 						actions : function (oTable) {
-							oTable.fireSelectionChange({listItem: oTable.getSelectedItem()});
+							oTable.fireSelectionChange({listItem : oTable.getSelectedItem()});
 						},
 						errorMessage : "Could not press user"
 					});

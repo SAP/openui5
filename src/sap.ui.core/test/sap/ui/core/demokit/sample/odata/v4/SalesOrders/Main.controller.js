@@ -105,7 +105,7 @@ sap.ui.define([
 			oEvent.getSource().getBindingContext().requestSideEffects([{
 					$PropertyPath : "/com.sap.gateway.default.zui5_epm_sample.v0002.Container"
 						+ "/SalesOrderList/SO_2_BP/CompanyName"}])
-				.catch(function () {/*may fail because of previous requests*/});
+				.catch(function () { /*may fail because of previous requests*/ });
 		},
 
 		onCreateSalesOrder : function (oEvent) {
@@ -221,7 +221,7 @@ sap.ui.define([
 					"SO_2_SOITEM/Note",
 					"SO_2_SOITEM/Quantity"
 				], "$auto")
-				.catch(function () {/*may fail because of previous requests*/})
+				.catch(function () { /*may fail because of previous requests*/ })
 				.finally(function () {
 					oView.setBusy(false);
 				});
@@ -252,7 +252,7 @@ sap.ui.define([
 			}
 		},
 
-		onDeleteBusinessPartner: function () {
+		onDeleteBusinessPartner : function () {
 			var oContext = this.byId("SO_2_BP::detail").getBindingContext();
 
 			oContext.delete(oContext.getModel().getGroupId()).then(function () {
@@ -407,9 +407,9 @@ sap.ui.define([
 
 			if (sQuery) {
 				aFilters.push(new Filter({
-					path: "SOITEM_2_PRODUCT/ProductID",
-					operator: FilterOperator.EQ,
-					value1: sQuery
+					path : "SOITEM_2_PRODUCT/ProductID",
+					operator : FilterOperator.EQ,
+					value1 : sQuery
 				}));
 			}
 			oBinding.filter(aFilters);
@@ -474,7 +474,7 @@ sap.ui.define([
 			var oItemContext = oEvent.getParameter("context");
 			if (!oItemContext.isTransient()) {
 				oItemContext.requestSideEffects([{$NavigationPropertyPath : "SOITEM_2_PRODUCT"}])
-					.catch(function () {/*may fail because of previous requests*/});
+					.catch(function () { /*may fail because of previous requests*/ });
 			}
 		},
 
@@ -659,7 +659,7 @@ sap.ui.define([
 				MessageBox.confirm(
 					"There are pending changes. Do you really want to refresh " + sRefreshableText
 						+ "?",
-					function onConfirm (sCode) {
+					function onConfirm(sCode) {
 						if (sCode === "OK") {
 							if (aUpdateGroupIds) {
 								aUpdateGroupIds.forEach(function (sUpdateGroupId) {
@@ -690,7 +690,7 @@ sap.ui.define([
 					{$PropertyPath : "Note"}
 				],
 				sGroupId
-			).catch(function () {/*may fail because of previous requests*/});
+			).catch(function () { /*may fail because of previous requests*/ });
 		},
 
 		setNextSortOrder : function (bDescending) {

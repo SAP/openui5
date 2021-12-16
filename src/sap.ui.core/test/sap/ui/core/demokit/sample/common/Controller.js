@@ -44,7 +44,7 @@ sap.ui.define([
 		initMessagePopover : function (sOpenButtonId) {
 			var oPage = this.getView().byId("page");
 
-			function onMessageSelected (oEvent) {
+			function onMessageSelected(oEvent) {
 				var oBestMatch,
 					aControls = oEvent.getParameter("item").getBindingContext("messages")
 						.getObject().getControlIds().map(function (sId) {
@@ -64,7 +64,7 @@ sap.ui.define([
 						return oBefore;
 					});
 					oPage.scrollToElement(oBestMatch);
-					setTimeout(function() {
+					setTimeout(function () {
 						// it may take some time to scroll the control into the visible area and the
 						// control can only be focused when it is visible
 						oBestMatch.focus();
@@ -75,7 +75,7 @@ sap.ui.define([
 			this.messagePopover = new MessagePopover({
 				activeTitlePress : onMessageSelected,
 				items : {
-					path :"messages>/",
+					path : "messages>/",
 					template : new MessageItem({
 						activeTitle : oPage ? true : false, // onMessageSelected needs a page
 						// Note: We need the details page in order to show a technical details link.
@@ -103,7 +103,7 @@ sap.ui.define([
 										endButton : oButton,
 										modal : true,
 										placement : PlacementType.Auto,
-										title: "Technical Details"
+										title : "Technical Details"
 									}),
 									oTechnicalDetails = oLink.data("technicalDetails"),
 									oText = new TextArea({
@@ -112,7 +112,7 @@ sap.ui.define([
 										width : "100%"
 									});
 
-								oButton.attachPress(function() {
+								oButton.attachPress(function () {
 									oPopover.close();
 								});
 								oText.setValue(JSON.stringify(oTechnicalDetails, null, "\t"));
@@ -216,7 +216,7 @@ sap.ui.define([
 		 * Opens or closes the MessagePopover on demand if it was initializied via
 		 * initMessagePopover.
 		 */
-		onToggleMessagePopover: function () {
+		onToggleMessagePopover : function () {
 			this.messagePopover.toggle(this.byId(this.messagePopoverButtonId));
 		}
 	});

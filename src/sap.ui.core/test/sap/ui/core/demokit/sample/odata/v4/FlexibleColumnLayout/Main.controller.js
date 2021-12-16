@@ -84,7 +84,7 @@ sap.ui.define([
 
 		onDeleteSalesOrderItem : function (oEvent) {
 			this.byId("objectPage").getBindingContext().requestSideEffects(["GrossAmount"], "$auto")
-					.catch(function () {/*may fail because of previous request*/});
+					.catch(function () { /*may fail because of previous request*/ });
 
 			oEvent.getSource().getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order line item deleted");
@@ -132,7 +132,7 @@ sap.ui.define([
 					"SO_2_SOITEM/GrossAmount",
 					"SO_2_SOITEM/Quantity"
 				], "$auto")
-				.catch(function () {/*may fail because of previous requests*/})
+				.catch(function () { /*may fail because of previous requests*/ })
 				.finally(function () {
 					oView.setBusy(false);
 				});
@@ -300,7 +300,7 @@ sap.ui.define([
 			// request new ETag for each sales order touched by changes on item level (containment)
 			Object.keys(this.mChangedSalesOrders).forEach(function (sPath) {
 				that.mChangedSalesOrders[sPath].requestSideEffects(["GrossAmount"])
-					.catch(function () {/*may fail because of previous request*/});
+					.catch(function () { /*may fail because of previous request*/ });
 			});
 			return oView.getModel().submitBatch(sGroupId).finally(function () {
 				oView.setBusy(false);

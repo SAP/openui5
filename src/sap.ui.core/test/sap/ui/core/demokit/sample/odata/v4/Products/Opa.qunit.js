@@ -152,7 +152,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onAnyPage.checkLog([{
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
-					message: "POST on 'ProductList' failed; will be repeated automatically",
+					message : "POST on 'ProductList' failed; will be repeated automatically",
 					details : "Error occurred while processing the request"
 				}]);
 				Then.onAnyPage.analyzeSupportAssistant();
