@@ -671,7 +671,7 @@ sap.ui.define([
 
 			// if recommendations were shown - add the icon pressed style
 			if (this._getItemsShownWithFilter()) {
-				this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, true);
+				this.toggleIconPressedStyle(true);
 			}
 		};
 
@@ -934,7 +934,7 @@ sap.ui.define([
 			}
 
 			// remove the active state of the control's field
-			this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, false);
+			this.toggleIconPressedStyle(false);
 		};
 
 		/**

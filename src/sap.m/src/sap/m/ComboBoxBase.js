@@ -161,8 +161,6 @@ sap.ui.define([
 			renderer: ComboBoxBaseRenderer
 		});
 
-		ComboBoxBase.ARROW_PRESSED_CSS_CLASS = "sapMComboBoxBaseArrowPressed";
-
 		/**
 		 * Called when the composition of a passage of text has been completed or cancelled.
 		 *
@@ -498,6 +496,8 @@ sap.ui.define([
 				press: this.handleClearIconPress.bind(this)
 			}, 0);
 
+			this._oClearIcon.addStyleClass("sapMComboBoxBaseClearIcon");
+
 			return this._oClearIcon;
 		};
 
@@ -682,7 +682,7 @@ sap.ui.define([
 				// instead of closing and reopening the SuggestionsPopover we set the default filter
 				// and use it to show all items in the picker, while adding the correct style class to the
 				// ComboBoxes icon.
-				this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, true);
+				this.toggleIconPressedStyle(true);
 				this.bOpenedByKeyboardOrButton = false;
 				this.clearFilter();
 				this._setItemsShownWithFilter(false);
@@ -1130,7 +1130,7 @@ sap.ui.define([
 		ComboBoxBase.prototype.onBeforeOpen = function () {
 			this._updateSuggestionsPopoverValueState();
 			if (!this._getItemsShownWithFilter()) {
-				this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, true);
+				this.toggleIconPressedStyle(true);
 			}
 		};
 

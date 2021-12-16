@@ -1021,7 +1021,7 @@ function(
 
 		// if recommendations were shown - add the icon pressed style
 		if (this._getItemsShownWithFilter()) {
-			this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, true);
+			this.toggleIconPressedStyle(true);
 		}
 	};
 
@@ -1449,7 +1449,7 @@ function(
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "false");
 
 		// remove the active state of the MultiComboBox's field
-		this.toggleStyleClass(ComboBoxBase.ARROW_PRESSED_CSS_CLASS, false);
+		this.toggleIconPressedStyle(false);
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();

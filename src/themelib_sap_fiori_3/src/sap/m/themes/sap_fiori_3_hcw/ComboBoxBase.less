@@ -1,0 +1,28 @@
+/* ==================================== */
+/* CSS for control sap.m/ComboBoxBase   */
+/* Quartz High Contrast White theme     */
+/* ==================================== */
+
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon {
+	color: @sapUiContentIconColor;
+	background: transparent;
+	border-left-color: transparent;
+
+	&:hover {
+		background: @sapUiButtonLiteHoverBackground;
+		border-left-color: @sapUiButtonSelectedBorderColor;
+	}
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+
+		&::before {
+			color: @sapUiButtonActiveTextColor;
+		}
+	}
+}
+
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon::before {
+	color: @sapUiContentIconColor;
+}

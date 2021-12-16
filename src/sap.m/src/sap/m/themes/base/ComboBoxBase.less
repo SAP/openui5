@@ -20,14 +20,26 @@
 	cursor: default;
 }
 
-.sapMInputBase:not(.sapMInputBaseDisabled):not(.sapMInputBaseIconPressed).sapMComboBoxBase.sapMComboBoxBaseArrowPressed .sapMInputBaseIconContainer .sapMInputBaseIcon:last-child {
-	background: @sapUiToggleButtonPressedBackground;
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon {
+	color: @sapUiContentIconColor;
+	background: transparent;
+
 	&:hover {
-		background: @sapUiToggleButtonPressedBackground;
+		background: @sapUiButtonLiteHoverBackground;
 	}
-	&::before {
-		color: @sapUiToggleButtonPressedTextColor;
+
+	&:active {
+		background-color: @sapUiButtonLiteActiveBackground;
+		color: @sapUiButtonActiveTextColor;
+
+		&::before {
+			color: @sapUiButtonActiveTextColor;
+		}
 	}
+}
+
+.sapMInputBaseIconPressed .sapMComboBoxBaseClearIcon::before {
+	color: @sapUiContentIconColor;
 }
 
 /* ------------------------------ */
