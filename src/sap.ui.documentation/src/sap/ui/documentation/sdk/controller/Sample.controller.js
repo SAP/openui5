@@ -57,10 +57,18 @@ sap.ui.define([
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
 
 				// Load runtime authoring asynchronously
-				Promise.all([
-					sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
-					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
-				]).then(this._loadRTA.bind(this));
+				if (!ResourcesUtil.getHasProxy()) {
+					Promise.all([
+						sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
+						sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+					]).then(function () {
+						sap.ui.require([
+							"sap/ui/fl/Utils",
+							"sap/ui/fl/FakeLrepConnectorLocalStorage",
+							"sap/ui/core/util/reflection/JsControlTreeModifier"
+						], this._loadRTA.bind(this));
+					}.bind(this));
+				}
 
 				this.getView().setModel(this.oModel);
 
@@ -333,7 +341,46 @@ sap.ui.define([
 							if (!this._oHtmlControl._jQueryHTMLControlLoadEventAttached) {
 								this._oHtmlControl.$().on("load", function () {
 									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
-										oSampleFrameCore = oSampleFrame.sap.ui.getCore();
+										oSampleFrameCore = oSampleFrame.sap.ui.getCore(),
+										oFrame = document.getElementById("sampleFrame");
+
+									if (this.oModel.getData().iframe) {
+										Promise.all([
+											oSampleFrameCore.loadLibrary("sap.ui.fl", {async: true}),
+											oSampleFrameCore.loadLibrary("sap.ui.rta", {async: true})
+										]).then(function () {
+											oSampleFrame.sap.ui.require([
+												"sap/ui/fl/Utils",
+												"sap/ui/fl/FakeLrepConnectorLocalStorage",
+												"sap/ui/core/util/reflection/JsControlTreeModifier"
+											], this._loadRTA.bind(this));
+										}.bind(this));
+
+
+										oFrame.onToggleAdaptationMode = function () {
+											oSampleFrame.sap.ui.require([
+												"sap/ui/rta/api/startKeyUserAdaptation"
+											], function (
+												startKeyUserAdaptation
+											) {
+												if (!this._oRTA) {
+													var oContainer = oSampleFrameCore.byId("__container0");
+
+													startKeyUserAdaptation({
+														rootControl : oContainer.getComponentInstance()
+													}).then(function(oRta) {
+														this._oRTA = oRta;
+														oContainer.$().css({"padding-top": "2.5rem", "box-sizing": "border-box"});
+														this._oRTA.attachStop(function () {
+															oContainer.$().css({"padding-top": "0", "box-sizing": "content-box"});
+															this._oRTA.destroy();
+															delete this._oRTA;
+														}.bind(this));
+													}.bind(this));
+												}
+											}.bind(this));
+										};
+									}
 
 									// Apply theme settings to iframe sample
 									oSampleFrame.sap.ui.getCore().attachInit(function () {
@@ -434,12 +481,7 @@ sap.ui.define([
 				this.sIFrameUrl = this.sIFrameUrl + decodeURI(oIFrameURL.search);
 			},
 
-			_loadRTA: function () {
-				sap.ui.require([
-					"sap/ui/fl/Utils",
-					"sap/ui/fl/FakeLrepConnectorLocalStorage",
-					"sap/ui/core/util/reflection/JsControlTreeModifier"
-				], function (
+			_loadRTA: function (
 					Utils,
 					FakeLrepConnectorLocalStorage,
 					JsControlTreeModifier
@@ -467,18 +509,23 @@ sap.ui.define([
 							this._oRTA = null;
 						}
 					}, this);
-				}.bind(this));
 			},
 
 			onToggleAdaptationMode : function (oEvt) {
+				if (this.oModel.getData().iframe) {
+					window.document.getElementsByTagName("iframe")[0].onToggleAdaptationMode();
+					return;
+				}
 				sap.ui.require([
 					"sap/ui/rta/api/startKeyUserAdaptation"
 				], function (
 					startKeyUserAdaptation
 				) {
 					if (!this._oRTA) {
+						var oContainer = this.byId("page").getContent()[0];
+
 						startKeyUserAdaptation({
-							rootControl : this.byId("page").getContent()[0].getComponentInstance()
+							rootControl : oContainer.getComponentInstance()
 						}).then(function(oRta) {
 							this._oRTA = oRta;
 							this._oRTA.attachStop(function () {
