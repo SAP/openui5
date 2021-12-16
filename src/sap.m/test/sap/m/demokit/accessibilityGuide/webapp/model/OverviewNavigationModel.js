@@ -48,6 +48,11 @@ sap.ui.define([
                         target: 'overview',
                         key: 'invisibleContent'
                     },
+					{
+                        title: 'Empty Display Control Readings',
+                        target: 'overview',
+                        key: 'emptyDisplayControlReadings'
+                    },
                     {
                         title: 'Colors and Theming',
                         target: 'overview',
