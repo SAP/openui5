@@ -19,6 +19,7 @@
 			],
 			"rules": {
 				"consistent-return": "off", // override "warn"
+				"no-mixed-spaces-and-tabs": "error",
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
 
 				// stylistic (JIRA: CPOUI5ODATAV4-1325)

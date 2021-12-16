@@ -30822,7 +30822,7 @@ sap.ui.define([
 			mExpectedHeaders = {
 				SomeSecurityTokenHeader : "foo",
 				SomeOtherSecurityTokenHeader : "bar",
-				 "X-CSRF-Token": undefined // Note: this is not sent by jQuery.ajax()
+				"X-CSRF-Token": undefined // Note: this is not sent by jQuery.ajax()
 			},
 			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}"/>',
 			that = this;
