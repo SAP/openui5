@@ -37,6 +37,7 @@
 				"no-whitespace-before-property": "error",
 				"nonblock-statement-body-position": "error", // @see "curly": ["error", "all"]
 				"object-curly-spacing": "error",
+				"quotes": ["error", "double", {"avoidEscape": true}],
 				"space-before-blocks": "error",
 				"space-before-function-paren": ["error", {"named": "never"}],
 				"space-in-parens": "error",

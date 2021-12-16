@@ -638,12 +638,12 @@ sap.ui.define([
 				LifecycleStatus : {},
 				CurrencyCode : {}
 			},
-			groupLevels : ['LifecycleStatus', 'CurrencyCode']
+			groupLevels : ["LifecycleStatus", "CurrencyCode"]
 		},
 		mQueryOptions : {
 			$$leaves : true,
 			$count : true,
-			$orderby : 'LifecycleStatus desc',
+			$orderby : "LifecycleStatus desc",
 			$top : 3
 		},
 		sApply : "concat(groupby((CurrencyCode,LifecycleStatus))/aggregate($count as UI5__leaves)"
@@ -657,14 +657,14 @@ sap.ui.define([
 				GrossAmount : {subtotals : true}
 			},
 			// group is optional
-			groupLevels : ['LifecycleStatus', 'CurrencyCode']
+			groupLevels : ["LifecycleStatus", "CurrencyCode"]
 		},
 		iLevel : 2, // ignore $$leaves!
 		mQueryOptions : {
 			$$filterBeforeAggregate : "LifecycleStatus eq 'X'",
 			$$leaves : true,
 			$count : true,
-			$orderby : 'LifecycleStatus desc',
+			$orderby : "LifecycleStatus desc",
 			$top : 3
 		},
 		sApply : "filter(LifecycleStatus eq 'X')/groupby((CurrencyCode),aggregate(GrossAmount))"
@@ -677,7 +677,7 @@ sap.ui.define([
 				GrossAmount : {grandTotal : true, subtotals : true}
 			},
 			// group is optional
-			groupLevels : ['LifecycleStatus', 'CurrencyCode']
+			groupLevels : ["LifecycleStatus", "CurrencyCode"]
 		},
 		mQueryOptions : {
 			$$leaves : true,

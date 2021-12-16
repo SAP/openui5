@@ -407,14 +407,14 @@ sap.ui.define([
 			converted : {"$filter" : "((foo eq ''%29   and %28bar gt 1%29%29"}
 		}, {
 			//       "$search= " foo \  " bar \ \ baz ",
-			string : '$search=%22foo%5c%22bar%5C\\baz%22',
-			parsed : {"$search" : '%22foo%5c%22bar%5C\\baz%22'},
-			converted : {"$search" : '%22foo%5c%22bar%5C\\baz%22'}
+			string : "$search=%22foo%5c%22bar%5C\\baz%22",
+			parsed : {"$search" : "%22foo%5c%22bar%5C\\baz%22"},
+			converted : {"$search" : "%22foo%5c%22bar%5C\\baz%22"}
 		}, {
 			//       "$search= " foo \  " bar \ \ baz% ",
-			string : '$search=%22foo%5c%22bar%5C\\baz%%22',
-			parsed : {"$search" : '%22foo%5c%22bar%5C\\baz%%22'},
-			converted : {"$search" : '%22foo%5c%22bar%5C\\baz%%22'}
+			string : "$search=%22foo%5c%22bar%5C\\baz%%22",
+			parsed : {"$search" : "%22foo%5c%22bar%5C\\baz%%22"},
+			converted : {"$search" : "%22foo%5c%22bar%5C\\baz%%22"}
 		}].forEach(function (oFixture) {
 			assert.deepEqual(_Parser.parseSystemQueryOption(oFixture.string), oFixture.parsed,
 				oFixture.string);
@@ -425,7 +425,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	['eq', 'ge', 'gt', 'le', 'lt', 'ne'].forEach(function (sOperator) {
+	["eq", "ge", "gt", "le", "lt", "ne"].forEach(function (sOperator) {
 		QUnit.test("parseFilter: operator=" + sOperator, function (assert) {
 
 			// Part 1: foo op 'bar'

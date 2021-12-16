@@ -647,7 +647,7 @@ sap.ui.define([
 		// We do not pass a resource path, but within V4 this doesn't matter
 		this.doConvertSystemQueryOptions(undefined, vExpandOptions,
 			function (sOptionName, vOptionValue) {
-				aExpandOptions.push(sOptionName + '=' + vOptionValue);
+				aExpandOptions.push(sOptionName + "=" + vOptionValue);
 			},
 			undefined, bSortExpandSelect);
 		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
@@ -781,7 +781,7 @@ sap.ui.define([
 		Object.keys(mQueryOptions).forEach(function (sKey) {
 			var vValue = mQueryOptions[sKey];
 
-			if (bDropSystemQueryOptions && sKey[0] === '$') {
+			if (bDropSystemQueryOptions && sKey[0] === "$") {
 				return;
 			}
 

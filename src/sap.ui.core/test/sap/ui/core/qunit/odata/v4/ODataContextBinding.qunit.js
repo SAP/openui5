@@ -3648,9 +3648,9 @@ sap.ui.define([
 		inherited : {$expand : {Nav : {}}},
 		expected: {foo : "bar", $expand : {Nav : {}}}
 	}, {
-		own : {foo : "bar", $select : ['own', 'both']},
-		inherited : {$select : ['inh', 'both']},
-		expected : {foo : "bar", $select : ['own', 'both', 'inh']}
+		own : {foo : "bar", $select : ["own", "both"]},
+		inherited : {$select : ["inh", "both"]},
+		expected : {foo : "bar", $select : ["own", "both", "inh"]}
 	}
 ].forEach(function (oFixture, i) {
 	QUnit.test("getQueryOptionsFromParameters: $$inheritExpandSelect #" + i, function (assert) {

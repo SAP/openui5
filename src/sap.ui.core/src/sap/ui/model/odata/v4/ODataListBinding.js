@@ -2287,7 +2287,7 @@ sap.ui.define([
 		if (sOrderbyQueryOption) {
 			aOrderbyOptions.push(sOrderbyQueryOption);
 		}
-		return aOrderbyOptions.join(',');
+		return aOrderbyOptions.join(",");
 	};
 
 	/**

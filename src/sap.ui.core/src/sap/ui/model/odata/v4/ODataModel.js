@@ -1123,7 +1123,7 @@ sap.ui.define([
 				+ "' without context");
 		}
 
-		iSeparator = sResolvedPath.indexOf('#');
+		iSeparator = sResolvedPath.indexOf("#");
 		if (iSeparator >= 0) {
 			sDataPath = sResolvedPath.slice(0, iSeparator);
 			sMetaPath = sResolvedPath.slice(iSeparator + 1);

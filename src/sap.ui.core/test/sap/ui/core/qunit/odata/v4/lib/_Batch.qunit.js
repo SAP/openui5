@@ -989,7 +989,7 @@ HTTP/1.1 200 OK\r\n\
 		}]
 	}, {
 		testTitle : "multiple Content-Type parameters separated with space",
-		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345 ; foo=bar',
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345 ; foo=bar",
 		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
@@ -1007,7 +1007,7 @@ HTTP/1.1 200 OK\r\n\
 		}]
 	}, {
 		testTitle : "multiple Content-Type parameters separated w/o space",
-		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar",
 		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
@@ -1025,7 +1025,7 @@ HTTP/1.1 200 OK\r\n\
 		}]
 	}, {
 		testTitle : "Content-Type with charset parameter lowercase",
-		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar",
 		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
@@ -1044,7 +1044,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=utf-8\r\n\
 		}]
 	}, {
 		testTitle : "Content-Type with charset parameter uppercase + space + following parameter",
-		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar",
 		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
@@ -1065,7 +1065,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8 ;foo=bar\r\n
 		}]
 	}, {
 		testTitle : "Content-Type text/plain with only spaces in response body",
-		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345',
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
@@ -1086,7 +1086,7 @@ Content-Type: text/plain\r\n\
 		}]
 	}, {
 		testTitle : "individual requests and change sets",
-		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345',
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 2768\r\n\
@@ -1288,7 +1288,7 @@ etag: W/\"20151211144619.4760440\"\r\n\
 --changeset_id-0123456789012-912--\r\n\
 \r\n\
 --batch_id-0123456789012-345--\r\n",
-		errorMessage : 'Content-ID MIME header missing for the change set response.'
+		errorMessage : "Content-ID MIME header missing for the change set response."
 	}, {
 		title : "invalid Content-ID for change set response",
 		body : "--batch_id-0123456789012-345\r\n\
@@ -1311,7 +1311,7 @@ etag: W/\"20151211144619.4760440\"\r\n\
 --changeset_id-0123456789012-912--\r\n\
 \r\n\
 --batch_id-0123456789012-345--\r\n",
-		errorMessage : 'Invalid Content-ID value in change set response.'
+		errorMessage : "Invalid Content-ID value in change set response."
 	}].forEach(function (oFixture) {
 		QUnit.test("Validation for deserializeBatchResponse: " + oFixture.title, function (assert) {
 			assert.throws(function () {
@@ -1961,7 +1961,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					}
 				}).then(function (_oData, _sTextStatus, jqXHR) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
-					jQuery.ajax(sResolvedServiceUrl + '$batch', {
+					jQuery.ajax(sResolvedServiceUrl + "$batch", {
 						method : "POST",
 						headers : {
 							"Content-Type" : oBatchRequestContent.headers["Content-Type"],
