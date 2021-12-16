@@ -61,10 +61,7 @@ sap.ui.define([
 		DEBUG = Log.Level.DEBUG,
 		rLeftBraces = /\$\(/g,
 		rNumber = /^-?\d+$/,
-		ODataMetaContextBinding,
-		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
-		ODataMetaPropertyBinding,
 		rPredicate = /\(.*\)$/,
 		oRawType = new Raw(),
 		rRightBraces = /\$\)/g,
@@ -124,7 +121,47 @@ sap.ui.define([
 		sValueListRelevantQualifiers
 			= "@com.sap.vocabularies.Common.v1.ValueListRelevantQualifiers",
 		sValueListWithFixedValues = "@com.sap.vocabularies.Common.v1.ValueListWithFixedValues",
-		WARNING = Log.Level.WARNING;
+		WARNING = Log.Level.WARNING,
+		ODataMetaContextBinding,
+		/**
+		 * Do <strong>NOT</strong> call this private constructor, but rather use
+		 * {@link sap.ui.model.odata.v4.ODataModel#getMetaModel} instead.
+		 *
+		 * @param {object} oRequestor
+		 *   The metadata requestor
+		 * @param {string} sUrl
+		 *   The URL to the $metadata document of the service
+		 * @param {string|string[]} [vAnnotationUri]
+		 *   The URL (or an array of URLs) from which the annotation metadata are loaded
+		 *   Supported since 1.41.0
+		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
+		 *   The model this meta model is related to
+		 * @param {boolean} [bSupportReferences=true]
+		 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives
+		 *   are supported in order to load schemas on demand from other $metadata documents and
+		 *   include them into the current service ("cross-service references").
+		 *
+		 * @alias sap.ui.model.odata.v4.ODataMetaModel
+		 * @author SAP SE
+		 * @class Implementation of an OData metadata model which offers access to OData V4
+		 *   metadata. The meta model does not support any public events; attaching an event handler
+		 *   leads to an error.
+		 *
+		 *   This model is read-only.
+		 *
+		 *   This model is not prepared to be inherited from.
+		 *
+		 * @extends sap.ui.model.MetaModel
+		 * @hideconstructor
+		 * @public
+		 * @since 1.37.0
+		 * @version ${version}
+		 */
+		ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
+				constructor : constructor
+			}),
+		ODataMetaListBinding,
+		ODataMetaPropertyBinding;
 
 	/**
 	 * Adds the given reference URI to the map of reference URIs for schemas.
@@ -367,6 +404,10 @@ sap.ui.define([
 		return sQualifiedName.slice(0, sQualifiedName.lastIndexOf(".") + 1);
 	}
 
+	//*********************************************************************************************
+	// ODataMetaContextBinding
+	//*********************************************************************************************
+
 	/**
 	 * @class Context binding implementation for the OData metadata model.
 	 *
@@ -404,6 +445,10 @@ sap.ui.define([
 				}
 			}
 		});
+
+	//*********************************************************************************************
+	// ODataMetaListBinding
+	//*********************************************************************************************
 
 	/**
 	 * @class List binding implementation for the OData metadata model which supports filtering on
@@ -549,6 +594,10 @@ sap.ui.define([
 		}
 	});
 
+	//*********************************************************************************************
+	// ODataMetaPropertyBinding
+	//*********************************************************************************************
+
 	/**
 	 * @class Property binding implementation for the OData metadata model.
 	 *
@@ -624,11 +673,15 @@ sap.ui.define([
 			}
 		});
 
+	//*********************************************************************************************
+	// ODataMetaModel
+	//*********************************************************************************************
+
 	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
 	 * {@link sap.ui.model.odata.v4.ODataModel#getMetaModel} instead.
 	 *
-	 * @param {object} oRequestor
+	 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
 	 *   The metadata requestor
 	 * @param {string} sUrl
 	 *   The URL to the $metadata document of the service
@@ -641,57 +694,36 @@ sap.ui.define([
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
 	 *   them into the current service ("cross-service references").
-	 *
-	 * @alias sap.ui.model.odata.v4.ODataMetaModel
-	 * @author SAP SE
-	 * @class Implementation of an OData metadata model which offers access to OData V4 metadata.
-	 *   The meta model does not support any public events; attaching an event handler leads to an
-	 *   error.
-	 *
-	 *   This model is read-only.
-	 *
-	 *   This model is not prepared to be inherited from.
-	 *
-	 * @extends sap.ui.model.MetaModel
-	 * @hideconstructor
-	 * @public
-	 * @since 1.37.0
-	 * @version ${version}
 	 */
-	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
-		/*
-		 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
-		 */
-		constructor : function (oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences) {
-			MetaModel.call(this);
-			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
-				? [vAnnotationUri] : vAnnotationUri;
-			this.sDefaultBindingMode = BindingMode.OneTime;
-			this.mETags = {};
-			this.oLastModified = new Date(0);
-			this.oMetadataPromise = null;
-			this.oModel = oModel;
-			this.mMetadataUrl2Promise = {};
-			this.oRequestor = oRequestor;
-			// maps the schema name to a map containing the URL references for the schema as key
-			// and a boolean value whether the schema has been read already as value; the URL
-			// reference is used by _MetadataRequestor#read()
-			// Example:
-			// mSchema2MetadataUrl = {
-			//   "A." : {"/A/$metadata" : false}, // namespace not yet read
-			//   // multiple references are ok as long as they are not read
-			//   "A.A." : {"/A/$metadata" : false, "/A/V2/$metadata" : false},
-			//   "B." : {"/B/$metadata" : true} // namespace already read
-			// }
-			this.mSchema2MetadataUrl = {};
-			this.mSupportedBindingModes = {OneTime : true, OneWay : true};
-			this.bSupportReferences = bSupportReferences !== false; // default is true
-			// ClientListBinding#filter calls checkFilterOperation on the model; ClientModel does
-			// not support "All" and "Any" filters
-			this.mUnsupportedFilterOperators = {All : true, Any : true};
-			this.sUrl = sUrl;
-		}
-	});
+	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences) {
+		MetaModel.call(this);
+		this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
+			? [vAnnotationUri] : vAnnotationUri;
+		this.sDefaultBindingMode = BindingMode.OneTime;
+		this.mETags = {};
+		this.oLastModified = new Date(0);
+		this.oMetadataPromise = null;
+		this.oModel = oModel;
+		this.mMetadataUrl2Promise = {};
+		this.oRequestor = oRequestor;
+		// maps the schema name to a map containing the URL references for the schema as key
+		// and a boolean value whether the schema has been read already as value; the URL
+		// reference is used by _MetadataRequestor#read()
+		// Example:
+		// mSchema2MetadataUrl = {
+		//   "A." : {"/A/$metadata" : false}, // namespace not yet read
+		//   // multiple references are ok as long as they are not read
+		//   "A.A." : {"/A/$metadata" : false, "/A/V2/$metadata" : false},
+		//   "B." : {"/B/$metadata" : true} // namespace already read
+		// }
+		this.mSchema2MetadataUrl = {};
+		this.mSupportedBindingModes = {OneTime : true, OneWay : true};
+		this.bSupportReferences = bSupportReferences !== false; // default is true
+		// ClientListBinding#filter calls checkFilterOperation on the model; ClientModel does
+		// not support "All" and "Any" filters
+		this.mUnsupportedFilterOperators = {All : true, Any : true};
+		this.sUrl = sUrl;
+	}
 
 	/**
 	 * Indicates that the property bindings of this model support the binding parameter

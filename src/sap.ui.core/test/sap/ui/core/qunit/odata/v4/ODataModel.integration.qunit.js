@@ -785,7 +785,8 @@ sap.ui.define([
 							type : oMessage.getType()
 						};
 					}).sort(compareMessages),
-				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
+				aExpectedMessages = this.aMessages.slice().sort(compareMessages),
+				oMatcher;
 
 			function compareMessages(oMessage1, oMessage2) {
 				return oMessage1.message.localeCompare(oMessage2.message);
@@ -799,7 +800,7 @@ sap.ui.define([
 			});
 
 			if (this.aMessages.bHasMatcher) {
-				var oMatcher = sinon.match(aExpectedMessages);
+				oMatcher = sinon.match(aExpectedMessages);
 
 				assert.ok(oMatcher.test(aCurrentMessages), oMatcher.message);
 			} else {
@@ -1679,10 +1680,11 @@ sap.ui.define([
 				that = this;
 
 			EventProvider.prototype.fireEvent = function (sEventId, mParameters) {
-				var sThis = this.toString();
+				var aDetails,
+					sThis = this.toString();
 
 				if (sThis.startsWith(sExpectedEventSourcePrefix)) {
-					var aDetails = [sThis, sEventId, mParameters];
+					aDetails = [sThis, sEventId, mParameters];
 
 					assert.deepEqual(aDetails, that.aExpectedEvents.shift(),
 						JSON.stringify(aDetails));

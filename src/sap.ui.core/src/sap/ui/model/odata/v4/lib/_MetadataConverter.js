@@ -524,10 +524,10 @@ sap.ui.define([
 	 *   The configuration: a map from attribute name to a function to convert it
 	 */
 	_MetadataConverter.prototype.processAttributes = function (oElement, oTarget, oConfig) {
-		var sProperty;
+		var sProperty, sValue;
 
 		for (sProperty in oConfig) {
-			var sValue = oConfig[sProperty](oElement.getAttribute(sProperty));
+			sValue = oConfig[sProperty](oElement.getAttribute(sProperty));
 
 			if (sValue !== undefined && sValue !== null) {
 				oTarget["$" + sProperty] = sValue;

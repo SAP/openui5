@@ -27,7 +27,38 @@ sap.ui.define([
 			dataRequested : true,
 			DataStateChange : true
 		},
-		sVirtualPath = "/" + Context.VIRTUAL; // a snippet indicating a virtual path
+		sVirtualPath = "/" + Context.VIRTUAL, // a snippet indicating a virtual path
+		/**
+		 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
+		 * @author SAP SE
+		 * @class Property binding for an OData V4 model.
+		 *   An event handler can only be attached to this binding for the following events:
+		 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested' and
+		 *   'DataStateChange'. For unsupported events, an error is thrown.
+		 * @extends sap.ui.model.PropertyBinding
+		 * @hideconstructor
+		 * @mixes sap.ui.model.odata.v4.ODataBinding
+		 * @public
+		 * @since 1.37.0
+		 * @version ${version}
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#requestRefresh as #requestRefresh
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#toString as #toString
+		 */
+		ODataPropertyBinding
+			= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
+				constructor : constructor
+			});
+
+	//*********************************************************************************************
+	// ODataPropertyBinding
+	//*********************************************************************************************
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
@@ -43,65 +74,37 @@ sap.ui.define([
 	 *   Map of binding parameters
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided
-	 *
-	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
-	 * @author SAP SE
-	 * @class Property binding for an OData V4 model.
-	 *   An event handler can only be attached to this binding for the following events:
-	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested' and
-	 *   'DataStateChange'. For unsupported events, an error is thrown.
-	 * @extends sap.ui.model.PropertyBinding
-	 * @hideconstructor
-	 * @mixes sap.ui.model.odata.v4.ODataBinding
-	 * @public
-	 * @since 1.37.0
-	 * @version ${version}
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#requestRefresh as #requestRefresh
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#toString as #toString
 	 */
-	var ODataPropertyBinding
-		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
-			constructor : function (oModel, sPath, oContext, mParameters) {
-				PropertyBinding.call(this, oModel, sPath);
-				// initialize mixin members
-				asODataBinding.call(this);
+	function constructor(oModel, sPath, oContext, mParameters) {
+		PropertyBinding.call(this, oModel, sPath);
+		// initialize mixin members
+		asODataBinding.call(this);
 
-				if (sPath.endsWith("/")) {
-					throw new Error("Invalid path: " + sPath);
-				}
-				if (mParameters) {
-					this.checkBindingParameters(mParameters,
-						["$$groupId", "$$ignoreMessages", "$$noPatch"]);
-					this.sGroupId = mParameters.$$groupId;
-					this.bNoPatch = mParameters.$$noPatch;
-					this.setIgnoreMessages(mParameters.$$ignoreMessages);
-				} else {
-					this.sGroupId = undefined;
-					this.bNoPatch = false;
-				}
-				this.oCheckUpdateCallToken = undefined;
-				this.oContext = oContext;
-				this.bHasDeclaredType = undefined; // whether the binding info declares a type
-				this.bInitial = true;
-				// Note: system query options supported at property binding only for ".../$count"
-				this.mQueryOptions = this.oModel.buildQueryOptions(_Helper.clone(mParameters),
-					/*bSystemQueryOptionsAllowed*/sPath.endsWith("$count"));
-				this.vValue = undefined;
-				// BEWARE: #doFetchQueryOptions uses #isRoot which relies on this.oContext!
-				this.fetchCache(oContext);
-				oModel.bindingCreated(this);
-			},
-			metadata : {
-				publicMethods : []
-			}
-		});
+		if (sPath.endsWith("/")) {
+			throw new Error("Invalid path: " + sPath);
+		}
+		if (mParameters) {
+			this.checkBindingParameters(mParameters,
+				["$$groupId", "$$ignoreMessages", "$$noPatch"]);
+			this.sGroupId = mParameters.$$groupId;
+			this.bNoPatch = mParameters.$$noPatch;
+			this.setIgnoreMessages(mParameters.$$ignoreMessages);
+		} else {
+			this.sGroupId = undefined;
+			this.bNoPatch = false;
+		}
+		this.oCheckUpdateCallToken = undefined;
+		this.oContext = oContext;
+		this.bHasDeclaredType = undefined; // whether the binding info declares a type
+		this.bInitial = true;
+		// Note: system query options supported at property binding only for ".../$count"
+		this.mQueryOptions = this.oModel.buildQueryOptions(_Helper.clone(mParameters),
+			/*bSystemQueryOptionsAllowed*/sPath.endsWith("$count"));
+		this.vValue = undefined;
+		// BEWARE: #doFetchQueryOptions uses #isRoot which relies on this.oContext!
+		this.fetchCache(oContext);
+		oModel.bindingCreated(this);
+	}
 
 	asODataBinding(ODataPropertyBinding.prototype);
 

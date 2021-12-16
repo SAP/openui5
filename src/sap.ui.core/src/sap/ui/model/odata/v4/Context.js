@@ -16,7 +16,35 @@ sap.ui.define([
 		iGenerationCounter = 0,
 		oModule,
 		// index of virtual context used for auto-$expand/$select
-		iVIRTUAL = -9007199254740991/*Number.MIN_SAFE_INTEGER*/;
+		iVIRTUAL = -9007199254740991/*Number.MIN_SAFE_INTEGER*/,
+		/**
+		 * @alias sap.ui.model.odata.v4.Context
+		 * @author SAP SE
+		 * @class Implementation of an OData V4 model's context.
+		 *
+		 *   The context is a pointer to model data as returned by a query from a
+		 *   {@link sap.ui.model.odata.v4.ODataContextBinding} or a
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding}. Contexts are always and only
+		 *   created by such bindings. A context for a context binding points to the complete query
+		 *   result. A context for a list binding points to one specific entry in the binding's
+		 *   collection. A property binding does not have a context, you can access its value via
+		 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue}.
+		 *
+		 *   Applications can access model data only via a context, either synchronously with the
+		 *   risk that the values are not available yet ({@link #getProperty} and
+		 *   {@link #getObject}) or asynchronously ({@link #requestProperty} and
+		 *   {@link #requestObject}).
+		 *
+		 *   Context instances are immutable except for their indexes.
+		 * @extends sap.ui.model.Context
+		 * @hideconstructor
+		 * @public
+		 * @since 1.39.0
+		 * @version ${version}
+		 */
+		Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
+				constructor : constructor
+			});
 
 	/*
 	 * Fetches and formats the primitive value at the given path.
@@ -52,6 +80,10 @@ sap.ui.define([
 		});
 	}
 
+	//*********************************************************************************************
+	// Context
+	//*********************************************************************************************
+
 	/**
 	 * Do <strong>NOT</strong> call this private constructor. In the OData V4 model you cannot
 	 * create contexts at will: retrieve them from a binding or a view element instead.
@@ -77,52 +109,27 @@ sap.ui.define([
 	 *   property update
 	 * @throws {Error}
 	 *   If an invalid path is given
-	 *
-	 * @alias sap.ui.model.odata.v4.Context
-	 * @author SAP SE
-	 * @class Implementation of an OData V4 model's context.
-	 *
-	 *   The context is a pointer to model data as returned by a query from a
-	 *   {@link sap.ui.model.odata.v4.ODataContextBinding} or a
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding}. Contexts are always and only
-	 *   created by such bindings. A context for a context binding points to the complete query
-	 *   result. A context for a list binding points to one specific entry in the binding's
-	 *   collection. A property binding does not have a context, you can access its value via
-	 *   {@link sap.ui.model.odata.v4.ODataPropertyBinding#getValue}.
-	 *
-	 *   Applications can access model data only via a context, either synchronously with the risk
-	 *   that the values are not available yet ({@link #getProperty} and {@link #getObject}) or
-	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
-	 *
-	 *   Context instances are immutable except for their indexes.
-	 * @extends sap.ui.model.Context
-	 * @hideconstructor
-	 * @public
-	 * @since 1.39.0
-	 * @version ${version}
 	 */
-	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
-			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise, iGeneration,
-					bInactive) {
-				if (sPath[0] !== "/") {
-					throw new Error("Not an absolute path: " + sPath);
-				}
-				if (sPath.endsWith("/")) {
-					throw new Error("Unsupported trailing slash: " + sPath);
-				}
-				BaseContext.call(this, oModel, sPath);
-				this.oBinding = oBinding;
-				this.oCreatedPromise = oCreatePromise
-					// ensure to return a promise that is resolved w/o data
-					&& Promise.resolve(oCreatePromise).then(function () {});
-				this.oSyncCreatePromise = oCreatePromise;
-				this.iGeneration = iGeneration || 0;
-				this.bInactive = bInactive || undefined; // be in sync with the annotation
-				this.iIndex = iIndex;
-				this.bKeepAlive = false;
-				this.fnOnBeforeDestroy = undefined;
-			}
-		});
+	function constructor(oModel, oBinding, sPath, iIndex, oCreatePromise, iGeneration,
+			bInactive) {
+		if (sPath[0] !== "/") {
+			throw new Error("Not an absolute path: " + sPath);
+		}
+		if (sPath.endsWith("/")) {
+			throw new Error("Unsupported trailing slash: " + sPath);
+		}
+		BaseContext.call(this, oModel, sPath);
+		this.oBinding = oBinding;
+		this.oCreatedPromise = oCreatePromise
+			// ensure to return a promise that is resolved w/o data
+			&& Promise.resolve(oCreatePromise).then(function () {});
+		this.oSyncCreatePromise = oCreatePromise;
+		this.iGeneration = iGeneration || 0;
+		this.bInactive = bInactive || undefined; // be in sync with the annotation
+		this.iIndex = iIndex;
+		this.bKeepAlive = false;
+		this.fnOnBeforeDestroy = undefined;
+	}
 
 	/**
 	 * Deletes the OData entity this context points to.

@@ -83,269 +83,281 @@ sap.ui.define([
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
 			"$select"],
 		// valid header values: non-empty, only US-ASCII, no control chars
-		rValidHeader = /^[ -~]+$/;
+		rValidHeader = /^[ -~]+$/,
+		/**
+		 * Constructor for a new ODataModel.
+		 *
+		 * @param {object} mParameters
+		 *   The parameters
+		 * @param {string|string[]} [mParameters.annotationURI]
+		 *   The URL (or an array of URLs) from which the annotation metadata are loaded.
+		 *   The annotation files are merged into the service metadata in the given order (last one
+		 *   wins). The same annotations are overwritten; if an annotation file contains other
+		 *   elements (like a type definition) that are already merged, an error is thrown.
+		 *   Supported since 1.41.0
+		 * @param {boolean} [mParameters.autoExpandSelect]
+		 *   Whether the OData model's bindings automatically generate $select and $expand system
+		 *   query options from the binding hierarchy. Note: Dynamic changes to the binding
+		 *   hierarchy are not supported. This parameter is supported since 1.47.0, and since 1.75.0
+		 *   it also enables property paths containing navigation properties in
+		 *   <code>$select</code>.
+		 * @param {boolean} [mParameters.earlyRequests]
+		 *   Whether the following is requested at the earliest convenience:
+		 *   <ul>
+		 *     <li> root $metadata document and annotation files;
+		 *     <li> the security token.
+		 *   </ul>
+		 *   Note: The root $metadata document and annotation files are just requested but not yet
+		 *   converted from XML to JSON unless really needed.
+		 *   Supported since 1.53.0.
+		 *   <b>BEWARE:</b> The default value may change to <code>true</code> in later releases.
+		 *   You may also set {@link topic:26ba6a5c1e5c417f8b21cce1411dba2c Manifest Model Preload}
+		 *   in order to further speed up the start of a UI5 component.
+		 * @param {string} [mParameters.groupId="$auto"]
+		 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in
+		 *   a batch request which is sent automatically before rendering; '$direct' sends requests
+		 *   directly without batch; other values result in an error
+		 * @param {object} [mParameters.groupProperties]
+		 *   Controls the use of batch requests for application groups. A map of application
+		 *   group IDs having an object with exactly one property <code>submit</code>. Valid values
+		 *   are 'API', 'Auto', 'Direct' see {@link sap.ui.model.odata.v4.SubmitMode}. Supported
+		 *   since 1.51.0
+		 * @param {object} [mParameters.httpHeaders]
+		 *   Map of HTTP header names to their values, see {@link #changeHttpHeaders}
+		 * @param {object} [mParameters.metadataUrlParams]
+		 *   Additional map of URL parameters used specifically for $metadata requests. Note that
+		 *   "sap-context-token" applies only to the service's root $metadata, but not to
+		 *   "cross-service references". Supported since 1.81.0
+		 * @param {string} [mParameters.odataVersion="4.0"]
+		 *   The version of the OData service. Supported values are "2.0" and "4.0".
+		 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+		 *   The operation mode for filtering and sorting. Since 1.39.0, the operation mode
+		 *   {@link sap.ui.model.odata.OperationMode.Server} is supported. All other operation modes
+		 *   including <code>undefined</code> lead to an error if 'vFilters' or 'vSorters' are given
+		 *   or if {@link sap.ui.model.odata.v4.ODataListBinding#filter} or
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
+		 * @param {string} mParameters.serviceUrl
+		 *   Root URL of the service to request data from. The path part of the URL must end with a
+		 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may
+		 *   append OData custom query options to the service root URL separated with a "?", for
+		 *   example "/MyService/?custom=foo". See specification "OData Version 4.0 Part 2: URL
+		 *   Conventions", "5.2 Custom Query Options". OData system query options and OData
+		 *   parameter aliases lead to an error.
+		 * @param {boolean} [mParameters.sharedRequests]
+		 *   Whether all list bindings for the same resource path share their data, so that it is
+		 *   requested only once; only the value <code>true</code> is allowed; see parameter
+		 *   "$$sharedRequest" of {@link #bindList}. Additionally,
+		 *   {@link sap.ui.model.BindingMode.OneWay} becomes the default binding mode and
+		 *   {@link sap.ui.model.BindingMode.TwoWay} is forbidden. Note: This makes all bindings
+		 *   read-only, so it may be especially useful for value list models. Supported since 1.80.0
+		 * @param {boolean} [mParameters.supportReferences=true]
+		 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives
+		 *   are supported in order to load schemas on demand from other $metadata documents and
+		 *   include them into the current service ("cross-service references").
+		 * @param {string} mParameters.synchronizationMode
+		 *   Controls synchronization between different bindings which refer to the same data for
+		 *   the case data changes in one binding. Must be set to 'None' which means bindings are
+		 *   not synchronized at all; all other values are not supported and lead to an error.
+		 * @param {string} [mParameters.updateGroupId]
+		 *   The group ID that is used for update requests. If no update group ID is specified,
+		 *   <code>mParameters.groupId</code> is used. Valid update group IDs are
+		 *   <code>undefined</code>, '$auto', '$direct' or an application group ID.
+		 * @throws {Error} If an unsupported synchronization mode is given, if the given service
+		 *   root URL does not end with a forward slash, if an unsupported parameter is given, if
+		 *   OData system query options or parameter aliases are specified as parameters, if an
+		 *   invalid group ID or update group ID is given, if the given operation mode is not
+		 *   supported, if an annotation file cannot be merged into the service metadata, if an
+		 *   unsupported value for <code>odataVersion</code> is given.
+		 *
+		 * @alias sap.ui.model.odata.v4.ODataModel
+		 * @author SAP SE
+		 * @class Model implementation for OData V4.
+		 *
+		 *   This model is not prepared to be inherited from.
+		 *
+		 *   Every resource path (relative to the service root URL, no query options) according to
+		 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
+		 *   a valid data binding path within this model if a leading slash is added; for example
+		 *   "/" + "SalesOrderList('A%2FB%26C')" to access an entity instance with key "A/B&C". Note
+		 *   that appropriate URI encoding is necessary, see the example of
+		 *   {@link sap.ui.model.odata.v4.ODataUtils.formatLiteral}. "4.5.1 Addressing Actions"
+		 *   needs an operation binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
+		 *
+		 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
+		 *   Bindings which are relative to such a V4 context depend on their corresponding parent
+		 *   binding and do not access data with their own service requests unless parameters are
+		 *   provided.
+		 *
+		 *   <b>Group IDs</b> control the model's use of batch requests. Valid group IDs are:
+		 *   <ul>
+		 *     <li> <b>$auto</b> and <b>$auto.*</b>: Bundles requests from the model in a batch
+		 *       request which is sent automatically before rendering. You can use different
+		 *       '$auto.*' group IDs to use different batch requests. The suffix may be any
+		 *       non-empty string consisting of alphanumeric characters from the basic Latin
+		 *       alphabet, including the underscore. The submit mode for these group IDs is always
+		 *       {@link sap.ui.model.odata.v4.SubmitMode#Auto}.
+		 *     <li> <b>$direct</b>: Sends requests directly without batch. The submit mode for this
+		 *       group ID is always {@link sap.ui.model.odata.v4.SubmitMode#Direct}.
+		 *     <li> An application group ID, which is a non-empty string consisting of alphanumeric
+		 *       characters from the basic Latin alphabet, including the underscore. By default, an
+		 *       application group has the submit mode {@link sap.ui.model.odata.v4.SubmitMode#API}.
+		 *       It is possible to use a different submit mode; for details see
+		 *       <code>mParameters.groupProperties</code>.
+		 *   </ul>
+		 *
+		 * @extends sap.ui.model.Model
+		 * @public
+		 * @since 1.37.0
+		 * @version ${version}
+		 */
+		ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
+			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */{
+				constructor : constructor
+			});
+
+	//*********************************************************************************************
+	// ODataModel
+	//*********************************************************************************************
 
 	/**
 	 * Constructor for a new ODataModel.
 	 *
 	 * @param {object} mParameters
 	 *   The parameters
-	 * @param {string|string[]} [mParameters.annotationURI]
-	 *   The URL (or an array of URLs) from which the annotation metadata are loaded.
-	 *   The annotation files are merged into the service metadata in the given order (last one
-	 *   wins). The same annotations are overwritten; if an annotation file contains other elements
-	 *   (like a type definition) that are already merged, an error is thrown.
-	 *   Supported since 1.41.0
-	 * @param {boolean} [mParameters.autoExpandSelect]
-	 *   Whether the OData model's bindings automatically generate $select and $expand system query
-	 *   options from the binding hierarchy. Note: Dynamic changes to the binding hierarchy are not
-	 *   supported. This parameter is supported since 1.47.0, and since 1.75.0 it also enables
-	 *   property paths containing navigation properties in <code>$select</code>.
-	 * @param {boolean} [mParameters.earlyRequests]
-	 *   Whether the following is requested at the earliest convenience:
-	 *   <ul>
-	 *     <li> root $metadata document and annotation files;
-	 *     <li> the security token.
-	 *   </ul>
-	 *   Note: The root $metadata document and annotation files are just requested but not yet
-	 *   converted from XML to JSON unless really needed.
-	 *   Supported since 1.53.0.
-	 *   <b>BEWARE:</b> The default value may change to <code>true</code> in later releases.
-	 *   You may also set {@link topic:26ba6a5c1e5c417f8b21cce1411dba2c Manifest Model Preload} in
-	 *   order to further speed up the start of a UI5 component.
-	 * @param {string} [mParameters.groupId="$auto"]
-	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
-	 *   batch request which is sent automatically before rendering; '$direct' sends requests
-	 *   directly without batch; other values result in an error
-	 * @param {object} [mParameters.groupProperties]
-	 *   Controls the use of batch requests for application groups. A map of application
-	 *   group IDs having an object with exactly one property <code>submit</code>. Valid values are
-	 *   'API', 'Auto', 'Direct' see {@link sap.ui.model.odata.v4.SubmitMode}.
-	 *   Supported since 1.51.0
-	 * @param {object} [mParameters.httpHeaders]
-	 *   Map of HTTP header names to their values, see {@link #changeHttpHeaders}
-	 * @param {object} [mParameters.metadataUrlParams]
-	 *   Additional map of URL parameters used specifically for $metadata requests. Note that
-	 *   "sap-context-token" applies only to the service's root $metadata, but not to
-	 *   "cross-service references". Supported since 1.81.0
-	 * @param {string} [mParameters.odataVersion="4.0"]
-	 *   The version of the OData service. Supported values are "2.0" and "4.0".
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
-	 *   The operation mode for filtering and sorting. Since 1.39.0, the operation mode
-	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported. All other operation modes
-	 *   including <code>undefined</code> lead to an error if 'vFilters' or 'vSorters' are given or
-	 *   if {@link sap.ui.model.odata.v4.ODataListBinding#filter} or
-	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
-	 * @param {string} mParameters.serviceUrl
-	 *   Root URL of the service to request data from. The path part of the URL must end with a
-	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
-	 *   OData custom query options to the service root URL separated with a "?", for example
-	 *   "/MyService/?custom=foo".
-	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
-	 *   OData system query options and OData parameter aliases lead to an error.
-	 * @param {boolean} [mParameters.sharedRequests]
-	 *   Whether all list bindings for the same resource path share their data, so that it is
-	 *   requested only once; only the value <code>true</code> is allowed; see parameter
-	 *   "$$sharedRequest" of {@link #bindList}. Additionally,
-	 *   {@link sap.ui.model.BindingMode.OneWay} becomes the default binding mode and
-	 *   {@link sap.ui.model.BindingMode.TwoWay} is forbidden. Note: This makes all bindings
-	 *   read-only, so it may be especially useful for value list models. Supported since 1.80.0
-	 * @param {boolean} [mParameters.supportReferences=true]
-	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
-	 *   supported in order to load schemas on demand from other $metadata documents and include
-	 *   them into the current service ("cross-service references").
-	 * @param {string} mParameters.synchronizationMode
-	 *   Controls synchronization between different bindings which refer to the same data for the
-	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
-	 *   synchronized at all; all other values are not supported and lead to an error.
-	 * @param {string} [mParameters.updateGroupId]
-	 *   The group ID that is used for update requests. If no update group ID is specified, <code>
-	 *   mParameters.groupId</code> is used. Valid update group IDs are <code>undefined</code>,
-	 *   '$auto', '$direct' or an application group ID.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
 	 *   system query options or parameter aliases are specified as parameters, if an invalid group
 	 *   ID or update group ID is given, if the given operation mode is not supported, if an
 	 *   annotation file cannot be merged into the service metadata, if an unsupported value for
 	 *   <code>odataVersion</code> is given.
-	 *
-	 * @alias sap.ui.model.odata.v4.ODataModel
-	 * @author SAP SE
-	 * @class Model implementation for OData V4.
-	 *
-	 *   This model is not prepared to be inherited from.
-	 *
-	 *   Every resource path (relative to the service root URL, no query options) according to
-	 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
-	 *   a valid data binding path within this model if a leading slash is added; for example
-	 *   "/" + "SalesOrderList('A%2FB%26C')" to access an entity instance with key "A/B&C". Note
-	 *   that appropriate URI encoding is necessary, see the example of
-	 *   {@link sap.ui.model.odata.v4.ODataUtils.formatLiteral}. "4.5.1 Addressing Actions" needs an
-	 *   operation binding, see {@link sap.ui.model.odata.v4.ODataContextBinding}.
-	 *
-	 *   Note that the OData V4 model has its own {@link sap.ui.model.odata.v4.Context} class.
-	 *   Bindings which are relative to such a V4 context depend on their corresponding parent
-	 *   binding and do not access data with their own service requests unless parameters are
-	 *   provided.
-	 *
-	 *   <b>Group IDs</b> control the model's use of batch requests. Valid group IDs are:
-	 *   <ul>
-	 *     <li> <b>$auto</b> and <b>$auto.*</b>: Bundles requests from the model in a batch request
-	 *       which is sent automatically before rendering. You can use different '$auto.*' group IDs
-	 *       to use different batch requests. The suffix may be any non-empty string consisting of
-	 *       alphanumeric characters from the basic Latin alphabet, including the underscore. The
-	 *       submit mode for these group IDs is always
-	 *       {@link sap.ui.model.odata.v4.SubmitMode#Auto}.
-	 *     <li> <b>$direct</b>: Sends requests directly without batch. The submit mode for this
-	 *       group ID is always {@link sap.ui.model.odata.v4.SubmitMode#Direct}.
-	 *     <li> An application group ID, which is a non-empty string consisting of alphanumeric
-	 *       characters from the basic Latin alphabet, including the underscore. By default, an
-	 *       application group has the submit mode {@link sap.ui.model.odata.v4.SubmitMode#API}. It
-	 *       is possible to use a different submit mode; for details see
-	 *       <code>mParameters.groupProperties</code>.
-	 *   </ul>
-	 *
-	 * @extends sap.ui.model.Model
-	 * @public
-	 * @since 1.37.0
-	 * @version ${version}
 	 */
-	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
-			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
-			{
-				constructor : function (mParameters) {
-					var sGroupId,
-						oGroupProperties,
-						sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
-						sODataVersion,
-						sParameter,
-						sServiceUrl,
-						oUri,
-						mUriParameters,
-						that = this;
+	function constructor(mParameters) {
+		var sGroupId,
+			oGroupProperties,
+			sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
+			sODataVersion,
+			sParameter,
+			sServiceUrl,
+			oUri,
+			mUriParameters,
+			that = this;
 
-					// do not pass any parameters to Model
-					Model.call(this);
+		// do not pass any parameters to Model
+		Model.call(this);
 
-					if (!mParameters || mParameters.synchronizationMode !== "None") {
-						throw new Error("Synchronization mode must be 'None'");
-					}
-					sODataVersion = mParameters.odataVersion || "4.0";
-					this.sODataVersion = sODataVersion;
-					if (sODataVersion !== "4.0" && sODataVersion !== "2.0") {
-						throw new Error("Unsupported value for parameter odataVersion: "
-							+ sODataVersion);
-					}
-					for (sParameter in mParameters) {
-						if (!(sParameter in mSupportedParameters)) {
-							throw new Error("Unsupported parameter: " + sParameter);
-						}
-					}
-					sServiceUrl = mParameters.serviceUrl;
-					if (!sServiceUrl) {
-						throw new Error("Missing service root URL");
-					}
-					oUri = new URI(sServiceUrl);
-					if (oUri.path()[oUri.path().length - 1] !== "/") {
-						throw new Error("Service root URL must end with '/'");
-					}
-					if (mParameters.operationMode
-							&& mParameters.operationMode !== OperationMode.Server) {
-						throw new Error("Unsupported operation mode: "
-							+ mParameters.operationMode);
-					}
-					this.sOperationMode = mParameters.operationMode;
-					// Note: strict checking for model's URI parameters, but "sap-*" is allowed
-					mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
-					// BEWARE: these are shared across all bindings!
-					this.mUriParameters = mUriParameters;
-					if (sap.ui.getCore().getConfiguration().getStatistics()) {
-						// Note: this way, "sap-statistics" is not sent within $batch
-						mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
-					}
-					this.sServiceUrl = oUri.query("").toString();
-					this.sGroupId = mParameters.groupId;
-					if (this.sGroupId === undefined) {
-						this.sGroupId = "$auto";
-					}
-					if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
-						throw new Error("Group ID must be '$auto' or '$direct'");
-					}
-					this.checkGroupId(mParameters.updateGroupId, false,
-						"Invalid update group ID: ");
-					this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
-					this.mGroupProperties = {};
-					for (sGroupId in mParameters.groupProperties) {
-						that.checkGroupId(sGroupId, true);
-						oGroupProperties = mParameters.groupProperties[sGroupId];
-						if (typeof oGroupProperties !== "object"
-								|| Object.keys(oGroupProperties).length !== 1
-								|| !(oGroupProperties.submit in SubmitMode)) {
-							throw new Error("Group '" + sGroupId + "' has invalid properties: '"
-								+ oGroupProperties + "'");
-						}
-					}
-					this.mGroupProperties = _Helper.clone(mParameters.groupProperties) || {};
-					this.mGroupProperties.$auto = {submit : SubmitMode.Auto};
-					this.mGroupProperties.$direct = {submit : SubmitMode.Direct};
-					if (mParameters.autoExpandSelect !== undefined
-							&& typeof mParameters.autoExpandSelect !== "boolean") {
-						throw new Error("Value for autoExpandSelect must be true or false");
-					}
-					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
-					if ("sharedRequests" in mParameters && mParameters.sharedRequests !== true) {
-						throw new Error("Value for sharedRequests must be true");
-					}
-					this.bSharedRequests = mParameters.sharedRequests === true;
+		if (!mParameters || mParameters.synchronizationMode !== "None") {
+			throw new Error("Synchronization mode must be 'None'");
+		}
+		sODataVersion = mParameters.odataVersion || "4.0";
+		this.sODataVersion = sODataVersion;
+		if (sODataVersion !== "4.0" && sODataVersion !== "2.0") {
+			throw new Error("Unsupported value for parameter odataVersion: " + sODataVersion);
+		}
+		for (sParameter in mParameters) {
+			if (!(sParameter in mSupportedParameters)) {
+				throw new Error("Unsupported parameter: " + sParameter);
+			}
+		}
+		sServiceUrl = mParameters.serviceUrl;
+		if (!sServiceUrl) {
+			throw new Error("Missing service root URL");
+		}
+		oUri = new URI(sServiceUrl);
+		if (oUri.path()[oUri.path().length - 1] !== "/") {
+			throw new Error("Service root URL must end with '/'");
+		}
+		if (mParameters.operationMode && mParameters.operationMode !== OperationMode.Server) {
+			throw new Error("Unsupported operation mode: "
+				+ mParameters.operationMode);
+		}
+		this.sOperationMode = mParameters.operationMode;
+		// Note: strict checking for model's URI parameters, but "sap-*" is allowed
+		mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
+		// BEWARE: these are shared across all bindings!
+		this.mUriParameters = mUriParameters;
+		if (sap.ui.getCore().getConfiguration().getStatistics()) {
+			// Note: this way, "sap-statistics" is not sent within $batch
+			mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
+		}
+		this.sServiceUrl = oUri.query("").toString();
+		this.sGroupId = mParameters.groupId;
+		if (this.sGroupId === undefined) {
+			this.sGroupId = "$auto";
+		}
+		if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
+			throw new Error("Group ID must be '$auto' or '$direct'");
+		}
+		this.checkGroupId(mParameters.updateGroupId, false, "Invalid update group ID: ");
+		this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
+		this.mGroupProperties = {};
+		for (sGroupId in mParameters.groupProperties) {
+			that.checkGroupId(sGroupId, true);
+			oGroupProperties = mParameters.groupProperties[sGroupId];
+			if (typeof oGroupProperties !== "object"
+					|| Object.keys(oGroupProperties).length !== 1
+					|| !(oGroupProperties.submit in SubmitMode)) {
+				throw new Error("Group '" + sGroupId + "' has invalid properties: '"
+					+ oGroupProperties + "'");
+			}
+		}
+		this.mGroupProperties = _Helper.clone(mParameters.groupProperties) || {};
+		this.mGroupProperties.$auto = {submit : SubmitMode.Auto};
+		this.mGroupProperties.$direct = {submit : SubmitMode.Direct};
+		if (mParameters.autoExpandSelect !== undefined
+				&& typeof mParameters.autoExpandSelect !== "boolean") {
+			throw new Error("Value for autoExpandSelect must be true or false");
+		}
+		this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
+		if ("sharedRequests" in mParameters && mParameters.sharedRequests !== true) {
+			throw new Error("Value for sharedRequests must be true");
+		}
+		this.bSharedRequests = mParameters.sharedRequests === true;
 
-					this.mHeaders = {"Accept-Language" : sLanguageTag};
-					this.mMetadataHeaders = {"Accept-Language" : sLanguageTag};
+		this.mHeaders = {"Accept-Language" : sLanguageTag};
+		this.mMetadataHeaders = {"Accept-Language" : sLanguageTag};
 
-					// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
-					this.oMetaModel = new ODataMetaModel(
-						_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
-							Object.assign({}, mUriParameters, mParameters.metadataUrlParams)),
-						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
-						mParameters.supportReferences);
-					this.oInterface = {
-						fetchEntityContainer :
-							this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-						fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
-						fireSessionTimeout : function () {
-							that.fireEvent("sessionTimeout");
-						},
-						getGroupProperty : this.getGroupProperty.bind(this),
-						onCreateGroup : function (sGroupId) {
-							if (that.isAutoGroup(sGroupId)) {
-								that.addPrerenderingTask(
-									that._submitBatch.bind(that, sGroupId, true));
-							}
-						},
-						reportStateMessages : this.reportStateMessages.bind(this),
-						reportTransitionMessages : this.reportTransitionMessages.bind(this)
-					};
-					this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface,
-						this.mHeaders, mUriParameters, sODataVersion);
-					this.changeHttpHeaders(mParameters.httpHeaders);
-					if (mParameters.earlyRequests) {
-						this.oMetaModel.fetchEntityContainer(true);
-						this.initializeSecurityToken();
-					}
-
-					this.aAllBindings = [];
-					this.mSupportedBindingModes = {
-						OneTime : true,
-						OneWay : true
-					};
-					if (mParameters.sharedRequests) {
-						this.sDefaultBindingMode = BindingMode.OneWay;
-					} else {
-						this.sDefaultBindingMode = BindingMode.TwoWay;
-						this.mSupportedBindingModes.TwoWay = true;
-					}
-					this.aPrerenderingTasks = null; // @see #addPrerenderingTask
+		// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
+		this.oMetaModel = new ODataMetaModel(
+			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
+				Object.assign({}, mUriParameters, mParameters.metadataUrlParams)),
+			this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
+			mParameters.supportReferences);
+		this.oInterface = {
+			fetchEntityContainer : this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+			fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+			fireSessionTimeout : function () {
+				that.fireEvent("sessionTimeout");
+			},
+			getGroupProperty : this.getGroupProperty.bind(this),
+			onCreateGroup : function (sGroupId) {
+				if (that.isAutoGroup(sGroupId)) {
+					that.addPrerenderingTask(that._submitBatch.bind(that, sGroupId, true));
 				}
-			});
+			},
+			reportStateMessages : this.reportStateMessages.bind(this),
+			reportTransitionMessages : this.reportTransitionMessages.bind(this)
+		};
+		this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface, this.mHeaders,
+			mUriParameters, sODataVersion);
+		this.changeHttpHeaders(mParameters.httpHeaders);
+		if (mParameters.earlyRequests) {
+			this.oMetaModel.fetchEntityContainer(true);
+			this.initializeSecurityToken();
+		}
+
+		this.aAllBindings = [];
+		this.mSupportedBindingModes = {
+			OneTime : true,
+			OneWay : true
+		};
+		if (mParameters.sharedRequests) {
+			this.sDefaultBindingMode = BindingMode.OneWay;
+		} else {
+			this.sDefaultBindingMode = BindingMode.TwoWay;
+			this.mSupportedBindingModes.TwoWay = true;
+		}
+		this.aPrerenderingTasks = null; // @see #addPrerenderingTask
+	}
 
 	/**
 	 * Submits the requests associated with this group ID in one batch request.
