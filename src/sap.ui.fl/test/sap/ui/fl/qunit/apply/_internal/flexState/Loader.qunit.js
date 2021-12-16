@@ -45,7 +45,11 @@ sap.ui.define([
 									id: "ProductDetail--GeneralForm--productLabel2",
 									idIsLocal: false
 								}
-							]
+							],
+							anotherElement: {
+								id: "ProductDetail--GeneralForm--anotherProductLabel",
+								idIsLocal: false
+							}
 						}
 					}, {
 						fileName: "2",
@@ -180,7 +184,11 @@ sap.ui.define([
 						}, {
 							id: "ProductDetail--GeneralForm--productLabel2",
 							idIsLocal: true
-						}]
+						}],
+						anotherElement: {
+							id: "ProductDetail--GeneralForm--anotherProductLabel",
+							idIsLocal: true
+						}
 					}, "the dependent selector of the first change is correct");
 					assert.equal(aChanges[1].fileName, "2", "the file name of the third change is correct");
 					assert.deepEqual(aChanges[1].selector, {
@@ -192,7 +200,7 @@ sap.ui.define([
 							id: "ProductDetail--GeneralForm--productLabel",
 							idIsLocal: true
 						}]
-					}, "the dependent selector of the third change is correct");
+					}, "the dependent selector of the second change is correct");
 					assert.equal(aChanges[2].fileName, "3", "the file name of the forth change is correct - MUST BE THE SAME");
 					assert.deepEqual(aChanges[2].selector, {
 						id: "ProductDetail--GeneralForm--generalForm",
@@ -231,7 +239,11 @@ sap.ui.define([
 					}, {
 						id: "ProductDetail--GeneralForm--productLabel2",
 						idIsLocal: false
-					}]
+					}],
+					anotherElement: {
+						id: "ProductDetail--GeneralForm--anotherProductLabel",
+						idIsLocal: false
+					}
 				}, "the dependent selector of the first change is correct");
 				assert.equal(aChanges[1].fileName, "2", "the file name of the second change is correct");
 				assert.deepEqual(aChanges[1].selector, {

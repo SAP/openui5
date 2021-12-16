@@ -38,8 +38,13 @@ sap.ui.define([
 
 						if (oFlexItem.dependentSelector) {
 							Object.keys(oFlexItem.dependentSelector).forEach(function (sCategory) {
-								oFlexItem.dependentSelector[sCategory] =
-                                    oFlexItem.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
+								if (Array.isArray(oFlexItem.dependentSelector[sCategory])) {
+									oFlexItem.dependentSelector[sCategory] =
+										oFlexItem.dependentSelector[sCategory].map(getIdIsLocalTrueObject);
+								} else {
+									oFlexItem.dependentSelector[sCategory] =
+										getIdIsLocalTrueObject(oFlexItem.dependentSelector[sCategory]);
+								}
 							});
 						}
 					}
