@@ -259,6 +259,7 @@ sap.ui.define([
 			oFormatOptions.payload = oConfig.payload;
 			oFormatOptions.operators = oConfig.operators;
 			oFormatOptions.display = oConfig.display;
+			oFormatOptions.defaultOperatorName = oConfig.defaultOperatorName;
 		}
 
 		return oFormatOptions;

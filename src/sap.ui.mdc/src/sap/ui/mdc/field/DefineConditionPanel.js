@@ -299,8 +299,10 @@ sap.ui.define([
 			var sOperator = oOperator.name;
 			var oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
 
-			// mark the condition as initial and not modified by the user
-			oCondition.isInitial = true;
+			if (oOperator.valueTypes[0] && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+				// mark the condition as initial and not modified by the user
+				oCondition.isInitial = true;
+			}
 
 			FilterOperatorUtil.updateConditionValues(oCondition);
 			FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
@@ -311,6 +313,11 @@ sap.ui.define([
 				aConditions.push(oCondition);
 			}
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+
+			if (!oCondition.isInitial) {
+				// static condition added, it is ready to use -> fire event
+				this.fireConditionProcessed();
+			}
 		},
 
 		updateDefineConditions: function() {

@@ -133,6 +133,8 @@ sap.ui.define([
 				}).then(function() {
 					return oFilterField;
 				});
+			} else if (sName === "published") {
+				oModifier.setProperty(oFilterField, "defaultOperator", "RENAISSANCE");
 			}
 		});
 

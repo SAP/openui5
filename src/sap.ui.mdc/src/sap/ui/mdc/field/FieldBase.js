@@ -2768,7 +2768,8 @@ sap.ui.define([
 					delegateName: this.getDelegate() && this.getDelegate().name,
 					payload: this.getPayload(),
 					conditionModel: oConditionModelInfo.model,
-					conditionModelName : oConditionModelInfo.name
+					conditionModelName: oConditionModelInfo.name,
+					defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null
 			};
 			oFieldHelp.connect(this, oConfig);
 			this._bConnected = true;
