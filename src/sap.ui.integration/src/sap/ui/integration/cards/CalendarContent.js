@@ -170,7 +170,11 @@ sap.ui.define([
 		};
 
 		CalendarContent.prototype.onDataChanged = function () {
-			var oSelectedDate = this._oCalendar.getSelectedDates()[0].getStartDate();
+			var oSelectedDate = this._oCalendar.getSelectedDates()[0] && this._oCalendar.getSelectedDates()[0].getStartDate();
+
+			if (!oSelectedDate) {
+				return;
+			}
 
 			if (!this._bDataInitiallyLoaded) {
 				this._handleSelect(oSelectedDate);

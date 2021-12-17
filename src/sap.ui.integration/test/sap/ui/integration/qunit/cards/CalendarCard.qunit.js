@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/unified/calendar/CalendarDate"
+	"sap/ui/unified/calendar/CalendarDate",
+	"sap/ui/integration/cards/CalendarContent"
 ],
 	function (
 		Core,
 		DateFormat,
 		Card,
-		CalendarDate
+		CalendarDate,
+		CalendarContent
 	) {
 		"use strict";
 
@@ -1104,6 +1106,13 @@ sap.ui.define([
 				this.oCard.destroy();
 				done();
 			}.bind(this));
+		});
+
+		QUnit.test("Initialization - CalendarContent with no selected date", function (assert) {
+			var oCalendarContent = new CalendarContent();
+
+			oCalendarContent.onDataChanged();
+			assert.ok(true, "There is no error when CalendarContent is created without a selected value");
 		});
 
 		QUnit.test("Using manifest", function (assert) {
