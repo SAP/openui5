@@ -263,12 +263,6 @@ sap.ui.define([
 			assert.strictEqual(oInstance.getProjectId(), "myProject");
 		});
 
-		QUnit.test("setProjectId should set the projectId in the definition", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			oInstance.setProjectId("otherProject");
-			assert.strictEqual(oInstance.getProjectId(), "otherProject");
-		});
-
 		QUnit.test("setComponent should set the reference of the definition", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			oInstance.setComponent("AppVariantId");
@@ -283,28 +277,6 @@ sap.ui.define([
 		QUnit.test("Change.getContent", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.ok(oInstance.getContent());
-		});
-
-		QUnit.test("Change.getSourceSystem returns undefined when there is no sourceSystem info maintained in the change", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			assert.notOk(oInstance.getSourceSystem());
-		});
-
-		QUnit.test("Change.getSourceSystem returns source system info when maintained in the change", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			oInstance._oDefinition.sourceSystem = "someSystem";
-			assert.equal(oInstance.getSourceSystem(), "someSystem");
-		});
-
-		QUnit.test("Change.getSourceClient returns undefined when there is no sourceClient info maintained in the change", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			assert.notOk(oInstance.getSourceClient());
-		});
-
-		QUnit.test("Change.getSourceClient returns source client info when maintained in the change", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			oInstance._oDefinition.sourceClient = "someClient";
-			assert.equal(oInstance.getSourceClient(), "someClient");
 		});
 
 		QUnit.test("Change.setState with an incorrect value", function(assert) {
@@ -392,19 +364,6 @@ sap.ui.define([
 			assert.equal(oInstance.getState(), Change.states.DIRTY);
 		});
 
-		QUnit.test("Change._isReadOnlyDueToLayer", function(assert) {
-			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
-
-			// check for different layer
-			this.oChangeDef.layer = Layer.CUSTOMER;
-			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance._isReadOnlyDueToLayer(), true);
-			// check for same layer
-			this.oChangeDef.layer = Layer.VENDOR;
-			oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance._isReadOnlyDueToLayer(), false);
-		});
-
 		QUnit.test("Change.markForDeletion", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			oInstance.markForDeletion();
@@ -429,11 +388,6 @@ sap.ui.define([
 			oChange = new Change(this.oChangeDef);
 			sComponent = oChange.getComponent();
 			assert.equal(sComponent, "smartFilterBar");
-		});
-
-		QUnit.test("Change.isUserDependent", function(assert) {
-			var oInstance = new Change(this.oChangeDef);
-			assert.ok(!oInstance.isUserDependent());
 		});
 
 		QUnit.test("Change.getState", function(assert) {
@@ -588,18 +542,6 @@ sap.ui.define([
 			assert.equal(oCreatedFile.projectId, "myProject");
 		});
 
-		QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
-			var oChange;
-			var bIsReadOnly;
-			oChange = new Change(this.oChangeDef);
-			sandbox.stub(Utils, "getCurrentLanguage").returns("DE");
-
-			//Call CUT
-			bIsReadOnly = oChange._isReadOnlyDueToOriginalLanguage();
-
-			assert.strictEqual(bIsReadOnly, false);
-		});
-
 		QUnit.test("setResponse shall set an object to the Change instance", function(assert) {
 			//Arrange
 			var sampleResponse = {
@@ -637,139 +579,6 @@ sap.ui.define([
 			//Assert
 			assert.ok(oChange._oDefinition.creation, "2014-10-30T13:52:40.4754350Z");
 			assert.equal(oChange.getState(), Change.states.PERSISTED);
-		});
-
-		QUnit.test("_isReadOnlyDueToOriginalLanguage shall be true if the original language is initial", function(assert) {
-			var oChange;
-			var bIsReadOnly;
-			this.oChangeDef.originalLanguage = "";
-			oChange = new Change(this.oChangeDef);
-			//Call CUT
-			bIsReadOnly = oChange._isReadOnlyDueToOriginalLanguage();
-
-			assert.strictEqual(bIsReadOnly, false);
-		});
-
-		QUnit.test("Change.isLabelReadOnly", function(assert) {
-			var oChange;
-			oChange = new Change(this.oChangeDef);
-
-			//false false
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			oChange._isReadOnlyDueToOriginalLanguage = sinon.stub().returns(false);
-			assert.strictEqual(oChange.isLabelReadOnly(), false);
-
-			//true false
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			oChange._isReadOnlyDueToOriginalLanguage = sinon.stub().returns(false);
-			assert.strictEqual(oChange.isLabelReadOnly(), true);
-
-			//false true
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			oChange._isReadOnlyDueToOriginalLanguage = sinon.stub().returns(true);
-			assert.strictEqual(oChange.isLabelReadOnly(), true);
-
-			//true true
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			oChange._isReadOnlyDueToOriginalLanguage = sinon.stub().returns(true);
-			assert.strictEqual(oChange.isLabelReadOnly(), true);
-		});
-
-		QUnit.test("Change.isReadOnly", function(assert) {
-			var oChange;
-			oChange = new Change(this.oChangeDef);
-
-			//false false false
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
-			assert.strictEqual(oChange.isReadOnly(), false);
-
-			//true false false
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
-			assert.strictEqual(oChange.isReadOnly(), true);
-
-			//false true false
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
-			assert.strictEqual(oChange.isReadOnly(), true);
-
-			//false false true
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
-			assert.strictEqual(oChange.isReadOnly(), true);
-
-			//true true false
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
-			assert.strictEqual(oChange.isReadOnly(), true);
-
-			//true false true
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
-			assert.strictEqual(oChange.isReadOnly(), true);
-
-			//false true true
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
-			assert.strictEqual(oChange.isReadOnly(), true);
-
-			//true true true
-			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
-			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
-			assert.strictEqual(oChange.isReadOnly(), true);
-		});
-
-		QUnit.test("_isReadOnlyWhenNotKeyUser shall return true, if not key user", function(assert) {
-			var oChange = new Change(this.oChangeDef); //shared change
-
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: false}));
-			assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), true);
-		});
-
-		QUnit.test("_isReadOnlyWhenNotKeyUser shall return false if key user", function(assert) {
-			var oChange = new Change(this.oChangeDef); //shared change
-
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: true}));
-			assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), false);
-		});
-
-		QUnit.test("_isReadOnlyWhenNotKeyUser shall return false if not key user but user dependent", function(assert) {
-			var oChange = new Change(this.oChangeDef); //shared change
-
-			//make change user dependent. In this case the method should never return true
-			sandbox.stub(oChange, 'isUserDependent').returns(true);
-
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: false}));
-			assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), false);
-		});
-
-		QUnit.test("_isReadOnlyWhenNotKeyUser shall return false if key user and user dependent", function(assert) {
-			var oChange = new Change(this.oChangeDef); //shared change
-
-			//make change user dependent. In this case the method should never return true
-			sandbox.stub(oChange, 'isUserDependent').returns(true);
-
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: true}));
-			assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), false);
-		});
-
-		QUnit.test("_isReadOnlyWhenNotKeyUser shall return true if the user id cannot be determined", function(assert) {
-			var oChange = new Change(this.oChangeDef); //shared change
-
-			//make change user dependent. In this case the method should never return true
-			sandbox.stub(oChange, 'isUserDependent').returns(false);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: false}));
-
-			assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), true);
 		});
 
 		QUnit.test("isChangeFromOtherSystem shall return true when settings cannot be read", function(assert) {

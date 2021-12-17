@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
@@ -12,7 +11,6 @@ sap.ui.define([
 	merge,
 	CompVariant,
 	Settings,
-	Change,
 	Layer,
 	UriParameters,
 	sinon
@@ -314,7 +312,7 @@ sap.ui.define([
 		});
 
 		aScenarios.forEach(function (mTestSetup) {
-			QUnit.test(mTestSetup.testName + " when isReadOnly is called", function(assert) {
+			QUnit.test(mTestSetup.testName, function(assert) {
 				// mocked settings
 				Settings._instance = new Settings(mTestSetup.settings);
 				stubCurrentUser(mTestSetup.currentUser);
@@ -328,7 +326,7 @@ sap.ui.define([
 
 				var oVariant = createVariant(mTestSetup.variant);
 
-				assert.equal(oVariant.isRenameEnabled(), mTestSetup.expectedRenameEnabled, "then the boolean for renameEnagbled was determined correct");
+				assert.equal(oVariant.isRenameEnabled(), mTestSetup.expectedRenameEnabled, "then the boolean for renameEnabled was determined correct");
 				assert.equal(oVariant.isEditEnabled(), mTestSetup.expectedEditEnabled, "then the boolean for editEnabled was determined correct");
 				assert.equal(oVariant.isDeleteEnabled(), mTestSetup.expectedDeleteEnabled, "then the boolean for deleteEnabled was determined correct");
 			});

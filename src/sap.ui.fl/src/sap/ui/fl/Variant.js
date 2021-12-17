@@ -187,20 +187,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the original language in ISO 639-1 format
-	 *
-	 * @returns {String} Original language
-	 *
-	 * @public
-	 */
-	Variant.prototype.getOriginalLanguage = function () {
-		if (this._oDefinition && this._oDefinition.content.originalLanguage) {
-			return this._oDefinition.content.originalLanguage;
-		}
-		return "";
-	};
-
-	/**
 	 * Returns the abap package name
 	 * @returns {string} ABAP package where the variant is assigned to
 	 *
@@ -286,16 +272,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the user ID of the owner
-	 * @returns {string} ID of the owner
-	 *
-	 * @public
-	 */
-	Variant.prototype.getOwnerId = function () {
-		return this._oDefinition.content.support ? this._oDefinition.content.support.user : "";
-	};
-
-	/**
 	 * Returns the text in the current language for a given id
 	 *
 	 * @param {string} sTextId
@@ -336,77 +312,6 @@ sap.ui.define([
 				this.setState(Variant.states.DIRTY);
 			}
 		}
-	};
-
-	/**
-	 * Returns true if the current layer is the same as the layer
-	 * in which the variant was created or the variant is from the
-	 * end-user layer and for this user created.
-	 * @returns {boolean} is the variant read only
-	 *
-	 * @public
-	 */
-	Variant.prototype.isReadOnly = function () {
-		return this._isReadOnlyDueToLayer() || this._isReadOnlyWhenNotKeyUser();
-	};
-
-	/**
-	 * Checks if the variant is read-only
-	 * because the current user is not a key user and the change is "shared"
-	 * @returns {boolean} Flag whether variant is read only
-	 *
-	 * @private
-	 */
-	Variant.prototype._isReadOnlyWhenNotKeyUser = function () {
-		if (this.isUserDependent()) {
-			return false; // the user always can edit its own variants
-		}
-
-		var sReference = this.getDefinition().reference;
-		if (!sReference) {
-			return true; // without a reference the right to edit or delete a variant cannot be determined
-		}
-
-		var oSettings = Settings.getInstanceOrUndef();
-		if (!oSettings) {
-			return true; // without settings the right to edit or delete a variant cannot be determined
-		}
-
-		return !oSettings.isKeyUser(); // a key user can edit changes
-	};
-
-	/**
-	 * Checks if the layer allows modifying the file
-	 * @returns {boolean} Flag whether variant is read only
-	 *
-	 * @private
-	 */
-	Variant.prototype._isReadOnlyDueToLayer = function () {
-		var sCurrentLayer;
-		sCurrentLayer = this._bUserDependent ? Layer.USER : LayerUtils.getCurrentLayer();
-		return (this._oDefinition.content.layer !== sCurrentLayer);
-	};
-
-	/**
-	 * A variant can only be modified if the current language equals the original language.
-	 * Returns false if the current language does not equal the original language of the variant's change file.
-	 * Returns false if the original language is initial.
-	 *
-	 * @returns {boolean} flag whether the current logon language differs from the original language of the variant's change document
-	 *
-	 * @private
-	 */
-	Variant.prototype._isReadOnlyDueToOriginalLanguage = function () {
-		var sCurrentLanguage;
-		var sOriginalLanguage;
-
-		sOriginalLanguage = this.getOriginalLanguage();
-		if (!sOriginalLanguage) {
-			return false;
-		}
-
-		sCurrentLanguage = Utils.getCurrentLanguage();
-		return (sCurrentLanguage !== sOriginalLanguage);
 	};
 
 	/**
@@ -484,16 +389,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns true if the variant is user dependent
-	 * @returns {boolean} Variant is only relevant for the current user
-	 *
-	 * @public
-	 */
-	Variant.prototype.isUserDependent = function () {
-		return (this._bUserDependent);
-	};
-
-	/**
 	 * Gets the JSON definition of the variant
 	 * @returns {object} the content of the variant
 	 *
@@ -516,15 +411,6 @@ sap.ui.define([
 			this._oOriginDefinition = JSON.parse(sResponse);
 			this.setState(Variant.states.PERSISTED);
 		}
-	};
-
-	Variant.prototype.getFullFileIdentifier = function () {
-		var sLayer = this.getLayer();
-		var sNamespace = this.getNamespace();
-		var sFileName = this.getDefinition().content.fileName;
-		var sFileType = this.getDefinition().content.fileType;
-
-		return sLayer + "/" + sNamespace + "/" + sFileName + "." + sFileType;
 	};
 
 	/**

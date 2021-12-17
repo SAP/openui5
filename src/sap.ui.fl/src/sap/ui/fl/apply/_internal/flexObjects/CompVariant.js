@@ -185,7 +185,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CompVariant.prototype.isRenameEnabled = function (sLayer) {
-		return !this.getStandardVariant() && this.isEditEnabled(sLayer) && isRenameEnableDueToOriginalLanguage(this.getOriginalLanguage());
+		return !this.getStandardVariant() && this.isEditEnabled(sLayer) && isRenameEnableDueToOriginalLanguage(this._oDefinition.content.originalLanguage);
 	};
 
 	/**
@@ -199,7 +199,7 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.isEditEnabled = function (sActiveLayer) {
 		var bDeveloperLayer = sActiveLayer && LayerUtils.isDeveloperLayer(sActiveLayer);
-		var bOriginSystem = isOriginSystem(this.getSourceSystem(), this.getSourceClient());
+		var bOriginSystem = isOriginSystem(this._oDefinition.sourceSystem, this._oDefinition.sourceClient);
 		var bUserAuthorized = checkLayerAndUserAuthorization(this.getLayer(), sActiveLayer, this.getOwnerId());
 		return bDeveloperLayer || bOriginSystem && bUserAuthorized;
 	};
@@ -214,7 +214,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CompVariant.prototype.isDeleteEnabled = function (sLayer) {
-		return isOriginSystem(this.getSourceSystem(), this.getSourceClient())
+		return isOriginSystem(this._oDefinition.sourceSystem, this._oDefinition.sourceClient)
 			&& checkLayerAndUserAuthorization(this.getLayer(), sLayer, this.getOwnerId())
 			&& !this.getStandardVariant();
 	};
@@ -262,6 +262,11 @@ sap.ui.define([
 	CompVariant.prototype.getContent = function () {
 		// TODO: remove after the extended Change.js does not overwrite the default getContent
 		return this.getProperty("content");
+	};
+
+
+	CompVariant.prototype.getOwnerId = function() {
+		return this._oDefinition.support ? this._oDefinition.support.user : "";
 	};
 
 	/**
