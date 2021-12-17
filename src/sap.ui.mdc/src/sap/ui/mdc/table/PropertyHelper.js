@@ -14,13 +14,50 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * @typedef {object} sap.ui.mdc.table.PropertyInfo
+	 * @extends sap.ui.mdc.util.PropertyInfo
+	 *
+	 * @property {object} [exportSettings]
+	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
+	 * @property {int} [maxConditions]
+	 *   Defines the maximum number of filter conditions for the property. Possible values that can be used:
+	 *   <ul>
+	 *       <li>1 is a single-filter expression field</li>
+	 *       <li>-1 is a multi-filter expression field</li>
+	 *   </ul>
+	 *   This information is for example used in the <code>addItem</code> method of the <code>FilterBar</code> control to forward this information to
+	 *   the created <code>FilterField</code> instance.
+	 * @property {boolean} [filterable=true]
+	 *   Defines whether a property is filterable.
+	 * @property {boolean} [sortable=true]
+	 *   Defines whether a property is sortable.
+	 * @property {boolean} [groupable=false]
+	 *   Defines whether a property is groupable.
+	 * @property {boolean} [key=false]
+	 *   Defines whether a property is a key or part of a key in the data.
+	 * @property {string} [unit]
+	 *   Name of the unit property that is related to this property.
+	 * @property {string} [text]
+	 *   Name of the text property that is related to this property in a 1:1 relation.
+	 * @property {boolean} [required]
+	 *   Defines whether a filter condition for this property is required.
+	 * @property {object} [visualSettings]
+	 *   This object contains all relevant properties for visual adjustments.
+	 *
+	 * @private
+	 * @experimental
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	*/
+
+	/**
 	 * Constructor for a new table property helper.
 	 *
 	 * @param {object[]} aProperties
 	 *     The properties to process in this helper
 	 * @param {object<string, object>} [mExtensions]
 	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
-	 *     The extension of a property is stored in a reserved <code>extension</code> attribute and its attributes must be specified with
+	 *     The extension of a property is stored in a reserved <code>extension</code> attribute, and its attributes must be specified with
 	 *     <code>mExtensionAttributeMetadata</code>.
 	 * @param {sap.ui.base.ManagedObject} [oParent]
 	 *     A reference to an instance that will act as the parent of this helper
@@ -28,7 +65,7 @@ sap.ui.define([
 	 *     The attribute metadata for the model-specific property extension
 	 *
 	 * @class
-	 * Table property helpers give tables of this library a consistent and standardized view on properties and their attributes.
+	 * Table property helpers in this SAPUI5 library provide tables with consistent and standardized structure of properties and their attributes.
 	 * Validates the given properties, sets defaults, and provides utilities to work with these properties.
 	 * The utilities can only be used for properties that are known to the helper. Known properties are all those that are passed to the constructor.
 	 *
@@ -129,7 +166,7 @@ sap.ui.define([
 				}, this);
 			}
 		} else if (!bSplitCells && oExportSettings) {
-			// called for basic propertyInfo having exportSettings
+			// called for basic PropertyInfo having exportSettings
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 			oColumnExportSettings.property = oProperty.path;
 			aColumnExportSettings.push(oColumnExportSettings);
@@ -211,7 +248,7 @@ sap.ui.define([
 	/**
 	 * Sets the width of the provided column based on the <code>visualSettings</code> of the relevant <code>PropertyInfo</code>.
 	 *
-	 * @param {sap.ui.mdc.table.Column} oMDCColumn The MDCColumn instance for which to set the width
+	 * @param {sap.ui.mdc.table.Column} oMDCColumn The <code>Column</code> instance for which to set the width
 	 * @public
 	 * @since 1.95
 	 */
@@ -232,9 +269,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates the column width based on the provided <code>PropertyInfo</code>
+	 * Calculates the column width based on the provided <code>PropertyInfo</code>.
 	 *
-	 * @param {object} oProperty The properties of PropertyInfo of MDCColumn instance for which to set the width for
+	 * @param {object} oProperty The properties of <code>PropertyInfo</code> of <code>Column</code> instance for which to set the width
 	 * @param {object} [mWidthCalculation] The configuration object for the width calculation
 	 * @param {int} [mWidthCalculation.minWidth=2] The minimum content width in rem
 	 * @param {int} [mWidthCalculation.maxWidth=19] The maximum content width in rem

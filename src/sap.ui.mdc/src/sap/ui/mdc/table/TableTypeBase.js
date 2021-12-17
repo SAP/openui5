@@ -11,8 +11,8 @@ sap.ui.define([
 	 * Constructor for a new <code>TableTypeBase</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
-	 * @param {object} [mSettings] initial settings for the new object
-	 * @class The table type info base class for the metadata driven table. Dummy/Base class with no implementation.
+	 * @param {object} [mSettings] Initial settings for the new object
+	 * @class The table type info base class for the metadata-driven table. Base class with no implementation.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
 	 * @private

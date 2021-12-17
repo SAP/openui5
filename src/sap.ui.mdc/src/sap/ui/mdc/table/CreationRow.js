@@ -10,12 +10,12 @@ sap.ui.define([
 	var TableType = Library.TableType;
 
 	/**
-	 * Constructor for a new CreationRow.
+	 * Constructor for a new <code>CreationRow</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
-	 * @param {object} [mSettings] initial settings for the new control
-	 * @class Allows to enter data in a row shaped form, if the table's {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>". The form
-	 * elements are aligned with the columns of the table, and are created automatically based on the
+	 * @param {object} [mSettings] Initial settings for the new control
+	 * @class Row that allows the user to enter data in a row-shaped form if the {@link sap.ui.mdc.TableType TableType} is "<code>Table</code>".
+	 * The form elements are aligned with the columns of the table and are created automatically based on the
 	 * {@link sap.ui.mdc.table.Column#getCreationTemplate creationTemplate} aggregation of the {@link sap.ui.mdc.table.Column}.
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
@@ -42,7 +42,7 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Determines whether the <code>sap.ui.mdc.table.CreationRow</code> and its inner control are in a busy state
+				 * Determines whether the <code>sap.ui.mdc.table.CreationRow</code> and its inner control are in a busy state.
 				 */
 				busy: {
 					type: "boolean",
@@ -50,7 +50,7 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * Visibility of the <code>CreationRow</code>
+				 * Visibility of the <code>CreationRow</code>.
 				 */
 				visible: {
 					type: "boolean",
@@ -60,7 +60,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired when the corresponding keyboard shortcut or the apply button of the toolbar are pressed
+				 * The event is fired when the corresponding keyboard shortcut or the apply button of the toolbar are pressed.
 				 */
 				apply: {
 					allowPreventDefault: true
@@ -143,9 +143,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the row based on the configuration of the table this row is inside of.
+	 * Updates the row based on the configuration of the table.
 	 *
-	 * @returns {Promise} Promise that resolves once the inner <code>CreationRow</code> control is updated
+	 * @returns {Promise} <code>Promise</code> that resolves once the inner <code>CreationRow</code> control is updated
 	 * @private
 	 */
 	CreationRow.prototype.update = function() {
@@ -229,7 +229,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Gets the table this row is inside of.
+	 * Gets the table in which this row is located.
 	 *
 	 * @return {sap.ui.mdc.Table|null} The instance of the table or <code>null</code>, if this row is not inside a table.
 	 * @private

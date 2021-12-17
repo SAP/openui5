@@ -15,8 +15,8 @@ sap.ui.define([
 	 * Constructor for a new <code>GridTableType</code>.
 	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
-	 * @param {object} [mSettings] initial settings for the new object
-	 * @class The table type info base class for the metadata driven table.
+	 * @param {object} [mSettings] Initial settings for the new object
+	 * @class The table type info class for the metadata-driven table.
 	 * @extends sap.ui.mdc.table.TableTypeBase
 	 * @author SAP SE
 	 * @private
@@ -33,8 +33,7 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties: {
 				/**
-				 * See sap.ui.mdc.RowCountMode for the options.<br>
-				 * Defaults to Auto - meaning table adjusts its height based on the parent container
+				 * Defines how the table handles the row count.
 				 */
 				rowCountMode: {
 					type: "sap.ui.mdc.RowCountMode",
@@ -42,8 +41,8 @@ sap.ui.define([
 				},
 				/**
 				 * Row count of the inner table.<br>
-				 * When <code>sap.ui.mdc.RowCountMode.Auto</code> is used - this property specifies the <code>minAutoRowCount</code>.<br>
-				 * When <code>sap.ui.mdc.RowCountMode.Fixed</code> is used - this property specifies the <code>visibleRowCount</code>.
+				 * This property specifies the minimum row count if <code>sap.ui.mdc.RowCountMode.Auto</code> is used.<br>
+				 * This property specifies the row count if <code>sap.ui.mdc.RowCountMode.Fixed</code> is used.
 				 */
 				rowCount: {
 					type: "int",
