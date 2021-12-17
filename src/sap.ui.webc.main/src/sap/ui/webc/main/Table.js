@@ -85,7 +85,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Limitations:</b> <code>growing="Scroll"</code> is not supported for Internet Explorer, and the component will fallback to <code>growing="Button"</code>.
+				 * <b>Restrictions:</b> <code>growing="Scroll"</code> is not supported for Internet Explorer, and the component will fallback to <code>growing="Button"</code>.
 				 */
 				growing: {
 					type: "sap.ui.webc.main.TableGrowingMode",
@@ -160,7 +160,7 @@ sap.ui.define([
 				/**
 				 * Determines whether the column headers remain fixed at the top of the page during vertical scrolling as long as the Web Component is in the viewport. <br>
 				 * <br>
-				 * <b>Limitations:</b>
+				 * <b>Restrictions:</b>
 				 * <ul>
 				 *     <li>Browsers that do not support this feature:
 				 *         <ul>

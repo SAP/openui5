@@ -135,7 +135,7 @@ sap.ui.define([
 				 * <br>
 				 *
 				 *
-				 * <b>Limitations:</b> <code>growing="Scroll"</code> is not supported for Internet Explorer, on IE the component will fallback to <code>growing="Button"</code>.
+				 * <b>Restrictions:</b> <code>growing="Scroll"</code> is not supported for Internet Explorer, on IE the component will fallback to <code>growing="Button"</code>.
 				 */
 				growing: {
 					type: "sap.ui.webc.main.ListGrowingMode",
