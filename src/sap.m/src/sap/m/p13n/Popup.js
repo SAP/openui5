@@ -35,8 +35,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @experimental
-	 *
+	 * @experimental Since 1.97.
 	 * @since 1.97
 	 * @alias sap.m.p13n.Popup
 	 */

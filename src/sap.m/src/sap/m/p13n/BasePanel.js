@@ -24,8 +24,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted
-	 * @experimental
-	 *
+	 * @experimental Since 1.96.
 	 * @since 1.96
 	 * @alias sap.m.p13n.BasePanel
 	 */

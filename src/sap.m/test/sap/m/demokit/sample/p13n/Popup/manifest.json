@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.m.sample.p13n.Panels",
+		"id": "sap.m.sample.p13n.Popup",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.p13n.Panels.P13nPanels",
+			"viewName": "sap.m.sample.p13n.Popup.P13nPanels",
 			"type": "XML",
 			"async": true
 		},
