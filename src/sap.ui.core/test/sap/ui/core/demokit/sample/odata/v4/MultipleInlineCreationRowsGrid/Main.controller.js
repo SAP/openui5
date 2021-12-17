@@ -130,7 +130,9 @@ sap.ui.define([
 		onRefresh : function () {
 			this.getView().getModel().refresh();
 			if (this.oUIModel.getProperty("/sLayout") !== LayoutType.OneColumn) {
-				this.createInactiveRows(iEmptyRowCount);
+				this.getView().byId("parts").getBinding("rows")
+					.attachEventOnce("dataReceived",
+						this.createInactiveRows.bind(this, iEmptyRowCount));
 			}
 		},
 
@@ -160,7 +162,6 @@ sap.ui.define([
 				? undefined
 				: new Sorter("quantity", oSortOrder.bDescending)
 			);
-			this.createInactiveRows(iEmptyRowCount); //TODO: obsolete with CPOUI5ODATAV4-1362
 			this.oUIModel.setProperty("/bSortPartsQuantity", oSortOrder.bDescending);
 			this.oUIModel.setProperty("/sSortPartsQuantityIcon", oSortOrder.sNewIcon);
 		},

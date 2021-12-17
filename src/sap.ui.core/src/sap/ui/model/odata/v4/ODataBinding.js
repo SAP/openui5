@@ -855,8 +855,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive) {
-		return this.withCache(function (oCache, sCachePath) {
-				return oCache.hasPendingChangesForPath(sCachePath, bIgnoreKeptAlive);
+		return this.withCache(function (oCache, sCachePath, oBinding) {
+				return oCache.hasPendingChangesForPath(sCachePath, bIgnoreKeptAlive,
+					bIgnoreKeptAlive && oBinding.isRoot()); // Note: implies oBinding === that
 			}, sPath, true).unwrap();
 	};
 

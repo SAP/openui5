@@ -2052,7 +2052,7 @@ sap.ui.define([
 				that.checkMessages(assert);
 				assert.ok(!bTimeout, "waitForChanges(" + (sTitle || "") + "): "
 					+ (bTimeout ? "Timeout (" + iTimeout + " ms)" : "Done")
-					+ " *".repeat(25));
+					+ " *".repeat(50));
 			});
 
 			return oPromise;
@@ -37016,4 +37016,356 @@ sap.ui.define([
 			return that.waitForChanges(assert, "(5) refresh table");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A table shows a visible area with three persisted rows. Three transient ones are
+	// added at the end, outside of the visible area. The list is then filtered, sorted, etc.
+	// Show that the transient ones properly survive.
+	// JIRA: CPOUI5ODATAV4-1362
+	QUnit.test("CPOUI5ODATAV4-1362", function (assert) {
+		var oBinding,
+			oContextA,
+			oContextB,
+			oContextC,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{parameters : {$count : true}, path : \'/TEAMS\'}" threshold="0"\
+	visibleRowCount="3">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="name" text="{Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$skip=0&$top=3", {
+				"@odata.count" : "3",
+				value : [{
+					Name : "Team #1",
+					Team_Id : "TEAM_01"
+				}, {
+					Name : "Team #2",
+					Team_Id : "TEAM_02"
+				}, {
+					Name : "Team #3",
+					Team_Id : "TEAM_03"
+				}]
+			})
+			.expectChange("id", ["TEAM_01", "TEAM_02", "TEAM_03"])
+			.expectChange("name", ["Team #1", "Team #2", "Team #3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			oContextA = oBinding.create({Name : "New Team A", Team_Id : "TEAM_A"}, true, true);
+			oContextB = oBinding.create({Name : "New Team B", Team_Id : "TEAM_B"}, true, true);
+			oContextC = oBinding.create({Name : "New Team C", Team_Id : "TEAM_C"}, true, true);
+
+			return that.waitForChanges(assert, "create 3x transient at end");
+		}).then(function () {
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$orderby=Team_Id desc"
+					+ "&$skip=0&$top=3", {
+					"@odata.count" : "3",
+					value : [{
+						Name : "Team #3",
+						Team_Id : "TEAM_03"
+					}, {
+						Name : "Team #2",
+						Team_Id : "TEAM_02"
+					}, {
+						Name : "Team #1",
+						Team_Id : "TEAM_01"
+					}]
+				})
+				.expectChange("id", ["TEAM_03",, "TEAM_01"])
+				.expectChange("name", ["Team #3",, "Team #1"]);
+
+			// code under test
+			assert.strictEqual(oBinding.hasPendingChanges(), true);
+			assert.strictEqual(oBinding.hasPendingChanges(true), false);
+			oBinding.sort(new Sorter("Team_Id", true));
+
+			return that.waitForChanges(assert, "sort");
+		}).then(function () {
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$orderby=Team_Id desc"
+					+ "&$filter=MANAGER_ID ne '666'&$skip=0&$top=3", {
+					"@odata.count" : "2",
+					value : [{
+						Name : "Team #3",
+						Team_Id : "TEAM_03"
+					}, {
+						Name : "Team #1",
+						Team_Id : "TEAM_01"
+					}]
+				})
+				.expectChange("id", [, "TEAM_01", "TEAM_A"])
+				.expectChange("name", [, "Team #1", "New Team A"]);
+
+			// code under test
+			assert.strictEqual(oBinding.hasPendingChanges(), true);
+			assert.strictEqual(oBinding.hasPendingChanges(true), false);
+			oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, "666"));
+
+			return that.waitForChanges(assert, "filter");
+		}).then(function () {
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$orderby=Team_Id desc"
+					+ "&$filter=MANAGER_ID ne '666'&$search=TDOP&$skip=0&$top=3", {
+					"@odata.count" : "2",
+					value : [{
+						Name : "Team #3 TDO",
+						Team_Id : "TEAM_03"
+					}, {
+						Name : "Team #1 T",
+						Team_Id : "TEAM_01"
+					}]
+				})
+				.expectChange("name", ["Team #3 TDO", "Team #1 T"]);
+
+			// code under test
+			assert.strictEqual(oBinding.hasPendingChanges(), true);
+			assert.strictEqual(oBinding.hasPendingChanges(true), false);
+			oBinding.changeParameters({$search : "TDOP"});
+
+			return that.waitForChanges(assert, "change parameters");
+		}).then(function () {
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=MANAGER_ID ne '666'"
+					+ "&$skip=0&$top=3", {
+					"@odata.count" : "2",
+					value : [{
+						Name : "Team #1 * T",
+						Team_Id : "TEAM_01"
+					}, {
+						Name : "Team #3 *** TDO",
+						Team_Id : "TEAM_03"
+					}]
+				})
+				.expectChange("id", ["TEAM_01", "TEAM_03"])
+				.expectChange("name", ["Team #1 * T", "Team #3 *** TDO"]);
+
+			// code under test
+			assert.strictEqual(oBinding.hasPendingChanges(), true);
+			assert.strictEqual(oBinding.hasPendingChanges(true), false);
+			oBinding.suspend();
+			oBinding.sort([]);
+			// oBinding.filter([]); // do not drop this, it's good to have one transient visible!
+			oBinding.changeParameters({$search : undefined});
+
+			return Promise.all([
+				oBinding.resumeAsync(),
+				that.waitForChanges(assert, "suspend/resume")
+			]);
+		}).then(function () {
+			// Note: this proves that change listeners have survived the refresh
+			that.expectChange("name", [,, "New A Team"]);
+
+			oContextA.setProperty("Name", "New A Team");
+			oContextB.setProperty("Name", "New B Team");
+			oContextC.setProperty("Name", "New C Team");
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New A Team", Team_Id : "TEAM_A"}
+				}, {Name : "New 'A' Team", Team_Id : "TEAM_A"})
+				.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New C Team", Team_Id : "TEAM_C"}
+				}, {Name : "New 'C' Team", Team_Id : "TEAM_C"})
+				.expectChange("name", [,, "New 'A' Team"]);
+
+			return Promise.all([
+				oContextA.created(),
+				oContextB.delete(), // must not send a request!
+				oContextB.created().then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message,
+						"Request canceled: POST TEAMS; group: update"
+					);
+					assert.ok(oError.canceled);
+				}),
+				oContextC.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submit")
+			]);
+		}).then(function () {
+			that.expectChange("id", [, "TEAM_03", "TEAM_A", "TEAM_C"])
+				.expectChange("name", [, "Team #3 *** TDO", "New 'A' Team", "New 'C' Team"]);
+
+			oTable.setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert, "scroll down");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table shows a visible area with three persisted rows. Four transient ones are
+	// added at the end, outside of the visible area, and two of them are persisted. The list is
+	// then either filtered, sorted, etc. Show that the transient ones properly survive, but the
+	// created ones are removed.
+	// JIRA: CPOUI5ODATAV4-1362
+[
+	"changeParameters", "filter", "resume", "sort"
+].forEach(function (sMethod) {
+	QUnit.test("CPOUI5ODATAV4-1362: created persisted, " + sMethod, function (assert) {
+		var oBinding,
+			oContextA,
+			oContextB,
+			oContextC,
+			oContextD,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{parameters : {$count : true}, path : \'/TEAMS\'}" threshold="0"\
+	visibleRowCount="4">\
+	<Text id="id" text="{Team_Id}"/>\
+	<Text id="name" text="{Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$skip=0&$top=4", {
+				"@odata.count" : "2",
+				value : [{
+					Name : "Team #1",
+					Team_Id : "TEAM_01"
+				}, {
+					Name : "Team #2",
+					Team_Id : "TEAM_02"
+				}]
+			})
+			.expectChange("id", ["TEAM_01", "TEAM_02"])
+			.expectChange("name", ["Team #1", "Team #2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectChange("id", ["TEAM_B", "TEAM_A", "TEAM_01", "TEAM_02"])
+				.expectChange("name", ["New Team B", "New Team A", "Team #1", "Team #2"]);
+
+			oContextA = oBinding.create({Name : "New Team A", Team_Id : "TEAM_A"}, true);
+			oContextB = oBinding.create({Name : "New Team B", Team_Id : "TEAM_B"}, true);
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New Team A", Team_Id : "TEAM_A"}
+				}, {Name : "New 'A' Team", Team_Id : "TEAM_A"})
+				.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New Team B", Team_Id : "TEAM_B"}
+				}, {Name : "New 'B' Team", Team_Id : "TEAM_B"})
+				.expectChange("name", ["New 'B' Team", "New 'A' Team"]);
+
+			return Promise.all([
+				oContextA.created(),
+				oContextB.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert, "2x created persisted")
+			]);
+		}).then(function () {
+			that.expectChange("id", ["TEAM_D", "TEAM_C", "TEAM_B", "TEAM_A"])
+				.expectChange("name", ["New Team D", "New Team C", "New 'B' Team", "New 'A' Team"]);
+
+			oContextC = oBinding.create({Name : "New Team C", Team_Id : "TEAM_C"}, true);
+			oContextD = oBinding.create({Name : "New Team D", Team_Id : "TEAM_D"}, true);
+
+			return that.waitForChanges(assert, "2x transient");
+		}).then(function () {
+			var oPromise,
+				oResult = {
+					"@odata.count" : "4",
+					value : [{
+						Name : "Team #2",
+						Team_Id : "TEAM_02"
+					}, {
+						Name : "Team #1",
+						Team_Id : "TEAM_01"
+					}]
+				};
+
+			switch (sMethod) {
+				case "changeParameters":
+					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
+							+ "&$search=TDOP&$skip=0&$top=2", oResult);
+
+					// code under test
+					oBinding.changeParameters({$search : "TDOP"});
+					break;
+
+				case "filter":
+					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
+							+ "&$filter=MANAGER_ID ne '666'&$skip=0&$top=2", oResult);
+
+					// code under test
+					oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, "666"));
+					break;
+
+				case "refresh":
+					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
+							+ "&$skip=0&$top=2", oResult);
+
+					// code under test
+					oPromise = oBinding.requestRefresh();
+					break;
+
+				case "resume":
+					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$search=TDOP"
+						+ "&$orderby=Team_Id desc&$filter=MANAGER_ID ne '666'&$skip=0&$top=2",
+						oResult);
+
+					// code under test
+					oBinding.suspend();
+					oBinding.changeParameters({$search : "TDOP"});
+					oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, "666"));
+					oBinding.sort(new Sorter("Team_Id", true));
+					oPromise = oBinding.resumeAsync();
+					break;
+
+				case "sort":
+					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
+							+ "&$orderby=Team_Id desc&$skip=0&$top=2", oResult);
+
+					// code under test
+					oBinding.sort(new Sorter("Team_Id", true));
+					break;
+
+				// no default
+			}
+
+			that.expectChange("id", [,, "TEAM_02", "TEAM_01"])
+				.expectChange("name", [,, "Team #2", "Team #1"]);
+
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert, sMethod)
+			]);
+		}).then(function () {
+			// Note: this proves that change listeners have survived the refresh
+			that.expectChange("name", ["New D Team", "New C Team"]);
+
+			oContextC.setProperty("Name", "New C Team");
+			oContextD.setProperty("Name", "New D Team");
+
+			that.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New C Team", Team_Id : "TEAM_C"}
+				}, {Name : "New 'C' Team", Team_Id : "TEAM_C"})
+				.expectRequest({
+					method : "POST",
+					url : "TEAMS",
+					payload : {Name : "New D Team", Team_Id : "TEAM_D"}
+				}, {Name : "New 'D' Team", Team_Id : "TEAM_D"})
+				.expectChange("name", ["New 'D' Team", "New 'C' Team"]);
+
+			return Promise.all([
+				oContextC.created(),
+				oContextD.created(),
+				that.oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submit")
+			]);
+		});
+	});
+});
 });

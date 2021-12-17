@@ -1011,13 +1011,16 @@ sap.ui.define([
 	 *   The relative path of a binding; must not end with '/'
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
-	 *   relate to a context which is kept alive.
+	 *   relate to a context which is kept alive
+	 * @param {boolean} [bIgnoreTransient]
+	 *   Whether to ignore transient elements which will not be lost by APIs like sort or filter
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 *
 	 * @public
 	 */
-	_Cache.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive) {
+	_Cache.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive,
+			bIgnoreTransient) {
 		var that = this;
 
 		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
@@ -1026,7 +1029,7 @@ sap.ui.define([
 					&& that.mPatchRequests[sRequestPath].every(function (oPatchPromise) {
 						return oPatchPromise.$isKeepAlive();
 					}));
-		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
+		}) || !bIgnoreTransient && Object.keys(this.mPostRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath)
 				&& that.mPostRequests[sRequestPath].some(function (oEntityData) {
 					return !oEntityData["@$ui5.context.isInactive"];
@@ -2782,17 +2785,29 @@ sap.ui.define([
 	 * @public
 	 */
 	_CollectionCache.prototype.reset = function (aKeptElementPredicates) {
-		var mChangeListeners = this.mChangeListeners,
-			mByPredicate = this.aElements.$byPredicate,
+		var mByPredicate = this.aElements.$byPredicate,
+			mChangeListeners = this.mChangeListeners,
+			oElement,
+			iTransient = 0,
+			i,
 			that = this;
 
-		this.iActiveElements = 0;
+		for (i = 0; i < this.aElements.$created; i += 1) {
+			oElement = this.aElements[i];
+			if (_Helper.getPrivateAnnotation(oElement, "transient")) {
+				aKeptElementPredicates.push(
+					_Helper.getPrivateAnnotation(oElement, "transientPredicate"));
+				this.aElements[iTransient] = oElement;
+				iTransient += 1;
+			} else { // Note: "created persisted" elements must be active
+				this.iActiveElements -= 1;
+			}
+		}
 		this.mChangeListeners = {};
 		this.sContext = undefined;
-		this.aElements = [];
+		this.aElements.length = this.aElements.$created = iTransient;
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // needed for setCount()
-		this.aElements.$created = 0;
 		this.iLimit = Infinity;
 
 		Object.keys(mChangeListeners).forEach(function (sPath) {

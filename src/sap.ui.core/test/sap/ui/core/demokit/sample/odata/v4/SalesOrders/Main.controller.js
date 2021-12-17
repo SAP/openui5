@@ -379,7 +379,7 @@ sap.ui.define([
 				// TODO validation
 				sQuery = this.getView().getModel("ui").getProperty("/filterValue");
 
-			if (oBinding.hasPendingChanges()) {
+			if (oBinding.hasPendingChanges(true)) {
 				MessageBox.error("Cannot filter due to unsaved changes"
 					+ "; save or reset changes before filtering");
 				return;
@@ -395,7 +395,7 @@ sap.ui.define([
 				aFilters = oBinding.getFilters(FilterType.Application),
 				sQuery = this.getView().getModel("ui").getProperty("/filterProductID");
 
-			if (oBinding.hasPendingChanges()) {
+			if (oBinding.hasPendingChanges(true)) {
 				MessageBox.error("Cannot filter due to unsaved changes"
 					+ "; save or reset changes before filtering");
 				return;
@@ -576,7 +576,7 @@ sap.ui.define([
 				bDescending = oUIModel.getProperty("/bSortGrossAmountDescending"),
 				oSortOrder;
 
-			if (oBinding.hasPendingChanges()) {
+			if (oBinding.hasPendingChanges(true)) {
 				MessageBox.error("Cannot sort due to unsaved changes"
 					+ "; save or reset changes before sorting");
 				return;
@@ -606,7 +606,7 @@ sap.ui.define([
 				oParameters = {},
 				oSortOrder;
 
-			if (oBinding.hasPendingChanges()) {
+			if (oBinding.hasPendingChanges(true)) {
 				MessageBox.error("Cannot change parameters due to unsaved changes"
 					+ "; save or reset changes before sorting");
 				return;

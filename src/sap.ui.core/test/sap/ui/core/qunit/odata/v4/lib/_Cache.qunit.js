@@ -630,8 +630,8 @@ sap.ui.define([
 				aCacheData.$created = bCreated ? 2 : 0;
 				oCache.iActiveElements = bCreated && !sParentPath ? 1 : 0;
 				if (bCreated) {
-					aCacheData[1]["@$ui5._"].transientPredicate = "$uid=1-23";
-					aCacheData.$byPredicate["$uid=1-23"] = aCacheData[1];
+					aCacheData[1]["@$ui5._"].transientPredicate = "($uid=id-1-23)";
+					aCacheData.$byPredicate["($uid=id-1-23)"] = aCacheData[1];
 				}
 				this.mock(_Cache).expects("getElementIndex")
 					.withExactArgs(sinon.match.same(aCacheData), "('1')", 2)
@@ -758,39 +758,52 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bPatch) {
-		QUnit.test("_Cache#hasPendingChangesForPath: bPatch = " + bPatch, function (assert) {
-			var oCache = new _Cache(this.oRequestor, "TEAMS");
+[true, false].forEach(function (bPatch) {
+	[true, false].forEach(function (bIgnoreTransient) {
+		var sTitle = "_Cache#hasPendingChangesForPath: bPatch = " + bPatch
+			+ ", bIgnoreTransient = " + bIgnoreTransient;
 
-			oCache[bPatch ? "mPatchRequests" : "mPostRequests"]["foo/bar/baz"] = [
-				{},
-				{"@$ui5.context.isInactive" : false},
-				{"@$ui5.context.isInactive" : true}
-			];
+		if (bPatch && bIgnoreTransient) {
+			return;
+		}
 
-			// code under test (active entities exists)
-			assert.strictEqual(oCache.hasPendingChangesForPath("bar"), false);
-			assert.strictEqual(oCache.hasPendingChangesForPath(""), true);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo"), true);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/ba"), false);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar"), true);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bars"), false);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/ba"), false);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz"), true);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baze"), false);
-			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz/qux"), false);
+	QUnit.test(sTitle, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
-			if (!bPatch) {
-				oCache.mPostRequests["foo/bar/baz"] = [{"@$ui5.context.isInactive" : true}];
+		function hasPendingChangesForPath(sPath) {
+			return oCache.hasPendingChangesForPath(sPath, false, bIgnoreTransient);
+		}
 
-				// code under test (only inactive entities)
-				assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
-				assert.strictEqual(oCache.hasPendingChangesForPath("foo"), false);
-				assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar"), false);
-				assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz"), false);
-			}
-		});
+		oCache[bPatch ? "mPatchRequests" : "mPostRequests"]["foo/bar/baz"] = [
+			{},
+			{"@$ui5.context.isInactive" : false},
+			{"@$ui5.context.isInactive" : true}
+		];
+
+		// code under test (active entities exists)
+		assert.strictEqual(hasPendingChangesForPath("bar"), false);
+		assert.strictEqual(hasPendingChangesForPath(""), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath("foo"), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath("foo/ba"), false);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar"), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath("foo/bars"), false);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar/ba"), false);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar/baze"), false);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar/baz/qux"), false);
+
+		if (!bPatch) {
+			oCache.mPostRequests["foo/bar/baz"] = [{"@$ui5.context.isInactive" : true}];
+
+			// code under test (only inactive entities)
+			assert.strictEqual(hasPendingChangesForPath(""), false);
+			assert.strictEqual(hasPendingChangesForPath("foo"), false);
+			assert.strictEqual(hasPendingChangesForPath("foo/bar"), false);
+			assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), false);
+		}
 	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#hasPendingChangesForPath: bIgnoreKeptAlive", function (assert) {
@@ -8618,50 +8631,88 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[[], ["('0')"]].forEach(function (aKeptElementPredicates, i) {
+[[], ["('3')"]].forEach(function (aKeptElementPredicates, i) {
 	QUnit.test("CollectionCache#reset; #" + i, function (assert) {
 		var oCache = this.createCache("Employees"),
-			oElement = {};
+			oCreated0 = {},
+			oCreated1 = {},
+			oCreated2 = {},
+			oElement = {},
+			oTail = SyncPromise.resolve(),
+			oTransient0 = {},
+			oTransient1 = {},
+			aElements = [oCreated0, oTransient0, oCreated1, oTransient1, oCreated2, oElement];
 
-		oCache.iActiveElements = 1;
+		_Helper.setPrivateAnnotation(oCreated0, "transientPredicate", "($uid=id-0-0)");
+		_Helper.setPrivateAnnotation(oCreated1, "transientPredicate", "($uid=id-0-1)");
+		_Helper.setPrivateAnnotation(oCreated2, "transientPredicate", "($uid=id-0-2)");
+		_Helper.setPrivateAnnotation(oTransient0, "transientPredicate", "($uid=id-1-23)");
+		_Helper.setPrivateAnnotation(oTransient1, "transientPredicate", "($uid=id-1-42)");
+		_Helper.setPrivateAnnotation(oTransient0, "transient", "$auto");
+		_Helper.setPrivateAnnotation(oTransient1, "transient", "$auto");
+		if (!i) { // show that oElement is not treated as transient (because of $created)
+			_Helper.setPrivateAnnotation(oElement, "transient", "$auto");
+			_Helper.setPrivateAnnotation(oElement, "transientPredicate", "($uid=id-17-4)");
+		}
+		oCache.iActiveElements = 4; // let's assume one transient is inactive
 		oCache.mChangeListeners = {
-			bar : [],
-			foo : [],
-			"('0')/bar/baz" : "~listener[]~0~",
-			"('0')/foo" : "~listener[]~1~"
+			"($uid=id-0-0)/n/a" : "~listener[]~n/a~",
+			"($uid=id-0-1)/n/a" : "~listener[]~n/a~",
+			"($uid=id-0-2)/n/a" : "~listener[]~n/a~",
+			"($uid=id-1-23)/bar" : "~listener[]~2~",
+			"($uid=id-1-42)/baz" : "~listener[]~3~",
+			"('0')/n/a" : "~listener[]~n/a~",
+			"('1')/n/a" : "~listener[]~n/a~",
+			"('2')/n/a" : "~listener[]~n/a~",
+			"('3')/bar/baz" : "~listener[]~0~",
+			"('3')/foo" : "~listener[]~1~"
 		};
 		oCache.sContext = "foo";
-		oCache.aElements = [{}, oElement];
+		oCache.aElements = aElements;
 		oCache.aElements.$byPredicate = {
-			"$uid=1-23" : oCache.aElements[0],
-			"('0')" : oElement
+			"($uid=id-1-23)" : oTransient0,
+			"($uid=id-1-42)" : oTransient1,
+			"('0')" : oCreated0,
+			"('1')" : oCreated1,
+			"('2')" : oCreated2,
+			"('3')" : oElement
 		};
 		oCache.aElements.$count = 1;
-		oCache.aElements.$created = 1;
-		oCache.aElements.$tail = SyncPromise.resolve();
+		oCache.aElements.$created = 5;
+		oCache.aElements.$tail = oTail;
 		oCache.iLimit = 42;
 
 		// code under test
 		oCache.reset(aKeptElementPredicates);
 
+		assert.strictEqual(oCache.iActiveElements, 1, "iActiveElements adjusted");
 		assert.deepEqual(oCache.mChangeListeners, i
 			? {
-				"('0')/bar/baz" : "~listener[]~0~",
-				"('0')/foo" : "~listener[]~1~"
-			} : {});
+				"('3')/bar/baz" : "~listener[]~0~",
+				"('3')/foo" : "~listener[]~1~",
+				"($uid=id-1-23)/bar" : "~listener[]~2~",
+				"($uid=id-1-42)/baz" : "~listener[]~3~"
+			} : {
+				"($uid=id-1-23)/bar" : "~listener[]~2~",
+				"($uid=id-1-42)/baz" : "~listener[]~3~"
+			});
 		assert.strictEqual(oCache.sContext, undefined);
-		assert.deepEqual(oCache.aElements, []);
+		assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
+		assert.strictEqual(oCache.aElements.length, 2, "transient elements are kept");
+		assert.strictEqual(oCache.aElements[0], oTransient0);
+		assert.strictEqual(oCache.aElements[1], oTransient1);
 		assert.deepEqual(oCache.aElements.$byPredicate, i
-			? {"('0')" : oElement}
-			: {});
+			? {"($uid=id-1-23)" : oTransient0, "($uid=id-1-42)" : oTransient1, "('3')" : oElement}
+			: {"($uid=id-1-23)" : oTransient0, "($uid=id-1-42)" : oTransient1});
+		assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-23)"], oTransient0);
+		assert.strictEqual(oCache.aElements.$byPredicate["($uid=id-1-42)"], oTransient1);
 		if (i) {
-			assert.strictEqual(oCache.aElements.$byPredicate["('0')"], oElement);
+			assert.strictEqual(oCache.aElements.$byPredicate["('3')"], oElement);
 		}
-		assert.strictEqual(oCache.iActiveElements, 0);
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.ok("$count" in oCache.aElements); // needed for setCount()
-		assert.strictEqual(oCache.aElements.$created, 0);
-		assert.strictEqual(oCache.aElements.$tail, undefined);
+		assert.strictEqual(oCache.aElements.$created, 2, "$created adjusted");
+		assert.strictEqual(oCache.aElements.$tail, oTail, "$tail unchanged");
 		assert.strictEqual(oCache.iLimit, Infinity);
 	});
 });
