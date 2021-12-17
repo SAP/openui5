@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+		sContactInformationType = "com.sap.vocabularies.Communication.v1.ContactInformationType",
 		sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
 			+ ' xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"'
 			+ ' xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"'
@@ -1163,7 +1164,8 @@ sap.ui.define([
 
 		testAnnotationConversion(assert, '\
 				<EntityType Name="Foo">\
-					<Property Name="P01" Type="Edm.String" sap:semantics="email;type=work,pref,home"/>\
+					<Property Name="P01" Type="Edm.String"\
+						sap:semantics="email;type=work,pref,home"/>\
 				</EntityType>',
 			{
 				"GWSAMPLE_BASIC.Foo" : {
@@ -1171,9 +1173,9 @@ sap.ui.define([
 						"address" : [{
 							"type" : {
 								"EnumMember" :
-									"com.sap.vocabularies.Communication.v1.ContactInformationType/work "
-									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred "
-									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/home"
+									sContactInformationType + "/work "
+									+ sContactInformationType + "/preferred "
+									+ sContactInformationType + "/home"
 							},
 							uri : {"$Path" : "P01"}
 						}]
@@ -1229,7 +1231,7 @@ sap.ui.define([
 						"address" : [{
 							uri : {"$Path" : "P01"},
 							"type" : {
-								"EnumMember" : "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
+								"EnumMember" : sContactInformationType + "/work"
 							}
 						}]
 					}

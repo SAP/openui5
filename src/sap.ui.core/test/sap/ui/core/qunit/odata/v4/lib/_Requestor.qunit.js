@@ -3575,12 +3575,14 @@ sap.ui.define([
 			return Promise.all([
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "foo"})
-					.then(undefined, onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
+					.then(undefined,
+						onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
 				oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
 					.then(undefined, onError.bind(null, sSampleServiceUrl + "Unknown")),
 				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "bar"})
-					.then(undefined, onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
+					.then(undefined,
+						onError.bind(null, sSampleServiceUrl + "ProductList('HT-1001')")),
 				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", this.createGroupLock())
 					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message,

@@ -4072,7 +4072,8 @@ sap.ui.define([
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", "foo")
 			.returns(oCache.sMetaPath + "/entity/path/foo");
 		oCacheMock.expects("fetchType")
-			.withExactArgs(sinon.match.same(mTypeForMetaPath), oCache.sMetaPath + "/entity/path/foo")
+			.withExactArgs(sinon.match.same(mTypeForMetaPath),
+				oCache.sMetaPath + "/entity/path/foo")
 			.returns(SyncPromise.resolve(oTypeFoo));
 		oHelperMock.expects("buildPath").withExactArgs("foo", "foo1").returns("foo/foo1");
 		oHelperMock.expects("buildPath").withExactArgs("foo", "t/foo2").returns("foo/t/foo2");
@@ -7272,7 +7273,8 @@ sap.ui.define([
 		{createGroupId : "$auto"},
 		{createGroupId : "myAuto"},
 		{createGroupId : "myDirect"},
-		{createGroupId : "$inactive.$auto", updateGroupId : "$auto", parkedGroupId : "$parked.$auto"}
+		{createGroupId : "$inactive.$auto", updateGroupId : "$auto",
+			parkedGroupId : "$parked.$auto"}
 	].forEach(function (oFixture) {
 		// createGroupId is used in the group lock of the create()
 		// updateGroupId is the corresponding ID for POSTs and PATCHes (default is createGroupId)

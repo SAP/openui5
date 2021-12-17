@@ -335,10 +335,10 @@ sap.ui.define([
 	 * Post-processing of a LabeledElementReference element within an Annotation element.
 	 *
 	 * @param {Element} oElement The element
-	 * @param {any[]} _aResult The results from child elements
+	 * @param {any[]} _aRes The results from child elements
 	 * @returns {any} The value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessLabeledElementReference = function (oElement, _aResult) {
+	_MetadataConverter.prototype.postProcessLabeledElementReference = function (oElement, _aRes) {
 		return {
 			"$LabeledElementReference" : this.resolveAlias(oElement.textContent)
 		};
