@@ -101,7 +101,7 @@ sap.ui.define([
 	 * Simulation of {@link sap.ui.model.odata.v4.ODataModel#getGroupProperty}
 	 */
 	function defaultGetGroupProperty(sGroupId, sPropertyName) {
-		if (sPropertyName !== 'submit') {
+		if (sPropertyName !== "submit") {
 			throw new Error("Unsupported property name: " + sPropertyName);
 		}
 		if (sGroupId === "$direct") {
@@ -2202,7 +2202,7 @@ sap.ui.define([
 
 			this.mock(oRequestor).expects("getGroupSubmitMode")
 				.withExactArgs(sGroupId)
-				.returns(bSubmitModeIsAuto ? "Auto" : 'API');
+				.returns(bSubmitModeIsAuto ? "Auto" : "API");
 			this.mock(_Batch).expects("serializeBatchRequest")
 				.withExactArgs(sinon.match.same(aBatchRequests), sEpilogue)
 				.returns(oBatchRequest);

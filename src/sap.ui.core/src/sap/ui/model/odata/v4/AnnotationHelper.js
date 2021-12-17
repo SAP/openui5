@@ -294,7 +294,7 @@ sap.ui.define([
 				if (sPath.endsWith("/$Path")) {
 					sPath = sPath.slice(0, -6);
 					vRawValue = {$Path : vRawValue};
-				} else if (sPath.endsWith('/$PropertyPath')) {
+				} else if (sPath.endsWith("/$PropertyPath")) {
 					sPath = sPath.slice(0, -14);
 					vRawValue = {$PropertyPath : vRawValue};
 				}
@@ -800,7 +800,7 @@ sap.ui.define([
 				} else if (sPath.endsWith("/$Path")) {
 					sPath = sPath.slice(0, -6);
 					vRawValue = {$Path : vRawValue};
-				} else if (sPath.endsWith('/$PropertyPath')) {
+				} else if (sPath.endsWith("/$PropertyPath")) {
 					sPath = sPath.slice(0, -14);
 					vRawValue = {$PropertyPath : vRawValue};
 				}

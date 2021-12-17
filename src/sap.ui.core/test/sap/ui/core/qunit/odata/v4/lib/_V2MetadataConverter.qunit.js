@@ -36,7 +36,7 @@ sap.ui.define([
 	function testAnnotationConversion(assert, sXmlSnippet, oExpected) {
 		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
 				+ '<Schema Namespace="GWSAMPLE_BASIC">' + sXmlSnippet
-				+ '</Schema></edmx:DataServices></edmx:Edmx>'),
+				+ "</Schema></edmx:DataServices></edmx:Edmx>"),
 			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, oExpected);
@@ -56,7 +56,7 @@ sap.ui.define([
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected, bSubset) {
 		testConversionForInclude(assert, '<edmx:DataServices m:DataServiceVersion="2.0">'
-			+ sXmlSnippet + '</edmx:DataServices>', oExpected, bSubset);
+			+ sXmlSnippet + "</edmx:DataServices>", oExpected, bSubset);
 	}
 
 	/**
@@ -73,7 +73,7 @@ sap.ui.define([
 	 */
 	function testConversionForInclude(assert, sXmlSnippet, oExpected, bSubset) {
 		var sProperty,
-			oXML = xml(assert, sEdmx + sXmlSnippet + '</edmx:Edmx>'),
+			oXML = xml(assert, sEdmx + sXmlSnippet + "</edmx:Edmx>"),
 			oResult = new _V2MetadataConverter().convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		if (bSubset) {
@@ -265,7 +265,7 @@ sap.ui.define([
 		function localTest(sProperty, sValue, vExpectedValue) {
 			var oExpectedResult = {},
 				oResult = {},
-				oXml = xml(assert, '<Foo ' + sProperty + '="' + sValue + '"/>');
+				oXml = xml(assert, "<Foo " + sProperty + '="' + sValue + '"/>');
 
 			if (typeof vExpectedValue === "object") {
 				oExpectedResult = vExpectedValue;
@@ -310,8 +310,8 @@ sap.ui.define([
 								<Property Name="p6" Type="' + sNamespace + 'DateTime"\
 									Precision="0" sap:display-format="Date"/>\
 								<Property Name="p7" Type="' + sNamespace + 'Float"/>\
-							</' + sType + '>\
-						</Schema>',
+							</' + sType + ">\
+						</Schema>",
 					{
 						"foo." : {
 							"$kind" : "Schema"
@@ -830,12 +830,12 @@ sap.ui.define([
 	[{ // annotations with boolean primitive values
 		annotationsV2 : 'sap:aggregation-role="dimension"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Analytics.v1.Dimension' : true
+			"@com.sap.vocabularies.Analytics.v1.Dimension" : true
 		}
 	}, {
 		annotationsV2 : 'sap:aggregation-role="measure"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Analytics.v1.Measure' : true
+			"@com.sap.vocabularies.Analytics.v1.Measure" : true
 		}
 	}, {
 		annotationsV2 : 'sap:aggregation-role="foo"',
@@ -843,46 +843,46 @@ sap.ui.define([
 	}, {
 		annotationsV2 : 'sap:display-format="NonNegative"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
+			"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
 		}
 	}, {
 		annotationsV2 : 'sap:display-format="UpperCase"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.IsUpperCase' : true
+			"@com.sap.vocabularies.Common.v1.IsUpperCase" : true
 		}
 	}, { // annotations with string values
 		annotationsV2 : 'sap:heading="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Heading' : 'Value'
+			"@com.sap.vocabularies.Common.v1.Heading" : "Value"
 		}
 	}, {
 		annotationsV2 : 'sap:label="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			"@com.sap.vocabularies.Common.v1.Label" : "Value"
 		}
 	}, {
 		annotationsV2 : 'sap:quickinfo="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+			"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
 		}
 	}, { // annotations with path expression as value
 		annotationsV2 : 'sap:field-control="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.FieldControl' : {
+			"@com.sap.vocabularies.Common.v1.FieldControl" : {
 				$Path : "PathExpression"
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:precision="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Measures.V1.Scale' : {
+			"@Org.OData.Measures.V1.Scale" : {
 				$Path : "PathExpression"
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:text="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Text' : {
+			"@com.sap.vocabularies.Common.v1.Text" : {
 				$Path : "PathExpression"
 			}
 		}
@@ -892,16 +892,16 @@ sap.ui.define([
 	}, { // multiple V4 annotations for one V2 annotation
 		annotationsV2 : 'sap:visible="false"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.FieldControl' : {
+			"@com.sap.vocabularies.Common.v1.FieldControl" : {
 				$EnumMember : "com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
 			},
-			'@com.sap.vocabularies.UI.v1.Hidden' : true
+			"@com.sap.vocabularies.UI.v1.Hidden" : true
 		}
 	}, { // combination of V2 annotations
 		annotationsV2 : 'sap:text="PathExpression" sap:label="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Label' : 'Value',
-			'@com.sap.vocabularies.Common.v1.Text' : {
+			"@com.sap.vocabularies.Common.v1.Label" : "Value",
+			"@com.sap.vocabularies.Common.v1.Text" : {
 				$Path : "PathExpression"
 			}
 		}
@@ -928,9 +928,9 @@ sap.ui.define([
 					<Schema Namespace="GWSAMPLE_BASIC.0001">\
 						<EntityType Name="Foo">\
 							<Property Name="Bar" Type="Edm.String" \
-								' + oFixture.annotationsV2 + ' />\
+								' + oFixture.annotationsV2 + " />\
 						</EntityType>\
-					</Schema>';
+					</Schema>";
 
 			// there are no $annotations yet at the schema so mergeAnnotations is not called
 			this.mock(_V2MetadataConverter.prototype).expects("mergeAnnotations").never();
@@ -947,21 +947,21 @@ sap.ui.define([
 	[{
 		v2Semantics : 'sap:semantics="name"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"fn" : {"$Path" : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="note"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"note" : {"$Path" : "Bar"}
 			}
 		}
 	}, {
 		v2Semantics : 'sap:semantics="givenname"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"n" : {
 					"given" : {
 						"$Path" : "Bar"
@@ -972,7 +972,7 @@ sap.ui.define([
 	}, {
 		v2Semantics : 'sap:semantics="middlename"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"n" : {
 					"additional" : {
 						"$Path" : "Bar"
@@ -983,7 +983,7 @@ sap.ui.define([
 	}, {
 		v2Semantics : 'sap:semantics="familyname"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"n" : {
 					"surname" : {
 						"$Path" : "Bar"
@@ -994,7 +994,7 @@ sap.ui.define([
 	}, {
 		v2Semantics : 'sap:semantics="nickname"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"nickname" : {
 					"$Path" : "Bar"
 				}
@@ -1003,7 +1003,7 @@ sap.ui.define([
 	}, {
 		v2Semantics : 'sap:semantics="honorific"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"n" : {
 					"prefix" : {
 						"$Path" : "Bar"
@@ -1014,7 +1014,7 @@ sap.ui.define([
 	}, {
 		v2Semantics : 'sap:semantics="suffix"',
 		expectedSemanticsV4 : {
-			'@com.sap.vocabularies.Communication.v1.Contact' : {
+			"@com.sap.vocabularies.Communication.v1.Contact" : {
 				"n" : {
 					"suffix" : {
 						"$Path" : "Bar"
@@ -1030,8 +1030,8 @@ sap.ui.define([
 
 			testAnnotationConversion(assert, '\
 						<EntityType Name="Foo">\
-							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics + ' />\
-						</EntityType>',
+							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics + " />\
+						</EntityType>",
 				{
 					"GWSAMPLE_BASIC.Foo" : oFixture.expectedSemanticsV4
 				});
@@ -1359,21 +1359,21 @@ sap.ui.define([
 	[{ // sap:creatable
 		annotationsV2 : 'sap:creatable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.InsertRestrictions' : {
+			"@Org.OData.Capabilities.V1.InsertRestrictions" : {
 				"Insertable" : false
 			}
 		}
 	}, { // sap:deletable and sap:deletable-path
 		annotationsV2 : 'sap:deletable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 				"Deletable" : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:deletable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 				"Deletable" : {
 					$Path : "PathExpression"
 				}
@@ -1382,7 +1382,7 @@ sap.ui.define([
 	}, { // if both V2 annotations are set there is an inconsistency -> use false
 		annotationsV2 : 'sap:deletable="foo-bar" sap:deletable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 				"Deletable" : false
 			}
 		},
@@ -1391,7 +1391,7 @@ sap.ui.define([
 	}, {
 		annotationsV2 : 'sap:deletable-path="PathExpression" sap:deletable="foo-bar"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+			"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 				"Deletable" : false
 			}
 		},
@@ -1400,13 +1400,13 @@ sap.ui.define([
 	}, { // sap:label
 		annotationsV2 : 'sap:label="Value"',
 		expectedAnnotationsV4 : {
-			'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			"@com.sap.vocabularies.Common.v1.Label" : "Value"
 		}
 	}, { // sap:pageable
 		annotationsV2 : 'sap:pageable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.SkipSupported' : false,
-			'@Org.OData.Capabilities.V1.TopSupported' : false
+			"@Org.OData.Capabilities.V1.SkipSupported" : false,
+			"@Org.OData.Capabilities.V1.TopSupported" : false
 		}
 	}, { // sap:pageable
 		annotationsV2 : 'sap:pageable="true"',
@@ -1414,7 +1414,7 @@ sap.ui.define([
 	}, { // sap:requires-filter
 		annotationsV2 : 'sap:requires-filter="true"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.FilterRestrictions' : {
+			"@Org.OData.Capabilities.V1.FilterRestrictions" : {
 				"RequiresFilter" : true
 			}
 		}
@@ -1422,16 +1422,16 @@ sap.ui.define([
 		annotationsV2 : 'sap:requires-filter="false"',
 		expectedAnnotationsV4 : {}
 	}, { // sap:searchable - different default values in V2 and V4
-		annotationsV2 : '',
+		annotationsV2 : "",
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
+			"@Org.OData.Capabilities.V1.SearchRestrictions" : {
 				"Searchable" : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:searchable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
+			"@Org.OData.Capabilities.V1.SearchRestrictions" : {
 				"Searchable" : false
 			}
 		}
@@ -1441,7 +1441,7 @@ sap.ui.define([
 	}, { // sap:topable
 		annotationsV2 : 'sap:topable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.TopSupported' : false
+			"@Org.OData.Capabilities.V1.TopSupported" : false
 		}
 	}, { // sap:topable
 		annotationsV2 : 'sap:topable="true"',
@@ -1449,14 +1449,14 @@ sap.ui.define([
 	}, { // sap:updatable and sap:updatable-path
 		annotationsV2 : 'sap:updatable="false"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
 				"Updatable" : false
 			}
 		}
 	}, {
 		annotationsV2 : 'sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
 				"Updatable" : {
 					$Path : "PathExpression"
 				}
@@ -1465,7 +1465,7 @@ sap.ui.define([
 	}, { // if both V2 annotations are set there is an inconsistency -> use false
 		annotationsV2 : 'sap:updatable-path="PathExpression" sap:updatable="foo-bar"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
 				"Updatable" : false
 			}
 		},
@@ -1474,7 +1474,7 @@ sap.ui.define([
 	}, {
 		annotationsV2 : 'sap:updatable="foo-bar" sap:updatable-path="PathExpression"',
 		expectedAnnotationsV4 : {
-			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+			"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
 				"Updatable" : false
 			}
 		},
@@ -1485,7 +1485,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var mAnnotations = Object.assign({
-					'@Org.OData.Capabilities.V1.SearchRestrictions' : {
+					"@Org.OData.Capabilities.V1.SearchRestrictions" : {
 						"Searchable" : false
 					}
 				}, oFixture.expectedAnnotationsV4),
@@ -1494,9 +1494,9 @@ sap.ui.define([
 						<EntityType Name="Foo"/>\
 						<EntityContainer Name="Container">\
 							<EntitySet Name="FooSet" EntityType="GWSAMPLE_BASIC.Foo" '
-								+ oFixture.annotationsV2 + '/>\
+								+ oFixture.annotationsV2 + "/>\
 							</EntityContainer>\
-					</Schema>',
+					</Schema>",
 				oExpectedResult = {
 					"$EntityContainer" : "GWSAMPLE_BASIC.Container",
 					"GWSAMPLE_BASIC." : {
@@ -1534,110 +1534,110 @@ sap.ui.define([
 	[{
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		},
 		v4Annotations : {},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/tango" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/tango" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Value"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV2'
+				"@com.sap.vocabularies.Common.v1.Label" : "ValueV2"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.Label" : "ValueV4"
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.Label" : "ValueV4"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.Label' : 'Label'
+				"@com.sap.vocabularies.Common.v1.Label" : "Label"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.Label' : 'Label'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.Label" : "Label"
 			}
 		}
 	}, {
 		convertedV2Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 					"Deletable" : false
 				},
-				'@com.sap.vocabularies.Common.v1.Label' : 'Label',
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+				"@com.sap.vocabularies.Common.v1.Label" : "Label",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/ChaChaCha" : {
-				'@com.sap.vocabularies.Common.v1.Heading' : 'ValueV2',
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV2'
+				"@com.sap.vocabularies.Common.v1.Heading" : "ValueV2",
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV2"
 			}
 		},
 		v4Annotations : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 					"NonDeletableNavigationProperties" : []
 				},
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV4'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV4"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/Jive" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "ValueV4"
 			}
 		},
 		result : {
 			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
-				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
 					"NonDeletableNavigationProperties" : []
 				},
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV4',
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV4",
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "Value"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/ChaChaCha" : {
-				'@com.sap.vocabularies.Common.v1.Heading' : 'ValueV2',
-				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV2'
+				"@com.sap.vocabularies.Common.v1.Heading" : "ValueV2",
+				"@com.sap.vocabularies.Common.v1.Label" : "LabelV2"
 			},
 			"GWSAMPLE_BASIC.0001.Foo/Jive" : {
-				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
-				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'ValueV4'
+				"@com.sap.vocabularies.Common.v1.IsDigitSequence" : true,
+				"@com.sap.vocabularies.Common.v1.QuickInfo" : "ValueV4"
 			}
 		}
 	}].forEach(function (oFixture, i) {
@@ -1759,7 +1759,7 @@ sap.ui.define([
 					"foo." : {
 						"$Annotations" : {
 							"foo.Bar" : {
-								'@com.sap.vocabularies.Common.v1.Label' : 'LabelEntityType'
+								"@com.sap.vocabularies.Common.v1.Label" : "LabelEntityType"
 							}
 						},
 						"$kind" : "Schema"

@@ -359,7 +359,7 @@ sap.ui.define([
 			if (jqXHR.status === 412) {
 				sPreference = jqXHR.getResponseHeader("Preference-Applied");
 
-				if (sPreference && sPreference.replace(rWhitespace, '') === "handling=strict") {
+				if (sPreference && sPreference.replace(rWhitespace, "") === "handling=strict") {
 					oResult.strictHandlingFailed = true;
 				} else {
 					oResult.isConcurrentModification = true;
@@ -697,7 +697,7 @@ sap.ui.define([
 					};
 
 				Object.keys(oMessage).forEach(function (sProperty) {
-					if (sProperty[0] === '@') {
+					if (sProperty[0] === "@") {
 						// cannot use .getAnnotation() for compatibility reasons
 						if (sProperty.endsWith(".numericSeverity")) {
 							oRawMessage.numericSeverity = oMessage[sProperty];

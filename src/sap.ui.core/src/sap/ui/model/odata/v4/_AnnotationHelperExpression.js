@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/performance/Measurement"
 ], function (Basics, Log, BindingParser, ManagedObject, SyncPromise, Measurement) {
-	'use strict';
+	"use strict";
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
 	var sAnnotationHelper = "sap.ui.model.odata.v4.AnnotationHelper",
@@ -246,7 +246,7 @@ sap.ui.define([
 				// convert the results to strings after we know whether the result is expression
 				aParts = aParameters.filter(function (oParameter) {
 					// ignore null (otherwise the string 'null' would appear in expressions)
-					return oParameter.type !== 'edm:Null';
+					return oParameter.type !== "edm:Null";
 				}).map(function (oParameter) {
 					if (bExpression) {
 						// the expression might have a lower operator precedence than '+'
@@ -566,9 +566,9 @@ sap.ui.define([
 					aParts = [],
 					sPrefix = "";
 
-				aParts.push('odata.fillUriTemplate(',
+				aParts.push("odata.fillUriTemplate(",
 					Basics.resultToString(aResults[0], true, false, true),
-					',{');
+					",{");
 				for (i = 1; i < oPathValue.value.length; i += 1) {
 					sName = Basics.property(aParameters[i], "$Name", "string");
 					aParts.push(sPrefix, Basics.toJSON(sName), ":",
@@ -849,10 +849,10 @@ sap.ui.define([
 					type : "Edm.String",
 					value : oResult.type === "Edm.String"
 						// Note: odata.uriEncode() is V2, but safe for Edm.String!
-						? 'odata.uriEncode(' + Basics.resultToString(oResult, true, false, true)
+						? "odata.uriEncode(" + Basics.resultToString(oResult, true, false, true)
 							+ "," + Basics.toJSON(oResult.type) + ")"
 						// Note: see _Helper.formatLiteral()
-						: 'String(' + Basics.resultToString(oResult, true, false, true) + ")"
+						: "String(" + Basics.resultToString(oResult, true, false, true) + ")"
 				};
 			});
 		},

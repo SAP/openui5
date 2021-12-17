@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/test/TestUtils",
-	'sap/ui/util/XMLHelper',
+	"sap/ui/util/XMLHelper",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
@@ -234,7 +234,7 @@ sap.ui.define([
 			/*jslint regexp: true*/
 			sXml = sXml
 				.replace(/ xmlns.*?=".*?"/g, "")
-				.replace(/ \/>/g, '/>')
+				.replace(/ \/>/g, "/>")
 				// Replace all tabulators
 				.replace(/\t/g, "");
 			return sXml;
@@ -419,7 +419,7 @@ sap.ui.define([
 			+ ' xmlns:t="sap.ui.table"'
 			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
-			+ '</mvc:View>',
+			+ "</mvc:View>",
 			"application/xml"
 		);
 		oParseError = XMLHelper.getParseError(oDocument);
@@ -5506,7 +5506,7 @@ sap.ui.define([
 			sPerson,
 			that = this;
 
-		return this.createView(assert, '', oModel).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			oOperation.setParameter("Person", oPerson);
 			oPerson.Salary = 54321;
 			oPerson.Address.City = "Kashyyk";
@@ -14131,7 +14131,7 @@ sap.ui.define([
 			that = this;
 
 		// code under test
-		return this.createView(assert, '', oModel).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			var oContextBinding = oModel.bindContext("/GetAvailableFlights(...)");
 
 			that.expectRequest("GetAvailableFlights?fromdate=datetime'2017-08-10T00:00:00'"
@@ -14229,7 +14229,7 @@ sap.ui.define([
 			that = this;
 
 		// code under test
-		return this.createView(assert, '', oModel).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			var oContextBinding = oModel.bindContext("/__FAKE__GetAllFlightDates(...)");
 
 			that.expectRequest("__FAKE__GetAllFlightDates", {
@@ -14269,7 +14269,7 @@ sap.ui.define([
 			that = this;
 
 		// code under test
-		return this.createView(assert, '', oModel).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			var oContextBinding = oModel.bindContext("/__FAKE__GetFlightDetailsByCarrier(...)");
 
 			that.expectRequest("__FAKE__GetFlightDetailsByCarrier?carrid='AA'", {
@@ -14380,7 +14380,7 @@ sap.ui.define([
 			that = this;
 
 		// code under test
-		return this.createView(assert, '', oModel).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			oContextBinding = oModel.bindContext("/__FAKE__ActionImport(...)");
 
 			that.expectRequest({
@@ -16145,7 +16145,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">' +
-	(bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : '') +
+	(bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : "") +
 '	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="blackBinding">\
 		<Text id="note" text="{Note}"/>\
 	</FlexBox>\
@@ -28276,7 +28276,7 @@ sap.ui.define([
 	QUnit.test("Annotation target with parentheses to specify action overload", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true});
 
-		return this.createView(assert, '', oModel).then(function () {
+		return this.createView(assert, "", oModel).then(function () {
 			return oModel.getMetaModel().requestData();
 		}).then(function (oMetaData) {
 			assert.deepEqual(
@@ -33246,7 +33246,7 @@ sap.ui.define([
 
 		return oMetaModel.requestObject("/As/$Type/$Key").then(function (aKeys) {
 			var i,
-				sView = '';
+				sView = "";
 
 			// DON'T TRY THIS AT HOME, KIDZ!
 			aKeys.length = 0;
@@ -35912,7 +35912,7 @@ sap.ui.define([
 				.expectChange("noteLanguage", "IT");
 
 			// code under test
-			oListBinding.changeParameters({foo : 'bar'});
+			oListBinding.changeParameters({foo : "bar"});
 
 			return that.waitForChanges(assert, "(3) changeParameters");
 		}).then(function () {

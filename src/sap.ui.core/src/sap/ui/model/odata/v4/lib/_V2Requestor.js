@@ -722,7 +722,7 @@ sap.ui.define([
 		}
 
 		Object.keys(mQueryOptions).forEach(function (sName) {
-			var bIsSystemQueryOption = sName[0] === '$',
+			var bIsSystemQueryOption = sName[0] === "$",
 				vValue = mQueryOptions[sName];
 
 			if (bDropSystemQueryOptions && bIsSystemQueryOption) {

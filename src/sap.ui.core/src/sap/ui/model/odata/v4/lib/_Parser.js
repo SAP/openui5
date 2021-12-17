@@ -139,14 +139,14 @@ sap.ui.define([], function () {
 						this.advanceBws();
 					} while (this.advanceIf(","));
 					this.advanceBws();
-					this.advance(')');
+					this.advance(")");
 					return oLeft;
 				},
 				nud : function () {
 					this.advanceBws();
 					var oToken = this.expression(0);
 					this.advanceBws();
-					this.advance(')');
+					this.advance(")");
 					return oToken;
 				}
 			},
@@ -494,7 +494,7 @@ sap.ui.define([], function () {
 		function brackets() {
 			for (;;) {
 				oToken = that.advance();
-				if (!oToken || oToken.id === ';') {
+				if (!oToken || oToken.id === ";") {
 					that.expected("')'", oToken);
 				}
 				sValue += oToken.value;
@@ -594,7 +594,7 @@ sap.ui.define([], function () {
 	 * @returns {object} An object with "$foo" as key and the parsed value of bar as value.
 	 */
 	_SystemQueryOptionParser.prototype.parseSystemQueryOption = function () {
-		var oToken = this.advance('OPTION');
+		var oToken = this.advance("OPTION");
 
 		switch (oToken.value) {
 			case "$expand":
@@ -685,7 +685,7 @@ sap.ui.define([], function () {
 				if (c === '"') {
 					return sNext.slice(0, i + 1);
 				}
-				bEscaping = c === '\\';
+				bEscaping = c === "\\";
 			}
 		}
 		throw new SyntaxError("Unterminated string at " + iAt + ": " + sOption);

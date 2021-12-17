@@ -2035,7 +2035,7 @@ sap.ui.define([
 		{sPath : "TEAM_2_MANAGER", oContext : {}} // relative binding with standard context
 	].forEach(function (oFixture) {
 		QUnit.test("checkUpdateInternal: " + JSON.stringify(oFixture), function (assert) {
-			var bRelative = oFixture.sPath[0] !== '/',
+			var bRelative = oFixture.sPath[0] !== "/",
 				oCache = bRelative ? null : { /* cache */},
 				oBinding = new ODataParentBinding({
 					oCache : oCache,

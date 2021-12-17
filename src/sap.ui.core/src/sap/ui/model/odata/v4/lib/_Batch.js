@@ -32,7 +32,7 @@ sap.ui.define([
 
 		// escape RegExp-related characters
 		sBatchBoundary = escapeRegExp(sBatchBoundary);
-		return new RegExp('--' + sBatchBoundary + '(?:[ \t]*\r\n|--)');
+		return new RegExp("--" + sBatchBoundary + "(?:[ \t]*\r\n|--)");
 	}
 
 	/**
@@ -177,14 +177,14 @@ sap.ui.define([
 			aHttpStatusInfos = aHttpHeaders[0].split(" ");
 
 			oResponse.status = parseInt(aHttpStatusInfos[1]);
-			oResponse.statusText = aHttpStatusInfos.slice(2).join(' ');
+			oResponse.statusText = aHttpStatusInfos.slice(2).join(" ");
 			oResponse.headers = {};
 
 			// start with index 1 to skip status line
 			for (i = 1; i < aHttpHeaders.length; i += 1) {
 				// e.g. Content-Type: application/json;odata.metadata=minimal
 				sHeader = aHttpHeaders[i];
-				iColonIndex = sHeader.indexOf(':');
+				iColonIndex = sHeader.indexOf(":");
 				sHeaderName = sHeader.slice(0, iColonIndex).trim();
 				sHeaderValue = sHeader.slice(iColonIndex + 1).trim();
 				oResponse.headers[sHeaderName] = sHeaderValue;
@@ -274,7 +274,7 @@ sap.ui.define([
 			aRequestBody.push("--", sBatchBoundary, "\r\n");
 			if (Array.isArray(oRequest)) {
 				if (bIsChangeSet) {
-					throw new Error('Change set must not contain a nested change set.');
+					throw new Error("Change set must not contain a nested change set.");
 				}
 				aRequestBody = aRequestBody.concat(
 					_serializeBatchRequest(oRequest, iRequestIndex).body);

@@ -1335,9 +1335,9 @@ sap.ui.define([
 			oMetaModel.checkFilterOperation(new Filter({
 				path : "path",
 				operator : FilterOperator.All,
-				variable : 'foo',
+				variable : "foo",
 				condition : new Filter({
-					path : 'foo/bar',
+					path : "foo/bar",
 					operator : FilterOperator.GT,
 					value1 : 0
 				})
@@ -5162,7 +5162,7 @@ sap.ui.define([
 		this.mock(this.oMetaModel.oModel).expects("reportError")
 			.withExactArgs(sMessage, sODataMetaModel, sinon.match({
 				message : oError.message,
-				name : 'Error'
+				name : "Error"
 			}));
 
 		assert.throws(function () {
@@ -5193,7 +5193,7 @@ sap.ui.define([
 			this.mock(this.oMetaModel.oModel).expects("reportError")
 				.withExactArgs(sMessage, sODataMetaModel, sinon.match({
 						message : oError.message,
-						name : 'Error'
+						name : "Error"
 					}
 				));
 

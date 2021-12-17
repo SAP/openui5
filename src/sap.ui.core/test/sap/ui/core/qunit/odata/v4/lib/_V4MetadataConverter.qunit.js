@@ -328,7 +328,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("processFacetAttributes", function (assert) {
 		function localTest(sProperty, sValue, vExpectedValue) {
-			var oXml = xml(assert, '<Foo ' + sProperty + '="' + sValue + '"/>'),
+			var oXml = xml(assert, "<Foo " + sProperty + '="' + sValue + '"/>'),
 				oResult = {},
 				oExpectedResult = {};
 
@@ -428,9 +428,9 @@ sap.ui.define([
 									ContainsTarget="true" />\
 								<NavigationProperty Name="team3" Type="foo.Team"\
 									ContainsTarget="false" />\
-							</' + sType + '>\
+							</' + sType + ">\
 						</Schema>\
-					</edmx:DataServices>',
+					</edmx:DataServices>",
 				oExpected);
 		});
 	});
@@ -549,8 +549,8 @@ sap.ui.define([
 									Precision="2" Scale="variable" SRID="42"/>\
 								<ReturnType Type="Collection(Edm.String)" Nullable="false"\
 									MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
-							</' + sRunnable + '>\
-							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="false"/>\
+							</' + sRunnable + ">\
+							<" + sRunnable + ' Name="Baz" IsComposable="true" IsBound="false"/>\
 						</Schema>\
 					</edmx:DataServices>',
 				{

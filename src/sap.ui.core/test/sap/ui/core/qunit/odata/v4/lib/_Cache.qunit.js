@@ -3797,31 +3797,31 @@ sap.ui.define([
 		// code under test
 		oCache.setLateQueryOptions({
 			foo : "bar",
-			$expand : {n : {$select : 'p3'}},
+			$expand : {n : {$select : "p3"}},
 			$filter : "filter",
-			$select : ['p1', 'p2'],
+			$select : ["p1", "p2"],
 			$$ownRequest : true
 		});
 
 		assert.deepEqual(oCache.mLateQueryOptions, {
-			$expand : {n : {$select : 'p3'}},
-			$select : ['p1', 'p2']
+			$expand : {n : {$select : "p3"}},
+			$select : ["p1", "p2"]
 		});
 
 		// code under test
-		oCache.setLateQueryOptions({$expand : {n : {$select : 'p3'}}});
+		oCache.setLateQueryOptions({$expand : {n : {$select : "p3"}}});
 
 		assert.deepEqual(oCache.mLateQueryOptions, {
-			$expand : {n : {$select : 'p3'}},
+			$expand : {n : {$select : "p3"}},
 			$select : undefined
 		});
 
 		// code under test
-		oCache.setLateQueryOptions({$select : ['p1', 'p2']});
+		oCache.setLateQueryOptions({$select : ["p1", "p2"]});
 
 		assert.deepEqual(oCache.mLateQueryOptions, {
 			$expand : undefined,
-			$select : ['p1', 'p2']
+			$select : ["p1", "p2"]
 		});
 
 		assert.strictEqual(oCache.getLateQueryOptions(), oCache.mLateQueryOptions);
@@ -7242,7 +7242,7 @@ sap.ui.define([
 
 					checkUpdateAndDeleteFailure();
 
-					fnResolvePost({ID : '42'}); // this will resolve oCreatePromise, too
+					fnResolvePost({ID : "42"}); // this will resolve oCreatePromise, too
 				});
 			});
 		});
@@ -8460,13 +8460,13 @@ sap.ui.define([
 				.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
 				.then(function () {
 					if (bSkip === false) {
-						assert.deepEqual(oGetRelativePathExpectation.args, [['', 'EMPLOYEE']]);
+						assert.deepEqual(oGetRelativePathExpectation.args, [["", "EMPLOYEE"]]);
 						assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
-							['', 'EMPLOYEE'],
-							['', '~another~'],
-							['', '~path~']
+							["", "EMPLOYEE"],
+							["", "~another~"],
+							["", "~path~"]
 						]);
 					}
 				});
@@ -9334,13 +9334,13 @@ sap.ui.define([
 					sReadPath)
 				.then(function () {
 					if (bSkip === false) {
-						assert.deepEqual(oGetRelativePathExpectation.args, [['', 'ROOM_ID']]);
+						assert.deepEqual(oGetRelativePathExpectation.args, [["", "ROOM_ID"]]);
 						assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
-							['', 'ROOM_ID'],
-							['', '~another~'],
-							['', '~path~']
+							["", "ROOM_ID"],
+							["", "~another~"],
+							["", "~path~"]
 						]);
 					}
 				});
