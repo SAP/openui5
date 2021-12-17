@@ -10,9 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/MonthChangeAction",
 	"sap/ui/integration/cards/actions/SubmitAction",
 	"sap/ui/integration/cards/actions/NavigationAction",
-	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/Utils",
 	"sap/base/strings/capitalize"
 ], function (
 	library,
@@ -23,9 +21,7 @@ sap.ui.define([
 	MonthChangeAction,
 	SubmitAction,
 	NavigationAction,
-	BindingHelper,
 	BindingResolver,
-	Utils,
 	capitalize
 ) {
 	"use strict";
@@ -368,31 +364,18 @@ sap.ui.define([
 	};
 
 	CardActions.prototype.fireAction = function (oSource, sType, mParameters) {
-		var oHost = this._getHostInstance(),
-			oCard = this.getCard(),
-			oActionHandlingConfiguration = this._extractActionConfigurations(oCard, mParameters);
-
-		oActionHandlingConfiguration = BindingHelper.createBindingInfos(oActionHandlingConfiguration, oCard.getBindingNamespaces());
-		oActionHandlingConfiguration = BindingResolver.resolveValue(oActionHandlingConfiguration, oSource);
-
-		// TODO: refactor and move this to SubmitAction
-		if (sType === CardActionType.Submit && oActionHandlingConfiguration.configuration) {
-			Utils.makeUndefinedValuesNull(oActionHandlingConfiguration.configuration.parameters);
-		}
-
 		CardActions.fireAction({
-			card: oCard,
-			host: oHost,
+			card: this.getCard(),
+			host: this._getHostInstance(),
 			action: {
 				type: sType
 			},
-			parameters: oActionHandlingConfiguration,
+			parameters: mParameters,
 			source: oSource
 		});
 	};
 
 	// TODO: make this method private and allow usage only through an instance, i.e. new CardActions(...).fireAction(...)
-	// Benefit: extract action handlers, resolve parameters bindings, make undefined values null in a single place
 	CardActions.fireAction = function (mConfig) {
 		var oHost = mConfig.host,
 			oCard = mConfig.card,
@@ -438,37 +421,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolves manifest configurations for the Actions
-	 *
-	 * @param oCard {sap.ui.integration.widgets.Card}
-	 * @param mParameters {Object}
-	 * @returns {Object}
-	 * @private
-	 */
-	CardActions.prototype._extractActionConfigurations = function (oCard, mParameters) {
-		var oRequestConfig = oCard && oCard.getManifestEntry("/sap.card/configuration/actionHandlers/submit"),
-			oData = mParameters.data || {};
-
-		if (!oRequestConfig) {
-			return mParameters;
-		}
-
-		return {
-			data: oData,
-			configuration: {
-				"mode": oRequestConfig.mode || "cors",
-				"url": oRequestConfig.url,
-				"method": oRequestConfig.method || "POST",
-				"parameters": oRequestConfig.parameters || oData,
-				"headers": oRequestConfig.headers,
-				"xhrFields": {
-					"withCredentials": !!oRequestConfig.withCredentials
-				}
-			}
-		};
-	};
-
-	/**
 	 * @param {sap.ui.integration.CardActionArea} sActionArea The area that describes what the action will be attached to
 	 * @returns {boolean} If the action is configured for the header, content, or a detail of an item in the content of the card
 	 */
@@ -505,6 +457,7 @@ sap.ui.define([
 			return new _ActionClass({
 				config: mConfig.action,
 				parameters: mConfig.parameters,
+				actionHandler: mConfig.card.getManifestEntry("/sap.card/configuration/actionHandlers/" + mConfig.action.type.toLowerCase()),
 				card: mConfig.card,
 				source: mConfig.source
 			});

@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/integration/library",
-	"sap/ui/integration/cards/actions/SubmitAction",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils"
 ], function (
 	library,
-	SubmitAction,
 	RequestDataProvider,
 	Card,
 	qutils
@@ -93,72 +91,6 @@ sap.ui.define([
 					"body": [{
 						"type": "Input.Text",
 						"id": "EmailVal"
-					}],
-					"actions": [{
-						"type": "Action.Submit",
-						"title": "Send to backend"
-					}]
-				}
-			}
-		});
-	});
-
-	QUnit.test("Action event with custom payload with bindings to 'form' model", function (assert) {
-		var done = assert.async();
-
-		this.oCard.attachEvent("_ready", function () {
-			// Act
-			this._pressSubmitButton();
-		}.bind(this));
-
-		this.oCard.attachAction(function (oEvent) {
-			oEvent.preventDefault();
-
-			// Assert
-			assert.deepEqual(
-				oEvent.getParameter("parameters").configuration.parameters,
-				{
-					user: {
-						name: "First name: Donna, last name: Moore"
-					}
-				},
-				"Bindings in custom payload should be resolved prior submit request"
-			);
-			done();
-		});
-
-		this.oCard.setManifest({
-			"sap.app": {
-				"id": "test.adaptive.submit.action.payload",
-				"type": "card"
-			},
-			"sap.card": {
-				"type": "AdaptiveCard",
-				"configuration": {
-					"actionHandlers": {
-						"submit": {
-							"url": "./some-fake-api",
-							"parameters": {
-								"user": {
-									"name": "First name: {form>/firstName}, last name: {form>/lastName}"
-								}
-							}
-						}
-					}
-				},
-				"content": {
-					"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-					"type": "AdaptiveCard",
-					"version": "1.0",
-					"body": [{
-						"type": "Input.Text",
-						"id": "firstName",
-						"value": "Donna"
-					},
-					{
-						"type": "Input.Text",
-						"id": "lastName",
-						"value": "Moore"
 					}],
 					"actions": [{
 						"type": "Action.Submit",
@@ -256,7 +188,9 @@ sap.ui.define([
 		var done = assert.async(),
 			oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 			oDefaultPayload = {
-				someKey: "someValue"
+				data: {
+					someKey: "someValue"
+				}
 			};
 
 		this.oCard.attachEvent("_ready", function () {
@@ -264,9 +198,7 @@ sap.ui.define([
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
 				CardActionType.Submit,
-				{
-					data: oDefaultPayload
-				}
+				oDefaultPayload
 			);
 
 			// Assert
@@ -348,7 +280,8 @@ sap.ui.define([
 		var done = assert.async(),
 			oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
 			oDefaultPayload = {
-				someKey: "someValue"
+				userName: "DonnaMoore",
+				email: undefined
 			},
 			oCustomPayload = {
 				user: {
@@ -362,10 +295,6 @@ sap.ui.define([
 					email: null
 				}
 			};
-		this.oCard.getModel("form").setProperty("/", {
-			userName: "DonnaMoore",
-			email: undefined
-		});
 
 		this.oCard.attachEvent("_ready", function () {
 			// Act
@@ -407,48 +336,33 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Undefined values in action event", function (assert) {
-		var done = assert.async(),
-			oDefaultPayload = {
-				someKey: "someValue"
-			},
-			oCustomPayload = {
-				user: {
-					name: "{form>/userName}",
-					email: "{form>/email}"
-				}
-			},
-			oExpectedPayload = {
-				user: {
-					name: "DonnaMoore",
-					email: null
-				}
-			};
-		this.oCard.getModel("form").setProperty("/", {
-			userName: "DonnaMoore",
-			email: undefined
-		});
-		this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+	QUnit.test("Binding in action handler parameters", function (assert) {
+		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
+			// Arrange
+			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
 			// Act
 			this.oCard.getCardContent().getActions().fireAction(
 				this.oCard.getCardContent(),
 				CardActionType.Submit,
 				{
-					data: oDefaultPayload
+					data: {
+						userName: "DonnaMoore"
+					}
 				}
 			);
 
-		}.bind(this));
-
-		this.oCard.attachAction(function (oEvent) {
-			var oParameters = oEvent.getParameter("parameters");
 			// Assert
-			assert.ok(oParameters.configuration.parameters.user.hasOwnProperty("email"), "Key with 'undefined' value should be part of the payload");
-			assert.deepEqual(oParameters.configuration.parameters, oExpectedPayload, "Undefined values should be turned to 'null'");
+			assert.strictEqual(
+				oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
+				"My name is DonnaMoore",
+				"Binding should be resolved"
+			);
+
 			done();
-		});
+		}.bind(this));
 
 		this.oCard.setManifest({
 			"sap.app": {
@@ -460,8 +374,62 @@ sap.ui.define([
 				"configuration": {
 					"actionHandlers": {
 						"submit": {
-							"url": "./some-fake-api",
-							"parameters": oCustomPayload
+							"url": "some-fake-api",
+							"parameters": {
+								"user": {
+									"name": "My name is {form>/userName}"
+								}
+							}
+						}
+					}
+				},
+				"content": {
+					"item": {}
+				}
+			}
+		});
+	});
+
+	QUnit.test("Expression binding in action handler parameters", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			// Arrange
+			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
+			// Act
+			this.oCard.getCardContent().getActions().fireAction(
+				this.oCard.getCardContent(),
+				CardActionType.Submit,
+				{}
+			);
+
+			// Assert
+			assert.strictEqual(
+				oDataProviderStub.thisValues[0].getSettings().request.parameters.user.name,
+				"The winner is second player",
+				"Binding should be resolved"
+			);
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.adaptive.submit.action.payload",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"actionHandlers": {
+						"submit": {
+							"url": "some-fake-api",
+							"parameters": {
+								"user": {
+									"name": "The winner is {= 1 > 2 ? 'first player' : 'second player'}"
+								}
+							}
 						}
 					}
 				},

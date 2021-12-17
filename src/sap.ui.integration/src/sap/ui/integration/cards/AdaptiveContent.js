@@ -285,7 +285,6 @@ sap.ui.define([
 						data: oAction.data
 					};
 					sType = library.CardActionType.Submit;
-					this.getCardInstance().getModel("form").setProperty("/", oPayload.data);
 				} else {
 					// The other types of actions are entirely internal
 					// and would not make sense to be bubbled outside the Card.
