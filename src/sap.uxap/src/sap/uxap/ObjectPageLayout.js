@@ -4265,13 +4265,14 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._toggleFooter = function (bShow) {
 		var bUseAnimations,
-			oFooter = this.getFooter();
+			oFooter = this.getFooter(),
+			sAnimationMode = this.oCore.getConfiguration().getAnimationMode();
 
 		if (!exists(oFooter) || !exists(this._$footerWrapper)) {
 			return;
 		}
 
-		bUseAnimations = this.oCore.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
+		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		if (bUseAnimations) {
 			this._toggleFooterAnimation(bShow, oFooter);

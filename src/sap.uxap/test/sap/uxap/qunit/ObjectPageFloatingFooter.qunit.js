@@ -132,6 +132,30 @@ function (jQuery, Core, Configuration, XMLView, ObjectPageLayout) {
 		Core.getConfiguration().setAnimationMode(sOriginalMode);
 	});
 
+	QUnit.test("Footer is toggled when animations are set to 'minimal'", function (assert) {
+		// Arrange
+		var $footerWrapper = this.oObjectPage._$footerWrapper,
+			sOriginalMode = Core.getConfiguration().getAnimationMode();
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+
+		// Act: toggle to 'true'
+		this.oObjectPage.setShowFooter(true);
+
+		// Check
+		assert.ok(!$footerWrapper.hasClass("sapUiHidden"), "footer is shown");
+
+		// Act: toggle to 'false'
+		this.oObjectPage.setShowFooter(false);
+
+		// Check
+		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden");
+
+		// Clean up
+		Core.getConfiguration().setAnimationMode(sOriginalMode);
+	});
+
 	QUnit.test("ObjectPage floating footer animation is forced to end in case of a sudden invalidate", function (assert) {
 		// Act
 		this.oObjectPage.invalidate();
