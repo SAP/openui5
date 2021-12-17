@@ -817,7 +817,8 @@ sap.ui.define([
 	 * @private
 	 */
 	_Cache.prototype.fetchTypes = function () {
-		var aPromises, mTypeForMetaPath, that = this;
+		var aPromises, mTypeForMetaPath,
+			that = this;
 
 		/*
 		 * Recursively calls fetchType for all (sub)paths in $expand.
@@ -1407,7 +1408,8 @@ sap.ui.define([
 	 * @private
 	 */
 	_Cache.prototype.requestCount = function (oGroupLock) {
-		var sExclusiveFilter, mQueryOptions, sReadUrl, that = this;
+		var sExclusiveFilter, mQueryOptions, sReadUrl,
+			that = this;
 
 		if (this.mQueryOptions && this.mQueryOptions.$count) {
 			// now we are definitely in a CollectionCache

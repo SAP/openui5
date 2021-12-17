@@ -10163,7 +10163,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("create: bSharedRequest, cache size", function (assert) {
-		var i, iTimerValue = 0, mSharedCollectionCacheByPath;
+		var mSharedCollectionCacheByPath,
+			iTimerValue = 0,
+			i;
 
 		// avoid that two caches get the same iInactiveSince so that we get a well-defined LRU order
 		this.stub(Date, "now").callsFake(function () {
