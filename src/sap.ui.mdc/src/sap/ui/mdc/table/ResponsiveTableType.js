@@ -165,25 +165,66 @@ sap.ui.define([
 		oTable._oTable.setMultiSelectMode(oTable.getMultiSelectMode());
 	};
 
-	ResponsiveTableType.updateNavigation = function(oTable) {
-		oTable._oTemplate.setType(RowAction.Navigation);
-	};
-
-	ResponsiveTableType.updateRowAction = function(oTable, bNavigation) {
-		var sType = oTable.hasListeners("rowPress") ? "Active" : "Inactive";
-		oTable._oTemplate.setType(sType);
-		if (bNavigation) {
-			this.updateNavigation(oTable);
-		}
-	};
-
-	ResponsiveTableType.updateRowSettings = function(oRowTemplate, oRowSettings) {
+	ResponsiveTableType.updateRowSettings = function(oTable, oRowSettings, fnRowActionPress) {
 		// Remove all bindings, as applySettings doesn't do it
+		var oRowTemplate = oTable._oTemplate;
 		oRowTemplate.unbindProperty("navigated");
 		oRowTemplate.unbindProperty("highlight");
 		oRowTemplate.unbindProperty("highlightText");
 
-		oRowTemplate.applySettings(oRowSettings.getAllSettings());
+		this.updateRowActions(oTable, oRowSettings, fnRowActionPress);
+		var oSettings = oRowSettings.getAllSettings();
+		oRowTemplate.applySettings(oSettings);
+	};
+
+	ResponsiveTableType.updateRowActions = function (oTable, oRowSettings) {
+		oTable._oTemplate.unbindProperty("type");
+
+		var sType = oTable.hasListeners("rowPress") ? "Active" : "Inactive";
+
+		if (!oRowSettings) {
+			oTable._oTemplate.setType(sType);
+			return;
+		}
+
+		var oRowActionsInfo = oRowSettings.getAllActions();
+		if ("templateInfo" in oRowActionsInfo) {
+			var oTemplateInfo = oRowActionsInfo.templateInfo;
+
+			if (oTemplateInfo.visible.formatter) {
+				// Wrap the formatter (which should return a boolean) value and determine the type based on the formatted value.
+				var fnFormatter = oTemplateInfo.visible.formatter;
+				oTemplateInfo.visible.formatter = function (sValue) {
+					var bVisible = fnFormatter(sValue);
+					return bVisible ? RowAction.Navigation : sType;
+				};
+			}
+			if (typeof oTemplateInfo.visible === "object") {
+				oTable._oTemplate.bindProperty("type", oTemplateInfo.visible);
+			} else {
+				oTable._oTemplate.setProperty("type", oTemplateInfo.visible);
+			}
+		} else if (oRowActionsInfo && oRowActionsInfo.items){
+			var _oRowActionItem;
+			if (oRowActionsInfo.items.length == 0) {
+				oTable._oTemplate.setType(sType);
+				return;
+			}
+
+			_oRowActionItem = oRowActionsInfo.items.find(function (oRowAction) {
+				return oRowAction.getType() == "Navigation";
+			});
+
+			// ResponsiveTable currently only supports RowActionItem<Navigation>
+			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
+				throw new Error("No RowAction of type 'Navigation' found. sap.m.Table only accepts RowAction of type 'Navigation'.");
+			}
+
+			// Associate RowActionItem<Navigation> to template for reference
+			oTable._oTemplate.data("rowAction", _oRowActionItem);
+		}
+
+		oTable._oTemplate.setType(RowAction.Navigation);
 	};
 
 	ResponsiveTableType.disableColumnResizer = function(oTable, oInnerTable) {
@@ -304,6 +345,38 @@ sap.ui.define([
 		} else {
 			this._oShowDetailsButton.setVisible(false);
 		}
+	};
+
+	ResponsiveTableType._onRowActionPress = function (oEvent) {
+		var oInnerRow = oEvent.getParameter("listItem");
+		var oContext = oInnerRow.getBindingContext();
+
+		if (oInnerRow.getType() !== "Navigation") {
+			return;
+		}
+
+		var oRowSettings = this.getRowSettings();
+		var oRowActionsInfo = oRowSettings.getAllActions();
+
+		if (this.getRowSettings().isBound("rowActions")) {
+			var sActionModel = oRowActionsInfo.items.model;
+			if (!this._oRowActionItem) {
+				this._oRowActionItem = oRowActionsInfo.items.template.clone();
+			}
+
+			// Set model for row settings, as it is not propagated
+			this._oRowActionItem.setModel(this.getModel(sActionModel), sActionModel);
+			this.getRowSettings().addDependent(this._oRowActionItem);
+		} else {
+			this._oRowActionItem = oInnerRow.data("rowAction");
+		}
+
+		// Binding Context cannot be determined for ResponsiveTable, which is why we always assume to have a RowActionItem<Navigation> no matter what
+		this._oRowActionItem.setType("Navigation");
+
+		this._oRowActionItem.firePress({
+			bindingContext: oContext
+		});
 	};
 
 	return ResponsiveTableType;

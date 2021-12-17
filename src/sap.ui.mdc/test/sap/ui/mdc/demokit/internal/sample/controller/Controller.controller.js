@@ -6,14 +6,30 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/m/MessageBox',
 	'sap/m/MessageToast',
-	'sap/ui/core/Core'
-], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore) {
+	'sap/ui/core/Core',
+	"sap/ui/mdc/table/RowActionItem"
+], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
 
 		onInit: function() {
 			StateUtil.attachStateChange(this._onStateChange.bind(this));
+			var oTable = this.byId("mdcTable");
+			var oTempModel = new sap.ui.model.json.JSONModel({
+				data: [
+					{name: "Navigation", type: sap.ui.mdc.RowAction.Navigation},
+					{name: "Test", type: "Navigation"}
+				]
+			});
+			oTable.setModel(oTempModel, "actions");
+
+			oTable.setModel(new sap.ui.model.json.JSONModel({
+				data: {
+					name: "Navigation",
+					type: sap.ui.mdc.RowAction.Navigation
+				}
+			}), "actionsResp");
 		},
 
 		onBeforeExport: function (oEvt) {
@@ -106,14 +122,102 @@ sap.ui.define([
 			return (sID === "HT-1003");
 		},
 
+		formatNav: function (sCat) {
+			return sCat === "Notebooks";
+		},
+
 		// only Grid Table
 		onToggleNavigation: function(oEvent) {
 			var oTable = this.byId('mdcTable');
-			if (oEvent.getSource().getSelected()) {
-				oTable.setRowAction(['Navigation']);
-			} else {
-				oTable.setRowAction();
+
+			var oSettings = oTable.getRowSettings();
+			if (!oSettings) {
+				oSettings = new RowSettings();
 			}
+
+			if (oEvent.getSource().getSelected()) {
+				//oTable.setRowAction(['Navigation']);
+				oSettings.addRowAction(new RowActionItem({
+					type: "Navigation",
+					text: "Navigation",
+					visible: true,
+					press: this.onRowActionPress
+				}));
+			} else {
+				//oTable.setRowAction();
+				oSettings.removeAllAggregation("rowActions");
+			}
+
+			oTable.setRowSettings(oSettings);
+		},
+
+		// only Grid Table
+		onToggleBoundNavigation: function(oEvent) {
+			var oTable = this.byId('mdcTable');
+
+			var oSettings = oTable.getRowSettings();
+			if (!oSettings) {
+				oSettings = new RowSettings();
+			}
+
+			if (oEvent.getSource().getSelected()) {
+				//oTable.setRowAction(['Navigation']);
+				var oRowActionTemplate = new RowActionItem({
+					type: "{path: 'actions>type'}",
+					text: "{path: 'actions>name'}"
+				});
+				oRowActionTemplate.attachPress(this.onRowActionPress);
+				oRowActionTemplate.bindProperty("visible", {
+					path: "Category",
+					type: "sap.ui.model.type.Boolean",
+					formatter: this.formatNav
+				});
+
+				oSettings.bindAggregation("rowActions", {
+					path: "actions>/data",
+					template: oRowActionTemplate,
+					templateShareable: false
+				});
+			} else {
+				//oTable.setRowAction();
+				oSettings.unbindAggregation("rowActions");
+				oSettings.removeAllAggregation("rowActions");
+			}
+			oTable.setRowSettings(oSettings);
+		},
+
+		onToggleResponsiveBoundNavigation: function(oEvent) {
+			var oTable = this.byId('mdcTable');
+
+			var oSettings = oTable.getRowSettings();
+			if (!oSettings) {
+				oSettings = new RowSettings();
+			}
+
+			if (oEvent.getSource().getSelected()) {
+				//oTable.setRowAction(['Navigation']);
+				var oRowActionTemplate = new RowActionItem({
+					type: "{path: 'actionsResp>/type'}",
+					text: "{path: 'actionsResp>/name'}"
+				});
+				oRowActionTemplate.attachPress(this.onRowActionPress);
+				oRowActionTemplate.bindProperty("visible", {
+					path: "Category",
+					type: "sap.ui.model.type.Boolean",
+					formatter: this.formatNav
+				});
+
+				oSettings.bindAggregation("rowActions", {
+					path: "actionsResp>/data",
+					template: oRowActionTemplate,
+					templateShareable: false
+				});
+			} else {
+				//oTable.setRowAction();
+				oSettings.unbindAggregation("rowActions");
+				oSettings.removeAllAggregation("rowActions");
+			}
+			oTable.setRowSettings(oSettings);
 		},
 
 		onToggleNavIndicator: function(oEvent) {
@@ -281,6 +385,14 @@ sap.ui.define([
 					StateUtil.applyExternalState(oTable, oState);
 				});
 			}
+		},
+
+		onRowActionPress: function (oEvent) {
+			MessageToast.show("Row Action " + oEvent.getSource().getType() + " selected.");
+		},
+
+		onRowPress: function (oEvent) {
+			MessageToast.show("Row " + oEvent.getParameter("id") + " pressed.", {offset: "0 50"});
 		}
 	});
 });

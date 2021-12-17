@@ -10,6 +10,8 @@ sap.ui.define([
 	/**
 	 * Constructor for new RowSettings.
 	 *
+	 * Caution: Only use bindings which are bound against the rows, as working functionalities cannot be ensured for other binding types.
+	 *
 	 * @param {string} [sId] Optional ID for the new object; generated automatically if no non-empty ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
@@ -58,6 +60,14 @@ sap.ui.define([
 				 * If set to <code>true</code>, a navigation indicator is displayed at the end of the row.
 				 */
 				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
+			},
+			aggregations: {
+				/**
+				 * The available actions for a row.
+				 *
+				 * rowActions cannot be bound with a factory. Additionally, {@link sap.m.Table} only works with row actions of type navigation.
+				 */
+				rowActions: {type: "sap.ui.mdc.table.RowActionItem", multiple: true}
 			}
 		}
 	});
@@ -85,6 +95,37 @@ sap.ui.define([
 		}
 
 		return mSettings;
+	};
+
+	RowSettings.prototype.getAllActions = function () {
+		var mSettings = {},
+			thisCloned = this.clone();
+
+		if (this.isBound("rowActions")) {
+			// Set bindingInfo for items aggregation to bindingInfo of rowActions
+			mSettings.items = thisCloned.getBindingInfo("rowActions");
+			var oTemplate = mSettings.items.template;
+			// Create temporary metdata information for later processing
+			mSettings.templateInfo = {
+				type: oTemplate.isBound("type") ? oTemplate.getBindingInfo("type") : oTemplate.getType(),
+				text: oTemplate.isBound("text") ? oTemplate.getBindingInfo("text") : oTemplate.getText(),
+				icon: oTemplate.isBound("icon") ? oTemplate.getBindingInfo("icon") : oTemplate.getIcon(),
+				visible: oTemplate.isBound("visible") ? oTemplate.getBindingInfo("visible") : oTemplate.getVisible()
+			};
+		} else {
+			mSettings.items = this.getRowActions();
+		}
+		return mSettings;
+	};
+
+	RowSettings.prototype.getRowActionCount = function () {
+		var iCount = 0;
+		if (this.isBound("rowActions")) {
+			iCount = 1;
+		} else {
+			iCount = this.getRowActions().length;
+		}
+		return iCount;
 	};
 
 	return RowSettings;
