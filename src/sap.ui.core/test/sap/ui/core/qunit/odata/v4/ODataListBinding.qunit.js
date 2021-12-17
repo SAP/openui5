@@ -2667,7 +2667,7 @@ sap.ui.define([
 				assert.strictEqual(oChild0Refreshed, true);
 				assert.strictEqual(oChild1Refreshed, true);
 				assert.strictEqual(oChild2Refreshed, true);
-				assert.strictEqual(oChild3RefreshedIfSuspended, bSuspended ? true : false);
+				assert.strictEqual(oChild3RefreshedIfSuspended, bSuspended);
 			});
 		});
 	});
