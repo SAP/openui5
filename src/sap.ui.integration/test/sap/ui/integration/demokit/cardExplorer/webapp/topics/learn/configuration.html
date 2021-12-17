@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Configuration</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Integration Card Configuration</h1>
+			<p>
+				As a card developer, you can define some general settings about the card.
+				These definitions are listed in the <code>"sap.card"/configuration</code> section of the manifest.
+				In this section you describe parameters, destinations, filters and enable features like Markdown.
+			</p>
+		
+			<h2 id="configurationProperties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>parameters</td>
+						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/manifestParameters" target="_parent">ManifestParameter</a>&gt;</td>
+						<td>No</td>
+						<td>Map of parameters.</td>
+						<td>1.15.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
+						<td>destinations</td>
+						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/destinations" target="_parent">Destination</a>&gt;</td>
+						<td>No</td>
+						<td>Map of destinations.</td>
+						<td>1.20.0</td>
+						<td>1.76</td>
+					</tr>
+					<tr>
+						<td>filters</td>
+						<td>Object&lt;string,<a href="../../index.html#/learn/filters" target="_parent">Filter</a>&gt;</td>
+						<td>No</td>
+						<td>
+							Map of filters.
+							<br><b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.24.0</td>
+						<td>1.80</td>
+					</tr>
+					<tr>
+						<td>csrfTokens</td>
+						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/csrfTokens" target="_parent">CSRFToken</a>&gt;</td>
+						<td>No</td>
+						<td>
+							Map of CSRF tokens.
+							<br><b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.38.0</td>
+						<td>1.97</td>
+					</tr>
+					<tr>
+						<td>actionHandlers</td>
+						<td>Object&lt;string,<a href="../../index.html#/learn/configuration/actionHandlers" target="_parent">ActionHandler</a>&gt;</td>
+						<td>No</td>
+						<td>
+							Map of action handlers for card actions.
+							Currently supported only in Adaptive cards with a single key named "submit" - an action handler for the submit action.
+						</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+					<tr>
+						<td>enableMarkdown</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>Markdown enablement for Adaptive Card.</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+				</table>
+			</div>
+ 
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Card Configuration</a></div>
+			<div><a href="#configurationroperties">Properties</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

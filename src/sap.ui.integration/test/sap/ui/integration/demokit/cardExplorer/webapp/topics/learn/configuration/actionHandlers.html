@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Action Handlers</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">
+				Action Handlers
+			</h1>
+			<p>
+				Action handlers enable card developers to provide action handling inside the manifest.
+			</p>
+			<p>
+				Currently only the submit action of Adaptive card can be handled.
+			</p>
+
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>url</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The URL of the request. Relative paths like
+							"data.json", "./data.json" and "../data.json"
+							are going to be resolved relatively to the manifest base path.
+						</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+					<tr>
+						<td>mode</td>
+						<td>string</td>
+						<td>"cors"</td>
+						<td>No</td>
+						<td>The mode of the request. Possible values are "cors", "no-cors", "same-origin".
+						</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+					<tr>
+						<td>method</td>
+						<td>string</td>
+						<td>"GET"</td>
+						<td>No</td>
+						<td>The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD".</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+					<tr>
+						<td>parameters</td>
+						<td>Object</td>
+						<td></td>
+						<td>No</td>
+						<td>
+							The request parameters to be sent to the server.
+							If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put as key/value pairs into the body of
+							the request.
+							If the method doesn't have an entity body, such as the "GET" or "HEAD" methods, the data is appended to
+							the URL.
+							<br><br>
+							Default encoding is <code>application/x-www-form-urlencoded</code>.
+							Also JSON is supported for the body encoding. If you need
+							it add a header <code>Content-Type: application/json</code>"
+							<br><br>
+							By default this property is a plain object that contains the form values of the Adaptive card.
+							The keys of the object are the IDs of all form fields, the values are the fields values.
+							<br>
+							Set this property if custom structure, keys, or values are needed.
+							In this case the values of the form fields can be accessed by their IDs via the "form" model.
+							This model contains all form fields.
+							For more information see the <a target="_parent"
+							href="../../../index.html#/explore/adaptive/adaptive-action-submit-custom-payload">Submit Action with Custom Payload</a> sample.
+						</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+					<tr>
+						<td>headers</td>
+						<td>Object</td>
+						<td></td>
+						<td>No</td>
+						<td>The HTTP headers of the request.</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+					<tr>
+						<td>withCredentials</td>
+						<td>boolean</td>
+						<td></td>
+						<td>No</td>
+						<td>Indicates whether cross-site requests should be made using credentials.</td>
+						<td>1.21.0</td>
+						<td>1.77</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="examples">
+				Example
+			</h2>
+
+			<p>An example with a card which submits the form data to Northwind service:</p>
+			<pre class="lang-json">
+{
+	"sap.card": {
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./NorthwindSvc/formData",
+					"method": "POST"
+				}
+			}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.0",
+			"body": [
+				....
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"title": "Send to backend"
+				}
+			]
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/adaptive/adaptive-action-submit" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#properties">Properties</a></div>
+			<div><a href="#examples">Example</a></div>
+		</div>
+	</div>
+</body>
+
+</html>
