@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
@@ -24,10 +23,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, coreLibrary, Message, BaseContext, FilterProcessor, Model,
-		_ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
-		ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations,
-		ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+], function (Log, SyncPromise, Message, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils,
+		CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding,
+		ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding,
+		ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -2595,15 +2594,20 @@ sap.ui.define([
 			}
 		]).forEach(function (fnTestEventHandlers, i) {
 			[true, false].forEach(function (bFromODLBcreate) {
+				[undefined, "~bInactive"].forEach(function (bInactive) {
 		var sTitle = "createEntry: called "
 			+ (bFromODLBcreate ? "from ODataListBinding#create" : "directly")
 			+ "; expand = " + sExpand + ", "
-			+ (bWithCallbackHandlers ? "with" : "without") + " callback handlers, i = " + i;
+			+ (bWithCallbackHandlers ? "with" : "without") + " callback handlers, inactive = "
+			+ bInactive + ", i = " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var fnAbort, fnAfterMetadataLoaded, pCreate, oEntity, fnError, mHeaders, oRequestHandle,
+		var fnAbort, fnAfterContextActivated, pCreate, oEntity, fnError, mHeaders, oRequestHandle,
 			oResult, fnSuccess, sUid,
-			oCreatedContext = {resetCreatedPromise : function () {}},
+			oCreatedContext = {
+				fetchActivated : function () {},
+				resetCreatedPromise : function () {}
+			},
 			oCreatedContextCache = {getCacheInfo : function () {}},
 			oCreatedContextCacheMock = this.mock(oCreatedContextCache),
 			oEntityMetadata = {entityType : "~entityType"},
@@ -2622,8 +2626,7 @@ sap.ui.define([
 					_getEntitySetByType : function () {},
 					_getEntityTypeByPath : function () {},
 					_isCollection : function () {},
-					isLoaded : function () {},
-					loaded : function () {}
+					isLoaded : function () {}
 				},
 				bRefreshAfterChange : false,
 				mRequests : "~mRequests",
@@ -2759,11 +2762,12 @@ sap.ui.define([
 					assert.ok(pCreate instanceof SyncPromise);
 
 					return true;
-				}))
+				}), bInactive)
 			.returns(oCreatedContext);
-		oMetadataMock.expects("loaded").withExactArgs().returns({then : function (fnFunc) {
-			fnAfterMetadataLoaded = fnFunc;
-		}});
+		this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
+			.returns({then : function (fnFunc) {
+				fnAfterContextActivated = fnFunc;
+			}});
 
 		// code under test
 		oResult = ODataModel.prototype.createEntry.call(oModel, "~path", {
@@ -2775,6 +2779,7 @@ sap.ui.define([
 			expand : sExpand,
 			groupId : "~groupId",
 			headers : mHeadersInput,
+			inactive : bInactive,
 			properties : {},
 			refreshAfterChange : "~refreshAfterChange",
 			success : bWithCallbackHandlers ? oEventHandlers.fnSuccess : undefined,
@@ -2786,7 +2791,7 @@ sap.ui.define([
 			oEntity.__metadata.created.contentID = sUid;
 			assert.deepEqual(oExpandRequest, {contentID : sUid});
 		}
-		assert.deepEqual(oModel.mChangedEntities["~sKey"], oEntity);
+		assert.deepEqual(oModel.mChangedEntities["~sKey"], bInactive ? undefined : oEntity);
 		assert.strictEqual(oResult, oCreatedContext);
 		assert.deepEqual(oRequest, sExpand
 			? {
@@ -2814,7 +2819,7 @@ sap.ui.define([
 		oModelMock.expects("_processRequestQueueAsync").withExactArgs("~mRequests");
 
 		// code under test
-		fnAfterMetadataLoaded();
+		fnAfterContextActivated();
 
 		// test abort handler
 		assert.strictEqual(oRequest._aborted, undefined);
@@ -2841,6 +2846,7 @@ sap.ui.define([
 		return fnTestEventHandlers.call(this, assert, oEventHandlersMock, fnAbort, fnError,
 			fnSuccess, pCreate, fnExpectResetCreatePromise);
 	});
+				});
 			});
 		});
 	});
@@ -4899,6 +4905,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getContext: inactive context", function (assert) {
+		var oContext,
+			oModel = {mContexts : {}};
+
+		// code under test
+		oContext = ODataModel.prototype.getContext.call(oModel, "/~sPath", "/~sDeepPath",
+			"~createPromise", "~inactive");
+
+		assert.strictEqual(oModel.mContexts["/~sPath"], oContext);
+		// constructor cannot be mocked so check internal member
+		assert.strictEqual(oContext.bInactive, true);
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bAll) {
 	QUnit.test("resetChanges: no paths; bAll=" + bAll, function (assert) {
 		var oModel = {
@@ -5295,6 +5315,111 @@ sap.ui.define([
 		return oMetadataPromise.then(function () {
 			assert.strictEqual(oRequest.key, "~sKey");
 		});
+	});
+});
+
+	//*********************************************************************************************
+[undefined, "base", "v2"].forEach(function (sContextType, i) {
+	QUnit.test("setProperty: activate inactive context; " + i, function (assert) {
+		var oActivateCall, oContext, oMetadataLoadedCall, oRequestQueuedPromise,
+			oMetadataLoadedPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {
+					"key" : {}
+				},
+				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
+				mDeferredGroups : {},
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					loaded : function () {}
+				},
+				mRequests : "~mRequests",
+				checkUpdate : function () {},
+				getEntityByPath : function () {},
+				_getObject : function () {},
+				_getRefreshAfterChange : function () {},
+				_processChange : function () {},
+				_processRequestQueueAsync : function () {},
+				_pushToRequestQueue : function () {},
+				resolve : function () {},
+				resolveDeep : function () {},
+				_resolveGroup : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oOriginalEntry = {
+				__metadata : {}
+			},
+			oOriginalValue = {};
+
+		if (sContextType) {
+			oContext = sContextType === "v2" ? new Context(oModel, "~sContextPath") : {};
+		}
+
+		oModelMock.expects("resolve")
+			.withExactArgs("~sPath", oContext && sinon.match.same(oContext))
+			.returns("/resolved/path");
+		oModelMock.expects("resolveDeep")
+			.withExactArgs("~sPath", oContext && sinon.match.same(oContext))
+			.returns("deepPath");
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/resolved/path", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "key";
+				oEntityInfo.propertyPath = "";
+
+				return "~oEntry";
+			});
+		oModelMock.expects("_getObject")
+			.withExactArgs("/key", null, true)
+			.returns(oOriginalEntry);
+		oModelMock.expects("_getObject")
+			.withExactArgs("~sPath", oContext && sinon.match.same(oContext), true)
+			.returns(oOriginalValue);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("key")
+			.returns(/*oEntityType*/);
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("key")
+			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		oModelMock.expects("_getObject")
+			.withExactArgs("/key")
+			.returns("~oData");
+		oModelMock.expects("_processChange")
+			.withExactArgs("key", "~oData", "~sDefaultUpdateMethod")
+			.returns(/*oRequest*/{});
+		oModelMock.expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, "~groupId")
+			.returns("~bRefreshAfterChange");
+		if (sContextType === "v2") {
+			oActivateCall = this.mock(oContext).expects("activate").withExactArgs();
+		}
+		oMetadataLoadedCall = this.mock(oModel.oMetadata).expects("loaded")
+			.withExactArgs()
+			.returns(oMetadataLoadedPromise);
+		oModelMock.expects("checkUpdate")
+			.withExactArgs(false, "~bAsyncUpdate", {"key" : true});
+		oRequestQueuedPromise = oMetadataLoadedPromise.then(function () {
+			oModelMock.expects("_pushToRequestQueue")
+				.withExactArgs("~mRequests", "~groupId", "~changeSetId", {key : "key"},
+					/*success*/ undefined, /*error*/ undefined,
+					/*oRequestHandle*/sinon.match.object, "~bRefreshAfterChange");
+			oModelMock.expects("_processRequestQueueAsync")
+				.withExactArgs("~mRequests");
+		});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
+				"~bAsyncUpdate"),
+			true);
+
+		if (sContextType === "v2") {
+			assert.ok(oMetadataLoadedCall.calledAfter(oActivateCall),
+				"activation pushes the creation POST request to the queue; the change request must "
+				+ "be after that");
+		}
+
+		return oRequestQueuedPromise;
 	});
 });
 });

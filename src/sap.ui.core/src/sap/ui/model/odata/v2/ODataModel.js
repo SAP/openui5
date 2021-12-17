@@ -6265,7 +6265,10 @@ sap.ui.define([
 
 		bRefreshAfterChange = this._getRefreshAfterChange(undefined, oGroupInfo.groupId);
 
-		this.oMetadata.loaded().then(function() {
+		if (oContext && oContext.activate) {
+			oContext.activate();
+		}
+		this.oMetadata.loaded().then(function () {
 			oRequestHandle = {
 				abort: function() {
 					oRequest._aborted = true;
@@ -6598,6 +6601,11 @@ sap.ui.define([
 	 *   batch request
 	 * @param {Object<string,string>} [mParameters.headers]
 	 *   A map of headers
+	 * @param {boolean} [mParameters.inactive]
+	 *   Whether the created context is inactive. An inactive context will only be sent to the
+	 *   server after the first property update. From then on it behaves like any other created
+	 *   context. This parameter is experimental and its implementation may still change. Do not use
+	 *   it in productive code yet. Supported since 1.98.0
 	 * @param {array|object} [mParameters.properties]
 	 *   An array that specifies a set of properties or the entry
 	 * @param {boolean} [mParameters.refreshAfterChange]
@@ -6619,9 +6627,9 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.createEntry = function (sPath, mParameters) {
 		var bCanonical, sChangeSetId, oContext, fnCreated, pCreate, fnCreatedPromiseResolve,
-			sDeepPath, fnError, sETag, sExpand, sGroupId, mHeaders, sKey, sNormalizedPath,
-			vProperties, bRefreshAfterChange, oRequest, mRequests, fnSuccess, sUrl, aUrlParams,
-			mUrlParams,
+			sDeepPath, fnError, sETag, sExpand, sGroupId, mHeaders, bInactive, sKey,
+			sNormalizedPath, vProperties, bRefreshAfterChange, oRequest, mRequests, fnSuccess, sUrl,
+			aUrlParams, mUrlParams,
 			oEntity = {},
 			sMethod = "POST",
 			that = this;
@@ -6640,6 +6648,7 @@ sap.ui.define([
 			bRefreshAfterChange = mParameters.refreshAfterChange;
 			bCanonical = mParameters.canonicalRequest;
 			sExpand = mParameters.expand;
+			bInactive = mParameters.inactive;
 		}
 		if (sExpand && !this.bUseBatch) {
 			throw new Error("The 'expand' parameter is only supported if batch mode is used");
@@ -6809,7 +6818,9 @@ sap.ui.define([
 			});
 
 			sKey = that._addEntity(merge({}, oEntity));
-			that.mChangedEntities[sKey] = oEntity;
+			if (!bInactive) {
+				that.mChangedEntities[sKey] = oEntity;
+			}
 
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
 			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity, sETag);
@@ -6826,7 +6837,7 @@ sap.ui.define([
 				oEntity.__metadata.created.contentID = sUID;
 			}
 
-			oCreatedContext = that.getContext("/" + sKey, sDeepPath, pCreate);
+			oCreatedContext = that.getContext("/" + sKey, sDeepPath, pCreate, bInactive);
 
 			oRequest.key = sKey;
 			oRequest.created = true;
@@ -6836,11 +6847,12 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			that.oMetadata.loaded().then(function() {
+			oCreatedContext.fetchActivated().then(function () {
 				that._pushToRequestQueue(mRequests, sGroupId,
 					sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle, bRefreshAfterChange);
 				that._processRequestQueueAsync(that.mRequests);
 			});
+
 			return oCreatedContext;
 		}
 
@@ -7765,9 +7777,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enriches the context with the deep path information.
-	 * Gets the OData V2 context instance for the given path. The returned context is cached by the
-	 * given path.
+	 * Gets or creates the OData V2 context for the given path; the returned context is cached by
+	 * this path. Enriches the context with the given deep path. In case the context is created, the
+	 * parameters <code>oCreatePromise</code> and <code>bInactive</code> are used for the creation.
 	 *
 	 * @param {string} sPath
 	 *   The absolute path
@@ -7775,15 +7787,18 @@ sap.ui.define([
 	 *   The absolute deep path representing the same data as the given <code>sPath</code>
 	 * @param {sap.ui.base.SyncPromise} [oCreatePromise]
 	 *   A created promise as specified in the constructor of {@link sap.ui.model.odata.v2.Context}
+	 * @param {boolean} [bInactive]
+	 *   Whether the created context is inactive
 	 * @returns {sap.ui.model.odata.v2.Context}
 	 *   The ODate V2 context for the given path
 	 * @private
 	 */
-	ODataModel.prototype.getContext = function (sPath, sDeepPath, oCreatePromise) {
+	ODataModel.prototype.getContext = function (sPath, sDeepPath, oCreatePromise, bInactive) {
 		var oContext = this.mContexts[sPath];
 
 		if (!oContext) {
-			oContext = this.mContexts[sPath] = new Context(this, sPath, sDeepPath, oCreatePromise);
+			oContext = this.mContexts[sPath]
+				= new Context(this, sPath, sDeepPath, oCreatePromise, bInactive);
 		} else {
 			oContext.setDeepPath(sDeepPath || oContext.getDeepPath() || sPath);
 		}

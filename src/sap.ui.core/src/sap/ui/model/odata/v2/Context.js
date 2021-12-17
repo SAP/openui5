@@ -4,8 +4,9 @@
 
 //Provides class sap.ui.model.odata.v2.Context
 sap.ui.define([
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context"
-], function (BaseContext) {
+], function (SyncPromise, BaseContext) {
 	"use strict";
 
 	/**
@@ -30,6 +31,8 @@ sap.ui.define([
 	 *   <code>bDeleteCreatedEntities</code> parameter set to <code>true</code>, the given promise
 	 *   rejects with an object <code>oError</code> containing the error information, where
 	 *   <code>oError.aborted === true</code>.
+	 * @param {boolean} [bInactive]
+	 *   Whether the created context is inactive
 	 * @alias sap.ui.model.odata.v2.Context
 	 * @author SAP SE
 	 * @class Implementation of an OData V2 model's context.
@@ -55,7 +58,9 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v2.Context", {
-			constructor : function (oModel, sPath, sDeepPath, oCreatePromise) {
+			constructor : function (oModel, sPath, sDeepPath, oCreatePromise, bInactive) {
+				var that = this;
+
 				BaseContext.call(this, oModel, sPath);
 				// Promise returned by #created for a context of a newly created entity which
 				// resolves when the entity is persisted or rejects if the creation is aborted; set
@@ -76,8 +81,28 @@ sap.ui.define([
 				// whether the context is updated, e.g. path changed from a preliminary path to the
 				// canonical one
 				this.bUpdated = false;
+				// whether the context is inactive
+				this.bInactive = !!bInactive;
+				// the function to activate this context
+				this.fnActivate = undefined;
+				// the promise on activation of this context
+				this.oActivatedPromise = bInactive
+					? new SyncPromise(function (resolve) { that.fnActivate = resolve; })
+					: SyncPromise.resolve();
 			}
 		});
+
+	/**
+	 * Activates this context.
+	 *
+	 * @private
+	 */
+	Context.prototype.activate = function () {
+		this.bInactive = false;
+		if (this.fnActivate) {
+			this.fnActivate();
+		}
+	};
 
 	/**
 	 * Returns a promise on the creation state of this context if it has been created via
@@ -126,6 +151,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the promise which resolves with <code>undefined</code> on activation of this context
+	 * or if this context is already active; the promise never rejects.
+	 *
+	 * @return {sap.ui.base.SyncPromise} The promise on activation of this context
+	 *
+	 * @private
+	 */
+	Context.prototype.fetchActivated = function () {
+		return this.oActivatedPromise;
+	};
+
+	/**
 	 * Gets the absolute deep path including all intermediate paths of the binding hierarchy. This
 	 * path is used to compute the full target of messages.
 	 *
@@ -147,6 +184,18 @@ sap.ui.define([
 	 */
 	Context.prototype.hasChanged = function () {
 		return this.bUpdated || this.bForceRefresh;
+	};
+
+	/**
+	 * Returns whether this context is inactive.
+	 *
+	 * @return {boolean} Whether this context is inactive
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	Context.prototype.isInactive = function () {
+		return this.bInactive;
 	};
 
 	/**

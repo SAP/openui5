@@ -3,8 +3,8 @@
  */
 
 /* Provides a sandbox for this component:
- * For the "realOData" (realOData=true/proxy) case when the component runs with
- * backend, the v2.ODataModel constructor is wrapped so that the URL is adapted to a proxy URL
+ * For the "realOData" (realOData=true) case when the component runs with backend, the v2.ODataModel
+ * constructor is wrapped so that the URL is adapted to a proxy URL.
  * For the case realOData=false a mockserver will be set up. Unknown values default to false.
  */
 sap.ui.define([
@@ -1014,9 +1014,7 @@ sap.ui.define([
 					"sap/ui/core/internal/samples/odata/v2/SalesOrders/data",
 					"/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/", oMockServerFixtures.aRegExpFixture);
 			} else {
-				mParameters = Object.assign({}, mParameters, {
-					serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
-				});
+				mParameters = Object.assign({}, mParameters);
 				oUriParameters = UriParameters.fromQuery(window.location.search);
 				sParameter = OperationMode[oUriParameters.get("operationMode")];
 				if (sParameter) {

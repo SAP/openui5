@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
+	"sap/base/util/isEmptyObject",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/library",
@@ -15,8 +16,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/ODataUtils"
-], function (Log, encodeURL, MessageBox, MessageToast, coreLibrary, Core, Element, Message,
-		Controller, Filter, FilterOperator, Sorter, ODataUtils) {
+], function (Log, encodeURL, isEmptyObject, MessageBox, MessageToast, coreLibrary, Core, Element,
+	Message, Controller, Filter, FilterOperator, Sorter, ODataUtils) {
 	"use strict";
 	var sClassname = "sap.ui.core.internal.samples.odata.v2.SalesOrders.Main.controller",
 		MessageType = coreLibrary.MessageType;
@@ -262,6 +263,7 @@ sap.ui.define([
 
 			// use FilterType.Control to combine it with the filters defined in the Main.view.xml
 			oView.byId("SalesOrderSet").getBinding("items").filter(aFilter);
+			oView.getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onFixAllQuantities : function (oEvent) {
@@ -318,9 +320,32 @@ sap.ui.define([
 
 		onInit : function () {
 			var oRowSettings = this.byId("rowsettings"),
-				oModel = this.getView().getModel();
+				oView = this.getView(),
+				oItemsBinding = oView.byId("ToLineItems").getBinding("rows"),
+				oModel = oView.getModel(),
+				oUiModel = oView.getModel("ui"),
+				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows");
+
+			function createInactiveLineItem() {
+				oItemsBinding.create({
+						CurrencyCode : null,
+						DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
+						GrossAmount : null,
+						Quantity : null,
+						QuantityUnit : null,
+						SalesOrderID : oItemsBinding.getContext().getProperty("SalesOrderID")
+					}, /*bAtEnd*/ true, {inactive : true});
+			}
 
 			oModel.attachMessageChange(this.handleMessageChange, this);
+			oModel.attachPropertyChange(function (oEvent) {
+				if (oEvent.getParameter("context").isTransient()) {
+					// enforces updating the status icon
+					// TODO: move into createActivate event handler as soon as available or solve
+					// via improved databinding solution
+					oModel.updateBindings(true);
+				}
+			});
 
 			// adding the formatter dynamically is a prerequisite that it is called with the control
 			// as 'this'
@@ -330,6 +355,23 @@ sap.ui.define([
 					'' // ensure formatter is called on scrolling
 				],
 				formatter : this.rowHighlight
+			});
+
+			if (!iInlineCreationRows) {
+				return;
+			}
+
+			// collection length may not be final on initial data load: one must always check
+			// until the length is final
+			oItemsBinding.attachEvent("dataReceived", function () {
+				var i;
+
+				if (oItemsBinding.isLengthFinal()
+						&& oItemsBinding.isFirstCreateAtEnd() === undefined) {
+					for (i = 0; i < iInlineCreationRows; i += 1) {
+						createInactiveLineItem();
+					}
+				}
 			});
 		},
 
@@ -355,10 +397,12 @@ sap.ui.define([
 
 		onRefreshItems : function () {
 			this.getView().byId("ToLineItems").getBinding("rows").refresh();
+			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onRefreshSalesOrders : function () {
 			this.getView().byId("SalesOrderSet").getBinding("items").refresh();
+			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onResetChanges : function () {
@@ -371,8 +415,7 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			var oView = this.getView(),
-				sSalesOrder = oView.getModel("ui").getProperty("/salesOrderID");
+			var oView = this.getView();
 
 			// ensure that the read request is in the same batch
 			this.readSalesOrder("changes");
@@ -382,33 +425,38 @@ sap.ui.define([
 					var bHasMessages = false;
 
 					if (oResultData) {
-						bHasMessages = oResultData.__batchResponses.some(function (oBatchResponse) {
+						bHasMessages = (oResultData.__batchResponses
+								|| []).some(function (oBatchResponse) {
 							return oBatchResponse.message;
 						});
-					}
-					if (!bHasMessages) {
-						MessageToast.show("Sales order '" + sSalesOrder + "' successfully saved");
+						if (!isEmptyObject(oResultData) && !bHasMessages) {
+							MessageToast.show("Sales order successfully saved");
+						}
 					}
 				}
 			});
 		},
 
-		onSelectItem : function () {
+		onSelectItem : function (oEvent) {
+			var oRowContext = oEvent.getParameter("rowContext"),
+				bIsInactive = oRowContext && oRowContext.isInactive();
+
 			this.getView().getModel("ui").setProperty("/itemSelected",
-				!!this.byId("ToLineItems").getSelectedIndices().length);
+				!!this.byId("ToLineItems").getSelectedIndices().length && !bIsInactive);
 		},
 
 		onSelectSalesOrder : function (oEvent) {
-			var oBindingContext, sContextPath, bIsTransient, sSalesOrderID,
+			var oBindingContext, sContextPath, bIsInactive, bIsTransient, sSalesOrderID,
 				oView = this.getView(),
 				oTable = oView.byId("ToLineItems"),
 				oUiModel = oView.getModel("ui");
 
 			if (oEvent && oEvent.sId === "selectionChange") {
 				oBindingContext = oEvent.getParameter("listItem").getBindingContext("SalesOrders");
+				bIsInactive = oBindingContext.isInactive();
 				bIsTransient = oBindingContext.isTransient();
 				sSalesOrderID = oBindingContext.getProperty("SalesOrderID") || "";
-				oUiModel.setProperty("/salesOrderSelected", true);
+				oUiModel.setProperty("/salesOrderSelected", !bIsInactive);
 				oUiModel.setProperty("/salesOrderID", sSalesOrderID);
 				sContextPath = oBindingContext.getPath();
 			} else {
@@ -453,11 +501,34 @@ sap.ui.define([
 		},
 
 		onShowTable : function () {
-			var oUiModel = this.getView().getModel("ui");
+			var oSalesOrdersBinding,
+				oUiModel = this.getView().getModel("ui"),
+				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows");
+
+			function createInactiveSalesOrder(bAtEnd) {
+				oSalesOrdersBinding.create({
+						CustomerID : "0100000000",
+						LifecycleStatus : "N"
+					}, bAtEnd, {inactive : true});
+			}
 
 			oUiModel.setProperty("/useTable", !oUiModel.getProperty("/useTable"));
 			// set the named model, so the table only requests data once it is shown
 			this.getView().setModel(this.getView().getModel(), "SalesOrders");
+
+			oSalesOrdersBinding = this.byId("SalesOrderSet").getBinding("items");
+			if (!iInlineCreationRows || oSalesOrdersBinding.isFirstCreateAtEnd() !== undefined) {
+				return;
+			}
+
+			// only create inactive rows after data has been received for the first time
+			oSalesOrdersBinding.attachEventOnce("dataReceived", function () {
+				var i;
+
+				for (i = 0; i < iInlineCreationRows; i += 1) {
+					createInactiveSalesOrder(/*bAtEnd*/i !== 0);
+				}
+			});
 		},
 
 		onSortSalesOrdersTable : function (oEvent) {
@@ -465,6 +536,7 @@ sap.ui.define([
 				oListBinding = this.getView().byId("SalesOrderSet").getBinding("items");
 
 			oListBinding.sort(new Sorter("SalesOrderID", sKey === "desc"));
+			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onTransitionMessagesOnly : function (oEvent) {

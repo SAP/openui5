@@ -63,20 +63,22 @@ sap.ui.define([
 					Currency : "EUR",
 					GrossAmount : "2,378.81",
 					ItemPosition : "030",
-					Status : "From Server"
+					Status : "Persisted"
 				}),
 				oPersistedItem2 = Object.assign({}, oTransientItem2, {
 					Currency : "EUR",
 					GrossAmount : "10.71",
 					ItemPosition : "040",
-					Status : "From Server"
+					Status : "Persisted"
 				}),
 				oPersistedItem4 = Object.assign({}, oTransientItem4, {
 					Currency : "EUR",
 					GrossAmount : "23.80",
 					ItemPosition : "050",
-					Status : "From Server"
-				});
+					Status : "Persisted"
+				}),
+				oFromServerItem1 = Object.assign({}, oPersistedItem1, {Status : "From Server"}),
+				oFromServerItem2 = Object.assign({}, oPersistedItem2, {Status : "From Server"});
 
 			Given.iStartMyUIComponent({
 				componentConfig : {
@@ -283,8 +285,8 @@ sap.ui.define([
 			When.onMainPage.showSalesOrder("230");
 			Then.onMainPage.checkSalesOrderLoaded("230");
 			Then.onMainPage.checkSalesOrderItemsLoaded("230");
-			Then.onMainPage.checkItemAtRow(0, oPersistedItem2);
-			Then.onMainPage.checkItemAtRow(1, oPersistedItem1);
+			Then.onMainPage.checkItemAtRow(0, oFromServerItem2);
+			Then.onMainPage.checkItemAtRow(1, oFromServerItem1);
 			Then.onMainPage.checkItemAtRow(2, oItem020);
 			Then.onMainPage.checkItemAtRow(3, oItem010);
 			Then.onMainPage.checkItemCountChangedBy(0);

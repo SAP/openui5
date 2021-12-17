@@ -12242,4 +12242,123 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: On creation of inactive entities, the methods #resetChanges, #hasPendingChanges
+	// and #submitChanges ignore these. The first valid edit activates the inactive entity.
+	// JIRA: CPOUI5MODELS-717
+	QUnit.test("Create inactive entity and activate it", function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<Input id="company" value="{CompanyName}"/>\
+	<Input id="mail" value="{EmailAddress}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					CompanyName : "SAP",
+					EmailAddress : "Mail0"
+				}]
+			})
+			.expectValue("id", ["42", ""])
+			.expectValue("company", ["SAP", ""])
+			.expectValue("mail", ["Mail0", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			that.expectValue("company", "Initial", 1)
+				.expectValue("mail", "Mail1", 1);
+
+			// code under test
+			oTable.getBinding("rows").create({
+				CompanyName : "Initial",
+				EmailAddress : "Mail1"
+			}, /*bAtEnd*/true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test
+			assert.strictEqual(oTable.getBinding("rows").getLength(), 2);
+			// inactive entities are no pending changes and do not cause requests
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+			oModel.submitChanges(); // expect no request
+
+			return Promise.all([
+				oModel.resetChanges(undefined, undefined, true), // expect no value change
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("company", "ACME", 1);
+
+			// code under test: activate by edit
+			oTable.getRows()[1].getCells()[1].setValue("ACME");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "", 1)
+				.expectValue("mail", "", 1);
+
+			// code under test
+			assert.strictEqual(oModel.hasPendingChanges(), true);
+
+			return Promise.all([
+				oModel.resetChanges(undefined, undefined, true),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("company", "Initial2", 1)
+				.expectValue("mail", "Mail2", 1);
+
+			// code under test
+			assert.strictEqual(oTable.getBinding("rows").getLength(), 1);
+			oCreatedContext = that.oView.byId("table").getBinding("rows").create({
+				CompanyName : "Initial2",
+				EmailAddress : "Mail2"
+			}, /*bAtEnd*/true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "ACME", 1);
+
+			// code under test
+			oTable.getRows()[1].getCells()[1].setValue("ACME");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName : "ACME",
+						EmailAddress : "Mail2"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {uri : "BusinessPartnerSet('43')"},
+						BusinessPartnerID : "43",
+						CompanyName : "ACME",
+						EmailAddress : "Mail2"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", "43", 1);
+
+			// code under test
+			return Promise.all([
+				oCreatedContext.created(),
+				oModel.submitChanges(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
