@@ -20,6 +20,8 @@ sap.ui.define([
      * @extends sap.ui.core.Element
      * @author SAP SE
      * @private
+     * @ui5-restricted sap.fe
+     * @MDC_PUBLIC_CANDIDATE
      * @experimental
      * @since 1.88
      * @alias sap.ui.mdc.chart.Item
@@ -62,8 +64,6 @@ sap.ui.define([
 
             }
         });
-
-    //TODO: Clarify if we really don't need an implementation for dimensions and measures, as both seem to have quite a difference in functionality.
 
     return Item;
 

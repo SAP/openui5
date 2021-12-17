@@ -44,12 +44,9 @@ sap.ui.define([
     ) {
         "use strict";
 
-        var FILTER_INTERFACE = "sap.ui.mdc.IFilter";
-
         var DrillStackHandler;
 
         /**
-         /**
          * Constructor for a new Chart.
          *
          * @param {string} [sId] id for the new control, generated automatically if no id is given
@@ -61,6 +58,8 @@ sap.ui.define([
          * @constructor
          * @experimental As of version ...
          * @private
+         * @ui5-restricted sap.fe
+         * @MDC_PUBLIC_CANDIDATE
          * @since 1.88
          * @alias sap.ui.mdc.Chart
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -226,15 +225,18 @@ sap.ui.define([
                     },
                     _toolbar: {
                         type: "sap.ui.mdc.chart.ChartToolbar",
-                        multiple: false
+                        multiple: false,
+                        visibility: "hidden"
                     },
                     _breadcrumbs: {
                         type: "sap.m.Breadcrumbs",
-                        multiple: false
+                        multiple: false,
+                        visibility: "hidden"
                     },
                     _innerChart: {
                         type: "sap.ui.core.Control",
-                        multiple: false
+                        multiple: false,
+                        visibility: "hidden"
                     },
                     selectionDetailsActions: {
                         type: "sap.ui.mdc.chart.SelectionDetailsActions",
@@ -249,11 +251,14 @@ sap.ui.define([
                      * @since 1.88
                      */
                     filter: {
-                        type: FILTER_INTERFACE,
+                        type: "sap.ui.mdc.IFilter",
                         multiple: false
                     }
                 },
                 events: {
+                    /**
+                     * This event is fired when a SelectionDetailsAction is pressed.
+                     */
                     selectionDetailsActionPressed: {
                         parameters: {
 
@@ -282,20 +287,16 @@ sap.ui.define([
                             }
                         }
                     },
-                    dataPointsSelected: {
-                        parameters: {
-                            /**
-                             * The context of selected / deselected data points
-                             */
-                            dataContext: {
-                                type: "object"
-                            }
-                        }
-                    },
+                    /**
+                     * This event is fired when a data load on the inner chart completes
+                     */
                     innerChartLoadedData: {
                         parameters: {
+                            /**
+                             * Reference to the inner chart
+                             */
                             innerChart: {
-                                type: "sap.core.Control"
+                                type: "sap.ui.core.Control"
                             }
                         }
                     }
