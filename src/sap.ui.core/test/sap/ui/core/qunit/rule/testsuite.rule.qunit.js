@@ -25,6 +25,9 @@ sap.ui.define(function () {
 			},
 			"config/modelPreloadAndEarlyRequests": {
 				title: "QUnit Tests for 'modelPreloadAndEarlyRequests' rules",
+				ui5 : {
+					language : "en"
+				},
 				loader: {
 					paths: {
 						"samples/components/config/modelPreloadAndEarlyRequests":
