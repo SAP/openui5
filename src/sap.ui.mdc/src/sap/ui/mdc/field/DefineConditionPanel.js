@@ -1251,7 +1251,7 @@ sap.ui.define([
 
 		var oOperator = sOperator && FilterOperatorUtil.getOperator(sOperator);
 
-		if (!oOperator || !oOperator.valueTypes[0]) {
+		if (!oOperator || !oOperator.valueTypes[0] || (oOperator.valueTypes[0] === Operator.ValueType.Static && !oOperator.getStaticText)) {
 			return "XL8 L8 M8 S0";
 		} else {
 			return "";
@@ -1347,8 +1347,7 @@ sap.ui.define([
 		var oValue0Field = aGridContent[iIndex];
 		var oValue1Field;
 		if (oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
-			var sEditMode = _getEditModeFromOperator(oCondition.operator, oCondition.invalid);
-			if (oCondition.values.length > 0 || sEditMode === EditMode.Display) { // as static text for display controls is created after update
+			if (oCondition.values.length > 0) {
 				oValueBindingContext = this._oManagedObjectModel.getContext(oBindingContext.getPath() + "values/0/");
 				oValue0Field.setBindingContext(oValueBindingContext, "$this");
 				oValue0Field.setBindingContext(oBindingContext, "$condition");
