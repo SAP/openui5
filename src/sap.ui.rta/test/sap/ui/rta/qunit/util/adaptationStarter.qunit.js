@@ -55,7 +55,12 @@ sap.ui.define([
 					"then the title of the mixed changes message is shown correctly"
 				);
 				assert.strictEqual(
-					this.fnMessageBoxStub.lastCall.args[0],
+					this.fnMessageBoxStub.lastCall.args[0].mAggregations.content.map(function(item, index) {
+						if (index === 1) {
+							return "[" + item.getText() + "]" + "(" + item.getHref() + ")";
+						}
+						return item.getText();
+					}).join(""),
 					oResourceBundle.getText("MSG_ADAPTATION_STARTER_MIXED_CHANGES_WARNING"),
 					"then the text of the mixed changes message is shown correctly"
 				);
