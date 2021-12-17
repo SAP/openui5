@@ -1222,7 +1222,9 @@ sap.ui.define([
 			"Failed to read path /path", sClassName, sinon.match.same(oError));
 
 		//code under test
-		oControl.bindProperty("text", {path : "/path", type : new TypeString(),
+		oControl.bindProperty("text", {
+			path : "/path",
+			type : new TypeString(),
 			events : {
 				dataReceived : function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("error"), oError, "expected error");

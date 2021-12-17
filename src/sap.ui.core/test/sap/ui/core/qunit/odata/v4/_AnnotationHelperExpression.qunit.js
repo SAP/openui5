@@ -1403,13 +1403,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("formatOperand: simple constants", function (assert) {
 		assert.strictEqual(Expression.formatOperand({
-			result : "constant",
-			category : "boolean",
-			value : true}, true), "true");
+				result : "constant",
+				category : "boolean",
+				value : true
+			}, true), "true");
 		assert.strictEqual(Expression.formatOperand({
-			result : "constant",
-			category : "number",
-			value : 42}, true), "42");
+				result : "constant",
+				category : "number",
+				value : 42
+			}, true), "42");
 	});
 
 	//*********************************************************************************************

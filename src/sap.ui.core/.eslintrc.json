@@ -37,6 +37,8 @@
 				"no-multi-spaces": "error",
 				"no-whitespace-before-property": "error",
 				"nonblock-statement-body-position": "error", // @see "curly": ["error", "all"]
+				// "multiline" doesn't match our style
+				"object-curly-newline": ["error", {"consistent": true}],
 				"object-curly-spacing": "error",
 				"quotes": ["error", "double", {"avoidEscape": true}],
 				"space-before-blocks": "error",

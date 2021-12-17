@@ -3047,7 +3047,8 @@ sap.ui.define([
 				SalesOrderID : "1",
 				SO_2_SOITEM : [
 					{ItemPosition : "10", SalesOrderID : "1"}
-				]})
+				]
+			})
 			.expectChange("id1", "1")
 			.expectChange("id2")
 			.expectChange("note");
@@ -4332,7 +4333,8 @@ sap.ui.define([
 					SO_2_SOITEM : [
 						{ItemPosition : "0010", SalesOrderID : "2"}
 					]
-				}]});
+				}]
+			});
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oRootTable = that.oView.byId("rootTable");
@@ -5724,8 +5726,8 @@ sap.ui.define([
 				}, {
 					ProductID : "2",
 					Name : "Salat"
-				}
-			]})
+				}]
+			})
 			.expectChange("name", ["Pommes", "Salat"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -5736,8 +5738,8 @@ sap.ui.define([
 					value : [{
 						ProductID : "2",
 						Name : "Salat"
-					}
-				]})
+					}]
+				})
 				.expectChange("name", ["Salat"]);
 
 			// code under test
@@ -23541,8 +23543,8 @@ sap.ui.define([
 				"Warning", "Message0");
 		}).then(function () {
 			// refresh the second sales order; the message for the first sales order is kept
-			that.expectRequest("SalesOrderList('0500000348')?$select=SalesOrderID", {
-					SalesOrderID : "0500000348"})
+			that.expectRequest("SalesOrderList('0500000348')?$select=SalesOrderID",
+					{SalesOrderID : "0500000348"})
 				.expectRequest("SalesOrderList('0500000348')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
@@ -23603,8 +23605,8 @@ sap.ui.define([
 		}).then(function () {
 			// refresh the first sales order, caches and messages of unresolved bindings for this
 			// sales order are discarded
-			that.expectRequest("SalesOrderList('0500000347')?$select=SalesOrderID", {
-					SalesOrderID : "0500000347"})
+			that.expectRequest("SalesOrderList('0500000347')?$select=SalesOrderID",
+					{SalesOrderID : "0500000347"})
 				.expectMessages([]);
 
 			that.oView.byId("tableSalesOrder").getItems()[0].getBindingContext().refresh();
@@ -27451,7 +27453,8 @@ sap.ui.define([
 <Text id="label1" text="{/Artists##/@com.sap.vocabularies.Common.v1.Label}"/>',
 		{"Artists('42')?$select=ArtistID,IsActiveEntity,Name" : {
 			//ArtistID : ..., IsActiveEntity : ...
-			Name : "Foo"}},
+			Name : "Foo"
+		}},
 		{label0 : "Artist Name", name : "Foo", insertable : true, label1 : "Artist"},
 		createSpecialCasesModel({autoExpandSelect : true})
 	);
@@ -33151,13 +33154,14 @@ sap.ui.define([
 			that.expectRequest("D_PR_TYPE_FV_SET?"
 					+ (bAutoExpandSelect ? "$select=DESCRIPTION,FIELD_VALUE&" : "")
 					+ "$skip=0&$top=100", {
-				value : [{
-					DESCRIPTION : "Anno Domini",
-					FIELD_VALUE : "AD"
-				}, {
-					DESCRIPTION : "Public Relations",
-					FIELD_VALUE : "PR"
-				}]})
+					value : [{
+						DESCRIPTION : "Anno Domini",
+						FIELD_VALUE : "AD"
+					}, {
+						DESCRIPTION : "Public Relations",
+						FIELD_VALUE : "PR"
+					}]
+				})
 				.expectChange("description1", ["Anno Domini", "Public Relations"])
 				.expectChange("description2", ["Anno Domini", "Public Relations"]);
 

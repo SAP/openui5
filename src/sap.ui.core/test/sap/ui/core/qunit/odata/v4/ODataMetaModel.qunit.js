@@ -7159,8 +7159,8 @@ sap.ui.define([
 		this.mock(oCodeListBinding).expects("requestContexts")
 			.withExactArgs(0, Infinity)
 			.resolves([{
-				getProperty : function () { throw oError; }}
-			]);
+				getProperty : function () { throw oError; }
+			}]);
 
 		// code under test
 		return this.oMetaModel.requestCodeList("T€RM")
