@@ -783,7 +783,7 @@ sap.ui.define([
 		DynamicDateRange.prototype._createListItem = function(oOption) {
 			var bIsFixedOption = this._isFixedOption(oOption);
 
-			return new DynamicDateRangeListItem({
+			return new DynamicDateRangeListItem(this.getId() + "-option-" + oOption.getKey(),  {
 				type: bIsFixedOption ? ListType.Active : ListType.Navigation,
 				title: oOption.getText(this),
 				wrapping: true,
