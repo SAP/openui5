@@ -179,7 +179,7 @@ sap.ui.define([
 		}
 
 		// Reserved attributes
-		// extension - Used to add model-specific information. For example, for analytics in OData, see sap.ui.mdc.odata.v4.TableDelegate.
+		// extension - Used to add model-specific information. For example, for analytics in OData, see sap/ui/mdc/odata/v4/TableDelegate.
 	};
 
 	/**

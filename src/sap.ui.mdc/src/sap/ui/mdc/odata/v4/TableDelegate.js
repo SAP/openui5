@@ -211,7 +211,7 @@ sap.ui.define([
 	 * @param {object} oDelegatePayload The delegate payload
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @function
-	 * @name sap.ui.mdc.odata.v4.TableDelegate.updateBindingInfo
+	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.updateBindingInfo
 	 * @abstract
 	 */
 	//Delegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) { };

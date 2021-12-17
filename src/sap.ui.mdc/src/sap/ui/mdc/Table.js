@@ -113,7 +113,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Object with initial settings for the new control
 	 * @class
 	 * A metadata-driven table to simplify the usage of existing tables, such as the <code>ResponsiveTable</code> and <code>GridTable</code>
-	 * controls. The metadata needs to be provided via the {@link sap.ui.mdc.TableDelegate TableDelegate} implementation as
+	 * controls. The metadata needs to be provided via the {@link module:sap/ui/mdc/TableDelegate TableDelegate} implementation as
 	 * {@link sap.ui.mdc.table.PropertyInfo}.
 	 *
 	 * @extends sap.ui.mdc.Control
