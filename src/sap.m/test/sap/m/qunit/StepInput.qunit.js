@@ -1814,6 +1814,34 @@ sap.ui.define([
 		oSUT.destroy();
 	});
 
+	QUnit.test("Internal NumericInput doesn't have duplicated labels in 'aria-labelledby' and 'aria-describedby' attributes when there is 'description' property set", function (assert) {
+		//prepare
+		var sId = "StepInput",
+			oSUT = new StepInput(sId, {
+				description: "USD"
+			}),
+			aLabelledBy = [],
+			aDescribedBy = [],
+			oInput = oSUT._getInput(),
+			$Input;
+
+		//act
+		oSUT.placeAt('qunit-fixture');
+		oCore.applyChanges();
+		$Input = oInput.$("inner");
+		aLabelledBy = $Input.attr("aria-labelledby").split(" ");
+		aDescribedBy = $Input.attr("aria-describedby").split(" ");
+
+		//assert
+		assert.equal(aLabelledBy.length, 1, "there are no duplicated labels in 'aria-labelledby'");
+		assert.equal(aLabelledBy[0], sId + "-input-descr", "there is proper label in 'aria-labelledby'");
+		assert.equal(aDescribedBy.length, 1, "there are no duplicated labels in 'aria-describedby'");
+		assert.equal(aDescribedBy[0], sId + "-input-descr", "there is proper label in 'aria-describedby'");
+
+		//clean
+		oSUT.destroy();
+	});
+
 	QUnit.test("Internal 'sap.m.Input' has correct ARIA attributes when initialized with specific values", function (assert) {
 		//prepare
 		var oSUT = new StepInput({
