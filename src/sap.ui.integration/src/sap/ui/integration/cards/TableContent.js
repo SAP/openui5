@@ -197,7 +197,6 @@ sap.ui.define([
 			template: this._oItemTemplate,
 			sorter: this._oSorter
 		};
-		this._filterHiddenNavigationItems(oRow, oBindingInfo);
 		this._bindAggregationToControl("items", oTable, oBindingInfo);
 	};
 

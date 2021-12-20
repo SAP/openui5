@@ -4,31 +4,42 @@ sap.ui.define([
 	"../services/SampleServices",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/util/ServiceManager",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/model/ObservableModel",
+	"sap/m/List",
+	"sap/ui/integration/controls/ListContentItem"
 ], function (
 	SampleServices,
 	BaseListContent,
 	ServiceManager,
-	JSONModel
+	JSONModel,
+	ObservableModel,
+	List,
+	ListContentItem
 ) {
 	"use strict";
 
 	function createFakeList() {
-		return {
-			getBinding: function () {
-				return {
-					getModel: function () {
-						return new JSONModel([
-							{ key: "item1" },
-							{ key: "item2" }
-						]);
-					},
-					getPath: function () {
-						return "/";
-					}
-				};
+		var oList = new List({
+			items: {
+				path: "/",
+				template: new ListContentItem({
+					title: "{title}"
+				})
 			}
-		};
+		});
+		oList.setModel(new JSONModel([
+			{
+				key: "item1",
+				title: "title 1"
+			},
+			{
+				key: "item2",
+				title: "title 2"
+			}
+		]));
+
+		return oList;
 	}
 
 	QUnit.module("Promises", {
@@ -55,18 +66,18 @@ sap.ui.define([
 	QUnit.test("Promises are awaited correctly", function (assert) {
 		// arrange
 		var mItemConfig = {
-				actions: [
-					{
-						type: "Navigation",
-						service: "IntentBasedNavigation",
-						parameters: {
-							intentSemanticObject: "SalesOrder",
-							name: "{Name}",
-							hidden: "{url}"
-						}
+			actions: [
+				{
+					type: "Navigation",
+					service: "IntentBasedNavigation",
+					parameters: {
+						intentSemanticObject: "SalesOrder",
+						name: "{Name}",
+						hidden: "{url}"
 					}
-				]
-			};
+				}
+			]
+		};
 
 		// act
 		this.oBLC._checkHiddenNavigationItems(mItemConfig);
@@ -78,18 +89,18 @@ sap.ui.define([
 	QUnit.test("Promise is changed when items change", function (assert) {
 		// arrange
 		var mItemConfig = {
-				actions: [
-					{
-						type: "Navigation",
-						service: "IntentBasedNavigation",
-						parameters: {
-							intentSemanticObject: "SalesOrder",
-							name: "{Name}",
-							hidden: "{url}"
-						}
+			actions: [
+				{
+					type: "Navigation",
+					service: "IntentBasedNavigation",
+					parameters: {
+						intentSemanticObject: "SalesOrder",
+						name: "{Name}",
+						hidden: "{url}"
 					}
-				]
-			};
+				}
+			]
+		};
 		this.oBLC._checkHiddenNavigationItems(mItemConfig);
 		var pAwait = this.oBLC._oAwaitingPromise;
 
@@ -98,5 +109,29 @@ sap.ui.define([
 
 		// assert
 		assert.notStrictEqual(this.oBLC._oAwaitingPromise, pAwait, "Promise changed when items have changed");
+	});
+
+	QUnit.test("Model is not changed after service respond", function (assert) {
+		// arrange
+		var mItemConfig = {
+			actions: [
+				{
+					type: "Navigation",
+					service: "IntentBasedNavigation",
+					parameters: {
+						intentSemanticObject: "SalesOrder",
+						name: "{Name}",
+						hidden: "{url}"
+					}
+				}
+			]
+		};
+		var oChangeEventSpy = this.spy(ObservableModel.prototype, "_handleChange");
+
+		// act
+		this.oBLC._checkHiddenNavigationItems(mItemConfig);
+
+		// assert
+		assert.ok(oChangeEventSpy.notCalled, "The model is not changed");
 	});
 });
