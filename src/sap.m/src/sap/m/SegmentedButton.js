@@ -396,7 +396,7 @@ function(
 			}
 		}
 
-		iCurrentWidth = this.$().width();
+		iCurrentWidth = Math.floor(this.getDomRef().getBoundingClientRect().width);
 
 		if (this._previousWidth !== undefined && iCurrentWidth !== this._previousWidth && !this._bInOverflow) {
 			this.fireEvent("_containerWidthChanged");
