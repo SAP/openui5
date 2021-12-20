@@ -6,7 +6,7 @@ sap.ui.define([
 ], function(History, HashChanger, Deferred, EventProvider) {
 	"use strict";
 
-	var oReady = new Deferred();
+	var oReady;
 
 	var oHashChanger = HashChanger.getInstance();
 	oHashChanger.init();
@@ -48,24 +48,30 @@ sap.ui.define([
 
 	oHashChanger.attachEvent("hashChanged", function(oEvent) {
 		var sHash = oEvent.getParameter("newHash");
-		document.getElementById(iFrameId).contentWindow.postMessage({
-			action: "updateHash",
-			hash: sHash,
-			direction: oHistory.getDirection()
-		}, "*");
+		var oIFrame = document.getElementById(iFrameId);
+		if (oIFrame) {
+			oIFrame.contentWindow.postMessage({
+				action: "updateHash",
+				hash: sHash,
+				direction: oHistory.getDirection()
+			}, "*");
+		}
 	});
 
-	var oParentDOM = document.getElementById("qunit-fixture");
-	var oIFrame = document.createElement("iframe");
-	oIFrame.width = "100%";
-	oIFrame.height = "400px";
-	oIFrame.src = "fixture/historyIframe/iframe/index.html";
-	oIFrame.id = iFrameId;
-
-	oParentDOM.appendChild(oIFrame);
-
 	return {
-		ready: oReady.promise,
+		createIFrame: function() {
+			oReady = new Deferred();
+
+			var oParentDOM = document.getElementById("qunit-fixture");
+			var oIFrame = document.createElement("iframe");
+			oIFrame.width = "100%";
+			oIFrame.height = "400px";
+			oIFrame.src = "fixture/historyIframe/iframe/index.html";
+			oIFrame.id = iFrameId;
+			oParentDOM.appendChild(oIFrame);
+
+			return oReady.promise;
+		},
 		setHash: function(sHash) {
 			var oFinish = new Deferred();
 
@@ -98,6 +104,9 @@ sap.ui.define([
 			});
 
 			return oFinish.promise;
+		},
+		removeIFrame: function() {
+			document.getElementById(iFrameId).remove();
 		}
 	};
 });
