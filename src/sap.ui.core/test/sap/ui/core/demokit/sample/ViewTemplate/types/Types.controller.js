@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/util/XMLHelper"
-], function (MessageToast, library, Controller, XMLHelper) {
+], function (MessageToast, library, Controller, DateTimeOffset, XMLHelper) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -109,6 +110,15 @@ sap.ui.define([
 			oView.setModel(oView.getModel(bV4 ? "v4" : "v2"));
 			oView.bindObject("/EdmTypesCollection(ID='1')"); // switch implementation v2 <--> v4
 			oIdentificationBox.addItem(oView.getViewData()[bV4]);
+			if (!bV4) {
+				// After V4 has been displayed the type is marked as bV4; type is reused when
+				// switching back to V2 but in this case the internal value is null -> reset the
+				// type when switching back to V2
+				oView.byId("I67").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+				oView.byId("I69").getBinding("value").getBindings()[0]
+					.setType(new DateTimeOffset());
+			}
 		}
 	});
 });

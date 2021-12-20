@@ -99,6 +99,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/type/Currency.qunit",
 		"sap/ui/core/qunit/odata/type/Date.qunit",
 		"sap/ui/core/qunit/odata/type/DateTimeBase.qunit",
+		"sap/ui/core/qunit/odata/type/DateTimeWithTimezone.qunit",
 		"sap/ui/core/qunit/odata/type/Decimal.qunit",
 		"sap/ui/core/qunit/odata/type/Double.qunit",
 		"sap/ui/core/qunit/odata/type/Guid.qunit",

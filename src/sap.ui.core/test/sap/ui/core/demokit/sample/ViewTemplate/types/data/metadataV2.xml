@@ -28,6 +28,7 @@
 				<Property Name="Time" Type="Edm.Time" Precision="0" sap:label="Field of type TIMS" />
 				<Property Name="TimeStampLong" Type="Edm.DateTime" Precision="7" sap:label="Time Stamp" />
 				<Property Name="TimeStampShort" Type="Edm.DateTime" Precision="0" sap:label="Time Stamp" />
+				<Property Name="TimezoneID" Type="Edm.String" MaxLength="120"/>
 			</EntityType>
 			<EntityContainer Name="com_sap_ui5_OData_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
 				<EntitySet Name="EdmTypesCollection" EntityType="com.sap.ui5.OData.EdmTypes" sap:content-version="1" />

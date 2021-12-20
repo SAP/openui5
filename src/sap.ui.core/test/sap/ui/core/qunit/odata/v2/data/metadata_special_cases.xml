@@ -51,6 +51,14 @@
 					FromRole="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					ToRole="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
 			</EntityType>
+			<EntityType Name="DateTimeWithTimezone" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="1" />
+				<Property Name="DateTime" Type="Edm.DateTime" Precision="0" />
+				<Property Name="TimezoneID" Type="Edm.String" MaxLength="120"/>
+			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -79,6 +87,8 @@
 					sap:addressable="false"/>
 				<EntitySet Name="UserAssignments" EntityType="special.cases.UserAssignment"/>
 				<EntitySet Name="DummySet" EntityType="special.cases.DummyType"/>
+				<EntitySet Name="DateTimeWithTimezoneSet"
+					EntityType="special.cases.DateTimeWithTimezone"/>
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"

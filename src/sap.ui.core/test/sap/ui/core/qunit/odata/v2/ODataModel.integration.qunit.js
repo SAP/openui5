@@ -7608,6 +7608,75 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		return this.createView(assert, sView);
 	});
 
+	//*********************************************************************************************
+	// Scenario: Messages for parts of the composite binding are propagated based on the format
+	// option showTimezone.
+	// JIRA: CPOUI5MODELS-752
+	QUnit.test("Messages: sap.ui.model.odata.type.DateTimeWithTimezone", function (assert) {
+		var oDateWarning = this.createResponseMessage("DateTime", "Foo", "warning"),
+			oModel = createSpecialCasesModel(),
+			sView = '\
+<FlexBox id="objectPage" binding="{/DateTimeWithTimezoneSet(\'1\')}">\
+	<Input id="Hide" value="{\
+		formatOptions : {showTimezone : \'Hide\'},\
+		mode : \'TwoWay\',\
+		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
+	<Input id="Only" value="{\
+		formatOptions : {showTimezone : \'Only\'},\
+		mode : \'TwoWay\',\
+		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
+	<Input id="Show" value="{\
+		formatOptions : {showTimezone : \'Show\'},\
+		mode : \'TwoWay\',\
+		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
+	<Input id="NoFormatOption" value="{\
+		mode : \'TwoWay\',\
+		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("DateTimeWithTimezoneSet('1')", {
+				DateTime : new Date(1642413288000),
+				ID : "1",
+				TimezoneID : "America/New_York"
+			}, {"sap-message" : getMessageHeader(oDateWarning)})
+			.expectValue("Hide", "Jan 17, 2022, 4:54:48 AM")
+			.expectValue("Only", "America/New_York")
+			.expectValue("Show", "Jan 17, 2022, 4:54:48 AM America/New_York")
+			.expectValue("NoFormatOption", "Jan 17, 2022, 4:54:48 AM America/New_York")
+			.expectMessage(oDateWarning, "/DateTimeWithTimezoneSet('1')/")
+			.expectValueState("Hide", "Warning", "Foo")
+			.expectValueState("Only", "None", "")
+			.expectValueState("Show", "Warning", "Foo")
+			.expectValueState("NoFormatOption", "Warning", "Foo");
+
+		// code under test
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTimezoneWarning = that.createResponseMessage("TimezoneID", "Bar", "warning");
+
+			that.expectRequest("DateTimeWithTimezoneSet('1')", {
+					DateTime : new Date(1642413288000),
+					ID : "1",
+					TimezoneID : "America/New_York"
+				}, {"sap-message" : getMessageHeader(oTimezoneWarning)})
+				.expectMessage(oTimezoneWarning, "/DateTimeWithTimezoneSet('1')/", undefined, true)
+				.expectValueState("Hide", "None", "")
+				.expectValueState("Only", "Warning", "Bar")
+				.expectValueState("Show", "Warning", "Bar")
+				.expectValueState("NoFormatOption", "Warning", "Bar");
+
+			// code under test
+			oModel.refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
 	//**********************************************************************************************
 	// Scenario: In a master-detail scenario there are two requests in one batch, one for the list
 	// (entity set) and one for the details (an entity of this set). If the first request responds

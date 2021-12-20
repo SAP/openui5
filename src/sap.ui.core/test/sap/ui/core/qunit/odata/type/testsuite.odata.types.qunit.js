@@ -30,6 +30,7 @@ sap.ui.define(function () {
 			"Currency" : {},
 			"Date" : {},
 			"DateTimeBase" : {},
+			"DateTimeWithTimezone" : {},
 			"Decimal" : {},
 			"Double" : {},
 			"Guid" : {},

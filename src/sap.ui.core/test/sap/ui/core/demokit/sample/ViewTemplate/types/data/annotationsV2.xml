@@ -104,6 +104,10 @@
 							<PropertyValue Property="Label" String="TimeStampShort"/>
 							<PropertyValue Property="Value" Path="TimeStampShort"/>
 						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="TimezoneID" />
+							<PropertyValue Property="Value" Path="TimezoneID" />
+						</Record>
 					</Collection>
 				</Annotation>
 			</Annotations>
