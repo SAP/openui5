@@ -769,11 +769,13 @@ sap.ui.define([
 
 						return oTypeahead.getItemForValue(oConfig).then(function(oItem) {
 							_cleanupParameterBinding.call(this, aInBindings);
-							if (oItem.inParameters) {
-								oItem.inParameters = _mapParametersToField.call(this, oItem.inParameters, this.getInParameters());
-							}
-							if (oItem.outParameters) {
-								oItem.outParameters = _mapParametersToField.call(this, oItem.outParameters, this.getOutParameters());
+							if (oItem) {
+								if (oItem.inParameters) {
+									oItem.inParameters = _mapParametersToField.call(this, oItem.inParameters, this.getInParameters());
+								}
+								if (oItem.outParameters) {
+									oItem.outParameters = _mapParametersToField.call(this, oItem.outParameters, this.getOutParameters());
+								}
 							}
 							return oItem;
 						}.bind(this));
@@ -1128,14 +1130,16 @@ sap.ui.define([
 			if (!vValue && bInitialValueFilterEmpty) {
 				oCondition = Condition.createCondition("Empty", []);
 				oCondition.isEmpty = false; // no explicit check needed
-			} else {
+			} else if (vValue !== null) {
 				// TODO: way to provide description on InParameter
 				// validated to let FilterField determine description if visible on FilterBar.
 				// Also to show it as selected on table in FieldHelp of FilterField.
 				oCondition = Condition.createItemCondition(vValue);
 				oCondition.validated = ConditionValidated.Validated;
 			}
-			oInConditions[sFilterPath].push(oCondition);
+			if (oCondition) {
+				oInConditions[sFilterPath].push(oCondition);
+			}
 		}
 
 		this.setProperty("_inConditions", oInConditions, true);

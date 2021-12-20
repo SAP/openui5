@@ -143,7 +143,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Title"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{title}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fTitle"
@@ -154,7 +154,7 @@
 										</mdc:fieldInfo>
 									</mdc:Field>
 									<Label text="Description"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fDescr" multipleLines="true" value="{descr}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fDescr" multipleLines="true" value="{path: 'descr', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 									<Label text="Stock"/>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fStock" value="{path: 'stock', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 									<Label text="Price"/>
@@ -173,7 +173,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Link" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{title}" editMode="Display">
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display">
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fLink"
@@ -181,9 +181,9 @@
 										</mdc:fieldInfo>
 									</mdc:Field>
 									<Label text="Genre" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fGenre" value="{genre_code}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHGenre" display="Description"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fGenre" value="{path: 'genre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHGenre" display="Description"/>
 									<Label text="SubGenre" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fSubGenre" value="{subgenre_code}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHSubGenre" display="Description"/>
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fSubGenre" value="{path: 'subgenre_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FHSubGenre" display="Description"/>
 								</f:content>
 								<f:dependents>
 									<mdc:ValueHelp id="FHGenre"
