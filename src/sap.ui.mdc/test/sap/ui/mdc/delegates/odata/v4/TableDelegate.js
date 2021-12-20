@@ -59,8 +59,9 @@ sap.ui.define([
 		});
 	};
 
-	TestTableDelegate.updateBindingInfo = function(oTable, oMetadataInfo, oBindingInfo) {
+	TestTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
+		var oMetadataInfo = oTable.getPayload();
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 

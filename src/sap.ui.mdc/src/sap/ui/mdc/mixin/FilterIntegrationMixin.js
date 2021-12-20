@@ -23,7 +23,7 @@ sap.ui.define([
 	 * <ul>
 	 * <li><code>setFilter</code> - The setter for the <code>filter</code> association</li>
 	 * <li><code>_validateFilter</code> - Validates the provided <code>IFilter</code> control instance and may return an error</li>
-	 * <li><code>checkAndRebind</code> - Executes a the <code>rebind</code> method for the given control instance.</li>
+	 * <li><code>rebind</code> - Executes a the <code>rebind</code> method for the given control instance.</li>
 	 * </ul>
 	 *
 	 * To use the FilterIntegrationMixin, the implementing Control requires the <code>filter</code> associaton.
@@ -31,7 +31,7 @@ sap.ui.define([
 	 * Additionally, the following methods are necessary to be implemented:
 	 *
 	 * <ul>
-	 * <li><code>rebind</code></li>
+	 * <li><code>_rebind</code></li>
 	 * <li><code>isFilteringEnabled</code></li>
 	 * </ul>
 	 *
@@ -92,7 +92,7 @@ sap.ui.define([
 	};
 
 	function onSearch(oEvent) {
-		this.rebind();
+		this._rebind();
 		if (this._onFilterSearch) {
 			this._onFilterSearch(oEvent);
 		}
@@ -178,8 +178,13 @@ sap.ui.define([
 
 	/**
 	 * Executes a rebind considering the provided external and inbuilt filtering.
+	 *
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	 * @since 1.98
 	 */
-	FilterIntegrationMixin.checkAndRebind = function() {
+	FilterIntegrationMixin.rebind = function() {
 
 		if (this.bIsDestroyed) {
 			return;
@@ -207,7 +212,7 @@ sap.ui.define([
 				pOuterFilterSearch,
 				pInnerFilterSearch
 			]).then(function() {
-				this.rebind();
+				this._rebind();
 			}.bind(this), function(){
 
 				//TODO:
@@ -217,7 +222,7 @@ sap.ui.define([
 		} else {
 
 			//No Filter source provided --> rebind immediately
-			this.rebind();
+			this._rebind();
 		}
 
 	};
@@ -226,7 +231,7 @@ sap.ui.define([
 
         this.setFilter = FilterIntegrationMixin.setFilter;
 		this._validateFilter = FilterIntegrationMixin._validateFilter;
-        this.checkAndRebind = FilterIntegrationMixin.checkAndRebind;
+        this.rebind = FilterIntegrationMixin.rebind;
 	};
 
 });

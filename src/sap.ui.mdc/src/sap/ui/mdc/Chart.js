@@ -453,7 +453,7 @@ sap.ui.define([
          * The rest of the creation of the content for the inner chart is done in the delegate.
          * Also creates the breadcrumbs.
          *
-         * Is called during init when autoBindOnInit = "true", if "false" then this is called by rebind()
+         * Is called during init when autoBindOnInit = "true", if "false" then this is called by _rebind()
          */
         Chart.prototype._createContentfromPropertyInfos = function () {
             this.initPropertyHelper(PropertyHelper).then(function () {
@@ -574,7 +574,7 @@ sap.ui.define([
 
             //Needed to apply current sorters when sorted measure/dimension was not selected yet
             //However, since this gets called multiple times when the aggregation adds/removes multiple properties, the binding seems to break
-            this.rebind();
+            this._rebind();
 
             //Update the breadcrumbs after an MDC Item change
             this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
@@ -583,7 +583,7 @@ sap.ui.define([
         /**
          * Rebinds the inner chart instance by calling oDelegate.rebindChart
          */
-        Chart.prototype.rebind = function () {
+        Chart.prototype._rebind = function () {
 
             if (!this._bInnerChartReady) {
                 //TODO: This can lead to a race conditition when the "Go" button is pressed while the inner chart still intializes
@@ -592,7 +592,7 @@ sap.ui.define([
 
                 //Wait with rebind until inner chart is ready
                 this.initialized().then(function () {
-                    this.rebind();
+                    this._rebind();
                 }.bind(this));
                 return;
             }
@@ -611,7 +611,7 @@ sap.ui.define([
             }
 
             this.getControlDelegate().updateBindingInfo(this, oBindingInfo); //Applies filters
-            this.getControlDelegate().rebindChart(this, oBindingInfo);
+            this.getControlDelegate().rebindChart(this, oBindingInfo); //TODO: Change this to rebind method on delegate once FE is ready
         };
 
         /**

@@ -29,12 +29,11 @@ sap.ui.define([
 	/**
 	 * Provides a hook to update the binding info object that is used to bind the table to the model.
 	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
-	 * @param {object} oDelegatePayload The delegate payload
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @protected
 	 */
-	TableDelegate.updateBindingInfo = function(oMDCTable, oDelegatePayload, oBindingInfo) {
+	TableDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
 		oBindingInfo.parameters = {};
 
 		if (oMDCTable._oMessageFilter) {
@@ -78,8 +77,20 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
 	 * @protected
+	 * @deprecated As of version 1.98, replaced by {@link sap.ui.mdc.TableDelegate.rebind}
 	 */
 	TableDelegate.rebindTable = function(oMDCTable, oBindingInfo) {
+		this.rebind.apply(this, arguments);
+	};
+
+	/**
+	 * Rebinds the table.
+	 *
+	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the MDC table
+	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
+	 * @protected
+	 */
+	TableDelegate.rebind = function (oMDCTable, oBindingInfo) {
 		if (oMDCTable._oTable) {
 			oMDCTable._oTable.bindRows(oBindingInfo);
 		}

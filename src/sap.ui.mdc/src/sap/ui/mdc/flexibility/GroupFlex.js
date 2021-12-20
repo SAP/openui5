@@ -13,7 +13,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function (FlexRuntimeI
 					element: oControl
 				}).then(function () {
 					if (bExecuteRebindForTable) {
-						oControl.checkAndRebind();
+						oControl.rebind();
 					} else if (bExecuteRebindForChart) {
 						oControl.rebind();
 					}

@@ -20,10 +20,9 @@ sap.ui.define([
 	 * Updates the binding info with the relevant path and model from the metadata.
 	 *
 	 * @param {Object} oTable The MDC table instance
-	 * @param {Object} oMetadataInfo The metadataInfo set on the table
 	 * @param {Object} oBindingInfo The bindingInfo of the table
 	 */
-	ODataTableDelegate.updateBindingInfo = function(oTable, oDelegatePayload, oBindingInfo) {
+	ODataTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
 
 		var oFilterBar = Core.byId(oTable.getFilter());

@@ -319,12 +319,27 @@ sap.ui.define([
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {object} oBindingInfo The bindingInfo of the chart
+     *  @deprecated as of 1.98;: use rebind instead
      *
      * @experimental
      * @private
      * @ui5-restricted sap.ui.mdc
      */
-    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+     ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+    };
+
+
+    /**
+     * Checks the binding of the chart and rebinds it if required.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
+     * @param {object} oBindingInfo The bindingInfo of the chart
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     */
+    ChartDelegate.rebind = function (oMDCChart, oBindingInfo) {
     };
 
     /**

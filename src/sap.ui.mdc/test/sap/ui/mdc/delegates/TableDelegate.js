@@ -25,8 +25,9 @@ sap.ui.define([
 		return TableDelegateUtils.createColumn(oTable, sPropertyName);
 	};
 
-	TestTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+	TestTableDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
+		var oMetadataInfo = oMDCTable.getPayload();
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 

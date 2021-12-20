@@ -298,7 +298,7 @@ sap.ui.define([
 			var aMDCColumns = oTable.getColumns();
 			var aInnerColumns = oTable._oTable.getColumns();
 
-			oTable.rebind();
+			oTable._rebind();
 
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getLabel().getText(), "Test");
@@ -826,8 +826,8 @@ sap.ui.define([
 
 		return this.oTable._fullyInitialized().then(function() {
 			fnOriginalUpdateBindingInfo = this.oTable.getControlDelegate().updateBindingInfo;
-			this.oTable.getControlDelegate().updateBindingInfo = function(oTable, oPayload, oBindingInfo) {
-				fnOriginalUpdateBindingInfo(oTable, oPayload, oBindingInfo);
+			this.oTable.getControlDelegate().updateBindingInfo = function(oTable, oBindingInfo) {
+				fnOriginalUpdateBindingInfo(oTable, oBindingInfo);
 				oBindingInfo.events = {
 					dataReceived: fCustomDataReceived
 				};

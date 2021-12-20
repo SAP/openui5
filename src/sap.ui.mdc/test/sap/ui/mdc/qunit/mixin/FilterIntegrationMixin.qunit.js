@@ -39,7 +39,7 @@ sap.ui.define([
     var fnCreateValidInstance = function () {
         fnExtendTestClass();
         oSomeInstance = new TestClass();
-        oSomeInstance.rebind = function(){
+        oSomeInstance._rebind = function(){
             fnExecuteOnRebind();
         };
         oSomeInstance.isFilteringEnabled = function(){ return bInbuiltEnabled;};
@@ -124,8 +124,8 @@ sap.ui.define([
         assert.ok(oSomeInstance._validateFilter instanceof Function, "Method provided");
     });
 
-    QUnit.test("check 'checkAndRebind'", function(assert) {
-        assert.ok(oSomeInstance.checkAndRebind instanceof Function, "Method provided");
+    QUnit.test("check 'rebind'", function(assert) {
+        assert.ok(oSomeInstance.rebind instanceof Function, "Method provided");
     });
 
     QUnit.module("FilterIntegrationMixin integration in Control", {
@@ -155,7 +155,7 @@ sap.ui.define([
 
     });
 
-    QUnit.test("Check 'checkAndRebind' functionality - only external filtering enabled", function(assert){
+    QUnit.test("Check 'rebind' functionality - only external filtering enabled", function(assert){
 
         bInbuiltEnabled = false;
 
@@ -171,14 +171,14 @@ sap.ui.define([
         var oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
         var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
-        oSomeInstance.checkAndRebind();
+        oSomeInstance.rebind();
 
         assert.equal(oExternalFilterSpy.callCount, 1, "Filter Promise fetched");
         assert.equal(oRetrieveInnerSpy.callCount, 0, "Filter Promise not fetched");
 
     });
 
-    QUnit.test("Check 'checkAndRebind' functionality - no filter association, but inbuilt enabled", function(assert){
+    QUnit.test("Check 'rebind' functionality - no filter association, but inbuilt enabled", function(assert){
 
         bInbuiltEnabled = true;
 
@@ -190,13 +190,13 @@ sap.ui.define([
 
         var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
-        oSomeInstance.checkAndRebind();
+        oSomeInstance.rebind();
 
         assert.equal(oRetrieveInnerSpy.callCount, 1, "Filter Promise fetched");
 
     });
 
-    QUnit.test("Check 'checkAndRebind' functionality - no filter association, inbuilt not enabled", function(assert){
+    QUnit.test("Check 'rebind' functionality - no filter association, inbuilt not enabled", function(assert){
 
         bInbuiltEnabled = false;
 
@@ -208,13 +208,13 @@ sap.ui.define([
 
         var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
-        oSomeInstance.checkAndRebind();
+        oSomeInstance.rebind();
 
         assert.equal(oRetrieveInnerSpy.callCount, 0, "Filter Promise not fetched");
 
     });
 
-    QUnit.test("Check 'checkAndRebind' functionality - both (internal/external) enabled", function(assert){
+    QUnit.test("Check 'rebind' functionality - both (internal/external) enabled", function(assert){
 
         bInbuiltEnabled = true;
 
@@ -230,7 +230,7 @@ sap.ui.define([
         var oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
         var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
-        oSomeInstance.checkAndRebind();
+        oSomeInstance.rebind();
 
         assert.equal(oExternalFilterSpy.callCount, 1, "Filter Promise fetched");
         assert.equal(oRetrieveInnerSpy.callCount, 1, "Filter Promise fetched");

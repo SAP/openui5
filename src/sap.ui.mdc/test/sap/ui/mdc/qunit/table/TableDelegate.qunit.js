@@ -25,7 +25,7 @@ sap.ui.define([
 	var sDelegatePath = "sap/ui/mdc/TableDelegate";
 
 	var fnOriginalUpdateBindingInfo = TableDelegate.updateBindingInfo;
-	TableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+	TableDelegate.updateBindingInfo = function(oMDCTable, oBindingInfo) {
 		fnOriginalUpdateBindingInfo.apply(this, arguments);
 		oBindingInfo.path = "/foo";
 	};
@@ -137,7 +137,7 @@ sap.ui.define([
 
 			oTable._fullyInitialized().then(function() {
 				assert.deepEqual(oTable._oTable.getBindingInfo("items").sorter, aSorter, "Correct sorter assigned");
-				TableDelegate.updateBindingInfo(oTable, oTable.getPayload(), oBindingInfo);
+				TableDelegate.updateBindingInfo(oTable, oBindingInfo);
 				assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aSorter, filters: [], path: "/foo"});
 				done();
 			});

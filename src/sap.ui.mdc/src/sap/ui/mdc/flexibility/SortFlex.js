@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 				oControl._bWaitForBindChanges = true;
 				Engine.getInstance().waitForChanges(oControl).then(function() {
 					if (bExecuteRebindForTable) {
-						oControl.checkAndRebind();
+						oControl.rebind();
 					} else if (bExecuteRebindForChart) {
 						oControl.rebind();
 					}
