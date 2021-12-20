@@ -3,6 +3,28 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "2803b94163c21f0b3c75de0fe8aeef995cf06233",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: inner query selectors are correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008908592021"
+          }
+        ]
+      },
+      {
+        "id": "ee828217515bd4d869f79afcb6c9404aefa56f6e",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: nagivation works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180390649"
+          }
+        ]
+      },
+      {
         "id": "515de3a813e211af9390979dc2bbac1d5cb73646",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: today focuses date in the allowed date range",

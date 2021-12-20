@@ -3,6 +3,32 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "399a71d43d78a8e5ca30294ea378ccc485b0a632",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: options list items have dedicated IDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180423337"
+          }
+        ]
+      },
+      {
+        "id": "7d228bde14002fe2a88b7a4d6e04944ac1ae06ed",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxBase: Layouting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180412331"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180389675"
+          }
+        ]
+      },
+      {
         "id": "cd846524e3ce82d2cfd0cc3ac1f8757a2992a6de",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: popover doesn't close on date selection",
@@ -17,6 +43,43 @@
         "id": "30bbfae22a05ee02af682d6e190d32b518b6aedc",
         "type": "FIX",
         "text": " sap.m.MenuButton: Increase visual tests coverage"
+      },
+      {
+        "id": "eaf1f80eea06f918854585e5e4ade57df270f91c",
+        "type": "FIX",
+        "text": " sap.m.Input: valueHelpOnly and showItems will result in no picker opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180409632"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180409482"
+          }
+        ]
+      },
+      {
+        "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
+        "id": "5c8f5713152fd2d3b0ea7b7d1b9bd47412dcc8be",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Compact mode density respected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180395055"
+          }
+        ]
       },
       {
         "id": "91c6d7c3869e9ec61b3a55eebd0379edb36b3202",

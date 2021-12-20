@@ -3,6 +3,17 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
         "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
         "type": "FEATURE",
         "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"

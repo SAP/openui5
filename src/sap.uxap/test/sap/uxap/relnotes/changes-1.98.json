@@ -3,6 +3,17 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "b6993a9891a1983f9a093f8b543ce162630f8300",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected check for closest section",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180393065"
+          }
+        ]
+      },
+      {
         "id": "4c800f1f9db8b83964587eab3731b2b44d800084",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Removed redundant accessibility readout",
