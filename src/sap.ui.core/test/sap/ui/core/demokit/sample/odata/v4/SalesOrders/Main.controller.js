@@ -402,9 +402,7 @@ sap.ui.define([
 			}
 
 			aFilters = aFilters.filter(function (oFilter) {
-				if (oFilter.getPath() !== "SOITEM_2_PRODUCT/ProductID") {
-					return oFilter;
-				}
+				 return oFilter.getPath() !== "SOITEM_2_PRODUCT/ProductID";
 			});
 
 			if (sQuery) {
