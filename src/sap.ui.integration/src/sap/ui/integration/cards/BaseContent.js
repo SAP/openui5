@@ -509,12 +509,10 @@ sap.ui.define([
 	/**
 	 * @protected
 	 * @param {string} sLogMessage Message that will be logged.
-	 * @param {string} [sDisplayMessage] Message that will be displayed in the card's content. If not provided, a default message is displayed.
 	 */
-	BaseContent.prototype.handleError = function (sLogMessage, sDisplayMessage) {
+	BaseContent.prototype.handleError = function (sLogMessage) {
 		this.fireEvent("_error", {
-			logMessage: sLogMessage,
-			displayMessage: sDisplayMessage
+			logMessage: sLogMessage
 		});
 	};
 

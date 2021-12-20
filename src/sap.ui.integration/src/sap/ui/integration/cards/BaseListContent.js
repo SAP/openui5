@@ -177,6 +177,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Used to show the illustrated message for no data retrived from server.
+	 *
+	 * @protected
+	 * @param {Object} mItemConfig The item template.
+	 */
+	BaseListContent.prototype._handleNoItemsError = function (mItemConfig) {
+
+		if (!this.getInnerList()) {
+			return;
+		}
+
+		var oInnerList = this.getInnerList(),
+			oBindingInfo = oInnerList.getBinding(oInnerList.getMetadata().getDefaultAggregationName()),
+			oModel = oBindingInfo.getModel(),
+			sPath = oBindingInfo.getPath(),
+			aItems = oModel.getProperty(sPath);
+
+		if (aItems && aItems.length === 0){
+			this.getParent()._handleError("No items available", true);
+		}
+	};
+
+	/**
 	 * Define the sorting of a group.
 	 * @param {object} oGroup The group which will be sorted
 	 * @returns {sap.ui.model.Sorter}  Sorter for a list bindings.

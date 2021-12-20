@@ -1188,6 +1188,19 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'customErrorMessages',
+						target: 'exploreSamples',
+						title: 'Custom Error Message',
+						experimental: true,
+						files: [
+							{
+								url: '/samples/customErrorMessage/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
+					},
+					{
 						key: 'data',
 						target: 'exploreSamples',
 						title: 'Data',

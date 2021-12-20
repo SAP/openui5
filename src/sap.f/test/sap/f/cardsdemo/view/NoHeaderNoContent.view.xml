@@ -62,6 +62,26 @@
 						<f:GridContainerItemLayoutData columns="3" />
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="ListNodata-error" manifest="{manifests>/noHeaderNoContent/ListNodata-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="TableNodata-error" manifest="{manifests>/noHeaderNoContent/TableNodata-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="Custom-error" manifest="{manifests>/noHeaderNoContent/Custom-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="BadUrl-error" manifest="{manifests>/noHeaderNoContent/BadUrl-error}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="3" />
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</Panel>
 	</Page>

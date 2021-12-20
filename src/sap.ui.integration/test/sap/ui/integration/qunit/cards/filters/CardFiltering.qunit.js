@@ -22,10 +22,12 @@ sap.ui.define([
 	QUnit.module("Filters in Card", {
 		beforeEach: function () {
 			this.oCard = new Card();
+			this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
 		},
 		afterEach: function () {
 			this.oCard.destroy();
 			this.oCard = null;
+			this.oRb = null;
 		}
 	});
 
@@ -79,7 +81,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			setTimeout(function () {
-				assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, 0, "an empty list is displayed");
+				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "an empty list is displayed");
 				done();
 			}.bind(this), 500);
 

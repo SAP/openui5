@@ -75,6 +75,8 @@ sap.ui.define([
 
 			if (oContext.getStaticConfiguration) {
 				oSubConfig = oContext.getStaticConfiguration();
+			} else if (oContext._oCardOriginalContent && oContext._oCardOriginalContent.getStaticConfiguration) {
+				oSubConfig = oContext._oCardOriginalContent.getStaticConfiguration();
 			} else {
 				oSubConfig = Utils.getNestedPropertyValue(oManifest, sManifestPath);
 			}

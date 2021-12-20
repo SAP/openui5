@@ -376,7 +376,11 @@ describe("sap.f.Card", function () {
 			{ id: "i4", focus: true },
 			{ id: "i5", focus: true },
 			{ id: "i6-error", focus: true },
-			{ id: "i7-error", focus: true }
+			{ id: "i7-error", focus: true },
+			{ id: "ListNodata-error", focus: true },
+			{ id: "TableNodata-error", focus: true },
+			{ id: "Custom-error", focus: true },
+			{ id: "BadUrl-error", focus: true }
 		];
 
 		aCards.forEach(function (oCard) {

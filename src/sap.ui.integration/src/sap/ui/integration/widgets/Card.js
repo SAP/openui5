@@ -33,7 +33,10 @@ sap.ui.define([
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/cards/filters/FilterBarFactory",
 	"sap/ui/integration/cards/actions/CardActions",
-	"sap/ui/integration/util/CardObserver"
+	"sap/ui/integration/util/CardObserver",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize"
 ], function (
 	CardRenderer,
 	Footer,
@@ -66,7 +69,10 @@ sap.ui.define([
 	IconFormatter,
 	FilterBarFactory,
 	CardActions,
-	CardObserver
+	CardObserver,
+	IllustratedMessage,
+	IllustratedMessageType,
+	IllustratedMessageSize
 ) {
 	"use strict";
 
@@ -82,7 +88,8 @@ sap.ui.define([
 		PARAMS: "/sap.card/configuration/parameters",
 		DESTINATIONS: "/sap.card/configuration/destinations",
 		CSRF_TOKENS: "/sap.card/configuration/csrfTokens",
-		FILTERS: "/sap.card/configuration/filters"
+		FILTERS: "/sap.card/configuration/filters",
+		ERROR_MESSAGES: "/sap.card/configuration/messages"
 	};
 
 	/**
@@ -1680,7 +1687,7 @@ sap.ui.define([
 		}
 
 		oContent.attachEvent("_error", function (oEvent) {
-			this._handleError(oEvent.getParameter("logMessage"), oEvent.getParameter("displayMessage"));
+			this._handleError(oEvent.getParameter("logMessage"));
 		}.bind(this));
 
 		var oPreviousContent = this.getAggregation("_content");
@@ -1763,43 +1770,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a control representation of an error.
-	 *
-	 * @param {string} sErrorMessage Error message
-	 * @private
-	 * @returns {sap.ui.core.Control} control instance
-	 */
-	Card.prototype._createError = function (sErrorMessage) {
-		return new HBox({
-			justifyContent: "Center",
-			alignItems: "Center",
-			items: [
-				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
-				new Text({ text: sErrorMessage })
-			]
-		}).addStyleClass("sapFCardErrorContent");
-	};
-
-	/**
 	 * Handler for error states.
 	 * If the content is not provided in the manifest, the error message will be displayed in the header.
 	 * If a message is not provided, a default message will be displayed.
 	 *
 	 * @param {string} sLogMessage Message that will be logged.
-	 * @param {string} [sDisplayMessage] Message that will be displayed as an error in the card.
+	 * @param {boolean} bNoItems No items are available after request.
 	 * @private
 	 */
-	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
+	Card.prototype._handleError = function (sLogMessage, bNoItems) {
 		this._loadDefaultTranslations();
-		Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
+		if (!bNoItems) {
+			Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
+		}
 
 		this.fireEvent("_error", { message: sLogMessage });
 
-		var sErrorMessage = sDisplayMessage || this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
-			oError = this._createError(sErrorMessage),
-			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
+		var oErrorConfiguration = this._oCardManifest.get(MANIFEST_PATHS.ERROR_MESSAGES),
+			oError = this._getIllustratedMessage(oErrorConfiguration, bNoItems),
+			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
+			oCardContent = merge({}, this.getCardContent());
 
 		if (oContentSection) {
+			this._handleNoDataItems(oCardContent, oError, bNoItems);
 			this._destroyPreviousContent(this.getCardContent());
 			this._preserveMinHeightInContent(oError);
 			this.setAggregation("_content", oError);
@@ -1808,6 +1801,67 @@ sap.ui.define([
 			this.getCardHeader().setAggregation("_error", oError);
 		}
 
+	};
+
+	/**
+	 * Get Illustrated message.
+	 *
+	 * @param {object} oErrorConfiguration Error settings from manifest.
+	 * @param {boolean} bNoItems No items are available after request.
+	 * @private
+	 */
+	Card.prototype._getIllustratedMessage = function (oErrorConfiguration, bNoItems) {
+		var sIllustratedMessageType = IllustratedMessageType.UnableToLoad,
+			sIllustratedMessageSize = IllustratedMessageSize.Spot,
+			sTitle,
+			sDescription;
+
+		//no item from request default messages, for some card types
+		if (bNoItems && !oErrorConfiguration) {
+			switch (this._oCardManifest.get(MANIFEST_PATHS.TYPE)) {
+				case "List":
+				case "Timeline":
+					sIllustratedMessageType = IllustratedMessageType.NoData;
+					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_LISTS");
+					break;
+				case "Table":
+					sIllustratedMessageType = IllustratedMessageType.NoEntries;
+					sTitle = this._oIntegrationRb.getText("CARD_NO_ITEMS_ERROR_LISTS");
+					break;
+			}
+		}
+
+		//custom no data message
+		if (oErrorConfiguration && oErrorConfiguration.noData && bNoItems) {
+			var oErrorData = oErrorConfiguration.noData;
+				sIllustratedMessageType = IllustratedMessageType[oErrorData.type];
+				sIllustratedMessageSize = IllustratedMessageSize[oErrorData.size];
+				sTitle = oErrorData.title;
+				sDescription = oErrorData.description;
+		}
+
+		var oIllustratedMessage = new IllustratedMessage({
+			illustrationType: sIllustratedMessageType,
+			illustrationSize: sIllustratedMessageSize,
+			title: sTitle,
+			description: sDescription ? sDescription : " "
+		}).addStyleClass("sapFCardErrorContent");
+
+		return oIllustratedMessage;
+	};
+
+	/**
+	 * Handle when there is no data in error cases for manifest resolver.
+	 *
+	 * @param {object} oCardContent clone of the original card content before it is destroyed.
+	 * @param {object} oError IllustratedMessage used for the error content.
+	 * @param {boolean} bNoItems No items are available after request.
+	 * @private
+	 */
+	Card.prototype._handleNoDataItems = function (oCardContent, oError, bNoItems) {
+		if (bNoItems && this._oCardManifest.get(MANIFEST_PATHS.TYPE) === "List") {
+			oError._oCardOriginalContent = oCardContent;
+		}
 	};
 
 	Card.prototype._getTemporaryContent = function (sCardType, oContentManifest) {

@@ -112,6 +112,12 @@ sap.ui.define([
 						key: 'actionHandlers'
 					},
 					{
+						title: 'Custom Error Message',
+						target: 'learnDetail',
+						key: 'customErrorMessages',
+						experimental: true
+					},
+					{
 						title: 'CSRF Tokens',
 						target: 'learnDetail',
 						key: 'csrfTokens',
