@@ -152,10 +152,12 @@ sap.ui.define([
 	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
 	 * so we have to call save twice. For App Variants all the changes are saved in one place.
 	 * @param {boolean} bSaveAsDraft - save the changes as a draft
+	 * @param {string} [sLayer] - Layer for which the changes should be saved
+	 * @param {boolean} [bRemoveOtherLayerChanges=false] - Whether to remove changes on other layers before saving
 	 * @returns {Promise} return empty promise
 	 * @public
 	 */
-	LREPSerializer.prototype.saveCommands = function(bSaveAsDraft) {
+	LREPSerializer.prototype.saveCommands = function(bSaveAsDraft, sLayer, bRemoveOtherLayerChanges) {
 		this._lastPromise = this._lastPromise.catch(function() {
 			// _lastPromise chain must not be interrupted
 		}).then(function() {
@@ -163,7 +165,13 @@ sap.ui.define([
 			if (!oRootControl) {
 				throw new Error("Can't save commands without root control instance!");
 			}
-			return PersistenceWriteAPI.save({selector: oRootControl, skipUpdateCache: false, draft: !!bSaveAsDraft});
+			return PersistenceWriteAPI.save({
+				selector: oRootControl,
+				skipUpdateCache: false,
+				draft: !!bSaveAsDraft,
+				layer: sLayer,
+				removeOtherLayerChanges: !!bRemoveOtherLayerChanges
+			});
 		}.bind(this))
 
 		.then(function() {

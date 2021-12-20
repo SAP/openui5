@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
+	"sap/ui/fl/FlexController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -65,6 +66,7 @@ sap.ui.define([
 	Stack,
 	RuntimeAuthoring,
 	RtaUtils,
+	FlexController,
 	sinon
 ) {
 	"use strict";
@@ -99,6 +101,7 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is available with a component as rootControl...", {
 		before: function () {
+			this.oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			return oComponentPromise;
 		},
 		beforeEach: function() {
@@ -261,6 +264,15 @@ sap.ui.define([
 			assert.equal(oFireModeChangedSpy.callCount, 2, "the event ModeChanged was fired again");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "visualization"}, "the argument of the event is correct");
 			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "default", "the movable overlays switched again to the default cursor");
+		});
+
+		QUnit.test("when navigation mode is entered multiple times", function(assert) {
+			var oMessageToastSpy = sandbox.stub(MessageToast, "show");
+			this.oRta.setMode("navigation");
+			this.oRta.setMode("adaptation");
+			this.oRta.setMode("navigation");
+			var sExpectedErrorMessage = this.oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING");
+			assert.ok(oMessageToastSpy.calledOnceWith(sExpectedErrorMessage), "then a warning is shown once");
 		});
 	});
 
@@ -911,14 +923,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("when stopping rta with saving changes", function(assert) {
+			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			var oRemoveDirtyChangesSpy = sandbox.spy(FlexController.prototype, "removeDirtyChanges");
+
 			return this.oRta.stop()
-			.then(function() {
-				assert.ok(true, "then the promise got resolved");
-			})
-			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
-			.then(function (iNumberOfChanges) {
-				assert.equal(iNumberOfChanges, 2);
-			});
+				.then(function() {
+					var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
+					assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
+					assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
+					assert.ok(oRemoveDirtyChangesSpy.called, "then dirty changes on other layers are removed");
+				}.bind(this))
+				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+				.then(function(iNumberOfChanges) {
+					assert.strictEqual(iNumberOfChanges, 2, "then the changes are written");
+				});
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is disabled", function(assert) {
