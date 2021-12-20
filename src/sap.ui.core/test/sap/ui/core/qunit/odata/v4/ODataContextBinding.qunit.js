@@ -1977,8 +1977,8 @@ sap.ui.define([
 		sId : "77",
 		bRead : true
 	}].forEach(function (oFixture) {
-		QUnit.test("_execute: bound operation " + (oFixture.bRead ? "" : "on context w/o read ") +
-				"returning the same entity type with key " + oFixture.sId,
+		QUnit.test("_execute: bound operation " + (oFixture.bRead ? "" : "on context w/o read ")
+				+ "returning the same entity type with key " + oFixture.sId,
 				function (assert) {
 			var oParentContext = Context.create(this.oModel, {/*binding*/}, "/TEAMS('42')"),
 				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
@@ -2803,8 +2803,8 @@ sap.ui.define([
 			}),
 			oOperationMetadata = {$kind : "Action"},
 			sPath = "/ActionImport(...)",
-			aRawMessages =
-				["~boundMessage0", "~boundMessage1", "~unboundMessage0", "~unboundMessage1"],
+			aRawMessages
+				= ["~boundMessage0", "~boundMessage1", "~unboundMessage0", "~unboundMessage1"],
 			oSingleCache = {
 				post : function () {}
 			};
@@ -4868,8 +4868,8 @@ sap.ui.define([
 					serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 					synchronizationMode : "None"
 				}),
-				oBinding = oModel.bindContext("EMPLOYEE_2_TEAM/" +
-					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)"),
+				oBinding = oModel.bindContext("EMPLOYEE_2_TEAM/"
+					+ "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)"),
 				oParentBinding = oModel.bindContext("/EMPLOYEES('1')", null,
 					{$expand : "EMPLOYEE_2_TEAM"});
 

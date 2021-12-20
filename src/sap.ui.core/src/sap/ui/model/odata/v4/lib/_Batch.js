@@ -280,8 +280,8 @@ sap.ui.define([
 					_serializeBatchRequest(oRequest, iRequestIndex).body);
 			} else {
 				if (bIsChangeSet && !mAllowedChangeSetMethods[oRequest.method]) {
-					throw new Error("Invalid HTTP request method: " + oRequest.method +
-						". Change set must contain only POST, PUT, PATCH, or DELETE requests.");
+					throw new Error("Invalid HTTP request method: " + oRequest.method
+						+ ". Change set must contain only POST, PUT, PATCH, or DELETE requests.");
 				}
 
 				if (iChangeSetIndex !== undefined && sUrl[0] === "$") {

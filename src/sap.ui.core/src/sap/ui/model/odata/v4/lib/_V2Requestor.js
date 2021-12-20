@@ -917,8 +917,8 @@ sap.ui.define([
 		this.mTypesByName = this.mTypesByName || {};
 		oType = this.mTypesByName[sName];
 		if (!oType) {
-			oType = this.mTypesByName[sName] =
-				this.oModelInterface.fetchMetadata("/" + sName).getResult();
+			oType = this.mTypesByName[sName]
+				= this.oModelInterface.fetchMetadata("/" + sName).getResult();
 		}
 		return oType;
 	};

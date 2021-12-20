@@ -16148,9 +16148,9 @@ sap.ui.define([
 			+ ")", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">' +
-	(bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : "") +
-'	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="blackBinding">\
+<FlexBox binding="{/SalesOrderList(\'0500000000\')}" id="form">'
+	+ (bParentHasData ? '<Text id="netAmount" text="{NetAmount}"/>' : "") + '\
+	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="blackBinding">\
 		<Text id="note" text="{Note}"/>\
 	</FlexBox>\
 </FlexBox>',
@@ -20393,8 +20393,8 @@ sap.ui.define([
 					+ "@$ui5._/predicate' does not point to a property",
 					sinon.match.string, "sap.ui.model.odata.v4.ODataParentBinding"
 				); // fetchIfChildCanUseCache
-				that.oLogMock.expects("error").withExactArgs("Not a valid property path: " +
-					sPrefix + "@$ui5._/predicate", undefined, "sap.ui.model.odata.v4.Context");
+				that.oLogMock.expects("error").withExactArgs("Not a valid property path: "
+					+ sPrefix + "@$ui5._/predicate", undefined, "sap.ui.model.odata.v4.Context");
 			}
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to drill-down into " + sPrefix

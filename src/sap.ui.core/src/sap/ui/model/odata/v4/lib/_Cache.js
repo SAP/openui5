@@ -1186,9 +1186,9 @@ sap.ui.define([
 				oEntity = aElements.$byPredicate[sPredicate];
 			}
 			sKeyFilter = _Helper.getKeyFilter(oEntity, that.sMetaPath, mTypeForMetaPath);
-			sInCollectionFilter =
-				(mQueryOptions.$filter ? "(" + mQueryOptions.$filter + ") and " : "")
-				+ sKeyFilter;
+			sInCollectionFilter
+				= (mQueryOptions.$filter ? "(" + mQueryOptions.$filter + ") and " : "")
+					+ sKeyFilter;
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
 

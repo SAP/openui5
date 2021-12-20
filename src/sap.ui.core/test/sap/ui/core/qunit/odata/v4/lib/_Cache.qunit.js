@@ -8387,8 +8387,8 @@ sap.ui.define([
 				oNewValue = {value : [{"@$ui5._" : {predicate : "('c')"}}]},
 				aPaths = ["EMPLOYEE"],
 				mQueryOptions = {},
-				mQueryOptionsForExtract =
-					Object.assign({$filter : "~key_filter~"}, mIntersectedQueryOptions),
+				mQueryOptionsForExtract
+					= Object.assign({$filter : "~key_filter~"}, mIntersectedQueryOptions),
 				sResourcePath = "TEAMS('42')/Foo",
 				mTypeForMetaPath = {"/TEAMS/Foo" : "~type~"},
 				oUpdateAllExpectation,
@@ -8447,14 +8447,14 @@ sap.ui.define([
 					sinon.match.same(oNewValue.value[0]), sinon.match.func)
 				.callThrough();
 			if (bSkip === true) {
-				oGetRelativePathExpectation =
-					this.mock(_Helper).expects("getRelativePath").exactly(0);
+				oGetRelativePathExpectation
+					= this.mock(_Helper).expects("getRelativePath").exactly(0);
 			} else if (bSkip === false) {
-				oGetRelativePathExpectation =
-					this.mock(_Helper).expects("getRelativePath").exactly(1);
+				oGetRelativePathExpectation
+					= this.mock(_Helper).expects("getRelativePath").exactly(1);
 			} else {
-				oGetRelativePathExpectation =
-					this.mock(_Helper).expects("getRelativePath").exactly(3);
+				oGetRelativePathExpectation
+					= this.mock(_Helper).expects("getRelativePath").exactly(3);
 			}
 
 			// code under test

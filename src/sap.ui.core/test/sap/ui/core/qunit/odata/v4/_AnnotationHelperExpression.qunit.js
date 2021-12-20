@@ -1444,10 +1444,10 @@ sap.ui.define([
 			aResults.forEach(function (sResult2) {
 				Object.keys(mTypes).forEach(function (sType1) {
 					Object.keys(mTypes).forEach(function (sType2) {
-						var oParameter1 =
-								{result : sResult1, type : sType1, category : mTypes[sType1]},
-							oParameter2 =
-								{result : sResult2, type : sType2, category : mTypes[sType2]},
+						var oParameter1
+								= {result : sResult1, type : sType1, category : mTypes[sType1]},
+							oParameter2
+								= {result : sResult2, type : sType2, category : mTypes[sType2]},
 							sText = JSON.stringify(oParameter1) + " op "
 								+ JSON.stringify(oParameter2);
 

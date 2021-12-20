@@ -2572,8 +2572,8 @@ sap.ui.define([
 					undefined, fnCancelPost)
 				.then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
-					assert.strictEqual(oError.message, "Request canceled: " +
-						"POST LeaveRequests('42')/name.space.Submit; group: groupId");
+					assert.strictEqual(oError.message, "Request canceled: "
+						+ "POST LeaveRequests('42')/name.space.Submit; group: groupId");
 				}),
 			oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
 					{"If-Match" : {/* product 0 */}}, {Name : "baz"}, undefined, fnCancel3)

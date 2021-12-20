@@ -206,8 +206,8 @@ sap.ui.define([
 			return sResourcePath;
 		}
 
-		return sResourcePath +
-			(sResourcePath.includes("?") ? "&" + sQueryString.slice(1) : sQueryString);
+		return sResourcePath
+			+ (sResourcePath.includes("?") ? "&" + sQueryString.slice(1) : sQueryString);
 	};
 
 	/**

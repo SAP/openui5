@@ -220,8 +220,8 @@ sap.ui.define([
 			if (Array.isArray(oResponse)) {
 				parseResponses(oResponse);
 			} else if (aResponses[i].responseText && aResponses[i].status < 400) {
-				aResponses[i].responseText =
-					JSON.parse(aResponses[i].responseText);
+				aResponses[i].responseText
+					= JSON.parse(aResponses[i].responseText);
 			}
 		}
 	}
@@ -248,22 +248,22 @@ sap.ui.define([
 				url : "Employees('2')"
 			}
 		],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"GET Employees('1') HTTP/1.1\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--batch_id-0123456789012-345\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"GET Employees('2') HTTP/1.1\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--batch_id-0123456789012-345--\r\n" +
-		"foo",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "GET Employees('1') HTTP/1.1\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "GET Employees('2') HTTP/1.1\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--batch_id-0123456789012-345--\r\n"
+		+ "foo",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -285,25 +285,25 @@ sap.ui.define([
 				}
 			}
 		],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"GET Employees('1')?$select=EmployeeID HTTP/1.1\r\n" +
-		"foo:bar1\r\n" +
-		"abc:123\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--batch_id-0123456789012-345\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"GET Employees('2') HTTP/1.1\r\n" +
-		"foo:bar2\r\n" +
-		"abc:456\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "GET Employees('1')?$select=EmployeeID HTTP/1.1\r\n"
+		+ "foo:bar1\r\n"
+		+ "abc:123\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "GET Employees('2') HTTP/1.1\r\n"
+		+ "foo:bar2\r\n"
+		+ "abc:456\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -327,29 +327,29 @@ sap.ui.define([
 			}
 		]],
 		$ContentIDs : [["0.0", "1.0"]],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
-		"\r\n" +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.0\r\n" +
-		"\r\n" +
-		"PATCH Employees('1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_03"}\r\n' +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:1.0\r\n" +
-		"\r\n" +
-		"PATCH Employees('2') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_01"}\r\n' +
-		"--changeset_id-9876543210987-654--\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:1.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('2') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_01"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -409,68 +409,68 @@ sap.ui.define([
 			]
 		],
 		$ContentIDs : [[], ["0.1", "1.1"], [], ["0.3", "1.3"]],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"GET Employees('1') HTTP/1.1\r\n" +
-		"foo:bar1\r\n" +
-		"abc:123\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
-		"\r\n" +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.1\r\n" +
-		"\r\n" +
-		"PATCH Employees('1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_03"}\r\n' +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:1.1\r\n" +
-		"\r\n" +
-		"PATCH Employees('2') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_01"}\r\n' +
-		"--changeset_id-9876543210987-654--\r\n" +
-		"--batch_id-0123456789012-345\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"PATCH Employees('3') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_01"}\r\n' +
-		"--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-0123456789012-912\r\n" +
-		"\r\n" +
-		"--changeset_id-0123456789012-912\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.3\r\n" +
-		"\r\n" +
-		"PATCH Employees('3') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_02"}\r\n' +
-		"--changeset_id-0123456789012-912\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:1.3\r\n" +
-		"\r\n" +
-		"PATCH Employees('4') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_01"}\r\n' +
-		"--changeset_id-0123456789012-912--\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "GET Employees('1') HTTP/1.1\r\n"
+		+ "foo:bar1\r\n"
+		+ "abc:123\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.1\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:1.1\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('2') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_01"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('3') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_01"}\r\n'
+		+ "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-0123456789012-912\r\n"
+		+ "\r\n"
+		+ "--changeset_id-0123456789012-912\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.3\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('3') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_02"}\r\n'
+		+ "--changeset_id-0123456789012-912\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:1.3\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('4') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_01"}\r\n'
+		+ "--changeset_id-0123456789012-912--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -548,87 +548,87 @@ sap.ui.define([
 			}
 		],
 		$ContentIDs : [["0.0", "1.0"], ["0.1", "1.1", "2.1", "3.1"]],
-		body : "--batch_id-1450426018742-911\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n" +
-		"\r\n" +
-		"--changeset_id-1450426018742-912\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.0\r\n" +
-		"\r\n" +
-		"POST TEAMS HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		JSON.stringify(oNewTeamBody) + "\r\n" +
-		"--changeset_id-1450426018742-912\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:1.0\r\n" +
-		"\r\n" +
-		"POST $0.0/TEAM_2_EMPLOYEES HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		JSON.stringify(oNewEmployeeBody) + "\r\n" +
-		"--changeset_id-1450426018742-912--\r\n" +
-		"--batch_id-1450426018742-911\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-913\r\n" +
-		"\r\n" +
-		"--changeset_id-1450426018742-913\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.1\r\n" +
-		"\r\n" +
-		"POST TEAMS HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"Team_Id":"TEAM_05",'
+		body : "--batch_id-1450426018742-911\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n"
+		+ "\r\n"
+		+ "--changeset_id-1450426018742-912\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "POST TEAMS HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ JSON.stringify(oNewTeamBody) + "\r\n"
+		+ "--changeset_id-1450426018742-912\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:1.0\r\n"
+		+ "\r\n"
+		+ "POST $0.0/TEAM_2_EMPLOYEES HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ JSON.stringify(oNewEmployeeBody) + "\r\n"
+		+ "--changeset_id-1450426018742-912--\r\n"
+		+ "--batch_id-1450426018742-911\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-913\r\n"
+		+ "\r\n"
+		+ "--changeset_id-1450426018742-913\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.1\r\n"
+		+ "\r\n"
+		+ "POST TEAMS HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"Team_Id":"TEAM_05",'
 		+ '"Name":"UI2 Services",'
 		+ '"MEMBER_COUNT":9,'
 		+ '"MANAGER_ID":"1",'
 		+ '"BudgetCurrency":"EUR",'
-		+ '"Budget":5555}\r\n' +
-		"--changeset_id-1450426018742-913\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:1.1\r\n" +
-		"\r\n" +
-		"POST TEAMS?$expand=TEAM_2_EMPLOYEES($filter=STATUS%20eq%20'$42') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"Team_Id":"TEAM_06",'
+		+ '"Budget":5555}\r\n'
+		+ "--changeset_id-1450426018742-913\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:1.1\r\n"
+		+ "\r\n"
+		+ "POST TEAMS?$expand=TEAM_2_EMPLOYEES($filter=STATUS%20eq%20'$42') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"Team_Id":"TEAM_06",'
 		+ '"Name":"UI2 Services",'
 		+ '"MEMBER_COUNT":9,'
 		+ '"MANAGER_ID":"1",'
 		+ '"BudgetCurrency":"EUR",'
-		+ '"Budget":5555}\r\n' +
-		"--changeset_id-1450426018742-913\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:2.1\r\n" +
-		"\r\n" +
-		"POST $1.1/TEAM_2_EMPLOYEES HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		JSON.stringify(oNewEmployeeBody) + "\r\n" +
-		"--changeset_id-1450426018742-913\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:3.1\r\n" +
-		"\r\n" +
-		"DELETE $TEAMS('$1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--changeset_id-1450426018742-913--\r\n" +
-		"--batch_id-1450426018742-911\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"\r\n" +
-		"GET EMPLOYEES?$filter=STATUS%20eq%20'$42' HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		"\r\n" +
-		"--batch_id-1450426018742-911--\r\n",
+		+ '"Budget":5555}\r\n'
+		+ "--changeset_id-1450426018742-913\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:2.1\r\n"
+		+ "\r\n"
+		+ "POST $1.1/TEAM_2_EMPLOYEES HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ JSON.stringify(oNewEmployeeBody) + "\r\n"
+		+ "--changeset_id-1450426018742-913\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:3.1\r\n"
+		+ "\r\n"
+		+ "DELETE $TEAMS('$1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--changeset_id-1450426018742-913--\r\n"
+		+ "--batch_id-1450426018742-911\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "\r\n"
+		+ "GET EMPLOYEES?$filter=STATUS%20eq%20'$42' HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ "\r\n"
+		+ "--batch_id-1450426018742-911--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-1450426018742-911",
 		"MIME-Version" : "1.0"
 	}, {
@@ -646,21 +646,21 @@ sap.ui.define([
 			}
 		]],
 		$ContentIDs : [["0.0"]],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
-		"\r\n" +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.0\r\n" +
-		"\r\n" +
-		"PATCH Employees('1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"If-Match:" + oEntity["@odata.etag"] + "\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_03"}\r\n' +
-		"--changeset_id-9876543210987-654--\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "If-Match:" + oEntity["@odata.etag"] + "\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -678,21 +678,21 @@ sap.ui.define([
 			}
 		]],
 		$ContentIDs : [["0.0"]],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
-		"\r\n" +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.0\r\n" +
-		"\r\n" +
-		"PATCH Employees('1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"If-Match:W/\"20151211144619.4328660\"\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_03"}\r\n' +
-		"--changeset_id-9876543210987-654--\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "If-Match:W/\"20151211144619.4328660\"\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -712,20 +712,20 @@ sap.ui.define([
 			}
 		]],
 		$ContentIDs : [["0.0"]],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
-		"\r\n" +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.0\r\n" +
-		"\r\n" +
-		"PATCH Employees('1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_03"}\r\n' +
-		"--changeset_id-9876543210987-654--\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
@@ -743,21 +743,21 @@ sap.ui.define([
 			}
 		]],
 		$ContentIDs : [["0.0"]],
-		body : "--batch_id-0123456789012-345\r\n" +
-		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
-		"\r\n" +
-		"--changeset_id-9876543210987-654\r\n" +
-		"Content-Type:application/http\r\n" +
-		"Content-Transfer-Encoding:binary\r\n" +
-		"Content-ID:0.0\r\n" +
-		"\r\n" +
-		"PATCH Employees('1') HTTP/1.1\r\n" +
-		"Content-Type:application/json\r\n" +
-		"Foo:\r\n" +
-		"\r\n" +
-		'{"TEAM_ID":"TEAM_03"}\r\n' +
-		"--changeset_id-9876543210987-654--\r\n" +
-		"--batch_id-0123456789012-345--\r\n",
+		body : "--batch_id-0123456789012-345\r\n"
+		+ "Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n"
+		+ "\r\n"
+		+ "--changeset_id-9876543210987-654\r\n"
+		+ "Content-Type:application/http\r\n"
+		+ "Content-Transfer-Encoding:binary\r\n"
+		+ "Content-ID:0.0\r\n"
+		+ "\r\n"
+		+ "PATCH Employees('1') HTTP/1.1\r\n"
+		+ "Content-Type:application/json\r\n"
+		+ "Foo:\r\n"
+		+ "\r\n"
+		+ '{"TEAM_ID":"TEAM_03"}\r\n'
+		+ "--changeset_id-9876543210987-654--\r\n"
+		+ "--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}].forEach(function (oFixture) {
@@ -836,8 +836,8 @@ sap.ui.define([
 				body : '{"TEAM_ID" : "TEAM_01"}'
 			}]
 		],
-		errorMessage : "Invalid HTTP request method: GET. Change set must contain only POST, " +
-		"PUT, PATCH, or DELETE requests."
+		errorMessage : "Invalid HTTP request method: GET. Change set must contain only POST, "
+		+ "PUT, PATCH, or DELETE requests."
 	}].forEach(function (oFixture) {
 			QUnit.test("validation serializeBatchRequest: " + oFixture.title, function (assert) {
 				assert.throws(
@@ -1246,8 +1246,8 @@ etag: W/\"20151211144619.4660570\"\r\n\
 		]
 	}].forEach(function (oFixture) {
 			QUnit.test("deserializeBatchResponse: " + oFixture.testTitle, function (assert) {
-				var aResponses =
-					_Batch.deserializeBatchResponse(oFixture.contentType, oFixture.body);
+				var aResponses
+					= _Batch.deserializeBatchResponse(oFixture.contentType, oFixture.body);
 				assert.deepEqual(aResponses, oFixture.expectedResponses);
 			});
 		}
