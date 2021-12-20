@@ -2230,5 +2230,12 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @private
+	 */
+	Card.prototype.isSkeleton = function () {
+		return false;
+	};
+
 	return Card;
 });

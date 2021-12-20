@@ -4,13 +4,46 @@ sap.ui.define([
 ], function (Controller, SkeletonCard) {
 	"use strict";
 
+	var aManifests = {
+		"objectCard": {
+			path: "sap/f/cardsdemo/bundles/objectbundle/manifest.json",
+			baseUrl: "sap/f/cardsdemo/bundles/objectbundle/"
+		},
+		"listCard": {
+			path: "sap/f/cardsdemo/bundles/listbundle/manifest.json",
+			baseUrl: "sap/f/cardsdemo/bundles/listbundle/"
+		},
+		"listCardGrouping": {
+			path: "sap/f/cardsdemo/cardcontent/listcontent/groups.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+		},
+		"listCardNoData": {
+			path: "sap/f/cardsdemo/cardcontent/listcontent/noData.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+		},
+		"listCardBulletGraphActions": {
+			path: "sap/f/cardsdemo/cardcontent/listcontent/bulletGraphAndActions.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+		},
+		"stackedBar": {
+			path: "sap/f/cardsdemo/cardcontent/listcontent/stackedBar.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listcontent/"
+		}
+	};
+
 	return Controller.extend("sap.f.cardsdemo.controller.ManifestResolver", {
 
 		onInit: function () {
-			this._sBaseUrl = sap.ui.require.toUrl("sap/f/cardsdemo/bundles/objectbundle/");
-			this.byId("baseUrlInp").setValue(this._sBaseUrl);
+			this.onManifestChange();
+		},
 
-			fetch(sap.ui.require.toUrl("sap/f/cardsdemo/bundles/objectbundle/manifest.json"))
+		onManifestChange: function () {
+			var sSelectedKey = this.byId("manifestId").getSelectedKey(),
+				oManifest = aManifests[sSelectedKey];
+
+			this.byId("baseUrlInp").setValue(sap.ui.require.toUrl(oManifest.baseUrl));
+
+			fetch(sap.ui.require.toUrl(oManifest.path))
 				.then(function (res) {
 					return res.json();
 				})
@@ -23,15 +56,10 @@ sap.ui.define([
 			this.resolveManifest();
 		},
 
-		onBaseUrlChange: function (e) {
-			this._sBaseUrl = e.getParameter("value");
-			this.resolveManifest();
-		},
-
 		resolveManifest: function () {
 			var oCard = new SkeletonCard({
 					manifest: JSON.parse(this.byId("editor").getValue()),
-					baseUrl: this._sBaseUrl
+					baseUrl: this.byId("baseUrlInp").getValue()
 				}),
 				errorOutput = this.byId("error"),
 				output = this.byId("output");
@@ -56,6 +84,5 @@ sap.ui.define([
 					.setText(oEvent.getParameter("message"));
 			});
 		}
-
 	});
 });

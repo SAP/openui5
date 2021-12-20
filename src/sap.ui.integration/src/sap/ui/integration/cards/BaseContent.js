@@ -535,5 +535,10 @@ sap.ui.define([
 		return Core.byId(this.getCard());
 	};
 
+	BaseContent.prototype.isSkeleton = function () {
+		var oCard = this.getCardInstance();
+		return oCard && oCard.isSkeleton();
+	};
+
 	return BaseContent;
 });

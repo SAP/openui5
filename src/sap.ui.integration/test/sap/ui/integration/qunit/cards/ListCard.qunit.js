@@ -1216,6 +1216,9 @@ sap.ui.define([
 			},
 			getBindingNamespaces: function () {
 				return {};
+			},
+			isSkeleton: function () {
+				return false;
 			}
 		});
 
