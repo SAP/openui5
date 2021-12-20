@@ -37,6 +37,7 @@
 			<ul>
 				<li><b>Loading</b> - The JSON-serialized card object model of a MS Adaptive Card could be added inline
 					or dynamically, requested as a JSON file in the content area of an Integration Card.</li>
+				<br/>
 				<li>
 					<b>Templating</b> - Templating enables the separation of data from the layout in an MS Adaptive
 					Card. To provide data directly within the card content, simply add a <code>$data</code> attribute to
@@ -50,7 +51,15 @@
 					syntax. For more information, see
 					<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/templating/">Adaptive Cards
 						Templating</a>.
+					<br/><br/>
+					<i>Note: As of version 1.98 the Integration Cards of type adaptive, support the new binding syntax of
+						the Templating feature. For reference, check
+					<a target="_blank" href="https://docs.microsoft.com/en-us/adaptive-cards/templating/language">Adaptive Cards
+						Templating Language</a>. Keep in mind that Microsoft Templating for Adaptive Cards is evolving
+						and might be a subject of incompatible changes in future as well.
+					</i>
 				</li>
+				<br/>
 				<li><b>Markdown</b> - To support inline markup, MS Adaptive Card supports a
 					<a target="_blank"
 						href="https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features">subset of
@@ -60,6 +69,7 @@
 					manifest. See the
 					<a target="_blank" href="../../../index.html#/explore/adaptive/markdown">Markdown example</a>.
 				</li>
+				<br/>
 				<li>
 					<b>Actions</b> - The <code>Action.OpenUrl</code> and <code>Action.Submit</code> are dispatched by the card
 					as <code>Navigation</code> and <code>Submit</code>.

@@ -395,6 +395,11 @@ Copyright: 2017 Microsoft
 License: MIT
 Comment: these files belong to: Adaptive Cards Templating
 
+Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptive-expressions.js
+Copyright: Microsoft
+License: MIT
+Comment: these files belong to: Adaptive Expressions
+
 Files: src/sap.ui.integration/src/sap/ui/integration/thirdparty/markdown-it.js
 Copyright: 2014 Vitaly Puzrin, Alex Kocharin
 License: MIT

@@ -94,7 +94,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{name}"
+							"text": "${name}"
 						}
 					]
 				}
@@ -118,7 +118,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{name}"
+							"text": "${name}"
 						}
 					]
 				}
@@ -144,11 +144,11 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{name}"
+							"text": "${name}"
 						},
 						{
 							"type": "TextBlock",
-							"text": "{company.name}"
+							"text": "${company.name}"
 						}
 					]
 				}
@@ -170,7 +170,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "No {name}"
+							"text": "No ${name}"
 						}
 					]
 				}
@@ -194,7 +194,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "No {name}"
+							"text": "No ${name}"
 						}
 					]
 				}
@@ -220,7 +220,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{company}"
+							"text": "${company}"
 						}
 					]
 				}
@@ -246,7 +246,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{name}"
+							"text": "${name}"
 						}
 					]
 				}
@@ -280,7 +280,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{name}"
+							"text": "${name}"
 						}
 					]
 				}
@@ -311,7 +311,7 @@ sap.ui.define([
 					"body": [
 						{
 							"type": "TextBlock",
-							"text": "{name}"
+							"text": "${name}"
 						}
 					]
 				}
@@ -674,7 +674,7 @@ sap.ui.define([
 				assert.ok(oDataRequestSpy.calledOnce, "Data is correctly fetched only once");
 
 				assert.ok(document.querySelectorAll(".ac-textBlock")[0], "A TextBlock element should be present in the DOM.");
-				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "No undefined", "A TextBlock element with a correctly mapped text value should be present.");
+				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "No ${name}", "A TextBlock element with a correctly non-mapped text value should be present.");
 				assert.ok(this._oDataProviderFactory._aDataProviders.length, "A data provider should be set.");
 
 				// Cleanup
@@ -698,7 +698,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oCard.attachEvent("_ready", setTimeout(function() {
-				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "No undefined", "A TextBlock element with a mapped text value should be present.");
+				assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "No ${name}", "A TextBlock element with a non-mapped text value should be present.");
 
 				// Cleanup
 				oCard.destroy();

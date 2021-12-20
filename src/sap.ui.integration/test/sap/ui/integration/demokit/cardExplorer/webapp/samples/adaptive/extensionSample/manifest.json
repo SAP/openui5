@@ -68,7 +68,7 @@
 				},
 				{
 					"type": "Input.Text",
-					"value": "{product.ProductName}",
+					"value": "${product.ProductName}",
 					"style": "text",
 					"id": "ProductName"
 				},
@@ -83,12 +83,12 @@
 					"id": "CategoryID",
 					"style": "compact",
 					"isMultiSelect": false,
-					"value": "{product.CategoryID}",
+					"value": "${product.CategoryID}",
 					"choices": [
 					  {
-						"$data": "{categories}",
-						"title": "{CategoryName}",
-						"value": "{CategoryID}"
+						"$data": "${categories}",
+						"title": "${CategoryName}",
+						"value": "${CategoryID}"
 					  }
 					]
 				},
@@ -100,7 +100,7 @@
 				},
 				{
 					"type": "Input.Text",
-					"value": "{product.supplier.CompanyName}",
+					"value": "${product.supplier.CompanyName}",
 					"style": "text",
 					"id": "CompanyName"
 				}

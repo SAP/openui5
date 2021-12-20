@@ -44,15 +44,15 @@
 			"body": [
 				{
 					"type": "TextBlock",
-					"text": "Hi {employee.name}! Here's a bit about your org..."
+					"text": "Hi ${employee.name}! Here's a bit about your org..."
 				},
 				{
 					"type": "TextBlock",
-					"text": "Your manager is: {employee.manager.name}"
+					"text": "Your manager is: ${employee.manager.name}"
 				},
 				{
 					"type": "TextBlock",
-					"text": "3 of your peers are: {employee.peers[0].name}, {employee.peers[1].name}, {employee.peers[2].name}"
+					"text": "3 of your peers are: ${employee.peers[0].name}, ${employee.peers[1].name}, ${employee.peers[2].name}"
 				}
 			]
 		}

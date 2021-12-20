@@ -377,11 +377,17 @@ License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards.js
 	src/sap.ui.integration/src/sap/ui/integration/schemas/adaptive-card.json
 
-Component: Adaptive Cards Templating, version: 0.1.1-alpha.0
+Component: Adaptive Cards Templating, version: 2.2.0
 Copyright: 2017 Microsoft
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards-templating.js
+
+Component: Adaptive Expressions, version: 4.15.0
+Copyright: Microsoft
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptive-expressions.js
 
 Component: Markdown-it, version: 10.0.0
 Copyright: 2014 Vitaly Puzrin, Alex Kocharin
