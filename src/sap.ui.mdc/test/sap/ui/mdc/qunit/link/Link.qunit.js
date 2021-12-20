@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
 	"sap/m/MessageToast",
-	"sap/ui/core/Core"
-], function(QUnit, LinkItem, Button, Link, MessageToast, oCore) {
+	"sap/ui/core/Core",
+	"sap/m/Text"
+], function(QUnit, LinkItem, Button, Link, MessageToast, oCore, Text) {
 	"use strict";
 
 	var aAdditionaLinkItems = [
@@ -92,27 +93,25 @@ sap.ui.define([
 					initiallyVisible: true
 				})
 			];
-			this.oLink;
 		},
 		afterEach: function() {
 			this.aLinkItems.forEach(function(oLinkItem) {
 				oLinkItem.destroy();
 			});
-			this.oLink.destroy();
 		}
 	});
 
 	QUnit.test("Instance", function(assert) {
 		var done = assert.async(2);
-		this.oLink = new Link();
-		assert.ok(this.oLink);
-		assert.equal(this.oLink.getEnablePersonalization(), true);
-		assert.equal(this.oLink.getSourceControl(), null);
-		this.oLink.retrieveAdditionalContent().then(function(aAdditionalContent) {
+		var oLink = new Link();
+		assert.ok(oLink);
+		assert.equal(oLink.getEnablePersonalization(), true);
+		assert.equal(oLink.getSourceControl(), null);
+		oLink.retrieveAdditionalContent().then(function(aAdditionalContent) {
 			assert.deepEqual(aAdditionalContent, []);
 			done();
 		});
-		this.oLink.retrieveLinkItems().then(function(aLinkItems) {
+		oLink.retrieveLinkItems().then(function(aLinkItems) {
 			assert.deepEqual(aLinkItems, []);
 			done();
 		});
@@ -120,7 +119,7 @@ sap.ui.define([
 
 	QUnit.test("retrieveLinkItems should cache LinkItems", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -128,11 +127,11 @@ sap.ui.define([
 				}
 			}
 		});
-		var fnUseDelegateItems = sinon.spy(this.oLink, "_useDelegateItems");
-		this.oLink.retrieveLinkItems().then(function(aRetrievedLinkItems) {
+		var fnUseDelegateItems = sinon.spy(oLink, "_useDelegateItems");
+		oLink.retrieveLinkItems().then(function(aRetrievedLinkItems) {
 			assert.deepEqual(aRetrievedLinkItems, this.aLinkItems, "First retrievedLinkItems are correct");
-			assert.ok(this.oLink._bLinkItemsFetched, "LinkItems are chached");
-			this.oLink.retrieveLinkItems().then(function(aRetrievedLinkItems) {
+			assert.ok(oLink._bLinkItemsFetched, "LinkItems are chached");
+			oLink.retrieveLinkItems().then(function(aRetrievedLinkItems) {
 				assert.deepEqual(aRetrievedLinkItems, this.aLinkItems, "Second retrievedLinkItems are correct");
 				assert.ok(fnUseDelegateItems.calledOnce, "_useDelegateItems only called once");
 				done();
@@ -142,7 +141,7 @@ sap.ui.define([
 
 	QUnit.test("retrieveAllMetadata should return all LinkItems", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -151,8 +150,8 @@ sap.ui.define([
 			}
 		});
 
-		this.oLink.getContent().then(function(oPanel) {
-			var oModel = this.oLink._getInternalModel();
+		oLink.getContent().then(function(oPanel) {
+			var oModel = oLink._getInternalModel();
 			var aMLinkItems = oModel.getProperty("/linkItems/");
 			var i = 0;
 			var aMetadata = Link.retrieveAllMetadata(oPanel);
@@ -166,12 +165,12 @@ sap.ui.define([
 			});
 			oPanel.destroy();
 			done();
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("retrieveAllMetadata should return an empty array if the Panel has no $sapuimdcLink model", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -180,7 +179,7 @@ sap.ui.define([
 			}
 		});
 
-		this.oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(function(oPanel) {
 			oPanel.setModel(null, "$sapuimdcLink");
 			assert.deepEqual(Link.retrieveAllMetadata(oPanel), [], "empty array returned");
 			oPanel.destroy();
@@ -190,7 +189,7 @@ sap.ui.define([
 
 	QUnit.test("retrieveBaseline should return all baseline LinkItems", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -199,8 +198,8 @@ sap.ui.define([
 			}
 		});
 
-		this.oLink.getContent().then(function(oPanel) {
-			var oModel = this.oLink._getInternalModel();
+		oLink.getContent().then(function(oPanel) {
+			var oModel = oLink._getInternalModel();
 			var aMBaselineLinkItems = oModel.getProperty("/baselineLinkItems/");
 			var i = 0;
 			var aMBaseline = Link.retrieveBaseline(oPanel);
@@ -211,12 +210,12 @@ sap.ui.define([
 			});
 			oPanel.destroy();
 			done();
-		}.bind(this));
+		});
 	});
 
 	QUnit.test("retrieveBaseline should return an empty array if the Panel has no $sapuimdcLink model", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -225,7 +224,7 @@ sap.ui.define([
 			}
 		});
 
-		this.oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(function(oPanel) {
 			oPanel.setModel(null, "$sapuimdcLink");
 			assert.deepEqual(Link.retrieveBaseline(oPanel), [], "empty array returned");
 			oPanel.destroy();
@@ -506,16 +505,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("sap.ui.mdc.Link: LinkDelegate tests", {
-		beforeEach: function() {
-			this.oLink = null;
-		},
-		afterEach: function() {
-			if (this.oLink){
-				this.oLink.destroy();
-			}
-		}
-	});
+	QUnit.module("sap.ui.mdc.Link: LinkDelegate tests");
 
 	QUnit.test("modifyLinkItemsBeforePopoverOpens", function(assert) {
 		var done = assert.async(2);
@@ -523,7 +513,7 @@ sap.ui.define([
 		aModfiedLinkItemTexts["Link1"] = "New Text Link1";
 		aModfiedLinkItemTexts["Link2"] = "New Text Link2";
 
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -541,12 +531,12 @@ sap.ui.define([
 				}
 			}
 		});
-		this.oLink._retrieveUnmodifiedLinkItems().then(function(aLinkItems) {
+		oLink._retrieveUnmodifiedLinkItems().then(function(aLinkItems) {
 			assert.equal(aLinkItems[0].getText(), "Link1");
 			assert.equal(aLinkItems[1].getText(), "Link2");
 			done();
 		});
-		this.oLink.retrieveLinkItems().then(function(aModfiedLinkItems) {
+		oLink.retrieveLinkItems().then(function(aModfiedLinkItems) {
 			assert.equal(aModfiedLinkItems[0].getText(), "New Text Link1");
 			assert.equal(aModfiedLinkItems[1].getText(), "New Text Link2");
 			done();
@@ -554,7 +544,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("beforeNavigationCallback - open MessageToast before navigation", function(assert) {
-		var done = assert.async();
+		var done = assert.async(1);
 
 		var fnMessageToastSpy = sinon.spy(MessageToast, "show");
 		var sBaseUrl = window.location.href;
@@ -585,16 +575,19 @@ sap.ui.define([
 			}
 		});
 
+		var fnCheckURL = function() {
+			window.removeEventListener('hashchange', fnCheckURL);
+			var oResultUrl = window.location.href;
+			assert.equal(oResultUrl, sBaseUrl + "#Action01", "Navigation happened");
+			done();
+		};
+
 		oLink.getContent().then(function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			assert.ok(fnMessageToastSpy.notCalled);
 
-			window.addEventListener('hashchange', function(){
-				var oResultUrl = window.location.href;
-				assert.equal(oResultUrl, sBaseUrl + "#Action01", "Navigation happened");
-				done();
-			});
+			window.addEventListener('hashchange', fnCheckURL);
 
 			oPanel.getAggregation("_content") // VerticalLayout of panel
 				.getContent()[2] // VBox which includes the links
@@ -609,7 +602,7 @@ sap.ui.define([
 
 	QUnit.test("Updated isTriggerable", function(assert) {
 		var done = assert.async();
-		this.oLink = new Link({
+		var oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -639,33 +632,26 @@ sap.ui.define([
 			}
 		});
 
-		var fnDataUpdateSpy = sinon.spy(this.oLink, "fireDataUpdate");
+		var fnDataUpdateSpy = sinon.spy(oLink, "fireDataUpdate");
 
-		this.oLink.isTriggerable().then(function(bIsTriggerAble) {
+		oLink.isTriggerable().then(function(bIsTriggerAble) {
 			assert.ok(bIsTriggerAble === false, "First isTriggerable call returns false");
 			assert.ok(fnDataUpdateSpy.notCalled, "dataUpdate event not fired yet");
 			setTimeout(function() {
 				assert.ok(fnDataUpdateSpy.calledOnce, "dataUpdate event fired after given timeout");
-				this.oLink.isTriggerable().then(function(bIsTriggerAble) {
+				oLink.isTriggerable().then(function(bIsTriggerAble) {
 					assert.ok(bIsTriggerAble, "Second isTriggerable call returns true");
-					this.oLink.getDirectLinkHrefAndTarget().then(function(oDirectLinkItem) {
+					oLink.getDirectLinkHrefAndTarget().then(function(oDirectLinkItem) {
 						assert.ok(oDirectLinkItem.target === "_self", "Target value of directLink");
 						assert.ok(oDirectLinkItem.href === "#Action02", "Href value of directLink");
 						done();
 					});
-				}.bind(this));
-			}.bind(this), 1000);
-		}.bind(this));
+				});
+			}, 1000);
+		});
 	});
 
-	QUnit.module("sap.ui.mdc.Link: FieldInfoBase functions", {
-		beforeEach: function() {
-			this.oLink = null;
-		},
-		afterEach: function() {
-			this.oLink.destroy();
-		}
-	});
+	QUnit.module("sap.ui.mdc.Link: FieldInfoBase functions");
 
 	var aLinkTypes = [
 		{
@@ -684,8 +670,8 @@ sap.ui.define([
 
 	aLinkTypes.forEach(function(oLinkType) {
 		QUnit.test("getTriggerHref type = " + oLinkType.type + " returns '" + oLinkType.expectedHref + "'", function(assert) {
-			var done = assert.async();
-			this.oLink = new Link({
+			var done = assert.async(1);
+			var oLink = new Link({
 				delegate: {
 					name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 					payload: {
@@ -702,7 +688,7 @@ sap.ui.define([
 					}
 				}
 			});
-			this.oLink.getTriggerHref().then(function(sHref) {
+			oLink.getTriggerHref().then(function(sHref) {
 				assert.equal(sHref, oLinkType.expectedHref, "correct triggerHref returned");
 				done();
 			});
@@ -710,13 +696,72 @@ sap.ui.define([
 	});
 
 	QUnit.test("getContent when there are no LinkItems and no additionalContent", function(assert) {
-		var done = assert.async();
-		this.oLink = new Link();
+		var done = assert.async(1);
+		var oLinkNoContent = new Link();
 
-		var oNoContentText = this.oLink._getNoContent().getContent()[0].getText();
+		var oNoContentText = oLinkNoContent._getNoContent().getContent()[0].getText();
 
-		this.oLink.getContent().then(function(oPanel) {
+		oLinkNoContent.getContent().then(function(oPanel) {
 			assert.deepEqual(oPanel.getAdditionalContent()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
+			done();
+		});
+	});
+
+	QUnit.test("checkDirectNavigation when there is only one LinkItem and additionalContent should not navigate directly", function(assert) {
+		var done = assert.async(1);
+		var sBaseUrl = window.location.href;
+
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "Link1",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						})
+					],
+					additionalContent: [
+						new Text({
+							text: "Additional Content Text"
+						})
+					]
+				}
+			}
+		});
+
+		oLink.checkDirectNavigation().then(function(bNavigate) {
+			var oResultUrl = window.location.href;
+			assert.equal(oResultUrl, sBaseUrl, "Direct navigation did not happened");
+			assert.ok(!bNavigate, "Promise value is false");
+			done();
+		});
+	});
+
+	QUnit.test("checkDirectNavigation when there is only one LinkItem and no additionalContent should navigate directly", function(assert) {
+		var done = assert.async(1);
+		var sBaseUrl = window.location.href;
+
+		var oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "Link1",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						})
+					]
+				}
+			}
+		});
+
+		oLink.checkDirectNavigation().then(function(bNavigate) {
+			var oResultUrl = window.location.href;
+			assert.equal(oResultUrl, sBaseUrl + "#directNavigation", "Direct navigation happened");
+			assert.ok(bNavigate, "Promise value is true");
 			done();
 		});
 	});

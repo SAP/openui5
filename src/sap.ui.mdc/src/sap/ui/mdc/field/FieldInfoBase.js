@@ -97,17 +97,21 @@ sap.ui.define([
 		if (this._oPopover && this._oPopover.isOpen()) {
 			return Promise.resolve();
 		}
-		return this.createPopover().then(function(oPopover) {
-			// Note: it is not needed to destroy this._oPopover in exit as through addDependent() the popover
-			// instance will be automatically destroyed once the FieldInfoBase instance is destroyed.
-			this._oPopover = oPopover;
+		return this.checkDirectNavigation().then(function(bNavigated) {
+			return bNavigated ? Promise.resolve() : this.createPopover().then(function(oPopover) {
+				if (oPopover) {
+					// Note: it is not needed to destroy this._oPopover in exit as through addDependent() the popover
+					// instance will be automatically destroyed once the FieldInfoBase instance is destroyed.
+					this._oPopover = oPopover;
 
-			this.addDependent(this._oPopover);
+					this.addDependent(this._oPopover);
 
-			this._oPopover.openBy(oControl || oParent);
+					this._oPopover.openBy(oControl || oParent);
 
-			this._oPopover.attachAfterOpen(function() {
-				this.firePopoverAfterOpen();
+					this._oPopover.attachAfterOpen(function() {
+						this.firePopoverAfterOpen();
+					}.bind(this));
+				}
 			}.bind(this));
 		}.bind(this));
 	};
@@ -121,6 +125,15 @@ sap.ui.define([
 	 */
 	FieldInfoBase.prototype.getContent = function(fnGetAutoClosedControl) {
 		throw new Error("sap.ui.mdc.field.FieldInfoBase: method getContent must be redefined");
+	};
+
+	/**
+	 * Checks if there is a direct navigation or if there is a popover to be opened.
+	 * @returns {Promise} Resolves a Boolean value
+	 * @protected
+	 */
+	FieldInfoBase.prototype.checkDirectNavigation = function() {
+		throw new Error("sap.ui.mdc.field.FieldInfoBase: method checkDirectNavigation must be redefined");
 	};
 
 	// ----------------------- Protected methods --------------------------------------------
@@ -142,10 +155,10 @@ sap.ui.define([
 	 */
 	FieldInfoBase.prototype.createPopover = function() {
 		var oPopover;
+
 		return this.getContent(function () {
 			return oPopover;
 		}).then(function(oPanel) {
-
 			oPopover = new ResponsivePopover(this.getId() + "-popover", {
 				contentWidth: "380px",
 				horizontalScrolling: false,

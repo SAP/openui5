@@ -352,4 +352,15 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	});
+
+	QUnit.module("basic methods");
+
+	QUnit.test("navigate without FLP", function(assert) {
+		var sBaseUrl = window.location.href;
+
+		Panel.navigate(sBaseUrl + "#navigate");
+		assert.equal(window.location.href, sBaseUrl + "#navigate", "Navigation happened");
+		assert.equal(Panel.oNavigationPromise, undefined, "Navigation Promise is undefined");
+	});
+
 });

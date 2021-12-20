@@ -259,6 +259,24 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	Link.prototype.checkDirectNavigation = function() {
+		var oLinkItemsPromise = this.retrieveLinkItems();
+		var oAdditionalContentPromise = this.retrieveAdditionalContent();
+		return Promise.all([oLinkItemsPromise, oAdditionalContentPromise]).then(function(values) {
+			var aLinkItems = values[0];
+			var aAdditionalContent = values[1];
+
+			this._setConvertedLinkItems(aLinkItems);
+			var aMLinkItems = this._getInternalModel().getProperty("/linkItems");
+
+			if (aMLinkItems.length === 1 && !aAdditionalContent.length) {
+				Panel.navigate(aMLinkItems[0].href);
+				return Promise.resolve(true);
+			}
+			return Promise.resolve(false);
+		}.bind(this));
+	};
+
 	/**
 	 * @private
 	 * @param {sap.ui.mdc.link.LinkItem[]} aLinkItems The given <code>LinkItem</code> objects

@@ -46,5 +46,12 @@ sap.ui.define([
 		});
 	};
 
+	SampleLinkDelegate.fetchAdditionalContent = function(oPayload, oLink) {
+		if (oPayload.additionalContent) {
+			return Promise.resolve(oPayload.additionalContent);
+		}
+		return Promise.resolve([]);
+	};
+
 	return SampleLinkDelegate;
 });
