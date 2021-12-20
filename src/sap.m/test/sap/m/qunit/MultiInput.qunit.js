@@ -2415,7 +2415,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		//Assert
-		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("MULTIINPUT_NAVIGATION_POPUP", [""])), "Navigation through suggestions should be announced.");
+		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("MULTIINPUT_NAVIGATION_POPUP")), "Navigation through suggestions should be announced.");
 
 		//Act
 		oMultiInputWithSuggestions._closeSuggestionPopup();
@@ -2427,7 +2427,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		//Assert
-		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("MULTIINPUT_NAVIGATION_POPUP", [oResourceBundle.getText("MULTIINPUT_NAVIGATION_TOKENS")])),
+		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("MULTIINPUT_NAVIGATION_POPUP_AND_TOKENS")),
 			"Navigation through suggestions and tokens should be announced.");
 
 		//Clean up
