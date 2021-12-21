@@ -2561,7 +2561,7 @@ sap.ui.define([
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
-				fireEvent : function () {},
+				fireCreateActivate : function () {},
 				firePatchCompleted : function () {},
 				firePatchSent : function () {},
 				getResolvedPath : function () {},
@@ -2623,8 +2623,8 @@ sap.ui.define([
 				that.mock(_Helper).expects("getRelativePath")
 					.withExactArgs("/entity/path", "/resolved/binding/path")
 					.returns("helper/path");
-				oBindingMock.expects("fireEvent").exactly(bInactive ? 1 : 0)
-					.withExactArgs("createActivate");
+				oBindingMock.expects("fireCreateActivate").exactly(bInactive ? 1 : 0)
+					.withExactArgs(sinon.match.same(oContext));
 				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 					.withExactArgs("/resolved/data/path")
 					.returns("unit/or/currency/path");
