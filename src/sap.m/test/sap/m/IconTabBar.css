@@ -1,0 +1,18 @@
+.label {
+	font-weight:bold;
+	padding: 3rem 1rem 1rem;
+	width: auto;
+	white-space: normal;
+}
+.ITBContainer {
+	border: 1px solid #0F5D94;
+}
+.iconTabBarContainer {
+	background-color: #a9c6de;
+}
+.cozyLabel {
+	padding-top: 1rem;
+}
+.sapUiSizeCompact .cozyLabel {
+	padding-top: 0.5rem;
+}
