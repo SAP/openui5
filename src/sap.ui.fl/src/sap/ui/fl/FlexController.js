@@ -37,7 +37,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function revertChangesAndUpdateVariantModel(oComponent, aChanges) {
+	function revertChangesAndUpdateVariantModel(oComponent, bSkipUrlUpdate, aChanges) {
 		return Promise.resolve()
 			.then(function () {
 				if (aChanges.length !== 0) {
@@ -61,12 +61,14 @@ sap.ui.define([
 							}
 						});
 
-						URLHandler.update({
-							parameters: [],
-							updateURL: true,
-							updateHashEntry: true,
-							model: oModel
-						});
+						if (!bSkipUrlUpdate) {
+							URLHandler.update({
+								parameters: [],
+								updateURL: true,
+								updateHashEntry: true,
+								model: oModel
+							});
+						}
 					}
 				}
 
@@ -435,21 +437,35 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	};
 
+	FlexController.prototype._removeOtherLayerChanges = function(oAppComponent, sLayer, bRemoveOtherLayerChanges) {
+		if (bRemoveOtherLayerChanges && sLayer) {
+			var aLayersToReset = Object.values(Layer).filter(function(sLayerToCheck) {
+				return sLayerToCheck !== sLayer;
+			});
+			return this.removeDirtyChanges(aLayersToReset, oAppComponent, undefined, undefined, undefined, true);
+		}
+		return Promise.resolve();
+	};
+
 	/**
 	 * Saves all changes of a persistence instance.
 	 *
 	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
 	 * @param {boolean} [bSkipUpdateCache=false] - Indicates the cache should not be updated
 	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
+	 * @param {string} [sLayer] - Layer for which the changes should be saved
+	 * @param {boolean} [bRemoveOtherLayerChanges=false] - Whether to remove changes on other layers before saving
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
-	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft) {
+	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft, sLayer, bRemoveOtherLayerChanges) {
 		var nParentVersion = bDraft ? Versions.getVersionsModel({
 			reference: Utils.normalizeReference(this._sComponentName),
 			layer: Layer.CUSTOMER // only the customer layer has draft active
 		}).getProperty("/persistedVersion") : undefined;
-		return this._oChangePersistence.saveDirtyChanges(oAppComponent, bSkipUpdateCache, undefined, nParentVersion)
+
+		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)
+			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, nParentVersion))
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;
@@ -563,23 +579,24 @@ sap.ui.define([
 	 */
 	FlexController.prototype.resetChanges = function(sLayer, sGenerator, oComponent, aSelectorIds, aChangeTypes) {
 		return this._oChangePersistence.resetChanges(sLayer, sGenerator, aSelectorIds, aChangeTypes)
-			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
+			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, undefined));
 	};
 
 	/**
-	 * Removes unsaved changes and reverts these.
+	 * Removes unsaved changes and reverts these. If no control is provided, all dirty changes are removed.
 	 *
-	 * @param {string} sLayer - Layer for which changes shall be deleted
+	 * @param {string|string[]} vLayer - Layer or multiple layers for which changes shall be deleted
 	 * @param {sap.ui.core.Component} oComponent - Component instance
-	 * @param {sap.ui.core.Control} oControl - Control for which the changes should be removed
+	 * @param {sap.ui.core.Control} [oControl] - Control for which the changes should be removed
 	 * @param {string} [sGenerator] - Generator of changes (optional)
 	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
+	 * @param {boolean} [bSkipUrlUpdate] - Whether to skip soft reload during variant model update
 	 *
 	 * @returns {Promise} Promise that resolves after the deletion took place
 	 */
-	FlexController.prototype.removeDirtyChanges = function(sLayer, oComponent, oControl, sGenerator, aChangeTypes) {
-		return this._oChangePersistence.removeDirtyChanges(sLayer, oComponent, oControl, sGenerator, aChangeTypes)
-			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent));
+	FlexController.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes, bSkipUrlUpdate) {
+		return this._oChangePersistence.removeDirtyChanges(vLayer, oComponent, oControl, sGenerator, aChangeTypes)
+			.then(revertChangesAndUpdateVariantModel.bind(this, oComponent, bSkipUrlUpdate));
 	};
 
 	/**
