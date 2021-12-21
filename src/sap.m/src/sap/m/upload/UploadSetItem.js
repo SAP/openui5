@@ -339,7 +339,7 @@ sap.ui.define([
 		if (this.getThumbnailUrl() != sUrl) {
 			this.setProperty("thumbnailUrl", sUrl, true);
 			// Below we handle change of icon case for existing uploadSetItem.For creation of uploadSetItem icon is created using _getIcon method.
-			if (this._oListItem) {
+			if (this._oListItem && sUrl) {
 				for (var i = 0; i < this._oListItem.getContent().length; i++) {
 					if (this._oListItem.getContent()[i] instanceof sap.ui.core.Icon || this._oListItem.getContent()[i] instanceof sap.m.Image) {
 						var oItem = this._oListItem.getContent()[i];

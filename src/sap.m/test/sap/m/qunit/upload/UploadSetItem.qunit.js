@@ -378,4 +378,19 @@ sap.ui.define([
 		oUploader.destroy();
 	});
 
+	QUnit.test("Test for thumnail url undefined", function (assert) {
+		//Setup
+		var oItem = this.oUploadSet.getItems()[0];
+		var oIconPoolSpy = this.spy(sap.ui.core.IconPool, "createControlByURI");
+		this.oUploadSet.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		oItem.setThumbnailUrl();
+		assert.notOk(oIconPoolSpy.called, "XML Http request is made with UploadSet item's URL");
+
+		oItem.setThumbnailUrl("./image/test.jpg");
+		assert.ok(oIconPoolSpy.called, "XML Http request is made with UploadSet item's URL");
+	});
+
 });
