@@ -1370,8 +1370,9 @@ sap.ui.define([
 				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				//Assert
-				assert.ok(oCardListItems.length === 1, "There should be only one item");
-				assert.ok(oCardListItems[1] === undefined, "There should be no second item");
+				assert.ok(oCardListItems.length === 2, "There should be two items");
+				assert.notOk(oCardListItems[0].getVisible(), "First items should not be visible");
+				assert.ok(oCardListItems[1].getVisible(), "Second item should be visible");
 
 				done();
 			}.bind(this));
