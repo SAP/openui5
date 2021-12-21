@@ -218,6 +218,7 @@ function(
 		_sAppTitle: null,
 		_dependents: null,
 		_sStatus: STOPPED,
+		_bHasSwitchedToNavigationMode: false,
 		constructor: function() {
 			// call parent constructor
 			ManagedObject.apply(this, arguments);
@@ -841,7 +842,8 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._serializeAndSave = function() {
-		return this._oSerializer.saveCommands(this._oVersionsModel.getProperty("/versioningEnabled"));
+		// Save changes on the current layer and discard dirty changes on other layers
+		return this._oSerializer.saveCommands(this._oVersionsModel.getProperty("/versioningEnabled"), this.getLayer(), true);
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
@@ -1224,10 +1226,10 @@ function(
 	 * @param  {string} sMessageKey The text key for the message
 	 * @private
 	 */
-	RuntimeAuthoring.prototype._showMessageToast = function(sMessageKey) {
+	RuntimeAuthoring.prototype._showMessageToast = function(sMessageKey, mOptions) {
 		var sMessage = this._getTextResources().getText(sMessageKey);
 
-		MessageToast.show(sMessage);
+		MessageToast.show(sMessage, mOptions || {});
 	};
 
 	/**
@@ -1718,6 +1720,13 @@ function(
 	 */
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
 		if (this.getMode() !== sNewMode) {
+			if (sNewMode === "navigation" && !this._bHasSwitchedToNavigationMode) {
+				this._showMessageToast("MSG_NAVIGATION_MODE_CHANGES_WARNING", {
+					duration: 5000
+				});
+				this._bHasSwitchedToNavigationMode = true;
+			}
+
 			var bOverlaysEnabled = sNewMode === "adaptation";
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
 			this.getPluginManager().getPlugin("tabHandling")[bOverlaysEnabled ? "removeTabIndex" : "restoreTabIndex"]();
