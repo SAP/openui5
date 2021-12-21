@@ -49,7 +49,7 @@
 			"cozy" : true
 		},
 		"dependencies" : {
-			"minUI5Version" : "1.55",
+			"minUI5Version": "1.98.0",
 			"libs" : {
 				"sap.m" : {}
 			}

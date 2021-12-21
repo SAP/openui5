@@ -40,7 +40,7 @@
 		"rootView": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.view.App",
 		"handleValidation"  : true,
 		"dependencies": {
-			"minUI5Version": "1.30",
+			"minUI5Version": "1.98.0",
 			"libs": {
 				"sap.m": { },
 				"sap.ui.layout": { },
