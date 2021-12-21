@@ -5,14 +5,12 @@ sap.ui.define([
 	"./BaseListContent",
 	"./TimelineContentRenderer",
 	"sap/ui/integration/library",
-	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
 	BaseListContent,
 	TimelineContentRenderer,
 	library,
-	mLibrary,
 	Core,
 	BindingHelper
 ) {
@@ -106,7 +104,8 @@ sap.ui.define([
 			oTimeline = new Timeline({
 				id: this.getId() + "-Timeline",
 				showHeaderBar: false,
-				enableScroll: false
+				enableScroll: false,
+				growingThreshold: 0
 			});
 			this.setAggregation("_content", oTimeline);
 		}
