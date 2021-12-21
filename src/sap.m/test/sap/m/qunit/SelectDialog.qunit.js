@@ -1196,30 +1196,27 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check height of content", function(assert) {
-			var done = assert.async(),
-				that = this;
+			this.clock.restore();
+			var done = assert.async();
 
 			this.oSelectDialog.setContentHeight("150px");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
 				assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
-				assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
-				that.oSelectDialog.setContentHeight("286px");
-				sap.ui.getCore().applyChanges();
+				this.oSelectDialog.setContentHeight("286px");
+				Core.applyChanges();
 
 				var browserCalculatedHeight = Math.round(parseFloat(window.getComputedStyle(jQuery("#selectDialog-dialog-cont")[0]).height));
 				assert.strictEqual(browserCalculatedHeight, 286, "content in Dialog should have height of 286px.");
-				assert.strictEqual(that.oSelectDialog.getContentHeight(), "286px", "contentHeight should be 286px.");
-				done();
+				assert.strictEqual(this.oSelectDialog.getContentHeight(), "286px", "contentHeight should be 286px.");
 
 				// Clean
-				that.oSelectDialog._oDialog.close();
-				that.clock.tick(350);
-			});
+				this.oSelectDialog._oDialog.close();
+				done();
+			}.bind(this));
 
 			this.oSelectDialog.open();
-			this.clock.tick(350);
 		});
 
 		QUnit.module("Keyboard and focus Handling", {
