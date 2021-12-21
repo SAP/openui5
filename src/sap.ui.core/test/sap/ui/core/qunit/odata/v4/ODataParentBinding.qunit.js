@@ -1892,23 +1892,23 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
-	childQueryOptions :  {$select : ["Name"]},
+	childQueryOptions : {$select : ["Name"]},
 	success : true,
 	title : "same $select as before"
 }, {
 	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
-	childQueryOptions :  {$select : ["ROOM_ID"]},
+	childQueryOptions : {$select : ["ROOM_ID"]},
 	lateQueryOptions : {$select : ["Name", "AGE", "ROOM_ID"]},
 	success : true,
 	title : "new property accepted and added to late properties"
 }, {
 	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
-	childQueryOptions :  {$expand : {EMPLOYEE_2_TEAM : {}}},
+	childQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {}}},
 	success : true,
 	title : "same $expand as before"
 }, {
 	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
-	childQueryOptions :  {$expand : {EMPLOYEE_2_TEAM : {$select : ["Name"]}}},
+	childQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Name"]}}},
 	lateQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}}},
 	success : true,
 	title : "new $select in existing $expand"
@@ -3131,7 +3131,7 @@ sap.ui.define([
 				oContext : oContext
 			}),
 			oChild3 = new ODataParentBinding({
-				mCacheByResourcePath: {
+				mCacheByResourcePath : {
 					"/Foo/1" : oCache3_1,
 					"/Foo/2" : oCache3_2
 				},

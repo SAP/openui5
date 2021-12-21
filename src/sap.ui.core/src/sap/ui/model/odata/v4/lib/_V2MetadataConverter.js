@@ -902,12 +902,12 @@ sap.ui.define([
 
 		this.processAttributes(oElement, oResult, {
 			"DefaultValue" : this.setValue,
-			"MaxLength" :  function (sValue) {
+			"MaxLength" : function (sValue) {
 				return sValue === "Max" ? undefined : that.setNumber(sValue);
 			},
 			"Nullable" : this.setIfFalse,
 			"Precision" : this.setNumber,
-			"Scale" :  this.setNumber,
+			"Scale" : this.setNumber,
 			"Unicode" : this.setIfFalse
 		});
 		if (oElement.getAttribute("FixedLength") === "false") {

@@ -5084,7 +5084,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.aElements), 20, 6, bServerDrivenPaging ? 0 : 10,
 				oCache.aElements.$created + oCache.iLimit)
 			// Note: not necessarily a realistic example
-			.returns([{start: 15, end: 31}]);
+			.returns([{start : 15, end : 31}]);
 		this.mock(oReadGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
 		this.mock(oReadGroupLock).expects("unlock").withExactArgs();
 		this.oRequestorMock.expects("request")

@@ -95,7 +95,7 @@ sap.ui.define([
 				oJQueryMock = this.mock(jQuery),
 				mHeaders = {},
 				mQueryParams = {
-					"sap-client" :"300"
+					"sap-client" : "300"
 				},
 				oMetadataRequestor,
 				sUrl = "/~/";

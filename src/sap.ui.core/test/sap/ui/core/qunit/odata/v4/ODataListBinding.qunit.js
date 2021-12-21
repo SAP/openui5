@@ -7875,9 +7875,9 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				checkUpdate: function () {},
-				fetchValue: function () {},
-				getBinding: function () {
+				checkUpdate : function () {},
+				fetchValue : function () {},
+				getBinding : function () {
 					return oEntityBinding;
 				},
 				getPath : function () {},
@@ -7885,7 +7885,7 @@ sap.ui.define([
 			},
 			oRootBinding = {
 				isSuspended : function () {},
-				resume: function () {}
+				resume : function () {}
 			},
 			that = this;
 
@@ -7933,7 +7933,7 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				getBinding: function () {
+				getBinding : function () {
 					return oEntityBinding;
 				},
 				getPath : function () {}
@@ -7958,7 +7958,7 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				getBinding: function () {
+				getBinding : function () {
 					return oEntityBinding;
 				},
 				getPath : function () {}
@@ -7986,8 +7986,8 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				fetchValue: function () {},
-				getBinding: function () {
+				fetchValue : function () {},
+				getBinding : function () {
 					return oEntityBinding;
 				},
 				getPath : function () {},
@@ -8030,8 +8030,8 @@ sap.ui.define([
 				toString : function () { return "~entity~binding~"; }
 			},
 			oEntityContext = {
-				fetchValue: function () {},
-				getBinding: function () {
+				fetchValue : function () {},
+				getBinding : function () {
 					return oEntityBinding;
 				},
 				getPath : function () {}
@@ -8068,8 +8068,8 @@ sap.ui.define([
 				getInheritableQueryOptions : function () {}
 			},
 			oEntityContext = {
-				fetchValue: function () {},
-				getBinding: function () {
+				fetchValue : function () {},
+				getBinding : function () {
 					return oEntityBinding;
 				},
 				getPath : function () {}

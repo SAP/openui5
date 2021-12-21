@@ -557,7 +557,7 @@ sap.ui.define([
 			},
 			"DataServices" : {
 				"Schema" : {
-					__xmlns :  $$.sEdmNamespace,
+					__xmlns : $$.sEdmNamespace,
 					__processor : $$.processAlias
 				}
 			}
@@ -605,7 +605,7 @@ sap.ui.define([
 			__include : [$$.oReferenceInclude],
 			"DataServices" : {
 				"Schema" : {
-					__xmlns :  $$.sEdmNamespace,
+					__xmlns : $$.sEdmNamespace,
 					__processor : $$.processSchema,
 					__include : [$$.oAnnotationsConfig, $$.oAnnotationConfig],
 					"Action" : {
