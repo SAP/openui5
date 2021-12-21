@@ -1089,6 +1089,36 @@ function (
 	});
 
 	QUnit.test("Each column is labeled correctly when there is Landmark Info", function (assert) {
+		// setup
+		var oSpy,
+			oFCL = this.oFCL,
+			fnCheckCorrectAnnouncement = function (oButton, sBundleKey) {
+				// act
+				oButton.firePress();
+				Core.applyChanges();
+
+				// assert
+				assert.strictEqual(oSpy.args[0][0], sBundleKey, "announceMessage is called with correct message");
+				assert.ok(oSpy.called, "announceMessage is called");
+
+				// clean-up
+				oSpy.reset();
+			},
+			fnGetBeginColumnBackArrow = function () { return oFCL.getAggregation("_beginColumnBackArrow"); },
+			fnGetMidColumnForwardArrow = function () { return oFCL.getAggregation("_midColumnForwardArrow"); },
+			fnGetMidColumnBackArrow = function () { return oFCL.getAggregation("_midColumnBackArrow"); },
+			fnGetEndColumnForwardArrow = function () { return oFCL.getAggregation("_endColumnForwardArrow"); };
+
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+
+		oSpy = this.spy(this.oFCL, "_announceMessage");
+
+		fnCheckCorrectAnnouncement(fnGetBeginColumnBackArrow(), "FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
+		fnCheckCorrectAnnouncement(fnGetMidColumnForwardArrow(), "FCL_FIRST_COLUMN_EXPANDED_MESSAGE");
+		fnCheckCorrectAnnouncement(fnGetMidColumnBackArrow(), "FCL_LAST_COLUMN_EXPANDED_MESSAGE");
+		fnCheckCorrectAnnouncement(fnGetEndColumnForwardArrow(), "FCL_MIDDLE_COLUMN_EXPANDED_MESSAGE");
+	});
+	QUnit.test("Each column is labeled correctly when there is Landmark Info", function (assert) {
 		// Arrange
 		var sTestFirstColumnLabel = "This is test first column label",
 			sTestLastColumnLabel = "This is custom last column label",
