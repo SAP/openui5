@@ -637,9 +637,9 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			prepareChanges([
-				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1"),
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1"),
 				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2"),
-				createMockChange("testRename", "rename", "Comp1---idMain1--Label1")
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
 			]);
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
@@ -670,56 +670,63 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the visualization is started", function (assert) {
 			var aIndicators = collectIndicatorReferences();
-			// Overlay 1 has lowest y, thus should be focused first
+			var iYPosIndicator1 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y;
+			var iXPosIndicator1 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x;
+			var iYPosIndicator2 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y;
+			var iXPosIndicator2 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x;
+			assert.ok(
+				(iYPosIndicator1 === iYPosIndicator2) && (iXPosIndicator1 < iXPosIndicator2),
+				"When two indicators have the same Y-Position, the X-Position is used for sort"
+			);
+
+			assert.ok(
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex,
+				"the first indicator has lower tabIndex than the second one"
+			);
+			assert.ok(
+				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").tabIndex < getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1").tabIndex,
+				"the second indicator has lower tabIndex than the third one"
+			);
+			// Overlay 1 has lowest x/y-position, thus should be focused first
 			assert.strictEqual(
 				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
 				document.activeElement,
-				"then the indicators are sorted and the first is focused"
+				"the indicators are sorted and the first is focused"
 			);
 		});
 
-		QUnit.test("when LEFT, UP or SHIFT TAB are pressed", function (assert) {
-			var aIndicators = collectIndicatorReferences();
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_LEFT);
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1"),
-				document.activeElement,
-				"then the previous indicator is focused 1/3"
-			);
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2"),
-				document.activeElement,
-				"then the previous indicator is focused 2/3"
-			);
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.TAB, true);
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
-				document.activeElement,
-				"then the previous indicator is focused 3/3"
-			);
-		});
+		QUnit.test("when the visualization is started and an indicator is clicked", function (assert) {
+			var fnDone = assert.async();
+			var oChangeIndicator = collectIndicatorReferences()[0];
+			var iInitialTabindex = oChangeIndicator.getDomRef().getAttribute("tabindex");
+			var oOpenPopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
+			QUnitUtils.triggerEvent("click", oChangeIndicator.getDomRef());
 
-		QUnit.test("when RIGHT, DOWN or TAB are pressed", function (assert) {
-			var aIndicators = collectIndicatorReferences();
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2"),
-				document.activeElement,
-				"then the next indicator is focused 1/3"
-			);
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--Label1"),
-				document.activeElement,
-				"then the next indicator is focused 2/3"
-			);
-			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.TAB);
-			assert.strictEqual(
-				getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1"),
-				document.activeElement,
-				"then the next indicator is focused 3/3"
-			);
+			oOpenPopoverPromise
+				.then(function () {
+					var oPopover = oChangeIndicator.getAggregation("_popover");
+					function onPopoverClosed() {
+						assert.strictEqual(
+							oChangeIndicator.getDomRef().getAttribute("tabindex"),
+							iInitialTabindex,
+							"then the original tab index is restored after the popover was closed"
+						);
+						fnDone();
+					}
+					oPopover.attachEventOnce("afterClose", onPopoverClosed);
+
+					function onPopoverOpened() {
+						// Trigger rerendering which will remove tab indices
+						oCore.applyChanges();
+						oPopover.close();
+					}
+
+					if (oPopover.isOpen()) {
+						onPopoverOpened();
+					} else {
+						oPopover.attachEventOnce("afterOpen", onPopoverOpened);
+					}
+				});
 		});
 	});
 
