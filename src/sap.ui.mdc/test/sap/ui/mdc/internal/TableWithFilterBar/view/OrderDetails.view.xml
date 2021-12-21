@@ -46,13 +46,13 @@
 								<core:Title text="Order Details"></core:Title>
 
 								<Label text="ID"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field id="fID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="OrderNo"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field id="fOrderNo" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="Total"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+								<mdc:Field id="fTotal" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
 							</f:SimpleForm>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
