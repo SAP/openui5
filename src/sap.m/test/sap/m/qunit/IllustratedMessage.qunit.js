@@ -175,7 +175,7 @@ function (
 		// Arrange
 		var oDescription,
 			sCurrDescrVal,
-			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, [], true),
+			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, null, true),
 			sTestDescrVal = "Test descr";
 
 		// Act - Force use of FormattedText
@@ -207,7 +207,7 @@ function (
 		// Arrange
 		var oDescription = this.oIllustratedMessage._getDescription(),
 			sCurrDescrVal = oDescription.getText(),
-			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, [], true),
+			sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + this.oIllustratedMessage._sIllustrationType, null, true),
 			sTestDescrVal = "Test descr";
 
 		// Assert
@@ -247,7 +247,7 @@ function (
 		// Arrange
 		var sTitleText = this.oIllustratedMessage._getTitle().getText(),
 		sNewTitleVal = "Test title",
-		sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this.oIllustratedMessage._sIllustrationType, [], true);
+		sDefaultText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this.oIllustratedMessage._sIllustrationType, null, true);
 
 		// Assert
 		assert.ok(this.oIllustratedMessage._getTitle().isA("sap.m.Title"), "Internal getter _getTitle is correctly returning an sap.m.Title");
@@ -506,6 +506,62 @@ function (
 
 		assert.strictEqual(this.oIllustratedMessage._getDescription().getId(),
 		this.oIllustratedMessage.getAccessibilityReferences().description, "Description reference is correct");
+	});
+
+	/* --------------------------- IllustratedMessage Default Text Fallback -------------------------------------- */
+	QUnit.module("IllustratedMessage - Default Text Fallback logic ", {
+		beforeEach: function () {
+			// Arrange
+			this.oIllustratedMessage = new IllustratedMessage();
+			this.oIllustratedMessage.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			// Clean
+			this.oIllustratedMessage.destroy();
+			this.oIllustratedMessage = null;
+		}
+	});
+
+	QUnit.test("Testing version fallback functionality", function (assert) {
+
+		// Arrange
+		var sOriginalType = "NoTasks",
+			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, null, true),
+			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, null, true),
+			sVersionType = IllustratedMessageType.NoTasksV1;
+
+		// Act
+		this.oIllustratedMessage.setIllustrationType(sVersionType);
+
+		// Assert
+		assert.strictEqual(this.oIllustratedMessage._getDescription().getText(),
+			sOriginalDefaultDescrText, "Version Description fallbacks to the original one.");
+
+		assert.strictEqual(this.oIllustratedMessage._getTitle().getText(),
+			sOriginalDefaultTitleText, "Version Title fallbacks to the original one.");
+	});
+
+	QUnit.test("Testing original text fallback functionality", function (assert) {
+
+		// Arrange
+		var sOriginalType = IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
+			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, null, true),
+			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, null, true),
+			sNewType = IllustratedMessageType.ReloadScreen;
+
+		// Act
+		this.oIllustratedMessage.setIllustrationType(sNewType);
+
+		// Assert
+		assert.strictEqual(IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
+			IllustratedMessage.FALLBACK_TEXTS.ReloadScreen, "ReloadScreen bundle key is UnableToLoad.");
+
+		assert.strictEqual(this.oIllustratedMessage._getDescription().getText(),
+			sOriginalDefaultDescrText, "ReloadScreen Description text fallbacks to the original one (UnableToLoad).");
+
+		assert.strictEqual(this.oIllustratedMessage._getTitle().getText(),
+			sOriginalDefaultTitleText, "ReloadScreen Title text fallbacks to the original one (UnableToLoad).");
 	});
 
 });
