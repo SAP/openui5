@@ -27,276 +27,81 @@ sap.ui.define([
 			page: "test-resources/sap/ui/rta/qunit/testsandbox.qunit.html?test={name}",
 			autostart: true
 		},
+		// keep tests in alphabetical order!
 		tests: {
-			AggregationBinding: {},
-			"enablement/elementActionTest": {
+			// API
+			"api/startKeyUserAdaptation": {
+				group: "API",
 				coverage: {
-					only: ["sap/ui/rta/enablement/elementActionTest"]
+					only: ["sap/ui/rta/api/startKeyUserAdaptation"]
+				}
+			},
+			"api/startAdaptation": {
+				group: "API",
+				coverage: {
+					only: ["sap/ui/rta/api/startAdaptation"]
 				}
 			},
 
-			// Services:
-			"service/Action": {
-				group: 'Service',
+			// AppVariant
+			"appVariant/AppVariantDialog": {
+				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/service/Action"]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "LocalStorageConnector"}]'
+					only: ["sap/ui/rta/appVariant/AppVariantDialog"]
 				}
 			},
-			"service/ControllerExtension": {
-				group: 'Service',
+			"appVariant/AppVariantManager": {
+				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/service/ControllerExtension"]
+					only: ["sap/ui/rta/appVariant/AppVariantManager"]
 				}
 			},
-			"service/Outline": {
-				group: 'Service',
+			"appVariant/AppVariantOverviewDialog": {
+				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/service/Outline"]
-				},
-				ui5: {
-					resourceroots: {
-						testdata: "test-resources/sap/ui/rta/testdata/",
-						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
-					}
+					only: ["sap/ui/rta/appVariant/AppVariantOverviewDialog"]
 				}
 			},
-			"service/Selection": {
-				group: 'Service',
+			"appVariant/AppVariantUtils": {
+				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/service/Selection"]
+					only: ["sap/ui/rta/appVariant/AppVariantUtils"]
 				}
 			},
-			"service/Property": {
-				group: 'Service',
+			"appVariant/Feature": {
+				group: "AppVariant",
 				coverage: {
-					only: ["sap/ui/rta/service/Property"]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+					only: ["sap/ui/rta/appVariant/Feature"]
+				}
+			},
+			"appVariant/ManageAppsController": {
+				group: "AppVariant",
+				coverage: {
+					only: ["sap/ui/rta/appVariant/manageApps/webapp/controller/ManageApps.controller"]
+				}
+			},
+			"appVariant/ManageAppsUtils": {
+				group: "AppVariant",
+				coverage: {
+					only: ["sap/ui/rta/appVariant/Utils"]
+				}
+			},
+			"appVariant/S4HanaCloudBackend": {
+				group: "AppVariant",
+				coverage: {
+					only: ["sap/ui/rta/appVariant/S4HanaCloudBackend"]
 				}
 			},
 
+			// Client
 			"client/Client": {
-				group: 'Client',
+				group: "Client",
 				coverage: {
 					only: ["sap/ui/rta/Client"]
 				}
 			},
 
-			// Toolbar
-			"toolbar/Base": {
-				group: 'Toolbar',
-				coverage: {
-					only: ["sap/ui/rta/toolbar/Base"]
-				}
-			},
-			"toolbar/Adaptation": {
-				group: 'Toolbar',
-				coverage: {
-					only: ["sap/ui/rta/toolbar/Adaptation"]
-				}
-			},
-			"toolbar/OverflowToolbarButton": {
-				group: 'Toolbar',
-				coverage: {
-					only: ["sap/ui/rta/toolbar/OverflowToolbarButton"]
-				}
-			},
-			"toolbar/translation/Translation": {
-				group: 'Toolbar',
-				coverage: {
-					only: ["sap/ui/rta/toolbar/translation/Translation"]
-				}
-			},
-			"toolbar/Fiori": {
-				group: 'Toolbar',
-				coverage: {
-					only: ["sap/ui/rta/toolbar/Fiori"]
-				}
-			},
-			"toolbar/FioriLike": {
-				group: 'Toolbar',
-				coverage: {
-					only: ["sap/ui/rta/toolbar/FioriLike"]
-				}
-			},
-
-			// Plugins
-			"plugin/additionalElements/AddElementsDialog": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/additionalElements/AddElementsDialog"]
-				}
-			},
-			"plugin/additionalElements/ActionExtractor": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/additionalElements/ActionExtractor"]
-				}
-			},
-			"plugin/additionalElements/AdditionalElementsPlugin": {
-				group: "Plugin",
-				coverage: {
-					only: [
-						"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-						"sap/ui/rta/plugin/additionalElements/ActionExtractor",
-						"sap/ui/rta/plugin/additionalElements/CommandBuilder",
-						"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
-					]
-				}
-			},
-			"plugin/additionalElements/AddElementsMultipleAggregations": {
-				group: "Plugin",
-				coverage: {
-					only: [
-						"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
-						"sap/ui/rta/plugin/additionalElements/ActionExtractor",
-						"sap/ui/rta/plugin/additionalElements/CommandBuilder",
-						"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
-					]
-				}
-			},
-			"plugin/iframe/AddIFrameDialog": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/iframe/AddIFrameDialog"]
-				}
-			},
-			"plugin/iframe/urlCleaner": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/iframe/urlCleaner"]
-				}
-			},
-			"plugin/iframe/AddIFrame": {
-				group: "Plugin",
-				autostart: false,
-				coverage: {
-					only: [
-						"sap/ui/rta/plugin/iframe/AddIFrame",
-						"sap/ui/rta/plugin/BaseCreate"
-					]
-				}
-			},
-			"plugin/AddXMLAtExtensionPoint": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/AddXMLAtExtensionPoint"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
-					}
-				}
-			},
-			"plugin/Combine": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Combine"]
-				}
-			},
-			"plugin/ControlVariant": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/ControlVariant"]
-				}
-			},
-			"plugin/CreateContainer": {
-				group: "Plugin",
-				autostart: false,
-				coverage: {
-					only: [
-						"sap/ui/rta/plugin/CreateContainer",
-						"sap/ui/rta/plugin/BaseCreate"
-					]
-				}
-			},
-			"plugin/CutPaste": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/CutPaste"]
-				}
-			},
-			"plugin/DragDrop": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/DragDrop"]
-				}
-			},
-			"plugin/EasyAdd": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/EasyAdd"]
-				}
-			},
-			"plugin/EasyRemove": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/EasyRemove"]
-				}
-			},
-			"plugin/LocalReset": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/LocalReset"]
-				}
-			},
-			"plugin/Plugin": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Plugin"]
-				}
-			},
-			"plugin/Remove": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Remove"]
-				}
-			},
-			"plugin/Rename": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Rename"]
-				}
-			},
-			"plugin/Selection": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Selection"]
-				}
-			},
-			"plugin/Settings": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Settings"]
-				}
-			},
-			"plugin/Split": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Split"]
-				}
-			},
-			"plugin/Stretch": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Stretch"]
-				}
-			},
-
 			// Commands
-			"command/BaseCommand": {
-				group: "Command",
-				coverage: {
-					only: ["sap/ui/rta/command/BaseCommand"]
-				},
-				ui5: {
-					"xx-designMode": true
-				}
-			},
 			"command/appDescriptor/AddLibrary": {
 				group: "Command",
 				coverage: {
@@ -365,6 +170,15 @@ sap.ui.define([
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/AppDescriptorCommand"]
+				}
+			},
+			"command/BaseCommand": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/BaseCommand"]
+				},
+				ui5: {
+					"xx-designMode": true
 				}
 			},
 			"command/BindProperty": {
@@ -545,59 +359,9 @@ sap.ui.define([
 				}
 			},
 
-			// AppVariant
-			"appVariant/AppVariantDialog": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/AppVariantDialog"]
-				}
-			},
-			"appVariant/AppVariantManager": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/AppVariantManager"]
-				}
-			},
-			"appVariant/AppVariantOverviewDialog": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/AppVariantOverviewDialog"]
-				}
-			},
-			"appVariant/AppVariantUtils": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/AppVariantUtils"]
-				}
-			},
-			"appVariant/Feature": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/Feature"]
-				}
-			},
-			"appVariant/ManageAppsController": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/manageApps/webapp/controller/ManageApps.controller"]
-				}
-			},
-			"appVariant/ManageAppsUtils": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/Utils"]
-				}
-			},
-			"appVariant/S4HanaCloudBackend": {
-				group: "AppVariant",
-				coverage: {
-					only: ["sap/ui/rta/appVariant/S4HanaCloudBackend"]
-				}
-			},
-
 			// DesignTime Tool
 			"dttool/controls/ListItem": {
-				group: 'DtTool',
+				group: "DtTool",
 				coverage: {
 					only: ["sap/ui/rta/internal/dttool/controls/DTToolListItem"]
 				},
@@ -608,7 +372,7 @@ sap.ui.define([
 				}
 			},
 			"dttool/controls/OutlineTree": {
-				group: 'DtTool',
+				group: "DtTool",
 				coverage: {
 					only: ["sap/ui/rta/internal/dttool/controls/OutlineTree"]
 				},
@@ -619,21 +383,365 @@ sap.ui.define([
 				}
 			},
 
-			// API
-			"api/startKeyUserAdaptation": {
-				group: "API",
+			// Element Action Test
+			"enablement/elementActionTest": {
 				coverage: {
-					only: ["sap/ui/rta/api/startKeyUserAdaptation"]
+					only: ["sap/ui/rta/enablement/elementActionTest"]
 				}
 			},
-			"api/startAdaptation": {
-				group: "API",
+
+			// Integration tests
+			"integration/AggregationBinding": {
+				group: "Integration"
+			},
+			"integration/SimpleFormRemove": {
+				group: "Integration",
+				ui5: {
+					libs: "sap.ui.layout, sap.ui.rta",
+					resourceroots: {
+						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+					}
+				}
+			},
+
+			// Plugins
+			"plugin/additionalElements/AddElementsDialog": {
+				group: "Plugin",
 				coverage: {
-					only: ["sap/ui/rta/api/startAdaptation"]
+					only: ["sap/ui/rta/plugin/additionalElements/AddElementsDialog"]
+				}
+			},
+			"plugin/additionalElements/ActionExtractor": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/additionalElements/ActionExtractor"]
+				}
+			},
+			"plugin/additionalElements/AdditionalElementsPlugin": {
+				group: "Plugin",
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+						"sap/ui/rta/plugin/additionalElements/ActionExtractor",
+						"sap/ui/rta/plugin/additionalElements/CommandBuilder",
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
+					]
+				}
+			},
+			"plugin/additionalElements/AdditionalElementsPluginContextMenu": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
+				}
+			},
+			"plugin/additionalElements/AddElementsMultipleAggregations": {
+				group: "Plugin",
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
+						"sap/ui/rta/plugin/additionalElements/ActionExtractor",
+						"sap/ui/rta/plugin/additionalElements/CommandBuilder",
+						"sap/ui/rta/plugin/additionalElements/AdditionalElementsUtils"
+					]
+				}
+			},
+			"plugin/iframe/AddIFrameDialog": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/iframe/AddIFrameDialog"]
+				}
+			},
+			"plugin/iframe/urlCleaner": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/iframe/urlCleaner"]
+				}
+			},
+			"plugin/iframe/AddIFrame": {
+				group: "Plugin",
+				autostart: false,
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/iframe/AddIFrame",
+						"sap/ui/rta/plugin/BaseCreate"
+					]
+				}
+			},
+			"plugin/AddXMLAtExtensionPoint": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/AddXMLAtExtensionPoint"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
+				}
+			},
+			"plugin/Combine": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Combine"]
+				}
+			},
+			"plugin/ControlVariant": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/ControlVariant"]
+				}
+			},
+			"plugin/CreateContainer": {
+				group: "Plugin",
+				autostart: false,
+				coverage: {
+					only: [
+						"sap/ui/rta/plugin/CreateContainer",
+						"sap/ui/rta/plugin/BaseCreate"
+					]
+				}
+			},
+			"plugin/CutPaste": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/CutPaste"]
+				}
+			},
+			"plugin/DragDrop": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/DragDrop"]
+				}
+			},
+			"plugin/EasyAdd": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/EasyAdd"]
+				}
+			},
+			"plugin/EasyRemove": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/EasyRemove"]
+				}
+			},
+			"plugin/LocalReset": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/LocalReset"]
+				}
+			},
+			"plugin/Plugin": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Plugin"]
+				}
+			},
+			"plugin/Remove": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Remove"]
+				}
+			},
+			"plugin/Rename": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Rename"]
+				}
+			},
+			"plugin/Selection": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Selection"]
+				}
+			},
+			"plugin/Settings": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Settings"]
+				}
+			},
+			"plugin/Split": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Split"]
+				}
+			},
+			"plugin/Stretch": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/Stretch"]
+				}
+			},
+
+			// Services:
+			"service/Action": {
+				group: "Service",
+				coverage: {
+					only: ["sap/ui/rta/service/Action"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "LocalStorageConnector"}]'
+				}
+			},
+			"service/ControllerExtension": {
+				group: "Service",
+				coverage: {
+					only: ["sap/ui/rta/service/ControllerExtension"]
+				}
+			},
+			"service/Outline": {
+				group: "Service",
+				coverage: {
+					only: ["sap/ui/rta/service/Outline"]
+				},
+				ui5: {
+					resourceroots: {
+						testdata: "test-resources/sap/ui/rta/testdata/",
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
+				}
+			},
+			"service/Selection": {
+				group: "Service",
+				coverage: {
+					only: ["sap/ui/rta/service/Selection"]
+				}
+			},
+			"service/Property": {
+				group: "Service",
+				coverage: {
+					only: ["sap/ui/rta/service/Property"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+				}
+			},
+
+			// Toolbar
+			"toolbar/Base": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/Base"]
+				}
+			},
+			"toolbar/Adaptation": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/Adaptation"]
+				}
+			},
+			"toolbar/OverflowToolbarButton": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/OverflowToolbarButton"]
+				}
+			},
+			"toolbar/translation/Translation": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/translation/Translation"]
+				}
+			},
+			"toolbar/Fiori": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/Fiori"]
+				}
+			},
+			"toolbar/FioriLike": {
+				group: "Toolbar",
+				coverage: {
+					only: ["sap/ui/rta/toolbar/FioriLike"]
+				}
+			},
+
+			// utilities
+			"util/adaptationStarter": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/adaptationStarter"]
+				}
+			},
+			"util/PluginManager": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/PluginManager"]
+				}
+			},
+			"util/PopupManager": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/PopupManager"]
+				}
+			},
+			"util/hasStableId": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/hasStableId"]
+				}
+			},
+			"util/validateFlexEnabled": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/validateFlexEnabled"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "LocalStorageConnector", "layers": ["ALL"]}]'
+				}
+			},
+			"util/validateStableIds": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/validateStableIds"]
+				}
+			},
+			"util/showMessageBox": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/showMessageBox"]
+				}
+			},
+			"util/changeVisualization/categories/MoveVisualization": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/categories/MoveVisualization"
+					]
+				}
+			},
+			"util/changeVisualization/categories/RenameVisualization": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/categories/RenameVisualization"
+					]
+				}
+			},
+			"util/changeVisualization/categories/SplitVisualization": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/categories/SplitVisualization"
+					]
+				}
+			},
+			"util/changeVisualization/ChangeIndicator": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/ChangeIndicator"
+					]
+				}
+			},
+			"util/changeVisualization/ChangeIndicatorRegistry": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
+					]
 				}
 			}
 		}
-
 	};
 
 	var bCompAvailable = false;
@@ -644,7 +752,7 @@ sap.ui.define([
 				case 200:
 				case 304:
 					bCompAvailable = JSON.parse(this.responseText).libraries.some(function (mLibrary) {
-						return mLibrary.name === 'sap.ui.comp';
+						return mLibrary.name === "sap.ui.comp";
 					});
 					break;
 				default:
@@ -656,164 +764,10 @@ sap.ui.define([
 	oXhr.open("GET", sap.ui.require.toUrl("sap-ui-version.json"), false);
 	oXhr.send();
 
-
 	if (bCompAvailable) {
 		mConfig = merge({}, mConfig, {
 			tests: {
-				"plugin/additionalElements/AdditionalElementsAnalyzer": {
-					group: "Plugin",
-					coverage: {
-						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer"]
-					},
-					ui5: {
-						resourceroots: {
-							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
-						}
-					}
-				},
-				"plugin/additionalElements/AdditionalElementsAnalyzerOData": {
-					group: "Plugin",
-					coverage: {
-						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer"]
-					},
-					ui5: {
-						resourceroots: {
-							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
-						}
-					}
-				},
-				"plugin/additionalElements/AdditionalElementsPluginContextMenu": {
-					group: "Plugin",
-					coverage: {
-						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
-					}
-				},
-				"plugin/CompVariant": {
-					group: "Plugin",
-					coverage: {
-						only: ["sap/ui/rta/plugin/CompVariant"]
-					},
-					ui5: {
-						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
-					}
-				},
-				"plugin/RTAElementMover": {
-					group: "Plugin",
-					coverage: {
-						only: ["sap/ui/rta/plugin/RTAElementMover"]
-					},
-					ui5: {
-						resourceroots: {
-							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
-						}
-					}
-				},
-				"util/adaptationStarter": {
-					coverage: {
-						only: ["sap/ui/rta/util/adaptationStarter"]
-					}
-				},
-				"util/BindingsExtractor": {
-					coverage: {
-						only: ["sap/ui/rta/util/BindingsExtractor"]
-					},
-					ui5: {
-						resourceroots: {
-							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
-						}
-					}
-				},
-				"util/PluginManager": {
-					coverage: {
-						only: ["sap/ui/rta/util/PluginManager"]
-					}
-				},
-				"util/PopupManager": {
-					coverage: {
-						only: ["sap/ui/rta/util/PopupManager"]
-					}
-				},
-				"util/hasStableId": {
-					coverage: {
-						only: ["sap/ui/rta/util/hasStableId"]
-					}
-				},
-				"util/validateFlexEnabled": {
-					coverage: {
-						only: ["sap/ui/rta/util/validateFlexEnabled"]
-					},
-					ui5: {
-						flexibilityServices: '[{"connector": "LocalStorageConnector", "layers": ["ALL"]}]'
-					}
-				},
-				"util/validateStableIds": {
-					coverage: {
-						only: ["sap/ui/rta/util/validateStableIds"]
-					}
-				},
-				"util/showMessageBox": {
-					coverage: {
-						only: ["sap/ui/rta/util/showMessageBox"]
-					}
-				},
-				"util/changeVisualization/ChangeVisualization": {
-					group: "Change visualization",
-					coverage: {
-						only: [
-							"sap/ui/rta/util/changeVisualization/ChangeVisualization",
-							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
-						]
-					},
-					ui5: {
-						resourceroots: {
-							qunit: "test-resources/sap/ui/rta/qunit/",
-							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
-							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
-					}
-				},
-				"util/changeVisualization/ChangeIndicator": {
-					group: "Change visualization",
-					coverage: {
-						only: [
-							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
-						]
-					}
-				},
-				"util/changeVisualization/ChangeIndicatorRegistry": {
-					group: "Change visualization",
-					coverage: {
-						only: [
-							"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
-						]
-					}
-				},
-				"util/changeVisualization/categories/RenameVisualization": {
-					group: "Change visualization",
-					coverage: {
-						only: [
-							"sap/ui/rta/util/changeVisualization/categories/RenameVisualization"
-						]
-					}
-				},
-				"util/changeVisualization/categories/MoveVisualization": {
-					group: "Change visualization",
-					coverage: {
-						only: [
-							"sap/ui/rta/util/changeVisualization/categories/MoveVisualization"
-						]
-					}
-				},
-				"util/changeVisualization/categories/SplitVisualization": {
-					group: "Change visualization",
-					coverage: {
-						only: [
-							"sap/ui/rta/util/changeVisualization/categories/SplitVisualization"
-						]
-					}
-				},
-
-				ContextMenu: { // Integration
+				ContextMenu: {
 					ui5: {
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
@@ -826,28 +780,6 @@ sap.ui.define([
 						reorder: false
 					},
 					autostart: false
-				},
-				"integration/EndToEnd": {
-					group: "Integration",
-					ui5: {
-						resourceroots: {
-							qunit: "test-resources/sap/ui/rta/qunit/",
-							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
-							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						},
-						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
-					}
-				},
-				"integration/BasicFunctionality": {
-					group: "Integration",
-					ui5: {
-						resourceroots: {
-							qunit: "test-resources/sap/ui/rta/qunit/",
-							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
-							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						},
-						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
-					}
 				},
 				RuntimeAuthoring: {
 					coverage: {
@@ -899,24 +831,106 @@ sap.ui.define([
 						}
 					}
 				},
-				"integration/SimpleFormRemove": {
-					group: "Integration",
-					ui5: {
-						libs: "sap.ui.layout, sap.ui.rta",
-						resourceroots: {
-							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
-					}
-				},
 				Utils: {
 					coverage: {
 						only: ["sap/ui/rta/Utils"]
 					},
 					ui5: {
-						libs: 'sap.ui.rta, sap.uxap',
+						libs: "sap.ui.rta, sap.uxap",
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/",
+							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
+						}
+					}
+				},
+				"integration/BasicFunctionality": {
+					group: "Integration",
+					ui5: {
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+					}
+				},
+				"integration/EndToEnd": {
+					group: "Integration",
+					ui5: {
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+					}
+				},
+				"plugin/additionalElements/AdditionalElementsAnalyzer": {
+					group: "Plugin",
+					coverage: {
+						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer"]
+					},
+					ui5: {
+						resourceroots: {
+							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
+						}
+					}
+				},
+				"plugin/additionalElements/AdditionalElementsAnalyzerOData": {
+					group: "Plugin",
+					coverage: {
+						only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer"]
+					},
+					ui5: {
+						resourceroots: {
+							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
+						}
+					}
+				},
+				"plugin/CompVariant": {
+					group: "Plugin",
+					coverage: {
+						only: ["sap/ui/rta/plugin/CompVariant"]
+					},
+					ui5: {
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+					}
+				},
+				"plugin/RTAElementMover": {
+					group: "Plugin",
+					coverage: {
+						only: ["sap/ui/rta/plugin/RTAElementMover"]
+					},
+					ui5: {
+						resourceroots: {
+							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
+						}
+					}
+				},
+				"util/changeVisualization/ChangeVisualization": {
+					group: "Change visualization",
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
+						]
+					},
+					ui5: {
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						}
+					}
+				},
+				"util/BindingsExtractor": {
+					group: "util",
+					coverage: {
+						only: ["sap/ui/rta/util/BindingsExtractor"]
+					},
+					ui5: {
+						resourceroots: {
 							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
 						}
 					}
