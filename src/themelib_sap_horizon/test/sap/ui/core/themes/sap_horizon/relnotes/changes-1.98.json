@@ -3,6 +3,28 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "ac7b839f0e912ebd65423044a4b3790cc312e45c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Visualization is aligned with the visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180422889"
+          }
+        ]
+      },
+      {
+        "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
         "id": "66dbd6a164458177f812a352e37436300abe10de",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Icons are now correctly centered in macOS",
