@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/uid",
+	"sap/m/Input",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
@@ -25,9 +26,9 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message, Controller,
-		View, BindingMode, Filter, FilterOperator, Sorter, JSONModel, CountMode, MessageScope,
-		Context, ODataModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message,
+		Controller, View, BindingMode, Filter, FilterOperator, Sorter, JSONModel, CountMode,
+		MessageScope, Context, ODataModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -4513,6 +4514,77 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: When destroying a control, the control ID gets properly removed from the message.
+	// BCP: 2180415452
+[true, false].forEach(function (bRemoveContext) {
+	var sTitle = "Messages: Remove the control ID from the message object when the control gets"
+			+ " destroyed; remove context before destroy: " + bRemoveContext;
+
+	QUnit.test(sTitle, function (assert) {
+		var oMessage, oObjectPage,
+			oModel = createSalesOrdersModelMessageScope(),
+			oSalesOrder1NoteError = this.createResponseMessage("('1')/Note"),
+			sView = '\
+<Table growing="true" growingThreshold="1" id="table" items="{/SalesOrderSet}">\
+	<Text id="note" text="{Note}" />\
+</Table>\
+<FlexBox id="objectPage">\
+	<Input id="note1" value="{Note}" />\
+	<Input id="note2" value="{= ${SalesOrderID} + \' - \' + ${Note}}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest({"sap-message-scope" : "BusinessObject"})
+			.expectRequest({
+				deepPath : "/SalesOrderSet",
+				headers : {"sap-message-scope" : "BusinessObject"},
+				requestUri : "SalesOrderSet?$skip=0&$top=1"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			}, {
+				"sap-message" : getMessageHeader([oSalesOrder1NoteError])
+			})
+			.expectValue("note", ["Foo"])
+			.expectMessage(oSalesOrder1NoteError, "/SalesOrderSet");
+
+		oModel.setMessageScope(MessageScope.BusinessObject);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oMessage = sap.ui.getCore().getMessageManager().getMessageModel().getObject("/")[0];
+			oObjectPage = that.oView.byId("objectPage");
+
+			assert.deepEqual(oMessage.getControlIds(), []);
+
+			oObjectPage.setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aControlIds = oMessage.getControlIds();
+
+			assert.ok(aControlIds.includes(that.oView.byId("note1").getId()), "simple binding");
+			assert.ok(aControlIds.includes(that.oView.byId("note2").getId()), "composite binding");
+
+			if (bRemoveContext) {
+				oObjectPage.setBindingContext(null);
+			}
+
+			// code under test
+			oObjectPage.getItems().forEach(function (oItem) { oItem.destroy(); });
+			oObjectPage.removeAllItems();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oMessage.getControlIds(), []);
+		});
 	});
 });
 

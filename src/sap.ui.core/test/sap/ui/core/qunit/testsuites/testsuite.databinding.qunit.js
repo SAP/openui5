@@ -57,6 +57,12 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			CompositeDataState: {
+				title: "sap.ui.model.CompositeDataState - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/CompositeDataState.qunit"
+				]
+			},
 			DataBinding: {
 				title: "DataBinding - QUnit Tests"
 			},

@@ -1,4 +1,3 @@
-/*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
@@ -214,5 +213,18 @@ sap.ui.define([
 		oDataState.reset();
 
 		assert.strictEqual(oDataState.mChangedProperties, "~initial");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllMessages", function(assert) {
+		var oDataState = new DataState();
+
+		this.mock(oDataState).expects("_getOldMessages")
+			.withExactArgs()
+			.returns(["~msg0", "~msg1"]);
+		this.mock(oDataState).expects("getMessages").withExactArgs().returns(["~msg0", "~msg2"]);
+
+		// code under test
+		assert.deepEqual(oDataState.getAllMessages(), ["~msg0", "~msg2", "~msg1"]);
 	});
 });
