@@ -354,7 +354,6 @@ sap.ui.define([
 	 *   just before view creation with the test as "this"
 	 */
 	function testViewStart(sTitle, sView, mResponseByRequest, mValueByControl, vModel, fnAssert) {
-
 		QUnit.test(sTitle, function (assert) {
 			var sControlId, sRequest,
 				that = this;
@@ -7204,7 +7203,6 @@ sap.ui.define([
 						sSalesOrderService + "SalesOrderList?$select=Note,SalesOrderID"
 						+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)",
 						"sap.ui.model.odata.v4.lib._Cache");
-
 				} else {
 					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
@@ -12805,7 +12803,6 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel);
 	});
-
 	});
 });
 
@@ -15304,7 +15301,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert,
 				"4e. remove custom parameter from ODCB and change root ODCB");
-
 		});
 	});
 
@@ -15741,7 +15737,6 @@ sap.ui.define([
 		this.expectChange("id", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-
 			// code under test
 			that.oModel.refresh("foo");
 
@@ -16388,7 +16383,6 @@ sap.ui.define([
 			.expectChange("company", "SAP AG");
 
 		return this.createView(assert, sView, oModel).then(function () {
-
 			that.expectRequest("BusinessPartnerList('0100000000')"
 					+ "?$select=BusinessPartnerID,CompanyName", {
 					BusinessPartnerID : "0100000000",
@@ -16462,7 +16456,6 @@ sap.ui.define([
 		this.expectChange("name", []);
 
 		return this.createView(assert, sView).then(function () {
-
 			that.expectRequest("Equipments?$skip=0&$top=100", {
 					value : [{
 						Category : "1",
@@ -16569,7 +16562,6 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-
 			that.expectRequest("Equipments?$select=Category,ID,Name"
 					+ "&$filter=EQUIPMENT_2_PRODUCT/ID eq 42&$skip=0&$top=105", {
 					value : [{
@@ -17357,7 +17349,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand 'Y' before scroll");
 		}).then(function () {
-
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 					+ "&$skip=3&$top=3", new Promise(function (resolve) {
 					fnRespondScroll1 = resolve.bind(null, {
@@ -17373,7 +17364,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "first scroll to node 'W'");
 		}).then(function () {
-
 			that.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
 					+ "&$skip=6&$top=1", new Promise(function (resolve) {
 					fnRespondScroll2 = resolve.bind(null, {
@@ -17387,7 +17377,6 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "second scroll to node 'V'");
 		}).then(function () {
-
 			if (bWithExpand) {
 				that.expectChange("isExpanded", [,,,, false, false, false])
 					.expectChange("isTotal", [,,,, true, true, true])
@@ -22870,7 +22859,6 @@ sap.ui.define([
 			}
 		});
 	});
-
 			});
 		});
 	});
@@ -29255,7 +29243,6 @@ sap.ui.define([
 				return oContextBinding.requestObject("TaxAmount").then(function (vValue) {
 					assert.strictEqual(vValue, "117");
 				});
-
 			});
 		});
 	});
@@ -29408,7 +29395,6 @@ sap.ui.define([
 				that.waitForChanges(assert, "check that new context still works fine")
 			]);
 		}).then(function () {
-
 			that.expectChange("creationRow::note", "Changed item note");
 
 			// code under test: no error on edit in transient context after requestSideEffects
@@ -29431,7 +29417,6 @@ sap.ui.define([
 			]);
 		});
 	});
-
 	});
 });
 
@@ -32914,7 +32899,6 @@ sap.ui.define([
 		return oContext.getProperty("AGE");
 	}
 ].forEach(function (vKey, i) {
-
 	QUnit.test("BCP: 2080132822 - grouping, #" + i, function (assert) {
 		var that = this,
 			oController = {

@@ -427,7 +427,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	["eq", "ge", "gt", "le", "lt", "ne"].forEach(function (sOperator) {
 		QUnit.test("parseFilter: operator=" + sOperator, function (assert) {
-
 			// Part 1: foo op 'bar'
 			parseAndRebuild(assert, "foo " + sOperator + " 'bar'", {
 				id : sOperator,

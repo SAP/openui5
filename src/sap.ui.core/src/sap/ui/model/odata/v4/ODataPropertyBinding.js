@@ -69,7 +69,6 @@ sap.ui.define([
 	var ODataPropertyBinding
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataPropertyBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-
 				PropertyBinding.call(this, oModel, sPath);
 				// initialize mixin members
 				asODataBinding.call(this);

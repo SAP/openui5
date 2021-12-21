@@ -2871,7 +2871,6 @@ sap.ui.define([
 		assert.ok(fnOnStrictHandlingFailed.calledOnceWithExactly(["~ui5message0", "~ui5message1",
 			"~ui5message2", "~ui5message3"]));
 	});
-
 	});
 });
 	//*********************************************************************************************
@@ -3323,7 +3322,6 @@ sap.ui.define([
 				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 			});
 	});
-
 	});
 });
 
@@ -4613,7 +4611,6 @@ sap.ui.define([
 	null
 ].forEach(function (oContext, i) {
 	[undefined, {}].forEach(function (mCacheQueryOptions, j) {
-
 	QUnit.test("adjustPredicate: " + i + ", " + j, function () {
 		var oBinding = this.bindContext("SO_2_BP", oContext);
 
@@ -4630,7 +4627,6 @@ sap.ui.define([
 		// code under test
 		oBinding.adjustPredicate("($uid=1)", "('42')");
 	});
-
 	});
 });
 
@@ -4656,7 +4652,6 @@ sap.ui.define([
 		return oBinding.requestObject().then(function (vValue) {
 			assert.strictEqual(vValue, undefined);
 		});
-
 	});
 
 	//*********************************************************************************************

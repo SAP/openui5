@@ -136,7 +136,6 @@ sap.ui.define([
 	hasMinOrMax : false
 }].forEach(function (oFixture, i) {
 	["$expand", "$select"].forEach(function (sName) {
-
 	QUnit.test("create: " + sName + " not allowed #" + i, function (assert) {
 		var oAggregation = {
 				aggregate : {},
@@ -160,7 +159,6 @@ sap.ui.define([
 			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 		}, new Error("Unsupported system query option: " + sName));
 	});
-
 	});
 });
 
@@ -419,7 +417,6 @@ sap.ui.define([
 			assert.notOk("$count" in oReadResult.value, "$count not available here");
 		});
 	});
-
 		});
 	});
 });
@@ -649,7 +646,6 @@ sap.ui.define([
 			p4 : "v4"
 		});
 	});
-
 		});
 	});
 });
@@ -1683,7 +1679,6 @@ sap.ui.define([
 
 		return oPromise;
 	});
-
 		});
 	});
 });
@@ -2103,7 +2098,6 @@ sap.ui.define([
 				"('4')" : aElements[4]
 			});
 	});
-
 	});
 });
 

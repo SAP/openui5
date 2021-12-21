@@ -3277,7 +3277,6 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.filterValueListRelevantQualifiers = function (mValueListByQualifier,
 		aRawRelevantQualifiers, sMetaPath, oContext) {
-
 		return this.requestValue4Annotation(aRawRelevantQualifiers, sMetaPath, oContext)
 			.then(function (aRelevantQualifiers) {
 				var mValueListByRelevantQualifier = {};

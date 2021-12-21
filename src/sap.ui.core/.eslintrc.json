@@ -50,6 +50,7 @@
 				"one-var-declaration-per-line": ["error", "initializations"],
 				"operator-assignment": "error",
 				"operator-linebreak": ["error", "before"],
+				"padded-blocks": ["error", "never"],
 				"quote-props": ["error", "as-needed", {"numbers": true}],
 				"quotes": ["error", "double", {"avoidEscape": true}],
 				"space-before-blocks": "error",

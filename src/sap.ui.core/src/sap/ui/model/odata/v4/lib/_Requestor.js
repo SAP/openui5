@@ -445,7 +445,6 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.checkConflictingStrictRequest = function (oRequest, aRequests,
 		iChangeSetNo) {
-
 		function isOtherChangeSetWithStrictHandling(aChangeSet, i) {
 			return iChangeSetNo !== i && aChangeSet.some(isUsingStrictHandling);
 		}
@@ -1704,7 +1703,6 @@ sap.ui.define([
 			that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
-
 			function send(bIsFreshToken) {
 				var sOldCsrfToken = that.mHeaders["X-CSRF-Token"];
 

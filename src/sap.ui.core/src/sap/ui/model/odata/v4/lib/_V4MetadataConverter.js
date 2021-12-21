@@ -668,7 +668,6 @@ sap.ui.define([
 				}
 			}
 		};
-
 	})(_V4MetadataConverter.prototype);
 
 	return _V4MetadataConverter;

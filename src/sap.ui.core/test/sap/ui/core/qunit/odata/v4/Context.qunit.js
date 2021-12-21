@@ -2071,7 +2071,6 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
-
 	});
 });
 
@@ -2238,7 +2237,6 @@ sap.ui.define([
 		.returns(oWrongContext);
 	this.mock(oTargetBinding.oCache).expects("hasChangeListeners").never();
 }].forEach(function (fnArrange, i) {
-
 	QUnit.test("requestSideEffectsInternal: no own cache #" + i, function (assert) {
 		var oBinding = {
 				oCache : null,
@@ -2286,7 +2284,6 @@ sap.ui.define([
 			assert.strictEqual(bSideEffectsRequested, true);
 		});
 	});
-
 });
 
 	//*********************************************************************************************
@@ -2679,7 +2676,6 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
-
 	});
 });
 
@@ -2985,7 +2981,6 @@ sap.ui.define([
 	//*********************************************************************************************
 [undefined, true].forEach(function (bRetry) {
 	[null, "new value"].forEach(function (vValue) {
-
 	QUnit.test("setProperty: " + vValue + ", retry = " + bRetry, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
@@ -3013,7 +3008,6 @@ sap.ui.define([
 				assert.strictEqual(vResult, vWithCacheResult);
 			});
 	});
-
 	});
 });
 

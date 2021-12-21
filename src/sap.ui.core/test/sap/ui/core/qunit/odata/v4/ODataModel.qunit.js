@@ -645,7 +645,6 @@ sap.ui.define([
 
 		// code under test (ignore group ID for suspended bindings)
 		oModel.refresh("myGroup2");
-
 	});
 
 	//*********************************************************************************************

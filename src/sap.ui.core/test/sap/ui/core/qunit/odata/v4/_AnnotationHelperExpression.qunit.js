@@ -327,7 +327,6 @@ sap.ui.define([
 						assert.deepEqual(oResult0, oResult);
 					});
 			});
-
 			});
 		});
 	});
