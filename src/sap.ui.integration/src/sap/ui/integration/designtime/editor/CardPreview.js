@@ -71,14 +71,14 @@ sap.ui.define([
 			oRm.openEnd();
 			oRm.openStart("div");
 			oRm.addClass("before");
-			oRm.writeAttribute("tabindex", "0");
+			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-before");
 			oRm.addStyle("z-index", oControl.getParent()._iZIndex + 1);
 			oRm.openEnd();
 			oRm.close("div");
 			oRm.renderControl(oControl._getCardPreview());
 			oRm.openStart("div");
-			oRm.writeAttribute("tabindex", "0");
+			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-after");
 			oRm.openEnd();
 			oRm.close("div");
