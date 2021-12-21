@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ResponsivePopover
-		id="myPopover"
+		id="newsPopover"
 		placement="Bottom"
 		title="{i18n>APP_NEWS_BTN_TOOLTIP}">
 			<beginButton>
@@ -24,7 +24,7 @@
 			items="{path:  'news>/items', templateShareable: false}"
 			>
 			<layoutData>
-				<FlexItemData maxHeight="450px" />
+				<FlexItemData maxHeight="450px" maxWidth="600px" />
 			</layoutData>
 
 			<NotificationListItem
