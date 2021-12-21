@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(Controller, JSONModel, MessageToast) {
 	"use strict";
 
-	return Controller.extend("sap.m.sample.p13n.Panels.Page", {
+	return Controller.extend("sap.m.sample.p13n.Popup.Page", {
 
 		onInit: function() {
 			this._oCurrentP13nData = null;

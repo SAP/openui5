@@ -26,11 +26,11 @@ sap.ui.define([
 	 * @alias sap.m.p13n.AbstractContainer
 	 * @author SAP SE
 	 * @version ${version}
-	 * @since 1.96.0
+	 * @experimental Since 1.96.
+	 * @since 1.96
 	 *
 	 * @private
 	 * @ui5-restricted
-	 * @experimental
 	 */
 	var AbstractContainer = Control.extend("sap.m.p13n.AbstractContainer", {
 		metadata: {

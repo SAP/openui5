@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.p13n.Panels.Component", {
+	var Component = UIComponent.extend("sap.m.sample.p13n.Popup.Component", {
 
 		metadata: {
 			manifest: "json"

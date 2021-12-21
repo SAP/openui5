@@ -5,11 +5,11 @@
     xmlns:p13n="sap.m.p13n"
     xmlns:ce="sap.ui.codeeditor"
     class="sapUiContentPadding"
-    controllerName="sap.m.sample.p13n.Panels.P13nPanels">
+    controllerName="sap.m.sample.p13n.Popup.P13nPanels">
 
     <VBox class="sapUiSmallMargin">
 
-        <Button id="openBtn" text="Show P13nContainer used in Popup" press="onContainerOpen"/>
+        <Button id="openBtn" text="Show p13n.Popup" press="onContainerOpen"/>
 
         <p13n:Popup id="p13nPopup" title="My Custom View Settings" close="onClose" warningText="Are you sure?" reset=".reset">
             <p13n:panels>

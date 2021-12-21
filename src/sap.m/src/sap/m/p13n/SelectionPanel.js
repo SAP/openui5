@@ -43,8 +43,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @experimental
-	 *
+	 * @experimental Since 1.96.
 	 * @since 1.96
 	 * @alias sap.m.p13n.SelectionPanel
 	 */
@@ -263,8 +262,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
+	 * Sets the personalization state of the panel instance.
 	 * @public
+	 * @param {sap.m.p13n.Item} aP13nData An array containing the personalization state that is represented by the <code>SelectionPanel</code>.
 	 */
 	SelectionPanel.prototype.setP13nData = function() {
 		BasePanel.prototype.setP13nData.apply(this, arguments);

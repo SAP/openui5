@@ -22,8 +22,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @experimental
-	 *
+	 * @experimental Since 1.96.
 	 * @since 1.96
 	 * @alias sap.m.p13n.SortPanel
 	 */

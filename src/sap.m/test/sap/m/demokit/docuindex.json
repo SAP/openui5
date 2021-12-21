@@ -1228,12 +1228,12 @@
 			]
 		},
 		{
-		"id": "sap.m.P13nPanels",
-			"name": "Panels",
-			"category": "_PRIVATE_",
+		"id": "sap.m.p13n.Popup",
+			"name": "p13n Popup",
+			"category": "Popup",
 			"since": "1.96",
 			"samples": [
-				"sap.m.sample.p13n.Panels"
+				"sap.m.sample.p13n.Popup"
 			]
 		},
 		{
@@ -2546,8 +2546,8 @@
 			"description": "Dialog & Popover with a sap.m.P13nContainer as content."
 		},
 		{
-			"id": "sap.m.sample.p13n.Panels",
-			"name": "p13n.*Panel usage in a Dialog",
+			"id": "sap.m.sample.p13n.Popup",
+			"name": "p13n.Popup usage",
 			"description": "Dialog with sap.m.p13n/* Panels"
 		},
 		{
