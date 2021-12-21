@@ -32,6 +32,7 @@ sap.ui.define([],
             oRm.text('Filter');
             oRm.close('a');
             oRm.openStart("ul", oControl.getId() + "-optionsList");
+			oRm.attr("tabindex", 0);
             if (!oControl.getProperty("expanded")){
                 oRm.style("display", "none");
             }
@@ -54,9 +55,14 @@ sap.ui.define([],
                     oRm.attr("checked", "true");
                 }
                 oRm.attr("type", "checkbox");
+				oRm.attr("id", "dropDownFilterOption" + index);
                 oRm.attr("index", index);
                 oRm.voidEnd();
-                oRm.text(sOption);
+				oRm.openStart("label");
+				oRm.attr("for", "dropDownFilterOption" + index);
+				oRm.openEnd("label");
+				oRm.text(sOption);
+				oRm.close("label");
                 oRm.close("li");
             });
 
