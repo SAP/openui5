@@ -1,59 +1,60 @@
-
 /* global QUnit */
 sap.ui.define([
 	"sap/m/p13n/SelectionPanel",
 	"sap/m/VBox",
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/core/Core"
-], function(ListView, VBox, sinon, oCore) {
+	"sap/ui/core/Core",
+	"sap/base/util/merge"
+], function(ListView, VBox, sinon, oCore, merge) {
 	"use strict";
-
-	var aVisible = ["key1", "key2", "key3"];
-
-	var aInfoData = [
-		{
-			visible: true,
-			name: "key1",
-			label: "Field 1",
-			group: "G1"
-		},
-		{
-			visible: true,
-			name: "key2",
-			label: "Field 2",
-			group: "G1",
-			active: true
-		},
-		{
-			visible: true,
-			name: "key3",
-			label: "Field 3",
-			group: "G1"
-		},
-		{
-			visible: false,
-			name: "key4",
-			label: "Field 4",
-			group: "G2"
-		},
-		{
-			visible: false,
-			name: "key5",
-			label: "Field 5",
-			group: "G2"
-		},
-		{
-			visible: false,
-			name: "key6",
-			label: "Field 6",
-			group: "G2",
-			tooltip: "Some Tooltip"
-		}
-	];
 
 	QUnit.module("API Tests", {
 		beforeEach: function(){
-			this.aMockInfo = aInfoData;
+
+			this.aVisible = ["key1", "key2", "key3"];
+
+			this.aInfoData = [
+				{
+					visible: true,
+					name: "key1",
+					label: "Field 1",
+					group: "G1"
+				},
+				{
+					visible: true,
+					name: "key2",
+					label: "Field 2",
+					group: "G1",
+					active: true
+				},
+				{
+					visible: true,
+					name: "key3",
+					label: "Field 3",
+					group: "G1"
+				},
+				{
+					visible: false,
+					name: "key4",
+					label: "Field 4",
+					group: "G2"
+				},
+				{
+					visible: false,
+					name: "key5",
+					label: "Field 5",
+					group: "G2"
+				},
+				{
+					visible: false,
+					name: "key6",
+					label: "Field 6",
+					group: "G2",
+					tooltip: "Some Tooltip"
+				}
+			];
+
+			this.aMockInfo = this.aInfoData;
 			this.oListView = new ListView();
 			this.oListView.setItemFactory(function(){
 				return new VBox();
@@ -71,12 +72,12 @@ sap.ui.define([
 
 	QUnit.test("check instantiation", function(assert){
 		assert.ok(this.oListView, "Panel created");
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 		assert.ok(this.oListView.getModel(this.oListView.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
 	});
 
 	QUnit.test("Check column toggle", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		var oList = this.oListView._oListControl;
 
@@ -90,28 +91,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'active' icon'", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		assert.ok(this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
 
 		//Mock what happens during runtime if a filter is made inactive
-		aInfoData[1].active = false;
-		this.oListView.setP13nData(aInfoData);
+		this.aInfoData[1].active = false;
+		this.oListView.setP13nData(this.aInfoData);
 		assert.ok(!this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is NOT filtered (active)");
 
 		//Mock what happens during runtime if a filter is made active
-		aInfoData[1].active = true;
-		this.oListView.setP13nData(aInfoData);
+		this.aInfoData[1].active = true;
+		this.oListView.setP13nData(this.aInfoData);
 		assert.ok(this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
 	});
 
 	QUnit.test("Check 'getSelectedFields' ", function(assert){
-		this.oListView.setP13nData(aInfoData);
-		assert.equal(this.oListView.getSelectedFields().length, aVisible.length, "Amount of selected fields is equal to initially visible fields");
+		this.oListView.setP13nData(this.aInfoData);
+		assert.equal(this.oListView.getSelectedFields().length, this.aVisible.length, "Amount of selected fields is equal to initially visible fields");
 	});
 
 	QUnit.test("Check '_addMoveButtons' ", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		this.oListView._oSelectedItem = this.oListView._oListControl.getItems()[0];
 
@@ -120,7 +121,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'removeButtons' ", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		this.oListView._oSelectedItem = this.oListView._oListControl.getItems()[0];
 
@@ -130,7 +131,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check hover event handling", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		var nFirstHovered = this.oListView._oListControl.getItems()[1].getDomRef();
 		this.oListView._hoverHandler({
@@ -155,7 +156,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check focus event handling", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		var nFirstHovered = this.oListView._oListControl.getItems()[1].getDomRef();
 		this.oListView._focusHandler({
@@ -181,7 +182,7 @@ sap.ui.define([
 
 	QUnit.test("Check deselectAll focus handling", function(assert){
 		//Arrange
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 		var oUpdateEnableOfMoveButtonsSpy = sinon.spy(this.oListView, "_updateEnableOfMoveButtons");
 
 		var oClearAllButton = this.oListView.getAggregation("_content").getItems()[0]._clearAllButton;
@@ -201,7 +202,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check '_handleActivated'", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		var oHoveredItem = this.oListView._oListControl.getItems()[1];
 
@@ -217,7 +218,7 @@ sap.ui.define([
 		assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oListView._getMoveBottomButton()) > -1, "Move Bottom Button found");
 
 		//check that the icon has been set to visible: false
-		assert.ok(!oHoveredItem.getCells()[1].getItems()[0].getVisible(), "Active icon is not visible");
+		assert.ok(!oHoveredItem.getCells()[1].getItems()[0].getVisible(), "active icon is not visible");
 	});
 
 	QUnit.test("Check 'enableReorder'", function(assert){
@@ -252,7 +253,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'enableCount' property", function(assert){
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 
 		var aColumns = [
 			"Fields",
@@ -276,7 +277,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check selection count after filtering the table control", function(assert) {
-		this.oListView.setP13nData(aInfoData);
+		this.oListView.setP13nData(this.aInfoData);
 		var aColumns = [
 			"Fields",
 			"Test"
@@ -297,6 +298,34 @@ sap.ui.define([
 
 		//Note: this test serves to check that also filtered lists still "remember" the complete selection state
 		assert.equal(sTextFirstColumn, "Fields " + oRB.getText("p13n.HEADER_COUNT", [4, 6]), "The text has been enhanced with a count (4 are selected, 6 are available)");
+	});
+
+	QUnit.test("Check selection count after filtering and resetting the p13n data", function(assert) {
+
+		// Prepare the panel --> 3 items selected
+		this.oListView.setP13nData(this.aInfoData);
+		var aColumns = [
+			"Fields",
+			"Test"
+		];
+		this.oListView.setEnableCount(true);
+		this.oListView._setPanelColumns(aColumns);//update the columns
+
+		// Select an additonal item --> 4 items selected
+		var aNew = merge([], this.aInfoData);
+		aNew[3].visible = true;
+		this.oListView.setP13nData(aNew);
+
+		//filter the list (e.g. 'Show Selected')
+		this.oListView._filterList(true);
+
+		//Reset the p13n data
+		this.oListView.setP13nData(this.aInfoData);
+
+		var oRB = oCore.getLibraryResourceBundle("sap.m");
+		var sTextFirstColumn = this.oListView._oListControl.getColumns()[0].getHeader().getText();
+
+		assert.equal(sTextFirstColumn, "Fields " + oRB.getText("p13n.HEADER_COUNT", [3, 6]), "3 are selected, 6 are available");
 	});
 
 });
