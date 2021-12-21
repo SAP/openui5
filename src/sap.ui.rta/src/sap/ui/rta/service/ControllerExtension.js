@@ -102,8 +102,6 @@ sap.ui.define([
 						},
 						changeType: "codeExt",
 						namespace: oFlexSettings.namespace,
-						developerMode: oFlexSettings.developerMode,
-						scenario: oFlexSettings.scenario,
 						moduleName: sModuleName
 					};
 

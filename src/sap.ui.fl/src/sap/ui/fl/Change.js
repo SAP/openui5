@@ -525,7 +525,6 @@ sap.ui.define([
 	 * Checks if change is read only because of its source system.
 	 * @returns {boolean} <code>true</code> if the change is from another system
 	 *
-	 * @deprecated
 	 * @public
 	 */
 	Change.prototype.isChangeFromOtherSystem = function () {
@@ -862,40 +861,12 @@ sap.ui.define([
 		this.setRevertData(null);
 	};
 
-	/**
-	 * Returns the undo operations.
-	 *
-	 * @returns {Array<*>} Array of undo operations
-	 * @public
-	 */
-	Change.prototype.getUndoOperations = function() {
-		return this._aUndoOperations;
-	};
-
-	/**
-	 * Sets the undo operations.
-	 *
-	 * @param {Array<*>} aData - Undo operations
-	 * @public
-	 */
-	Change.prototype.setUndoOperations = function(aData) {
-		this._aUndoOperations = aData;
-	};
-
 	Change.prototype.getExtensionPointInfo = function() {
 		return this._oExtensionPointInfo;
 	};
 
 	Change.prototype.setExtensionPointInfo = function(oExtensionPointInfo) {
 		this._oExtensionPointInfo = oExtensionPointInfo;
-	};
-
-	/**
-	 * Resets the undo operations
-	 * @public
-	 */
-	Change.prototype.resetUndoOperations = function() {
-		this.setUndoOperations(null);
 	};
 
 	/**

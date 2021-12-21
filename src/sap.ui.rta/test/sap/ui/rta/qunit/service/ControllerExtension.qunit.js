@@ -130,9 +130,7 @@ sap.ui.define([
 				assert.equal(this.oCreateChangeParameter.changeType, "codeExt", "the changeType was set correctly");
 				assert.equal(this.oCreateChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
 				assert.equal(this.oCreateChangeParameter.content.codeRef, "coding/foo.js", "the codeRef was set correctly");
-				assert.equal(this.oCreateChangeParameter.developerMode, true, "the developerMode was set correctly");
-				assert.equal(this.oCreateChangeParameter.scenario, "scenario", "the scenario was set correctly");
-				assert.equal(this.oCreateChangeParameter.moduleName, "sap/ui/rta/service/controllerExtension/changes/coding/foo", "the scenario was set correctly");
+				assert.equal(this.oCreateChangeParameter.moduleName, "sap/ui/rta/service/controllerExtension/changes/coding/foo", "the moduleName was set correctly");
 			}.bind(this));
 		});
 

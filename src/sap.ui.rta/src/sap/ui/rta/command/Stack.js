@@ -34,10 +34,6 @@ sap.ui.define([
 			element: JsControlTreeModifier.bySelector(oSelector, oComponent)
 		});
 		oCommand._oPreparedChange = oChange;
-		if (oChange.getUndoOperations()) {
-			oCommand._aRecordedUndo = oChange.getUndoOperations();
-			oChange.resetUndoOperations();
-		}
 		// check if change belongs to a composite command
 		var sCompositeId = oChange.getDefinition().support.compositeCommand;
 		if (sCompositeId) {
