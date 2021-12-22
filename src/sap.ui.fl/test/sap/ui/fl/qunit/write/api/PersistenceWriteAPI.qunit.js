@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
+	"sap/ui/core/UIComponent",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
@@ -22,6 +24,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings"
 ], function(
 	_omit,
+	UIComponent,
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorChangeTypes,
@@ -34,6 +37,7 @@ sap.ui.define([
 	FlexState,
 	FlexObjectState,
 	Change,
+	ChangePersistence,
 	Layer,
 	Utils,
 	jQuery,
@@ -260,6 +264,45 @@ sap.ui.define([
 			assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
 			assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
 			assert.equal("foo", sReturn, "the function returns whatever the FlexObjectState returns");
+		});
+
+		QUnit.test("when save is called with removeOtherLayerChanges", function(assert) {
+			var oComp = new UIComponent("testComponent");
+			oComp.name = "testComponent";
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
+			var oChangePersistence = new ChangePersistence(oComp);
+			oChangePersistence.addDirtyChange(
+				new Change({
+					selector: "someControl",
+					layer: Layer.CUSTOMER
+				})
+			);
+			oChangePersistence.addDirtyChange(
+				new Change({
+					selector: "someControl",
+					layer: Layer.USER
+				})
+			);
+
+			sandbox.stub(FlexObjectState, "getFlexObjects");
+			sandbox.stub(FlexState, "getCompVariantsMap");
+			sandbox.stub(oChangePersistence, "saveDirtyChanges").resolves();
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+
+			var mPropertyBag = {
+				selector: {
+					appComponent: oComp
+				},
+				layer: Layer.CUSTOMER,
+				removeOtherLayerChanges: true
+			};
+			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
+				assert.strictEqual(
+					oChangePersistence.getDirtyChanges().length,
+					1,
+					"then dirty changes on other layers are removed"
+				);
+			});
 		});
 
 		QUnit.test("when reset is called", function(assert) {

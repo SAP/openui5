@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
@@ -42,6 +43,7 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	Settings,
 	Versions,
+	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
@@ -907,7 +909,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when Mode is changed from adaptation to navigation and back to adaptation", function(assert) {
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
 			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
 			var oTabHandlingRestoreSpy = sandbox.spy(oTabhandlingPlugin, "restoreTabIndex");
@@ -921,7 +922,6 @@ sap.ui.define([
 			assert.equal(oTabHandlingRemoveOverlaySpy.callCount, 1, "removeOverlayTabIndex was called");
 			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
-			assert.ok(oMessageToastStub.calledOnceWith(oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING")), "then a warning is shown once");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "adaptation";}}});
@@ -962,7 +962,6 @@ sap.ui.define([
 
 		QUnit.test("when Mode is changed from visualizaton to navigation and back to visualization", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
 			this.oRta.setMode("visualization");
 			var oTabhandlingPlugin = this.oRta.getPlugins()["tabHandling"];
 			var oTabHandlingRemoveSpy = sandbox.spy(oTabhandlingPlugin, "removeTabIndex");
@@ -979,7 +978,6 @@ sap.ui.define([
 			assert.equal(oFireModeChangedSpy.callCount, 1, "the event ModeChanged was fired");
 			assert.deepEqual(oFireModeChangedSpy.lastCall.args[0], {mode: "navigation"}, "the argument of the event is correct");
 			assert.equal(jQuery(".sapUiDtOverlayMovable").css("cursor"), "move", "the movable overlays back to the move cursor");
-			assert.ok(oMessageToastStub.calledOnceWith(oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING")), "then a warning is shown once");
 
 			// simulate mode change from toolbar
 			this.oRta.getToolbar().fireModeChange({item: { getKey: function() {return "visualization";}}});
@@ -992,13 +990,23 @@ sap.ui.define([
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
 		});
 
-		QUnit.test("when navigation mode is entered multiple times", function(assert) {
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
+		QUnit.test("when personalization changes are created in navigation mode", function(assert) {
+			var oMessageToastSpy = sandbox.stub(MessageToast, "show");
 			this.oRta.setMode("navigation");
-			this.oRta.setMode("adaptation");
-			this.oRta.setMode("navigation");
-			var sExpectedErrorMessage = oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING");
-			assert.ok(oMessageToastStub.calledOnceWith(sExpectedErrorMessage), "then a warning is shown once");
+			return ControlPersonalizationWriteAPI.add({changes: [{
+				selectorElement: oComp
+			}]})
+				.then(function() {
+					var sExpectedErrorMessage = oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING");
+					assert.ok(oMessageToastSpy.calledOnceWith(sExpectedErrorMessage), "then a warning is shown");
+					oMessageToastSpy.resetHistory();
+					return ControlPersonalizationWriteAPI.add({changes: [{
+						selectorElement: oComp
+					}]})
+						.then(function() {
+							assert.ok(oMessageToastSpy.notCalled, "then the toast is only shown once");
+						});
+				});
 		});
 	});
 

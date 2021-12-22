@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/Settings",
@@ -32,6 +33,7 @@ sap.ui.define([
 	Element,
 	UIComponent,
 	VariantUtils,
+	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
 	ChangeHandlerRegistration,
 	Settings,
@@ -194,6 +196,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oCompContainer.destroy();
 			this.oComp.destroy();
+			ControlPersonalizationWriteAPI.detachAllChangeCreationListeners();
 		}
 	}, function() {
 		QUnit.test("when calling 'add' with two valid variant changes", function(assert) {
@@ -389,6 +392,69 @@ sap.ui.define([
 		QUnit.test("When save() is called with an invalid element", function(assert) {
 			ControlPersonalizationWriteAPI.save({selector: {}, changes: []});
 			assert.ok(this.fnLogErrorStub.calledWith("App Component could not be determined"), "then Log.error() called with an error");
+		});
+
+		QUnit.test("when attaching a change creation listener", function(assert) {
+			var fnCallback = sandbox.spy();
+			ControlPersonalizationWriteAPI.attachChangeCreation(this.oObjectPageLayout, fnCallback);
+
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
+			})
+				.then(function() {
+					assert.ok(fnCallback.calledOnce, "then the callback is called");
+					assert.strictEqual(
+						fnCallback.getCall(0).args[0].length,
+						2,
+						"then the callback is called with both personalization changes"
+					);
+				});
+		});
+
+		QUnit.test("when attaching and later detaching a change creation listener", function(assert) {
+			var fnCallback = sandbox.spy();
+			ControlPersonalizationWriteAPI.attachChangeCreation(this.oObjectPageLayout, fnCallback);
+			ControlPersonalizationWriteAPI.detachChangeCreation(this.oObjectPageLayout, fnCallback);
+
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1]
+			})
+				.then(function() {
+					assert.ok(fnCallback.notCalled, "then the callback is not called");
+				});
+		});
+
+		QUnit.test("when attaching multiple change creation listener", function(assert) {
+			var fnCallback = sandbox.spy();
+			var fnCallback2 = sandbox.spy();
+			ControlPersonalizationWriteAPI.attachChangeCreation(this.oObjectPageLayout, fnCallback);
+			ControlPersonalizationWriteAPI.attachChangeCreation(this.oObjectPageLayout, fnCallback2);
+
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1]
+			})
+				.then(function() {
+					assert.ok(fnCallback.calledOnce, "then the first callback is called");
+					assert.ok(fnCallback2.calledOnce, "then the second callback is called");
+				});
+		});
+
+		QUnit.test("when attaching change creation listeners for different flex references", function(assert) {
+			var fnCallback = sandbox.spy();
+			var fnCallback2 = sandbox.spy();
+			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference")
+				.callThrough()
+				.onFirstCall().returns("someDifferentReference");
+			ControlPersonalizationWriteAPI.attachChangeCreation("someControl", fnCallback2);
+			ControlPersonalizationWriteAPI.attachChangeCreation(this.oObjectPageLayout, fnCallback);
+
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1]
+			})
+				.then(function() {
+					assert.ok(fnCallback.calledOnce, "then the first callback is called");
+					assert.ok(fnCallback2.notCalled, "then the callback for the different refrence is not called");
+				});
 		});
 	});
 
