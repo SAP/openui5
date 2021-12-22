@@ -10149,7 +10149,6 @@ sap.ui.define([
 	// right request -> all requests in the change set are rejected with the same error;
 	// the error is logged for each request in the change set, but it is reported only once to
 	// the message model
-	// Note: Key properties are omitted from response data to improve readability.
 	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
 		var oError = createErrorInsideBatch({message : "Value 4.22 not allowed"}),
 			oModel = createSalesOrdersModel({
@@ -31713,7 +31712,6 @@ sap.ui.define([
 	// --> We expect the caller to map {$NavigationPropertyPath : ""} to {$PropertyPath : "*"} in
 	// order to opt-in to this interpretation.
 	//
-	// Note: Key properties are omitted from response data to improve readability.
 	// BCP: 2070022577
 	//
 	// Scenario 2: Two GET requests for side effects are merged. One is expecting changes for
