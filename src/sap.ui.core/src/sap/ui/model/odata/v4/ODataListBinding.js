@@ -1252,7 +1252,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise that is resolved when the expand is succesful and rejected when it fails
+	 *   A promise that is resolved when the expand is successful and rejected when it fails
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended
 	 *
@@ -3383,7 +3383,7 @@ sap.ui.define([
 	 * @param {string} [aAggregation[].as]
 	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
 	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
-	 * @returns {object}
+	 * @returns {object|undefined}
 	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
 	 *   least one measure has requested a minimum or maximum value; its value is a
 	 *   promise which resolves with the measure range map as soon as data has been received; the

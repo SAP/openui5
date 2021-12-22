@@ -627,7 +627,7 @@ sap.ui.define([
 	 *   Whether parentheses in the path segment should be handled specially for alias replacement,
 	 *   for example to address a bound action's specific overload
 	 * @param {string} sSegment The path segment
-	 * @returns {string} The path segment with aliases resolved (if there were any)
+	 * @returns {string|undefined} The path segment with aliases resolved (if there were any)
 	 */
 	_MetadataConverter.prototype.resolveAliasInParentheses = function (bHandleParentheses,
 			sSegment) {
@@ -696,7 +696,7 @@ sap.ui.define([
 	 * Helper for processAttributes, returns sValue converted to a number.
 	 *
 	 * @param {string} sValue The attribute value in the element
-	 * @returns {number} The value as number or undefined
+	 * @returns {number|undefined} The value as number or <code>undefined</code>
 	 */
 	_MetadataConverter.prototype.setNumber = function (sValue) {
 		return sValue ? parseInt(sValue) : undefined;
@@ -733,7 +733,7 @@ sap.ui.define([
 	 *   If true, the hook processElement at the aggregate is used, otherwise the processor is
 	 *   called directly
 	 * @returns {any}
-	 *   The return value from __postProcessor or undefined if there is none
+	 *   The return value from __postProcessor or <code>undefined</code> if there is none
 	 */
 	_MetadataConverter.prototype.traverse = function (oElement, oConfig, bUseProcessElementHook) {
 		var oAnnotatable = this.oAnnotatable, // "push" oAnnotatable to the recursion stack

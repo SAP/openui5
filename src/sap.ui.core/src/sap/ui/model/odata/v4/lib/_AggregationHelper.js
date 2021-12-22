@@ -526,8 +526,8 @@ sap.ui.define([
 		 *   (see {@link .buildApply})
 		 * @param {number} [iLevel=0]
 		 *   The current level; use <code>0</code> to bypass group levels
-		 * @returns {string}
-		 *   The filtered "$orderby" system query option
+		 * @returns {string|undefined}
+		 *   The filtered "$orderby" system query option or <code>undefined</code>
 		 *
 		 * @private
 		 */

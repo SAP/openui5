@@ -80,9 +80,10 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   A lock for the group ID to be used for the PATCH request; without a lock, no PATCH is sent
-	 * @returns {sap.ui.base.SyncPromise} <code>undefined</code> for the general case which is
-	 *   handled generically by the caller {@link sap.ui.model.odata.v4.Context#doSetProperty}
-	 *   or a <code>SyncPromise</code> for the exceptional case
+	 * @returns {sap.ui.base.SyncPromise|undefined}
+	 *   <code>undefined</code> for the general case which is handled generically by the caller
+	 *   {@link sap.ui.model.odata.v4.Context#doSetProperty} or a <code>SyncPromise</code> for the
+	 *   exceptional case
 	 *
 	 * @abstract
 	 * @function
@@ -637,7 +638,8 @@ sap.ui.define([
 	 *   The child binding's (aggregated) query options or a promise resolving with them
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolved with the reduced path for the child binding if the child binding can use
-	 *   this binding's or an ancestor binding's cache; <code>undefined</code> otherwise.
+	 *   this binding's or an ancestor binding's cache; resolved with <code>undefined</code>
+	 *   otherwise.
 	 *
 	 * @private
 	 * @see sap.ui.model.odata.v4.ODataMetaModel#getReducedPath

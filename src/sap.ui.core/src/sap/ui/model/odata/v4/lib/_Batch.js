@@ -43,7 +43,8 @@ sap.ui.define([
 	 *   HTTP header value e.g. "application/json;charset=utf-8"
 	 * @param {string} sParameterName
 	 *   Name of HTTP header parameter e.g. "charset"
-	 * @returns {string} The HTTP header parameter value
+	 * @returns {string|undefined} The HTTP header parameter value or <code>undefined</code> if the
+	 *   parameter is not found
 	 */
 	function getHeaderParameterValue(sHeaderValue, sParameterName) {
 		var iParamIndex,
@@ -67,8 +68,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sMimeTypeHeaders
 	 *   Section of MIME part representing HTTP headers
-	 * @returns {string} Content-Type header value e.g.
-	 *   "multipart/mixed; boundary=batch_id-0123456789012-345" or undefined
+	 * @returns {string|undefined} Content-Type header value e.g.
+	 *   "multipart/mixed; boundary=batch_id-0123456789012-345" or <code>undefined</code>
 	 */
 	function getChangeSetContentType(sMimeTypeHeaders) {
 		var sContentType = getHeaderValue(sMimeTypeHeaders, "content-type");
@@ -110,7 +111,7 @@ sap.ui.define([
 	 *   Section of MIME part representing HTTP headers
 	 * @param {string} sHeaderName
 	 *   Name of HTTP header in lower case
-	 * @returns {string} The HTTP header value
+	 * @returns {string|undefined} The HTTP header value or <code>undefined</code>
 	 */
 	function getHeaderValue(sHeaders, sHeaderName) {
 		var aHeaderParts,

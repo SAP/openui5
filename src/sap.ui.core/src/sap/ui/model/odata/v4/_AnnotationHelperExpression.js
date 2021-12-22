@@ -486,7 +486,7 @@ sap.ui.define([
 		 *   the type of the property referenced by <code>oPathValue.path</code>
 		 * @param {object} mConstraints
 		 *   the type constraints for the property referenced by <code>oPathValue.path</code>
-		 * @returns {sap.ui.base.SyncPromise}
+		 * @returns {sap.ui.base.SyncPromise|undefined}
 		 *   a sync promise which resolves with a result object for the currency or unit, or is
 		 *   rejected with an error; <code>undefined</code> if there are no unit and currency
 		 *   annotations for the property referenced by <code>oPathValue.path</code>
@@ -616,7 +616,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   path and value information pointing to the expression (see Expression object)
-		 * @returns {Promise|string}
+		 * @returns {Promise|string|undefined}
 		 *   the expression value or "Unsupported: oRawValue" in case of an error or
 		 *   <code>undefined</code> in case the raw value is undefined; may instead return a
 		 *   <code>Promise</code> resolving with that result.
