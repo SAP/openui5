@@ -102,7 +102,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Region"></Label>
-									<mdc:Field is="fRegion" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'regionOfOrigin_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
+									<mdc:Field id="fRegion" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'regionOfOrigin_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
 										<mdc:dependents>
 											<mdc:ValueHelp id="IOFFVHRegion" title="Regions" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:inParameters>
