@@ -73,6 +73,11 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 		} else if (!oDate) {
 			oDate = new Date();
 		}
+
+		if (isNaN(oDate.getTime())) {
+			throw new Error("The given date object is invalid");
+		}
+
 		if (!sCalendarType) {
 			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
@@ -263,6 +268,11 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 			iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek(),
 			oFirstDay = new clDate(clDate.UTC(iYear, 0, 1)),
 			iDayCount = 7;
+
+		if (isNaN(oFirstDay.getTime())) {
+			throw new Error("Could not determine the first day of the week, because the date " +
+				"object is invalid");
+		}
 		// Find the first day of the first week of the year
 		while (oFirstDay.getUTCDay() !== iFirstDayOfWeek) {
 			oFirstDay.setUTCDate(oFirstDay.getUTCDate() - 1);
