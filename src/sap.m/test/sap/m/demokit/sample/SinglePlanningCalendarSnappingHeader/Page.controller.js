@@ -229,6 +229,10 @@ function(Controller, JSONModel, unifiedLibrary) {
 			oModel = new JSONModel();
 			oModel.setData({allDay: false});
 			this.getView().setModel(oModel, "allDay");
+		},
+
+		onChange: function (oEvent) {
+			this.byId('SPC1').setFirstDayOfWeek(Number(oEvent.getParameter("selectedItem").getKey()));
 		}
 	});
 

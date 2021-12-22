@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.SinglePlanningCalendar.Page"
+	controllerName="sap.m.sample.SinglePlanningCalendarSnappingHeader.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:unified="sap.ui.unified"
@@ -15,6 +15,19 @@
 					<core:ListItem text="NavBarAndColHeaders" key="NavBarAndColHeaders" />
 				</Select>
 			</VBox>
+			<VBox width="180px">
+				<Label text="Choose first day of week:"/>
+				<Select change=".onChange">
+					<core:Item key="-1" text="Locale-based" />
+					<core:Item key="1" text="Monday" />
+					<core:Item key="2" text="Tuesday" />
+					<core:Item key="3" text="Wednesday" />
+					<core:Item key="4" text="Thursday" />
+					<core:Item key="5" text="Friday" />
+					<core:Item key="6" text="Saturday" />
+					<core:Item key="0" text="Sunday" />
+				</Select>
+			</VBox>
 		</HBox>
 		<SinglePlanningCalendar
 			id="SPC1"
@@ -27,6 +40,7 @@
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
 				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
 				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+				<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
 			</views>
 			<appointments>
 				<unified:CalendarAppointment

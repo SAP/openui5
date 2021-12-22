@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/DateRange',
 	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library',
@@ -37,6 +38,7 @@ function(
 	ResizeHandler,
 	DateFormat,
 	CalendarDate,
+	CalendarUtils,
 	DateRange,
 	DateTypeRange,
 	unifiedLibrary,
@@ -190,7 +192,18 @@ function(
 			 *
 			 * @since 1.65
 			 */
-			enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false }
+			enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false },
+
+			/**
+			 * If set, the first day of the displayed week is this day. Valid values are 0 to 6 starting on Sunday.
+			 * If there is no valid value set, the default of the used locale is used.
+			 *
+			 * Note: This property will only have effect in Week view and Month view of the SinglePlanningCalendar,
+			 * but it wouldn't have effect in WorkWeek view.
+			 *
+			 * @since 1.98
+			 */
+			firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
 		},
 
 		aggregations : {
@@ -899,6 +912,30 @@ function(
 				destroy: true
 			});
 		}
+
+		return this;
+	};
+
+	SinglePlanningCalendar.prototype.setFirstDayOfWeek = function (iFirstDayOfWeek) {
+		if (iFirstDayOfWeek < -1 || iFirstDayOfWeek > 6) {
+			Log.error("" + iFirstDayOfWeek + " is not a valid value to the property firstDayOfWeek. Valid values are from -1 to 6.");
+			return;
+		}
+		this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
+		this.getViews().forEach(function (oView) {
+			oView.setFirstDayOfWeek(iFirstDayOfWeek);
+		});
+
+		var oHeader = this._getHeader(),
+			oPicker = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0],
+			oSelectedView = this._getSelectedView(),
+			oStartDate = this.getStartDate() || new Date(),
+			oSPCStart = oSelectedView.calculateStartDate(new Date(oStartDate.getTime())),
+			oMonthGrid = this.getAggregation("_mvgrid");
+
+		this.setStartDate(oSPCStart);
+		oMonthGrid.setFirstDayOfWeek(iFirstDayOfWeek);
+		oPicker.setFirstDayOfWeek(iFirstDayOfWeek);
 
 		return this;
 	};

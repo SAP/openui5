@@ -3607,7 +3607,7 @@
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarWithLegend",
-		  "name": "Planning Calendar - with legend and ability to change the first day of week",
+		  "name": "Planning Calendar - with legend and option to change the first day of week",
 		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections. For each sap.m.PlanningCalendarRow in the sap.m.PlanningCalendar some specific special dates of type non-working are set."
 		},
 		{
@@ -3647,7 +3647,7 @@
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendarSnappingHeader",
-		  "name": "Single Planning Calendar with Snapping Header",
+		  "name": "Single Planning Calendar with Snapping Header and option to change the first day of week",
 		  "description": "SinglePlanningCalendar showing the modes for snapping the header part of the calendar."
 		},
 		{
