@@ -56,9 +56,9 @@ sap.ui.getCore().attachInit(function () {
 				aExpectedLogs.push({
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
-					message: "POST on 'Products(ID=10,IsActiveEntity=false)/_Parts' failed;"
+					message : "POST on 'Products(ID=10,IsActiveEntity=false)/_Parts' failed;"
 						+ " will be repeated automatically",
-					details: "Error: Key exists already"
+					details : "Key exists already"
 				});
 				When.onTheObjectPage.enterPartId(4, "100");
 				Then.onTheObjectPage.checkPartsLength(8);
