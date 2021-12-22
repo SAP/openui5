@@ -1936,6 +1936,115 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("create_ui5_changeModel", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui5_changeModel({
+				changeType: "appdescr_ui5_changeModel",
+				content: {
+					modelId: "a.id",
+					entityPropertyChange: {
+						propertyPath: "settings/keyString",
+						operation: "UPSERT",
+						propertyValue: "keyValue"
+					}
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_changeModel");
+			});
+		});
+
+		QUnit.test("create_ui5_changeModel object UPSERT", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui5_changeModel({
+				changeType: "appdescr_ui5_changeModel",
+				content: {
+					modelId: "a.id",
+					entityPropertyChange: {
+						propertyPath: "settings/keyString",
+						operation: "UPSERT",
+						propertyValue: {
+							mainViewId: "mainString",
+							startOptions: {
+								tab: "BalanceSheetOverview",
+								startImmediately: true
+							},
+							mainGlobalVariables: {
+								ConsolidationGroup: "111",
+								PFiscalYear: "222"
+							}
+						}
+					}
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_changeModel");
+			});
+		});
+
+		QUnit.test("create_ui5_changeModel multiple changes", function(assert) {
+			return AppVariantInlineChangeFactory.create_ui5_changeModel({
+				changeType: "appdescr_ui5_changeModel",
+				content: {
+					modelId: "a.id",
+					entityPropertyChange: [{
+						propertyPath: "settings/keyString",
+						operation: "UPSERT",
+						propertyValue: {
+							mainViewId: "mainString",
+							startOptions: {
+								tab: "BalanceSheetOverview",
+								startImmediately: true
+							},
+							mainGlobalVariables: {
+								ConsolidationGroup: "111",
+								PFiscalYear: "222"
+							}
+						}
+					},
+					{
+						propertyPath: "settings/maxAge",
+						operation: "UPSERT",
+						propertyValue: 3600
+					}]
+				}
+			}).then(function(oDescriptorInlineChange) {
+				assert.notEqual(oDescriptorInlineChange, null);
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_changeModel");
+			});
+		});
+
+		QUnit.test("create_ui5_changeModel failure", function (assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_changeModel({
+					content: {
+						models: "a.id"
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_changeModel({
+					content: {
+						modelId: {}
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_changeModel({
+					content: {
+						modelId: "a.id"
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_changeModel({
+					content: {
+						propertyPath: "uri",
+						operation: "UPDATE",
+						propertyValue: "abc"
+					}
+				});
+			});
+		});
 	});
 
 	QUnit.done(function () {
