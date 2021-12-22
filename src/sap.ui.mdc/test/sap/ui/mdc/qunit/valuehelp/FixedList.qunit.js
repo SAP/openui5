@@ -393,6 +393,39 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getItemForValue - useFirstMatch for key", function(assert) {
+
+		var oConfig = {
+			parsedValue: undefined,
+			value: "I",
+			inParameters: undefined,
+			outParameters: undefined,
+			bindingContext: undefined,
+			conditionModel: undefined,
+			conditionModelName: undefined,
+			checkKey: false, // as value might not be a valid key, jsut a part of it
+			checkDescription: false,
+			exception: ParseException
+		};
+		oFixedList.setUseFirstMatch(true);
+
+		var oPromise = oFixedList.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function(oItem) {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, {key: "I1", description: "Item 1"}, "Item returned");
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError);
+				fnDone();
+			});
+		}
+
+	});
+
 	QUnit.test("getItemForValue - useFirstMatch for description", function(assert) {
 
 		var oConfig = {
