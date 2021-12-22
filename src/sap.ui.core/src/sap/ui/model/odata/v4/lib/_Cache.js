@@ -1027,7 +1027,10 @@ sap.ui.define([
 						return oPatchPromise.$isKeepAlive();
 					}));
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
-			return isSubPath(sRequestPath, sPath);
+			return isSubPath(sRequestPath, sPath)
+				&& that.mPostRequests[sRequestPath].some(function (oEntityData) {
+					return !oEntityData["@$ui5.context.isInactive"];
+				});
 		});
 	};
 
@@ -1485,9 +1488,11 @@ sap.ui.define([
 				aEntities = that.mPostRequests[sRequestPath];
 				for (i = aEntities.length - 1; i >= 0; i -= 1) {
 					sTransientGroup = _Helper.getPrivateAnnotation(aEntities[i], "transient");
-					that.oRequestor.removePost(sTransientGroup, aEntities[i]);
+					if (!sTransientGroup.startsWith("$inactive.")) {
+						// this also cleans up that.mPostRequests
+						that.oRequestor.removePost(sTransientGroup, aEntities[i]);
+					}
 				}
-				delete that.mPostRequests[sRequestPath];
 			}
 		});
 	};

@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataUtils"
-], function (Log, UriParameters, library, MessageBox, Controller, JSONModel, ODataUtils) {
+], function (Log, UriParameters, library, MessageBox, Controller, Sorter, JSONModel, ODataUtils) {
 	"use strict";
 
 	var sEmptyRowCount = UriParameters.fromQuery(window.location.search).get("emptyRows"),
@@ -17,8 +18,23 @@ sap.ui.define([
 		LayoutType = library.LayoutType;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main", {
+		createAndSetDraft : function (oContext) {
+			var oView = this.getView(),
+				that = this;
 
-		createEmptyRows : function (iCount) {
+			oView.setBusy(true);
+			oView.getModel()
+				.bindContext("SampleService.draftEdit(...)", oContext,
+					{$$inheritExpandSelect : true})
+				.execute(undefined, false, false, true)
+				.then(function (oReturnValueContext) {
+					that.setPartsContext(oReturnValueContext);
+				}).finally(function () {
+					oView.setBusy(false);
+				});
+		},
+
+		createInactiveRows : function (iCount) {
 			var oBinding = this.getView().byId("parts").getBinding("rows"),
 				i;
 
@@ -37,23 +53,42 @@ sap.ui.define([
 			}
 		},
 
+		deleteInactiveRows : function () {
+			this.getView().byId("parts").getBinding("rows").getAllCurrentContexts()
+				.forEach(function (oContext) {
+					if (oContext.isInactive()) {
+						oContext.delete();
+					}
+			});
+		},
+
+		getNextSortOrder : function (bDescending) {
+			var sNewIcon;
+
+			// choose next sort order: no sort => ascending <-> descending
+			if (bDescending) {
+				sNewIcon = "sap-icon://sort-ascending";
+				bDescending = false;
+			} else {
+				sNewIcon = "sap-icon://sort-descending";
+				bDescending = true;
+			}
+			return {bDescending : bDescending, sNewIcon : sNewIcon};
+		},
+
 		onActivate : function () {
-			this.createEmptyRows(1);
+			this.createInactiveRows(1);
 		},
 
 		onDelete : function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext(),
-				iPartNo = oContext.getProperty("ID"),
-				oView = this.getView();
+				iPartNo = oContext.getProperty("ID");
 
 			MessageBox.confirm(
 				"Do you really want to delete part " + iPartNo + "?",
 				function (sCode) {
 					if (sCode === "OK") {
-						oView.setBusy(true);
-						oContext.delete().finally(function () {
-							oView.setBusy(false);
-						});
+						oContext.delete();
 					}
 				},
 				"Confirm Deletion"
@@ -61,7 +96,7 @@ sap.ui.define([
 		},
 
 		onExit : function () {
-			this.resetChanges();
+			this.deleteInactiveRows();
 			this.oUIModel.destroy();
 			Controller.prototype.onExit.apply(this);
 		},
@@ -75,7 +110,9 @@ sap.ui.define([
 			this.oUIModel = new JSONModel({
 				sActivity : "",
 				sLayout : LayoutType.OneColumn,
-				iMessages : 0
+				iMessages : 0,
+				bSortPartsQuantity : true,
+				sSortPartsQuantityIcon : ""
 			});
 			oView.setModel(this.oUIModel, "ui");
 			oView.setModel(oView.getModel(), "headerContext");
@@ -88,6 +125,13 @@ sap.ui.define([
 			oPartsBinding.attachCreateActivate(this.onActivate, this);
 			oPartsBinding.attachCreateSent(this.showSaving, this);
 			oPartsBinding.attachCreateCompleted(this.showNothing, this);
+		},
+
+		onRefresh : function () {
+			this.getView().getModel().refresh();
+			if (this.oUIModel.getProperty("/sLayout") !== LayoutType.OneColumn) {
+				this.createInactiveRows(iEmptyRowCount);
+			}
 		},
 
 		onSelectProduct : function (oEvent) {
@@ -106,36 +150,28 @@ sap.ui.define([
 			}
 		},
 
-		createAndSetDraft : function (oContext) {
-			var oView = this.getView(),
-				that = this;
+		onSortByPartsQuantity : function () {
+			var oBinding = this.byId("parts").getBinding("rows"),
+				bDescending = this.oUIModel.getProperty("/bSortPartsQuantity"),
+				oSortOrder;
 
-			oView.setBusy(true);
-			oView.getModel()
-				.bindContext("SampleService.draftEdit(...)", oContext,
-					{$$inheritExpandSelect : true})
-				.execute(undefined, false, false, true)
-				.then(function (oReturnValueContext) {
-					that.setPartsContext(oReturnValueContext);
-				}).finally(function () {
-					oView.setBusy(false);
-				});
-		},
-
-		resetChanges : function () {
-			// TODO this is needed as long as the creation rows still are transient and thus pending
-			//  changes; as soon as we introduce the initial state these creation rows are no
-			//  pending changes anymore
-			this.getView().byId("products").getBinding("items").resetChanges();
+			oSortOrder = this.getNextSortOrder(bDescending);
+			oBinding.sort(oSortOrder.bDescending === undefined
+				? undefined
+				: new Sorter("quantity", oSortOrder.bDescending)
+			);
+			this.createInactiveRows(iEmptyRowCount); //TODO: obsolete with CPOUI5ODATAV4-1362
+			this.oUIModel.setProperty("/bSortPartsQuantity", oSortOrder.bDescending);
+			this.oUIModel.setProperty("/sSortPartsQuantityIcon", oSortOrder.sNewIcon);
 		},
 
 		setPartsContext : function (oContext) {
-			this.resetChanges();
+			this.deleteInactiveRows();
 			this.getView().byId("parts").setBindingContext(oContext);
 			this.byId("partCount").setBindingContext(
-				this.byId("parts").getBinding("rows").getHeaderContext(),
+				this.getView().byId("parts").getBinding("rows").getHeaderContext(),
 				"headerContext");
-			this.createEmptyRows(iEmptyRowCount);
+			this.createInactiveRows(iEmptyRowCount);
 			this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 		},
 

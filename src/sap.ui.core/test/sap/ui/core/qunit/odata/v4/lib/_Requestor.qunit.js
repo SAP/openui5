@@ -2467,7 +2467,8 @@ sap.ui.define([
 	{bLocked : false, sGroupId : "simpleRead", bModifying : false, bPendingChanges : false},
 	{bLocked : false, sGroupId : "modifyingUnlocked", bModifying : true, bPendingChanges : false},
 	{bLocked : true, sGroupId : "lockedRead", bModifying : false, bPendingChanges : false},
-	{bLocked : true, sGroupId : "modifyingLocked", bModifying : true, bPendingChanges : true}
+	{bLocked : true, sGroupId : "modifyingLocked", bModifying : true, bPendingChanges : true},
+	{bLocked : true, sGroupId : "$inactive.$auto", bModifying : true, bPendingChanges : false}
 ].forEach(function (oFixture, i) {
 	QUnit.test("hasPendingChanges: locked modifying group:" + oFixture.sGroupId, function (assert) {
 		var j,
@@ -2492,7 +2493,7 @@ sap.ui.define([
 				};
 
 			that.mock(oGroupLock).expects("getGroupId").withExactArgs()
-				.twice() // once for oFixture.sGroupId and once for "otherGroup"
+				.thrice() // once for oFixture.sGroupId and once for "otherGroup"
 				.returns("foo");
 			that.mock(oGroupLock).expects("isModifying").withExactArgs() // without group ID
 				.returns(bIsModifying);
@@ -2508,7 +2509,7 @@ sap.ui.define([
 			addDummyGoupLock(j % 2 === 0); // some are modifying but all are unlocked
 		}
 		this.mock(oGroupLockForFixture).expects("getGroupId").withExactArgs()
-			.twice() // once for oFixture.sGroupId and once for "otherGroup"
+			.thrice() // once for oFixture.sGroupId and once for "otherGroup"
 			.returns(oFixture.sGroupId);
 		this.mock(oGroupLockForFixture).expects("isModifying").withExactArgs()
 			.twice() // once without group ID and once for oFixture.sGroupId
@@ -2725,9 +2726,23 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("hasPendingChanges: '$inactive.*' groups are no pending changes", function (assert) {
+		var fnCancel = function () { throw new Error(); },
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
+
+		// must not count as pending change
+		oRequestor.request("POST", "ActionImport('42')", this.createGroupLock("$inactive.foo"),
+			undefined, {}, undefined, fnCancel);
+
+		// code under test
+		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+		// we don't care about #hasPendingChanges("$inactive.*") because it cannot be used that way
+	});
+
+	//*****************************************************************************************
 	QUnit.test("hasPendingChanges: correct for multiple change sets in one group",
 			function (assert) {
-		var fnCancel = this.spy(),
+		var fnCancel = function () { throw new Error(); },
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
 		oRequestor.request("DELETE", "Products('42')", this.createGroupLock());

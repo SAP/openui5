@@ -83,6 +83,31 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkPart(5, "", "inactive");
 				Then.onTheObjectPage.checkPart(6, "", "inactive");
 
+				When.onTheListReport.selectProduct(1); // setContext detects no transient active
+				Then.onTheObjectPage.checkPartsLength(6);
+				Then.onTheObjectPage.checkPart(0, "201", "persisted");
+				Then.onTheObjectPage.checkPart(1, "202", "persisted");
+				Then.onTheObjectPage.checkPart(2, "203", "persisted");
+				Then.onTheObjectPage.checkPart(3, "", "inactive");
+				Then.onTheObjectPage.checkPart(4, "", "inactive");
+				Then.onTheObjectPage.checkPart(5, "", "inactive");
+				When.onTheObjectPage.pressSortPartsQuantity(); // binding has no pending changes
+				Then.onTheObjectPage.checkPartsLength(6);
+				Then.onTheObjectPage.checkPart(0, "202", "persisted");
+				Then.onTheObjectPage.checkPart(1, "203", "persisted");
+				Then.onTheObjectPage.checkPart(2, "201", "persisted");
+				Then.onTheObjectPage.checkPart(3, "", "inactive");
+				Then.onTheObjectPage.checkPart(4, "", "inactive");
+				Then.onTheObjectPage.checkPart(5, "", "inactive");
+				When.onTheListReport.pressRefresh(); // ODataModel has no pending changes
+				Then.onTheObjectPage.checkPartsLength(6);
+				Then.onTheObjectPage.checkPart(0, "202", "persisted");
+				Then.onTheObjectPage.checkPart(1, "203", "persisted");
+				Then.onTheObjectPage.checkPart(2, "201", "persisted");
+				Then.onTheObjectPage.checkPart(3, "", "inactive");
+				Then.onTheObjectPage.checkPart(4, "", "inactive");
+				Then.onTheObjectPage.checkPart(5, "", "inactive");
+
 				Then.onAnyPage.checkLog(aExpectedLogs);
 				Then.onAnyPage.analyzeSupportAssistant();
 				Then.iTeardownMyUIComponent();

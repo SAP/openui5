@@ -97,8 +97,8 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 					var oInput =  iRow === undefined ? vControls : vControls[0];
 
 					Opa5.assert.ok(iRow === undefined || vControls.length === 1);
-					Opa5.assert.strictEqual(oInput.getValue(), sValue, sId + ": Input value set to "
-						+ sValue);
+					Opa5.assert.strictEqual(oInput.getValue(), sValue, "Row: " + iRow + " " + sId
+						+ ": Input value set to " + sValue);
 				},
 				viewName : sViewName
 			});

@@ -14,6 +14,9 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheListReport : {
 			actions : {
+				pressRefresh : function () {
+					Helper.pressButton(this, sViewName, "refresh");
+				},
 				selectProduct : function (iRow) {
 					this.waitFor({
 						actions : new Press(),
@@ -63,6 +66,9 @@ sap.ui.define([
 						},
 						viewName : sViewName
 					});
+				},
+				pressSortPartsQuantity : function (iRow) {
+					Helper.pressButton(this, sViewName, "sortByPartsQuantity");
 				}
 			},
 			assertions : {
@@ -84,7 +90,7 @@ sap.ui.define([
 				},
 				checkPart : function (iRow, sExpectedPartId, sExpectedState) {
 					Helper.waitForSortedByID(this, {
-						autoWait : false,
+						autoWait : false, // to match also disabled delete buttons
 						matchers : function (oControl) {
 							return oControl.getBindingContext()
 								&& oControl.getBindingContext().getIndex() === iRow;
@@ -94,7 +100,7 @@ sap.ui.define([
 							var bDeletable = aControls[0].getEnabled(),
 								sPartId = aControls[1].getValue(),
 								sState = aControls[2].getTooltip();
-							Opa5.assert.strictEqual(aControls.length, 3, "number of controls");
+							Opa5.assert.strictEqual(aControls.length, 3, "exactly 3 controls");
 							Opa5.assert.strictEqual(sPartId, sExpectedPartId,
 								"Row: " + iRow + ", Part ID: " + sPartId);
 							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "inactive",

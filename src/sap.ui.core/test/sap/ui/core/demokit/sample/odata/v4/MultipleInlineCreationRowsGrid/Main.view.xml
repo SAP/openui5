@@ -10,7 +10,9 @@
 <App>
 	<Page id="page" showHeader="false">
 		<Toolbar>
-			<Text id="activity" text="{ui>/sActivity}"/>
+			<Button enabled="true" icon="sap-icon://refresh" id="refresh"
+				press="onRefresh" tooltip="Refresh"/>
+			<BusyIndicator text="{ui>/sActivity}" visible="{= !!${ui>/sActivity} }"/>
 			<ToolbarSpacer/>
 			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press="onToggleMessagePopover" text="{ui>/iMessages}"
@@ -67,7 +69,7 @@
 									<core:Icon
 										id="partState"
 										src="{= %{@$ui5.context.isInactive}
-											? 'sys-minus'
+											? 'sap-icon://sys-minus'
 											: (%{@$ui5.context.isTransient}
 												? 'sap-icon://sys-add'
 												: 'sap-icon://sys-enter')}"
@@ -92,7 +94,9 @@
 								</t:template>
 							</t:Column>
 							<t:Column width="8em">
-								<Label text="Quantity" />
+								<Button iconFirst="false" icon="{ui>/sSortPartsQuantityIcon}"
+									id="sortByPartsQuantity" press="onSortByPartsQuantity"
+									text="Quantity"/>
 								<t:template>
 									<Input textAlign="Right" value="{quantity}" />
 								</t:template>
