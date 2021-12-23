@@ -648,6 +648,7 @@ sap.ui.define([
 		{t : "Edm.TimeOfDay", v : "18:59:59.999"}
 	].forEach(function (oFixture) {
 		var sTitle = "formatLiteral/parseLiteral: " + oFixture.t + " " + oFixture.v;
+
 		QUnit.test(sTitle, function (assert) {
 			var sLiteral = oFixture.l || oFixture.v;
 

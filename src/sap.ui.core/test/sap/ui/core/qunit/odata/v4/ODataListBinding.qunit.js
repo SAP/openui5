@@ -5376,6 +5376,7 @@ sap.ui.define([
 			function buildFilters(aNodes) {
 				return aNodes.map(function (vNode) {
 					var aParts;
+
 					if (typeof vNode === "string") {
 						aParts = vNode.split("=");
 						return new Filter(aParts[0], FilterOperator.EQ, aParts[1]);

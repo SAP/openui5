@@ -3422,6 +3422,7 @@ sap.ui.define([
 	_Cache.makeUpdateData = function (aPropertyPath, vValue) {
 		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
 			var oResult = {};
+
 			oResult[sSegment] = vValue0;
 			return oResult;
 		}, vValue);

@@ -611,6 +611,7 @@ sap.ui.define([
 				Label : "ID",
 				Value : {}
 			};
+
 		this.mock(oModel).expects("createBindingContext")
 			.withExactArgs("Label", sinon.match.same(oDetails.context))
 			.returns(oContext);

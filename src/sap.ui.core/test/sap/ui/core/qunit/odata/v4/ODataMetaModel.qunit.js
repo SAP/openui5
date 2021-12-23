@@ -1393,6 +1393,7 @@ sap.ui.define([
 		["/my/annotation.xml", "/another/annotation.xml"]
 	].forEach(function (aAnnotationURI) {
 		var title = "fetchEntityContainer - " + JSON.stringify(aAnnotationURI);
+
 		QUnit.test(title, function (assert) {
 			var oRequestorMock = this.mock(this.oMetaModel.oRequestor),
 				aReadResults,
@@ -7580,6 +7581,7 @@ forEach({
 					ValueListType.Standard);
 				return oMetaModel.requestValueListInfo(sPropertyPath).then(function (oResult) {
 					var oValueListInfo = oResult[""];
+
 					assert.strictEqual(oValueListInfo.CollectionPath, "H_EPM_PD_CATS_SH_Set");
 				});
 			});

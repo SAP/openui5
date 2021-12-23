@@ -215,6 +215,7 @@ sap.ui.define([
 
 	function parseResponses(aResponses) {
 		var i, oResponse;
+
 		for (i = 0; i < aResponses.length; i += 1) {
 			oResponse = aResponses[i];
 			if (Array.isArray(oResponse)) {
@@ -1248,6 +1249,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 			QUnit.test("deserializeBatchResponse: " + oFixture.testTitle, function (assert) {
 				var aResponses
 					= _Batch.deserializeBatchResponse(oFixture.contentType, oFixture.body);
+
 				assert.deepEqual(aResponses, oFixture.expectedResponses);
 			});
 		}
@@ -1961,6 +1963,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					}
 				}).then(function (_oData, _sTextStatus, jqXHR) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+
 					jQuery.ajax(sResolvedServiceUrl + "$batch", {
 						method : "POST",
 						headers : {

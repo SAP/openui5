@@ -888,6 +888,7 @@ sap.ui.define([
 	{path : "name/complex", value : {complex : "value"}}
 ].forEach(function (oFixture) {
 	var sTitle = "fetchValue: operation binding returns $Parameter path: " + oFixture.path;
+
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindContext("/OperationImport(...)"),
 			oListener = {};

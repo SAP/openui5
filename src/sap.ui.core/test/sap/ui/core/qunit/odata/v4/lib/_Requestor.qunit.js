@@ -2248,6 +2248,7 @@ sap.ui.define([
 		// expects a jQuery.ajax for a batch request and returns a mock for it to be resolved later
 		function expectBatch() {
 			var jqXHR = new jQuery.Deferred();
+
 			oJQueryMock.expects("ajax")
 				.withArgs(sServiceUrl + "$batch")
 				.returns(jqXHR);
