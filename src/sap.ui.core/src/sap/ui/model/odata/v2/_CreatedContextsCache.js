@@ -75,6 +75,36 @@ sap.ui.define([
 	};
 
 	/**
+	 * Finds the context in the cache whose path is prefix to or equals the given path.
+	 *
+	 * @param {string} sPath
+	 *   The absolute path
+	 * @returns {sap.ui.model.odata.v2.Context|undefined}
+	 *   The matching context or <code>undefined</code> if no context matches
+	 *
+	 * @private
+	 */
+	_CreatedContextsCache.prototype.findCreatedContext = function (sPath) {
+		var oContext;
+
+		Object.values(this.mCache).some(function (mListIDToContexts) {
+			return Object.values(mListIDToContexts).some(function (aContextsByListID) {
+				return aContextsByListID.some(function (oContext0) {
+					if (sPath.startsWith(oContext0.getPath())) {
+						oContext = oContext0;
+
+						return true;
+					}
+
+					return false;
+				});
+			});
+		});
+
+		return oContext;
+	};
+
+	/**
 	 * Checks whether a given context is contained in the the list of contexts for created entities
 	 * and returns the path and list ID.
 	 *

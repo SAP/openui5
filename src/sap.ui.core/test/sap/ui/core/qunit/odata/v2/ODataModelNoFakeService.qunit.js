@@ -5319,11 +5319,33 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, "base", "v2"].forEach(function (sContextType, i) {
+[{
+	createdContextFound : false,
+	entryMetadata : {},
+	expectFindCreatedContext : false
+}, {
+	createdContextFound : false,
+	entryMetadata : {created : {}},
+	expectFindCreatedContext : true
+}, {
+	createdContextFound : true,
+	entryMetadata : {created : {}},
+	expectFindCreatedContext : true
+}, {
+	createdContextFound : false,
+	entryMetadata : {created : {functionImport : true}},
+	expectFindCreatedContext : false
+}].forEach(function (oFixture, i) {
 	QUnit.test("setProperty: activate inactive context; " + i, function (assert) {
-		var oActivateCall, oContext, oMetadataLoadedCall, oRequestQueuedPromise,
+		var oActivateCall, oMetadataLoadedCall, oRequestQueuedPromise,
+			oEntry = {
+				__metadata : oFixture.entryMetadata
+			},
 			oMetadataLoadedPromise = Promise.resolve(),
 			oModel = {
+				oCreatedContextsCache : {
+					findCreatedContext : function () {}
+				},
 				mChangedEntities : {
 					"key" : {}
 				},
@@ -5345,21 +5367,18 @@ sap.ui.define([
 				resolveDeep : function () {},
 				_resolveGroup : function () {}
 			},
+			oCreatedContext = new Context(oModel, "~sContextPath"),
 			oModelMock = this.mock(oModel),
 			oOriginalEntry = {
 				__metadata : {}
 			},
 			oOriginalValue = {};
 
-		if (sContextType) {
-			oContext = sContextType === "v2" ? new Context(oModel, "~sContextPath") : {};
-		}
-
 		oModelMock.expects("resolve")
-			.withExactArgs("~sPath", oContext && sinon.match.same(oContext))
+			.withExactArgs("~sPath", "~oContext")
 			.returns("/resolved/path");
 		oModelMock.expects("resolveDeep")
-			.withExactArgs("~sPath", oContext && sinon.match.same(oContext))
+			.withExactArgs("~sPath", "~oContext")
 			.returns("deepPath");
 		oModelMock.expects("getEntityByPath")
 			.withExactArgs("/resolved/path", null, /*by ref oEntityInfo*/{})
@@ -5367,13 +5386,13 @@ sap.ui.define([
 				oEntityInfo.key = "key";
 				oEntityInfo.propertyPath = "";
 
-				return "~oEntry";
+				return oEntry;
 			});
 		oModelMock.expects("_getObject")
 			.withExactArgs("/key", null, true)
 			.returns(oOriginalEntry);
 		oModelMock.expects("_getObject")
-			.withExactArgs("~sPath", oContext && sinon.match.same(oContext), true)
+			.withExactArgs("~sPath", "~oContext", true)
 			.returns(oOriginalValue);
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("key")
@@ -5390,9 +5409,13 @@ sap.ui.define([
 		oModelMock.expects("_getRefreshAfterChange")
 			.withExactArgs(undefined, "~groupId")
 			.returns("~bRefreshAfterChange");
-		if (sContextType === "v2") {
-			oActivateCall = this.mock(oContext).expects("activate").withExactArgs();
-		}
+		this.mock(oModel.oCreatedContextsCache).expects("findCreatedContext")
+			.withExactArgs("/resolved/path")
+			.exactly(oFixture.expectFindCreatedContext ? 1 : 0)
+			.returns(oFixture.createdContextFound ? oCreatedContext : undefined);
+		oActivateCall = this.mock(oCreatedContext).expects("activate")
+			.withExactArgs()
+			.exactly(oFixture.createdContextFound ? 1 : 0);
 		oMetadataLoadedCall = this.mock(oModel.oMetadata).expects("loaded")
 			.withExactArgs()
 			.returns(oMetadataLoadedPromise);
@@ -5409,11 +5432,11 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", "~oContext",
 				"~bAsyncUpdate"),
 			true);
 
-		if (sContextType === "v2") {
+		if (oFixture.createdContextFound) {
 			assert.ok(oMetadataLoadedCall.calledAfter(oActivateCall),
 				"activation pushes the creation POST request to the queue; the change request must "
 				+ "be after that");

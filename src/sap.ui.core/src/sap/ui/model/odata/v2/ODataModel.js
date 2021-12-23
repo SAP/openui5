@@ -6145,11 +6145,14 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 
-		var oOriginalValue, sPropertyPath, mRequests, oRequest, oOriginalEntry, oEntry,
-			sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-			mChangedEntities = {}, oEntityInfo = {}, mParams, oChangeObject, bRefreshAfterChange,
-			bFunction = false, that = this, bCreated,
-			oEntityType, oNavPropRefInfo, bIsNavPropExpanded, mKeys, oRef, sDeepPath;
+		var oContextToActivate, oChangeObject, bCreated, sDeepPath, oEntityMetadata, oEntityType,
+			oEntry, oGroupInfo, bIsNavPropExpanded, sKey, mKeys, oNavPropRefInfo, oOriginalEntry,
+			oOriginalValue, mParams, aParts, sPropertyPath, oRef, bRefreshAfterChange, oRequest,
+			mRequests, oRequestHandle, sResolvedPath,
+			mChangedEntities = {},
+			oEntityInfo = {},
+			bFunction = false,
+			that = this;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject) {
 			each(oChangedObject,function(sKey) {
@@ -6265,8 +6268,11 @@ sap.ui.define([
 
 		bRefreshAfterChange = this._getRefreshAfterChange(undefined, oGroupInfo.groupId);
 
-		if (oContext && oContext.activate) {
-			oContext.activate();
+		if (oEntry.__metadata.created && !oEntry.__metadata.created.functionImport) {
+			oContextToActivate = this.oCreatedContextsCache.findCreatedContext(sResolvedPath);
+			if (oContextToActivate) {
+				oContextToActivate.activate();
+			}
 		}
 		this.oMetadata.loaded().then(function () {
 			oRequestHandle = {
