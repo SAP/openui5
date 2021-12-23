@@ -155,4 +155,53 @@ describe('sap.m.MultiComboBox', function() {
 			expect(takeScreenshot()).toLookAs("multiComboBox_dropdown_selection");
 		});
 	});
+
+	// MultiComboBox - dropwdown selection
+	it("should visualize a MultiComboBox dropdown with correct focus (arrow keys)", function() {
+		browser.executeScript('document.getElementById("MultiComboBoxWithGrouping").scrollIntoView()').then(function() {
+			var oMultiComboBoxArrow = element(by.id("MultiComboBoxWithGrouping-arrow"));
+			oMultiComboBoxArrow.click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowdown_focus_vsh");
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowdown_focus_group");
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowdown_focus_item");
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowup_focus_group");
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowup_focus_vsh");
+			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowup_focus_input");
+			oMultiComboBoxArrow.click();
+		});
+	});
+
+	// MultiComboBox - dropwdown selection
+	it("should visualize a MultiComboBox dropdown with correct focus (HOME, END)", function() {
+		browser.executeScript('document.getElementById("MultiComboBoxWithGrouping").scrollIntoView()').then(function() {
+			var oMultiComboBoxArrow = element(by.id("MultiComboBoxWithGrouping-arrow"));
+			oMultiComboBoxArrow.click();
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			browser.actions().sendKeys(protractor.Key.END).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_end_focus_lastitem");
+			browser.actions().sendKeys(protractor.Key.HOME).perform();
+			expect(takeScreenshot()).toLookAs("mcb_dropdown_home_focus_firstitem");
+			oMultiComboBoxArrow.click();
+		});
+	});
+
+	//MultiComboBox Compact Mode
+	it("should select Compact mode", function(){
+		element(by.id("compactMode")).click();
+		expect(takeScreenshot()).toLookAs("compact_mode");
+	});
+
+	it("should visualize opened picker in compact mode", function(){
+		var defaultMultiComboBoxArrow = element(by.id("MultiComboBox2-arrow"));
+		defaultMultiComboBoxArrow.click();
+		expect(takeScreenshot()).toLookAs("opened_picker_compact");
+		defaultMultiComboBoxArrow.click();
+		element(by.id("compactMode")).click();
+	});
 });
