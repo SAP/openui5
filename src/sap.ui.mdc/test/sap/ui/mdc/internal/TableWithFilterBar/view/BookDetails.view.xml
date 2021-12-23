@@ -42,7 +42,7 @@
 							<f:SimpleForm id="detailForm" layout="ColumnLayout" editable="{view>/editMode}">
 								<f:content>
 									<Label text="ID" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{path: 'ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{path: 'ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" />
 									<Label text="Author ID" />
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" fieldHelp="FH1" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
@@ -160,10 +160,10 @@
 									<Label text="Price"/>
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
-											<mdc:ValueHelp id="FVH-Currency" title="Currencies"
+											<mdc:ValueHelp id="FVH-Currency"
 												delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:typeahead>
-													<mdcv:Popover>
+													<mdcv:Popover title="Currencies">
 														<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
 															<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}" />
 														</mdcvc:FixedList>

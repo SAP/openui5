@@ -42,7 +42,7 @@
 								<core:Title text="Order Item Details"></core:Title>
 
 								<Label text="ID"></Label>
-								<mdc:Field id="fID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field id="fID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}"></mdc:Field>
 
 								<Label text="amount"></Label>
 								<mdc:Field id="fAmount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type:'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>

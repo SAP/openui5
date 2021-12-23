@@ -53,7 +53,7 @@
 									<Label text="Country"></Label>
 									<mdc:Field id="fCountry" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'countryOfOrigin_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
 										<mdc:dependents>
-											<mdc:ValueHelp id="IOFFVHCountry" title="Countries" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+											<mdc:ValueHelp id="IOFFVHCountry" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:typeahead>
 													<mdcv:Popover >
 														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
@@ -77,7 +77,7 @@
 													</mdcv:Popover >
 												</mdc:typeahead>
 												<mdc:dialog>
-													<mdcv:Dialog >
+													<mdcv:Dialog title="Countries">
 														<mdcvc:MTable filterFields="$search" keyPath="code"	descriptionPath="descr">
 															<Table items="{path: '/Countries'}" width="30rem" mode="SingleSelectLeft">
 																<columns>
@@ -104,7 +104,7 @@
 									<Label text="Region"></Label>
 									<mdc:Field id="fRegion" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'regionOfOrigin_code', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
 										<mdc:dependents>
-											<mdc:ValueHelp id="IOFFVHRegion" title="Regions" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+											<mdc:ValueHelp id="IOFFVHRegion" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 												<mdc:inParameters>
 													<mdcf:InParameter id="IOFFVHRegion-In-Country" value="{countryOfOrigin_code}" helpPath="country_code" />
 												</mdc:inParameters>
