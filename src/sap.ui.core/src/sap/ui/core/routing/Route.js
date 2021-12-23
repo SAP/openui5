@@ -17,7 +17,7 @@ sap.ui.define([
 	"use strict";
 
 		/**
-		 * Instantiates an SAPUI5 Route
+		 * Instantiates a route
 		 *
 		 * @class
 		 * @param {sap.ui.core.routing.Router} oRouter
@@ -68,17 +68,17 @@ sap.ui.define([
 		 *   the view created by a component, or if the Route is a subroute the view of the parent route is taken.
 		 *   You only need to specify this, if you are not using a router created by a component on your top level routes
 		 * @param {string} [oConfig.targetControl]
-		 *   <b>Deprecated since 1.28, use <code>target.controlId</code> instead.</b></br> Views will be put into a container Control, this might be a
-		 *   {@link sap.ui.ux3.Shell} control or a {@link sap.m.NavContainer} if working with mobile, or any other container.
+		 *   <b>Deprecated since 1.28, use <code>target.controlId</code> instead.</b></br> Views will be put into a container Control, this might be an
+		 *   {@link sap.ui.ux3.Shell} control or an {@link sap.m.NavContainer} if working with mobile, or any other container.
 		 *   The id of this control has to be put in here
 		 * @param {string} [oConfig.targetAggregation]
 		 *   <b>Deprecated since 1.28, use <code>target.controlAggregation</code> instead.</b></br> The name of an aggregation of the targetControl,
-		 *   that contains views. Eg: a {@link sap.m.NavContainer} has an aggregation "pages", another Example is the
+		 *   that contains views. Eg: an {@link sap.m.NavContainer} has an aggregation "pages", another Example is the
 		 *   {@link sap.ui.ux3.Shell} it has "content".
 		 * @param {boolean} [oConfig.clearTarget=false]
 		 *   <b>Deprecated since 1.28, use <code>target.clearControlAggregation</code> instead.</b></br> Defines a boolean that
-		 *   can be passed to specify if the aggregation should be cleared before adding the View to it. When using a
-		 *   {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false
+		 *   can be passed to specify if the aggregation should be cleared before adding the View to it. When using an
+		 *   {@link sap.ui.ux3.Shell} this should be true. For an {@link sap.m.NavContainer} it should be false
 		 * @param {object} [oConfig.subroutes]
 		 *   <b>Deprecated since 1.28, use <code>targets.parent</code> instead.</b> one or multiple route configs taking all of these parameters again.
 		 *   If a subroute is hit, it will fire the routeMatched event for all its parents. The routePatternMatched event
