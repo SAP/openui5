@@ -190,4 +190,17 @@ sap.ui.define([
 
 		this.oUploadSet.detachMediaTypeMismatch(fnCheckEvent);
 	});
+
+	QUnit.test("Checking if isRestricted() is a Public Method", function (assert) {
+		assert.expect(2);
+
+		var oShorterItem = this.oUploadSet.getItems()[0],
+			oLongerItem = this.oUploadSet.getItems()[1];
+
+		this.oUploadSet.setMaxFileNameLength(20);
+		oShorterItem.setFileName("0123456789.jpg");
+		oLongerItem.setFileName("012345678901234567890123456789.mp4");
+		assert.equal(oShorterItem.isRestricted(), false, "File with shorter name should not be restricted.");
+		assert.equal(oLongerItem.isRestricted(), true, "File with longer name should be restricted.");
+	});
 });
