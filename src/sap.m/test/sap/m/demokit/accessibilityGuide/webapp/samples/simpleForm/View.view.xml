@@ -11,13 +11,13 @@
 			<!-- Person section -->
 			<core:Title text="Person" />
 
-			<Label text="Name" labelFor="name"/>
+			<Label text="Name" />
 			<Input id="name" value="Max" />
 
-			<Label text="Date of birth" labelFor="dp"/>
+			<Label text="Date of birth" />
 			<DatePicker id="dp"/>
 
-			<Label text="Gender" labelFor="rbg"/>
+			<Label text="Gender" />
 			<RadioButtonGroup id="rbg" columns="2">
 				<RadioButton text="male" />
 				<RadioButton text="female" />
@@ -26,13 +26,13 @@
 			<!-- Address section -->
 			<core:Title text="Address" />
 
-			<Label text="Street" labelFor="addr"/>
+			<Label text="Street" />
 			<Input id="addr" value="Dietmar-Hopp-Allee" />
 
-			<Label text="City" labelFor="city"/>
+			<Label text="City" />
 			<Input id="city" value="Sofia" />
 
-			<Label text="Country" labelFor="country"/>
+			<Label text="Country" />
 			<Input id="country" value="Bulgaria" />
 		</form:SimpleForm>
 </mvc:View>
