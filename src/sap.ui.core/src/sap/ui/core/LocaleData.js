@@ -283,7 +283,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
-		 * Get combined datetime pattern with given date and and time style.
+		 * Get combined datetime pattern with given date and time style.
 		 *
 		 * @param {string} sDateStyle the required style for the date part
 		 * @param {string} sTimeStyle the required style for the time part
