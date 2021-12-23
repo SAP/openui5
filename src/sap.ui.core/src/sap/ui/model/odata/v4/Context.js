@@ -388,7 +388,7 @@ sap.ui.define([
 
 		if (this.oModel.bAutoExpandSelect) {
 			sPath = oMetaModel.getReducedPath(
-				_Helper.buildPath(this.sPath, sPath),
+				this.oModel.resolve(sPath, this),
 				this.oBinding.getBaseForPathReduction());
 		}
 		return this.withCache(function (oCache, sCachePath, oBinding) {
@@ -525,7 +525,7 @@ sap.ui.define([
 		if (!sPath || sPath[0] !== "/") {
 			// Create an absolute path based on the context's path and reduce it. This is only
 			// necessary for data access via Context APIs, bindings already use absolute paths.
-			sPath = _Helper.buildPath(this.sPath, sPath);
+			sPath = this.oModel.resolve(sPath, this);
 			if (this.oModel.bAutoExpandSelect) {
 				sPath = this.oModel.getMetaModel()
 					.getReducedPath(sPath, this.oBinding.getBaseForPathReduction());
@@ -1610,9 +1610,8 @@ sap.ui.define([
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
-		return this.oBinding.withCache(fnProcessor,
-			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
-			bSync, bWithOrWithoutCache);
+		return this.oBinding.withCache(fnProcessor, this.oModel.resolve(sPath, this), bSync,
+			bWithOrWithoutCache);
 	};
 
 	oModule = {

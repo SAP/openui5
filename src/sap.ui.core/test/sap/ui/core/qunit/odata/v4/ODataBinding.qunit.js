@@ -1616,6 +1616,7 @@ sap.ui.define([
 				doCreateCache : function () {},
 				mLateQueryOptions : bHasLateQueryOptions ? mLateQueryOptions : undefined,
 				oModel : {
+					resolve : function () {},
 					mUriParameters : {}
 				},
 				sPath : "relative",
@@ -1624,9 +1625,7 @@ sap.ui.define([
 			oCache = {
 				setLateQueryOptions : function () {}
 			},
-			oContext = {
-				getPath : function () {}
-			},
+			oContext = {},
 			mMergedQueryOptions = {},
 			oOldCache = {
 				setActive : function () {}
@@ -1649,8 +1648,8 @@ sap.ui.define([
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mQueryOptions))
 			.returns(mMergedQueryOptions);
-		this.mock(oContext).expects("getPath").withExactArgs().returns("/contextPath");
-		this.mock(_Helper).expects("buildPath").withExactArgs("/contextPath", oBinding.sPath)
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/deep/resource/path");
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
@@ -1735,6 +1734,7 @@ sap.ui.define([
 			oBinding = new ODataBinding({
 				mLateQueryOptions : bHasLateQueryOptions ? mLateQueryOptions : undefined,
 				oModel : {
+					resolve : function () {},
 					mUriParameters : {}
 				},
 				sPath : "relative",
@@ -1773,6 +1773,7 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				doCreateCache : function () {},
 				oModel : {
+					resolve : function () {},
 					mUriParameters : {}
 				},
 				mParameters : {},
@@ -1784,7 +1785,6 @@ sap.ui.define([
 			},
 			oCache1 = {},
 			oContext = {
-				getPath : function () {},
 				getGeneration : function () {}
 			},
 			mMergedQueryOptions = {},
@@ -1799,8 +1799,8 @@ sap.ui.define([
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mQueryOptions)).returns(mMergedQueryOptions);
 		this.mock(oContext).expects("getGeneration").withExactArgs().returns(42);
-		this.mock(oContext).expects("getPath").withExactArgs().returns("/contextPath");
-		this.mock(_Helper).expects("buildPath").withExactArgs("/contextPath", oBinding.sPath)
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/deep/resource/path");
 		this.mock(oBinding).expects("doCreateCache")
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions),
