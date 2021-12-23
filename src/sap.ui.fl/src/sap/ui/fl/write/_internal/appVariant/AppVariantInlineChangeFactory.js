@@ -925,6 +925,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates an inline change of change type <code>appdescr_ui5_changeModel</code>.
+	 *
+	 * @param {object} mPropertyBag - Parameters of the change type
+	 * @param {string} mPropertyBag.changeType - Inline change type of an app variant
+	 * @param {object} mPropertyBag.content - Content of an inline change
+	 * @param {string} mPropertyBag.content.modelId - ID of the data source to be changed
+	 * @param {object|array} mPropertyBag.content.entityPropertyChange - Entity property change or an array of multiple changes
+	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyPath - Property path inside the model (currently chaning settings/* is supported)
+	 * @param {object} mPropertyBag.content.entityPropertyChange.operation - Operation (INSERT, UPDATE, UPSERT, DELETE)
+	 * @param {object} mPropertyBag.content.entityPropertyChange.propertyValue - New property value
+	 *
+	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta, smart business
+	 */
+	 AppVariantInlineChangeFactory.create_ui5_changeModel = function(mPropertyBag) {
+		Utils.checkParameterAndType(mPropertyBag.content, "modelId", "string");
+		Utils.checkEntityPropertyChange(mPropertyBag.content);
+		return _createAppVariantInlineChange(mPropertyBag);
+	};
+
+	/**
 	 * Creates an inline change of change type <code>appdescr_fiori_setAbstract</code>.
 	 *
 	 * @param {object} mPropertyBag - Parameters of the change type
