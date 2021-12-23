@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/fl/FakeLrepConnectorLocalStorage"
 ], function(
 	Opa5,
 	PropertyStrictEquals,
@@ -15,7 +16,8 @@ sap.ui.define([
 	QUnitUtils,
 	FakeLrepConnectorSessionStorage,
 	KeyCodes,
-	oCore
+	oCore,
+	FakeLrepConnectorLocalStorage
 ) {
 	"use strict";
 
@@ -139,7 +141,7 @@ sap.ui.define([
 						},
 						actions: function(oEditableFieldDomNode) {
 							oEditableFieldDomNode.innerHTML = sNewLabel;
-							QUnitUtils.triggerEvent("keypress", oEditableFieldDomNode, {which: KeyCodes.ENTER, keyCode: KeyCodes.ENTER});
+							QUnitUtils.triggerEvent("keypress", oEditableFieldDomNode, { which: KeyCodes.ENTER, keyCode: KeyCodes.ENTER });
 							oEditableFieldDomNode.blur();
 						},
 						errorMessage: "Did not find the Selected Element Overlay"
@@ -236,6 +238,20 @@ sap.ui.define([
 						},
 						actions: new Press()
 					});
+				},
+				enableAndDeleteLrepLocalStorageAfterRta: function() {
+					return this.waitFor({
+						check: function() {
+							return !(Opa5.getJQuery()(".sapUiRtaToolbar").length > 0);
+						},
+						success: function() {
+							FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
+						}
+					});
+				},
+				clearRtaRestartSessionStorage: function() {
+					window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
+					window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
 				}
 			},
 
@@ -254,24 +270,24 @@ sap.ui.define([
 						errorMessage: "Did not find the Toolbar"
 					});
 				},
-				iShouldSeeTheToolbarAndTheLogo: function () {
+				iShouldSeeTheToolbarAndTheLogo: function() {
 					return this.waitFor({
 						autoWait: false,
 						controlType: "sap.m.HBox",
-						matchers: function (oToolbar) {
+						matchers: function(oToolbar) {
 							return oToolbar.$().hasClass("sapUiRtaToolbar");
 						},
-						success: function (oToolbar) {
+						success: function(oToolbar) {
 							var oFioriToolbar = oToolbar[0];
 							Opa5.assert.ok(oFioriToolbar.getVisible(), "The Toolbar is shown.");
 							Opa5.assert.ok(oFioriToolbar.getControl("icon"), "The FLP Icon is part of the Toolbar");
 
 							return this.waitFor({
 								controlType: "sap.m.Image",
-								matchers: function (oImage) {
+								matchers: function(oImage) {
 									return oImage.$().closest(".sapUiRtaToolbar").length > 0;
 								},
-								success: function (aLogo) {
+								success: function(aLogo) {
 									Opa5.assert.ok(aLogo.length > 0, "the logo is found on the UI");
 								}
 							});
@@ -359,29 +375,29 @@ sap.ui.define([
 						errorMessage: "Did not find the Dialog"
 					});
 				},
-				iShouldSeeTheVariantURLParameter: function () {
+				iShouldSeeTheVariantURLParameter: function() {
 					return this.waitFor({
 						autoWait: true,
-						check: function () {
+						check: function() {
 							var oOpa5Window = Opa5.getWindow();
 							var oHashChanger = new oOpa5Window.sap.ui.core.routing.HashChanger();
 							return oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
 					});
 				},
-				iShouldNotSeeTheVariantURLParameter: function () {
+				iShouldNotSeeTheVariantURLParameter: function() {
 					return this.waitFor({
 						autoWait: true,
-						check: function () {
+						check: function() {
 							var oOpa5Window = Opa5.getWindow();
 							var oHashChanger = new oOpa5Window.sap.ui.core.routing.HashChanger();
 							return !oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
-						success: function () {
+						success: function() {
 							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
