@@ -429,6 +429,18 @@ sap.ui.define([
 		return oParent._getActiveUploader().downloadItem(this, [], bAskForLocation);
 	};
 
+	/**
+	 * Validates if the item is restricted, which means that it is restricted for the file type, media type, maximum file name length and maximum file size limit.
+	 *
+	 * @public
+         * @since 1.98
+	 * @returns {boolean} <code>true</code> if item is restricted, <code>false</code> otherwise.
+	 *
+	 */
+	 UploadSetItem.prototype.isRestricted = function () {
+		return this._isRestricted();
+	};
+
 	/* ============== */
 	/* Event handlers */
 	/* ============== */
