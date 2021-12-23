@@ -710,7 +710,7 @@ function(
 		StepInput.prototype._verifyValue = function () {
 			var min = this._getMin(),
 				max = this._getMax(),
-				value = parseFloat(this._getInput().getValue()),
+				value = this._parseNumber(this._getInput().getValue()),
 				oCoreMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
 				oBinding = this.getBinding("value"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
