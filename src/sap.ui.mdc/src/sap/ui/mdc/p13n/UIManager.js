@@ -362,7 +362,7 @@ sap.ui.define([
 
 		var mSettings = Object.assign({
 			verticalScrolling: true,
-			reset: mUISettings.reset,
+			reset: mUISettings.reset || {},
 			afterClose: function(oEvt) {
 				var oDialog = oEvt.getSource();
 				if (oDialog) {
@@ -373,11 +373,9 @@ sap.ui.define([
 		}, mUISettings.containerSettings);
 
 		if (mUISettings.resetEnabled){
-			mSettings.reset = {
-				onExecute: function() {
-					this.oAdaptationProvider.reset(oControl, aKeys);
-				}.bind(this)
-			};
+			mSettings.reset.onExecute = function() {
+				this.oAdaptationProvider.reset(oControl, aKeys);
+			}.bind(this);
 		}
 
 		mSettings.confirm = {

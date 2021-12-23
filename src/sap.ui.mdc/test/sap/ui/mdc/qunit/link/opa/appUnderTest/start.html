@@ -2,24 +2,24 @@
 <html>
 
 <head>
+	<title>AppUnderTest</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="UTF-8">
-
-	<title>AppUnderTest</title>
 
 	<script src="../../../../../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 	src="../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m, sap.ui.fl"
+			data-sap-ui-libs="sap.m, sap.ui.fl, sap.ui.rta"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-async="true"
-			data-sap-ui-resourceroots='{"appUnderTest": ""}'>
+			data-sap-ui-oninit="module:appUnderTest/app"
+			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
+			data-sap-ui-resourceroots='{"appUnderTest": "./"}'>
 	</script>
-	<script src="app.js"></script>
 
 </head>
-<body class="sapUiBody sapUiSizeCompact">
-<div id="content"></div>
-</body>
+	<body class="sapUiBody sapUiSizeCompact">
+		<div id="content"></div>
+	</body>
 </html>
 

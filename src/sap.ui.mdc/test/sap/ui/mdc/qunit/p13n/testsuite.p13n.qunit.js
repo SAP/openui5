@@ -147,6 +147,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"LinkPanelController": {
+				group: "SubController (generic)",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"TableIntegration": {
 				group: "Control Integration",
 				module: "./integration/TableP13n.qunit",
@@ -258,6 +267,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"FlexUtil": {
 				group: "P13n logic",
 				module: "./FlexUtil.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"ChangeContent": {
+				group: "P13n Logic",
+				module: "./ChangeContent.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"

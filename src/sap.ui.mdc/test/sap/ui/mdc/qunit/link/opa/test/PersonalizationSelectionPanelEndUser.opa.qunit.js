@@ -1,4 +1,4 @@
-/* globals opaTest */
+/* global QUnit, opaTest */
 
 sap.ui.define([
 	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
@@ -15,6 +15,38 @@ sap.ui.define([
 		assertions: new Assertion(),
 		viewNamespace: "view.",
 		autoWait: true
+	});
+
+	var fnCheckLinks = function(Then, mItems) {
+		Object.entries(mItems).forEach(function (oEntry) {
+			var sLinkText = oEntry[0];
+			var oValue = oEntry[1];
+			Then.iShouldSeeLinkItemOnPosition(sLinkText, oValue.position);
+			Then.iShouldSeeLinkItemWithSelection(sLinkText, oValue.selected);
+			Then.iShouldSeeLinkItemAsEnabled(sLinkText, oValue.enabled);
+		});
+	};
+
+	QUnit.module("", {
+		before: function() {
+			this.mItems = {
+				"1239102": {
+					position: 0,
+					selected: false,
+					enabled: true
+				},
+				"Review Description": {
+					position: 1,
+					selected: false,
+					enabled: true
+				},
+				"Edit Description": {
+					position: 2,
+					selected: false,
+					enabled: true
+				}
+			};
+		}
 	});
 
 	opaTest("When I look at the screen of appUnderTest, a table with links should appear", function(Given, When, Then) {
@@ -50,17 +82,7 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("1239102", 0);
-		Then.iShouldSeeLinkItemWithSelection("1239102", false);
-		Then.iShouldSeeLinkItemAsEnabled("1239102", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Review Description", 1);
-		Then.iShouldSeeLinkItemWithSelection("Review Description", false);
-		Then.iShouldSeeLinkItemAsEnabled("Review Description", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Edit Description", 2);
-		Then.iShouldSeeLinkItemWithSelection("Edit Description", false);
-		Then.iShouldSeeLinkItemAsEnabled("Edit Description", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
@@ -68,17 +90,10 @@ sap.ui.define([
 	opaTest("When I select the 'Edit Description' item, the 'Restore' button should be enabled", function(Given, When, Then) {
 		When.iSelectLink("Edit Description");
 
-		Then.iShouldSeeLinkItemOnPosition("1239102", 0);
-		Then.iShouldSeeLinkItemWithSelection("1239102", false);
-		Then.iShouldSeeLinkItemAsEnabled("1239102", true);
+		// Position value doesn't change yet as we have to close the dialog before it takes effect
+		this.mItems["Edit Description"].selected = true;
 
-		Then.iShouldSeeLinkItemOnPosition("Review Description", 1);
-		Then.iShouldSeeLinkItemWithSelection("Review Description", false);
-		Then.iShouldSeeLinkItemAsEnabled("Review Description", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Edit Description", 2);
-		Then.iShouldSeeLinkItemWithSelection("Edit Description", true);
-		Then.iShouldSeeLinkItemAsEnabled("Edit Description", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
@@ -106,19 +121,21 @@ sap.ui.define([
 	opaTest("When I click on 'More Links' button, the selection dialog opens with a enabled 'Restore' button", function(Given, When, Then) {
 		When.iPressOnLinkPersonalizationButton();
 
+		// Delete this entry as we open another link
+		delete this.mItems["1239102"];
+
+		// Change the position value as we open the dialog again
+		this.mItems["Edit Description"].position = 0;
+		this.mItems["977700-11"] = {
+			position: 1,
+			selected: false,
+			enabled: true
+		};
+		this.mItems["Review Description"].position = 2;
+
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("977700-11", 0);
-		Then.iShouldSeeLinkItemWithSelection("977700-11", false);
-		Then.iShouldSeeLinkItemAsEnabled("977700-11", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Review Description", 1);
-		Then.iShouldSeeLinkItemWithSelection("Review Description", false);
-		Then.iShouldSeeLinkItemAsEnabled("Review Description", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Edit Description", 2);
-		Then.iShouldSeeLinkItemWithSelection("Edit Description", true);
-		Then.iShouldSeeLinkItemAsEnabled("Edit Description", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});

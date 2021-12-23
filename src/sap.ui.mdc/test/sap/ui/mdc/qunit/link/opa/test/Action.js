@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/Device', 'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/core/Core"
-], function(Device, Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, oCore) {
+	'sap/ui/test/Opa5', 'sap/ui/test/actions/Press', 'sap/ui/test/actions/EnterText', 'sap/ui/test/matchers/Properties', 'sap/ui/test/matchers/Ancestor', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Util', 'sap/ui/test/matchers/PropertyStrictEquals', "sap/ui/test/matchers/Descendant", "sap/ui/core/Core"
+], function(Opa5, Press, EnterText, Properties, Ancestor, TestUtil, PropertyStrictEquals, Descendant, oCore) {
 	'use strict';
 
 	var Action = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Action", {
@@ -73,36 +73,38 @@ sap.ui.define([
 		// 	});
 		// },
 
-		iNavigateToPanel: function(sPanelType) {
-			if (Device.system.phone) {
-				return this.waitFor({
-					controlType: "sap.m.List",
-					success: function(aLists) {
-						var oItem = TestUtil.getNavigationItem(aLists[0], TestUtil.getTextOfPanel(sPanelType));
-						oItem.$().trigger("tap");
-					}
-				});
-			}
-			return this.waitFor({
-				controlType: "sap.m.SegmentedButton",
-				success: function(aSegmentedButtons) {
-					var oGroupButton = TestUtil.getNavigationItem(aSegmentedButtons[0], TestUtil.getTextOfPanel(sPanelType));
-					oGroupButton.$().trigger("tap");
-				}
-			});
-		},
-
 		iSelectLink: function(sColumnName) {
 			return this.waitFor({
-				controlType: "sap.m.CheckBox",
-				matchers: function (oCheckBox) {
-					var oItem = oCheckBox.getParent();
-					if (oItem.getCells && oItem.getCells()[0].getText() === sColumnName) {
-						return true;
-					}
-					return false;
-				},
-				actions: new Press()
+				searchOpenDialogs: true,
+				controlType: "sap.m.Table",
+				success: function(aTables) {
+					var oTable = aTables[0];
+					this.waitFor({
+						controlType: "sap.m.Link",
+						matchers: [
+							new Ancestor(oTable, false),
+							new PropertyStrictEquals({
+								name: "text",
+								value: sColumnName
+							})
+						],
+						success: function(aLinks) {
+							var oLink = aLinks[0];
+							this.waitFor({
+								controlType: "sap.m.ColumnListItem",
+								matchers: new Descendant(oLink, false),
+								success: function(aColumnListItems) {
+									var oColumnListItem = aColumnListItems[0];
+									this.waitFor({
+										controlType: "sap.m.CheckBox",
+										matchers: new Ancestor(oColumnListItem, false),
+										actions: new Press()
+									});
+								}
+							});
+						}
+					});
+				}
 			});
 		},
 
@@ -693,6 +695,33 @@ sap.ui.define([
 					return oCheckBox.getSelected() !== bSelectAll && oCheckBox.getId().endsWith("-sa");
 				},
 				actions: new Press()
+			});
+		},
+		// NOTE: this is only a temporary action as we are planning to create a page object for the mdc.Link in the near future anyways - ingore the hardcoded texts :)
+		iPressOkButtonOnTheWarningDialog: function() {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: new PropertyStrictEquals({
+					name: "title",
+					value: "Warning"
+				}),
+				success: function(aDialogs) {
+					Opa5.assert.equal(aDialogs.length, 1, "warning dialog found");
+					var oDialog = aDialogs[1];
+					this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.Button",
+						matchers: [
+							new PropertyStrictEquals({
+								name: "text",
+								value: "OK"
+							}),
+							new Ancestor(oDialog, false)
+						],
+						actions: new Press(),
+						errorMessage: "Could not find the 'OK' button"
+					});
+				}
 			});
 		}
 	});

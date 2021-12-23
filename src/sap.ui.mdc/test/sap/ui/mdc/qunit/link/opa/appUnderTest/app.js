@@ -1,6 +1,6 @@
 sap.ui.require([
-	'sap/ui/fl/FakeLrepConnectorLocalStorage', 'sap/ui/core/ComponentContainer', 'sap/m/Shell'
-], function(FakeLrepConnectorLocalStorage, ComponentContainer, Shell) {
+	'sap/ui/core/ComponentContainer', 'sap/m/Shell'
+], function(ComponentContainer, Shell) {
 	'use strict';
 
 	new Shell("Shell", {

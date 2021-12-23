@@ -99,6 +99,7 @@ sap.ui.define([
 			contentTitle: undefined,
 			linkItems: []
 		});
+
 		oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
 		this.setModel(oModel, "$sapuimdcLink");
@@ -316,7 +317,7 @@ sap.ui.define([
 		if (this.getParent()) {
 			oField = this.getParent();
 		}
-		var oControl = sap.ui.getCore().byId(this.getSourceControl());
+		var oControl = typeof this.getSourceControl() === "string" ? sap.ui.getCore().byId(this.getSourceControl()) : this.getSourceControl();
 		if (!oControl) {
 			//SapBaseLog.error("Invalid source control: " + this.getSourceControl() + ". The mandatory 'sourceControl' association should be defined due to personalization reasons, parent: " + oField + " used instead.");
 			this.setSourceControl(oField);
@@ -541,7 +542,7 @@ sap.ui.define([
 	 * @returns {Object} The binding context of the SourceControl / link
 	 */
 	Link.prototype._getControlBindingContext = function() {
-		var oControl = sap.ui.getCore().byId(this.getSourceControl());
+		var oControl = typeof this.getSourceControl() === "string" ? sap.ui.getCore().byId(this.getSourceControl()) : this.getSourceControl();
 		return oControl && oControl.getBindingContext() || this.getBindingContext();
 	};
 

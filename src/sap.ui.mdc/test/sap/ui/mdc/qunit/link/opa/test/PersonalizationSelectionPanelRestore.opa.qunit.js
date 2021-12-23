@@ -1,4 +1,4 @@
-/* globals opaTest */
+/* global QUnit, opaTest */
 
 sap.ui.define([
 	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
@@ -15,6 +15,38 @@ sap.ui.define([
 		assertions: new Assertion(),
 		viewNamespace: "view.",
 		autoWait: true
+	});
+
+	var fnCheckLinks = function(Then, mItems) {
+		Object.entries(mItems).forEach(function (oEntry) {
+			var sLinkText = oEntry[0];
+			var oValue = oEntry[1];
+			Then.iShouldSeeLinkItemOnPosition(sLinkText, oValue.position);
+			Then.iShouldSeeLinkItemWithSelection(sLinkText, oValue.selected);
+			Then.iShouldSeeLinkItemAsEnabled(sLinkText, oValue.enabled);
+		});
+	};
+
+	QUnit.module("", {
+		before: function() {
+			this.mItems = {
+				"Name Link2 (Superior)": {
+					position: 0,
+					selected: true,
+					enabled: true
+				},
+				"Name Link3": {
+					position: 1,
+					selected: false,
+					enabled: true
+				},
+				"FactSheet of Name": {
+					position: 2,
+					selected: false,
+					enabled: true
+				}
+			};
+		}
 	});
 
 	opaTest("When I look at the screen of appUnderTest, a table with links should appear", function(Given, When, Then) {
@@ -47,17 +79,7 @@ sap.ui.define([
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", false);
-		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
-		Then.iShouldSeeLinkItemWithSelection("Name Link2 (Superior)", true);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link2 (Superior)", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
-		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
@@ -69,17 +91,11 @@ sap.ui.define([
 		When.iSelectLink("FactSheet of Name");
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 
-		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", true);
-		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
+		// Position value doesn't change yet as we have to close the dialog before it takes effect
+		this.mItems["Name Link2 (Superior)"].selected = false;
+		this.mItems["FactSheet of Name"].selected = true;
 
-		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
-		Then.iShouldSeeLinkItemWithSelection("Name Link2 (Superior)", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link2 (Superior)", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
-		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
+		fnCheckLinks(Then, this.mItems);
 	});
 
 	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
@@ -106,24 +122,25 @@ sap.ui.define([
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", true);
-		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
+		// Change the position value as we open the dialog again
+		this.mItems["FactSheet of Name"].position = 0;
+		this.mItems["Name Link2 (Superior)"].position = 1;
+		this.mItems["Name Link3"].position = 2;
 
-		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
-		Then.iShouldSeeLinkItemWithSelection("Name Link2 (Superior)", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link2 (Superior)", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
-		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Restore' and then 'OK' button, popover should show previous link selection again", function(Given, When, Then) {
-		When.iPressRestoreButton();
-		When.iPressOkButton();
+		When.iPressRestoreButton().and.iPressOkButtonOnTheWarningDialog();
+
+		// Change the position value as we reset the personalization
+		this.mItems["Name Link2 (Superior)"].selected = true;
+		this.mItems["Name Link2 (Superior)"].position = 0;
+		this.mItems["Name Link3"].position = 1;
+		this.mItems["FactSheet of Name"].selected = false;
+		this.mItems["FactSheet of Name"].position = 2;
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeNavigationPopoverOpens();
@@ -154,17 +171,7 @@ sap.ui.define([
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", false);
-		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
-		Then.iShouldSeeLinkItemWithSelection("Name Link2 (Superior)", true);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link2 (Superior)", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
-		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 	});
@@ -173,17 +180,9 @@ sap.ui.define([
 		When.iSelectLink("FactSheet of Name");
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 
-		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", true);
-		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
+		this.mItems["FactSheet of Name"].selected = true;
 
-		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
-		Then.iShouldSeeLinkItemWithSelection("Name Link2 (Superior)", true);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link2 (Superior)", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
-		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
+		fnCheckLinks(Then, this.mItems);
 
 		When.iPressOkButton();
 
@@ -198,23 +197,21 @@ sap.ui.define([
 		When.iPressOnLinkPersonalizationButton();
 		Then.thePersonalizationDialogOpens();
 
-		Then.iShouldSeeLinkItemOnPosition("FactSheet of Name", 0);
-		Then.iShouldSeeLinkItemWithSelection("FactSheet of Name", true);
-		Then.iShouldSeeLinkItemAsEnabled("FactSheet of Name", true);
+		// Change the position value as we open the dialog again
+		this.mItems["FactSheet of Name"].position = 0;
+		this.mItems["Name Link2 (Superior)"].position = 1;
+		this.mItems["Name Link3"].position = 2;
 
-		Then.iShouldSeeLinkItemOnPosition("Name Link2 (Superior)", 1);
-		Then.iShouldSeeLinkItemWithSelection("Name Link2 (Superior)", true);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link2 (Superior)", true);
-
-		Then.iShouldSeeLinkItemOnPosition("Name Link3", 2);
-		Then.iShouldSeeLinkItemWithSelection("Name Link3", false);
-		Then.iShouldSeeLinkItemAsEnabled("Name Link3", true);
+		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
 	});
 
 	opaTest("When I press 'Restore' then select 'FactSheet of Name' again and then 'OK' button, popover should show the same link selection again", function(Given, When, Then) {
-		When.iPressRestoreButton();
+		When.iPressRestoreButton().and.iPressOkButtonOnTheWarningDialog();
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		When.iPressOnLinkPersonalizationButton();
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
 		When.iSelectLink("FactSheet of Name");
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);

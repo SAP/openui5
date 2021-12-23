@@ -7,15 +7,16 @@ sap.ui.define([
 ], function (FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log) {
 	"use strict";
 
-    var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController");
+    var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
+        constructor: function() {
+			BaseController.apply(this, arguments);
+			this._bResetEnabled = true;
+		}
+    });
 
     FilterController.prototype.getCurrentState = function() {
         var oControlState = this.getAdaptationControl().getCurrentState();
         return oControlState.hasOwnProperty("filter") ? oControlState.filter : {};
-    };
-
-    FilterController.prototype.getResetEnabled = function() {
-        return true;
     };
 
     FilterController.prototype.getUISettings = function() {

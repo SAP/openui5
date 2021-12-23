@@ -190,7 +190,7 @@ sap.ui.define([
 		return this.initAdaptation(vControl, sKey).then(function(){
 
 			var oController = this.getController(vControl, sKey);
-			var mchangeOperations = oController.getChangeOperations();
+			var mChangeOperations = oController.getChangeOperations();
 
 			var oRegistryEntry = this._getRegistryEntry(vControl);
 			var oCurrentState = oController.getCurrentState();
@@ -201,7 +201,7 @@ sap.ui.define([
 				applyAbsolute: bApplyAbsolute,
 				changedState: aNewState,
 				control: oController.getAdaptationControl(),
-				changeOperations: mchangeOperations,
+				changeOperations: mChangeOperations,
 				deltaAttributes: ["name"],
 				propertyInfo: oRegistryEntry.helper.getProperties().map(function(a){return {name: a.name};})
 			};
@@ -233,8 +233,14 @@ sap.ui.define([
 
 		aKeys = aKeys instanceof Array ? aKeys : [aKeys];
 
+		var aSelectors = [];
+
+		aKeys.forEach(function(sKey) {
+			aSelectors = aSelectors.concat(this.getController(oControl, sKey).getSelectorForReset());
+		}.bind(this));
+
 		var oResetConfig = {
-			selectors: [oControl],
+			selectors: aSelectors,
 			selector: oControl
 		};
 
@@ -317,9 +323,10 @@ sap.ui.define([
 		var fResolveRTA;
 
 		//var aVMs = Engine.hasForReference(oControl, "sap.ui.fl.variants.VariantManagement");
+		// TODO: clarify if we need this error handling / what to do with the Link if we want to keep it
 		var aPVs = Engine.hasForReference(oControl, "sap.ui.mdc.p13n.PersistenceProvider");
 
-		if (aPVs.length > 0) {
+		if (aPVs.length > 0 && !oControl.isA("sap.ui.mdc.link.Panel")) {
 			return Promise.reject("Please do not use a PeristenceProvider in RTA.");
 		}
 
@@ -343,6 +350,9 @@ sap.ui.define([
 				oCustomHeader.getContentRight()[0].setVisible(false);
 			}
 			oContainer.addStyleClass(mPropertyBag.styleClass);
+			if (mPropertyBag.fnAfterClose instanceof Function) {
+				oContainer.attachAfterClose(mPropertyBag.fnAfterClose);
+			}
 		});
 
 		oRTAPromise.then(function(){
@@ -612,7 +622,8 @@ sap.ui.define([
 	 *
 	 * @returns {object} The requested UI settings of the control instance and provided keys
 	 */
-	Engine.prototype.getUISettings = function(vControl, aKeys) {
+	Engine.prototype.getUISettings = function(vControl, vKeys) {
+		var aKeys = Array.isArray(vKeys) ? vKeys : [vKeys];
 		this.verifyController(vControl, aKeys);
 		var oPropertyHelper = this._getRegistryEntry(vControl).helper;
 		var mUiSettings = {};
@@ -621,6 +632,8 @@ sap.ui.define([
 			var oController = this.getController(vControl, sKey);
 			var pAdaptationUI = oController.getAdaptationUI(oPropertyHelper);
 			//Check faceless controller implementations and skip them
+
+			//TODO: error handling for non promises
 			if (pAdaptationUI instanceof Promise){
 				mUiSettings[sKey] = {};
 				mUiSettings[sKey] = {
@@ -968,27 +981,27 @@ sap.ui.define([
 	 * @param {object[]} [aCustomPropertyInfo] A custom set of propertyinfo.
 	 *
 	 */
-	Engine.prototype._retrievePropertyHelper = function(vControl, aCustomPropertyInfo){
+	Engine.prototype._retrievePropertyHelper = function (vControl, aCustomPropertyInfo) {
 
 		var oRegistryEntry = this._getRegistryEntry(vControl);
 		var oControl = Engine.getControlInstance(vControl);
 
 		if (aCustomPropertyInfo) {
-			if (oRegistryEntry.helper){
+			if (oRegistryEntry.helper) {
 				oRegistryEntry.helper.destroy();
 			}
 			oRegistryEntry.helper = new PropertyHelper(aCustomPropertyInfo);
 			return Promise.resolve(oRegistryEntry.helper);
-        }
+		}
 
 		if (oRegistryEntry.helper) {
 			return Promise.resolve(oRegistryEntry.helper);
 		}
 
-		return oControl.initPropertyHelper().then(function(oPropertyHelper){
+		return oControl.initPropertyHelper().then(function (oPropertyHelper) {
 			oRegistryEntry.helper = oPropertyHelper;
 			return oPropertyHelper;
-		}, function(sHelperError){
+		}, function (sHelperError) {
 			throw new Error(sHelperError);
 		});
 	};
