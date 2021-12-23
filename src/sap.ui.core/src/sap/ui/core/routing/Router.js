@@ -41,7 +41,7 @@ sap.ui.define([
 		var oRouters = {};
 
 		/**
-		 * Instantiates a SAPUI5 Router
+		 * Instantiates a router
 		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider
