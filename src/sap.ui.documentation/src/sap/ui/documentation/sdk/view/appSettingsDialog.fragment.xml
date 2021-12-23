@@ -11,6 +11,7 @@
 			<VBox class="sapUiTinyMarginTop">
 					<Label text="{i18n>APP_SETTINGS_DIALOG_THEME}" design="Standard" labelFor="ThemeSelect" />
 					<Select id="ThemeSelect" width="100%" class="sapUiSmallMarginBottom">
+						<core:Item key="sap_horizon" text="Horizon"/>
 						<core:Item key="sap_fiori_3" text="Quartz Light"/>
 						<core:Item key="sap_fiori_3_dark" text="Quartz Dark"/>
 						<core:Item key="sap_belize" text="Belize"/>
