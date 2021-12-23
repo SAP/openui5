@@ -7,10 +7,11 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
+	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/layout/library',
 	'./DynamicSideContentRenderer'
 ],
-	function(jQuery, Control, ResizeHandler, library, DynamicSideContentRenderer) {
+	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -438,6 +439,50 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns a scroll helper object used to handle scrolling.
+		 * @public
+		 * @param {object} oControl The control instance that requested the scroll helper
+		 * @returns {sap.ui.core.delegate.ScrollEnablement} The scroll helper instance
+		 * @since 1.78
+		 */
+		DynamicSideContent.prototype.getScrollDelegate = function (oControl) {
+			var oControlInQuestion = oControl,
+				oContainerOfDSC = this.getParent(),
+				sBreakpoint = this._getBreakPointFromWidth(),
+				bMCVisible = this.getShowMainContent() && this._MCVisible,
+				bSCVisible = this.getShowSideContent() && this._SCVisible;
+
+			//for cases with main and side content - one above the other - use the scroll delegate of the parent container
+			if (sBreakpoint && sBreakpoint !== L && sBreakpoint !== XL ) {
+				// check whether the control is in visible aggregation; if not - don't get its scrollDelegate
+				if (oControlInQuestion &&
+				   ((oControlInQuestion.sParentAggregationName === "sideContent" && !bSCVisible) ||
+				   (oControlInQuestion.sParentAggregationName === "mainContent" && !bMCVisible)) ){
+					return;
+				} else {
+					while (oContainerOfDSC && (!oContainerOfDSC.getScrollDelegate || !oContainerOfDSC.getScrollDelegate())) {
+						oContainerOfDSC = oContainerOfDSC.getParent();
+					}
+					return oContainerOfDSC.getScrollDelegate();
+				}
+			}
+
+			if (this._oMCScroller && this._oSCScroller) {
+				while (oControlInQuestion && oControlInQuestion.getId() !== this.getId()) {
+					if (oControlInQuestion.sParentAggregationName === "mainContent" && bMCVisible) {
+						return this._oMCScroller;
+					}
+					if (oControlInQuestion.sParentAggregationName === "sideContent" && bSCVisible) {
+						return this._oSCScroller;
+					}
+					oControlInQuestion = oControlInQuestion.getParent();
+				}
+			}
+
+			return;
+		};
+
+		/**
 		 * Re-renders only part of the control that is changed.
 		 * @param {object} aControls Array containing the passed aggregation controls
 		 * @param {object} $domElement DOM reference of the control to be re-rendered
@@ -707,6 +752,9 @@ sap.ui.define([
 				$mainContent.addClass(HIDDEN_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
 			}
+
+			$mainContent.addClass("sapUiDSCM");
+			$sideContent.addClass("sapUiDSCS");
 		};
 
 		/**
