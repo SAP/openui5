@@ -85,18 +85,21 @@ sap.ui.define([
 	/**
 	 * Opens the popover at the specified target.
 	 *
-	 * @param {sap.ui.core.Control} oControl This is the control, where the popover will be placed at.
-	 *
+	 * @param {sap.ui.core.Control | HTMLElement} oAnchor This is the control or HTMLElement, where the popover will be placed at.
 	 * @public
 	 */
-	ColumnMenu.prototype.openBy = function (oControl) {
-		if (!this._oPopover) {
-			this._createPopover();
+	ColumnMenu.prototype.openBy = function(oAnchor) {
+		if (!this.getParent()) {
+			Core.getUIArea(Core.getStaticAreaRef()).addContent(this, true);
 		}
+
+		this._initPopover();
+
 		if (!this._oItemsContainer) {
 			this._initItemsContainer();
 		}
-		this._oPopover.openBy(oControl);
+
+		this._oPopover.openBy(oAnchor);
 	};
 
 	/**
@@ -141,31 +144,30 @@ sap.ui.define([
 		}
 	};
 
-	ColumnMenu.prototype._createPopover = function () {
-		if (!this._oPopover) {
-			this._oPopover = new ResponsivePopover({
-				showArrow: false,
-				showHeader: false,
-				placement: library.PlacementType.Bottom,
-				content: new AssociativeControl({control: this, height: true}),
-				contentWidth: "500px",
-				horizontalScrolling: false,
-				verticalScrolling: false
-			});
-			this.addDependent(this._oPopover);
-			this._oPopover.attachAfterClose(function () {
-				this.close();
-			}.bind(this));
-
-			this._focusDelegate = {
-				"onAfterRendering": this._focusItem
-			};
-			this._oPopover.addEventDelegate(this._focusDelegate, this);
-			if (this.getItems().length == 0 && !this.getAggregation("_items")) {
-				this._oPopover.attachAfterOpen(this._focusInitialQuickAction.bind(this));
-			}
+	ColumnMenu.prototype._initPopover = function () {
+		if (this._oPopover) {
+			return;
 		}
-		return this._oPopover;
+
+		this._oPopover = new ResponsivePopover({
+			showArrow: false,
+			showHeader: false,
+			placement: library.PlacementType.Bottom,
+			content: new AssociativeControl({control: this, height: true}),
+			contentWidth: "500px",
+			horizontalScrolling: false,
+			verticalScrolling: false,
+			afterClose: [this.close, this]
+		});
+		this.addDependent(this._oPopover);
+
+		this._oPopover.addEventDelegate({
+			"onAfterRendering": this._focusItem
+		}, this);
+
+		if (this.getItems().length == 0 && !this.getAggregation("_items")) {
+			this._oPopover.attachAfterOpen(this._focusInitialQuickAction.bind(this));
+		}
 	};
 
 	ColumnMenu.prototype._initItemsContainer = function () {

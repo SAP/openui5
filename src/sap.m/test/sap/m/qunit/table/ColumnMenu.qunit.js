@@ -12,25 +12,7 @@ sap.ui.define([
 
 	var sText = "Test";
 
-	QUnit.module("Plain Menu", {
-		beforeEach: function () {
-			this.oColumnMenu = new ColumnMenu();
-
-			this.oButton = new Button();
-			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
-		},
-		afterEach: function () {
-			this.oColumnMenu.destroy();
-			this.oButton.destroy();
-		}
-	});
-
-	QUnit.test("Initialize empty ColumnMenu", function (assert) {
-		assert.ok(this.oColumnMenu);
-	});
-
-	QUnit.module("Complex Menu", {
+	QUnit.module("Initialization", {
 		createMenu: function (bMultiple) {
 			var aQuickActions = [];
 			var aPQuickActions = [];
@@ -69,10 +51,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Destroy column menu and its instances", function (assert) {
+	QUnit.test("Internal instances", function (assert) {
 		this.createMenu(false);
-		this.oColumnMenu.destroy();
-		assert.ok(this.oColumnMenu.isDestroyed());
+		assert.notOk(this.oColumnMenu._oPopover, "sap.m.ResponsivePopover not created before opening");
+		assert.notOk(this.oColumnMenu._oItemsContainer, "sap.m.p13n.Container not created before opening");
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu._oPopover, "sap.m.ResponsivePopover created on opening");
+		assert.ok(this.oColumnMenu._oItemsContainer, "sap.m.p13n.Container created on opening");
 	});
 
 	QUnit.test("Initialize ColumnMenu with singular content", function (assert) {
@@ -105,6 +91,36 @@ sap.ui.define([
 		assert.ok(this.oColumnMenu.getAggregation("_items").length === 3);
 	});
 
+	QUnit.module("Destruction", {
+		beforeEach: function() {
+			this.oColumnMenu = new ColumnMenu({
+				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
+				items: [new Item({label: sText, content: new Button({text: sText})})],
+				_quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
+				_items: [new Item({label: sText, content: new Button({text: sText})})]
+			});
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oColumnMenu.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Internal instances", function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		var oResponsivePopover = this.oColumnMenu._oPopover;
+		var oItemsContainer = this.oColumnMenu._oItemsContainer;
+
+		this.oColumnMenu.destroy();
+		assert.ok(oResponsivePopover.isDestroyed(), "sap.m.ResponsivePopover destroyed");
+		assert.ok(oItemsContainer.isDestroyed(), "sap.m.p13n.Container destroyed");
+		assert.notOk(this.oColumnMenu._oPopover, "Reference to sap.m.ResponsivePopover cleared");
+		assert.notOk(this.oColumnMenu._oItemsContainer, "Reference to sap.m.p13n.Container cleared");
+	});
+
 	QUnit.module("Rendering", {
 		createMenu: function (bQuickActions, bItems, bPQuickActions, bPItems) {
 			var aQuickActions = [new QuickAction({label: sText, content: new Button({text: sText})})];
@@ -133,20 +149,21 @@ sap.ui.define([
 		}
 	});
 
-
-	QUnit.test("Open popover", function (assert) {
+	QUnit.test("Open popover by a control", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
+		assert.ok(this.oColumnMenu._oPopover.isOpen());
+	});
 
+	QUnit.test("Open popover by an HTMLElement", function (assert) {
+		this.createMenu(true, true, true, true);
+		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu._oPopover.isOpen());
 	});
 
 	QUnit.test("Check hidden header and footer in default view", function (assert) {
 		this.createMenu(false);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowHeader());
@@ -156,8 +173,6 @@ sap.ui.define([
 	QUnit.test("View switch event", function (assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		var aCalls = [],
@@ -166,7 +181,6 @@ sap.ui.define([
 			},
 			oSpy = this.spy(fnViewSwitch);
 		this.oColumnMenu._oItemsContainer.attachEvent("afterViewSwitch", oSpy);
-
 
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
@@ -180,7 +194,6 @@ sap.ui.define([
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
@@ -191,7 +204,6 @@ sap.ui.define([
 		this.createMenu(true, true, true, false);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		var sId = this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId();
@@ -202,7 +214,6 @@ sap.ui.define([
 		this.createMenu(true, false, true, false);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		var sId = this.oColumnMenu.getAggregation("_quickActions")[0].getContent().getId();
@@ -213,7 +224,6 @@ sap.ui.define([
 		this.createMenu(true, false, false, false);
 		this.oColumnMenu.openBy(this.oButton);
 		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		var sId = this.oColumnMenu.getQuickActions()[0].getContent().getId();
@@ -223,14 +233,11 @@ sap.ui.define([
 	QUnit.test("Check focus when view is switched", function (assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Navigate to item
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-
 		oCore.applyChanges();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
@@ -239,8 +246,6 @@ sap.ui.define([
 	QUnit.test("Check focus when view is switched back", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Navigate to item
@@ -275,8 +280,6 @@ sap.ui.define([
 
 	QUnit.test("Check default button settings", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Navigate to first item
@@ -295,8 +298,6 @@ sap.ui.define([
 
 	QUnit.test("Switch reset button states", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Navigate to first item
@@ -325,8 +326,6 @@ sap.ui.define([
 
 	QUnit.test("Switch cancel button states", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Navigate to first item
@@ -345,8 +344,6 @@ sap.ui.define([
 
 	QUnit.test("Switch confirm button states", function (assert) {
 		this.oColumnMenu.openBy(this.oButton);
-		this.clock.tick(500);
-
 		oCore.applyChanges();
 
 		// Navigate to first item
@@ -361,5 +358,40 @@ sap.ui.define([
 
 		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
 		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);
+	});
+
+	QUnit.module("Control tree", {
+		beforeEach: function () {
+			this.oColumnMenu = new ColumnMenu({
+				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
+				items: [new Item({label: sText, content: new Button({text: sText})})],
+				_quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
+				_items: [new Item({label: sText, content: new Button({text: sText})})]
+			});
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oColumnMenu.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("Without parent", function (assert) {
+		assert.notOk(this.oColumnMenu.getUIArea(), "Before opening, the menu has no connection to the UIArea");
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.getUIArea(), "After opening, the menu has a connection to the UIArea");
+		assert.equal(this.oColumnMenu.getUIArea(), this.oColumnMenu.getParent(), "After opening, the UIArea is the parent");
+	});
+
+	QUnit.test("With parent", function (assert) {
+		this.oButton.addDependent(this.oColumnMenu);
+		assert.equal(this.oColumnMenu.getUIArea(), this.oButton.getUIArea(), "Before opening, the UIArea is inherited from the parent");
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.equal(this.oColumnMenu.getUIArea(), this.oButton.getUIArea(), "After opening, the UIArea is inherited from the parent");
+		assert.equal(this.oColumnMenu.getParent(), this.oButton, "After opening, the parent is unchanged");
 	});
 });
