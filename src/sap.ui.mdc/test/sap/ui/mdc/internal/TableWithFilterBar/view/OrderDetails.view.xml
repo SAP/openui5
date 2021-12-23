@@ -9,6 +9,8 @@
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:mdcl="sap.ui.mdc.link"
+	xmlns:mdcv="sap.ui.mdc.valuehelp"
+	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.OrderDetails">
@@ -52,7 +54,36 @@
 								<mdc:Field id="fOrderNo" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="Total"></Label>
-								<mdc:Field id="fTotal" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+								<mdc:Field id="fTotal" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FVH-Currency">
+									<mdc:dependents>
+										<mdc:ValueHelp id="FVH-Currency"
+											delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+											<mdc:typeahead>
+												<mdcv:Popover title="Currencies">
+													<mdcvc:FixedList items="{/Currencies}" useAsValueHelp="true">
+														<mdcf:ListFieldHelpItem key="{code}" text="{descr}" additionalText="{code}" />
+													</mdcvc:FixedList>
+												</mdcv:Popover>
+											</mdc:typeahead>
+										</mdc:ValueHelp>
+									</mdc:dependents>
+								</mdc:Field>
+
+								<Label text="Customer"></Label>
+								<mdc:Field id="fCustomer" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" display="Description" fieldHelp="FVH-Customer">
+									<mdc:dependents>
+										<mdc:ValueHelp id="FVH-Customer"
+											delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+											<mdc:typeahead>
+												<mdcv:Popover title="Customer">
+													<mdcvc:FixedList items="{/Customers}" useAsValueHelp="true">
+														<mdcf:ListFieldHelpItem key="{ID}" text="{name}" additionalText="{ID}" />
+													</mdcvc:FixedList>
+												</mdcv:Popover>
+											</mdc:typeahead>
+										</mdc:ValueHelp>
+									</mdc:dependents>
+								</mdc:Field>
 							</f:SimpleForm>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
@@ -65,7 +96,7 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection>
 						<uxap:blocks>
-							<mdc:Table id="childOrderItemsTable" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'delegates/odata/v4/TableDelegate', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" header="Order Items" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
+							<mdc:Table id="childOrderItemsTable" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/OrderItems.Table.delegate', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" header="Order Items" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
 								<mdc:variant>
 									<fl:VariantManagement id="opTableVM" for="childOrderItemsTable"/>
 								</mdc:variant>
@@ -84,8 +115,8 @@
 									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperty="netAmount" width="15rem">
 										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="Display" />
 									</mdc:table.Column>
-									<mdc:table.Column id="cBook" header="Book" dataProperty="book_title" >
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book/title}" display="Description" width="100%" editMode="Display" />
+									<mdc:table.Column id="cBook" header="Book" dataProperty="book_ID" >
+										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book_ID}" additionalValue="{book/title}" display="Description" width="100%" editMode="Display" />
 									</mdc:table.Column>
 								</mdc:columns>
 								<mdc:creationRow>
@@ -94,6 +125,65 @@
 								<mdc:type>
 									<mdc:table.ResponsiveTableType growingMode="Scroll" />
 								</mdc:type>
+								<mdc:dependents>
+									<mdc:ValueHelp id="FH-Books"
+										delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+										<mdc:typeahead>
+											<mdcv:Popover title="Books">
+												<mdcvc:MTable keyPath="ID" descriptionPath="title" filterFields="$search">
+													<Table id="mTable1_title" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
+														<columns>
+															<Column>
+																<header>
+																	<Text text="ID" />
+																</header>
+																<header>
+																	<Text text="Title" />
+																</header>
+															</Column>
+														</columns>
+														<items>
+															<ColumnListItem type="Active">
+																<cells>
+																	<Text text="{ID}" />
+																</cells>
+																<cells>
+																	<Text text="{title}" />
+																</cells>
+															</ColumnListItem>
+														</items>
+													</Table>
+												</mdcvc:MTable>
+											</mdcv:Popover>
+										</mdc:typeahead>
+										<mdc:dialog>
+											<mdcv:Dialog title="Title">
+												<mdcvc:MDCTable keyPath="ID" descriptionPath="title" filterFields="$search">
+													<mdc:Table id="FH-Books--mdc--gridtable"
+														autoBindOnInit="true"
+														width="100%"
+														height="100%"
+														selectionMode="Multi"
+														p13nMode="Column,Sort"
+														delegate="{name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
+														<mdc:columns>
+															<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID" width="5rem">
+																<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%"/>
+															</mdc:table.Column>
+															<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
+																<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display" width="100%"/>
+															</mdc:table.Column>
+														</mdc:columns>
+														<mdc:type>
+															<mdc:table.GridTableType rowCountMode="Auto"/>
+														</mdc:type>
+													</mdc:Table>
+												</mdcvc:MDCTable>
+												<mdcvc:Conditions label="Books"/>
+											</mdcv:Dialog>
+										</mdc:dialog>
+									</mdc:ValueHelp>
+								</mdc:dependents>
 							</mdc:Table>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
