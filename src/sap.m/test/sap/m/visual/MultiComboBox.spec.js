@@ -240,6 +240,13 @@ describe('sap.m.MultiComboBox', function() {
 	it("should select Compact mode", function(){
 		element(by.id("compactMode")).click();
 		expect(takeScreenshot()).toLookAs("compact_mode");
+	});
+
+	it("should visualize opened picker in compact mode", function(){
+		var defaultMultiComboBoxArrow = element(by.id("MultiComboBox2-arrow"));
+		defaultMultiComboBoxArrow.click();
+		expect(takeScreenshot()).toLookAs("opened_picker_compact");
+		defaultMultiComboBoxArrow.click();
 		element(by.id("compactMode")).click();
 	});
 });
