@@ -28,7 +28,7 @@ sap.ui.require([
 		//  sap.ui.table.* controls are used due to a support rule for this library leading to error
 		//  log
 		//  "Support rule with the id gridTableAccessibleLabel should have an audience."
-		// "sap/ui/core/qunit/rule/model/bindingPathSyntaxValidation.qunit",
+		// "sap/ui/core/qunit/rule/model/modelSupport.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.* - tests are contained in testsuite.databinding.qunit.js
