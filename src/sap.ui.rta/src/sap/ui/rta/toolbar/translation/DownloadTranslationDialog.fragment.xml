@@ -6,28 +6,37 @@
 		type="Message"
 		contentWidth="33%">
 		<Label
+			labelFor="languageSelection"
 			wrappingType="Hyphenated"
 			wrapping="true"
 			width="auto"
-			text="{i18n>MSG_DOWNLOAD_CHANGED_TEXTS}">
+			text="{i18n>MSG_DOWNLOAD_CHANGED_TEXTS}"
+			class="sapUiTinyMarginBottom">
 		</Label>
-		<VBox width="100%">
-			<ComboBox
+		<VBox
+			width="100%"
+			id="languageSelection">
+			<Select
 				width="100%"
-				value="{translation>/sourceLanguage}"
-				id="sapUiRta_selectSourceLanguage"
-				placeholder="{i18n>TXT_SOURCE_LANGUAGE}" />
-			<ComboBox
+				id="selectedSourceLanguage"
+				items="{translation>/sourceLanguages}"
+				selectedKey="{translation>/sourceLanguage}">
+				<core:Item key="{translation>}" text="{translation>}"/>
+			</Select>
+			<Input
 				width="100%"
-				id="sapUiRta_selectTargetLanguage"
-				placeholder="{i18n>TXT_TARGET_LANGUAGE}" />
+				id="selectedTargetLanguage"
+				value="{translation>/targetLanguage}"
+				placeholder="{i18n>TXT_TARGET_LANGUAGE}">
+			</Input>
 		</VBox>
 		<beginButton>
 			<Button
 				id="sapUiRta_downloadChangedTextsButton"
 				text="{i18n>BTN_DOWNLOAD_CHANGED_TEXTS}"
 				type="Emphasized"
-				enabled="{= ${translation>/downloadChangedTexts}}"
+				icon="sap-icon://download"
+				enabled="{= !!${translation>/sourceLanguages}.length}"
 				press=".onDownloadFile" />
 		</beginButton>
 		<endButton>
