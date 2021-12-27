@@ -173,7 +173,6 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
 			var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
-			aChanges[1].setUndoOperations(["undoStack"]);
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 
 			return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack) {
@@ -181,9 +180,7 @@ sap.ui.define([
 				assert.ok(oStack, "an instance of the CommandStack has been created");
 				assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
 				assert.equal(aCommands[0]._oPreparedChange, aChanges[1], "the first command contains the last change");
-				assert.ok(aCommands[0]._aRecordedUndo, "the first command has a recorded undo stack");
 				assert.equal(aCommands[1]._oPreparedChange, aChanges[0], "the last command contains the first change");
-				assert.notOk(aCommands[1]._aRecordedUndo, "the last command has no recorded undo stack");
 			});
 		});
 

@@ -3,9 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/rta/command/FlexCommand",
 	"sap/ui/fl/Utils"
 ], function(
 	BaseCommand,
+	FlexCommand,
 	FlUtils
 ) {
 	"use strict";
@@ -55,10 +57,8 @@ sap.ui.define([
 		.catch(function(e) {
 			var aCommands = this.getCommands();
 			aCommands.forEach(function(oCommand) {
-				if (oCommand instanceof sap.ui.rta.command.FlexCommand) {
-					if (!oCommand._aRecordedUndo) {
-						this.removeCommand(oCommand);
-					}
+				if (oCommand instanceof FlexCommand) {
+					this.removeCommand(oCommand);
 				}
 			}.bind(this));
 
