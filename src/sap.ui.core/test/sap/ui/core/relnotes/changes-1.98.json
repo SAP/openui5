@@ -3,6 +3,17 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "da186b12eec539be829d7bf6136375df901718ad",
+        "type": "FIX",
+        "text": " sap.ui.core.message.MessageMixin#destroy: cleanup control IDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180415452"
+          }
+        ]
+      },
+      {
         "id": "e473521b360191620828467c72264aa6109fc807",
         "type": "FIX",
         "text": " strengthen CSS Classes for Theme Parameters with !important",

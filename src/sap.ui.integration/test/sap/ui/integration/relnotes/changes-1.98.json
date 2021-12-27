@@ -3,6 +3,22 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "b37ac43429042584abdfb34a56e663d0a4418d68",
+        "type": "FIX",
+        "text": " Integration Cards: High CPU utilization is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180389313"
+          }
+        ]
+      },
+      {
+        "id": "d37f4c6a8ab756b8b96a9d43b01ae2d396a8c162",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Markdown support for Adaptive type updated"
+      },
+      {
         "id": "4edde839aa1224483e45a3cc3ae827acceaeb3d0",
         "type": "FIX",
         "text": " sap.ui.integration.cards.CalendarContent: Now works with no initial date",

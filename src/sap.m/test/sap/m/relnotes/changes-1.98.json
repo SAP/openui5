@@ -3,6 +3,60 @@
     "date": "December 2021",
     "notes": [
       {
+        "id": "57d6fdd6a159da5138c0f11da725110ce4c3d839",
+        "type": "FIX",
+        "text": " sap.m.StepInput: string values are parsed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419994"
+          }
+        ]
+      },
+      {
+        "id": "a6ca091853a490edef4ba1a2eebd00583b26d701",
+        "type": "FIX",
+        "text": " sap.m.StepInput: prevented adding of description label twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170313387"
+          }
+        ]
+      },
+      {
+        "id": "f6f670f2c121416544e3fac2edea6b2d69291534",
+        "type": "FIX",
+        "text": " sap.m.Label: color edited to have contrast when used inside Toolbar and Overflowtoolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170321978"
+          }
+        ]
+      },
+      {
+        "id": "7eed0a8f08e4273be20872279203522257676918",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: new firstDayOfWeek property implemented"
+      },
+      {
+        "id": "43327deae901d8cb0df88d1eef2450938f0e2e2a",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: container width changed event properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080431926"
+          }
+        ]
+      },
+      {
+        "id": "5d46c17aed1e861fc477da2349ff625969885ca6",
+        "type": "FEATURE",
+        "text": " StandardListItem: new Avatar aggregation added"
+      },
+      {
         "id": "399a71d43d78a8e5ca30294ea378ccc485b0a632",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: options list items have dedicated IDs",
