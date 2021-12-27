@@ -1412,7 +1412,12 @@ sap.ui.define([
 	undefined
 ].forEach(function (mParameters, i) {
 	QUnit.test("create: calls ODataModel#createEntry with parameters, #" + i, function (assert) {
-		var oModel = {
+		var fnResolveActivatedPromise,
+			oActivatedPromise = new Promise(function (resolve) {
+				fnResolveActivatedPromise = resolve;
+			}),
+			bInactive = mParameters && mParameters.inactive,
+			oModel = {
 				oMetadata : {isLoaded : function () {}},
 				_getCreatedContextsCache : function () {},
 				createEntry : function () {}
@@ -1424,16 +1429,21 @@ sap.ui.define([
 				oModel : oModel,
 				sPath : "~sPath",
 				_fireChange : function () {},
+				fireEvent : function () {},
 				getResolvedPath : function () {},
 				isFirstCreateAtEnd : function () {}
 			},
-			oCreatedContext = {created : function () {}},
+			oBindingMock = this.mock(oBinding),
+			oCreatedContext = {
+				created : function () {},
+				fetchActivated : function () {}
+			},
 			oCreatedContextsCache = {addContext : function () {}},
 			mCreateParameters;
 
-		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
+		oBindingMock.expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("_getCreatedContextsCache")
 			.withExactArgs()
 			.returns(oCreatedContextsCache);
@@ -1447,21 +1457,35 @@ sap.ui.define([
 				mCreateParameters = mParam0;
 
 				return true;
-			}), sinon.match.same(mParameters));
+			}), sinon.match.same(mParameters))
+			.callThrough();
 		this.mock(oModel).expects("createEntry")
 			.withExactArgs("~sPath", sinon.match(function (mParam) {
 				return mParam === mCreateParameters;
 			}))
 			.returns(oCreatedContext);
-
 		this.mock(oCreatedContextsCache).expects("addContext")
 			.withExactArgs(sinon.match.same(oCreatedContext), "~resolvedPath",
 				"~sCreatedEntitiesKey", true);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Add});
+		this.mock(oCreatedContext).expects("fetchActivated")
+			.withExactArgs()
+			.exactly(bInactive ? 1 : 0)
+			.returns(oActivatedPromise);
+		oBindingMock.expects("fireEvent").withExactArgs("createActivate").never();
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Add});
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.create.call(oBinding, "~oInitialData",
 			"~bAtEnd", mParameters), oCreatedContext);
+
+		oBindingMock.expects("fireEvent")
+			.withExactArgs("createActivate")
+			.exactly(bInactive ? 1 : 0);
+
+		// code under test: async context activation
+		fnResolveActivatedPromise();
+
+		return oActivatedPromise;
 	});
 });
 
@@ -2074,5 +2098,27 @@ sap.ui.define([
 		assert.ok(aAllCurrentContexts.includes("~createdContexts"));
 		assert.ok(aAllCurrentContexts.includes("~context(bar)"));
 		assert.ok(aAllCurrentContexts.includes("~context(baz)"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("attachCreateActivate", function (assert) {
+		var oBinding = {attachEvent : function () {}};
+
+		this.mock(oBinding).expects("attachEvent")
+			.withExactArgs("createActivate", "~fnFunction", "~oListener");
+
+		// code under test
+		ODataListBinding.prototype.attachCreateActivate.call(oBinding, "~fnFunction", "~oListener");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("detachCreateActivate", function (assert) {
+		var oBinding = {detachEvent : function () {}};
+
+		this.mock(oBinding).expects("detachEvent")
+			.withExactArgs("createActivate", "~fnFunction", "~oListener");
+
+		// code under test
+		ODataListBinding.prototype.detachCreateActivate.call(oBinding, "~fnFunction", "~oListener");
 	});
 });

@@ -148,6 +148,44 @@ sap.ui.define([
 	});
 
 	/**
+	 * The 'createActivate' event is fired when a property is changed on a context in an 'inactive'
+	 * state (see {@link #create}). The context then changes its state to 'transient'.
+	 *
+	 * @param {sap.ui.base.Event} oEvent The event object
+	 * @param {sap.ui.model.odata.v2.ODataListBinding} oEvent.getSource() This binding
+	 *
+	 * @event sap.ui.model.odata.v2.ODataListBinding#createActivate
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'createActivate' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	 ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
+		this.attachEvent("createActivate", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'createActivate' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	ODataListBinding.prototype.detachCreateActivate = function (fnFunction, oListener) {
+		this.detachEvent("createActivate", fnFunction, oListener);
+	};
+
+	/**
 	 * Returns all current contexts of this list binding in no special order. Just like
 	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
 	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
@@ -1722,7 +1760,8 @@ sap.ui.define([
 				properties : oInitialData,
 				refreshAfterChange : false
 			},
-			bCreationAreaAtEnd = this.isFirstCreateAtEnd();
+			bCreationAreaAtEnd = this.isFirstCreateAtEnd(),
+			that = this;
 
 		bAtEnd = !!bAtEnd;
 		if (bCreationAreaAtEnd === undefined) {
@@ -1753,6 +1792,11 @@ sap.ui.define([
 		oCreatedContext = this.oModel.createEntry(this.sPath, mCreateParameters);
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
 			this.sCreatedEntitiesKey, bAtEnd);
+		if (mCreateParameters.inactive) {
+			oCreatedContext.fetchActivated().then(function () {
+				that.fireEvent("createActivate");
+			});
+		}
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oCreatedContext;

@@ -37,6 +37,26 @@ sap.ui.define([
 			}));
 		},
 
+		createInactiveLineItem : function () {
+			var oItemsBinding = this.getView().byId("ToLineItems").getBinding("rows");
+
+			oItemsBinding.create({
+					CurrencyCode : null,
+					DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
+					GrossAmount : null,
+					Quantity : null,
+					QuantityUnit : null,
+					SalesOrderID : oItemsBinding.getContext().getProperty("SalesOrderID")
+				}, /*bAtEnd*/ true, {inactive : true});
+		},
+
+		createInactiveSalesOrder : function (bAtEnd) {
+			this.byId("SalesOrderSet").getBinding("items").create({
+					CustomerID : "0100000000",
+					LifecycleStatus : "N"
+				}, bAtEnd, {inactive : true});
+		},
+
 		handleMessageChange : function (oEvent) {
 			var aMessages = oEvent.getParameter("newMessages"),
 				sMessageText,
@@ -324,28 +344,10 @@ sap.ui.define([
 				oItemsBinding = oView.byId("ToLineItems").getBinding("rows"),
 				oModel = oView.getModel(),
 				oUiModel = oView.getModel("ui"),
-				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows");
-
-			function createInactiveLineItem() {
-				oItemsBinding.create({
-						CurrencyCode : null,
-						DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
-						GrossAmount : null,
-						Quantity : null,
-						QuantityUnit : null,
-						SalesOrderID : oItemsBinding.getContext().getProperty("SalesOrderID")
-					}, /*bAtEnd*/ true, {inactive : true});
-			}
+				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows"),
+				that = this;
 
 			oModel.attachMessageChange(this.handleMessageChange, this);
-			oModel.attachPropertyChange(function (oEvent) {
-				if (oEvent.getParameter("context").isTransient()) {
-					// enforces updating the status icon
-					// TODO: move into createActivate event handler as soon as available or solve
-					// via improved databinding solution
-					oModel.updateBindings(true);
-				}
-			});
 
 			// adding the formatter dynamically is a prerequisite that it is called with the control
 			// as 'this'
@@ -369,7 +371,7 @@ sap.ui.define([
 				if (oItemsBinding.isLengthFinal()
 						&& oItemsBinding.isFirstCreateAtEnd() === undefined) {
 					for (i = 0; i < iInlineCreationRows; i += 1) {
-						createInactiveLineItem();
+						that.createInactiveLineItem();
 					}
 				}
 			});
@@ -406,8 +408,12 @@ sap.ui.define([
 		},
 
 		onResetChanges : function () {
-			this.getView().getModel().resetChanges(/*aPath*/undefined, /*bAll*/true,
-				/*bDeleteCreatedEntities*/true);
+			var oModel = this.getView().getModel();
+
+			oModel.resetChanges(/*aPath*/undefined, /*bAll*/true, /*bDeleteCreatedEntities*/true)
+				.then(function () {
+					oModel.updateBindings(true); // enforce update of status icon + text
+				});
 		},
 
 		onSaveCreatedItem : function () {
@@ -502,19 +508,14 @@ sap.ui.define([
 
 		onShowTable : function () {
 			var oSalesOrdersBinding,
-				oUiModel = this.getView().getModel("ui"),
-				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows");
-
-			function createInactiveSalesOrder(bAtEnd) {
-				oSalesOrdersBinding.create({
-						CustomerID : "0100000000",
-						LifecycleStatus : "N"
-					}, bAtEnd, {inactive : true});
-			}
+				oView = this.getView(),
+				oUiModel = oView.getModel("ui"),
+				iInlineCreationRows = oUiModel.getProperty("/inlineCreationRows"),
+				that = this;
 
 			oUiModel.setProperty("/useTable", !oUiModel.getProperty("/useTable"));
 			// set the named model, so the table only requests data once it is shown
-			this.getView().setModel(this.getView().getModel(), "SalesOrders");
+			oView.setModel(oView.getModel(), "SalesOrders");
 
 			oSalesOrdersBinding = this.byId("SalesOrderSet").getBinding("items");
 			if (!iInlineCreationRows || oSalesOrdersBinding.isFirstCreateAtEnd() !== undefined) {
@@ -526,7 +527,7 @@ sap.ui.define([
 				var i;
 
 				for (i = 0; i < iInlineCreationRows; i += 1) {
-					createInactiveSalesOrder(/*bAtEnd*/i !== 0);
+					that.createInactiveSalesOrder(/*bAtEnd*/i !== 0);
 				}
 			});
 		},
@@ -557,6 +558,19 @@ sap.ui.define([
 				// refreshed
 				this.onSelectSalesOrder();
 			}
+		},
+
+		onTriggerCreateActivateLineItem : function () {
+			this.createInactiveLineItem();
+			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
+		},
+
+		onTriggerCreateActivateSalesOrder : function () {
+			this.createInactiveSalesOrder(true);
+			//FIXME: Currently not working scenario: Open "Sales Orders" table, select first
+			// inactive row, enter a "Note", tab out or press enter -> updateBindings leads triggers
+			// an unexpected request to SalesOrderSet('id-...')/ToLineItems...
+			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 
 		onUpdateSalesOrderItemsCount : function () {

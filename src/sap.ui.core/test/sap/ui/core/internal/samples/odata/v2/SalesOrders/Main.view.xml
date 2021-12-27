@@ -38,7 +38,10 @@
 			<VBox class="sapUiSmallMargin" id="listPage" visible="{ui>/useTable}">
 				<Table growing="true" growingThreshold="4" id="SalesOrderSet"
 					items="{
-						events : {change : '.onUpdateSalesOrdersCount'},
+						events : {
+							change : '.onUpdateSalesOrdersCount',
+							createActivate : '.onTriggerCreateActivateSalesOrder'
+						},
 						path : 'SalesOrders>/SalesOrderSet',
 						filters : [{path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'}],
 						parameters : {
@@ -183,7 +186,10 @@
 						}" width="12em" />
 				</form:SimpleForm>
 				<t:Table id="ToLineItems" rowActionCount="1" rows="{
-						events : {change : '.onUpdateSalesOrderItemsCount'},
+						events : {
+							change : '.onUpdateSalesOrderItemsCount',
+							createActivate : '.onTriggerCreateActivateLineItem'
+						},
 						parameters : {transitionMessagesOnly : true, usePreliminaryContext : true},
 						path : 'ToLineItems'
 					}" rowSelectionChange="onSelectItem" selectionMode="Single" threshold="0"
