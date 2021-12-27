@@ -8,11 +8,12 @@
  * @version @version@
  */
 sap.ui.define([
+	"sap/base/util/UriParameters",
 	"sap/ui/core/library",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/MessageScope"
-], function (coreLibrary, UIComponent, JSONModel, MessageScope) {
+], function (UriParameters, coreLibrary, UIComponent, JSONModel, MessageScope) {
 	"use strict";
 	var MessageType = coreLibrary.MessageType;
 
@@ -47,6 +48,9 @@ sap.ui.define([
 					text : "With information messages",
 					type : MessageType.Information
 				}],
+				sInlineCreationRows = UriParameters.fromQuery(window.location.search)
+					.get("inlineCreationRows"),
+				iInlineCreationRows = parseInt(sInlineCreationRows),
 				oModel;
 
 			UIComponent.prototype.init.apply(this, arguments);
@@ -56,6 +60,7 @@ sap.ui.define([
 			oModel.setMessageScope(MessageScope.BusinessObject);
 
 			this.setModel(new JSONModel({
+				inlineCreationRows : isNaN(iInlineCreationRows) ? 0 : iInlineCreationRows,
 				itemFilter : aItemFilter,
 				itemSelected : false,
 				messageCount : 0,

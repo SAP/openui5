@@ -52,6 +52,26 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.oCreatePromise, undefined);
 		assert.strictEqual(oContext.oSyncCreatePromise, "~oSyncCreatePromise");
+		assert.strictEqual(oContext.bInactive, false);
+		assert.ok(oContext.oActivatedPromise instanceof SyncPromise);
+		assert.ok(oContext.oActivatedPromise.isFulfilled());
+		assert.strictEqual(oContext.oActivatedPromise.getResult(), undefined);
+		assert.strictEqual(oContext.fnActivate, undefined);
+
+		// code under test
+		oContext = new Context("~oModel", "/~sPath", undefined, "~oSyncCreatePromise", "~inactive");
+
+		assert.strictEqual(oContext.oCreatePromise, undefined);
+		assert.strictEqual(oContext.oSyncCreatePromise, "~oSyncCreatePromise");
+		assert.strictEqual(oContext.bInactive, true);
+		assert.ok(oContext.oActivatedPromise instanceof SyncPromise);
+		assert.ok(oContext.oActivatedPromise.isPending());
+
+		// code under test
+		oContext.fnActivate("~result");
+
+		assert.ok(oContext.oActivatedPromise.isFulfilled());
+		assert.strictEqual(oContext.oActivatedPromise.getResult(), "~result");
 	});
 
 	//*********************************************************************************************
@@ -211,5 +231,43 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.oCreatePromise, undefined);
 		assert.strictEqual(oContext.oSyncCreatePromise, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("activate", function (assert) {
+		var oContext = new Context("~oModel", "/~sPath", undefined, undefined, /*bInactive*/false);
+
+		assert.strictEqual(oContext.bInactive, false);
+
+		// code under test
+		oContext.activate(oContext);
+
+		assert.strictEqual(oContext.bInactive, false);
+
+		oContext = new Context("~oModel", "/~sPath", undefined, undefined, /*bInactive*/true);
+
+		assert.strictEqual(oContext.bInactive, true);
+		this.mock(oContext).expects("fnActivate").withExactArgs();
+
+		// code under test
+		oContext.activate(oContext);
+
+		assert.strictEqual(oContext.bInactive, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchActivated", function (assert) {
+		var oContext = {oActivatedPromise : "~oActivatedPromise"};
+
+		// code under test
+		assert.strictEqual(Context.prototype.fetchActivated.call(oContext), "~oActivatedPromise");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isInactive", function (assert) {
+		var oContext = {bInactive : "~bInactive"};
+
+		// code under test
+		assert.strictEqual(Context.prototype.isInactive.call(oContext), "~bInactive");
 	});
 });

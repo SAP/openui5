@@ -28,7 +28,8 @@ sap.ui.define([
 		CountMode, ODataFilter, ODataUtils,  OperationMode) {
 	"use strict";
 
-	var aCreateParametersAllowlist = ["changeSetId", "error", "expand", "groupId", "success"];
+	var aCreateParametersAllowlist = ["changeSetId", "error", "expand", "groupId", "inactive",
+			"success"];
 
 	/**
 	 * @class
@@ -328,7 +329,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._getContexts = function (iStartIndex, iLength) {
 		var oContext, i, iEndIndex, sKey,
-			bAtEnd = this.isCreationAreaAtEnd(),
+			bAtEnd = this.isFirstCreateAtEnd(),
 			aContexts = [],
 			aCreatedContexts = this._getCreatedContexts(),
 			iCreated = aCreatedContexts.length,
@@ -1696,6 +1697,10 @@ sap.ui.define([
 	 * @param {string} [mParameters.groupId]
 	 *   The ID of a request group; requests belonging to the same group will be bundled in one
 	 *   batch request
+	 * @param {boolean} [mParameters.inactive]
+	 *   Whether the created context is inactive. An inactive context will only be sent to the
+	 *   server after the first property update. From then on it behaves like any other created
+	 *   context.
 	 * @param {function} [mParameters.success]
 	 *   The success callback function
 	 * @returns {sap.ui.model.odata.v2.Context}
@@ -1717,7 +1722,7 @@ sap.ui.define([
 				properties : oInitialData,
 				refreshAfterChange : false
 			},
-			bCreationAreaAtEnd = this.isCreationAreaAtEnd();
+			bCreationAreaAtEnd = this.isFirstCreateAtEnd();
 
 		bAtEnd = !!bAtEnd;
 		if (bCreationAreaAtEnd === undefined) {
@@ -1825,8 +1830,9 @@ sap.ui.define([
 	 *   there are no created contexts
 	 *
 	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
 	 */
-	ODataListBinding.prototype.isCreationAreaAtEnd = function () {
+	ODataListBinding.prototype.isFirstCreateAtEnd = function () {
 		return this.oModel._getCreatedContextsCache()
 			.isAtEnd(this.getResolvedPath(), this.sCreatedEntitiesKey);
 	};
@@ -1859,7 +1865,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._getSkipAndTop = function (iStartIndex, iLength) {
 		var iCreatedContextsLength = this._getCreatedContexts().length,
-			iSkip = this.isCreationAreaAtEnd()
+			iSkip = this.isFirstCreateAtEnd()
 				? iStartIndex
 				: Math.max(0, iStartIndex - iCreatedContextsLength),
 			iTop = this.bLengthFinal && iSkip + iLength >= this.iLength

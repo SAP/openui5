@@ -123,9 +123,9 @@ sap.ui.define([
 			// Step 3
 			When.onMainPage.pressSalesOrderSaveButton();
 			Then.onMainPage.checkSalesOrdersCountChangedBy(0);
-			Then.onMainPage.checkSalesOrderAtRow(0, "220", "SAP", "1", "From Server");
-			Then.onMainPage.checkSalesOrderAtRow(1, "221", "SAP", "2", "From Server");
-			Then.onMainPage.checkSalesOrderAtRow(2, "222", "SAP", "4", "From Server");
+			Then.onMainPage.checkSalesOrderAtRow(0, "220", "SAP", "1", "Persisted");
+			Then.onMainPage.checkSalesOrderAtRow(1, "221", "SAP", "2", "Persisted");
+			Then.onMainPage.checkSalesOrderAtRow(2, "222", "SAP", "4", "Persisted");
 			Then.onMainPage.checkSalesOrderAtRow(3, "203", "Talpa", "Inline Creation Rows 203",
 				"From Server");
 
@@ -137,8 +137,8 @@ sap.ui.define([
 			When.onMainPage.pressSalesOrdersDelete();
 			// Step 3
 			When.onMainPage.confirmDialog();
-			Then.onMainPage.checkSalesOrderAtRow(0, "220", "SAP", "1", "From Server");
-			Then.onMainPage.checkSalesOrderAtRow(1, "221", "SAP", "2", "From Server");
+			Then.onMainPage.checkSalesOrderAtRow(0, "220", "SAP", "1", "Persisted");
+			Then.onMainPage.checkSalesOrderAtRow(1, "221", "SAP", "2", "Persisted");
 			Then.onMainPage.checkSalesOrderAtRow(2, "203", "Talpa", "Inline Creation Rows 203",
 				"From Server");
 			Then.onMainPage.checkSalesOrdersCountChangedBy(-1);

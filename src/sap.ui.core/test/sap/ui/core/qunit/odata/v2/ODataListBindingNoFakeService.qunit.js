@@ -1014,11 +1014,11 @@ sap.ui.define([
 				sPath : "~path",
 				_getCreatedContexts : function () {},
 				getResolvedPath : function () {},
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			},
 			oModelMock = this.mock(oModel);
 
-		this.mock(oBinding).expects("isCreationAreaAtEnd").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getCreatedContexts").withExactArgs().returns([]);
 		oModelMock.expects("resolveDeep").withExactArgs("~path", "~context").returns("/~sDeepPath");
 		oModelMock.expects("getContext").withExactArgs("/~key(0)", "/~sDeepPath(0)")
@@ -1118,11 +1118,11 @@ sap.ui.define([
 				_getCreatedContexts : function () {},
 				_getMaximumLength : function () {},
 				getResolvedPath : function () {},
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			},
 			oModelMock = this.mock(oModel);
 
-		this.mock(oBinding).expects("isCreationAreaAtEnd")
+		this.mock(oBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(oFixture.bAtEnd);
 		this.mock(oBinding).expects("_getCreatedContexts")
@@ -1404,6 +1404,7 @@ sap.ui.define([
 	error : "~error",
 	expand : "~expand",
 	groupId : "~groupId",
+	inactive : "~inactive",
 	success : "~success"
 }, {
 	success : undefined
@@ -1424,13 +1425,13 @@ sap.ui.define([
 				sPath : "~sPath",
 				_fireChange : function () {},
 				getResolvedPath : function () {},
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			},
 			oCreatedContext = {created : function () {}},
 			oCreatedContextsCache = {addContext : function () {}},
 			mCreateParameters;
 
-		this.mock(oBinding).expects("isCreationAreaAtEnd").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("_getCreatedContextsCache")
@@ -1478,11 +1479,11 @@ sap.ui.define([
 	{sParameter : "urlParameters", sError : "Parameter 'urlParameters' is not supported"}
 ].forEach(function (oFixture) {
 	QUnit.test("create: unsupported parameter: " + oFixture.sParameter, function (assert) {
-		var oBinding = {isCreationAreaAtEnd : function () {}},
+		var oBinding = {isFirstCreateAtEnd : function () {}},
 			mParameters = {};
 
 		mParameters[oFixture.sParameter] = "~" + oFixture.sParameter;
-		this.mock(oBinding).expects("isCreationAreaAtEnd").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 
 		// code under test
 		assert.throws(function () {
@@ -1506,10 +1507,10 @@ sap.ui.define([
 	QUnit.test("create: bAtEnd with no final length, #" + i, function (assert) {
 		var oListBinding = {
 				bLengthFinal : false,
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			};
 
-		this.mock(oListBinding).expects("isCreationAreaAtEnd")
+		this.mock(oListBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(oFixture.bCreationAreaAtEnd);
 
@@ -1526,10 +1527,10 @@ sap.ui.define([
 		var oContext = {isTransient : function () {}},
 			oBinding = {
 				oContext : oContext,
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			};
 
-		this.mock(oBinding).expects("isCreationAreaAtEnd").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
 
 		// code under test
@@ -1543,10 +1544,10 @@ sap.ui.define([
 		var oModel = {oMetadata : {isLoaded : function () {}}},
 			oBinding = {
 				oModel : oModel,
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			};
 
-		this.mock(oBinding).expects("isCreationAreaAtEnd").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(false);
 
 		// code under test
@@ -1559,10 +1560,10 @@ sap.ui.define([
 	QUnit.test("create: expanded list error", function (assert) {
 		var oBinding = {
 				bUseExpandedList : true,
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			};
 
-		this.mock(oBinding).expects("isCreationAreaAtEnd").withExactArgs().returns(false);
+		this.mock(oBinding).expects("isFirstCreateAtEnd").withExactArgs().returns(false);
 
 		// code under test
 		assert.throws(function () {
@@ -1615,13 +1616,13 @@ sap.ui.define([
 	QUnit.test("_getSkipAndTop, creation area at start: #" + i, function (assert) {
 		var oBinding = {
 				_getCreatedContexts : function () {},
-				isCreationAreaAtEnd : function () {}
+				isFirstCreateAtEnd : function () {}
 			};
 
 		this.mock(oBinding).expects("_getCreatedContexts")
 			.withExactArgs()
 			.returns(Array(oFixture.iCreated));
-		this.mock(oBinding).expects("isCreationAreaAtEnd")
+		this.mock(oBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(false);
 
@@ -1673,7 +1674,7 @@ sap.ui.define([
 	QUnit.test("_getSkipAndTop: creation area at end: #" + i, function (assert) {
 		var oBinding = {
 				_getCreatedContexts : function () {},
-				isCreationAreaAtEnd : function () {},
+				isFirstCreateAtEnd : function () {},
 				iLength : oFixture.iBindingLength,
 				bLengthFinal : oFixture.bLengthFinal
 			};
@@ -1681,7 +1682,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("_getCreatedContexts")
 			.withExactArgs()
 			.returns(Array(oFixture.iCreated));
-		this.mock(oBinding).expects("isCreationAreaAtEnd")
+		this.mock(oBinding).expects("isFirstCreateAtEnd")
 			.withExactArgs()
 			.returns(true);
 
@@ -2017,7 +2018,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isCreationAreaAtEnd", function (assert) {
+	QUnit.test("isFirstCreateAtEnd", function (assert) {
 		var oCreatedContextCache = {
 				isAtEnd : function () {}
 			},
@@ -2040,7 +2041,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			ODataListBinding.prototype.isCreationAreaAtEnd.call(oBinding),
+			ODataListBinding.prototype.isFirstCreateAtEnd.call(oBinding),
 			"~bAtEnd");
 	});
 
