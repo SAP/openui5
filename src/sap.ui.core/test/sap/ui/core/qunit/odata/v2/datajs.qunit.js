@@ -2,6 +2,10 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	//*********************************************************************************************
+	QUnit.module("sap.ui.thirdparty.datajs: module loading tests");
+
+	//*********************************************************************************************
 	QUnit.test("datajs loaded and executed", function(assert) {
 		var done = assert.async();
 		sap.ui.require(['sap/ui/thirdparty/datajs'], function(datajs) {
