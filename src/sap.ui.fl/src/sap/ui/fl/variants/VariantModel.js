@@ -205,16 +205,6 @@ sap.ui.define([
 		_mUShellServices[sServiceName] = oService;
 	}
 
-	function revertVariantAndClearData(mPropertyBag) {
-		return Switcher.switchVariant(mPropertyBag)
-			.then(function() {
-				delete this.oData[mPropertyBag.vmReference];
-			}.bind(this))
-			.catch(function(oError) {
-				Log.warning(oError.message);
-			});
-	}
-
 	function switchVariantAndUpdateModel(mPropertyBag, sScenario) {
 		return Switcher.switchVariant(mPropertyBag)
 			.then(function() {
@@ -1520,41 +1510,11 @@ sap.ui.define([
 
 	/**
 	 * When the variants map is reset at runtime, this listener is called.
-	 * It reverts all applied changes and resets all variant management controls to default state.
-	 * @param {boolean} bSkipURLHandling - Indicates whether the URL handling should be skipped
-	 * @returns {Promise} Promise which resolves when all applied changes have been reverted
+	 * It clear the faked standard variants and destroys the model.
 	 */
-	VariantModel.prototype.resetMap = function(bSkipURLHandling) {
-		var aVariantManagementReferences = Object.keys(this.oData);
-		aVariantManagementReferences.forEach(function(sVariantManagementReference) {
-			var mPropertyBag = {
-				vmReference: sVariantManagementReference,
-				currentVReference: this.oData[sVariantManagementReference].currentVariant || this.oData[sVariantManagementReference].defaultVariant,
-				newVReference: true, // since new variant is not known - true will lead to no new changes for variant switch
-				appComponent: this.oAppComponent,
-				flexController: this.oFlexController,
-				modifier: JsControlTreeModifier,
-				reference: this.sFlexReference
-			};
-
-			//_setVariantModelBusy adds a promise to the _oVariantSwitchPromise chain
-			//for each variant management reference (control) a promise will be added
-			return _setVariantModelBusy(revertVariantAndClearData.bind(this, mPropertyBag), this, sVariantManagementReference);
-		}.bind(this));
-		return this._oVariantSwitchPromise
-			.then(function() {
-				VariantManagementState.clearFakedStandardVariants(this.sFlexReference, this.oAppComponent.getId());
-				VariantManagementState.resetContent(this.sFlexReference, this.oAppComponent.getId());
-				//re-initialize hash data and remove existing parameters
-				if (!bSkipURLHandling) {
-					URLHandler.initialize({ model: this });
-					URLHandler.update({
-						parameters: [],
-						updateHashEntry: true,
-						model: this
-					});
-				}
-			}.bind(this));
+	VariantModel.prototype.destroy = function() {
+		VariantManagementState.clearFakedStandardVariants(this.sFlexReference, this.oAppComponent.getId());
+		JSONModel.prototype.destroy.apply(this);
 	};
 
 	/**

@@ -187,54 +187,13 @@ sap.ui.define([
 			assert.ok(URLHandler.initialize.calledWith({model: this.oModel}), "then URLHandler.initialize() called with the the VariantModel");
 		});
 
-		QUnit.test("when resetMap() is called", function(assert) {
-			var sVariantManagementReference = "variantMgmtId1";
-			var sCurrentVariantBeforeReset = this.oModel.oData[sVariantManagementReference].currentVariant;
+		QUnit.test("when destroy() is called", function(assert) {
 			sandbox.stub(URLHandler, "update");
 			sandbox.stub(Switcher, "switchVariant").resolves();
-			sandbox.spy(VariantManagementState, "resetContent");
+			sandbox.spy(VariantManagementState, "clearFakedStandardVariants");
 
-			return this.oModel.resetMap().then(function() {
-				assert.ok(Switcher.switchVariant.calledWith({
-					vmReference: sVariantManagementReference,
-					currentVReference: sCurrentVariantBeforeReset,
-					newVReference: true,
-					appComponent: this.oModel.oAppComponent,
-					reference: this.oModel.sFlexReference,
-					flexController: this.oModel.oFlexController,
-					modifier: JsControlTreeModifier
-				}), "then current variant changes were reverted");
-				assert.ok(URLHandler.update.calledWith({
-					parameters: [],
-					updateHashEntry: true,
-					model: this.oModel
-				}), "then hash register was reset");
-				assert.strictEqual(this.oData[sVariantManagementReference], undefined, "then model data was deleted");
-				assert.equal(VariantManagementState.resetContent.callCount, 1, "then variants map was reset");
-			}.bind(this));
-		});
-
-		QUnit.test("when resetMap() is called with true as property", function(assert) {
-			var sVariantManagementReference = "variantMgmtId1";
-			var sCurrentVariantBeforeReset = this.oModel.oData[sVariantManagementReference].currentVariant;
-			sandbox.stub(URLHandler, "update");
-			sandbox.stub(Switcher, "switchVariant").resolves();
-			sandbox.spy(VariantManagementState, "resetContent");
-
-			return this.oModel.resetMap(true).then(function() {
-				assert.ok(Switcher.switchVariant.calledWith({
-					vmReference: sVariantManagementReference,
-					currentVReference: sCurrentVariantBeforeReset,
-					newVReference: true,
-					appComponent: this.oModel.oAppComponent,
-					reference: this.oModel.sFlexReference,
-					flexController: this.oModel.oFlexController,
-					modifier: JsControlTreeModifier
-				}), "then current variant changes were reverted");
-				assert.strictEqual(URLHandler.update.callCount, 0, "the URLHandler was not called");
-				assert.strictEqual(this.oData[sVariantManagementReference], undefined, "then model data was deleted");
-				assert.equal(VariantManagementState.resetContent.callCount, 1, "then variants map was reset");
-			}.bind(this));
+			this.oModel.destroy();
+			assert.equal(VariantManagementState.clearFakedStandardVariants.callCount, 1, "then faked standard variants were reset");
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
