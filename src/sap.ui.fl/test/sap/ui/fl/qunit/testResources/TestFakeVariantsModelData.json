@@ -8,7 +8,11 @@
 				"favorite": true,
 				"executeOnSelect": false,
 				"visible": true,
-				"author": "SAP"
+				"author": "SAP",
+				"contexts": { 
+					"role": ["ROLE1", "ROLE2"],
+					"country": ["DE", "IT"] 
+				}
 			},
 			{
 				"key": "variant0",
@@ -26,7 +30,11 @@
 				"favorite": true,
 				"executeOnSelect": false,
 				"visible": false,
-				"author": ""
+				"author": "",
+				"contexts": { 
+					"role": ["ROLE1"],
+					"country": ["DE"] 
+				}
 			}
 		]
 	},

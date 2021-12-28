@@ -18,6 +18,16 @@
 						"favorite": true,
 						"visible": true,
 						"executeOnSelect": false
+					},
+					"contexts": {
+						"country": [
+							"DE",
+							"IT"
+						],
+						"role": [
+							"ROLE1",
+							"ROLE2"
+						]
 					}
 				},
 				"controlChanges": [
@@ -267,6 +277,14 @@
 						"visible": false,
 						"executeOnSelect": false
 					},
+					"contexts": {
+						"country": [
+							"DE"
+						],
+						"role": [
+							"ROLE1"
+						]
+					},
 					"layer": "CUSTOMER",
 					"texts": {},
 					"namespace": "sap.ui.rta.test.Demo.md.Component",
@@ -417,6 +435,28 @@
 								"idIsLocal": false
 							},
 							"layer": "CUSTOMER"
+						}
+					],
+					"setContexts": [
+						{
+							"changeType": "setContexts",
+							"content": {
+								"contexts": {
+									"country": [
+										"DE"
+									],
+									"role": [
+										"ROLE1"
+									]
+								}
+							},
+							"fileName": "id_1507716136285_55_setContexts",
+							"fileType": "ctrl_variant_change",
+							"layer": "CUSTOMER",
+							"selector": {
+								"id": "variant2",
+								"idIsLocal": false
+							}
 						}
 					]
 				}

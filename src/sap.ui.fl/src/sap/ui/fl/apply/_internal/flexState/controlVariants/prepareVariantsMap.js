@@ -283,6 +283,12 @@ sap.ui.define([
 						oVariantClone.content.content.visible = oActiveChange.getContent().visible;
 					}
 					break;
+				case "setContexts":
+					oActiveChange = getActiveChange(aChanges);
+					if (oActiveChange) {
+						oVariantClone.content.contexts = oActiveChange.getContent().contexts;
+					}
+					break;
 				default:
 					Log.error("No valid changes on variant " + oVariantClone.content.content.title + " available");
 			}
