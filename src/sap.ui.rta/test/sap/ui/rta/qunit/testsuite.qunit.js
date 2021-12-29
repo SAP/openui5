@@ -802,7 +802,8 @@ sap.ui.define([
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
 				"RuntimeAuthoring-3": {
@@ -810,7 +811,7 @@ sap.ui.define([
 						only: ["sap/ui/rta/RuntimeAuthoring"]
 					},
 					ui5: {
-						flexibilityServices: '[{"connector": "LocalStorageConnector"}]',
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]',
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
@@ -823,7 +824,7 @@ sap.ui.define([
 						only: ["sap/ui/rta/RuntimeAuthoring"]
 					},
 					ui5: {
-						flexibilityServices: '[{"connector": "LocalStorageConnector"}]',
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]',
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
