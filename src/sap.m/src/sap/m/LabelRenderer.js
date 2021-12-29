@@ -67,13 +67,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 
 		if (sLabelForRendering) {
 			LabelEnablement.writeLabelForAttribute(rm, oLabel);
+			rm.accessibilityState({
+				label: oLabel.getText()
+			});
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.class("sapMLabelTBHeader");
 		}
-
-		rm.accessibilityState({
-			label: oLabel.getText()
-		});
 
 		// text direction
 		if (sTextDir !== TextDirection.Inherit){
