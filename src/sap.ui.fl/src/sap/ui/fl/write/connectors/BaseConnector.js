@@ -243,6 +243,19 @@ sap.ui.define([
 			 */
 			getTexts: function () {
 				return Promise.reject("translation.getTexts is not implemented");
+			},
+
+			/**
+			 * Interface called to upload an XLIFF file.
+			 *
+			 * @param {object} mPropertyBag - Property bag
+			 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+			 * @param {object} mPropertyBag.payload - The file to be uploaded
+			 * @returns {Promise} Resolves after the file was uploaded;
+			 * rejects if an error occurs or a parameter is missing
+			 */
+			postTranslationTexts: function () {
+				return Promise.reject("translation.postTranslationTexts is not implemented");
 			}
 		}
 	};

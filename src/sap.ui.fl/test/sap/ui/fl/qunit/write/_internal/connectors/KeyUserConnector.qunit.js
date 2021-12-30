@@ -152,7 +152,6 @@ sap.ui.define([
 
 	QUnit.module("KeyUserConnector.translation", {
 		afterEach: function() {
-			InitialUtils.sendRequest.restore();
 			sandbox.restore();
 		}
 	}, function() {
@@ -191,6 +190,20 @@ sap.ui.define([
 			return KeyUserConnector.translation.getTexts(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("given a mock server, when postTranslationTexts is triggered", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				payload: {}
+			};
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/translation/texts";
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: {}});
+			return KeyUserConnector.translation.postTranslationTexts(mPropertyBag).then(function () {
+				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");
 			});
 		});

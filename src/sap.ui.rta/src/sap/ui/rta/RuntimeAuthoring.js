@@ -1104,13 +1104,6 @@ sap.ui.define([
 					}.bind(this));
 				}
 
-				/*
-				FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer()).then(function() {
-					this._oToolbarControlsModel.setProperty("/translationVisible", true);
-				}.bind(this));
-				*/
-
-
 				this.getToolbar().setModel(this._oVersionsModel, "versions");
 				this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
 			}.bind(this));

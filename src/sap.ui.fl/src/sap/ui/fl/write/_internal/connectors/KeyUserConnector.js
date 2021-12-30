@@ -44,6 +44,7 @@ sap.ui.define([
 				DISCARD: PREFIX + API_VERSION + "/versions/draft/"
 			},
 			TRANSLATION: {
+				UPLOAD: PREFIX + API_VERSION + "/translation/texts",
 				DOWNLOAD: PREFIX + API_VERSION + "/translation/texts/",
 				GET_SOURCELANGUAGE: PREFIX + API_VERSION + "/translation/sourcelanguages/"
 			}
@@ -125,8 +126,15 @@ sap.ui.define([
 			return InitialUtils.sendRequest(sTranslationUrl, "GET", mPropertyBag).then(function(oResult) {
 				return oResult.response;
 			});
+		},
+
+		postTranslationTexts: function (mPropertyBag) {
+			_enhancePropertyBagWithTokenInfo(mPropertyBag);
+			var sTranslationUrl = InitialUtils.getUrl(KeyUserConnector.ROUTES.TRANSLATION.UPLOAD, mPropertyBag, {});
+			return InitialUtils.sendRequest(sTranslationUrl, "POST", mPropertyBag);
 		}
 	};
+
 
 	KeyUserConnector.initialConnector = InitialConnector;
 	return KeyUserConnector;

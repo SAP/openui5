@@ -20,6 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+
 	QUnit.module("TranslationAPI rejects", {
 		before: function() {
 			this.vSelector = {
@@ -55,26 +56,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Wwhen getTexts is triggered, with missing selector", function (assert) {
-			var mPropertyBag = {
-				reference: "reference",
-				layer: Layer.CUSTOMER
-			};
-			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "No selector was provided", "then the rejection message is passed");
-			});
-		});
-
-		QUnit.test("When getTexts is triggered, with missing selector", function (assert) {
-			var mPropertyBag = {
-				reference: "reference",
-				layer: Layer.CUSTOMER
-			};
-			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "No selector was provided", "then the rejection message is passed");
-			});
-		});
-
 		QUnit.test("When getTexts is triggered, with missing layer", function (assert) {
 			var mPropertyBag = {
 				sourceLanguage: "en-US",
@@ -83,6 +64,44 @@ sap.ui.define([
 			};
 			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
 				assert.equal(sRejectionMessage, "No layer was provided", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("when getSourceLanguages is triggered, with missing selector", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				layer: Layer.CUSTOMER
+			};
+			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "No selector was provided", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("When getSourceLanguages is triggered, with missing layer", function (assert) {
+			var mPropertyBag = {
+				reference: "reference",
+				selector: this.vSelector
+			};
+			return TranslationAPI.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "No layer was provided", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("When postTranslationTexts is triggered, with missing layer", function (assert) {
+			var mPropertyBag = {
+				payload: {}
+			};
+			return TranslationAPI.postTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "No layer was provided", "then the rejection message is passed");
+			});
+		});
+
+		QUnit.test("When postTranslationTexts is triggered, with missing layer", function (assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER
+			};
+			return TranslationAPI.postTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "No payload was provided", "then the rejection message is passed");
 			});
 		});
 	});
@@ -156,6 +175,24 @@ sap.ui.define([
 			return TranslationAPI.getTexts(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("given a mock server, when postTranslationTexts is triggered", function (assert) {
+			var mPropertyBag = {
+				layer: Layer.CUSTOMER,
+				payload: {}
+			};
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			var sUrl = "/flexKeyUser/flex/keyuser/v1/translation/texts";
+			var oStubSendRequest = sandbox.stub(InitialConnector, "sendRequest").resolves({response: {}});
+			return TranslationAPI.postTranslationTexts(mPropertyBag).then(function () {
+				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mPropertyBag, "the propertyBag is passed correct");
 			});
 		});
