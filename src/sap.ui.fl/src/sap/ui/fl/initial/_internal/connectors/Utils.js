@@ -159,7 +159,7 @@ sap.ui.define([
 								}
 
 								oResult.response = xhr.response;
-								if (typeof oResult.response === "string" && xhr.getResponseHeader("content-type") === "application/json") {
+								if (typeof oResult.response === "string" && xhr.getResponseHeader("content-type").startsWith("application/json")) {
 									oResult.response = JSON.parse(oResult.response);
 								}
 							}
