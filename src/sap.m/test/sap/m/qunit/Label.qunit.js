@@ -388,6 +388,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("aria-label should be updated on setText", function (assert) {
+		this.oLabel.setLabelFor("someid");
+		oCore.applyChanges();
 		var sAriaLabel = this.oLabel.$().attr('aria-label');
 
 		assert.strictEqual(sAriaLabel, "Selected: 1", "aria-label should be 'Selected: 1'");
@@ -423,6 +425,17 @@ sap.ui.define([
 				"Should be rendered as a span element when the labelFor points to a non-labelable control");
 
 		oLink.destroy();
+	});
+
+	QUnit.test("'aria-label' attribute should be set when label element is rendered", function (assert) {
+		this.label.setLabelFor("someid");
+		oCore.applyChanges();
+
+		assert.ok(this.label.getDomRef().hasAttribute("aria-label"), "'aria-label' attribute should be set on label element");
+	});
+
+	QUnit.test("'aria-label' attribute should NOT be set when span element is rendered", function (assert) {
+		assert.notOk(this.label.getDomRef().hasAttribute("aria-label"), "'aria-label' attribute should NOT be set on label element");
 	});
 
 	QUnit.module("DisplayOnly mode", {
