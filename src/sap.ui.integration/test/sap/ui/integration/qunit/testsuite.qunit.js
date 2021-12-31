@@ -249,6 +249,7 @@ sap.ui.define(function () {
 					"./cards/filters/CardFiltering.qunit",
 					"./cards/filters/DateRangeFilter.qunit",
 					"./cards/filters/FilterBarFactory.qunit",
+					"./cards/filters/SearchFilter.qunit",
 					"./cards/filters/SelectFilter.qunit"
 				],
 				coverage: {

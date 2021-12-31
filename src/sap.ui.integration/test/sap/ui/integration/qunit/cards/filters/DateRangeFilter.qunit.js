@@ -21,7 +21,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	QUnit.module("Generic", {
+	QUnit.module("DateRangeFilter Generic", {
 		beforeEach: function () {
 			this.oCard = new Card({
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
@@ -45,7 +45,7 @@ sap.ui.define([
 		oDRF.destroy();
 	});
 
-	QUnit.test("Card creating 'dateRange' filter", function (assert) {
+	QUnit.test("Card creating 'DateRange' filter", function (assert) {
 		// Arrange
 		var done = assert.async();
 
@@ -91,7 +91,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Value", {
+	QUnit.module("DateRangeFilter Value", {
 		beforeEach: function () {
 			this.oDRF = new DateRangeFilter();
 		},

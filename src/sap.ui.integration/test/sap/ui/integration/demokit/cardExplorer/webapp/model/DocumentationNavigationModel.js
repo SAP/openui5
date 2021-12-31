@@ -134,6 +134,12 @@ sap.ui.define([
 						experimental: true
 					},
 					{
+						title: 'Search',
+						target: 'learnDetail',
+						key: 'search',
+						experimental: true
+					},
+					{
 						title: 'Select',
 						target: 'learnDetail',
 						key: 'select',

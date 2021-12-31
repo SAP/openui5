@@ -1013,6 +1013,19 @@ sap.ui.define([
 						]
 					},
 					{
+						title: 'Search',
+						target: 'exploreSamples',
+						key: 'searchFilter',
+						experimental: true,
+						files: [
+							{
+								url: '/samples/filters/search/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
+					},
+					{
 						title: 'Select',
 						target: 'exploreSamples',
 						key: 'selectFilter',
