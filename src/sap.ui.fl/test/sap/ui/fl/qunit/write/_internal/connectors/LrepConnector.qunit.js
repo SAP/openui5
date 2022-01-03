@@ -679,6 +679,28 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given a mock server, when write a draft is triggered", function (assert) {
+			var mPropertyBag = {
+				flexObjects: [],
+				url: "/sap/bc/lrep",
+				parentVersion: "versionGUID"
+			};
+			var sUrl = "/sap/bc/lrep/changes/?parentVersion=versionGUID&sap-language=en";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+
+			return WriteLrepConnector.write(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: "[]"
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
 		QUnit.test("given a mock server, when write a local change is triggered", function (assert) {
 			var mPropertyBag = {
 				flexObjects: [],
@@ -1272,6 +1294,168 @@ sap.ui.define([
 					"&containerkey=container12&itemname=tablePersonalization", "the correct url was passed");
 				assert.equal(oCallArguments[1], "DELETE", "the correct method was passed");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("LrepConnector.versions.load", {
+		afterEach: function() {
+			sandbox.verifyAndRestore();
+		}
+	}, function () {
+		QUnit.test("get Versions", function (assert) {
+			var mPropertyBag = {
+				url: "/sap/bc/lrep",
+				reference: "com.sap.test.app",
+				limit: 10
+			};
+			assert.equal(mPropertyBag.limit, 10);
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/actions/getcsrftoken/"
+			};
+			var aReturnedVersions = {versions: [{
+				versionId: sap.ui.fl.Versions.Draft
+			}, {
+				versionId: "versionGUID"
+			}]};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: aReturnedVersions});
+			return WriteLrepConnector.versions.load(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, [{
+					version: sap.ui.fl.Versions.Draft
+				}, {
+					version: "versionGUID"
+				}], "the versions list is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/sap/bc/lrep/flex/versions/com.sap.test.app?sap-language=en&limit=10", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+	});
+
+	QUnit.module("LrepConnector.versions.discardDraft", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("discard draft", function (assert) {
+			var mPropertyBag = {
+				url: "/sap/bc/lrep",
+				reference: "com.sap.test.app"
+			};
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/actions/getcsrftoken/"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			return WriteLrepConnector.versions.discardDraft(mPropertyBag).then(function () {
+				assert.equal(oStubSendRequest.getCall(0).args[0], "/sap/bc/lrep/flex/versions/draft/com.sap.test.app", "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "DELETE", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+	});
+
+	QUnit.module("LrepConnector.versions.activate", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("activate draft", function (assert) {
+			var sActivateVersion = sap.ui.fl.Versions.Draft;
+			var mPropertyBag = {
+				url: "/sap/bc/lrep",
+				reference: "com.sap.test.app",
+				title: "new Title",
+				version: sActivateVersion
+			};
+
+			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/actions/getcsrftoken/",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: "{\"title\":\"new Title\"}"
+			};
+			var oActivatedVersion = {
+				versionId: "versionGUID"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
+			return WriteLrepConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {
+					version: "versionGUID"
+				}, "the activated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("reactivate old version", function (assert) {
+			var sActivateVersion = "1";
+			var mPropertyBag = {
+				url: "/sap/bc/lrep",
+				reference: "com.sap.test.app",
+				title: "new reactivate Title",
+				version: sActivateVersion
+			};
+
+			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/actions/getcsrftoken/",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: "{\"title\":\"new reactivate Title\"}"
+			};
+			var oActivatedVersion = {
+				versionId: "versionGUID"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
+			return WriteLrepConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {
+					version: "versionGUID"
+				}, "the reactivated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
+		});
+
+		QUnit.test("reactivate original app", function (assert) {
+			var sActivateVersion = sap.ui.fl.Versions.Original;
+			var mPropertyBag = {
+				url: "/sap/bc/lrep",
+				reference: "com.sap.test.app",
+				title: "new Title",
+				version: sActivateVersion
+			};
+
+			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var mExpectedPropertyBag = {
+				xsrfToken: undefined,
+				initialConnector: InitialLrepConnector,
+				tokenUrl: "/actions/getcsrftoken/",
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				payload: "{\"title\":\"new Title\"}"
+			};
+			var oActivatedVersion = {
+				versionId: "versionGUID"
+			};
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oActivatedVersion});
+			return WriteLrepConnector.versions.activate(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, {
+					version: "versionGUID"
+				}, "the activated version is returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "the request has the correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the method is correct");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2], mExpectedPropertyBag, "the propertyBag is passed correct");
+			});
 		});
 	});
 

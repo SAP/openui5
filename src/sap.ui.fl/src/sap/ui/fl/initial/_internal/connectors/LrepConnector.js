@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/Utils",
-	"sap/ui/dom/includeScript"
+	"sap/ui/dom/includeScript",
+	"sap/base/util/restricted/_pick"
 ], function(
 	Utils,
 	FlexUtils,
-	includeScript
+	includeScript,
+	_pick
 ) {
 	"use strict";
 
@@ -88,10 +90,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 
-			var mParameters = {};
-			if (mPropertyBag.allContexts) {
-				mParameters["allContexts"] = mPropertyBag.allContexts;
-			}
+			var mParameters = _pick(mPropertyBag, ["version", "allContexts"]);
 			this._addClientInfo(mParameters);
 			Utils.addLanguageInfo(mParameters);
 			var sAppDescriptorId;

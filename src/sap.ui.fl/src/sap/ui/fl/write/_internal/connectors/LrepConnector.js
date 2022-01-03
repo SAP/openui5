@@ -50,7 +50,12 @@ sap.ui.define([
 		APPVARIANTS: "/appdescr_variants/",
 		APPVARIANTS_OVERVIEW: "/app_variant_overview/",
 		UI2PERSONALIZATION: "/ui2personalization/",
-		CONTEXTS: "/flex/contexts/"
+		CONTEXTS: "/flex/contexts/",
+		VERSIONS: {
+			GET: "/flex/versions/",
+			ACTIVATE: "/flex/versions/activate/",
+			DISCARD: "/flex/versions/draft/"
+		}
 	};
 
 	/**
@@ -66,6 +71,8 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.isAppVariant] Indicator whether this is an app variant
 	 * @param {boolean} [mPropertyBag.isContextSharing] Indicator whether this is a request for context sharing
 	 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
+	 * @param {boolean} [mPropertyBag.isCondensingEnabled] Indicator whether this is a request for condensing
+	 * @param {boolean} [mPropertyBag.parentVersion] Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */
@@ -85,6 +92,9 @@ sap.ui.define([
 		var mParameters = mPropertyBag.transport ? {changelist: mPropertyBag.transport} : {};
 		if (mPropertyBag.skipIam) {
 			mParameters.skipIam = mPropertyBag.skipIam;
+		}
+		if (mPropertyBag.parentVersion) {
+			mParameters.parentVersion = mPropertyBag.parentVersion;
 		}
 		InitialUtils.addLanguageInfo(mParameters);
 		InitialConnector._addClientInfo(mParameters);
@@ -138,6 +148,12 @@ sap.ui.define([
 			return Promise.reject(new Error("Transport information could not be determined"));
 		});
 	};
+
+	function renameVersionNumberProperty(oVersion) {
+		oVersion.version = oVersion.versionId;
+		delete oVersion.versionId;
+		return oVersion;
+	}
 
 	/**
 	 * Connector for requesting data from an LRep-based back end.
@@ -598,6 +614,47 @@ sap.ui.define([
 					itemname: mPropertyBag.itemName
 				});
 				return WriteUtils.sendRequest(sUrl, "DELETE");
+			}
+		},
+		versions: {
+			load: function (mPropertyBag) {
+				var oRequestOption = WriteUtils.getRequestOptions(
+					InitialConnector,
+					ROUTES.TOKEN
+				);
+				var mParameters = {};
+				InitialUtils.addLanguageInfo(mParameters);
+				mParameters.limit = mPropertyBag.limit;
+				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
+				return WriteUtils.sendRequest(sVersionsUrl, "GET", oRequestOption).then(function (oResult) {
+					return oResult.response.versions.map(function (oVersion) {
+						return renameVersionNumberProperty(oVersion);
+					});
+				});
+			},
+			activate: function (mPropertyBag) {
+				var oRequestOption = WriteUtils.getRequestOptions(
+					InitialConnector,
+					ROUTES.TOKEN,
+					{title: mPropertyBag.title},
+					"application/json; charset=utf-8",
+					"json"
+				);
+				var mParameters = {version: mPropertyBag.version};
+				InitialUtils.addLanguageInfo(mParameters);
+				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
+				return WriteUtils.sendRequest(sVersionsUrl, "POST", oRequestOption).then(function (oResult) {
+					var oVersion = oResult.response;
+					return renameVersionNumberProperty(oVersion);
+				});
+			},
+			discardDraft: function (mPropertyBag) {
+				var oRequestOption = WriteUtils.getRequestOptions(
+					InitialConnector,
+					ROUTES.TOKEN
+				);
+				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.DISCARD, mPropertyBag);
+				return WriteUtils.sendRequest(sVersionsUrl, "DELETE", oRequestOption);
 			}
 		}
 	});
