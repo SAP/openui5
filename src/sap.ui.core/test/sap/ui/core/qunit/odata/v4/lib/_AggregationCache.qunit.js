@@ -956,7 +956,6 @@ sap.ui.define([
 			oReadResult1 = {value : [{}, {}]},
 			that = this;
 
-
 		oCache.aElements = [
 			{/* expanded node */},
 			{/* first leaf */},

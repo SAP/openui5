@@ -305,7 +305,6 @@ sap.ui.define([
 		});
 		aRequestBody.push("--", sBatchBoundary, "--\r\n", sEpilogue);
 
-
 		return {body : aRequestBody, batchBoundary : sBatchBoundary};
 	}
 

@@ -5458,7 +5458,6 @@ sap.ui.define([
 		var oBinding = this.bindList("/EMPLOYEES"),
 			sOrderby = "bar desc";
 
-
 		assert.strictEqual(oBinding.getOrderby(), "", "empty sorters");
 		assert.strictEqual(oBinding.getOrderby(sOrderby), sOrderby);
 
@@ -7977,7 +7976,6 @@ sap.ui.define([
 		}, new Error(oBinding + ": /TEAMS('1') is not an entity of the collection"));
 	});
 });
-
 
 	//*********************************************************************************************
 	QUnit.test("moveEntityHere: not suspended", function (assert) {

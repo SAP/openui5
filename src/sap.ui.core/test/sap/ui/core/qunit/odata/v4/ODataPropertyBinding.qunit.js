@@ -953,7 +953,6 @@ sap.ui.define([
 		this.mock(oBinding).expects("fireDataRequested").never();
 		this.mock(oBinding).expects("fireDataReceived").never();
 
-
 		// code under test
 		return oBinding.checkUpdateInternal().then(function () {
 			assert.strictEqual(oBinding.getValue(), undefined);

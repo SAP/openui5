@@ -39,7 +39,7 @@
 				"key-spacing": ["error", {"beforeColon": true}],
 				"lines-between-class-members": "error",
 				"no-lonely-if": "error", // override "warn"
-				"no-multiple-empty-lines": "error",
+				"no-multiple-empty-lines": ["error", {"max": 1}],
 				"no-multi-spaces": "error",
 				"no-unneeded-ternary": ["error", {"defaultAssignment": false}],
 				"no-whitespace-before-property": "error",
