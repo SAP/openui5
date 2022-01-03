@@ -868,8 +868,7 @@ sap.ui.define([], function () {
 		 * <b>Example:</b>
 		 *
 		 * <code>$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP
-		 * ;$select=ID,Name);$select=*;$count=true;$orderby=Name
-		 * desc)</code>
+		 * ;$select=ID,Name);$select=*;$count=true;$orderby=Name desc)</code>
 		 * is converted to
 		 * <pre>
 			{
