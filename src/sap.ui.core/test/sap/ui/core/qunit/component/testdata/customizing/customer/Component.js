@@ -8,7 +8,7 @@ sap.ui.define([
 
 		metadata : {
 			version : "1.0",
-
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			customizing: {
 
 				"sap.ui.viewReplacements": {

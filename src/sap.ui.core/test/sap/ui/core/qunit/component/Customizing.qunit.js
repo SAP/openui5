@@ -78,10 +78,6 @@ sap.ui.define([
 	// View Extension
 	QUnit.test("View Extension", function(assert) {
 		assert.ok(document.getElementById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
-		assert.ok(document.getElementById("buttonWithCustomerAction"), "JSView Extension should be rendered");
-
-		// extension within extension
-		assert.ok(document.getElementById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
 
 		// extension withing fragment
 		assert.ok(document.getElementById("theComponent---mainView--customFrag1Btn"), "Extension within Fragment without id should be rendered");
@@ -192,8 +188,6 @@ sap.ui.define([
 
 		assert.ok(oFirstItem, "First ListItem should exist");
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");
-		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentText"), "JS extension point 1 should contain default content");
-		assert.ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
 	QUnit.module("Controller Customizing via Hook", {
@@ -220,7 +214,7 @@ sap.ui.define([
 							assert.equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
 							assert.equal(aLifeCycleCalls[1], "Sub2ControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub2ControllerExtension Controller onInit()");
 								aLifeCycleCalls.push("ControllerExtension onInit()");
-								assert.equal(Component.getOwnerIdFor(this.byId("standardBtnWithStandardAction")), this.getOwnerComponent().getId(), "Propagation of owner component to view creation works!");
+							assert.equal(Component.getOwnerIdFor(this.byId("standardBtnWithStandardAction")), this.getOwnerComponent().getId(), "Propagation of owner component to view creation works!");
 						},
 						onBeforeRendering: function() {
 							assert.equal(aLifeCycleCalls.length, 3, "ControllerExtension lifecycle method execution count is correct!");
@@ -276,27 +270,6 @@ sap.ui.define([
 
 		},
 		afterEach: destroyComponentAndContainer
-	});
-
-	QUnit.test("Register ExtensionProvider (sync)", function(assert) {
-
-		assert.expect(21);
-
-		// test processing will be completed in onExit of the view extension
-		this.done = assert.async();
-
-		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
-		var that = this;
-		sap.ui.predefine("sap/my/sync/ExtensionProvider", [], function() {
-			var ExtensionProvider = function() {};
-			ExtensionProvider.prototype.getControllerExtensions = that.getControllerExtensions;
-			return ExtensionProvider;
-		}, true);
-
-		//...and reinitialize - with registered ExtensionProvider
-		Controller.registerExtensionProvider("sap.my.sync.ExtensionProvider");
-
-		return createComponentAndContainer();
 	});
 
 	QUnit.test("Register ExtensionProvider (async)", function(assert) {

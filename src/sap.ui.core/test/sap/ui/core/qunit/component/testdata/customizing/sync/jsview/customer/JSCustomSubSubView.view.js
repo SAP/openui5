@@ -5,7 +5,7 @@ sap.ui.define([
 	function(TextView, JSView) {
 	"use strict";
 
-	sap.ui.jsview("testdata.customizing.customer.JSCustomSubSubView", {
+	sap.ui.jsview("testdata.customizing.sync.jsview.customer.JSCustomSubSubView", {
 
 		createContent : function(oController) {
 

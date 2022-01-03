@@ -2,7 +2,7 @@ sap.ui.define(['sap/m/Button', 'sap/ui/core/Fragment'],
 	function(Button, Fragment) {
 	"use strict";
 
-	sap.ui.jsfragment("testdata.customizing.customer.JSCustomFragWithCustomAction", {
+	sap.ui.jsfragment("testdata.customizing.sync.jsview.customer.JSCustomFragWithCustomAction", {
 
 		createContent : function(oController) {
 			var oButton = new Button("buttonWithCustomerAction", {

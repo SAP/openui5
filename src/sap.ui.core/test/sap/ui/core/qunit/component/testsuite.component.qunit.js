@@ -82,6 +82,13 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			"Customizing_unavoidablySync": {
+				title: "Customizing in general - sap.ui.core (sync tests)",
+				qunit: {
+					// Test makes assumptions about when CustomizingData is loaded
+					reorder: false
+				}
+			},
 			"Customizing_async": {
 				title: "Async Customizing - sap.ui.core",
 				qunit: {

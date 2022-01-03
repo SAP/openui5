@@ -6,10 +6,10 @@ sap.ui.define([
 ], function(Button, Text, JSView, VerticalLayout) {
 	"use strict";
 
-	sap.ui.jsview("testdata.customizing.sap.Sub4", {
+	sap.ui.jsview("testdata.customizing.sync.jsview.sap.Sub", {
 
 		getControllerName : function(){
-			return "testdata.customizing.sap.Sub4";
+			return "testdata.customizing.sync.jsview.sap.Sub";
 		},
 		createContent : function(oController) {
 			var that = this;
@@ -58,7 +58,7 @@ sap.ui.define([
 			var oLayout = new VerticalLayout("Layout1", {
 				content: [
 					new Text({
-						text: "SAP View 'Sub4' - the text after this one is hidden by customizing: "
+						text: "SAP View 'Sub' - the text after this one is hidden by customizing: "
 					}),
 					new Text("customizableText1", {
 						text: "This text is made invisible by customization"

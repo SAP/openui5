@@ -23,6 +23,9 @@ sap.ui.define([
 
 		before: function() {
 			this.oXMLTPSpy = sinon.spy(XMLTemplateProcessor, "parseTemplatePromise");
+			return new Promise(function (resolve, reject) {
+				sap.ui.require(["sap/ui/core/mvc/XMLView"], resolve, reject);
+			});
 		},
 		beforeEach: function() {
 			this.oXMLTPSpy.resetHistory();
