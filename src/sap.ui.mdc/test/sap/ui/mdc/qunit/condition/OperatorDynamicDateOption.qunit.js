@@ -383,8 +383,8 @@ sap.ui.define([
 		var aRange = oOperatorDynamicDateOption.toDates(oValue);
 		assert.ok(Array.isArray(aRange), "Array returned");
 		assert.equal(aRange.length, 2, "Range length");
-		assert.deepEqual(aRange[0], new Date(2021, 0, 1), "First value");
-		assert.deepEqual(aRange[1], new Date(2021, 2, 31), "Second value");
+		assert.deepEqual(aRange[0], new Date(new Date().getFullYear(), 0, 1), "First value");
+		assert.deepEqual(aRange[1], new Date(new Date().getFullYear(), 2, 31), "Second value");
 
 	});
 
