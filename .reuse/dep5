@@ -28,7 +28,7 @@ Disclaimer: The code in this project may include calls to APIs (“API Calls”)
 # OpenUI5 code
 
 Files: *
-Copyright: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+Copyright: 2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
 License: Apache-2.0
 
 
@@ -60,7 +60,7 @@ Comment: these files belong to: jQuery UI
 
 Files: src/sap.ui.commons/src/sap/ui/commons/Carousel.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     Spencer Tipping
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jquery.fix.clone: Carousel.js is authored by SAP, but contains an improved implementation of the clone function which is taken from jquery-fix-clone
@@ -75,35 +75,35 @@ Comment: these files belong to: jQuery 3
 
 Files: src/sap.ui.core/src/sap/base/util/isPlainObject.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     OpenJS Foundation and other contributors
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery 3: isPlainObject.js is overall written by SAP, but contains a modified implementation of jQuery.isPlainObject taken from jQuery
 
 Files: src/sap.ui.core/src/sap/base/util/_merge.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     OpenJS Foundation and other contributors
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery 3: _merge.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery
 
 Files: src/sap.ui.core/src/jquery.sap.script.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     OpenJS Foundation and other contributors
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery 3: jquery.sap.script.js is overall written by SAP, but contains a modified implementation of jQuery.extend taken from jQuery
 
 Files: src/sap.ui.core/src/sap/ui/Device.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2011, John Resig
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery 1: Device.js is overall written by SAP, but contains code taken from jQuery 1.7.1 (see the respective comment)
 
 Files: src/sap.ui.core/src/sap/ui/dom/jquery/Selectors.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2014 jQuery Foundation and other contributors
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery UI 1.8: Selectors.js is overall written by SAP, but contains code taken from jQuery UI (see the respective comments)
@@ -115,14 +115,14 @@ Comment: these files belong to: jQuery UI 1.10
 
 Files: src/sap.ui.core/src/jquery.sap.dom.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2014 jQuery Foundation and other contributors
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery UI 1.10: jquery.sap.dom.js is overall written by SAP, but contains code taken from jQuery UI Core (see the respective comment)
 
 Files: src/sap.ui.core/src/sap/ui/dom/jquery/zIndex.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2014 jQuery Foundation and other contributors
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery UI 1.11: zIndex.js is overall written by SAP, but contains an implementation of the function 'fnzIndex' which is taken from jQuery UI Datepicker 1.11.1
@@ -149,7 +149,7 @@ Comment: these files belong to: jQuery Mobile
 
 Files: src/sap.ui.core/src/sap/ui/util/_FeatureDetection.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2012 Wei-Ko Kao
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery.rtl-scroll-type: _FeatureDetection.js is overall written by SAP, but contains code which is inspired by jQuery.rtl-scroll-type
@@ -281,14 +281,14 @@ Comment: these files belong to: blanket.js
 
 Files: src/sap.ui.core/src/sap/base/util/JSTokenizer.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     Douglas Crockford
 License: Apache-2.0 and LicenseRef-JSONinJSPublicDomain
 Comment: these files contain content from SAP and JSON in JS: JSTokenizer.js is overall written by SAP, but contains code has been taken from the component JSON in JavaScript (https://github.com/douglascrockford/JSON-js/blob/master/json2.js) from Douglas Crockford which is licensed under Public Domain
 
 Files: src/sap.ui.core/src/sap/ui/base/ExpressionParser.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2010 Douglas Crockford
 License: Apache-2.0
 Comment: these files contain content from SAP and Top Down Operator Precedence: ExpressionParser.js is overall written by SAP, but contains code taken from or inspired by TDOP by Douglas Crockford (see the respective comment)
@@ -322,7 +322,7 @@ Comment: these files contain content from p-cancelable and @babel/helpers: _Canc
 
 Files: src/sap.ui.core/src/sap/ui/core/date/Persian.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     Behrang Norouzinia
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and Jalaali JS: Persian.js is overall written by SAP, but the calculation is taken from jalaali-js
@@ -334,7 +334,7 @@ Comment: these files belong to: vkBeautify
 
 Files: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     Isaac Z. Schlueter and Contributors
 License: Apache-2.0 and ISC
 Comment: these files contain content from SAP and node-lru-cache: LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.
@@ -415,7 +415,7 @@ Comment: these files belong to: @cfworker/json-schema
 
 Files: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2015 unnikked
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and BooleanExpressionEvaluator: BoolExprTool.js is authored by SAP, but partly inspired by BooleanExpressionEvaluator
@@ -459,7 +459,7 @@ Comment: these files belong to: LESS
 
 Files: lib/jsdoc/ui5/plugin.js
 Copyright:
-    2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
+    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
     2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc
 License: Apache-2.0
 Comment: these files contain content from SAP and JSDoc 3: plugin.js is overall written by SAP, but contains code taken from JSDoc 3.6.7 (see the respective comments)
