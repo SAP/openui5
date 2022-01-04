@@ -72,12 +72,12 @@ sap.ui.define([
 		var OriginalAssociation = ElementMetadata.prototype.metaFactoryAssociation;
 		var WebComponentAssociation = function(oClass, name, info) {
 			OriginalAssociation.apply(this, arguments);
-
 			if (!info.mapping || typeof info.mapping !== "object") {
 				this._sMapping = ""; // For associations, "mapping" must be an object, because "to" is required
 			} else {
 				this._sMapping = "property"; // Associations map only to properties, no matter what is set, it's always "property" mapping
 				this._sMapTo = info.mapping.to; // The property, to which the association is related
+				this._fnMappingFormatter = info.mapping.formatter;
 			}
 		};
 		WebComponentAssociation.prototype = Object.create(OriginalAssociation.prototype);

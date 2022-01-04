@@ -60,14 +60,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the textarea.
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Indicates whether the user can interact with the component or not. <br>
 				 * <br>
 				 * <b>Note:</b> A disabled component is completely noninteractive.
@@ -226,6 +218,19 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					defaultValue: null,
 					mapping: "style"
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

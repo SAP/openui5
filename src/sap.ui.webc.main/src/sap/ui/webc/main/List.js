@@ -82,14 +82,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the IDs of the elements that label the input.
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Defines the accessible role of the component. <br>
 				 * <br>
 				 */
@@ -233,6 +225,19 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.webc.main.IListItem",
 					multiple: true
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

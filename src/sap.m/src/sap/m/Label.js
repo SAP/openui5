@@ -160,8 +160,8 @@ function(
 		associations : {
 
 			/**
-			 * Association to the labeled control.
-			 * By default the label set the for attribute to the ID of the labeled control. This can be changed by implementing the function getIdForLabel on the labelled control.
+			 * Association to the labelled control.
+			 * By default, the label sets the for attribute to the ID of the labelled control. This can be changed by implementing the function getIdForLabel on the labelled control.
 			 */
 			labelFor : {type : "sap.ui.core.Control", multiple : false}
 		},

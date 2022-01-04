@@ -191,10 +191,17 @@ sap.ui.define([
 			for (var sAssocName in oAssociations) {
 				var oAssocData = oAssociations[sAssocName];
 				var vAssocValue = oAssocData.get(oWebComponent);
-				var sPropName = oAssocData._sMapTo; // The name of the property to be set with the association's ID value
-				var sPropValue = typeof vAssocValue === "object" ? vAssocValue.getId() : vAssocValue; // The ID, held by the association
-				if (sPropValue) { // Only set the property, if the association is set
-					oRm.attr(sPropName, sPropValue);
+				var sPropName = hyphenate(oAssocData._sMapTo); // The name of the property to be set with the association's ID value
+				if (oAssocData._fnMappingFormatter) {
+					vAssocValue = oWebComponent[oAssocData._fnMappingFormatter].call(oWebComponent, vAssocValue);
+				}
+
+				if (!oAssocData.multiple && vAssocValue && typeof vAssocValue === "object") {
+					vAssocValue = vAssocValue.getId(); // The value will be the control ID, held by the association
+				}
+
+				if (vAssocValue) { // Only set the property, if the association is set
+					oRm.attr(sPropName, vAssocValue);
 				}
 			}
 		};

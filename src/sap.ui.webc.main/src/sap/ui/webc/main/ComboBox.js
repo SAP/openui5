@@ -62,14 +62,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the combo box
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Defines whether the component is in disabled state. <br>
 				 * <br>
 				 * <b>Note:</b> A disabled component is completely noninteractive.
@@ -190,6 +182,19 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.webc.main.IComboBoxItem",
 					multiple: true
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {
