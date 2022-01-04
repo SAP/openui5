@@ -154,7 +154,7 @@ sap.ui.define([
 	 * return those contexts that were last requested by a control, but all contexts that are
 	 * currently available in the binding.
 	 *
-	 * @returns {sap.ui.model.v2.Context[]}
+	 * @returns {sap.ui.model.odata.v2.Context[]}
 	 *   All current contexts of this list binding, in no special order
 	 *
 	 * @public
