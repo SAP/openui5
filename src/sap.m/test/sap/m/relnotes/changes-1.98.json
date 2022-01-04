@@ -1,7 +1,29 @@
 {
   "1.98.0": {
-    "date": "December 2021",
+    "date": "January 2022",
     "notes": [
+      {
+        "id": "2427ec301f8a55abdc0be966349fc8dc9f440ddb",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: The names of options are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "40b1a30a36c3e0c61d123ebe49e2ac3d8fa605ff",
+        "type": "FIX",
+        "text": " sap.m.Label: aria-label attribute is now set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430748"
+          }
+        ]
+      },
       {
         "id": "57d6fdd6a159da5138c0f11da725110ce4c3d839",
         "type": "FIX",
