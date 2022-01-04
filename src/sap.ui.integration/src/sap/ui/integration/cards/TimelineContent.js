@@ -184,7 +184,6 @@ sap.ui.define([
 			template: this._oTimeLineItemTemplate
 		};
 
-		this._filterHiddenNavigationItems(mItem, oBindingInfo);
 		this._bindAggregationToControl("content", this._getTimeline(), oBindingInfo);
 
 		return this;

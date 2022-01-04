@@ -101,26 +101,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Used to filter the content items that are to be hidden.
-	 *
-	 * @protected
-	 * @param {Object} mItemConfig The item template.
-	 * @param {Object} oBindingInfo The binding info on which to attach the filter.
-	 */
-	BaseListContent.prototype._filterHiddenNavigationItems = function (mItemConfig, oBindingInfo) {
-		if (!mItemConfig.actions) {
-			return;
-		}
-		var oAction = mItemConfig.actions[0];
-		if (!(oAction && oAction.service && oAction.type === "Navigation")) {
-			return;
-		}
-		var oFilter = new Filter("_card_item_hidden", FilterOperator.EQ, false);
-		this.awaitEvent("_filterNavItemsReady");
-		oBindingInfo.filters = [oFilter];
-	};
-
-	/**
 	 * Used to check which content items should be hidden based on the Navigation Service.
 	 *
 	 * @protected
@@ -135,16 +115,14 @@ sap.ui.define([
 			return;
 		}
 
-		var oBindingInfo = this.getInnerList().getBinding("items"),
-			oModel = oBindingInfo.getModel(),
-			sPath = oBindingInfo.getPath(),
-			aItems = oModel.getProperty(sPath),
+		var oInnerList = this.getInnerList(),
+			aItems = oInnerList.getItems(),
 			aPromises = [],
 			oAction = mItemConfig.actions[0],
-			sBasePath = sPath.trim().replace(/\/$/, ""),
-			sActionName;
+			sActionName,
+			iVisibleItems = 0;
 
-		if (!(oAction && oAction.service && oAction.type === "Navigation")) {
+		if (!oAction || !oAction.service || oAction.type !== "Navigation") {
 			return;
 		}
 
@@ -155,39 +133,45 @@ sap.ui.define([
 		}
 
 		// create new promises
-		aItems.forEach(function (oItem, iIndex) {
+		aItems.forEach(function (oItem) {
 			var mParameters = BindingResolver.resolveValue(
 				oAction.parameters,
 				this,
-				sBasePath + "/" + iIndex
+				oItem.getBindingContext().getPath()
 			);
 
-			if (oItem._card_item_hidden === undefined) {
-				oItem._card_item_hidden = false;
-			}
+			aPromises.push(this._oServiceManager
+				.getService(sActionName)
+				.then(function (oNavigationService) {
+					if (!oNavigationService.hidden) {
+						return false;
+					}
 
-			aPromises.push(
-				this._oServiceManager
-					.getService(sActionName)
-					.then(function (oNavigationService) {
-						if (!oNavigationService.hidden) {
-							return false;
-						}
+					return oNavigationService.hidden({parameters: mParameters});
+				})
+				.then(function (bHidden) {
+					oItem.setVisible(!bHidden);
+					if (!bHidden) {
+						iVisibleItems++;
+					}
+				})
+				.catch(function (sMessage) {
+					Log.error(sMessage);
+				}));
 
-						return oNavigationService.hidden({ parameters: mParameters });
-					})
-					.then(function (bHidden) {
-						oItem._card_item_hidden = !!bHidden;
-						oModel.checkUpdate(true);
-					})
-					.catch(function (sMessage) {
-						Log.error(sMessage);
-					})
-			);
 		}.bind(this));
 
-		oModel.checkUpdate(true);
-		this._awaitPromises(aPromises);
+		this.awaitEvent("_filterNavItemsReady");
+
+		var pCurrent = this._oAwaitingPromise = Promise.all(aPromises)
+			.then(function () {
+				if (this._oAwaitingPromise === pCurrent) {
+					if (this.getModel("parameters")) {
+						this.getModel("parameters").setProperty("/visibleItems", iVisibleItems);
+					}
+					this.fireEvent("_filterNavItemsReady");
+				}
+			}.bind(this));
 	};
 
 	/**
