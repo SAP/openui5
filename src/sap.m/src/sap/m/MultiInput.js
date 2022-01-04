@@ -356,9 +356,9 @@ function(
 				that._manageListsVisibility(!!oTokenizer.getTokens().length);
 			})
 			.attachAfterOpen(function () {
-				var sTokensText = that.getTokens().length ? oRb.getText("MULTIINPUT_NAVIGATION_TOKENS") : "";
+				var sNavigationText = that.getTokens().length ? oRb.getText("MULTIINPUT_NAVIGATION_POPUP_AND_TOKENS") : oRb.getText("MULTIINPUT_NAVIGATION_POPUP");
 
-				that._oInvisibleMessage.announce(oRb.getText("MULTIINPUT_NAVIGATION_POPUP", [sTokensText]));
+				that._oInvisibleMessage.announce(sNavigationText);
 			});
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
