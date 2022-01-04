@@ -24,6 +24,7 @@ sap.ui.define([
 		aData = _aData.map(function (oEntry) {
 			var oTime = new Date(oEntry.Time);
 			oTime.setMonth(oToday.getMonth()); // always use the current month
+			oTime.setFullYear(oToday.getFullYear()); // always use the current year
 
 			// yesterday, today, tomorrow
 			var aOffsets = [-1, 0, 1];
