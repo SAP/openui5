@@ -589,7 +589,6 @@ sap.ui.define([
 		return this.oBinding.getGeneration();
 	};
 
-
 	/**
 	 * Returns the group ID of the context's binding that is used for read requests. See
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#getGroupId} and

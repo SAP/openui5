@@ -2273,7 +2273,6 @@ sap.ui.define([
 				], oTargetContext)
 			.returns(oPromise);
 
-
 		// code under test
 		return oContext.requestSideEffectsInternal([
 				"/.../TEAM_2_MANAGER/Manager_to_Team/TEAM_ID",

@@ -43,7 +43,6 @@ sap.ui.define([
 		return oResult;
 	}
 
-
 	/*
 	 * Simulation of {@link sap.ui.model.odata.v4.ODataModel#getGroupProperty}
 	 */

@@ -521,7 +521,6 @@ sap.ui.define([
 			this.mock(Binding.prototype).expects("setContext").on(oBinding)
 				.withExactArgs(sinon.match.same(oTargetContext));
 
-
 			// code under test
 			oBinding.setContext(oTargetContext);
 
@@ -535,7 +534,6 @@ sap.ui.define([
 			});
 		});
 	});
-
 
 	//*********************************************************************************************
 	QUnit.test("setContext, relative path with parameters", function (assert) {
@@ -3842,7 +3840,6 @@ sap.ui.define([
 				oBindingMock = this.mock(oBinding),
 				oDependent0 = {resumeInternal : function () {}},
 				oDependent1 = {resumeInternal : function () {}};
-
 
 			oBinding.oOperation.bAction = bAction;
 

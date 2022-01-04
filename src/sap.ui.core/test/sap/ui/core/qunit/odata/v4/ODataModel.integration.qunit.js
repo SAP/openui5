@@ -822,7 +822,6 @@ sap.ui.define([
 				.replace(/\s/g, ""), "More" + sExpected, "check More button: " + sExpected);
 		},
 
-
 		/**
 		 * Creates a view with a numeric property, "enters" incorrect text to reach an invalid data
 		 * state, calls resetChanges at the given object and checks that the control gets another
@@ -8420,7 +8419,6 @@ sap.ui.define([
 			// scrolling not possible: only one entry
 		});
 	});
-
 
 	//*********************************************************************************************
 	// Scenario: All pairs test for multi create (8)
@@ -20348,7 +20346,6 @@ sap.ui.define([
 				})
 				.expectChange("salary", ["997"]);
 
-
 			return Promise.all([
 				that.oModel.submitBatch("update"),
 				oContext.created(),
@@ -23028,7 +23025,6 @@ sap.ui.define([
 			});
 			oAction.setParameter("ManagerID", "01");
 
-
 			return Promise.all([
 				// code under test
 				oAction.execute(),
@@ -24201,7 +24197,6 @@ sap.ui.define([
 					technical : true,
 					type : "Error"
 				}]);
-
 
 			// simulate navigation to a detail page if only a key property is given which belongs
 			// to a deleted entity; all bindings have to read data again and fail because entity is
