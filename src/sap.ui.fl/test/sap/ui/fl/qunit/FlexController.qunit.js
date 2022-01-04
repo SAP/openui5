@@ -146,8 +146,8 @@ function (
 			return this.oFlexController.saveAll(oComp, true, false, Layer.CUSTOMER, true)
 				.then(function() {
 					var aLayersToReset = oRemoveStub.firstCall.args[0];
-					assert.ok(aLayersToReset.includes(Layer.USER), "then dirty changes on higher layers are removed");
-					assert.ok(aLayersToReset.includes(Layer.VENDOR), "then dirty changes on lower layers are removed");
+					assert.ok(aLayersToReset.indexOf(Layer.USER) !== -1, "then dirty changes on higher layers are removed");
+					assert.ok(aLayersToReset.indexOf(Layer.VENDOR) !== -1, "then dirty changes on lower layers are removed");
 					assert.ok(oUrlHandlerStub.notCalled, "then the page is not reloaded");
 				});
 		});

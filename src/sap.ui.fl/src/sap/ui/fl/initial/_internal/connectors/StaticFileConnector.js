@@ -22,7 +22,7 @@ sap.ui.define([
 				return LoaderExtensions.loadResource(sBundleResourcePath);
 			} catch (e) {
 				//JSON parse error of bundle file --> log error
-				if (e.name.includes("SyntaxError")) {
+				if (e.name.indexOf("SyntaxError") !== -1) {
 					Log.error(e);
 				}
 				Log.warning("flexibility did not find a " + sBundleName + ".json for the application: " + sReference);

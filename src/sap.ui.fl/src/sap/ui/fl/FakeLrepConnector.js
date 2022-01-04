@@ -86,9 +86,7 @@ sap.ui.define([
 		synchronous: {
 			clearAll: function (oStorage) {
 				var fnRemoveItem = function(sKey) {
-					var bIsFlexObject = sKey.includes(FL_PREFIX);
-
-					if (!bIsFlexObject) {
+					if (sKey.indexOf(FL_PREFIX) === -1) {
 						return;
 					}
 
@@ -113,9 +111,7 @@ sap.ui.define([
 			getNumberOfChanges: function(oStorage, sReference) {
 				var iCount = 0;
 				Object.keys(oStorage).map(function(sKey) {
-					var bIsFlexObject = sKey.includes(FL_PREFIX);
-
-					if (!bIsFlexObject) {
+					if (sKey.indexOf(FL_PREFIX) === -1) {
 						return;
 					}
 					var oFlexObject = JSON.parse(oStorage.getItem(sKey));

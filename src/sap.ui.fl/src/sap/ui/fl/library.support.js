@@ -94,9 +94,8 @@ sap.ui.define([
 				aUnstableOverlays.forEach(function (oElementOverlay) {
 					var oElement = oElementOverlay.getElement();
 					var sElementId = oElement.getId();
-					var bHasConcatenatedId = sElementId.includes("--");
 
-					if (!bHasConcatenatedId) {
+					if (sElementId.indexOf("--") === -1) {
 						issueManager.addIssue({
 							severity: Severity.High,
 							details: "The ID '" + sElementId + "' for the control was generated and flexibility features " +

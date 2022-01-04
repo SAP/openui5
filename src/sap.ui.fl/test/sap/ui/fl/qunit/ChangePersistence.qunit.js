@@ -1262,8 +1262,8 @@ function(
 			return this.oChangePersistence.removeDirtyChanges([Layer.VENDOR, Layer.USER])
 				.then(function(aChangesToBeRemoved) {
 					assert.strictEqual(aChangesToBeRemoved.length, 2, "two changes are removed");
-					assert.ok(aChangesToBeRemoved.includes(oVendorChange), "the VENDOR change is removed");
-					assert.ok(aChangesToBeRemoved.includes(oUserChange), "the USER change is removed");
+					assert.ok(aChangesToBeRemoved.indexOf(oVendorChange) !== -1, "the VENDOR change is removed");
+					assert.ok(aChangesToBeRemoved.indexOf(oUserChange) !== -1, "the USER change is removed");
 					assert.strictEqual(
 						this.oChangePersistence.getDirtyChanges().length,
 						1,

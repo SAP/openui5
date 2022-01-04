@@ -1568,7 +1568,7 @@ function(
 				assert.notOk(true, "then the 'then' method shouldn't be called");
 			})
 			.catch(function(oErrorValue) {
-				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
+				assert.ok(oErrorValue.message.indexOf("some") !== -1, "then the error was caught and communicated properly");
 			});
 		});
 
@@ -1588,7 +1588,7 @@ function(
 				assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
 			})
 			.catch(function(oErrorValue) {
-				assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
+				assert.ok(oErrorValue.message.indexOf("some") !== -1, "then the error was caught and communicated properly");
 			});
 		});
 
@@ -1639,7 +1639,7 @@ function(
 					assert.notOk(true, "then the 'then' method in the root chain also shouldn't be called");
 				})
 				.catch(function(oErrorValue) {
-					assert.ok(oErrorValue.message.includes("some"), "then the error was caught and communicated properly");
+					assert.ok(oErrorValue.message.indexOf("some") !== -1, "then the error was caught and communicated properly");
 				});
 		});
 

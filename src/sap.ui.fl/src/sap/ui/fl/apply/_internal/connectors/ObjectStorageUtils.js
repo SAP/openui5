@@ -36,9 +36,7 @@ sap.ui.define([], function () {
 			return Promise.resolve(oRealStorage)
 				.then(function (oRealStorage) {
 					var aPromises = Object.keys(oRealStorage).map(function(sKey) {
-						var bIsFlexObject = sKey.includes(FL_PREFIX);
-
-						if (!bIsFlexObject) {
+						if (sKey.indexOf(FL_PREFIX) === -1) {
 							return;
 						}
 

@@ -863,7 +863,7 @@ sap.ui.define([
 		var aChangesToBeRemoved = aDirtyChanges.filter(function (oChange) {
 			var bChangeValid = true;
 
-			if (!aLayers.includes(oChange.getLayer())) {
+			if (aLayers.indexOf(oChange.getLayer()) === -1) {
 				return false;
 			}
 
