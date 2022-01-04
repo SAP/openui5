@@ -279,5 +279,43 @@
         ]
       }
     ]
+  },
+  "1.90.10": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "fbad0c94c32392b9e1a1b2bf0dcb8877b0bad6a5",
+        "type": "FIX",
+        "text": " ScrollPosition qunit tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180342621"
+          }
+        ]
+      },
+      {
+        "id": "7e810ec8cdaba4c4c6be88d5bedd6999eaa8c45d",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Compact mode density respected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180395055"
+          }
+        ]
+      },
+      {
+        "id": "b02422b25f63867a143dce52a03c521a701c033e",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarMonthGrid: appointments in Month view are now selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180403760"
+          }
+        ]
+      }
+    ]
   }
 }

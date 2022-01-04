@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.90.10": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "b02422b25f63867a143dce52a03c521a701c033e",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarMonthGrid: appointments in Month view are now selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180403760"
+          }
+        ]
+      }
+    ]
   }
 }
