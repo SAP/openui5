@@ -1932,5 +1932,25 @@ sap.ui.define([
 			.removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
 	};
 
+	/*
+	 * Returns the count of active entries in the list if the list length is final, otherwise
+	 * <code>undefined</code>.
+	 *
+	 * @returns {number|undefined} The count of entries
+	 * @public
+	 * @see #getLength
+	 * @see #isLengthFinal
+	 * @since 1.??.0
+	 */
+	 ODataListBinding.prototype.getCount = function () {
+		if (!this.isLengthFinal()) {
+			return undefined;
+		}
+
+		return this.getLength() - this._getCreatedContexts().filter(function (oContext) {
+				return oContext.isInactive();
+			}).length;
+	};
+
 	return ODataListBinding;
 });

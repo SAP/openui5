@@ -12321,6 +12321,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-717
 	// Scenario 2: createActivate event is fired for each activation of inactive contexts.
 	// JIRA: CPOUI5MODELS-718
+	// Scenario 3: getCount on list bindings does not count inactive contexts.
+	// JIRA: CPOUI5MODELS-719
 	QUnit.test("Create inactive entity and activate it", function (assert) {
 		var iCreateActivateCalled = 0,
 			oCreatedContext,
@@ -12358,15 +12360,23 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 
 			// code under test
+			assert.strictEqual(oTable.getBinding("rows").getLength(), 1);
+			// code under test: Scenario 3
+			assert.strictEqual(oTable.getBinding("rows").getCount(), 1);
+
+			// code under test
 			oTable.getBinding("rows").create({
 				CompanyName : "Initial",
 				EmailAddress : "Mail1"
 			}, /*bAtEnd*/true, {inactive : true});
 
-			return that.waitForChanges(assert);
-		}).then(function () {
 			// code under test
 			assert.strictEqual(oTable.getBinding("rows").getLength(), 2);
+			// code under test: Scenario 3
+			assert.strictEqual(oTable.getBinding("rows").getCount(), 1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			// inactive entities are no pending changes and do not cause requests
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			oModel.submitChanges(); // expect no request
@@ -12383,6 +12393,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test: activate by edit
 			oTable.getRows()[1].getCells()[1].setValue("ACME");
+
+			// code under test: Scenario 3
+			assert.strictEqual(oTable.getBinding("rows").getCount(), 2);
 
 			return that.waitForChanges(assert);
 		}).then(function () {

@@ -2121,4 +2121,39 @@ sap.ui.define([
 		// code under test
 		ODataListBinding.prototype.detachCreateActivate.call(oBinding, "~fnFunction", "~oListener");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getCount, length not final", function (assert) {
+		var oBinding = {
+				isLengthFinal : function () {}
+			};
+
+		this.mock(oBinding).expects("isLengthFinal").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getCount.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCount, length final", function (assert) {
+		var oBinding = {
+				_getCreatedContexts : function () {},
+				getLength : function () {},
+				isLengthFinal : function () {}
+			},
+			oContext = {isInactive : function () {}},
+			oContext2 = {isInactive : function () {}},
+			aCreatedContexts = [oContext, oContext2];
+
+		this.mock(oBinding).expects("isLengthFinal").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getLength").withExactArgs().returns(42);
+		this.mock(oBinding).expects("_getCreatedContexts")
+			.withExactArgs()
+			.returns(aCreatedContexts);
+		this.mock(oContext).expects("isInactive").withExactArgs().returns(true);
+		this.mock(oContext2).expects("isInactive").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getCount.call(oBinding), 41);
+	});
 });
