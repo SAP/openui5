@@ -501,4 +501,27 @@ sap.ui.define([
 		assert.equal(this.oFP.getAggregation("content")[0].getType(), oMessageStrip.getType(), "Correct MessageStrip has been added to the content area");
 		assert.equal(this.oFP.getAggregation("content")[0].getShowIcon(), oMessageStrip.getShowIcon(), "Correct MessageStrip has been added to the content area");
 	});
+
+	QUnit.test("fGetValueOfProperty should return correct value if it is not found in the binding context' ", function(assert){
+		// Arrange
+		this.oFP._bUpdateRequired = true;
+		var oItem = new P13nItem({
+			columnKey: "c0",
+			text: "Name"
+		});
+		var fnStubGetBinding = sinon.stub(oItem, "getBinding").withArgs("text").returns({
+			getPath: function() {}
+		});
+		sinon.stub(oItem, "getBindingContext").returns({
+			getObject: function() {
+				return [fnStubGetBinding];
+		}});
+		this.oFP.addItem(oItem);
+
+		// Act
+		this.oFP.onBeforeRendering();
+
+		// Assert
+		assert.equal(this.oFP.getKeyFields()[0].text, "Name",  "Text property is correctly returned");
+	});
 });

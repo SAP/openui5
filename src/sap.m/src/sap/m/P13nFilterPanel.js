@@ -493,18 +493,23 @@ sap.ui.define([
 				oMessageStrip.addStyleClass("sapUiResponsiveMargin");
 				this.insertAggregation("content", oMessageStrip, 0);
 			}
-
 			aKeyFields = [];
 			sModelName = (this.getBindingInfo("items") || {}).model;
-			var fGetValueOfProperty = function(sName, oContext, oItem) {
+			var fGetValueOfProperty = function (sName, oContext, oItem) {
 				var oBinding = oItem.getBinding(sName),
-					oMetadata;
+					oMetadata = oItem.getMetadata(),
+					vPropertyValue = oMetadata.hasProperty(sName) ? oMetadata.getProperty(sName).get(oItem) : oMetadata.getAggregation(sName).get(oItem),
+					vContextValue;
 
 				if (oBinding && oContext) {
-					return oContext.getObject()[oBinding.getPath()];
+					vContextValue =  oContext.getObject()[oBinding.getPath()];
+					if (sName === "text") {
+						return vContextValue || vContextValue === "" ? vContextValue : vPropertyValue;
+					} else {
+						return vContextValue;
+					}
 				}
-				oMetadata = oItem.getMetadata();
-				return oMetadata.hasProperty(sName) ? oMetadata.getProperty(sName).get(oItem) : oMetadata.getAggregation(sName).get(oItem);
+				return vPropertyValue;
 			};
 			this.getItems().forEach(function(oItem_) {
 				var oContext = oItem_.getBindingContext(sModelName),
