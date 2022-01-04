@@ -223,6 +223,19 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
+	QUnit.test("ShowColon", function(assert) {
+		assert.notOk(l1.$().hasClass("sapMLabelShowColon"), "sapMLabelShowColon class is not set");
+
+		l1.setShowColon(true);
+		oCore.applyChanges();
+
+		assert.ok(l1.$().hasClass("sapMLabelShowColon"), "sapMLabelShowColon class is set");
+
+		//reset value
+		l1.setShowColon(false);
+		oCore.applyChanges();
+	});
+
 	QUnit.test("Label wrappingType (Hyphenation)", function(assert) {
 		var done = assert.async();
 		l1.setText("pneumonoultramicroscopicsilicovolcanoconiosis");

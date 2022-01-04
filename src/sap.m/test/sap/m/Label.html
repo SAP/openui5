@@ -32,7 +32,7 @@
 						 required: "{/globalRequired}",
 						 text:'mobile standard label '
 					}),
-				
+
 					new sap.m.Label("lbl2", {
 						 required: true,
 						 text:'required label'
@@ -43,7 +43,7 @@
 						text: "Label with design property set: ",
 						design: "Bold"
 					}),
-				
+
 					new sap.m.Label("lbl3", {
 						required: "{/globalRequired}",
 						text: "mobile bold label",
@@ -62,14 +62,14 @@
 						textDirection: "LTR",
 						width: sLabelWidth
 					}),
-				
+
 					new sap.m.Label("lbl5", {
  						required: "{/globalRequired}",
 						text: "mobile RTL label",
 						textDirection: "RTL",
 						width: sLabelWidth
 					}),
-				
+
 					new sap.m.Label("lbl6", {
  						required: "{/globalRequired}",
 						text: "mobile Inherit label",
@@ -89,28 +89,28 @@
 						width: sLabelWidth,
 						textAlign: "Begin"
 					}),
-				
+
 					new sap.m.Label("lbl8", {
  						required: "{/globalRequired}",
 						text: "mobile center label",
 						width: sLabelWidth,
 						textAlign: "Center"
 					}),
-				
+
 					new sap.m.Label("lbl9", {
  						required: "{/globalRequired}",
 						text: "mobile end label",
 						width: sLabelWidth,
 						textAlign: "End"
 					}),
-				
+
 					new sap.m.Label("lbl10", {
  						required: "{/globalRequired}",
 						text: "mobile left label",
 						width: sLabelWidth,
 						textAlign: "Left"
 					}),
-				
+
 					new sap.m.Label("lbl11", {
  						required: "{/globalRequired}",
 						text: "mobile right label",
@@ -123,7 +123,7 @@
 						text: "Label with no text:",
 						design: "Bold"
 					}),
-				
+
 					new sap.m.Label("lbl12", {
  						required: "{/globalRequired}",
 						text: ""
@@ -134,7 +134,7 @@
 						text: "Label with width property set:",
 						design: "Bold"
 					}),
-				
+
 					new sap.m.Label("lbl13", {
  						required: "{/globalRequired}",
 						text: "mobile label with width set to 250px with loooooooooooooooooooooooooooooooong content",
@@ -145,7 +145,7 @@
 						text: 'Label with displayOnly property set to "true":',
 						design: "Bold"
 					}),
-				
+
 					new sap.m.Label("lbl8a", {
  						required: "{/globalRequired}",
 						text: "mobile label in display mode",
@@ -156,7 +156,7 @@
 						text: 'Label with wrappingType property set to "Hyphenated":',
 						design: "Bold"
 					}),
-				
+
 					new sap.m.Label("lbl14", {
  						required: "{/globalRequired}",
 						text: 'mobile label with loooooooooooooooooooooooooooooooong words, wrappingType property set to "Hyphenated" and wrapping set to "true"',
@@ -211,6 +211,12 @@
 					new sap.m.Label("truncatedRequiredLabel", {
 						text: "Simple Label Simple LabelSimple LabelSimple LabelSimple",
 						width: "200px",
+						required: "{/globalRequired}"
+					}),
+					new sap.m.Label("requiredLabelWithColon", {
+						text: "Label with colon",
+						width: "100%",
+						showColon: true,
 						required: "{/globalRequired}"
 					})
 				]

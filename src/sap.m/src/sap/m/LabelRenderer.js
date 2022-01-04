@@ -65,6 +65,10 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/m/library', 'sap
 			rm.class("sapMLabelRequired");
 		}
 
+		if (oLabel.getShowColon()) {
+			rm.class("sapMLabelShowColon");
+		}
+
 		if (sLabelForRendering) {
 			LabelEnablement.writeLabelForAttribute(rm, oLabel);
 			rm.accessibilityState({

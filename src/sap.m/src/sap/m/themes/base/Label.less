@@ -207,9 +207,12 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 	vertical-align: top; /* align vertically to multiline texts */
 }
 
-.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel .sapMLabelColonAndRequired::before {
-	content: attr(data-colon);
-	white-space: pre;
+.sapMLabel.sapMLabelShowColon,
+.sapUiFormLblColon .sapUiFormElementLbl > .sapMLabel {
+	.sapMLabelColonAndRequired::before {
+		content: attr(data-colon);
+		white-space: pre;
+	}
 }
 
 /* Wrapping of the Label's text */
