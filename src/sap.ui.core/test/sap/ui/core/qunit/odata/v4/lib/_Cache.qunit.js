@@ -8121,7 +8121,7 @@ sap.ui.define([
 								{
 									$expand : {expand : null},
 									$select : ["Name"]
-								}, sinon.match.func)
+								}, sinon.match.same(oCache), sinon.match.func)
 							.resolves(oResult);
 						that.mock(oCache).expects("visitResponse").withExactArgs(
 								sinon.match.same(oResult), sinon.match.same(mTypeForMetaPath),
@@ -8332,7 +8332,8 @@ sap.ui.define([
 				that.oRequestorMock.expects("request")
 					.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
 						undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
-						false, sinon.match.same(mMergeableQueryOptions), sinon.match.func)
+						false, sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
+						sinon.match.func)
 					.resolves({value : [oNewValue]});
 				oHelperMock.expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
@@ -8402,7 +8403,8 @@ sap.ui.define([
 					that.oRequestorMock.expects("request")
 						.withExactArgs("GET", "TEAMS('42')/Foo?bar", sinon.match.same(oGroupLock),
 							undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined,
-							false, sinon.match.same(mMergeableQueryOptions), sinon.match.func)
+							false, sinon.match.same(mMergeableQueryOptions),
+							sinon.match.same(oCache), sinon.match.func)
 						.resolves({value : aData});
 					that.mock(oCache).expects("visitResponse").never();
 
@@ -8479,14 +8481,15 @@ sap.ui.define([
 			this.oRequestorMock.expects("request")
 				.withExactArgs("GET", sResourcePath + "?bar", sinon.match.same(oGroupLock),
 					undefined, undefined, undefined, undefined, "/TEAMS/Foo", undefined, false,
-					sinon.match.same(mMergeableQueryOptions), sinon.match.func)
+					sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
+					sinon.match.func)
 				.callsFake(function () {
 					if (bSkip === true) {
-						assert.deepEqual(arguments[11](), aPaths,
-							"arguments[11]: fnMergeRequests; returns its own paths");
+						assert.deepEqual(arguments[12](), aPaths,
+							"arguments[12]: fnMergeRequests; returns its own paths");
 					} else if (bSkip === undefined) {
-						assert.strictEqual(arguments[11](["~another~", "~path~"]), undefined,
-							"arguments[11]: fnMergeRequests, gets other parts as parameter");
+						assert.strictEqual(arguments[12](["~another~", "~path~"]), undefined,
+							"arguments[12]: fnMergeRequests, gets other parts as parameter");
 					}
 					return Promise.resolve(oNewValue);
 				});
@@ -9350,14 +9353,14 @@ sap.ui.define([
 					oCache.sMetaPath, undefined, false, {
 						$expand : {expand : null},
 						$select : ["ROOM_ID"]
-					}, sinon.match.func)
+					}, sinon.match.same(oCache), sinon.match.func)
 				.callsFake(function () {
 					if (bSkip === true) {
-						assert.deepEqual(arguments[11](), aPaths,
-							"arguments[11]: fnMergeRequests; returns its own paths");
+						assert.deepEqual(arguments[12](), aPaths,
+							"arguments[12]: fnMergeRequests; returns its own paths");
 					} else if (bSkip === undefined) {
-						assert.strictEqual(arguments[11](["~another~", "~path~"]), undefined,
-							"arguments[11]: fnMergeRequests; gets other parts as parameter");
+						assert.strictEqual(arguments[12](["~another~", "~path~"]), undefined,
+							"arguments[12]: fnMergeRequests; gets other parts as parameter");
 					}
 					return Promise.resolve(oNewValue);
 				});
@@ -9470,7 +9473,8 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "~path~?~", sinon.match.same(oGroupLock), undefined, undefined,
 				undefined, undefined, oCache.sMetaPath, undefined, false,
-				sinon.match.same(mMergeableQueryOptions), sinon.match.func)
+				sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
+				sinon.match.func)
 			.resolves(oNewValue);
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
@@ -9579,7 +9583,8 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees('42')?~", sinon.match.same(oGroupLock), undefined,
 				undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
-				sinon.match.same(mMergeableQueryOptions), sinon.match.func)
+				sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
+				sinon.match.func)
 			.rejects(oError);
 		oCacheMock.expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(/*don't care*/));

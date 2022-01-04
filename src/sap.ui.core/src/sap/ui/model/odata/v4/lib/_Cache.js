@@ -2728,7 +2728,7 @@ sap.ui.define([
 
 		return this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
 				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions,
-				function (aOtherPaths) {
+				this, function (aOtherPaths) {
 					if (arguments.length) {
 						aPaths = aPaths.concat(aOtherPaths);
 					} else {
@@ -3183,7 +3183,7 @@ sap.ui.define([
 		oResult = SyncPromise.all([
 			this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
 				undefined, undefined, this.sMetaPath, undefined, false, mMergeableQueryOptions,
-				function (aOtherPaths) {
+				this, function (aOtherPaths) {
 					if (arguments.length) {
 						aPaths = aPaths.concat(aOtherPaths);
 					} else {
