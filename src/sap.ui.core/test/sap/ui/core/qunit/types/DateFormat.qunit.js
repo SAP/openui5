@@ -1210,6 +1210,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new Locale("xx-XX"));
 			assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "CW 01", "week format with pattern 'www'");
 			assert.ok(oDateFormat.parse("CW 01") instanceof Date, "Date can be correctly parsed");
+			assert.notOk(isNaN(oDateFormat.parse("CW 01").getTime()), "Date is a valid JS Date");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: "wwww"
