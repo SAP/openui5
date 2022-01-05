@@ -14,9 +14,11 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/m/Text",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/m/Panel",
+	"sap/m/GenericTile"
 ], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary,
-			Log, Text, oCore) {
+			Log, Text, oCore, Panel, GenericTile) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -24,6 +26,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
+
+	// shortcut for sap.m.ScreenSizes
+	var ScreenSizes = mobileLibrary.ScreenSizes;
 
 	Mobile.init();
 
@@ -1274,4 +1279,201 @@ sap.ui.define([
 		}
 
 	});
+
+	QUnit.module("HeaderContainer in Mobile View", {
+		afterEach: function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+			if (this.initialScreenWidth && this.initialWidth) {
+				this.resetMobileView();
+			}
+		},
+		initializeMobileView: function() {
+			this.initialScreenWidth = Device.resize.width;
+			this.initialWidth = document.getElementById("qunit-fixture").offsetWidth;
+			Device.resize.width = 320;
+			document.getElementById("qunit-fixture").style.width = "320px";
+			Device.system.desktop = false;
+			Device.system.phone = true;
+			document.querySelector("html").classList.add("sap-phone");
+			document.querySelector("html").classList.remove("sap-desktop");
+		},
+		resetMobileView: function(){
+			Device.resize.width = this.initialScreenWidth;
+			document.getElementById("qunit-fixture").style.width = this.initialWidth;
+			Device.system.desktop = true;
+			Device.system.phone = false;
+			document.querySelector("html").classList.remove("sap-phone");
+			document.querySelector("html").classList.add("sap-desktop");
+		}
+	});
+
+	QUnit.test("HeaderContainer in Normal View initialization.", function (assert) {
+
+		var fnDone = assert.async(),
+			iCount = 5,
+			i;
+			this.oHeaderContainer = new HeaderContainer({
+				gridLayout: true,
+				orientation: Orientation.Horizontal,
+				showDividers: false,
+				scrollTime: 1000
+			});
+			var afterRenderDelegate = {
+				onAfterRendering: function () {
+					var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+					var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+					var isRightArrowVisible = false;
+					if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+						isRightArrowVisible = true;
+					} else {
+						isRightArrowVisible = false;
+					}
+
+					assert.ok(this.oHeaderContainer._oArrowPrev,  "Previous Arrow is present.");
+					assert.ok(this.oHeaderContainer._oArrowNext,  "Next Arrow is present.");
+					assert.ok(isRightArrowVisible,"Right arrow indicator is not hidden.");
+					assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Preperty gridLayout is true.");
+					assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
+					assert.equal(Device.resize.width >= ScreenSizes.xsmall, true,  "Large screen size.");
+					this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
+					fnDone();
+				}.bind(this)
+			};
+		this.oHeaderContainer.addEventDelegate(afterRenderDelegate);
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Panel({
+				width: "272px",
+				content: createTile()
+			}));
+		}
+		this.oHeaderContainer.placeAt("qunit-fixture");
+		oCore.applyChanges();
+	});
+
+	QUnit.test("HeaderContainer in Mobile View initialization.", function (assert) {
+		var fnDone = assert.async(),
+			iCount = 5,
+			i;
+
+		this.initializeMobileView();
+		this.oHeaderContainer = new HeaderContainer({
+			gridLayout: true,
+			orientation: Orientation.Horizontal,
+			showDividers: false,
+			scrollTime: 1000
+		});
+		var afterRenderDelegate = {
+			onAfterRendering: function () {
+				var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+				var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+				var isLeftArrowVisible = false;
+				if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+					isLeftArrowVisible = true;
+				} else {
+					isLeftArrowVisible = false;
+				}
+				var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+				var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+				var isRightArrowVisible = false;
+				if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+					isRightArrowVisible = true;
+				} else {
+					isRightArrowVisible = false;
+				}
+
+				assert.ok(this.oHeaderContainer._oArrowPrev, "Previous Arrow is present.");
+				assert.ok(this.oHeaderContainer._oArrowNext, "Next Arrow is present.");
+				assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
+				assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
+				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Preoerty gridLayout is true.");
+				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
+				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
+				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
+				fnDone();
+			}.bind(this)
+		};
+		this.oHeaderContainer.addEventDelegate(afterRenderDelegate);
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Panel({
+				width: "272px",
+				content: createTile()
+			}));
+		}
+		this.oHeaderContainer.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+	});
+
+	QUnit.test("HeaderContainer in Mobile View initialization in RTL Mode.", function (assert) {
+		var fnDone = assert.async(),
+			iCount = 5,
+			i;
+
+		sap.ui.getCore().getConfiguration().setRTL(true);
+		this.initializeMobileView();
+		this.oHeaderContainer = new HeaderContainer({
+			gridLayout: true,
+			orientation: Orientation.Horizontal,
+			showDividers: false,
+			scrollTime: 1000
+		});
+		var afterRenderDelegate = {
+			onAfterRendering: function () {
+				var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+				var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+				var isLeftArrowVisible = false;
+				if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+					isLeftArrowVisible = true;
+				} else {
+					isLeftArrowVisible = false;
+				}
+				var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+				var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+				var isRightArrowVisible = false;
+				if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+					isRightArrowVisible = true;
+				} else {
+					isRightArrowVisible = false;
+				}
+
+				assert.ok(this.oHeaderContainer._oArrowPrev, "Previous Arrow is present.");
+				assert.ok(this.oHeaderContainer._oArrowNext, "Next Arrow is present.");
+				assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
+				assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
+				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Preperty gridLayout is true.");
+				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
+				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
+				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
+				sap.ui.getCore().getConfiguration().setRTL(false);
+				fnDone();
+			}.bind(this)
+		};
+		this.oHeaderContainer.addEventDelegate(afterRenderDelegate);
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Panel({
+				width: "272px",
+				content: createTile()
+			}));
+		}
+		this.oHeaderContainer.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+	});
+
+	function createTile(){
+		var aTile = [];
+		for (var i = 0; i < 5 ; i++){
+			aTile.push(new GenericTile({
+				mode: "IconMode",
+				sizeBehavior: "Small",
+				header: "title" + i,
+				backgroundColor: "blue" ,
+				tileIcon: "sap-icon://home-share" ,
+				frameType: "TwoByHalf",
+				width: "14.875rem"
+			}));
+		}
+		return aTile;
+	}
 });

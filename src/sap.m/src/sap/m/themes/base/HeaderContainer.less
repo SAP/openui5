@@ -263,3 +263,28 @@ html.sap-desktop .sapMHrdrCntrInner:focus {
 	outline: none;
 	border: 1px dotted @sapUiContentFocusColor;
 }
+
+@media (min-width:320px) and (max-width:599px){
+    .sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner {
+		margin-left: 0rem !important;
+		padding: 0rem 0rem 0rem 1rem !important;
+	}
+	
+	.sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:last-of-type {
+		padding-right: 1rem !important;
+	}
+
+	.sapMHrdrCntrDvdrs.Horizontal .sapMHrdrCntrInner::after {
+		left: 0.4rem;
+		border-left: 1px solid @sapUiListBorderColor;
+	}
+	
+	html[dir=rtl] .sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner {
+		margin-right: 0rem !important;
+		padding: 0rem 1rem 0rem 0rem !important;
+	}
+	
+	html[dir=rtl]  .sapMHdrCntrCntr.Horizontal .sapMHrdrCntrInner:last-of-type {
+		padding-left: 1rem !important;
+	}
+}

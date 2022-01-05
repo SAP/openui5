@@ -49,6 +49,7 @@ sap.ui.define([
 
 		// shortcut for sap.ui.core.Orientation
 		var Orientation = coreLibrary.Orientation;
+		var ScreenSizes = library.ScreenSizes;
 
 		var HeaderContainerItemContainer = Control.extend("sap.m.HeaderContainerItemContainer", {
 			metadata: {
@@ -199,7 +200,14 @@ sap.ui.define([
 					/**
 					 * The height of the whole HeaderContainer. If not specified, it is rendered as 'auto' in horizontal orientation and as '100%' in vertical orientation.
 					 */
-					height: {type: "sap.ui.core.CSSSize", group: "Appearance"}
+					height: {type: "sap.ui.core.CSSSize", group: "Appearance"},
+					/**
+					* Enables grid layout in mobile view.
+                                        * @private
+                                        * @since 1.99
+					* @experimental since 1.99
+					*/
+					gridLayout: {type: "boolean", defaultValue: false}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -301,15 +309,17 @@ sap.ui.define([
 				}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
 				this._oArrowNext._bExcludeFromTabChain = true;
 				this.setAggregation("_nextButton", this._oArrowNext, true);
-			} else if (Device.system.phone || Device.system.tablet) {
-				this._oArrowPrev = new Icon({
-					id: this.getId() + "-scrl-prev-button"
-				}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
-				this.setAggregation("_prevButton", this._oArrowPrev, true);
-				this._oArrowNext = new Icon({
-					id: this.getId() + "-scrl-next-button"
-				}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
-				this.setAggregation("_nextButton", this._oArrowNext, true);
+			} else if ((Device.system.phone || Device.system.tablet)) {
+				if (!this._isMobileView()) {
+					this._oArrowPrev = new Icon({
+						id: this.getId() + "-scrl-prev-button"
+					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrLeft");
+					this.setAggregation("_prevButton", this._oArrowPrev, true);
+					this._oArrowNext = new Icon({
+						id: this.getId() + "-scrl-next-button"
+					}).addStyleClass("sapMHdrCntrBtn").addStyleClass("sapMHdrCntrRight");
+					this.setAggregation("_nextButton", this._oArrowNext, true);
+				}
 			}
 
 			this._oScrollCntr.addDelegate({
@@ -335,6 +345,9 @@ sap.ui.define([
 						this._oItemNavigation.setTabIndex0();
 						this._oItemNavigation.setCycling(false);
 
+						this._handleMobileScrolling();
+					}
+					if (this._isMobileView()) {
 						this._handleMobileScrolling();
 					}
 				}.bind(this)
@@ -631,29 +644,37 @@ sap.ui.define([
 				var iSize = 0,
 					iButtonSize = 0;
 
-				var OFFSET = 10;
+				var OFFSET = 10, mobileOffset = 7;
 
-				// RTL button offset fixes
-				if (this._bRtl && bHorizontal) {
-					if (!$prevButton.is(":visible")) {
-						iButtonSize = $prevButton.width();
-					}
+				if (!this._isMobileView()) {
+					// RTL button offset fixes
+					if (this._bRtl && bHorizontal) {
+						if (!$prevButton.is(":visible")) {
+							iButtonSize = $prevButton.width();
+						}
 
-					if (!$nextButton.is(":visible")) {
-						iButtonSize = $nextButton.width();
+						if (!$nextButton.is(":visible")) {
+							iButtonSize = $nextButton.width();
+						}
 					}
 				}
-
 				for (var i = 0; i < aItems.length && i < iIndex; i++) {
 					iSize += fnGetItemSize(aItems[i]);
 				}
+				if (this._isMobileView()) {
+					return iSize !== 0 ? iSize - mobileOffset - iButtonSize : 0;
+				} else {
+					return iSize !== 0 ? iSize + OFFSET - iButtonSize : 0;
+				}
 
-				return iSize !== 0 ? iSize + OFFSET - iButtonSize : 0;
 			}.bind(this);
 
 			var fnGetItemSize = function (oItem) {
+				if (this._isMobileView()) {
+					return oItem.$().parent().outerWidth(true);
+				}
 				return bHorizontal ? oItem.$().parent().outerWidth(true) : oItem.$().parent().outerHeight(true);
-			};
+			}.bind(this);
 
 			// this function ensures that after clicking right arrow (left for RTL) at least on item is shown
 			// this does not by default happen in some cases when items are not of the same size
@@ -690,11 +711,18 @@ sap.ui.define([
 				// for different browser implementation (especially in RTL) we want to avoid offsetLeft and its variations
 				// we sum width (height for vertical) of each item and compare it with scrolling start position
 				for (var i = 0; i < aItems.length; i++) {
-					iSize += fnGetItemSize(aItems[i]);
-
-					if (iSize >= iScroll) {
-						iTarget = i;
-						break;
+					if (this._isMobileView()) {
+						iSize = iSize + fnGetItemSize(aItems[i]) - 7;
+						if (iSize > Math.ceil(iScroll)) {
+							iTarget = i;
+							break;
+						}
+					} else {
+						iSize += fnGetItemSize(aItems[i]);
+						if (iSize >= iScroll) {
+							iTarget = i;
+							break;
+						}
 					}
 				}
 
@@ -778,21 +806,21 @@ sap.ui.define([
 
 				$ButtonContainer = this.$("prev-button-container");
 				oOldScrollBack = $ButtonContainer.is(":visible");
-				if (oOldScrollBack && !bScrollBack) {
+				if (oOldScrollBack && !bScrollBack && !this._isMobileView()()) {
 					$ButtonContainer.hide();
 					this.$().removeClass("sapMHrdrTopPadding");
 				}
-				if (!oOldScrollBack && bScrollBack) {
+				if (!oOldScrollBack && bScrollBack && !this._isMobileView()) {
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrTopPadding");
 				}
 				$ButtonContainer = this.$("next-button-container");
 				var oOldScrollForward = $ButtonContainer.is(":visible");
-				if (oOldScrollForward && !bScrollForward) {
+				if (oOldScrollForward && !bScrollForward && !this._isMobileView()) {
 					$ButtonContainer.hide();
 					this.$().removeClass("sapMHrdrBottomPadding");
 				}
-				if (!oOldScrollForward && bScrollForward) {
+				if (!oOldScrollForward && bScrollForward && !this._isMobileView()) {
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrBottomPadding");
 				}
@@ -820,7 +848,27 @@ sap.ui.define([
 							iDelta = iPos - fCurrent,
 							oScroller = that._oScrollCntr.getDomRef();
 
-						bIsHorizontal ? oScroller.scrollLeft += iDelta : oScroller.scrollTop += iDelta;
+						if (that._isMobileView()) {
+							var bForward;
+							if (iDelta > 0) {
+								bForward = true;
+								if (that._bRtl) {
+									bForward = false;
+								}
+                                that._scroll(that._getScrollValue(bForward), that.getScrollTime());
+                                bScrolling = false;
+                            } else {
+								bForward = false;
+								if (that._bRtl) {
+									bForward = true;
+								}
+                                that._scroll(that._getScrollValue(bForward), that.getScrollTime());
+                                bScrolling = false;
+                            }
+						} else {
+							bIsHorizontal ? oScroller.scrollLeft += iDelta : oScroller.scrollTop += iDelta;
+						}
+
 						iPos = fCurrent;
 
 						// prevent navigation
@@ -877,22 +925,22 @@ sap.ui.define([
 				bScrollForward = this._checkForOverflowItem(bScrollForward);
 
 				var bOldScrollBack = $ButtonContainer.is(":visible");
-				if (bOldScrollBack && !bScrollBack) {
+				if (bOldScrollBack && !bScrollBack && !this._isMobileView()) {
 					$ButtonContainer.hide();
 					this.$().removeClass("sapMHrdrLeftPadding");
 				}
-				if (!bOldScrollBack && bScrollBack) {
+				if (!bOldScrollBack && bScrollBack && !this._isMobileView()) {
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrLeftPadding");
 				}
 
 				$ButtonContainer = this.$("next-button-container");
 				var bOldScrollForward = $ButtonContainer.is(":visible");
-				if (bOldScrollForward && !bScrollForward) {
+				if (bOldScrollForward && !bScrollForward && !this._isMobileView()) {
 					$ButtonContainer.hide();
 					this.$().removeClass("sapMHrdrRightPadding");
 				}
-				if (!bOldScrollForward && bScrollForward) {
+				if (!bOldScrollForward && bScrollForward && !this._isMobileView()) {
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrRightPadding");
 				}
@@ -1004,6 +1052,12 @@ sap.ui.define([
 			} else {
 				this.$().find(".sapMHdrCntrItemCntr").css("border-color", "transparent");
 			}
+		};
+
+		HeaderContainer.prototype._isMobileView = function() {
+			return this.getGridLayout()
+						&& this.getOrientation() === Orientation.Horizontal
+						&& Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet;
 		};
 
 		/**
