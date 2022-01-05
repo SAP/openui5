@@ -333,4 +333,49 @@ sap.ui.define([
 		assert.strictEqual(oCache.isAtEnd("/unknown", "id"), undefined);
 		assert.strictEqual(oCache.isAtEnd("/foo", "unknown"), undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("findCreatedContext", function (assert) {
+		var oCache = new _CreatedContextsCache(),
+			oContext0 = {getPath : function () {}},
+			oContext1 = {getPath : function () {}},
+			oContext2 = {getPath : function () {}},
+			oContext3 = {getPath : function () {}},
+			oContext4 = {getPath : function () {}},
+			oContext5 = {getPath : function () {}},
+			oContextMock0 = this.mock(oContext0),
+			oContextMock1 = this.mock(oContext1),
+			oContextMock2 = this.mock(oContext2),
+			oContextMock3 = this.mock(oContext3),
+			oContextMock4 = this.mock(oContext4),
+			oContextMock5 = this.mock(oContext5);
+
+		oCache.mCache = {
+			"/SalesOrderSet" : {"" : [oContext0], "foo" : [oContext1]},
+			"/BusinessPartnerSet" : {"" : [oContext2, oContext3], "bar" : [oContext4]},
+			"/SalesOrderLineItemSet" : {"" : [oContext5]}
+		};
+
+		oContextMock0.expects("getPath").withExactArgs().returns("/SalesOrderSet('id-000')");
+		oContextMock1.expects("getPath").withExactArgs().returns("/SalesOrderSet('id-111')");
+		oContextMock2.expects("getPath").withExactArgs().returns("/BusinessPartnerSet('id-123')");
+		oContextMock3.expects("getPath").never();
+		oContextMock4.expects("getPath").never();
+		oContextMock5.expects("getPath").never();
+
+		// code under test
+		assert.strictEqual(oCache.findCreatedContext("/BusinessPartnerSet('id-123')/Address/City"),
+			oContext2);
+
+		oContextMock0.expects("getPath").withExactArgs().returns("/SalesOrderSet('id-000')");
+		oContextMock1.expects("getPath").withExactArgs().returns("/SalesOrderSet('id-111')");
+		oContextMock2.expects("getPath").withExactArgs().returns("/BusinessPartnerSet('id-123')");
+		oContextMock3.expects("getPath").withExactArgs().returns("/BusinessPartnerSet('id-234')");
+		oContextMock4.expects("getPath").withExactArgs().returns("/BusinessPartnerSet('id-345')");
+		oContextMock5.expects("getPath").withExactArgs().returns("/SalesOrderLineItemSet('id-0')");
+
+		// code under test
+		assert.strictEqual(oCache.findCreatedContext("/BusinessPartnerSet('id-007')/Address/City"),
+			undefined);
+	});
 });

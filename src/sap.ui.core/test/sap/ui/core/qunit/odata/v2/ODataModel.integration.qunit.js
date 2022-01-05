@@ -12433,4 +12433,117 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: After creation of an inactive entity with a complex type, the first valid edit
+	// within the complex type activates the inactive entity.
+	// JIRA: CPOUI5MODELS-717
+	QUnit.test("Create inactive entity and activate it (complex type)", function (assert) {
+		var oCreatedContext, oObjectPage, oTable,
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<Text id="company" text="{CompanyName}"/>\
+</t:Table>\
+<FlexBox id="objectPage">\
+	<Input id="city" value="{City}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {
+				results : [{
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					Address : {City : "Walldorf"},
+					BusinessPartnerID : "42",
+					CompanyName : "SAP"
+				}]
+			})
+			.expectValue("id", ["42", ""])
+			.expectValue("company", ["SAP", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oObjectPage = that.oView.byId("objectPage");
+			that.expectValue("city", "Walldorf");
+
+			oObjectPage.bindElement({
+				path : oTable.getRows()[0].getBindingContext().getPath() + "/Address",
+				parameters : {select : "City"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Initial", 1);
+
+			// code under test: create inactive context
+			oCreatedContext = oTable.getBinding("rows").create({
+				Address : {},
+				CompanyName : "Initial"
+			}, /*bAtEnd*/true, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("city", "");
+
+			oObjectPage.bindElement({
+				path : oCreatedContext.getPath() + "/Address",
+				parameters : {select : "City"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("city", "Berlin");
+
+			// code under test: no request before context activation
+			oModel.submitChanges();
+			// code under test: activate parent context by edit
+			that.oView.byId("city").setValue("Berlin");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.BusinessPartner"},
+						Address : {City : "Berlin"},
+						CompanyName : "Initial"
+					},
+					method : "POST",
+					requestUri : "BusinessPartnerSet"
+				}, {
+					data : {
+						__metadata : {uri : "BusinessPartnerSet('43')"},
+						Address : {City : "Berlin"},
+						BusinessPartnerID : "43",
+						CompanyName : "Initial"
+					},
+					statusCode : 201
+				})
+				.expectValue("id", "43", 1)
+				// received data has an updated key predicate; internal model data updates this key
+				// predicate but element binding "objectPage" still has its old absolute path
+				// => element binding will no longer find the data
+				.expectValue("city", "");
+
+			// code under test: activated entity triggers request
+			oModel.submitChanges();
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectValue("city", "Berlin");
+
+			// code under test: setting element binding with its updated key predicate restores data
+			oObjectPage.bindElement({
+				path : oCreatedContext.getPath() + "/Address",
+				parameters : {select : "City"}
+			});
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
