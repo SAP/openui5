@@ -17,6 +17,12 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		buttonElement.style.display = "flex";
 		buttonElement.style.alignItems = "center";
 		buttonElement.style.justifyContent = "center";
+		var style = this.style;
+		if (style === "positive") {
+			buttonElement.setAttribute("design", "Positive");
+		} else if (style === "destructive") {
+			buttonElement.setAttribute("design", "Negative");
+		}
 		var hasTitle = this.title;
 		var titleElement = document.createElement("div");
 		titleElement.style.overflow = "hidden";

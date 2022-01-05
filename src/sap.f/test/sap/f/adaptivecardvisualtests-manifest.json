@@ -108,6 +108,25 @@
 									"maxLength": 30,
 									"id": "MultiLineVal",
 									"value": "The maximum length is reached."
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						},
@@ -131,6 +150,25 @@
 									"max": 5,
 									"value": 1,
 									"id": "NumVal"
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						},
@@ -153,6 +191,25 @@
 									"value": "2019-09-20",
 									"min": "2019-01-01",
 									"max": "2020-01-01"
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						},
@@ -175,6 +232,25 @@
 									"value": "13:59",
 									"min": "12:00",
 									"max": "17:00"
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						}
@@ -269,6 +345,25 @@
 										"value": "3"
 										}
 									]
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						},
@@ -317,6 +412,25 @@
 									"value": "false",
 									"valueOn": "false",
 									"valueOff": "Falsy value"
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						}
@@ -350,6 +464,25 @@
 								{
 									"type": "TextBlock",
 									"text": "Check out [Adaptive Cards](http://adaptivecards.io)"
+								},
+								{
+									"type": "ActionSet",
+									"actions": [
+										{
+											"type": "Action.Submit",
+											"title": "Default"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "positive",
+											"title": "Positive"
+										},
+										{
+											"type": "Action.Submit",
+											"style": "destructive",
+											"title": "Destructive"
+										}
+									]
 								}
 							]
 						}
