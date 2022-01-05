@@ -26,6 +26,7 @@ sap.ui.define([
 		],
 		controls: [
 			"sap.ui.integration.widgets.Card",
+			"sap.ui.integration.cards.filters.FilterBar",
 			"sap.ui.integration.cards.Header",
 			"sap.ui.integration.cards.NumericHeader",
 			"sap.ui.integration.controls.ListContentItem"

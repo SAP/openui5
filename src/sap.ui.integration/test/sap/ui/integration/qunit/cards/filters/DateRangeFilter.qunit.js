@@ -54,9 +54,9 @@ sap.ui.define([
 
 			// Assert
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter bar has 1 filter");
+			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
 
-			var oFirstFilter = oFilterBar.getItems()[0];
+			var oFirstFilter = oFilterBar._getFilters()[0];
 			assert.ok(oFirstFilter.isA(DateRangeFilter.getMetadata().getName()), "The filter type is correct");
 
 			done();

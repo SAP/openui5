@@ -1948,6 +1948,75 @@
 					]
 				}
 			}
+		},
+		"multipleFilters": {
+			"sap.app": {
+				"id": "cardsdemo.filters.multiplefilters",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardsdemo/cardcontent/someitems.json"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"f1": {
+							"type": "DateRange",
+							"value": {
+								"option": "dateRange",
+								"values": ["1997-05-01", "1997-05-31"]
+							}
+						},
+						"f2": {
+							"type": "Search"
+						},
+						"f3": {
+							"type": "Select",
+							"value": 1,
+							"items": [
+								{
+									"key": 1,
+									"title": "Aaaaa"
+								},
+								{
+									"key": 2,
+									"title": "AaaaaBbbbbb"
+								},
+								{
+									"key": 3,
+									"title": "AaaaaBbbbbbCcccc"
+								},
+								{
+									"key": 4,
+									"title": "AaaaaBbbbbbCccccDdddd"
+								}
+							]
+						}
+					}
+				},
+				"type": "Object",
+				"header": {
+					"title": "Card with Multiple Filters",
+					"icon": {
+						"src": "sap-icon://filter"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Values",
+							"items": [
+								{
+									"label": "Name",
+									"value": "Donna Moore"
+								}
+							]
+						}
+					]
+				}
+			}
 		}
 	}
 }

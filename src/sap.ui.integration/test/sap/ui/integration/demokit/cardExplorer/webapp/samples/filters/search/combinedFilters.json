@@ -1,0 +1,93 @@
+{
+	"sap.app": {
+		"id": "card.explorer.filters.search.combined",
+		"type": "card",
+		"title": "Sample of a Card with filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"shipper": {
+					"value": "{{parameters.selectedShipperID}}",
+					"type": "Select",
+					"label": "Shipper",
+					"description": "Filter the orders by shipper.",
+					"item": {
+						"path": "/value",
+						"template": {
+							"key": "{ShipperID}",
+							"title": "{CompanyName}"
+						}
+					},
+					"data": {
+						"request": {
+							"url": "{{destinations.Northwind_V4}}/Shippers"
+						}
+					}
+				},
+				"country": {
+					"type": "Search",
+					"label": "City",
+					"description": "Search query.",
+					"value": "France",
+					"placeholder": "Enter a country"
+				}
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxOrdersShown": {
+					"value": 6,
+					"type": "integer",
+					"label": "Number of orders",
+					"description": "How many orders to show in the list."
+				},
+				"selectedShipperID": {
+					"value": 3,
+					"type": "integer",
+					"label": "The default selected shipper"
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Orders",
+				"parameters": {
+					"$top": "{{parameters.maxOrdersShown}}",
+					"$filter": "contains(ShipCountry, '{filters>/country/value}') and Shipper/ShipperID eq {filters>/shipper/value}"
+				}
+			},
+			"path": "/value/"
+		},
+		"type": "List",
+		"header": {
+			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ShipName}",
+				"description": "{ShipAddress}",
+				"info": {
+					"value": "{ShipCountry}"
+				},
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "./?OrderID={OrderID}&ShipperID={filters>/shipper/value}"
+						}
+					}
+				]
+			},
+			"maxItems": "{{parameters.maxOrdersShown}}"
+		}
+	}
+}

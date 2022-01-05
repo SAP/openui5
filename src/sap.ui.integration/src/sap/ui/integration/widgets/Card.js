@@ -262,7 +262,7 @@ sap.ui.define([
 				 * Defines the filters section of the card.
 				 */
 				_filterBar: {
-					type: "sap.ui.core.Control",
+					type: "sap.ui.integration.cards.filters.FilterBar",
 					multiple: false,
 					visibility: "hidden"
 				},
@@ -939,9 +939,7 @@ sap.ui.define([
 		}
 
 		if (oFilterBar) {
-			oFilterBar.getItems().forEach(function (oFilter) {
-				oFilter.refreshData();
-			});
+			oFilterBar.refreshData();
 		}
 	};
 
@@ -1947,9 +1945,7 @@ sap.ui.define([
 			case CardArea.Filters:
 				oArea = this.getAggregation("_filterBar");
 				if (oArea) {
-					oArea.getItems().forEach(function (oFilter) {
-						oFilter.showLoadingPlaceholders();
-					});
+					oArea.showLoadingPlaceholders();
 				}
 				break;
 
@@ -1992,9 +1988,7 @@ sap.ui.define([
 			case CardArea.Filters:
 				oArea = this.getAggregation("_filterBar");
 				if (oArea) {
-					oArea.getItems().forEach(function (oFilter) {
-						oFilter.hideLoadingPlaceholders();
-					});
+					oArea.hideLoadingPlaceholders();
 				}
 				break;
 

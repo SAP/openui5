@@ -810,7 +810,7 @@ function (
 		var done = assert.async();
 
 		this.oCard.attachEvent("_ready", function () {
-			var oFilter = this.oCard.getAggregation("_filterBar").getItems()[0],
+			var oFilter = this.oCard.getAggregation("_filterBar")._getFilters()[0],
 				oRequestedURL = oFilter._oDataProvider.getSettings().request.url;
 
 			// Assert

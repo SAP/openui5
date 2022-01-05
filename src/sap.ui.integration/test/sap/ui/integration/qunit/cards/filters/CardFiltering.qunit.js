@@ -96,7 +96,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			// Act
 			var oFilterBar = this.oCard.getAggregation("_filterBar"),
-				oSelect = oFilterBar.getItems()[0]._getSelect(),
+				oSelect = oFilterBar._getFilters()[0]._getSelect(),
 				mArguments;
 
 			oSelect.onSelectionChange({
@@ -148,9 +148,9 @@ sap.ui.define([
 
 			// Assert
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter bar has 1 filter");
+			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
 
-			var oFilter = oFilterBar.getItems()[0];
+			var oFilter = oFilterBar._getFilters()[0];
 			assert.strictEqual(oFilter._getSelect().getSelectedKey(), "available", "property binding works");
 			assert.strictEqual(oFilter._getSelect().getItems()[1].getKey(), "out_of_stock", "option has the expected key");
 

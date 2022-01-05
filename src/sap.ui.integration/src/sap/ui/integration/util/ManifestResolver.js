@@ -56,7 +56,7 @@ sap.ui.define([
 		}
 
 		if (oCard.getAggregation("_filterBar")) {
-			aFilters =  oCard.getAggregation("_filterBar").getItems().map(function (oFilter) {
+			aFilters =  oCard.getAggregation("_filterBar")._getFilters().map(function (oFilter) {
 				return ["/sap.card/configuration/filters/" + oFilter.getKey(), oFilter];
 			});
 		}
