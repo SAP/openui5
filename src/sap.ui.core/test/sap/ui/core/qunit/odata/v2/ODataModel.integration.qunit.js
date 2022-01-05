@@ -12319,8 +12319,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: On creation of inactive entities, the methods #resetChanges, #hasPendingChanges
 	// and #submitChanges ignore these. The first valid edit activates the inactive entity.
 	// JIRA: CPOUI5MODELS-717
+	// Scenario 2: createActivate event is fired for each activation of inactive contexts.
+	// JIRA: CPOUI5MODELS-718
 	QUnit.test("Create inactive entity and activate it", function (assert) {
-		var oCreatedContext,
+		var iCreateActivateCalled = 0,
+			oCreatedContext,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
 			oTable,
 			sView = '\
@@ -12349,6 +12352,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectValue("company", "Initial", 1)
 				.expectValue("mail", "Mail1", 1);
 
+			// code under test: Scenario 2
+			oTable.getBinding("rows").attachEvent("createActivate", function () {
+				iCreateActivateCalled += 1;
+			});
+
 			// code under test
 			oTable.getBinding("rows").create({
 				CompanyName : "Initial",
@@ -12368,6 +12376,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			// evaluate Scenario 2
+			assert.strictEqual(iCreateActivateCalled, 0);
+
 			that.expectValue("company", "ACME", 1);
 
 			// code under test: activate by edit
@@ -12375,6 +12386,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// evaluate Scenario 2
+			assert.strictEqual(iCreateActivateCalled, 1);
+
 			that.expectValue("company", "", 1)
 				.expectValue("mail", "", 1);
 
@@ -12391,7 +12405,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test
 			assert.strictEqual(oTable.getBinding("rows").getLength(), 1);
-			oCreatedContext = that.oView.byId("table").getBinding("rows").create({
+			oCreatedContext = oTable.getBinding("rows").create({
 				CompanyName : "Initial2",
 				EmailAddress : "Mail2"
 			}, /*bAtEnd*/true, {inactive : true});
@@ -12405,6 +12419,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			// evaluate Scenario 2
+			assert.strictEqual(iCreateActivateCalled, 2);
+
 			that.expectRequest({
 					created : true,
 					data : {
