@@ -155,7 +155,18 @@ function(
 			 * Specifies the vertical alignment of the <code>Label</code> related to the tallest and lowest element on the line.
 			 * @since 1.54
 			 */
-			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
+			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit},
+
+			/**
+			 * Defines whether a colon (:) character is added to the label.
+			 *
+			 * <b>Note:</b> By default when the <code>Label</code> is in
+			 * the <code>sap.ui.layout.form.Form</code> and <code>sap.ui.layout.form.SimpleForm</code>
+			 * controls the colon (:) character is displayed automatically
+			 * regardless of the value of the <code>showColon</code> property.
+			 * @since 1.98
+			 */
+			showColon : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		associations : {
 
