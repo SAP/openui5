@@ -4331,7 +4331,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("createReadGroupLock")
 			.withExactArgs("group", true);
 		this.mock(oReturnValueContext).expects("refreshDependentBindings")
-			.withExactArgs("", "group", true)
+			.withExactArgs("", "group", true, undefined)
 			.returns(oDependentsPromise);
 
 		// code under test
@@ -4350,6 +4350,66 @@ sap.ui.define([
 		return oRefreshPromise.then(function () {
 			assert.strictEqual(bDependentsRefreshed, true);
 		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bKeepCacheOnError) {
+	[false, true].forEach(function (bCheckFails) {
+		var sTitle = "refreshReturnValueContext: keep cache on error: " + bKeepCacheOnError
+				+ ", check fails: " + bCheckFails;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = this.bindContext("bound.Operation(...)",
+				Context.create(this.oModel, {}, "/SalesOrderList('42')")),
+			oCheckError = new Error("checkUpdateInternal intentionally failed"),
+			oError = new Error("This call intentionally failed"),
+			oNewCache = {},
+			oOldCache = {
+				setActive : function () { throw new Error("must be mocked"); }
+			},
+			oReturnValueContext = Context.create(this.oModel, oBinding, "/SalesOrderList('77')"),
+			that = this;
+
+		oBinding.oCache = oOldCache;
+		oBinding.oCachePromise = SyncPromise.resolve(oOldCache);
+		oBinding.mCacheQueryOptions = "~mCacheQueryOptions~";
+		oBinding.oReturnValueContext = oReturnValueContext;
+		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
+			.returns("~mQueryOptions~");
+		this.mock(_Helper).expects("aggregateExpandSelect").never();
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "SalesOrderList('77')",
+				"~mQueryOptions~", true, sinon.match.same(this.oModel.bSharedRequests))
+			.returns(oNewCache);
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("group", true);
+		this.mock(oReturnValueContext).expects("refreshDependentBindings")
+			.withExactArgs("", "group", true, bKeepCacheOnError).callsFake(function () {
+				that.mock(oOldCache).expects("setActive").exactly(bKeepCacheOnError ? 1 : 0)
+					.withExactArgs(true);
+				that.mock(oReturnValueContext).expects("checkUpdateInternal")
+					.exactly(bKeepCacheOnError ? 1 : 0).withExactArgs()
+					.returns(bKeepCacheOnError && bCheckFails
+						? SyncPromise.reject(oCheckError)
+						: SyncPromise.resolve());
+				return Promise.reject(oError);
+			});
+
+		// code under test
+		return oBinding.refreshReturnValueContext(oReturnValueContext, "group", bKeepCacheOnError)
+			.then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0,
+					bKeepCacheOnError && bCheckFails ? oCheckError : oError);
+				assert.strictEqual(oBinding.oCache,
+					bKeepCacheOnError ? oOldCache : oNewCache);
+				assert.strictEqual(oBinding.oCachePromise.getResult(),
+					bKeepCacheOnError ? oOldCache : oNewCache);
+				assert.strictEqual(oBinding.mCacheQueryOptions,
+					bKeepCacheOnError ? "~mCacheQueryOptions~" : "~mQueryOptions~");
+			});
+	});
 	});
 });
 
@@ -4510,7 +4570,7 @@ sap.ui.define([
 						.throws(oError);
 				}
 				this.mock(oBinding).expects("refreshReturnValueContext")
-					.withExactArgs(sinon.match.same(oContext), sGroupId)
+					.withExactArgs(sinon.match.same(oContext), sGroupId, true)
 					.returns(oRefreshPromise);
 				this.mock(oBinding).expects("refreshInternal").exactly(bReturnValueContext ? 0 : 1)
 					.withExactArgs("", sGroupId, true, true)

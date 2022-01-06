@@ -212,15 +212,13 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#checkUpdate
 	ODataBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var that = this;
-
 		if (arguments.length > 1) {
 			throw new Error("Only the parameter bForceUpdate is supported");
 		}
 
-		this.checkUpdateInternal(bForceUpdate).catch(function (oError) {
-			that.oModel.reportError("Failed to update " + that, sClassName, oError);
-		});
+		this.checkUpdateInternal(bForceUpdate).catch(this.oModel.getReporter());
+		// do not rethrow, ManagedObject doesn't react on this either
+		// throwing an error would cause "Uncaught (in promise)" in Chrome
 	};
 
 	/**
@@ -232,7 +230,7 @@ sap.ui.define([
 	 *   Whether the change event is fired in any case (only allowed for property bindings)
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error (e.g. thrown by the change event handler of a control)
+	 *   case of an error
 	 * @throws {Error} If called with illegal parameters
 	 *
 	 * @abstract

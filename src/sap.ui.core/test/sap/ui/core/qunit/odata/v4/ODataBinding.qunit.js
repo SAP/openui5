@@ -123,18 +123,17 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				checkUpdateInternal : function () {},
 				oModel : {
-					reportError : function () {}
+					getReporter : function () {
+						return function () { throw new Error(); };
+					}
 				}
-			}),
-			bForceUpdate = {/*false or true*/};
+			});
 
-		this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(sinon.match.same(bForceUpdate))
+		this.mock(oBinding).expects("checkUpdateInternal").withExactArgs("~bForceUpdate~")
 			.resolves();
-		this.mock(oBinding.oModel).expects("reportError").never();
 
 		// code under test
-		oBinding.checkUpdate(bForceUpdate);
+		oBinding.checkUpdate("~bForceUpdate~");
 	});
 
 	//*********************************************************************************************
@@ -149,24 +148,24 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				checkUpdateInternal : function () {},
 				oModel : {
-					reportError : function () {}
-				},
-				toString : function () { return "~"; }
+					getReporter : function () {}
+				}
 			}),
 			oError = new Error(),
-			bForceUpdate = {/*false or true*/},
-			oPromise = Promise.reject(oError);
+			oPromise = Promise.reject(oError),
+			fnReporter = sinon.spy();
 
-		this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(sinon.match.same(bForceUpdate))
+		this.mock(oBinding).expects("checkUpdateInternal").withExactArgs("~bForceUpdate~")
 			.returns(oPromise);
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Failed to update ~", sClassName, sinon.match.same(oError));
+		this.mock(oBinding.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
-		oBinding.checkUpdate(bForceUpdate);
+		oBinding.checkUpdate("~bForceUpdate~");
 
-		return oPromise.catch(function () {}); // wait for the error, but ignore it
+		return oPromise.catch(function () {
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		});
 	});
 
 	//*********************************************************************************************

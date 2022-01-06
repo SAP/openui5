@@ -344,7 +344,7 @@ sap.ui.define([
 			}
 			if (oFixture.sTarget) {
 				this.mock(oBinding).expects("checkUpdateInternal")
-					.withExactArgs(/*bInitial*/true, "context");
+					.withExactArgs(/*bInitial*/true, "context").returns(SyncPromise.resolve());
 			}
 			this.mock(oBinding).expects("deregisterChange").withExactArgs();
 			this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
@@ -765,11 +765,12 @@ sap.ui.define([
 
 			// code under test
 			return oBinding.checkUpdateInternal(false).then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
 				assert.strictEqual(oBinding.getValue(), undefined,
 					"read error resets the value");
 				assert.ok(bChangeReceived, "Value changed -> expecting change event");
-			}, function () {
-				assert.ok(false, "unexpected failure");
 			});
 		});
 	});
@@ -789,7 +790,11 @@ sap.ui.define([
 			});
 
 			// code under test
-			return oBinding.checkUpdateInternal(true);
+			return oBinding.checkUpdateInternal(true).then(function () {
+				assert.ok(false, "unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
 		});
 	});
 
@@ -1213,12 +1218,15 @@ sap.ui.define([
 					return Promise.reject(oError);
 				}
 			},
-			done = assert.async(),
-			oControl = new TestControl({models : this.oModel});
+			oControl = new TestControl({models : this.oModel}),
+			done = assert.async();
 
 		this.mock(_Cache).expects("createProperty").returns(oCache);
-		this.mock(this.oModel).expects("reportError").withExactArgs(
-			"Failed to read path /path", sClassName, sinon.match.same(oError));
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs("Failed to read path /path", sClassName, sinon.match.same(oError))
+			.callsFake(function (_sLogMessage, _sReportingClassName, oError) {
+				oError.$reported = true; // important for #getReporter
+			});
 
 		//code under test
 		oControl.bindProperty("text", {
@@ -1607,10 +1615,32 @@ sap.ui.define([
 			vValue = "foo";
 
 		this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(undefined, undefined, undefined, vValue);
+			.withExactArgs(undefined, undefined, undefined, vValue)
+			.returns(SyncPromise.resolve());
+		this.mock(this.oModel).expects("getReporter").withExactArgs()
+			.returns(function () { throw new Error(); });
 
 		// code under test
 		oBinding.onChange(vValue);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onChange: checkUpdateInternal fails", function () {
+		var oBinding = this.oModel.bindProperty("/absolute"),
+			oError = new Error("This call intentionally failed"),
+			fnReporter = sinon.spy(),
+			vValue = "foo";
+
+		this.mock(oBinding).expects("checkUpdateInternal")
+			.withExactArgs(undefined, undefined, undefined, vValue)
+			.returns(SyncPromise.reject(oError));
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
+
+		// code under test
+		oBinding.onChange(vValue);
+
+		sinon.assert.calledOnce(fnReporter);
+		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 	});
 
 	//*********************************************************************************************
@@ -2188,22 +2218,43 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
 			oBinding = this.oModel.bindProperty("Category", oContext),
-			oBindingMock = this.mock(oBinding),
 			bForceUpdate = oFixture.parentHasChanges ? undefined : false,
 			sResumeChangeReason = {/*change or refresh*/};
 
 		oBinding.sResumeChangeReason = sResumeChangeReason;
-		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-		oBindingMock.expects("checkUpdateInternal").exactly(oFixture.checkUpdate ? 1 : 0)
+		this.mock(oBinding).expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("checkUpdateInternal").exactly(oFixture.checkUpdate ? 1 : 0)
 			.withExactArgs(bForceUpdate, sinon.match.same(sResumeChangeReason))
 			.callsFake(function () {
 				assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+				return SyncPromise.resolve();
 			});
+		this.mock(this.oModel).expects("getReporter").exactly(oFixture.checkUpdate ? 1 : 0)
+			.withExactArgs().returns(function () { throw new Error(); });
 
 		// code under test
 		oBinding.resumeInternal(oFixture.checkUpdate, oFixture.parentHasChanges);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: checkUpdateInternal fails", function () {
+		var oContext = Context.create(this.oModel, {}, "/ProductList('42')"),
+			oBinding = this.oModel.bindProperty("Category", oContext),
+			oError = new Error("This call intentionally failed"),
+			fnReporter = sinon.spy();
+
+		this.mock(oBinding).expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("checkUpdateInternal") // don't care about args
+			.returns(SyncPromise.reject(oError));
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
+
+		// code under test
+		oBinding.resumeInternal(true);
+
+		sinon.assert.calledOnce(fnReporter);
+		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getDependentBindings", function (assert) {

@@ -47,7 +47,7 @@ sap.ui.define([
 				this.byId("index::table").bindText({
 					path : "BusinessPartnerID",
 					formatter : function () {
-						return this.getBindingContext().getIndex();
+						return this.getBindingContext() && this.getBindingContext().getIndex();
 					}
 				});
 				this.byId("businessPartnerTable").bindRows({

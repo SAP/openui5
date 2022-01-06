@@ -1304,13 +1304,35 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate", function (assert) {
+	QUnit.test("checkUpdate", function () {
+		var oModel = {
+				getDependentBindings : function () {}
+			},
+			oBinding1 = {
+				checkUpdate : function () {}
+			},
+			oBinding2 = {
+				checkUpdate : function () {}
+			},
+			oContext = Context.create(oModel, {/*oParentBinding*/}, "/EMPLOYEES/42", 42);
+
+		this.mock(oModel).expects("getDependentBindings").withExactArgs(sinon.match.same(oContext))
+			.returns([oBinding1, oBinding2]);
+		this.mock(oBinding1).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding2).expects("checkUpdate").withExactArgs();
+
+		// code under test
+		oContext.checkUpdate();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdateInternal", function (assert) {
 		var oModel = {
 				getDependentBindings : function () {}
 			},
 			bBinding1Updated = false,
 			oBinding1 = {
-				checkUpdate : function () {
+				checkUpdateInternal : function () {
 					return new SyncPromise(function (resolve) {
 						setTimeout(function () {
 							bBinding1Updated = true;
@@ -1321,7 +1343,7 @@ sap.ui.define([
 			},
 			bBinding2Updated = false,
 			oBinding2 = {
-				checkUpdate : function () {
+				checkUpdateInternal : function () {
 					return new SyncPromise(function (resolve) {
 						setTimeout(function () {
 							bBinding2Updated = true;
@@ -1339,7 +1361,7 @@ sap.ui.define([
 			.returns([oBinding1, oBinding2]);
 
 		// code under test
-		oPromise = oContext.checkUpdate();
+		oPromise = oContext.checkUpdateInternal();
 
 		assert.strictEqual(oPromise.isFulfilled(), false);
 		return oPromise.then(function () {

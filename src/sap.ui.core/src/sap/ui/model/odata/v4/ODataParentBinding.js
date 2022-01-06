@@ -411,7 +411,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error (e.g. thrown by the change event handler of a control)
+	 *   case of an error
 	 * @throws {Error} If called with parameters
 	 *
 	 * @private
@@ -1059,9 +1059,11 @@ sap.ui.define([
 	 * @param {boolean} [bKeepCacheOnError]
 	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
-	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
-	 *   given
+	 *   A promise resolving when all dependent bindings are refreshed; it is rejected
+	 *   when the refresh fails; the promise is resolved immediately on a suspended binding
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended and a group ID different from the binding's
+	 *   group ID is given
 	 *
 	 * @private
 	 */
@@ -1077,7 +1079,11 @@ sap.ui.define([
 	 * Recursively refreshes all dependent list bindings that have no own cache.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving when all dependent list bindings without own cache are refreshed
+	 *   A promise resolving when all dependent list bindings without own cache are refreshed; it is
+	 *   rejected when the refresh fails; the promise is resolved immediately on a suspended binding
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended and a group ID different from the binding's
+	 *   group ID is given
 	 *
 	 * @private
 	 */

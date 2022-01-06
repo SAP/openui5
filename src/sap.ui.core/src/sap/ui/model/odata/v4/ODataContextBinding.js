@@ -1385,15 +1385,21 @@ sap.ui.define([
 	 *   The context to refresh
 	 * @param {string} sGroupId
 	 *   The group ID for the refresh
+	 * @param {boolean} [bKeepCacheOnError]
+	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the refresh is finished if the context is
 	 *   this binding's return value context; <code>null</code> otherwise
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.refreshReturnValueContext = function (oContext, sGroupId) {
-		var oCache,
-			oModel = this.oModel;
+	ODataContextBinding.prototype.refreshReturnValueContext = function (oContext, sGroupId,
+			bKeepCacheOnError) {
+		var oCache = this.oCache,
+			mCacheQueryOptions = this.mCacheQueryOptions,
+			oModel = this.oModel,
+			oPromise,
+			that = this;
 
 		if (this.oReturnValueContext !== oContext) {
 			return null;
@@ -1403,12 +1409,25 @@ sap.ui.define([
 		if (this.mLateQueryOptions) {
 			_Helper.aggregateExpandSelect(this.mCacheQueryOptions, this.mLateQueryOptions);
 		}
-		oCache = _Cache.createSingle(oModel.oRequestor, oContext.getPath().slice(1),
+		this.oCache = _Cache.createSingle(oModel.oRequestor, oContext.getPath().slice(1),
 			this.mCacheQueryOptions, true, oModel.bSharedRequests);
-		this.oCache = oCache;
-		this.oCachePromise = SyncPromise.resolve(oCache);
+		this.oCachePromise = SyncPromise.resolve(this.oCache);
 		this.createReadGroupLock(sGroupId, true);
-		return oContext.refreshDependentBindings("", sGroupId, true);
+		oPromise = oContext.refreshDependentBindings("", sGroupId, true, bKeepCacheOnError);
+		if (bKeepCacheOnError) {
+			oPromise = oPromise.catch(function (oError) {
+				that.oCache = oCache;
+				that.oCachePromise = SyncPromise.resolve(oCache);
+				that.mCacheQueryOptions = mCacheQueryOptions;
+				oCache.setActive(true);
+
+				return oContext.checkUpdateInternal().then(function () {
+					throw oError;
+				});
+			});
+		}
+
+		return oPromise;
 	};
 
 	/**
@@ -1457,7 +1476,8 @@ sap.ui.define([
 				}
 			}
 		}
-		return oContext && this.refreshReturnValueContext(oContext, sGroupId)
+		return oContext
+			&& this.refreshReturnValueContext(oContext, sGroupId, /*bKeepCacheOnError*/true)
 			|| this.refreshInternal("", sGroupId, true, true);
 	};
 

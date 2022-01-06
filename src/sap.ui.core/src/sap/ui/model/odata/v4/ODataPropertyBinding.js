@@ -227,9 +227,9 @@ sap.ui.define([
 	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the check is finished, or rejecting in
-	 *   case of an error (e.g. thrown by the change event handler of a control). If the cache is no
-	 *   longer the active cache when the response arrives, that response is silently ignored and
-	 *   the value remains unchanged.
+	 *   case of an error. If the cache is no longer the active cache when the response arrives,
+	 *   that response is ignored almost silently (that is, with a canceled error) and the value
+	 *   remains unchanged.
 	 *
 	 * @private
 	 * @see sap.ui.model.PropertyBinding#checkDataState
@@ -313,14 +313,13 @@ sap.ui.define([
 				}
 				Log.error("Accessed value is not primitive", sResolvedPath, sClassName);
 			}, function (oError) {
-				// do not rethrow, ManagedObject doesn't react on this either
-				// throwing an error would cause "Uncaught (in promise)" in Chrome
 				that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName, oError);
 				if (oError.canceled) { // canceled -> value remains unchanged
 					oCallToken.forceUpdate = false;
 					return that.vValue;
 				}
 				mParametersForDataReceived = {error : oError};
+				// oError is re-thrown below
 			});
 			if (bForceUpdate && vValue.isFulfilled()) {
 				if (vType && vType.isFulfilled && vType.isFulfilled()) {
@@ -348,6 +347,9 @@ sap.ui.define([
 			}
 			if (bDataRequested) {
 				that.fireDataReceived(mParametersForDataReceived);
+			}
+			if (mParametersForDataReceived.error) {
+				throw mParametersForDataReceived.error;
 			}
 		});
 	};
@@ -490,7 +492,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.checkUpdateInternal(undefined, undefined, undefined, vValue);
+		this.checkUpdateInternal(undefined, undefined, undefined, vValue)
+			.catch(this.oModel.getReporter());
 	};
 
 	/**
@@ -519,7 +522,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise}
 	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
-	 *   determined
+	 *   determined, or rejecting in case of an error
 	 *
 	 * @public
 	 * @since 1.69
@@ -630,7 +633,8 @@ sap.ui.define([
 
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdateInternal(bParentHasChanges ? undefined : false, sResumeChangeReason);
+			this.checkUpdateInternal(bParentHasChanges ? undefined : false, sResumeChangeReason)
+				.catch(this.oModel.getReporter());
 		}
 	};
 
@@ -657,7 +661,8 @@ sap.ui.define([
 			this.sResumeChangeReason = undefined;
 			if (this.bRelative) {
 				this.fetchCache(this.oContext);
-				this.checkUpdateInternal(this.bInitial || undefined, ChangeReason.Context);
+				this.checkUpdateInternal(this.bInitial || undefined, ChangeReason.Context)
+					.catch(this.oModel.getReporter());
 			}
 		}
 	};

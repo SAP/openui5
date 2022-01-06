@@ -187,14 +187,25 @@ sap.ui.define([
 	/**
 	 * Updates all dependent bindings of this context.
 	 *
+	 * @private
+	 */
+	Context.prototype.checkUpdate = function () {
+		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+			oDependentBinding.checkUpdate();
+		});
+	};
+
+	/**
+	 * Updates all dependent bindings of this context.
+	 *
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result when the update is finished
 	 * @private
 	 */
-	Context.prototype.checkUpdate = function () {
+	Context.prototype.checkUpdateInternal = function () {
 		return SyncPromise.all(
 			this.oModel.getDependentBindings(this).map(function (oDependentBinding) {
-				return oDependentBinding.checkUpdate();
+				return oDependentBinding.checkUpdateInternal();
 			})
 		);
 	};
@@ -939,9 +950,11 @@ sap.ui.define([
 	 * @param {boolean} [bKeepCacheOnError]
 	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving when all dependent bindings are refreshed; it is rejected if the
-	 *   binding's root binding is suspended and a group ID different from the binding's group ID is
-	 *   given
+	 *   A promise resolving when all dependent bindings are refreshed; it is rejected
+	 *   when the refresh fails; the promise is resolved immediately on a suspended binding
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended and a group ID different from the binding's
+	 *   group ID is given
 	 *
 	 * @private
 	 */
