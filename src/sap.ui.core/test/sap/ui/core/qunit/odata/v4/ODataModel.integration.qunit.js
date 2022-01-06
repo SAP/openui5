@@ -31716,6 +31716,10 @@ sap.ui.define([
 	// sure that the check for unexpected changes of key predicates does not fail due to this
 	// merging.
 	// BCP: 2170263464
+	//
+	// There is an ODCB with empty path in between, sending own requests (see "standalone"). Its
+	// side effect GET must not be merged to ensure that response processing is not skipped.
+	// BCP: 2180419641
 	QUnit.test("requestSideEffects: {$PropertyPath : '*'}", function (assert) {
 		var oContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -31725,8 +31729,11 @@ sap.ui.define([
 	<Text id="name" text="{Name}"/>\
 	<Text binding="{BestPublication}" id="price0" text="{Price}"/>\
 	<FlexBox binding="{BestFriend/BestFriend}">\
-		<Text id="friend" text="{Name}"/>\
+		<Text id="friends_friend0" text="{Name}"/>\
 		<Text binding="{BestPublication}" id="price1" text="{Price}"/>\
+	</FlexBox>\
+	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="standalone">\
+		<Text id="friends_friend1" text="{BestFriend/BestFriend/Name}"/>\
 	</FlexBox>\
 	<FlexBox binding="{}" id="section">\
 		<Text binding="{path : \'DraftAdministrativeData\', parameters : {$$ownRequest : true}}"\
@@ -31738,7 +31745,24 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+				+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name))", {
+				ArtistID : "42",
+				BestFriend : {
+					ArtistID : "23",
+					BestFriend : {
+						ArtistID : "24",
+						IsActiveEntity : true,
+						Name : "Best Friend"
+					},
+					IsActiveEntity : true
+				},
+				IsActiveEntity : true
+			})
+			.expectChange("friends_friend1", "Best Friend")
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/DraftAdministrativeData"
 				+ "?$select=DraftID,InProcessByUser", {
 				DraftID : "1",
 				InProcessByUser : "foo"
@@ -31786,7 +31810,7 @@ sap.ui.define([
 			.expectChange("city", "Heidelberg")
 			.expectChange("name", "Hour Frustrated")
 			.expectChange("price0", "9.99")
-			.expectChange("friend", "Best Friend")
+			.expectChange("friends_friend0", "Best Friend")
 			.expectChange("price1", "8.88");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -31803,7 +31827,13 @@ sap.ui.define([
 					Name : "Minute Frustrated"
 				})
 				.expectChange("city", "Walldorf")
-				.expectChange("name", "Minute Frustrated");
+				.expectChange("name", "Minute Frustrated")
+				//TODO avoid this useless GET for key properties only!
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity", {
+					ArtistID : "42",
+					IsActiveEntity : true
+				});
 
 			return Promise.all([
 				// code under test
@@ -31828,7 +31858,15 @@ sap.ui.define([
 					persistent : true,
 					technical : true,
 					type : "Error"
-				}]);
+				}])
+				//TODO avoid this useless GET for key properties only? no changes allowed anyway!
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=BestFriend&$expand=BestFriend($select=ArtistID,IsActiveEntity)", {
+					BestFriend : {
+						ArtistID : "23",
+						IsActiveEntity : true
+					}
+				});
 			that.oLogMock.expects("error").withArgs("Failed to request side effects");
 
 			return Promise.all([
@@ -31854,7 +31892,21 @@ sap.ui.define([
 						IsActiveEntity : true
 					}
 				})
-				.expectChange("friend", "TAFKAP");
+				.expectChange("friends_friend0", "TAFKAP")
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name))", {
+					BestFriend : {
+						ArtistID : "23",
+						BestFriend : {
+							ArtistID : "24",
+							IsActiveEntity : true,
+							Name : "TAFKAP"
+						},
+						IsActiveEntity : true
+					}
+				})
+				.expectChange("friends_friend1", "TAFKAP");
 
 			return Promise.all([
 				// code under test
@@ -31930,8 +31982,22 @@ sap.ui.define([
 					}
 				})
 				.expectChange("price1", "2.22")
-				.expectChange("friend", "Princess")
-				.expectChange("price0", "-2.22");
+				.expectChange("friends_friend0", "Princess")
+				.expectChange("price0", "-2.22")
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+						+ ";$expand=BestFriend($select=ArtistID,IsActiveEntity,Name))", {
+					BestFriend : {
+						ArtistID : "23",
+						BestFriend : {
+							ArtistID : "42",
+							IsActiveEntity : true,
+							Name : "Princess"
+						},
+						IsActiveEntity : true
+					}
+				})
+				.expectChange("friends_friend1", "Princess");
 
 			return Promise.all([
 				// code under test (BCP: 2170263464)

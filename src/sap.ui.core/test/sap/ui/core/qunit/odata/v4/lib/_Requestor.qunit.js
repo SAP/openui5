@@ -1515,6 +1515,7 @@ sap.ui.define([
 				$cancel : undefined,
 				$mergeRequests : undefined,
 				$metaPath : undefined,
+				$owner : undefined,
 				$promise : sinon.match.defined,
 				$queryOptions : undefined,
 				$reject : sinon.match.func,
@@ -1533,6 +1534,7 @@ sap.ui.define([
 				$cancel : undefined,
 				$mergeRequests : undefined,
 				$metaPath : undefined,
+				$owner : undefined,
 				$promise : sinon.match.defined,
 				$queryOptions : undefined,
 				$reject : sinon.match.func,
@@ -1552,6 +1554,7 @@ sap.ui.define([
 				$cancel : "~cancel~",
 				$mergeRequests : "~mergeRequests~",
 				$metaPath : "~metaPath~",
+				$owner : "~owner~",
 				$promise : sinon.match.defined,
 				$queryOptions : "~queryOptions~",
 				$reject : sinon.match.func,
@@ -1570,6 +1573,7 @@ sap.ui.define([
 				$cancel : undefined,
 				$mergeRequests : undefined,
 				$metaPath : undefined,
+				$owner : undefined,
 				$promise : sinon.match.defined,
 				$queryOptions : undefined,
 				$reject : sinon.match.func,
@@ -1596,7 +1600,7 @@ sap.ui.define([
 		aPromises.push(oRequestor.request("GET", "Products('23')", this.createGroupLock(sGroupId),
 				{Foo : "bar", Accept : "application/json;odata.metadata=full"}, "~payload~",
 				fnSubmit, "~cancel~", "~metaPath~", "~sOriginalResourcePath~", undefined,
-				"~queryOptions~", "~mergeRequests~")
+				"~queryOptions~", "~owner~", "~mergeRequests~")
 			.then(function (oResult) {
 				assert.deepEqual(oResult, {
 					"@odata.etag" : "ETag value",
@@ -1876,6 +1880,7 @@ sap.ui.define([
 					$cancel : undefined,
 					$mergeRequests : undefined,
 					$metaPath : sMetaPath,
+					$owner : undefined,
 					$promise : sinon.match.defined,
 					$queryOptions : undefined,
 					$reject : sinon.match.func,
@@ -4450,8 +4455,8 @@ sap.ui.define([
 				$queryOptions : {}
 			}, {
 				url : "EntitySet2('42')",
-				$metaPath : "/EntitySet2",
 				$mergeRequests : function () {},
+				$metaPath : "/EntitySet2",
 				$promise : {},
 				$queryOptions : {}
 			}, {
@@ -4459,6 +4464,12 @@ sap.ui.define([
 				$queryOptions : {},
 				$mergeRequests : function () {},
 				$resolve : function () {}
+			}, {
+				url : "EntitySet1('42')?foo=bar",
+				$mergeRequests : function () { throw new Error("Do not call!"); },
+				$metaPath : "/EntitySet1",
+				$owner : "different",
+				$queryOptions : {}
 			}];
 
 		aRequests.iChangeSet = 1;
@@ -4490,11 +4501,15 @@ sap.ui.define([
 			.withExactArgs(aRequests[6].url, aRequests[6].$metaPath,
 				sinon.match.same(aRequests[6].$queryOptions))
 			.returns("EntitySet2('42')?$select=birthdate");
+		oRequestorMock.expects("addQueryString")
+			.withExactArgs(aRequests[8].url, aRequests[8].$metaPath,
+				sinon.match.same(aRequests[8].$queryOptions))
+			.returns("EntitySet1('42')?$owner=different");
 
 		// code under test
 		aMergedRequests = oRequestor.mergeGetRequests(aRequests);
 
-		assert.strictEqual(aMergedRequests.length, 6);
+		assert.strictEqual(aMergedRequests.length, 7);
 		assert.strictEqual(aMergedRequests.iChangeSet, aRequests.iChangeSet);
 		assert.strictEqual(aMergedRequests[0], aRequests[0]);
 		assert.strictEqual(aMergedRequests[1], aRequests[1]);
@@ -4502,9 +4517,11 @@ sap.ui.define([
 		assert.strictEqual(aMergedRequests[3], aRequests[4]);
 		assert.strictEqual(aMergedRequests[4], aRequests[5]);
 		assert.strictEqual(aMergedRequests[5], aRequests[6]);
+		assert.strictEqual(aMergedRequests[6], aRequests[8]);
 		assert.strictEqual(aMergedRequests[1].url, "EntitySet1('42')?$select=name");
 		assert.strictEqual(aMergedRequests[4].url, "EntitySet3('42')?$select=foo");
 		assert.strictEqual(aMergedRequests[5].url, "EntitySet2('42')?$select=birthdate");
+		assert.strictEqual(aMergedRequests[6].url, "EntitySet1('42')?$owner=different");
 	});
 
 	//*********************************************************************************************
