@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/integration/controls/ActionsStrip",
+	"sap/ui/integration/controls/Paginator",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver"
 ], function (
 	Control,
 	Core,
 	ActionsStrip,
+	Paginator,
 	BindingHelper,
 	BindingResolver
 ) {
@@ -49,6 +51,11 @@ sap.ui.define([
 				actionsStrip: {
 					type: "sap.ui.integration.controls.ActionsStrip",
 					multiple: false
+				},
+
+				paginator: {
+					type: "sap.ui.integration.controls.Paginator",
+					multiple: false
 				}
 			},
 
@@ -68,6 +75,9 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oFooter) {
+				var oActionsStrip = oFooter.getActionsStrip(),
+					oPaginator = oFooter.getPaginator();
+
 				oRM.openStart("div", oFooter).class("sapFCardFooter");
 
 				if (oFooter.getCardInstance().isLoading() && oFooter._hasBinding()) {
@@ -76,7 +86,13 @@ sap.ui.define([
 
 				oRM.openEnd();
 
-				oRM.renderControl(oFooter.getActionsStrip());
+				if (oPaginator) {
+					oRM.renderControl(oPaginator);
+				}
+
+				if (oActionsStrip) {
+					oRM.renderControl(oActionsStrip);
+				}
 
 				oRM.close("div");
 			}
@@ -87,7 +103,7 @@ sap.ui.define([
 		var oConfiguration = BindingHelper.createBindingInfos(this.getConfiguration(), this.getCardInstance().getBindingNamespaces());
 
 		// to do: if more precise check is needed search recursively
-		return oConfiguration.actionsStrip.some(function (oButtonConfig) {
+		return (oConfiguration.actionsStrip || []).some(function (oButtonConfig) {
 			for (var sKey in oButtonConfig) {
 				if (BindingResolver.isBindingInfo(oButtonConfig[sKey])) {
 					return true;
@@ -109,14 +125,11 @@ sap.ui.define([
 	};
 
 	Footer.create = function (oCard, oConfiguration) {
-		if (!oConfiguration.actionsStrip) {
-			return null;
-		}
-
 		return new Footer({
 			configuration: oConfiguration,
 			card: oCard,
-			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip)
+			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip),
+			paginator: Paginator.create(oCard, oConfiguration.paginator)
 		});
 	};
 

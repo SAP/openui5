@@ -1,0 +1,20 @@
+<mvc:View
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page>
+		<f:GridContainer>
+			<w:Card id="card1" manifest="./cardsdemo/cardcontent/pagination/cardManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card id="card2" manifest="./cardsdemo/cardcontent/pagination/oDataManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+		</f:GridContainer>
+	</Page>
+</mvc:View>

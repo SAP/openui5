@@ -39,6 +39,7 @@ sap.ui.define(function () {
 					'./CardDesigntime.qunit'
 				]
 			},
+			"CardPagination": { },
 			"AllCards": {
 				ui5: {
 					libs: ["sap.ui.integration"]
@@ -261,6 +262,7 @@ sap.ui.define(function () {
 			},
 			"controls/ActionsToolbar": {},
 			"controls/ActionsStrip": {},
+			"controls/Paginator": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
 			"controls/MicrochartLegend": {},

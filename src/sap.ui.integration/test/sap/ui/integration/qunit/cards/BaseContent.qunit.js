@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/integration/widgets/Card"
 ], function (
 	Text,
 	ContentFactory,
 	jQuery,
-	Core
+	Core,
+	Card
 ) {
 	"use strict";
 
@@ -19,9 +21,10 @@ sap.ui.define([
 		before: function () {
 			var oContentFactory = new ContentFactory();
 
+			this.oCard = new Card();
 			this.getMinHeight = function (sType, oConfiguration, oContent) {
-				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent);
-			};
+				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent, this.oCard);
+			}.bind(this);
 		},
 		beforeEach: function () {
 			jQuery("html").addClass("sapUiSizeCompact");
@@ -36,6 +39,8 @@ sap.ui.define([
 		},
 		after: function () {
 			this.getMinHeight = null;
+			this.oCard.destroy();
+			this.oCard = null;
 		}
 	});
 
@@ -153,9 +158,10 @@ sap.ui.define([
 		before: function () {
 			var oContentFactory = new ContentFactory();
 
+			this.oCard = new Card();
 			this.getMinHeight = function (sType, oConfiguration, oContent) {
-				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent);
-			};
+				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent, this.oCard);
+			}.bind(this);
 		},
 		beforeEach: function () {
 			this.oFakeContent = new Text();
@@ -166,6 +172,8 @@ sap.ui.define([
 		},
 		after: function () {
 			this.getMinHeight = null;
+			this.oCard.destroy();
+			this.oCard = null;
 		}
 	});
 

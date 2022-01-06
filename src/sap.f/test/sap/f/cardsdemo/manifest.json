@@ -266,6 +266,11 @@
 					"pattern": "submitAction",
 					"name": "submitAction",
 					"target": "submitAction"
+				},
+				{
+					"pattern": "pagination",
+					"name": "pagination",
+					"target": "pagination"
 				}
 			],
 			"targets": {
@@ -462,6 +467,11 @@
 				"submitAction": {
 					"id": "submitAction",
 					"name": "SubmitAction",
+					"level": 1
+				},
+				"pagination": {
+					"id": "pagination",
+					"name": "Pagination",
 					"level": 1
 				}
 			}

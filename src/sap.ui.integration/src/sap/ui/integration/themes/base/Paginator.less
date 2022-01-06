@@ -1,0 +1,28 @@
+/* ====================================================== */
+/* CSS for control sap.ui.integration.controls/Paginator */
+/* Base theme                                             */
+/* ====================================================== */
+
+.sapUiIntPaginator {
+	.sapMCrslControls {
+
+		.sapMCrslPrev:hover,
+		.sapMCrslNext:hover {
+			background: @sapUiButtonHoverBackground;
+		}
+
+		.sapMCrslPrev:active,
+		.sapMCrslNext:active {
+			background: @sapUiButtonActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+		}
+
+		.sapUiIcon {
+			pointer-events: auto;
+
+			&:focus {
+				outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			}
+		}
+	}
+}

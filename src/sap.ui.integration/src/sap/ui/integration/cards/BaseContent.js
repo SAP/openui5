@@ -326,6 +326,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	BaseContent.prototype.onDataRequestComplete = function () {
+		var oCard = this.getCardInstance();
+		if (oCard) {
+			oCard._fireContentDataChange();
+		}
+
 		this.fireEvent("_dataReady");
 	};
 
@@ -538,6 +543,12 @@ sap.ui.define([
 	BaseContent.prototype.isSkeleton = function () {
 		var oCard = this.getCardInstance();
 		return oCard && oCard.isSkeleton();
+	};
+
+	BaseContent.prototype.sliceData = function (iStartIndex, iEndIndex) { };
+
+	BaseContent.prototype.getDataLength = function () {
+		return 0;
 	};
 
 	return BaseContent;

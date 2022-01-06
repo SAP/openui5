@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 		}
 
 		if (bIsCardValid && oCard.getHeight() === "auto") { // if there is no height specified the default value is "auto"
-			var sHeight = this.getMinHeight(oCardContent.getParsedConfiguration(), oCardContent);
+			var sHeight = this.getMinHeight(oCardContent.getParsedConfiguration(), oCardContent, oCard);
 			oRm.style("min-height", sHeight);
 		}
 
