@@ -502,7 +502,7 @@ sap.ui.define([
 		var that = this;
 
 		if (this.isRootBindingSuspended()) {
-			this.sResumeChangeReason = ChangeReason.Refresh;
+			this.refreshSuspended(sGroupId);
 			return SyncPromise.resolve();
 		}
 		return this.oCachePromise.then(function () {

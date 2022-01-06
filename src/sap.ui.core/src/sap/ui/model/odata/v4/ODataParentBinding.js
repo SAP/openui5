@@ -1106,24 +1106,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding; expects it to be suspended.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for the refresh
-	 * @throws {Error}
-	 *   If a group ID different from the binding's group ID is given
-
-	 * @private
-	 */
-	ODataParentBinding.prototype.refreshSuspended = function (sGroupId) {
-		if (sGroupId && sGroupId !== this.getGroupId()) {
-			throw new Error(this + ": Cannot refresh a suspended binding with group ID '"
-				+ sGroupId + "' (own group ID is '" + this.getGroupId() + "')");
-		}
-		this.setResumeChangeReason(ChangeReason.Refresh);
-	};
-
-	/**
 	 * Loads side effects for the given context of this binding.
 	 *
 	 * @param {string} sGroupId

@@ -3466,34 +3466,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshSuspended", function () {
-		var oBinding = new ODataParentBinding();
-
-		this.mock(oBinding).expects("getGroupId").never();
-		this.mock(oBinding).expects("setResumeChangeReason").withExactArgs(ChangeReason.Refresh);
-
-		// code under test
-		oBinding.refreshSuspended();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("refreshSuspended: with group ID", function (assert) {
-		var oBinding = new ODataParentBinding();
-
-		this.mock(oBinding).expects("getGroupId").thrice().withExactArgs().returns("myGroup");
-		this.mock(oBinding).expects("setResumeChangeReason").withExactArgs(ChangeReason.Refresh);
-
-		// code under test
-		oBinding.refreshSuspended("myGroup");
-
-		assert.throws(function () {
-			// code under test
-			oBinding.refreshSuspended("otherGroup");
-		}, new Error(oBinding + ": Cannot refresh a suspended binding with group ID 'otherGroup' "
-			+ "(own group ID is 'myGroup')"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getResumePromise", function (assert) {
 		var oBinding = new ODataParentBinding(),
 			oResumePromise = {};
