@@ -352,7 +352,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("last/next x text", function(assert) {
+	QUnit.skip("last/next x text", function(assert) {
 		var oOptionLast = new StandardDynamicDateOption({ key: "LASTDAYS" }),
 			oOptionNext = new StandardDynamicDateOption({ key: "NEXTWEEKS" }),
 			sText;
@@ -371,7 +371,7 @@ sap.ui.define([
 		oOptionNext.destroy();
 	});
 
-	QUnit.test("last/next x creating value help UI", function(assert) {
+	QUnit.skip("last/next x creating value help UI", function(assert) {
 		var oOptionLast = new StandardDynamicDateOption({ key: "LASTDAYS" }),
 			aControls;
 
