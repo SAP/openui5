@@ -922,7 +922,7 @@ sap.ui.define([
 
 			//Assert
 			assert.strictEqual(oActionSheet.indexOfAggregation("buttons", oASButton2), 1, "Inserted button should be correctly placed at the second place.");
-			assert.strictEqual(oInvisibleText.getText().indexOf("2"), 0, "Invisible text should correctly state that the Button is placed at position #2.");
+			assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [2, 3]), "Invisible text should correctly state that the Button is placed at position #2.");
 
 			//Cleanup
 			done();
