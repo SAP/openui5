@@ -6988,9 +6988,9 @@ sap.ui.define([
 	// within the same $batch.
 	// Steps:
 	// 1. Successfully create 2 new entities.
-	// 2. Create 3 further entities, request side effects afterwards for the complete list; one POST
-	//    request fails hence the GET request for side effects also fails and the binding is
-	//    restored.
+	// 2. Create 3 further entities. one of them inactive, request side effects afterwards for the
+	//    complete list; one POST request fails hence the GET request for side effects also fails
+	//    and the binding is restored.
 	// 3. Check that the list binding has properly restored the created contexts (already saved +
 	//    still transient ones).
 	// 4. A deletion of a still transient context afterwards must NOT result in a DELETE request,
