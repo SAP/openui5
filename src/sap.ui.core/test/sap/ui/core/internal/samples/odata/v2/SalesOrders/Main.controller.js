@@ -339,7 +339,8 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oRowSettings = this.byId("rowsettings"),
+			var oItemsBindingContext,
+				oRowSettings = this.byId("rowsettings"),
 				oView = this.getView(),
 				oItemsBinding = oView.byId("ToLineItems").getBinding("rows"),
 				oModel = oView.getModel(),
@@ -368,12 +369,20 @@ sap.ui.define([
 			oItemsBinding.attachEvent("dataReceived", function () {
 				var i;
 
+				if (oItemsBindingContext !== oItemsBinding.getContext()) {
+					return;
+				}
+
 				if (oItemsBinding.isLengthFinal()
 						&& oItemsBinding.isFirstCreateAtEnd() === undefined) {
 					for (i = 0; i < iInlineCreationRows; i += 1) {
 						that.createInactiveLineItem();
 					}
 				}
+			});
+			// store binding context on data request to check it is unchanged when data is received
+			oItemsBinding.attachEvent("dataRequested", function () {
+				oItemsBindingContext = oItemsBinding.getContext();
 			});
 		},
 
