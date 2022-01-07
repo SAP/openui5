@@ -143,7 +143,8 @@ sap.ui.define([
 			sItemTemplateKey,
 			sItemTemplateTitle,
 			sItemsPath = "/",
-			oConfig = this.getConfig();
+			oConfig = this.getConfig(),
+			oLabel = this.createLabel(oConfig);
 
 		oSelect.attachChange(function (oEvent) {
 			this.setValue(this.getValueForModel());
@@ -177,6 +178,10 @@ sap.ui.define([
 		});
 
 		oSelect.setSelectedKey(oConfig.value);
+
+		if (oLabel) {
+			oSelect.addAriaLabelledBy(oLabel);
+		}
 
 		return oSelect;
 	};

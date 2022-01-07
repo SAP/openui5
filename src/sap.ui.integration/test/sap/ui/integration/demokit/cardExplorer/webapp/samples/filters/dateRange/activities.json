@@ -42,7 +42,8 @@
 						"dateRange",
 						"nextDays",
 						"lastDays"
-					]
+					],
+					"label": "Activity period"
 				}
 			}
 		},

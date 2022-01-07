@@ -81,6 +81,11 @@ sap.ui.define([
 			value: oConfig.value,
 			placeholder: oConfig.placeholder
 		});
+		var oLabel = this.createLabel(oConfig);
+
+		if (oLabel) {
+			oSearchField.addAriaLabelledBy(oLabel);
+		}
 
 		oSearchField.attachChange(function () {
 			this.setValue(this.getValueForModel());

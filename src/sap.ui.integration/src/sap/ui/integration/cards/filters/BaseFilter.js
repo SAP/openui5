@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText",
 	"sap/base/Log",
 	"sap/ui/core/Icon",
 	"sap/m/HBox",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function (
 	Control,
 	Core,
+	InvisibleText,
 	Log,
 	Icon,
 	HBox,
@@ -64,7 +66,12 @@ sap.ui.define([
 				/**
 				 * The internally used LoadingProvider.
 				 */
-				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" }
+				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" },
+
+				/**
+				 * The hidden label for this control
+				 */
+				_label: { type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden" }
 			},
 			associations: {
 
@@ -121,6 +128,16 @@ sap.ui.define([
 	};
 
 	BaseFilter.prototype.getField = function () {
+		return null;
+	};
+
+	BaseFilter.prototype.createLabel = function (oConfig) {
+		if (oConfig.label) {
+			this.setAggregation("_label", new InvisibleText({
+				text: oConfig.label
+			}).toStatic());
+			return this.getAggregation("_label");
+		}
 		return null;
 	};
 
