@@ -315,13 +315,13 @@ sap.ui.define([
 				return null;
 			}
 
-			if (oConfig.checkDescription && this.getUseFirstMatch()) {
+			if (this.getUseFirstMatch()) {
 				for (i = 0; i < aItems.length; i++) {
 					oItem = aItems[i];
-					sText = oItem.getText();
+					sText = oConfig.checkDescription ? oItem.getText() : oItem.getKey(); // don't use oConfig.checkKey as entered value non't neet to be a valid (complete) key
 					if (_filterText.call(this, sText, oConfig.value)) {
 						vKey = _getKey.call(this, oItem);
-						return {key: vKey, description: sText};
+						return {key: vKey, description: oItem.getText()};
 					}
 				}
 			}
