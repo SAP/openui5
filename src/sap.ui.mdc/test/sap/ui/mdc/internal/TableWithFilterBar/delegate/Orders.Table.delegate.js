@@ -85,6 +85,9 @@ sap.ui.define([
 
 		if (oProperty.name === "total") {
 			oCtrlProperties.value = "{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}";
+		} else if (oProperty.name === "customer_ID") {
+			oCtrlProperties.additionalValue = "{customer/name}";
+			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		return new Field(oCtrlProperties);
