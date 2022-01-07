@@ -6053,7 +6053,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {array} [aPath]
-	 *   Paths to be be reset; if no array is passed, all changes are reset
+	 *   Paths to be reset; if no array is passed, all changes are reset
 	 * @param {boolean} [bAll=false]
 	 *   Whether also deferred requests are taken into account
 	 * @param {boolean} [bDeleteCreatedEntities=false]
@@ -6610,8 +6610,7 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.inactive]
 	 *   Whether the created context is inactive. An inactive context will only be sent to the
 	 *   server after the first property update. From then on it behaves like any other created
-	 *   context. This parameter is experimental and its implementation may still change. Do not use
-	 *   it in productive code yet. Supported since 1.98.0
+	 *   context. Supported since 1.98.0
 	 * @param {array|object} [mParameters.properties]
 	 *   An array that specifies a set of properties or the entry
 	 * @param {boolean} [mParameters.refreshAfterChange]

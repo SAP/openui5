@@ -46,7 +46,7 @@ sap.ui.define([
 	 *           if not specified, the default count mode of the <code>oModel</code> is applied
 	 * @param {string} [mParameters.createdEntitiesKey=""]
 	 *   A key used in combination with the resolved path of this binding to identify the entities
-	 *   created this binding's {@link #create} method.
+	 *   created by this binding's {@link #create} method.
 	 *
 	 *   <b>Note:</b> Different controls or control aggregation bindings to the same collection must
 	 *   have different <code>createdEntitiesKey</code> values.
@@ -155,8 +155,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v2.ODataListBinding} oEvent.getSource() This binding
 	 *
 	 * @event sap.ui.model.odata.v2.ODataListBinding#createActivate
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @public
+	 * @since 1.98.0
 	 */
 
 	/**
@@ -165,8 +165,8 @@ sap.ui.define([
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @public
+	 * @since 1.98.0
 	 */
 	 ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
 		this.attachEvent("createActivate", fnFunction, oListener);
@@ -178,8 +178,8 @@ sap.ui.define([
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @public
+	 * @since 1.98.0
 	 */
 	ODataListBinding.prototype.detachCreateActivate = function (fnFunction, oListener) {
 		this.detachEvent("createActivate", fnFunction, oListener);
@@ -198,7 +198,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.98.0
 	 */
-	ODataListBinding.prototype.getAllCurrentContexts = function() {
+	ODataListBinding.prototype.getAllCurrentContexts = function () {
 		var aContexts = this._getCreatedContexts(),
 			that = this;
 
@@ -1699,29 +1699,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * The function is experimental and the API/behaviour is not finalized and hence this must not
-	 * be used for productive usage.
+	 * Creates a new entity for this binding's collection via
+	 * {@link sap.ui.model.odata.v2.ODataModel#createEntry} using the parameters given in
+	 * <code>mParameters</code> and inserts it at the list position specified by the
+	 * <code>bAtEnd</code> parameter.
 	 *
-	 * Creates a new entity via {@link sap.ui.model.odata.v2.ODataModel#createEntry} and inserts it
-	 * at the start of the list.
-	 *
-	 * Note: If there are transient entities in the list, switching the parent context is not
-	 * supported. The transient entities are stored at the ListBinding only, that means if a table
-	 * is rebound, that is the list binding is replaced by a new instance, the newly created
-	 * entities are not visible any more. Nevertheless they still exist and the corresponding
-	 * requests are fired with the next call of {@link #submitChanges}.
-	 *
-	 * Note: The metadata have to be loaded before {@link #create} can be called.
+	 * Note: This method requires that the model metadata has been loaded; see
+	 * {@link sap.ui.model.odata.v2.ODataModel#metadataLoaded}.
 	 *
 	 * @param {object} [oInitialData={}]
-	 *   The initial data for the created entity; see <code>mParameters.properties</code> parameter
-	 *   of {@link sap.ui.model.odata.v2.ODataModel#createEntry}
+	 *   The initial data for the created entity; see the <code>mParameters.properties</code>
+	 *   parameter of {@link sap.ui.model.odata.v2.ODataModel#createEntry}
 	 * @param {boolean} [bAtEnd=false]
 	 *   Whether the entity is inserted at the end of the list. The first insertion determines the
-	 *   overall position of created contexts within the binding's context list. Every succeeding
-	 *   insertion is relative to the created contexts within this list. Note: the order of created
-	 *   contexts in the binding does not necessarily correspond to the order of the resulting back
-	 *   end creation requests
+	 *   overall position of created contexts within the list. Every succeeding insertion is
+	 *   relative to the created contexts within this list. Note: the order of created contexts in
+	 *   the binding does not necessarily correspond to the order of the resulting back end creation
+	 *   requests.
 	 * @param {object} mParameters
 	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#createEntry}
 	 *   where only the following subset of these is supported.
@@ -1744,14 +1738,20 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v2.Context}
 	 *   The context representing the created entity
 	 * @throws {Error}
-	 *   If a relative binding is unresolved, if the binding's context is transient, if
-	 *   <code>bAtEnd</code> is truthy and the binding's length is not final, if the collection data
-	 *   has been read via <code>$expand</code> together with the parent entity, if the metadata is
-	 *   not yet available, or if there are unsupported parameters in the given parameters map; see
-	 *   {@link sap.ui.model.odata.v2.ODataModel#createEntry} for additional errors thrown
+	 *   If
+	 *   <ul>
+	 *   <li>a relative binding is unresolved,</li>
+	 *   <li>the binding's context is transient,</li>
+	 *   <li><code>bAtEnd</code> is truthy and the binding's length is not final,</li>
+	 *   <li>the collection data has been read via <code>$expand</code> together with the parent
+	 *     entity,</li>
+	 *   <li>the metadata is not yet available,</li>
+	 *   <li>there are unsupported parameters in the given parameters map.</li>
+	 *   </ul>
+	 *   See {@link sap.ui.model.odata.v2.ODataModel#createEntry} for additional errors thrown.
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @public
+	 * @since 1.98.0
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bAtEnd, mParameters) {
 		var oCreatedContext, oCreatedContextsCache, sResolvedPath,
@@ -1865,16 +1865,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the overall position of created contexts is at the end of the binding's
-	 * context list; this is determined by the first call to
-	 * {@link sap.ui.model.odata.v2.ODataListBinding#create}.
+	 * Returns whether the overall position of created entries is at the end of the list; this is
+	 * determined by the first call to {@link sap.ui.model.odata.v2.ODataListBinding#create}.
 	 *
 	 * @returns {boolean|undefined}
-	 *   Whether the overall position of created contexts is at the end; <code>undefined</code> if
-	 *   there are no created contexts
+	 *   Whether the overall position of created contexts is at the end, or <code>undefined</code>
+	 *   if there are no created contexts
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @public
+	 * @since 1.98.0
 	 */
 	ODataListBinding.prototype.isFirstCreateAtEnd = function () {
 		return this.oModel._getCreatedContextsCache()
@@ -1932,15 +1931,19 @@ sap.ui.define([
 			.removePersistedContexts(this.getResolvedPath(), this.sCreatedEntitiesKey);
 	};
 
-	/*
+	/**
 	 * Returns the count of active entries in the list if the list length is final, otherwise
-	 * <code>undefined</code>.
+	 * <code>undefined</code>. Contrary to {#getLength}, this method does not consider inactive
+	 * entries which are created via {#create}.
 	 *
 	 * @returns {number|undefined} The count of entries
+	 *
 	 * @public
+	 * @see #create
 	 * @see #getLength
 	 * @see #isLengthFinal
-	 * @since 1.??.0
+	 * @see sap.ui.model.odata.v2.Context#isInactive
+	 * @since 1.98.0
 	 */
 	 ODataListBinding.prototype.getCount = function () {
 		if (!this.isLengthFinal()) {
