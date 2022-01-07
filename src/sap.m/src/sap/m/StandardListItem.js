@@ -238,7 +238,7 @@ sap.ui.define([
 	StandardListItem.prototype._getAvatar = function() {
 		var oAvatar = this.getAvatar();
 		var sSize = this.getIconInset() ? library.AvatarSize.XS : library.AvatarSize.S;
-		oAvatar.constructor.prototype.setDisplaySize.call(oAvatar, sSize);
+		oAvatar.setProperty("displaySize", sSize, true);
 		return oAvatar;
 	};
 
