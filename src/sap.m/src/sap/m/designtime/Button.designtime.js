@@ -26,7 +26,7 @@ sap.ui.define([],
 				rename: {
 					changeType: "rename",
 					domRef: function (oControl) {
-						return oControl.$().find(".sapMBtnContent")[0];
+						return oControl.$().find(".sapMBtnContent, .sapMSegBBtnInner")[0];
 					}
 				},
 				reveal: {
