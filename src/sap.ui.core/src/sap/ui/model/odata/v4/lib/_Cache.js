@@ -3161,7 +3161,6 @@ sap.ui.define([
 	_SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
 		var mMergeableQueryOptions,
-			oOldValuePromise = this.oPromise,
 			mQueryOptions,
 			oResult,
 			bSkip,
@@ -3169,7 +3168,7 @@ sap.ui.define([
 
 		this.checkSharedRequest();
 
-		mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
+		mQueryOptions = this.oPromise && _Helper.intersectQueryOptions(
 			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
 			this.oRequestor.getModelInterface().fetchMetadata,
 			this.sMetaPath, mNavigationPropertyPaths);
