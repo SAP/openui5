@@ -518,8 +518,7 @@ sap.ui.define([
 			});
 			this.setAggregation("_invisibleText", oInvisibleText, true);
 		} else {
-			// avoid triggering invalidation during rendering
-			oInvisibleText.setProperty("text", sText, true);
+			oInvisibleText.setText(sText);
 		}
 
 		return oInvisibleText;
