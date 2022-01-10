@@ -67,7 +67,6 @@ sap.ui.define([
 		}
 	};
 
-
 	QUnit.module("ListReport - Books Page Table", oModuleSettings);
 
 	opaTest("Table - Check if Table has correct Toolbar and displays Data", function(Given, When, Then) {
@@ -418,6 +417,21 @@ sap.ui.define([
 		Then.onTheBooksListReportPage.iShouldSeeRowsWithData(2);
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["The Yellow Wallpaper"]);
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(1, ListReport.books["Herland"]);
+
+		// cleanup
+		Then.iTeardownMyUIComponent();
+	});
+
+	QUnit.module("ValueHelp PageObject", oModuleSettings);
+
+	opaTest("I open and close the ValueHelp for a given Field", function(Given, When, Then) {
+		Given.iStartMyUIComponentInViewMode();
+
+		When.onTheMDCValueHelp.iOpenTheValueHelpForField("__component" + iComponent + "---books--ff1");
+		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
+
+		When.onTheMDCValueHelp.iOpenTheValueHelpForField("__component" + iComponent + "---books--ff1");
+		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(false);
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
