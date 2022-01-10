@@ -11604,6 +11604,7 @@ sap.ui.define([
 					Name : "After Refresh"
 				})
 				.expectChange("nameCreated", "After Refresh")
+				// Note: this proves that "Just A Message" is gone
 				.expectMessages([{
 					code : "23",
 					message : "Just Another Message",
@@ -21560,7 +21561,8 @@ sap.ui.define([
 					url : "Artists/special.cases.Create?$select=Messages"
 				}, {
 					ArtistID : "23",
-					IsActiveEntity : false
+					IsActiveEntity : false,
+					Messages : []
 				});
 
 			return oOperationBinding.execute();
@@ -21596,6 +21598,7 @@ sap.ui.define([
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 				ArtistID : "23",
 				IsActiveEntity : false,
+				Messages : [],
 				Name : "DJ Bobo",
 				BestFriend : {
 					ArtistID : "32",
@@ -21628,6 +21631,7 @@ sap.ui.define([
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "23",
 					IsActiveEntity : false,
+					Messages : [],
 					Name : "DJ Bobo",
 					BestFriend : {
 						ArtistID : "32",
@@ -21655,6 +21659,7 @@ sap.ui.define([
 				}, {
 					ArtistID : "23",
 					IsActiveEntity : true,
+					Messages : [],
 					Name : "DJ Bobo",
 					BestFriend : {
 						ArtistID : "32",
@@ -21685,6 +21690,7 @@ sap.ui.define([
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "23",
 					IsActiveEntity : true,
+					Messages : [],
 					Name : "DJ Bobo",
 					BestFriend : {
 						ArtistID : "32",
@@ -22107,6 +22113,7 @@ sap.ui.define([
 					ArtistID : "42",
 					DraftAdministrativeData : null,
 					IsActiveEntity : true,
+					Messages : [],
 					Name : "Hour Frustrated"
 				})
 				.expectChange("id", "42")
@@ -26296,6 +26303,132 @@ sap.ui.define([
 			assert.strictEqual(oFormContext.getPath(), "/SalesOrderList('42')");
 			assert.strictEqual(oRowContext.getPath(),
 				"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Check that the failure to refresh a complete form using requestSideEffects leads
+	// to a rejected promise, but no changes in data, even in case of a return value context.
+	// BCP: 2280001179
+	QUnit.test("R.V.C.: refresh within requestSideEffects fails", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oParentContext,
+			oReturnValueContext,
+			sView = '\
+<FlexBox id="form">\
+	<Text id="note" text="{Note}"/>\
+	<Table id="items" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("note")
+			.expectChange("itemPosition", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/SalesOrderList('1')");
+
+			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID", {
+					Note : "Hello, world!",
+					SalesOrderID : "1"
+				})
+				.expectChange("note", "Hello, world!")
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : "0010",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", ["0010"]);
+
+			oParentContext = oContextBinding.getBoundContext();
+			that.oView.byId("form").setBindingContext(oParentContext);
+
+			return that.waitForChanges(assert, "setBindingContext");
+		}).then(function () {
+			var sOperation = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+				oOperationBinding
+					= oModel.bindContext(sOperation + "(...)", oParentContext,
+						{$$inheritExpandSelect : true, $select : ["Messages"]});
+
+			that.expectRequest({
+					method : "POST",
+					payload : {},
+					url : "SalesOrderList('1')/" + sOperation
+						+ "?$select=Messages,Note,SalesOrderID"
+				}, {
+					Messages : [{
+						message : "Just A Message",
+						numericSeverity : 1,
+						target : "Note"
+					}],
+					Note : "Good-bye",
+					SalesOrderID : "1"
+				})
+				.expectChange("note", "Good-bye") // sync into binding parameter
+				.expectMessages([{
+					message : "Just A Message",
+					target : "/SalesOrderList('1')/Note",
+					type : "Success"
+				}]);
+
+			return Promise.all([
+				oOperationBinding.execute(),
+				that.waitForChanges(assert, "execute")
+			]);
+		}).then(function (aResults) {
+			oReturnValueContext = aResults[0];
+
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : "0010",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("itemPosition", ["0010"]);
+
+			that.oView.byId("form").setBindingContext(oReturnValueContext);
+
+			return that.waitForChanges(assert, "setBindingContext: R.V.C.");
+		}).then(function () {
+			that.oLogMock.expects("error").thrice(); // don't care about console here
+			that.expectRequest("SalesOrderList('1')?$select=Messages,Note,SalesOrderID",
+					createErrorInsideBatch())
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100") // no response required
+				.expectChange("note", null) // temporary data loss due to failed request
+				.expectChange("note", "Good-bye") // "keep cache on error"
+				// Note: there is proof that "Just A Message" would be gone on success
+				.expectMessages([{
+					message : "Just A Message",
+					target : "/SalesOrderList('1')/Note",
+					type : "Success"
+				}, {
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				oReturnValueContext.requestSideEffects([""]).then(mustFail(assert), function () {
+					assert.ok(true, "requestSideEffects failed as expected");
+				}),
+				that.waitForChanges(assert, "requestSideEffects")
+			]);
+		}).then(function () {
+			var oListBinding = that.oView.byId("items").getBinding("items");
+
+			assert.strictEqual(oReturnValueContext.getProperty("Note"), "Good-bye");
+			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), [
+				"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+			]);
+			assert.strictEqual(oListBinding.getCurrentContexts()[0].getProperty("ItemPosition"),
+				"0010");
 		});
 	});
 

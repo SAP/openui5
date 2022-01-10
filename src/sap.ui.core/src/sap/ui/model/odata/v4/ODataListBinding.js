@@ -2711,7 +2711,7 @@ sap.ui.define([
 					fireDataReceived({data : {}});
 					oBinding.assertSameCache(oCache);
 					if (!bDestroyed) { // do not update destroyed context
-						aUpdatePromises.push(oContext.checkUpdate());
+						aUpdatePromises.push(oContext.checkUpdateInternal());
 						if (bAllowRemoval) {
 							aUpdatePromises.push(
 								oContext.refreshDependentBindings(sResourcePathPrefix,

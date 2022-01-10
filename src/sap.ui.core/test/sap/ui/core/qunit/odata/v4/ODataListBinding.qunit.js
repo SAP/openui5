@@ -6088,7 +6088,7 @@ sap.ui.define([
 						throw oCanceledError;
 					}
 				});
-			that.mock(oContext).expects("checkUpdate").exactly(bSameCache ? 1 : 0)
+			that.mock(oContext).expects("checkUpdateInternal").exactly(bSameCache ? 1 : 0)
 				.withExactArgs()
 				.returns(new SyncPromise(function (resolve) {
 					setTimeout(function () {
@@ -6225,8 +6225,7 @@ sap.ui.define([
 					.returns(oCacheRequestPromise);
 				this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 				this.mock(oBinding).expects("fireDataReceived").withExactArgs({data : {}});
-				oContextMock.expects("checkUpdate")
-					.exactly(bOnRemoveCalled ? 0 : 1)
+				oContextMock.expects("checkUpdateInternal").exactly(bOnRemoveCalled ? 0 : 1)
 					.withExactArgs()
 					.returns(new SyncPromise(function (resolve) {
 						setTimeout(function () {
@@ -6261,7 +6260,7 @@ sap.ui.define([
 			},
 			oCacheRequestPromise,
 			oContext = {
-				checkUpdate : function () {},
+				checkUpdateInternal : function () {},
 				created : function () { return false; },
 				destroy : function () {},
 				getModelIndex : function () { return oFixture.index; },
@@ -6326,7 +6325,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
 		this.mock(oBinding).expects("fireDataReceived").withExactArgs({data : {}});
 
-		this.mock(oContext).expects("checkUpdate").exactly(oFixture.stillAlive ? 1 : 0)
+		this.mock(oContext).expects("checkUpdateInternal").exactly(oFixture.stillAlive ? 1 : 0)
 			.withExactArgs().resolves();
 		this.mock(oGroupLock).expects("getGroupId").exactly(oFixture.stillAlive ? 1 : 0)
 			.withExactArgs().returns("groupId");
