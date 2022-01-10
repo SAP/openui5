@@ -255,7 +255,15 @@ sap.ui.define([
 
 	ListFieldHelp.prototype.open = function(bSuggestion) {
 
-		return FieldHelpBase.prototype.open.apply(this, arguments);
+		FieldHelpBase.prototype.open.apply(this, arguments);
+
+		var oPopover = this._getPopover();
+		var oControl = this._getControlForSuggestion();
+		if (oPopover && oControl) {
+			// make popver not smaller than Field
+			var sWidth = (oControl.$().outerWidth() / parseFloat(mLibrary.BaseFontSize)) + "rem"; // same logic as in ComboBox
+			oPopover.setContentMinWidth(sWidth);
+		}
 
 	};
 

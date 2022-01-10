@@ -100,7 +100,7 @@ sap.ui.define([
 	/* use dummy control to simulate Field */
 
 	var _initFields = function() {
-		oField = new Icon("I1", {src:"sap-icon://sap-ui5"});
+		oField = new Icon("I1", {src:"sap-icon://sap-ui5", width: "2rem"});
 		oField2 = new Icon("I2", {src:"sap-icon://sap-ui5"});
 
 		oField.placeAt("content");
@@ -173,6 +173,7 @@ sap.ui.define([
 			assert.equal(aItems[0].getLabel(), "Item1", "Text assigned to item");
 			assert.equal(aItems[0].getValue(), "Text1", "AdditinalText assigned to item");
 			assert.equal(oPopover.getInitialFocus(), "I1", "Initial focus on Field");
+			assert.equal(oPopover.getContentMinWidth(), "2rem", "MinWidth of popover taken from Field");
 			var fnDone = assert.async();
 			setTimeout( function(){ // as dataUpdate event id fired async
 				assert.equal(iDataUpdate, 1, "DataUpdate event fired once");
