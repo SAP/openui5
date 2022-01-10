@@ -344,6 +344,12 @@ sap.ui.define([
 				name: "name_country",
 				label: "Complex Title & Description",
 				propertyInfos: ["Name", "Country"]
+			}, {
+				name: "Value",
+				label: "Value",
+				path: "Value",
+				sortable: false,
+				filterable: false
 			}]);
 			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
 				Name: {
@@ -394,9 +400,21 @@ sap.ui.define([
 		var oPlugin;
 		var fSetAggregationSpy;
 
-		return oTable._fullyInitialized().then(function() {
-			var oFirstInnerColumn = oTable._oTable.getColumns()[0];
+		this.oTable.addColumn(new Column({
+			header: "Value",
+			dataProperty: "Value",
+			template: new Text({text: "Value"})
+		}));
 
+		return oTable._fullyInitialized().then(function() {
+			oTable._oTable.fireEvent("columnSelect", {
+				column: oTable._oTable.getColumns()[3]
+			});
+			return oTable._fullyInitialized().then(function() {
+				assert.notOk(oTable._oPopover, "ColumnHeaderPopover not created");
+				fColumnPressSpy.resetHistory();
+			});
+		}).then(function() {
 			oPlugin = oTable._oTable.getDependents()[0];
 			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 
@@ -405,26 +423,25 @@ sap.ui.define([
 			});
 			oTable.rebind();
 			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-				visible: ["Name", "Country"],
+				visible: ["Name", "Country", "Value"],
 				groupLevels: [],
 				grandTotal: ["Country"],
 				subtotals: ["Country"],
 				columnState: createColumnStateIdMap(oTable, [
 					{subtotals: false, grandTotal: false},
 					{subtotals: true, grandTotal: true},
-					{subtotals: true, grandTotal: true}
+					{subtotals: true, grandTotal: true},
+					{subtotals: false, grandTotal: false}
 				]),
 				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
 			oTable._oTable.fireEvent("columnSelect", {
-				column: oFirstInnerColumn
+				column: oTable._oTable.getColumns()[0]
 			});
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			return oTable._fullyInitialized();
 		}).then(function() {
-			var oThirdInnerColumn = oTable._oTable.getColumns()[2];
-
 			assert.strictEqual(oTable._oPopover.getItems()[0].getLabel(), oResourceBundle.getText("table.SETTINGS_GROUP"),
 				"The first column has group menu item");
 			assert.strictEqual(oTable._oPopover.getItems()[1].getLabel(), oResourceBundle.getText("table.SETTINGS_TOTALS"),
@@ -433,7 +450,7 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oTable._oPopover.getAggregation("_popover").attachAfterClose(function() {
 					oTable._oTable.fireEvent("columnSelect", {
-						column: oThirdInnerColumn
+						column: oTable._oTable.getColumns()[2]
 					});
 					resolve();
 				});
@@ -455,26 +472,26 @@ sap.ui.define([
 			});
 			oTable.rebind();
 			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-				visible: ["Name", "Country"],
+				visible: ["Name", "Country", "Value"],
 				groupLevels: ["Name"],
 				grandTotal: ["Country"],
 				subtotals: ["Country"],
 				columnState: createColumnStateIdMap(oTable, [
 					{subtotals: false, grandTotal: false},
 					{subtotals: true, grandTotal: true},
-					{subtotals: true, grandTotal: true}
+					{subtotals: true, grandTotal: true},
+					{subtotals: false, grandTotal: false}
 				]),
 				search: undefined
 			}), "Plugin#setAggregationInfo call");
 
-			var oNewCol = new Column({
-				id: "cl"
-			});
 			fSetAggregationSpy.reset();
-			oTable.insertColumn(oNewCol, 2);
+			oTable.insertColumn(new Column({
+				id: "cl"
+			}), 2);
 			oTable.rebind();
 			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-				visible: ["Name", "Country"],
+				visible: ["Name", "Country", "Value"],
 				groupLevels: ["Name"],
 				grandTotal: ["Country"],
 				subtotals: ["Country"],
@@ -482,7 +499,8 @@ sap.ui.define([
 					{subtotals: false, grandTotal: false},
 					{subtotals: true, grandTotal: true},
 					{subtotals: false, grandTotal: false},
-					{subtotals: true, grandTotal: true}
+					{subtotals: true, grandTotal: true},
+					{subtotals: false, grandTotal: false}
 				]),
 				search: undefined
 			}), "Plugin#setAggregationInfo call");

@@ -275,8 +275,7 @@ sap.ui.define([
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
 		var oPropertyHelper = oTable.getPropertyHelper();
 		var oProperty = oPropertyHelper.getProperty(oMDCColumn.getDataProperty());
-		var oAggregatePopoverItem;
-		var oGroupPopoverItem;
+		var aItems = [];
 
 		if (!oProperty) {
 			return [];
@@ -286,7 +285,7 @@ sap.ui.define([
 			var aGroupProperties = oProperty.getGroupableProperties();
 
 			if (aGroupProperties.length > 0) {
-				oGroupPopoverItem = createGroupPopoverItem(aGroupProperties, oMDCColumn);
+				aItems.push(createGroupPopoverItem(aGroupProperties, oMDCColumn));
 			}
 		}
 
@@ -294,7 +293,7 @@ sap.ui.define([
 			var aAggregateProperties = oProperty.getAggregatableProperties();
 
 			if (aAggregateProperties.length > 0) {
-				oAggregatePopoverItem = createAggregatePopoverItem(aAggregateProperties, oMDCColumn);
+				aItems.push(createAggregatePopoverItem(aAggregateProperties, oMDCColumn));
 			}
 		}
 
@@ -314,7 +313,7 @@ sap.ui.define([
 			});
 		}
 
-		return [oGroupPopoverItem, oAggregatePopoverItem];
+		return aItems;
 	};
 
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {
