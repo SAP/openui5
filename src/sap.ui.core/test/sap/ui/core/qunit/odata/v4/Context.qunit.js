@@ -227,9 +227,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bAutoExpandSelect) {
-	[undefined, "bar"].forEach(function (sPath) {
-		var sTitle = "fetchValue: relative, path=" + sPath + ", autoExpandSelect="
-				+ bAutoExpandSelect;
+	[false, true].forEach(function (bHeaderContext) {
+		[undefined, "", "bar"].forEach(function (sPath) {
+			var sTitle = "fetchValue: relative, path=" + sPath + ", headerContext=" + bHeaderContext
+					+ " , autoExpandSelect=" + bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
 			var bCached = {/*false,true*/},
@@ -249,6 +250,11 @@ sap.ui.define([
 				oListener = {},
 				oResult = {};
 
+			if (bHeaderContext) {
+				oBinding.getHeaderContext = function () {};
+				this.mock(oBinding).expects("getHeaderContext")
+					.withExactArgs().returns({/* some other Context */});
+			}
 			this.mock(oModel).expects("resolve")
 				.withExactArgs(sPath, sinon.match.same(oContext)).returns("/~");
 			if (bAutoExpandSelect) {
@@ -263,6 +269,7 @@ sap.ui.define([
 				.returns(oResult);
 
 			assert.strictEqual(oContext.fetchValue(sPath, oListener, bCached), oResult);
+		});
 		});
 	});
 });
@@ -284,6 +291,85 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.fetchValue(sPath, oListener, bCached), oResult);
 	});
+
+	//*********************************************************************************************
+[undefined, "", "/foo"].forEach(function (sPath) {
+	QUnit.test("fetchValue: header context, path=" + JSON.stringify(sPath), function (assert) {
+		var oBinding = {
+				fetchValue : function () {},
+				getHeaderContext : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
+			aElements = [];
+
+		aElements.$count = 42;
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
+		this.mock(oBinding).expects("fetchValue")
+			.withExactArgs("/foo", "~listener~", "bCached")
+			.returns(SyncPromise.resolve(Promise.resolve(aElements)));
+
+		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (oResult) {
+			assert.deepEqual(oResult, {$count : 42});
+		});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bAutoExpandSelect) {
+	["$count", "/foo/$count"].forEach(function (sPath) {
+		var sTitle = "fetchValue: header context, autoExpandSelect=" + bAutoExpandSelect
+				+ ", path=" + sPath;
+
+	QUnit.test(sTitle + sPath, function (assert) {
+		var oBinding = {
+				fetchValue : function () {},
+				getBaseForPathReduction : function () {},
+				getHeaderContext : function () {}
+			},
+			oMetaModel = {
+				getReducedPath : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : bAutoExpandSelect,
+				getMetaModel : function () { return oMetaModel; },
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/foo");
+
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("$count", sinon.match.same(oContext)).returns("/~");
+		if (bAutoExpandSelect) {
+			this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("/base");
+			this.mock(oMetaModel).expects("getReducedPath").withExactArgs("/~", "/base")
+				.returns("/reduced");
+		}
+		this.mock(oBinding).expects("fetchValue")
+			.withExactArgs(bAutoExpandSelect ? "/reduced" : "/~", "~listener~", "bCached")
+			.returns(SyncPromise.resolve(Promise.resolve(42)));
+
+		return oContext.fetchValue(sPath, "~listener~", "bCached").then(function (iCount) {
+			assert.deepEqual(iCount, 42);
+		});
+	});
+	});
+});
+	//*********************************************************************************************
+["invalid", "/foo/invalid"].forEach(function (sPath) {
+	QUnit.test("fetchValue: header context, path=" + sPath, function (assert) {
+		var oBinding = {
+				fetchValue : function () {},
+				getHeaderContext : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo");
+
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
+
+		assert.throws(function () {
+			oContext.fetchValue(sPath, "~listener~", "bCached");
+		}, new Error("Invalid header path: invalid"));
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue for a virtual context", function (assert) {

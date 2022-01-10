@@ -5667,8 +5667,12 @@ sap.ui.define([
 	//
 	// Test ODLB#getCount
 	// JIRA: CPOUI5ODATAV4-958
+	//
+	// Test oHeaderContext.getObject() and oHeaderContext.setProperty("$count")
+	// JIRA: CPOUI5ODATAV4-1404
 	QUnit.test("ODLB: $count and filter()", function (assert) {
-		var oTable,
+		var oHeaderContext,
+			oTable,
 			oTableBinding,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -5689,15 +5693,37 @@ sap.ui.define([
 		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
 			oTable = that.oView.byId("table");
 			oTableBinding = oTable.getBinding("items");
+			oHeaderContext = oTableBinding.getHeaderContext();
+
+			// JIRA: CPOUI5ODATAV4-1404
+			assert.strictEqual(oHeaderContext.getProperty("$count"), 2);
+			assert.deepEqual(oHeaderContext.getObject(), {$count : 2});
+			assert.deepEqual(oHeaderContext.getObject(""), {$count : 2});
 
 			that.expectChange("count", "2");
 			assert.strictEqual(oTableBinding.getCount(), 2);
 			assert.strictEqual(oTableBinding.getLength(), 2);
 
 			// code under test
-			that.oView.byId("count").setBindingContext(oTableBinding.getHeaderContext());
+			that.oView.byId("count").setBindingContext(oHeaderContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error").twice();
+			that.expectMessages([{
+					message : "/SalesOrderList/$count: Not a (navigation) property: $count",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				oHeaderContext.setProperty("$count", 5).then(mustFail, function (oError) {
+					assert.strictEqual(oError.message,
+						"/SalesOrderList/$count: Not a (navigation) property: $count");
+				}),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$select=SalesOrderID"
 					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
@@ -5709,7 +5735,13 @@ sap.ui.define([
 			// code under test
 			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.GT, "0500000001"));
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test - request the header data while filter is still running
+				oHeaderContext.requestObject().then(function (oResult) {
+					assert.deepEqual(oResult, {$count : 1});
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -32167,9 +32199,9 @@ sap.ui.define([
 
 			// Note: "$tail" does not yield a red test here, it's created only on demand
 			["$byPredicate", "$created", "length"].forEach(function (sProperty) {
-				that.oLogMock.expects("error").withArgs("Failed to drill-down into " + sProperty
-					+ ", invalid segment: " + sProperty);
-				assert.strictEqual(oHeaderContext.getObject(sProperty), undefined);
+				assert.throws(function () {
+					oHeaderContext.getObject(sProperty);
+				}, new Error("Invalid header path: " + sProperty));
 			});
 			that.expectRequest("SalesOrderList?$count=true&" + sSelect + "$skip=1&$top=1", {
 					"@odata.count" : "23",
@@ -32187,14 +32219,15 @@ sap.ui.define([
 			assert.strictEqual(oHeaderContext.getProperty("$count"), 42);
 
 			return Promise.all([
-					// code under test
-					oHeaderContext.requestProperty("1/Note"),
-					oHeaderContext.requestProperty("$count"),
-					that.waitForChanges(assert)
-				]);
-		}).then(function (aResults) {
-			assert.strictEqual(aResults[0], "Note 2");
-			assert.strictEqual(aResults[1], 23);
+				// code under test
+				oHeaderContext.requestProperty("1/Note").then(mustFail, function (oError) {
+					assert.strictEqual(oError.message, "Invalid header path: 1/Note");
+				}),
+				oHeaderContext.requestProperty("$count").then(function (oResult) {
+					assert.strictEqual(oResult, 23);
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

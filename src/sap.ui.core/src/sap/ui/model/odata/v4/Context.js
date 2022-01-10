@@ -537,8 +537,23 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener, bCached) {
+		var oBinding = this.oBinding;
+
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
+		}
+		if (oBinding.getHeaderContext && oBinding.getHeaderContext() === this) {
+			if (sPath && sPath.startsWith(this.sPath)) {
+				sPath = sPath.slice(this.sPath.length + 1);
+			}
+			if (!sPath) {
+				return oBinding.fetchValue(this.sPath, oListener, bCached)
+					.then(function (aElements) {
+						return {$count : aElements.$count};
+					});
+			} else if (sPath !== "$count") {
+				throw new Error("Invalid header path: " + sPath);
+			}
 		}
 		if (!sPath || sPath[0] !== "/") {
 			// Create an absolute path based on the context's path and reduce it. This is only
@@ -685,12 +700,16 @@ sap.ui.define([
 	 * Returns <code>undefined</code> if the data is not (yet) available; no request is triggered.
 	 * Use {@link #requestObject} for asynchronous access.
 	 *
+	 * The header context of a list binding only delivers <code>$count</code> (wrapped in an object
+	 * if <code>sPath</code> is "").
+	 *
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context
 	 * @returns {any}
 	 *   The requested value
 	 * @throws {Error}
-	 *   If the context's root binding is suspended
+	 *   If the context's root binding is suspended or if the context is a header context and the
+	 *   path is neither empty nor "$count".
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getObject
@@ -715,8 +734,12 @@ sap.ui.define([
 	 *   If the type is not yet available, <code>undefined</code> is returned.
 	 * @returns {any}
 	 *   The requested property value
-	 * @throws {Error}
-	 *   If the context's root binding is suspended or if the value is not primitive
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the context's root binding is suspended,
+	 *     <li> the value is not primitive,
+	 *     <li> or the context is a header context and the path is not "$count"
+	 *   </ul>
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getProperty
@@ -1040,12 +1063,16 @@ sap.ui.define([
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
 	 *
+	 * The header context of a list binding only delivers <code>$count</code> (wrapped in an object
+	 * if <code>sPath</code> is "").
+	 *
 	 * If you want {@link #requestObject} to read fresh data, call {@link #refresh} first.
 	 *
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context
 	 * @returns {Promise}
-	 *   A promise on the requested value
+	 *   A promise on the requested value; it is rejected if the context is a header context and the
+	 *   path is neither empty nor "$count".
 	 * @throws {Error}
 	 *   If the context's root binding is suspended
 	 *
@@ -1073,7 +1100,8 @@ sap.ui.define([
 	 *   If <code>true</code>, the values are returned in external format using UI5 types for the
 	 *   given property paths that format corresponding to the properties' EDM types and constraints
 	 * @returns {Promise}
-	 *   A promise on the requested value or values; it is rejected if a value is not primitive
+	 *   A promise on the requested value or values; it is rejected if a value is not primitive or
+	 *   if the context is a header context and a path is not "$count"
 	 * @throws {Error}
 	 *   If the context's root binding is suspended
 	 *
