@@ -22668,14 +22668,8 @@ sap.ui.define([
 
 					return that.waitForChanges(assert, "items for new active");
 				}).then(function () {
-					var oHeaderContext = oInactiveArtistContext.getBinding().getHeaderContext();
-
 					if (!bRefresh) {
 						that.expectMessages([]);
-
-						assert.strictEqual(
-							oHeaderContext.getProperty("(ArtistID='42',IsActiveEntity=false)/Name"),
-							"Mrs Eliot");
 
 						return Promise.all([
 							// code under test (get rid of message for draft)
@@ -22684,12 +22678,6 @@ sap.ui.define([
 						]).then(function () {
 							assert.strictEqual(oInactiveArtistContext.getBinding(), undefined);
 							assert.strictEqual(oInactiveArtistContext.getModel(), undefined);
-							that.oLogMock.expects("error").withArgs("Failed to drill-down into"
-								+ " (ArtistID='42',IsActiveEntity=false)/Name, invalid segment:"
-								+ " (ArtistID='42',IsActiveEntity=false)");
-							assert.strictEqual(oHeaderContext.getProperty(
-									"(ArtistID='42',IsActiveEntity=false)/Name"),
-								undefined, "data has been deleted from cache");
 						});
 					}
 

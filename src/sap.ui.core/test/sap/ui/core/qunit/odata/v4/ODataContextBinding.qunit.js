@@ -427,7 +427,7 @@ sap.ui.define([
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext("relative");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs(true).twice();
-		oModelMock.expects("resolve").twice()
+		oModelMock.expects("resolve").thrice() // 2x setContext + createAndSetCache
 			.withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/contextPath/relative");
 		oBindingPrototypeMock.expects("setContext").on(oBinding)

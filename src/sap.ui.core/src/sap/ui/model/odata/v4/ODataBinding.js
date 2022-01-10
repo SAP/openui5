@@ -286,7 +286,7 @@ sap.ui.define([
 			if (oCache && oCache.$generation >= iGeneration) {
 				oCache.setActive(true);
 			} else {
-				sDeepResourcePath = _Helper.buildPath(oContext.getPath(), this.sPath).slice(1);
+				sDeepResourcePath = this.oModel.resolve(this.sPath, oContext).slice(1);
 				oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions, oContext,
 					sDeepResourcePath, bOldCacheReadOnly, oOldCache);
 				if (!(this.mParameters && this.mParameters.$$sharedRequest)) {

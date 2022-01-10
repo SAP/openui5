@@ -242,13 +242,15 @@ sap.ui.define([
 				},
 				oModel = {
 					bAutoExpandSelect : bAutoExpandSelect,
-					getMetaModel : function () { return oMetaModel; }
+					getMetaModel : function () { return oMetaModel; },
+					resolve : function () {}
 				},
 				oContext = Context.create(oModel, oBinding, "/foo", 42),
 				oListener = {},
 				oResult = {};
 
-			this.mock(_Helper).expects("buildPath").withExactArgs("/foo", sPath).returns("/~");
+			this.mock(oModel).expects("resolve")
+				.withExactArgs(sPath, sinon.match.same(oContext)).returns("/~");
 			if (bAutoExpandSelect) {
 				this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
 					.returns("/base");
@@ -1636,11 +1638,16 @@ sap.ui.define([
 				withCache : function () {}
 			},
 			fnCallback = {},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')", 42),
 			oResult = {},
 			bSync = {/*boolean*/},
 			bWithOrWithoutCache = {/*boolean*/};
 
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("/foo", sinon.match.same(oContext)).returns("/foo");
 		this.mock(oBinding).expects("withCache")
 			.withExactArgs(sinon.match.same(fnCallback), "/foo", sinon.match.same(bSync),
 				sinon.match.same(bWithOrWithoutCache))
@@ -1658,13 +1665,16 @@ sap.ui.define([
 				withCache : function () {}
 			},
 			fnCallback = {},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
+			oModel = {
+				resolve : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')", 42),
 			oResult = {},
 			bSync = {/*boolean*/},
 			bWithOrWithoutCache = {/*boolean*/};
 
-		this.mock(_Helper).expects("buildPath").withExactArgs("/EMPLOYEES('42')", "foo")
-			.returns("~");
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("foo", sinon.match.same(oContext)).returns("~");
 		this.mock(oBinding).expects("withCache")
 			.withExactArgs(sinon.match.same(fnCallback), "~", sinon.match.same(bSync),
 				sinon.match.same(bWithOrWithoutCache))
@@ -2777,6 +2787,7 @@ sap.ui.define([
 				},
 				resolve : function () {}
 			},
+			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			oFetchUpdateDataResult = {
 				editUrl : "/edit/url",
@@ -2785,8 +2796,8 @@ sap.ui.define([
 			},
 			that = this;
 
-		this.mock(_Helper).expects("buildPath")
-			.withExactArgs("/BusinessPartnerList('0100000000')", "some/relative/path")
+		oModelMock.expects("resolve")
+			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns("/~");
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
 			.returns("/base/path");
@@ -2800,7 +2811,6 @@ sap.ui.define([
 				var oCache = {
 						update : function () {}
 					},
-					oModelMock = that.mock(oModel),
 					bPatchWithoutSideEffects = {/*false,true*/};
 
 				that.mock(oBinding).expects("doSetProperty")
