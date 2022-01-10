@@ -3068,7 +3068,7 @@
 		{
 			"id": "sap.m.sample.StandardListItemAvatar",
 			"name": "Standard List Item - Avatar",
-			"description": "This list item offers a standardized user interface for list content with title, description and avatar."
+			"description": "This list item offers a standardized user interface for list content with title, description, and avatar."
 		  },
 		{
 		  "id": "sap.m.sample.StandardListItemInfo",
