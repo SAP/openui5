@@ -1017,18 +1017,22 @@ sap.ui.define([
 
 		return filter(this.mRunningChangeRequests).length > 0
 			|| this.aLockedGroupLocks.some(function (oGroupLock) {
-				return (sGroupId === undefined || oGroupLock.getGroupId() === sGroupId)
+				var sGroupId0 = oGroupLock.getGroupId();
+
+				return (sGroupId === undefined || sGroupId0 === sGroupId)
 					// aLockedGroupLocks may contain modifying group locks that have been unlocked
 					// already; cleanup of aLockedGroupLocks is done only in #submitBatch. An
 					// unlocked group lock is not relevant because either the corresponding change
 					// has been reset or it has been added to the batch queue.
-					&& oGroupLock.isModifying() && oGroupLock.isLocked();
+					&& oGroupLock.isModifying() && oGroupLock.isLocked()
+					&& !sGroupId0.startsWith("$inactive.");
 			})
 			|| filter(this.mBatchQueue).some(function (sGroupId0) {
-				return that.mBatchQueue[sGroupId0].some(function (vRequests) {
-					return Array.isArray(vRequests) && vRequests.some(function (oRequest) {
-						return oRequest.$cancel;
-					});
+				return !sGroupId0.startsWith("$inactive.")
+					&& that.mBatchQueue[sGroupId0].some(function (vRequests) {
+						return Array.isArray(vRequests) && vRequests.some(function (oRequest) {
+							return oRequest.$cancel;
+						});
 				});
 			});
 	};

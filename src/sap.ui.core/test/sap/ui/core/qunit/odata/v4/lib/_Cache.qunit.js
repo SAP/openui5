@@ -762,8 +762,13 @@ sap.ui.define([
 		QUnit.test("_Cache#hasPendingChangesForPath: bPatch = " + bPatch, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS");
 
-			oCache[bPatch ? "mPatchRequests" : "mPostRequests"]["foo/bar/baz"] = [{}];
+			oCache[bPatch ? "mPatchRequests" : "mPostRequests"]["foo/bar/baz"] = [
+				{},
+				{"@$ui5.context.isInactive" : false},
+				{"@$ui5.context.isInactive" : true}
+			];
 
+			// code under test (active entities exists)
 			assert.strictEqual(oCache.hasPendingChangesForPath("bar"), false);
 			assert.strictEqual(oCache.hasPendingChangesForPath(""), true);
 			assert.strictEqual(oCache.hasPendingChangesForPath("foo"), true);
@@ -774,6 +779,16 @@ sap.ui.define([
 			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz"), true);
 			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baze"), false);
 			assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz/qux"), false);
+
+			if (!bPatch) {
+				oCache.mPostRequests["foo/bar/baz"] = [{"@$ui5.context.isInactive" : true}];
+
+				// code under test (only inactive entities)
+				assert.strictEqual(oCache.hasPendingChangesForPath(""), false);
+				assert.strictEqual(oCache.hasPendingChangesForPath("foo"), false);
+				assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar"), false);
+				assert.strictEqual(oCache.hasPendingChangesForPath("foo/bar/baz"), false);
+			}
 		});
 	});
 
@@ -843,12 +858,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#resetChangesForPath: POSTs", function (assert) {
+	QUnit.test("_Cache#resetChangesForPath: remove POSTs with given path", function (assert) {
 		var oBody0 = {"@$ui5._" : {transient : "update"}},
 			oBody1 = {"@$ui5._" : {transient : "update2"}},
 			oBody2 = {"@$ui5._" : {transient : "update"}},
 			oBody3 = {"@$ui5._" : {transient : "update"}},
 			oBody4 = {"@$ui5._" : {transient : "update"}},
+			oBody5 = {"@$ui5._" : {transient : "$inactive.foo"}},
 			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCall1,
 			oCall2;
@@ -857,7 +873,7 @@ sap.ui.define([
 			"foo/ba" : [oBody0],
 			"foo/bar" : [oBody1, oBody2],
 			"foo/bars" : [oBody3],
-			"foo/bar/baz" : [oBody4]
+			"foo/bar/baz" : [oBody4, oBody5]
 		};
 
 		oCall1 = this.oRequestorMock.expects("removePost")
@@ -865,23 +881,49 @@ sap.ui.define([
 		oCall2 = this.oRequestorMock.expects("removePost")
 			.withExactArgs("update2", sinon.match.same(oBody1));
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody4));
+		this.oRequestorMock.expects("removePost").withArgs("$inactive.foo").never();
 
 		// code under test
 		oCache.resetChangesForPath("foo/bar");
 
 		sinon.assert.callOrder(oCall1, oCall2);
+		// resetChangesForPath will not clean up oCache.mPostRequests by itself, but via
+		// _Requestor#removePost which is mocked here
 		assert.deepEqual(oCache.mPostRequests, {
 			"foo/ba" : [oBody0],
-			"foo/bars" : [oBody3]
+			"foo/bar" : [oBody1, oBody2],
+			"foo/bars" : [oBody3],
+			"foo/bar/baz" : [oBody4, oBody5]
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#resetChangesForPath: top-level", function (assert) {
+		var oBody0 = {"@$ui5._" : {transient : "update"}},
+			oBody1 = {"@$ui5._" : {transient : "update"}},
+			oBody2 = {"@$ui5._" : {transient : "$inactive.foo"}},
+			oCache = new _Cache(this.oRequestor, "TEAMS");
+
+		oCache.mPostRequests = {
+			"foo/ba" : [oBody0],
+			"foo/bars" : [oBody1],
+			"foo/bar/baz" : [oBody2]
+		};
 
 		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody0));
-		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody3));
+		this.oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody1));
+		this.oRequestorMock.expects("removePost").withArgs("$inactive.foo").never();
 
 		// code under test
 		oCache.resetChangesForPath("");
 
-		assert.deepEqual(oCache.mPostRequests, {});
+		// resetChangesForPath will not clean up oCache.mPostRequests by itself, but via
+		// _Requestor#removePost which is mocked here
+		assert.deepEqual(oCache.mPostRequests, {
+			"foo/ba" : [oBody0],
+			"foo/bars" : [oBody1],
+			"foo/bar/baz" : [oBody2]
+		});
 	});
 
 	//*********************************************************************************************

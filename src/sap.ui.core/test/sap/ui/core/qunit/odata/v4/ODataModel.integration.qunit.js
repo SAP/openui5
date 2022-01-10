@@ -33466,9 +33466,9 @@ sap.ui.define([
 			oContext2 = oBinding.create({}, true, true, true);
 			oContext3 = oBinding.create({}, true, true, true);
 
-			assert.strictEqual(oModel.hasPendingChanges(), true); // TODO: not the final state!
+			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.strictEqual(oModel.hasPendingChanges("$auto"), false);
-			assert.strictEqual(oBinding.hasPendingChanges(), true); // TODO: not the final state!
+			assert.strictEqual(oBinding.hasPendingChanges(), false);
 			assert.strictEqual(oContext1.isInactive(), true);
 			assert.strictEqual(oContext2.isInactive(), true);
 			assert.strictEqual(oContext3.isInactive(), true);

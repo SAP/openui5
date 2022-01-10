@@ -7241,17 +7241,18 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChangesForPath: iCreatedContexts", function (assert) {
+	QUnit.test("hasPendingChangesForPath: iActiveContexts", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 
 		oBinding.oCache = undefined;
-		oBinding.iCreatedContexts = 0;
+		oBinding.iActiveContexts = 0;
+		oBinding.iCreatedContexts = 2;
 		this.mock(asODataParentBinding.prototype).expects("hasPendingChangesForPath").never();
 
 		// code under test
 		assert.notOk(oBinding.hasPendingChangesForPath());
 
-		oBinding.iCreatedContexts = 1;
+		oBinding.iActiveContexts = 1;
 
 		// code under test
 		assert.ok(oBinding.hasPendingChangesForPath());
