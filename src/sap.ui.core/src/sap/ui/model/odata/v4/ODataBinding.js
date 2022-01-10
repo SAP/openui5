@@ -1045,6 +1045,24 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Refreshes the binding; expects it to be suspended.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be used for the refresh
+	 * @throws {Error}
+	 *   If a group ID different from the binding's group ID is given
+
+	 * @private
+	 */
+	ODataBinding.prototype.refreshSuspended = function (sGroupId) {
+		if (sGroupId && sGroupId !== this.getGroupId()) {
+			throw new Error(this + ": Cannot refresh a suspended binding with group ID '"
+				+ sGroupId + "' (own group ID is '" + this.getGroupId() + "')");
+		}
+		this.setResumeChangeReason(ChangeReason.Refresh);
+	};
+
+	/**
 	 * Remove this binding's caches and non-persistent messages. The binding's active cache removes
 	 * only its own messages. Inactive caches with a deep resource path starting with the given
 	 * resource path prefix are removed and they also remove only their own messages.
