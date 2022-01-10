@@ -2,12 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./SearchFilter",
 	"./SelectFilter",
 	"./DateRangeFilter",
 	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/m/HBox"
 ], function (
+	SearchFilter,
 	SelectFilter,
 	DateRangeFilter,
 	BaseObject,
@@ -132,6 +134,8 @@ sap.ui.define([
 				return SelectFilter;
 			case "daterange":
 				return DateRangeFilter;
+			case "search":
+				return SearchFilter;
 			default:
 				return undefined;
 		}

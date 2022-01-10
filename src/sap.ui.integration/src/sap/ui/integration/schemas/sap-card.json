@@ -64,6 +64,9 @@
               },
               {
                 "$ref": "#/definitions/Configuration.FilterType.DateRange"
+              },
+              {
+                "$ref": "#/definitions/Configuration.FilterType.Search"
               }
             ]
           }
@@ -2489,6 +2492,43 @@
               "nextYear"
             ]
           }
+        }
+      }
+    },
+    "Configuration.FilterType.Search": {
+      "description": "Search filter",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "The type of the filter",
+          "oneOf": [
+            {
+              "const": "Search"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "data": {
+          "$ref": "#/definitions/data"
+        },
+        "label": {
+          "description": "Label for the filter for user-friendly visualization in the design-time editor",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the filter for user-friendly visualization in the design-time editor",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value of the filter",
+          "type": "string"
+        },
+        "placeholder": {
+          "description": "The placeholder of the filter",
+          "type": "string"
         }
       }
     },

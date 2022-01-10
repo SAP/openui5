@@ -199,7 +199,7 @@ sap.ui.define([
 		var oDdr = new DynamicDateRange({
 			value: oValue,
 			options: oConfig.options
-		});
+		}).addStyleClass("sapFCardDateRangeField");
 
 		oDdr.attachChange(function (oEvent) {
 			if (oEvent.getParameter("valid")) {

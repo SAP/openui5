@@ -27,7 +27,7 @@
 			</p>
 
 			<h2 id="filterProperties">Filter Properties</h2>
-			<p>All filter types have the following properties:</p>
+			<p>All filters have the following common properties:</p>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -45,9 +45,13 @@
 						<td>"Select"</td>
 						<td>No</td>
 						<td>
-							The type of the filter. Possible values: "Select" and "DateRange".
-							Based on this value additional properties of the filter are available.
-							See <a href="../../index.html#/learn/filters/select" target="_parent">Select Filter</a> and <a href="../../index.html#/learn/filters/dateRange" target="_parent">DateRange Filter</a>.
+							The type of the filter. Based on this value additional properties of the filter are available.
+							Possible values are:
+							<ul>
+								<li>"DateRange" - see <a href="../../index.html#/learn/filters/dateRange" target="_parent">DateRange Filter</a></li>
+								<li>"Search" - see <a href="../../index.html#/learn/filters/search" target="_parent">Search Filter</a></li>
+								<li>"Select" - see <a href="../../index.html#/learn/filters/select" target="_parent">Select Filter</a></li>
+							</ul>
 						</td>
 						<td>1.24.0</td>
 						<td>1.80</td>
@@ -57,7 +61,7 @@
 						<td>string</td>
 						<td></td>
 						<td>No</td>
-						<td>A label for the filter. This property is used only in UI adaptation during designtime.</td>
+						<td>A label for the filter. This property is used only in UI adaptation during design time.</td>
 						<td>1.24.0</td>
 						<td>1.80</td>
 					</tr>
@@ -67,7 +71,7 @@
 						<td></td>
 						<td>No</td>
 						<td>More detailed description for this filter. This property is used only in UI adaptation
-							during designtime.</td>
+							during design time.</td>
 						<td>1.24.0</td>
 						<td>1.80</td>
 					</tr>
