@@ -5196,7 +5196,7 @@ sap.ui.define([
 	 * @param {function} [mParameters.success]
 	 *   A callback function which is called when the data has been successfully retrieved; the
 	 *   handler can have the following parameters: <code>oData</code> and <code>response</code>.
-	 * @param {Object<string,string>} [mParameters.urlParameters]
+	 * @param {Object<string,any>} [mParameters.urlParameters]
 	 *   Maps the function import parameter name as specified in the function import's metadata to
 	 *   its value; the value is formatted based on the parameter's type as specified in the metadata
 	 * @param {string} [mParameters.batchGroupId]
