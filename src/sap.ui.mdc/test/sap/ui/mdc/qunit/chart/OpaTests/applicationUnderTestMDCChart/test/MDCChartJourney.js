@@ -2,11 +2,15 @@
 sap.ui.require([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/opaQunit',
-    'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+    'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/actions/Press"
 ], function(
 	Opa5,
 	opaTest,
-    testLibrary
+    testLibrary,
+	PropertyStrictEquals,
+	Press
 ) {
 	'use strict';
 
@@ -29,7 +33,34 @@ sap.ui.require([
 					autowait: true
 				});
 			}
-		}
+		},
+		actions: new Opa5({
+			iClickOnTheVMButton : function () {
+				return this.waitFor({
+					controlType: "sap.m.Button",
+					matchers: [
+						new PropertyStrictEquals({
+							name: "icon",
+							value: "sap-icon://slim-arrow-down"
+						})
+					],
+					success: function(aBtns) {
+						new Press().executeOn(aBtns[0]);
+					}
+				});
+			}
+		}),
+		assertions: new Opa5({
+			iShouldSeeAnVMPopover : function () {
+				return this.waitFor({
+					id: "__component0---chartNew--variantManagementChart-popover",
+					success: function(oPopver) {
+						Opa5.assert.ok(oPopver, "VM Popover is opened");
+					},
+					errorMessage: "No Dialogs found"
+				});
+			}
+		})
 	});
 
 	QUnit.module("MDC Chart");
@@ -106,5 +137,10 @@ sap.ui.require([
 		Then.onTheMDCChart.iShouldSeeVisibleMeasuresInOrder(["averagemetricsWords"], "__component0---chartNew--bookChart");
 	});
 
+	opaTest("When I click on the Variant Management, the dialog opens", function(Given, When, Then) {
+		When.iClickOnTheVMButton();
+
+		Then.iShouldSeeAnVMPopover();
+	});
 
 });

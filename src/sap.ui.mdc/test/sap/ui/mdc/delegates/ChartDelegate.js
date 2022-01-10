@@ -101,6 +101,10 @@ sap.ui.define([
 
     };
 
+    ChartDelegate.requestToolbarUpdate = function() {
+
+    };
+
     /**
      * Chart relevant API (WIP)
      */

@@ -13,7 +13,8 @@ sap.ui.define([
         "sap/ui/mdc/library",
         "sap/ui/mdc/chart/ChartTypeButton",
         "sap/ui/mdc/chart/ChartSettings",
-        "./ChartSelectionDetails"
+        "./ChartSelectionDetails",
+        "sap/m/ToolbarSeparator"
     ],
     function (
         Core,
@@ -26,7 +27,8 @@ sap.ui.define([
         MDCLib,
         ChartTypeButton,
         ChartSettings,
-        ChartSelectionDetails
+        ChartSelectionDetails,
+        ToolbarSeparator
     ) {
         "use strict";
 
@@ -74,13 +76,19 @@ sap.ui.define([
         };
 
         ChartToolbar.prototype.createToolbarContent = function (oMDCChart) {
-            this.setEnabled(false);
+            //Keep track of chart buttons to enable them later on
+            this._chartInternalButtonsToEnable = [];
 
             /**add beginning**/
             var title = new Title(oMDCChart.getId() + "-title", {
                 text: oMDCChart.getHeader()
             });
             this.addBegin(title);
+
+            /** variant management */
+            if (oMDCChart.getVariant()){
+                this.addVariantManagement(oMDCChart.getVariant());
+            }
 
             /**add end **/
             this._oChartSelectionDetails = new ChartSelectionDetails(oMDCChart.getId() + "-selectionDetails", {});
@@ -98,11 +106,13 @@ sap.ui.define([
                     icon: "sap-icon://drill-down",
                     tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+                    enabled: false,
                     press: function (oEvent) {
                         oMDCChart._showDrillDown(this._oDrillDownBtn);
                     }.bind(this)
                 });
                 this.addEnd(this._oDrillDownBtn);
+                this._chartInternalButtonsToEnable.push(this._oDrillDownBtn);
             }
 
             if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
@@ -111,10 +121,11 @@ sap.ui.define([
                     text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
                     tooltip: MDCRb.getText("chart.LEGENDBTN_TOOLTIP"),
                     icon: "sap-icon://legend",
-                    pressed: "{$mdcChart>/legendVisible}"
-
+                    pressed: "{$mdcChart>/legendVisible}",
+                    enabled: false
                 });
                 this.addEnd(this._oLegendBtn);
+                this._chartInternalButtonsToEnable.push(this._oLegendBtn);
             }
 
             if (!oMDCChart.getIgnoreToolbarActions().length || oMDCChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
@@ -122,6 +133,7 @@ sap.ui.define([
                     icon: "sap-icon://zoom-in",
                     tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
                     text: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
+                    enabled: false,
                     press: function onZoomOutButtonPressed(oControlEvent) {
                         oMDCChart.zoomIn();
                         this.toggleZoomButtons(oMDCChart);
@@ -132,6 +144,7 @@ sap.ui.define([
                     icon: "sap-icon://zoom-out",
                     tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
                     text: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
+                    enabled: false,
                     press: function onZoomOutButtonPressed(oControlEvent) {
                         oMDCChart.zoomOut();
                         this.toggleZoomButtons(oMDCChart);
@@ -139,6 +152,7 @@ sap.ui.define([
                 });
                 this.addEnd(this.oZoomInButton);
                 this.addEnd(this.oZoomOutButton);
+                //Enabled via toggleZoomButtons()
             }
 
             if (aP13nMode.indexOf("Sort") > -1 || aP13nMode.indexOf("Item") > -1) {
@@ -146,16 +160,33 @@ sap.ui.define([
                     icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
                     tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
+                    enabled: false,
                     press: function (oEvent) {
                         oMDCChart.getEngine().uimanager.show(oMDCChart, oMDCChart.getP13nMode());
                     }
                 });
                 this.addEnd(this._oSettingsBtn);
+                this._chartInternalButtonsToEnable.push(this._oSettingsBtn);
             }
 
             if (oMDCChart._getTypeBtnActive()) {
                 this._oChartTypeBtn = new ChartTypeButton(oMDCChart);
+                this._oChartTypeBtn.setEnabled(false);
                 this.addEnd(this._oChartTypeBtn);
+                this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
+            }
+
+        };
+
+        ChartToolbar.prototype.addVariantManagement = function(oVariantManagement) {
+
+            if (oVariantManagement){
+                if (this._oVariantManagement) {
+                    this.removeBetween(this._oVariantManagement);
+                }
+
+                this._oVariantManagement = oVariantManagement;
+                this.addBetween(this._oVariantManagement);
             }
 
         };
@@ -178,6 +209,11 @@ sap.ui.define([
 
             if (!this._toolbarInitialUpdated) {
                 this.setEnabled(true);
+
+                this._chartInternalButtonsToEnable.forEach(function(oBtn){
+                    oBtn.setEnabled(true);
+                });
+
                 this._toolbarInitialUpdated = true;
             }
 

@@ -331,6 +331,24 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 							"sap.ui.fl", "sap.ui.mdc"
 						]
 					}
+				},
+				"ChartToolbar": {
+					group: "Chart",
+					module: "./chart/ChartToolbar.qunit",
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					}
+				},
+				"ChartBreadcrumbs": {
+					group: "Chart",
+					module: "./chart/ChartBreadcrumbs.qunit",
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					}
 				},/* TO-Do: Check whether this is still needed with new MDC Chart
 				"ChartFlex": {
 					group: "Chart",

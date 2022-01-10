@@ -20,7 +20,11 @@
 				}
 			}" chartType="column" header="Remake Chart" height="400px" width="100%">
 
-				<mdc:selectionDetailsActions>
+			<mdc:variant>
+				<variants:VariantManagement id="variantManagementChart" for="bookChart" class="sapUiTinyMarginBottom"/>
+			</mdc:variant>
+			
+			<mdc:selectionDetailsActions>
 				<mdcc:SelectionDetailsActions>
 					<mdcc:detailsItemActions>
 						<core:Item key="ItemAction1" text="ItemAction 1"></core:Item>

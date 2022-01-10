@@ -241,6 +241,13 @@ sap.ui.define([
                     selectionDetailsActions: {
                         type: "sap.ui.mdc.chart.SelectionDetailsActions",
                         multiple: false
+                    },
+                    /**
+                     * <code>VariantManagement<code> control for the table.
+                     */
+                    variant: {
+                        type: "sap.ui.fl.variants.VariantManagement",
+                        multiple: false
                     }
                 },
                 associations: {
@@ -1076,6 +1083,18 @@ sap.ui.define([
 				this._renderOverlay(true);
 			}
 		};
+
+        Chart.prototype.setVariant = function(oControl) {
+            this.setAggregation("variant", oControl);
+
+            //Only add VM directly when Toolbar already exists; otherwise VM will be added during init of toolbar
+            if (this.getAggregation("_toolbar")){
+                this.getAggregation("_toolbar").addVariantManagement(oControl);
+            }
+
+
+            return this;
+        };
 
         /**
 		 * Adds/Removes the overlay shown above the inner chart

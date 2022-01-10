@@ -463,6 +463,10 @@
 							}
 						}" chartType="column" header="Remake Chart" height="400px" width="100%">
 
+						<mdc:variant>
+								<variants:VariantManagement id="variantManagementChart" for="bookChart" class="sapUiTinyMarginBottom"/>
+						</mdc:variant>
+
 						 <mdc:selectionDetailsActions>
 							<mdcc:SelectionDetailsActions>
 								<mdcc:detailsItemActions>
