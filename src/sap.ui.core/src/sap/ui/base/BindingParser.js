@@ -60,13 +60,23 @@ sap.ui.define([
 	 *   a composite formatter
 	 */
 	function composeFormatters(aFormatters, fnRootFormatter) {
-		function formatter() {
+		var bRequiresIContext = aFormatters.some(function (fnFormatter) {
+				return fnFormatter.requiresIContext; // Note: it's either true or missing here
+			});
+
+		function formatter(oInterface) {
 			var i,
 				n = aFormatters.length,
+				aArguments = arguments,
 				aResults = new Array(n);
 
 			for (i = 0; i < n; i += 1) {
-				aResults[i] = aFormatters[i].apply(this, arguments);
+				if (aFormatters[i].requiresIContext) {
+					aArguments = arguments;
+				} else if (bRequiresIContext) { // drop oInterface
+					aArguments = Array.prototype.slice.call(arguments, 1);
+				}
+				aResults[i] = aFormatters[i].apply(this, aArguments);
 			}
 
 			if (fnRootFormatter) {
@@ -76,6 +86,10 @@ sap.ui.define([
 			// "default: multiple values are joined together as space separated list if no
 			//  formatter or type specified"
 			return n > 1 ? aResults.join(" ") : aResults[0];
+		}
+
+		if (bRequiresIContext) {
+			formatter.requiresIContext = true;
 		}
 		// @see sap.ui.base.ManagedObject#_bindProperty
 		formatter.textFragments = fnRootFormatter && fnRootFormatter.textFragments
@@ -592,11 +606,24 @@ sap.ui.define([
 					aParts = aParts.concat(vEmbeddedBinding.parts);
 					iEnd = aParts.length;
 					if (vEmbeddedBinding.formatter) {
-						fnFormatter = function () {
-							// old formatter needs to operate on its own slice of overall arguments
-							return vEmbeddedBinding.formatter.apply(this,
-								Array.prototype.slice.call(arguments, iStart, iEnd));
-						};
+						if (vEmbeddedBinding.formatter.requiresIContext === true) {
+							fnFormatter = function (oInterface) {
+								// old formatter needs to operate on its own slice of overall args
+								var aArguments
+									= Array.prototype.slice.call(arguments, iStart + 1, iEnd + 1);
+
+								aArguments.unshift(oInterface._slice(iStart, iEnd));
+
+								return vEmbeddedBinding.formatter.apply(this, aArguments);
+							};
+							fnFormatter.requiresIContext = true;
+						} else {
+							fnFormatter = function () {
+								// old formatter needs to operate on its own slice of overall args
+								return vEmbeddedBinding.formatter.apply(this,
+									Array.prototype.slice.call(arguments, iStart, iEnd));
+							};
+						}
 					} else if (iEnd - iStart > 1) {
 						fnFormatter = function () {
 							// @see sap.ui.model.CompositeBinding#getExternalValue

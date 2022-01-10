@@ -602,6 +602,69 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+[undefined, false, true, "n/a"].forEach(function (vRequiresIContext) {
+	var sTitle = "mergeParts: requiresIContext = " + vRequiresIContext;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBindingInfo = {
+				parts : [{
+					path : "/bar"
+				}, {
+					formatter : formatter1,
+					parts : [{path : "/foo"}]
+				}, {
+					formatter : formatter2,
+					parts : [{path : "/qux"}]
+				}]
+			},
+			fnFormatter,
+			oInterface = {
+				_slice : function () {}
+			};
+
+		function formatter1(oInterface0, oValue) {
+			if (vRequiresIContext === true) {
+				assert.strictEqual(arguments.length, 2);
+				assert.strictEqual(oInterface0, "~oInterfaceSlice~");
+			} else {
+				assert.strictEqual(arguments.length, 1);
+				oValue = oInterface0; // no interface requested ;-)
+			}
+			return "*" + oValue + "*";
+		}
+
+		function formatter2(oValue) {
+			assert.strictEqual(arguments.length, 1);
+			return ">" + oValue + "<";
+		}
+
+		formatter1.requiresIContext = vRequiresIContext;
+		formatter2.requiresIContext = "n/a";
+
+		// code under test
+		BindingParser.mergeParts(oBindingInfo);
+
+		fnFormatter = oBindingInfo.formatter;
+		delete oBindingInfo.formatter;
+		assert.deepEqual(oBindingInfo, {
+			parts : [{path : "/bar"}, {path : "/foo"}, {path : "/qux"}]}
+		);
+
+		if (vRequiresIContext === true) {
+			assert.strictEqual(fnFormatter.requiresIContext, true);
+
+			this.mock(oInterface).expects("_slice").withExactArgs(1, 2)
+				.returns("~oInterfaceSlice~");
+
+			// code under test
+			assert.strictEqual(fnFormatter(oInterface, "a", "b", "c", "n/a"), "a *b* >c<");
+		} else {
+			assert.notOk("requiresIContext" in fnFormatter);
+			assert.strictEqual(fnFormatter("a", "b", "c", "n/a"), "a *b* >c<");
+		}
+	});
+});
+
 	QUnit.test("mergeParts w/o any formatter", function (assert) {
 		var oBindingInfo = {
 				parts : [
