@@ -152,13 +152,14 @@ sap.ui.define([
     ChartDelegate.createInnerMeasures = function (aAggregatableProperties, oPropertyHelper) {
 
     };
+
     /**
      * Checks the binding of the table and rebinds it if required.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart The MDC chart instance
      * @param {object} oBindingInfo The bindingInfo of the chart
      */
-    ChartDelegate.rebindChart = function (oMDCChart, oBindingInfo) {
+    ChartDelegate.rebind = function (oMDCChart, oBindingInfo) {
         //Nothing to test
     };
 
