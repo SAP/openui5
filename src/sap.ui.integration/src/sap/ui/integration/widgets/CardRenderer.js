@@ -40,13 +40,7 @@ sap.ui.define([
 			var oFilterBar = oCard.getAggregation("_filterBar");
 
 			if (oFilterBar) {
-				oRm.openStart("div")
-					.class("sapFCardFilterBar")
-					.openEnd();
-
 				oRm.renderControl(oFilterBar);
-
-				oRm.close("div");
 			}
 
 			FCardRenderer.renderContentSection.apply(this, arguments);

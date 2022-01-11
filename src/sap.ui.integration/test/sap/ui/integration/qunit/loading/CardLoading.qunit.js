@@ -1110,7 +1110,7 @@ sap.ui.define([
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), true, "Header is showing placeholders");
 
 						var oFilterBar = this.oCard.getAggregation("_filterBar");
-						oFilterBar.getItems().forEach(function (oFilter) {
+						oFilterBar._getFilters().forEach(function (oFilter) {
 							assert.strictEqual(oFilter.isLoading(), true, "Filter is loading");
 							assert.strictEqual(oFilter.getDomRef().classList.contains("sapFCardFilterLoading"), true, "Filter is showing a placeholder");
 						});
@@ -1138,7 +1138,7 @@ sap.ui.define([
 				assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "Header is not showing placeholders");
 
 				var oFilterBar = this.oCard.getAggregation("_filterBar");
-				oFilterBar.getItems().forEach(function (oFilter) {
+				oFilterBar._getFilters().forEach(function (oFilter) {
 					assert.strictEqual(oFilter.isLoading(), false, "Filter is not loading");
 					assert.strictEqual(oFilter.getDomRef().classList.contains("sapFCardFilterLoading"), false, "Filter is not showing a placeholder");
 				});

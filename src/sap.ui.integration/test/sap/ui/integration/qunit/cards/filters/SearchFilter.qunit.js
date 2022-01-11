@@ -50,9 +50,9 @@ sap.ui.define([
 
 			// Assert
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			assert.strictEqual(oFilterBar.getItems().length, 1, "The filter bar has 1 filter");
+			assert.strictEqual(oFilterBar._getFilters().length, 1, "The filter bar has 1 filter");
 
-			var oFirstFilter = oFilterBar.getItems()[0];
+			var oFirstFilter = oFilterBar._getFilters()[0];
 			assert.ok(oFirstFilter.isA(SearchFilter.getMetadata().getName()), "The filter type is correct");
 
 			done();
@@ -125,7 +125,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 			var oFilterBar = this.oCard.getAggregation("_filterBar"),
-				oSearchField = oFilterBar.getItems()[0].getField();
+				oSearchField = oFilterBar._getFilters()[0].getField();
 
 			// Assert
 			assert.strictEqual(oSearchField.getPlaceholder(), "Some placeholder", "The placeholder binding should be resolved");
@@ -168,7 +168,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 			var oFilterBar = this.oCard.getAggregation("_filterBar"),
-				oSearchField = oFilterBar.getItems()[0].getField();
+				oSearchField = oFilterBar._getFilters()[0].getField();
 
 			// Assert
 			assert.strictEqual(oSearchField.getValue(), "Some value", "The value binding should be resolved");

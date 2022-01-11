@@ -1017,11 +1017,28 @@ sap.ui.define([
 						target: 'exploreSamples',
 						key: 'searchFilter',
 						experimental: true,
-						files: [
+						subSamples: [
 							{
-								url: '/samples/filters/search/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								title: 'Single Filter',
+								key: 'singleFilter',
+								files: [
+									{
+										url: '/samples/filters/search/singleFilter.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Combined Filters',
+								key: 'combinedFilters',
+								files: [
+									{
+										url: '/samples/filters/search/combinedFilters.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

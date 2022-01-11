@@ -46,12 +46,20 @@
 	border-bottom: @_sap_f_Card_HeaderBorder;
 	z-index: 1;
 
-	.sapFCardFilter {
-		max-width: 100%;
+	.sapFCardFilterBarContent {
+		overflow: hidden;
 
-		.sapFCardDateRangeField {
-			width: 14rem;
+		&.sapFCardFilterBarAFLayout {
+			column-gap: 0.5rem;
+		}
+
+		&:not(.sapFCardFilterBarAFLayout) .sapFCardFilter {
 			max-width: 100%;
+
+			.sapFCardDateRangeField {
+				width: 14rem;
+				max-width: 100%;
+			}
 		}
 	}
 }

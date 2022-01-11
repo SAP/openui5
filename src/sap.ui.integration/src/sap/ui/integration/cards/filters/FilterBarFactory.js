@@ -2,19 +2,23 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./FilterBar",
 	"./SearchFilter",
 	"./SelectFilter",
 	"./DateRangeFilter",
 	"sap/ui/base/Object",
 	"sap/m/library",
-	"sap/m/HBox"
+	"sap/m/HBox",
+	"sap/ui/layout/AlignedFlowLayout"
 ], function (
+	FilterBar,
 	SearchFilter,
 	SelectFilter,
 	DateRangeFilter,
 	BaseObject,
 	mLibrary,
-	HBox
+	HBox,
+	AlignedFlowLayout
 ) {
 	"use strict";
 
@@ -54,7 +58,7 @@ sap.ui.define([
 	 *
 	 * @param {map} mFiltersConfig A map of the parameters config - the same that is defined in sap.card/configuration/filters.
 	 * @param {sap.ui.model.json.JSONModel} oModel The model for filters.
-	 * @returns {sap.m.HBox} The Filter bar.
+	 * @returns {sap.ui.integration.cards.filters.FilterBar|null} The Filter bar.
 	 */
 	FilterBarFactory.prototype.create = function (mFiltersConfig, oModel) {
 		var aFilters = [],
@@ -91,21 +95,34 @@ sap.ui.define([
 			return null;
 		}
 
-		for (var i = 0; i < aFilters.length - 1; i++) {
-			aFilters[i].addStyleClass("sapUiTinyMarginEnd");
+		if (aFilters.length > 1) {
+			oFilterBarStrip = new AlignedFlowLayout({
+				content: aFilters,
+				minItemWidth: "10rem",
+				maxItemWidth: "20rem"
+			});
+			aFilters.forEach(function (oFilter) {
+				oFilter.getField().setWidth("100%");
+			});
+			oFilterBarStrip.addStyleClass("sapFCardFilterBarAFLayout");
+		} else {
+			oFilterBarStrip = new HBox({
+				wrap: FlexWrap.Wrap,
+				renderType: RenderType.Bare,
+				items: aFilters
+			});
 		}
+		oFilterBarStrip.addStyleClass("sapFCardFilterBarContent");
 
-		oFilterBarStrip = new HBox({
-			wrap: FlexWrap.Wrap,
-			renderType: RenderType.Bare,
-			items: aFilters
+		var oFilterBar = new FilterBar({
+			content: oFilterBarStrip
 		});
 
 		Promise.all(aReadyPromises).then(function () {
-			oFilterBarStrip.fireEvent("_filterBarDataReady");
+			oFilterBar.fireEvent("_filterBarDataReady");
 		});
 
-		return oFilterBarStrip;
+		return oFilterBar;
 	};
 
 	/**
