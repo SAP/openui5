@@ -1150,7 +1150,8 @@ sap.ui.define([
 		assert.notOk(_AggregationHelper.isAffected(oAggregation, [],
 			["foo", "bar", "meas", "dim", "lev"]));
 
-		["", "*", "measure1", "measure1/*", "measure3", "dimension1", "dimension1/property1",
+		[
+			"", "*", "measure1", "measure1/*", "measure3", "dimension1", "dimension1/property1",
 			"dimension1/*", "level1", "complex1", "complex1/*", "complex2", "complex2/*",
 			"complex3", "complex3/*"
 		].forEach(function (sSideEffectPath) {

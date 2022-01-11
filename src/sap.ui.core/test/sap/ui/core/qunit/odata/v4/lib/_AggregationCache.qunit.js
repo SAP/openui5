@@ -2214,8 +2214,7 @@ sap.ui.define([
 			// specific level!
 			oCache.aElements = [,
 				_AggregationHelper.createPlaceholder(NaN, 42, oGroupLevelCache),
-				_AggregationHelper.createPlaceholder(NaN, 43, oGroupLevelCache)
-			];
+				_AggregationHelper.createPlaceholder(NaN, 43, oGroupLevelCache)];
 			oCache.aElements.$byPredicate = {};
 
 			assert.throws(function () {

@@ -1066,7 +1066,8 @@ sap.ui.define([
 			var oLogMock = this.oLogMock;
 
 			// The following warnings are logged when the RMTSAMPLEFLIGHT metamodel is loaded
-			["semantics", "creatable", "creatable", "semantics", "semantics", "value-list",
+			[
+				"semantics", "creatable", "creatable", "semantics", "semantics", "value-list",
 				"value-list", "label", "label", "value-list", "value-list", "value-list",
 				"value-list", "value-list", "value-list", "value-list", "label", "label",
 				"supported-formats", "addressable", "value-list"
@@ -9992,7 +9993,8 @@ sap.ui.define([
 							}
 						},
 						type : "Error"
-					}]);
+					}
+				]);
 
 			that.oView.byId("quantity").getBinding("value").setValue("0.000");
 
@@ -12143,7 +12145,8 @@ sap.ui.define([
 		this.expectRequest("TEAMS?$select=BudgetCurrency,Team_Id&$skip=0&$top=100", {
 				value : [
 					{BudgetCurrency : "EUR", Team_Id : "TEAM_01"},
-					{BudgetCurrency : "EUR", Team_Id : "TEAM_02"}]
+					{BudgetCurrency : "EUR", Team_Id : "TEAM_02"}
+				]
 			})
 			.expectChange("currency", ["EUR", "EUR"])
 			.expectChange("id", ["TEAM_01", "TEAM_02"])
@@ -12188,7 +12191,8 @@ sap.ui.define([
 			that.expectRequest("TEAMS?$select=BudgetCurrency,Team_Id&$skip=0&$top=100", {
 					value : [
 						{BudgetCurrency : "RBL", Team_Id : "TEAM_01"},
-						{BudgetCurrency : "RBL", Team_Id : "TEAM_02"}]
+						{BudgetCurrency : "RBL", Team_Id : "TEAM_02"}
+					]
 				})
 				.expectChange("currency", ["RBL", "RBL"])
 				.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
@@ -14409,7 +14413,8 @@ sap.ui.define([
 					.setParameter("fldate", "2017-08-10T00:00:00Z")
 					.setParameter("flightTime", 42)
 					.execute(),
-				that.waitForChanges(assert)]);
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			var oContext = oContextBinding.getBoundContext();
 
@@ -19328,35 +19333,34 @@ sap.ui.define([
 				+ ",aggregate(SalesAmount with sum as SalesAmountSum,Currency,SalesNumber))"
 				+ "/orderby(SalesAmountSum asc)/concat(aggregate($count as UI5__count),top(4)))", {
 				value : [{
-						Currency : "EUR",
-						SalesAmountSum : "351",
-						//TODO this should be used by auto type detection
-						"SalesAmountSum@odata.type" : "#Decimal"
-					}, {
-						UI5__count : "26",
-						"UI5__count@odata.type" : "#Decimal"
-					}, {
-						Currency : "EUR",
-						Region : "Z",
-						SalesNumber : 1,
-						SalesAmountSum : "1"
-					}, {
-						Currency : "EUR",
-						Region : "Y",
-						SalesNumber : 2,
-						SalesAmountSum : "2"
-					}, {
-						Currency : "EUR",
-						Region : "X",
-						SalesNumber : 3,
-						SalesAmountSum : "3"
-					}, {
-						Currency : "EUR",
-						Region : "W",
-						SalesNumber : 4,
-						SalesAmountSum : "4"
-					}
-				]
+					Currency : "EUR",
+					SalesAmountSum : "351",
+					//TODO this should be used by auto type detection
+					"SalesAmountSum@odata.type" : "#Decimal"
+				}, {
+					UI5__count : "26",
+					"UI5__count@odata.type" : "#Decimal"
+				}, {
+					Currency : "EUR",
+					Region : "Z",
+					SalesNumber : 1,
+					SalesAmountSum : "1"
+				}, {
+					Currency : "EUR",
+					Region : "Y",
+					SalesNumber : 2,
+					SalesAmountSum : "2"
+				}, {
+					Currency : "EUR",
+					Region : "X",
+					SalesNumber : 3,
+					SalesAmountSum : "3"
+				}, {
+					Currency : "EUR",
+					Region : "W",
+					SalesNumber : 4,
+					SalesAmountSum : "4"
+				}]
 			})
 			.expectChange("region", ["", "Z", "Y", "X", "W"])
 			.expectChange("salesNumber", [null, "1", "2", "3", "4"])
@@ -20596,19 +20600,18 @@ sap.ui.define([
 				+ "AGE with max as UI5max__AGE,$count as UI5__count)"
 				+ ",skip(1)/top(3))", {
 				value : [{
-						// the server response may contain additional data for example @odata.id or
-						// type information "UI5min__AGE@odata.type" : "#Int16"
-						"@odata.id" : null,
-						"UI5min__AGE@odata.type" : "#Int16",
-						UI5min__AGE : 42,
-						UI5max__AGE : 77,
-						UI5__count : "4",
-						"UI5__count@odata.type" : "#Decimal"
-					},
-					{ID : "1", Name : "Jonathan Smith", AGE : 50},
-					{ID : "0", Name : "Frederic Fall", AGE : 70},
-					{ID : "2", Name : "Peter Burke", AGE : 77}
-				]
+					// the server response may contain additional data for example @odata.id or
+					// type information "UI5min__AGE@odata.type" : "#Int16"
+					"@odata.id" : null,
+					"UI5min__AGE@odata.type" : "#Int16",
+					UI5min__AGE : 42,
+					UI5max__AGE : 77,
+					UI5__count : "4",
+					"UI5__count@odata.type" : "#Decimal"
+				},
+				{ID : "1", Name : "Jonathan Smith", AGE : 50},
+				{ID : "0", Name : "Frederic Fall", AGE : 70},
+				{ID : "2", Name : "Peter Burke", AGE : 77}]
 			})
 			.expectChange("count")
 			.expectChange("text", [, "Jonathan Smith", "Frederic Fall", "Peter Burke"])
@@ -20686,17 +20689,16 @@ sap.ui.define([
 					+ "/concat(aggregate(AGE with min as UI5min__AGE,AGE with max as UI5max__AGE)"
 					+ ",top(100))", {
 					value : [{
-							// the server response may contain additional data for example
-							// @odata.id or type information "UI5min__AGE@odata.type" : "#Int16"
-							"@odata.id" : null,
-							"UI5min__AGE@odata.type" : "#Int16",
-							UI5min__AGE : 42,
-							UI5max__AGE : 77
-						},
-						{ID : "1", Name : "Jonathan Smith", AGE : 50},
-						{ID : "0", Name : "Frederic Fall", AGE : 70},
-						{ID : "2", Name : "Peter Burke", AGE : 77}
-					]
+						// the server response may contain additional data for example
+						// @odata.id or type information "UI5min__AGE@odata.type" : "#Int16"
+						"@odata.id" : null,
+						"UI5min__AGE@odata.type" : "#Int16",
+						UI5min__AGE : 42,
+						UI5max__AGE : 77
+					},
+					{ID : "1", Name : "Jonathan Smith", AGE : 50},
+					{ID : "0", Name : "Frederic Fall", AGE : 70},
+					{ID : "2", Name : "Peter Burke", AGE : 77}]
 				})
 				.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"])
 				.expectChange("age", ["50", "70", "77"]);

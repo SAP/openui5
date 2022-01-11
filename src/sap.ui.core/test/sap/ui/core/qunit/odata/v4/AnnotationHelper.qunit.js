@@ -1316,7 +1316,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["$AnnotationPath", "$NavigationPropertyPath", "$Path", "$PropertyPath"
+	[
+		"$AnnotationPath", "$NavigationPropertyPath", "$Path", "$PropertyPath"
 	].forEach(function (sName) {
 		QUnit.test("resolve$Path: " + sName + " at entity container", function (assert) {
 			var oMetaModel = {

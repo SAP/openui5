@@ -5427,7 +5427,8 @@ sap.ui.define([
 		new Filter(
 			[new Filter("a", FilterOperator.EQ, 1), new Filter("a", FilterOperator.EQ, 2)], false
 		),
-		new Filter("b", FilterOperator.EQ, "before")],
+		new Filter("b", FilterOperator.EQ, "before")
+	],
 	staticFilter : "c eq 47",
 	result : ["(a eq 1 or a eq 2) and (c eq 47)", "b eq 'before'"]
 }, {

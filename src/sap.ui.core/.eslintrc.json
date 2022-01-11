@@ -28,6 +28,8 @@
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
 
 				// stylistic (JIRA: CPOUI5ODATAV4-1325)
+				// {"multiline": true} doesn't match our style
+				"array-bracket-newline": ["error", "consistent"],
 				"array-bracket-spacing": "error",
 				"block-spacing": "error",
 				"comma-spacing": "error",

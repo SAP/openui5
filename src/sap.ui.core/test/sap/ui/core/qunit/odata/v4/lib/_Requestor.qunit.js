@@ -1721,7 +1721,8 @@ sap.ui.define([
 			oEntityProduct0 = {},
 			oEntityProduct0OtherCache = {},
 			oEntityProduct1 = {},
-			aExpectedRequests = [[
+			aExpectedRequests = [
+				[
 					sinon.match({
 						body : {Name : "bar2", Note : "hello, world"},
 						method : "PATCH",
@@ -3728,8 +3729,7 @@ sap.ui.define([
 				}, {
 					code : "43",
 					type : "Warning"
-				}
-			], sResourcePath);
+				}], sResourcePath);
 
 		// code under test
 		oRequestor.reportHeaderMessages(sResourcePath, sMessages);
@@ -4373,7 +4373,8 @@ sap.ui.define([
 		oRequestor.checkHeaderNames({allowed : "123"});
 		oRequestor.checkHeaderNames({"X-Http-Method" : "123"}); // V2 specific headers are allowed
 
-		["Accept", "Accept-Charset", "Content-Encoding", "Content-ID", "Content-Language",
+		[
+			"Accept", "Accept-Charset", "Content-Encoding", "Content-ID", "Content-Language",
 			"Content-Length", "Content-Transfer-Encoding", "Content-Type", "If-Match",
 			"If-None-Match", "Isolation", "OData-Isolation", "OData-MaxVersion", "OData-Version",
 			"Prefer", "SAP-ContextId"

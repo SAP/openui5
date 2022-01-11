@@ -403,7 +403,8 @@ sap.ui.define([
 					return Expression.path(oPathValue);
 				}
 
-				["$And", "$Apply", "$Date", "$DateTimeOffset", "$Decimal", "$Float", "$Eq",
+				[
+					"$And", "$Apply", "$Date", "$DateTimeOffset", "$Decimal", "$Float", "$Eq",
 					"$Ge", "$Gt", "$Guid", "$If", "$Int", "$Le", "$Lt", "$Name", "$Ne", "$Not",
 					"$Null", "$Or", "$Path", "$PropertyPath", "$TimeOfDay", "$LabeledElement"
 				].forEach(function (sProperty) {

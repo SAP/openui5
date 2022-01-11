@@ -1545,34 +1545,31 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			testTitle : "POST to not exist. entity within change set (odata.continue-on-error)",
 			continueOnError : true,
 			batchRequests : [{
-					method : "GET",
-					url : "Departments",
-					headers : {Accept : "application/json"}
-				},
-				[
-					{
-						method : "PATCH",
-						url : "EMPLOYEES('1')",
-						headers : {
-							"Content-Type" : "application/json",
-							"If-Match" : "W/\"19770724000000.0000000\""
-						},
-						body : {TEAM_ID : "TEAM_03"}
-					}, {
-						method : "POST",
-						url : "Unknown",
-						headers : {
-							"Content-Type" : "application/json"
-						},
-						body : {bar : "bar"}
-					}
-				],
+				method : "GET",
+				url : "Departments",
+				headers : {Accept : "application/json"}
+			}, [
 				{
-					method : "GET",
-					url : "TEAMS",
-					headers : {Accept : "application/json"}
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					headers : {
+						"Content-Type" : "application/json",
+						"If-Match" : "W/\"19770724000000.0000000\""
+					},
+					body : {TEAM_ID : "TEAM_03"}
+				}, {
+					method : "POST",
+					url : "Unknown",
+					headers : {
+						"Content-Type" : "application/json"
+					},
+					body : {bar : "bar"}
 				}
-			],
+			], {
+				method : "GET",
+				url : "TEAMS",
+				headers : {Accept : "application/json"}
+			}],
 			expectedResponses : [{
 				status : 200,
 				statusText : "OK",
@@ -1882,8 +1879,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : oNewTeamBody
-				},
-				{
+				}, {
 					status : 201,
 					statusText : "Created",
 					headers : {
@@ -1891,7 +1887,8 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : oNewEmployeeBody
-				}]]
+				}]
+			]
 		}].forEach(function (oFixture) {
 			QUnit[oFixture.skip ? "skip" : "test"](
 				"Multipart Integration Test: " + oFixture.testTitle,

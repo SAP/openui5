@@ -1788,8 +1788,10 @@ sap.ui.define([
 		oRequestor.checkHeaderNames({allowed : "123"});
 		oRequestor.checkHeaderNames({"OData-Version" : "123"}); // V4 specific headers are allowed
 
-		["Accept", "Content-ID", "Content-Transfer-Encoding", "Content-Type", "DataServiceVersion",
-			"If-Match", "If-None-Match", "MaxDataServiceVersion", "SAP-ContextId", "X-HTTP-Method"
+		[
+			"Accept", "Content-ID", "Content-Transfer-Encoding", "Content-Type",
+			"DataServiceVersion", "If-Match", "If-None-Match", "MaxDataServiceVersion",
+			"SAP-ContextId", "X-HTTP-Method"
 		].forEach(function (sHeaderName) {
 			var mHeaders = {};
 

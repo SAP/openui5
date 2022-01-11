@@ -837,8 +837,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseKeyPredicate", function (assert) {
-		["false", "true", "3.14", "2016-04-23", "2016-01-13T14:08:31Z", "-1", "'foo'", "'foo''bar'",
-			"'foo/bar'", "F050568D-393C-1ED4-9D97-E65F0F3FCC23"
+		[
+			"false", "true", "3.14", "2016-04-23", "2016-01-13T14:08:31Z", "-1", "'foo'",
+			"'foo''bar'", "'foo/bar'", "F050568D-393C-1ED4-9D97-E65F0F3FCC23"
 		].forEach(function (sValue) {
 			var sPredicate = "(" + sValue + ")";
 
