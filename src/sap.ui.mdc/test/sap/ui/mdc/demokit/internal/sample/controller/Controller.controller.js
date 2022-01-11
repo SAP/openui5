@@ -262,6 +262,25 @@ sap.ui.define([
 					oOutput.setValue(JSON.stringify(oState, null, "  "));
 				}
 			}.bind(this));
+		},
+
+		applyTableStateConfig: function() {
+			var oTable = this.byId("mdcTable");
+
+			if (oTable) {
+				StateUtil.retrieveExternalState(oTable).then(function(oState) {
+					oState.supplementaryConfig = {
+						'aggregations': {
+							'columns': {
+								'Name': {
+									'width': '300px'
+								}
+							}
+						}
+					};
+					StateUtil.applyExternalState(oTable, oState);
+				});
+			}
 		}
 	});
 });

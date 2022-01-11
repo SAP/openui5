@@ -34,6 +34,9 @@
 			height="100%"
 			enableAutoColumnWidth="true"
 			paste="onPaste">
+		<mdc:actions>
+			<OverflowToolbarButton icon="sap-icon://activate" tooltip="Apply table state config" press="applyTableStateConfig"/>
+		</mdc:actions>
 		<mdc:columns>
 			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
