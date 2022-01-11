@@ -248,6 +248,10 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "Designtime",
 				module: "./designtime/Library.qunit"
 			},
+			"Designtime/Designtime_Table" : {
+				group: "Designtime",
+				module: "./designtime/Designtime_Table.qunit"
+			},
 
 			"DelegateMixin": {
 				group: "Mixin",
