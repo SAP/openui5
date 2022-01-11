@@ -3,6 +3,17 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "f1f26ea6b91c06817e4b6d581e368bb71cd2ca80",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix hiding of footer without animations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180414804"
+          }
+        ]
+      },
+      {
         "id": "b6993a9891a1983f9a093f8b543ce162630f8300",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Corrected check for closest section",
