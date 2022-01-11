@@ -132,6 +132,9 @@ sap.ui.define(function() {
 			Manifest: {
 				title: "QUnit tests: Component Manifest"
 			},
+			"Manifest_unavoidablySync": {
+				title: "QUnit tests: Component Manifest (sync tests)"
+			},
 			Metadata: {
 				title: "QUnit tests: Component Metadata"
 			},
@@ -189,6 +192,12 @@ sap.ui.define(function() {
 			},
 			"Component_dependencyLoading": {
 				title: "QUnit test: Dependency loading",
+				qunit: {
+					reorder: false
+				}
+			},
+			"Component_dependencyLoading_unavoidablySync": {
+				title: "QUnit test: Dependency loading (sync tests)",
 				qunit: {
 					reorder: false
 				}

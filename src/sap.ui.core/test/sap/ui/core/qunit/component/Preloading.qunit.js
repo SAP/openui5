@@ -75,9 +75,8 @@ sap.ui.define([
 		var done = assert.async();
 
 		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
-		var oResult = sap.ui.component.load({
+		var oResult = Component.load({
 			name: "sap.test.mycomp",
-			async: true,
 			asyncHints: {
 				libs: [ 'sap.test.lib2', 'sap.test.lib3' ],
 				components: ['sap.test.mysubcomp']
@@ -85,8 +84,9 @@ sap.ui.define([
 		});
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
-			sap.ui.component({name: "sap.test.mycomp"});
-			done();
+			Component.create({name: "sap.test.mycomp"}).then(function () {
+				done();
+			});
 		}, function() {
 			assert.ok(false, "loading component failed");
 			done();
@@ -100,9 +100,8 @@ sap.ui.define([
 		var done = assert.async();
 
 		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
-		var oResult = sap.ui.component.load({
+		var oResult = Component.load({
 			name: "sap.test.mycomp",
-			async: true,
 			asyncHints: {
 				libs: [
 					{
@@ -117,8 +116,9 @@ sap.ui.define([
 		});
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
-			sap.ui.component({name: "sap.test.mycomp"});
-			done();
+			Component.create({name: "sap.test.mycomp"}).then(function () {
+				done();
+			});
 		}, function() {
 			assert.ok(false, "loading component failed");
 			done();
@@ -136,9 +136,8 @@ sap.ui.define([
 		sap.ui.loader.config({paths:{"sap/test/lib4":"test-resources/sap/ui/core/qunit/component/testdata/async/lib4"}});
 		sap.ui.loader.config({paths:{"sap/test/mycomp":"test-resources/sap/ui/core/qunit/component/testdata/async/mycomp"}});
 
-		var oResult = sap.ui.component.load({
+		var oResult = Component.load({
 			name: "sap.test.mycomp",
-			async: true,
 			asyncHints: {
 				libs: [
 					{
@@ -156,8 +155,9 @@ sap.ui.define([
 
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
-			sap.ui.component({name: "sap.test.mycomp"});
-			done();
+			Component.create({name: "sap.test.mycomp"}).then(function () {
+				done();
+			});
 		}, function() {
 			assert.ok(false, "loading component failed");
 			done();
@@ -175,9 +175,8 @@ sap.ui.define([
 		sap.ui.loader.config({paths:{"sap/test/lib4":"test-resources/sap/ui/core/qunit/component/testdata/async/lib4"}});
 		sap.ui.loader.config({paths:{"sap/test/mycomp":"test-resources/sap/ui/core/qunit/component/testdata/async/mycomp"}});
 
-		var oResult = sap.ui.component.load({
+		var oResult = Component.load({
 			name: "sap.test.mycomp",
-			async: true,
 			asyncHints: {
 				libs: [
 					{
@@ -258,8 +257,9 @@ sap.ui.define([
 				"final": true
 			});
 
-			sap.ui.component({name: "sap.test.mycomp"});
-			done();
+			Component.create({name: "sap.test.mycomp"}).then(function () {
+				done();
+			});
 		}.bind(this), function() {
 			assert.ok(false, "loading component failed");
 			done();
@@ -293,9 +293,8 @@ sap.ui.define([
 		]);
 
 		// start test
-		var oCompPromise = sap.ui.component({
-			manifestUrl : "/anylocation/manifest.json",
-			async: true
+		var oCompPromise = Component.create({
+			manifest: "/anylocation/manifest.json"
 		});
 
 		var oDone = assert.async();
@@ -329,9 +328,8 @@ sap.ui.define([
 		});
 
 		sap.ui.loader.config({paths:{"sap/test":"test-resources/sap/ui/core/qunit/component/testdata/async"}});
-		sap.ui.component({
+		Component.create({
 			name: "sap.test.mycomp",
-			async: true,
 			asyncHints: {
 				waitFor: p
 			}
@@ -389,9 +387,8 @@ sap.ui.define([
 		this.requireSpy.withArgs( ["scenario1/comp/Component"] ).callsArgWith(1, Component);
 
 		// first load with preloadOnly: true and check that none of the relvant modules have been required
-		return sap.ui.component.load({
+		return Component.load({
 			name: "scenario1.comp",
-			async: true,
 			asyncHints: {
 				libs: [ "scenario1.lib1", "scenario1.lib2" ],
 				preloadOnly: true
@@ -403,9 +400,8 @@ sap.ui.define([
 			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/comp/Component') ), "component never has been required");
 
 			// then load again and check that modules now are required
-			return sap.ui.component.load({
+			return Component.load({
 				name: "scenario1.comp",
-				async: true,
 				asyncHints: {
 					libs: [ "scenario1.lib1", "scenario1.lib2" ]
 				}
@@ -439,9 +435,8 @@ sap.ui.define([
 		this.loadScript.withArgs("scenario2/comp/Component-preload.js").returns(Promise.resolve(true));
 		this.requireSpy.withArgs( ["scenario2/comp/Component"] ).callsArgWith(1, Component);
 
-		var promise = sap.ui.component({
+		var promise = Component.create({
 			name: "scenario2.comp",
-			async: true,
 			asyncHints: {
 				preloadBundles: [
 					"scenario2/bundle.js"
@@ -522,9 +517,8 @@ sap.ui.define([
 		var done = assert.async();
 
 		// start test
-		sap.ui.component({
-			manifestUrl : "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
-			async: true
+		Component.create({
+			manifest: "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(oComponent instanceof Component, "Component has been created.");
 
@@ -574,9 +568,9 @@ sap.ui.define([
 		var done = assert.async();
 
 		// start test
-		sap.ui.component({
+		Component.create({
 			name: "sap.test.manifestcomp",
-			async: true
+			manifest: false
 		}).then(function(oComponent) {
 			assert.ok(oComponent instanceof Component, "Component has been created.");
 
@@ -618,7 +612,7 @@ sap.ui.define([
 		jQuery.getJSON("test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json", function(oLoadedManifest) {
 
 			var oConfig = {
-				manifestUrl : "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
+				manifest: "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
 				async: true,
 				asyncHints: {
 					libs: ["sap.ui.core"],
@@ -656,7 +650,7 @@ sap.ui.define([
 			}.bind(oStorage, oConfig, oLoadedManifest);
 
 			// start test
-			var oComponentPromise = sap.ui.component(oConfig);
+			var oComponentPromise = Component.create(oConfig);
 
 			oComponentPromise.then(fnCheckForModification.bind(oStorage));
 		});
@@ -755,9 +749,8 @@ sap.ui.define([
 
 		// start test
 		oOwnerComponent.runAsOwner(function() {
-			sap.ui.component({
-				manifestUrl : "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json",
-				async: true
+			Component.create({
+				manifest: "test-resources/sap/ui/core/qunit/component/testdata/async/manifestcomp/manifest.json"
 			}).then(function(oComponent) {
 				assert.equal(Component.getOwnerIdFor(oComponent), "ownerId", "Owner Component delegated properly.");
 				done();
