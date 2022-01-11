@@ -376,7 +376,7 @@ sap.ui.define([
         if (oMDCItem.getType() === "aggregatable") {
             return new Sorter(this._getAggregatedMeasureNameForMDCItem(oMDCItem), oSortProperty.descending);
         } else if (oMDCItem.getType() === "groupable") {
-            return new Sorter(oSortProperty.name, oSortProperty.descending);
+            return new Sorter(this.getInternalChartNameFromPropertyNameAndKind(oSortProperty.name, "groupable", oMDCItem.getParent()), oSortProperty.descending);
         }
 
     };
@@ -391,7 +391,8 @@ sap.ui.define([
         //TODO: Create Measures/Dimension only when required?
         if (oMDCChartItem.getType() === "groupable") {
 
-            var oDim = this._getChart(oMDCChart).getDimensionByName(oMDCChartItem.getName());
+            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oMDCChartItem.getName(), "groupable", oMDCChart);
+            var oDim = this._getChart(oMDCChart).getDimensionByName(sInnerDimName);
 
             if (!oDim) {
                 this.createInnerDimension(oMDCChart, oMDCChartItem);
@@ -402,7 +403,7 @@ sap.ui.define([
             }
 
             var aVisibleDimension = this._getChart(oMDCChart).getVisibleDimensions();
-            aVisibleDimension.splice(iIndex, 0, oMDCChartItem.getName()); //Insert Item without deleting existing dimension
+            aVisibleDimension.splice(iIndex, 0, sInnerDimName); //Insert Item without deleting existing dimension
             this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimension);
 
         } else if (oMDCChartItem.getType() === "aggregatable") {
@@ -428,13 +429,15 @@ sap.ui.define([
      * @param {sap.ui.mdc.chart.Item} oMDCChartItem The Item to remove from the inner chart
      */
     ChartDelegate.removeItemFromInnerChart = function (oMDCChart, oMDCChartItem) {
-        if (oMDCChartItem.getType() === "groupable" && this._getChart(oMDCChart).getVisibleDimensions().includes(oMDCChartItem.getName())) {
+        if (oMDCChartItem.getType() === "groupable" && this._getChart(oMDCChart).getVisibleDimensions().includes(this.getInternalChartNameFromPropertyNameAndKind(oMDCChartItem.getName(), "groupable", oMDCChart))) {
+            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oMDCChartItem.getName(), "groupable", oMDCChart);
+
             var aNewVisibleDimensions = this._getChart(oMDCChart).getVisibleDimensions().filter(function (e) {
-                return e !== oMDCChartItem.getName();
+                return e !== sInnerDimName;
             });
 
-            if (oMDCChart.getDelegate().inResultDimensions && oMDCChart.getDelegate().inResultDimensions instanceof Array) {
-                this._getChart(oMDCChart).setInResultDimensions(oMDCChart.getDelegate().inResultDimensions);
+            if (this._getState(oMDCChart).inResultDimensions.length > 0) {
+                this._getChart(oMDCChart).setInResultDimensions(this._getState(oMDCChart).inResultDimensions);
             }
 
             this._getChart(oMDCChart).setVisibleDimensions(aNewVisibleDimensions);
@@ -478,6 +481,8 @@ sap.ui.define([
 
     ChartDelegate._createMDCChartItem = function (sPropertyName, oMDCChart, sRole) {
         return this.fetchProperties(oMDCChart).then(function (aProperties) {
+
+            //Uses excact MDC Chart Item id
             var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
                 return oCurrentPropertyInfo.name === sPropertyName;
             });
@@ -559,6 +564,7 @@ sap.ui.define([
             var aVisibleMeasures = [];
             oMDCChart.getItems().forEach(function (oItem, iIndex) {
 
+                //Uses excact mdc chart item id
                 var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
                     return oCurrentPropertyInfo.name === oItem.getName();
                 });
@@ -571,7 +577,8 @@ sap.ui.define([
 
                 switch (oItem.getType()) {
                     case "groupable":
-                        aVisibleDimensions.push(oItem.getName());
+                        aVisibleDimensions.push(this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "groupable", oMDCChart));
+
                         this._addInnerDimension(oMDCChart, oItem, oPropertyInfo);
                         break;
                     case "aggregatable":
@@ -593,15 +600,14 @@ sap.ui.define([
 
                 if (this._getState(oMDCChart).aInSettings.indexOf(sKey) == -1) {
 
-                    var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                        return oCurrentPropertyInfo.name === sKey;
-                    });
+                    var oPropertyInfo = oMDCChart.getPropertyHelper().getProperty(sKey); //this.getPropertyFromNameAndKind not used as the key is the name of the MDC Chart Item
 
                     var aggregationMethod = oPropertyInfo.aggregationMethod;
                     var propertyPath = oPropertyInfo.propertyPath;
+                    var sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oMDCChart);
 
                     var oMeasureSettings = {
-                        name: sKey,
+                        name: sName,
                         label: oPropertyInfo.label,
                         role: "axis1"
                     };
@@ -625,7 +631,7 @@ sap.ui.define([
                 this._getChart(oMDCChart).setVisibleDimensions(aVisibleDimensions);
                 this._getChart(oMDCChart).setVisibleMeasures(aVisibleMeasures);
 
-                var aInResultDimensions = oMDCChart.getDelegate().inResultDimensions;
+                var aInResultDimensions = oMDCChart.getDelegate().inResultDimensions; //TODO: Does this use internal name? If so, change _getPropertyInfosByName  below; Most likely not the case
                 if (aInResultDimensions && aInResultDimensions instanceof Array && aInResultDimensions.length != 0) {
 
                     var aInResultPromises = [];
@@ -633,18 +639,21 @@ sap.ui.define([
                     aInResultDimensions.forEach(function(sInResultDim){
 
                         aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oMDCChart).then(function(oPropertyInfos){
+                            var sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfos.name, "groupable", oMDCChart);
+
                             var oDim = new Dimension({
-                                name: oPropertyInfos.name,
+                                name: sName,
                                 label: oPropertyInfos.label
                             });
 
+                            this._getState(oMDCChart).inResultDimensions.push(sName);
                             this._getChart(oMDCChart).addDimension(oDim);
                         }.bind(this)));
 
                     }.bind(this));
 
                     Promise.all(aInResultPromises).then(function(){
-                        this._getChart(oMDCChart).setInResultDimensions(oMDCChart.getDelegate().inResultDimensions);
+                        this._getChart(oMDCChart).setInResultDimensions(this._getState(oMDCChart).inResultDimensions);
                     }.bind(this));
 
                 }
@@ -669,6 +678,7 @@ sap.ui.define([
 
             if (oItem.getType === "aggregatable") {
 
+                //Uses excact MDC CHart Item name
                 this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
                     for (var j = 0; j < this._getAdditionalColoringMeasuresForItem(oPropertyInfo); j++) {
 
@@ -706,6 +716,7 @@ sap.ui.define([
      */
     ChartDelegate._addCriticality = function (oItem) {
 
+        //Uses excact MDC Chart item name to idenfiy property
         return this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
 
             if (oPropertyInfo.criticality || (oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality)){
@@ -729,7 +740,8 @@ sap.ui.define([
                         };
                     }
 
-                    oColorings.Criticality.DimensionValues[oItem.getName()] = mChartCrit;
+                    var sDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "groupable", oItem.getParent());
+                    oColorings.Criticality.DimensionValues[sDimName] = mChartCrit;
 
                 } else {
                     var mCrit = oPropertyInfo.datapoint  && oPropertyInfo.datapoint.criticality ? oPropertyInfo.datapoint.criticality : [];
@@ -738,7 +750,8 @@ sap.ui.define([
                         mChartCrit[sKey] = mCrit[sKey];
                     }
 
-                    oColorings.Criticality.MeasureValues[oItem.getName()] = mChartCrit;
+                    var sMeasureName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getName(), "aggregatable", oItem.getParent());
+                    oColorings.Criticality.MeasureValues[sMeasureName] = mChartCrit;
                 }
 
                 var oState = this._getState(oItem.getParent());
@@ -825,9 +838,7 @@ sap.ui.define([
 
         aVisibleMeasures.forEach(function(sVisibleMeasureName){
             //first draft only with semantic pattern
-            var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
-                return oCurrentPropertyInfo.name === sVisibleMeasureName;
-            });
+            var oPropertyInfo = this.getPropertyFromNameAndKind(sVisibleMeasureName, "aggregatable", oMDCChart);
 
             if (!oPropertyInfo){
                 return;
@@ -946,7 +957,23 @@ sap.ui.define([
      */
     ChartDelegate.getDrillStack = function (oMDCChart) {
         //TODO: Generify the return values here for other chart frameworks
-        return this._getChart(oMDCChart).getDrillStack();
+        var aDrillStack = [];
+        aDrillStack = Object.assign(aDrillStack, this._getChart(oMDCChart).getDrillStack());
+
+        aDrillStack.forEach(function(oStackEntry) {
+			// loop over nested dimension arrays -> give them the correct name for filtering
+			oStackEntry.dimension = oStackEntry.dimension.map(function(sDimension) {
+                var oProp = this.getPropertyFromNameAndKind(sDimension, "groupable", oMDCChart);
+                if (oProp) {
+                    return oProp.name;
+                } else {
+                    Log.error("MDC Chart Delegate: Couldn't map chart dimension to groupable property: " + sDimension);
+                    return sDimension;
+                }
+			}.bind(this));
+		}.bind(this));
+
+        return aDrillStack;
     };
 
     /**
@@ -1010,6 +1037,9 @@ sap.ui.define([
             width: "100%",
             isAnalytical: true//,
         }));
+
+        //Initialize empty; will get filled later on
+        this._getState(oMDCChart).inResultDimensions = [];
 
         if (oMDCChart.getHeight()){
             this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
@@ -1096,6 +1126,7 @@ sap.ui.define([
 
         this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
 
+            //Uses MDC Chart Item ID to identify preoperty, not internal chart id
             var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
                 return oCurrentPropertyInfo.name === oMDCChartItem.getName();
             });
@@ -1110,6 +1141,7 @@ sap.ui.define([
 
         this.fetchProperties(oMDCChartItem.getParent()).then(function (aProperties) {
 
+            //Uses MDC Chart Item ID to identify preoperty, not internal chart id
             var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
                 return oCurrentPropertyInfo.name === oMDCChartItem.getName();
             });
@@ -1125,7 +1157,7 @@ sap.ui.define([
      */
     ChartDelegate._addInnerDimension = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
         var oDimension = new Dimension({
-            name: oMDCChartItem.getName(),
+            name: this.getInternalChartNameFromPropertyNameAndKind(oMDCChartItem.getName(), "groupable", oMDCChart),
             role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
             label: oMDCChartItem.getLabel()
         });
@@ -1149,7 +1181,7 @@ sap.ui.define([
         var propertyPath = oPropertyInfo.propertyPath;
 
         var oMeasureSettings = {
-            name: this._getAggregatedMeasureNameForMDCItem(oMDCChartItem),//"average" + oItem.getName(),
+            name: this._getAggregatedMeasureNameForMDCItem(oMDCChartItem),//aggregationMethod + oItem.getName() under normal circumstances
             label: oMDCChartItem.getLabel(),
             role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "axis1"
         };
@@ -1286,7 +1318,32 @@ sap.ui.define([
     };
 
     ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oMDCItem){
-        return oMDCItem.getName();
+        return this.getInternalChartNameFromPropertyNameAndKind(oMDCItem.getName(), "aggregatable", oMDCItem.getParent());
+    };
+
+    /**
+     * This function returns an id which should be used in the internal chart for the measure/dimension
+     * In the standard case, this is just the id of the property.
+     * If it is necessary to use another id internally inside the chart (e.g. on duplicate property ids) this method can be overwritten.
+     * In this case, <code>getPropertyFromNameAndKind</code> needs to be overwritten aswell.
+     * @param {string} sName ID of the property
+     * @param {string} sKind Kind of the Property (Measure/Dimension)
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
+     * @returns {string} internal id for the sap.chart.Chart
+     */
+    ChartDelegate.getInternalChartNameFromPropertyNameAndKind = function(sName, sKind, oMDCChart) {
+        return sName;
+    };
+
+    /**
+     * This maps an id of an internal chart dimension/measure & kind of a property to its coresponding property entry.
+     * @param {string} sName the id of internal chart measure/dimension
+     * @param {string} sKind the kind of the property
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
+     * @returns {object} the property object
+     */
+    ChartDelegate.getPropertyFromNameAndKind = function(sName, sKind, oMDCChart) {
+        return oMDCChart.getPropertyHelper().getProperty(sName);
     };
 
     /**
@@ -1571,6 +1628,7 @@ sap.ui.define([
         return aProperties;
     };
 
+    //Gets internal property infos by excact property name
     ChartDelegate._getPropertyInfosByName = function(sName, oMDCChart){
         return new Promise(function(resolve){
             this.fetchProperties(oMDCChart).then(function(aProperties){
