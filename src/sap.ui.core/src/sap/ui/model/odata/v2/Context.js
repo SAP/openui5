@@ -187,12 +187,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether this context is inactive.
+	 * Returns whether this context is inactive. An inactive context will only be sent to the
+	 * server after the first property update. From then on it behaves like any other created
+	 * context.
 	 *
 	 * @return {boolean} Whether this context is inactive
 	 *
-	 * @private
-	 * @ui5-restricted sap.suite.ui.generic.template
+	 * @public
+	 * @see sap.ui.model.odata.v2.ODataListBinding#create
+	 * @see sap.ui.model.odata.v2.ODataModel#createEntry
+	 * @since 1.98.0
 	 */
 	Context.prototype.isInactive = function () {
 		return this.bInactive;
