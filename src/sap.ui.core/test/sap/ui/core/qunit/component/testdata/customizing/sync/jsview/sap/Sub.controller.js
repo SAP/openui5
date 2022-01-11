@@ -4,22 +4,22 @@ sap.ui.define([
 ], function(Log, Controller) {
 	"use strict";
 
-	return Controller.extend("testdata.customizing.sap.Sub4", {
+	return Controller.extend("testdata.customizing.sync.jsview.sap.Sub", {
 
 		onInit: function() {
-			Log.info("Sub4 Controller onInit()");
+			Log.info("Sub Controller onInit()");
 		},
 
 		onExit: function() {
-			Log.info("Sub4 Controller onExit()");
+			Log.info("Sub Controller onExit()");
 		},
 
 		onBeforeRendering: function() {
-			Log.info("Sub4 Controller onBeforeRendering()");
+			Log.info("Sub Controller onBeforeRendering()");
 		},
 
 		onAfterRendering: function() {
-			Log.info("Sub4 Controller onAfterRendering()");
+			Log.info("Sub Controller onAfterRendering()");
 		},
 
 		originalSAPAction: function() {

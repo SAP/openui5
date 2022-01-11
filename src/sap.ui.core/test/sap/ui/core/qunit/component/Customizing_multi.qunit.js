@@ -104,9 +104,6 @@ sap.ui.define([
 	// View Extension
 	QUnit.test("View Extension", function(assert) {
 		assert.ok(document.getElementById("customerComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
-		assert.ok(document.getElementById("buttonWithCustomerAction"), "JSView Extension should be rendered");
-		// extension within extension
-		assert.ok(document.getElementById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
 		assert.ok(document.getElementById("customerComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
 	});
 
@@ -199,8 +196,6 @@ sap.ui.define([
 
 		assert.ok(oFirstItem, "First ListItem should exist");
 		assert.equal(oFirstItem.getText(), "(Customer's replacement ListItem)", "First ListItem should be the customized one");
-		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentText"), "JS extension point 1 should contain default content");
-		assert.ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
 	QUnit.module("Owner-Component Handling (Controller Extension) - synchronous", {
@@ -284,32 +279,6 @@ sap.ui.define([
 		oCompB.byId("rootView").destroy();
 		oCompA.destroy();
 		oCompB.destroy();
-	});
-
-	/**
-	 * This test depicts the "legacy-else" case.
-	 * Previously only ran via the CustomizingConfiguration and its global Component registry.
-	 * Now runs fully on a component instance basis.
-	 */
-	QUnit.skip("Controller Extension of component name is used", function(assert){
-		var oCompA = sap.ui.component({
-			id: "componentA",
-			name: "testdata.customizing.synchronous.sap.CompA",
-			manifest: false,
-			async: false
-		});
-
-		var oRootView = sap.ui.xmlview({
-			id: "rootView",
-			viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" controllerName="testdata.customizing.synchronous.sap.RootController">'
-			+ ' <core:Icon src="sap-icon://doctor"></core:Icon>'
-			+ ' </mvc:View>'
-		});
-
-		assert.strictEqual(oRootView.getController().getValue(), "ControllerA", "The correct controller extension is used.");
-
-		oRootView.destroy();
-		oCompA.destroy();
 	});
 
 	QUnit.module("Owner-Component Handling (Controller Extension) - asynchronous", {
@@ -410,34 +379,6 @@ sap.ui.define([
 				});
 			});
 		});
-	});
-
-	/**
-	 * This test depicts the "legacy-else" case.
-	 * Previously only ran via the CustomizingConfiguration and its global Component registry.
-	 * Now runs fully on a component instance basis.
-	 */
-	QUnit.skip("Controller Extension of component name is used", function(assert){
-		var pCompA = Component.create({
-			id: "componentA",
-			name: "testdata.customizing.asynchronous.sap.CompA",
-			manifest: false
-		});
-
-		return pCompA.then(function(oCompA) {
-			return XMLView.create({
-				id: "rootView",
-				definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" controllerName="testdata.customizing.asynchronous.sap.RootController">'
-					+ ' <core:Icon src="sap-icon://doctor"></core:Icon>'
-					+ ' </mvc:View>'
-			}).then(function(oView) {
-				assert.strictEqual(oView.getController().getValue(), "ControllerA", "The correct controller extension is used.");
-
-				oView.destroy();
-				oCompA.destroy();
-			});
-		});
-
 	});
 
 });
