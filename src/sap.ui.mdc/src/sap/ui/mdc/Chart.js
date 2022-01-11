@@ -612,7 +612,7 @@ sap.ui.define([
             }
 
             this.getControlDelegate().updateBindingInfo(this, oBindingInfo); //Applies filters
-            this.getControlDelegate().rebindChart(this, oBindingInfo); //TODO: Change this to rebind method on delegate once FE is ready
+            this.getControlDelegate().rebind(this, oBindingInfo);
         };
 
         /**

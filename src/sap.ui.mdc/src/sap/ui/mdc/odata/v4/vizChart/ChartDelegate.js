@@ -1047,7 +1047,7 @@ sap.ui.define([
         this._setState(oMDCChart, oState);
         var oBindingInfo = this._getBindingInfo(oMDCChart);
         this.updateBindingInfo(oMDCChart, oBindingInfo); //Applies filters
-        this.rebindChart(oMDCChart, oBindingInfo); //TODO: Change this to rebind method on delegate once FE is ready
+        this.rebind(oMDCChart, oBindingInfo);
     };
 
     ChartDelegate._calculateInnerChartHeight = function(oMDCChart) {
