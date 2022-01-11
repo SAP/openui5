@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"./BaseController",
-	"sap/ui/documentation/sdk/util/Resources",
 	"sap/ui/thirdparty/URI",
 	"sap/m/library"
 ], function (
 	BaseController,
-	ResourcesUtil,
 	URI,
 	mLib
 ) {
@@ -91,7 +89,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				jQuery.ajax({
 					async: true,
-					url: ResourcesUtil.getResourceOriginPath("versionoverview.json"),
+					url: "/versionoverview.json",
 					dataType: 'json',
 					success: function (oResponse) {
 						resolve(oResponse);
