@@ -3,6 +3,27 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "0ae3992a09d3f2b03c1df5ae5730fe5c8d765d97",
+        "type": "FEATURE",
+        "text": " Upload Set - uploadCompleted event passes the backend response when upload is failed"
+      },
+      {
+        "id": "dd500964644506ed36656297a8f5f98c837e798f",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Now buttons it is possible to rename in UI Adaptation mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430233"
+          }
+        ]
+      },
+      {
+        "id": "3875177afff6d71b9b0d757991771d67207ad831",
+        "type": "FEATURE",
+        "text": " sap.m.Label: Added \"showColon\" property"
+      },
+      {
         "id": "2427ec301f8a55abdc0be966349fc8dc9f440ddb",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: The names of options are now correct",
@@ -43,6 +64,17 @@
           {
             "type": "BCP",
             "reference": "2170313387"
+          }
+        ]
+      },
+      {
+        "id": "3284c1440034c3204827919a302058710ef36b5e",
+        "type": "FIX",
+        "text": " sap.m.P13nFilterPanel: Text property of P13nItem is now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170191653"
           }
         ]
       },

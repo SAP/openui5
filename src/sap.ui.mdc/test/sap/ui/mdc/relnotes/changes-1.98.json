@@ -1,7 +1,18 @@
 {
   "1.98.0": {
-    "date": "November 2021",
+    "date": "January 2022",
     "notes": [
+      {
+        "id": "b563689bbe350db075eb7ef62bc39ffc314ab561",
+        "type": "FIX",
+        "text": " ListFieldHelp: use minWidth of Field",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180436653"
+          }
+        ]
+      },
       {
         "id": "9c9b27646cb09129a4651e1d3988919b863f7c56",
         "type": "FEATURE",
