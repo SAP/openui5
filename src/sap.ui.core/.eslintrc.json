@@ -24,7 +24,7 @@
 					"ignorePattern": "@param|@returns|&lt;",
 					"ignoreUrls": true
 				}],
-				"no-mixed-spaces-and-tabs": "error",
+				"no-mixed-spaces-and-tabs": "error", // override "smart-tabs"
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
 
 				// stylistic (JIRA: CPOUI5ODATAV4-1325)
@@ -69,7 +69,10 @@
 				// "multiline-comment-style": "off", // we use both, line & block comments...
 				// "multiline-ternary": "off", // "always-multiline" doesn't match our style
 				// "newline-per-chained-call": "off", // doesn't match our style
+				// "prefer-exponentiation-operator": "off", // requires ES2016
+				// "prefer-object-spread": "off", // requires ES2018
 				// "sort-vars": "off", // cannot deal with Hungarian prefix :-(
+				// "wrap-regex": "off", // not useful
 			}
 		},
 		{
