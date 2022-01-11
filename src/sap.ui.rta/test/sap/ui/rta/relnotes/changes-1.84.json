@@ -25,5 +25,25 @@
         ]
       }
     ]
+  },
+  "1.84.21": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "6189a594fc08f61bce6253a380608c4ac0fdf341",
+        "type": "FIX",
+        "text": " sap.m.Popover: Nested popovers KH close fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180385781"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180132292"
+          }
+        ]
+      }
+    ]
   }
 }

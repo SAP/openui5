@@ -148,5 +148,32 @@
         ]
       }
     ]
+  },
+  "1.84.21": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "9f1933b6e9a02ab8a10f78ec41b3895d3ae40fd5",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed redundant accessibility readout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376700022310422021"
+          }
+        ]
+      },
+      {
+        "id": "8a2d877bdbcef79f795ab168b0e43776b2e982cc",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected media update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170272703"
+          }
+        ]
+      }
+    ]
   }
 }

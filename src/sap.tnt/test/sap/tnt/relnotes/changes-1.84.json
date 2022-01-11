@@ -41,5 +41,26 @@
         ]
       }
     ]
+  },
+  "1.84.21": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "e65ba88fe9e3001ecbab8ddcf9771fe6f8eb956a",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Corrected \"since\" label for ariaLabel property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "7574455819eabf3de76bcff656b2333871733908",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: new ariaLabel property added"
+      }
+    ]
   }
 }

@@ -187,5 +187,21 @@
         ]
       }
     ]
+  },
+  "1.84.21": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "65cbd3fcc733d9a2283f24e941ca68c68cfe466b",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      }
+    ]
   }
 }

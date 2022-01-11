@@ -1061,5 +1061,106 @@
         ]
       }
     ]
+  },
+  "1.84.21": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "717875c1676d65cf161b2b4feff56b11b9c7d471",
+        "type": "FIX",
+        "text": " sap.m.Label: aria-label attribute is now set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430748"
+          }
+        ]
+      },
+      {
+        "id": "140270ce63f7d1d3dc22f0b84451a09ce6a137a8",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: container width changed event properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080431926"
+          }
+        ]
+      },
+      {
+        "id": "f71a79c0c8f2537aa633a94be52752d6396eb1e1",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Compact mode density respected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180395055"
+          }
+        ]
+      },
+      {
+        "id": "65cbd3fcc733d9a2283f24e941ca68c68cfe466b",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
+        "id": "1a00014555f94a7eef0e402dd43069551f2ea932",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Highligting in list removed from popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180415299"
+          }
+        ]
+      },
+      {
+        "id": "bdcbd009492b2e62376805ff92a46a0b2aa6cf4f",
+        "type": "FIX",
+        "text": " sap.m.inputUtils.inputsDefaultFilter: The filter now returns only enabled items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008403912021"
+          }
+        ]
+      },
+      {
+        "id": "155f71fdee33f15db7c85380fee460c487d24a10",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Correct tokenizer width calculations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180178344"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180399782"
+          }
+        ]
+      },
+      {
+        "id": "6189a594fc08f61bce6253a380608c4ac0fdf341",
+        "type": "FIX",
+        "text": " sap.m.Popover: Nested popovers KH close fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180385781"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180132292"
+          }
+        ]
+      }
+    ]
   }
 }
