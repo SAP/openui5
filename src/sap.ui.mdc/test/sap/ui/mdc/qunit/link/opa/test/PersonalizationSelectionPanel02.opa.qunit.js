@@ -1,8 +1,13 @@
 /* global QUnit, opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
+	'sap/ui/test/Opa5',
+	'sap/ui/test/opaQunit',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Action',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion, testlibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -129,9 +134,9 @@ sap.ui.define([
 	});
 
 	opaTest("When I click on 'Projector' link in the 'Category' column, popover should open with main link", function(Given, When, Then) {
-		When.iClickOnLink("Projector");
+		When.onTheMDCLink.iPressTheLink({text: "Projector"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Projector"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	});
 
@@ -143,49 +148,54 @@ sap.ui.define([
 		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(false);
+		When.iPressOkButton();
 	});
 
 	opaTest("When I deselect the 'Category Link2 (Superior)' and select the 'Category Link3' item, the 'Restore' button should be enabled", function(Given, When, Then) {
-		When.iSelectLink("Category Link2 (Superior)").and.iSelectLink("Category Link3");
+		When.onTheMDCLink.iPersonalizeTheLinks({text: "Projector"}, [
+			"Category Link3"
+		]);
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Projector"}, [
+			"Category Link3"
+		]);
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
 
 		// Position values don't change yet as we have to close the dialog before it takes effect
 		this.mItems["Category Link2 (Superior)"].selected = false;
 		this.mItems["Category Link3"].selected = true;
-
-		fnCheckLinks(Then, this.mItems);
-
-		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
-	});
-
-	opaTest("When I press 'Ok' button, the dialog should close", function(Given, When, Then) {
-		When.iPressOkButton();
-
-		Then.thePersonalizationDialogShouldBeClosed();
-		Then.iShouldSeeOrderedLinksOnNavigationContainer([
-			 "Category Link3"
-		]);
-	});
-
-	opaTest("When I click on 'More Links' button again, the selection dialog opens", function(Given, When, Then) {
-		When.iPressOnLinkPersonalizationButton();
-
-		// Change the position values as we open the dialog again
 		this.mItems["Category Link2 (Superior)"].position = 1;
 		this.mItems["Category Link3"].position = 0;
 
-		Then.thePersonalizationDialogOpens();
-
 		fnCheckLinks(Then, this.mItems);
 
 		Then.iShouldSeeRestoreButtonWhichIsEnabled(true);
+		When.iPressOkButton();
+
+		Then.thePersonalizationDialogShouldBeClosed();
 	});
 
 	opaTest("When I select the 'Category Link2 (Superior)' and deselect the 'Category Link3' item, the 'Restore' button should be disabled", function(Given, When, Then) {
-		When.iSelectLink("Category Link2 (Superior)").and.iSelectLink("Category Link3");
+		When.onTheMDCLink.iPersonalizeTheLinks({text: "Projector"}, [
+			"Category Link2 (Superior)"
+		]);
+		Then.thePersonalizationDialogShouldBeClosed();
+
+		Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Projector"}, [
+			"Category Link2 (Superior)"
+		]);
+
+		When.iPressOnLinkPersonalizationButton();
+		Then.thePersonalizationDialogOpens();
 
 		// Position values don't change yet as we have to close the dialog before it takes effect
 		this.mItems["Category Link2 (Superior)"].selected = true;
 		this.mItems["Category Link3"].selected = false;
+		this.mItems["Category Link2 (Superior)"].position = 0;
+		this.mItems["Category Link3"].position = 1;
 
 		fnCheckLinks(Then, this.mItems);
 
@@ -197,7 +207,7 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogShouldBeClosed();
 
-		Given.closeAllNavigationPopovers();
+		When.onTheMDCLink.iCloseThePopover();
 
 		Then.iTeardownMyAppFrame();
 	});
@@ -332,9 +342,9 @@ sap.ui.define([
 	// 	Then.iShouldSeeColumnWithName("Category");
 	// });
 	// opaTest("When I click on 'Projector' link in the 'Category' column, popover should open with one 'superior action' link", function(Given, When, Then) {
-	// 	When.iClickOnLink("Projector");
+	// 	When.onTheMDCLink.iPressTheLink({text: "Projector"});
 	//
-	// 	Then.iShouldSeeNavigationPopoverOpens();
+	// 	Then.onTheMDCLink.iShouldSeeAPopover({text: "Projector"});
 	// 	Then.iShouldSeeOrderedLinksOnNavigationContainer([]);
 	// 	Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 	// });

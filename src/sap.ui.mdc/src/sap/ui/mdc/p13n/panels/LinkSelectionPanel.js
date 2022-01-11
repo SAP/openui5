@@ -45,7 +45,7 @@ sap.ui.define([
 							text: "{" + this.P13N_MODEL + ">text}",
                             href: "{" + this.P13N_MODEL + ">href}",
                             target: "{" + this.P13N_MODEL + ">target}",
-                            press: this._onLinkPressed
+                            press: this._onLinkPressed.bind(this)
 						}),
                         new Text({
                             text: "{" + this.P13N_MODEL + ">description}",

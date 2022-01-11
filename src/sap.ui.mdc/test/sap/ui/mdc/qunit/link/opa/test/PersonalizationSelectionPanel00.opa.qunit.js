@@ -1,8 +1,13 @@
 /* globals opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
+	'sap/ui/test/Opa5',
+	'sap/ui/test/opaQunit',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Action',
+	'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion, testLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -47,12 +52,12 @@ sap.ui.define([
 		Then.theCellWithTextIsOfType("Projector", "sap.m.Link");
 	});
 	opaTest("When I click on 'Projector' link in the 'Category' column, popover should open with main link", function(Given, When, Then) {
-		When.iClickOnLink("Projector");
+		When.onTheMDCLink.iPressTheLink({text: "Projector"});
 
-		Then.iShouldSeeNavigationPopoverOpens();
+		Then.onTheMDCLink.iShouldSeeAPopover({text: "Projector"});
 		Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
 
-		Given.closeAllNavigationPopovers();
+		When.onTheMDCLink.iCloseThePopover();
 		Then.iTeardownMyAppFrame();
 	});
 	// opaTest("When I start RTA, the Runtime Adaptation mode should open", function(Given, When, Then) {
@@ -166,10 +171,10 @@ sap.ui.define([
 	// });
 	//
 	// opaTest("When I click on 'Projector' link in the 'Category' column, popover should open with two links", function(Given, When, Then) {
-	// 	When.iClickOnLink("Projector");
+	// 	When.onTheMDCLink.iPressTheLink({text: "Projector"});
 	//
-	// 	Then.iShouldSeeNavigationPopoverOpens();
-	// 	Then.iShouldSeeOrderedLinksOnNavigationContainer([
+	// 	Then.onTheMDCLink.iShouldSeeAPopover({text: "Projector"});
+	// 	Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Projector"}, [
 	// 		"Category Link2 (Superior)", "Category Link3"
 	// 	]);
 	// 	Then.iShouldSeeOnNavigationPopoverPersonalizationLinkText();
@@ -327,7 +332,7 @@ sap.ui.define([
 	// 	When.iPressOkButton();
 	//
 	// 	Then.thePersonalizationDialogShouldBeClosed();
-	// 	Then.iShouldSeeOrderedLinksOnNavigationContainer([
+	// 	Then.onTheMDCLink.iShouldSeeLinksOnPopover({text: "Projector"}, [
 	// 		"Category Link2 (Superior)", "Category Link3"
 	// 	]);
 	//

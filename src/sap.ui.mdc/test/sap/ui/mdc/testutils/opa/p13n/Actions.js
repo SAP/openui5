@@ -48,51 +48,88 @@ sap.ui.define([
 			success: function(oControlInstance) {
 				Opa5.assert.ok(oControlInstance);
 
-				aButtonMatchers.push(new Ancestor(oControlInstance));
+				if (oControlInstance.isA("sap.m.Link")) {
+					// mdc.Link handling
 
-				if (oControlInstance.isA("sap.ui.comp.smartchart.SmartChart")) {
-					aDialogMatchers.push(function(oP13nDialog) {
-						return oP13nDialog.getParent().getChart() === oControlInstance.getChart().getId();
+					new Press().executeOn(oControlInstance);
+					this.waitFor({
+						controlType: "sap.ui.mdc.link.Panel",
+						success: function(aPanels) {
+							Opa5.assert.equal(aPanels.length, 1, "mdc.link.Panel found");
+							var oPanel = aPanels[0];
+
+							waitForP13nButtonWithMatchers.call(this, {
+								actions: new Press(),
+								matchers: [
+									new Ancestor(oPanel, false),
+									new PropertyStrictEquals({
+										name: "text",
+										value: oMDCBundle.getText("info.POPOVER_DEFINE_LINKS")
+									})
+								],
+								success: function() {
+									waitForP13nDialog.call(this, {
+										matchers: new PropertyStrictEquals({
+											name: "title",
+											value: oMDCBundle.getText("info.SELECTION_DIALOG_ALIGNEDTITLE")
+										}),
+										success:  function(oP13nDialog) {
+											if (oSettings && typeof oSettings.success === "function") {
+												oSettings.success.call(this, oP13nDialog);
+											}
+										}
+									});
+								}
+							});
+						}
 					});
 				} else {
-					aDialogMatchers.push(new Ancestor(oControlInstance, false));
-				}
+					aButtonMatchers.push(new Ancestor(oControlInstance));
 
-				if (oControlInstance.isA("sap.ui.mdc.FilterBar")) {
-					// Add matcher for p13n button text
-					var oMatcher = new Matcher();
-					oMatcher.isMatching = function(oButton) {
-						return oButton.getText().includes(oMDCBundle.getText("filterbar.ADAPT"));
-					};
-					aButtonMatchers.push(oMatcher);
-					aDialogMatchers.push(new Properties({
-						title: oMDCBundle.getText("filterbar.ADAPT_TITLE")
-					}));
-				} else {
-					// Add matcher for p13n button icon
-					aButtonMatchers.push(new Properties({
-						icon: Util.icons.settings
-					}));
-					aDialogMatchers.push(new Properties({
-						title: oMDCBundle.getText("p13nDialog.VIEW_SETTINGS")
-					}));
-				}
-
-				waitForP13nButtonWithMatchers.call(this, {
-					actions: new Press(),
-					matchers: aButtonMatchers,
-					success: function() {
-						waitForP13nDialog.call(this, {
-							matchers: aDialogMatchers,
-							success:  function(oP13nDialog) {
-								if (oSettings && typeof oSettings.success === "function") {
-									oSettings.success.call(this, oP13nDialog);
-								}
-							}
+					if (oControlInstance.isA("sap.ui.comp.smartchart.SmartChart")) {
+						aDialogMatchers.push(function(oP13nDialog) {
+							return oP13nDialog.getParent().getChart() === oControlInstance.getChart().getId();
 						});
-					},
-					errorMessage: "Control '" + sControlId + "' has no P13n button"
-				});
+					} else {
+						aDialogMatchers.push(new Ancestor(oControlInstance, false));
+					}
+
+					if (oControlInstance.isA("sap.ui.mdc.FilterBar")) {
+						// Add matcher for p13n button text
+						var oMatcher = new Matcher();
+						oMatcher.isMatching = function(oButton) {
+							return oButton.getText().includes(oMDCBundle.getText("filterbar.ADAPT"));
+						};
+						aButtonMatchers.push(oMatcher);
+						aDialogMatchers.push(new Properties({
+							title: oMDCBundle.getText("filterbar.ADAPT_TITLE")
+						}));
+					} else {
+						// Add matcher for p13n button icon
+						aButtonMatchers.push(new Properties({
+							icon: Util.icons.settings
+						}));
+						aDialogMatchers.push(new Properties({
+							title: oMDCBundle.getText("p13nDialog.VIEW_SETTINGS")
+						}));
+					}
+
+					waitForP13nButtonWithMatchers.call(this, {
+						actions: new Press(),
+						matchers: aButtonMatchers,
+						success: function() {
+							waitForP13nDialog.call(this, {
+								matchers: aDialogMatchers,
+								success:  function(oP13nDialog) {
+									if (oSettings && typeof oSettings.success === "function") {
+										oSettings.success.call(this, oP13nDialog);
+									}
+								}
+							});
+						},
+						errorMessage: "Control '" + sControlId + "' has no P13n button"
+					});
+				}
 			},
 			errorMessage: "Control '" + sControlId + "' not found."
 		});
@@ -928,6 +965,53 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "No button with icon '" + sIcon + "' found on P13nDialog"
+					});
+				}
+			});
+		},
+		/**
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be personalized
+		 * @param {String[]} aLinks an array containing the names of the links that should be result of the personalisation
+		 * @returns {Promise} Opa waitFor
+		 */
+		iPersonalizeLink: function(oControl, aLinks) {
+			return iOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
+					this.waitFor({
+						controlType: "sap.ui.mdc.p13n.panels.LinkSelectionPanel",
+						matchers: new Ancestor(oP13nDialog, false),
+						success: function(aLinkSelectionPanels) {
+							Opa5.assert.equal(aLinkSelectionPanels.length, 1, "sap.ui.mdc.p13n.panels.LinkSelectionPanel found");
+							var oLinkSelectionPanel = aLinkSelectionPanels[0];
+							this.waitFor({
+								controlType: "sap.m.ColumnListItem",
+								matchers: new Ancestor(oLinkSelectionPanel, false),
+								actions: function(oColumnListItem) {
+									this.waitFor({
+										controlType: "sap.m.Link",
+										matchers: new Ancestor(oColumnListItem, false),
+										success: function(aLinkControls) {
+											var oLinkControl = aLinkControls[0];
+											this.waitFor({
+												controlType: "sap.m.CheckBox",
+												matchers: [
+													new Ancestor(oColumnListItem, false)
+												],
+												actions: function(oCheckBox) {
+													if ((!oCheckBox.getSelected() && aLinks.includes(oLinkControl.getText())) ||
+														(oCheckBox.getSelected() && !aLinks.includes(oLinkControl.getText()))) {
+														new Press().executeOn(oCheckBox);
+													}
+												}
+											});
+										}
+									});
+								}.bind(this),
+								success: function() {
+									iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+								}
+							});
+						}
 					});
 				}
 			});
