@@ -77,6 +77,16 @@ sap.ui.define([
 		*			Country: {
 		*				aggregated: false
 		*			}
+		*		},
+		*		//The supplementaryConfig can be used to modify control specific attributes, for example the column width in the Table
+		*		supplementaryConfig: {
+		*			aggregations: {
+		*				columns: {
+		*					Category: {
+		*						width: "150px"
+		*					}
+		*				}
+		*			}
 		*		}
 		* }
 		*
@@ -110,6 +120,9 @@ sap.ui.define([
 		 * Attaches an event handler to the <code>StateUtil</code>.
 		 * The event handler may be fired every time a user triggers a personalization change for a control instance during runtime.
 		 *
+		 * @private
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 * @param {function} fnListener fnFunction The handler function to call when the event occurs
 		 */
 		attachStateChange: function(fnListener) {
@@ -120,6 +133,9 @@ sap.ui.define([
 		 * Removes a previously attached state change event handler from the <code>StateUtil</code> class.
 		 * The passed parameters must match those used for registration with {@link StateUtil#attachChange} beforehand.
 		 *
+		 * @private
+		 * @ui5-restricted sap.fe
+		 * @MDC_PUBLIC_CANDIDATE
 		 * @param {function} fnListener fnFunction The handler function to detach from the event
 		 */
 		detachStateChange: function(fnListener) {
@@ -133,7 +149,8 @@ sap.ui.define([
 				Aggregate: "aggregations",
 				Filter: "filter",
 				Item: "items",
-				Column: "items"
+				Column: "items",
+				ColumnWidth: "supplementaryConfig"
 			};
 			var oTransformedState = {};
 
@@ -142,10 +159,6 @@ sap.ui.define([
 				var sTransformedKey = sExternalKey || sProvidedEngineKey;//no external key --> provide internal key
 				oTransformedState[sTransformedKey] = oInternalState[sProvidedEngineKey];
 			});
-			//TODO: Remove once the stateUtil for columnWidth is introduced
-			if (oTransformedState.ColumnWidth) {
-				delete oTransformedState.ColumnWidth;
-			}
 			return oTransformedState;
 		},
 
@@ -155,7 +168,8 @@ sap.ui.define([
 				groupLevels: ["Group"],
 				aggregations: ["Aggregate"],
 				filter: ["Filter"],
-				items: ["Item", "Column"]
+				items: ["Item", "Column"],
+				supplementaryConfig: ["ColumnWidth"]
 			};
 
 			var oTransformedState = {};

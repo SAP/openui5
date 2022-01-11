@@ -657,10 +657,7 @@ sap.ui.define([
 				{
 					name: "Double"
 				}
-			],
-			groupLevels: [],
-			aggregations: {},
-			filter: {}
+			]
 		};
 
 		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
@@ -674,7 +671,8 @@ sap.ui.define([
 			assert.deepEqual(this.oTable.getSortConditions().sorters, oState.sorters, "Correct sort object created");
 
 			StateUtil.retrieveExternalState(this.oTable).then(function(oTableState){
-				assert.deepEqual(oTableState, oState, "Correct state retrieved");
+				assert.deepEqual(oTableState.items, oState.items, "Correct state retrieved");
+				assert.deepEqual(oTableState.sorters, oState.sorters, "Correct state retrieved");
 				done();
 			});
 
@@ -785,6 +783,57 @@ sap.ui.define([
 
 				done();
 			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Create different width/supplementaryConfig changes via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			supplementaryConfig: {
+				aggregations : {
+					columns: {
+						String: {
+							width: "150px"
+						}
+					}
+				}
+			}
+		};
+
+		//add new column width change
+		StateUtil.applyExternalState(this.oTable, oState)
+		.then(function(aChanges){
+			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+			assert.equal(aChanges[0].getChangeType(), "setColumnWidth", "Correct change type created");
+
+			//Check new state after appliance
+			return StateUtil.retrieveExternalState(this.oTable);
+		}.bind(this))
+		.then(function(oRetrievedState){
+			assert.deepEqual(oRetrievedState.supplementaryConfig, oState.supplementaryConfig, "The retrieved config is equal to the applied");
+
+			//Apply a state without explicitly mentioning a property --> no change should occur
+			return StateUtil.applyExternalState(this.oTable, {
+				supplementaryConfig: {
+					aggregations: {
+						columns: {
+							//No property mentioned --> no remove changes should be created as there is no 'absolute' appliance
+						}
+					}
+				}
+			});
+		}.bind(this))
+		.then(function(aChanges){
+
+			assert.deepEqual(aChanges.length, 0, "Correct amount of changes created: " + aChanges.length);
+
+			//The state has not changed --> only explicit changes will be processed
+			StateUtil.retrieveExternalState(this.oTable).then(function(oRetrievedState){
+				assert.deepEqual(oRetrievedState.supplementaryConfig, oState.supplementaryConfig, "The retrieved config is equal to the applied");
+				done();
+			});
 		}.bind(this));
 	});
 
