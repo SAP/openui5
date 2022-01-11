@@ -13,9 +13,9 @@
 @_sap_ui_table_Table_TableHeaderBorderColor: @sapUiListVerticalBorderColor;
 
 // Can be used in other themes to add styles for which there are no style definitions in the base theme and therefore no theme parameters.
-._sap_ui_table_Table_Header() {}
-._sap_ui_table_Table_Extension() {}
-._sap_ui_table_Table_Table() {}
+._sap_ui_table_Table_TitleContainer() {}
+._sap_ui_table_Table_ExtensionContainer() {}
+._sap_ui_table_Table_GridContainer() {}
 
 /*******************************************************************************
  * MAIN TABLE SECTIONS (First Level Elements)
@@ -41,7 +41,7 @@
 		flex: 1 1 auto;
 	}
 
-	._sap_ui_table_Table_Header();
+	._sap_ui_table_Table_TitleContainer();
 }
 
 .sapUiTableHdrTitle {
@@ -53,7 +53,7 @@
 
 .sapUiTableTbr,
 .sapUiTableExt {
-	._sap_ui_table_Table_Extension();
+	._sap_ui_table_Table_ExtensionContainer();
 }
 
 .sapUiTableCnt {
@@ -64,7 +64,7 @@
 	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 	border-top: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
 	background-color: @sapBackgroundColor;
-	._sap_ui_table_Table_Table();
+	._sap_ui_table_Table_GridContainer();
 }
 
 .sapUiTableFtr {
