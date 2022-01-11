@@ -1885,7 +1885,7 @@ sap.ui.define([
 	 * function lead to a single synchronous call where <code>mChangedEntities</code> is the union
 	 * of all <code>mChangedEntities</Code> from the asynchronous calls.
 	 *
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate]
 	 *   The parameter <code>bForceUpdate</code> for the <code>checkUpdate</code> call on the
 	 *   bindings
 	 * @param {boolean} bAsync

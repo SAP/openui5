@@ -411,7 +411,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceupdate Not used in this method
+	 * @param {boolean} [bForceupdate] Not used in this method
 	 *
 	 */
 	ClientTreeBinding.prototype.checkUpdate = function(bForceupdate){

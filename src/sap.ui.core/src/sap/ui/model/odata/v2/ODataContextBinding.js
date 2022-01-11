@@ -143,7 +143,7 @@ sap.ui.define([
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.checkUpdate
 	 *
-	 * @param {boolean} bForceUpdate unused
+	 * @param {boolean} [bForceUpdate] unused
 	 */
 	ODataContextBinding.prototype.checkUpdate = function(/*bForceUpdate*/) {
 		var oContext,

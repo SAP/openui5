@@ -1819,7 +1819,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,fire a change
 	 * event.
 	 *
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate]
 	 *   Whether to fire the event regardless of the bindings state
 	 * @param {object} mChangedEntities
 	 *   A map of changed entities

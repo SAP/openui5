@@ -548,7 +548,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate]
 	 *   Whether a change event should be fired regardles of this bindings state
 	 * @param {object} [mChangedEntities]
 	 *   A map of changed entities to check if an update is necessary.
