@@ -165,7 +165,15 @@ sap.ui.define([
 					 *
 					 * @since 1.65
 					 */
-					enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false }
+					enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false },
+
+					/**
+					 * Determines scale factor for the appointments.
+					 *
+					 * Acceptable range is from 1 to 6.
+					 * @since 1.99
+					 */
+					scaleFactor: {type: "float", group: "Data", defaultValue: 1}
 				},
 				aggregations: {
 
@@ -1563,6 +1571,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._calculateAppointmentsLevelsAndWidth = function (oVisibleAppointments) {
+			var iDuration = HALF_HOUR_MS - ((this.getScaleFactor() - 1) * 5 * 60 * 1000); // min step is 5min (5 * 60 * 1000)
 			var that = this;
 
 			return Object.keys(oVisibleAppointments).reduce(function (oAcc, sDate) {
@@ -1586,10 +1595,10 @@ sap.ui.define([
 							iAppointmentEnd = oAppointment.getEndDate().getTime(),
 							iAppointmentDuration = iAppointmentEnd - iAppointmentStart;
 
-						if (iAppointmentDuration < HALF_HOUR_MS) {
+						if (iAppointmentDuration < iDuration) {
 							// Take into account that appointments smaller than one hour will be rendered as one hour
 							// in height. That's why the calculation for levels should consider this too.
-							iAppointmentEnd = iAppointmentEnd + (HALF_HOUR_MS - iAppointmentDuration);
+							iAppointmentEnd = iAppointmentEnd + (iDuration - iAppointmentDuration);
 						}
 
 						if (iCurrentAppointmentStart >= iAppointmentStart && iCurrentAppointmentStart < iAppointmentEnd) {
@@ -1846,7 +1855,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getRowHeight = function () {
-			return this._isCompact() ? ROW_HEIGHT_COMPACT : ROW_HEIGHT_COZY;
+			return this._isCompact() ? ROW_HEIGHT_COMPACT * this.getScaleFactor() :  ROW_HEIGHT_COZY * this.getScaleFactor();
 		};
 
 		/**

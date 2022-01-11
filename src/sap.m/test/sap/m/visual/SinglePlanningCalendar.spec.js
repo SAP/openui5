@@ -205,6 +205,104 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		_focusFromAppToCell("__appointment0-SinglePlanningCalendar-25-1_8", "focused_cell_with_arrow_down_kb_app", protractor.Key.ARROW_DOWN);
 	});
 
+	it("should scale factor in day view", function() {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-PickerBtn")).click();
+		element(by.id("SinglePlanningCalendar-Header-Cal--Month0-20180723")).click();
+
+		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){
+			if (presented) {
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item77")).click();
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+			} else {
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item62")).click();
+			}
+		});
+
+		element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+		element(by.id("overrideTime")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("day_view_scale_factor_one");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("day_view_scale_factor_two");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("day_view_scale_factor_three");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("day_view_scale_factor_four");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("day_view_scale_factor_five");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("day_view_scale_factor_six");
+
+		element(by.id("resetScaleFactor")).click();
+	});
+
+	it("should scale factor in work week view", function() {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){
+			if (presented) {
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item113")).click();
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+			} else {
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item108")).click();
+			}
+		});
+
+		element(by.id("overrideTime")).click();
+
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_view_scale_factor_one");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_view_scale_factor_two");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_view_scale_factor_three");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_view_scale_factor_four");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_view_scale_factor_five");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("work_week_view_scale_factor_six");
+
+		element(by.id("resetScaleFactor")).click();
+	});
+
+	it("should scale factor in Month view", function() {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){
+			if (presented) {
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item143")).click();
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+			} else {
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+
+				element(by.id("__item151")).click();
+			}
+		});
+		element(by.id("overrideTime")).click();
+
+		expect(takeScreenshot(oSPC)).toLookAs("month_view_scale_factor_one");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_week_view_scale_factor_two");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_week_view_scale_factor_three");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_week_view_scale_factor_four");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_week_view_scale_factor_five");
+		element(by.id("zoomIn")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_week_view_scale_factor_six");
+
+		element(by.id("resetScaleFactor")).click();
+	});
+
 	function _focusFromCellToCell(sSelector, sRefImage, iControl) {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
