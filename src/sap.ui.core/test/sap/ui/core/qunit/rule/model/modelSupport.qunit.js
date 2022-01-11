@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/StandardListItem",
 	"sap/m/Table",
+	"sap/m/VBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -11,19 +12,37 @@ sap.ui.define([
 	"sap/ui/support/library",
 	"sap/ui/support/RuleAnalyzer",
 	"sap/ui/test/TestUtils"
-], function(Button, StandardListItem, Table, JSONModel, CountMode, ODataV2Model, ODataV4Model,
+], function(Button, StandardListItem, Table, VBox, JSONModel, CountMode, ODataV2Model, ODataV4Model,
 		SupportLib, RuleAnalyzer, TestUtils) {
 	"use strict";
 
 	QUnit.module("sap.ui.core.rules.Model.support", {
-		/**
-		 * Set up a fake server to use with OData models.
-		 *
-		 * @param {string} sBasePath The base path to the test data files
-		 * @param {object} oFixture A fixture of URIs and the data they should return
-		 */
-		setUpFakeServer : function (sBasePath, oFixture) {
-			TestUtils.useFakeServer(this._oSandbox, sBasePath, oFixture);
+		beforeEach : function () {
+			var oEmptyV2Response = {message : JSON.stringify({"d" : {"results" : []}})},
+				oEmptyV4Response = {message : JSON.stringify({"value" : []})};
+
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
+					: {source : "qunit/model/GWSAMPLE_BASIC.metadata.xml"},
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet?$skip=0&$top=100&$select=SalesOrderID"
+					: oEmptyV2Response,
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet?$skip=0&$top=100"
+					: oEmptyV2Response,
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('42')?$select=SalesOrderID"
+					: oEmptyV2Response,
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('42')"
+					: oEmptyV2Response,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
+					: {source : "qunit/odata/v4/data/metadata.xml"},
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$select=ID&$skip=0&$top=100"
+					: oEmptyV4Response,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$skip=0&$top=100"
+					: oEmptyV4Response,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('42')?$select=ID"
+					: oEmptyV4Response,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('42')"
+					: oEmptyV4Response
+			});
 		}
 	});
 
@@ -40,33 +59,21 @@ sap.ui.define([
 		oButton.setModel(oModel);
 		oButton.placeAt("qunit-fixture");
 
-		return RuleAnalyzer.analyze({type: "global"}, [{libName: "sap.ui.core", ruleId: sRuleId}])
-			.then(function() {
-				var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
+		return RuleAnalyzer.analyze({type: "global"},
+				[{libName: "sap.ui.core", ruleId: sRuleId}]).then(function() {
+			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
 
-				assert.strictEqual(aIssues.length, 1, "Expected issues ");
-				assert.strictEqual(aIssues[0].rule.id, sRuleId);
-			});
+			assert.strictEqual(aIssues.length, 1, "Expected issues ");
+			assert.strictEqual(aIssues[0].rule.id, sRuleId);
+		});
 	});
 
 	//**********************************************************************************************
 [true, false].forEach(function (bUse$select) {
 	QUnit.test("selectUsedInBoundAggregation: v2, use $select: " + bUse$select, function (assert) {
-		var oModel, fnResolve,
-			oPromise = new Promise(function (resolve) {
-				fnResolve = resolve;
-			}),
+		var oModel,
 			sRuleId = "selectUsedInBoundAggregation",
 			oTable = new Table();
-
-		this.setUpFakeServer("sap/ui/core", {
-			"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
-				: {source : "qunit/model/GWSAMPLE_BASIC.metadata.xml"},
-			"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet?$skip=0&$top=100&$select=SalesOrderID"
-				: {message : JSON.stringify({"d" : {"results" : []}})},
-			"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet?$skip=0&$top=100"
-				: {message : JSON.stringify({"d" : {"results" : []}})}
-		});
 
 		oModel = new ODataV2Model({
 			defaultCountMode : CountMode.None,
@@ -78,9 +85,6 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 
 		oTable.bindItems({
-			events : {
-				dataReceived : fnResolve
-			},
 			path : '/SalesOrderSet',
 			parameters : bUse$select ? {select : 'SalesOrderID'} : undefined,
 			template : new StandardListItem("SOItem", {
@@ -88,10 +92,8 @@ sap.ui.define([
 			})
 		});
 
-		return oPromise.then(function () {
-			return RuleAnalyzer.analyze({type: "global"},
-				[{libName: "sap.ui.core", ruleId: sRuleId}]);
-		}).then(function () {
+		return RuleAnalyzer.analyze({type: "global"},
+				[{libName: "sap.ui.core", ruleId: sRuleId}]).then(function () {
 			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
 
 			assert.strictEqual(aIssues.length, bUse$select ? 0 : 1, "Correct number of issues");
@@ -112,21 +114,9 @@ sap.ui.define([
 	//**********************************************************************************************
 [true, false].forEach(function (bUse$select) {
 	QUnit.test("selectUsedInBoundAggregation: v4: use $select: " + bUse$select, function (assert) {
-		var oModel, fnResolve,
-			oPromise = new Promise(function (resolve) {
-				fnResolve = resolve;
-			}),
+		var oModel,
 			sRuleId = "selectUsedInBoundAggregation",
 			oTable = new Table();
-
-		this.setUpFakeServer("sap/ui/core", {
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-				: {source : "qunit/odata/v4/data/metadata.xml"},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$select=ID&$skip=0&$top=100"
-				: {message : JSON.stringify({"value" : []})},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$skip=0&$top=100"
-				: {message : JSON.stringify({"value" : []})}
-		});
 
 		oModel = new ODataV4Model({
 			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
@@ -137,9 +127,6 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 
 		oTable.bindItems({
-			events : {
-				dataReceived : fnResolve
-			},
 			path : '/EMPLOYEES',
 			parameters : bUse$select ? {$select : 'ID'} : undefined,
 			template : new StandardListItem("EmployeeItem", {
@@ -147,10 +134,8 @@ sap.ui.define([
 			})
 		});
 
-		return oPromise.then(function () {
-			return RuleAnalyzer.analyze({type: "global"},
-				[{libName: "sap.ui.core", ruleId: sRuleId}]);
-		}).then(function () {
+		return RuleAnalyzer.analyze({type: "global"},
+				[{libName: "sap.ui.core", ruleId: sRuleId}]).then(function () {
 			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
 
 			assert.strictEqual(aIssues.length, bUse$select ? 0 : 1, "Correct number of issues");
@@ -161,7 +146,7 @@ sap.ui.define([
 					+ "collection, yet no OData query option '$select' is used. Using '$select' may"
 					+ " improve performance. Alternatively, enable the automatic generation of "
 					+ "'$select' and '$expand' in the model using the 'autoExpandSelect' "
-					+ "parameter", "Correct details");
+					+ "parameter.", "Correct details");
 				assert.strictEqual(aIssues[0].severity, SupportLib.Severity.Low,
 					"Correct severity");
 			}
@@ -183,7 +168,8 @@ sap.ui.define([
 			})
 		});
 
-		return RuleAnalyzer.analyze({type: "global"}, [{libName: "sap.ui.core", ruleId: sRuleId}]).then(function () {
+		return RuleAnalyzer.analyze({type: "global"},
+				[{libName: "sap.ui.core", ruleId: sRuleId}]).then(function () {
 			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
 
 			assert.strictEqual(aIssues.length, 0, "Correct number of issues");
@@ -193,21 +179,9 @@ sap.ui.define([
 
 	//**********************************************************************************************
 	QUnit.test("selectUsedInBoundAggregation: v4: use autoExpandSelect", function (assert) {
-		var oModel, fnResolve,
-			oPromise = new Promise(function (resolve) {
-				fnResolve = resolve;
-			}),
+		var oModel,
 			sRuleId = "selectUsedInBoundAggregation",
 			oTable = new Table();
-
-		this.setUpFakeServer("sap/ui/core", {
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-				: {source : "qunit/odata/v4/data/metadata.xml"},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$select=ID&$skip=0&$top=100"
-				: {message : JSON.stringify({"value" : []})},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES?$skip=0&$top=100"
-				: {message : JSON.stringify({"value" : []})}
-		});
 
 		oModel = new ODataV4Model({
 			autoExpandSelect : true,
@@ -219,23 +193,95 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 
 		oTable.bindItems({
-			events : {
-				dataReceived : fnResolve
-			},
 			path : '/EMPLOYEES',
 			template : new StandardListItem("EmployeeItem", {
 				title: new Text({text: "{ID}"})
 			})
 		});
 
-		return oPromise.then(function () {
-			return RuleAnalyzer.analyze({type: "global"},
-				[{libName: "sap.ui.core", ruleId: sRuleId}]);
-		}).then(function () {
+		return RuleAnalyzer.analyze({type: "global"},
+				[{libName: "sap.ui.core", ruleId: sRuleId}]).then(function () {
 			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
 
 			assert.strictEqual(aIssues.length, 0, "Correct number of issues");
 			oTable.destroy();
 		});
 	});
+
+	//**********************************************************************************************
+[true, false].forEach(function (bUse$select) {
+	QUnit.test("selectUsedInBoundAggregation: v2.ODataContextBinding, use select: " + bUse$select,
+			function (assert) {
+		var oModel,
+			sRuleId = "selectUsedInBoundAggregation",
+			oVBox = new VBox();
+
+		oModel = new ODataV2Model({
+			defaultCountMode : CountMode.None,
+			serviceUrl : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/",
+			useBatch : false
+		});
+
+		oVBox.setModel(oModel);
+		oVBox.bindElement("/SalesOrderSet('42')",
+			bUse$select ? {select : "SalesOrderID"} : undefined);
+		oVBox.bindProperty("visible", "/visibility");
+
+		return RuleAnalyzer.analyze({type : "global"},
+				[{libName : "sap.ui.core", ruleId : sRuleId}]).then(function () {
+			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
+
+			assert.strictEqual(aIssues.length, bUse$select ? 0 : 1, "Correct number of issues");
+			if (!bUse$select) {
+				assert.deepEqual(aIssues[0].context, {id : oVBox.getId()}, "Correct ID");
+				assert.strictEqual(aIssues[0].details, "The element " + oVBox.getId() + " with "
+					+ "binding path '/SalesOrderSet('42')' is bound against an entity, yet no "
+					+ "binding parameter 'select' is used. Using 'select' may improve "
+					+ "performance.");
+				assert.strictEqual(aIssues[0].severity, SupportLib.Severity.Low,
+					"Correct severity");
+			}
+
+			oVBox.destroy();
+		});
+	});
+});
+
+	//**********************************************************************************************
+[true, false].forEach(function (bUse$select) {
+	QUnit.test("selectUsedInBoundAggregation: v4.ODataContextBinding, use select: " + bUse$select,
+			function (assert) {
+		var oModel,
+			sRuleId = "selectUsedInBoundAggregation",
+			oVBox = new VBox();
+
+		oModel = new ODataV4Model({
+			serviceUrl : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+			synchronizationMode : "None"
+		});
+
+		oVBox.setModel(oModel);
+		oVBox.bindElement("/EMPLOYEES('42')",
+			bUse$select ? {$select : "ID"} : undefined);
+
+		return RuleAnalyzer.analyze({type : "global"},
+				[{libName : "sap.ui.core", ruleId : sRuleId}]).then(function () {
+			var aIssues = RuleAnalyzer.getLastAnalysisHistory().issues;
+
+			assert.strictEqual(aIssues.length, bUse$select ? 0 : 1, "Correct number of issues");
+			if (!bUse$select) {
+				assert.deepEqual(aIssues[0].context, {id : oVBox.getId()}, "Correct ID");
+				assert.strictEqual(aIssues[0].details, "The element " + oVBox.getId() + " with "
+					+ "binding path '/EMPLOYEES('42')' is bound against an entity, yet no OData "
+					+ "query option '$select' is used. Using '$select' may improve performance. "
+					+ "Alternatively, enable the automatic generation of '$select' and '$expand' in"
+					+ " the model using the 'autoExpandSelect' parameter.");
+				assert.strictEqual(aIssues[0].severity, SupportLib.Severity.Low,
+					"Correct severity");
+			}
+
+			oVBox.destroy();
+		});
+	});
+});
 });

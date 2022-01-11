@@ -47,13 +47,15 @@ sap.ui.define([
 
 	var fnCheckSelect = function (oIssueManager, oCoreFacade, oScope) {
 		oScope.getElements().forEach(function (oElement) {
-			var mBindingInfos = oElement.mBindingInfos;
+			var mBindingInfos = {};
+
+			Object.assign(mBindingInfos, oElement.mBindingInfos, oElement.mObjectBindingInfos);
 
 			Object.keys(mBindingInfos).forEach(function (sName) {
 				var oBinding = mBindingInfos[sName].binding,
 					sDetails;
 
-				if (!oBinding) {
+				if (!oBinding || oBinding.getModel().bAutoExpandSelect) {
 					return;
 				}
 
@@ -64,14 +66,25 @@ sap.ui.define([
 						+ "collection, yet no binding parameter 'select' is used. Using 'select' "
 						+ "may improve performance.";
 				} else if (oBinding.isA("sap.ui.model.odata.v4.ODataListBinding")
-						&& !oBinding.getModel().bAutoExpandSelect
 						&& (!oBinding.mParameters || !oBinding.mParameters.$select)) {
 					sDetails = "The aggregation '" + sName + "' of element "
 						+ oElement.getId() + " with binding path '" + oBinding.getPath() + "' is "
 						+ "bound against a collection, yet no OData query option '$select' is used."
 						+ " Using '$select' may improve performance. Alternatively, enable the "
 						+ "automatic generation of '$select' and '$expand' in the model using the "
-						+ "'autoExpandSelect' parameter";
+						+ "'autoExpandSelect' parameter.";
+				} else if (oBinding.isA("sap.ui.model.odata.v2.ODataContextBinding")
+						&& (!oBinding.mParameters || !oBinding.mParameters.select)) {
+					sDetails = "The element " + oElement.getId() + " with binding path '"
+						+ oBinding.getPath() + "' is bound against an entity, yet no binding "
+						+ "parameter 'select' is used. Using 'select' may improve performance.";
+				} else if (oBinding.isA("sap.ui.model.odata.v4.ODataContextBinding")
+						&& (!oBinding.mParameters || !oBinding.mParameters.$select)) {
+					sDetails = "The element " + oElement.getId() + " with binding path '"
+						+ oBinding.getPath() + "' is bound against an entity, yet no OData query"
+						+ " option '$select' is used. Using '$select' may improve performance. "
+						+ "Alternatively, enable the automatic generation of '$select' and "
+						+ "'$expand' in the model using the 'autoExpandSelect' parameter.";
 				}
 
 				if (sDetails) {
