@@ -142,6 +142,9 @@ sap.ui.define([
 			/**
 			 * Determines the alternative text of the <code>ObjectHeader</code> icon. The text is
 			 * displayed if the image for the icon is not available, or cannot be displayed.
+			 *
+			 * <b>Note:</b> Provide an empty string value for the <code>iconAlt</code> property
+			 * in case you want to use the icon for decoration only.
 			 */
 			iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
 
@@ -1041,7 +1044,9 @@ sap.ui.define([
 				src : this.getIcon(),
 				tooltip: this.getIconTooltip(),
 				// If there isn't an alt, then just add a default 'Icon' just in case
-				alt: this.getIconAlt() || ObjectHeader._getResourceBundle().getText("OH_ARIA_ICON"),
+				alt: this.getIconAlt() === null ?
+					ObjectHeader._getResourceBundle().getText("OH_ARIA_ICON")
+					: this.getIconAlt(),
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware(),
 				decorative : false

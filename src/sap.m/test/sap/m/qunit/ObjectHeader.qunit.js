@@ -1072,7 +1072,28 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	/******************************************************************/
+	// Related to: 002075129500008606402021
+	QUnit.test("The initial 'iconAlt' property value could be overridden", function(assert){
+		// Arrange
+		var oObjectHeader = new ObjectHeader({
+				icon : "non existing path/icon.png",
+				iconAlt: "",
+				iconDensityAware: false
+			}),
+			oImage = oObjectHeader._getImageControl();
+
+		oObjectHeader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oImage.onerror();
+
+		// Assert
+		assert.ok(oImage.getDomRef().classList.contains("sapMNoImg"));
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
 
 	var iconOH = new ObjectHeader("iconOH", {
 		icon : IconPool.getIconURI("pdf-attachment"),
