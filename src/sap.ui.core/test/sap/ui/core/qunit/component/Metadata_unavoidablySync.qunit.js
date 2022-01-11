@@ -1,10 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/Manifest",
 	"sap/ui/thirdparty/URI",
-	"sap/ui/core/Component",
-	"sap/base/Log",
 	"sap/base/util/deepExtend"
-], function(Manifest, URI, Component, Log, deepExtend) {
+], function(URI, deepExtend) {
 
 	"use strict";
 	/*global QUnit*/
@@ -18,7 +15,7 @@ sap.ui.define([
 	 *
 	 *    The first two tests below test that difference.
 	 *
-	 * 2. the v1 test components use sync APIs (not active yet)
+	 * 2. the v1 test (and the v2 test with manifest last) components use sync APIs
 	 *
 	 * TODO: the tests for 1. could be simplified a lot by removing all other test aspects.
 	 * ================================================================================================================== */
@@ -37,6 +34,10 @@ sap.ui.define([
 	/*
 	 * SHARED TEST CODE
 	 */
+
+	function getModulePath(sModuleName, sSuffix) {
+		return sap.ui.require.toUrl(sModuleName.replace(/\./g, "/")) + (sSuffix || "");
+	}
 
 	function moduleSetup(sComponentName, iMetadataVersion, bManifestFirst, bDefineComponentName) {
 
@@ -390,6 +391,55 @@ sap.ui.define([
 
 
 	/*
+	 * TEST CODE: Component Metadata v1
+	 */
+
+	QUnit.module("Component Metadata v1", {
+		beforeEach: function() {
+			moduleSetup.call(this, "v1", 1);
+			// fix the specials in the metadata for the v1
+			[
+				this.oExpectedManifest,
+				this.oExpectedRawManifest
+			].forEach(function(oManifest) {
+				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
+				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.layout"] = {};
+				oManifest["sap.ui5"]["rootView"]["async"] = true;
+				oManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewReplacements"]["sap.ui.test.view.Main"]["async"] = true;
+				delete oManifest["sap.ui5"]["resourceRoots"];
+				delete oManifest["sap.app"]["title"];
+				delete oManifest["sap.app"]["description"];
+				delete oManifest["foo"];
+				delete oManifest["foo.bar"];
+			});
+			this.oExpectedMetadata["rootView"]["async"] = true;
+			this.oExpectedMetadata["customizing"]["sap.ui.viewReplacements"]["sap.ui.test.view.Main"]["async"] = true;
+		},
+		afterEach: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
+	 * TEST CODE: Component Metadata v2
+	 */
+
+	QUnit.module("Component Metadata v2", {
+		beforeEach: function() {
+			moduleSetup.call(this, "v2", 2);
+		},
+		afterEach: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
 	 * TEST CODE: Component Metadata v2
 	 */
 
@@ -432,38 +482,8 @@ sap.ui.define([
 
 
 	/*
-	/*
-	 * TEST CODE: Component Metadata v1
-	 * /
-
-	QUnit.module("Component Metadata v1", {
-		beforeEach: function() {
-			moduleSetup.call(this, "v1", 1);
-			// fix the specials in the metadata for the v1
-				[
-					this.oExpectedManifest,
-					this.oExpectedRawManifest
-				].forEach(function(oManifest) {
-					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
-					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.layout"] = {};
-					delete oManifest["sap.ui5"]["resourceRoots"];
-					delete oManifest["sap.app"]["title"];
-					delete oManifest["sap.app"]["description"];
-					delete oManifest["foo"];
-					delete oManifest["foo.bar"];
-				});
-		},
-		afterEach: function() {
-			moduleTeardown.call(this);
-		}
-	});
-
-	defineGenericTests();
-
-
-	/*
 	 * TEST CODE: Component Metadata v1 (inline)
-	 * /
+	 */
 
 	QUnit.module("Component Metadata v1 (inline)", {
 		beforeEach: function() {
@@ -492,7 +512,7 @@ sap.ui.define([
 
 	/*
 	 * TEST CODE: Component Metadata v1 (valdidate empty metadata)
-	 * /
+	 */
 
 	QUnit.module("Component Metadata v1 (empty)", {
 		beforeEach: function() {
@@ -510,10 +530,9 @@ sap.ui.define([
 
 	});
 
-
 	/*
 	 * TEST CODE: Component Metadata v1 (valdidate missing metadata)
-	 * /
+	 */
 
 	QUnit.module("Component Metadata v1 (missing)", {
 		beforeEach: function() {
@@ -534,7 +553,7 @@ sap.ui.define([
 
 	/*
 	 * TEST CODE: Component Metadata v1 & v2 (mixed)
-	 * /
+	 */
 
 	QUnit.module("Component Metadata v1 & v2 (mixed)", {
 		beforeEach: function() {
@@ -571,24 +590,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		assert.sameUrl(
-			sap.ui.require.toUrl("x/y/z"),
-			getCompUrl(this.oMetadata.getComponentName()) + "/anypath",
-			"ResourceRoot 'x.y.z' registered (" + sap.ui.require.toUrl("x/y/z") + ")");
-		assert.sameUrl(
-			sap.ui.require.toUrl("foo/bar"),
-			getCompUrl(this.oMetadata.getComponentName()) + "/../../foo/bar",
-			"ResourceRoot 'foo.bar' registered (" + sap.ui.require.toUrl("foo/bar") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/anypath"))
+			.equals(new URI(getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + getModulePath("x.y.z") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+			.equals(new URI(getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		assert.notSameUrl(
-			sap.ui.require.toUrl("absolute"),
-			"http://absolute/uri",
-			"ResourceRoot 'absolute' not registered (" + sap.ui.require.toUrl("absolute") + ")");
-		assert.notSameUrl(
-			sap.ui.require.toUrl("server/absolute"),
-			"/server/absolute/uri",
-			"ResourceRoot 'server.absolute' not registered (" + sap.ui.require.toUrl("server/absolute") + ")");
+		assert.ok(!new URI("http://absolute/uri")
+			.equals(new URI(getModulePath("absolute"))),
+			"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
+		assert.ok(!new URI("/server/absolute/uri")
+			.equals(new URI(getModulePath("server.absolute"))),
+			"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
@@ -602,7 +615,7 @@ sap.ui.define([
 
 	/*
 	 * TEST CODE: Component Metadata v1 & v2 (mixed/inheritance)
-	 * /
+	 */
 
 	QUnit.module("Component Metadata v1 & v2 (mixed/inheritance)", {
 		beforeEach: function() {
@@ -611,11 +624,13 @@ sap.ui.define([
 			this.oExpectedMetadata.config.any9 = this.oExpectedMetadata.config.any3;
 			this.oExpectedMetadata.models.i18n_1 = this.oExpectedMetadata.models.i18n;
 			this.oExpectedMetadata.models.sfapi_1 = this.oExpectedMetadata.models.sfapi;
+			this.oExpectedMetadata["rootView"]["async"] = true;
 
 			[
 				this.oExpectedManifest,
 				this.oExpectedRawManifest
 			].forEach(function(oManifest) {
+				oManifest["sap.ui5"]["rootView"]["async"] = true;
 				oManifest["sap.ui5"]["extends"].component = "sap.ui.test.inherit.parent";
 				delete oManifest["sap.ui5"].resourceRoots["x.y.z"];
 				delete oManifest["sap.ui5"].rootView;
@@ -664,24 +679,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResourceRoots", function(assert) {
-		assert.sameUrl(
-			sap.ui.require.toUrl("x/y/z"),
-			getCompUrl(this.oMetadata.getParent().getComponentName()) + "/anypath",
-			"ResourceRoot 'x.y.z' registered (" + sap.ui.require.toUrl("x/y/z") + ")");
-		assert.sameUrl(
-			sap.ui.require.toUrl("foo/bar"),
-			getCompUrl(this.oMetadata.getComponentName()) + "/../../foo/bar",
-			"ResourceRoot 'foo.bar' registered (" + sap.ui.require.toUrl("foo/bar") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getParent().getComponentName(), "/anypath"))
+			.equals(new URI(getModulePath("x.y.z"))), "ResourceRoot 'x.y.z' registered (" + getModulePath("x.y.z") + ")");
+		assert.ok(new URI(getModulePath(this.oMetadata.getComponentName(), "/../../foo/bar"))
+			.equals(new URI(getModulePath("foo.bar"))), "ResourceRoot 'foo.bar' registered (" + getModulePath("foo.bar") + ")");
 
 		// (server-)absolute resource roots are not allowed and therefore won't be registered!
-		assert.notSameUrl(
-			sap.ui.require.toUrl("absolute"),
-			"http://absolute/uri",
-			"ResourceRoot 'absolute' not registered (" + sap.ui.require.toUrl("absolute") + ")");
-		assert.notSameUrl(
-			sap.ui.require.toUrl("server/absolute"),
-			"/server/absolute/uri",
-			"ResourceRoot 'server.absolute' not registered (" + sap.ui.require.toUrl("server/absolute") + ")");
+		assert.ok(!new URI("http://absolute/uri")
+			.equals(new URI(getModulePath("absolute"))),
+			"ResourceRoot 'absolute' not registered (" + getModulePath("absolute") + ")");
+		assert.ok(!new URI("/server/absolute/uri")
+			.equals(new URI(getModulePath("server.absolute"))),
+			"ResourceRoot 'server.absolute' not registered (" + getModulePath("server.absolute") + ")");
 	});
 
 	QUnit.test("Manifest Validation", function(assert) {
@@ -692,7 +701,5 @@ sap.ui.define([
 		assert.strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 
 	});
-
-	*/
 
 });

@@ -1,18 +1,39 @@
 {
 
-	"name": "sap.ui.test.inherit.parent.Component",
+	"name": "sap.ui.test.v2asyncRootView.Component",
 
 	"sap.app": {
-		"id": "sap.ui.test.inherit.parent",
+		"id": "sap.ui.test.v2asyncRootView",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"title": "{{title}}",
+		"description": "{{description}}"
 	},
 
 	"sap.ui5": {
 
 		"resourceRoots": {
-			"x.y.z": "anypath"
+			"x.y.z": "anypath",
+			"foo.bar": "../../foo/bar",
+			"absolute": "http://absolute/uri",
+			"server.absolute": "/server/absolute/uri"
+		},
+
+		"resources": {
+			"js": [
+				{
+					"uri": "script.js"
+				},
+				{}
+			],
+			"css": [
+				{
+					"uri": "style.css",
+					"id": "mystyle"
+				},
+				{}
+			]
 		},
 
 		"dependencies": {
@@ -31,19 +52,13 @@
 		},
 
 		"models": {
-			"i18n_1": {
+			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"uri": "i18n/i18n.properties"
 			},
-			"sfapi_1": {
+			"sfapi": {
 				"type": "sap.ui.model.odata.ODataModel",
 				"uri": "./some/odata/service"
-			}
-		},
-
-		"config": {
-			"any9": {
-				"anyarray": [1, 2, 3]
 			}
 		},
 
@@ -51,6 +66,40 @@
 			"viewName": "sap.ui.test.view.Main",
 			"type": "XML",
 			"async": true
+		},
+
+		"config": {
+			"any1": {
+				"entry": "configuration"
+			},
+			"any2": {
+				"anyobject": {
+					"key1": "value1"
+				}
+			},
+			"any3": {
+				"anyarray": [1, 2, 3]
+			},
+			"zero": 0
+		},
+
+		"routing": {
+			"config": {
+				"type": "View",
+				"viewType" : "XML",
+				"path": "NavigationWithoutMasterDetailPattern.view",
+				"targetParent": "myViewId",
+				"targetControl": "app",
+				"targetAggregation": "pages",
+				"clearTarget": false
+			},
+			"routes": [
+				{
+					"name" : "myRouteName1",
+					"pattern" : "FirstView/{from}",
+					"view" : "myViewId"
+				}
+			]
 		},
 
 		"extends": {
@@ -80,20 +129,11 @@
 					}
 				}
 			}
-		},
-
-		"routing": {
-			"config": {
-				"type": "View",
-				"viewType": "XML",
-				"path": "NavigationWithoutMasterDetailPattern.view",
-				"targetParent": "myViewId",
-				"targetControl": "app",
-				"targetAggregation": "pages",
-				"clearTarget": false
-			}
 		}
 
-	}
+	},
+
+	"foo": {},
+	"foo.bar": "string as entry value is not valid!"
 
 }

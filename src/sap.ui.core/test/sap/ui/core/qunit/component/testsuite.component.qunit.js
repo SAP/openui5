@@ -46,6 +46,14 @@ sap.ui.define(function() {
 					preload: "async" // enforce preloads in dev mode
 				}
 			},
+			"Component_unavoidablySync": {
+				title: "QUnit test: Component (sync tests)",
+				ui5: {
+					libs: "sap.m",
+					language: "en",
+					preload: "sync"
+				}
+			},
 			"Component_containedInLibrary": {
 				title: "QUnit test: Components contained in a Library",
 				ui5: {
@@ -60,6 +68,12 @@ sap.ui.define(function() {
 			},
 			ComponentContainer: {
 				title: "QUnit Page for sap.ui.core.ComponentContainer",
+				ui5: {
+					language: "en"
+				}
+			},
+			ComponentContainer_unavoidablySync: {
+				title: "QUnit Page for sap.ui.core.ComponentContainer (sync tests)",
 				ui5: {
 					language: "en"
 				}
@@ -97,6 +111,15 @@ sap.ui.define(function() {
 					version: 4
 				}
 			},
+			"ExtensionPoint_unavoidablySync": {
+				title: "ExtensionPoints with ExtensionProvider (sync tests)",
+				qunit: {
+					reorder: false
+				},
+				sinon: {
+					version: 4
+				}
+			},
 			"Customizing_disabled": {
 				title: "Customizing in general - sap.ui.core (customizing disabled)",
 				ui5: {
@@ -124,6 +147,15 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			"Models_unavoidablySync": {
+				title: "QUnit tests: Component Models (sync tests)",
+				ui5: {
+					language: "en-US"
+				},
+				qunit: {
+					reorder: false
+				}
+			},
 			Preloading: {
 				title: "QUnit test: Component (async)",
 				qunit: {
@@ -143,6 +175,13 @@ sap.ui.define(function() {
 			},
 			UIComponent: {
 				title: "QUnit test: UIComponent",
+				ui5: {
+					libs: "sap.m",
+					language: "en-US"
+				}
+			},
+			"UIComponent_unavoidablySync": {
+				title: "QUnit test: UIComponent (sync tests)",
 				ui5: {
 					libs: "sap.m",
 					language: "en-US"

@@ -978,6 +978,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	// TODO Should we move all v1 tests to unavoidablySync or should we keep it, since the test do not trigger CSP violations?
 	QUnit.test("metadata v1 with models", function(assert) {
 		this.stubGetUriParameters();
 
@@ -3814,33 +3815,5 @@ sap.ui.define([
 			this.oComponent = oComponent;
 			fnAssert.call(this, assert);
 		}.bind(this));
-	});
-
-	QUnit.test("SYNC: Resolve annotation urls; Manifest first;", function(assert) {
-		// stub uri parameters with sap-client and sap-server
-		this.stubGetUriParameters();
-
-		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
-
-		this.oComponent = sap.ui.component({
-			name: "sap.ui.test.v2models.ui5urls",
-			manifest: true,
-			async: false
-		});
-
-		fnAssert.call(this, assert);
-	});
-
-	QUnit.test("SYNC: Resolve annotation urls; Manifest last;", function(assert) {
-		// stub uri parameters with sap-client and sap-server
-		this.stubGetUriParameters();
-
-		assert.equal(sap.ui.require.toUrl("this/is/a/resourceRoot"), "resources/this/is/a/resourceRoot", "Resource-roots not defined yet.");
-
-		this.oComponent = sap.ui.component({
-			name: "sap.ui.test.v2models.ui5urls"
-		});
-
-		fnAssert.call(this, assert);
 	});
 });

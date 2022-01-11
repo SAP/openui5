@@ -45,13 +45,18 @@
 		}
 	},
 
-	"rootView": "sap.ui.test.view.Main",
+	"rootView": {
+		"viewName": "sap.ui.test.view.Main",
+		"type": "XML",
+		"async": true
+	},
 
 	"customizing": {
 		"sap.ui.viewReplacements": {
 			"sap.ui.test.view.Main": {
 				"viewName": "sap.ui.test.view.Main",
-				"type": "XML"
+				"type": "XML",
+				"async": true
 			}
 		},
 		"sap.ui.controllerReplacements": {
