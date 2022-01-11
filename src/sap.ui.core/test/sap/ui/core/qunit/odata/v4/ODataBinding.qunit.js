@@ -480,33 +480,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("hasPendingChangesForPath", function (assert) {
+[false, true].forEach(function (bIgnoreKeptAlive) {
+	[false, true].forEach(function (bIsRoot) {
+	var sTitle = "hasPendingChangesForPath, bIgnoreKeptAlive = " + bIgnoreKeptAlive
+			+ ", bIsRoot = " + bIsRoot;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = new ODataBinding({}),
 			oCache = {
 				hasPendingChangesForPath : function () {}
 			},
-			sCachePath = {/*string*/},
 			oExpectation,
-			sPath = "foo",
-			bResult = {/*true or undefined*/},
-			oResult = {},
 			oWithCachePromise = {unwrap : function () {}};
 
 		oExpectation = this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.func, sPath, true)
+			.withExactArgs(sinon.match.func, "some/path", true)
 			.returns(oWithCachePromise);
-		this.mock(oWithCachePromise).expects("unwrap").withExactArgs().returns(oResult);
+		this.mock(oWithCachePromise).expects("unwrap").withExactArgs().returns("~vResult~");
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesForPath(sPath, "~bIgnoreKeptAlive~"), oResult);
+		assert.strictEqual(oBinding.hasPendingChangesForPath("some/path", bIgnoreKeptAlive),
+			"~vResult~");
 
+		this.mock(oBinding).expects("isRoot").exactly(bIgnoreKeptAlive ? 1 : 0).withExactArgs()
+			.returns(bIsRoot);
 		this.mock(oCache).expects("hasPendingChangesForPath")
-			.withExactArgs(sinon.match.same(sCachePath), "~bIgnoreKeptAlive~")
-			.returns(bResult);
+			.withExactArgs("~sCachePath~", bIgnoreKeptAlive, bIgnoreKeptAlive && bIsRoot)
+			.returns("~bResult~");
 
 		// code under test
-		assert.strictEqual(oExpectation.firstCall.args[0](oCache, sCachePath), bResult);
+		assert.strictEqual(oExpectation.firstCall.args[0](oCache, "~sCachePath~", oBinding),
+			"~bResult~");
 	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("hasPendingChangesInCaches", function (assert) {

@@ -209,23 +209,6 @@ sap.ui.define([
 			}
 		},
 		/*
-		 * Actions for the "Error" information dialog
-		 */
-		onTheErrorInfo : {
-			actions : {
-				confirm : function () {
-					this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://error"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap();
-							Opa5.assert.ok(true, "Confirm 'Error'");
-						}
-					});
-				}
-			}
-		},
-		/*
 		 * Actions and Assertions for the "Message" popover
 		 */
 		onTheMessagePopover : {

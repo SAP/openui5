@@ -123,7 +123,7 @@ sap.ui.define([
 			When.onTheMainPage.doubleRefresh();
 			Then.onTheMainPage.checkID(0);
 
-			// Create a sales order, refresh/filter w/o saving -> expected "pending changes" message
+			// Create a sales order, refresh w/o saving
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			// Cancel refresh
@@ -133,9 +133,8 @@ sap.ui.define([
 			When.onTheMainPage.pressRefreshAllButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
-			if (bRealOData) {
+			if (bRealOData) { // allow filter and keep transient entity
 				When.onTheMainPage.filterGrossAmount("1000");
-				When.onTheErrorInfo.confirm();
 				Then.onTheMainPage.checkID(0, "");
 			}
 			// Confirm refresh

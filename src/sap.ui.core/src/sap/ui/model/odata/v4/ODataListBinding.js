@@ -109,10 +109,13 @@ sap.ui.define([
 				this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
 					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
 					"$$sharedRequest", "$$updateGroupId"]);
+				// number of active (client-side) created contexts in aContexts
+				this.iActiveContexts = 0;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
 					? "AddVirtualContext"
 					: undefined;
+				this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.sGroupId = mParameters.$$groupId;
@@ -1138,7 +1141,7 @@ sap.ui.define([
 				return that.mPreviousContextsByPath[sPath].isKeepAlive();
 			});
 
-			if (aKeptElementPaths.length && !bOldCacheReadOnly) {
+			if (!bOldCacheReadOnly && (aKeptElementPaths.length || this.iCreatedContexts)) {
 				oOldCache.reset(aKeptElementPaths.map(function (sPath) {
 					return _Helper.getRelativePath(sPath, sBindingPath);
 				}));
@@ -1895,7 +1898,7 @@ sap.ui.define([
 							detailedReason : "RemoveVirtualContext",
 							reason : ChangeReason.Change
 						});
-						that.reset(ChangeReason.Refresh, true);
+						that.reset(ChangeReason.Refresh);
 					}
 					oVirtualContext.destroy();
 				});
@@ -2594,7 +2597,7 @@ sap.ui.define([
 			}
 			// Note: after reset the dependent bindings cannot be found any more
 			aDependentBindings = that.getDependentBindings();
-			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
+			that.reset(ChangeReason.Refresh, true); // this may reset that.oRefreshPromise
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise,
 					// Update after refresh event, otherwise $count is fetched before the request
@@ -2985,30 +2988,48 @@ sap.ui.define([
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
 	 *   as long as the binding is still empty.
-	 * @param {boolean} [bKeepCreated]
-	 *   Whether created contexts shall remain in aContexts
+	 * @param {boolean} [bDropTransient]
+	 *   Whether transient contexts shall also be dropped, not just created persisted ones
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason, bKeepCreated) {
-		var bEmpty = this.iCurrentEnd === 0,
+	ODataListBinding.prototype.reset = function (sChangeReason, bDropTransient) {
+		var oContext,
+			bEmpty = this.iCurrentEnd === 0,
+			iTransient = 0,
+			i,
 			that = this;
 
-		if (!bKeepCreated) {
-			// number of active (client-side) created contexts in aContexts
+		if (bDropTransient) {
 			this.iActiveContexts = 0;
-			this.iCreatedContexts = 0; // number of all (client-side) created contexts in aContexts
-			// true if contexts have been created at the end, false if contexts have been created at
-			// the start, undefined if there are no created contexts
-			this.bCreatedAtEnd = undefined;
+			this.iCreatedContexts = 0;
 		}
 		if (this.aContexts) { // allow initial call from c'tor via #applyParameters
 			this.aContexts.slice(this.iCreatedContexts).forEach(function (oContext) {
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
-			this.aContexts.length = this.iCreatedContexts;
+			for (i = 0; i < this.iCreatedContexts; i += 1) {
+				oContext = this.aContexts[i];
+				if (oContext.isTransient()) {
+					this.aContexts[iTransient] = oContext;
+					iTransient += 1;
+				} else { // Note: "created persisted" elements must be active
+					this.iActiveContexts -= 1;
+					this.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				}
+			}
+			for (i = 0; i < iTransient; i += 1) {
+				this.aContexts[i].iIndex = i - iTransient;
+			}
+			// Note: no strict need to keep the reference here
+			this.aContexts.length = this.iCreatedContexts = iTransient;
 		} else {
 			this.aContexts = [];
+		}
+		if (!this.iCreatedContexts) {
+			// true if contexts have been created at the end, false if contexts have been created at
+			// the start, undefined if there are no created contexts
+			this.bCreatedAtEnd = undefined;
 		}
 		// the range of array indices for getCurrentContexts
 		this.iCurrentBegin = this.iCurrentEnd = 0;
