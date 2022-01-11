@@ -5812,7 +5812,7 @@ sap.ui.define([
 	});
 
 	/* Android and Blackberry browsers do not scroll a focused input into the view correctly after resize */
-	if (Device.os.blackberry || Device.os.android && Device.os.version >= 4) {
+	if (Device.os.blackberry || Device.os.android) {
 		jQuery(window).on("resize", function(){
 			var oActive = document.activeElement;
 			var sTagName = oActive ? oActive.tagName : "";
