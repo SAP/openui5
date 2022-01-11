@@ -283,6 +283,31 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("oXhr parameters are not empty", function (assert) {
+		var oUploader = new Uploader(),
+			oItem = this.oUploadSet.getItems()[0],
+			done = assert.async();
+
+		this.oUploadSet.attachEventOnce("uploadCompleted",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "item param present");
+			assert.ok(oEvent.getParameter("response"), "response param present");
+			assert.equal(oEvent.getParameter("responseXML"), null, "response xml param present");
+			assert.ok(oEvent.getParameter("readyState"), "readystate param present");
+			assert.ok(oEvent.getParameter("status"), "status param present");
+			assert.ok(oEvent.getParameter("headers"), "headers param present");
+			done();
+		});
+
+		//Arrange
+		this.oUploadSet.registerUploaderEvents(oUploader);
+		this.oUploadSet.addDependent(oUploader);
+		oCore.applyChanges();
+
+		//Act
+		oUploader.uploadItem(oItem);
+	});
+
 	QUnit.test("Check multi-part form data in XMLHttpRequest", function (assert) {
 		//Setup
 		var oUploader = new Uploader({

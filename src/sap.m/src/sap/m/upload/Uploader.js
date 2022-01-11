@@ -97,7 +97,21 @@ sap.ui.define([
 						/**
 						 * The item that was uploaded.
 						 */
-						item: {type: "sap.m.upload.UploadSetItem"}
+						item: {type: "sap.m.upload.UploadSetItem"},
+						/**
+						 * A JSON object containing the additional response parameters like response, responseXML, readyState, status and headers.
+						 * <i>Sample response object:</i>
+						 * <pre><code>
+						 * {
+						 *    response: "<!DOCTYPE html>\n<html>...</html>\n",
+						 *    responseXML: null,
+						 *    readyState: 2,
+						 *    status: 404,
+						 *    headers: "allow: GET, HEAD"
+						 * }
+						 * </code></pre>
+						 */
+						responseXHR: {type: "object"}
 					}
 				},
 				/**
@@ -211,9 +225,17 @@ sap.ui.define([
 		});
 
 		oXhr.onreadystatechange = function () {
-			var oHandler = that._mRequestHandlers[oItem.getId()];
+			var oHandler = that._mRequestHandlers[oItem.getId()],
+				oResponseXHRParams = {};
 			if (this.readyState === window.XMLHttpRequest.DONE && !oHandler.aborted) {
-				that.fireUploadCompleted({item: oItem});
+				oResponseXHRParams = {
+					"response": this.response,
+					"responseXML": this.responseXML,
+					"readyState": this.readyState,
+					"status": this.status,
+					"headers": this.getAllResponseHeaders()
+				};
+				that.fireUploadCompleted({item: oItem, responseXHR: oResponseXHRParams});
 			}
 		};
 
