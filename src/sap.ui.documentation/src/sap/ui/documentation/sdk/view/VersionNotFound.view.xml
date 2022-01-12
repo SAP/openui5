@@ -9,7 +9,7 @@
 			<customHeader>
 				<f:ShellBar
 					title="UI5 Version Not Found"
-					homeIcon="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
+					homeIcon="/resources/sap/ui/documentation/sdk/images/logo_ui5.png"
 					homeIconPressed="onHomePress"
 				>
 				</f:ShellBar>
