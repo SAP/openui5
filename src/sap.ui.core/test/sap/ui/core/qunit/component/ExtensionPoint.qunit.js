@@ -310,7 +310,7 @@ sap.ui.define([
 		after: function() {
 			// unload provider, so that subsequent async tests can reload the module again
 			// needed to test the loading of the provider class
-			sap.ui.loader._.unloadResources("testdata/customizing/customer/ext/ExtensionPointProvider");
+			sap.ui.loader._.unloadResources("testdata/customizing/customer/ext/ExtensionPointProvider.js", false, true);
 		}
 	});
 
