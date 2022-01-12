@@ -164,7 +164,11 @@ sap.ui.define([
 		Then.iShouldSeeColumnWithName("Name");
 		Then.iShouldSeeColumnWithName("Product ID");
 		Then.iShouldSeeColumnWithName("Category");
+
+		Then.iTeardownMyAppFrame();
 	});
+
+	/* Deactivated due to instability based on missing RTA page object functions.
 	opaTest("When I start RTA, the Runtime Adaptation mode should open", function(Given, When, Then) {
 		When.onTheAppUnderTest.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("applicationUnderTest---IDView--MyApp");
 		Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("applicationUnderTest---IDView--MyApp");
@@ -201,7 +205,8 @@ sap.ui.define([
 		this.mItems["Category Link2 (Superior)"].selected = true;
 		this.mItems["Category Link4"].selected = false;
 
-		Then.theRtaModeShouldBeClosed().and.theApplicationIsLoaded("applicationUnderTest---IDView--MyApp");
+		Then.theApplicationIsLoaded("applicationUnderTest---IDView--MyApp");
+		When.onPageWithRTA.iExitRtaMode();
 
 		Then.iTeardownMyAppFrame();
 	});
@@ -237,4 +242,5 @@ sap.ui.define([
 
 		Then.iTeardownMyAppFrame();
 	});
+	*/
 });

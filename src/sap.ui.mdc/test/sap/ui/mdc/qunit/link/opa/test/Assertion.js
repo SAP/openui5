@@ -246,8 +246,7 @@ sap.ui.define([
 				},
 				success: function() {
 					Opa5.assert.ok(!aDomOverlay.length, "RTA mode is closed");
-				},
-				timeout: 5
+				}
 			});
 		},
 		iShouldSeeTheRtaOverlayForTheViewId: function(sId) {
@@ -271,19 +270,13 @@ sap.ui.define([
 			});
 		},
 		theApplicationIsLoaded: function(sId) {
-			var aDomApp;
 			return this.waitFor({
-				check: function() {
-					var frameJQuery = Opa5.getWindow().jQuery;
-					var fnApp = frameJQuery.sap.getObject('sap.m.App');
-					aDomApp = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnApp);
-					return !!aDomApp.length;
-				},
-				success: function() {
-					Opa5.assert.equal(aDomApp.length, 1, "One app is loaded");
-					Opa5.assert.equal(aDomApp[0].getId(), sId, "App '" + sId + "' is loaded");
-				},
-				timeout: 5
+				id: sId,
+				visible: false,
+				success: function(oDomApp) {
+					Opa5.assert.ok(oDomApp, "One app is loaded");
+					Opa5.assert.equal(oDomApp.getId(), sId, "App '" + sId + "' is loaded");
+				}
 			});
 		},
 		theApplicationURLContains: function(sText) {
