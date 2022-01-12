@@ -278,43 +278,43 @@
 						</l:Grid>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
-
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA">
-						<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">
-							<core:HTML sanitizeContent="true" content='
-								&lt;div class="videoWrapper"&gt;
-									&lt;iframe src="https://www.youtube.com/embed/6_CQYtmRJNg" title="YouTube video player" frameborder="0"
-												 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true" /&gt;
-								&lt;/div&gt;'>
-								<core:layoutData>
-									<FlexItemData maxWidth="35rem" growFactor="1" />
-								</core:layoutData>
-							</core:HTML>
-						</HBox>
-					</l:BlockLayoutCell>
-					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									text="{i18n>WELCOME_VIDEO_BLOCK_TITLE}"
-									class="sapUiSmallMarginBottom"
-									href="https://www.youtube.com/watch?v=6_CQYtmRJNg"
-									target="_blank"
-									titleStyle="H2"/>
-							<Text
-									text="{i18n>WELCOME_VIDEO_BLOCK_TEXT_1}"
-									class="sapUiSmallMarginBottom"/>
-							<FormattedText
-									htmlText="{i18n>WELCOME_VIDEO_BLOCK_TEXT_2}"
-									class="sapUiSmallMarginBottom"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
+<!-- This block layout row will be commented until BGSOFUIPIRIN-5473 is completely finished-->
+<!--				<l:BlockLayoutRow>-->
+<!--					<l:BlockLayoutCell-->
+<!--							backgroundColorSet="ColorSet11"-->
+<!--							backgroundColorShade="ShadeA">-->
+<!--						<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">-->
+<!--							<core:HTML sanitizeContent="true" content='-->
+<!--								&lt;div class="videoWrapper"&gt;-->
+<!--									&lt;iframe src="https://www.youtube.com/embed/6_CQYtmRJNg" title="YouTube video player" frameborder="0"-->
+<!--												 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true" /&gt;-->
+<!--								&lt;/div&gt;'>-->
+<!--								<core:layoutData>-->
+<!--									<FlexItemData maxWidth="35rem" growFactor="1" />-->
+<!--								</core:layoutData>-->
+<!--							</core:HTML>-->
+<!--						</HBox>-->
+<!--					</l:BlockLayoutCell>-->
+<!--					<l:BlockLayoutCell-->
+<!--							backgroundColorSet="ColorSet11"-->
+<!--							backgroundColorShade="ShadeD">-->
+<!--						<l:VerticalLayout-->
+<!--								width="100%">-->
+<!--							<custom:TitleLink-->
+<!--									text="{i18n>WELCOME_VIDEO_BLOCK_TITLE}"-->
+<!--									class="sapUiSmallMarginBottom"-->
+<!--									href="https://www.youtube.com/watch?v=6_CQYtmRJNg"-->
+<!--									target="_blank"-->
+<!--									titleStyle="H2"/>-->
+<!--							<Text-->
+<!--									text="{i18n>WELCOME_VIDEO_BLOCK_TEXT_1}"-->
+<!--									class="sapUiSmallMarginBottom"/>-->
+<!--							<FormattedText-->
+<!--									htmlText="{i18n>WELCOME_VIDEO_BLOCK_TEXT_2}"-->
+<!--									class="sapUiSmallMarginBottom"/>-->
+<!--						</l:VerticalLayout>-->
+<!--					</l:BlockLayoutCell>-->
+<!--				</l:BlockLayoutRow>-->
 			</l:BlockLayout>
 		</Panel>
 
