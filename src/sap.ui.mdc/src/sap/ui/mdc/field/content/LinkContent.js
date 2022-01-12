@@ -41,7 +41,7 @@ sap.ui.define([
 				textDirection: "{$field>/textDirection}",
 				tooltip: "{$field>/tooltip}",
 				press: oContentFactory.getHandleContentPress(),
-				wrapping: true
+				wrapping: "{$field>/multipleLines}"
 			});
 			var oFieldInfo = oContentFactory.getField().getFieldInfo();
 			if (oFieldInfo) {
