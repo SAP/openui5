@@ -1381,6 +1381,22 @@ sap.ui.define([
 		oChangeToWarningBtn.destroy();
 	});
 
+	QUnit.test("Cloning the items should clone the bindings as well", function(assert){
+		var oItem = new MessageItem({title: "MessageItem", type: "Error"});
+		var oItemSpy = this.spy(oItem, "clone");
+		var oMessagePopover = new MessagePopover();
+
+		oMessagePopover.insertItem(oItem);
+
+		oMessagePopover.openBy(this.oButton2);
+		Core.applyChanges();
+
+		assert.ok(oItemSpy.firstCall.args[2].cloneBindings, "The bindings were cloned");
+		oItemSpy.restore();
+		oItem.destroy();
+		oMessagePopover.destroy();
+	});
+
 	QUnit.module("Refactoring", {
 		beforeEach: function () {
 			var oMessageTemplate = new MessagePopoverItem({
