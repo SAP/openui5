@@ -425,7 +425,6 @@ sap.ui.define([
 			});
 		}
 
-		var taskChecksDone = assert.async();
 		var deferredBundle = new Deferred();
 		var deferredLib1 = new Deferred();
 		var deferredLib2 = new Deferred();
@@ -462,21 +461,16 @@ sap.ui.define([
 
 				deferredBundle.resolve();
 
-				setTimeout(function() {
-					// check after next execution of micro tasks that libs have been required
-					assert.ok( this.requireSpy.calledWith( contains('scenario2/lib1/library') ), "lib1 has been required");
-					assert.ok( this.requireSpy.calledWith( contains('scenario2/lib2/library') ), "lib2 has been required");
-					assert.ok( this.requireSpy.calledWith( contains('scenario2/comp/Component') ), "component has been required");
-
-					taskChecksDone();
-
-				}.bind(this), 10);
-
 			}.bind(this), 10);
 
 		}.bind(this), 10);
 
-		return promise;
+		return promise.then(function () {
+			// check after next execution of micro tasks that libs have been required
+			assert.ok( this.requireSpy.calledWith( contains('scenario2/lib1/library') ), "lib1 has been required");
+			assert.ok( this.requireSpy.calledWith( contains('scenario2/lib2/library') ), "lib2 has been required");
+			assert.ok( this.requireSpy.calledWith( contains('scenario2/comp/Component') ), "component has been required");
+		}.bind(this));
 
 	});
 
