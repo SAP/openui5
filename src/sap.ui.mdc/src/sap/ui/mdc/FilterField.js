@@ -220,9 +220,10 @@ sap.ui.define([
 	/**
 	 * Adds an operator to the list of known operators.
 	 *
-	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
-	 *
  	 * <b>Note</b>: If no operator is set, the used type of the <code>FilterField</code> defines the set of default operators.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
 	 * @since: 1.88.0
 	 * @private
@@ -241,14 +242,16 @@ sap.ui.define([
 			aOperators.push(sOpName);
 			this.setOperators(aOperators);
 		}
+		return this;
 	};
 
 	/**
 	 * Adds an array of operators to the list of known operators.
 	 *
-	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
-	 *
 	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 *
 	 * @since: 1.88.0
 	 * @private
@@ -293,9 +296,9 @@ sap.ui.define([
 	/**
 	 * Removes all given operators from the list of known operators.
 	 *
-	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
-	 *
 	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 *
+	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 	 *
 	 * @since: 1.88.0
 	 * @private
