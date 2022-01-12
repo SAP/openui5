@@ -225,8 +225,11 @@ sap.ui.define([
 	 */
 	GridBoxLayout.prototype._applySizeClass = function (oControl) {
 
-		var oRange = Device.media.getCurrentRange("StdExt", oControl.$().width()),
-			sSizeClass = mSizeClasses[oRange.name];
+		var oRange = Device.media.getCurrentRange("StdExt", oControl.$().width());
+		if (!oRange) {
+			return;
+		}
+		var sSizeClass = mSizeClasses[oRange.name];
 
 		oControl.getGridDomRefs().forEach(function (oDomRef) {
 			//Check if the class is already applied
