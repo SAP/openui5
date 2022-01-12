@@ -1417,12 +1417,9 @@ sap.ui.define([
 	 *
 	 * There's no difference between <code>bindElement</code> and {@link sap.ui.base.ManagedObject#bindObject}.
 	 *
-	 * @param {string|object} vPath the binding path or an object with more detailed binding options
-	 * @param {string} vPath.path the binding path
-	 * @param {object} [vPath.parameters] map of additional parameters for this binding
-	 * @param {string} [vPath.model] name of the model
-	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case it corresponds to vPath.parameters).
+	 * @param {string|sap.ui.base.ManagedObject.ObjectBindingInfo} vPath the binding path or an object with more detailed binding options
+	 * @param {object} [mParameters] map of additional parameters for this binding.
+	 * Only taken into account when <code>vPath</code> is a string. In that case it corresponds to <code>mParameters</code> of {@link sap.ui.base.ManagedObject.ObjectBindingInfo}.
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @returns {this} reference to the instance itself

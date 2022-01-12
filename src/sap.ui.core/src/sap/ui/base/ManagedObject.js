@@ -2981,6 +2981,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Configuration for the binding of a managed object
+	 *
+	 * <code>path</code> is the only mandatory property, all others are optional.
+	 *
+	 * @typedef {object} sap.ui.base.ManagedObject.ObjectBindingInfo
+	 *
+	 * @property {string} path
+	 *   Path in the model to bind to, either an absolute path or relative to the binding context for the
+	 *   corresponding model. If the path contains a '&gt;' sign, the string preceding it will override
+	 *   the <code>model</code> property, and the remainder after the '&gt;' sign will be used as binding path
+	 * @property {string} [model]
+	 *   Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
+	 * @property {boolean} [suspended]
+	 *   Whether the binding is initially suspended
+	 * @property {object} [parameters]
+	 *   Map of additional parameters for this binding; the names and value ranges of the supported
+	 *   parameters depend on the model implementation and should be documented with the
+	 *   <code>bindContext</code> method of the corresponding model class or with the model-specific
+	 *   subclass of <code>sap.ui.model.ContextBinding</code>
+	 * @property {Object<string,function>} [events]
+	 *   Map of event handler functions keyed by the name of the binding events that they are attached to
+	 *
+	 * @public
+	 */
+
+	/**
 	 * Bind the object to the referenced entity in the model.
 	 *
 	 * The entity is used as the binding context to resolve bound properties or aggregations of the object itself
@@ -3000,23 +3026,8 @@ sap.ui.define([
 	 *
 	 * Also see {@link topic:91f05e8b6f4d1014b6dd926db0e91070 Context Binding} in the documentation.
 	 *
-	 * @param {object} oBindingInfo
-	 *            An object describing the binding
-	 * @param {string} oBindingInfo.path
-	 *            Path in the model to bind to, either an absolute path or relative to the binding context for the
-	 *            corresponding model; when the path contains a '&gt;' sign, the string preceding it will override
-	 *            the <code>model</code> property and the remainder after the '&gt;' will be used as binding path
-	 * @param {string} [oBindingInfo.model]
-	 *            Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
-	 * @param {object} [oBindingInfo.parameters=null]
-	 *            Map of additional parameters for this binding; the names and value ranges of the supported parameters
-	 *            depend on the model implementation, they should be documented with the <code>bindContext</code>
-	 *            method of the corresponding model class or with the model specific subclass of
-	 *            <code>sap.ui.model.ContextBinding</code>
-	 * @param {boolean} [oBindingInfo.suspended=false]
-	 *            Whether the binding should be suspended initially
-	 * @param {object} [oBindingInfo.events=null]
-	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
+	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo} oBindingInfo
+	 *            Binding info
 	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
@@ -3067,7 +3078,7 @@ sap.ui.define([
 	/**
 	 * Create object binding.
 	 *
-	 * @param {object} oBindingInfo The bindingInfo object
+	 * @param {sap.ui.base.ManagedObject.ObjectBindingInfo} oBindingInfo The bindingInfo object
 	 * @private
 	 */
 	ManagedObject.prototype._bindObject = function(oBindingInfo) {
