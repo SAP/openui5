@@ -1,7 +1,18 @@
 {
   "1.98.0": {
-    "date": "December 2021",
+    "date": "January 2022",
     "notes": [
+      {
+        "id": "b36eecde1e14f6a386f456b7dc5c5065ec727c17",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: left border is correct color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180429506"
+          }
+        ]
+      },
       {
         "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
         "type": "FIX",

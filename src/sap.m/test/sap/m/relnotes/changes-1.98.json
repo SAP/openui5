@@ -3,6 +3,17 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "0ebc878b9f6faa4a6aa9e1c676fadd927ba7f2f5",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Item bindings are now cloned correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180409546"
+          }
+        ]
+      },
+      {
         "id": "0ae3992a09d3f2b03c1df5ae5730fe5c8d765d97",
         "type": "FEATURE",
         "text": " Upload Set - uploadCompleted event passes the backend response when upload is failed"

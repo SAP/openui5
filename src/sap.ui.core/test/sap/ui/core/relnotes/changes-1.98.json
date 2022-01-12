@@ -3,6 +3,11 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "4073e969edf022ed0f571caa54093f78d368400d",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.v2.ODataListBinding#create: Support creation of a new entry in the binding"
+      },
+      {
         "id": "8b734933544e837c66f8042d89447cd696c0997b",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataModel#callFunction: JSDoc for type of mParameters.urlParameters fixed",
