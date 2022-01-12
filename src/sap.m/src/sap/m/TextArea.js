@@ -611,7 +611,7 @@ function(
 	 */
 	TextArea.prototype._behaviour = (function(oDevice) {
 		return {
-			INSIDE_SCROLLABLE_WITHOUT_FOCUS : oDevice.os.ios || oDevice.os.blackberry || oDevice.browser.chrome,
+			INSIDE_SCROLLABLE_WITHOUT_FOCUS : oDevice.os.ios || oDevice.browser.chrome,
 			PAGE_NON_SCROLLABLE_AFTER_FOCUS : oDevice.os.android
 		};
 	}(Device));
