@@ -856,12 +856,14 @@ sap.ui.define([
 					bValid = oParseHelper.checkValid(oPart.type, !sPart, oFormat);
 				} else {
 					sPart = oFormat.oLocaleData.getCalendarWeek(oPart.digits === 3 ? "narrow" : "wide");
-					sPart = sPart.replace("{0}", "[0-9]+");
+					sPart = sPart.replace("{0}", "([0-9]+)");
 					var rWeekNumber = new RegExp(sPart),
 						oResult = rWeekNumber.exec(sValue);
 					if (oResult) {
+						// e.g. for input "CW 01" create pattern "CW ([0-9]+)"
+						// and extract number from "01" part of the input
 						iLength = oResult[0].length;
-						iWeek = parseInt(oResult[0]) - 1;
+						iWeek = parseInt(oResult[oResult.length - 1]) - 1;
 					} else {
 						bValid = oParseHelper.checkValid(oPart.type, true, oFormat);
 					}
