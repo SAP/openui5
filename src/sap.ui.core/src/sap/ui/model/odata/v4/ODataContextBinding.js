@@ -1185,6 +1185,7 @@ sap.ui.define([
 	 *       (@see sap.ui.model.odata.v4.ODataListBinding#setAggregation)
 	 *   </ul>
 	 *
+	 * @deprecated since 1.96.5
 	 * @experimental
 	 * @public
 	 * @since 1.95.0
