@@ -378,7 +378,6 @@ sap.ui.define([
 		 */
 		loadFeatures: function (mPropertyBag) {
 			if (InitialConnector.settings) {
-				InitialConnector.settings.isVersioningEnabled = false;
 				return Promise.resolve(InitialConnector.settings);
 			}
 			var mParameters = {};
@@ -387,8 +386,6 @@ sap.ui.define([
 
 			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
-				// ensure that even an enabled back end is not consumed in this version
-				oResult.response.isVersioningEnabled = false;
 				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
 				return oResult.response;
 			});

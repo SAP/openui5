@@ -668,8 +668,7 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when loadFeatures is triggered when settings already stored in apply connector", function (assert) {
 			var oExpectedResponse = {
-				isKeyUser: false,
-				isVersioningEnabled: false
+				isKeyUser: false
 			};
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			InitialLrepConnector.settings = {isKeyUser: false};
