@@ -232,7 +232,7 @@ sap.ui.define([
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding) {
 		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
-			this.rebindTable(oTable, oBindingInfo);
+			this.rebind(oTable, oBindingInfo);
 			return;
 		}
 
@@ -250,7 +250,7 @@ sap.ui.define([
 			oBinding.filter(oBindingInfo.filters, "Application");
 			oBinding.sort(oBindingInfo.sorter);
 		} catch (e) {
-			this.rebindTable(oTable, oBindingInfo);
+			this.rebind(oTable, oBindingInfo);
 			if (oRootBinding == oBinding) {
 				// If we resume before the rebind, you get an extra request therefore we must
 				// resume after rebind, but only if the list binding was not the root binding.
@@ -269,7 +269,7 @@ sap.ui.define([
 	 */
 	Delegate.rebind = function (oTable, oBindingInfo) {
 		setAggregation(oTable, oBindingInfo);
-		TableDelegate.rebindTable(oTable, oBindingInfo);
+		TableDelegate.rebind(oTable, oBindingInfo);
 	};
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {

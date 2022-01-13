@@ -2469,7 +2469,7 @@ sap.ui.define([
 
 		var oBindingInfo = {};
 
-		this.getControlDelegate().updateBindingInfo(this, oBindingInfo, oBindingInfo);
+		this.getControlDelegate().updateBindingInfo(this, oBindingInfo);
 
 		if (oBindingInfo.path) {
 			this._oTable.setShowOverlay(false);
@@ -2689,11 +2689,6 @@ sap.ui.define([
 				fOriginalHandler.apply(this, arguments);
 			};
 		}
-	};
-
-	// TODO: Delete!
-	Table.prototype.rebindTable = function () {
-		this._rebind();
 	};
 
 	/**

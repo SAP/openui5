@@ -48,7 +48,7 @@ sap.ui.define([
 	 * Updates the row binding of the table.
 	 *
 	 * The default implementation rebinds the table, but model-specific subclasses must call dedicated binding methods to update the binding instead
-	 * of using {@link #rebindTable}.
+	 * of using {@link #rebind}.
 	 *
 	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
@@ -56,7 +56,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.updateBinding = function(oMDCTable, oBindingInfo, oBinding) {
-		this.rebindTable(oMDCTable, oBindingInfo);
+		this.rebind(oMDCTable, oBindingInfo);
 	};
 
 	TableDelegate.validateState = function(oControl, oState, sKey) {
@@ -69,18 +69,6 @@ sap.ui.define([
 		}
 
 		return  AggregationBaseDelegate.validateState.apply(this, arguments);
-	};
-
-	/**
-	 * Rebinds the table.
-	 *
-	 * @param {sap.ui.mdc.Table} oMDCTable Instance of the table
-	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo The binding info object to be used to bind the table to the model
-	 * @protected
-	 * @deprecated As of version 1.98, replaced by {@link sap.ui.mdc.TableDelegate.rebind}
-	 */
-	TableDelegate.rebindTable = function(oMDCTable, oBindingInfo) {
-		this.rebind.apply(this, arguments);
 	};
 
 	/**

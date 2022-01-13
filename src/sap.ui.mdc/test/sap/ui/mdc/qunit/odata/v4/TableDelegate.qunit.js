@@ -526,10 +526,10 @@ sap.ui.define([
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 				var oDelegate = oTable.getControlDelegate();
-				var fnRebindTable = oDelegate.rebindTable;
+				var fnRebind = oDelegate.rebind;
 
-				oDelegate.rebindTable = function () {
-					fnRebindTable.apply(this, arguments);
+				oDelegate.rebind = function () {
+					fnRebind.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: ["Name", "Country"],
 						groupLevels: ["Name"],
@@ -543,7 +543,7 @@ sap.ui.define([
 						search: undefined
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
-					oDelegate.rebindTable = fnRebindTable;
+					oDelegate.rebind = fnRebind;
 					done();
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
@@ -569,10 +569,10 @@ sap.ui.define([
 				var oDelegate = oTable.getControlDelegate();
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				var fnRebindTable = oDelegate.rebindTable;
+				var fnRebind = oDelegate.rebind;
 
-				oDelegate.rebindTable = function () {
-					fnRebindTable.apply(this, arguments);
+				oDelegate.rebind = function () {
+					fnRebind.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: ["Name", "Country"],
 						groupLevels: [],
@@ -586,7 +586,7 @@ sap.ui.define([
 						search: undefined
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
-					oDelegate.rebindTable = fnRebindTable;
+					oDelegate.rebind = fnRebind;
 					done();
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
@@ -610,11 +610,11 @@ sap.ui.define([
 				var oDelegate = oTable.getControlDelegate();
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-				var fnRebindTable = oDelegate.rebindTable;
+				var fnRebind = oDelegate.rebind;
 				var oInnerSecondColumn = oTable._oTable.getColumns()[1];
 
-				oDelegate.rebindTable = function () {
-					fnRebindTable.apply(this, arguments);
+				oDelegate.rebind = function () {
+					fnRebind.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: ["Name", "Country"],
 						groupLevels: ["Name"],
@@ -630,7 +630,7 @@ sap.ui.define([
 
 					fColumnPressSpy.restore();
 					fSetAggregationSpy.restore();
-					oDelegate.rebindTable = fnRebindTable;
+					oDelegate.rebind = fnRebind;
 
 					new Promise(function(resolve) {
 						oTable._oPopover.getAggregation("_popover").attachAfterClose(function() {
@@ -646,10 +646,10 @@ sap.ui.define([
 						var oDelegate = oTable.getControlDelegate();
 						var oPlugin = oTable._oTable.getDependents()[0];
 						var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-						var fnRebindTable = oDelegate.rebindTable;
+						var fnRebind = oDelegate.rebind;
 
-						oDelegate.rebindTable = function () {
-							fnRebindTable.apply(this, arguments);
+						oDelegate.rebind = function () {
+							fnRebind.apply(this, arguments);
 							assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 								visible: ["Name", "Country"],
 								groupLevels: ["Name"],
@@ -665,7 +665,7 @@ sap.ui.define([
 
 							fColumnPressSpy.restore();
 							fSetAggregationSpy.restore();
-							oDelegate.rebindTable = fnRebindTable;
+							oDelegate.rebind = fnRebind;
 							done();
 						};
 						oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
@@ -681,7 +681,7 @@ sap.ui.define([
 		var oDelegate;
 		var oPlugin;
 		var fSetAggregationSpy;
-		var fnRebindTable;
+		var fnRebind;
 
 		function openColumnMenu(oColumn) {
 			oTable._oTable.fireEvent("columnSelect", {
@@ -696,13 +696,13 @@ sap.ui.define([
 			oDelegate = oTable.getControlDelegate();
 			oPlugin = oTable._oTable.getDependents()[0];
 			fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			fnRebindTable = oDelegate.rebindTable;
+			fnRebind = oDelegate.rebind;
 
 			return openColumnMenu(oTable._oTable.getColumns()[0]);
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oDelegate.rebindTable = function() {
-					fnRebindTable.apply(this, arguments);
+				oDelegate.rebind = function() {
+					fnRebind.apply(this, arguments);
 
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: ["Name", "Country"],
@@ -718,7 +718,7 @@ sap.ui.define([
 					}), "Plugin#setAggregationInfo call");
 
 					fSetAggregationSpy.reset();
-					oDelegate.rebindTable = fnRebindTable;
+					oDelegate.rebind = fnRebind;
 					resolve();
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
@@ -727,8 +727,8 @@ sap.ui.define([
 			return openColumnMenu(oTable._oTable.getColumns()[0]);
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oDelegate.rebindTable = function() {
-					fnRebindTable.apply(this, arguments);
+				oDelegate.rebind = function() {
+					fnRebind.apply(this, arguments);
 
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: ["Name", "Country"],
@@ -744,7 +744,7 @@ sap.ui.define([
 					}), "Plugin#setAggregationInfo call");
 
 					fSetAggregationSpy.reset();
-					oDelegate.rebindTable = fnRebindTable;
+					oDelegate.rebind = fnRebind;
 					resolve();
 				};
 				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
@@ -1026,10 +1026,10 @@ sap.ui.define([
 				var oPlugin = oTable._oTable.getDependents()[0];
 				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 				var oDelegate = oTable.getControlDelegate();
-				var fnRebindTable = oDelegate.rebindTable;
+				var fnRebind = oDelegate.rebind;
 
-				oDelegate.rebindTable = function () {
-					fnRebindTable.apply(this, arguments);
+				oDelegate.rebind = function () {
+					fnRebind.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 						visible: ["Name", "Country","Value"],
 						groupLevels: ["Name"],
@@ -1042,7 +1042,7 @@ sap.ui.define([
 						search: undefined
 					}), "Plugin#setAggregationInfo call");
 					fSetAggregationSpy.restore();
-					oDelegate.rebindTable = fnRebindTable;
+					oDelegate.rebind = fnRebind;
 					done();
 				};
 				var fTableGroupSpy = sinon.spy(oTable, "_onCustomGroup");
@@ -1349,7 +1349,7 @@ sap.ui.define([
 				this.oInnerTable = this.oTable._oTable;
 				this.oRowBinding = this.oTable.getRowBinding();
 				this.oSetAggregationSpy = sinon.spy(this.oInnerTable.getDependents()[0], "setAggregationInfo");
-				this.oRebindTableSpy = sinon.spy(this.oTable.getControlDelegate(), "rebindTable");
+				this.oRebindSpy = sinon.spy(this.oTable.getControlDelegate(), "rebind");
 				this.oChangeParametersSpy = sinon.spy(this.oRowBinding, "changeParameters");
 				this.oFilterSpy = sinon.spy(this.oRowBinding, "filter");
 				this.oSortSpy = sinon.spy(this.oRowBinding, "sort");
@@ -1358,7 +1358,7 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 			this.oSetAggregationSpy.restore();
-			this.oRebindTableSpy.restore();
+			this.oRebindSpy.restore();
 			this.oChangeParametersSpy.restore();
 			this.oFilterSpy.restore();
 			this.oSortSpy.restore();
@@ -1377,7 +1377,7 @@ sap.ui.define([
 
 		this.oTable.setSortConditions()._rebind();
 		assert.equal(this.oSortSpy.callCount, 3);
-		assert.equal(this.oRebindTableSpy.callCount, 0);
+		assert.equal(this.oRebindSpy.callCount, 0);
 	});
 
 	QUnit.test("Filter", function(assert) {
@@ -1396,7 +1396,7 @@ sap.ui.define([
 		oUpdateBindingInfoStub.restore();
 		this.oTable._rebind();
 		assert.ok(this.oFilterSpy.secondCall.calledWithExactly([], "Application"));
-		assert.equal(this.oRebindTableSpy.callCount, 0);
+		assert.equal(this.oRebindSpy.callCount, 0);
 	});
 
 	QUnit.test("Group", function(assert) {
@@ -1405,7 +1405,7 @@ sap.ui.define([
 
 		this.oTable.setGroupConditions()._rebind();
 		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { groupLevels: [] }));
-		assert.equal(this.oRebindTableSpy.callCount, 0);
+		assert.equal(this.oRebindSpy.callCount, 0);
 	});
 
 	QUnit.test("Aggregates", function(assert) {
@@ -1417,7 +1417,7 @@ sap.ui.define([
 
 		this.oTable.setAggregateConditions()._rebind();
 		assert.ok(this.oSetAggregationSpy.secondCall.calledWithMatch( { grandTotal: [], subtotals: [] }));
-		assert.equal(this.oRebindTableSpy.callCount, 0);
+		assert.equal(this.oRebindSpy.callCount, 0);
 	});
 
 	QUnit.test("Parameters", function(assert) {
@@ -1446,10 +1446,10 @@ sap.ui.define([
 		assert.equal(this.oChangeParametersSpy.callCount, 1);
 		this.oTable._rebind();
 		assert.equal(this.oChangeParametersSpy.callCount, 2);
-		assert.equal(this.oRebindTableSpy.callCount, 0);
+		assert.equal(this.oRebindSpy.callCount, 0);
 
 		this.oTable._rebind();
-		assert.equal(this.oRebindTableSpy.callCount, 1);
+		assert.equal(this.oRebindSpy.callCount, 1);
 
 		oUpdateBindingInfoStub.restore();
 	});
@@ -1462,7 +1462,7 @@ sap.ui.define([
 		assert.equal(this.oFilterSpy.callCount, 0);
 		assert.equal(this.oSortSpy.callCount, 0);
 		assert.equal(this.oSetAggregationSpy.callCount, 1);
-		assert.equal(this.oRebindTableSpy.callCount, 1);
+		assert.equal(this.oRebindSpy.callCount, 1);
 	});
 
 	QUnit.test("Change path", function(assert) {
@@ -1474,10 +1474,10 @@ sap.ui.define([
 		});
 
 		this.oTable._rebind();
-		this.oRebindTableSpy.resetHistory();
+		this.oRebindSpy.resetHistory();
 		this.oTable._rebind();
 
-		assert.equal(this.oRebindTableSpy.callCount, 1, "Changing the path forces a rebind");
+		assert.equal(this.oRebindSpy.callCount, 1, "Changing the path forces a rebind");
 		oUpdateBindingInfoStub.restore();
 	});
 });
