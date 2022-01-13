@@ -959,7 +959,7 @@ sap.ui.define([
 	/**
 	 * Refreshes the binding.
 	 *
-	 * @param {boolean} bForceUpdate Whether an update should be forced
+	 * @param {boolean} [bForceUpdate] Whether an update should be forced
 	 * @param {object} [mChangedEntities] A map of changed entities
 	 * @param {object} [mEntityTypes] A map of entity types
 	 *
@@ -1117,7 +1117,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceUpdate Force control update
+	 * @param {boolean} [bForceUpdate] Force control update
 	 * @param {object} mChangedEntities Map of changed entities
 	 * @private
 	 */

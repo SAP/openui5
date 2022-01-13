@@ -985,7 +985,7 @@ sap.ui.define([
 
 	/**
 	 * Private method iterating the registered bindings of this model instance and initiating their check for update
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate]
 	 * @param {boolean} bAsync
 	 * @param {function} fnFilter an optional test function to filter the binding
 	 * @protected

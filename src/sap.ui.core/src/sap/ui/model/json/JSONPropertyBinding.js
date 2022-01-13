@@ -52,7 +52,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed, fire a change
 	 * event with change reason <code>Change</code>.
 	 *
-	 * @param {boolean} bForceupdate
+	 * @param {boolean} [bForceupdate]
 	 *   Whether the change event will be fired regardless of the bindings state
 	 *
 	 */

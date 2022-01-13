@@ -44,7 +44,7 @@ sap.ui.define(['./Binding'],
 	 * Check whether this Binding would provide new values and in case it changed, inform interested
 	 * parties about this.
 	 *
-	 * @param {boolean} bForceupdate Ignored in this method
+	 * @param {boolean} [bForceupdate] Ignored in this method
 	 */
 	ContextBinding.prototype.checkUpdate = function(bForceupdate) {
 		// nothing to do here, data changes can not change the context

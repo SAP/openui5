@@ -46,7 +46,7 @@ sap.ui.define([
 	 * Checks whether this Binding would provide new values and in case it changed, fires a change
 	 * event with change reason <code>sap.ui.model.ChangeReason.Change</code>.
 	 *
-	 * @param {boolean} bForceupdate
+	 * @param {boolean} [bForceupdate]
 	 *   Whether the change event will be fired regardless of the binding's state
 	 */
 	XMLPropertyBinding.prototype.checkUpdate = function(bForceupdate){

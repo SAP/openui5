@@ -1095,7 +1095,7 @@ sap.ui.define([
 	 * Private method iterating the registered bindings of this model instance and initiating their
 	 * check for an update.
 	 *
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate]
 	 *   Whether change events is fired regardless of the bindings state
 	 * @param {boolean} bAsync
 	 *   Whether the check is done asynchronously

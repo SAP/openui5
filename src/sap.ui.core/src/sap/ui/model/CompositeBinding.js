@@ -823,7 +823,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceUpdate Whether an update should be forced
+	 * @param {boolean} [bForceUpdate] Whether an update should be forced
 	 *
 	 */
 	CompositeBinding.prototype.checkUpdate = function(bForceUpdate){

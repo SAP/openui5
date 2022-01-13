@@ -132,7 +132,7 @@ sap.ui.define([
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
 	 *
-	 * @param {boolean} bForceupdate
+	 * @param {boolean} [bForceupdate]
 	 *   Whether interested parties should be informed regardless of the bindings state
 	 *
 	 */
