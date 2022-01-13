@@ -114,8 +114,8 @@ sap.ui.define([
 
 		mParameters = _Helper.clone(mParameters) || {};
 		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
-			"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
-			"$$sharedRequest", "$$updateGroupId"]);
+			"$$getKeepAliveContext", "$$groupId", "$$operationMode", "$$ownRequest",
+			"$$patchWithoutSideEffects", "$$sharedRequest", "$$updateGroupId"]);
 		// number of active (client-side) created contexts in aContexts
 		this.iActiveContexts = 0;
 		this.aApplicationFilters = _Helper.toArray(vFilters);
@@ -2287,6 +2287,35 @@ sap.ui.define([
 		return iViewIndex < this.getLength() - this.iCreatedContexts
 			? iViewIndex + this.iCreatedContexts
 			: this.getLength() - iViewIndex - 1;
+	};
+
+	/**
+	 * Calls {@link sap.ui.model.odata.v4.Context#setKeepAlive} at the context for the given path
+	 * and returns it.
+	 *
+	 * @param {string} sPath
+	 *   The path of the context to be kept alive
+	 * @param {boolean} [bRequestMessages]
+	 *   Whether to request messages for the context's entity
+	 * @returns {sap.ui.model.odata.v4.Context|undefined}
+	 *   The kept-alive context, or <code>undefined</code> if it does not exist
+	 * @throws {Error}
+	 *   If {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.Model#getKeepAliveContext
+	 * @since 1.99.0
+	 */
+	ODataListBinding.prototype.getKeepAliveContext = function (sPath, bRequestMessages) {
+		var oContext = this.mPreviousContextsByPath[sPath]
+				|| this.aContexts.find(function (oCandidate) {
+					return oCandidate && oCandidate.getPath() === sPath;
+				});
+
+		if (oContext) {
+			oContext.setKeepAlive(true, oContext.fnOnBeforeDestroy, bRequestMessages);
+		}
+		return oContext;
 	};
 
 	/**

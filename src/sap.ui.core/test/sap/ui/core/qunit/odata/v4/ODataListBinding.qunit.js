@@ -31,9 +31,9 @@ sap.ui.define([
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
-			"$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest",
-			"$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$getKeepAliveContext",
+			"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
+			"$$sharedRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		oParentBinding = {
 			getRootBinding : function () {
@@ -8206,6 +8206,50 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(ODataListBinding.prototype.getAllCurrentContexts.call(oBinding),
 			["~oContext1", "~oContext2", "~oContext3", "~oKeptContext1", "~oKeptContext2"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: existing context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oContext;
+
+		oBinding.createContexts(3, createData(3, 3, true, 6, true)); // simulate a read
+		oContext = oBinding.aContexts[4];
+		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
+		this.mock(oContext).expects("setKeepAlive")
+			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~"),
+			oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: no context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~"),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: kept-alive context not in the list", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			sPath = "/EMPLOYEES('4')",
+			oContext = Context.create(this.oModel, oBinding, sPath);
+
+		oBinding.mPreviousContextsByPath[sPath] = oContext;
+		oContext.fnOnBeforeDestroy = "~fnOnBeforeDestroy~";
+		this.mock(oContext).expects("setKeepAlive")
+			.withExactArgs(true, "~fnOnBeforeDestroy~", "~bRequestMessages~");
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getKeepAliveContext("/EMPLOYEES('4')", "~bRequestMessages~"),
+			oContext);
 	});
 });
 

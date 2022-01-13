@@ -35586,17 +35586,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Flexible Column Layout
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
 	// A list report and an object page are set up in different ways such that the object page shows
-	// an active entity visible in the list report. Afterwards the object page switches to the
-	// draft, a property is changed in the object page and side effects including messages are
-	// requested. The result must not be influenced by the different setups.
-	// (1) Read the entities in the list and then set a list's row context at the object page.
-	//     Context#setKeepAlive must request messages (JIRA: CPOUI5ODATAV4-981).
+	// an active entity visible in the list report, including a manually requested late property for
+	// the object-page.
+	// Afterwards the object page switches to the draft, a property is changed in the object page
+	// and side effects including messages are requested. The result must not be influenced by the
+	// different setups.
+	// (1) Read the entities in the list and afterwards get an existing kept-alive context for the
+	//     object page from it.
+	//     Context#setKeepAlive (called indirectly) must request messages (JIRA: CPOUI5ODATAV4-981).
+	//     JIRA: CPOUI5ODATAV4-1405
 	// (...) To be continued.
 	// The properties Name and defaultChannel are in both bindings and have to be kept in sync,
 	// lastUsedChannel is only in the object page and must be requested as late property,
-	// sendsAutographs is only in the list report and must be inherited by the action.
+	// HasDraftEntity is the manually requested late property, sendsAutographs is only in the list
+	// report and must be inherited by the action.
 [{
 	description : "(1) first list, then object page",
 	setup : function (assert, oListBinding) {
@@ -35621,11 +35626,12 @@ sap.ui.define([
 		oListBinding.resume();
 
 		return this.waitForChanges(assert, "initialize list").then(function () {
-			var oRowContext = oListBinding.getCurrentContexts()[0];
+			var oContext;
 
 			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
-					+ "?$select=Messages,lastUsedChannel", {
+					+ "?$select=HasDraftEntity,Messages,lastUsedChannel", {
 					"@odata.etag" : "etag.active1",
+					HasDraftEntity : false,
 					Messages : [{
 						message : "Active message",
 						numericSeverity : 2,
@@ -35647,20 +35653,25 @@ sap.ui.define([
 					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
 				}]);
 
-			oRowContext.setKeepAlive(true, null, true);
-			that.oView.byId("objectPage").setBindingContext(oRowContext);
+			oContext = that.oModel.getKeepAliveContext(
+				"/Artists(ArtistID='A1',IsActiveEntity=true)", true);
+			that.oView.byId("objectPage").setBindingContext(oContext);
 
-			return that.waitForChanges(assert, "initialize object page");
+			return Promise.all([
+				oContext.requestProperty("HasDraftEntity"),
+				that.waitForChanges(assert, "initialize object page")
+			]);
 		});
 	}
 }].forEach(function (oFixture) {
-	QUnit.test("FCL Safeguard: " + oFixture.description, function (assert) {
+	QUnit.test("getKeepAliveContext: " + oFixture.description, function (assert) {
 		var oListBinding,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
 			sView = '\
 <Table id="listReport"\ items="{path : \'/Artists\', \
-		parameters : {$$patchWithoutSideEffects : true}, suspended : true}">\
+		parameters : {$$getKeepAliveContext : true, $$patchWithoutSideEffects : true}, \
+		suspended : true}">\
 	<Text id="listName" text="{Name}"/>\
 	<Text id="listChannel" text="{defaultChannel}"/>\
 	<Text id="sendsAutographs" text="{sendsAutographs}"/>\
@@ -35697,13 +35708,14 @@ sap.ui.define([
 			that.expectRequest({
 					method : "POST",
 					url : "Artists(ArtistID='A1',IsActiveEntity=true)/special.cases.EditAction"
-						+ "?$select=ArtistID,IsActiveEntity,Messages,Name,defaultChannel,"
-						+ "lastUsedChannel,sendsAutographs",
+						+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
+						+ "defaultChannel,lastUsedChannel,sendsAutographs",
 					headers : {"If-Match" : "etag.active1"},
 					payload : {}
 				}, {
 					"@odata.etag" : "etag.draft1",
 					ArtistID : "A1",
+					HasDraftEntity : false,
 					IsActiveEntity : false,
 					Messages : [{
 						message : "Draft message",
@@ -35795,6 +35807,106 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			return that.checkValueState(assert, "channel", "Information", "Updated message");
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages"
+					+ "&$filter=ArtistID eq 'A1' and IsActiveEntity eq false"
+					+ " or ArtistID eq 'A1' and IsActiveEntity eq true&$top=2", {
+					value : [{
+						"@odata.etag" : "etag.draft2",
+						ArtistID : "A1",
+						HasDraftEntity : false,
+						IsActiveEntity : false,
+						Messages : []
+					}, {
+						"@odata.etag" : "etag.active1",
+						ArtistID : "A1",
+						HasDraftEntity : true,
+						IsActiveEntity : true,
+						Messages : []
+					}]
+				})
+				.expectMessages([]);
+
+			return Promise.all([
+				// code under test - these properties may only be requested by kept-alive contexts
+				oListBinding.getHeaderContext().requestSideEffects(["HasDraftEntity", "Messages"]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Flexible Column Layout, ODataModel#getKeepAliveContext
+	// List report with $$getKeepAliveContext. Object page requests a kept-alive context (incl.
+	// messages) which the list already has as row context. Request a late property for the object
+	// page, afterwards fetch more rows in the list to see that this late property is not selected
+	// for the list
+	// JIRA: CPOUI5ODATAV4-1405
+[false, true].forEach(function (bRelative) {
+	QUnit.test("getKeepAliveContext: row context, relative=" + bRelative, function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sPath = bRelative ? "Artists" : "/Artists",
+			oTable,
+			sView = '\
+<Table id="list" growing="true" growingThreshold="2"\
+		items="{path : \'' + sPath + '\', \
+		parameters : {$$getKeepAliveContext : true, $$ownRequest : true}}">\
+	<Text id="id" text="{ArtistID}"/>\
+</Table>\
+<FlexBox id="objectPage">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		function expectInitialRequest() {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=0&$top=2", {
+					value : [
+						{ArtistID : "1", IsActiveEntity : true},
+						{ArtistID : "2", IsActiveEntity : true}
+					]
+				})
+				.expectChange("id", ["1", "2"]);
+		}
+
+		this.expectChange("id", [])
+			.expectChange("name");
+		if (!bRelative) {
+			expectInitialRequest();
+		}
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("list");
+			if (bRelative) {
+				expectInitialRequest();
+				oTable.setBindingContext(oModel.createBindingContext("/"));
+			}
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContext;
+
+			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
+					+ "?$select=HasDraftEntity,Messages,Name",
+					{HasDraftEntity : false, Messages : [], Name : "The Beatles"})
+				.expectChange("name", "The Beatles");
+
+			oContext
+				= oModel.getKeepAliveContext("/Artists(ArtistID='1',IsActiveEntity=true)", true);
+			that.oView.byId("objectPage").setBindingContext(oContext);
+
+			return Promise.all([
+				oContext.requestProperty("HasDraftEntity"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=2&$top=2",
+					{value : [{ArtistID : "3", IsActiveEntity : true}]})
+				.expectChange("id", [,, "3"]);
+
+			oTable.requestItems();
+
+			return that.waitForChanges(assert);
 		});
 	});
 });

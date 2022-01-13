@@ -2532,6 +2532,80 @@ sap.ui.define([
 			"/~resourcePath~/~cachePath~/baz"
 		]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: no binding found", function (assert) {
+		var oModel = this.createModel("", {autoExpandSelect : true});
+
+		assert.strictEqual(
+			// code under test
+			oModel.getKeepAliveContext("/EMPLOYEES('1')", "~bRequestMessages~"),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: one binding found", function (assert) {
+		var oListBinding,
+			oModel = this.createModel("", {autoExpandSelect : true}),
+			oModelMock = this.mock(oModel);
+
+		oModel.bindProperty("/SalesOrders/$count");
+		oModel.bindList("/Products");
+		oModel.bindList("/Products", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+		oListBinding = oModel.bindList("Items", oModel.createBindingContext("/SalesOrders('1')"),
+			undefined, undefined, {$$getKeepAliveContext : true});
+		oModelMock.expects("resolve").withExactArgs("/Products", undefined).returns("/Products");
+		oModelMock.expects("resolve")
+			.withExactArgs("Items", sinon.match.same(oListBinding.oContext))
+			.returns("/SalesOrders('1')/Items");
+		this.mock(oListBinding).expects("getKeepAliveContext")
+			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~")
+			.returns("~oContext~");
+
+		assert.strictEqual(
+			// code under test
+			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~"),
+			"~oContext~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: two bindings found", function (assert) {
+		var oModel = this.createModel("", {autoExpandSelect : true});
+
+		oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+		oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+			{$$getKeepAliveContext : true});
+
+		assert.throws(function () {
+			// code under test
+			oModel.getKeepAliveContext("/EMPLOYEES('1')", "~bRequestMessages~");
+		}, new Error("Multiple bindings with $$getKeepAliveContext for: /EMPLOYEES('1')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: no autoExpandSelect", function (assert) {
+		// autoExpandSelect is important when creating a kept-alive context w/o data. This context
+		// needs late property requests to become valid.
+		assert.throws(function () {
+			// code under test
+			this.createModel().getKeepAliveContext("/EMPLOYEES('1')");
+		}, new Error("Missing parameter autoExpandSelect"));
+	});
+
+	//*********************************************************************************************
+	// For these paths no matching list binding can ever appear
+["/TEAMS", "TEAMS('1')", "/TEAMS(", "/TEAMS('1')/Name"].forEach(function (sPath) {
+	QUnit.test("getKeepAliveContext: invalid path " + sPath, function (assert) {
+		var oModel = this.createModel("", {autoExpandSelect : true});
+
+		assert.throws(function () {
+			// code under test
+			oModel.getKeepAliveContext(sPath);
+		}, new Error("Not a list context path to an entity: " + sPath));
+	});
+});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

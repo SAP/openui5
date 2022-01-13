@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/test/actions/Press"
 ], function (Helper, Opa5, Press) {
 	"use strict";
-	var sViewName = "sap.ui.core.sample.odata.v4.Draft.Main";
+	var sListReport = "sap.ui.core.sample.odata.v4.Draft.ListReport",
+		sObjectPage = "sap.ui.core.sample.odata.v4.Draft.ObjectPage";
 
 	Opa5.createPageObjects({
 		onTheListReport : {
@@ -23,7 +24,7 @@ sap.ui.define([
 						success : function (aControls) {
 							Opa5.assert.ok(true, "Product selected: " + aControls[0].getText());
 						},
-						viewName : sViewName
+						viewName : sListReport
 					});
 				}
 			},
@@ -43,7 +44,7 @@ sap.ui.define([
 							Opa5.assert.strictEqual(aControls[2].getText(), sName,
 								"Product name is " + sName);
 						},
-						viewName : sViewName
+						viewName : sListReport
 					});
 				}
 			}
@@ -51,28 +52,28 @@ sap.ui.define([
 		onTheObjectPage : {
 			actions : {
 				changeName : function (sName) {
-					Helper.changeInputValue(this, sViewName, "Product::name", sName);
+					Helper.changeInputValue(this, sObjectPage, "Product::name", sName);
 				},
 				changeQuantity : function (iRow, sQuantity) {
-					Helper.changeInputValue(this, sViewName, /_Parts::quantity/, sQuantity, iRow);
+					Helper.changeInputValue(this, sObjectPage, /_Parts::quantity/, sQuantity, iRow);
 				},
 				pressCancel : function () {
-					Helper.pressButton(this, sViewName, "cancel");
+					Helper.pressButton(this, sObjectPage, "cancel");
 				},
 				pressEdit : function () {
-					Helper.pressButton(this, sViewName, "edit");
+					Helper.pressButton(this, sObjectPage, "edit");
 				},
 				pressSave : function () {
-					Helper.pressButton(this, sViewName, "save");
+					Helper.pressButton(this, sObjectPage, "save");
 				}
 			},
 			assertions : {
 				checkIsActiveEntity : function (bIsActiveEntity) {
-					Helper.checkInputValue(this, sViewName, "Product::IsActiveEntity",
+					Helper.checkInputValue(this, sObjectPage, "Product::IsActiveEntity",
 						bIsActiveEntity ? "Yes" : "No");
 				},
 				checkName : function (sName) {
-					Helper.checkInputValue(this, sViewName, "Product::name", sName);
+					Helper.checkInputValue(this, sObjectPage, "Product::name", sName);
 				},
 				checkPart : function (iRow, sPartID, sDescription, sQuantity) {
 					Helper.waitForSortedByID(this, {
@@ -88,11 +89,11 @@ sap.ui.define([
 							Opa5.assert.strictEqual(aControls[2].getValue(), sQuantity,
 								"Quantity is " + sQuantity);
 						},
-						viewName : sViewName
+						viewName : sObjectPage
 					});
 				},
 				checkProductID : function (sProductID) {
-					Helper.checkInputValue(this, sViewName, "Product::ID", sProductID);
+					Helper.checkInputValue(this, sObjectPage, "Product::ID", sProductID);
 				}
 			}
 		}

@@ -70,6 +70,51 @@
 			"async" : true,
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.Draft.Main"
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.f.routing.Router",
+				"type": "View",
+				"viewType": "XML",
+				"path": "sap.ui.core.sample.odata.v4.Draft",
+				"controlId": "layout",
+				"controlAggregation": "beginColumnPages",
+				"async": true
+			},
+			"routes": [{
+				"layout" : "OneColumn",
+				"name": "listReport",
+				"pattern": "",
+				"target": ["listReport"]
+			}, {
+				"layout" : "TwoColumnsMidExpanded",
+				"name": "objectPage",
+				"pattern": "Products{key}",
+				"target": ["listReport", "objectPage"]
+			}, {
+				"layout" : "MidColumnFullScreen",
+				"name": "objectPageNoList",
+				"pattern": "Products{key}?noList",
+				"target": ["empty", "objectPage"]
+			}],
+			"targets": {
+				"empty": {
+					"id": "empty",
+					"level": 1,
+					"name": "Empty"
+				},
+				"listReport": {
+					"id": "listReport",
+					"level": 1,
+					"name": "ListReport"
+				},
+				"objectPage": {
+					"controlAggregation": "midColumnPages",
+					"id": "objectPage",
+					"level": 1,
+					"name": "ObjectPage"
+				}
+			}
 		}
 	}
 }
