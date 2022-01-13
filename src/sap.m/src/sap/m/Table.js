@@ -5,6 +5,7 @@
 // Provides control sap.m.Table.
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/Device",
 	"./library",
 	"./ListBase",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"./CheckBox",
 	"./TableRenderer",
 	"sap/base/Log",
+	"sap/ui/base/Object",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/events/KeyCodes",
@@ -21,7 +23,7 @@ sap.ui.define([
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Core, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer, Icon) {
+	function(Core, Element, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, BaseObject, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer, Icon) {
 	"use strict";
 
 
@@ -1063,6 +1065,44 @@ sap.ui.define([
 			this.focusPrevious();
 			oEvent.preventDefault();
 		}
+	};
+
+	/**
+	 * Sets the focus on the stored focus DOM reference.
+	 *
+	 * If {@param oFocusInfo.targetInfo} is of type {@type sap.ui.core.message.Message},
+	 * the focus will be set as accurately as possible according to the information provided by {@type sap.ui.core.message.Message}.
+	 *
+	 * @param {object} [oFocusInfo={}] Options for setting the focus
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 If set to <code>true</code>, the focused
+	 *   element won't be moved into the viewport if it's not completely visible before the focus is set
+	 * @param {any} [oFocusInfo.targetInfo] @since 1.98 Further control-specific setting of the focus target within the control
+	 * @public
+	 */
+	Table.prototype.focus = function(oFocusInfo) {
+		this._oFocusInfo = oFocusInfo;
+		ListBase.prototype.focus.apply(this, arguments);
+		delete this._oFocusInfo;
+	};
+
+	Table.prototype.getFocusDomRef = function() {
+		var bHasMessage = this._oFocusInfo && this._oFocusInfo.targetInfo && BaseObject.isA(this._oFocusInfo.targetInfo, "sap.ui.core.message.Message");
+
+		if (bHasMessage) {
+			var $TblHeader = this.$("tblHeader");
+			var $VisibleColumns = $TblHeader.find(".sapMListTblCell:visible");
+
+			if ($VisibleColumns.length) {
+				return $TblHeader[0];
+			}
+
+			var $NoData = this.$("nodata");
+			if ($NoData.length) {
+				return $NoData[0];
+			}
+		}
+
+		return ListBase.prototype.getFocusDomRef.apply(this, arguments);
 	};
 
 	Table.prototype.onfocusin = function(oEvent) {

@@ -41,7 +41,8 @@ sap.ui.define([
 	"sap/ui/unified/MenuItem",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/message/Message"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -83,7 +84,8 @@ sap.ui.define([
 	MenuItem,
 	Log,
 	jQuery,
-	oCore
+	oCore,
+	Message
 ) {
 	"use strict";
 
@@ -1422,9 +1424,25 @@ sap.ui.define([
 		oTable.focus();
 		checkFocus(getColumnHeader(0, null, null, oTable), assert);
 
+		oTable.focus({
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		});
+		checkFocus(getColumnHeader(0, null, null, oTable), assert);
+
 		oTable.setColumnHeaderVisible(false);
 		oCore.applyChanges();
 		oTable.focus();
+		checkFocus(getCell(0, 0, null, null, oTable), assert);
+
+		oTable.focus({
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		});
 		checkFocus(getCell(0, 0, null, null, oTable), assert);
 
 		oTable.unbindRows();
@@ -1434,6 +1452,25 @@ sap.ui.define([
 		oTable.setShowOverlay(true);
 		oTable.focus();
 		checkFocus(oTable.getDomRef("overlay"), assert);
+
+		oTable.focus({
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		});
+		checkFocus(oTable.getDomRef("overlay"), assert);
+
+		oTable.setShowOverlay(false);
+		oTable.removeAllColumns();
+		oCore.applyChanges();
+		oTable.focus({
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		});
+		checkFocus(oTable.getDomRef("noDataCnt"), assert);
 	});
 
 	QUnit.test("#getFocusDomRef", function(assert) {

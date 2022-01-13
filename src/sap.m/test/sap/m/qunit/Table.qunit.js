@@ -23,9 +23,10 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/ScrollContainer",
 	"sap/m/library",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/core/message/Message"
 ], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
-	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout) {
+	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message) {
 	"use strict";
 
 	var oTable;
@@ -740,6 +741,40 @@ sap.ui.define([
 			assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'selectAll' checkbox is unpressed");
 		});
 		$SelectAllCheckbox.trigger("tap");
+
+		//clean up
+		sut.destroy();
+	});
+
+	QUnit.test("Test focus event", function(assert) {
+		var sut = createSUT("idTableFocusEvent", true, true);
+
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var $tblHeader = sut.$("tblHeader");
+
+		sut.focus();
+		assert.ok(document.activeElement !== $tblHeader[0], "Focus event called without any parameter. Table header is not focused");
+
+		sut.focus({
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		});
+		assert.ok(document.activeElement === $tblHeader[0], "Focus event called with core:Message. Table header is focused");
+
+		sut.removeAllColumns();
+		Core.applyChanges();
+		sut.focus({
+			targetInfo: new Message({
+				message: "Error thrown",
+				type: "Error"
+			})
+		});
+		assert.notOk(sut.getColumns().length, "Columns removed from table");
+		assert.ok(document.activeElement === sut.$("nodata")[0], "Focus event called with core:Message. Table nodata element is focused");
 
 		//clean up
 		sut.destroy();
