@@ -244,7 +244,7 @@ sap.ui.define([
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable4.json"
 				},
 				"SalesOrderSet?$skip=0&$top=12&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
-					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableALL.json"
+					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTableAll.json"
 				},
 
 				/* Test Case I */
