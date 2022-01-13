@@ -2,8 +2,9 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ExtensionPoint',
-	'sap/ui/core/mvc/XMLView'
-], function(Component, ComponentContainer, ExtensionPoint, XMLView) {
+	// Load ExtensionPointProvider in advance because Controller expects some extensions to be processed sync
+	'testdata/customizing/customer/ext/ExtensionPointProvider'
+], function(Component, ComponentContainer, ExtensionPoint, ExtensionPointProvider) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -49,23 +50,12 @@ sap.ui.define([
 			ExtensionPoint.registerExtensionProvider(function() {
 				return "testdata/customizing/customer/ext/ExtensionPointProvider";
 			});
-			return new Promise(function(resolve, reject) {
-				// preload ExtensionPoint Provider so we can register a spy
-				sap.ui.require([ExtensionPoint._fnExtensionProvider()], function(EPProvider) {
-					this.oEPProvider = EPProvider;
-					this.oEPSpy = sinon.spy(this.oEPProvider, "applyExtensionPoint");
-					resolve();
-				}.bind(this), reject);
-			}.bind(this));
+			this.oEPProvider = ExtensionPointProvider;
+			this.oEPSpy = sinon.spy(this.oEPProvider, "applyExtensionPoint");
 		},
 		beforeEach: function() {
 			// make sure tests can check the spy independently
 			this.oEPSpy.resetHistory();
-		},
-		after: function() {
-			// unload provider, so that subsequent async tests can reload the module again
-			// needed to test the loading of the provider class
-			sap.ui.loader._.unloadResources("testdata/customizing/customer/ext/ExtensionPointProvider");
 		}
 	});
 
@@ -221,7 +211,7 @@ sap.ui.define([
 		// we poll for the panels aggregation content until all ExtensionPoints have been resolved
 		var iPoll = setInterval(function() {
 			var aPanelContent = oView.byId("Panel").getContent();
-			if (aPanelContent.length == 7) {
+			if (aPanelContent.length == 7 && oView.getContent().length === 32) {
 				fnAssert();
 				clearInterval(iPoll);
 			}
