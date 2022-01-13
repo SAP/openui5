@@ -23,6 +23,8 @@ function (
 				"min": -5,
 				"max": 5,
 				"value": 1,
+				"label": "Number",
+				"isRequired": true,
 				"id": "WithValue"
 			},
 			{
@@ -55,6 +57,7 @@ function (
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			var oNumberInput = document.querySelector("#WithValue ui5-step-input");
+			var oLabel = document.querySelector("#WithValue ui5-label");
 			var oNumInputWithoutValue = document.querySelector("#ValueNotSpecified ui5-step-input");
 
 
@@ -63,6 +66,10 @@ function (
 			assert.ok(oNumberInput, "The number input is created");
 			assert.strictEqual(oNumberInput.placeholder, "", "The placeholder is not specified");
 			assert.strictEqual(oNumberInput.value, 1, "The initial value is correct");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Number", "Label text is correctly mapped");
+			assert.ok(oNumberInput.required, "required attribute is set on the ui5-select");
+			assert.strictEqual(oNumberInput.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
 			assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
 			assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
 

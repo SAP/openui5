@@ -19,7 +19,9 @@ function (
 		"body": [
 			{
 				"type": "Input.Date",
-				"id": "DateVal"
+				"id": "DateVal",
+				"label": "Date",
+				"isRequired": true
 			},
 			{
 				"type": "Input.Date",
@@ -56,6 +58,7 @@ function (
 
 			//Arrange
 			var oDateInput = document.querySelector("#DateVal ui5-date-picker");
+			var oLabel = document.querySelector("#DateVal ui5-label");
 			var oDateInputWithPlaceholder = document.querySelector("#DateInputWithPlaceholder ui5-date-picker");
 
 			//Assert
@@ -64,9 +67,14 @@ function (
 			assert.strictEqual(oDateInput.placeholder, undefined, "There is no placeholder");
 			assert.strictEqual(oDateInput.value, "", "The is no initial value set");
 			assert.strictEqual(oDateInput.formatPattern, "yyyy-MM-dd", "The correct date format is used");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Date", "Label text is correctly mapped");
+			assert.ok(oDateInput.required, "required attribute is set");
+			assert.strictEqual(oDateInput.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
 			assert.strictEqual(oDateInputWithPlaceholder.value, "2020-01-01", "The value is mapped correctly");
 			assert.strictEqual(oDateInputWithPlaceholder.minDate, "2017-01-01", "The minimum date available for selection is correct");
 			assert.strictEqual(oDateInputWithPlaceholder.maxDate, "2022-01-01", "The maximum date available for selection is correct");
+			assert.notOk(oDateInputWithPlaceholder.required, "required attribute should not be set");
 
 			done();
 		}.bind(this));

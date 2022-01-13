@@ -31,7 +31,9 @@ function (
 		"body": [
 			{
 				"type": "Input.Time",
-				"id": "TimeVal"
+				"id": "TimeVal",
+				"label": "Time",
+				"isRequired": true
 			},
 			{
 				"type": "Input.Time",
@@ -73,6 +75,7 @@ function (
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			var oTimeInput = document.querySelector("#TimeVal ui5-time-picker");
+			var oLabel = document.querySelector("#TimeVal ui5-label");
 			var oTimeInputWithMinMaxValues = document.querySelector("#TimeInputWithMinMaxValues ui5-time-picker");
 
 			//Assert
@@ -80,7 +83,12 @@ function (
 			assert.ok(oTimeInput, "The time input is created");
 			assert.strictEqual(oTimeInput.value, "", "There is no initial value set");
 			assert.strictEqual(oTimeInput.formatPattern, "HH:mm", "The formatPattern should be HH:mm");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Time", "Label text is correctly mapped");
+			assert.ok(oTimeInput.required, "required attribute is set");
+			assert.strictEqual(oTimeInput.getAttribute("aria-labelledby"), oLabel.id, "aria-labelledby refers to the id of the label");
 			assert.strictEqual(oTimeInputWithMinMaxValues.value, "15:30", "The value is mapped correctly");
+			assert.notOk(oTimeInputWithMinMaxValues.required, "required attribute should not be set");
 
 			setTimeout(function () {
 				assert.strictEqual(oTimeInput.valueState, ValueState.None, "We don't show error when the initial value is empty string");

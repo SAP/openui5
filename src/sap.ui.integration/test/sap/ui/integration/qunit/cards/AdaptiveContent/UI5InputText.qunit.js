@@ -24,6 +24,8 @@ function (
 				"id": "TextInput",
 				"type": "Input.Text",
 				"maxLength": 40,
+				"label": "Text",
+				"isRequired": true,
 				"value": "Some text"
 			},
 			{
@@ -80,6 +82,7 @@ function (
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			var oTextInput = document.querySelector("#TextInput ui5-input");
+			var oLabel = document.querySelector("#TextInput ui5-label");
 
 			//Assert
 			assert.strictEqual(oTextInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
@@ -88,6 +91,10 @@ function (
 			assert.strictEqual(oTextInput.type, "Text", "The input type is text");
 			assert.strictEqual(oTextInput.maxlength, 40, "The maximum length is set.");
 			assert.strictEqual(oTextInput.value, "Some text", "The initial value is correct");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Text", "Label text is correctly mapped");
+			assert.ok(oTextInput.required, "required attribute is set");
+			assert.strictEqual(oTextInput.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
 
 			done();
 		}.bind(this));
@@ -112,6 +119,7 @@ function (
 			assert.strictEqual(oTextArea.placeholder, "Comments", "The placeholder is mapped correctly");
 			assert.strictEqual(oTextArea.maxlength, null, "The maximum length is  not specified.");
 			assert.strictEqual(oTextArea.value, "", "There is no value set initially");
+			assert.notOk(oTextArea.required, "required attribute should not be set");
 
 			done();
 		}.bind(this));

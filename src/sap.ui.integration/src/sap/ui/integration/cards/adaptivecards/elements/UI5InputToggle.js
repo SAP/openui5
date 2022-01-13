@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (AdaptiveCards) {
+sap.ui.define([
+	"sap/ui/integration/thirdparty/adaptivecards",
+	"sap/ui/integration/cards/adaptivecards/overwrites/inputsGeneralOverwrites"
+], function (AdaptiveCards, InputsOverwrites) {
 	"use strict";
 	function UI5InputToggle() {
 		AdaptiveCards.ToggleInput.apply(this, arguments);
@@ -20,6 +23,16 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 * @since 1.74
 	 */
 	UI5InputToggle.prototype = Object.create(AdaptiveCards.ToggleInput.prototype);
+
+	UI5InputToggle.prototype.overrideInternalRender = function () {
+		var oInput = AdaptiveCards.TextInput.prototype.overrideInternalRender.call(this, arguments);
+
+		InputsOverwrites.overwriteLabel(this);
+		InputsOverwrites.overwriteRequired(this);
+
+		return oInput;
+	};
+
 	UI5InputToggle.prototype.internalRender = function () {
 
 		this._checkboxInputElement = document.createElement("ui5-checkbox");
@@ -40,5 +53,12 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 
 		return this._checkboxInputElement;
 	};
+
+	UI5InputToggle.prototype.updateInputControlAriaLabelledBy = function () {
+		// support for accessible-name-ref is available from 1.1.0, after updating
+		// aria-labelledby should be changed to accessible-name-ref
+		InputsOverwrites.overwriteAriaLabelling(this, "aria-labelledby");
+	};
+
 	return UI5InputToggle;
 });

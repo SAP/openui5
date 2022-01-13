@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (AdaptiveCards) {
+sap.ui.define([
+	"sap/ui/integration/thirdparty/adaptivecards",
+	"sap/ui/integration/cards/adaptivecards/overwrites/inputsGeneralOverwrites"
+], function (AdaptiveCards, InputsOverwrites) {
 	"use strict";
 
 	function UI5ChoiceSet (){
@@ -22,6 +25,16 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 */
 
 	UI5ChoiceSet.prototype = Object.create(AdaptiveCards.ChoiceSetInput.prototype);
+
+
+	UI5ChoiceSet.prototype.overrideInternalRender = function () {
+		var oInput = AdaptiveCards.TextInput.prototype.overrideInternalRender.call(this, arguments);
+
+		InputsOverwrites.overwriteLabel(this);
+		InputsOverwrites.overwriteRequired(this);
+
+		return oInput;
+	};
 
 	UI5ChoiceSet.prototype.internalRender = function () {
 		if (!this.isMultiSelect) {
@@ -51,6 +64,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			var oRbContainer = document.createElement("div");
 			oRbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
 			oRbContainer.id = this.id;
+			oRbContainer.setAttribute("role", "radiogroup");
 			oRbContainer.addEventListener("change", function () {
 				this.valueChanged();
 			}.bind(this));
@@ -76,6 +90,7 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		var defaultValues = this.defaultValue ? this.defaultValue.split(",") : null;
 		var oCbContainer = document.createElement("div");
 		oCbContainer.classList.add("sapFCardAdaptiveContentChoiceSetWrapper");
+		oCbContainer.setAttribute("role", "group");
 		oCbContainer.id = this.id;
 		oCbContainer.addEventListener("change", function () { this.valueChanged(); }.bind(this));
 		this._toggleInputs = [];
@@ -141,6 +156,11 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			}
 		}
 	});
+
+	UI5ChoiceSet.prototype.updateInputControlAriaLabelledBy = function () {
+		var sAttribute = (!this.isMultiSelect && this.isCompact) ? "accessible-name-ref" : "aria-labelledby";
+		InputsOverwrites.overwriteAriaLabelling(this, sAttribute);
+	};
 
 	return UI5ChoiceSet;
 });

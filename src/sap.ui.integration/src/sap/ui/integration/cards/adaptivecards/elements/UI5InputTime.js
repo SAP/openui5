@@ -3,11 +3,13 @@
  */
 sap.ui.define([
 	"sap/ui/integration/thirdparty/adaptivecards",
-	"sap/ui/core/format/DateFormat"
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/integration/cards/adaptivecards/overwrites/inputsGeneralOverwrites"
 ],
 	function (
 		AdaptiveCards,
-		DateFormat
+		DateFormat,
+		InputsOverwrites
 	) {
 		"use strict";
 
@@ -24,6 +26,16 @@ sap.ui.define([
 		var sTimePattern = "HH:mm";
 
 		UI5InputTime.prototype = Object.create(AdaptiveCards.TimeInput.prototype);
+
+
+		UI5InputTime.prototype.overrideInternalRender = function () {
+			var oInput = AdaptiveCards.TextInput.prototype.overrideInternalRender.call(this, arguments);
+
+			InputsOverwrites.overwriteLabel(this);
+			InputsOverwrites.overwriteRequired(this);
+
+			return oInput;
+		};
 
 		UI5InputTime.prototype.internalRender = function () {
 			var sWCElement = "ui5-time-picker";
@@ -153,6 +165,11 @@ sap.ui.define([
 			var oTimeInstance = DateFormat.getTimeInstance({pattern: sTimePattern});
 
 			return sValue && oTimeInstance.parse(sValue);
+		};
+
+		UI5InputTime.prototype.updateInputControlAriaLabelledBy = function () {
+			// when support for accessible-name-ref is implemented for ui5-time-picker, aria-labelledby should be changed
+			InputsOverwrites.overwriteAriaLabelling(this, "aria-labelledby");
 		};
 
 		return UI5InputTime;

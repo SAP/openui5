@@ -10,48 +10,29 @@
 			"version": "1.2",
 			"body": [
 				{
-					"type": "TextBlock",
-					"text": "Your Name:",
-					"isSubtle": true,
-					"size": "medium"
-				},
-				{
 					"type": "Input.Text",
+					"label": "Your Name",
+					"isRequired": true,
 					"placeholder": "Last, First",
 					"style": "text",
 					"id": "SimpleVal"
 				},
 				{
-					"type": "TextBlock",
-					"text": "Email address:",
-					"isSubtle": true,
-					"size": "medium"
-				},
-				{
 					"type": "Input.Text",
+					"label": "Email address",
+					"isRequired": true,
 					"placeholder": "youremail@example.com",
 					"style": "email",
 					"id": "EmailVal"
 				},
 				{
-					"type": "TextBlock",
-					"text": "Age:",
-					"isSubtle": true,
-					"size": "medium"
-				},
-				{
 					"type": "Input.Number",
+					"label": "Age",
+					"isRequired": true,
 					"id": "NumVal",
 					"min": 0,
 					"max": 110,
 					"placeholder": "Age"
-				},
-				{
-					"type": "TextBlock",
-					"text": "Actions:",
-					"isSubtle": false,
-					"size": "medium",
-					"style": "strong"
 				}
 			],
 			"actions": [
@@ -62,41 +43,25 @@
 						"type": "AdaptiveCard",
 						"body": [
 							{
-								"type": "TextBlock",
-								"text": "Website",
-								"isSubtle": true,
-								"size": "medium"
-							},
-							{
 								"type": "Input.Text",
+								"label": "Website",
 								"placeholder": "Website Url",
 								"style": "url",
 								"id": "UrlVal"
 							},
 							{
-								"type": "TextBlock",
-								"text": "Description",
-								"isSubtle": true,
-								"size": "medium"
-							},
-							{
 								"type": "Input.Text",
+								"label": "Description",
 								"style": "text",
 								"isMultiline": true,
 								"id": "MultiLineVal"
 							},
 							{
-								"type": "TextBlock",
-								"text": "Gender",
-								"isSubtle": true,
-								"size": "medium"
-							},
-							{
 								"type": "Input.ChoiceSet",
 								"id": "SingleSelectVal",
+								"label": "Gender",
 								"style": "compact",
 								"value": "2",
-
 								"choices": [
 									{
 										"title": "Male",
@@ -113,13 +78,9 @@
 								]
 							},
 							{
-								"type": "TextBlock",
-								"text": "Do you have a driver's license?",
-								"isSubtle": true
-							},
-							{
 								"type": "Input.ChoiceSet",
 								"id": "SingleSelectVal",
+								"label": "Do you have a driver's license?",
 								"style": "expanded",
 								"choices": [
 									{
@@ -133,13 +94,9 @@
 								]
 							},
 							{
-								"type": "TextBlock",
-								"text": "How do you want to be notified?",
-								"isSubtle": true
-							},
-							{
 								"type": "Input.ChoiceSet",
 								"id": "MultiSelectVal",
+								"label": "How do you want to be notified?",
 								"isMultiSelect": true,
 								"choices": [
 									{
