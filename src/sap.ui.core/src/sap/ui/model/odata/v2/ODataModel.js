@@ -6852,10 +6852,12 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			oCreatedContext.fetchActivated().then(function () {
-				that._pushToRequestQueue(mRequests, sGroupId,
-					sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle, bRefreshAfterChange);
-				that._processRequestQueueAsync(that.mRequests);
+			that.oMetadata.loaded().then(function () {
+				oCreatedContext.fetchActivated().then(function () {
+					that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess,
+						fnError, oRequestHandle, bRefreshAfterChange);
+					that._processRequestQueueAsync(that.mRequests);
+				});
 			});
 
 			return oCreatedContext;

@@ -2602,8 +2602,8 @@ sap.ui.define([
 			+ bInactive + ", i = " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var fnAbort, fnAfterContextActivated, pCreate, oEntity, fnError, mHeaders, oRequestHandle,
-			oResult, fnSuccess, sUid,
+		var fnAbort, fnAfterContextActivated, pCreate, oEntity, fnError, mHeaders, fnMetadataLoaded,
+			oRequestHandle, oResult, fnSuccess, sUid,
 			oCreatedContext = {
 				fetchActivated : function () {},
 				resetCreatedPromise : function () {}
@@ -2626,7 +2626,8 @@ sap.ui.define([
 					_getEntitySetByType : function () {},
 					_getEntityTypeByPath : function () {},
 					_isCollection : function () {},
-					isLoaded : function () {}
+					isLoaded : function () {},
+					loaded : function () {}
 				},
 				bRefreshAfterChange : false,
 				mRequests : "~mRequests",
@@ -2764,9 +2765,9 @@ sap.ui.define([
 					return true;
 				}), bInactive)
 			.returns(oCreatedContext);
-		this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs()
 			.returns({then : function (fnFunc) {
-				fnAfterContextActivated = fnFunc;
+				fnMetadataLoaded = fnFunc;
 			}});
 
 		// code under test
@@ -2803,6 +2804,15 @@ sap.ui.define([
 			: {created : true, key : "~sKey"});
 
 		// async functionality
+
+		this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
+			.returns({then : function (fnFunc) {
+				fnAfterContextActivated = fnFunc;
+			}});
+
+		// code under test
+		fnMetadataLoaded();
+
 		oModelMock.expects("_pushToRequestQueue")
 			.withExactArgs("~mRequests", "~groupId", "~changeSetId", sinon.match.same(oRequest),
 				sinon.match(function (fnSuccess0) {

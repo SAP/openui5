@@ -425,6 +425,8 @@ sap.ui.define([
 
 			// Counter for batch requests
 			this.iBatchNo = 0;
+			// Counter for single requests within a batch
+			this.iRequestNo = 0;
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
@@ -786,6 +788,7 @@ sap.ui.define([
 				}
 
 				that.iBatchNo += 1;
+				that.iRequestNo = 0;
 
 				processRequests(oRequest);
 			}
@@ -867,6 +870,7 @@ sap.ui.define([
 				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
 				delete oActualRequest["contentID"];
+				that.iRequestNo += 1;
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
 
@@ -939,6 +943,9 @@ sap.ui.define([
 					}
 					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = iBatchNo;
+					}
+					if ("requestNo" in oExpectedRequest) {
+						oActualRequest.requestNo = that.iRequestNo;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 					oResponse.headers = mResponseHeaders || {};
@@ -1343,6 +1350,8 @@ sap.ui.define([
 		 *       <code>true</code> by default</li>
 		 *     <li>"headers": The expected request headers</li>
 		 *     <li>"method": The expected HTTP method; "GET" by default</li>
+		 *     <li>"requestNo": The number of the request within the batch; use this to check the
+		 *       order of change requests</li>
 		 *   </ul>
 		 *   A string is interpreted as URL with method "GET". Spaces inside the URL, and "'" and
 		 *   "~" inside the query string are percent-encoded automatically.
@@ -12576,4 +12585,82 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+
+	//*********************************************************************************************
+	// Scenario: On calling a function import (or using a different API to trigger a write request)
+	// and creating an entry synchronously in this order (and vice versa), the corresponding
+	// requests are in the same order in the change set in the $batch request.
+	// BCP: 2280012509
+[
+	["callFunction", "createEntry"],
+	["createEntry", "callFunction"]
+].forEach(function (aOrderedFunctions) {
+	var sTitle = "Correct request order with createEntry and callFunction; applied order: "
+			+ JSON.stringify(aOrderedFunctions);
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({refreshAfterChange : false, useBatch : true}),
+			oFunctions = {
+				callFunction : function () {
+					oModel.callFunction("/SalesOrder_Confirm", {
+						groupId : "changes",
+						method : "POST",
+						refreshAfterChange : false,
+						urlParameters : {
+							SalesOrderID : "0500000001"
+						}
+					});
+				},
+				createEntry : function () {
+					oModel.createEntry("/SalesOrderSet", {properties : {Note : "note"}});
+				}
+			},
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					batchNo : 1,
+					deepPath : "/SalesOrder_Confirm",
+					encodeRequestUri : false,
+					method : "POST",
+					requestNo : (aOrderedFunctions.indexOf("callFunction") + 1),
+					requestUri : "SalesOrder_Confirm?SalesOrderID='0500000001'"
+				}, {
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1"
+				}, {
+					location : "/SalesOrderSrv/SalesOrderSet('0500000001')"
+				})
+				.expectRequest({
+					batchNo : 1,
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "note"
+					},
+					deepPath : "/SalesOrderSet('~key~')",
+					method : "POST",
+					requestNo : (aOrderedFunctions.indexOf("createEntry") + 1),
+					requestUri : "SalesOrderSet"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('0500000002')"},
+						Note : "note",
+						SalesOrderID : "0500000002"
+					},
+					statusCode : 201
+				});
+
+			// code under test
+			aOrderedFunctions.forEach(function (sFunction) {
+				oFunctions[sFunction]();
+			});
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 });
