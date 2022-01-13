@@ -835,6 +835,7 @@ sap.ui.define([
 	 * @param {object} [oFocusInfo={}] Options for setting the focus
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
+ 	 * @param {any} [oFocusInfo.targetInfo] Further control-specific setting of the focus target within the control @since 1.98
 	 * @public
 	 */
 	Element.prototype.focus = function (oFocusInfo) {
