@@ -491,6 +491,7 @@ sap.ui.define([
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createActivate
 	 * @public
+	 * @see sap.ui.model.odata.v4.Context#isInactive
 	 * @since 1.98.0
 	 */
 
@@ -729,10 +730,10 @@ sap.ui.define([
 	 * {@link #getUpdateGroupId}.
 	 *
 	 * You can call {@link sap.ui.model.odata.v4.Context#delete} to delete the created context
-	 * again. As long as the context is transient (see
-	 * {@link sap.ui.model.odata.v4.Context#isTransient}), {@link #resetChanges} and a call to
-	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as parameter
-	 * also delete the created context together with other changes.
+	 * again. As long as the context is {@link sap.ui.model.odata.v4.Context#isTransient transient}
+	 * and {@link sap.ui.model.odata.v4.Context#isInactive active}, {@link #resetChanges} and a call
+	 * to {@link sap.ui.model.odata.v4.ODataModel#resetChanges} with the update group ID as
+	 * parameter also delete the created context together with other changes.
 	 *
 	 * If the creation of the entity on the server failed, the creation is repeated
 	 * automatically. If the binding's update group ID has
@@ -785,6 +786,12 @@ sap.ui.define([
 	 *   property update. From then on it behaves like any other created context. This parameter is
 	 *   experimental and its implementation may still change. Do not use it in productive code yet.
 	 *   Supported since 1.97.0
+	 *   <p>
+	 *   Since 1.98.0, when the first property updates happens, the context is no longer
+	 *   {@link sap.ui.model.odata.v4.Context#isInactive inactive} and the
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#event:createActivate createActivate} event
+	 *   is fired. While inactive, it does not count as a {@link #hasPendingChanges pending change}
+	 *   and does not contribute to the {@link #getCount count}.
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity; its method
 	 *   {@link sap.ui.model.odata.v4.Context#created} returns a promise that is resolved when the
@@ -1711,6 +1718,8 @@ sap.ui.define([
 	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
 	 *   are ignored if they relate to a
 	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
+	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
@@ -2012,10 +2021,12 @@ sap.ui.define([
 	 * Returns the count of elements.
 	 *
 	 * If known, the value represents the sum of the element count of the collection on the server
-	 * and the number of transient entities created on the client. Otherwise, it is
-	 * <code>undefined</code>. The value is a number of type <code>Edm.Int64</code>. Since 1.91.0,
-	 * in case of data aggregation with group levels, the count is the leaf count on the server; it
-	 * is only determined if the <code>$count</code> system query option is given.
+	 * and the number of {@link sap.ui.model.odata.v4.Context#isInactive active}
+	 * {@link sap.ui.model.odata.v4.Context#isTransient transient} entities created on the client.
+	 * Otherwise, it is <code>undefined</code>. The value is a number of type
+	 * <code>Edm.Int64</code>. Since 1.91.0, in case of data aggregation with group levels, the
+	 * count is the leaf count on the server; it is only determined if the <code>$count</code>
+	 * system query option is given.
 	 *
 	 * The count is known to the binding in the following situations:
 	 * <ul>
@@ -3326,6 +3337,8 @@ sap.ui.define([
 	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
 	 *   are ignored if they relate to a
 	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
+	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#sort

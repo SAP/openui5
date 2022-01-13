@@ -812,7 +812,8 @@ sap.ui.define([
 	 * changes or created entities which have not been sent successfully to the server. This
 	 * function does not take into account the deletion of entities (see
 	 * {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
-	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). Since 1.98.0,
+	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored.
 	 *
 	 * Note: If this binding is relative, its data is cached separately for each parent context
 	 * path. This method returns <code>true</code> if there are pending changes for the current
@@ -821,11 +822,13 @@ sap.ui.define([
 	 *
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like
-	 *  {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters changeParameters},
-	 *  {@link sap.ui.model.odata.v4.ODataListBinding#filter filter},
-	 *  {@link sap.ui.model.odata.v4.ODataListBinding#sort sort}, or
-	 *  {@link sap.ui.model.odata.v4.ODataListBinding#suspend suspend} because they relate to a
-	 *  {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters changeParameters},
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter filter},
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort sort}, or
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#suspend suspend} because they relate to a
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
+	 *   of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding is resolved and has pending changes
 	 *
