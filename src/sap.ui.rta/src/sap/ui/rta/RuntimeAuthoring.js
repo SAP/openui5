@@ -605,7 +605,7 @@ sap.ui.define([
 		});
 	};
 
-	var fnShowTechnicalError = function(vError) {
+	function showTechnicalError(vError) {
 		BusyIndicator.hide();
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
 		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
@@ -615,7 +615,7 @@ sap.ui.define([
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});
-	};
+	}
 
 	/**
 	 * @override
@@ -769,7 +769,7 @@ sap.ui.define([
 					return undefined;
 				}.bind(this));
 			}.bind(this))
-			.catch(fnShowTechnicalError)
+			.catch(showTechnicalError)
 			.then(function () {
 				this._checkToolbarAndExecuteFunction("setBusy", false);
 				this._sStatus = STOPPED;
@@ -1203,7 +1203,7 @@ sap.ui.define([
 							}
 						}.bind(this));
 				}.bind(this));
-		}.bind(this))["catch"](fnShowTechnicalError);
+		}.bind(this))["catch"](showTechnicalError);
 	};
 
 	/**
