@@ -170,9 +170,9 @@ sap.ui.define([
 					"maxItems": "{maxItems}",
 					"maxLegendItems": "{maxLegendItems}",
 					"noItemsText": "{noItemsText}",
-					"appointment": {
+					"item": {
 						"template": {
-							"date": "{start}",
+							"startDate": "{start}",
 							"endDate": "{end}",
 							"title": "{title}",
 							"text": "{text}",

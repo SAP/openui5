@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/core/Element",
 	"sap/f/cards/loading/GenericPlaceholder",
-	"sap/f/cards/loading/ListPlaceholder"
-], function (ListContentRenderer, library, Element, GenericPlaceholder, ListPlaceholder) {
+	"sap/f/cards/loading/ListPlaceholder",
+	"sap/f/cards/loading/CalendarPlaceholder"
+], function (ListContentRenderer, library, Element, GenericPlaceholder, ListPlaceholder, CalendarPlaceholder) {
 	"use strict";
 
 	/**
@@ -74,6 +75,15 @@ sap.ui.define([
 					maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
 					item: oConfiguration.item,
 					itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
+				});
+				break;
+
+			case "Calendar":
+				this._oContentPlaceholder = new CalendarPlaceholder({
+					maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
+					maxLegendItems: oConfiguration.maxLegendItems ? parseInt(oConfiguration.maxLegendItems) : 2,
+					item: oConfiguration.item ? oConfiguration.item.template : {},
+					legendItem: oConfiguration.legendItem ? oConfiguration.legendItem.template : {}
 				});
 				break;
 
