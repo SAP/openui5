@@ -84,6 +84,7 @@ sap.ui.define([
 		var bEditableToUser = this.getBoolenValue(oConfigValue.value.editableToUser, vItemMetadata.editableToUser, true);
 		var bRequired = this.getBoolenValue(oConfigValue.value.required, vItemMetadata.required, false);
 		var bExpanded = this.getBoolenValue(oConfigValue.value.expanded, vItemMetadata.expanded, true);
+		var sLevel = oConfigValue.value.level || vItemMetadata.level || "0";
 		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
 		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
 		var bTranslatable = this.getBoolenValue(oConfigValue.value.translatable, vItemMetadata.translatable, false);
@@ -129,6 +130,25 @@ sap.ui.define([
 				type: "string",
 				enabled: this.getConfig().allowLabelChange,
 				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.LEVEL"),
+				path: "level",
+				value: sLevel,
+				type: "select",
+				items: [
+					{
+						key: "0",
+						title: "0"
+					},
+					{
+						key: "1",
+						title: "1"
+					}
+				],
+				visible: sType === "group",
+				itemKey: sKey,
+				allowBindings: true
 			},
 			{
 				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.DESCRIPTION"),

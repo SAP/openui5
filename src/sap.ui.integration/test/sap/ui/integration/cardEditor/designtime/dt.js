@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				"items": {
 					"generalGroup": {
 						"type": "group",
-						"label": "General",
+						"label": "Step2 : {items>cardTitle/value}",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"cardTitle": {
@@ -59,6 +59,15 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true,
 						"description": "test",
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"subGroup1": {
+						"type": "group",
+						"label": "Sub group 1",
+						"level": "1",
+						"expanded": false,
+						"visualization": {
+							"type": "Panel"
+						}
 					},
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
@@ -139,6 +148,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					},
 					"stringInCols2": {
 						"manifestpath": "/sap.card/configuration/parameters/stringInCols2/value",
+						"label": "URL",
+						"type": "string",
+						"cols": 1
+					},
+					"stringInCols3": {
+						"manifestpath": "/sap.card/configuration/parameters/stringInCols3/value",
+						"label": "URL",
+						"type": "string",
+						"cols": 1
+					},
+					"subGroup2": {
+						"type": "group",
+						"label": "Sub group 2",
+						"level": "1"
+					},
+					"stringInCols4": {
+						"manifestpath": "/sap.card/configuration/parameters/stringInCols4/value",
 						"label": "URL",
 						"type": "string",
 						"cols": 1
@@ -465,7 +491,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"message": "Minimum is 2"
 						},
 						{
-							"type": "error",
+							"type": "warning",
 							"multipleOf": 2,
 							"message": "Has to be multiple of 2"
 						}]

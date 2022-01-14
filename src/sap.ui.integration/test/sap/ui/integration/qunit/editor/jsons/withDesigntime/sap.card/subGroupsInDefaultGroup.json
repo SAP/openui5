@@ -1,0 +1,16 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"designtime": "designtime/1stringInSubGroupsInDefaultGroup",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"stringParameter": {
+					"value": "stringParameter Value"
+				}
+			}
+		}
+	}
+}

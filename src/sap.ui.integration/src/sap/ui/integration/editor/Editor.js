@@ -44,7 +44,8 @@ sap.ui.define([
 	"./Settings",
 	"sap/m/FlexItemData",
 	"sap/m/FlexBox",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/m/OverflowToolbar"
 ], function (
 	ui5loader,
 	Control,
@@ -87,7 +88,8 @@ sap.ui.define([
 	Settings,
 	FlexItemData,
 	FlexBox,
-	Button
+	Button,
+	OverflowToolbar
 ) {
 	"use strict";
 
@@ -265,9 +267,11 @@ sap.ui.define([
 				//render items
 				if (aItems) {
 					var oPanel;
+					var oSubPanel;
 					var oLanguagePanel;
 					var oLabelItemForNotWrapping;
 					var oColFields = [];
+					var oColFieldsOfSubPanel = [];
 					var oOriginalField;
 					var addColFields = function () {
 						if (oColFields.length > 0) {
@@ -283,38 +287,101 @@ sap.ui.define([
 							oColFields = [];
 						}
 					};
+					var addColFieldsOfSubPanel = function () {
+						if (oColFieldsOfSubPanel.length > 0) {
+							var iLess = 2 - oColFieldsOfSubPanel.length;
+							for (var n = 0; n < iLess; n++) {
+								oColFieldsOfSubPanel.push(new VBox());
+							}
+							oSubPanel.addContent(new FlexBox({
+								alignItems: "Start",
+								justifyContent: "SpaceBetween",
+								items: oColFieldsOfSubPanel
+							}));
+							oColFieldsOfSubPanel = [];
+						}
+					};
+					var renderPanel = function (oPanel) {
+						if (oPanel.getContent().length > 0) {
+							var aContents = oPanel.getContent();
+							if (aContents.length === 1 && aContents[0].isA("sap.m.MessageStrip")) {
+								return;
+							}
+							if (aContents[0].isA("sap.m.MessageStrip")) {
+								oPanel.removeContent(0);
+								oPanel.addContent(aContents[0]);
+							}
+							oRm.renderControl(oPanel);
+							if (oPanel._messageStrip) {
+								oRm.renderControl(oPanel._messageStrip);
+							}
+						}
+					};
+					var addSubPanel = function (oPanel, oSubPanel) {
+						if (oPanel && oSubPanel.getContent().length > 0) {
+							var aContents = oSubPanel.getContent();
+							if (aContents[0].isA("sap.m.MessageStrip")) {
+								oSubPanel.removeContent(0);
+								oSubPanel.addContent(aContents[0]);
+							}
+							oPanel.addContent(oSubPanel);
+							if (oSubPanel._messageStrip) {
+								oPanel.addContent(oSubPanel._messageStrip);
+							}
+						} else {
+							oSubPanel = null;
+						}
+					};
 					for (var i = 0; i < aItems.length; i++) {
 						var oItem = aItems[i];
 						if (oControl.getMode() !== "translation") {
 							if (oItem.isA("sap.m.Panel")) {
-								if (oPanel) {
-									//add current col fields to previous panel, then empty the col fields list
-									addColFields();
-									//render previous panel
-									if (oPanel.getContent().length > 0) {
-										oRm.renderControl(oPanel);
-									}
+								if (oSubPanel) {
+									//add current col fields to previous sub panel, then empty the col fields list
+									addColFieldsOfSubPanel();
+									//add sub panel to panel
+									addSubPanel(oPanel, oSubPanel);
 								}
-								oPanel = oItem;
-								oPanel.addStyleClass("sapUiIntegrationEditorItem");
+								if (oItem._level === "1") {
+									oSubPanel = oItem;
+									oSubPanel._subItems = [];
+									oSubPanel.addStyleClass("sapUiIntegrationEditorSubPanel");
+								} else {
+									if (oPanel) {
+										//add current col fields to previous panel, then empty the col fields list
+										addColFields();
+										//render previous panel
+										renderPanel(oPanel);
+										oSubPanel = null;
+									}
+									oPanel = oItem;
+									oPanel._subItems = [];
+									oPanel.addStyleClass("sapUiIntegrationEditorItem");
+								}
 								if (i === aItems.length - 1) {
 									//add current col fields to panel, then empty the col fields list
 									addColFields();
-									if (oPanel.getContent().length > 0) {
-										oRm.renderControl(oPanel);
-									}
+									renderPanel(oPanel);
 								}
 								continue;
 							}
 							// add style class for the hint under group and checkbox/toggle
 							if (oItem.isA("sap.m.FormattedText")) {
-								oPanel.addContent(oItem.addStyleClass("sapUiIntegrationEditorHint"));
+								if (oSubPanel) {
+									oSubPanel.addContent(oItem.addStyleClass("sapUiIntegrationEditorHint"));
+								} else {
+									oPanel.addContent(oItem.addStyleClass("sapUiIntegrationEditorHint"));
+								}
 								if (i === aItems.length - 1) {
+									if (oSubPanel) {
+										//add current col fields to previous sub panel, then empty the col fields list
+										addColFieldsOfSubPanel();
+										//add sub panel to panel
+										addSubPanel(oPanel, oSubPanel);
+									}
 									//add current col fields to panel, then empty the col fields list
 									addColFields();
-									if (oPanel.getContent().length > 0) {
-										oRm.renderControl(oPanel);
-									}
+									renderPanel(oPanel);
 								}
 								continue;
 							}
@@ -330,19 +397,36 @@ sap.ui.define([
 								} else {
 									//if cols === 1 and reach the col size, add the col fields to panel, then empty the col fields list
 									//if cols === 2, add the col fields to panel, then empty the col fields list
-									if (oItem._cols === 2 || (oItem._cols === 1 && oColFields.length === 2)) {
+									if (oItem._cols === 2) {
+										if (oSubPanel) {
+											addColFieldsOfSubPanel();
+										} else {
+											addColFields();
+										}
+									} else if (oColFieldsOfSubPanel.length === 2) {
+										addColFieldsOfSubPanel();
+									} else if (oColFields.length === 2) {
 										addColFields();
 									}
-									oPanel.addContent(oItem);
+									if (oSubPanel) {
+										oSubPanel.addContent(oItem);
+									} else {
+										oPanel.addContent(oItem);
+									}
 								}
 							} else if (oItem.isA("sap.m.ToolbarSpacer")) {
-								addColFields();
 								if (oItem._hasLine) {
 									oItem.addStyleClass("sapUiIntegrationEditorSpacerWithLine");
 								} else {
 									oItem.addStyleClass("sapUiIntegrationEditorSpacerWithoutLine");
 								}
-								oPanel.addContent(oItem);
+								if (oSubPanel) {
+									addColFieldsOfSubPanel();
+									oSubPanel.addContent(oItem);
+								} else {
+									addColFields();
+									oPanel.addContent(oItem);
+								}
 							} else {
 								var oConfig = oItem.getConfiguration(),
 									aInfoHBox = new HBox(),
@@ -460,30 +544,58 @@ sap.ui.define([
 									}
 									//render lable and field for NotWrapping parameter
 									if (oItem._cols === 1) {
-										if (oColFields.length === 2) {
-											addColFields();
-										}
-										if (oConfig.hint) {
-											var oHint = oControl._createHint(oConfig.hint);
-											var oColVBox = new VBox({
-												items: [
-													oHBox,
-													oHint.addStyleClass("sapUiIntegrationEditorHint")
-												]
-											});
-											oColVBox.addStyleClass("col1");
-											oColFields.push(oColVBox);
+										if (oSubPanel) {
+											if (oColFieldsOfSubPanel.length === 2) {
+												addColFieldsOfSubPanel();
+											}
+											if (oConfig.hint) {
+												var oHint = oControl._createHint(oConfig.hint);
+												var oColVBox = new VBox({
+													items: [
+														oHBox,
+														oHint.addStyleClass("sapUiIntegrationEditorHint")
+													]
+												});
+												oColVBox.addStyleClass("col1");
+												oColFieldsOfSubPanel.push(oColVBox);
+											} else {
+												oHBox.addStyleClass("col1");
+												oColFieldsOfSubPanel.push(oHBox);
+											}
 										} else {
-											oHBox.addStyleClass("col1");
-											oColFields.push(oHBox);
+											if (oColFields.length === 2) {
+												addColFields();
+											}
+											if (oConfig.hint) {
+												var oHint = oControl._createHint(oConfig.hint);
+												var oColVBox = new VBox({
+													items: [
+														oHBox,
+														oHint.addStyleClass("sapUiIntegrationEditorHint")
+													]
+												});
+												oColVBox.addStyleClass("col1");
+												oColFields.push(oColVBox);
+											} else {
+												oHBox.addStyleClass("col1");
+												oColFields.push(oHBox);
+											}
 										}
+									} else if (oSubPanel) {
+										addColFieldsOfSubPanel();
+										oSubPanel.addContent(oHBox);
 									} else {
 										addColFields();
 										oPanel.addContent(oHBox);
 									}
 									oLabelItemForNotWrapping = null;
 								} else {
-									var oLabel = oPanel.getContent().pop();
+									var oLabel;
+									if (oSubPanel) {
+										oLabel = oSubPanel.getContent().pop();
+									} else {
+										oLabel = oPanel.getContent().pop();
+									}
 									oLabel.setLayoutData(oFlexItemDataForInfo);
 									if (aInfoHBox.getItems().length > 0) {
 										oLabel.addStyleClass("sapUiIntegrationEditorItemLabelWithInfo");
@@ -517,19 +629,40 @@ sap.ui.define([
 											oColVBox.addItem(oHint.addStyleClass("sapUiIntegrationEditorHint"));
 										}
 										oColVBox.addStyleClass("col1");
-										oColFields.push(oColVBox);
+										if (oSubPanel) {
+											oColFieldsOfSubPanel.push(oColVBox);
+										} else {
+											oColFields.push(oColVBox);
+										}
+									} else if (oSubPanel) {
+										oSubPanel.addContent(oLabelFlexBox);
+										oSubPanel.addContent(oItem);
 									} else {
 										oPanel.addContent(oLabelFlexBox);
 										oPanel.addContent(oItem);
 									}
 								}
+								if (oSubPanel) {
+									oSubPanel._subItems.push({
+										"settingspath": oItem.getConfiguration()._settingspath,
+										"itemId": oItem.getId()
+									});
+								}
+								oPanel._subItems.push({
+									"settingspath": oItem.getConfiguration()._settingspath,
+									"itemId": oItem.getId()
+								});
 							}
 							if (i === aItems.length - 1) {
+								if (oSubPanel) {
+									//add current col fields to previous sub panel, then empty the col fields list
+									addColFieldsOfSubPanel();
+									//add sub panel to panel
+									addSubPanel(oPanel, oSubPanel);
+								}
 								//add current col fields to panel, then empty the col fields list
 								addColFields();
-								if (oPanel.getContent().length > 0) {
-									oRm.renderControl(oPanel);
-								}
+								renderPanel(oPanel);
 							}
 						} else {
 							if (i === 0) {
@@ -540,12 +673,22 @@ sap.ui.define([
 								continue;
 							}
 							if (oItem.isA("sap.m.Panel")) {
-								//add sub panel if it has content into top panel
-								if (oPanel && oPanel.getContent().length > 0) {
-									oLanguagePanel.addContent(oPanel);
+								if (oSubPanel) {
+									//add sub panel to panel
+									addSubPanel(oPanel, oSubPanel);
 								}
-								oPanel = oItem;
-								oPanel.addStyleClass("sapUiIntegrationEditorTranslationSubPanel");
+								if (oItem._level === "1") {
+									oSubPanel = oItem;
+									oSubPanel.addStyleClass("sapUiIntegrationEditorSubPanel");
+								} else {
+									oSubPanel = null;
+									//add sub panel if it has content into top panel
+									if (oPanel && oPanel.getContent().length > 0) {
+										oLanguagePanel.addContent(oPanel);
+									}
+									oPanel = oItem;
+									oPanel.addStyleClass("sapUiIntegrationEditorSubPanel");
+								}
 								continue;
 							}
 							if (oItem.isA("sap.m.ToolbarSpacer")) {
@@ -555,7 +698,11 @@ sap.ui.define([
 								continue;
 							}
 							if (oItem.isA("sap.m.Label")) {
-								oPanel.addContent(oItem);
+								if (oSubPanel) {
+									oSubPanel.addContent(oItem);
+								} else {
+									oPanel.addContent(oItem);
+								}
 								continue;
 							}
 							//oItem.addStyleClass("language");
@@ -571,8 +718,16 @@ sap.ui.define([
 									oItem
 								]
 							}).addStyleClass("notWrappingRow");
-							oPanel.addContent(oHBox);
+							if (oSubPanel) {
+								oSubPanel.addContent(oHBox);
+							} else {
+								oPanel.addContent(oHBox);
+							}
 							if (i === aItems.length - 1) {
+								if (oSubPanel) {
+									//add sub panel to panel
+									addSubPanel(oPanel, oSubPanel);
+								}
 								oLanguagePanel.addContent(oPanel);
 							}
 						}
@@ -602,9 +757,12 @@ sap.ui.define([
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 		this._mDestinationDataProviders = {};
-		this.setAggregation("_messageStrip", new MessageStrip({
+		var oMessageStrip = new MessageStrip({
 			showIcon: false
-		}));
+		});
+		oMessageStrip.addStyleClass("sapUiIntegrationEditorFieldMessageStrip");
+		this.setAggregation("_messageStrip", oMessageStrip);
+		MessageStripId = oMessageStrip.getId();
 		this.setLanguage(Core.getConfiguration().getLanguage());
 		/**
 		 * Facade of the {@link sap.ui.integration.editor.Editor} control.
@@ -1691,7 +1849,7 @@ sap.ui.define([
 			oField._layout = oConfig.layout;
 		}
 		oField._oDataProviderFactory = this._oDataProviderFactory;
-		oField.setAssociation("_messageStrip", this.getAggregation("_messageStrip"));
+		oField.setAssociation("_messageStrip", MessageStripId);
 		oField._previewPostion = this.getPreviewPosition();
 		return oField;
 	};
@@ -2046,7 +2204,7 @@ sap.ui.define([
 							if (aResult[i].indexOf("destinations.") === 0) {
 								sValueKey = "/name";
 							}
-							sDependentPath = sDependentPath + aResult[i].replace(".", "/") + "/" + sValueKey;
+							sDependentPath = sDependentPath + "/" + aResult[i].replace(".", "/") + sValueKey;
 						} else if (aResult[i].indexOf("{items>") === 0) {
 							sDependentPath = sDependentPath + "/parameters/" + aResult[i].slice(7, -1);
 						}
@@ -2102,11 +2260,12 @@ sap.ui.define([
 			return;
 		}
 		if (oConfig.type === "group") {
+			oConfig.expanded = oConfig.expanded !== false;
 			var oPanel = new Panel({
 				headerText: oConfig.label,
 				visible: oConfig.visible,
 				expandable: oConfig.expandable !== false,
-				expanded: oConfig.expanded !== false,
+				expanded: "{currentSettings>expanded}",
 				width: "auto",
 				backgroundDesign: "Transparent",
 				objectBindings: {
@@ -2122,26 +2281,128 @@ sap.ui.define([
 				},
 				expand: function (oEvent) {
 					var oControl = oEvent.getSource();
-					if (!oEvent.mParameters.expand && oControl.getParent().getAggregation("_messageStrip") !== null) {
-						MessageStripId = oControl.getParent().getAggregation("_messageStrip").getId();
+					var bExpand = oEvent.getParameter("expand");
+					// handle error message strip for field
+					var oMessageStrip = oControl._level === "1" ? oControl.getParent().getParent().getAggregation("_messageStrip") : oControl.getParent().getAggregation("_messageStrip");
+					if (oMessageStrip === null) {
+						oMessageStrip = Core.byId(MessageStripId);
 					}
-					if (oEvent.mParameters.expand) {
-						var oMessageStrip = Core.byId(MessageStripId);
+					if (!bExpand && oControl._level === "1") {
+						oControl.getParent().addContent(oMessageStrip);
+						oControl.getParent().focus();
+					} else {
 						oControl.addContent(oMessageStrip);
 						oControl.focus();
 					}
+					// handle error message for panel
+					if (!bExpand && oControl._subItems && oControl._subItems.length > 0) {
+						var oCurrentSettingsModel = oControl.getModel("currentSettings");
+						var bHasError = false;
+						var sErrorType = "None";
+						for (var i = 0; i < oControl._subItems.length; i++) {
+							var sSettingsPath = oControl._subItems[i].settingspath;
+							var oItem = Core.byId(oControl._subItems[i].itemId);
+							if (oCurrentSettingsModel.getProperty(sSettingsPath + "/hasError") === true && oItem.getVisible()) {
+								bHasError = true;
+								var sType = oCurrentSettingsModel.getProperty(sSettingsPath + "/errorType");
+								if (sType === "Error") {
+									sErrorType = "Error";
+									break;
+								} else if (sType === "Warning" && sErrorType !== "Error") {
+									sErrorType = "Warning";
+								}
+							}
+						}
+						oCurrentSettingsModel.setProperty("hasError", bHasError, oControl.getBindingContext("currentSettings"));
+						oCurrentSettingsModel.setProperty("errorType", sErrorType, oControl.getBindingContext("currentSettings"));
+					}
 				}
 			});
+			if (sMode !== "translation") {
+				/*
+				var oMessage = new MessageStrip({
+					showIcon: false,
+					text: {
+						path: 'currentSettings>errorType',
+						formatter: function (errorType) {
+							var sPanelTitle = "";
+							switch (errorType) {
+								case "Error":
+									sPanelTitle = oResourceBundle.getText("EDITOR_GROUP_ERRORS");
+									break;
+								case "Warning":
+									sPanelTitle = oResourceBundle.getText("EDITOR_GROUP_WARNINGS");
+									break;
+								default:
+							}
+							return sPanelTitle;
+						}
+					},
+					type: "{currentSettings>errorType}",
+					visible: "{= !${currentSettings>expanded} && ${currentSettings>hasError} === true}"
+				}).addStyleClass("sapUiIntegrationEditorPanelMessageStrip");
+				var oHeaderToolbar = new OverflowToolbar({
+					content: [
+						new Title({
+							text: oConfig.label
+						}),
+						new Separator(),
+						oMessage
+					]
+				}).addStyleClass("sapUiIntegrationEditorPanelHeader");
+				oPanel.setHeaderToolbar(oHeaderToolbar);
+				*/
+				var oResourceBundle = this._oResourceBundle;
+				var oMessageStripOfPanel = new MessageStrip({
+					showIcon: false,
+					visible: "{= !${currentSettings>expanded} && ${currentSettings>hasError} === true}",
+					text: {
+						path: 'currentSettings>errorType',
+						formatter: function (errorType) {
+							var sPanelTitle = "";
+							switch (errorType) {
+								case "Error":
+									sPanelTitle = oResourceBundle.getText("EDITOR_GROUP_ERRORS");
+									break;
+								case "Warning":
+									sPanelTitle = oResourceBundle.getText("EDITOR_GROUP_WARNINGS");
+									break;
+								default:
+							}
+							return sPanelTitle;
+						}
+					},
+					type: "{currentSettings>errorType}",
+					objectBindings: {
+						currentSettings: {
+							path: "currentSettings>" + oConfig._settingspath
+						}
+					}
+				});
+				if (oConfig.level !== "1") {
+					oMessageStripOfPanel.setModel(this._settingsModel, "currentSettings");
+				}
+				oMessageStripOfPanel.addStyleClass("sapUiIntegrationEditorPanelMessageStrip");
+				oPanel._messageStrip = oMessageStripOfPanel;
+			}/* else {
+				oPanel.setHeaderText(oConfig.label);
+			}*/
 			this.addAggregation("_formContent", oPanel);
 			oPanel._cols = oConfig.cols || 2; //by default 2 cols
+			oPanel._level = oConfig.level || 0; //by default 0 level
 			if (oConfig.hint) {
 				this._addHint(oConfig.hint);
 			}
 			//add "aria-label" for each panel to make the landmark uniquely
 			var oDelegate = {
-				onAfterRendering: function() {
+				onAfterRendering: function(oEvent) {
 					var ePanel = document.getElementById(oPanel.getId());
 					ePanel.setAttribute("aria-label", oConfig.label);
+					var oControl = oEvent.srcControl;
+					var oMessageStrip = oControl._messageStrip;
+					if (oControl._level !== "1" && oMessageStrip) {
+						oMessageStrip.rerender();
+					}
 				}
 			};
 			oPanel.addEventDelegate(oDelegate);
@@ -2311,8 +2572,42 @@ sap.ui.define([
 		if (oContents && oContents.length > 0) {
 			this.destroyAggregation("_formContent");
 		}
-		var oSettings = this._settingsModel.getProperty("/");
+
+		var oSettingsData = this._settingsModel.getData();
 		var aItems;
+		if (oSettingsData.form && oSettingsData.form.items) {
+			aItems = oSettingsData.form.items;
+			//add general configuration group
+			var bAddGeneralSettingsPanel = false;
+			for (var m in aItems) {
+				var oItem = aItems[m];
+				if (oItem.type === "group" && oItem.level !== "1") {
+					break;
+				} else if (oItem.visible) {
+					bAddGeneralSettingsPanel = true;
+					break;
+				}
+			}
+			if (bAddGeneralSettingsPanel) {
+				//add general settings panel
+				aItems = merge(
+					{
+						generalPanel : {
+							type: "group",
+							translatable: true,
+							expanded: true,
+							label: this._oResourceBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"),
+							_settingspath: "/form/items/generalPanel"
+						}
+					}, aItems
+				);
+				oSettingsData.form.items = aItems;
+				this._settingsModel.setData(oSettingsData);
+			}
+		}
+
+		var oSettings = this._settingsModel.getProperty("/");
+		this._mItemsByPaths = {};
 		if (oSettings.form && oSettings.form.items) {
 			aItems = oSettings.form.items;
 			//get current language
@@ -2323,29 +2618,10 @@ sap.ui.define([
 					type: "group",
 					translatable: true,
 					expandable: false,
+					expanded: true,
 					label: this._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[sLanguage]
 				});
 			}
-			//add general configuration group
-			var bAddGeneralSettingsPanel = false;
-			for (var m in aItems) {
-				var oItem = aItems[m];
-				if (oItem.type === "group") {
-					break;
-				} else if (oItem.visible) {
-					bAddGeneralSettingsPanel = true;
-					break;
-				}
-			}
-			if (bAddGeneralSettingsPanel) {
-				//add general settings panel
-				this._addItem({
-					type: "group",
-					translatable: true,
-					label: this._oResourceBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS")
-				});
-			}
-			this._mItemsByPaths = {};
 			for (var n in aItems) {
 				var oItem = aItems[n];
 				if (oItem) {
@@ -2673,7 +2949,9 @@ sap.ui.define([
 				oSettings.form.items["destination.group"] = {
 					label: this._oResourceBundle.getText("EDITOR_DESTINATIONS") || "Destinations",
 					type: "group",
-					visible: true
+					expanded: true,
+					visible: true,
+					_settingspath: "/form/items/destination.group"
 				};
 			}
 			var oItems = oSettings.form.items,
