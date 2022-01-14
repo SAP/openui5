@@ -484,7 +484,7 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
-						assert.ok(oField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
 						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: MultiComboBox items lenght is OK");
 						resolve();
@@ -522,7 +522,7 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
-						assert.ok(oField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						var oMultiComboBox = oField.getAggregation("_field");
 						assert.ok(oMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
 						assert.ok(oMultiComboBox.getItems().length === 5, "Field: MultiComboBox items lenght is OK");
@@ -564,14 +564,14 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringArrayParameterNoValues", "Label: Has static label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Input value is OK");
 					oLabel = this.oEditor.getAggregation("_formContent")[3];
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringArrayParameterNoValuesNotEditable", "Label: Has static label text");
-					assert.ok(oField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Input value is OK");
 					assert.ok(!oField.getAggregation("_field").getEditable(), "Field: Input editable is OK");
@@ -609,7 +609,7 @@ sap.ui.define([
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
-						assert.ok(oField.isA("sap.ui.integration.editor.fields.ListField"), "Field: List Field");
+						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
 						assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: MultiComboBox items lenght is OK");
 						resolve();

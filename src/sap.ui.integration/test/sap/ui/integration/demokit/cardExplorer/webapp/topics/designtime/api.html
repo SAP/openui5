@@ -143,8 +143,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							<td>string</td>
 							<td><strong>Yes</strong></td>
 							<td>"string"</td>
-							<td>Type of the value in the manifest that is edited. Currently "string", "integer", "number",
-								"date", "datetime", "boolean", "string[]", "group", "separator" are supported.<br>
+							<td>Type of the value in the manifest that is edited. Currently "string", "string[]", "integer", "number",
+								"date", "datetime", "boolean", "object", "object[]", "group", "separator" are supported.<br>
 								type="group" in an item will allow to set an expandable panel within the form.
 								It will contains all the parameters behind it and before the next item which type is "group" too.
 								For a group typed item the manifestpath setting can be omitted. A label should be provided.<br>
@@ -388,40 +388,41 @@ formatter : {
 					</table>
 				</div>
 			</div>
-			<h3 id="lists">Providing Lists for String</h3>
-			<p>
-				To allow a selection of values for fields of type "string", you can add a values section.
-				Similar to the card data section, the list can be filled with a static JSON or a request.
-				The item section in the values definition links the data. The "key" property of the item is used as
-				the value for the setting referred by the "manifestPath".</p>
-			<strong>Static Data List</strong>
+			<div>
+				<h3 id="lists">Providing Lists for String</h3>
+				<p>
+					To allow a selection of values for fields of type "string", you can add a values section.
+					Similar to the card data section, the list can be filled with a static JSON or a request.
+					The item section in the values definition links the data. The "key" property of the item is used as
+					the value for the setting referred by the "manifestPath".</p>
+				<strong>Static Data List</strong>
 
-			<pre class="lang-js collapsed" data-caption="Static Values">
+				<pre class="lang-js collapsed" data-caption="Static Values">
 "stringWithStaticList": {
 	"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
 	"type": "string",<mark>
 	"values": {
 		"data": {
 			"json": {
-			"values": [
-				{ "text": "From JSON 1", "key": "key1" },
-				{ "text": "From JSON 2", "key": "key2" },
-				{ "text": "From JSON 3", "key": "key3" }
-			]
+				"values": [
+					{ "text": "From JSON 1", "key": "key1" },
+					{ "text": "From JSON 2", "key": "key2" },
+					{ "text": "From JSON 3", "key": "key3" }
+				]
 			},
 			"path": "/values"
 		},
 		"item": {
 			"text": "{text}",
 			"key": "{key}"
-		}</mark>
-	}
+		}
+	}</mark>
 }</pre>
-			<strong>Request Data List</strong>
-			<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
-				propvider.</p>
-			<pre class="lang-js collapsed" data-caption="Request Values">
-"stringWithStaticList": {
+				<strong>Request Data List</strong>
+				<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
+					propvider.</p>
+				<pre class="lang-js collapsed" data-caption="Request Values">
+"stringWithRequestList": {
 	"manifestpath": "/sap.card/configuration/parameters/stringWithRequestList/value",
 	"type": "string",
 	"values": {
@@ -429,84 +430,449 @@ formatter : {
 			"request": {
 				"url": "./dt/listdata.json"
 			},
-			"path": "/values"
-		},</mark>
+			"path": "/values"</mark>
+		},
 		"item": {
 			"text": "{text}",
 			"key": "{key}"
 		}
 	}
 }</pre>
-
-			<pre class="lang-js collapsed" data-caption="Data of dt/listdata.json">
-"values": [
-	{ "text": "From JSON 1", "key": "key1" },
-	{ "text": "From JSON 2", "key": "key2" },
-	{ "text": "From JSON 3", "key": "key3" }
-]</pre>
-			<h3 id="listsArrays">Providing Lists for String Arrays</h3>
-			<p>
-				To allow a selection of values for fields of type "string[]", you can add the same values sections as
-				above.
-				Similar to the card data section, the list can be filled with a static JSON or a request.
-				The item section in the values definition links the data. The "key" property of the item is used as
-				the value for the setting referred by the "manifestPath".
-			</p>
-			<strong>Static Data List</strong>
-			<pre class="lang-js collapsed" data-caption="String Array Lists">
+				<pre class="lang-js collapsed" data-caption="Data of dt/listdata.json">
+{
+	"values": [
+		{ "text": "From JSON 1", "key": "key1" },
+		{ "text": "From JSON 2", "key": "key2" },
+		{ "text": "From JSON 3", "key": "key3" }
+	]
+}</pre>
+			</div>
+			<div>
+				<h3 id="listsArrays">Providing Lists for String Array</h3>
+				<p>
+					To allow a selection of values for fields of type "string[]", you can add the same values sections as
+					above.
+					Similar to the card data section, the list can be filled with a static JSON or a request.
+					The item section in the values definition links the data. The "key" property of the item is used as
+					the value for the setting referred by the "manifestPath".
+				</p>
+				<strong>Static Data List</strong>
+				<pre class="lang-js collapsed" data-caption="Static Values">
 "stringArrayWithStaticList": {
-	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",<mark>
-	"type": "string[]",</mark>
+	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithStaticList/value",
+	"type": "string[]",<mark>
 	"values": {
 		"data": {
-		"json": {
-			"values": [
-				{ "text": "From JSON 1", "key": "key1" },
-				{ "text": "From JSON 2", "key": "key2" },
-				{ "text": "From JSON 3", "key": "key3" }
-			]
-		},
-		"path": "/values"
+			"json": {
+				"values": [
+					{ "text": "From JSON 1", "key": "key1" },
+					{ "text": "From JSON 2", "key": "key2" },
+					{ "text": "From JSON 3", "key": "key3" }
+				]
+			},
+			"path": "/values"
 		},
 		"item": {
-		"text": "{text}",
-		"key": "{key}"
+			"text": "{text}",
+			"key": "{key}"
+		}
+	}</mark>
+}</pre>
+				<strong>Request Data List</strong>
+				<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
+					propvider.</p>
+				<pre class="lang-js collapsed" data-caption="Request Values">
+"stringArrayWithRequestList": {
+	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",
+	"type": "string[]",
+	"values": {
+		"data": {<mark>
+			"request": {
+				"url": "./dt/listdata.json"
+			},
+			"path": "/values"</mark>
+		},
+		"item": {
+			"text": "{text}",
+			"key": "{key}"
 		}
 	}
 }</pre>
-			<strong>Request Data List</strong>
-			<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
-				propvider.</p>
-			<pre class="lang-js collapsed" data-caption="String Array Lists with requests">
-"stringWithStaticList": {
-	"manifestpath": "/sap.card/configuration/parameters/stringArrayWithRequestList/value",<mark>
-	"type": "string[]",</mark>
+				<pre class="lang-js collapsed" data-caption="Data of dt/listdata.json">
+{
+	"values": [
+		{ "text": "From JSON 1", "key": "key1" },
+		{ "text": "From JSON 2", "key": "key2" },
+		{ "text": "From JSON 3", "key": "key3" }
+	]
+}</pre>
+			</div>
+			<div>
+				<h3 id="lists">Providing Lists for Object</h3>
+				<p>
+					To allow a selection of values for fields of type "object", you can add a values section.
+					Similar to the card data section, the list can be filled with a static JSON or a request.
+					The properties section defines the object properties.
+					The column section of each property defines a column for it in the values table. If no such section, will use the default settings to define a column.</p>
+				<strong>Static Data List</strong>
+
+				<pre class="lang-js collapsed" data-caption="Static Values">
+"objectWithStaticList": {
+	"manifestpath": "/sap.card/configuration/parameters/objectWithStaticList/value",
+	"type": "object",<mark>
 	"values": {
 		"data": {
-		"request": {
-			"url": "./dt/listdata.json"
+			"json": {
+				"values": [
+					{ "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
+					{ "text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
+					{ "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
+				]
+			},
+			"path": "/values"
 		},
-		"path": "/values"
+		"allowCreateNew": true
+	},
+	"properties": {
+		"key": {
+			"label": "Key"
 		},
-		"item": {
-		"text": "{text}",
-		"key": "{key}"
+		"icon": {
+			"label": "Icon",
+			"defaultValue": "sap-icon://add",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "4rem"
+				},
+				"cell": {
+					"type": "Icon",
+					"color": "{iconcolor}"
+				}
+			}
+		},
+		"text": {
+			"label": "Text",
+			"defaultValue": "text",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "6rem",
+					"filterProperty": "text",
+					"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+				}
+			}
+		},
+		"url": {
+			"label": "URL",
+			"defaultValue": "http://",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "10rem",
+					"label": "URL Link",
+					"filterProperty": "url",
+					"defaultFilterOperator": "StartsWith"
+				},
+				"cell": {
+					"type": "Link",
+					"href": "{url}"
+				}
+			}
+		},
+		"editable": {
+			"label": "Editable",
+			"defaultValue": false,
+			"type": "boolean",
+			"column": {
+				"cell": {
+					"type": "CheckBox"
+				}
+			}
+		},
+		"int": {
+			"label": "Integer",
+			"defaultValue": 0,
+			"type": "int",
+			"formatter": {
+				"minIntegerDigits": 1,
+				"maxIntegerDigits": 6,
+				"emptyString": ""
+			},
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "5rem",
+					"label": "Integer",
+					"filterProperty": "int",
+					"defaultFilterOperator": "EQ",
+					"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
+				}
+			}
+		}
+	}</mark>
+}</pre>
+				<strong>Request Data List</strong>
+				<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
+					propvider.</p>
+				<pre class="lang-js collapsed" data-caption="Request Values">
+"objectWithRequestList": {
+	"manifestpath": "/sap.card/configuration/parameters/objectWithRequestList/value",
+	"type": "object",
+	"values": {
+		"data": {<mark>
+			"request": {
+				"url": "./dt/listdata.json"
+			},
+			"path": "/values"</mark>
+		}
+	},
+	"properties": {
+		"key": {
+			"label": "Key"
+		},
+		"icon": {
+			"label": "Icon",
+			"defaultValue": "sap-icon://add",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "4rem"
+				},
+				"cell": {
+					"type": "Icon",
+					"color": "{iconcolor}"
+				}
+			}
+		},
+		"text": {
+			"label": "Text",
+			"defaultValue": "text",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "6rem",
+					"filterProperty": "text",
+					"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+				}
+			}
+		},
+		"url": {
+			"label": "URL",
+			"defaultValue": "http://",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "10rem",
+					"label": "URL Link",
+					"filterProperty": "url",
+					"defaultFilterOperator": "StartsWith"
+				},
+				"cell": {
+					"type": "Link",
+					"href": "{url}"
+				}
+			}
 		}
 	}
 }</pre>
-			<pre class="lang-js collapsed" data-caption="Data of dt/listdata.json">
-"values": [
-	{ "text": "From JSON 1", "key": "key1" },
-	{ "text": "From JSON 2", "key": "key2" },
-	{ "text": "From JSON 3", "key": "key3" }
-]</pre>
-			<h3>Validation of Field Value</h3>
-			<p>
-				Validation of value can be added to the validation(s) settings in the configuration of each
-				field.
-				Please ensure that users are not overwhelmed with error and warning messages. Use validation wisely.
-			</p>
-			<pre class="lang-js collapsed" data-caption="String/Integer fields with validations">
+				<pre class="lang-js collapsed" data-caption="Data of dt/listdata.json">
+{
+	"values": [
+		{ "text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+		{ "text": "text2req", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+		{ "text": "text3req", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+		{ "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out" }
+	]
+}</pre>
+			</div>
+			<div>
+				<h3 id="lists">Providing Lists for Object Array</h3>
+				<p>
+					To allow a selection of values for fields of type "object[]", you can add a values section.
+					Similar to the card data section, the list can be filled with a static JSON or a request.
+					The properties section defines the object properties.
+					The column section of each property defines a column for it in the values table. If no such section, will use the default settings to define a column.</p>
+				<strong>Static Data List</strong>
+
+				<pre class="lang-js collapsed" data-caption="Static Values">
+"objectArrayWithStaticList": {
+	"manifestpath": "/sap.card/configuration/parameters/objectArrayWithStaticList/value",
+	"type": "object[]",<mark>
+	"values": {
+		"data": {
+			"json": {
+				"values": [
+					{ "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
+					{ "text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
+					{ "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
+				]
+			},
+			"path": "/values"
+		},
+		"allowCreateNew": true
+	},
+	"properties": {
+		"key": {
+			"label": "Key"
+		},
+		"icon": {
+			"label": "Icon",
+			"defaultValue": "sap-icon://add",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "4rem"
+				},
+				"cell": {
+					"type": "Icon",
+					"color": "{iconcolor}"
+				}
+			}
+		},
+		"text": {
+			"label": "Text",
+			"defaultValue": "text",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "6rem",
+					"filterProperty": "text",
+					"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+				}
+			}
+		},
+		"url": {
+			"label": "URL",
+			"defaultValue": "http://",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "10rem",
+					"label": "URL Link",
+					"filterProperty": "url",
+					"defaultFilterOperator": "StartsWith"
+				},
+				"cell": {
+					"type": "Link",
+					"href": "{url}"
+				}
+			}
+		},
+		"editable": {
+			"label": "Editable",
+			"defaultValue": false,
+			"type": "boolean",
+			"column": {
+				"cell": {
+					"type": "CheckBox"
+				}
+			}
+		},
+		"int": {
+			"label": "Integer",
+			"defaultValue": 0,
+			"type": "int",
+			"formatter": {
+				"minIntegerDigits": 1,
+				"maxIntegerDigits": 6,
+				"emptyString": ""
+			},
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "5rem",
+					"label": "Integer",
+					"filterProperty": "int",
+					"defaultFilterOperator": "EQ",
+					"filterType": "sap.ui.model.type.Integer"   //sap.ui.model.type
+				}
+			}
+		}
+	}</mark>
+}</pre>
+				<strong>Request Data List</strong>
+				<p>The referred URL will deliver the data asynchronously. Also an extension could be used as a data
+					propvider.</p>
+				<pre class="lang-js collapsed" data-caption="Request Values">
+"objectArrayWithRequestList": {
+	"manifestpath": "/sap.card/configuration/parameters/objectArrayWithRequestList/value",
+	"type": "object[]",
+	"values": {
+		"data": {<mark>
+			"request": {
+				"url": "./dt/listdata.json"
+			},
+			"path": "/values"</mark>
+		}
+	},
+	"properties": {
+		"key": {
+			"label": "Key"
+		},
+		"icon": {
+			"label": "Icon",
+			"defaultValue": "sap-icon://add",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "4rem"
+				},
+				"cell": {
+					"type": "Icon",
+					"color": "{iconcolor}"
+				}
+			}
+		},
+		"text": {
+			"label": "Text",
+			"defaultValue": "text",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "6rem",
+					"filterProperty": "text",
+					"defaultFilterOperator": "Contains"   // values are in enum sap.ui.model.FilterOperator
+				}
+			}
+		},
+		"url": {
+			"label": "URL",
+			"defaultValue": "http://",
+			"column": {
+				"settings": {
+					"hAlign": "Center",
+					"width": "10rem",
+					"label": "URL Link",
+					"filterProperty": "url",
+					"defaultFilterOperator": "StartsWith"
+				},
+				"cell": {
+					"type": "Link",
+					"href": "{url}"
+				}
+			}
+		}
+	}
+}</pre>
+				<pre class="lang-js collapsed" data-caption="Data of dt/listdata.json">
+{
+	"values": [
+		{ "text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+		{ "text": "text2req", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+		{ "text": "text3req", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" },
+		{ "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out" }
+	]
+}</pre>
+			</div>
+			<div>
+				<h3>Validation of Field Value</h3>
+				<p>
+					Validation of value can be added to the validation(s) settings in the configuration of each
+					field.
+					Please ensure that users are not overwhelmed with error and warning messages. Use validation wisely.
+				</p>
+				<pre class="lang-js collapsed" data-caption="String/Integer fields with validations">
 "string1": {
 	"type": "string",
 	"required": true,  // this is a validation rule, it will automatically check for empty value, no need to define a validation for it.
@@ -554,10 +920,10 @@ formatter : {
 		}
 	]
 }</pre>
-			<p>
-				Now users can also validate the value via request result.
-			</p>
-			<pre class="lang-js collapsed" data-caption="Validations via request result">
+				<p>
+					Now users can also validate the value via request result.
+				</p>
+				<pre class="lang-js collapsed" data-caption="Validations via request result">
 "boolean1": {
 	"manifestpath": "/sap.card/configuration/parameters/boolean1/value",
 	"type": "boolean",
@@ -698,81 +1064,81 @@ formatter : {
 		"message": "Please remove some items!"
 	}]
 }</pre>
-			<div class="tableWrapper">
-				<table>
-					<caption>Validation Type</caption>
-					<tr>
-						<th>Property</th>
-						<th>Type</th>
-						<th>Required</th>
-						<th>Default</th>
-						<th>For Type</th>
-						<th>Description</th>
-						<th>Since</th>
-					</tr>
-					<tr>
-						<td>type</td>
-						<td>["error","warning"]</td>
-						<td>No</td>
-						<td>error</td>
-						<td>all</td>
-						<td>Defines the type of the message (error or warning) that should appear on the field.
-							<pre class="lang-js">type: "error"</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>message</td>
-						<td>string</td>
-						<td>No</td>
-						<td>none</td>
-						<td>all</td>
-						<td>Defines the error message that should appear. If not given a default message will appear.
-							<pre class="lang-js">message: "{i18n>TRANSLATABLE_ERROR_MESSAGE}"</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>minLength</td>
-						<td>integer</td>
-						<td>No</td>
-						<td>0</td>
-						<td>string/string[]</td>
-						<td>Minimal length of a string value.<br>Minimal size of a string array value.
-							<pre class="lang-js">minLength : 10</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>maxLength</td>
-						<td>integer</td>
-						<td>No</td>
-						<td>unlimited</td>
-						<td>string/string[]</td>
-						<td>Maximal length of a string value<br>Maximal size of a string array value.
-							<pre class="lang-js">maxLength : 10</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>pattern</td>
-						<td>Reg Exp string</td>
-						<td>No</td>
-						<td>none</td>
-						<td>string</td>
-						<td>String values are only valid if text matches the given Regular Expression.
-							<pre class="lang-js">pattern : "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>validate</td>
-						<td>function</td>
-						<td>No</td>
-						<td>none</td>
-						<td>all</td>
-						<td>Own implementation function to check value.
-							<pre class="lang-js">
+				<div class="tableWrapper">
+					<table>
+						<caption>Validation Type</caption>
+						<tr>
+							<th>Property</th>
+							<th>Type</th>
+							<th>Required</th>
+							<th>Default</th>
+							<th>For Type</th>
+							<th>Description</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>type</td>
+							<td>["error","warning"]</td>
+							<td>No</td>
+							<td>error</td>
+							<td>all</td>
+							<td>Defines the type of the message (error or warning) that should appear on the field.
+								<pre class="lang-js">type: "error"</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>message</td>
+							<td>string</td>
+							<td>No</td>
+							<td>none</td>
+							<td>all</td>
+							<td>Defines the error message that should appear. If not given a default message will appear.
+								<pre class="lang-js">message: "{i18n>TRANSLATABLE_ERROR_MESSAGE}"</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>minLength</td>
+							<td>integer</td>
+							<td>No</td>
+							<td>0</td>
+							<td>string/string[]</td>
+							<td>Minimal length of a string value.<br>Minimal size of a string array value.
+								<pre class="lang-js">minLength : 10</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>maxLength</td>
+							<td>integer</td>
+							<td>No</td>
+							<td>unlimited</td>
+							<td>string/string[]</td>
+							<td>Maximal length of a string value<br>Maximal size of a string array value.
+								<pre class="lang-js">maxLength : 10</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>pattern</td>
+							<td>Reg Exp string</td>
+							<td>No</td>
+							<td>none</td>
+							<td>string</td>
+							<td>String values are only valid if text matches the given Regular Expression.
+								<pre class="lang-js">pattern : "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>validate</td>
+							<td>function</td>
+							<td>No</td>
+							<td>none</td>
+							<td>all</td>
+							<td>Own implementation function to check value.
+								<pre class="lang-js">
 validate : function(value, config, context) {
 	return context["requestData"]({
 		"data": {
@@ -789,8 +1155,8 @@ validate : function(value, config, context) {
 		return true;
 	});
 }</pre>
-							or
-							<pre class="lang-js">
+								or
+								<pre class="lang-js">
 validate: function (value, config, context) {
 	return context["requestData"]({
 		"data": {
@@ -817,61 +1183,62 @@ validate: function (value, config, context) {
 		};
 	});
 }</pre>
-							or
-							<pre class="lang-js">
+								or
+								<pre class="lang-js">
 validate : function (value) {
 	return value !== 5;
 }</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>minimum</td>
-						<td>integer</td>
-						<td>No</td>
-						<td>none</td>
-						<td>integer/number</td>
-						<td>Minimum value for the number
-							<pre class="lang-js">minimum : 10</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>maximum</td>
-						<td>integer</td>
-						<td>No</td>
-						<td>none</td>
-						<td>integer/number</td>
-						<td>Maximum value for the number
-							<pre class="lang-js">maximum : 20</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>exclusiveMinimum</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>false</td>
-						<td>integer/number</td>
-						<td>Whether the given minimum should be excluded.
-							<pre
-								class="lang-js">minimum: 10, exclusiveMinimum : true // 10 is not allowed, but 10.00001</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-					<tr>
-						<td>exclusiveMaximum</td>
-						<td>boolean</td>
-						<td>No</td>
-						<td>false</td>
-						<td>integer/number</td>
-						<td>Whether the given maximum should be excluded.
-							<pre
-								class="lang-js">maximum: 20, exclusiveMaximum : true // 20 is not allowed, but 19.9999</pre>
-						</td>
-						<td>1.86</td>
-					</tr>
-				</table>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>minimum</td>
+							<td>integer</td>
+							<td>No</td>
+							<td>none</td>
+							<td>integer/number</td>
+							<td>Minimum value for the number
+								<pre class="lang-js">minimum : 10</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>maximum</td>
+							<td>integer</td>
+							<td>No</td>
+							<td>none</td>
+							<td>integer/number</td>
+							<td>Maximum value for the number
+								<pre class="lang-js">maximum : 20</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>exclusiveMinimum</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>false</td>
+							<td>integer/number</td>
+							<td>Whether the given minimum should be excluded.
+								<pre
+									class="lang-js">minimum: 10, exclusiveMinimum : true // 10 is not allowed, but 10.00001</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>exclusiveMaximum</td>
+							<td>boolean</td>
+							<td>No</td>
+							<td>false</td>
+							<td>integer/number</td>
+							<td>Whether the given maximum should be excluded.
+								<pre
+									class="lang-js">maximum: 20, exclusiveMaximum : true // 20 is not allowed, but 19.9999</pre>
+							</td>
+							<td>1.86</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 

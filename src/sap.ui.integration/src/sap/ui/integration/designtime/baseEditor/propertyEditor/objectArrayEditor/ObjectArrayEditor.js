@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor",
 	"sap/base/util/restricted/_isNil",
 	"sap/base/util/isPlainObject"
 ], function (
-	BasePropertyEditor,
+	TextAreaEditor,
 	_isNil,
 	isPlainObject
 ) {
@@ -14,7 +14,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * Constructor for a new <code>TextAreaEditor</code>.
+	 * Constructor for a new <code>ObjectArrayEditor</code>.
 	 * This allows to set a code editor or binding strings for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.m.TextArea}.
 	 *
@@ -47,66 +47,35 @@ sap.ui.define([
 	 * </tr>
 	 * </table>
 	 *
-	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
-	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.textAreaEditor.TextAreaEditor
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.textAreaEditor.TextAreaEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.objectArrayEditor.ObjectArrayEditor
 	 * @author SAP SE
-	 * @since 1.85
+	 * @since 1.100.0
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental 1.85
+	 * @experimental 1.100
 	 * @ui5-restricted
 	 */
-	var TextAreaEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.textAreaEditor.TextAreaEditor", {
-		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.textAreaEditor.TextAreaEditor",
+	var ObjectArrayEditor = TextAreaEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.objectArrayEditor.ObjectArrayEditor", {
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.objectArrayEditor.ObjectArrayEditor",
 		metadata: {
 			library: "sap.ui.integration"
 		},
-		renderer: BasePropertyEditor.getMetadata().getRenderer().render
+		renderer: TextAreaEditor.getMetadata().getRenderer().render
 	});
 
-	TextAreaEditor.configMetadata = Object.assign({}, BasePropertyEditor.configMetadata, {
+	ObjectArrayEditor.configMetadata = Object.assign({}, TextAreaEditor.configMetadata, {
 		allowBindings: {
 			defaultValue: true,
 			mergeStrategy: "mostRestrictiveWins"
 		},
 		typeLabel: {
-			defaultValue: "BASE_EDITOR.TYPES.OBJECT"
+			defaultValue: "BASE_EDITOR.TYPES.OBJECTARRAY"
 		}
 	});
 
-	TextAreaEditor.prototype.getDefaultValidators = function () {
-		var oConfig = this.getConfig();
-		return Object.assign(
-			{},
-			BasePropertyEditor.prototype.getDefaultValidators.call(this),
-			{
-				notABinding: {
-					type: "notABinding",
-					isEnabled: !oConfig.allowBindings
-				},
-				maxLength: {
-					type: "maxLength",
-					isEnabled: typeof oConfig.maxLength === "number",
-					config: {
-						maxLength: oConfig.maxLength
-					}
-				}
-			}
-		);
-	};
-
-	TextAreaEditor.prototype.formatValue = function (vValue) {
-		vValue = JSON.stringify(vValue, null, "\t");
-		if (typeof vValue === "object" && !vValue.length) {
-			vValue = vValue.replace(/\"\$\$([a-zA-Z]*)\$\$\"/g, function (s) {
-				return s.substring(3, s.length - 3);
-			});
-		}
-		return vValue;
-	};
-
-	TextAreaEditor.prototype._onLiveChange = function () {
+	ObjectArrayEditor.prototype._onLiveChange = function () {
 		var oTextArea = this.getContent();
 		var sValue = oTextArea.getValue();
 		if (!sValue || sValue === "") {
@@ -114,6 +83,11 @@ sap.ui.define([
 		} else {
 			try {
 				var oValue = JSON.parse(sValue);
+				if (!(oValue instanceof Array)) {
+					oTextArea.setValueState("Error");
+					oTextArea.setValueStateText(this.getI18nProperty("BASE_EDITOR.VALIDATOR.NOT_AN_ARRAY_OF_JSONOBJECTS"));
+					return;
+				}
 				this.setValue(oValue);
 			} catch (e) {
 				oTextArea.setValueState("Error");
@@ -122,5 +96,5 @@ sap.ui.define([
 		}
 	};
 
-	return TextAreaEditor;
+	return ObjectArrayEditor;
 });

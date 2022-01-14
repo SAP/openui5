@@ -92,6 +92,7 @@ sap.ui.define([
 		var bAllowDynamicValues = this.getBoolenValue(oConfigValue.value.allowDynamicValues, vItemMetadata.allowDynamicValues, false);
 		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
 		var oValues = oConfigValue.value.values || vItemMetadata.values;
+		var oProperties = oConfigValue.value.properties || vItemMetadata.properties;
 		var sLabel = oConfigValue.value.label || vItemMetadata.label;
 		var sPlaceholder = oConfigValue.value.placeholder || vItemMetadata.placeholder || "";
 		var oValidations = oConfigValue.value.validations || vItemMetadata.validations;
@@ -258,7 +259,7 @@ sap.ui.define([
 				path: "translatable",
 				value: bTranslatable,
 				enabled: true,
-				visible: sType !== "separator",
+				visible: sType === "string",
 				type: "boolean",
 				itemKey: sKey
 			},
@@ -306,8 +307,18 @@ sap.ui.define([
 				path: "values",
 				allowBindings: true,
 				value: oValues,
-				visible: sType === "string" || sType === "array",
+				visible: sType === "string" || sType === "array" || sType === "object" || sType === "objectArray",
 				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VALUES.PLACEHOLDER"),
+				type: "textArea",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.PROPERTIES"),
+				path: "properties",
+				allowBindings: true,
+				value: oProperties,
+				visible: sType === "object" || sType === "objectArray",
+				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.PROPERTIES.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey
 			},

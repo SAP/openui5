@@ -219,12 +219,58 @@
 	max-width: 100%;
 }
 
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapMTBStandard {
+    border-bottom: 0px !important;
+}
+
+.sapUiIntegrationEditorItemObjectFieldDetailsPopover .sapUiFormResGridCont > div {
+    padding-top: 0.2rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm {
+	border: solid 0.0625rem #d9d9d9;
+	margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapMTB {
+    height: 2.0rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapMTBStandard {
+    border-bottom: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapUiFormResGrid > div {
+    padding-top: 0px;
+    box-sizing: border-box;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapUiFormResGridCont > div {
+    padding-top: 0.2rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTBStandard,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTBStandard {
+    border-bottom: 0px !important;
+	margin-bottom: 0px !important;
+	padding-left: 0.25rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTB, 
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTB{
+	height: 2rem !important;
+	border: solid 0.0625rem #d9d9d9;
+}
+
 .sapUiIntegrationEditorPopover .sapUiIntegrationEditorDescriptionText {
 	max-width: 300px !important;
 	font-size: 0.8rem;
 }
 
-.sapUiIntegrationFieldTranslation .sapMPopoverTitle {
+.sapUiIntegrationFieldTranslation .sapMPopoverTitle,
+.sapUiIntegrationFieldObjectListPopup .sapMPopoverTitle {
 	max-width: 300px !important;
 	font-size: 1.125rem;
 	text-align: center;
@@ -248,7 +294,7 @@
     padding: 0 1.8rem 0.5rem 1rem;
 }
 
-.sapUiIntegrationFieldTranslation .sapMHeaderTitle {
+.sapUiIntegrationFieldTranslation .sapMHeaderTitle{
 	font-size: 1rem;
 	padding: 0.5rem 0 0.5rem 0.5rem;
 }
