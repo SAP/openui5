@@ -468,7 +468,7 @@ function(
 					// we need to clone the item along with its bindings and aggregations
 					this._oMessageView.addItem(item.clone("", "", {
 						cloneChildren: true,
-						cloneBindings: true
+						cloneBinding: true
 					}));
 				}, this);
 
