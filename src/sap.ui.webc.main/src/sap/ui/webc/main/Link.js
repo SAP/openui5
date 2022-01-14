@@ -53,14 +53,6 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Receives id(or many ids) of the elements that label the input
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Defines the component design. <br>
 				 * <br>
 				 * <b>Note:</b> Avaialble options are <code>Default</code>, <code>Subtle</code>, and <code>Emphasized</code>.
@@ -130,6 +122,19 @@ sap.ui.define([
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",
 					defaultValue: WrappingType.None
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

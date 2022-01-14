@@ -59,14 +59,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the select.
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Defines whether the component is in disabled state. <br>
 				 * <br>
 				 * <b>Note:</b> A disabled component is noninteractive.
@@ -148,6 +140,19 @@ sap.ui.define([
 				options: {
 					type: "sap.ui.webc.main.ISelectOption",
 					multiple: true
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

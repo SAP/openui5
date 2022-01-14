@@ -91,14 +91,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the component.
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Determines whether the component is displayed as disabled.
 				 */
 				disabled: {
@@ -247,6 +239,19 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					defaultValue: null,
 					mapping: "style"
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

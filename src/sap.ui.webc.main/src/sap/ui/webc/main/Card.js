@@ -46,17 +46,9 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the accessible name of the component, which is used as the name of the card region and should be unique per card. <b>Note:</b> <code>accessibleName</code> should be always set, unless <code>accessibleNameRef</code> is set.
+				 * Defines the accessible name of the component, which is used as the name of the card region and should be unique per card. <b>Note:</b> <code>accessibleName</code> should be always set, unless <code>ariaLabelledBy</code> is set.
 				 */
 				accessibleName: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
-				 * Defines the IDs of the elements that label the component.
-				 */
-				accessibleNameRef: {
 					type: "string",
 					defaultValue: ""
 				},
@@ -99,6 +91,19 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					slot: "header"
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			}
 		}

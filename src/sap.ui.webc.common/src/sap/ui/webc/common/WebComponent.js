@@ -11,7 +11,8 @@ sap.ui.define([
 		"sap/ui/core/Core",
 		"sap/base/strings/hyphenate",
 		"sap/base/strings/camelize",
-		"sap/ui/core/library"
+		"sap/ui/core/library",
+		"sap/ui/core/LabelEnablement"
 	],
 	function(
 		Control,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Core,
 		hyphenate,
 		camelize,
-		coreLibrary
+		coreLibrary,
+		LabelEnablement
 	) {
 		"use strict";
 
@@ -390,6 +392,25 @@ sap.ui.define([
 			}
 
 			return sTextDirection.toLowerCase();
+		};
+
+		/**
+		 * Generates a string containing the ID's from the association ariaLabelledBy.
+		 * @param {string[]} aAriaLabelledBy an array of IDs associated with this control
+		 * @returns {string} sAriaLabelledBy
+		 */
+		WebComponent.prototype._getAriaLabelledByForRendering = function (aAriaLabelledBy) {
+			var aFilteredIds = LabelEnablement.getReferencingLabels(this);
+
+			if (Array.isArray(aAriaLabelledBy)) {
+				aAriaLabelledBy.forEach(function (sId) {
+					if (aFilteredIds.indexOf(sId) < 0) {
+						aFilteredIds.unshift(sId);
+					}
+				});
+			}
+
+			return aFilteredIds.join(" ");
 		};
 
 		return WebComponent;

@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
-	"./thirdparty/Label"
-], function(WebComponent, library) {
+	"./thirdparty/Label",
+	"sap/ui/core/LabelEnablement"
+], function(WebComponent, library, Label, LabelEnablement) {
 	"use strict";
 
 	var WrappingType = library.WrappingType;
@@ -41,17 +42,10 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-label-ui5",
+			interfaces: [
+				"sap.ui.core.Label"
+			],
 			properties: {
-
-				/**
-				 * Defines the labeled input by providing its ID. <br>
-				 * <br>
-				 * <b>Note:</b> Can be used with both <code>sap.ui.webc.main.Input</code> and native input.
-				 */
-				"for": {
-					type: "string",
-					defaultValue: ""
-				},
 
 				/**
 				 * Defines whether an asterisk character is added to the component text. <br>
@@ -102,9 +96,25 @@ sap.ui.define([
 					type: "sap.ui.webc.main.WrappingType",
 					defaultValue: WrappingType.None
 				}
+			},
+			associations: {
+
+				/**
+				 * Association to the labelled control.
+				 * By default, the label sets the for attribute to the ID of the labelled control. This can be changed by implementing the function getIdForLabel on the labelled control.
+				 */
+				labelFor: {
+					type: "sap.ui.core.Control",
+					multiple: false,
+					mapping: {
+						to: "for"
+					}
+				}
 			}
 		}
 	});
+
+	LabelEnablement.enrich(Label.prototype);
 
 	return Label;
 });

@@ -65,14 +65,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Receives id(or many ids) of the elements that label the component.
-				 */
-				accessibleNameRef: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * Determines the symbol which separates the dates. If not supplied, the default time interval delimiter for the current locale will be used.
 				 */
 				delimiter: {
@@ -228,6 +220,19 @@ sap.ui.define([
 					type: "sap.ui.core.CSSSize",
 					defaultValue: null,
 					mapping: "style"
+				}
+			},
+			associations: {
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {
