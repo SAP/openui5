@@ -511,8 +511,8 @@ sap.ui.define([
 			setTimeout(function() {
 				// Assert
 				assert.strictEqual(this.oDynamicPage._getScrollBar().$("sbcnt").height(),
-					this.oDynamicPage._getTitleHeight() + this.oDynamicPage._oStickySubheader.$().height() + this.oDynamicPage.$wrapper[0].scrollHeight,
-					"Scrollbar content size includes title, scrollheight of wrapper and the sticky subheader");
+					Math.round(this.oDynamicPage._getTitleHeight() + this.oDynamicPage._oStickySubheader.$().height() + this.oDynamicPage.$wrapper[0].scrollHeight,
+					"Scrollbar content size includes title, scrollheight of wrapper and the sticky subheader"));
 				fnDone();
 			}.bind(this), 200);
 		});
