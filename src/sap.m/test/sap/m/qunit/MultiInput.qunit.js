@@ -3292,7 +3292,6 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(this.multiInput._iResizeHandlerId, "Register resize handler");
-		assert.ok(this.multiInput._iTokenizerResizeHandler, "Register Tokenizer's resize handler");
 		assert.ok(oMaxWidthSetterSpy.calledOnce, "Tokens MaxWidth setter called");
 		assert.ok(oMaxWidthSetterSpy.calledBefore(oRegisterResizeSpy), "Finally, subscribe again for the resize handler");
 
