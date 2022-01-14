@@ -81,16 +81,16 @@ sap.ui.define([
 	};
 
 	QueryPanel.prototype.getP13nData = function (bOnlyActive) {
-        var aItems = [];
-        this._oListControl.getItems().forEach(function (oItem) {
-            var sKey = oItem.getContent()[0].getContent()[0]._key;
-            if (sKey) {
-                var oField = this._getP13nModel().getProperty("/items").find(function (o) {
-                    return o.name == sKey;
-                });
-                aItems.push(oField);
-            }
-        }.bind(this));
+		var aItems = [];
+		this._oListControl.getItems().forEach(function (oItem) {
+			var sKey = oItem.getContent()[0].getContent()[0]._key;
+			if (sKey) {
+				var oField = this._getP13nModel().getProperty("/items").find(function (o) {
+					return o.name == sKey;
+				});
+				aItems.push(oField);
+			}
+		}.bind(this));
 
 		if (!bOnlyActive) {
 			this._getP13nModel().getProperty("/items").forEach(function(oItem){
@@ -100,8 +100,8 @@ sap.ui.define([
 			});
 		}
 
-        return merge([], aItems);
-    };
+		return merge([], aItems);
+	};
 
 	QueryPanel.prototype._allEntriesUsed = function() {
 		return this.getP13nData().length === this.getP13nData(true).length;
@@ -122,7 +122,7 @@ sap.ui.define([
 				item: this._getModelEntry(oItem)
 			});
 		}
-    };
+	};
 
 	QueryPanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
 		BasePanel.prototype._updateEnableOfMoveButtons.apply(this, arguments);
