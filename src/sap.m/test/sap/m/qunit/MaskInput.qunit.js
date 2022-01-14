@@ -1272,19 +1272,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Testing aria label", function (assert){
-		var $AriaLabel = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-labelledby");
-		//assert
-		assert.ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
-		assert.strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
-	});
+	QUnit.test("Testing aria roledescription", function (assert){
+		var sCustomRole = this.oRenderer.getAccessibilityState(this.oMaskInput)["roledescription"];
 
-	QUnit.test("Testing aria description", function (assert){
-		//arrange
-		var $AriaDescripttion = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-describedby");
-		//assert
-		assert.ok($AriaDescripttion.length > 0, "The hidden aria description is present in the DOM");
-		assert.strictEqual(this.oRenderer.getDescribedByAnnouncement(this.oMaskInput), $AriaDescripttion.text(), "The message is rendered correctly");
+		assert.strictEqual(sCustomRole, "Masked Edit", "Proper aria-roledescription is added");
 	});
 
 	QUnit.module("Clear Icon", {

@@ -17,6 +17,14 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 	 * The <code>sap.m.MaskInput</code> control allows users to easily enter data in a certain format and in a fixed-width input
 	 * (for example: date, time, phone number, credit card number, currency, IP address, MAC address, and others).
 	 *
+	 * When focused, the masked input field is formatted and prefilled. The <code>placeholderSymbol</code> property value is reserved for a placeholder.
+	 * The value that has to be entered in this field is in the <code>mask</code> property value format where every symbol corresponds to a rule.
+	 * A rule is a set of characters that are allowed for their particular position.
+	 * Symbols that do not have a rule are immutable characters and are part of the value formatting.
+	 *
+	 * <b<Note:</b> Descriptive text as <code>placeholder</code> property value should be added,
+	 * in order guide users what input is expected based on the particular control configuration.
+	 *
 	 * @author SAP SE
 	 * @extends sap.m.InputBase
 	 * @version ${version}

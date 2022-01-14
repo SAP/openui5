@@ -8,53 +8,43 @@
 
 			<form:SimpleForm title="Generic Mask Input" editable="true">
 
-				<Label text="Any character" tooltip="Any character"/>
-				<MaskInput mask="~~~~~~~~~~" placeholderSymbol="_" placeholder="Enter text">
+				<Label text="Unique ID" />
+				<MaskInput mask="~~~~~~~~~~" placeholderSymbol="_" placeholder="All characters allowed">
 					<rules>
 						<MaskInputRule maskFormatSymbol="~" regex="[^_]"/>
 					</rules>
 				</MaskInput>
 
-				<Label text="Latin characters (case insensitive) and numbers"
-					   tooltip="Latin characters (case insensitive) and numbers"/>
-				<MaskInput mask="**********" placeholderSymbol="_" placeholder="Enter text">
+				<Label text="Promo code"/>
+				<MaskInput mask="**********" placeholderSymbol="_" placeholder="Latin characters (case insensitive) and numbers">
 					<rules>
 						<MaskInputRule/>
 					</rules>
 				</MaskInput>
 
-				<Label text="Latin characters (case sensitive) and numbers"
-					   tooltip="Latin characters (case sensitive) and numbers"/>
-				<MaskInput mask="CCCCCCCC" placeholderSymbol="_" placeholder="Enter text">
-					<rules>
-						<MaskInputRule maskFormatSymbol="C" regex="[A-Z0-9]"/>
-					</rules>
-				</MaskInput>
-
-				<Label text="Numeric only" tooltip="Numeric only"/>
-				<MaskInput mask="999999" placeholderSymbol="_" placeholder="Enter a six digit number" showClearIcon="true" />
+				<Label text="Phone number"/>
+				<MaskInput mask="(999) 999 999999" placeholderSymbol="_" placeholder="Enter twelve-digit number" showClearIcon="true" />
 
 			</form:SimpleForm>
 
 			<form:SimpleForm title="Possible usages (may require additional coding)" editable="true">
 
-				<Label text="Serial number" tooltip="Serial number. Digits and capital letters allowed"/>
-				<MaskInput mask="CCCC-CCCC-CCCC-CCCC-CCCC" placeholderSymbol="_" placeholder="Enter serial number" showClearIcon="{/showClearIcon}">
+				<Label text="Serial number" />
+				<MaskInput mask="CCCC-CCCC-CCCC-CCCC-CCCC" placeholderSymbol="_" placeholder="Enter digits and capital letters" showClearIcon="{/showClearIcon}">
 					<rules>
 						<MaskInputRule maskFormatSymbol="C" regex="[A-Z0-9]"/>
 					</rules>
 				</MaskInput>
 
-				<Label text="Product activation key"
-					   tooltip="Product activation key. Starts with 'SAP' followed by digits and capital letters"/>
-				<MaskInput mask="SAP-CCCCC-CCCCC" placeholderSymbol="_" placeholder="Enter activation key" showClearIcon="{/showClearIcon}">
+				<Label text="Product activation key"/>
+				<MaskInput mask="SAP-CCCCC-CCCCC" placeholderSymbol="_" placeholder="Starts with 'SAP' followed by digits and capital letters" showClearIcon="{/showClearIcon}">
 					<rules>
 						<MaskInputRule maskFormatSymbol="C" regex="[A-Z0-9]"/>
 					</rules>
 				</MaskInput>
 
-				<Label text="ISBN" tooltip="ISBN"/>
-				<MaskInput mask="999-99-999-9999-9" placeholderSymbol="_" placeholder="Enter ISBN" showClearIcon="{/showClearIcon}" />
+				<Label text="ISBN" />
+				<MaskInput mask="999-99-999-9999-9" placeholderSymbol="_" placeholder="Enter thirteen-digit number" showClearIcon="{/showClearIcon}" />
 
 			</form:SimpleForm>
 
