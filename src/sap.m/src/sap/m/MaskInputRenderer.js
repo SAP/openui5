@@ -14,54 +14,20 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	MaskInputRenderer.apiVersion = 2;
 
 	/**
-	 * Returns the inner aria labelledby announcement texts for the accessibility.
+	 * Returns the accessibility state of the control.
 	 *
 	 * @override
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String} The inner aria labelledby announcement texts
+	 * @returns {Object}
 	 */
-	MaskInputRenderer.getLabelledByAnnouncement = function(oControl) {
-		var sMask = oControl.getMask(),
-			sPlaceholder = oControl.getPlaceholder() || "",
-			oResourceBundle,
-			sMaskScreenReaderTag,
-			sAnnouncement = "";
+	MaskInputRenderer.getAccessibilityState = function (oControl) {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sCustomRole = oResourceBundle.getText("MASKINPUT_ROLE_DESCRIPTION"),
+			mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
-		if (sMask && sMask.length) {
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			sMaskScreenReaderTag = oResourceBundle.getText("MASKINPUT_SCREENREADER_TAG");
+		mAccessibilityState["roledescription"] = sCustomRole;
 
-			if (sPlaceholder) {
-				sPlaceholder = " " + sPlaceholder + " ";
-			}
-			sAnnouncement = sMaskScreenReaderTag + sPlaceholder;
-			return sAnnouncement;
-		}
-
-		return InputBaseRenderer.getLabelledByAnnouncement.apply(this, arguments);
-	};
-
-	/**
-	 * Returns the inner aria describedby announcement texts for the accessibility.
-	 * Hook for the subclasses.
-	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String} The inner aria describedby announcement texts
-	 */
-	MaskInputRenderer.getDescribedByAnnouncement = function(oControl) {
-		var sMask = oControl.getMask(),
-			sMaskPlaceholderSymbol = oControl.getPlaceholderSymbol(),
-			oResourceBundle,
-			sAnnouncement = "";
-
-		if (sMask.length && sMaskPlaceholderSymbol) {
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			sAnnouncement = oResourceBundle.getText("MASKINPUT_SCREENREADER_DESCRIPTION", [sMaskPlaceholderSymbol, sMask]);
-
-			return sAnnouncement.trim();
-		}
-
-		return InputBaseRenderer.getDescribedByAnnouncement.apply(this, arguments);
+		return mAccessibilityState;
 	};
 
 	return MaskInputRenderer;
