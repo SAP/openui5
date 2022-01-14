@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/values"
 ], function(
 	ChangeRegistry,
 	Utils,
@@ -33,7 +34,8 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Component,
-	Log
+	Log,
+	values
 ) {
 	"use strict";
 
@@ -436,7 +438,7 @@ sap.ui.define([
 
 	FlexController.prototype._removeOtherLayerChanges = function(oAppComponent, sLayer, bRemoveOtherLayerChanges) {
 		if (bRemoveOtherLayerChanges && sLayer) {
-			var aLayersToReset = Object.values(Layer).filter(function(sLayerToCheck) {
+			var aLayersToReset = values(Layer).filter(function(sLayerToCheck) {
 				return sLayerToCheck !== sLayer;
 			});
 			return this.removeDirtyChanges(aLayersToReset, oAppComponent, undefined, undefined, undefined, true);
