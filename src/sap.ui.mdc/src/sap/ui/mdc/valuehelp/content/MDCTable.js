@@ -517,14 +517,18 @@ sap.ui.define([
 					this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 					this._oFilterBarVBox._oWrapper = this;
 					this._oFilterBarVBox.getItems = function () {
-						return [this._oWrapper._getPriorityFilterBar.call(this._oWrapper)];
+						var oFilterBar = this._oWrapper._getPriorityFilterBar.call(this._oWrapper);
+						var aItems = oFilterBar ? [oFilterBar] : [];
+						return aItems;
 					};
 
 					this._oTableBox = new VBox(this.getId() + "-TB", {height: "100%"});
 					this._oTableBox.addStyleClass("sapMdcValueHelpPanelTableBox");
 					this._oTableBox._oWrapper = this;
 					this._oTableBox.getItems = function () {
-						return [this._oWrapper._sTableType === "ResponsiveTable" ? this._oWrapper._oScrollContainer : this._oWrapper._oTable];
+						var oTable = this._oWrapper._sTableType === "ResponsiveTable" ? this._oWrapper._oScrollContainer : this._oWrapper._oTable;
+						var aItems = oTable ? [oTable] : [];
+						return aItems;
 					};
 
 					this._oContentLayout = new FixFlex(this.getId() + "-FF", {minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTableBox});
@@ -550,6 +554,7 @@ sap.ui.define([
 
 				if (!this._getPriorityFilterBar()) {
 					return this._createDefaultFilterBar().then(function () {
+						this._oFilterBarVBox.invalidate(); // to rerender if FilterBar added
 						return this._oContentLayout;
 					}.bind(this));
 				}
