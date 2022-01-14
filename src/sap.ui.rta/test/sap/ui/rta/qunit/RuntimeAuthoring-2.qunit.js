@@ -695,7 +695,9 @@ sap.ui.define([
 				isAtoAvailable: true,
 				isKeyUser: true,
 				isProductiveSystem: false,
-				versioning: {}
+				versioning: {},
+				system: "someSystemId",
+				client: "someClient"
 			};
 			var oSettingsInstance = new Settings(oSettings);
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
@@ -1031,7 +1033,7 @@ sap.ui.define([
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), false, "then the saveAs Button is not visible");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/publishEnabled"), false, "then the Publish Button is disabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/publishVisible"), true, "then the Publish Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/publishVisible"), false, "then the Publish Button is not visible");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/redoEnabled"), false, "then the redo is disabled");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/undoEnabled"), false, "then the undo is disabled");
 				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restoreEnabled"), false, "then the restore is disabled");
@@ -1305,6 +1307,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
+		cleanInfoSessionStorage();
 		oComp._restoreGetAppComponentStub();
 		oComp.destroy();
 		jQuery("#qunit-fixture").hide();

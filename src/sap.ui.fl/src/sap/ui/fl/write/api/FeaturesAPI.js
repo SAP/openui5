@@ -35,7 +35,10 @@ sap.ui.define([
 		 */
 		isPublishAvailable: function () {
 			return Settings.getInstance().then(function (oSettings) {
-				return !oSettings.isProductiveSystem();
+				return (
+					!oSettings.isProductiveSystem()
+					&& oSettings.isSystemWithTransports()
+				);
 			});
 		},
 
