@@ -311,6 +311,11 @@ var oMenu22 = new sap.m.Menu({
 			defaultAction: function() {
 				sap.m.MessageToast.show("Accepted");
 			}
+        });
+
+        var oMenuButton3Disabled = new sap.m.MenuButton('mb3-disabled', {
+            text: "Disabled menu button",
+            enabled: false
 		});
 
 		var oMenuButton4 = new sap.m.MenuButton('mb4', {
@@ -788,7 +793,8 @@ var oMenu22 = new sap.m.Menu({
             customHeader: new sap.m.Toolbar({
                 content: [
                     oLabel8,
-                    oMenuButton8
+                    oMenuButton8,
+                    oMenuButton3Disabled
                 ]
             }),
             subHeader: new sap.m.Toolbar({

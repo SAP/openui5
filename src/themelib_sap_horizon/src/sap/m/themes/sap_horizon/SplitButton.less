@@ -146,10 +146,10 @@
 	height: 0.9rem;
 }
 
-.sapMSB .sapMBtnInner.sapMBtnIconFirst:hover::before,
-.sapMSB .sapMBtn.sapMSBActive .sapMBtnInner.sapMBtnIconFirst::before,
-.sapMMenuBtn:hover .sapMBtnInner.sapMBtnIconFirst::before,
-.sapMMenuBtn:focus .sapMBtnInner.sapMBtnIconFirst::before {
+.sapMSB .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnIconFirst:hover::before,
+.sapMSB .sapMBtn.sapMSBActive.sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnIconFirst::before,
+.sapMMenuBtn:hover .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnIconFirst::before,
+.sapMMenuBtn:focus .sapMBtn:not(.sapMBtnDisabled) .sapMBtnInner.sapMBtnIconFirst::before {
 	display: none;
 }
 
