@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/layout/Grid", "./BasePanel", "sap/ui/core/Item", "sap/m/CustomListItem", "sap/m/Select", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button"
-], function (Grid, BasePanel, Item, CustomListItem, Select, List, HBox, mLibrary, Button) {
+	"sap/ui/layout/Grid", "./BasePanel", "sap/ui/core/Item", "sap/m/CustomListItem", "sap/m/Select", "sap/m/List", "sap/m/HBox", "sap/m/library", "sap/m/Button", "sap/base/util/merge"
+], function (Grid, BasePanel, Item, CustomListItem, Select, List, HBox, mLibrary, Button, merge) {
 	"use strict";
 
 
@@ -80,18 +80,57 @@ sap.ui.define([
 		return this;
 	};
 
-	QueryPanel.prototype._moveTableItem = function (oItem, iNewIndex) {
-		BasePanel.prototype._moveTableItem.apply(this, arguments);
-		this._updateEnableOfMoveButtons(oItem, false);
-		this._oListControl.removeItem(oItem);
-		this._oListControl.insertItem(oItem, iNewIndex);
+	QueryPanel.prototype.getP13nData = function (bOnlyActive) {
+        var aItems = [];
+        this._oListControl.getItems().forEach(function (oItem) {
+            var sKey = oItem.getContent()[0].getContent()[0]._key;
+            if (sKey) {
+                var oField = this._getP13nModel().getProperty("/items").find(function (o) {
+                    return o.name == sKey;
+                });
+                aItems.push(oField);
+            }
+        }.bind(this));
+
+		if (!bOnlyActive) {
+			this._getP13nModel().getProperty("/items").forEach(function(oItem){
+				if (aItems.indexOf(oItem) === -1) {
+					aItems.push(oItem);
+				}
+			});
+		}
+
+        return merge([], aItems);
+    };
+
+	QueryPanel.prototype._allEntriesUsed = function() {
+		return this.getP13nData().length === this.getP13nData(true).length;
 	};
+
+	QueryPanel.prototype._moveTableItem = function (oItem, iNewIndex) {
+		// Rules for the movement for the $_none row:
+		// 1) disable the $_none row for reordering
+		// 2) in case all entries are used there is no $_none row and the movement is allowed
+		if (this._oListControl.getItems().indexOf(oItem) !== (this._oListControl.getItems().length - 1)  || this._allEntriesUsed()) {
+			this._oListControl.removeItem(oItem);
+			this._oListControl.insertItem(oItem, iNewIndex);
+
+			this._updateEnableOfMoveButtons(oItem, false);
+
+			this.fireChange({
+				reason: this.CHANGE_REASON_MOVE,
+				item: this._getModelEntry(oItem)
+			});
+		}
+    };
 
 	QueryPanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
 		BasePanel.prototype._updateEnableOfMoveButtons.apply(this, arguments);
 
-		//The last item is always the "$_none" field, check if its the item before, if yes do not allow to reorder it below
-		if (this._oListControl.getItems().indexOf(oTableItem) === (this._oListControl.getItems().length - 2)) {
+		//The last item is always the "$_none" field
+		// 1) check if its the item before, if yes do not allow to reorder it below
+		// 2) Also check the case if all entries are used --> then there is no $_none row and the buttons can be enabled.
+		if (this._oListControl.getItems().indexOf(oTableItem) === (this._oListControl.getItems().length - 2) && !this._allEntriesUsed()) {
 			this._getMoveDownButton().setEnabled(false);
 		}
 	};
@@ -136,21 +175,12 @@ sap.ui.define([
 		return aAvailableItems;
 	};
 
-	QueryPanel.prototype._getMoveDownButton = function() {
-		var oMoveBtn = BasePanel.prototype._getMoveDownButton.apply(this, arguments);
-		oMoveBtn.setIcon("sap-icon://navigation-down-arrow");
-		return oMoveBtn;
-	};
-
-	QueryPanel.prototype._getMoveUpButton = function() {
-		var oMoveBtn = BasePanel.prototype._getMoveUpButton.apply(this, arguments);
-		oMoveBtn.setIcon("sap-icon://navigation-up-arrow");
-		return oMoveBtn;
-	};
-
 	QueryPanel.prototype._addQueryRow = function (oItem) {
 
-		if (this.getQueryLimit() > -1 && this.getQueryLimit() === this._oListControl.getItems().length) {
+		var bLimitedQueries = this.getQueryLimit() > -1;
+		var bQueryLimitReached = this.getQueryLimit() === this._oListControl.getItems().length;
+
+		if ((bLimitedQueries && bQueryLimitReached) || this._allEntriesUsed()) {
 			return;
 		}
 
@@ -263,9 +293,15 @@ sap.ui.define([
 					icon: "sap-icon://decline",
 					press: function (oEvt) {
 						var oRow = oEvt.getSource().getParent().getParent().getParent();
+
+						var iQueries = this._oListControl.getItems().length;
+						//A new row with (none) needs to be created if either no row is left, or if the last potential row
+						//has been removed, as no row will be created if every possible key has been used
+						var bNewRowRequired = iQueries === 1 || iQueries == this.getP13nData(true).length;
+
 						this._oListControl.removeItem(oRow);
 						this._updatePresence(oRow.getContent()[0].getContent()[0]._key, false, undefined);
-						if (this._oListControl.getItems().length === 0) {
+						if (bNewRowRequired) {
 							this._addQueryRow();
 						} else {
 							//In case an item has been removed, focus the Select control of the new 'none' row
@@ -293,11 +329,6 @@ sap.ui.define([
 
 		if (aRelevant[0]) {
 			aRelevant[0][this.PRESENCE_ATTRIBUTE] = bAdd;
-		}
-
-		if (iNewIndex !== undefined) {
-			var iOldIndex = aItems.indexOf(aRelevant[0]);
-			aItems.splice(iNewIndex, 0, aItems.splice(iOldIndex, 1)[0]);
 		}
 
 		this._getP13nModel().setProperty("/items", aItems);
