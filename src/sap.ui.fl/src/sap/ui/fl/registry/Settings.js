@@ -311,13 +311,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether change transport mechanism is available for the current system or not.
+	 *
+	 * @returns {boolean} <code>true</code> if transport of changes is available
+	 */
+	 Settings.prototype.isSystemWithTransports = function() {
+		// Currently, transport mechanism is only available in ABAP stack which can be identified by system and client ids
+		return !!(this._oSettings.system && this._oSettings.client);
+	};
+
+	/**
 	 * Checks whether the current system is defined as a productive system and transport mechanism of changes is also available or not.
 	 *
 	 * @returns {boolean} <code>true</code> if transport of changes is available
 	 */
 	Settings.prototype.isProductiveSystemWithTransports = function() {
-		//Currently, transport mechanism is only available in ABAP stack which can be identified by system and client ids
-		return this._getBooleanProperty("isProductiveSystem") && !!(this._oSettings.system && this._oSettings.client);
+		return this.isProductiveSystem() && this.isSystemWithTransports();
 	};
 
 	/**

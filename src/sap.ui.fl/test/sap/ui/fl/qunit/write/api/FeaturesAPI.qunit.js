@@ -24,15 +24,33 @@ sap.ui.define([
 		}
 	}, function () {
 		[true, false].forEach(function (bValueToBeSet) {
-			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system", function (assert) {
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system with transports", function (assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
 					isProductiveSystem: function () {
 						return bValueToBeSet;
+					},
+					isSystemWithTransports: function() {
+						return true;
 					}
 				});
 
 				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
 					assert.strictEqual(bReturnValue, !bValueToBeSet, "then " + !bValueToBeSet + " is returned");
+				});
+			});
+
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system without transports", function (assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isProductiveSystem: function () {
+						return bValueToBeSet;
+					},
+					isSystemWithTransports: function() {
+						return false;
+					}
+				});
+
+				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
+					assert.notOk(bReturnValue, "then false is returned");
 				});
 			});
 

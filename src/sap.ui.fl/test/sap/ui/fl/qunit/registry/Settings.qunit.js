@@ -193,6 +193,19 @@ sap.ui.define([
 			assert.equal(this.cut.isProductiveSystemWithTransports(), true);
 		});
 
+		QUnit.test("when isSystemWithTransports is called without system/client info being maintained in the settings", function(assert) {
+			assert.notOk(this.cut.isSystemWithTransports(), "then it returns false");
+		});
+
+		QUnit.test("when isSystemWithTransports is called with system/client info being maintained in the settings", function(assert) {
+			var oSettings = {
+				client: "someClient",
+				system: "someSystem"
+			};
+			this.cut = new Settings(oSettings);
+			assert.ok(this.cut.isSystemWithTransports(), "then it returns true");
+		});
+
 		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
 			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
