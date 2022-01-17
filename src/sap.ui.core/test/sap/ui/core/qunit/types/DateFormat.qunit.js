@@ -1383,7 +1383,7 @@ sap.ui.define([
 			var oDate = new Date("Mon Apr 7 00:00:00 2014"),
 				oFormat = DateFormat.getDateInstance(),
 				sDateIn = "040714", oDateOut = oFormat.parse(sDateIn);
-			assert.ok((oDateOut.toString() === oDate.toString()), "6 digit fallback: " + sDateIn + " to " + oDateOut);
+			assert.strictEqual(oDateOut.toString(), oDate.toString(), "6 digit fallback: " + sDateIn + " to " + oDateOut);
 
 			oDateOut = oFormat.parse("000100");
 			assert.strictEqual(oDateOut, null, "000100 shouldn't be parsed as a valid date");
@@ -1393,10 +1393,10 @@ sap.ui.define([
 
 			sDateIn = "04072014";
 			oDateOut = oFormat.parse(sDateIn);
-			assert.ok((oDateOut.toString() === oDate.toString()), "8 digit fallback: " + sDateIn + " to " + oDateOut);
+			assert.strictEqual(oDateOut.toString(), oDate.toString(), "8 digit fallback: " + sDateIn + " to " + oDateOut);
 			sDateIn = "20140407";
 			oDateOut = oFormat.parse(sDateIn);
-			assert.ok((oDateOut.toString() === oDate.toString()), "ISO fallback: " + sDateIn + " to " + oDateOut);
+			assert.strictEqual(oDateOut.toString(), oDate.toString(), "ISO fallback: " + sDateIn + " to " + oDateOut);
 		});
 
 		QUnit.test("parse and format two digit years", function (assert) {
