@@ -458,12 +458,19 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// check that DOM has been preserved
-		var oElemPanel2 = oView.byId("myPanel").getDomRef();
+		var oPanel = oView.byId("myPanel");
+		var oElemPanel2 = oPanel.getDomRef();
 		var oElemTable2 = document.getElementById(oView.createId("localTableId"));
 		assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
 		assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
 		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
 		assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
+
+		// check the preserved data attribute on the HTML nodes
+		var oSubView1 = oPanel.getContent()[2];
+		var oSubViewDomRef = oSubView1.getDomRef();
+		assert.ok(oSubViewDomRef, "SubView for HTML nodes is rendered");
+		assert.ok(oSubViewDomRef.hasAttribute("data-sap-ui-preserve"), "Dom Element has the preserve attribute set");
 
 		oView.destroy();
 		sap.ui.getCore().applyChanges();
@@ -506,12 +513,19 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			// check that DOM has been preserved
-			var oElemPanel2 = oView.byId("myPanel").getDomRef();
+			var oPanel = oView.byId("myPanel");
+			var oElemPanel2 = oPanel.getDomRef();
 			var oElemTable2 = document.getElementById(oView.createId("localTableId"));
 			assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
 			assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
 			assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
 			assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
+
+			// check the preserved data attribute on the HTML nodes
+			var oSubView1 = oPanel.getContent()[2];
+			var oSubViewDomRef = oSubView1.getDomRef();
+			assert.ok(oSubViewDomRef, "SubView for HTML nodes is rendered");
+			assert.ok(oSubViewDomRef.hasAttribute("data-sap-ui-preserve"), "Dom Element has the preserve attribute set");
 
 			// complete execution only in next tick as the controller code will execute further QUnit asserts in the current tick
 			setTimeout(function() {
@@ -1022,6 +1036,253 @@ sap.ui.define([
 		assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
 		assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
 
+	});
+
+	QUnit.module("View's root level settings");
+
+	QUnit.test("Custom Data", function(assert) {
+		var oModel = new JSONModel({
+			value : 'myValue'
+		});
+
+		var xmlWithBindings = [
+			'<mvc:View controllerName="example.mvc.test"',
+			'  xmlns:mvc="sap.ui.core.mvc"',
+			'  xmlns:test="sap.ui.testlib"',
+			'  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"',
+			'  app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}">',
+			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
+			'</mvc:View>'
+		].join('');
+
+		return XMLView.create({
+			definition: xmlWithBindings
+		}).then(function(oView) {
+			oView.setModel(oModel);
+
+			assert.equal(oView.data("myKey1"), "myValue1", "Check CustomData 'myKey1' of the View");
+			assert.equal(oView.data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of the View");
+			assert.equal(oView.data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of the View");
+			assert.equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
+			assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
+			assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
+		});
+	});
+
+	QUnit.test("Custom Data (legacy factory)", function(assert) {
+		var oModel = new JSONModel({
+			value : 'myValue'
+		});
+
+		var xmlWithBindings = [
+			'<mvc:View controllerName="example.mvc.test"',
+			'  xmlns:mvc="sap.ui.core.mvc"',
+			'  xmlns:test="sap.ui.testlib"',
+			'  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"',
+			'  app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}">',
+			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
+			'</mvc:View>'
+		].join('');
+
+		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});
+		oView.setModel(oModel);
+
+		assert.equal(oView.data("myKey1"), "myValue1", "Check CustomData 'myKey1' of the View");
+		assert.equal(oView.data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of the View");
+		assert.equal(oView.data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of the View");
+		assert.equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
+		assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
+		assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
+
+	});
+
+	QUnit.test("Named Aggregation", function(assert) {
+		var sXmlWithNamedAggregations = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml">',
+			'  <mvc:content>',
+			'    <test:TestButton id="contentButton" />',
+			'    <html:div id="div1">test1</html:div>',
+			'  </mvc:content>',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <html:div id="div2">test2</html:div>',
+			'    plain text node',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		var sXmlWithNamedDependents = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="contentButton" />',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		var sXmlWithWrongAggregation = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="contentButton" />',
+			'  <mvc:wrong>',
+			'    <test:TestButton id="dependentButton" />',
+			'  </mvc:wrong>',
+			'</mvc:View>'
+		].join('');
+
+		return XMLView.create({
+			id: "viewWithNamedAggregations",
+			definition: sXmlWithNamedAggregations
+		}).then(function(oView) {
+			oView.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oView.getContent()[0].getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly to content aggregation");
+
+			var oDependentButton = oView.byId("dependentButton");
+			assert.notOk(oDependentButton.getDomRef(), "controls that aren't in the content aggregation of the view shouldn't be rendered");
+			assert.strictEqual(oView.getDependents()[0].getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly to dependents aggregation");
+			assert.strictEqual(oView.getDependents()[1].getId(),"viewWithNamedAggregations--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
+
+			var oDiv1 = document.getElementById(oView.createId("div1"));
+			assert.ok(oDiv1, "XHTML element in 'content' aggregation is rendered");
+			assert.equal(oDiv1.childNodes.length, 1, "The div has one child");
+			assert.equal(oDiv1.childNodes[0].textContent, "test1", "The text content is correct");
+			assert.notOk(document.getElementById(oView.createId("div2")), "XHTML element in 'dependents' aggregation is NOT rendered");
+			assert.notOk(oDiv1.nextSibling.textContent.trim(), "HTML nodes or text nodes outside the content aggregation shouldn't be rendered");
+
+			oView.destroy();
+		}).then(function() {
+			return XMLView.create({
+				id: "xmlWithNamedDependents",
+				definition: sXmlWithNamedDependents
+			});
+		}).then(function(oView) {
+			assert.strictEqual(oView.byId("contentButton").getId(),"xmlWithNamedDependents--contentButton", "xmlWithNamedDependents: The button was added correctly");
+			assert.strictEqual(oView.getContent()[0].getId(),"xmlWithNamedDependents--contentButton", "xmlWithNamedDependents: The button was added correctly to content aggregation");
+			assert.strictEqual(oView.byId("dependentButton").getId(),"xmlWithNamedDependents--dependentButton", "xmlWithNamedDependents: The dependent button was added correctly");
+			assert.strictEqual(oView.getDependents()[0].getId(),"xmlWithNamedDependents--dependentButton", "xmlWithNamedDependents: The dependent button was added correctly to dependents aggregation");
+			assert.strictEqual(oView.getDependents()[1].getId(),"xmlWithNamedDependents--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
+			oView.destroy();
+		}).then(function() {
+			return XMLView.create({
+				id: "xmlWithWrongAggregation",
+				definition: sXmlWithWrongAggregation
+			});
+		}).then(function() {
+			assert.notOK(true, "The XMLView.create promise shouldn't resolve");
+		}, function(oError) {
+			assert.ok(oError.message.match(/failed to load .{1}sap\/ui\/core\/mvc\/wrong\.js/), "xmlWithWrongAggregation: Error thrown for unknown aggregation");
+		});
+	});
+
+	QUnit.test("Named Aggregations (legacy factory)", function(assert) {
+		var sXmlWithNamedAggregations = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml">',
+			'  <mvc:content>',
+			'    <test:TestButton id="contentButton" />',
+			'    <html:div id="div1">test1</html:div>',
+			'  </mvc:content>',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <html:div id="div2">test2</html:div>',
+			'    plain text node',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		var sXmlWithNamedDependents = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="contentButton" />',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		var sXmlWithWrongAggregation = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="contentButton" />',
+			'  <mvc:wrong>',
+			'    <test:TestButton id="dependentButton" />',
+			'  </mvc:wrong>',
+			'</mvc:View>'
+		].join('');
+
+
+		var oView = sap.ui.xmlview("viewWithNamedAggregations", { viewContent: sXmlWithNamedAggregations });
+		oView.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oView.byId("contentButton").getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly");
+		assert.strictEqual(oView.getContent()[0].getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly to content aggregation");
+		assert.strictEqual(oView.byId("dependentButton").getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly");
+		assert.strictEqual(oView.getDependents()[0].getId(),"viewWithNamedAggregations--dependentButton", "viewWithNamedAggregations: The dependent button was added correctly to dependents aggregation");
+		assert.strictEqual(oView.getDependents()[1].getId(),"viewWithNamedAggregations--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
+
+		var oDiv1 = document.getElementById(oView.createId("div1"));
+		assert.ok(oDiv1, "XHTML element in 'content' aggregation is rendered");
+		assert.equal(oDiv1.childNodes.length, 1, "The div has one child");
+		assert.equal(oDiv1.childNodes[0].textContent, "test1", "The text content is correct");
+		assert.notOk(document.getElementById(oView.createId("div2")), "XHTML element in 'dependents' aggregation is NOT rendered");
+		assert.notOk(oDiv1.nextSibling.textContent.trim(), "HTML nodes or text nodes outside the content aggregation shouldn't be rendered");
+		oView.destroy();
+
+		oView = sap.ui.xmlview("xmlWithNamedDependents", { viewContent: sXmlWithNamedDependents });
+		assert.strictEqual(oView.byId("contentButton").getId(),"xmlWithNamedDependents--contentButton", "xmlWithNamedDependents: The button was added correctly");
+		assert.strictEqual(oView.getContent()[0].getId(),"xmlWithNamedDependents--contentButton", "xmlWithNamedDependents: The button was added correctly to content aggregation");
+		assert.strictEqual(oView.byId("dependentButton").getId(),"xmlWithNamedDependents--dependentButton", "xmlWithNamedDependents: The dependent button was added correctly");
+		assert.strictEqual(oView.getDependents()[0].getId(),"xmlWithNamedDependents--dependentButton", "xmlWithNamedDependents: The dependent button was added correctly to dependents aggregation");
+		assert.strictEqual(oView.getDependents()[1].getId(),"xmlWithNamedDependents--innerFragment--xmlDialog", "viewWithNamedAggregations: The dialog control from the dependent fragment was added correctly to dependents aggregation");
+		oView.destroy();
+
+		assert.throws(function() {
+			sap.ui.xmlview("xmlWithWrongAggregationLegacy", { viewContent: sXmlWithWrongAggregation });
+		}, /failed to load .{1}sap\/ui\/core\/mvc\/wrong\.js/, "xmlWithWrongAggregation: Error thrown for unknown aggregation");
+	});
+
+	QUnit.test("Error should be thrown when 'content' aggregation of View is bound", function(assert) {
+		var sXmlWithBoundContent = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
+			'  content="{path: \'Supplier\', templateShareable:false}">',
+			'  <core:Icon src="sap-icon://accept" />',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <html:div id="div2">test</html:div>',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		return XMLView.create({
+			id: "xmlWithBoundContent",
+			definition: sXmlWithBoundContent
+		}).then(function() {
+			assert.notOK(true, "The XMLView.create promise shouldn't resolve");
+		}, function(oError) {
+			assert.ok(oError.message.match(/Binding syntax is found in the 'content' aggregation of XMLView/), "Error thrown for bound 'content' aggregation");
+		});
+	});
+
+	QUnit.test("Error should be thrown when 'content' aggregation of View is bound (legacy factory)", function(assert) {
+		var sXmlWithBoundContent = [
+			'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:test="sap.ui.testlib" xmlns:html="http://www.w3.org/1999/xhtml" ',
+			'  content="{path: \'Supplier\', templateShareable:false}">',
+			'  <core:Icon src="sap-icon://accept" />',
+			'  <mvc:dependents>',
+			'    <test:TestButton id="dependentButton" />',
+			'    <core:Fragment id="innerFragment" fragmentName="testdata.fragments.XMLFragmentDialog" type="XML"/>',
+			'  </mvc:dependents>',
+			'</mvc:View>'
+		].join('');
+
+		var logSpyError = this.spy(Log, "error");
+		var oView = sap.ui.xmlview("xmlWithBoundContent", { viewContent: sXmlWithBoundContent });
+		assert.equal(logSpyError.callCount, 1, "Error log is done once");
+		assert.ok(logSpyError.getCall(0).args[0].message.match(/Binding syntax is found in the 'content' aggregation of XMLView/), "Error thrown for bound 'content' aggregation");
+		oView.destroy();
 	});
 
 	QUnit.module("Preprocessor API", {

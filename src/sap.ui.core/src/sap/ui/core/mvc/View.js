@@ -181,6 +181,7 @@ sap.ui.define([
 				 */
 				displayBlock : {type : "boolean", group : "Appearance", defaultValue : false}
 			},
+			defaultAggregation: "content",
 			aggregations : {
 
 				/**

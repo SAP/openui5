@@ -6,7 +6,9 @@
 	displayBlock="true"
 	core:require="{Box:'sap/ui/core/BusyIndicator',
 		AnnotationHelper:'sap/ui/model/odata/AnnotationHelper',
-		OwnHelper:'testdata/xml-require/helper/Formatter'}">
+		HashChanger: 'sap/ui/core/routing/HashChanger',
+		OwnHelper:'testdata/xml-require/helper/Formatter'}"
+	afterInit="HashChanger.getInstance()">
 	<App>
 		<Page id="page" title="Hello"
 			app:data1="{=OwnHelper.groupA.keep('abc')}"

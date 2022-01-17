@@ -133,6 +133,10 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				module: "test-resources/sap/ui/core/qunit/Fragment.qunit"
 			},
+			"Fragment_unavoidablySync": {
+				title: "sap.ui.core.Fragment (sync)",
+				module: "test-resources/sap/ui/core/qunit/Fragment_unavoidablySync.qunit"
+			},
 			Shortcut: {
 				title: "sap.ui.core.Shortcut",
 				module: "test-resources/sap/ui/core/qunit/Shortcut.qunit"

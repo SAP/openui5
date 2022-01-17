@@ -117,15 +117,5 @@
 	<core:Fragment id="EPinBinding" fragmentName="testdata.customizing.customer.ext.EPinBinding" type="XML" />
 
 	<!-- nested View containing EPs in binding template -->
-	<!-- IMPORTANT: The nested view should be async for this test, since the async state of the outer view
-					is only propagated to Fragments and not views (because of compatibility).
-					Nested sync views might lead to memory leaks, when an async EP provider is used!
-					The provider based tests are partly async by default, meaning the EPs are resolved
-					async too and thus their controls cannot be contained in the views content synchronously.
-					This leads to the situation that the controls from the EP might not yet added to the
-					content aggregation of the nested view when the test destroys the Component!
-					The solution for this is either to set the nested views to "async=true" or to implement
-					the "sap.ui.core.IAsyncContentCreation" interface on the Component.
-	-->
-	<mvc:XMLView id="EPinBinding_in_nestedView" async="true" viewName="testdata.customizing.customer.ext.EPinBinding" />
+	<mvc:XMLView id="EPinBinding_in_nestedView" viewName="testdata.customizing.customer.ext.EPinBinding" />
 </mvc:View>

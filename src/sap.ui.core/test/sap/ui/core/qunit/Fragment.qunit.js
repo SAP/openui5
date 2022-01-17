@@ -1129,4 +1129,23 @@ sap.ui.define([
 		// clean up panel
 		oFrag.destroy();
 	});
+
+	QUnit.test("Asynchronous XML Fragment from string with duplicate id error", function(assert) {
+		return Fragment.load({
+			id: "asyncFragment",
+			definition:
+				'<Panel id="panel" xmlns="sap.m">'
+				+ '<Button id="button4"/>'
+				+ '<Button id="button4" text="text"/>'
+				+ '</Panel>'
+		}).then(function() {
+			assert.ok(false, "should not succeed");
+		}, function(err) {
+			assert.strictEqual(
+				err.message,
+				"Error: adding element with duplicate id 'asyncFragment--button4'",
+				"Correct error is logged"
+			);
+		});
+	});
 });

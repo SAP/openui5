@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/XMLView"
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/routing/HashChanger"
 ], function(Component, UIComponent, XMLTemplateProcessor, View,
-	InstanceManager, Log, merge, JSONModel, XMLView) {
+	InstanceManager, Log, merge, JSONModel, XMLView, HashChanger) {
 	"use strict";
 
 	var TESTDATA_PREFIX = "testdata.xml-require";
@@ -96,7 +97,7 @@ sap.ui.define([
 		return XMLView.create({
 			definition: sView
 		}).catch(function(oError) {
-			assert.equal(oError.message, "core:require in XMLView contains invalide value '[object Object]'under key 'module' on Node: Panel");
+			assert.equal(oError.message, "core:require in XMLView contains invalid value '[object Object]'under key 'module' on Node: Panel");
 		});
 	});
 
@@ -107,10 +108,16 @@ sap.ui.define([
 		viewName: ".view.XMLTemplateProcessorAsync_require",
 		settings: {
 			async: {
-				create: createAsyncView
+				create: createAsyncView,
+				spies: {
+					getInstance: [HashChanger, "getInstance"]
+				}
 			},
 			sync: {
-				create: createSyncView
+				create: createSyncView,
+				spies: {
+					getInstance: [HashChanger, "getInstance"]
+				}
 			}
 		},
 		runAssertions: function (oView, mSpies, assert, bAsync) {
@@ -125,6 +132,8 @@ sap.ui.define([
 			assert.ok(MessageBox, "Class is loaded");
 			assert.ok(BusyIndicator, "Class is loaded");
 			assert.ok(Helper, "Class is loaded");
+
+			assert.equal(mSpies.getInstance.callCount, 1, "event handler on view instance is called");
 
 			var oPage = oView.byId("page");
 			var oBoxButton = oView.byId("boxButton");

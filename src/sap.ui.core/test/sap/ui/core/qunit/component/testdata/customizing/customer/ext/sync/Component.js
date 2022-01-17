@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 		metadata : {
 			version : "1.0",
 			rootView : {
-				viewName: "testdata.customizing.customer.ext.Main",
+				viewName: "testdata.customizing.customer.ext.sync.Main",
 				type: "XML",
 				id: "mainView",
 				async: false

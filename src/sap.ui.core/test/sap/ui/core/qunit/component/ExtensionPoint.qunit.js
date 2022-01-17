@@ -54,14 +54,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(27);
+		assert.expect(29);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
+			// panel content
 			var oPanel = oView.byId("Panel");
 			var aPanelContent = oPanel.getContent();
-			var aViewContent = oView.getContent();
+
 			assert.strictEqual(aPanelContent.length, 7, "ExtensionView content added to view");
 
 			assert.strictEqual(aPanelContent[0].getId(), "ExtComponent---mainView--customFragment--customButton1", "EP1 content is in correct order"); // EP1
@@ -71,6 +72,11 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
+
+			// view content on top level
+			var aViewContent = oView.getContent();
+			assert.strictEqual(aViewContent.length, 33, "Correct # of controls inside View content aggregation");
+
 			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
@@ -88,6 +94,7 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[31].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[32].getId(), "ExtComponent---mainView--EPinBinding_in_nestedView", "Main.view content is in correct order"); // Main (nested view with EPs)
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -95,13 +102,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(48);
+		assert.expect(49);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 32, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 33, "Correct # of controls inside View content aggregation");
 
 			// View Content Aggregation
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 content is in correct order"); // EP0
@@ -136,6 +143,7 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[31].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[32].getId(), "ExtComponent---mainView--EPinBinding_in_nestedView", "Main.view content is in correct order"); // Main (nested view with EPs)
 
 			var oTable = aViewContent[13];
 			var aTableItems = oTable.getItems();
@@ -174,13 +182,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(40);
+		assert.expect(43);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 30, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 31, "Correct # of controls inside View content aggregation");
 
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 			assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -212,6 +220,12 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--EPinBinding_in_nestedView", "Main.view content is in correct order"); // Main (nested view with EPs)
+
+			// Default content for EPs in nested View should be available
+			var oNestedView = aViewContent[30];
+			assert.ok(oNestedView.byId("TableRowButton") != null, "Default Content 'TableRowButton' in nested View is available");
+			assert.ok(oNestedView.byId("PanelButton") != null, "Default Content 'PanelButton' in nested View is available");
 
 			// table
 			var oTable = aViewContent[11];
@@ -240,13 +254,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(39);
+		assert.expect(42);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 30, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 31, "Correct # of controls inside View content aggregation");
 
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 			assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -275,6 +289,12 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--EPinBinding_in_nestedView", "Main.view content is in correct order"); // Main (nested view with EPs)
+
+			// Default content for EPs in nested View should be available
+			var oNestedView = aViewContent[30];
+			assert.ok(oNestedView.byId("TableRowButton") != null, "Default Content 'TableRowButton' in nested View is available");
+			assert.ok(oNestedView.byId("PanelButton") != null, "Default Content 'PanelButton' in nested View is available");
 
 			// table
 			var oTable = aViewContent[11];
@@ -358,7 +378,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("via XMLView: async", function(assert) {
-		assert.expect(35);
+		assert.expect(47);
 
 		// load the view
 		return XMLView.create({
@@ -366,67 +386,104 @@ sap.ui.define([
 			id: "myView"
 		}).then(function(oView) {
 			// inspect EP Provider calls
-			assert.equal(this.oEPSpy.args.length, 13, "13 Calls to the EP Provider");
+			assert.equal(this.oEPSpy.args.length, 16, "16 Calls to the EP Provider");
+
 			// EP 1
 			var oArgsEP1 = this.oEPSpy.args[0][0];
 			assert.equal(oArgsEP1.name, "EP1", "EP1");
 			assert.ok(oArgsEP1.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP1: View instance is correct");
+
 			// EP 2
 			var oArgsEP2 = this.oEPSpy.args[1][0];
 			assert.equal(oArgsEP2.name, "EP2", "EP2");
 			assert.ok(oArgsEP2.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP2: View instance is correct");
+
+			// Closest Binding Carrier Test: EPinBinding from Fragement
 			// EP Product_Table_Cell_Ext
-			var oArgsProductTableCell = this.oEPSpy.args[2][0];
-			assert.equal(oArgsProductTableCell.name, "Product_Table_Cell_Ext", "Product_Table_Cell_Ext");
-			assert.ok(oArgsProductTableCell.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext: View instance is correct");
-			assert.equal(oArgsProductTableCell.closestAggregationBindingCarrier, "myView--EPinBinding--product_table", "BindingCarrier ID set correctly");
-			assert.equal(oArgsProductTableCell.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
+			var oArgsProductTableCellInFragment = this.oEPSpy.args[2][0];
+			assert.equal(oArgsProductTableCellInFragment.name, "Product_Table_Cell_Ext", "Product_Table_Cell_Ext");
+			assert.ok(oArgsProductTableCellInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext: View instance is correct");
+			assert.equal(oArgsProductTableCellInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--product_table", "BindingCarrier ID set correctly");
+			assert.equal(oArgsProductTableCellInFragment.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
+
 			// EP Product_Table_Column_Ext
-			var oArgsProductTableColumn = this.oEPSpy.args[3][0];
-			assert.equal(oArgsProductTableColumn.name, "Product_Table_Column_Ext", "Product_Table_Column_Ext");
-			assert.ok(oArgsProductTableColumn.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext: View instance is correct");
-			assert.equal(oArgsProductTableColumn.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
-			assert.equal(oArgsProductTableColumn.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
+			var oArgsProductTableColumnInFragment = this.oEPSpy.args[3][0];
+			assert.equal(oArgsProductTableColumnInFragment.name, "Product_Table_Column_Ext", "Product_Table_Column_Ext");
+			assert.ok(oArgsProductTableColumnInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext: View instance is correct");
+			assert.equal(oArgsProductTableColumnInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
+			assert.equal(oArgsProductTableColumnInFragment.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
+
 			// EP Panel_Button_Ext
-			var oArgsPanelButton = this.oEPSpy.args[4][0];
-			assert.equal(oArgsPanelButton.name, "Panel_Button_Ext", "Panel_Button_Ext");
-			assert.ok(oArgsPanelButton.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext: View instance is correct");
-			assert.equal(oArgsPanelButton.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
-			assert.equal(oArgsPanelButton.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
+			var oArgsPanelButtonInFragment = this.oEPSpy.args[4][0];
+			assert.equal(oArgsPanelButtonInFragment.name, "Panel_Button_Ext", "Panel_Button_Ext");
+			assert.ok(oArgsPanelButtonInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext: View instance is correct");
+			assert.equal(oArgsPanelButtonInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
+			assert.equal(oArgsPanelButtonInFragment.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
+
 			// EP 0
 			var oArgsEP0 = this.oEPSpy.args[5][0];
 			assert.equal(oArgsEP0.name, "EP0", "EP0");
 			assert.ok(oArgsEP0.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP0: View instance is correct");
+
 			// EP 99
 			var oArgsEP99 = this.oEPSpy.args[6][0];
 			assert.equal(oArgsEP99.name, "EP99", "EP99");
 			assert.ok(oArgsEP99.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP99: View instance is correct");
+
 			// EP 23
 			var oArgsEP23 = this.oEPSpy.args[7][0];
 			assert.equal(oArgsEP23.name, "EP23", "EP23");
 			assert.ok(oArgsEP23.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP23: View instance is correct");
+
 			// EP Table
 			var oArgsEPTable = this.oEPSpy.args[8][0];
 			assert.equal(oArgsEPTable.name, "EPTable", "EPTable");
 			assert.ok(oArgsEPTable.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPTable: View instance is correct");
+
 			//EPinEPRoot
 			var oArgsEPinEP = this.oEPSpy.args[9][0];
 			assert.equal(oArgsEPinEP.name, "EPinEPRoot", "EPinEPRoot");
 			assert.ok(oArgsEPinEP.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinEPRoot: View instance is correct");
+
 			//EPinRootFragmentRoot
 			var oArgsEPinRootFragment = this.oEPSpy.args[10][0];
 			assert.equal(oArgsEPinRootFragment.name, "EPinRootFragment", "EPinRootFragment");
 			assert.ok(oArgsEPinRootFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinRootFragment: View instance is correct");
+
 			// EP Root
 			var oArgsEPRoot = this.oEPSpy.args[11][0];
 			assert.equal(oArgsEPRoot.name, "EPRoot", "EPRoot");
 			assert.ok(oArgsEPRoot.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
 			assert.equal(oArgsEPRoot.fragmentId, "EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
+
 			// NestingFragment --> EP Root
 			var oArgsEPRootNested = this.oEPSpy.args[12][0];
 			assert.equal(oArgsEPRootNested.name, "EPRoot", "EPRoot");
 			assert.ok(oArgsEPRootNested.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
 			assert.equal(oArgsEPRootNested.fragmentId, "NestingFragment--EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
+
+			// Closest Binding Carrier Test: EPinBinding from nested View
+			// EP Product_Table_Cell_Ext_In_View
+			var oArgsProductTableCellInView = this.oEPSpy.args[13][0];
+			assert.equal(oArgsProductTableCellInView.name, "Product_Table_Cell_Ext_In_View", "Product_Table_Cell_Ext_In_View");
+			assert.ok(oArgsProductTableCellInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext_In_View: View instance is correct");
+			assert.equal(oArgsProductTableCellInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView--product_table", "BindingCarrier ID set correctly");
+			assert.equal(oArgsProductTableCellInView.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
+
+			// EP Product_Table_Column_Ext_In_View
+			var oArgsProductTableColumnInView = this.oEPSpy.args[14][0];
+			assert.equal(oArgsProductTableColumnInView.name, "Product_Table_Column_Ext_In_View", "Product_Table_Column_Ext_In_View");
+			assert.ok(oArgsProductTableColumnInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext_In_View: View instance is correct");
+			assert.equal(oArgsProductTableColumnInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView", "BindingCarrier ID set correctly");
+			assert.equal(oArgsProductTableColumnInView.closestAggregationBinding, "dependents", "BindingCarrier aggregation set cortrectly");
+
+			// EP Panel_Button_Ext_In_View
+			var oArgsPanelButtonInView = this.oEPSpy.args[15][0];
+			assert.equal(oArgsPanelButtonInView.name, "Panel_Button_Ext_In_View", "Panel_Button_Ext_In_View");
+			assert.ok(oArgsPanelButtonInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext_In_View: View instance is correct");
+			assert.equal(oArgsPanelButtonInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView", "BindingCarrier ID set correctly");
+			assert.equal(oArgsPanelButtonInView.closestAggregationBinding, "dependents", "BindingCarrier aggregation set cortrectly");
+
 			oView.destroy();
 		}.bind(this));
 
