@@ -36,8 +36,7 @@ sap.ui.define(function () {
 				module: [
 					'./Card.qunit',
 					'./CardDataHandling.qunit',
-					'./CardDesigntime.qunit',
-					'./util/CardFormatters.qunit'
+					'./CardDesigntime.qunit'
 				]
 			},
 			"AllCards": {
@@ -53,7 +52,6 @@ sap.ui.define(function () {
 						"sap/f/cards/NumericSideIndicator",
 						"sap/f/cards/NumericSideIndicatorRenderer",
 						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/formatters/IconFormatter",
 						"sap/ui/integration/util/CardActions",
 						"sap/ui/integration/util/ContextModel",
 						"sap/ui/integration/util/CardManifest",
@@ -90,11 +88,9 @@ sap.ui.define(function () {
 					'./util/CardActions.qunit',
 					'./util/ContextModel.qunit',
 					'./cardbundle/CardStaticResources.qunit',
-					'./util/CardFormatters.qunit',
 					'./cards/BaseContent.qunit',
 					'./bindingFeatures/DateRange.qunit',
 					'./CardHost.qunit',
-					'./formatters/IconFormatter.qunit',
 					'./CardFiltering.qunit',
 					'./cards/AnalyticsCloudContent.qunit'
 				]
@@ -120,6 +116,14 @@ sap.ui.define(function () {
 				]
 			},
 			"CardExtension": {},
+			"CardFormatters": {
+				module: [
+					"./formatters/CardFormatters.qunit",
+					"./formatters/DateTimeFormatter.qunit",
+					"./formatters/IconFormatter.qunit",
+					"./formatters/NumberFormatter.qunit"
+				]
+			},
 			"CardHostAndExtension": {},
 			"CardHost": {
 				coverage: {
@@ -229,11 +233,6 @@ sap.ui.define(function () {
 					only: [
 						"sap/ui/integration/customElements/"
 					]
-				}
-			},
-			"formatters/IconFormatter": {
-				coverage: {
-					only: ["sap/ui/integration/formatters/IconFormatter"]
 				}
 			},
 			"util/BindingHelper": {
