@@ -78,16 +78,14 @@ sap.ui.define([
 				.withArgs(Object.assign(
 					_pick(this.mPropertyBag, ["vmReference"]), {
 						variantsMap: this.oVariantsMap,
-						vReference: this.mPropertyBag.currentVReference,
-						changeInstance: true
+						vReference: this.mPropertyBag.currentVReference
 					}
 				))
 				.returns(this.aSourceVariantChanges)
 				.withArgs(Object.assign(
 					_pick(this.mPropertyBag, ["vmReference"]), {
 						variantsMap: this.oVariantsMap,
-						vReference: this.mPropertyBag.newVReference,
-						changeInstance: true
+						vReference: this.mPropertyBag.newVReference
 					}
 				))
 				.returns(this.aTargetControlChangesForVariant);

@@ -52,8 +52,7 @@ sap.ui.define([
 		if (mPropertyBag.variantData.content.variantReference) {
 			aReferencedVariantChanges = VariantManagementState.getControlChangesForVariant(Object.assign(
 				mPropertyBag, {
-					vReference: mPropertyBag.variantData.content.variantReference,
-					changeInstance: true
+					vReference: mPropertyBag.variantData.content.variantReference
 				}));
 			return aReferencedVariantChanges.filter(function(oReferencedChange) {
 				return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.getDefinition().layer, mPropertyBag.variantData.content.layer) === -1; /* Referenced change layer below current layer*/
@@ -164,7 +163,6 @@ sap.ui.define([
 	 * @param {String} mPropertyBag.vReference - ID of the variant
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included, <code>true</code> by default
-	 * @param {boolean} [mPropertyBag.changeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
 	 *
 	 * @returns {object[]|sap.ui.fl.Change[]} All changes of the variant
 	 * @private
@@ -180,11 +178,6 @@ sap.ui.define([
 					|| oChange.getState() === Change.states.PERSISTED
 				);
 			});
-			if (!mPropertyBag.changeInstance) {
-				aResult = aResult.map(function(oChange) {
-					return oChange.getDefinition();
-				});
-			}
 		}
 		return aResult;
 	};
@@ -366,7 +359,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.addChangeToVariant = function(mPropertyBag) {
-		var aExistingChanges = VariantManagementState.getControlChangesForVariant(Object.assign(mPropertyBag, {changeInstance: true}));
+		var aExistingChanges = VariantManagementState.getControlChangesForVariant(mPropertyBag);
 		var aChangeFileNames = aExistingChanges.map(function(oChange) {
 			return oChange.getDefinition().fileName;
 		});
@@ -393,7 +386,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	VariantManagementState.removeChangeFromVariant = function(mPropertyBag) {
-		var aControlChanges = VariantManagementState.getControlChangesForVariant(Object.assign(mPropertyBag, {changeInstance: true}));
+		var aControlChanges = VariantManagementState.getControlChangesForVariant(mPropertyBag);
 		var oVariant = VariantManagementState.getVariant(mPropertyBag);
 		var bChangeFound = false;
 
@@ -418,7 +411,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with the necessary properties
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {string} [mPropertyBag.vmReference] - Variant management reference
-	 * @param {boolean} [mPropertyBag.changeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
 	 *
 	 * @returns {Array} All changes of current or default variants
 	 * @private
@@ -583,8 +575,7 @@ sap.ui.define([
 	VariantManagementState.waitForInitialVariantChanges = function(mPropertyBag) {
 		var aCurrentVariantChanges = VariantManagementState.getInitialChanges({
 			vmReference: mPropertyBag.vmReference,
-			reference: mPropertyBag.reference,
-			changeInstance: true
+			reference: mPropertyBag.reference
 		});
 		var aControls = aCurrentVariantChanges.reduce(function(aCurrentControls, oChange) {
 			var oSelector = oChange.getSelector();

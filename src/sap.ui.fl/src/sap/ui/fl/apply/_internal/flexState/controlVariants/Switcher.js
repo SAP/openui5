@@ -34,7 +34,6 @@ sap.ui.define([
 		var aCurrentVariantChanges = VariantManagementState.getControlChangesForVariant(
 			Object.assign(
 				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
-					changeInstance: true,
 					vReference: mPropertyBag.currentVReference
 				}
 			)
@@ -42,7 +41,6 @@ sap.ui.define([
 		var aNewChanges = VariantManagementState.getControlChangesForVariant(
 			Object.assign(
 				_pick(mPropertyBag, ["vmReference", "variantsMap", "reference"]), {
-					changeInstance: true,
 					vReference: mPropertyBag.newVReference
 				}
 			)
@@ -106,7 +104,6 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.newVReference - Variant reference to be switched to
 		 * @param {string} mPropertyBag.currentVReference - Variant reference to be switched from
 		 * @param {sap.ui.core.Component} mPropertyBag.appComponent - App component
-		 * @param {boolean} [mPropertyBag.changeInstance] <code>true</code> if each change has to be an instance of <code>sap.ui.fl.Change</code>
 		 *
 		 * @returns {Promise} Resolves after variant has been switched
 		 * @private

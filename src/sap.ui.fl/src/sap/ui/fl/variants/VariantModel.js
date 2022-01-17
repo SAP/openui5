@@ -94,8 +94,7 @@ sap.ui.define([
 					var aControlChanges = VariantManagementState.getControlChangesForVariant({
 						reference: oModel.sFlexReference,
 						vmReference: sVMReference,
-						vReference: sSourceVReference,
-						changeInstance: true
+						vReference: sSourceVReference
 					});
 					return _eraseDirtyChanges({
 						changes: aControlChanges,
@@ -599,7 +598,6 @@ sap.ui.define([
 			VariantManagementState.getControlChangesForVariant({
 				vmReference: sVariantManagementReference,
 				vReference: sSourceVariantReference,
-				changeInstance: true,
 				reference: this.sFlexReference
 			})
 				.map(function(oVariantChange) {
@@ -1279,8 +1277,7 @@ sap.ui.define([
 			var aSourceVariantChanges = VariantManagementState.getControlChangesForVariant({
 				reference: this.sFlexReference,
 				vmReference: sVariantManagementReference,
-				vReference: sSourceVariantReference,
-				changeInstance: true
+				vReference: sSourceVariantReference
 			});
 
 			if (mParameters.overwrite) {
@@ -1468,8 +1465,7 @@ sap.ui.define([
 			var aCurrentVariantControlChanges = VariantManagementState.getControlChangesForVariant({
 				reference: this.sFlexReference,
 				vmReference: sVariantManagementReference,
-				vReference: sCurrentVariantReference,
-				changeInstance: true
+				vReference: sCurrentVariantReference
 			});
 			var aDirtyCurrentVariantChanges = this._getDirtyChangesFromVariantChanges(aCurrentVariantControlChanges);
 

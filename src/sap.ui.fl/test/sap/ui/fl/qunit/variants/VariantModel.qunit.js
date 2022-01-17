@@ -1746,8 +1746,7 @@ sap.ui.define([
 				.withArgs({
 					vmReference: sVMReference,
 					vReference: this.oModel.oData[sVMReference].currentVariant,
-					reference: this.oModel.sFlexReference,
-					changeInstance: true
+					reference: this.oModel.sFlexReference
 				})
 				.returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges")
@@ -1860,8 +1859,7 @@ sap.ui.define([
 				.withArgs({
 					vmReference: sVMReference,
 					vReference: this.oModel.oData[sVMReference].currentVariant,
-					reference: this.oModel.sFlexReference,
-					changeInstance: true
+					reference: this.oModel.sFlexReference
 				})
 				.returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges")
@@ -2053,8 +2051,7 @@ sap.ui.define([
 				.withArgs({
 					vmReference: sVMReference,
 					vReference: this.oModel.oData[sVMReference].currentVariant,
-					reference: this.oModel.sFlexReference,
-					changeInstance: true
+					reference: this.oModel.sFlexReference
 				})
 				.returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, oChange1, oChange2, oChange3]);
@@ -2413,7 +2410,6 @@ sap.ui.define([
 				.withArgs({
 					vmReference: sVMReference,
 					vReference: sVMReference,
-					changeInstance: true,
 					reference: this.oModel.sFlexReference
 				})
 				.returns([oDirtyChange1, oDirtyChange2]);
