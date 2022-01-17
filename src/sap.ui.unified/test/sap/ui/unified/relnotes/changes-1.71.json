@@ -435,5 +435,25 @@
         ]
       }
     ]
+  },
+  "1.71.41": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "e3f576e2c8ce5eb9aecb23671201e8f6120dda83",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: Runtime error on click on week",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008953802021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070447053"
+          }
+        ]
+      }
+    ]
   }
 }

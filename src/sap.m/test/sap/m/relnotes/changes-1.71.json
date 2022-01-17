@@ -2920,5 +2920,47 @@
         ]
       }
     ]
+  },
+  "1.71.41": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "26cf6e2a968bebd9522496783d4d37890a5c571c",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: getScrollDelegate() method now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008706252021"
+          }
+        ]
+      },
+      {
+        "id": "15b5eff6ba74b74328171ce30c4abeef932cbe43",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: container width changed event properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080431926"
+          }
+        ]
+      },
+      {
+        "id": "593bb89b44d3a923516820d5a27b0615bd1e0adc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarHeader: Close button on mobile now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970556079"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400007751372021"
+          }
+        ]
+      }
+    ]
   }
 }

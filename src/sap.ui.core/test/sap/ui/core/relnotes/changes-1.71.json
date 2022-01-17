@@ -1231,5 +1231,21 @@
         ]
       }
     ]
+  },
+  "1.71.41": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "7f28bac962aa1a00055ae0dfea79297f7d63f816",
+        "type": "FIX",
+        "text": " core.HTML: Do not unnecessarily mark content as \"to-be-preserved\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170279131"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -107,5 +107,21 @@
         ]
       }
     ]
+  },
+  "1.71.41": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "26cf6e2a968bebd9522496783d4d37890a5c571c",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: getScrollDelegate() method now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008706252021"
+          }
+        ]
+      }
+    ]
   }
 }
