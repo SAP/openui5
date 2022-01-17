@@ -1,0 +1,18 @@
+{
+  "1.99.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "a892d535c00890b16c78b94912502ae0743dda10",
+        "type": "FIX",
+        "text": " GridBoxLayout: prevent exception when hidden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280010982"
+          }
+        ]
+      }
+    ]
+  }
+}

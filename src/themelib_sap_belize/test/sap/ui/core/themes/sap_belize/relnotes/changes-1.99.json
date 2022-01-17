@@ -1,0 +1,23 @@
+{
+  "1.99.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
+        "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170275459"
+          }
+        ]
+      }
+    ]
+  }
+}

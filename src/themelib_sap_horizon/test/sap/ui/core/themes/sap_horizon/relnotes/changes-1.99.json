@@ -1,0 +1,62 @@
+{
+  "1.99.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "b36eecde1e14f6a386f456b7dc5c5065ec727c17",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: left border is correct color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180429506"
+          }
+        ]
+      },
+      {
+        "id": "ac7b839f0e912ebd65423044a4b3790cc312e45c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox/MultiComboBox: Visualization is aligned with the visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180422889"
+          }
+        ]
+      },
+      {
+        "id": "c987552ac6e19ee8d9adbef0bbe812618d71a46e",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      },
+      {
+        "id": "66dbd6a164458177f812a352e37436300abe10de",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Icons are now correctly centered in macOS",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170317303"
+          }
+        ]
+      },
+      {
+        "id": "883bcc009c430df63e40b2962c4716194f5fd6b0",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: 'ariaHasPopup' property now added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170275459"
+          }
+        ]
+      }
+    ]
+  }
+}

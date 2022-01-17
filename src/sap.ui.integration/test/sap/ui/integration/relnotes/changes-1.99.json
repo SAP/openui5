@@ -1,0 +1,60 @@
+{
+  "1.99.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "b37ac43429042584abdfb34a56e663d0a4418d68",
+        "type": "FIX",
+        "text": " Integration Cards: High CPU utilization is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180389313"
+          }
+        ]
+      },
+      {
+        "id": "d37f4c6a8ab756b8b96a9d43b01ae2d396a8c162",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Markdown support for Adaptive type updated"
+      },
+      {
+        "id": "4edde839aa1224483e45a3cc3ae827acceaeb3d0",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.CalendarContent: Now works with no initial date",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008345612021"
+          }
+        ]
+      },
+      {
+        "id": "2b644d002b7b76e0a663c34205d722b7b6f13beb",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Templating support for Adaptive type updated"
+      },
+      {
+        "id": "c3563cab634aefe1e878700e24315f85236213f0",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Payload of submit action handler now supports bindings"
+      },
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
+        "id": "0756b277e5670dffe0699b87e728c1e3177997c1",
+        "type": "FIX",
+        "text": " CalendarCard: Appointments times and card display match",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170296340"
+          }
+        ]
+      }
+    ]
+  }
+}

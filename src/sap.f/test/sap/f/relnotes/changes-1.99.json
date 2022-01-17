@@ -1,0 +1,39 @@
+{
+  "1.99.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "9a6ab4f6798a2c858ea92a5d33737a62bf425bdf",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix failing QUnit on Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280003769"
+          }
+        ]
+      },
+      {
+        "id": "c3563cab634aefe1e878700e24315f85236213f0",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Payload of submit action handler now supports bindings"
+      },
+      {
+        "id": "a5c602d2ffad403cbd70bc1b5779da9f481bb7e3",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card is enhanced with new experimental item types"
+      },
+      {
+        "id": "eb2a30935451f914475090df1e4d496b8d22198e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix scroll issue with sticky subHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170326966"
+          }
+        ]
+      }
+    ]
+  }
+}
