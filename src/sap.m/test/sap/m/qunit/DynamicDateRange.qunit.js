@@ -49,6 +49,35 @@ sap.ui.define([
 		assert.strictEqual(oResultOptions[0], "LASTDAYS", "correct option");
 	});
 
+	QUnit.test("creating custom option with working ID", function(assert) {
+		//arrange
+		var oOption = new CustomDynamicDateOption({
+			key: "X To Last Work Week",
+			valueTypes: ["int"],
+			getValueHelpUITypes: function() {
+				return [new DynamicDateValueHelpUIType({ type: "int" })];
+			},
+			createValueHelpUI: function () { return {}; },
+			format: function(oValue) {
+				return oValue.values[0] + " To Last Work Week";
+			},
+			parse: function(sValue) {
+				return {};
+			},
+			validateValueHelpUI: function () { return {}; },
+			toDates: function(oValue) {
+				return {};
+			}
+		});
+
+		// act
+		this.ddr.addOption(oOption);
+		var oOptionListItem = this.ddr._createListItem(oOption);
+
+		// assert
+		assert.strictEqual(oOptionListItem.getId(), this.ddr.getId() + "-option-XToLastWorkWeek", "correct id of options");
+	});
+
 	QUnit.test("getFocusDomRef", function(assert) {
 		assert.strictEqual(
 			this.ddr.getFocusDomRef().id,
