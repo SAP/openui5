@@ -27,9 +27,6 @@ sap.ui.define([
 		_MetadataRequestor, _Parser, _Requestor, TestUtils, library) {
 	"use strict";
 
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = library.MessageType;
-
 	/*
 	 * You can run various tests in this module against a real OData V4 service using the request
 	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
@@ -40,6 +37,8 @@ sap.ui.define([
 			"TEAMS('TEAM_01')/Name" : {message : {value : "Business Suite"}},
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
+		// shortcut for sap.ui.core.MessageType
+		MessageType = library.MessageType,
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		TestControl = Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata : {

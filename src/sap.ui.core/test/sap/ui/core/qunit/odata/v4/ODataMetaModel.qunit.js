@@ -1167,13 +1167,13 @@ sap.ui.define([
 	 *   function (string sPath, any vResult, string sContextPath, string sMetaPath)
 	 */
 	function forEach(mFixture, fnTest) {
-		var sPath;
+		var sContextPath, sMetaPath, sPath, vValue, i;
 
 		for (sPath in mFixture) {
-			var i = sPath.indexOf("|"),
-				sContextPath = "",
-				sMetaPath = sPath.slice(i + 1),
-				vValue = mFixture[sPath];
+			i = sPath.indexOf("|");
+			sContextPath = "";
+			sMetaPath = sPath.slice(i + 1);
+			vValue = mFixture[sPath];
 
 			if (i >= 0) {
 				sContextPath = sPath.slice(0, i);

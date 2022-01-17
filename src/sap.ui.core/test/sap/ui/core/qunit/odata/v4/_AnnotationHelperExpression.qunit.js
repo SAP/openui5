@@ -562,10 +562,11 @@ sap.ui.define([
 				formatOptions : oFixture.pathValue,
 				parameters : {},
 				prefix : "~prefix~"
-			};
+			},
+			oResult;
 
 		// code under test
-		var oResult = Expression.pathResult(oPathValue, "Edm.String", "path", mConstraints);
+		oResult = Expression.pathResult(oPathValue, "Edm.String", "path", mConstraints);
 
 		assert.strictEqual(oResult.constraints, mConstraints);
 		assert.deepEqual(oResult.formatOptions, oFixture.result);

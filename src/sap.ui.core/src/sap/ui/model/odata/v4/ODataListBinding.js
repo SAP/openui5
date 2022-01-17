@@ -42,7 +42,47 @@ sap.ui.define([
 			patchCompleted : true,
 			patchSent : true,
 			refresh : true
-		};
+		},
+		/**
+		 * @alias sap.ui.model.odata.v4.ODataListBinding
+		 * @author SAP SE
+		 * @class List binding for an OData V4 model.
+		 *   An event handler can only be attached to this binding for the following events:
+		 *   'AggregatedDataStateChange', 'change', 'createActivate', 'createCompleted',
+		 *   'createSent', 'dataReceived', 'dataRequested', 'DataStateChange', 'patchCompleted',
+		 *   'patchSent', and 'refresh'. For other events, an error is thrown.
+		 * @extends sap.ui.model.ListBinding
+		 * @hideconstructor
+		 * @mixes sap.ui.model.odata.v4.ODataParentBinding
+		 * @public
+		 * @since 1.37.0
+		 * @version ${version}
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#requestRefresh as #requestRefresh
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#toString as #toString
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchCompleted as
+		 *   #attachPatchCompleted
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchSent as #attachPatchSent
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchCompleted as
+		 *   #detachPatchCompleted
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchSent as #detachPatchSent
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
+		 */
+		ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
+				constructor : constructor
+			});
+
+	//*********************************************************************************************
+	// ODataListBinding
+	//*********************************************************************************************
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
@@ -62,98 +102,63 @@ sap.ui.define([
 	 *   Map of binding parameters
 	 * @throws {Error}
 	 *   If incorrect binding parameters are provided or an unsupported operation mode is used
-	 *
-	 * @alias sap.ui.model.odata.v4.ODataListBinding
-	 * @author SAP SE
-	 * @class List binding for an OData V4 model.
-	 *   An event handler can only be attached to this binding for the following events:
-	 *   'AggregatedDataStateChange', 'change', 'createActivate', 'createCompleted', 'createSent',
-	 *   'dataReceived', 'dataRequested', 'DataStateChange', 'patchCompleted', 'patchSent', and
-	 *   'refresh'. For other events, an error is thrown.
-	 * @extends sap.ui.model.ListBinding
-	 * @hideconstructor
-	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
-	 * @public
-	 * @since 1.37.0
-	 * @version ${version}
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#requestRefresh as #requestRefresh
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#toString as #toString
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchCompleted as
-	 *   #attachPatchCompleted
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchSent as #attachPatchSent
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchCompleted as
-	 *   #detachPatchCompleted
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchSent as #detachPatchSent
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
 	 */
-	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
-			constructor : function (oModel, sPath, oContext, vSorters, vFilters, mParameters) {
-				ListBinding.call(this, oModel, sPath);
-				// initialize mixin members
-				asODataParentBinding.call(this);
+	function constructor(oModel, sPath, oContext, vSorters, vFilters, mParameters) {
+		ListBinding.call(this, oModel, sPath);
+		// initialize mixin members
+		asODataParentBinding.call(this);
 
-				if (sPath.endsWith("/")) {
-					throw new Error("Invalid path: " + sPath);
-				}
+		if (sPath.endsWith("/")) {
+			throw new Error("Invalid path: " + sPath);
+		}
 
-				mParameters = _Helper.clone(mParameters) || {};
-				this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
-					"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
-					"$$sharedRequest", "$$updateGroupId"]);
-				// number of active (client-side) created contexts in aContexts
-				this.iActiveContexts = 0;
-				this.aApplicationFilters = _Helper.toArray(vFilters);
-				this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
-					? "AddVirtualContext"
-					: undefined;
-				this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
-				this.oDiff = undefined;
-				this.aFilters = [];
-				this.sGroupId = mParameters.$$groupId;
-				this.bHasAnalyticalInfo = false;
-				this.oHeaderContext = this.bRelative
-					? null
-					: Context.createNewContext(oModel, this, sPath);
-				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
-				// map<string,sap.ui.model.odata.v4.Context>
-				// Maps a string path to a v4.Context with that path. A context may either be
-				// - an element of this.aContexts (then it knows its index) or
-				// - a value of this.mPreviousContextsByPath.
-				// Contexts which have previously been part of this.aContexts are parked here for
-				// reuse (and thus still remember their index) and get destroyed by
-				// #destroyPreviousContexts after the next call to #createContexts.
-				// A kept-alive context may be parked here for a longer time, with undefined index.
-				this.mPreviousContextsByPath = {};
-				this.aPreviousData = [];
-				this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
-				this.aSorters = _Helper.toArray(vSorters);
-				this.sUpdateGroupId = mParameters.$$updateGroupId;
-				// Note: $$operationMode is validated before, oModel.sOperationMode also
-				// Just check for the case that no mode was specified, but sort/filter takes place
-				if (!this.sOperationMode
-						&& (this.aSorters.length || this.aApplicationFilters.length)) {
-					throw new Error("Unsupported operation mode: " + this.sOperationMode);
-				}
+		mParameters = _Helper.clone(mParameters) || {};
+		this.checkBindingParameters(mParameters, ["$$aggregation", "$$canonicalPath",
+			"$$groupId", "$$operationMode", "$$ownRequest", "$$patchWithoutSideEffects",
+			"$$sharedRequest", "$$updateGroupId"]);
+		// number of active (client-side) created contexts in aContexts
+		this.iActiveContexts = 0;
+		this.aApplicationFilters = _Helper.toArray(vFilters);
+		this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
+			? "AddVirtualContext"
+			: undefined;
+		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
+		this.oDiff = undefined;
+		this.aFilters = [];
+		this.sGroupId = mParameters.$$groupId;
+		this.bHasAnalyticalInfo = false;
+		this.oHeaderContext = this.bRelative
+			? null
+			: Context.createNewContext(oModel, this, sPath);
+		this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
+		// map<string,sap.ui.model.odata.v4.Context>
+		// Maps a string path to a v4.Context with that path. A context may either be
+		// - an element of this.aContexts (then it knows its index) or
+		// - a value of this.mPreviousContextsByPath.
+		// Contexts which have previously been part of this.aContexts are parked here for
+		// reuse (and thus still remember their index) and get destroyed by
+		// #destroyPreviousContexts after the next call to #createContexts.
+		// A kept-alive context may be parked here for a longer time, with undefined index.
+		this.mPreviousContextsByPath = {};
+		this.aPreviousData = [];
+		this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
+		this.aSorters = _Helper.toArray(vSorters);
+		this.sUpdateGroupId = mParameters.$$updateGroupId;
+		// Note: $$operationMode is validated before, oModel.sOperationMode also
+		// Just check for the case that no mode was specified, but sort/filter takes place
+		if (!this.sOperationMode && (this.aSorters.length || this.aApplicationFilters.length)) {
+			throw new Error("Unsupported operation mode: " + this.sOperationMode);
+		}
 
-				// Note: clone() dropped $$aggregation : undefined, which is good
-				this.applyParameters(mParameters); // calls #reset
-				if (!this.bRelative || oContext && !oContext.fetchValue) { // @see #isRoot
-					// do this before #setContext fires an event!
-					this.createReadGroupLock(this.getGroupId(), true);
-				}
-				this.setContext(oContext);
-				oModel.bindingCreated(this);
-			}
-		});
+		// Note: clone() dropped $$aggregation : undefined, which is good
+		this.applyParameters(mParameters); // calls #reset
+		if (!this.bRelative || oContext && !oContext.fetchValue) { // @see #isRoot
+			// do this before #setContext fires an event!
+			this.createReadGroupLock(this.getGroupId(), true);
+		}
+		this.setContext(oContext);
+		oModel.bindingCreated(this);
+	}
 
 	asODataParentBinding(ODataListBinding.prototype);
 

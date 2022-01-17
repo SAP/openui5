@@ -13,7 +13,6 @@ sap.ui.define([
 		rPaths = /\$(?:(?:Annotation)|(?:(?:Navigation)?Property))?Path/,
 		rSplitPathSegment = /^(.+?\/(\$(?:Annotation)?Path))(\/?)(.*)$/,
 		rUnsupportedPathSegments = /\$(?:Navigation)?PropertyPath/,
-
 		/**
 		 * @classdesc
 		 * A collection of methods which help to consume

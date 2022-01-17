@@ -26,7 +26,76 @@ sap.ui.define([
 			DataStateChange : true,
 			patchCompleted : true,
 			patchSent : true
-		};
+		},
+		/**
+		 * @alias sap.ui.model.odata.v4.ODataContextBinding
+		 * @author SAP SE
+		 * @class Context binding for an OData V4 model.
+		 *   An event handler can only be attached to this binding for the following events:
+		 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested',
+		 *   'DataStateChange', 'patchCompleted', and 'patchSent'. For other events, an error is
+		 *   thrown.
+		 *
+		 *   A context binding can also be used as an <i>operation binding</i> to support bound
+		 *   actions, action imports, bound functions and function imports. If you want to control
+		 *   the execution time of an operation, for example a function import named
+		 *   "GetNumberOfAvailableItems", create a context binding for the path
+		 *   "/GetNumberOfAvailableItems(...)" (as specified here, including the three dots). Such
+		 *   an operation binding is <i>deferred</i>, meaning that it does not request
+		 *   automatically, but only when you call {@link #execute}. {@link #refresh} is always
+		 *   ignored for actions and action imports. For bound functions and function imports, it is
+		 *   ignored if {@link #execute} has not yet been called. Afterwards it results in another
+		 *   call of the function with the parameter values of the last execute.
+		 *
+		 *   The binding parameter for bound actions or bound functions may be given in the binding
+		 *   path, for example "/SalesOrderList('42')/name.space.SalesOrder_Confirm". This can be
+		 *   used if the exact entity for the binding parameter is known in advance. If you use a
+		 *   relative binding instead, the operation path is a concatenation of the parent context's
+		 *   canonical path and the deferred binding's path.
+		 *
+		 *   <b>Example</b>: You have a table with a list binding to "/SalesOrderList". In
+		 *   each row you have a button to confirm the sales order, with the relative binding
+		 *   "name.space.SalesOrder_Confirm(...)". Then the parent context for such a button
+		 *   refers to an entity in "SalesOrderList", so its canonical path is
+		 *   "/SalesOrderList('<i>SalesOrderID</i>')" and the resulting path for the action
+		 *   is "/SalesOrderList('<i>SalesOrderID</i>')/name.space.SalesOrder_Confirm".
+		 *
+		 *   This also works if the relative path of the deferred operation binding starts with a
+		 *   navigation property. Then this navigation property will be part of the operation's
+		 *   resource path, which is still valid.
+		 *
+		 *   A deferred operation binding is not allowed to have another deferred operation binding
+		 *   as parent.
+		 *
+		 * @extends sap.ui.model.ContextBinding
+		 * @hideconstructor
+		 * @mixes sap.ui.model.odata.v4.ODataParentBinding
+		 * @public
+		 * @since 1.37.0
+		 * @version ${version}
+		 *
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#requestRefresh as #requestRefresh
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
+		 * @borrows sap.ui.model.odata.v4.ODataBinding#toString as #toString
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchCompleted as
+		 *   #attachPatchCompleted
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchSent as #attachPatchSent
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchCompleted as
+		 *   #detachPatchCompleted
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchSent as #detachPatchSent
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
+		 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
+		 */
+		ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
+				constructor : constructor
+			});
 
 	/**
 	 * Returns the path for the return value context. Supports bound operations on an entity or a
@@ -47,6 +116,10 @@ sap.ui.define([
 		return (i < 0 ? sBoundParameterPath : sPath.slice(0, i)) + sResponsePredicate;
 	}
 
+	//*********************************************************************************************
+	// ODataContextBinding
+	//*********************************************************************************************
+
 	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
 	 * {@link sap.ui.model.odata.v4.ODataModel#bindContext} instead!
@@ -61,135 +134,67 @@ sap.ui.define([
 	 *   Map of binding parameters
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided
-	 *
-	 * @alias sap.ui.model.odata.v4.ODataContextBinding
-	 * @author SAP SE
-	 * @class Context binding for an OData V4 model.
-	 *   An event handler can only be attached to this binding for the following events:
-	 *   'AggregatedDataStateChange', 'change', 'dataReceived', 'dataRequested', 'DataStateChange',
-	 *   'patchCompleted', and 'patchSent'. For other events, an error is thrown.
-	 *
-	 *   A context binding can also be used as an <i>operation binding</i> to support bound actions,
-	 *   action imports, bound functions and function imports. If you want to control the execution
-	 *   time of an operation, for example a function import named "GetNumberOfAvailableItems",
-	 *   create a context binding for the path "/GetNumberOfAvailableItems(...)" (as specified here,
-	 *   including the three dots). Such an operation binding is <i>deferred</i>, meaning that it
-	 *   does not request automatically, but only when you call {@link #execute}. {@link #refresh}
-	 *   is always ignored for actions and action imports. For bound functions and function imports,
-	 *   it is ignored if {@link #execute} has not yet been called. Afterwards it results in another
-	 *   call of the function with the parameter values of the last execute.
-	 *
-	 *   The binding parameter for bound actions or bound functions may be given in the binding
-	 *   path, for example "/SalesOrderList('42')/name.space.SalesOrder_Confirm". This can be
-	 *   used if the exact entity for the binding parameter is known in advance. If you use a
-	 *   relative binding instead, the operation path is a concatenation of the parent context's
-	 *   canonical path and the deferred binding's path.
-	 *
-	 *   <b>Example</b>: You have a table with a list binding to "/SalesOrderList". In
-	 *   each row you have a button to confirm the sales order, with the relative binding
-	 *   "name.space.SalesOrder_Confirm(...)". Then the parent context for such a button
-	 *   refers to an entity in "SalesOrderList", so its canonical path is
-	 *   "/SalesOrderList('<i>SalesOrderID</i>')" and the resulting path for the action
-	 *   is "/SalesOrderList('<i>SalesOrderID</i>')/name.space.SalesOrder_Confirm".
-	 *
-	 *   This also works if the relative path of the deferred operation binding starts with a
-	 *   navigation property. Then this navigation property will be part of the operation's
-	 *   resource path, which is still valid.
-	 *
-	 *   A deferred operation binding is not allowed to have another deferred operation binding as
-	 *   parent.
-	 *
-	 * @extends sap.ui.model.ContextBinding
-	 * @hideconstructor
-	 * @mixes sap.ui.model.odata.v4.ODataParentBinding
-	 * @public
-	 * @since 1.37.0
-	 * @version ${version}
-	 *
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getGroupId as #getGroupId
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getRootBinding as #getRootBinding
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#getUpdateGroupId as #getUpdateGroupId
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#hasPendingChanges as #hasPendingChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#isInitial as #isInitial
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#refresh as #refresh
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#requestRefresh as #requestRefresh
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#resetChanges as #resetChanges
-	 * @borrows sap.ui.model.odata.v4.ODataBinding#toString as #toString
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchCompleted as
-	 *   #attachPatchCompleted
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#attachPatchSent as #attachPatchSent
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#changeParameters as #changeParameters
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchCompleted as
-	 *   #detachPatchCompleted
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#detachPatchSent as #detachPatchSent
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#resume as #resume
-	 * @borrows sap.ui.model.odata.v4.ODataParentBinding#suspend as #suspend
 	 */
-	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
-			constructor : function (oModel, sPath, oContext, mParameters) {
-				var iPos = sPath.indexOf("(...)"),
-					that = this;
+	function constructor(oModel, sPath, oContext, mParameters) {
+		var iPos = sPath.indexOf("(...)"),
+			that = this;
 
-				ContextBinding.call(this, oModel, sPath);
-				// initialize mixin members
-				asODataParentBinding.call(this);
+		ContextBinding.call(this, oModel, sPath);
+		// initialize mixin members
+		asODataParentBinding.call(this);
 
-				if (sPath.endsWith("/")) {
-					throw new Error("Invalid path: " + sPath);
-				}
-				this.oOperation = undefined;
-				this.oParameterContext = null;
-				this.oReturnValueContext = null;
-				if (iPos >= 0) { // deferred operation binding
-					if (iPos !== this.sPath.length - /*"(...)".length*/5) {
-						throw new Error(
-							"The path must not continue after a deferred operation: " + this.sPath);
-					}
-
-					this.oOperation = {
-						bAction : undefined,
-						mChangeListeners : {}, // map from path to an array of change listeners
-						mParameters : {},
-						sResourcePath : undefined
-					};
-					if (!this.bRelative) {
-						this.oParameterContext = Context.create(this.oModel, this,
-							this.sPath + "/$Parameter");
-					}
-				}
-
-				mParameters = _Helper.clone(mParameters) || {};
-				// Note: needs this.oOperation
-				this.checkBindingParameters(mParameters, ["$$canonicalPath", "$$groupId",
-					"$$inheritExpandSelect", "$$ownRequest", "$$patchWithoutSideEffects",
-					"$$updateGroupId"]);
-				this.sGroupId = mParameters.$$groupId;
-				this.bInheritExpandSelect = mParameters.$$inheritExpandSelect;
-				this.sUpdateGroupId = mParameters.$$updateGroupId;
-
-				this.applyParameters(mParameters);
-				this.oElementContext = this.bRelative
-					? null
-					: Context.createNewContext(this.oModel, this, sPath);
-				if (!this.oOperation
-					&& (!this.bRelative || oContext && !oContext.fetchValue)) { // @see #isRoot
-					// do this before #setContext fires an event!
-					this.createReadGroupLock(this.getGroupId(), true);
-				}
-				this.setContext(oContext);
-				oModel.bindingCreated(this);
-
-				Promise.resolve().then(function () {
-					// bInitial must be true initially, but false later. Then suspend on a just
-					// created binding causes a change event on resume; otherwise further changes
-					// on the suspended binding are required (see doSuspend)
-					that.bInitial = false;
-				});
-			},
-			metadata : {
-				publicMethods : []
+		if (sPath.endsWith("/")) {
+			throw new Error("Invalid path: " + sPath);
+		}
+		this.oOperation = undefined;
+		this.oParameterContext = null;
+		this.oReturnValueContext = null;
+		if (iPos >= 0) { // deferred operation binding
+			if (iPos !== this.sPath.length - /*"(...)".length*/5) {
+				throw new Error(
+					"The path must not continue after a deferred operation: " + this.sPath);
 			}
+
+			this.oOperation = {
+				bAction : undefined,
+				mChangeListeners : {}, // map from path to an array of change listeners
+				mParameters : {},
+				sResourcePath : undefined
+			};
+			if (!this.bRelative) {
+				this.oParameterContext = Context.create(this.oModel, this,
+					this.sPath + "/$Parameter");
+			}
+		}
+
+		mParameters = _Helper.clone(mParameters) || {};
+		// Note: needs this.oOperation
+		this.checkBindingParameters(mParameters, ["$$canonicalPath", "$$groupId",
+			"$$inheritExpandSelect", "$$ownRequest", "$$patchWithoutSideEffects",
+			"$$updateGroupId"]);
+		this.sGroupId = mParameters.$$groupId;
+		this.bInheritExpandSelect = mParameters.$$inheritExpandSelect;
+		this.sUpdateGroupId = mParameters.$$updateGroupId;
+
+		this.applyParameters(mParameters);
+		this.oElementContext = this.bRelative
+			? null
+			: Context.createNewContext(this.oModel, this, sPath);
+		if (!this.oOperation
+			&& (!this.bRelative || oContext && !oContext.fetchValue)) { // @see #isRoot
+			// do this before #setContext fires an event!
+			this.createReadGroupLock(this.getGroupId(), true);
+		}
+		this.setContext(oContext);
+		oModel.bindingCreated(this);
+
+		Promise.resolve().then(function () {
+			// bInitial must be true initially, but false later. Then suspend on a just
+			// created binding causes a change event on resume; otherwise further changes
+			// on the suspended binding are required (see doSuspend)
+			that.bInitial = false;
 		});
+	}
 
 	asODataParentBinding(ODataContextBinding.prototype);
 
