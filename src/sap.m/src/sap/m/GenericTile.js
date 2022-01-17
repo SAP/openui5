@@ -1077,10 +1077,8 @@ sap.ui.define([
 		// when subheader is unavailable, the header can have maximal 5 lines
 
 		var frameType = this.getFrameType();
-		if (this._isIconMode()) { //Set MaxLines as 2 for IconMode
-
-            this._oTitle.setProperty("maxLines", 2, true);
-
+		if (this._isIconMode()) {
+			this._oTitle.setProperty("maxLines", this._isSmall() ? 3 : 2, true);
         } else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
 			this._oTitle.setProperty("maxLines", 2, true);
 		} else if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
