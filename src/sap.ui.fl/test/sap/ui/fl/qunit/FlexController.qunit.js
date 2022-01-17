@@ -145,25 +145,53 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when saveAll is called for a draft", function(assert) {
+		QUnit.test("when saveAll is called for a draft without filenames", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
-				persistedVersion: sap.ui.fl.Versions.Draft
+				persistedVersion: sap.ui.fl.Versions.Draft,
+				versions: [{version: sap.ui.fl.Versions.Draft}]
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, undefined, true)
 				.then(function() {
-					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft));
+					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
+				});
+		});
+
+		QUnit.test("when saveAll is called for a draft with filenames", function(assert) {
+			var aFilenames = ["fileName1", "fileName2"];
+			var oDraftVersion = {
+				version: sap.ui.fl.Versions.Draft,
+				filenames: aFilenames
+			};
+			var oFirstVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a long while ago",
+				version: "versionGUID 1"
+			};
+			var aVersions = [
+				oDraftVersion,
+				oFirstVersion
+			];
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				persistedVersion: sap.ui.fl.Versions.Draft,
+				versions: aVersions
+			}));
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
+			return this.oFlexController.saveAll(oComponent, undefined, true)
+				.then(function() {
+					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, sap.ui.fl.Versions.Draft, aFilenames), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
 				});
 		});
 
 		QUnit.test("when saveAll is called with skipping the cache and for draft", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
-				persistedVersion: sap.ui.fl.Versions.Original
+				persistedVersion: sap.ui.fl.Versions.Original,
+				versions: [{version: sap.ui.fl.Versions.Original}]
 			}));
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, true, true)
 				.then(function() {
-					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, sap.ui.fl.Versions.Original));
+					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, true, undefined, sap.ui.fl.Versions.Original, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
 				});
 		});
 

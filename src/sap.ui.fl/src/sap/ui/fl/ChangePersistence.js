@@ -600,16 +600,12 @@ sap.ui.define([
 	function shouldCondensingBeEnabled(oAppComponent, aChanges) {
 		var bCondenserEnabled = false;
 
-		if (!oAppComponent || aChanges.length < 2) {
-			return false;
-		}
-
-		if (!checkIfOnlyOne(aChanges, "getLayer")) {
+		if (!oAppComponent || aChanges.length < 2 || !checkIfOnlyOne(aChanges, "getLayer")) {
 			return false;
 		}
 
 		var sLayer = aChanges[0].getLayer();
-		if (sLayer === "CUSTOMER" || sLayer === "USER") {
+		if ([Layer.CUSTOMER, Layer.USER].includes(sLayer)) {
 			bCondenserEnabled = true;
 		}
 
@@ -635,12 +631,15 @@ sap.ui.define([
 		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges, bAlreadyDeletedViaCondense);
 	}
 
-	function getAllRelevantChangesForCondensing(aDirtyChanges) {
+	function getAllRelevantChangesForCondensing(aDirtyChanges, aDraftFilenames) {
 		if (!aDirtyChanges.length) {
 			return [];
 		}
 		var sLayer = aDirtyChanges[0].getLayer();
 		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
+			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
+				return oChange.getState() === Change.states.PERSISTED && aDraftFilenames.includes(oChange.getFileName());
+			}
 			return oChange.getState() === Change.states.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
 		});
 		return aPersistedAndSameLayerChanges.concat(aDirtyChanges);
@@ -658,11 +657,12 @@ sap.ui.define([
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
 	 * @param {string} sParentVersion - Parent version
+	 * @param {string[]} [aDraftFilenames] - Filesnames from persisted changes draft version
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, sParentVersion) {
+	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, sParentVersion, aDraftFilenames) {
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
-		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges);
+		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges, aDraftFilenames);
 		var bIsCondensingEnabled = (
 			isBackendCondensingEnabled(aRelevantChangesForCondensing)
 			&& shouldCondensingBeEnabled(oAppComponent, aRelevantChangesForCondensing)
