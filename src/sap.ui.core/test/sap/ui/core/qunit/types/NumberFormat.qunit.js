@@ -10,7 +10,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			maxIntegerDigits: 4,
 			minIntegerDigits: 2,
 			groupingEnabled: true,
-			groupingSeparator: "."
+			groupingSeparator: ".",
+			decimalSeparator: "."
 		}),
 		oCustomFloat = NumberFormat.getFloatInstance({
 			maxIntegerDigits: 4,
@@ -819,11 +820,46 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			decimals: 2
 		}, oLocale);
 		assert.equal(oFloatFormat.format(1), "1.00", "1");
+		assert.equal(oFloatFormat.parse("1.00"), 1, "parse to parse to 1");
 		assert.equal(oFloatFormat.format(10), "10.00", "10");
+		assert.equal(oFloatFormat.parse("10.00"), 10, "parse to 10");
 		assert.equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		assert.equal(oFloatFormat.parse("1,000.00"), 1000, "parse to 1000");
 		assert.equal(oFloatFormat.format(100000), "1,00,000.00", "100000");
+		assert.equal(oFloatFormat.parse("1,00,000.00"), 100000, "parse to 100000");
 		assert.equal(oFloatFormat.format(1000000), "10,00,000.00", "1000000");
+		assert.equal(oFloatFormat.parse("10,00,000.00"), 1000000, "parse to 1000000");
 		assert.equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+		assert.equal(oFloatFormat.parse("1,00,00,000.00"), 10000000, "parse to 10000000");
+		assert.equal(oFloatFormat.format(1000000000), "1,00,00,00,000.00", "1000000000");
+		assert.equal(oFloatFormat.parse("1,00,00,00,000.00"), 1000000000, "parse to 1000000000");
+		assert.equal(oFloatFormat.format(100000000000), "1,00,00,00,00,000.00", "100000000000");
+		assert.equal(oFloatFormat.parse("1,00,00,00,00,000.00"), 100000000000, "parse to 100000000000");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.equal(oFloatFormat.parse("1,000,00,000"), 1e+8, "parse to 1,000,00,000");
+		assert.equal(oFloatFormat.parse("1,00,000,000"), 1e+8, "parse 1,00,000,000");
+		assert.equal(oFloatFormat.parse("1,00,00,00"), 1e+6, "parse 1,00,00,00");
+		assert.equal(oFloatFormat.parse("1,000,00"), 1e+5, "parse to 1,000,00");
+		assert.equal(oFloatFormat.parse("1,00,00"), 1e+4, "parse to 1,00,00");
+
+		// tolerated, despite wrong grouping, because decimal separator is present
+		assert.equal(oFloatFormat.parse("1,00,000,000.00"), 1e+8, "parse 1,00,000,000.00");
+		assert.equal(oFloatFormat.parse("1,000,00,000.00"), 1e+8, "parse to 1,000,00,000.00");
+		assert.equal(oFloatFormat.parse("1,00,00,00.00"), 1e+6, "parse 1,00,00,00.00");
+		assert.equal(oFloatFormat.parse("1,0000.00"), 1e+4, "parse to 1,0000.00");
+		assert.equal(oFloatFormat.parse("1,000,00.00"), 1e+5, "parse to 1,000,00.00");
+		assert.equal(oFloatFormat.parse("1,00,00.00"), 1e+4, "parse to 1,00,00.00");
+		assert.equal(oFloatFormat.parse("1,00.00"), 1e+2, "parse to 1,00.00");
+		assert.equal(oFloatFormat.parse("1,0.00"), 1e+1, "parse to 1,0.00");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1,0000"), NaN, "parse to 1,0000");
+		assert.deepEqual(oFloatFormat.parse("1,00"), NaN, "parse to 1,00");
+		assert.deepEqual(oFloatFormat.parse("1,0"), NaN, "parse to 1,0");
+
+		// correctly grouped (output from #format), as single separator with grouping base size (assumingly a grouping separator)
+		assert.equal(oFloatFormat.parse("1,000"), 1e+3, "parse to 1,000");
 	});
 
 	QUnit.test("float format with decimals and myriad grouping", function (assert) {
@@ -2474,8 +2510,13 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.test("parse default format", function (assert) {
 		assert.equal(oDefaultInteger.parse("123"), 123, "123");
 		assert.equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
-		assert.equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
+		assert.equal(oDefaultInteger.parse("123,123,123"), 123123123, "123,123,123");
+		assert.equal(oDefaultInteger.parse("123,123,123,124"), 123123123124, "123,123,123,124");
 		assert.equal(oDefaultInteger.parse("5e+3"), 5000, "5e+3");
+
+		// tolerated, despite wrong grouping, because there are 2 grouping separators present
+		assert.equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
+
 		assert.equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
 		assert.equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
 
@@ -2632,9 +2673,13 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oIntegerFormat.parse("123"), "123", "123");
 		assert.equal(oIntegerFormat.parse("123,123"), "123123", "123,123");
 		assert.equal(oIntegerFormat.parse("000123,123"), "123123", "000123,123");
-		assert.equal(oIntegerFormat.parse("123,123,1234"), "1231231234", "123,123,1234");
+		assert.equal(oIntegerFormat.parse("123,123,123"), "123123123", "123,123,123");
 		assert.equal(oIntegerFormat.parse("5e+3"), "5000", "5e+3");
 		assert.equal(oIntegerFormat.parse("1.234567e+6"), "1234567", "1.234567e+6");
+
+		// tolerated, despite wrong grouping, because there are 2 grouping separators present
+		assert.equal(oIntegerFormat.parse("123,123,1234"), 1231231234, "123,123,1234");
+
 		assert.ok(isNaN(oIntegerFormat.parse("1.234567e+5")), "1.234567e+5");
 		assert.ok(isNaN(oIntegerFormat.parse("123.00")), "123.00");
 		assert.ok(isNaN(oIntegerFormat.parse("5e-3")), "5e-3 (0.005 not an integer)");
@@ -2756,11 +2801,14 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.ok(isNaN(oIntegerFormat.parse("1s234s567")), "1s234s567 is parsed as NaN");
 	});
 
-	QUnit.test("parse custom format", function (assert) {
+	QUnit.test("parse custom format (grouping and decimal separator are equal)", function (assert) {
 		assert.equal(oCustomInteger.parse("123"), 123, "123");
 		assert.equal(oCustomInteger.parse("123.123"), 123123, "123.123");
-		assert.equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
+		assert.equal(oCustomInteger.parse("123.123.123"), 123123123, "123.123.123");
 		assert.equal(oCustomInteger.parse("5e+3"), 5000, "5e+3");
+		// tolerated, despite wrong grouping, because decimal separator is the same as grouping
+		// separator and 2 grouping separators are present
+		assert.equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
 		assert.ok(isNaN(oCustomInteger.parse("123,00")), "123,00");
 		assert.ok(isNaN(oCustomInteger.parse("5e-3")), "5e+3");
 		assert.ok(isNaN(oCustomInteger.parse("a1b2c3")), "a1b2c3");
@@ -3238,4 +3286,708 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("52.3xsd"), NaN, "'xsd' cannot be parsed as number");
 	});
 
+	QUnit.module("Grouping Separator");
+
+	QUnit.test("Integer with groupingEnabled=true (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oIntegerFormat = NumberFormat.getIntegerInstance({groupingEnabled: true}, oLocale);
+
+		// format
+		assert.deepEqual(oIntegerFormat.format(1234), "1.234", "Format to '1.234'");
+
+		// valid numbers
+		assert.deepEqual(oIntegerFormat.parse("1.234"), 1234, "Parse '1.234'");
+		assert.deepEqual(oIntegerFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+
+		// spacing/plus sign
+		assert.deepEqual(oIntegerFormat.parse("1. 234"), 1234, "Parse '1. 234'");
+		assert.deepEqual(oIntegerFormat.parse("1 .234"), 1234, "Parse '1 .234'");
+		assert.deepEqual(oIntegerFormat.parse("+1 .234"), 1234, "Parse '+1 .234'");
+		assert.deepEqual(oIntegerFormat.parse("+1.234"), 1234, "Parse '+1.234'");
+
+		// scientific notation
+		assert.deepEqual(oIntegerFormat.parse("1.234e+0"), 1234, "parse 1.234e+0");
+		assert.deepEqual(oIntegerFormat.parse("1.234e+1"), 12340, "parse 1.234e+1");
+		assert.deepEqual(oIntegerFormat.parse("1234e+0"), 1234, "parse 1234e+0");
+		assert.deepEqual(oIntegerFormat.parse("1234e+1"), 12340, "parse 1234e+1");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oIntegerFormat.parse("1.23.456"), 123456, "Parse '1.23.456'");
+		assert.deepEqual(oIntegerFormat.parse("1.23.45"), 12345, "Parse '1.23.45'");
+		assert.deepEqual(oIntegerFormat.parse("1.234.56"), 123456, "Parse '1.234.56'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oIntegerFormat.parse("1.23"), NaN, "Parse '1.23'");
+		assert.deepEqual(oIntegerFormat.parse("1.2345"), NaN, "Parse '1.2345'");
+
+		// invalid, because integer contains decimal separator
+		assert.deepEqual(oIntegerFormat.parse("1,234"), NaN, "Parse '1,234'");
+		assert.deepEqual(oIntegerFormat.parse("1.234,567"), NaN, "Parse '1.234,567'");
+		assert.deepEqual(oIntegerFormat.parse("1.23,45"), NaN, "Parse '1.23,45'");
+		assert.deepEqual(oIntegerFormat.parse("1.23.45,67"), NaN, "Parse '1.23.45,67'");
+		assert.deepEqual(oIntegerFormat.parse("1.23.456,78"), NaN, "Parse '1.23.456,78'");
+		assert.deepEqual(oIntegerFormat.parse("1.234.56,78"), NaN, "Parse '1.234.56,78'");
+		assert.deepEqual(oIntegerFormat.parse("1.2345,67"), NaN, "Parse '1.2345,67'");
+	});
+
+	QUnit.test("Integer with groupingEnabled=true and style=long (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oIntegerFormat = NumberFormat.getIntegerInstance({groupingEnabled: true, style: "long"}, oLocale);
+
+		// format
+		assert.deepEqual(oIntegerFormat.format(1200), "1,2 Tausend", "Format to '1,2 Tausend'");
+		assert.deepEqual(oIntegerFormat.format(1200000), "1,2 Millionen", "Format to '1,2 Millionen'");
+
+		// valid numbers
+		assert.deepEqual(oIntegerFormat.parse("+1,2 Tausend"), 1200, "Parse '+1,2 Tausend'");
+		assert.deepEqual(oIntegerFormat.parse("1234 Tausend"), 1234000, "Parse '1234 Tausend'");
+
+		assert.deepEqual(oIntegerFormat.parse("1.234 Tausend"), 1234000, "Parse '1.234 Tausend'");
+		assert.deepEqual(oIntegerFormat.parse("+1.234 Tausend"), 1234000, "Parse '+1.234 Tausend'");
+		assert.deepEqual(oIntegerFormat.parse("1. 234 Tausend"), 1234000, "Parse '1. 234 Tausend'");
+		assert.deepEqual(oIntegerFormat.parse("1 .234 Tausend"), 1234000, "Parse '1 .234 Tausend'");
+		assert.deepEqual(oIntegerFormat.parse("+1 .234 Tausend"), 1234000, "Parse '+1 .234 Tausend'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oIntegerFormat.parse("1.2 Tausend"), NaN, "Parse '1.2 Tausend'");
+		assert.deepEqual(oIntegerFormat.parse("1.23 Tausend"), NaN, "Parse '1.23 Tausend'");
+	});
+
+	QUnit.test("Integer with groupingEnabled=true and parseAsString=true (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oIntegerFormat = NumberFormat.getIntegerInstance({groupingEnabled: true, parseAsString: true}, oLocale);
+
+		// format
+		assert.deepEqual(oIntegerFormat.format(-12345), "-12.345", "Format to '-12.345'");
+
+		// valid numbers
+		assert.deepEqual(oIntegerFormat.parse("-01"),"-1", "can parse -01");
+		assert.deepEqual(oIntegerFormat.parse("01"), "1", "can parse 01");
+
+		// leading zeros
+		assert.deepEqual(oIntegerFormat.parse("00012.345"), "12345", "can parse 00012.345");
+		assert.deepEqual(oIntegerFormat.parse("-00012.345"), "-12345", "can parse -00012.345");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oIntegerFormat.parse("1.23"), NaN, "Parse '1.23'");
+		assert.deepEqual(oIntegerFormat.parse("1.2345"), NaN, "Parse '1.2345'");
+	});
+
+	QUnit.test("Percent (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oPercentInstance = NumberFormat.getPercentInstance(oLocale);
+
+		// format
+		assert.deepEqual(oPercentInstance.format(0.01), "1\xa0%", "Format to 1\xa0%");
+		assert.deepEqual(oPercentInstance.format(1234), "123.400\xa0%", "Format to 1.234\xa0%");
+		assert.deepEqual(oPercentInstance.format(-12345.6789), "-1.234.567,89\xa0%", "Format to -12.345,67");
+
+		// valid numbers
+		assert.deepEqual(oPercentInstance.parse("1\xa0%"), 0.01, "can parse 1\xa0%");
+		assert.deepEqual(oPercentInstance.parse("1.234\xa0%"), 12.34, "Parse '1.234\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.234.567\xa0%"), 12345.67, "Parse '1.234.567\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.234,56\xa0%"), 12.3456, "Parse '1.234,56\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.234.567,89\xa0%"), 12345.6789, "Parse '1.234.567,89\xa0%'");
+
+		// spacing/plus sign
+		assert.deepEqual(oPercentInstance.parse("1.234 %"), 12.34, "Parse '1.234 %'");
+		assert.deepEqual(oPercentInstance.parse("1.234%"), 12.34, "Parse '1.234%'");
+		assert.deepEqual(oPercentInstance.parse("1. 234\xa0%"), 12.34, "Parse '1. 234\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1 .234\xa0%"), 12.34, "Parse '1 .234\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("+1 .234\xa0%"), 12.34, "Parse '+1 .234\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("+1.234\xa0%"), 12.34, "Parse '+1.234\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("+1.234,56\xa0%"), 12.3456, "Parse '+1.234,56\xa0%'");
+
+		// scientific
+		assert.deepEqual(oPercentInstance.parse("1.234e+0\xa0%"), 12.34, "parse 1.234e+0");
+		assert.deepEqual(oPercentInstance.parse("1.234e+1\xa0%"), 123.40, "parse 1.234e+1");
+		assert.deepEqual(oPercentInstance.parse("1234e+0\xa0%"), 12.34, "parse 1234e+0");
+		assert.deepEqual(oPercentInstance.parse("1234e+1\xa0%"), 123.40, "parse 1234e+1");
+		assert.deepEqual(oPercentInstance.parse("1.234,56e+0\xa0%"), 12.3456, "parse 1.234,56e+0");
+		assert.deepEqual(oPercentInstance.parse("1.234,56e+1\xa0%"), 123.456, "parse 1.234,56e+1");
+
+		// leading zeros
+		assert.deepEqual(oPercentInstance.parse("-01\xa0%"), -0.01, "can parse -01");
+		assert.deepEqual(oPercentInstance.parse("01\xa0%"), 0.01, "can parse 01");
+		assert.deepEqual(oPercentInstance.parse("-01,2\xa0%"),-0.012, "can parse -01,2");
+		assert.deepEqual(oPercentInstance.parse("01,2\xa0%"), 0.012, "can parse 01,2");
+		assert.deepEqual(oPercentInstance.parse("-00010001,2\xa0%"), -100.012, "can parse -000001,2");
+		assert.deepEqual(oPercentInstance.parse("00010001,2\xa0%"), 100.012, "can parse 000001,2");
+		assert.deepEqual(oPercentInstance.parse("00012.345,67\xa0%"), 123.4567, "can parse with leading zeros");
+		assert.deepEqual(oPercentInstance.parse("-00012.345,67\xa0%"), -123.4567, "can parse with leading zeros");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oPercentInstance.parse("1.23\xa0%"), NaN, "Parse '1.23\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.2345\xa0%"), NaN, "Parse '1.2345\xa0%'");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oPercentInstance.parse("1.23.45\xa0%"), 123.45, "Parse '1.23.45\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.23.456\xa0%"), 1234.56, "Parse '1.23.456\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.234.56\xa0%"), 1234.56, "Parse '1.234.56\xa0%'");
+
+		// tolerated, despite wrong grouping, because decimal separator is present
+		assert.deepEqual(oPercentInstance.parse("1.23,45\xa0%"), 1.2345, "Parse '1.23,45\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.23.45,67\xa0%"), 123.4567, "Parse '1.23.45,67\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.23.456,78\xa0%"), 1234.5678, "Parse '1.23.456,78\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.234.56,78\xa0%"), 1234.5678, "Parse '1.234.56,78\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.2345,67\xa0%"), 123.4567, "Parse '1.2345,67\xa0%'");
+
+		// invalid mix of decimal and grouping separators
+		assert.deepEqual(oPercentInstance.parse("5,001.234,56\xa0%"), NaN, "Parse '5,001.234,56\xa0%'");
+
+		// invalid reversal of decimal and grouping separator
+		assert.deepEqual(oPercentInstance.parse("5,001.234\xa0%"), NaN, "Parse '5,001.234\xa0%'");
+	});
+
+	QUnit.test("Percent with style=long (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oPercentInstance = NumberFormat.getPercentInstance({style: "long"}, oLocale);
+
+		// format
+		assert.deepEqual(oPercentInstance.format(12000), "1.200 Tausend\xa0%", "Format to 1,2 Tausend");
+		assert.deepEqual(oPercentInstance.format(12000000), "1.200 Millionen\xa0%", "Format to 1,2 Millionen");
+
+		// valid numbers
+		assert.deepEqual(oPercentInstance.parse("1.234 Tausend\xa0%"), 12340, "Parse '1.234 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("+1,2 Tausend\xa0%"), 12, "Parse '+1,2 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1234 Tausend\xa0%"), 12340, "Parse '1234 Tausend\xa0%'");
+
+		// spacing/plus sign
+		assert.deepEqual(oPercentInstance.parse("1. 234 Tausend\xa0%"), 12340, "Parse '1. 234 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1 .234 Tausend\xa0%"), 12340, "Parse '1 .234 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("+1 .234 Tausend\xa0%"), 12340, "Parse '+1 .234 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("+1.234 Tausend\xa0%"), 12340, "Parse '+1.234 Tausend\xa0%'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oPercentInstance.parse("1.2 Tausend\xa0%"), NaN, "Parse '1.2 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.23 Tausend\xa0%"), NaN, "Parse '1.23 Tausend\xa0%'");
+		assert.deepEqual(oPercentInstance.parse("1.2345 Tausend\xa0%"), NaN, "Parse '1.2345 Tausend\xa0%'");
+	});
+
+	QUnit.test("Float (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oFloatFormat = NumberFormat.getFloatInstance(oLocale);
+
+		// format
+		assert.deepEqual(oFloatFormat.format(1234), "1.234", "Format to '1.234'");
+
+		// valid numbers
+		assert.deepEqual(oFloatFormat.parse("0"), 0, "Parse '0'");
+		assert.deepEqual(oFloatFormat.parse("0,3"), 0.3, "Parse '0,3'");
+		assert.deepEqual(oFloatFormat.parse("0,34"), 0.34, "Parse '0,34'");
+		assert.deepEqual(oFloatFormat.parse("0,345"), 0.345, "Parse '0,345'");
+		assert.deepEqual(oFloatFormat.parse("-0,345"), -0.345, "Parse '-0,345'");
+		assert.deepEqual(oFloatFormat.parse(",345"), 0.345, "Parse ',345'");
+		assert.deepEqual(oFloatFormat.parse("-,345"), -0.345, "Parse '-,345'");
+
+		assert.deepEqual(oFloatFormat.parse("1.234"), 1234, "Parse '1.234'");
+		assert.deepEqual(oFloatFormat.parse("-234.567"), -234567, "Parse '-234.567'");
+		assert.deepEqual(oFloatFormat.parse("234.567"), 234567, "Parse '234.567'");
+		assert.deepEqual(oFloatFormat.parse("00234.567"), 234567, "Parse '00234.567'");
+		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+		assert.deepEqual(oFloatFormat.parse("1.234,56"), 1234.56, "Parse '1.234,56'");
+		assert.deepEqual(oFloatFormat.parse("1.234.567,89"), 1234567.89, "Parse '1.234.567,89'");
+		assert.deepEqual(oFloatFormat.parse("1.234.567.891"), 1234567891, "Parse '1.234.567.891'");
+
+		// tolerated, despite incomplete grouping, because decimal separator is present
+		assert.deepEqual(oFloatFormat.parse("1.234567,89"), 1234567.89, "Parse '1.234567,89'");
+		assert.deepEqual(oFloatFormat.parse("1234.567,89"), 1234567.89, "Parse '1234.567,89'");
+		assert.deepEqual(oFloatFormat.parse("1.337 234.567,89"), 1337234567.89, "Parse '1.337 234.567,89'");
+		assert.deepEqual(oFloatFormat.parse("12.345 671 337,89"), 12345671337.89, "Parse '12.345 671 337,89'");
+		assert.deepEqual(oFloatFormat.parse("12345.671337,89"), 12345671337.89, "Parse '12345.671337,89'");
+
+		// spacing/plus sign
+		assert.deepEqual(oFloatFormat.parse("1. 234"), 1234, "Parse '1. 234'");
+		assert.deepEqual(oFloatFormat.parse("1 .234"), 1234, "Parse '1 .234'");
+		assert.deepEqual(oFloatFormat.parse("+1 .234"), 1234, "Parse '+1 .234'");
+		assert.deepEqual(oFloatFormat.parse("+1.234"), 1234, "Parse '+1.234'");
+		assert.deepEqual(oFloatFormat.parse("+1.234,56"), 1234.56, "Parse '+1.234,56'");
+
+		// scientific
+		assert.deepEqual(oFloatFormat.parse("1.234e+0"), 1234, "parse 1.234e+0");
+		assert.deepEqual(oFloatFormat.parse("1.234e+1"), 12340, "parse 1.234e+1");
+		assert.deepEqual(oFloatFormat.parse("1234e+0"), 1234, "parse 1234e+0");
+		assert.deepEqual(oFloatFormat.parse("1234e+1"), 12340, "parse 1234e+1");
+		assert.deepEqual(oFloatFormat.parse("1.234,56e+0"), 1234.56, "parse 1.234,56e+0");
+		assert.deepEqual(oFloatFormat.parse("1.234,56e+1"), 12345.6, "parse 1.234,56e+1");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1.23"), NaN, "Parse '1.23'");
+		assert.deepEqual(oFloatFormat.parse("1.2345"), NaN, "Parse '1.2345'");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("1.23.45"), 12345, "Parse '1.23.45'");
+		assert.deepEqual(oFloatFormat.parse("1.23.456"), 123456, "Parse '1.23.456'");
+		assert.deepEqual(oFloatFormat.parse("1.234.56"), 123456, "Parse '1.234.56'");
+		assert.deepEqual(oFloatFormat.parse("1.2.3.4"), 1234, "Parse '1.2.3.4'");
+		assert.deepEqual(oFloatFormat.parse("1.2.3"), 123, "Parse '1.2.3'");
+
+		// expectation 1.234.567.891
+		assert.deepEqual(oFloatFormat.parse("12.34.56.7.891"), 1234567891, "Parse '12.34.56.7.891'");
+		assert.deepEqual(oFloatFormat.parse("1234.56.7.891"), 1234567891, "Parse '1234.56.7.891'");
+		assert.deepEqual(oFloatFormat.parse("1.23.4.567.891"), 1234567891, "Parse '1.23.4.567.891'");
+		assert.deepEqual(oFloatFormat.parse("1 234.567 89.1"), 1234567891, "Parse '1 234.567 89.1'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1 23.4567 891"), NaN, "Parse '1 23.4567 891'");
+		assert.deepEqual(oFloatFormat.parse("1 2.34567 891"), NaN, "Parse '1 2.34567 891'");
+		assert.deepEqual(oFloatFormat.parse("1 23456.7 891"), NaN, "Parse '1 23456.7 891'");
+
+		// tolerated, despite wrong grouping
+		assert.deepEqual(oFloatFormat.parse("1.23,45"), 123.45, "Parse '1.23,45'");
+		assert.deepEqual(oFloatFormat.parse("1.23.45,67"), 12345.67, "Parse '1.23.45,67'");
+		assert.deepEqual(oFloatFormat.parse("1.23.456,78"), 123456.78, "Parse '1.23.456,78'");
+		assert.deepEqual(oFloatFormat.parse("1.234.56,78"), 123456.78, "Parse '1.234.56,78'");
+		assert.deepEqual(oFloatFormat.parse("1.2345,67"), 12345.67, "Parse '1.2345,67'");
+
+		// invalid mix of decimal and grouping separators
+		assert.deepEqual(oFloatFormat.parse("5,001.234,56"), NaN, "Parse '5,001.234,56'");
+
+		// invalid reversal of decimal and grouping separator
+		assert.deepEqual(oFloatFormat.parse("5,001.234"), NaN, "Parse '5,001.234'");
+
+		// special case
+		// One grouping separator is present, at least one is missing and no decimal separator is present.
+		assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
+		assert.deepEqual(oFloatFormat.parse("-.234.567"), NaN, "Parse '-.234.567'");
+		assert.deepEqual(oFloatFormat.parse("1234234.567"), 1234234567, "Parse '1234234.567'");
+		assert.deepEqual(oFloatFormat.parse("1234.234567"), NaN, "Parse '1234.234567'");
+		assert.deepEqual(oFloatFormat.parse("1.234234567"), NaN, "Parse '1.234234567'");
+
+		// leading zeros
+		assert.deepEqual(oFloatFormat.parse(".345"), NaN, "Parse '.345'");
+		assert.deepEqual(oFloatFormat.parse("-.345"), NaN, "Parse '-.345'");
+		assert.deepEqual(oFloatFormat.parse("0.345"), NaN, "Parse '0.345'");
+		assert.deepEqual(oFloatFormat.parse("-0.345"), NaN, "Parse '-0.345'");
+	});
+
+	QUnit.test("Float groupingEnabled=false (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oFloatFormat = NumberFormat.getFloatInstance({groupingEnabled: false}, oLocale);
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("1.2.3"), 123, "Parse '1.2.3'");
+	});
+
+	QUnit.test("Float with style=long (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oFloatFormat = NumberFormat.getFloatInstance({style: "long"}, oLocale);
+
+		// format
+		assert.deepEqual(oFloatFormat.format(1200), "1,2 Tausend", "Format to '1,2 Tausend'");
+		assert.deepEqual(oFloatFormat.format(1200000), "1,2 Millionen", "Format to '1,2 Millionen'");
+
+		// valid numbers
+		assert.deepEqual(oFloatFormat.parse("1234 Tausend"), 1234000, "Parse '1234 Tausend'");
+
+		// spacing/plus sign
+		assert.deepEqual(oFloatFormat.parse("+1,2 Tausend"), 1200, "Parse '+1,2 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("1.234 Tausend"), 1234000, "Parse '1.234 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("+1.234 Tausend"), 1234000, "Parse '+1.234 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("1. 234 Tausend"), 1234000, "Parse '1. 234 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("1 .234 Tausend"), 1234000, "Parse '1 .234 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("+1 .234 Tausend"), 1234000, "Parse '+1 .234 Tausend'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1.2 Tausend"), NaN, "Parse '1.2 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("1.23 Tausend"), NaN, "Parse '1.23 Tausend'");
+		assert.deepEqual(oFloatFormat.parse("1.2345 Tausend"), NaN, "Parse '1.2345 Tausend'");
+	});
+
+	QUnit.test("Float with parseAsString=true (de-DE)", function (assert) {
+		var oLocale = new Locale("de-DE");
+		var oFloatFormat = NumberFormat.getFloatInstance({parseAsString: true}, oLocale);
+		// format
+		assert.deepEqual(oFloatFormat.format(-12345.67), "-12.345,67", "Format to '-12.345,67'");
+
+		// leading zeros
+		assert.deepEqual(oFloatFormat.parse("-01"),"-1", "can parse -01");
+		assert.deepEqual(oFloatFormat.parse("01"), "1", "can parse 01");
+		assert.deepEqual(oFloatFormat.parse("-01,2"),"-1.2", "can parse -01,2");
+		assert.deepEqual(oFloatFormat.parse("01,2"), "1.2", "can parse 01,2");
+		assert.deepEqual(oFloatFormat.parse("-00010001,2"),"-10001.2", "can parse -000001,2");
+		assert.deepEqual(oFloatFormat.parse("00010001,2"), "10001.2", "can parse 000001,2");
+		assert.deepEqual(oFloatFormat.parse("00012.345,67"), "12345.67", "can parse '00012.345,67'");
+		assert.deepEqual(oFloatFormat.parse("-00012.345,67"), "-12345.67", "can parse -00012,345.67");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("-01.2"), NaN, "Parse '-01.2'");
+		assert.deepEqual(oFloatFormat.parse("-01.23"), NaN, "Parse '-01.23'");
+		assert.deepEqual(oFloatFormat.parse("-01.2345"), NaN, "Parse '-01.2345'");
+	});
+
+	QUnit.test("Float (en-GB)", function (assert) {
+		var oLocale = new Locale("en-GB");
+		var oFloatFormat = NumberFormat.getFloatInstance(oLocale);
+
+		// format
+		assert.deepEqual(oFloatFormat.format(1234), "1,234", "Format to '1,234'");
+
+		// valid numbers
+		assert.deepEqual(oFloatFormat.parse("1,234"), 1234, "Parse '1,234'");
+		assert.deepEqual(oFloatFormat.parse("1,234,567"), 1234567, "Parse '1,234,567'");
+		assert.deepEqual(oFloatFormat.parse("1,234.56"), 1234.56, "Parse '1,234.56'");
+		assert.deepEqual(oFloatFormat.parse("1,234,567.89"), 1234567.89, "Parse '1,234,567.89'");
+
+		// scientific
+		assert.deepEqual(oFloatFormat.parse("1,234e+0"), 1234, "parse 1.234e+0");
+		assert.deepEqual(oFloatFormat.parse("1,234e+1"), 12340, "parse 1.234e+1");
+		assert.deepEqual(oFloatFormat.parse("1234e+0"), 1234, "parse 1234e+0");
+		assert.deepEqual(oFloatFormat.parse("1234e+1"), 12340, "parse 1234e+1");
+		assert.deepEqual(oFloatFormat.parse("1,234.56e+0"), 1234.56, "parse 1.234,56e+0");
+		assert.deepEqual(oFloatFormat.parse("1,234.56e+1"), 12345.6, "parse 1.234,56e+1");
+		assert.deepEqual(oFloatFormat.parse("1234E+1"), 12340, "parse 1234E+1");
+		assert.deepEqual(oFloatFormat.parse("1,234E+0"), 1234, "parse 1.234E+0");
+		assert.deepEqual(oFloatFormat.parse("1,234.56E+0"), 1234.56, "parse 1.234,56E+0");
+		assert.deepEqual(oFloatFormat.parse("1,234.56E+1"), 12345.6, "parse 1.234,56E+1");
+
+		// spacing/plus sign
+		assert.deepEqual(oFloatFormat.parse("1, 234"), 1234, "Parse '1, 234'");
+		assert.deepEqual(oFloatFormat.parse("1 ,234"), 1234, "Parse '1 ,234'");
+		assert.deepEqual(oFloatFormat.parse("+1 ,234"), 1234, "Parse '+1 ,234'");
+		assert.deepEqual(oFloatFormat.parse("+1,234"), 1234, "Parse '+1,234'");
+		assert.deepEqual(oFloatFormat.parse("+1,234.56"), 1234.56, "Parse '+1,234.56'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1,23"), NaN, "Parse '1,23'");
+		assert.deepEqual(oFloatFormat.parse("1,2345"), NaN, "Parse '1,2345'");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("1,23,45"), 12345, "Parse '1,23,45'");
+		assert.deepEqual(oFloatFormat.parse("1,23,456"), 123456, "Parse '1,23,456'");
+		assert.deepEqual(oFloatFormat.parse("1,234,56"), 123456, "Parse '1,234,56'");
+
+		// tolerated, despite wrong grouping, because decimal separator is present
+		assert.deepEqual(oFloatFormat.parse("1,23.45"), 123.45, "Parse '1,23.45'");
+		assert.deepEqual(oFloatFormat.parse("1,23,45.67"), 12345.67, "Parse '1,23,45.67'");
+		assert.deepEqual(oFloatFormat.parse("1,23,456.78"), 123456.78, "Parse '1,23,456.78'");
+		assert.deepEqual(oFloatFormat.parse("1,234,56.78"), 123456.78, "Parse '1,234,56.78'");
+		assert.deepEqual(oFloatFormat.parse("1,2345.67"), 12345.67, "Parse '1,2345.67'");
+
+		// invalid mix of decimal and grouping separators
+		assert.deepEqual(oFloatFormat.parse("5.001,234.56"), NaN, "Parse '5.001,234.56'");
+
+		// invalid reversal of decimal and grouping separator
+		assert.deepEqual(oFloatFormat.parse("5.001,234"), NaN, "Parse '5.001,234'");
+	});
+
+	QUnit.test("Float with style=long (en-GB)", function (assert) {
+		var oLocale = new Locale("en-GB");
+		var oFloatFormat = NumberFormat.getFloatInstance({style: "long"}, oLocale);
+
+		// format with style long, to see how the default formatted string looks like which serves as input for parse
+		// note that, unless the maximum unit is used, it is not possible to have a formatted string containing grouping separators.
+		assert.deepEqual(oFloatFormat.format(1200), "1.2 thousand", "Format to '1.2 thousand'");
+		assert.deepEqual(oFloatFormat.format(1200000), "1.2 million", "Format to '1.2 million'");
+		assert.deepEqual(oFloatFormat.format(1.2e+12), "1.2 trillion", "Format to '1.2 trillion'");
+		assert.deepEqual(oFloatFormat.format(1200e+12), "1,200 trillion", "Format to '1,200 trillion'");
+
+		// valid numbers
+		assert.deepEqual(oFloatFormat.parse("1,200 trillion"), 1200e+12, "Parse '1,200 trillion'");
+		assert.deepEqual(oFloatFormat.parse("1,234 trillion"), 1234e+12, "Parse '1,234 trillion'");
+		assert.deepEqual(oFloatFormat.parse("1234 trillion"), 1234e+12, "Parse '1234 trillion'");
+
+		// spacing/plus sign
+		assert.deepEqual(oFloatFormat.parse("1, 234 trillion"), 1234e+12, "Parse '1, 234 trillion'");
+		assert.deepEqual(oFloatFormat.parse("1 ,234 trillion"), 1234e+12, "Parse '1 ,234 trillion'");
+		assert.deepEqual(oFloatFormat.parse("+1 ,234 trillion"), 1234e+12, "Parse '+1 ,234 trillion'");
+		assert.deepEqual(oFloatFormat.parse("+1,234 trillion"), 1234e+12, "Parse '+1,234 trillion'");
+		assert.deepEqual(oFloatFormat.parse("+1.2 trillion"), 1.2e+12, "Parse '+1.2 trillion'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1,2 trillion"), NaN, "Parse '1,2 trillion'");
+		assert.deepEqual(oFloatFormat.parse("1,23 trillion"), NaN, "Parse '1,23 trillion'");
+		assert.deepEqual(oFloatFormat.parse("1,2345 trillion"), NaN, "Parse '1,2345 trillion'");
+	});
+
+	QUnit.test("Float with parseAsString=true (en-GB)", function (assert) {
+		var oLocale = new Locale("en-GB");
+		var oFloatFormat = NumberFormat.getFloatInstance({parseAsString: true}, oLocale);
+
+		// format
+		assert.deepEqual(oFloatFormat.format(-12345.67), "-12,345.67", "Format to '-12,345.67'");
+
+		// leading zeros
+		assert.deepEqual(oFloatFormat.parse("-01"),"-1", "can parse -01");
+		assert.deepEqual(oFloatFormat.parse("01"), "1", "can parse 01");
+		assert.deepEqual(oFloatFormat.parse("-01.2"),"-1.2", "can parse -01,2");
+		assert.deepEqual(oFloatFormat.parse("01.2"), "1.2", "can parse 01,2");
+		assert.deepEqual(oFloatFormat.parse("-00010001.2"),"-10001.2", "can parse -000001,2");
+		assert.deepEqual(oFloatFormat.parse("00010001.2"), "10001.2", "can parse 000001,2");
+		assert.deepEqual(oFloatFormat.parse("00012,345.67"), "12345.67", "can parse '00012,345.67'");
+		assert.deepEqual(oFloatFormat.parse("-00012,345.67"), "-12345.67", "can parse '-00012,345.67'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("-01,2"), NaN, "Parse '-01,2'");
+		assert.deepEqual(oFloatFormat.parse("-01,23"), NaN, "Parse '-01,23'");
+		assert.deepEqual(oFloatFormat.parse("-01,2345"), NaN, "Parse '-01,2345'");
+	});
+
+	QUnit.test("Special cases Float", function (assert) {
+		var oFloatFormat = NumberFormat.getFloatInstance(new Locale("de-DE"));
+		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
+
+		// invalid syntax
+		assert.deepEqual(oFloatFormat.parse("123,456,789.21"), NaN, "Parse '123,456,789.21'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oFloatFormat.parse("1111.111"), 1111111, "Parse '1111.111'");
+		assert.deepEqual(oFloatFormat.parse("111.111"), 111111, "Parse '111.111'");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("1.."), 1, "Parse '1..'");
+		assert.deepEqual(oFloatFormat.parse("1..2"), 12, "Parse '1..2'");
+		assert.deepEqual(oFloatFormat.parse("1..2.."), 12, "Parse '1..2..'");
+		assert.deepEqual(oFloatFormat.parse("1..2..3"), 123, "Parse '1..2..3'");
+		assert.deepEqual(oFloatFormat.parse("1.11.11...11"), 1111111, "Parse '1.11.11...11'");
+		assert.deepEqual(oFloatFormat.parse("1.11.11.11"), 1111111, "Parse '1.11.11.11'");
+		assert.deepEqual(oFloatFormat.parse("1.1111.11"), 1111111, "Parse '1.1111.11'");
+		assert.deepEqual(oFloatFormat.parse("1111.111.111"), 1111111111, "Parse '1111.111.111'");
+		assert.deepEqual(oFloatFormat.parse("1.111.111111"), 1111111111, "Parse '1.111.111111'");
+
+		// not tolerated, because invalid number syntax (in combination with grouping separator)
+		assert.deepEqual(oFloatFormat.parse(".0."), NaN, "Parse '.0.'");
+		assert.deepEqual(oFloatFormat.parse("."), NaN, "Parse '.'");
+		assert.deepEqual(oFloatFormat.parse("..1"), NaN, "Parse '..1'");
+		assert.deepEqual(oFloatFormat.parse("0."), NaN, "Parse '0.'");
+		assert.deepEqual(oFloatFormat.parse(".0"), NaN, "Parse '.0'");
+		assert.deepEqual(oFloatFormat.parse("0.."), NaN, "Parse '0..'");
+		assert.deepEqual(oFloatFormat.parse("0.123."), NaN, "Parse '0.123.'");
+		assert.deepEqual(oFloatFormat.parse("0.123"), NaN, "Parse '0.123'");
+		assert.deepEqual(oFloatFormat.parse("-.123"), NaN, "Parse '-.123'");
+		assert.deepEqual(oFloatFormat.parse(".123"), NaN, "Parse '.123'");
+		assert.deepEqual(oFloatFormat.parse("123."), NaN, "Parse '123.'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFloatFormat.parse("1."), NaN, "Parse '1.'");
+		assert.deepEqual(oFloatFormat.parse("11."), NaN, "Parse '11.'");
+		assert.deepEqual(oFloatFormat.parse("1.1"), NaN, "Parse '1.1'");
+		assert.deepEqual(oFloatFormat.parse("11.11"), NaN, "Parse '11.11'");
+		assert.deepEqual(oFloatFormat.parse("111.11"), NaN, "Parse '111.11'");
+		assert.deepEqual(oFloatFormat.parse("111.1111"), NaN, "Parse '111.1111'");
+
+		// tolerated, despite incomplete grouping
+		assert.deepEqual(oFloatFormat.parse("1111.111,11"), 1111111.11, "Parse '1111.111,11'");
+
+		// space characters are allowed by default!!
+		assert.deepEqual(oFloatFormat.parse("12\xa03\xa04\xa0567"), 1234567, "Parse '12\xa03\xa04\xa0567'");
+		assert.deepEqual(oFloatFormat.parse("123456\u202F7"), 1234567, "Parse '123456\u202F7'");
+		assert.deepEqual(oFloatFormat.parse("12 3 4 567"), 1234567, "Parse '12 3 4 567'");
+		assert.deepEqual(oFloatFormat.parse(" 12 3 4 567 "), 1234567, "Parse ' 12 3 4 567 '");
+		assert.deepEqual(oFloatFormat.parse(" 1234567 "), 1234567, "Parse ' 1234567 '");
+
+		// empty custom groupingSeparator (not officially supported)
+		oFloatFormat = NumberFormat.getFloatInstance({groupingSeparator: ""}, new Locale("de-DE"));
+		assert.deepEqual(oFloatFormat.parse("1234567"), 1234567, "Parse '1234567'");
+		assert.deepEqual(oFloatFormat.parse("1234567,89"), 1234567.89, "Parse '1234567,89'");
+		assert.deepEqual(oFloatFormat.parse("123.456"), NaN, "Parse '123.456'");
+
+		// custom groupingSeparator is the same as the decimal separator (not officially supported)
+		oFloatFormat = NumberFormat.getFloatInstance({groupingSeparator: ".", decimalSeparator: "."}, new Locale("de-DE"));
+		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+		assert.deepEqual(oFloatFormat.parse("1234.567"), 1234567, "Parse '1234.567'");
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("12.34.567"), 1234567, "Parse '12.34.567'");
+
+		// if custom groupingSeparator is a space character, then restrictive validity checks cannot be applied,
+		// because all space characters are allowed
+		oFloatFormat = NumberFormat.getFloatInstance({groupingSeparator: "\xa0"}, new Locale("de-DE"));
+		assert.deepEqual(oFloatFormat.parse("1\xa0234\xa0567"), 1234567, "Parse '1\xa0234\xa0567'");
+		assert.deepEqual(oFloatFormat.parse("1234\xa0567"), 1234567, "Parse '1234\xa0567'");
+		assert.deepEqual(oFloatFormat.parse("123456\xa07"), 1234567, "Parse '123456\xa07'");
+		assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
+
+		// \u202F (NNBSP) is default e.g. for French (fr.json)
+		oFloatFormat = NumberFormat.getFloatInstance(new Locale("fr-FR"));
+		assert.deepEqual(oFloatFormat.parse("1\u202F234\u202F567"), 1234567, "Parse '1\u202F234\u202F567'");
+		assert.deepEqual(oFloatFormat.parse("1234\u202F567"), 1234567, "Parse '1234\u202F567'");
+		assert.deepEqual(oFloatFormat.parse("123456\u202F7"), 1234567, "Parse '123456\u202F7'");
+		assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
+
+		// \xa0 (NBSP) is default e.g. for Finish (fi.json)
+		oFloatFormat = NumberFormat.getFloatInstance(new Locale("fi"));
+		assert.deepEqual(oFloatFormat.parse("1\xa0234\xa0567"), 1234567, "Parse '1\xa0234\xa0567'");
+		assert.deepEqual(oFloatFormat.parse("1234\xa0567"), 1234567, "Parse '1234\xa0567'");
+		assert.deepEqual(oFloatFormat.parse("123456\xa07"), 1234567, "Parse '123456\xa07'");
+		assert.deepEqual(oFloatFormat.parse("1 2 3 4 5 6 7"), 1234567, "Parse '1 2 3 4 5 6 7'");
+
+		// ’ (apostrophe) is default e.g. for Italian Switzerland (it_CH.json)
+		oFloatFormat = NumberFormat.getFloatInstance(new Locale("it_CH"));
+		assert.deepEqual(oFloatFormat.parse("1’234’567"), 1234567, "Parse '1’234’567'");
+		assert.deepEqual(oFloatFormat.parse("1234’567.89"), 1234567.89, "Parse '1234’567.89'");
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oFloatFormat.parse("1234’567"), 1234567, "Parse '1234’567'");
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("1’23’45’67"), 1234567, "Parse '1’23’45’67'");
+
+		// custom groupingSize
+		oFloatFormat = NumberFormat.getFloatInstance({groupingSize: 4}, new Locale("de-DE"));
+		assert.deepEqual(oFloatFormat.parse("123.4567"), 1234567, "Parse '123.4567'");
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
+		assert.deepEqual(oFloatFormat.parse("1234.567"), NaN, "Parse '1234.567'");
+
+		// custom plus/minusSign
+		oFloatFormat = NumberFormat.getFloatInstance({
+			plusSign: ":",
+			minusSign: "_"
+		}, new Locale("de-DE"));
+		assert.deepEqual(oFloatFormat.parse(":1.234.567"), 1234567, "Parse ':1.234.567'");
+		assert.deepEqual(oFloatFormat.parse("_1.234.567"), -1234567, "Parse '_1.234.567'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oFloatFormat.parse(":1234.567"), 1234567, "Parse ':1234.567'");
+		assert.deepEqual(oFloatFormat.parse("_1234.567"), -1234567, "Parse '_1234.567'");
+
+		assert.deepEqual(oFloatFormat.parse(":1.234567"), NaN, "Parse ':1.234567'");
+		assert.deepEqual(oFloatFormat.parse("_1.234567"), NaN, "Parse '_1.234567'");
+	});
+
+	QUnit.test("Special cases Unit", function (assert) {
+		// en locale
+		var oUnitFormat = NumberFormat.getUnitInstance(new Locale("en"));
+
+		assert.equal(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 gal Imp.", "Format to '1,234,567.89 gal Imp.'");
+
+		// formatted
+		assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"], "Parse '1,234,567.89 gal Imp.'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234,567 gal Imp."), [1234567, "volume-gallon-imperial"], "Parse '1234,567 gal Imp.'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oUnitFormat.parse("123,4567 gal Imp."), null, "Parse '123,4567 gal Imp.'");
+
+		assert.deepEqual(oUnitFormat.parse("1234567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"], "Parse '1234567.89 gal Imp.'");
+		assert.deepEqual(oUnitFormat.parse("1234,567.89 gal Imp."), [1234567.89, "volume-gallon-imperial"], "Parse '1234,567.89 gal Imp.'");
+
+		// de locale
+		oUnitFormat = NumberFormat.getUnitInstance(new Locale("de"));
+
+		assert.equal(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1.234.567,89 Imp. gal", "Format to '1.234.567,89 Imp. gal'");
+
+		// formatted
+		assert.deepEqual(oUnitFormat.parse("1.234.567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"], "Parse '1.234.567,89 Imp. gal'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234.567 Imp. gal"), [1234567, "volume-gallon-imperial"], "Parse '1234.567 Imp. gal'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oUnitFormat.parse("123.4567 Imp. gal"), null, "Parse '123.4567 Imp. gal'");
+
+		assert.deepEqual(oUnitFormat.parse("1234567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"], "Parse '1234567,89 Imp. gal'");
+		assert.deepEqual(oUnitFormat.parse("1234.567,89 Imp. gal"), [1234567.89, "volume-gallon-imperial"], "Parse '1234.567,89 Imp. gal'");
+
+		// ar (RTL)
+		oUnitFormat = NumberFormat.getUnitInstance(new Locale("ar"));
+
+		assert.equal(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89 غالون إمبراطوري", "Format to '1,234,567.89 غالون إمبراطوري'");
+		assert.equal(oUnitFormat.format(1234567.89, "volume-fluid-ounce-imperial"), "1,234,567.89 fl oz Imp.", "Format to '1,234,567.89 fl oz Imp.'");
+
+		// formatted
+		assert.deepEqual(oUnitFormat.parse("1,234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"], "Parse '1,234,567.89 غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1,234,567.89 fl oz Imp."), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1,234,567.89 fl oz Imp.'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234,567 غالون إمبراطوري"), [1234567, "volume-gallon-imperial"], "Parse '1234,567 غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1234,567 fl oz Imp."), [1234567, "volume-fluid-ounce-imperial"], "Parse '1234,567 fl oz Imp.'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oUnitFormat.parse("123,4567 غالون إمبراطوري"), null, "Parse '123,4567 غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("123,4567 fl oz Imp."), null, "Parse '123,4567 fl oz Imp.'");
+
+		assert.deepEqual(oUnitFormat.parse("1234567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"], "Parse '1234567.89 غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1234567.89 fl oz Imp."), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234567.89 fl oz Imp.'");
+		assert.deepEqual(oUnitFormat.parse("1234,567.89 غالون إمبراطوري"), [1234567.89, "volume-gallon-imperial"], "Parse '1234,567.89 غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1234,567.89 fl oz Imp."), [1234567.89, "volume-fluid-ounce-imperial"], "Parse '1234,567.89 fl oz Imp.'");
+	});
+
+	QUnit.test("Special cases Unit style=short", function (assert) {
+		// en locale
+		var oUnitFormat = NumberFormat.getUnitInstance({style: "short"}, new Locale("en"));
+
+		assert.equal(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2T gal Imp.", "Format to '1.2T gal Imp.'");
+		assert.equal(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1,234,567T gal Imp.", "Format to '1,234,567T gal Imp.'");
+
+		// formatted
+		assert.deepEqual(oUnitFormat.parse("1.2T gal Imp."), [1.2e+12, "volume-gallon-imperial"], "Parse '1.2T gal Imp.'");
+		assert.deepEqual(oUnitFormat.parse("1,234,567T gal Imp."), [1234567e+12, "volume-gallon-imperial"], "Parse '1,234,567T gal Imp.'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234,567T gal Imp."), [1234567e+12, "volume-gallon-imperial"], "Parse '1234,567T gal Imp.'");
+
+		assert.deepEqual(oUnitFormat.parse("123,4567T gal Imp."), null, "Parse '123,4567T gal Imp.'");
+		assert.deepEqual(oUnitFormat.parse("1234567T gal Imp."), [1234567e+12, "volume-gallon-imperial"], "Parse '1234567T gal Imp.'");
+
+		// de locale
+		oUnitFormat = NumberFormat.getUnitInstance({style: "short"}, new Locale("de"));
+
+		assert.equal(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1,2\xa0Bio. Imp. gal", "Format to '1,2\xa0Bio. Imp. gal'");
+		assert.equal(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1.234.567\xa0Bio. Imp. gal", "Format to '1.234.567\xa0Bio. Imp. gal'");
+
+		// formatted
+		assert.deepEqual(oUnitFormat.parse("1,2\xa0Bio. Imp. gal"), [1.2e+12, "volume-gallon-imperial"], "Parse '1,2\xa0Bio. Imp. gal'");
+		assert.deepEqual(oUnitFormat.parse("1.234.567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"], "Parse '1.234.567\xa0Bio. Imp. gal'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234.567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"], "Parse '1234.567\xa0Bio. Imp. gal'");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oUnitFormat.parse("123.4567\xa0Bio. Imp. gal"), null, "Parse '123.4567\xa0Bio. Imp. gal'");
+
+		assert.deepEqual(oUnitFormat.parse("1234567\xa0Bio. Imp. gal"), [1234567e+12, "volume-gallon-imperial"], "Parse '1234567\xa0Bio. Imp. gal'");
+
+		// ar (RTL)
+		oUnitFormat = NumberFormat.getUnitInstance({style: "short"}, new Locale("ar"));
+
+		assert.equal(oUnitFormat.format(1.2e+12, "volume-gallon-imperial"), "1.2\xa0ترليون غالون إمبراطوري", "Format to '1.2\xa0ترليون غالون إمبراطوري'");
+		assert.equal(oUnitFormat.format(1234567e+12, "volume-gallon-imperial"), "1,234,567\xa0ترليون غالون إمبراطوري", "Format to '1,234,567\xa0ترليون غالون إمبراطوري'");
+		assert.equal(oUnitFormat.format(1.2e+12, "volume-fluid-ounce-imperial"), "1.2\xa0ترليون fl oz Imp.", "Format to '1.2\xa0ترليون fl oz Imp.'");
+		assert.equal(oUnitFormat.format(1234567e+12, "volume-fluid-ounce-imperial"), "1,234,567\xa0ترليون fl oz Imp.", "Format to '1,234,567\xa0ترليون fl oz Imp.'");
+
+		// formatted
+		assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون غالون إمبراطوري"), [1.2e+12, "volume-gallon-imperial"], "Parse '1.2\xa0ترليون غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون غالون إمبراطوري"), [1234567e+12, "volume-gallon-imperial"], "Parse '1,234,567\xa0ترليون غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1.2\xa0ترليون fl oz Imp."), [1.2e+12, "volume-fluid-ounce-imperial"], "Parse '1.2\xa0ترليون fl oz Imp.'");
+		assert.deepEqual(oUnitFormat.parse("1,234,567\xa0ترليون fl oz Imp."), [1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1,234,567\xa0ترليون fl oz Imp.'");
+
+		assert.deepEqual(oUnitFormat.parse("1,2\xa0ترليون غالون إمبراطوري"), null, "Parse '1,2\xa0ترليون غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1,234567\xa0ترليون fl oz Imp."), null, "Parse '1,234567\xa0ترليون fl oz Imp.'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234,567\xa0ترليون غالون إمبراطوري"), [1234567e+12, "volume-gallon-imperial"], "Parse '1234,567\xa0ترليون غالون إمبراطوري'");
+
+		assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون غالون إمبراطوري"), [1234567e+12, "volume-gallon-imperial"], "Parse '1234567\xa0ترليون غالون إمبراطوري'");
+		assert.deepEqual(oUnitFormat.parse("1234567\xa0ترليون fl oz Imp."), [1234567e+12, "volume-fluid-ounce-imperial"], "Parse '1234567\xa0ترليون fl oz Imp.'");
+	});
+
+	QUnit.test("Special cases Unit showNumber/showMeasure", function (assert) {
+		// showMeasure: true
+		var oUnitFormat = NumberFormat.getUnitInstance({showNumber: false}, new Locale("en"));
+
+		// format
+		assert.equal(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "gal Imp.", "Format to 'gal Imp.'");
+
+		// parse
+		assert.deepEqual(oUnitFormat.parse("gal Imp."), [undefined, "volume-gallon-imperial"], "Parse 'gal Imp.'");
+		assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
+
+		// showMeasure: false
+		oUnitFormat = NumberFormat.getUnitInstance({showMeasure: false}, new Locale("en"));
+
+		// format
+		assert.equal(oUnitFormat.format(1234567.89, "volume-gallon-imperial"), "1,234,567.89", "Format to '1,234,567.89'");
+
+		// parse
+		assert.deepEqual(oUnitFormat.parse("1,234,567.89"), [1234567.89, undefined], "Parse '1,234,567.89'");
+		assert.deepEqual(oUnitFormat.parse("1234,567.89"), [1234567.89, undefined], "Parse '1234,567.89'");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oUnitFormat.parse("1234,567"), [1234567, undefined], "Parse '1234,567'");
+
+		assert.deepEqual(oUnitFormat.parse("1,234,567.89 gal Imp."), null, "Parse '1,234,567.89 gal Imp.'");
+	});
 });

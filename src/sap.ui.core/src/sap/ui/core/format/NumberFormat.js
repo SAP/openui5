@@ -318,10 +318,12 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -376,10 +378,12 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -476,10 +480,12 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
@@ -576,10 +582,12 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
 	 * @param {Object<string,object>} [oFormatOptions.customUnits] defines a set of custom units, e.g. {"electric-inductance": {
 				"displayName": "henry",
 				"unitPattern-count-one": "{0} H",
@@ -654,10 +662,12 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
-	 * @param {string} [oFormatOptions.groupingSeparator] defines the used grouping separator, note that the groupingSeparator must always be different than the used decimalSeparator.
+	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
+	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
-	 * @param {string} [oFormatOptions.decimalSeparator] defines the used decimal separator, note that the decimalSeparator must always be different than the used groupingSeparator.
+	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
+	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
@@ -979,6 +989,55 @@ sap.ui.define([
 	}
 
 	/**
+	 * Applies the grouping to the given integer part and returns it.
+	 *
+	 * @param {string} sIntegerPart a string with the integer value, e.g. "1234567"
+	 * @param {object} oOptions the format options, relevant are: groupingSeparator,
+	 *   groupingBaseSize, groupingSize
+	 * @param {boolean} bIndianCurrency if it is an Indian currency
+	 * @returns {string} integer part with grouping, e.g. "1.234.567" for locale de-DE
+	 * @private
+	 */
+	function applyGrouping(sIntegerPart, oOptions, bIndianCurrency) {
+		var iPosition;
+		var sGroupedIntegerPart = "";
+
+		// Special grouping for lakh crore/crore crore in India
+		if (bIndianCurrency) {
+			var aGroups = [3, 2, 2], iCurGroupSize, iIndex = 0;
+			iPosition = sIntegerPart.length;
+			while (iPosition > 0) {
+				iCurGroupSize = aGroups[iIndex % 3];
+				iPosition -= iCurGroupSize;
+				if (iIndex > 0) {
+					sGroupedIntegerPart = oOptions.groupingSeparator + sGroupedIntegerPart;
+				}
+				if (iPosition < 0) {
+					iCurGroupSize += iPosition;
+					iPosition = 0;
+				}
+				sGroupedIntegerPart = sIntegerPart.substr(iPosition, iCurGroupSize) + sGroupedIntegerPart;
+				iIndex++;
+			}
+		} else {
+			// default grouping
+			var iLength = sIntegerPart.length;
+			var iGroupSize = oOptions.groupingSize;
+			var iBaseGroupSize = oOptions.groupingBaseSize || iGroupSize;
+			iPosition = Math.max(iLength - iBaseGroupSize, 0) % iGroupSize || iGroupSize;
+			sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
+			while (iLength - iPosition >= iBaseGroupSize) {
+				sGroupedIntegerPart += oOptions.groupingSeparator;
+				sGroupedIntegerPart += sIntegerPart.substr(iPosition, iGroupSize);
+				iPosition += iGroupSize;
+			}
+			sGroupedIntegerPart += sIntegerPart.substr(iPosition);
+		}
+
+		return sGroupedIntegerPart;
+	}
+
+	/**
 	 * Format a number according to the given format options.
 	 *
 	 * @param {number|array} vValue the number to format or an array which contains the number to format and the sMeasure parameter
@@ -998,10 +1057,6 @@ sap.ui.define([
 			sResult = "",
 			sNumber = "",
 			sPattern = "",
-			iPosition = 0,
-			iLength = 0,
-			iGroupSize = 0,
-			iBaseGroupSize = 0,
 			bNegative = vValue < 0,
 			iDotPos = -1,
 			oOptions = Object.assign({}, this.oFormatOptions),
@@ -1287,38 +1342,8 @@ sap.ui.define([
 		}
 
 		// grouping
-		iLength = sIntegerPart.length;
-
 		if (oOptions.groupingEnabled) {
-			// Special grouping for lakh crore/crore crore in India
-			if (bIndianCurrency) {
-				var aGroups = [3, 2, 2], iCurGroupSize, iIndex = 0;
-				iPosition = sIntegerPart.length;
-				while (iPosition > 0) {
-					iCurGroupSize = aGroups[iIndex % 3];
-					iPosition -= iCurGroupSize;
-					if (iIndex > 0) {
-						sGroupedIntegerPart = oOptions.groupingSeparator + sGroupedIntegerPart;
-					}
-					if (iPosition < 0) {
-						iCurGroupSize += iPosition;
-						iPosition = 0;
-					}
-					sGroupedIntegerPart = sIntegerPart.substr(iPosition, iCurGroupSize) + sGroupedIntegerPart;
-					iIndex++;
-				}
-			} else {
-				iGroupSize = oOptions.groupingSize;
-				iBaseGroupSize = oOptions.groupingBaseSize || iGroupSize;
-				iPosition = Math.max(iLength - iBaseGroupSize, 0) % iGroupSize || iGroupSize;
-				sGroupedIntegerPart = sIntegerPart.substr(0, iPosition);
-				while (iLength - iPosition >= iBaseGroupSize) {
-					sGroupedIntegerPart += oOptions.groupingSeparator;
-					sGroupedIntegerPart += sIntegerPart.substr(iPosition, iGroupSize);
-					iPosition += iGroupSize;
-				}
-				sGroupedIntegerPart += sIntegerPart.substr(iPosition);
-			}
+			sGroupedIntegerPart = applyGrouping(sIntegerPart, oOptions, bIndianCurrency);
 		} else {
 			sGroupedIntegerPart = sIntegerPart;
 		}
@@ -1701,10 +1726,6 @@ sap.ui.define([
 			return oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT ? null : NaN;
 		}
 
-		// Remove grouping separator and replace locale dependant decimal separator,
-		// before calling parseInt/parseFloat
-		sValue = sValue.replace(oGroupingRegExp, "");
-
 		// Replace "minus/plus" sign with a parsable symbol
 		// e.g. "➖47" ("➖" or "\u2796" cannot be parsed using parseInt) --> "-47" (can be parsed using parseInt)
 		var iValueLength = sValue.length;
@@ -1725,13 +1746,23 @@ sap.ui.define([
 		// Remove the leading "+" sign because when "parseAsString" is set to true the "parseInt" or "parseFloat" isn't called and the leading "+" has to be moved manually
 		sValue = sValue.replace(/^\+/, "");
 
+		// remove the percentage sign
+		if (!oOptions.isInteger && sValue.indexOf(sPercentSign) !== -1) {
+			bPercent = true;
+			sValue = sValue.replace(sPercentSign, "");
+		}
+
+		var sValueWithGrouping = sValue;
+
+		// Remove grouping separator and replace locale dependant decimal separator,
+		// before calling parseInt/parseFloat
+		sValue = sValue.replace(oGroupingRegExp, "");
+
 		// Expanding short value before using parseInt/parseFloat
 		if (oShort) {
 			sValue = sValue.replace(oDecimalRegExp, ".");
 			sValue = NumberFormat._shiftDecimalPoint(sValue, Math.round(Math.log(oShort.factor) / Math.LN10));
 		}
-
-
 
 		if (oOptions.isInteger) {
 			var iInt;
@@ -1750,14 +1781,17 @@ sap.ui.define([
 			vResult = oOptions.parseAsString ? sValue : iInt;
 		} else {
 			sValue = sValue.replace(oDecimalRegExp, ".");
-			if (sValue.indexOf(sPercentSign) !== -1) {
-				bPercent = true;
-				sValue = sValue.replace(sPercentSign, "");
-			}
 			vResult = oOptions.parseAsString ? sValue : parseFloat(sValue);
 			if (bPercent) {
 				vResult = NumberFormat._shiftDecimalPoint(vResult, -2);
 			}
+		}
+
+		// strict grouping validation
+		var bIsGroupingValid = checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp);
+		if (!bIsGroupingValid) {
+			// treat invalid grouping the same way as if the value cannot be parsed
+			return (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) ? null : NaN;
 		}
 
 		// Get rid of leading zeros
@@ -2213,6 +2247,106 @@ sap.ui.define([
 		}
 		sFormat = oStyledFormat[sKey + "-" + sPlural];
 		return sFormat;
+	}
+
+	/**
+	 * Checks if grouping is performed correctly (decimal separator is not confused with grouping separator).
+	 * The examples use the German locale.
+	 *
+	 * Validity:
+	 * * The grouping is valid if there are at least 2 grouping separators present.
+	 *   Because there can only be one decimal separator, and by writing 2 grouping separators there is no confusion.
+	 *   E.g. 1.2.3
+	 * * The grouping is valid if there is a decimal separator and one grouping separator present.
+	 *   Because the user wrote both, there cannot be a confusion.
+	 *   (If it was confused, it has already been taken care by the syntax check.)
+	 *   E.g. 1.2,3
+	 *
+	 * Invalidity:
+	 * * If there is exactly one grouping separator present, no decimal separator, and the grouping
+	 *   separator at the most right grouping position is wrong.
+	 *   E.g. 1.2
+	 *   E.g. 1.234567
+	 *
+	 * The grouping is checked even if the groupingEnabled format is set to <code>false</code>, because the
+	 * input could be copied from external sources which might have wrong grouping separators.
+	 *
+	 * The empty grouping separator is ignored and <code>true</code> is returned, because it cannot be validated.
+	 *
+	 * An additional check is performed which invalidates a wrong number syntax
+	 * E.g. 0.123
+	 * E.g. -.123
+	 *
+	 * @param {string} sValueWithGrouping the normalized value which only contains the grouping (e.g. "1.000"),
+	 *  i.e. the following modifications were already applied:
+	 *  <ul>
+	 *   <li>remove percent symbol</li>
+	 *   <li>remove leading plus</li>
+	 *   <li>remove whitespaces</li>
+	 *   <li>remove RTL characters</li>
+	 *   <li>remove short/long format (e.g. "Mio"/"Million")</li>
+	 *   <li>resolve lenient symbols</li>
+	 *  </ul>
+	 * @param {object} oOptions the format options, relevant are: groupingSeparator, groupingSize, groupingBaseSize and decimalSeparator
+	 * @param {boolean} bScientificNotation is scientific notation, e.g. "1.234e+1"
+	 * @param {RegExp} oGroupingRegExp grouping regular expression
+	 * @returns {boolean} true if the grouping is done correctly, e.g. "1.23" is not grouped correctly for grouping separator "." and groupingSize 3
+	 * @private
+	 */
+	function checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp) {
+		if (oOptions.groupingSeparator && sValueWithGrouping.includes(oOptions.groupingSeparator)) {
+			// All following checks are only done, if the value contains at least one (non-falsy) grouping separator.
+			// The examples below use the German locale:
+			// groupingSeparator: '.'
+			// decimalSeparator: ','
+			// groupingSize: 3
+
+			// remove leading minus sign, it is irrelevant for grouping check
+			// "-123.456" -> "123.456"
+			sValueWithGrouping = sValueWithGrouping.replace(/^-/, "");
+
+			// remove leading zeros before non-zero digits
+			// "001.234" -> "1.234"
+			// "0.234" -> "0.234"
+			sValueWithGrouping = sValueWithGrouping.replace(/^0+(\d)/, "$1");
+
+			// if value still starts with 0, or it starts with a grouping separator, it is invalid
+			// e.g. "0.123", ".123" (invalid)
+			if (sValueWithGrouping.startsWith("0") || sValueWithGrouping.startsWith(oOptions.groupingSeparator)) {
+				return false;
+			}
+
+			// remove scientific notation
+			// "1.234e+1" -> "1.234"
+			if (bScientificNotation) {
+				sValueWithGrouping = sValueWithGrouping.replace(/[eE].*/, "");
+			}
+
+			// if value includes a decimal separator, it is valid and no further checks are needed.
+			// Integer types are skipped, which often have identical decimal and grouping separators configured
+			// e.g. "1.2,3" (valid)
+			if (oOptions.decimalSeparator !== oOptions.groupingSeparator
+				&& sValueWithGrouping.includes(oOptions.decimalSeparator)) {
+				return true;
+			}
+
+			// if value doesn't include exactly one grouping separator, it is valid and no further checks are needed
+			// e.g. 1.2.3 (valid)
+			if (sValueWithGrouping.split(oGroupingRegExp).length !== 2) {
+				return true;
+			}
+
+			// find least-significant ("lowest") grouping separator
+			var iLowestGroupingIndex = sValueWithGrouping.length - sValueWithGrouping.lastIndexOf(oOptions.groupingSeparator);
+			var iBaseGroupSize = oOptions.groupingBaseSize || oOptions.groupingSize;
+			// if least-significant grouping size doesn't match grouping base size, the value is invalid
+			// e.g. 12.34 (invalid)
+			if (iLowestGroupingIndex !== iBaseGroupSize + oOptions.groupingSeparator.length) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
