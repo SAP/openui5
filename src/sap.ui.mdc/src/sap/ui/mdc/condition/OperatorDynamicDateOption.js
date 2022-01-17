@@ -6,9 +6,11 @@ sap.ui.define([
 	'sap/m/DynamicDateOption',
 	'sap/m/DynamicDateValueHelpUIType',
 	'sap/m/Input',
-	'sap/m/DatePicker',
 	'sap/ui/mdc/condition/Operator',
+	"sap/ui/mdc/enum/BaseType",
+	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/util/DateUtil',
+	'sap/ui/mdc/util/loadModules',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -18,9 +20,11 @@ sap.ui.define([
 		DynamicDateOption,
 		DynamicDateValueHelpUIType,
 		Input,
-		DatePicker,
 		Operator,
+		BaseType,
+		FieldDisplay,
 		DateUtil,
+		loadModules,
 		JSONModel,
 		FormatException,
 		ParseException,
@@ -30,6 +34,8 @@ sap.ui.define([
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;
+		var DatePicker;
+		var DateTimePicker;
 
 		/**
 		 * Constructor for a new OperatorDynamicDateOption.
@@ -59,20 +65,25 @@ sap.ui.define([
 					/**
 					 * Operator used in the corresponding filter field.
 					 *
-					 * <b>Note:</b> A condition must be an instance of {@link sap.ui.mdc.condition.Operator Operator}.
+					 * <b>Note:</b> An operator must be an instance of {@link sap.ui.mdc.condition.Operator Operator}.
 					 */
 					operator: { type: "object" },
 					/**
 					 * Data type of the corresponding filter field.
 					 *
-					 * <b>Note:</b> A condition must  be an instance of {@link sap.ui.model.Type Type}.
+					 * <b>Note:</b> A type must  be an instance of {@link sap.ui.model.Type Type}.
 					 */
-					type: { type: "object" }
+					type: { type: "object" },
+					/**
+					 * Basic type of the corresponding filter field.
+					 */
+					baseType: { type: "sap.ui.mdc.enum.BaseType" }
 				}
 			}
 		});
 
 		OperatorDynamicDateOption.prototype.exit = function() {
+			DynamicDateOption.prototype.exit.apply(this, arguments);
 			if (this._oModel) {
 				this._oModel.destroy();
 				this._oModel = undefined;
@@ -88,6 +99,31 @@ sap.ui.define([
 			// _removeControls.call(this);
 		};
 
+		OperatorDynamicDateOption.prototype.applySettings = function() {
+			DynamicDateOption.prototype.applySettings.apply(this, arguments);
+
+			// load needed pickers
+			// TODO: request in DateContent to be sure that loaded? But needed only on opening, so async loading on initialization should be ok
+			var aModules = [];
+			var sBaseType = this.getBaseType();
+			if (sBaseType === BaseType.DateTime && !DateTimePicker) {
+				aModules.push("sap/m/DateTimePicker");
+			} else if (!DatePicker) {
+				aModules.push("sap/m/DatePicker");
+			}
+
+			if (aModules.length > 0) {
+				return loadModules(aModules).then(function (aModules) {
+					if (sBaseType === BaseType.DateTime) {
+						DateTimePicker = aModules[0];
+					} else {
+						DatePicker = aModules[0];
+					}
+				});
+			}
+
+		};
+
 		OperatorDynamicDateOption.prototype.validateProperty = function(sPropertyName, oValue) {
 
 			if (sPropertyName === "operator" && oValue && (typeof oValue !== "object" || !oValue.isA || !oValue.isA("sap.ui.mdc.condition.Operator"))) {
@@ -99,13 +135,6 @@ sap.ui.define([
 			}
 
 			return DynamicDateOption.prototype.validateProperty.apply(this, arguments);
-
-		};
-
-		OperatorDynamicDateOption.prototype.getKey = function() {
-
-			var oOperator = this.getOperator();
-			return oOperator.name;
 
 		};
 
@@ -128,15 +157,22 @@ sap.ui.define([
 			if (!this._aUITypes) {
 				var oOperator = this.getOperator();
 				var oType = this.getType();
+				var sBaseType = this.getBaseType();
 				this._aUITypes = [];
 
 				for (var i = 0; i < oOperator.valueTypes.length; i++) {
 					var vType = oOperator.valueTypes[i];
 					if (vType === Operator.ValueType.Self) {
+						var sType;
+						if (sBaseType === BaseType.DateTime) {
+							sType = "datetime";
+						} else {
+							sType = "date";
+						}
 						this._aUITypes.push(new DynamicDateValueHelpUIType({
-							type: "date"
+							type: sType
 						}));
-					} else if (vType === Operator.ValueType.Static) {
+					} else if (!vType || vType === Operator.ValueType.Static) {
 						continue;
 					} else {
 						oType = oOperator._createLocalType(vType, oType);
@@ -185,8 +221,12 @@ sap.ui.define([
 
 			for (var i = 0; i < oOperator.valueTypes.length; i++) {
 				var vType = oOperator.valueTypes[i];
+				var sBaseType = this.getBaseType();
 				var oDate;
 
+				if (!vType) {
+					continue;
+				}
 				if (!oControl.aControlsByParameters[sKey][i]) {
 					if (oOperator.createControl) {
 						// use internal model to bind the control
@@ -219,12 +259,18 @@ sap.ui.define([
 						// TODO: DatePicker or Calendar?
 						// convert internal value to date
 						if (oValue && oValue.values[i]) {
-							oDate = DateUtil.typeToUniversalDate(oValue.values[i], oType);
+							oDate = DateUtil.typeToUniversalDate(oValue.values[i], oType, sBaseType);
 							oDate = DateUtil.utcToLocal(oDate);
 						}
 						var oFormatOptions = oType.getFormatOptions();
 
-						var oDatePicker = new DatePicker(sControlId + "-" + i, {
+						var Picker;
+						if (sBaseType === BaseType.DateTime) {
+							Picker = DateTimePicker;
+						} else {
+							Picker = DatePicker;
+						}
+						var oDatePicker = new Picker(sControlId + "-" + i, {
 							dateValue: oDate,
 							displayFormat: oFormatOptions.style || oFormatOptions.pattern,
 							displayFormatType: oFormatOptions.calendarType,
@@ -233,8 +279,11 @@ sap.ui.define([
 						oControl.aControlsByParameters[sKey].push(oDatePicker);
 					} else if (typeof vType === "object"){
 						// just use Input
+						oType = oOperator._createLocalType(oOperator.valueTypes[i], oType);
+						// format value to String using type
+						var sValue = oType.formatValue(oValue && oValue.values[i], "string");
 						var oInput = new Input(sControlId + "-" + i, {
-							value: oValue && oValue.values[i],
+							value: sValue,
 							change: fnChangeHandler
 						});
 						oControl.aControlsByParameters[sKey].push(oInput);
@@ -309,9 +358,13 @@ sap.ui.define([
 			var oResult = {operator: sKey, values: []};
 			var oOperator = this.getOperator();
 			var oType = this.getType();
+			var sBaseType = this.getBaseType();
 			var sControlId = oControl.getId();
 
 			for (var i = 0; i < oOperator.valueTypes.length; i++) {
+				if (!oOperator.valueTypes[i]) {
+					continue;
+				}
 				var oInputControl = oControl.aControlsByParameters[sKey][i];
 				if (oInputControl) {
 					var vValue;
@@ -327,7 +380,7 @@ sap.ui.define([
 						if (vValue) {
 							// parse to Types format
 							vValue = DateUtil.localToUtc(vValue);
-							vValue = DateUtil.universalDateToType(vValue, oType);
+							vValue = DateUtil.universalDateToType(vValue, oType, sBaseType);
 						}
 					} else {
 						vValue = oInputControl.getValue();
@@ -363,21 +416,22 @@ sap.ui.define([
 		OperatorDynamicDateOption.prototype.toDates = function(oValue) {
 			var oOperator = this.getOperator();
 			var oType = this.getType();
+			var sBaseType = this.getBaseType();
 			var aRange;
 			var i = 0;
 
 			if (oOperator.isA("sap.ui.mdc.condition.RangeOperator")) {
-				aRange = oOperator._getRange(oValue && oValue.values, oType);
+				aRange = oOperator._getRange(oValue && oValue.values, oType, sBaseType);
 				// convert to local date
 				for (i = 0; i < aRange.length; i++) {
-					aRange[i] = DateUtil.typeToUniversalDate(aRange[i], oType);
+					aRange[i] = DateUtil.typeToUniversalDate(aRange[i], oType, sBaseType);
 					aRange[i] = DateUtil.utcToLocal(aRange[i]);
 				}
 			} else if (oOperator.valueTypes[0] === Operator.ValueType.Self) {
 				aRange = oValue.values;
 				for (i = 0; i < aRange.length; i++) {
 					if (aRange[i]) {
-						aRange[i] = DateUtil.typeToUniversalDate(aRange[i], oType);
+						aRange[i] = DateUtil.typeToUniversalDate(aRange[i], oType, sBaseType);
 						aRange[i] = DateUtil.utcToLocal(aRange[i]);
 					}
 				}
@@ -396,7 +450,7 @@ sap.ui.define([
 		OperatorDynamicDateOption.prototype.format = function(oValue) {
 			var oOperator = this.getOperator();
 			var oType = this.getType();
-			return oOperator.format(oValue, oType);
+			return oOperator.format(oValue, oType, FieldDisplay.Value);
 		};
 
 		OperatorDynamicDateOption.prototype.parse = function(sValue) {
@@ -406,7 +460,7 @@ sap.ui.define([
 			if (sValue && oOperator.parse(sValue)) {
 				var oResult = {};
 				oResult.operator = this.getKey();
-				oResult.values = oOperator.parse(sValue, oType);
+				oResult.values = oOperator.parse(sValue, oType, FieldDisplay.Value);
 				return oResult;
 			}
 		};

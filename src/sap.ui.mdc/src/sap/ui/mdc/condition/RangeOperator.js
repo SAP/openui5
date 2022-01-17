@@ -85,12 +85,12 @@ sap.ui.define([
 			}
 		});
 
-		RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive) {
-			var aRange = this._getRange(oCondition.values, oType);
+		RangeOperator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+			var aRange = this._getRange(oCondition.values, oType, sBaseType);
 			return new Filter({ path: sFieldPath, operator: "BT", value1: aRange[0], value2: aRange[1] });
 		};
 
-		RangeOperator.prototype._getRange = function(aValues, oType) {
+		RangeOperator.prototype._getRange = function(aValues, oType, sBaseType) {
 			var aRange;
 			if (aValues) {
 				if (aValues.length === 2) {
@@ -105,7 +105,7 @@ sap.ui.define([
 			for (var i = 0; i < 2; i++) {
 				//the calcRange result must be converted from local time to UTC and into the correct type format.
 				aRange[i].oDate = DateUtil.localToUtc(aRange[i].oDate);
-				aRange[i] = DateUtil.universalDateToType(aRange[i], oType);
+				aRange[i] = DateUtil.universalDateToType(aRange[i], oType, sBaseType);
 			}
 
 			return aRange;

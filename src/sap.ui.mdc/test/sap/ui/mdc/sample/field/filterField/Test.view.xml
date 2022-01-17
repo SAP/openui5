@@ -122,7 +122,8 @@
 					<m:Label text="single value field (DateTime) only equals"></m:Label>
 					<mdc:FilterField id="FF7"
 						conditions="{cm>/conditions/DateTime}"
-						dataType="Edm.DateTimeOffset"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions="{style: 'long'}"
 						display="Value"
 						maxConditions="1"
 						operators="EQ"
@@ -132,10 +133,24 @@
 						liveChange="handleLiveChange">
 					</mdc:FilterField>
 
+					<m:Label text="single value field (DateTime) with DynamicDateRange"></m:Label>
+					<mdc:FilterField id="FF7d"
+						conditions="{cm>/conditions/DateTime}"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions="{style: 'short'}"
+						display="Value"
+						maxConditions="1"
+						placeholder="{/#Product/DateTime/@sap:label}"
+						label="{/#Product/DateTime/@sap:label}"
+						change="handleChange"
+						liveChange="handleLiveChange">
+					</mdc:FilterField>
+
 					<m:Label text="single value field in display mode (DateTime)"></m:Label>
 					<mdc:FilterField id="FF8"
 						conditions="{cm>/conditions/DateTime}"
-						dataType="Edm.DateTimeOffset"
+						dataType="sap.ui.model.odata.type.DateTime"
+						dataTypeFormatOptions="{style: 'medium'}"
 						maxConditions="1"
 						editMode="Display"
 						placeholder="{/#Product/DateTime/@sap:label}"
@@ -713,6 +728,9 @@
 							<m:Label text="{/#Product/DateTime/@sap:label}"></m:Label>
 						</m:Column>
 						<m:Column width="8rem" minScreenWidth="Desktop" demandPopin="true">
+							<m:Label text="{/#Product/Date/@sap:label}"></m:Label>
+						</m:Column>
+						<m:Column width="8rem" minScreenWidth="Desktop" demandPopin="true">
 							<m:Label text="{/#Product/Status/@sap:label}"></m:Label>
 						</m:Column>
 						<m:Column width="2rem" minScreenWidth="Desktop" demandPopin="true">
@@ -739,14 +757,15 @@
 							<m:Text id="T-F1" text="{ProductId}" />
 							<m:Text id="T-F2" text="{Name}"/>
 							<m:Text id="T-F3" text="{Description}"/>
-							<m:Text id="T-F5" text="{path:'DateTime', type:'sap.ui.model.type.DateTime'}"/>
-							<m:Text id="T-F6" text="{Status}"/>
-							<m:Text id="T-F7" text="{Quantity}"/>
-							<m:Text id="T-F8" text="{MatrId}"/>
-							<m:Text id="T-F9" text="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
-							<m:Text id="T-F10" text="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
-							<m:Text id="T-F11" text="{path:'CityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
-							<m:Text id="T-F12" text="{parts: ['WeightMeasure', 'WeightUnit'], type: 'sap.ui.model.type.Unit'}"/>
+							<m:Text id="T-F5" text="{path:'DateTime', type:'sap.ui.model.odata.type.DateTime'}"/>
+							<m:Text id="T-F6" text="{path:'Date', type:'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
+							<m:Text id="T-F7" text="{Status}"/>
+							<m:Text id="T-F8" text="{Quantity}"/>
+							<m:Text id="T-F9" text="{MatrId}"/>
+							<m:Text id="T-F10" text="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+							<m:Text id="T-F11" text="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+							<m:Text id="T-F12" text="{path:'CityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
+							<m:Text id="T-F13" text="{parts: ['WeightMeasure', 'WeightUnit'], type: 'sap.ui.model.type.Unit'}"/>
 						</m:ColumnListItem>
 					</m:items>
 				</m:Table>

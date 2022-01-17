@@ -137,11 +137,13 @@ function(
 
 					var oDataType;
 					var bCaseSensitiveType = true;
+					var sBaseType;
 
 					if (oConditionTypes) {
 						if (oConditionTypes[sFieldPath]) {
 							oDataType = oConditionTypes[sFieldPath].type;
 							bCaseSensitiveType = oConditionTypes[sFieldPath].caseSensitive;
+							sBaseType = oConditionTypes[sFieldPath].baseType;
 
 							if (!oDataType) {
 								// We only shown a warning, because the oDataType might not be required for creating the Filter.
@@ -159,7 +161,7 @@ function(
 						}
 
 						try {
-							oFilter = oOperator.getModelFilter(oCondition, sFieldPath, oDataType, bCaseSensitiveType);
+							oFilter = oOperator.getModelFilter(oCondition, sFieldPath, oDataType, bCaseSensitiveType, sBaseType);
 						} catch (error) {
 							// in case the getModelFilter fails - because the oDataType is missing - we show a console error.
 							Log.error("FilterConverter", "Not able to convert the condition for path '" + sFieldPath + "' into a filter! The type is missing!");

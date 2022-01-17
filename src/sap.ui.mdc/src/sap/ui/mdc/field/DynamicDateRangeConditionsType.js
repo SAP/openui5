@@ -118,20 +118,22 @@ sap.ui.define([
 			}
 
 			var aValues = [];
-			var sOption = oOperator.name;
-			if (!mLibrary.StandardDynamicDateRangeKeys[sOption]) {
-				sOption = oOperator.alias || sOption;
-			}
+			var sBaseType = _getBaseType.call(this);
+			var sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, sBaseType);
 
 			for (var i = 0; i < oOperator.valueTypes.length; i++) {
-				if (mLibrary.StandardDynamicDateRangeKeys[sOption] && oOperator.valueTypes[i] === Operator.ValueType.Self) { // only for standard operators
+				if (sOption && oOperator.valueTypes[i] === Operator.ValueType.Self) { // only for standard operators
 					aValues.push(_dateToTimestamp.call(this, oCondition.values[i]));
 				} else if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static) {
 					aValues.push(oCondition.values[i]);
 				}
 			}
 
-			var oDynamicDateType = _getDynamicDateType.call(this, oOperator);
+			if (!sOption) {
+				sOption = FilterOperatorUtil.getCustomDynamicDateOptionForOperator(oOperator, sBaseType);
+			}
+
+			var oDynamicDateType = _getDynamicDateType.call(this, sBaseType);
 			vResult = oDynamicDateType.formatValue({operator: sOption, values: aValues}, sInternalType);
 		}
 
@@ -139,7 +141,7 @@ sap.ui.define([
 
 	};
 
-	function _getDynamicDateType(oOperator) {
+	function _getDynamicDateType(sBaseType) {
 
 		if (!this._oDynamicDateType) {
 			var oDynamicDateFormatOptions = {
@@ -148,6 +150,11 @@ sap.ui.define([
 				},
 				"int": {}
 			};
+			if (sBaseType === BaseType.DateTime) {
+				oDynamicDateFormatOptions.datetime = {
+					source: {pattern: "timestamp"}
+				};
+			}
 
 			this._oDynamicDateType = new DynamicDateType(oDynamicDateFormatOptions);
 		}
@@ -158,12 +165,30 @@ sap.ui.define([
 	function _dateToTimestamp(vValue) {
 
 		var oType = _getInternalType.call(this);
+		var sBaseType = _getBaseType.call(this);
 		var sDate = oType.formatValue(vValue, "string");
-		var aDate = sDate.split("-");
-		var iYear = parseInt(aDate[0]);
-		var iMonth = parseInt(aDate[1]) - 1;
-		var iDate = parseInt(aDate[2]);
-		var iTimeStamp = new Date(iYear, iMonth, iDate).getTime();
+		var aParts;
+		var iHour = 0;
+		var iMinute = 0;
+		var iSecond = 0;
+		var iMillisecond = 0;
+
+		if (sBaseType === BaseType.DateTime) {
+			aParts = sDate.split("T");
+			sDate = aParts[0];
+			var sTime = aParts[1];
+			aParts = sTime.split(":");
+			iHour = parseInt(aParts[0]);
+			iMinute = parseInt(aParts[1]);
+			iSecond = parseInt(aParts[2]);
+			iMillisecond = parseInt(aParts[3]);
+		}
+
+		aParts = sDate.split("-");
+		var iYear = parseInt(aParts[0]);
+		var iMonth = parseInt(aParts[1]) - 1;
+		var iDate = parseInt(aParts[2]);
+		var iTimeStamp = new Date(iYear, iMonth, iDate, iHour, iMinute, iSecond, iMillisecond).getTime();
 
 		return iTimeStamp;
 
@@ -172,11 +197,20 @@ sap.ui.define([
 	function _timestampToDate(iTimeStamp) {
 
 		var oType = _getInternalType.call(this);
+		var sBaseType = _getBaseType.call(this);
 		var oDate = new Date(iTimeStamp);
 		var iYear = oDate.getFullYear();
 		var iMonth = oDate.getMonth() + 1;
 		var iDate = oDate.getDate();
 		var sDate = iYear.toString() + "-" + ((iMonth < 10) ? "0" : "") + iMonth.toString() + "-" + ((iDate < 10) ? "0" : "") + iDate.toString();
+
+		if (sBaseType === BaseType.DateTime) {
+			var iHour = oDate.getHours();
+			var iMinute = oDate.getMinutes();
+			var iSecond = oDate.getSeconds();
+			var iMillisecond = oDate.getMilliseconds();
+			sDate = sDate + "T" + ((iHour < 10) ? "0" : "") + iHour.toString() + ":" + ((iMinute < 10) ? "0" : "") + iMinute.toString() + ":" + ((iSecond < 10) ? "0" : "") + iSecond.toString() + ":" + ((iMillisecond < 100) ? "0" : "") + ((iMillisecond < 10) ? "0" : "") + iMillisecond.toString();
+		}
 		var vDate = oType.parseValue(sDate, "string");
 
 		return vDate;
@@ -187,7 +221,15 @@ sap.ui.define([
 
 		if (!this._oInternalType) {
 			var oType = _getValueType.call(this);
-			this._oInternalType = DateUtil.createInternalType(oType, "yyyy-MM-dd");
+			var sBaseType = _getBaseType.call(this);
+			var sPattern;
+
+			if (sBaseType === BaseType.DateTime) {
+				sPattern = "yyyy-MM-dd'T'HH:mm:ss:SSS";
+			} else {
+				sPattern = "yyyy-MM-dd";
+			}
+			this._oInternalType = DateUtil.createInternalType(oType, sPattern);
 		}
 
 		return this._oInternalType;
@@ -212,11 +254,12 @@ sap.ui.define([
 			}
 
 			var sOperator = oValue.operator; // sOperator is the Option name
-			var oOperator = FilterOperatorUtil.getOperator(sOperator); // getOperator will search via name and alias
+			var oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOperator, _getBaseType.call(this)); // search via name and alias
 			sOperator = oOperator.name; // map it back to the real Operator name
 
 			if (oOperator) {
-				var oDynamicDateType = _getDynamicDateType.call(this, oOperator);
+				var sBaseType = _getBaseType.call(this);
+				var oDynamicDateType = _getDynamicDateType.call(this, sBaseType);
 				var vResult = oDynamicDateType.parseValue(oValue, sInternalType);
 				var aValues = [];
 
@@ -259,9 +302,9 @@ sap.ui.define([
 				throw new ValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"));
 			}
 
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator, aOperators);
+			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
-			if (!oOperator) {
+			if (!oOperator || aOperators.indexOf(oOperator.name) === -1) {
 				throw new ValidateException("No valid condition provided, Operator wrong.");
 			}
 
@@ -297,10 +340,24 @@ sap.ui.define([
 
 		var aOperators = this.oFormatOptions.operators;
 		if (!aOperators || aOperators.length === 0) {
-			aOperators = FilterOperatorUtil.getOperatorsForType(BaseType.Date); // TODO: check for type
+			aOperators = FilterOperatorUtil.getOperatorsForType(_getBaseType.call(this));
 		}
 
 		return aOperators;
+
+	}
+
+	function _getBaseType() {
+
+		var oType = _getValueType.call(this);
+		var sType = oType.getMetadata().getName();
+		var oFormatOptions = oType.getFormatOptions();
+		var oConstraints = oType.getConstraints();
+		var oDelegate = this.oFormatOptions.delegate;
+		var oPayload = this.oFormatOptions.payload;
+		var sBaseType = oDelegate ? oDelegate.getTypeUtil(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.Date;
+
+		return sBaseType;
 
 	}
 

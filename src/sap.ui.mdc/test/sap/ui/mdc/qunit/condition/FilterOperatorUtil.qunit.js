@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/date/UniversalDateUtils"
+	"sap/ui/core/date/UniversalDateUtils",
+	"sap/m/library"
 ], function(
 	FilterOperatorUtil,
 	Operator,
@@ -28,7 +29,8 @@ sap.ui.define([
 	IntegerType,
 	StringType,
 	UniversalDate,
-	UniversalDateUtils
+	UniversalDateUtils,
+	mLibrary
 ) {
 	"use strict";
 
@@ -134,7 +136,7 @@ sap.ui.define([
 
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.String).length, 20, "Default operators for String");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 54, "Default operators for date");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 12, "Default operators for datetime");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 54, "Default operators for datetime");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Time).length, 12, "Default operators for time");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Numeric).length, 12, "Default operators for numeric");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Boolean).length, 2, "Default operators for boolean");
@@ -176,11 +178,35 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getOperator via alias", function(assert) {
+	QUnit.test("getOperatorForDynamicDateOption", function(assert) {
 
-		var oOperator = FilterOperatorUtil.getOperator("FIRSTQUARTER");
+		var oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("FROM", BaseType.Date);
 		assert.ok(oOperator, "Operator returned");
-		assert.equal(oOperator.name, "QUARTER1", "QUARTER1 operator returned");
+		assert.equal(oOperator.name, "GE", "GE operator returned");
+
+		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("Date-EQ", BaseType.Date);
+		assert.ok(oOperator, "Operator returned");
+		assert.equal(oOperator.name, "EQ", "EQ operator returned");
+
+	});
+
+	QUnit.test("getDynamicDateOptionForOperator", function(assert) {
+
+		var oOperator = FilterOperatorUtil.getOperator("TODAY");
+		var sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, BaseType.Date);
+		assert.equal(sOption, "TODAY", "TODAY option returned");
+
+		oOperator = FilterOperatorUtil.getOperator("GE");
+		sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, BaseType.Date);
+		assert.equal(sOption, "FROM", "FROM option returned");
+
+	});
+
+	QUnit.test("getCustomDynamicDateOptionForOperator", function(assert) {
+
+		var oOperator = FilterOperatorUtil.getOperator("LT");
+		var sOption = FilterOperatorUtil.getCustomDynamicDateOptionForOperator(oOperator, BaseType.Date);
+		assert.equal(sOption, "Date-LT", "custom option returned");
 
 	});
 

@@ -9,30 +9,38 @@ sap.ui.define([
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
+	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/type/Date",
+	"sap/ui/model/type/DateTime",
 	"sap/ui/model/type/Integer",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/m/DynamicDateValueHelpUIType",
 	"sap/m/DynamicDateRange",
 	"sap/m/DynamicDateUtil",
-	"sap/m/Slider"
+	"sap/m/Slider",
+	"sap/m/DatePicker",
+	"sap/m/DateTimePicker"
 ], function(
 	OperatorDynamicDateOption,
 	Operator,
 	RangeOperator,
+	BaseType,
 	ValidateException,
 	FilterOperator,
 	DateType,
+	DateTimeType,
 	IntegerType,
 	UniversalDate,
 	UniversalDateUtils,
 	DynamicDateValueHelpUIType,
 	DynamicDateRange,
 	DynamicDateUtil,
-	Slider
+	Slider,
+	DatePicker,
+	DateTimePicker
 ) {
 	"use strict";
 
@@ -79,8 +87,10 @@ sap.ui.define([
 				}
 			});
 			oOperatorDynamicDateOption = new OperatorDynamicDateOption("O1", {
+				key: "Date-Range",
 				operator: oOperator,
-				type: oType
+				type: oType,
+				baseType: BaseType.Date
 			});
 			DynamicDateUtil.addOption(oOperatorDynamicDateOption);
 
@@ -121,7 +131,7 @@ sap.ui.define([
 	QUnit.test("getKey", function(assert) {
 
 		var sKey = oOperatorDynamicDateOption.getKey();
-		assert.equal(sKey, "Range", "Key of Operator returned");
+		assert.equal(sKey, "Date-Range", "Key of Option returned");
 
 	});
 
@@ -173,7 +183,7 @@ sap.ui.define([
 		};
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
 		};
 		oDynamicDateRange.setValue(oValue);
@@ -218,7 +228,7 @@ sap.ui.define([
 	QUnit.test("toDates", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
 		};
 
@@ -233,7 +243,7 @@ sap.ui.define([
 	QUnit.test("format", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
 		};
 		var sCheckResult = oType.formatValue(oValue.values[0], "string") + ":::" + oType.formatValue(oValue.values[1], "string"); // to have language independednt test (need not to check formmting of type here)
@@ -246,7 +256,7 @@ sap.ui.define([
 	QUnit.test("parse", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [new Date(Date.UTC(2021, 9, 4)), new Date(Date.UTC(2021, 9, 5))]
 		};
 		var sCheckValue = oType.formatValue(oValue.values[0], "string") + ":::" + oType.formatValue(oValue.values[1], "string"); // to have language independednt test (need not to check formmting of type here)
@@ -263,9 +273,106 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("Integer type", {
+	QUnit.module("DateTime type", {
 		beforeEach: function() {
-			oType = new IntegerType({emptyString: null}, {minimum: 1, maximum: 4});
+			oType = new DateTimeType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
+			oOperator = new Operator({
+				name: "Equal",
+				// alias: "DATERANGE",
+				filterOperator: FilterOperator.EQ,
+				tokenParse: "^=(.+)$", // just some pattern
+				tokenFormat: "={0}",
+				longText: "My Equal",
+				valueTypes: [Operator.ValueType.Self]
+			});
+			oOperatorDynamicDateOption = new OperatorDynamicDateOption("O1", {
+				key: "DateTime-Equal",
+				operator: oOperator,
+				type: oType,
+				baseType: BaseType.DateTime
+			});
+			DynamicDateUtil.addOption(oOperatorDynamicDateOption);
+
+			oDynamicDateRange = new DynamicDateRange("DDR1", { // needed for UI functions
+				formatter: {date: {style: "long"}}
+			});
+		},
+
+		afterEach: fnTeardown
+	});
+
+	QUnit.test("getValueHelpUITypes", function(assert) {
+
+		var aDynamicDateValueHelpUIType = oOperatorDynamicDateOption.getValueHelpUITypes();
+		assert.ok(Array.isArray(aDynamicDateValueHelpUIType), "Array returned");
+		assert.equal(aDynamicDateValueHelpUIType.length, 1, "Array length");
+		assert.ok(aDynamicDateValueHelpUIType[0] instanceof DynamicDateValueHelpUIType, "DynamicDateValueHelpUIType returned");
+		assert.equal(aDynamicDateValueHelpUIType[0].getType(), "datetime", "type of oDynamicDateValueHelpUIType");
+
+	});
+
+	QUnit.test("createValueHelpUI", function(assert) {
+
+		var iChange = 0;
+		var fnChange = function(oEvent) {
+			iChange++;
+		};
+
+		var oValue = {
+			operator: "DateTime-Equal",
+			values: [new Date(Date.UTC(2022, 0, 18, 11, 17, 30))]
+		};
+		oDynamicDateRange.setValue(oValue);
+
+		var aControls = oOperatorDynamicDateOption.createValueHelpUI(oDynamicDateRange, fnChange);
+		assert.ok(Array.isArray(aControls), "Array returned");
+		assert.equal(aControls.length, 1, "1 control created");
+		assert.ok(aControls[0].isA("sap.m.DateTimePicker"), "control is DateTimePicker");
+		assert.deepEqual(aControls[0].getDateValue(), new Date(2022, 0, 18, 11, 17, 30), "DateValue of first DateTimePicker");
+		assert.equal(aControls[0].getDisplayFormat(), "long", "displayFormat of first DatePicker");
+		assert.equal(aControls[0].getDisplayFormatType(), "Gregorian", "displayFormatType of first DatePicker");
+
+		aControls[0].fireChange();
+		assert.equal(iChange, 1, "Change function called for DateTimePicker");
+
+		// check getValueHelpOutput here as UI needs to be created before
+		var oResult = oOperatorDynamicDateOption.getValueHelpOutput(oDynamicDateRange);
+		assert.ok(oResult, "getValueHelpOutput returns result");
+		assert.deepEqual(oResult, oValue, "Result returns right dates");
+
+		// check validateValueHelpUI here as UI needs to be created before
+		var bValid = oOperatorDynamicDateOption.validateValueHelpUI(oDynamicDateRange);
+		assert.ok(bValid, "validateValueHelpUI: valid");
+
+		aControls[0].setDateValue(); // make empty to check if invalid
+		bValid = oOperatorDynamicDateOption.validateValueHelpUI(oDynamicDateRange);
+		assert.notOk(bValid, "validateValueHelpUI: not valid");
+
+		// cleanup as normally destroyed by DynamicDateRange control
+		for (var i = 0; i < aControls.length; i++) {
+			aControls[i].destroy();
+		}
+
+	});
+
+	QUnit.test("toDates", function(assert) {
+
+		var oValue = {
+			operator: "DateTime-Equal",
+			values: [new Date(Date.UTC(2022, 0, 18, 11, 17, 30))]
+		};
+
+		var aRange = oOperatorDynamicDateOption.toDates(oValue);
+		assert.ok(Array.isArray(aRange), "Array returned");
+		assert.equal(aRange.length, 2, "Range length");
+		assert.deepEqual(aRange[0], new Date(2022, 0, 18, 11, 17, 30), "First value");
+		assert.deepEqual(aRange[1], new Date(2022, 0, 18, 11, 17, 30), "Second value");
+
+	});
+
+	QUnit.module("Integer RangeOperator", {
+		beforeEach: function() {
+			oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
 			oOperator = new RangeOperator({
 				name: "Range",
 				// alias: "DATERANGE",
@@ -285,8 +392,10 @@ sap.ui.define([
 				}
 			});
 			oOperatorDynamicDateOption = new OperatorDynamicDateOption("O1", {
+				key: "Date-Range",
 				operator: oOperator,
-				type: oType
+				type: oType,
+				baseType: BaseType.Date
 			});
 			DynamicDateUtil.addOption(oOperatorDynamicDateOption);
 
@@ -330,7 +439,7 @@ sap.ui.define([
 		};
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [1]
 		};
 		// don't set value on Control to check default value
@@ -376,7 +485,7 @@ sap.ui.define([
 	QUnit.test("toDates", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [1]
 		};
 
@@ -391,7 +500,7 @@ sap.ui.define([
 	QUnit.test("format", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [1]
 		};
 
@@ -403,7 +512,7 @@ sap.ui.define([
 	QUnit.test("parse", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [1]
 		};
 
@@ -412,7 +521,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("Static operator", {
+	QUnit.module("Static RangeOperator", {
 		beforeEach: function() {
 			oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
 			oOperator = new RangeOperator({
@@ -428,8 +537,10 @@ sap.ui.define([
 				}
 			});
 			oOperatorDynamicDateOption = new OperatorDynamicDateOption("O1", {
+				key: "Date-MyToday",
 				operator: oOperator,
-				type: oType
+				type: oType,
+				baseType: BaseType.Date
 			});
 			DynamicDateUtil.addOption(oOperatorDynamicDateOption);
 
@@ -455,7 +566,7 @@ sap.ui.define([
 		};
 
 		var oValue = {
-			operator: "MyToday",
+			operator: "Date-MyToday",
 			values: []
 		};
 		oDynamicDateRange.setValue(oValue);
@@ -479,7 +590,7 @@ sap.ui.define([
 	QUnit.test("toDates", function(assert) {
 
 		var oValue = {
-			operator: "MyToday",
+			operator: "Date-MyToday",
 			values: []
 		};
 		var oToday = new Date();
@@ -495,7 +606,7 @@ sap.ui.define([
 	QUnit.test("format", function(assert) {
 
 		var oValue = {
-			operator: "MyToday",
+			operator: "Date-MyToday",
 			values: []
 		};
 
@@ -507,7 +618,7 @@ sap.ui.define([
 	QUnit.test("parse", function(assert) {
 
 		var oValue = {
-			operator: "MyToday",
+			operator: "Date-MyToday",
 			values: []
 		};
 
@@ -518,7 +629,7 @@ sap.ui.define([
 
 	QUnit.module("Custom control", {
 		beforeEach: function() {
-			oType = new IntegerType({emptyString: null}, {minimum: 1, maximum: 4});
+			oType = new DateType({style: "long", calendarType: "Gregorian", UTC: true}); // UTC to check conversion
 			oOperator = new Operator({
 				name: "Range",
 				filterOperator: FilterOperator.BT,
@@ -541,8 +652,10 @@ sap.ui.define([
 				}
 			});
 			oOperatorDynamicDateOption = new OperatorDynamicDateOption({
+				key: "Date-Range",
 				operator: oOperator,
-				type: oType
+				type: oType,
+				baseType: BaseType.Date
 			});
 			DynamicDateUtil.addOption(oOperatorDynamicDateOption);
 
@@ -562,7 +675,7 @@ sap.ui.define([
 		};
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [2]
 		};
 		oDynamicDateRange.setValue(oValue);
@@ -579,7 +692,7 @@ sap.ui.define([
 		// check getValueHelpOutput here as UI needs to be created before
 		var oResult = oOperatorDynamicDateOption.getValueHelpOutput(oDynamicDateRange);
 		assert.ok(oResult, "getValueHelpOutput returns result");
-		assert.deepEqual(oResult, {operator: "Range",values: [3]}, "Result returns right dates");
+		assert.deepEqual(oResult, {operator: "Date-Range",values: [3]}, "Result returns right dates");
 
 		// cleanup as normally destroyed by DynamicDateRange control
 		for (var i = 0; i < aControls.length; i++) {
@@ -591,7 +704,7 @@ sap.ui.define([
 	QUnit.test("toDates", function(assert) {
 
 		var oValue = {
-			operator: "Range",
+			operator: "Date-Range",
 			values: [1]
 		};
 

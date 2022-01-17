@@ -340,7 +340,7 @@ sap.ui.define([
 					[Text],
 					[TokenizerDisplay],
 					[ExpandableText],
-					[FieldInput],
+					[DynamicDateRange],
 					[FieldMultiInput],
 					[null],
 					[DateTimePicker],
