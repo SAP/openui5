@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
@@ -65,6 +66,7 @@ sap.ui.define([
 	KeyCodes,
 	FlexRuntimeInfoAPI,
 	SmartVariantManagementApplyAPI,
+	ControlPersonalizationWriteAPI,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
@@ -219,7 +221,7 @@ sap.ui.define([
 		_sAppTitle: null,
 		_dependents: null,
 		_sStatus: STOPPED,
-		_bHasSwitchedToNavigationMode: false,
+		_bNavigationModeWarningShown: false,
 		constructor: function() {
 			// call parent constructor
 			ManagedObject.apply(this, arguments);
@@ -420,6 +422,15 @@ sap.ui.define([
 		}).then(this._setVersionsModel.bind(this));
 	};
 
+	RuntimeAuthoring.prototype._onPersonalizationChangeCreation = function() {
+		if (this.getMode() === "navigation" && !this._bNavigationModeWarningShown) {
+			this._showMessageToast("MSG_NAVIGATION_MODE_CHANGES_WARNING", {
+				duration: 5000
+			});
+			this._bNavigationModeWarningShown = true;
+		}
+	};
+
 	function addOrRemoveStyleClass(oRootControl, bAdd) {
 		if (oRootControl.isA("sap.ui.core.UIComponent")) {
 			oRootControl = oRootControl.getRootControl();
@@ -545,6 +556,11 @@ sap.ui.define([
 			.then(function() {
 				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
+				this.fnOnPersonalizationChangeCreation = this._onPersonalizationChangeCreation.bind(this);
+				ControlPersonalizationWriteAPI.attachChangeCreation(
+					this.getRootControlInstance(),
+					this.fnOnPersonalizationChangeCreation
+				);
 			}.bind(this))
 			.then(function () {
 				this._sStatus = STARTED;
@@ -1140,6 +1156,13 @@ sap.ui.define([
 
 			// detach browser events
 			jQuery(document).off("keydown", this.fnKeyDown);
+
+			if (this.fnOnPersonalizationChangeCreation) {
+				ControlPersonalizationWriteAPI.detachChangeCreation(
+					this.getRootControlInstance(),
+					this.fnOnPersonalizationChangeCreation
+				);
+			}
 		}
 
 		if (this.getRootControlInstance()) {
@@ -1784,13 +1807,6 @@ sap.ui.define([
 			if (sCurrentMode === "navigation" || sNewMode === "navigation") {
 				this._oDesignTime.setEnabled(sNewMode !== "navigation");
 				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
-			}
-
-			if (sNewMode === "navigation" && !this._bHasSwitchedToNavigationMode) {
-				this._showMessageToast("MSG_NAVIGATION_MODE_CHANGES_WARNING", {
-					duration: 5000
-				});
-				this._bHasSwitchedToNavigationMode = true;
 			}
 
 			oTabHandlingPlugin[(sNewMode === "adaptation") ? "restoreOverlayTabIndex" : "removeOverlayTabIndex"]();

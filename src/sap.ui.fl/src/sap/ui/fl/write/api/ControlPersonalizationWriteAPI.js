@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/FlexControllerFactory",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Core,
 	Element,
 	VariantUtils,
+	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
 	Settings,
 	FlexControllerFactory,
@@ -37,7 +39,9 @@ sap.ui.define([
 	 * @ui5-restricted UI5 controls that allow personalization
 	 */
 
-	 function checkChangeSpecificData(oChange, sLayer) {
+	var mChangeCreationListeners = {};
+
+	function checkChangeSpecificData(oChange, sLayer) {
 		if (!oChange.changeSpecificData) {
 			return Promise.reject(new Error("No changeSpecificData available"));
 		}
@@ -111,7 +115,12 @@ sap.ui.define([
 			if (!mPropertyBag.changes.length) {
 				return Promise.resolve([]);
 			}
-			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.changes[0].selectorElement || mPropertyBag.changes[0].selectorControl);
+			var oReferenceControl = (
+				mPropertyBag.changes[0].selectorElement
+				|| mPropertyBag.changes[0].selectorControl
+			);
+			var oAppComponent = Utils.getAppComponentForControl(oReferenceControl);
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oReferenceControl});
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 			var sLayer = Layer.USER;
@@ -146,6 +155,10 @@ sap.ui.define([
 					Log.error("A Change was not added successfully. Reason:", oError.message);
 				});
 			}, Promise.resolve()).then(function() {
+				(mChangeCreationListeners[sFlexReference] || [])
+					.forEach(function(fnCallback) {
+						fnCallback(aSuccessfulChanges);
+					});
 				return aSuccessfulChanges;
 			});
 		},
@@ -276,6 +289,53 @@ sap.ui.define([
 				.then(function (oSettings) {
 					return oSettings.isCondensingEnabled(Layer.USER);
 				});
+		},
+
+		/**
+		 * Registers the provided callback function to be called when personalization changes are
+		 * added for the flex reference that the given control belongs to.
+		 *
+		 * @param {sap.ui.core.Control} oControl - Reference control to get the flex reference
+		 * @param {function} fnCallback - Function to be called on change creation
+		 * @private
+		 * @sapui5-restricted sap.ui.rta
+		 */
+		attachChangeCreation: function(oControl, fnCallback) {
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oControl});
+			mChangeCreationListeners[sFlexReference] = (mChangeCreationListeners[sFlexReference] || []).concat(fnCallback);
+		},
+
+		/**
+		 * Removes a previously registered callback function by reference.
+		 *
+		 * @param {sap.ui.core.Control} oControl - Reference control to get the flex reference
+		 * @param {function} fnCallback - Function reference to be removed
+		 * @private
+		 * @sapui5-restricted sap.ui.rta
+		 */
+		detachChangeCreation: function(oControl, fnCallback) {
+			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oControl});
+			if (Array.isArray(mChangeCreationListeners[sFlexReference])) {
+				mChangeCreationListeners[sFlexReference] = mChangeCreationListeners[sFlexReference].filter(function(fnRegisteredCallback) {
+					return fnRegisteredCallback !== fnCallback;
+				});
+			}
+		},
+
+		/**
+		 * Removes all registered change creation listeners.
+		 *
+		 * @param {sap.ui.core.Control} [oControl] - When provided, listeners are only removed for the flex reference of the given control
+		 * @private
+		 * @sapui5-restricted sap.ui.rta
+		 */
+		detachAllChangeCreationListeners: function(oControl) {
+			if (oControl) {
+				var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oControl});
+				delete mChangeCreationListeners[sFlexReference];
+			} else {
+				mChangeCreationListeners = {};
+			}
 		}
 	};
 
