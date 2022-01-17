@@ -336,8 +336,8 @@ sap.ui.define([
 		assert.equal(oTable.getBinding().iLength, 70, "RowCount after filtering money >123,45");
 		oTable.filter(oColMoney, "<50,55");
 		assert.equal(oTable.getBinding().iLength, 100, "RowCount after filtering money <50,55");
-		oTable.filter(oColMoney, "9.35");
-		assert.equal(oTable.getBinding().iLength, 0, "RowCount after filtering money 9.35");
+		oTable.filter(oColMoney, "9,35");
+		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering money 9,35");
 		oTable.filter(oColMoney, "5,67");
 		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering money 5,67");
 		oTable.filter(oColMoney, "= 32,7600");
