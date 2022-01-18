@@ -26,7 +26,8 @@ function (
 		"actions": [
 			{
 				"type": "Action.Submit",
-				"title": "Action.Submit"
+				"title": "Action.Submit",
+				"style": "positive"
 			},
 			{
 				"type": "Action.ShowCard",
@@ -46,6 +47,11 @@ function (
 						}
 					]
 				}
+			},
+			{
+				"type": "Action.Submit",
+				"title": "Negative Action",
+				"style": "destructive"
 			}
 		]
 	};
@@ -75,10 +81,11 @@ function (
 
 			var aButtons = document.getElementsByClassName("ac-pushButton"),
 				oSubmitAction = aButtons[0],
-				oShowCardAction = aButtons[1];
+				oShowCardAction = aButtons[1],
+				oNegativeAction = aButtons[2];
 
 			//Assert
-			assert.strictEqual(aButtons.length, 2, "Two buttons have to be rendered");
+			assert.strictEqual(aButtons.length, 3, "Three buttons have to be rendered");
 
 			for (var i = 0; i < aButtons.length; i++) {
 				assert.strictEqual(aButtons[i].tagName.toLowerCase(), "ui5-button", "ui5-button webcomponent has to be rendered for an action button");
@@ -86,6 +93,11 @@ function (
 
 			assert.strictEqual(oSubmitAction.getAttribute('aria-label'), 'Action.Submit', "Button for submit action");
 			assert.strictEqual(oShowCardAction.getAttribute('aria-label'), 'Action.ShowCard', "Button for show card action");
+
+			// Style property assertions
+			assert.strictEqual(oShowCardAction.getAttribute('design'), null, "Action with style 'default' correctly mapped to ui5-button with design 'Default'");
+			assert.strictEqual(oSubmitAction.getAttribute('design'), 'Positive', "Action with style 'positive' correctly mapped to ui5-button with design 'Positive'");
+			assert.strictEqual(oNegativeAction.getAttribute('design'), 'Negative', "Action with style 'destructive' correctly mapped to ui5-button with design 'Negative'");
 			done();
 		}.bind(this));
 	});

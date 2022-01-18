@@ -153,6 +153,17 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Styled Actions',
+								key: 'styled-actions',
+								files: [
+									{
+										url: '/samples/adaptive/action-styling.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
