@@ -13,27 +13,58 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheListReport : {
 			actions : {
+				enterProductId : function (iRow, sId, bPressSave) {
+					Helper.changeInputValue(this, sViewName, /productId/, sId, iRow);
+					if (bPressSave) {
+						Helper.pressButton(this, sViewName, "save");
+					}
+				},
 				pressRefresh : function () {
 					Helper.pressButton(this, sViewName, "refresh");
 				},
 				selectProduct : function (iRow) {
 					this.waitFor({
 						actions : new Press(),
-						controlType : "sap.m.Text",
-						id : /productId/,
+						controlType : "sap.m.ColumnListItem",
+						id : /highlight/,
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						success : function (aControls) {
-							Opa5.assert.ok(true, "Product selected: " + aControls[0].getText());
+							Opa5.assert.ok(true, "Product selected: "
+								+ aControls[0].getCells()[2].getValue());
 						},
 						viewName : sViewName
 					});
 				}
 			},
 			assertions : {
-				checkFirstProduct : function (sExpectedProductId) {
-					Helper.checkTextValue(this, sViewName, /productId/, sExpectedProductId, 0);
+				checkProduct : function (iRowNumber, sExpectedProductId) {
+					Helper.checkInputValue(this, sViewName, /productId/, sExpectedProductId,
+						iRowNumber);
+				},
+				checkProductsLength : function (iExpectedLength) {
+					this.waitFor({
+						controlType : "sap.m.Table",
+						id : "products",
+						success : function (oProductsTable) {
+							Opa5.assert.strictEqual(
+								oProductsTable.getBinding("items").getLength(),
+								iExpectedLength,
+								"Products length is: " + iExpectedLength);
+						},
+						viewName : sViewName
+					});
+				},
+				checkProductsTableTitle : function (sTableTitle) {
+					this.waitFor({
+						controlType : "sap.m.Title",
+						id : "productsTitle",
+						success : function (oTitle) {
+							Opa5.assert.ok(oTitle.getText(), sTableTitle);
+						},
+						viewName : sViewName
+					});
 				}
 			}
 		},
@@ -132,7 +163,7 @@ sap.ui.define([
 							Opa5.assert.strictEqual(aControls.length, 4, "exactly 4 controls");
 							Opa5.assert.strictEqual(sPartId, sExpectedPartId,
 								"Row: " + iRow + ", Part ID: " + sPartId);
-							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "inactive",
+							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "Inactive",
 								"Row: " + iRow + ", deletable: " + bDeletable);
 							Opa5.assert.strictEqual(sState, sExpectedState,
 								"Row: " + iRow + ", state: " + sState);
