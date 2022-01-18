@@ -211,7 +211,7 @@
 	 *
 	 * Note that the empty prefix ('') will always match and thus serves as a fallback.
 	 * See {@link sap.ui.loader.config}, option <code>paths</code>.
-	 * @type {Object.<string,{url:string,absoluteUrl:string}>}.
+	 * @type {Object<string,{url:string,absoluteUrl:string}>}
 	 * @private
 	 */
 	var mUrlPrefixes = Object.create(null);
