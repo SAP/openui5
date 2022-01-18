@@ -39,13 +39,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	QUnit.dump.maxDepth = 20;
 
-	function _getInitialChangesForVariant (sVReference, mVariantsMap) {
+	function getInitialChangesForVariant (sVReference, mVariantsMap) {
 		return values(mVariantsMap).reduce(function(aChanges, oVMData) {
 			oVMData.variants.some(function(oVariant) {
 				if (oVariant.content.fileName === sVReference) {
-					oVariant.controlChanges = oVariant.controlChanges.map(function(oChange) {
-						return oChange.getDefinition();
-					});
 					aChanges = aChanges.concat(oVariant.controlChanges);
 					return true;
 				}
@@ -150,7 +147,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -171,7 +168,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -191,7 +188,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -211,7 +208,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -231,7 +228,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -250,7 +247,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -267,7 +264,7 @@ sap.ui.define([
 			var aExpectedInitialChanges = [];
 			Object.keys(oData).forEach(function(sVMReference) {
 				aExpectedInitialChanges = aExpectedInitialChanges.concat(
-					_getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
+					getInitialChangesForVariant(oData[sVMReference].currentVariant || oData[sVMReference].defaultVariant, this.oVariantsMap)
 				);
 			}.bind(this));
 			assert.deepEqual(aResultantInitialChanges, aExpectedInitialChanges, "then correct initial changes were returned");
@@ -279,16 +276,14 @@ sap.ui.define([
 
 			assert.deepEqual(VariantManagementState.getInitialChanges({
 				vmReference: "vmReference1",
-				reference: this.sReference,
-				changeInstance: true
+				reference: this.sReference
 			}), ["foo"], "the function returns what 'getControlChangesForVariant' returns for that variant");
 			assert.equal(oGetVariantChangesStub.callCount, 1, "getControlChangesForVariant was called once");
 			var mExpectedParameters = {
 				vmReference: "vmReference1",
 				reference: this.sReference,
 				vReference: "variant0",
-				includeDirtyChanges: false,
-				changeInstance: true
+				includeDirtyChanges: false
 			};
 			assert.deepEqual(oGetVariantChangesStub.lastCall.args[0], mExpectedParameters, "the correct variant was asked for changes");
 
@@ -297,13 +292,11 @@ sap.ui.define([
 				vmReference: "vmReference1",
 				reference: this.sReference,
 				vReference: "variant2",
-				includeDirtyChanges: false,
-				changeInstance: false
+				includeDirtyChanges: false
 			};
 			VariantManagementState.getInitialChanges({
 				vmReference: "vmReference1",
-				reference: this.sReference,
-				changeInstance: false
+				reference: this.sReference
 			});
 			assert.equal(oGetVariantChangesStub.callCount, 2, "getControlChangesForVariant was called once again");
 			assert.deepEqual(oGetVariantChangesStub.lastCall.args[0], mExpectedParameters, "the correct variant was asked for changes");
@@ -344,36 +337,6 @@ sap.ui.define([
 			assert.deepEqual(oExpectedVariant, oVariant, "then the correct variant object is returned");
 		});
 
-		QUnit.test("when 'getControlChangesForVariant' is called with changeInstance parameter not set", function(assert) {
-			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
-
-			var aExpectedDefaultVariantChanges = this.oVariantsMap["vmReference2"].variants[1].controlChanges.map(function(oChange) {
-				return oChange.getDefinition();
-			});
-			var aExpectedNonDefaultVariantChanges = this.oVariantsMap["vmReference1"].variants[2].controlChanges.map(function(oChange) {
-				return oChange.getDefinition();
-			});
-			var aDefaultVariantChanges = VariantManagementState.getControlChangesForVariant({vmReference: "vmReference2", reference: this.sReference});
-			var aNonDefaultVariantChanges = VariantManagementState.getControlChangesForVariant({vmReference: "vmReference1", vReference: "variant2", reference: this.sReference});
-
-			assert.deepEqual(aExpectedNonDefaultVariantChanges, aNonDefaultVariantChanges, "then the correct control changes were returned for a non default variant");
-			assert.deepEqual(aExpectedDefaultVariantChanges, aDefaultVariantChanges, "then the correct control changes were returned for a default variant");
-		});
-
-		QUnit.test("when 'getControlChangesForVariant' is called with changeInstance parameter set", function(assert) {
-			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
-
-			function checkChangeInstance(oChange) {
-				return oChange instanceof Change;
-			}
-
-			var bDefaultVariantChangeInstances = VariantManagementState.getControlChangesForVariant({vmReference: "vmReference2", reference: this.sReference, changeInstance: true}).every(checkChangeInstance);
-			var bNonDefaultVariantChangeInstances = VariantManagementState.getControlChangesForVariant({vmReference: "vmReference1", vReference: "variant2", reference: this.sReference, changeInstance: true}).every(checkChangeInstance);
-
-			assert.ok(bDefaultVariantChangeInstances, "then all returned control changes were change instances for a non default variant");
-			assert.ok(bNonDefaultVariantChangeInstances, "then all returned control changes were change instances for a default variant");
-		});
-
 		QUnit.test("when 'getControlChangesForVariant' is called with includeDirtyChanges parameter", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 			var oDirtyChange = new Change({
@@ -389,7 +352,7 @@ sap.ui.define([
 
 			function includesDirtyChange(aChanges) {
 				return !!aChanges.find(function(oChange) {
-					return oChange.fileName === "dirtyChange";
+					return oChange.getFileName() === "dirtyChange";
 				});
 			}
 
@@ -652,7 +615,7 @@ sap.ui.define([
 			assert.ok(bSuccess1, "then adding a change was successful");
 			assert.notOk(bSuccess2, "then adding an already existing change was unsuccessful");
 
-			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference, changeInstance: true});
+			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
 			assert.equal(aChanges.length, 4, "then the number of changes in the variant is correct");
 			assert.equal(aChanges[3], oChangeToBeAdded1, "then the newly added change is at the end of the array");
 		});
@@ -666,7 +629,7 @@ sap.ui.define([
 			assert.ok(bSuccess1, "then removing an existing change was successful");
 			assert.notOk(bSuccess2, "then removing a non existent change was unsuccessful");
 
-			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference, changeInstance: true});
+			var aChanges = VariantManagementState.getControlChangesForVariant({vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
 			assert.equal(aChanges.length, 2, "then the number of changes in the variant is correct");
 			assert.notEqual(aChanges[0].getId(), oChangeToBeRemoved1.getId(), "then the removed change does not exist");
 			assert.notEqual(aChanges[1].getId(), oChangeToBeRemoved1.getId(), "then the removed change does not exist");
@@ -707,7 +670,7 @@ sap.ui.define([
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on CUSTOMER layer and a variant reference from a VENDOR layer variant, with 2 VENDOR and one CUSTOMER change", function(assert) {
 			var oChangeContent0 = new Change({fileName: "change0"});
-			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: this.sVMReference, reference: this.sReference, changeInstance: true});
+			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: this.sVMReference, reference: this.sReference});
 
 			var oFakeVariantData = {
 				content: {
@@ -737,7 +700,7 @@ sap.ui.define([
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on USER layer and a variant reference from a VENDOR layer variant with 2 VENDOR and one CUSTOMER change", function(assert) {
 			var oChangeContent0 = new Change({fileName: "change0"});
-			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: "vmReference1", reference: this.sReference, changeInstance: true});
+			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: "vmReference1", reference: this.sReference});
 
 			var oFakeVariantData = {
 				content: {
