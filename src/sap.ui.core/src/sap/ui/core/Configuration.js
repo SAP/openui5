@@ -106,7 +106,7 @@ sap.ui.define([
 					"calendarType"          : { type : "string",   defaultValue : null },
 					"trailingCurrencyCode"  : { type : "boolean",  defaultValue : true },
 					"accessibility"         : { type : "boolean",  defaultValue : true },
-					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
+					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,      noUrl:true }, //whether the framework automatically adds the ARIA role 'application' to the html body
 					"animation"             : { type : "boolean",  defaultValue : true }, // deprecated, please use animationMode
 					"animationMode"         : { type : Configuration.AnimationMode, defaultValue : undefined }, // If no value is provided, animationMode will be set on instantiation depending on the animation setting.
 					"rtl"                   : { type : "boolean",  defaultValue : null },
@@ -372,8 +372,12 @@ sap.ui.define([
 				}
 
 				if (oUriParams.has('sap-timezone')) {
-					// call #setTimezone to prevent invalid IANA timezone IDs
-					this.setTimezone(oUriParams.get('sap-timezone'));
+					// validate the IANA timezone ID, but do not trigger a localizationChanged event
+					// because the initialization should not trigger a "*Changed" event
+					var sTimezone = oUriParams.get('sap-timezone');
+					if (checkTimezone(sTimezone)) {
+						this.timezone = sTimezone;
+					}
 				}
 
 				if (oUriParams.has('sap-theme')) {
@@ -637,7 +641,7 @@ sap.ui.define([
 		/**
 		 * Returns a string that identifies the current language.
 		 *
-		 * The value returned by this methods in most cases corresponds to the exact value that has been
+		 * The value returned by this method in most cases corresponds to the exact value that has been
 		 * configured by the user or application or that has been determined from the user agent settings.
 		 * It has not been normalized, but has been validated against a relaxed version of
 		 * {@link http://www.ietf.org/rfc/bcp/bcp47.txt BCP47}, allowing underscores ('_') instead of the
@@ -810,20 +814,16 @@ sap.ui.define([
 			check(sTimezone == null || typeof sTimezone === 'string',
 				"Configuration.setTimezone: sTimezone must be null or be a string", /* warn= */ true);
 
-			if (sTimezone == null) {
+			if (sTimezone == null || !checkTimezone(sTimezone)) {
 				sTimezone = TimezoneUtil.getLocalTimezone();
-			} else if (!TimezoneUtil.isValidTimezone(sTimezone)) {
-				var sLocalTimezone = TimezoneUtil.getLocalTimezone();
-				Log.error("The provided timezone '" + sTimezone + "' is not a valid IANA timezone ID." +
-					" Falling back to browser's local timezone '" + sLocalTimezone + "'.");
-				sTimezone = sLocalTimezone;
 			}
 			if (this.timezone !== sTimezone) {
+				this.timezone = sTimezone;
+
 				var mChanges = this._collect();
 				mChanges.timezone = sTimezone;
 				this._endCollect();
 			}
-			this.timezone = sTimezone;
 			return this;
 		},
 
@@ -1054,7 +1054,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether the framework automatically adds automatically
+		 * Returns whether the framework automatically adds
 		 * the ARIA role 'application' to the HTML body or not.
 		 * @return {boolean}
 		 * @since 1.27.0
@@ -1780,6 +1780,21 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks if the provided timezone is valid and logs an error if not.
+	 *
+	 * @param {string} sTimezone The IANA timezone ID
+	 * @returns {boolean} Returns true if the timezone is valid
+	 */
+	function checkTimezone(sTimezone) {
+		var bIsValidTimezone = TimezoneUtil.isValidTimezone(sTimezone);
+		if (!bIsValidTimezone) {
+			Log.error("The provided timezone '" + sTimezone + "' is not a valid IANA timezone ID." +
+				" Falling back to browser's local timezone '" + TimezoneUtil.getLocalTimezone() + "'.");
+		}
+		return bIsValidTimezone;
+	}
+
+	/**
 	 * @class Encapsulates configuration settings that are related to data formatting/parsing.
 	 *
 	 * <b>Note:</b> When format configuration settings are modified through this class,
@@ -1890,7 +1905,7 @@ sap.ui.define([
 		 * * In the patterns <code>{0}</code> is replaced by the number
 		 *
 		 * E.g. In locale 'en' value <code>1</code> would result in <code>1 Bag</code>, while <code>2</code> would result in <code>2 Bags</code>
-		 * @param mUnits {object} custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
+		 * @param {object} mUnits custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
 		 * @returns {this}
 		 */
 		setCustomUnits: function (mUnits) {
@@ -1908,7 +1923,7 @@ sap.ui.define([
 		/**
 		 * Adds custom units.
 		 * Similar to {@link sap.ui.core.Configuration#setCustomUnits} but instead of setting the custom units, it will add additional ones.
-		 * @param mUnits {object} custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
+		 * @param {object} mUnits custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
 		 * @returns {this}
 		 * @see sap.ui.core.Configuration#setCustomUnits
 		 */
@@ -1937,7 +1952,7 @@ sap.ui.define([
 		 * </code>
 		 * Note: It is possible to create multiple entries per unit key.
 		 * Call with <code>null</code> to delete unit mappings.
-		 * @param mUnitMappings {object} unit mappings
+		 * @param {object} mUnitMappings unit mappings
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 */
 		setUnitMappings: function (mUnitMappings) {
@@ -1948,7 +1963,7 @@ sap.ui.define([
 		/**
 		 * Adds unit mappings.
 		 * Similar to {@link sap.ui.core.Configuration#setUnitMappings} but instead of setting the unit mappings, it will add additional ones.
-		 * @param mUnitMappings {object} unit mappings
+		 * @param {object} mUnitMappings unit mappings
 		 * @returns {this}
 		 * @see sap.ui.core.Configuration#setUnitMappings
 		 */
@@ -2062,7 +2077,7 @@ sap.ui.define([
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {string} sStyle must be one of decimal, group, plusSign, minusSign.
+		 * @param {string} sType must be one of decimal, group, plusSign, minusSign.
 		 * @param {string} sSymbol will be used to represent the given symbol type
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public

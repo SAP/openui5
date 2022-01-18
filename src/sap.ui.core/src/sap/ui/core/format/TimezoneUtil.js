@@ -20,6 +20,52 @@ sap.ui.define([], function() {
 	var sLocalTimezone = "";
 
 	/**
+	 * Cache for Intl.DateTimeFormat instances
+	 */
+	var oIntlDateTimeFormatCache = {
+		_oCache: new Map(),
+		/**
+		 * When cache limit is reached, it gets cleared
+		 */
+		_iCacheLimit: 10,
+
+		/**
+		 * Creates or gets an instance of Intl.DateTimeFormat.
+		 *
+		 * @param {string} sTimezone IANA timezone ID
+		 * @returns {Intl.DateTimeFormat} Intl.DateTimeFormat instance
+		 */
+		get: function (sTimezone) {
+			var cacheEntry = this._oCache.get(sTimezone);
+			if (cacheEntry) {
+				return cacheEntry;
+			}
+
+			var oOptions = {
+				hourCycle: "h23",
+				hour: "2-digit",
+				minute: "2-digit",
+				second: "2-digit",
+				fractionalSecondDigits: 3,
+				day: "2-digit",
+				month: "2-digit",
+				year: "numeric",
+				timeZone: sTimezone,
+				timeZoneName: 'short',
+				era: 'narrow'
+			};
+			var oInstance = new Intl.DateTimeFormat("en-US", oOptions);
+
+			// only store a limited number of entries in the cache
+			if (this._oCache.size === this._iCacheLimit) {
+				this._oCache = new Map();
+			}
+			this._oCache.set(sTimezone, oInstance);
+			return oInstance;
+		}
+	};
+
+	/**
 	 * Uses the <code>Intl.DateTimeFormat</code> API to check if it can handle the given
 	 * IANA timezone ID.
 	 *
@@ -34,10 +80,7 @@ sap.ui.define([], function() {
 		}
 
 		try {
-			new Intl.DateTimeFormat("en-US", {
-				timeZone: sTimezone
-			}).format();
-
+			oIntlDateTimeFormatCache.get(sTimezone);
 			return true;
 		} catch (oError) {
 			return false;
@@ -46,14 +89,14 @@ sap.ui.define([], function() {
 
 	/**
 	 * Converts a date to a specific timezone.
-	 * The resulting date is local but reflects the given timezone such that the local Date methods
-	 * can be used, e.g. Date#getHours().
+	 * The resulting date reflects the given timezone such that the "UTC" Date methods
+	 * can be used, e.g. Date#getUTCHours() to display the hours in the given timezone.
 	 *
 	 * @example
-	 * var oDate = new Date("2021-10-13T15:22:33Z"); (zulu)
-	 * // Timezone difference -4 (DST) hours
+	 * var oDate = new Date("2021-10-13T15:22:33Z"); // UTC
+	 * // Timezone difference UTC-4 (DST)
 	 * TimezoneUtil.convertToTimezone(oDate, "America/New_York");
-	 * // 2021-10-13T11:22:33Z (zulu)
+	 * // 2021-10-13 11:22:33 in America/New_York
 	 *
 	 * @param {Date} oDate The date which should be converted.
 	 * @param {string} sTargetTimezone The target IANA timezone ID, e.g <code>"Europe/Berlin"</code>
@@ -86,21 +129,7 @@ sap.ui.define([], function() {
 	 * @private
 	 */
 	TimezoneUtil._getParts = function(oDate, sTargetTimezone) {
-		var options = {
-			hourCycle: "h23",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-			fractionalSecondDigits: 3,
-			day: "2-digit",
-			month: "2-digit",
-			year: "numeric",
-			timeZone: sTargetTimezone,
-			timeZoneName: 'short',
-			era: 'narrow'
-		};
-
-		var oIntlDate = new Intl.DateTimeFormat("en-US", options);
+		var oIntlDate = oIntlDateTimeFormatCache.get(sTargetTimezone);
 		// clone the date object before passing it to the Intl API, to ensure that no
 		// UniversalDate gets passed to it
 		var oParts = oIntlDate.formatToParts(new Date(oDate.getTime()));
@@ -169,8 +198,9 @@ sap.ui.define([], function() {
 	 * // => -7200 seconds (-2 * 60 * 60 seconds)
 	 *
 	 * // daylight saving time (2018 Sun, 25 Mar, 02:00	CET → CEST	+1 hour (DST start)	UTC+2h)
+	 * // the given date is taken as it is in the timezone
 	 * TimezoneUtil.calculateOffset(new Date("2018-03-25T00:00:00Z"), "Europe/Berlin");
-	 * // => -3600 seconds (-1 * 60 * 60 seconds)
+	 * // => -3600 seconds (-1 * 60 * 60 seconds), interpreted as: 2018-03-25 00:00:00 (CET)
 	 *
 	 * TimezoneUtil.calculateOffset(new Date("2018-03-25T03:00:00Z"), "Europe/Berlin");
 	 * // => -7200 seconds (-2 * 60 * 60 seconds)
@@ -186,16 +216,13 @@ sap.ui.define([], function() {
 	 * @ui5-restricted sap.ui.core.format.DateFormat
 	 */
 	TimezoneUtil.calculateOffset = function(oDate, sTimezoneSource) {
-		var oPartsTarget = this._getParts(oDate, sTimezoneSource);
-		var oDateInTimezone = this._getDateFromParts(oPartsTarget);
+		var oFirstGuess = this.convertToTimezone(oDate, sTimezoneSource);
 
-		var iDiff = oDate.getTime() - oDateInTimezone.getTime();
+		var iInitialOffset = oDate.getTime() - oFirstGuess.getTime();
 
 		// to get the correct summer/wintertime (daylight saving time) handling use the source date (apply the diff)
-		var oDateSource = new Date(oDate.getTime() + iDiff);
-
-		var oPartsSource = this._getParts(oDateSource, sTimezoneSource);
-		var oDateTarget = this._getDateFromParts(oPartsSource);
+		var oDateSource = new Date(oDate.getTime() + iInitialOffset);
+		var oDateTarget = this.convertToTimezone(oDateSource, sTimezoneSource);
 
 		return (oDateSource.getTime() - oDateTarget.getTime()) / 1000;
 	};

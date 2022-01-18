@@ -733,37 +733,23 @@ sap.ui.define(["sap/ui/core/format/TimezoneUtil"],
 					targetDate: Date.UTC(2018, 9, 28),
 					targetTimezone: "Europe/Berlin",
 					timezoneDiff: -2
+				},
+				// Independent State of Samoa changed time at the end of December 29, 2011
+				// It changed from UTC-11 (UTC-10 DST) to UTC+13 (UTC+14 DST until 2021 - currently always UTC+13)
+				{
+					targetDate: Date.UTC(2011, 11, 29, 23),
+					targetTimezone: "Pacific/Apia",
+					timezoneDiff: 10
+				},
+				{
+					targetDate: Date.UTC(2011, 11, 30, 0),
+					targetTimezone: "Pacific/Apia",
+					timezoneDiff: -14
 				}
 			].forEach(function (oFixture) {
 				assert.equal(TimezoneUtil.calculateOffset(new Date(oFixture.targetDate), oFixture.targetTimezone), oFixture.timezoneDiff * 3600,
 					"Timezone difference of " + oFixture.timezoneDiff + " hours in " + oFixture.targetTimezone + " for input date " + new Date(oFixture.targetDate) + ".");
 			});
-		});
-
-		QUnit.test("daylight saving time", function (assert) {
-			// Berlin
-			// 2018	Sun, 25 Mar, 02:00	CET → CEST	+1 hour (DST start)	UTC+2h
-			//  	Sun, 28 Oct, 03:00	CEST → CET	-1 hour (DST end)	UTC+1h
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 2, 25, 3)), "Europe/Berlin"), -2 * 3600, "Timezone difference is -2h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 2, 25, 2)), "Europe/Berlin"), -1 * 3600, "Timezone difference is -1h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 2, 25)), "Europe/Berlin"), -1 * 3600, "Timezone difference is -1h.");
-
-			// Adak
-			// 2018 Sun, 4 Nov, 02:00	HDT → HST -1 hour
-			// from UTC-9h to UTC-10
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 10, 4)), "America/Adak"), 9 * 3600, "Timezone difference is 9h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 10, 4, 4)), "America/Adak"), 10 * 3600, "Timezone difference is 10h.");
-
-			// Sydney
-			// 2018	Sun, 1 Apr, 03:00	AEDT → AEST
-			// from UTC+11h to UTC+10
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1)), "Australia/Sydney"), -11 * 3600, "Timezone difference is -11h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1, 1, 30)), "Australia/Sydney"), -11 * 3600, "Timezone difference is -11h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1, 2)), "Australia/Sydney"), -10 * 3600, "Timezone difference is -10h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1, 2, 30)), "Australia/Sydney"), -10 * 3600, "Timezone difference is -10h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1, 3)), "Australia/Sydney"), -10 * 3600, "Timezone difference is -10h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1, 3, 30)), "Australia/Sydney"), -10 * 3600, "Timezone difference is -10h.");
-			assert.equal(TimezoneUtil.calculateOffset(new Date(Date.UTC(2018, 3, 1, 4)), "Australia/Sydney"), -10 * 3600, "Timezone difference is -10h.");
 		});
 
 		QUnit.module("convertToTimezone");
@@ -950,5 +936,24 @@ sap.ui.define(["sap/ui/core/format/TimezoneUtil"],
 			assert.deepEqual(TimezoneUtil.convertToTimezone(oDate, "UTC"), oDate, "Date should be converted.");
 		});
 
+		QUnit.module("Integration");
+
+		QUnit.test("convertToTimezone + calculateOffset + isValidTimezone", function (assert) {
+			var oDate = new Date(Date.UTC(2018, 9, 7, 2, 30));
+			aIanaTimezones.forEach(function (sTimezone) {
+
+				assert.ok(TimezoneUtil.isValidTimezone(sTimezone), "timezone is valid: " + sTimezone);
+
+				// forth
+				var oConvertedDate = TimezoneUtil.convertToTimezone(oDate, sTimezone);
+
+				// back
+				var iOffsetSeconds = TimezoneUtil.calculateOffset(oConvertedDate, sTimezone);
+				oConvertedDate.setUTCSeconds(iOffsetSeconds);
+
+				// check
+				assert.deepEqual(oConvertedDate, oDate, "timezone conversion forth and back: " + sTimezone);
+			});
+		});
 	}
 );
