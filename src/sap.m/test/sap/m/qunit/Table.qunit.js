@@ -815,7 +815,9 @@ sap.ui.define([
 		// Check if clear all icon has aria-label attribute
 		var $clearSelection = sut.$("clearSelection");
 		var sText = $clearSelection.attr("aria-label");
+		var sToolTip = sut._getClearAllButton().getTooltip();
 		assert.strictEqual(sText, oResourceBundle.getText("TABLE_ICON_DESELECT_ALL"), "The clear all icon has an aria-label assigned");
+		assert.strictEqual(sToolTip, oResourceBundle.getText("TABLE_CLEARBUTTON_TOOLTIP"), "The deselect all tooltip is set on the button");
 
 		var oItem = sut.getItems()[0];
 		oItem.setSelected(true);
