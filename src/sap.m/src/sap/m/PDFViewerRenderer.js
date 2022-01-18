@@ -57,17 +57,18 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 				return bIsEnabled;
 			}
 
-			var aMimeTypes = navigator.mimeTypes;
-			if (aMimeTypes.length) {
+			if (typeof navigator.pdfViewerEnabled !== "undefined") {
+				if (navigator.pdfViewerEnabled || /HeadlessChrome/.test(window.navigator.userAgent)) {
+					return bIsEnabled;
+				} else {
+					bIsEnabled = false;
+				}
+			} else {
+				var aMimeTypes = navigator.mimeTypes;
 				bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
 					var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
 					return oMimeTypeItem !== null;
 				});
-			} else {
-				//Return true if the browser is headless, since there are no plugins installed on headless browsers
-				if (navigator.userAgent.match(/headless/gi)) {
-					bIsEnabled = false;
-				}
 			}
 
 			return bIsEnabled;
@@ -97,7 +98,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 				oRm.renderControl(oControl._objectsRegister.getOverflowToolbarControl());
 			}
 
-			if (oControl._isEmbeddedModeAllowed()) {
+			if (oControl._isEmbeddedModeAllowed() && this._isPdfPluginEnabled()) {
 				this.renderPdfContent(oRm, oControl);
 			}
 
@@ -110,7 +111,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 		};
 
 		PDFViewerRenderer.renderPdfContent = function (oRm, oControl) {
-			if (oControl._shouldRenderPdfContent()) {
+			if (oControl._shouldRenderPdfContent() && !(/HeadlessChrome/.test(window.navigator.userAgent))) {
 				oRm.write("<iframe");
 				oRm.addClass("sapMPDFViewerContent");
 				oRm.addClass("sapMPDFViewerLoading");
