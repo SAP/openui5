@@ -2229,11 +2229,12 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterRenderingList = function() {
-		var oList = this._getList();
 		var bInputFocussed = document.activeElement === this.getFocusDomRef();
+		var oList = this._getList();
+		var aVisibleItems = oList ? oList.getVisibleItems() : [];
 
-		if (this.getEditable() && !bInputFocussed && oList && oList.getItems()[this._iFocusedIndex]) {
-			oList.getItems()[this._iFocusedIndex].focus();
+		if (this.getEditable() && !bInputFocussed && aVisibleItems[this._iFocusedIndex]) {
+			aVisibleItems[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
 		}
 
