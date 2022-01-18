@@ -14,7 +14,6 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		apiVersion: 2
 	};
 
-	var oResource = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -49,18 +48,23 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 			this._renderControlInListItem(oRm, oSelect, sSeparator, false, "sapMBreadcrumbsSelectItem");
 		}
 
-		aControls.forEach(function (oChildControl) {
-			this._renderControlInListItem(oRm, oChildControl, sSeparator, oChildControl instanceof Text);
+		aControls.forEach(function (oChildControl, iIndex) {
+			this._renderControlInListItem(oRm, oChildControl, sSeparator, oChildControl instanceof Text, undefined, iIndex, aControls.length);
 		}, this);
 
 		oRm.close("ol");
 		oRm.close("nav");
 	};
 
-	BreadcrumbsRenderer._renderControlInListItem = function (oRm, oControl, sSeparator, bSkipSeparator, sAdditionalItemClass) {
+	BreadcrumbsRenderer._renderControlInListItem = function (oRm, oControl, sSeparator, bSkipSeparator, sAdditionalItemClass, iIndex, iVisibleItemsCount) {
 		oRm.openStart("li");
 		oRm.class("sapMBreadcrumbsItem");
 		oRm.class(sAdditionalItemClass);
+		if (iVisibleItemsCount && iIndex >= 0) {
+			// override the default size of the list to include the links count only
+			oRm.attr("aria-posinset", iIndex + 1);
+			oRm.attr("aria-setsize", iVisibleItemsCount);
+		}
 		oRm.openEnd();
 		oRm.renderControl(oControl);
 		if (!bSkipSeparator) {
@@ -69,9 +73,6 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		oRm.close("li");
 	};
 
-	BreadcrumbsRenderer._getResourceBundleText = function (sText) {
-		return oResource.getText(sText);
-	};
 
 	return BreadcrumbsRenderer;
 
