@@ -267,12 +267,12 @@ sap.ui.define([
 		sinon.stub(oWrapper,"_isTableReady").returns(true);
 		sinon.spy(oWrapper, "_fireSelectionChange");
 		oTable._fullyInitialized().then(function () {
-			oWrapper._bIsModifyingTableSelection = true;
+			oWrapper._iRunningTableSelectionUpdates = 1;
 
 			oTable._oTable.fireRowSelectionChange();
 			assert.notOk(oWrapper._fireSelectionChange.called, "_fireSelectionChange is not triggered when wrapper is modifying selections.");
 
-			oWrapper._bIsModifyingTableSelection = false;
+			oWrapper._iRunningTableSelectionUpdates = 0;
 
 			oTable._oTable.fireRowSelectionChange();
 			assert.ok(oWrapper._fireSelectionChange.calledOnce, "_fireSelectionChange is triggered.");
