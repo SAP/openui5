@@ -210,4 +210,17 @@ sap.ui.define( [
 		assert.equal(oPDFViewer.$()[0].style.height, 'auto');
 	});
 
+	QUnit.test("Desktop View Emulated from Mobile", function (assert) {
+		this.stub(Device, "system").value({desktop: true});
+		this.stub(window.navigator.mimeTypes, "namedItem").value(function() { return null; });
+
+		oPDFViewer = TestUtils.createPdfViewer({
+			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
+		});
+
+		TestUtils.renderPdfViewer(oPDFViewer);
+
+		assert.equal(document.querySelector("iframe"), null, "iFrame is not rendered");
+	});
+
 });
