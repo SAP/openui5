@@ -538,3 +538,19 @@ html[data-sap-ui-browser^="cr"] .sapFCard {
 .sapFCardFooter {
 	padding: 0.5rem @_sap_f_Card_ContentPadding 0.7rem;
 }
+
+.sapFCardContentMessageContainer {
+	position: absolute;
+	padding: 1rem;
+	z-index: 1;
+	pointer-events: none;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+
+	.sapFCardContentMessage {
+		pointer-events: all;
+		box-shadow: @sapUiShadow;
+	}
+}

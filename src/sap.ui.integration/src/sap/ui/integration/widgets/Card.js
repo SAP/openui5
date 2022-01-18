@@ -1179,24 +1179,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Displays a message strip on top of the content with the given text.
-	 *
-	 * <b>Note</b> Currently only available for an Adaptive Card.
+	 * Displays a message strip above the content with the given text.
+	 * There can be only 1 message displayed. If there is a previous message, it is removed.
+	 * Can be used only after the <code>manifestApplied</code> event is fired.
 	 *
 	 * @public
 	 * @experimental As of version 1.81
 	 * @param {string} sMessage The message.
 	 * @param {sap.ui.core.MessageType} sType Type of the message.
 	 */
-	Card.prototype.showMessage = function (sMessage, sType) {
-		var oContent = this.getCardContent();
-
-		if (!oContent || !oContent.showMessage) {
-			Log.error("The experimental feature 'showMessage' is currently available only for an Adaptive Card.");
-			return;
+	 Card.prototype.showMessage = function (sMessage, sType) {
+		if (this._createContentPromise) {
+			this._createContentPromise.then(function (oContent) {
+				oContent.showMessage(sMessage, sType);
+			});
+		} else {
+			Log.error("'showMessage' cannot be used before the card instance is ready. Consider using the event 'manifestApplied' event.", "sap.ui.integration.widgets.Card");
 		}
-
-		oContent.showMessage(sMessage, sType);
 	};
 
 	/**
@@ -2073,7 +2072,7 @@ sap.ui.define([
 	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
 	 * @param {string} [oConfiguration.method="GET"] The HTTP method. Possible values are "GET", "POST".
 	 * @param {Object} [oConfiguration.parameters] The request parameters. If the method is "POST" the parameters will be put as key/value pairs into the body of the request.
-	 * @param {Object} [oConfiguration.dataType="json"] The expected Content-Type of the response. Possible values are "xml", "json", "text", "script", "html", "jsonp". Note: Complex Binding is not supported when a dataType is provided. Serialization of the response to an object is up to the developer.
+	 * @param {string} [oConfiguration.dataType="json"] The expected Content-Type of the response. Possible values are "xml", "json", "text", "script", "html", "jsonp". Note: Complex Binding is not supported when a dataType is provided. Serialization of the response to an object is up to the developer.
 	 * @param {Object} [oConfiguration.headers] The HTTP headers of the request.
 	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether cross-site requests should be made using credentials.
 	 * @returns {Promise} Resolves when the request is successful, rejects otherwise.
