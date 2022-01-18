@@ -813,6 +813,7 @@ sap.ui.define([
 			this._clearAllButton = new Icon({
 				id: this.getId() + "-clearSelection",
 				src: "sap-icon://clear-all",
+				tooltip: Core.getLibraryResourceBundle("sap.m").getText("TABLE_CLEARBUTTON_TOOLTIP"),
 				decorative: false,
 				press: this.removeSelections.bind(this, false, true, false)
 			}).setParent(this, null, true).addEventDelegate({
