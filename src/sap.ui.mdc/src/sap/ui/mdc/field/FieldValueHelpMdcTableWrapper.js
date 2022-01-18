@@ -341,7 +341,7 @@ sap.ui.define([
 
 	FieldValueHelpMdcTableWrapper.prototype._handleSelectionChange = function (oEvent) {
 		var bIsTableReady = this._isTableReady();
-		return this._bIsModifyingTableSelection || !bIsTableReady || this._bBusy ? undefined : this._fireSelectionChange.call(this, false);
+		return this._iRunningTableSelectionUpdates || !bIsTableReady || this._bBusy ? undefined : this._fireSelectionChange.call(this, false);
 	};
 
 	FieldValueHelpMdcTableWrapper.prototype._getTableItems = function (bSelectedOnly, bNoVirtual) {

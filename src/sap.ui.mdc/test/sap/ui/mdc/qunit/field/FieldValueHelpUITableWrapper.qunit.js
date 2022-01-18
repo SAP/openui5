@@ -1604,4 +1604,31 @@ sap.ui.define([
 	});
 
 
+	QUnit.test("_iRunningTableSelectionUpdates is properly updated on async selection modification", function(assert) {
+
+		var fnDone = assert.async();
+		oClock.restore();
+		oClock = undefined;
+
+		sinon.stub(oWrapper, "_modifyTableSelection").returns(Promise.resolve());
+
+		var aConditions = [Condition.createItemCondition("I1", "Item 1")];
+
+		oFieldHelp.setConditions(aConditions);
+		assert.equal(oWrapper._iRunningTableSelectionUpdates, 1, "_iRunningTableSelectionUpdates increased to 1");
+
+		oFieldHelp.setConditions([]);
+		assert.equal(oWrapper._iRunningTableSelectionUpdates, 2, "_iRunningTableSelectionUpdates increased to 2");
+
+		oFieldHelp.setConditions(aConditions);
+		assert.equal(oWrapper._iRunningTableSelectionUpdates, 3, "_iRunningTableSelectionUpdates increased to 3");
+
+		setTimeout(function () {
+			assert.equal(oWrapper._iRunningTableSelectionUpdates, 0, "_iRunningTableSelectionUpdates decreased to 0");
+			oWrapper._modifyTableSelection.restore();
+			fnDone();
+		}, 0);
+	});
+
+
 });

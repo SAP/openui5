@@ -88,6 +88,7 @@ sap.ui.define([
 		this._oPromises = {};
 		this._oTableDelegate = {/*onfocusin: this._handleTableEvent, */onsapprevious: this._handleTableEvent, onsapnext: this._handleTableEvent, cellClick: this._handleTableEvent};
 
+		this._iRunningTableSelectionUpdates = 0;
 	};
 
 	FieldValueHelpTableWrapperBase.prototype.exit = function() {
@@ -104,6 +105,8 @@ sap.ui.define([
 		delete this._oTablePromise;
 		delete this._oTablePromiseResolve;
 		delete this._bTableResolved;
+
+		this._iRunningTableSelectionUpdates = null;
 
 		FieldValueHelpContentWrapperBase.prototype.exit.apply(this, arguments);
 	};
@@ -799,7 +802,7 @@ sap.ui.define([
 			var aTableItems = this._getTableItems();
 			var bUpdate = false;
 
-			this._bIsModifyingTableSelection = true;
+			this._iRunningTableSelectionUpdates = this._iRunningTableSelectionUpdates + 1 || 1;
 
 			for (var j = 0; j < aTableItems.length; j++) {
 				var oTableItem = aTableItems[j];
@@ -834,7 +837,7 @@ sap.ui.define([
 			}
 
 			this._oTableModificationPromise = Promise.all(aTableModifications).then(function () {
-				this._bIsModifyingTableSelection = false;
+				this._iRunningTableSelectionUpdates = this._iRunningTableSelectionUpdates - 1;
 			}.bind(this));
 		}
 	};
