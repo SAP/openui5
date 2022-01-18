@@ -5405,6 +5405,43 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Focus should be on the selected visible item in the list", function(assert) {
+		// Arrange
+		var aItems = [
+			new Item({key: "Text1", text: "Text1"}),
+			new Item({key: "Text2", text: "Text2"}),
+			new Item({key: "Text3", text: "Text3"}),
+			new Item({key: "Text4", text: "Text4"}),
+
+			new Item({key: "Item1", text: "Item1"}),
+			new Item({key: "Item2", text: "Item2"}),
+			new Item({key: "Item3", text: "Item3"}),
+			new Item({key: "Item4", text: "Item4"})
+		];
+		var oMultiComboBox = new MultiComboBox({items: aItems}).placeAt("MultiComboBoxContent");
+		var oItemToBeFocused, aListItems;
+
+		Core.applyChanges();
+
+		// Act
+		oMultiComboBox.getFocusDomRef().value = "I";
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
+
+		aListItems = oMultiComboBox._getList().getItems();
+		aListItems[4].getDomRef().focus(); // Focus random item just so that the focus is not in the input for the check in onAfterRenderingList();
+		oItemToBeFocused = aListItems[7].getDomRef();
+
+		oMultiComboBox._iFocusedIndex = 3;
+		oMultiComboBox.onAfterRenderingList();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oItemToBeFocused, "The 4th visible item is focused");
+
+		// Clean
+		oMultiComboBox.destroy();
+	});
+
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
