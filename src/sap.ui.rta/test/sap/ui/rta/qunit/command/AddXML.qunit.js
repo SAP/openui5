@@ -120,6 +120,35 @@ sap.ui.define([
 			});
 		});
 
+		["not-adaptable", null].forEach(function(vAction) {
+			var sTitle = "when the action is disabled in the designtime via " + vAction;
+			QUnit.test(sTitle, function(assert) {
+				var oNewDesigntime = new ElementDesignTimeMetadata({
+					data: {
+						actions: {
+							addXML: vAction
+						}
+					}
+				});
+				var oCommandFactory = new CommandFactory({
+					flexSettings: {
+						layer: Layer.VENDOR
+					}
+				});
+
+				return oCommandFactory.getCommandFor(this.oButton, "addXML", {
+					fragmentPath: "pathToFragment",
+					fragment: "{@i18n>Foo}",
+					targetAggregation: "targetAggregation",
+					index: 0
+				}, oNewDesigntime)
+
+				.then(function(oAddXmlCommand) {
+					assert.ok(oAddXmlCommand, "then command is still available with " + vAction + " in the designtime");
+				});
+			});
+		});
+
 		QUnit.test("When addXML is created with a fragment string containing a binding", function(assert) {
 			var oCommandFactory = new CommandFactory({
 				flexSettings: {

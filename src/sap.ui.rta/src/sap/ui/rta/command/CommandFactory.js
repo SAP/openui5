@@ -98,12 +98,16 @@ sap.ui.define([
 	}
 
 	function configureAddXmlCommand(oElement, mSettings, oDesignTimeMetadata) {
-		var oAction = {
-			changeType: mSettings.name
-		};
+		var vAction;
 		if (oDesignTimeMetadata) {
-			Object.assign(oAction, oDesignTimeMetadata.getAction(mSettings.name, oElement));
+			vAction = oDesignTimeMetadata.getAction(mSettings.name, oElement);
 		}
+		// the change type is not configurable via designtime
+		// it can also not be disabled with 'not-adaptable' or null
+		var oAction = vAction || {};
+		Object.assign(oAction, {
+			changeType: mSettings.name
+		});
 		return oAction;
 	}
 
