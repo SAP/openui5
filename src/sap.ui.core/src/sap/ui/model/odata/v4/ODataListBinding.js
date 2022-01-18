@@ -2471,64 +2471,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Makes the given context a row context of this binding. Adds the entity data to the cache.
-	 * Makes the context kept-alive.
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
-	 *   A context pointing to an entity
-	 * @throws {Error}
-	 *   If the binding is not suspended, setKeepAlive is not possible, the resource paths do not
-	 *   match, the entity's key predicate is unknown, the context binding's $expand contains
-	 *   collections, or the context binding is still reading
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.moveEntityHere = function (oEntityContext) {
-		var oEntity,
-			oEntityFetchValuePromise,
-			sEntityPath = oEntityContext.getPath(),
-			mEntityQueryOptions = oEntityContext.getBinding().getInheritableQueryOptions(),
-			sRelativePath = _Helper.getRelativePath(sEntityPath, this.oHeaderContext.getPath());
-
-		if (!sRelativePath || sRelativePath.includes("/")) {
-			throw new Error(this + ": " + sEntityPath + " is not an entity of the collection");
-		}
-		if (!this.getRootBinding().isSuspended()) {
-			throw new Error(this + ": must be suspended");
-		}
-		this.checkKeepAlive(oEntityContext);
-
-		// take the value from the context binding's cache
-		oEntityFetchValuePromise = oEntityContext.fetchValue(null, null, /*bCached*/true);
-		if (oEntityFetchValuePromise.isPending()) {
-			throw new Error("Cannot move the entity; the context binding has not finished loading: "
-				+ oEntityContext.getBinding());
-		}
-		oEntity = oEntityFetchValuePromise.getResult();
-
-		if (!_Helper.getPrivateAnnotation(oEntity, "predicate")) {
-			throw new Error("No key predicate known at " + sEntityPath);
-		}
-
-		// add the context binding's query options as late query options
-		if (!this.aggregateQueryOptions(mEntityQueryOptions, _Helper.getMetaPath(sEntityPath),
-				/*bImmutable*/true)) {
-			throw new Error(oEntityContext + ": could not move the entity. Probably a list binding"
-				+ " w/o $$ownRequest depends on it");
-		}
-
-		this.getRootBinding().resume();
-		oEntityContext.oBinding = this;
-		this.mPreviousContextsByPath[sEntityPath] = oEntityContext;
-		this.oCachePromise.then(function (oCache) {
-			oCache.addKeptElement(oEntity);
-			// setKeepAlive looks into the cache, so this had to wait
-			oEntityContext.setKeepAlive(true);
-			oEntityContext.checkUpdate(); // create listeners in this binding's cache
-		});
-	};
-
-	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */

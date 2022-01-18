@@ -4,7 +4,6 @@
 sap.ui.define([
 	"./Formatter", // make it available to the view
 	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"sap/f/library",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
@@ -14,10 +13,9 @@ sap.ui.define([
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/test/TestUtils"
-], function (_Formatter, Log, UriParameters, library, MessageBox, MessageToast, Controller, Filter,
-		FilterOperator, FilterType, Sorter, JSONModel, ODataUtils, TestUtils) {
+], function (_Formatter, Log, library, MessageBox, MessageToast, Controller, Filter, FilterOperator,
+		FilterType, Sorter, JSONModel, TestUtils) {
 	"use strict";
 
 	var LayoutType = library.LayoutType;
@@ -138,69 +136,6 @@ sap.ui.define([
 				.finally(function () {
 					oView.setBusy(false);
 				});
-		},
-
-		onBeforeRendering : function () {
-			var oItemBinding,
-				oItemContext,
-				sItemPath, // for OPA
-				mQueryOptions = UriParameters.fromQuery(window.location.search),
-				sItemPosition =  mQueryOptions.get("ItemPosition")
-					|| TestUtils.retrieveData(
-						"sap.ui.core.sample.odata.v4.FlexibleColumLayout.ItemPosition"),
-				sLayout = LayoutType.OneColumn,
-				oListBinding = this.byId("SalesOrderList").getBinding("items"),
-				oModel = this.getView().getModel(),
-				oSalesOrderBinding,
-				oSalesOrderContext,
-				sSalesOrderID = mQueryOptions.get("SalesOrderID")
-					|| TestUtils.retrieveData(
-						"sap.ui.core.sample.odata.v4.FlexibleColumLayout.SalesOrderID"),
-				sSalesOrderPath, // for OPA
-				oSubObjectPage = this.byId("subObjectPage"),
-				that = this;
-
-			function moveObjectPage() {
-				oSalesOrderContext.requestObject().then(function() {
-					oSalesOrderBinding.moveEntityTo(oListBinding);
-				});
-			}
-
-			if (!sSalesOrderID) {
-				oListBinding.resume();
-			} else {
-				sSalesOrderID = ODataUtils.formatLiteral(sSalesOrderID, "Edm.String");
-				sSalesOrderPath = "/SalesOrderList(" + sSalesOrderID + ")";
-				// The object page must not have a binding, so that its getBoundContext() delivers
-				// the parent binding => We need a hidden binding initially
-				oSalesOrderBinding = oModel.bindContext(sSalesOrderPath, null, {
-					$select : ["Messages"],
-					$$patchWithoutSideEffects : true
-				});
-				oSalesOrderContext = oSalesOrderBinding.getBoundContext();
-
-				if (!sItemPosition) {
-					sLayout = LayoutType.TwoColumnsMidExpanded;
-					moveObjectPage();
-				} else {
-					oSalesOrderBinding.suspend();
-					sItemPath = sSalesOrderPath + "/SO_2_SOITEM(SalesOrderID=" + sSalesOrderID
-						+ ",ItemPosition=" + ODataUtils.formatLiteral(sItemPosition, "Edm.String")
-						+ ")";
-					oItemBinding = oModel.bindContext(sItemPath, null, {
-						$$patchWithoutSideEffects : true
-					});
-					oItemContext = oItemBinding.getBoundContext();
-					oSubObjectPage.setBindingContext(oItemContext);
-					oItemContext.requestObject().then(function () {
-						oItemBinding.moveEntityTo(that.byId("SO_2_SOITEM").getBinding("items"));
-					}).then(moveObjectPage);
-					sLayout = LayoutType.ThreeColumnsEndExpanded;
-				}
-				this.byId("objectPage").setBindingContext(oSalesOrderContext);
-			}
-
-			this.oUIModel.setProperty("/sLayout", sLayout);
 		},
 
 		onInit : function () {

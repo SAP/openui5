@@ -4854,65 +4854,6 @@ sap.ui.define([
 		}, new Error("Unsupported " + oBinding));
 	});
 
-	//*********************************************************************************************
-	QUnit.test("moveEntityTo", function (assert) {
-		var oBinding = this.bindContext("/Entity('1')"),
-			oListBinding = {
-				moveEntityHere : function () {}
-			};
-
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
-
-		this.mock(oListBinding).expects("moveEntityHere")
-			.withExactArgs(sinon.match.same(oBinding.oElementContext));
-
-		// code under test
-		oBinding.moveEntityTo(oListBinding);
-
-		assert.strictEqual(oBinding.oElementContext, null);
-	});
-
-	//*******************************************************************************************
-	QUnit.test("moveEntityTo: no root binding", function (assert) {
-		var oBinding = this.bindContext("/Entity('1')"),
-			oListBinding = {};
-
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.moveEntityTo(oListBinding);
-		}, new Error(oBinding + ": must be a root binding"));
-	});
-
-	//*******************************************************************************************
-	QUnit.test("moveEntityTo: operation binding", function (assert) {
-		var oBinding = this.bindContext("/AnAction(...)"),
-			oListBinding = {};
-
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.moveEntityTo(oListBinding);
-		}, new Error(oBinding + ": must not be an operation binding"));
-	});
-
-	//*******************************************************************************************
-	QUnit.test("moveEntityTo: pending changes", function (assert) {
-		var oBinding = this.bindContext("/Entity('1')"),
-			oListBinding = {};
-
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
-
-		assert.throws(function () {
-			// code under test
-			oBinding.moveEntityTo(oListBinding);
-		}, new Error(oBinding + ": has pending changes"));
-	});
-
 	//*******************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************

@@ -297,54 +297,6 @@ sap.ui.getCore().attachInit(function () {
 
 				Then.iTeardownMyUIComponent();
 			});
-
-			//*****************************************************************************
-			opaTest("Deep-Link to a sales order (not in the list)", function (Given, When, Then) {
-				TestUtils.setData("sap.ui.core.sample.odata.v4.FlexibleColumLayout.SalesOrderID",
-					"0500000009");
-				Given.iStartMyUIComponent({
-					autoWait : true,
-					componentConfig : {
-						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
-					}
-				});
-
-				Then.onTheObjectPage.checkSalesOrderID("0500000009");
-				Then.onTheListReport.checkSalesOrderNotInTheList("0500000009");
-
-				When.onTheObjectPage.changeNote("Test (moveEntityTo)");
-				Then.onTheObjectPage.checkNote("Test (moveEntityTo)");
-				When.onTheListReport.pressMore();
-				Then.onTheListReport.checkSalesOrder(9, "0500000009", "Test (moveEntityTo)");
-
-				Then.onAnyPage.checkLog();
-				Then.iTeardownMyUIComponent();
-			});
-
-			//*****************************************************************************
-			opaTest("Deep-Link to a sales order item", function (Given, When, Then) {
-				TestUtils.setData("sap.ui.core.sample.odata.v4.FlexibleColumLayout.SalesOrderID",
-					"0500000009");
-				TestUtils.setData("sap.ui.core.sample.odata.v4.FlexibleColumLayout.ItemPosition",
-					"0000000010");
-				Given.iStartMyUIComponent({
-					autoWait : true,
-					componentConfig : {
-						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
-					}
-				});
-
-				Then.onTheObjectPage.checkSalesOrderID("0500000009");
-				Then.onTheSubObjectPage.checkItemPosition('0000000010');
-				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000010", "2.000");
-
-				When.onTheSubObjectPage.changeQuantity("4");
-				Then.onTheSubObjectPage.checkQuantity("4.000");
-				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000010", "4.000");
-
-				Then.onAnyPage.checkLog();
-				Then.iTeardownMyUIComponent();
-			});
 		}
 
 		QUnit.start();
