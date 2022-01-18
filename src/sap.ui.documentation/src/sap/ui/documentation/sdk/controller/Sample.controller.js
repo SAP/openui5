@@ -17,7 +17,8 @@ sap.ui.define([
     "sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Fragment",
-	"sap/ui/documentation/sdk/util/Resources"
+	"sap/ui/documentation/sdk/util/Resources",
+	"./config/sampleForwardingConfig"
 ], function(
     jQuery,
 	SampleBaseController,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Log,
 	UriParameters,
 	Fragment,
-	ResourcesUtil
+	ResourcesUtil,
+	sampleForwardingConfig
 ) {
 		"use strict";
 
@@ -66,6 +68,7 @@ sap.ui.define([
 
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
+				this.router = this.getRouter();
 
 				// Load runtime authoring asynchronously
 				if (!ResourcesUtil.getHasProxy()) {
@@ -102,6 +105,14 @@ sap.ui.define([
 				this._sEntityId = event.getParameter("arguments").entityId;
 
 				this.byId("page").setBusy(true);
+
+				if (sampleForwardingConfig[this._sId]) {
+					return this.router.navTo("sample", {
+						entityId: sampleForwardingConfig[this._sId].entityId,
+						sampleId: sampleForwardingConfig[this._sId].sampleId
+					}, true);
+				}
+
 				this.getModel("appView").setProperty("/bHasMaster", false);
 
 				ControlsInfo.loadData().then(this._loadSample.bind(this));
