@@ -884,6 +884,24 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Returns an array containing all current elements of a collection or single cache for the
+	 * given relative path. If there are pending requests, the corresponding promises will be
+	 * ignored and set to <code>undefined</code>.
+	 *
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into, may be empty (only for collection cache)
+	 * @returns {object[]} The cache elements
+	 */
+	 _Cache.prototype.getAllElements = function (sPath) {
+		if (sPath) {
+			return this.getValue(sPath);
+		}
+		return this.aElements.map(function (oElement) {
+			return oElement instanceof SyncPromise ? undefined : oElement;
+		});
+	};
+
+	/**
 	 * Returns the query options to be used for downloading list data corresponding to the given
 	 * query options.
 	 *

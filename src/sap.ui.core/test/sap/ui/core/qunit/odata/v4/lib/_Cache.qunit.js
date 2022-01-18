@@ -4432,6 +4432,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("#getAllElements without path", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oPromise = new SyncPromise(function () {}); // not (yet) resolved
+
+		oCache.aElements = ["~oElement0~", oPromise, "~oElement2~"];
+
+		// code under test
+		assert.deepEqual(oCache.getAllElements(), ["~oElement0~", undefined, "~oElement2~"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("#getAllElements with relative path for drill down", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		this.mock(oCache).expects("getValue").withExactArgs("~relativePath~")
+			.returns("~elements~");
+
+		// code under test
+		assert.strictEqual(oCache.getAllElements("~relativePath~"), "~elements~");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#getDownloadQueryOptions", function (assert) {
 		var mQueryOptions = {},
 			oCache = new _Cache(this.oRequestor, "Employees", mQueryOptions, false);
