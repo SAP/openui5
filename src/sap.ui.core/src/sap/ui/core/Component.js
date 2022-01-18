@@ -425,7 +425,8 @@ sap.ui.define([
 	 * @throws {Error} If 'getExtensionComponent' function is given, but does not return an instance.
 	 * @returns {object|undefined} Object containing the customizing config or <code>undefined</code>
 	 * @static
-	 * @private ui5-restricted sap.ui.core
+	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	Component.getCustomizing = function(vObject, mOptions) {
 		var sType = mOptions.type,
