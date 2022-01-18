@@ -809,11 +809,11 @@ sap.ui.define([
 		var oDelegate = {
 			onAfterRendering: function () {
 				this._oPopupContent.getCalendar().getAggregation("month")[0].removeEventDelegate(oDelegate, this);
-				this._oOKButton.setEnabled(true);
 				this._oPopupContent.switchToTime();
 				this._oPopupContent.getClocks()._focusActiveButton();
 			}
 		};
+		this._oOKButton.setEnabled(true);
 		this._oPopupContent.getCalendar().getAggregation("month")[0].addEventDelegate(oDelegate, this);
 	}
 
