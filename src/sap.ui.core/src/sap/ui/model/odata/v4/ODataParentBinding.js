@@ -462,6 +462,9 @@ sap.ui.define([
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity
+	 * @param {boolean} bAtEndOfCreated
+	 *   Whether the newly created entity should be inserted after previously created entities, not
+	 *   before them
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an error object each time a POST request for the create
 	 *   fails
@@ -474,7 +477,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.createInCache = function (oUpdateGroupLock, vCreatePath,
-			sCollectionPath, sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback) {
+			sCollectionPath, sTransientPredicate, oInitialData, bAtEndOfCreated, fnErrorCallback,
+			fnSubmitCallback) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -483,7 +487,8 @@ sap.ui.define([
 			if (oCache) {
 				sPathInCache = _Helper.getRelativePath(sCollectionPath, that.getResolvedPath());
 				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
-					sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback
+					sTransientPredicate, oInitialData, bAtEndOfCreated, fnErrorCallback,
+					fnSubmitCallback
 				).then(function (oCreatedEntity) {
 					if (that.mCacheByResourcePath) {
 						// Ensure that cache containing non-transient created entity is recreated
@@ -494,8 +499,8 @@ sap.ui.define([
 				});
 			}
 			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
-				sCollectionPath, sTransientPredicate, oInitialData, fnErrorCallback,
-				fnSubmitCallback);
+				sCollectionPath, sTransientPredicate, oInitialData, bAtEndOfCreated,
+				fnErrorCallback, fnSubmitCallback);
 		});
 	};
 

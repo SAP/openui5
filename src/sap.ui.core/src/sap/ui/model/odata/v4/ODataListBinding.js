@@ -784,8 +784,10 @@ sap.ui.define([
 	 * @param {boolean} [bSkipRefresh]
 	 *   Whether an automatic refresh of the created entity will be skipped
 	 * @param {boolean} [bAtEnd]
-	 *   Whether the entity is inserted at the end of the list. When creating multiple entities,
-	 *   this parameter must have the same value for each entity. Supported since 1.66.0
+	 *   Whether the entity is inserted at the end of the list. Supported since 1.66.0.
+	 *   Since 1.99.0 the first insertion determines the overall position of created contexts
+	 *   within the binding's context list. Every succeeding insertion is relative to the created
+	 *   contexts within this list.
 	 * @param {boolean} [bInactive]
 	 *   Create an inactive context. Such a context will only be sent to the server after the first
 	 *   property update. From then on it behaves like any other created context. This parameter is
@@ -805,7 +807,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended,
 	 *     <li> a relative binding is unresolved,
-	 *     <li> entities are created both at the start and at the end,
+	 *     <li> entities are created first at the end and then at the start,
 	 *     <li> <code>bAtEnd</code> is <code>true</code> and the binding does not know the final
 	 *       length,
 	 *     <li> <code>bInactive</code> is <code>true</code> and the update group ID does not have
@@ -826,6 +828,7 @@ sap.ui.define([
 			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
+			i,
 			that = this;
 
 		if (!sResolvedPath) {
@@ -839,10 +842,9 @@ sap.ui.define([
 			throw new Error(
 				"Must know the final length to create at the end. Consider setting $count");
 		}
-		if (this.bCreatedAtEnd !== undefined && this.bCreatedAtEnd !== bAtEnd) {
-			throw new Error("Creating entities at the start and at the end is not supported.");
+		if (this.bCreatedAtEnd && !bAtEnd) {
+			throw new Error("Cannot create at the start after creation at end");
 		}
-
 		if (bInactive) {
 			if (this.isRelative() && !this.mParameters.$$ownRequest) {
 				throw new Error("Missing $$ownRequest at " + this);
@@ -856,7 +858,9 @@ sap.ui.define([
 			this.iActiveContexts += 1;
 		}
 
-		this.bCreatedAtEnd = bAtEnd;
+		if (this.bCreatedAtEnd === undefined) {
+			this.bCreatedAtEnd = bAtEnd;
+		}
 
 		// only for createInCache
 		oGroupLock = this.lockGroup(sGroupId, true, true, function () {
@@ -868,7 +872,7 @@ sap.ui.define([
 			});
 		});
 		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, sResolvedPath,
-			sTransientPredicate, oInitialData,
+			sTransientPredicate, oInitialData, this.bCreatedAtEnd !== bAtEnd,
 			function (oError) { // error callback
 				that.oModel.reportError("POST on '" + oCreatePathPromise
 					+ "' failed; will be repeated automatically", sClassName, oError);
@@ -908,7 +912,15 @@ sap.ui.define([
 		this.iCreatedContexts += 1;
 		oContext = Context.create(this.oModel, this, sTransientPath, -this.iCreatedContexts,
 			oCreatePromise, bInactive);
-		this.aContexts.unshift(oContext);
+
+		if (this.bCreatedAtEnd !== bAtEnd) {
+			this.aContexts.splice(this.iCreatedContexts - 1, 0, oContext);
+			for (i = this.iCreatedContexts - 1; i >= 0; i -= 1) {
+				this.aContexts[i].iIndex = i - this.iCreatedContexts;
+			}
+		} else {
+			this.aContexts.unshift(oContext);
+		}
 		this._fireChange({reason : ChangeReason.Add});
 
 		return oContext;
@@ -2301,6 +2313,7 @@ sap.ui.define([
 		}
 		return iViewIndex < this.getLength() - this.iCreatedContexts
 			? iViewIndex + this.iCreatedContexts
+			// Note: the created rows are mirrored at the end
 			: this.getLength() - iViewIndex - 1;
 	};
 
@@ -2506,6 +2519,21 @@ sap.ui.define([
 				this._fireRefresh({reason : ChangeReason.Refresh});
 			}
 		}
+	};
+
+	/**
+	 * Returns whether the overall position of created entries is at the end of the list; this is
+	 * determined by the first call to {@link #create}.
+	 *
+	 * @returns {boolean|undefined}
+	 *   Whether the overall position of created contexts is at the end, or <code>undefined</code>
+	 *   if there are no created contexts
+	 *
+	 * @public
+	 * @since 1.99.0
+	 */
+	ODataListBinding.prototype.isFirstCreateAtEnd = function () {
+		return this.bCreatedAtEnd;
 	};
 
 	/**
