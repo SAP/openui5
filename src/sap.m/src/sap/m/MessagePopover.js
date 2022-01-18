@@ -454,6 +454,7 @@ function(
 			// Update MV only if 'items' aggregation is changed
 			if (this._oMessageView && this._bItemsChanged) {
 				var items = this.getItems();
+				var sModelName = this.getBindingInfo("items") && this.getBindingInfo("items").model;
 				var that = this;
 
 				this._oMessageView.destroyItems();
@@ -468,10 +469,11 @@ function(
 					// we need to clone the item along with its bindings and aggregations
 					this._oMessageView.addItem(item.clone("", "", {
 						cloneChildren: true,
-						cloneBinding: true
+						cloneBindings: true
 					}));
 				}, this);
 
+				this._oMessageView.setModel(this.getModel(sModelName), sModelName);
 				this._bItemsChanged = false;
 			}
 
