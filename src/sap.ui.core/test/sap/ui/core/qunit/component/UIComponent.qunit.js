@@ -438,7 +438,7 @@ sap.ui.define([
 						!/^\/anylocation\/prefixid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/autoid\/manifest\.json/.test(url) &&
 						!/^\/anylocation\/mf1st\/prefixid\/manifest\.json/.test(url) &&
-						!/^\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/.test(url) &&
+						!/\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/.test(url) &&
 						url !== "/anylocation/View.view.xml");
 			});
 			oServer.autoRespond = true;
@@ -500,7 +500,7 @@ sap.ui.define([
 				sXMLView
 			]);
 
-			oServer.respondWith("GET", /^\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/, [
+			oServer.respondWith("GET", /\/test-resources\/sap\/ui\/core\/qunit\/component\/testdata\/view\/manifest\.json/, [
 				200,
 				{
 					"Content-Type": "application/json"
@@ -512,7 +512,7 @@ sap.ui.define([
 			sap.ui.loader.config({
 				paths:{
 					"my/own":"/anylocation",
-					"error/test": "/test-resources/sap/ui/core/qunit/component/testdata/view/"
+					"error/test": sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/component/testdata/view/")
 				}
 			});
 			sap.ui.predefine("my/own/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
