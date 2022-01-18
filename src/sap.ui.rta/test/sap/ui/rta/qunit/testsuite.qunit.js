@@ -391,9 +391,6 @@ sap.ui.define([
 			},
 
 			// Integration tests
-			"integration/AggregationBinding": {
-				group: "Integration"
-			},
 			"integration/SimpleFormRemove": {
 				group: "Integration",
 				ui5: {
