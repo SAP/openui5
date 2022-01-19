@@ -190,6 +190,12 @@ sap.ui.define([
 						experimental: true
 					},
 					{
+						title: 'Pagination',
+						target: 'learnDetail',
+						key: 'pagination',
+						experimental: true
+					},
+					{
 						title: 'Sizing',
 						target: 'learnDetail',
 						key: 'sizing',
