@@ -142,8 +142,7 @@ sap.ui.define([
 					{
 						title: 'Select',
 						target: 'learnDetail',
-						key: 'select',
-						experimental: true
+						key: 'select'
 					}
 				]
 			},

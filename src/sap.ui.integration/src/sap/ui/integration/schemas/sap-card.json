@@ -2339,7 +2339,7 @@
       }
     },
     "Configuration.FilterType.Select": {
-      "description": "[Experimental] Select filter",
+      "description": "Select filter",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -2361,11 +2361,7 @@
           "$ref": "#/definitions/data"
         },
         "label": {
-          "description": "Label for the filter for user-friendly visualization in the design-time editor",
-          "type": "string"
-        },
-        "description": {
-          "description": "Description of the filter for user-friendly visualization in the design-time editor",
+          "description": "Label for the filter. Used by screen readers",
           "type": "string"
         },
         "items": {
@@ -2428,11 +2424,7 @@
           "$ref": "#/definitions/data"
         },
         "label": {
-          "description": "Label for the filter for user-friendly visualization in the design-time editor",
-          "type": "string"
-        },
-        "description": {
-          "description": "Description of the filter for user-friendly visualization in the design-time editor",
+          "description": "Label for the filter. Used by screen readers",
           "type": "string"
         },
         "value": {
@@ -2515,11 +2507,7 @@
           "$ref": "#/definitions/data"
         },
         "label": {
-          "description": "Label for the filter for user-friendly visualization in the design-time editor",
-          "type": "string"
-        },
-        "description": {
-          "description": "Description of the filter for user-friendly visualization in the design-time editor",
+          "description": "Label for the filter. Used by screen readers",
           "type": "string"
         },
         "value": {

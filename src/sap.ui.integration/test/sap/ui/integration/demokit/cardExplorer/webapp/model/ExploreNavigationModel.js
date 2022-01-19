@@ -1057,7 +1057,6 @@ sap.ui.define([
 						title: 'Select',
 						target: 'exploreSamples',
 						key: 'selectFilter',
-						experimental: true,
 						subSamples: [
 							{
 								title: 'Dynamically Defined Filter',

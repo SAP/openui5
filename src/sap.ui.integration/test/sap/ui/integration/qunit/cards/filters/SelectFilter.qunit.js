@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
 ], function (
+	SelectFilter,
 	Card,
 	Core
 ) {
@@ -56,6 +58,28 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+	});
+
+	QUnit.module("SelectFilter Properties");
+
+	QUnit.test("Label", function (assert) {
+		// Arrange
+		var oConfig = {
+			label: "Some label"
+		};
+		var oSF = new SelectFilter({
+			config: oConfig
+		});
+		var oLabel = Core.byId(oSF.getField().getAriaLabelledBy()[0]);
+
+		// Assert
+		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");
+		assert.strictEqual(oLabel.getText(), oConfig.label, "Hidden label is created and added");
+
+		// Act up
+		oSF.destroy();
+
+		assert.ok(oLabel.isDestroyed(), "Hidden label should be destroyed when the filter is destroyed");
 	});
 
 });

@@ -210,6 +210,11 @@ sap.ui.define([
 			}
 		}.bind(this));
 
+		var oLabel = this.createLabel(oConfig);
+		if (oLabel) {
+			oDdr.addAriaLabelledBy(oLabel);
+		}
+
 		return oDdr;
 	};
 

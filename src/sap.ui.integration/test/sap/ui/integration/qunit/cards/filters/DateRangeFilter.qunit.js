@@ -233,4 +233,26 @@ sap.ui.define([
 		assert.strictEqual(oModelValue.value.option, "lastDays");
 	});
 
+	QUnit.module("DateRangeFilter Properties");
+
+	QUnit.test("Label", function (assert) {
+		// Arrange
+		var oConfig = {
+			label: "Some label"
+		};
+		var oDRF = new DateRangeFilter({
+			config: oConfig
+		});
+		var oLabel = Core.byId(oDRF.getField().getAriaLabelledBy()[0]);
+
+		// Assert
+		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");
+		assert.strictEqual(oLabel.getText(), oConfig.label, "Hidden label is created and added");
+
+		// Act up
+		oDRF.destroy();
+
+		assert.ok(oLabel.isDestroyed(), "Hidden label should be destroyed when the filter is destroyed");
+	});
+
 });

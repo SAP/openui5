@@ -105,6 +105,26 @@ sap.ui.define([
 		oSF.destroy();
 	});
 
+	QUnit.test("Label", function (assert) {
+		// Arrange
+		var oConfig = {
+			label: "Some label"
+		};
+		var oSF = new SearchFilter({
+			config: oConfig
+		});
+		var oLabel = Core.byId(oSF.getField().getAriaLabelledBy()[0]);
+
+		// Assert
+		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");
+		assert.strictEqual(oLabel.getText(), oConfig.label, "Hidden label is created and added");
+
+		// Act up
+		oSF.destroy();
+
+		assert.ok(oLabel.isDestroyed(), "Hidden label should be destroyed when the filter is destroyed");
+	});
+
 	QUnit.module("SearchFilter properties binding", {
 		beforeEach: function () {
 			this.oCard = new Card({

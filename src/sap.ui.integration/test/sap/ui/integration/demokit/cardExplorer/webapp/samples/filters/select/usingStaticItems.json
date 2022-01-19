@@ -26,7 +26,6 @@
 					"value": "Notebooks",
 					"type": "Select",
 					"label": "Category",
-					"description": "Filter the products by category.",
 					"items": [
 						{
 							"title": "All",
