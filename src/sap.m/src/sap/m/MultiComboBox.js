@@ -1249,6 +1249,7 @@ function(
 	 * @protected
 	 */
 	MultiComboBox.prototype.onBeforeRendering = function() {
+
 		var bEditable = this.getEditable();
 		var oTokenizer = this.getAggregation("tokenizer");
 		var aItems = this.getItems();
@@ -3029,13 +3030,11 @@ function(
 		var oList = this._getList(),
 			oSuggestionsPopover = this._getSuggestionsPopover();
 
-		if (!oList) {
-			return;
-		}
-
-		if (bEditable) {
+		if (oList && bEditable !== this._bPrevEditable && bEditable) {
 			oSuggestionsPopover.addContent(oList);
 		}
+
+		this._bPrevEditable = bEditable;
 	};
 
 	/**
