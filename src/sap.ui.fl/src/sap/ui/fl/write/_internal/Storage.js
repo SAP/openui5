@@ -441,6 +441,20 @@ sap.ui.define([
 		getTexts: function (mPropertyBag) {
 			return _getWriteConnectors()
 			.then(_executeActionByName.bind(undefined, "translation.getTexts", mPropertyBag));
+		},
+
+		/**
+		 * Uploads an XLIFF file.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+		 * @param {object} mPropertyBag.payload - The file to be uploaded
+		 * @returns {Promise} Resolves after the file was uploaded;
+		 * rejects if an error occurs or the parameter is missing
+		 */
+		postTranslationTexts: function (mPropertyBag) {
+			return _getWriteConnectors()
+			.then(_executeActionByName.bind(undefined, "translation.postTranslationTexts", mPropertyBag));
 		}
 	};
 

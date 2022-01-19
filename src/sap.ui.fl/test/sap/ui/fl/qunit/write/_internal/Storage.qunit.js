@@ -1471,6 +1471,43 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given Storage when translation.postTranslationTexts is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a token is returned", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				layer: Layer.CUSTOMER,
+				payload: {}
+			};
+
+			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
+			]);
+
+			sandbox.stub(WriteKeyUserConnector.translation, "postTranslationTexts").resolves({payload: {}});
+
+			return Storage.translation.postTranslationTexts(mPropertyBag).then(function (oDownloadFile) {
+				assert.deepEqual(oDownloadFile, {payload: {}});
+			});
+		});
+
+		QUnit.test("and the method is not implemented in the connector", function (assert) {
+			assert.expect(1);
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				layer: Layer.CUSTOMER,
+				payload: {}
+			};
+
+			return Storage.translation.postTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
+				assert.equal(sRejectionMessage, "translation.postTranslationTexts is not implemented", "then the rejection message is passed");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

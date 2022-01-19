@@ -19,7 +19,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Download Translation Dialog", {
+	QUnit.module("Download & Upload - Translation Dialogs", {
 		before: function () {
 			this.oToolbar = new Adaptation({
 				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")

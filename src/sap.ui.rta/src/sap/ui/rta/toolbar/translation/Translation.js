@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/* global FormData */
+
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
@@ -13,8 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/util/File"
-],
-function(
+], function(
 	ManagedObject,
 	Fragment,
 	Utils,
@@ -27,6 +28,34 @@ function(
 	FileUtil
 ) {
 	"use strict";
+
+	/**
+	 * Controller for the <code>sap.ui.rta.toolbar.translation.Translation</code> controls.
+	 * Contains implementation of translation functionality.
+	 *
+	 * @class
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @private
+	 * @since 1.93
+	 * @alias sap.ui.rta.toolbar.translation.Translation
+	 */
+	var Translation = ManagedObject.extend("sap.ui.rta.toolbar.translation.Translation", {
+		metadata: {
+			properties: {
+				toolbar: {
+					type: "sap.ui.rta.toolbar.Base"
+				}
+			}
+		},
+		constructor: function () {
+			ManagedObject.prototype.constructor.apply(this, arguments);
+			this._oTranslationModel = new JSONModel(getTranslationModelData());
+		}
+	});
 
 	function saveFiles(oEvent) {
 		this._oTranslationModel.setProperty("/file", oEvent.getParameter("files")[0]);
@@ -80,13 +109,33 @@ function(
 				onCancelUploadDialog: function () {
 					this._oDialogUpload.close();
 				}.bind(this),
-				saveFiles: saveFiles.bind(this)
+				saveFiles: saveFiles.bind(this),
+				handleUploadPress: handleUploadPress.bind(this, sUploadId)
 			}
 		}).then(function (oTranslationDialog) {
 			this._oDialogUpload = oTranslationDialog;
 			this._oDialogUpload.setModel(this._oTranslationModel, "translation");
 			this.getToolbar().addDependent(this._oDialogUpload);
 			return sUploadId;
+		}.bind(this));
+	}
+
+
+	function handleUploadPress(sUploadId) {
+		var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
+		oFileUploader.checkFileReadable().then(function() {
+			if (this._oTranslationModel.getProperty("/file")) {
+				var mPropertyBag = {
+					layer: Layer.CUSTOMER,
+					payload: new FormData()
+				};
+				mPropertyBag.payload.append("file", this._oTranslationModel.getProperty("/file"), oFileUploader.getValue());
+				TranslationAPI.postTranslationTexts(mPropertyBag).then(function () {
+					MessageToast.show("Translation texts import successful");
+				}).catch(function (sError) {
+					MessageBox.error("Translation texts import failed: " + sError);
+				}).finally(oFileUploader.clear.bind(oFileUploader));
+			}
 		}.bind(this));
 	}
 
@@ -98,34 +147,6 @@ function(
 			file: undefined
 		});
 	}
-
-	/**
-	 * Controller for the <code>sap.ui.rta.toolbar.translation.Translation</code> controls.
-	 * Contains implementation of translation functionality.
-	 *
-	 * @class
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 *
-	 * @constructor
-	 * @private
-	 * @since 1.93
-	 * @alias sap.ui.rta.toolbar.translation.Translation
-	 */
-	var Translation = ManagedObject.extend("sap.ui.rta.toolbar.translation.Translation", {
-		metadata: {
-			properties: {
-				toolbar: {
-					type: "sap.ui.rta.toolbar.Base"
-				}
-			}
-		},
-		constructor: function () {
-			ManagedObject.prototype.constructor.apply(this, arguments);
-			this._oTranslationModel = new JSONModel(getTranslationModelData());
-		}
-	});
 
 	Translation.prototype.showTranslationPopover = function (oEvent) {
 		var oTranslationButton = oEvent.getSource();

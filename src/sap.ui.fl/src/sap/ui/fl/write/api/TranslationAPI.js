@@ -30,7 +30,7 @@ sap.ui.define([
 	 * Downloads the XLIFF file for the given parameters.
 	 *
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - The root control of key user adaptation
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Root control of key user adaptation
 	 to determine the app component and the reference
 	 * @param {string} mPropertyBag.sourceLanguage - Source language for for which the request should be made
 	 * @param {string} mPropertyBag.targetLanguage - Target language for for which the request should be made
@@ -65,7 +65,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Property bag
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - The root control of key user adaptation
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Root control of key user adaptation
 	 to determine the app component and the reference
 	 * @returns {Promise} Resolves after the languages are retrieved;
 	 * rejects if an error occurs or parameters are missing
@@ -84,6 +84,27 @@ sap.ui.define([
 
 		return Promise.resolve()
 			.then(Storage.translation.getSourceLanguages.bind(undefined, mPropertyBag));
+	};
+
+	/**
+	 * Uploads an XLIFF file.
+	 *
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
+	 * @param {object} mPropertyBag.payload - The file to be uploaded
+	 * @returns {Promise} Resolves after the file was uploaded;
+	 * rejects if an error occurs or a parameter is missing
+	 */
+	TranslationAPI.postTranslationTexts = function (mPropertyBag) {
+		if (!mPropertyBag.layer) {
+			return Promise.reject("No layer was provided");
+		}
+		if (!mPropertyBag.payload) {
+			return Promise.reject("No payload was provided");
+		}
+
+		return Promise.resolve()
+			.then(Storage.translation.postTranslationTexts.bind(undefined, mPropertyBag));
 	};
 
 	/* TODO follow up commit
