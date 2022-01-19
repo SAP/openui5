@@ -1268,25 +1268,15 @@ function (
 			var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 			var oParentAggregationOverlay = oParentOverlay && oParentOverlay.getAggregationOverlay(sAggregationName);
 			if (!oParentAggregationOverlay) {
-				var onSynced;
 				var onElementOverlayCreated = function (oEvent) {
 					var oElementOverlay = oEvent.getParameter("elementOverlay");
 					if (oElementOverlay.getElement().getId() === oParent.getId()) {
 						var oParentAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
-						this.detachSynced(onSynced, this);
 						this.detachElementOverlayCreated(onElementOverlayCreated, this);
 						this._addAggregation(oElement, oParentAggregationOverlay);
 					}
 				};
-				onSynced = function () {
-					var oParentOverlay = OverlayRegistry.getOverlay(oParent);
-					var oParentAggregationOverlay = oParentOverlay && oParentOverlay.getAggregationOverlay(sAggregationName);
-					this.detachSynced(onSynced, this);
-					this.detachElementOverlayCreated(onElementOverlayCreated, this);
-					this._addAggregation(oElement, oParentAggregationOverlay);
-				};
 				this.attachElementOverlayCreated(onElementOverlayCreated, this);
-				this.attachSynced(onSynced, this);
 			} else {
 				this._addAggregation(oElement, oParentAggregationOverlay);
 			}
