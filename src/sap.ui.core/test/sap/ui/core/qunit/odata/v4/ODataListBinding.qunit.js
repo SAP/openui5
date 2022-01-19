@@ -2259,17 +2259,52 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getCurrentContexts", function (assert) {
+	QUnit.test("getCurrentContexts: iCurrentEnd limits", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 
-		oBinding.aContexts.unshift({/*created*/});
-		oBinding.iCreatedContexts += 1;
+		oBinding.iCreatedContexts = 1;
 		oBinding.iCurrentBegin = 1;
-		oBinding.iCurrentEnd = 11;
-		oBinding.iMaxLength = 10;
+		oBinding.iCurrentEnd = 2;
+		oBinding.iMaxLength = 3;
+
+		this.mock(oBinding).expects("getContextsInViewOrder").withExactArgs(1, 1)
+			.returns(["~oContext~"]);
 
 		// code under test
-		assert.strictEqual(oBinding.getCurrentContexts().length, 10);
+		assert.deepEqual(oBinding.getCurrentContexts(), ["~oContext~"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrentContexts: iMaxLength + iCreatedContexts limits", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.iCreatedContexts = 2;
+		oBinding.iCurrentBegin = 1;
+		oBinding.iCurrentEnd = 7;
+		oBinding.iMaxLength = 4;
+
+		this.mock(oBinding).expects("getContextsInViewOrder").withExactArgs(1, 5)
+			.returns(["~oContext~"]);
+
+		// code under test
+		assert.deepEqual(oBinding.getCurrentContexts(), ["~oContext~", undefined, undefined,
+			undefined, undefined]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCurrentContexts: special case Infinity", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.iCreatedContexts = 1;
+		oBinding.iCurrentBegin = 0;
+		oBinding.iCurrentEnd = Infinity;
+		oBinding.iMaxLength = Infinity;
+
+		this.mock(oBinding).expects("getContextsInViewOrder").withExactArgs(0, Infinity)
+			.returns(["~oContext~"]);
+
+		// code under test (BCP: 2280015704)
+		assert.deepEqual(oBinding.getCurrentContexts(), ["~oContext~"]);
 	});
 
 	//*********************************************************************************************

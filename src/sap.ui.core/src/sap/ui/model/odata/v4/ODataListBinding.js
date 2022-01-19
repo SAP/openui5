@@ -2074,8 +2074,10 @@ sap.ui.define([
 
 		aContexts = this.getContextsInViewOrder(this.iCurrentBegin, iLength);
 
-		while (aContexts.length < iLength) {
-			aContexts.push(undefined);
+		if (iLength < Infinity) {
+			while (aContexts.length < iLength) {
+				aContexts.push(undefined);
+			}
 		}
 
 		return aContexts;
