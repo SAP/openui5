@@ -1054,7 +1054,6 @@ sap.ui.define([
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				icon : "non existing path/icon.png",
-				iconAlt: "",
 				iconDensityAware: false
 			}),
 			oImage = oObjectHeader._getImageControl();
@@ -1063,6 +1062,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
+		oImage.onerror();
+
+		// Assert
+		assert.notOk(oImage.getDomRef().classList.contains("sapMNoImg"));
+
+		// Act
+		oObjectHeader.setIconAlt("");
+		sap.ui.getCore().applyChanges();
 		oImage.onerror();
 
 		// Assert
