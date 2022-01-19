@@ -4986,6 +4986,7 @@ sap.ui.define([
 
 	QUnit.test("hasSelection - MultiComboBox with pre-selected items", function(assert) {
 		// arrange
+		var oSpy;
 		var oMultiComboBox = new MultiComboBox({
 				items: [
 					new Item({key: "Item1", text: "Item1"}),
@@ -5010,7 +5011,16 @@ sap.ui.define([
 		assert.notOk(oMultiComboBox.getProperty("hasSelection"), "The property should be correctly set on item delete.");
 		assert.notOk(oMultiComboBox.$().hasClass("sapMMultiComboBoxHasToken"), "The control should not have the class set.");
 
+		oMultiComboBox.open();
+		oSpy = this.spy(oMultiComboBox._getSuggestionsPopover(), "addContent");
+
+		oMultiComboBox.setProperty("hasSelection", true);
+		Core.applyChanges();
+
+		assert.strictEqual(oSpy.notCalled, true ,"The popover is not re-rendered after unnecessary content aggregation update");
+
 		// clean up
+		oSpy.restore();
 		oMultiComboBox.destroy();
 	});
 
