@@ -319,6 +319,8 @@ sap.ui.define([
 	 *   pending changes are ignored if all parameters are unchanged. Since 1.97.0, pending changes
 	 *   are ignored if they relate to a
 	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
+	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
 	 *
 	 * @public
 	 * @since 1.45.0
@@ -1312,7 +1314,8 @@ sap.ui.define([
 	 * data service requests. Call {@link #resume} to resume the binding. Before 1.53.0, this method
 	 * was not supported and threw an error. Since 1.97.0, pending changes are ignored if they
 	 * relate to a {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this
-	 * binding.
+	 * binding. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
+	 * of a {@link #getRootBinding root binding} do not count as pending changes.
 	 *
 	 * @throws {Error}
 	 *   If this binding

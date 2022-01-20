@@ -1528,7 +1528,8 @@ sap.ui.define([
 	/**
 	 * Returns <code>true</code> if there are pending changes, meaning updates or created entities
 	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
-	 * successfully sent to the server.
+	 * successfully sent to the server. Since 1.98.0,
+	 * {@link sap.ui.model.odata.v4.Context#isInactive inactive} contexts are ignored.
 	 *
 	 * @param {string} [sGroupId]
 	 *   A group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}, except group IDs

@@ -837,7 +837,8 @@ sap.ui.define([
 	 * Returns whether there are pending changes for bindings dependent on this context, or for
 	 * unresolved bindings (see {@link sap.ui.model.Binding#isResolved}) which were dependent on
 	 * this context at the time the pending change was created. This includes the context itself
-	 * being transient (see {@link #isTransient}).
+	 * being {@link #isTransient transient}. Since 1.98.0, {@link #isInactive inactive} contexts are
+	 * ignored.
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -878,6 +879,7 @@ sap.ui.define([
 	 *   otherwise.
 	 *
 	 * @public
+	 * @see #isTransient
 	 * @see sap.ui.model.odata.v4.ODataListBinding#create
 	 * @see sap.ui.model.odata.v4.ODataListBinding#event:createActivate
 	 * @since 1.98.0
@@ -912,6 +914,7 @@ sap.ui.define([
 	 *   created using {@link sap.ui.model.odata.v4.ODataListBinding#create}
 	 *
 	 * @public
+	 * @see #isInactive
 	 * @since 1.43.0
 	 */
 	Context.prototype.isTransient = function () {
