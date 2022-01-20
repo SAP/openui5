@@ -28,7 +28,6 @@ sap.ui.define([
 			autostart: true
 		},
 		tests: {
-			AggregationBinding: {},
 			"enablement/elementActionTest": {
 				coverage: {
 					only: ["sap/ui/rta/enablement/elementActionTest"]
