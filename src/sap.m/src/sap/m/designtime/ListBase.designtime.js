@@ -20,6 +20,19 @@ sap.ui.define([],
 			},
 			aggregations: {
 				items: {
+					propagateMetadata: function(oElement) {
+						if (oElement.isA("sap.m.ListItemBase")) {
+							var oParent = oElement.getParent();
+							if (oParent && oParent.isA("sap.m.ListBase")) {
+								var oBinding = oParent.getBinding("items");
+								if (oBinding) {
+									return {
+										actions: null // when items aggregation is bound then changes the items via RTA should be prevented
+									};
+								}
+							}
+						}
+					},
 					domRef: ":sap-domref > .sapMListUl:not(.sapMGrowingList)",
 					actions: {
 						move: "moveControls"
