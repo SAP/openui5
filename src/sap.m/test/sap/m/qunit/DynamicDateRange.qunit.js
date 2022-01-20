@@ -106,6 +106,22 @@ sap.ui.define([
 		assert.strictEqual(this.ddr._oInput.shouldSuggetionsPopoverOpenOnMobile(oCustomEvent), false, "the suggestions popover is not opened on mobile when the icon is clicked");
 	});
 
+	QUnit.test("Setting value", function(assert) {
+		// arrange
+		var oCustomValue = { operator: "DATE", values: [new Date(2020, 2, 31)]};
+		// act
+		this.ddr.setValue(oCustomValue);
+
+		// assert
+		assert.strictEqual(this.ddr._oInput.getValue(), "Mar 31, 2020", "The set value is the correct value");
+
+		// act
+		this.ddr.setValue();
+
+		// assert
+		assert.strictEqual(this.ddr._oInput.getValue(), "", "The set empty value is the correct value");
+	});
+
 	QUnit.module("CustomDynamicDateOption", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
