@@ -17,13 +17,12 @@
 			<p>
 				A Card Bundle is the zipped version of a folder that contains all resources that the card needs for
 				rendering and configuration.
-				This zip file should have the extension <code>[CARDNAME].card.zip</code>
+				The filename of this ZIP has the following format: <code>[CARDNAME].card.zip</code>
 			</p>
 			<h2 id="contained">What is contained in the Card Bundle?</h2>
 			<p>
 				The card's manifest.json contains the most important information to configure a card.
-				Nevertheless there might be the necessity to add other resources needed for design-time or runtime
-				purposes.
+				Nevertheless, other resources might also be needed for runtime or configuration purposes.
 				Such files are:
 			</p>
 			<ul>
@@ -31,7 +30,7 @@
 				<li>Translations of texts for the card <a href="../../index.html#/learn/features/translation"
 						target="_parent">details</a></li>
 				<li>Other static resources, for example static JSON data</li>
-				<li>Design-time artifacts that define the design-time behavior of the card</li>
+				<li>Artifacts that define the Configuration Editor of the card</li>
 				<li>UI5 Component files in case of a <a href="../../index.html#/learn/types/component"
 						target="_parent">Component Card</a></li>
 				<li>JavaScript logic held in <a href="../../index.html#/learn/features/extension"
@@ -58,8 +57,8 @@
 
 			<h1 id="example">Example</h1>
 			<p>
-				Here is an example folder structure of a Card Bundle which includes a manifest.json, i18n translation
-				files, an icon and designtime configuration.<br />
+				Here is an example folder structure of a Card Bundle that includes a manifest.json, i18n translation
+				files, an icon and Configuration Editor.<br />
 				<a href="./resources/news.card.zip">Download the Card Bundle: news.card.zip</a>
 			</p>
 			<pre class="lang-yaml">
@@ -70,8 +69,8 @@
    -  messagebundle.properties
    -  messagebundle_en.properties
    -  messagebundle_de.properties
--  designtime
-   -  Card.designtime.js
+-  dt
+   -  Configuration.js
 		</pre>
 
 			<p>
@@ -97,8 +96,8 @@
 		}
 	},
 	"sap.card": {
-		"designtime" : "designtime/Card.designtime",
 		"configuration": {
+			"editor": "./dt/Configuration"
 			"parameters": {
 				"city": {
 					"value": "Berlin"
