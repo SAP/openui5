@@ -824,6 +824,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Called when LayoutData of actions/content buttons is changed
+	 */
+	DynamicPageTitle.prototype.onLayoutDataChange = function(oEvent) {
+		var oEventSource = oEvent.srcControl,
+			oOverflowToolbar = oEventSource && typeof oEventSource._fnOriginalGetParent === "function" && oEventSource._fnOriginalGetParent();
+
+		if (oOverflowToolbar) {
+			oOverflowToolbar.onLayoutDataChange(oEvent);
+		}
+	};
+
+	/**
 	 * Starts observing the <code>visible</code> property.
 	 * @param {sap.ui.core.Control} oControl
 	 * @private
@@ -1278,7 +1290,9 @@ sap.ui.define([
 			actionsAreaFlexBasis: this._sActionsAreaFlexBasis,
 			contentAreaHasContent: this._bContentAreaHasContent,
 			actionsAreaHasContent: this._bActionsAreaHasContent,
-			isFocusable: this._bIsFocusable
+			isFocusable: this._bIsFocusable,
+			actionsAreaMinWidth: this._sActionsAreaMinWidth,
+			contentAreaMinWidth: this._sContentAreaMinWidth
 		};
 	};
 
@@ -1326,7 +1340,8 @@ sap.ui.define([
 	*/
 	DynamicPageTitle.prototype._observeContentChanges = function (oChanges) {
 		var oControl = oChanges.child,
-			sMutation = oChanges.mutation;
+			sMutation = oChanges.mutation,
+			$node =  oControl.$().parent();
 
 		// Only overflow toolbar is supported as of now
 		if (!(oControl instanceof OverflowToolbar)) {
@@ -1335,9 +1350,12 @@ sap.ui.define([
 
 		if (sMutation === "insert") {
 			oControl.attachEvent("_contentSizeChange", this._onContentSizeChange, this);
+			oControl.attachEvent("_minWidthChange", this._onContentMinWidthChange, this);
 		} else if (sMutation === "remove") {
 			oControl.detachEvent("_contentSizeChange", this._onContentSizeChange, this);
-			this._setContentAreaFlexBasis(0, oControl.$().parent());
+			oControl.detachEvent("_minWidthChange", this._onContentMinWidthChange, this);
+			this._setContentAreaFlexBasis(0, $node);
+			$node.css({ "min-width": "" });
 		}
 	};
 
@@ -1349,7 +1367,27 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._onContentSizeChange = function (oEvent) {
 		var iContentSize = oEvent.getParameter("contentSize");
-			this._setContentAreaFlexBasis(iContentSize, oEvent.getSource().$().parent());
+		this._setContentAreaFlexBasis(iContentSize, oEvent.getSource().$().parent());
+	};
+
+	/**
+	 * Called whenever the required min-width of an overflow toolbar's content, used in the content aggregation, changes.
+	 * Min-width is defined as the total width of the content, which never overflows, and the overflow button.
+	 * @param oEvent
+	 * @private
+	 */
+		DynamicPageTitle.prototype._onContentMinWidthChange = function (oEvent) {
+		var iMinWidth = oEvent.getParameter("minWidth"),
+			sMinWidth = iMinWidth > 0 ? iMinWidth + "px" : "",
+			$node = oEvent.getSource().$().parent();
+
+		$node.css({ "min-width": sMinWidth });
+
+		if ($node.hasClass("sapFDynamicPageTitleMainContent")) {
+			this._sContentAreaMinWidth = sMinWidth;
+		} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
+			this._sActionsAreaMinWidth = sMinWidth;
+		}
 	};
 
 	/**
