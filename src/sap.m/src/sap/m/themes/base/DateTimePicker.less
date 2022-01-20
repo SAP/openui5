@@ -138,3 +138,83 @@ html:not(.sapUiMedia-StdExt-Phone) {
 		}
 	}
 }
+
+/* DateTimePicker in DynamicDateRange */
+
+.sapMDynamicDateRangePopover {
+
+	.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead {
+		max-width: 100%;
+	}
+
+	.sapMDateTimePopupCont {
+		min-width: 20rem;
+		overflow: hidden auto !important;
+		display: block;
+		height: 100%;
+		padding: 0;
+		.sapUiCal .sapUiCalMonthView, .sapUiCal .sapUiCalRow {
+			padding-bottom: 0;
+		}
+	}
+
+	.sapUiSizeCompact .sapMDateTimePopupCont {
+		min-width: 17rem;
+	}
+
+	.sapMTimePickerSep {
+		display: none;
+	}
+
+	.sapMDateTimePopupCont > .sapUiCal {
+		width: 100%;
+		height: auto;
+	}
+
+	.sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+		width: 100%;
+		height: 22rem;
+	}
+
+	.sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
+		height: 15.25rem;
+		width: 100%;
+	}
+
+	.sapMDateTimePopupCont {
+		  background-color: @sapUiListBackground;
+		.sapUiCalContent {
+			& > .sapUiCalMonthPicker,
+			& > .sapUiCalYearPicker {
+				width: 100%;
+				box-sizing: border-box;
+				left: 0;
+				margin: 0;
+			}
+		}
+		.sapMTPClocksContainer {
+			width: 100%;
+			height: auto;
+			.sapMTPCButtons,
+			.sapMTPCClocks {
+				margin: 0 auto;
+			}
+		}
+	}
+
+}
+
+html.sapUiMedia-Std-Tablet .sapMDynamicDateRangePopover .sapMDateTimePopupCont > .sapUiCal:not(.sapUiCalInt),
+html.sapUiMedia-StdExt-Tablet .sapMDynamicDateRangePopover .sapMDateTimePopupCont > .sapUiCal:not(.sapUiCalInt) {
+	width: 100%;
+}
+
+.sapUiSizeCompact .sapMDDRPopover .sapMPageWithFooter > section,
+.sapMDDRPopover .sapMPageWithFooter > section {
+	bottom: 2rem;
+}
+
+.sapUiSizeCompact .sapMDynamicDateRangePopover .sapUiCal:not(.sapUiCalInt) {
+	width: 100%;
+}
+

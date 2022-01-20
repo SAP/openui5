@@ -68,6 +68,7 @@ sap.ui.define([
 
 		var Keys = {
 			"DATE": "DATE",
+			"DATETIME": "DATETIME",
 			"DATERANGE": "DATERANGE",
 			"TODAY": "TODAY",
 			"YESTERDAY": "YESTERDAY",
@@ -125,6 +126,7 @@ sap.ui.define([
 
 		var _OptionsGroup = {
 			"DATE": _Groups.SingleDates,
+			"DATETIME": _Groups.SingleDates,
 			"DATERANGE": _Groups.DateRanges,
 			"TODAY": _Groups.SingleDates,
 			"YESTERDAY": _Groups.SingleDates,
@@ -260,6 +262,12 @@ sap.ui.define([
 					case Keys.QUARTER4:
 						this.aValueHelpUITypes = [];
 						break;
+					case Keys.DATETIME:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								type: "datetime"
+							})];
+						break;
 					case Keys.DATE:
 					case Keys.FROM:
 					case Keys.TO:
@@ -323,16 +331,18 @@ sap.ui.define([
 		 * Returns an array of controls which is mapped to the parameters of this DynamicDateOption.
 		 */
 		StandardDynamicDateOption.prototype.createValueHelpUI = function(oControl, fnControlsUpdated) {
-			var oOptions = oControl._getOptions();
-			var oValue = oControl.getValue();
-			var aParams = this.getValueHelpUITypes(oControl);
-			var aControls = [];
+			var oOptions = oControl._getOptions(),
+				oValue = oControl.getValue(),
+				aParams = this.getValueHelpUITypes(oControl),
+				aControls = [];
+
 			if (!oControl.aControlsByParameters) {
 				oControl.aControlsByParameters = {};
 			}
 			oControl.aControlsByParameters[this.getKey()] = [];
-			var oLastOptionParam = this._getOptionParams(aLastOptions, oOptions);
-			var oNextOptionParam = this._getOptionParams(aNextOptions, oOptions);
+
+			var oLastOptionParam = this._getOptionParams(aLastOptions, oOptions),
+				oNextOptionParam = this._getOptionParams(aNextOptions, oOptions);
 
 			if (oLastOptionParam) {
 				aParams.push(oLastOptionParam);
@@ -367,6 +377,12 @@ sap.ui.define([
 						break;
 					case "date":
 						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated);
+						break;
+					case "datetime":
+						if (aParams.length === 1) {
+							// creates "single" DateTime option (embedded in the DynamicDateRange popup)
+							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+						}
 						break;
 					case "daterange":
 						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated);
@@ -478,6 +494,14 @@ sap.ui.define([
 							return false;
 						}
 						break;
+					case "datetime":
+						if (aParams.length === 1) {
+							// validates "single" DateTime option (embedded in the DynamicDateRange popup)
+							if (!oInputControl.getCalendar().getSelectedDates() || oInputControl.getCalendar().getSelectedDates().length == 0) {
+								return false;
+							}
+						}
+						break;
 					case "options":
 						if (oInputControl.getSelectedIndex() < 0) {
 							return false;
@@ -532,6 +556,25 @@ sap.ui.define([
 
 						vOutput = oInputControl.getSelectedDates()[0].getStartDate();
 						break;
+					case "datetime":
+						if (aParams.length === 1) {
+							// "single" DateTime picker (embedded in the DynamicDateRange popup)
+							var oDate,
+								oTimeDate,
+								oCalendar,
+								oClocks;
+
+							oCalendar = oInputControl.getCalendar();
+							oClocks = oInputControl.getClocks();
+							if (!oCalendar.getSelectedDates().length) {
+								return null;
+							}
+							oDate = oCalendar.getSelectedDates()[0].getStartDate();
+							oTimeDate = oClocks.getTimeValues();
+							oDate.setHours(oTimeDate.getHours(), oTimeDate.getMinutes(), oTimeDate.getSeconds());
+							vOutput = oDate;
+						}
+						break;
 					case "daterange":
 						if (!oInputControl.getSelectedDates().length) {
 							return null;
@@ -584,6 +627,9 @@ sap.ui.define([
 					return UniversalDateUtils.getRange(0, "MONTH", oDate);
 				case "DATE":
 					return UniversalDateUtils.getRange(0, "DAY", UniversalDate.getInstance(oValue.values[0]));
+				case "DATETIME":
+					var oDateTime = new UniversalDate.getInstance(oValue.values[0]);
+					return [oDateTime, oDateTime];
 				case "DATERANGE":
 					var oStart = UniversalDate.getInstance(oValue.values[0]);
 					var oEnd = UniversalDate.getInstance(oValue.values[1]);

@@ -119,7 +119,8 @@ sap.ui.define([
 			"QUARTER4": new StandardDynamicDateOption({ key: "QUARTER4", valueTypes: [] }),
 			"SPECIFICMONTH": new StandardDynamicDateOption({ key: "SPECIFICMONTH", valueTypes: ["int"] }),
 			"DATERANGE": new StandardDynamicDateOption({ key: "DATERANGE", valueTypes: ["date", "date"] }),
-			"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] })
+			"DATE": new StandardDynamicDateOption({ key: "DATE", valueTypes: ["date"] }),
+			"DATETIME": new StandardDynamicDateOption({ key: "DATETIME", valueTypes: ["datetime"] })
 		},
 		_allKeys: STANDARD_KEYS_ARRAY.slice(0)
 	};

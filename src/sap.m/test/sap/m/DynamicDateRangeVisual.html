@@ -75,6 +75,19 @@
 								"NEXTDAYS",
 								"TODAYFROMTO"
 							],
+						}),
+						new Label("DDR4-label", {text: "DateTime options", labelFor: "DDR4"}),
+						new DynamicDateRange("DDR4", {
+							enableGroupHeaders: false,
+							width: '300px',
+							value: {
+								operator: 'DATETIME',
+								values: [new Date(2000, 11, 20, 17, 0, 0)]
+							},
+							change: handleChange,
+							options: [
+								"DATETIME",
+							],
 						})
 					]
 				}).addStyleClass("sapUiSmallMargin");

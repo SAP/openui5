@@ -3404,9 +3404,15 @@ sap.ui.define([
 		 * The date will be selected from a calendar.
 		 * @public
 		 */
-		DATE : "DATE",
+		 DATE : "DATE",
 
 		/**
+		 * The date and time will be selected from a calendar and time picker.
+		 * @public
+		 */
+		 DATETIME : "DATETIME",
+
+		 /**
 		 * The date will be the day of selection.
 		 * @public
 		 */

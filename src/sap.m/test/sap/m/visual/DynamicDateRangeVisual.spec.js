@@ -4,6 +4,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	"use strict";
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.DynamicDateRange';
+	var iDefaultTimeout = 35000; // timeout for test execution in milliseconds
 
 	it("Mock now Date", function() {
 		var el = element(by.tagName('body'));
@@ -25,7 +26,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		// };
 
 		browser.executeScript('var a = new Date(2015,1,1);Date = class extends Date{constructor(options) {if (options) {super(options);} else {super(a);}}};', el);
-	});
+	}, iDefaultTimeout);
 
 	it("Suggestion popover gets opened", function() {
 		var oInput = element(by.id("DDR1-input-inner")),
@@ -36,7 +37,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oVBox)).toLookAs("suggestion_popover_opened");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-	});
+	}, iDefaultTimeout);
 
 	it("Input error state", function() {
 		var oInput = element(by.id("DDR1-input-inner")),
@@ -48,7 +49,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oVBox)).toLookAs("error_state_applied");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-	});
+	}, iDefaultTimeout);
 
 	it("Group headers disabled when there are more then ten options available", function() {
 		var oDDRInputField = element(by.id("DDR3-input-inner")),
@@ -63,7 +64,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oPopover)).toLookAs("group_headers_disabled");
 
 		browser.actions().sendKeys(sAltArrowDown).perform();
-	});
+	}, iDefaultTimeout);
 
 	it("Group headers enabled when there are less then ten options available", function() {
 		var oValueHelp = element(by.id("DDR2-input-vhi")),
@@ -74,7 +75,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oPopover)).toLookAs("group_headers_enabled");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-	});
+	}, iDefaultTimeout);
 
 	it("Fixed date and date range with 'Calendar' based UI", function() {
 		var oValueHelp = element(by.id("DDR2-input-vhi")),
@@ -112,7 +113,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oPopover)).toLookAs("month_ui_selected");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-	});
+	}, iDefaultTimeout);
 
 	it("Relative date and date range", function() {
 		var oValueHelp = element(by.id("DDR3-input-vhi")),
@@ -155,6 +156,25 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 
 		expect(takeScreenshot(oPopover)).toLookAs("today_x_y_values_changed");
+
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+	}, iDefaultTimeout);
+
+	it("DateTime option", function() {
+		var oValueHelp = element(by.id("DDR4-input-vhi")),
+			oPopover, aListItems;
+
+		oValueHelp.click();
+		oPopover = element(by.id("DDR4-RP-popover"));
+		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_list");
+
+		aListItems = element.all(by.css("#DDR4-RP-popover .sapMListItems .sapMSLI"));
+		aListItems.get(0).click(); // select Last X days
+		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_datepicker");
+
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_timepicker");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
