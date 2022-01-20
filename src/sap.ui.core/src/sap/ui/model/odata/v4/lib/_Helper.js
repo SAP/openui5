@@ -1551,6 +1551,10 @@ sap.ui.define([
 			return _Helper.getRelativePath(sPath, sBasePath) !== undefined;
 		},
 
+		// Trampoline property to allow for mocking function module in unit tests.
+		// @see sap.base.util.isEmptyObject
+		isEmptyObject : isEmptyObject,
+
 		/**
 		 * Tells whether the value is a safe integer.
 		 *
@@ -2162,7 +2166,7 @@ sap.ui.define([
 				}
 			}
 			if (oProperty.$kind === "Property") {
-				if (Object.keys(mChildQueryOptions).length > 0) {
+				if (!isEmptyObject(mChildQueryOptions)) {
 					Log.error("Failed to enhance query options for auto-$expand/$select as the"
 							+ " child binding has query options, but its path '" + sChildMetaPath
 							+ "' points to a structural property",
