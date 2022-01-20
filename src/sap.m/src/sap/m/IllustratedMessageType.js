@@ -95,6 +95,12 @@ sap.ui.define([], function() {
 		UnableToLoad: "sapIllus-UnableToLoad",
 
 		/**
+		 * "Unable To Load Image" illustration type.
+		 * @public
+		 */
+		 UnableToLoadImage: "sapIllus-UnableToLoadImage",
+
+		/**
 		 * "Unable To Upload" illustration type.
 		 * @public
 		 */
@@ -215,10 +221,10 @@ sap.ui.define([], function() {
 		SimpleCalendar: "sapIllus-SimpleCalendar",
 
 		/**
-		 * "Simple Checkmark" illustration type.
+		 * "Simple CheckMark" illustration type.
 		 * @public
 		 */
-		SimpleCheckmark: "sapIllus-SimpleCheckmark",
+		SimpleCheckMark: "sapIllus-SimpleCheckMark",
 
 		/**
 		 * "Simple Connection" illustration type.
@@ -291,6 +297,24 @@ sap.ui.define([], function() {
 		 * @public
 		 */
 		SortColumn: "sapIllus-SortColumn",
+
+		/**
+		 * "Success Balloon" illustration type.
+		 * @public
+		 */
+		SuccessBalloon: "sapIllus-SuccessBalloon",
+
+		/**
+		 * "Success CheckMark" illustration type.
+		 * @public
+		 */
+		SuccessCheckMark: "sapIllus-SuccessCheckMark",
+
+		/**
+		 * "Success HighFive" illustration type.
+		 * @public
+		 */
+		SuccessHighFive: "sapIllus-SuccessHighFive",
 
 		/**
 		 * "Success Screen" illustration type.

@@ -229,7 +229,7 @@ sap.ui.define([
 		SimpleBalloon: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky,
 		SimpleBell: IllustratedMessage.ORIGINAL_TEXTS.NoNotifications,
 		SimpleCalendar: IllustratedMessage.ORIGINAL_TEXTS.NoActivities,
-		SimpleCheckmark: IllustratedMessage.ORIGINAL_TEXTS.SuccessScreen,
+		SimpleCheckMark: IllustratedMessage.ORIGINAL_TEXTS.SuccessScreen,
 		SimpleConnection: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
 		SimpleEmptyDoc: IllustratedMessage.ORIGINAL_TEXTS.NoData,
 		SimpleEmptyList: IllustratedMessage.ORIGINAL_TEXTS.NoEntries,
@@ -239,7 +239,10 @@ sap.ui.define([
 		SimpleNoSavedItems: IllustratedMessage.ORIGINAL_TEXTS.NoSavedItems,
 		SimpleNotFoundMagnifier: IllustratedMessage.ORIGINAL_TEXTS.NoSearchResults,
 		SimpleReload: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
-		SimpleTask: IllustratedMessage.ORIGINAL_TEXTS.NoTasks
+		SimpleTask: IllustratedMessage.ORIGINAL_TEXTS.NoTasks,
+		SuccessBalloon: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky,
+		SuccessCheckMark: IllustratedMessage.ORIGINAL_TEXTS.SuccessScreen,
+		SuccessHighFive: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky
 	};
 
 	IllustratedMessage.PREPENDS = {
