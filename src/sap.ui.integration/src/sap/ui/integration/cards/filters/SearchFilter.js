@@ -55,7 +55,7 @@ sap.ui.define([
 	 */
 	SearchFilter.prototype.getValueForModel = function () {
 		return {
-			value: this._getSearchField().getValue()
+			value: this._escapeDoubleQuotes(this._getSearchField().getValue())
 		};
 	};
 
@@ -92,6 +92,10 @@ sap.ui.define([
 		}.bind(this));
 
 		return oSearchField;
+	};
+
+	SearchFilter.prototype._escapeDoubleQuotes = function (sValue) {
+		return sValue.replaceAll("\"", "\\\"");
 	};
 
 	return SearchFilter;
