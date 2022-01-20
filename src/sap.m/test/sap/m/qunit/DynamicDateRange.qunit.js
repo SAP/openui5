@@ -54,6 +54,33 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.module("basic functionality", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("Setting value", function(assert) {
+		// arrange
+		var oCustomValue = { operator: "DATE", values: [new Date(2020, 2, 31)]};
+		// act
+		this.ddr.setValue(oCustomValue);
+
+		// assert
+		assert.strictEqual(this.ddr._oInput.getValue(), "Mar 31, 2020", "The set value is the correct value");
+
+		// act
+		this.ddr.setValue();
+
+		// assert
+		assert.strictEqual(this.ddr._oInput.getValue(), "", "The set empty value is the correct value");
+	});
+
 	QUnit.module("CustomDynamicDateOption", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();

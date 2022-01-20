@@ -411,6 +411,8 @@ sap.ui.define([
 			if (oValue && oValue.operator !== "PARSEERROR") {
 				sInputValue = this._enhanceInputValue(this._formatValue(oValue), oValue);
 				this._oInput.setValue(sInputValue);
+			} else if (oValue === undefined) {
+				this._oInput.setValue("");
 			}
 		};
 
