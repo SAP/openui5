@@ -1267,51 +1267,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Moves the bound entity into the given list binding. This binding loses its data. The method
-	 * may only be called when this binding has finished loading. You can verify this by calling
-	 * <code>oBinding.getBoundContext().requestObject()</code>. If that promise resolves, the
-	 * binding has finished loading.
-	 *
-	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding
-	 *   The list binding to take the entity
-	 * @throws {Error} If
-	 *   <ul>
-	 *     <li> this binding is not a root binding,
-	 *     <li> this binding has not finished loading yet,
-	 *     <li> not all key properties of the bound entity have been selected (so that it is
-	 *       impossible to determine its key predicate),
-	 *     <li> the bound entity is not an entity of the list binding's collection,
-	 *     <li> this binding is an operation binding,
-	 *     <li> this binding has pending changes (see {@link #hasPendingChanges}),
-	 *     <li> this binding has a <code>$expand</code> to a collection or a dependent list binding
-	 *       without <code>$$ownRequest</code>,
-	 *     <li> the list binding is not suspended,
-	 *     <li> the list binding is relative and does not use the <code>$$ownRequest</code>
-	 *       parameter (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
-	 *     <li> the list binding uses data aggregation
-	 *       (@see sap.ui.model.odata.v4.ODataListBinding#setAggregation)
-	 *   </ul>
-	 *
-	 * @experimental
-	 * @public
-	 * @since 1.95.0
-	 */
-	ODataContextBinding.prototype.moveEntityTo = function (oListBinding) {
-		if (!this.isRoot()) {
-			throw new Error(this + ": must be a root binding");
-		}
-		if (this.oOperation) {
-			throw new Error(this + ": must not be an operation binding");
-		}
-		if (this.hasPendingChanges()) {
-			throw new Error(this + ": has pending changes");
-		}
-
-		oListBinding.moveEntityHere(this.oElementContext);
-		this.oElementContext = null;
-	};
-
-	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */

@@ -37,9 +37,6 @@ sap.ui.define([
 				"SalesOrderList?$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=SalesOrderID&$skip=0&$top=5" : {
 					source : "SalesOrderList.json"
 				},
-				"SalesOrderList?$count=true&$filter=SalesOrderID%20ge%20'0500000000'%20and%20LifecycleStatus%20eq%20'N'&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=5&$top=5" : {
-					source : "SalesOrderList_skip5_top5.json"
-				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$orderby=GrossAmount,ItemPosition&$select=CurrencyCode,GrossAmount,ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
 					source : "SalesOrderList('0500000000')-SO_2_ITEM-OrderByGrossAmount.json"
 				},
@@ -117,12 +114,6 @@ sap.ui.define([
 				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$select=GrossAmount,ItemPosition,Quantity,SalesOrderID&$filter=SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000080'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000090'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000050'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000030'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000100'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000010'&$top=6" : {
 					source : "SalesOrderList('0500000000')-requestSideEffects.json"
-				},
-				"SalesOrderList('0500000009')?$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Messages,Note,SalesOrderID" : {
-					source : "SalesOrderList('0500000009').json"
-				},
-				"SalesOrderList('0500000009')/SO_2_SOITEM(SalesOrderID='0500000009',ItemPosition='0000000010')?$select=ItemPosition,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
-					source : "SalesOrderList('0500000009')-SO_2_SOITEM(SalesOrderID='0500000009',ItemPosition='0000000010').json"
 				}
 			},
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",

@@ -83,16 +83,6 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				pressMore : function () {
-					return this.waitFor({
-						id : "SalesOrderList-trigger",
-						success : function (oTrigger) {
-							new Press().executeOn(oTrigger);
-							Opa5.assert.ok(true, "'More' Button pressed");
-						},
-						viewName : sViewName
-					});
-				},
 				refresh : function () {
 					this.waitFor({
 						success : function () {
