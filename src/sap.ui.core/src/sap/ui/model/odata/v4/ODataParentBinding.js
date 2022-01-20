@@ -189,15 +189,16 @@ sap.ui.define([
 	 * "5.1.2 System Query Option $expand" and "5.1.3 System Query Option $select" in specification
 	 * "OData Version 4.0 Part 2: URL Conventions".
 	 *
-	 * @param {object} mQueryOptions The query options to be merged
-	 * @param {string} sBaseMetaPath This binding's meta path
-	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
+	 * @param {object} mQueryOptions - The query options to be merged
+	 * @param {string} sBaseMetaPath - This binding's meta path
+	 * @param {boolean} bCacheImmutable - Whether the cache of this binding is immutable
+	 * @param {boolean} bIsProperty - Whether the child is a property binding
 	 * @returns {boolean} Whether the query options can be fulfilled by this binding
 	 *
 	 * @private
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, sBaseMetaPath,
-			bCacheImmutable) {
+			bCacheImmutable, bIsProperty) {
 		var mAggregatedQueryOptionsClone = _Helper.merge({},
 				bCacheImmutable && this.mLateQueryOptions || this.mAggregatedQueryOptions),
 			bChanged = false,
@@ -254,8 +255,9 @@ sap.ui.define([
 
 			// Top-level all query options in the aggregate are OK, even if not repeated in the
 			// child. In a $expand the child must also have them (and the second loop checks that
-			// they're equal).
-			return (!bInsideExpand || Object.keys(mAggregatedQueryOptions).every(function (sName) {
+			// they're equal). Property bindings are an exception to this rule.
+			return (bIsProperty || !bInsideExpand
+				|| Object.keys(mAggregatedQueryOptions).every(function (sName) {
 					return sName in mQueryOptions0 || sName === "$count" || sName === "$expand"
 						|| sName === "$select";
 				}))
@@ -638,6 +640,8 @@ sap.ui.define([
 	 *   The child binding's binding path relative to <code>oContext</code>
 	 * @param {object|sap.ui.base.SyncPromise} vChildQueryOptions
 	 *   The child binding's (aggregated) query options or a promise resolving with them
+	 * @param {boolean} bIsProperty
+	 *   Whether the child is a property binding
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolved with the reduced path for the child binding if the child binding can use
 	 *   this binding's or an ancestor binding's cache; resolved with <code>undefined</code>
@@ -647,7 +651,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataMetaModel#getReducedPath
 	 */
 	ODataParentBinding.prototype.fetchIfChildCanUseCache = function (oContext, sChildPath,
-			vChildQueryOptions) {
+			vChildQueryOptions, bIsProperty) {
 		// getBaseForPathReduction must be called early, because the (virtual) parent context may be
 		// lost again when the path is needed
 		var sBaseForPathReduction = this.getBaseForPathReduction(),
@@ -759,7 +763,7 @@ sap.ui.define([
 			if (bIsAdvertisement) {
 				mWrappedChildQueryOptions = {$select : [sReducedChildMetaPath.slice(1)]};
 				return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
-						bCacheImmutable)
+						bCacheImmutable, bIsProperty)
 					? sReducedPath
 					: undefined;
 			}
@@ -771,7 +775,7 @@ sap.ui.define([
 					that.oModel.oInterface.fetchMetadata);
 				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
-							bCacheImmutable)
+							bCacheImmutable, bIsProperty)
 						? sReducedPath
 						: undefined;
 				}
@@ -779,7 +783,7 @@ sap.ui.define([
 			}
 			if (sReducedChildMetaPath === "value") { // symbolic name for operation result
 				return that.aggregateQueryOptions(mChildQueryOptions, sBaseMetaPath,
-						bCacheImmutable)
+						bCacheImmutable, bIsProperty)
 					? sReducedPath
 					: undefined;
 			}
