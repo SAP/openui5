@@ -2668,8 +2668,12 @@ function(
 
 			// adding timeout of 0 ensures the DOM is ready in case of rerendering
 			setTimeout(function() {
-				oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
-				return resolve();
+				try {
+					oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
+					resolve();
+				} catch (e) {
+					reject(e);
+				}
 			}.bind(this), 0);
 		}.bind(this));
 	};
