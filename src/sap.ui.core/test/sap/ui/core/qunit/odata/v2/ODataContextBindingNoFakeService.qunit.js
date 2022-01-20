@@ -527,10 +527,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext: context is transient", function (assert) {
+[{ // skip context propagation because sResolvedPath is falsy
+	navigationProperty : undefined,
+	resolvedPath : undefined,
+	skipTransientContextPropagation : true
+}, { // skip context propagation because a navigation property was detected
+	navigationProperty : "~navigationProperty",
+	resolvedPath : "~resolvedPath",
+	skipTransientContextPropagation : true
+}, { // don't skip context propagation for resolved paths without navigation properties
+	navigationProperty : "",
+	resolvedPath : "~resolvedPath",
+	skipTransientContextPropagation : false
+}].forEach(function (oFixture, i) {
+	var sTitle = "setContext: context is transient; no context propagation for navigation "
+			+ "properties #" + i;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				oContext : "~context",
 				oElementContext : "~oOldElementContext",
+				oModel : {
+					oMetadata : {_splitByLastNavigationProperty : function () {}},
+					_getObject : function () {},
+					_isReloadNeeded : function () {},
+					createBindingContext : function () {}
+				},
+				mParameters : "~parameters",
+				sPath : "~path",
 				_fireChange : function () {},
 				getResolvedPath : function () {},
 				isRelative : function () {}
@@ -550,7 +574,26 @@ sap.ui.define([
 		this.mock(BaseContext).expects("hasChanged")
 			.withExactArgs("~context", sinon.match.same(oNewContext))
 			.returns(true);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("getResolvedPath")
+			.withExactArgs()
+			.returns(oFixture.resolvedPath);
+		this.mock(oBinding.oModel.oMetadata).expects("_splitByLastNavigationProperty")
+			.withExactArgs(oFixture.resolvedPath)
+			.exactly(oFixture.resolvedPath ? 1 : 0)
+			.returns({lastNavigationProperty : oFixture.navigationProperty});
+		this.mock(oBinding.oModel).expects("_getObject")
+			.withExactArgs("~path", sinon.match.same(oNewContext))
+			.exactly(oFixture.skipTransientContextPropagation ? 0 : 1)
+			.returns("~oData");
+		this.mock(oBinding.oModel).expects("_isReloadNeeded")
+			.withExactArgs(oFixture.resolvedPath, "~parameters")
+			.exactly(oFixture.skipTransientContextPropagation ? 0 : 1)
+			.returns(false);
+		this.mock(oBinding.oModel).expects("createBindingContext")
+			.withExactArgs("~path", sinon.match.same(oNewContext), "~parameters", sinon.match.func,
+				false)
+			.exactly(oFixture.skipTransientContextPropagation ? 0 : 1)
+			.returns(undefined);
 		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
@@ -558,6 +601,7 @@ sap.ui.define([
 
 		assert.strictEqual(ODataContextBinding.prototype.getBoundContext.call(oBinding), null);
 	});
+});
 
 	//*********************************************************************************************
 [true, false].forEach(function (bV2Context) {

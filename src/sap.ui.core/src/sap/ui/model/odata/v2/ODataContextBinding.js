@@ -278,7 +278,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.setContext = function(oContext) {
-		var oBindingContext, sContextPath, oData, bReloadNeeded, sResolvedPath,
+		var oBindingContext, sContextPath, oData, sNavigationProperty, bReloadNeeded, sResolvedPath,
 			bForceUpdate = oContext && oContext.isRefreshForced(),
 			bPreliminary = oContext && oContext.isPreliminary(),
 			bTransient = oContext && oContext.isTransient && oContext.isTransient(),
@@ -301,8 +301,12 @@ sap.ui.define([
 		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
 			sResolvedPath = this.getResolvedPath();
-			// If path doesn't resolve or parent context is created, reset current context
-			if (!sResolvedPath || bTransient) {
+			if (sResolvedPath && bTransient) {
+				// prevent propagation of transient context if it refers to a navigation property
+				sNavigationProperty = this.oModel.oMetadata
+					._splitByLastNavigationProperty(sResolvedPath).lastNavigationProperty;
+			}
+			if (!sResolvedPath || sNavigationProperty) {
 				if (this.oElementContext !== null) {
 					this.oElementContext = null;
 					this._fireChange({ reason: ChangeReason.Context });

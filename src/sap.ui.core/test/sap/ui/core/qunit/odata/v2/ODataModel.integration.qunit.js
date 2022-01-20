@@ -12546,6 +12546,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: After creation of an inactive entity with a complex type, the first valid edit
 	// within the complex type activates the inactive entity.
 	// JIRA: CPOUI5MODELS-717
+	// JIRA: CPOUI5MODELS-827
 	QUnit.test("Create inactive entity and activate it (complex type)", function (assert) {
 		var oCreatedContext, oObjectPage, oTable,
 			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
@@ -12555,7 +12556,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Text id="company" text="{CompanyName}"/>\
 </t:Table>\
 <FlexBox id="objectPage">\
-	<Input id="city" value="{City}" />\
+	<FlexBox binding="{path : \'Address\', parameters : {select : \'City\'}}">\
+		<Input id="city" value="{City}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
@@ -12576,10 +12579,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oObjectPage = that.oView.byId("objectPage");
 			that.expectValue("city", "Walldorf");
 
-			oObjectPage.bindElement({
-				path : oTable.getRows()[0].getBindingContext().getPath() + "/Address",
-				parameters : {select : "City"}
-			});
+			oObjectPage.setBindingContext(oTable.getRows()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -12595,10 +12595,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			that.expectValue("city", "");
 
-			oObjectPage.bindElement({
-				path : oCreatedContext.getPath() + "/Address",
-				parameters : {select : "City"}
-			});
+			oObjectPage.setBindingContext(oCreatedContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -12629,11 +12626,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					},
 					statusCode : 201
 				})
-				.expectValue("id", "43", 1)
-				// received data has an updated key predicate; internal model data updates this key
-				// predicate but element binding "objectPage" still has its old absolute path
-				// => element binding will no longer find the data
-				.expectValue("city", "");
+				.expectValue("id", "43", 1);
 
 			// code under test: activated entity triggers request
 			oModel.submitChanges();
@@ -12643,15 +12636,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			that.expectValue("city", "Berlin");
-
-			// code under test: setting element binding with its updated key predicate restores data
-			oObjectPage.bindElement({
-				path : oCreatedContext.getPath() + "/Address",
-				parameters : {select : "City"}
-			});
-
-			return that.waitForChanges(assert);
+			assert.strictEqual(that.oView.byId("city").getBindingContext().getPath(),
+				"/BusinessPartnerSet('43')/Address");
 		});
 	});
 
