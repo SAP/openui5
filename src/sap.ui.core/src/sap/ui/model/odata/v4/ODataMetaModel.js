@@ -3127,6 +3127,10 @@ sap.ui.define([
 	 *   information exists. It is also rejected with an error if the value list metadata is
 	 *   inconsistent.
 	 *
+	 *   Since 1.99.0, the <code>com.sap.vocabularies.Common.v1.ValueListWithFixedValues</code>
+	 *   annotation wins, even if a <code>com.sap.vocabularies.Common.v1.ValueList</code> annotation
+	 *   in the service itself has the <code>SearchSupported</code> property.
+	 *
 	 *   An inconsistency can result from one of the following reasons:
 	 *   <ul>
 	 *     <li> There is a reference, but the referenced service does not contain mappings for the
@@ -3138,9 +3142,6 @@ sap.ui.define([
 	 *     <li> There are multiple mappings for a fixed value list.
 	 *     <li> A <code>com.sap.vocabularies.Common.v1.ValueList</code> annotation in a referenced
 	 *       service has the property <code>CollectionRoot</code> or <code>SearchSupported</code>.
-	 *     <li> A <code>com.sap.vocabularies.Common.v1.ValueList</code> annotation in the service
-	 *       itself has the property <code>SearchSupported</code> and additionally the annotation
-	 *       <code>com.sap.vocabularies.Common.v1.ValueListWithFixedValues</code> is defined.
 	 *   </ul>
 	 *
 	 * @public
@@ -3183,11 +3184,6 @@ sap.ui.define([
 			 * @throws {Error} If there is already a mapping for the given qualifier
 			 */
 			function addMapping(mValueListMapping, sQualifier, sMappingUrl, oModel) {
-				if (bFixedValues !== undefined && "SearchSupported" in mValueListMapping) {
-					throw new Error("Must not set 'SearchSupported' in annotation "
-						+ "'com.sap.vocabularies.Common.v1.ValueList' and annotation "
-						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
-				}
 				if ("CollectionRoot" in mValueListMapping) {
 					oModel = that.getOrCreateSharedModel(mValueListMapping.CollectionRoot,
 						undefined, bAutoExpandSelect);
