@@ -499,26 +499,27 @@ function (
 				oSecondSection = oPage.getSections()[1],
 				oSecondSection_secondSubsection = oSecondSection.getSubSections()[1],
 				done = assert.async(),
+				iScrollPosition,
 				fnOnDomReady = function() {
 					oPage.detachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 					oPage.scrollToSection(oSecondSection_secondSubsection.getId(), 0);
+					iScrollPosition = oPage._computeScrollPosition(oSecondSection_secondSubsection);
+					// call the scroll listener synchronously to save a timeout
+					oPage._onScroll({target: {scrollTop: iScrollPosition}});
+					sectionIsSelected(oPage, assert, {
+						bSnapped: true,
+						iAnchorBarSelectionIndex: 1
+					});
 
-					setTimeout(function() {
-						sectionIsSelected(oPage, assert, {
-							bSnapped: true,
-							iAnchorBarSelectionIndex: 1
-						});
+					// act
+					oSecondSection.setVisible(false); // hide the entire section
 
-						// act
-						oSecondSection.setVisible(false); // hide the entire section
+					sectionIsSelected(oPage, assert, { //selection moved to the first visible section
+						bSnapped: true,
+						iAnchorBarSelectionIndex: 1 // TODO Verify this is correct since these tests were disabled (changed from 0)
+					});
 
-						sectionIsSelected(oPage, assert, { //selection moved to the first visible section
-							bSnapped: true,
-							iAnchorBarSelectionIndex: 1 // TODO Verify this is correct since these tests were disabled (changed from 0)
-						});
-
-						done();
-					}, 0);
+					done();
 				};
 			oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 		});
@@ -530,34 +531,37 @@ function (
 				oSecondSection_secondSubsection = oPage.getSections()[1].getSubSections()[1],
 				bExpectedSnapped = true,
 				done = assert.async(),
+				iScrollPosition,
 				fnOnDomReady = function() {
 					oPage.detachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 
 					oPage.scrollToSection(oSecondSection_secondSubsection.getId(), 0);
+					iScrollPosition = oPage._computeScrollPosition(oSecondSection_secondSubsection);
+					// call the scroll listener synchronously to save a timeout
+					oPage._onScroll({target: {scrollTop: iScrollPosition}});
 
-					setTimeout(function() {
+					sectionIsSelected(oPage, assert, {
+						bSnapped: bExpectedSnapped,
+						iAnchorBarSelectionIndex: 1
+					});
 
-						sectionIsSelected(oPage, assert, {
-							bSnapped: bExpectedSnapped,
-							iAnchorBarSelectionIndex: 1
-						});
+					// act
+					oSecondSection_secondSubsection.setVisible(false); // hide the current subsection
 
-						// act
-						oSecondSection_secondSubsection.setVisible(false); // hide the current subsection
+					if (oPage.getUseIconTabBar()) {
+						/* only one subsection remained => we are on top of the section => in iconTabBar no need to snap */
+						bExpectedSnapped = true; // TODO Verify this is correct since these tests were disabled (changed from false)
+					}
 
-						if (oPage.getUseIconTabBar()) {
-							/* only one subsection remained => we are on top of the section => in iconTabBar no need to snap */
-							bExpectedSnapped = true; // TODO Verify this is correct since these tests were disabled (changed from false)
-						}
-						setTimeout(function() {
-							sectionIsSelected(oPage, assert, {
-								bSnapped: bExpectedSnapped,
-								iAnchorBarSelectionIndex: 1
-							});
-							done();
-						}, 0);
-					}, 0); //scroll delay
-				};
+					Core.applyChanges();
+
+					sectionIsSelected(oPage, assert, {
+						bSnapped: bExpectedSnapped,
+						iAnchorBarSelectionIndex: 1
+					});
+					done();
+
+			};
 			oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 		});
 	}
