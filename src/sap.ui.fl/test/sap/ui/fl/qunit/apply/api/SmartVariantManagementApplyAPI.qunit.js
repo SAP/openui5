@@ -241,6 +241,13 @@ sap.ui.define([
 			assert.equal(bVendorLayer, false);
 		});
 
+		QUnit.test("When isDeveloperLayer() is called it calls the corresponding Utils function", function (assert) {
+			sandbox.stub(LayerUtils, "isDeveloperLayer").withArgs().returns(false);
+			var bVendorLayer = SmartVariantManagementApplyAPI.isDeveloperLayer();
+
+			assert.equal(bVendorLayer, false);
+		});
+
 		QUnit.test("When isVariantDownport() is called it calls the corresponding Utils function", function (assert) {
 			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs().returns('VENDOR');
 			sandbox.stub(Utils, "isHotfixMode").withArgs().returns(true);
