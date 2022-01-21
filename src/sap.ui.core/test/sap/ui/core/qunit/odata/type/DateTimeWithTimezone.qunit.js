@@ -16,7 +16,8 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+	var sClassName = "sap.ui.model.odata.type.DateTimeWithTimezone",
+		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone();
 
 	//*********************************************************************************************
@@ -136,27 +137,34 @@ sap.ui.define([
 		[new Date(), null],
 		[undefined, "~timezone"]
 	].forEach(function (aValues, i) {
+		["string", "object"].forEach(function (sTargetType) {
 	var sTitle = "formatValue: no values, no timezone or undefined timestamp lead to null; "
-		+ "oFormatOptions="
+		+ "oFormatOptions = "
 		+ (oFormatOptions === undefined ? "undefined" : JSON.stringify(oFormatOptions))
-		+ ", #" + i;
+		+ ", sTargetType = " + sTargetType + ", #" + i;
 
 	QUnit.test(sTitle, function (assert) {
 		var oType = new DateTimeWithTimezone(oFormatOptions);
 
 		// code under test
-		assert.strictEqual(oType.formatValue(aValues, "string"), null);
+		assert.strictEqual(oType.formatValue(aValues, sTargetType), null);
 	});
+		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("formatValue: no Date and showTimezone = 'Hide' returns null", function (assert) {
+["string", "object"].forEach(function (sTargetType) {
+	var sTitle = "formatValue: no Date and showTimezone = 'Hide' returns null; sTargetType = "
+			+ sTargetType;
+
+	QUnit.test(sTitle, function (assert) {
 		var oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Hide});
 
 		// code under test
 		assert.strictEqual(oType.formatValue([null, "~timezone"], "string"), null);
 	});
+});
 
 	//*********************************************************************************************
 [
@@ -189,7 +197,7 @@ sap.ui.define([
 	{showTimezone : DateFormatTimezoneDisplay.Only},
 	{showTimezone : DateFormatTimezoneDisplay.Show}
 ].forEach(function (oFormatOptions) {
-	var sTitle = "formatValue: no Date given, oFormatOptions = "
+	var sTitle = "formatValue: no Date given, sTargetType = 'string', oFormatOptions = "
 		+ (oFormatOptions === undefined ? "undefined" : JSON.stringify(oFormatOptions));
 
 	QUnit.test(sTitle, function (assert) {
@@ -208,14 +216,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["any", "boolean", "int", "float", "object"].forEach(function (sPrimitiveTargetType) {
-	QUnit.test("formatValue: to " + sPrimitiveTargetType + " not supported", function (assert) {
+["any", "boolean", "int", "float"].forEach(function (sType) {
+	QUnit.test("formatValue: to " + sType + " not supported", function (assert) {
 		var oType = new DateTimeWithTimezone();
 
 		this.mock(oType).expects("getName").withExactArgs().returns("~DateTimeWithTimezone");
-		this.mock(oType).expects("getPrimitiveType")
-			.withExactArgs("~targetType")
-			.returns(sPrimitiveTargetType);
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~targetType").returns(sType);
 
 		// code under test
 		assert.throws(function () {
@@ -232,7 +238,7 @@ sap.ui.define([
 			oType = new DateTimeWithTimezone(),
 			oTypeMock = this.mock(oType);
 
-			oType.oFormatOptions = "~formatOptions";
+		oType.oFormatOptions = "~formatOptions";
 
 		oTypeMock.expects("getPrimitiveType").withExactArgs("~targetType").returns("string");
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
@@ -252,6 +258,40 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oType.formatValue([oDate, "~timezone"], "~targetType"),
 			"~formattedDate");
+	});
+
+	//*********************************************************************************************
+[
+	{},
+	{showTimezone : DateFormatTimezoneDisplay.Only},
+	{showTimezone : DateFormatTimezoneDisplay.Show}
+].forEach(function (oFormatOptions, i) {
+	[null, new Date()].forEach(function (oDate) {
+	var sTitle = "formatValue: to object (" + oDate + "), requires showTimezone = 'Hide', #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oType = new DateTimeWithTimezone(oFormatOptions);
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~targetType").returns("object");
+
+		assert.throws(function () {
+			// code under test
+			oType.formatValue([oDate, "~timezone"], "~targetType");
+		}, new FormatException("Type 'object' requires format option 'showTimezone' set to "
+			+ "sap.ui.core.format.DateFormatTimezoneDisplay.Hide"));
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("formatValue: to object", function (assert) {
+		var oDate = new Date(),
+			oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Hide});
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~targetType").returns("object");
+
+		// code under test
+		assert.strictEqual(oType.formatValue([oDate, "~timezone"], "~targetType"), oDate);
 	});
 
 	//*********************************************************************************************
@@ -306,7 +346,10 @@ sap.ui.define([
 	QUnit.test("parseValue: " + vValue + " to [null, undefined], #" + i, function (assert) {
 		var oType = new DateTimeWithTimezone(oFormatOptions);
 
-		assert.deepEqual(oType.parseValue(vValue, "string", [/*no relevant*/]), [null, undefined]);
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
+
+		assert.deepEqual(oType.parseValue(vValue, "~sourceType", [/*no relevant*/]),
+			[null, undefined]);
 	});
 	});
 });
@@ -342,14 +385,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["any", "boolean", "int", "float", "object"].forEach(function (sPrimitiveTargetType) {
-	QUnit.test("parseValue: to " + sPrimitiveTargetType + " not supported", function (assert) {
+["any", "boolean", "int", "float"].forEach(function (sType) {
+	QUnit.test("parseValue: to " + sType + " not supported", function (assert) {
 		var oType = new DateTimeWithTimezone();
 
 		this.mock(oType).expects("getName").withExactArgs().returns("~DateTimeWithTimezone");
-		this.mock(oType).expects("getPrimitiveType")
-			.withExactArgs("~sourceType")
-			.returns(sPrimitiveTargetType);
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns(sType);
 
 		// code under test
 		assert.throws(function () {
@@ -423,9 +464,9 @@ sap.ui.define([
 			oFormat = {parse : function (){}},
 			oType = new DateTimeWithTimezone();
 
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
 		oCoreMock.expects("getConfiguration").withExactArgs().returns(oConfiguration);
 		this.mock(oConfiguration).expects("getTimezone").withExactArgs().returns("~localTimezone");
-		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("string");
 		this.mock(DateFormat).expects("getDateTimeWithTimezoneInstance")
 			.withExactArgs({})
 			.returns(oFormat);
@@ -442,9 +483,14 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("parseValue: showTimezone='Hide' cannot parse value without current timezone",
-			function (assert) {
+["string", "object"].forEach(function (sType) {
+	var sTitle = "parseValue: to " + sType
+			+ ", showTimezone = 'Hide' cannot parse value without current timezone";
+
+	QUnit.test(sTitle, function (assert) {
 		var oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Hide});
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns(sType);
 
 		TestUtils.withNormalizedMessages(function () {
 			assert.throws(function () {
@@ -452,6 +498,70 @@ sap.ui.define([
 				oType.parseValue("~timestamp", "~sourceType", [null, null]);
 			}, new ParseException("EnterDateTimeTimezoneFirst"));
 		});
+	});
+});
+
+	//*********************************************************************************************
+[
+	{},
+	{showTimezone : DateFormatTimezoneDisplay.Show},
+	{showTimezone : DateFormatTimezoneDisplay.Only}
+].forEach(function (oFormatOptions, i) {
+	QUnit.test("parseValue: to object, requires showTimezone = 'Hide', #" + i, function (assert) {
+		var oType = new DateTimeWithTimezone(oFormatOptions);
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("object");
+
+		assert.throws(function () {
+			// code under test
+			oType.parseValue(new Date(), "~sourceType", [null, "Europe/Berlin"]);
+		}, new ParseException("Type 'object' requires format option 'showTimezone' set to "
+			+ "sap.ui.core.format.DateFormatTimezoneDisplay.Hide"));
+	});
+});
+
+	//*********************************************************************************************
+[undefined, null].forEach(function (vValue) {
+	var sTitle = "parseValue: to object, " + vValue + " results in [null, undefined]";
+
+	QUnit.test(sTitle, function (assert) {
+		var oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Hide});
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("object");
+
+		// code under test
+		assert.deepEqual(oType.parseValue(vValue, "~sourceType", [/*not relevant*/]),
+			[null, undefined]);
+	});
+});
+
+	//*********************************************************************************************
+[{}, "foo", 42].forEach(function (vValue) {
+	QUnit.test("parseValue: to object, not a Date object", function (assert) {
+		var oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Hide});
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("object");
+
+		assert.throws(function () {
+			// code under test
+			oType.parseValue(vValue, "~sourceType", [null,  "~timezone"]);
+		}, new ParseException("Given value must be an instance of Date"));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("parseValue: to object", function (assert) {
+		var oDate = new Date(),
+			aResult,
+			oType = new DateTimeWithTimezone({showTimezone : DateFormatTimezoneDisplay.Hide});
+
+		this.mock(oType).expects("getPrimitiveType").withExactArgs("~sourceType").returns("object");
+
+		// code under test
+		aResult = oType.parseValue(oDate, "~sourceType", [null, "~timezone"]);
+
+		assert.deepEqual(aResult, [oDate, undefined]);
+		assert.strictEqual(aResult[0], oDate);
 	});
 
 	//*********************************************************************************************
@@ -500,6 +610,16 @@ sap.ui.define([
 			oFixture.result);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("parseValue: Integrative failing tests", function (assert) {
+		var oType = new DateTimeWithTimezone();
+
+		assert.throws(function () {
+			// code under test
+			oType.parseValue(0, "int", []);
+		}, new ParseException("Don't know how to parse " + sClassName + " from int"));
+	});
 
 	//*********************************************************************************************
 [{
