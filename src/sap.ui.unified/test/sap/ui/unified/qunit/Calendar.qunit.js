@@ -2591,6 +2591,36 @@ sap.ui.define([
 		oLocaleData = null;
 	});
 
+	QUnit.test("When there are 2 months, and minDate and maxDate are set, the label of month buttons are proper", function(assert) {
+		// arrange
+		var oCal = new Calendar("Cal", {
+				months: 2,
+				width: "450px",
+				minDate: new Date(2021, 5, 1),
+				maxDate: new Date(2022, 0, 31)
+			}).placeAt("content");
+
+		oCal.displayDate(new Date(2021, 11, 1));
+		sap.ui.getCore().applyChanges();
+
+		// act: click on year select button
+		qutils.triggerEvent("click", "Cal--Head-B2");
+		sap.ui.getCore().applyChanges();
+
+		// act: select an year 2022 (December 2022 is outside the maxDate)
+		oCal.getAggregation("yearPicker").setYear(2022);
+		oCal._selectYear();
+
+		// assert
+		assert.equal(oCal.getAggregation("header").getTextButton1(), "December",
+			"Two months calendar, December 2021 selected, 'December' shown as Month button label");
+		assert.equal(oCal.getAggregation("header").getTextButton2(), "2021",
+			"Two months calendar, December 2021 selected, '2021' shown as Year button label");
+
+		// cleanup
+		oCal2.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("Day picker DOM ref has aria-roledescription='Calendar'", function(assert) {

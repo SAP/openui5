@@ -2313,7 +2313,7 @@ sap.ui.define([
 		this._focusDate(oFocusedDate, true);
 		this._hideYearPicker();
 		this._updateHeadersButtons();
-		this._setHeaderText(this._getFocusedDate());
+		this._setHeaderText(CalendarDate.fromLocalJSDate(this.getAggregation("month")[0].getDate(), this.getPrimaryCalendarType()));
 	};
 
 	Calendar.prototype._selectYearRange = function() {
