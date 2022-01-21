@@ -19,7 +19,7 @@ sap.ui.define([
 				oExpectedPatchLog1 = {
 					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList"
+					message : "Failed to update path /SalesOrderList"
 //					details : "Error occurred while processing the request"
 				};
 
@@ -60,7 +60,7 @@ sap.ui.define([
 			aExpectedLogs.push({
 				component : "sap.ui.model.odata.v4.Context",
 				level : Log.Level.ERROR,
-				message: "Failed to update path /SalesOrderList",
+				message : "Failed to update path /SalesOrderList",
 				details : sRaiseErrorMessage
 			});
 			if (sGroupId.includes("irect")) { // Note: better check group submit mode, but how?
@@ -68,7 +68,7 @@ sap.ui.define([
 				aExpectedLogs.push({
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList",
+					message : "Failed to update path /SalesOrderList",
 					details : sRaiseErrorMessage
 				});
 			}

@@ -21,7 +21,7 @@ sap.ui.define([
 	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.LateProperties.Main", {
-		onOpenEditDeliveryDate : function(oEvent) {
+		onOpenEditDeliveryDate : function (oEvent) {
 			var oDialog = new Dialog({
 					title : "Edit Delivery Date",
 					content : new SimpleForm({
@@ -60,13 +60,13 @@ sap.ui.define([
 								tooltip : "DeliveryDate fetched as late property"})
 						]
 					}),
-					beginButton: new Button({
+					beginButton : new Button({
 						id : "confirmEditDeliveryDialog",
 						press : function () {
 							var oModel = oDialog.getModel();
 
 							if (oModel.hasPendingChanges("UpdateGroup")) {
-								oModel.submitBatch("UpdateGroup").then(function() {
+								oModel.submitBatch("UpdateGroup").then(function () {
 									MessageToast.show("Delivery Date saved");
 								});
 							}
@@ -76,7 +76,7 @@ sap.ui.define([
 						text : "Confirm",
 						type : ButtonType.Emphasized
 					}),
-					endButton: new Button({
+					endButton : new Button({
 						id : "cancelEditDeliveryDialog",
 						text : "Cancel",
 						press : function () {

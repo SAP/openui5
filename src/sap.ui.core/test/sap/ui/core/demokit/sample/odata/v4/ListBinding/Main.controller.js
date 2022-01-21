@@ -47,7 +47,7 @@ sap.ui.define([
 
 		changeManagerOfTeam : function (oEvent) {
 			var oView = this.getView(),
-				that  = this;
+				that = this;
 
 			this.oChangeManager.execute().then(function () {
 					var oControl = oView.byId("ManagerID");
@@ -80,7 +80,7 @@ sap.ui.define([
 			this.byId("GetEmployeeMaxAge").getObjectBinding().execute();
 		},
 
-		onCancel: function (oEvent) {
+		onCancel : function (oEvent) {
 			this.getView().getModel().resetChanges();
 		},
 
@@ -115,16 +115,16 @@ sap.ui.define([
 			var oView = this.getView();
 
 			oView.setModel(new JSONModel({
-				EmployeeID: null,
+				EmployeeID : null,
 				Employees : {
-					AGE : { icon : "sap-icon://sort-ascending", desc : false },
-					Name : { icon : "", desc : undefined }
+					AGE : {icon : "sap-icon://sort-ascending", desc : false},
+					Name : {icon : "", desc : undefined}
 				},
 				Equipments : {
-					Category : { icon : "sap-icon://sort-ascending", desc : false },
-					ID : { icon : "", desc : undefined },
-					Name : { icon : "", desc : undefined },
-					EmployeeId : { icon : "", desc : undefined }
+					Category : {icon : "sap-icon://sort-ascending", desc : false},
+					ID : {icon : "", desc : undefined},
+					Name : {icon : "", desc : undefined},
+					EmployeeId : {icon : "", desc : undefined}
 				},
 				bRealOData : TestUtils.isRealOData()
 			}), "ui");
@@ -147,7 +147,7 @@ sap.ui.define([
 			}
 		},
 
-		onSave: function (oEvent) {
+		onSave : function (oEvent) {
 			var oModel = this.getView().getModel();
 
 			// TODO this should be the default for submitBatch

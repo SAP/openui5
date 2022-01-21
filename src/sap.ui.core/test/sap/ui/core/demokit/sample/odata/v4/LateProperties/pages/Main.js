@@ -13,7 +13,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheEditDeliveryDialog : {
 			actions : {
-				postponeDeliveryDateByOneDay : function (){
+				postponeDeliveryDateByOneDay : function () {
 					this.waitFor({
 						controlType : "sap.m.Input",
 						id : "DeliveryDate",
@@ -45,7 +45,7 @@ sap.ui.define([
 			assertions : {
 				checkThatControlsHaveContent : function () {
 					this.waitFor({
-						id :[
+						id : [
 							"SalesOrderID",
 							"Note",
 							"GrossAmount",

@@ -30,11 +30,11 @@ sap.ui.getCore().attachInit(function () {
 			var aExpectedLogs = [{
 					component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 					level : Log.Level.WARNING,
-					message: "Unsupported annotation 'sap:supported-formats'"
+					message : "Unsupported annotation 'sap:supported-formats'"
 				}, {
 					component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 					level : Log.Level.WARNING,
-					message: "Unsupported annotation 'sap:semantics'"
+					message : "Unsupported annotation 'sap:semantics'"
 				}],
 				i;
 
@@ -42,7 +42,7 @@ sap.ui.getCore().attachInit(function () {
 				aExpectedLogs.push({
 					component : "sap.ui.model.odata.v4.lib._V2MetadataConverter",
 					level : Log.Level.WARNING,
-					message: "Unsupported annotation 'sap:value-list'"
+					message : "Unsupported annotation 'sap:value-list'"
 				});
 			}
 

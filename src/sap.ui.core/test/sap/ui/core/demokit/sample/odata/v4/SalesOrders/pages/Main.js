@@ -269,7 +269,7 @@ sap.ui.define([
 						success : function () {
 							sFilterValue = sFilterValue || Opa.getContext().GrossAmount;
 							this.waitFor({
-								actions: new EnterText({clearTextFirst: true, text: sFilterValue}),
+								actions : new EnterText({clearTextFirst : true, text : sFilterValue}),
 								controlType : "sap.m.SearchField",
 								id : "filterGrossAmount",
 								success : function (oSearchField) {
@@ -310,7 +310,7 @@ sap.ui.define([
 									"Reset Filter by ProductID with changeParameters");
 								return;
 							}
-							oRow  = oSOItemsTable.getItems()[iRow];
+							oRow = oSOItemsTable.getItems()[iRow];
 							sProductID = oRow.getCells()[2].getValue();
 							// store sales order id and item postion for later comparison
 							Opa.getContext().sExpectedSalesOrderID =
@@ -346,7 +346,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						check : function (oSalesOrderTable) {
-							return  oSalesOrderTable.getItems().length > 0;
+							return oSalesOrderTable.getItems().length > 0;
 						},
 						success : function (oControl) {
 							var oCore = sap.ui.getCore(),
@@ -364,7 +364,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : "SalesOrderList",
 						check : function (oSalesOrderTable) {
-							return  oSalesOrderTable.getItems()[0].getCells()[0].getText()
+							return oSalesOrderTable.getItems()[0].getCells()[0].getText()
 								=== Opa.getContext().firstSalesOrderId;
 						},
 						success : function (oSalesOrderTable) {
@@ -408,7 +408,7 @@ sap.ui.define([
 					if (TestUtils.isRealOData()) {
 						// remember created sales order for cleanup
 						this.waitFor({
-							success : function() {
+							success : function () {
 							var oCreated = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
 									.getItems()[0].getBindingContext();
 							oCreated.created().then(function () {
@@ -544,7 +544,7 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				selectFirstSalesOrder : function ( bRememberGrossAmount) {
+				selectFirstSalesOrder : function (bRememberGrossAmount) {
 					selectSalesOrder(this, 0, bRememberGrossAmount);
 				},
 				selectSalesOrder : function (iIndex) {
@@ -555,7 +555,7 @@ sap.ui.define([
 						actions : new Press(),
 						controlType : "sap.m.Text",
 						id : /SO_2_SOITEM-/,
-						matchers : new Properties({text: sPosition}),
+						matchers : new Properties({text : sPosition}),
 						success : function (aControls) {
 							Opa5.assert.ok(true, "Sales Order Item selected: " + sPosition);
 						},
@@ -566,7 +566,7 @@ sap.ui.define([
 					this.waitFor({
 						controlType : "sap.m.Text",
 						id : /SalesOrderID-/,
-						matchers : new Properties({text: sSalesOrderId}),
+						matchers : new Properties({text : sSalesOrderId}),
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
@@ -614,12 +614,12 @@ sap.ui.define([
 						id : "SalesOrderList",
 						success : function () {
 							sap.ui.getCore().byId(sViewName).getController().onSortByGrossAmount();
-							Opa5.assert.ok(true, "controller.onSortByGrossAmount() called" );
+							Opa5.assert.ok(true, "controller.onSortByGrossAmount() called");
 						},
 						viewName : sViewName
 					});
 				},
-				sortBySalesOrderID  : function () {
+				sortBySalesOrderID : function () {
 					pressButton(this, "sortBySalesOrderId");
 				},
 				sortBySalesOrderIDviaController : function () {
@@ -628,13 +628,13 @@ sap.ui.define([
 						id : "SalesOrderList",
 						success : function () {
 							sap.ui.getCore().byId(sViewName).getController().onSortBySalesOrderID();
-							Opa5.assert.ok(true, "controller.onSortBySalesOrderID() called" );
+							Opa5.assert.ok(true, "controller.onSortBySalesOrderID() called");
 						},
 						viewName : sViewName
 					});
 				}
 			},
-			assertions: {
+			assertions : {
 				checkButtonDisabled : function (sButtonId) {
 					Helper.checkButtonDisabled(this, sViewName, sButtonId);
 				},
@@ -879,7 +879,7 @@ sap.ui.define([
 						id : "SalesOrderID::detail",
 						success : function (oInput) {
 							var sCurrentId = oInput.getValue(),
-								sIdBefore  = Opa.getContext().firstSalesOrderId,
+								sIdBefore = Opa.getContext().firstSalesOrderId,
 								sMessage = "checkSalesOrderIdInDetails(" + !!bChanged
 									+ ") before: '" + sIdBefore + "' current: '" + sCurrentId;
 							Opa5.assert.ok(
@@ -905,9 +905,9 @@ sap.ui.define([
 								|| Opa.getContext().sExpectedItem;
 
 							if (oRow) {
-								sSalesOrderId  = oRow.getCells()[ID_COLUMN_INDEX].getText();
+								sSalesOrderId = oRow.getCells()[ID_COLUMN_INDEX].getText();
 								sItem = oRow.getCells()[ITEM_COLUMN_INDEX].getText();
-								if (sSalesOrderId ===  sExpectedSalesOrderID &&
+								if (sSalesOrderId === sExpectedSalesOrderID &&
 										sItem === sExpectedItem) {
 									Opa5.assert.strictEqual(sSalesOrderId, sExpectedSalesOrderID,
 										"Sales Order ID '" + sExpectedSalesOrderID + "' in row "

@@ -110,7 +110,7 @@ sap.ui.define([
 						} else {
 							aNames.push(oBindingInfo.parts[0].path);
 						}
-					} else if (!(oCell instanceof Label)){
+					} else if (!(oCell instanceof Label)) {
 						aNames.push("<Not a Text or Input control or composite binding>");
 					}
 					return aNames;
@@ -129,9 +129,9 @@ sap.ui.define([
 						&& oEntityType[sPropertyName].$Type.startsWith("Edm.")) {
 					if (this.aDisplayedProperties.indexOf(sPropertyName) < 0) {
 						aProperties.push({
-							name: sPropertyName,
-							displayed: false,
-							enabled: true
+							name : sPropertyName,
+							displayed : false,
+							enabled : true
 						});
 					}
 				}

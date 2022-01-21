@@ -23,11 +23,11 @@ sap.ui.define([
 				applyDialog : function () {
 					Helper.pressButton(this, sViewName, "ApplyChangesInFragment");
 				},
-				checkCheckBox: function (sCheckBoxText) {
+				checkCheckBox : function (sCheckBoxText) {
 					this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.CheckBox",
-						matchers : new Properties({text: sCheckBoxText}),
+						matchers : new Properties({text : sCheckBoxText}),
 						viewName : sViewName
 					});
 				}
@@ -36,7 +36,7 @@ sap.ui.define([
 				checkCheckBoxIsSelected : function (sCheckBoxText, bSelected) {
 					this.waitFor({
 						controlType : "sap.m.CheckBox",
-						matchers : new Properties({text: sCheckBoxText}),
+						matchers : new Properties({text : sCheckBoxText}),
 						success : function (oCheckBox) {
 							var bIsSelected = oCheckBox[0].mProperties.selected;
 
@@ -71,7 +71,7 @@ sap.ui.define([
 						controlType : "sap.m.Table",
 						id : sTableId,
 						check : function (oSalesOrderTable) {
-							return  oSalesOrderTable.getItems().length > 0;
+							return oSalesOrderTable.getItems().length > 0;
 						},
 						success : function (oControl) {
 							var iColumnLength = oControl.getItems()[0].getCells().length,

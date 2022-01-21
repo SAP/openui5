@@ -72,12 +72,12 @@ sap.ui.define([
 			}
 		},
 
-		onResetContextBinding: function (oEvent) {
+		onResetContextBinding : function (oEvent) {
 			this.getView().getElementBinding().resetChanges();
 			this.getView().getElementBinding("v4").resetChanges();
 		},
 
-		onResetModel: function (oEvent) {
+		onResetModel : function (oEvent) {
 			this.getView().getModel().resetChanges();
 		},
 
@@ -85,7 +85,7 @@ sap.ui.define([
 			var oModel = this.getView().getModel();
 
 			if (this.getView().getModel("ui").getProperty("/v2")) {
-				oModel.attachEventOnce("requestCompleted", this, function(oEvent) {
+				oModel.attachEventOnce("requestCompleted", this, function (oEvent) {
 					if (oEvent.getParameter("success")) {
 						showSuccessMessage("saved");
 					}

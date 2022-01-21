@@ -67,7 +67,7 @@ sap.ui.define([
 				that = this;
 
 			oOperation = this.getView().getModel().bindContext(
-				"com.sap.gateway.srvd.zrc_rap_sticky.v0001.SaveChanges(...)" ,
+				"com.sap.gateway.srvd.zrc_rap_sticky.v0001.SaveChanges(...)",
 				this.byId("Sticky::details").getBindingContext());
 
 			oOperation.execute().then(function () {

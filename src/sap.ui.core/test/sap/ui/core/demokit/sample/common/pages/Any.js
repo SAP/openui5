@@ -105,7 +105,7 @@ sap.ui.define([
 		/*
 		 * Actions and assertions useful for any pages
 		 */
-		onAnyPage: {
+		onAnyPage : {
 			actions : {
 				applySupportAssistant : function () {
 					// we use support assistant only on-demand and only with mock data
@@ -114,7 +114,7 @@ sap.ui.define([
 					Opa5.extendConfig(getConfig(Opa.getContext().bSupportAssistant));
 				},
 				// deletes all entities remembered in Opa.getContext().aCreatedEntityPaths
-				cleanUp : function(sControlId) {
+				cleanUp : function (sControlId) {
 					this.waitFor({
 						controlType : "sap.m.Table",
 						autoWait : false,
@@ -158,7 +158,7 @@ sap.ui.define([
 						}
 					});
 				},
-				analyzeSupportAssistant: function () {
+				analyzeSupportAssistant : function () {
 					this.waitFor({
 						success : function () {
 							var bFinished = false;
@@ -194,7 +194,7 @@ sap.ui.define([
 								return;
 							}
 
-							analyse().then(function() {
+							analyse().then(function () {
 								bFinished = true;
 							});
 							this.waitFor({

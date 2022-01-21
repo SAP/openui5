@@ -177,7 +177,7 @@ sap.ui.define([
 				sMetadata = this.responseText;
 				fnResolve();
 			};
-			oRequest.onerror = function() {
+			oRequest.onerror = function () {
 				var sError = "error loading resource '" + sResourcePath + "'";
 				Log.error(sError, sLogComponent);
 				fnReject(new Error(sError, sLogComponent));
@@ -461,12 +461,12 @@ sap.ui.define([
 			oUser = aUsers[iIndex];
 			for (var i = 0; i < aExpand.length; i++) {
 				switch (aExpand[i]) {
-					case "Friends" :
+					case "Friends":
 						oObject.Friends = [];
 						aFriends = oUser.Friends;
 						oObject.Friends = createFriendsArray(aFriends, aSubSelects[i]);
 						break;
-					case "BestFriend" :
+					case "BestFriend":
 						sBestFriend = oUser.BestFriend;
 						iFriendIndex = findUserIndex(sBestFriend);
 						oObject.BestFriend = getUserByIndex(iFriendIndex, aSubSelects[i]);

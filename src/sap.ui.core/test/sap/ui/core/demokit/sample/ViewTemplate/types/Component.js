@@ -92,7 +92,7 @@ sap.ui.define([
 					viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV2"
 				}).then(function (oView) {
 					oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
-					oRootView.loaded().then(function() {
+					oRootView.loaded().then(function () {
 						oRootView.byId("identificationBox").addItem(oView);
 					});
 					mViews["false"] = oView;

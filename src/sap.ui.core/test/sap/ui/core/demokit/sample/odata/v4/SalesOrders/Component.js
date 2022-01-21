@@ -72,7 +72,7 @@ sap.ui.define([
 					oLastModified && oLastModified.toISOString(),
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
 
-				this.runAsOwner(function() {
+				this.runAsOwner(function () {
 					View.create({
 						id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
 						models : {

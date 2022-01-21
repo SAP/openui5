@@ -76,7 +76,7 @@ sap.ui.define([
 					Helper.changeInputValue(this, sViewName, "ChangeManagerOfTeamDialog::Manager",
 						sManager);
 				},
-				pressChange: function () {
+				pressChange : function () {
 					Helper.pressButton(this, sViewName, "changeManagerOfTeam");
 				}
 			},
@@ -93,7 +93,7 @@ sap.ui.define([
 					Helper.changeInputValue(this, sViewName, "ChangeTeamBudgetDialog::Budget",
 						sBudget);
 				},
-				pressChange: function () {
+				pressChange : function () {
 					Helper.pressButton(this, sViewName, "changeTeamBudget");
 				}
 			},
