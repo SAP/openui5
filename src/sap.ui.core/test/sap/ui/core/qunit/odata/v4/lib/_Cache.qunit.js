@@ -758,23 +758,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bPatch) {
-	[true, false].forEach(function (bIgnoreTransient) {
+[false, true].forEach(function (bPatch) {
+	[false, true].forEach(function (bIgnoreTransient) {
+		["foo/bar/baz", ""].forEach(function (sRequestPath) {
 		var sTitle = "_Cache#hasPendingChangesForPath: bPatch = " + bPatch
-			+ ", bIgnoreTransient = " + bIgnoreTransient;
+			+ ", bIgnoreTransient = " + bIgnoreTransient
+			+ ", sRequestPath = " + sRequestPath;
 
-		if (bPatch && bIgnoreTransient) {
+		if (bPatch && bIgnoreTransient || !bIgnoreTransient && !sRequestPath) {
 			return;
 		}
 
 	QUnit.test(sTitle, function (assert) {
-		var oCache = new _Cache(this.oRequestor, "TEAMS");
+		var oCache = new _Cache(this.oRequestor, "TEAMS"),
+			bIgnored = bIgnoreTransient && !sRequestPath;
 
 		function hasPendingChangesForPath(sPath) {
 			return oCache.hasPendingChangesForPath(sPath, false, bIgnoreTransient);
 		}
 
-		oCache[bPatch ? "mPatchRequests" : "mPostRequests"]["foo/bar/baz"] = [
+		oCache[bPatch ? "mPatchRequests" : "mPostRequests"][sRequestPath] = [
 			{},
 			{"@$ui5.context.isInactive" : false},
 			{"@$ui5.context.isInactive" : true}
@@ -782,13 +785,13 @@ sap.ui.define([
 
 		// code under test (active entities exists)
 		assert.strictEqual(hasPendingChangesForPath("bar"), false);
-		assert.strictEqual(hasPendingChangesForPath(""), !bIgnoreTransient);
-		assert.strictEqual(hasPendingChangesForPath("foo"), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath(""), !bIgnored);
+		assert.strictEqual(hasPendingChangesForPath("foo"), !bIgnored);
 		assert.strictEqual(hasPendingChangesForPath("foo/ba"), false);
-		assert.strictEqual(hasPendingChangesForPath("foo/bar"), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar"), !bIgnored);
 		assert.strictEqual(hasPendingChangesForPath("foo/bars"), false);
 		assert.strictEqual(hasPendingChangesForPath("foo/bar/ba"), false);
-		assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), !bIgnoreTransient);
+		assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), !bIgnored);
 		assert.strictEqual(hasPendingChangesForPath("foo/bar/baze"), false);
 		assert.strictEqual(hasPendingChangesForPath("foo/bar/baz/qux"), false);
 
@@ -802,6 +805,7 @@ sap.ui.define([
 			assert.strictEqual(hasPendingChangesForPath("foo/bar/baz"), false);
 		}
 	});
+		});
 	});
 });
 

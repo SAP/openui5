@@ -11257,7 +11257,9 @@ sap.ui.define([
 
 			// code under test
 			assert.ok(oTeam2EmployeesBinding.hasPendingChanges(), "pending changes; new entity");
+			assert.ok(oTeam2EmployeesBinding.hasPendingChanges(true), "JIRA: CPOUI5ODATAV4-1409");
 			assert.ok(oTeamBinding.hasPendingChanges(), "pending changes; new entity");
+			assert.ok(oTeamBinding.hasPendingChanges(true), "JIRA: CPOUI5ODATAV4-1409");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -11345,7 +11347,10 @@ sap.ui.define([
 				});
 				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(),
 					"binding has pending changes");
+				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(true),
+					"JIRA: CPOUI5ODATAV4-1409");
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
+				assert.ok(oTeamBinding.hasPendingChanges(true), "JIRA: CPOUI5ODATAV4-1409");
 
 				return that.waitForChanges(assert);
 			}).then(function () {
@@ -37091,14 +37096,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: A table shows a visible area with three persisted rows. Four transient ones are
-	// added at the end, outside of the visible area, and two of them are persisted. The list is
-	// then either filtered, sorted, etc. Show that the transient ones properly survive, but the
-	// created ones are removed.
+	// added at the start, inside the visible area, and two of them are persisted. The list is then
+	// either filtered, sorted, etc. Show that the transient ones properly survive, but the created
+	// ones are removed.
 	// JIRA: CPOUI5ODATAV4-1362
-[
-	"changeParameters", "filter", "resume", "sort"
-].forEach(function (sMethod) {
-	QUnit.test("CPOUI5ODATAV4-1362: created persisted, " + sMethod, function (assert) {
+	//
+	// The table's list binding is relative, but sends own requests. An ODCB with empty path in
+	// between the root binding and the list binding is an addt'l hurdle for ignoring transient
+	// rows on suspend.
+	// JIRA: CPOUI5ODATAV4-1409
+["changeParameters", "filter", "resume", "sort"].forEach(function (sMethod) {
+	[false, true].forEach(function (bRelative) {
+	var sTitle = "CPOUI5ODATAV4-1362: created persisted, " + sMethod
+			+ ", $$ownRequest = " + bRelative;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding,
 			oContextA,
 			oContextB,
@@ -37106,16 +37118,26 @@ sap.ui.define([
 			oContextD,
 			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oTable,
-			sView = '\
-<t:Table id="table" rows="{parameters : {$count : true}, path : \'/TEAMS\'}" threshold="0"\
+			sTeams = bRelative ? "Departments(Sector='EMEA',ID='UI5')/DEPARTMENT_2_TEAMS" : "TEAMS",
+			sView = bRelative ? '\
+<FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}" id="objectPage">\
+	<FlexBox binding="{}">\
+		<t:Table id="table"\
+			rows="{parameters : {$$ownRequest : true}, path : \'DEPARTMENT_2_TEAMS\'}"\
+			threshold="0" visibleRowCount="4">\
+			<Text id="id" text="{Team_Id}"/>\
+			<Text id="name" text="{Name}"/>\
+		</t:Table>\
+	</FlexBox>\
+</FlexBox>' : '\
+<t:Table id="table" rows="{/TEAMS}" threshold="0"\
 	visibleRowCount="4">\
 	<Text id="id" text="{Team_Id}"/>\
 	<Text id="name" text="{Name}"/>\
 </t:Table>',
 			that = this;
 
-		this.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$skip=0&$top=4", {
-				"@odata.count" : "2",
+		this.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=4", {
 				value : [{
 					Name : "Team #1",
 					Team_Id : "TEAM_01"
@@ -37139,12 +37161,12 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					url : "TEAMS",
+					url : sTeams,
 					payload : {Name : "New Team A", Team_Id : "TEAM_A"}
 				}, {Name : "New 'A' Team", Team_Id : "TEAM_A"})
 				.expectRequest({
 					method : "POST",
-					url : "TEAMS",
+					url : sTeams,
 					payload : {Name : "New Team B", Team_Id : "TEAM_B"}
 				}, {Name : "New 'B' Team", Team_Id : "TEAM_B"})
 				.expectChange("name", ["New 'B' Team", "New 'A' Team"]);
@@ -37166,7 +37188,6 @@ sap.ui.define([
 		}).then(function () {
 			var oPromise,
 				oResult = {
-					"@odata.count" : "4",
 					value : [{
 						Name : "Team #2",
 						Team_Id : "TEAM_02"
@@ -37176,47 +37197,49 @@ sap.ui.define([
 					}]
 				};
 
+			assert.strictEqual(oBinding.hasPendingChanges(), true);
+			assert.strictEqual(oBinding.hasPendingChanges(true), false);
+
 			switch (sMethod) {
 				case "changeParameters":
-					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
-							+ "&$search=TDOP&$skip=0&$top=2", oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$search=TDOP&$skip=0&$top=2",
+							oResult);
 
 					// code under test
 					oBinding.changeParameters({$search : "TDOP"});
 					break;
 
 				case "filter":
-					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
-							+ "&$filter=MANAGER_ID ne '666'&$skip=0&$top=2", oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$filter=MANAGER_ID ne '666'"
+							+ "&$skip=0&$top=2", oResult);
 
 					// code under test
 					oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, "666"));
 					break;
 
 				case "refresh":
-					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
-							+ "&$skip=0&$top=2", oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 					// code under test
 					oPromise = oBinding.requestRefresh();
 					break;
 
 				case "resume":
-					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$search=TDOP"
-						+ "&$orderby=Team_Id desc&$filter=MANAGER_ID ne '666'&$skip=0&$top=2",
-						oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$search=TDOP"
+							+ "&$orderby=Team_Id desc&$filter=MANAGER_ID ne '666'&$skip=0&$top=2",
+							oResult);
 
 					// code under test
-					oBinding.suspend();
+					oBinding.getRootBinding().suspend();
 					oBinding.changeParameters({$search : "TDOP"});
 					oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, "666"));
 					oBinding.sort(new Sorter("Team_Id", true));
-					oPromise = oBinding.resumeAsync();
+					oPromise = oBinding.getRootBinding().resumeAsync();
 					break;
 
 				case "sort":
-					that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id"
-							+ "&$orderby=Team_Id desc&$skip=0&$top=2", oResult);
+					that.expectRequest(sTeams + "?$select=Name,Team_Id&$orderby=Team_Id desc"
+							+ "&$skip=0&$top=2", oResult);
 
 					// code under test
 					oBinding.sort(new Sorter("Team_Id", true));
@@ -37241,12 +37264,12 @@ sap.ui.define([
 
 			that.expectRequest({
 					method : "POST",
-					url : "TEAMS",
+					url : sTeams,
 					payload : {Name : "New C Team", Team_Id : "TEAM_C"}
 				}, {Name : "New 'C' Team", Team_Id : "TEAM_C"})
 				.expectRequest({
 					method : "POST",
-					url : "TEAMS",
+					url : sTeams,
 					payload : {Name : "New D Team", Team_Id : "TEAM_D"}
 				}, {Name : "New 'D' Team", Team_Id : "TEAM_D"})
 				.expectChange("name", ["New 'D' Team", "New 'C' Team"]);
@@ -37259,5 +37282,8 @@ sap.ui.define([
 			]);
 		});
 	});
+	});
 });
+//TODO what happens to transient contexts of items table when list report is filtered, sorted etc.?
+//TODO what about #setContext (select another row in list report)?
 });

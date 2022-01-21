@@ -1013,11 +1013,13 @@ sap.ui.define([
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
 	 *   relate to a context which is kept alive
 	 * @param {boolean} [bIgnoreTransient]
-	 *   Whether to ignore transient elements which will not be lost by APIs like sort or filter
+	 *   Whether to ignore transient elements on top level which will not be lost by APIs like sort
+	 *   or filter
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
 	 *
 	 * @public
+	 * @see _CollectionCache#reset
 	 */
 	_Cache.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive,
 			bIgnoreTransient) {
@@ -1029,11 +1031,13 @@ sap.ui.define([
 					&& that.mPatchRequests[sRequestPath].every(function (oPatchPromise) {
 						return oPatchPromise.$isKeepAlive();
 					}));
-		}) || !bIgnoreTransient && Object.keys(this.mPostRequests).some(function (sRequestPath) {
-			return isSubPath(sRequestPath, sPath)
-				&& that.mPostRequests[sRequestPath].some(function (oEntityData) {
-					return !oEntityData["@$ui5.context.isInactive"];
-				});
+		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
+			return bIgnoreTransient && !sRequestPath
+				? false // ignore transient elements on top level
+				: isSubPath(sRequestPath, sPath)
+					&& that.mPostRequests[sRequestPath].some(function (oEntityData) {
+						return !oEntityData["@$ui5.context.isInactive"];
+					});
 		});
 	};
 
@@ -2777,12 +2781,14 @@ sap.ui.define([
 
 	/**
 	 * Resets this cache to its initial state, but keeps certain elements and their change listeners
-	 * alive.
+	 * alive: all kept-alive elements identified by the given key predicates as well as all
+	 * transient elements on top level.
 	 *
 	 * @param {string[]} aKeptElementPredicates
 	 *   The key predicates for all kept-alive elements
 	 *
 	 * @public
+	 * @see _Cache#hasPendingChangesForPath
 	 */
 	_CollectionCache.prototype.reset = function (aKeptElementPredicates) {
 		var mByPredicate = this.aElements.$byPredicate,

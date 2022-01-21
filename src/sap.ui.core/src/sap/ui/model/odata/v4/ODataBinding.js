@@ -829,6 +829,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
 	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
 	 *   of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
+	 *   Since 1.99.0, the same happens for bindings using the <code>$$ownRequest</code> parameter
+	 *   (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 * @returns {boolean}
 	 *   <code>true</code> if the binding is resolved and has pending changes
 	 *
@@ -858,7 +860,7 @@ sap.ui.define([
 	ODataBinding.prototype.hasPendingChangesForPath = function (sPath, bIgnoreKeptAlive) {
 		return this.withCache(function (oCache, sCachePath, oBinding) {
 				return oCache.hasPendingChangesForPath(sCachePath, bIgnoreKeptAlive,
-					bIgnoreKeptAlive && oBinding.isRoot()); // Note: implies oBinding === that
+					bIgnoreKeptAlive && (oBinding.isRoot() || oBinding.mParameters.$$ownRequest));
 			}, sPath, true).unwrap();
 	};
 

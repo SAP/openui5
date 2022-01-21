@@ -481,18 +481,41 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bIgnoreKeptAlive) {
-	[false, true].forEach(function (bIsRoot) {
+	["root", "$$ownRequest", "others"].forEach(function (sCase) {
 	var sTitle = "hasPendingChangesForPath, bIgnoreKeptAlive = " + bIgnoreKeptAlive
-			+ ", bIsRoot = " + bIsRoot;
+			+ ", case = " + sCase;
 
 	QUnit.test(sTitle, function (assert) {
-		var oBinding = new ODataBinding({}),
+		var oBinding,
 			oCache = {
 				hasPendingChangesForPath : function () {}
 			},
 			oExpectation,
+			bIgnoreTransient = false,
+			oTemplate = {
+				mParameters : {},
+				isRoot : function () { throw new Error("must be mocked"); }
+			},
 			oWithCachePromise = {unwrap : function () {}};
 
+		if (sCase === "$$ownRequest") {
+			oTemplate.mParameters.$$ownRequest = true;
+		}
+		if (bIgnoreKeptAlive) {
+			switch (sCase) {
+				case "root":
+				case "$$ownRequest":
+					bIgnoreTransient = true;
+					break;
+
+				case "others":
+					bIgnoreTransient = undefined;
+					break;
+
+				// no default
+			}
+		}
+		oBinding = new ODataBinding(oTemplate);
 		oExpectation = this.mock(oBinding).expects("withCache")
 			.withExactArgs(sinon.match.func, "some/path", true)
 			.returns(oWithCachePromise);
@@ -502,10 +525,10 @@ sap.ui.define([
 		assert.strictEqual(oBinding.hasPendingChangesForPath("some/path", bIgnoreKeptAlive),
 			"~vResult~");
 
-		this.mock(oBinding).expects("isRoot").exactly(bIgnoreKeptAlive ? 1 : 0).withExactArgs()
-			.returns(bIsRoot);
+		this.mock(oBinding).expects("isRoot").exactly(bIgnoreKeptAlive ? 1 : 0)
+			.withExactArgs().returns(sCase === "root");
 		this.mock(oCache).expects("hasPendingChangesForPath")
-			.withExactArgs("~sCachePath~", bIgnoreKeptAlive, bIgnoreKeptAlive && bIsRoot)
+			.withExactArgs("~sCachePath~", bIgnoreKeptAlive, bIgnoreTransient)
 			.returns("~bResult~");
 
 		// code under test

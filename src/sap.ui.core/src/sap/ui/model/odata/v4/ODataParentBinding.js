@@ -999,7 +999,8 @@ sap.ui.define([
 			}
 			if (oCache !== undefined) {
 				// Pending changes for this cache are only possible when there is a cache already
-				if (oCache && oCache.hasPendingChangesForPath("")) {
+				if (oCache && oCache.hasPendingChangesForPath("", false,
+						bIgnoreKeptAlive && oDependent.mParameters.$$ownRequest)) {
 					return true;
 				}
 			} else if (oDependent.hasPendingChangesForPath("")) {
@@ -1018,7 +1019,7 @@ sap.ui.define([
 				}
 			}
 			// Ask dependents, they might have no cache, but pending changes in mCacheByResourcePath
-			return oDependent.hasPendingChangesInDependents();
+			return oDependent.hasPendingChangesInDependents(bIgnoreKeptAlive);
 		})
 		|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches",
 				this.getResolvedPath().slice(1));
