@@ -12,8 +12,8 @@
 				}
 			},
 			"filters": {
-				"category": {
-					"value": "notebooks",
+				"category2": {
+					"value": "flat_screens",
 					"type": "string",
 					"label": "Category",
 					"description": "Filter the products by category.",
@@ -29,26 +29,26 @@
 					]
 				},
 				"city": {
-					"value": "sofia",
+					"value": "vienna",
 					"type": "string",
 					"label": "City",
 					"description": "Filter the products by city.",
 					"items":  [
 						{
-							"title": "Sofia",
-							"key": "sofia"
+							"title": "Vienna",
+							"key": "vienna"
 						},
 						{
-							"title": "Stara Zagora",
-							"key": "stara_zagora"
+							"title": "Rome",
+							"key": "rome"
 						}
 					]
 				}
 			}
 		},
 		"data": {
-			"request": {
-				"url": "./items_{filters>/category/value}.json"
+			"json": {
+				"items": []
 			}
 		},
 		"type": "List",

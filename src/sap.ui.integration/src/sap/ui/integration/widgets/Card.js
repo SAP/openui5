@@ -556,6 +556,7 @@ sap.ui.define([
 				// Destroy the manifest when null/undefined/empty string are passed
 				this.destroyManifest();
 			} else {
+				this._cleanupOldManifest();
 				this.createManifest(vManifest, this.getBaseUrl());
 			}
 		}
@@ -657,7 +658,6 @@ sap.ui.define([
 		if (this._oCardManifest) {
 			this._oCardManifest.destroy();
 		}
-		this.destroyAggregation("_extension");
 
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 
@@ -1003,18 +1003,6 @@ sap.ui.define([
 			this._oServiceManager = null;
 		}
 
-		// destroying the factory would also destroy the data provider
-		if (this._oDataProviderFactory) {
-			this._oDataProviderFactory.destroy();
-			this._oDataProviderFactory = null;
-			this._oDataProvider = null;
-		}
-
-		if (this._oTemporaryContent) {
-			this._oTemporaryContent.destroy();
-			this._oTemporaryContent = null;
-		}
-
 		if (this._oDestinations) {
 			this._oDestinations.destroy();
 			this._oDestinations = null;
@@ -1035,16 +1023,38 @@ sap.ui.define([
 		this.destroyAggregation("_content");
 		this.destroyAggregation("_footer");
 
+		this._cleanupOldManifest();
+	};
+
+	/**
+	 * Cleans up internal models and other before new manifest processing.
+	 */
+	Card.prototype._cleanupOldManifest = function() {
 		this._aReadyPromises = null;
 
 		this.getModel("filters").setData({});
 		this.getModel("parameters").setData({});
 		this.getModel("paginator").setData({});
-		// this.getModel("csrfTokens").setData({});
+
+		this.setModel(null, "i18n");
 
 		this._oContextParameters = null;
 
 		this._deregisterCustomModels();
+
+		this.destroyAggregation("_extension");
+
+		if (this._oTemporaryContent) {
+			this._oTemporaryContent.destroy();
+			this._oTemporaryContent = null;
+		}
+
+		// destroying the factory would also destroy the data provider
+		if (this._oDataProviderFactory) {
+			this._oDataProviderFactory.destroy();
+			this._oDataProviderFactory = null;
+			this._oDataProvider = null;
+		}
 	};
 
 	/**
