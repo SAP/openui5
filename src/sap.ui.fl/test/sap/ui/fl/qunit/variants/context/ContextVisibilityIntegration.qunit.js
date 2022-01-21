@@ -385,12 +385,36 @@ sap.ui.define([
 			assert.equal(this.oRestrictedRadioButton.getSelected(), true, "restricted radio button is still selected");
 		});
 
+		QUnit.test("when pressing remove first row button until every role is removed, select roles control should not be visible and public radio button should be selected", function (assert) {
+			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
+			var oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
+			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
+			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
+			oRmvFirstRowBtn.firePress();
+			oCore.applyChanges();
+			assert.equal(this.oSelectedRolesList.getItems().length, 1, "table contains 1 entry");
+			assert.equal(this.oRestrictedRadioButton.getSelected(), true, "restricted radio button is still selected");
+			assert.equal(this.oPublicRadioButton.getSelected(), false, "public radio button is not selected");
+			oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
+			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
+			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
+			oRmvFirstRowBtn.firePress();
+			oCore.applyChanges();
+			assert.equal(this.oSelectedRolesList.getItems().length, 0, "table contains no entries");
+			assert.equal(this.oPublicRadioButton.getSelected(), true, "public radio button is selected");
+			assert.equal(this.oRestrictedRadioButton.getSelected(), false, "restricted radio button is not selected");
+			assert.equal(this.oSelectedRolesList.getVisible(), false, "select roles control is not visible");
+		});
+
 		QUnit.test("when pressing remove all button, all contexts are removed", function (assert) {
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "table contains 2 entries");
 			assert.equal(this.oRemoveAllBtn.getVisible(), true, "remove all rows button is visible");
+			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
 			this.oRemoveAllBtn.firePress();
 			assert.equal(this.oSelectedRolesList.getItems().length, 0, "table contains no entries");
 			assert.equal(this.oPublicRadioButton.getSelected(), true, "public radio button is selected");
+			assert.equal(this.oRestrictedRadioButton.getSelected(), false, "restricted radio button is not selected");
+			assert.equal(this.oSelectedRolesList.getVisible(), false, "select roles control is not visible");
 		});
 
 		QUnit.test("when pressing add contexts button, select roles dialog is opened, and items are pre-selected", function (assert) {

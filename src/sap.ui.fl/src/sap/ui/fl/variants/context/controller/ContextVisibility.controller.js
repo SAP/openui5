@@ -99,6 +99,7 @@ sap.ui.define([
 		},
 
 		formatSelectedIndex: function(aSelectedRoles) {
+			this.byId("selectedContextsList").setVisible(aSelectedRoles.length !== 0);
 			return aSelectedRoles.length === 0 ? 0 : 1;
 		},
 
