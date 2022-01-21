@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/enum/PersistenceMode",
-	"sap/ui/core/Core"
-], function (Control, Engine, Controller, AggregationBaseDelegate, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, FlexUtil, PersistenceMode, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/mdc/p13n/modules/xConfigAPI"
+], function (Control, Engine, Controller, AggregationBaseDelegate, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, FlexUtil, PersistenceMode, oCore, xConfigAPI) {
 	"use strict";
 
 	QUnit.module("Modification Handler", {
@@ -168,7 +169,7 @@ sap.ui.define([
 
 	QUnit.test("Check 'enhanceXConfig' and 'readXConfig'", function(assert){
 
-		var oFMHStub = sinon.spy(FlexModificationHandler.getInstance(), "enhanceConfig");
+		var oXConfigAPIStub = sinon.spy(xConfigAPI, "enhanceConfig");
 
 		var TestClass = Control.extend("adaptationTestControl", {
 			metadata: {
@@ -200,9 +201,9 @@ sap.ui.define([
 		.then(function(oAggregationConfig) {
 			assert.equal(oAggregationConfig.aggregations.items.test.text, "someTestText", "The xConfig customdata has been written and read correctly");
 
-			assert.ok(oFMHStub.calledOnce, "Check that the correct modification handler has been called");
+			assert.ok(oXConfigAPIStub.calledOnce, "Check that the correct modification handler has been called");
 
-			FlexModificationHandler.getInstance().enhanceConfig.restore();
+			xConfigAPI.enhanceConfig.restore();
 		});
 	});
 

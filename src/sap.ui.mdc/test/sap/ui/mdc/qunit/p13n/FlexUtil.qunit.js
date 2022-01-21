@@ -24,7 +24,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil._diffConditionPath("Test", aOrigConditions, [], this.oFilterBar);
+		var aChanges = FlexUtil._diffConditionPath("Test", aOrigConditions, [], this.oFilterBar, true);
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oFilterBar.getId(), "the correct selectorElement has been set");
 		assert.strictEqual(aChanges[0].changeSpecificData.changeType, "addCondition", "Correct change type has been set");
@@ -41,7 +41,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil._diffConditionPath("Test",[], aShadowConditions, this.oFilterBar);
+		var aChanges = FlexUtil._diffConditionPath("Test",[], aShadowConditions, this.oFilterBar, true);
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oFilterBar.getId(), "the correct selectorElement has been set");
 		assert.strictEqual(aChanges[0].changeSpecificData.changeType, "removeCondition", "Correct change type has been set");

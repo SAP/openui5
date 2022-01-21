@@ -42,6 +42,15 @@
 					"sap.ui.mdc.sample.FilterFieldTypes",
 					"sap.ui.mdc.sample.FieldInOutParameter"
 				]
+			},
+			{
+				"id": "sap.ui.mdc.sample.StateUtil",
+				"name": "MDC",
+				"category": "_PRIVATE_",
+				"since": "1.99",
+				"samples": [
+					"sap.ui.mdc.sample.StateUtil"
+				]
 			}
 		],
 		"samples": [
@@ -66,7 +75,7 @@
 				"name": "0.5 Table with OData V4",
 				"description": "OData V4 with analytical capabilities, e.g. grouping and totals."
 			}, {
-				
+
 				"id": "sap.ui.mdc.sample.TableODataV4PDFExport",
 				"name": "0.6 Table with OData V4 for PDF export",
 				"description": "OData V4 with PDF export capabilities."
@@ -114,6 +123,10 @@
 				"id": "sap.ui.mdc.sample.TableWithFilterBar",
 				"name": "6.1 Table with FilterBar",
 				"description": "first Table and Filterbar example"
+			}, {
+				"id": "sap.ui.mdc.sample.StateUtil",
+				"name": "7.1 StateUtil overview",
+				"description": "example demonstrating StateUtil functionality"
 			}
 		]
 	}
