@@ -155,6 +155,35 @@
           "items": {
             "$ref": "#/definitions/actionsStripItem"
           }
+        },
+        "paginator": {
+          "description": "[Experimental] Describes the paginator",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "pageSize": {
+              "description": "Represents the number of the items in one page",
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/simpleBinding"
+                }
+              ]
+            },
+            "totalCount": {
+              "description": "Represents the total count of the items in all pages",
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "$ref": "#/definitions/simpleBinding"
+                }
+              ]
+            }
+          }
         }
       }
     },
