@@ -41,10 +41,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		}
 	};
 
-	DatePickerRenderer.getAriaRole = function(oDP) {
-		return "combobox";
-	};
-
 	DatePickerRenderer.getAccessibilityState = function(oDP) {
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
