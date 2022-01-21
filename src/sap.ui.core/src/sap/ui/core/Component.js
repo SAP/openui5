@@ -419,7 +419,7 @@ sap.ui.define([
 	 * @param {string|sap.ui.base.ManagedObject|sap.ui.core.Component} vObject Either Component Id, ManagedObject or component instance
 	 * @param {object} mOptions Info object to retrieve the customizing config
 	 * @param {object} mOptions.type Either <code>sap.ui.viewExtension</code>, <code>sap.ui.controllerReplacement</code>, <code>sap.ui.viewReplacement</code>, <code>sap.ui.viewModification</code> or <code>sap.ui.controllerExtension</code>
-	 * @param {object} mOptions.name Name of the customizing configuration
+	 * @param {object} [mOptions.name] Name of the customizing configuration. If none given the complete extension object is returned.
 	 * @param {object} [mOptions.extensionName] If type <code>sap.ui.viewExtension</code>, the extension name must be provided
 	 * @throws {Error} If 'getExtensionComponent' function is given, but does not return an instance.
 	 * @returns {object|undefined} Object containing the customizing config or <code>undefined</code>
@@ -429,7 +429,8 @@ sap.ui.define([
 	 */
 	Component.getCustomizing = function(vObject, mOptions) {
 		var sType = mOptions.type,
-			sPath = "/sap.ui5/extends/extensions/" + sType + "/" + mOptions.name;
+			sExtensionSuffix = mOptions.name ? "/" + mOptions.name : "",
+			sPath = "/sap.ui5/extends/extensions/" + sType + sExtensionSuffix;
 
 		if (sType === "sap.ui.viewExtensions") {
 			sPath += "/" + mOptions.extensionName;
@@ -3669,17 +3670,26 @@ sap.ui.define([
 	 *
 	 * @param {string} [sCommandName] The name of the command defined in manifest
 	 *
-	 * @returns {object} The command object as defined in the manifest
+	 * @returns {object|undefined} The command object as defined in the manifest, undefined if no command is found under the given name.
 	 * @private
 	 */
 	Component.prototype.getCommand = function(sCommandName) {
-		var oCommand,
-			oCommands = this._getManifestEntry("/sap.ui5/commands", true);
+		if (!this._mComputedCommands) {
+			var oCommandExtensions = Component.getCustomizing(this, {
+					type: "sap.ui.commands"
+				}) || {},
+				oOwnCommands = this._getManifestEntry("/sap.ui5/commands", true) || {},
+				sComponentName = this.getMetadata().getComponentName(),
+				sComponentIdSuffix = "",
+				oExtensionComponent = this.getExtensionComponent && this.getExtensionComponent();
 
-		if (oCommands && sCommandName) {
-			oCommand = oCommands[sCommandName];
+			if (oExtensionComponent && oExtensionComponent.getLocalId) {
+				sComponentIdSuffix = "#" + oExtensionComponent.getLocalId(this.getId());
+			}
+			this._mComputedCommands = merge({}, oOwnCommands, oCommandExtensions[sComponentName], oCommandExtensions[sComponentName + sComponentIdSuffix]);
 		}
-		return sCommandName ? oCommand : oCommands;
+
+		return sCommandName ? this._mComputedCommands[sCommandName] : this._mComputedCommands;
 	};
 
 	/**

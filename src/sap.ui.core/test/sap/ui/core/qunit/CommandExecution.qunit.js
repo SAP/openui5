@@ -45,6 +45,28 @@ sap.ui.define([
 						}
 					},
 					"sap.ui5": {
+						"extends": {
+							"extensions": {
+								"sap.ui.commands": {
+									"my.command2": {
+										"Save": {
+											"shortcut": "ctrl+k"
+										},
+										"Create": {
+											"shortcut": "ctrl+a"
+										}
+									},
+									"my.command2#component2": {
+										"Save": {
+											"shortcut": "ctrl+z"
+										},
+										"Print": {
+											"shortcut": "ctrl+p"
+										}
+									}
+								}
+							}
+						},
 						"models": {
 							"odata":{
 								"type": "sap.ui.model.odata.v2.ODataModel",
@@ -155,6 +177,11 @@ sap.ui.define([
 						}
 					}
 				}
+			},
+			getExtensionComponent: function() {
+				return sap.ui.core.Component.registry.filter(function(oComponent) {
+					return oComponent.getManifestEntry("/sap.app/id") === "my.command.constructor";
+				})[0] || this;
 			}
 		});
 	});
@@ -939,6 +966,52 @@ sap.ui.define([
 			oPanel.addContent(oView2);
 			assert.ok(true, "must not fail");
 			oComponent.destroy();
+		});
+	});
+
+	QUnit.module("Instance specific commands");
+
+	QUnit.test("ExtensionComponent overwrites commands from reuse component", function(assert) {
+		assert.expect(6);
+
+		var oComponent1;
+
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(oComponent) {
+			oComponent1 = oComponent;
+			return oComponent.rootControlLoaded();
+		}).then(function(oView) {
+			return oComponent1.runAsOwner(function() {
+				return Component.create({
+					name: "my.command2",
+					id: oComponent1.createId("component2")
+				});
+			}).then(function(oComponent2) {
+				var oExepected = {
+					"Create": {shortcut: 'ctrl+a'},
+					"Exit": {shortcut: 'Ctrl+E'},
+					"Print": {shortcut: 'ctrl+p'},
+					"Save": {shortcut: 'ctrl+z'}
+				};
+
+				// empty argument
+				assert.deepEqual(oComponent2.getCommand(), oExepected, "All commands are correctly merged");
+
+				// unknown command name
+				assert.strictEqual(oComponent2.getCommand("unknown"), undefined, "Unkown command should return undefined");
+
+				// Create overwritten for all Component2 instances
+				// Exit is defined in Component2 (not overwritten)
+				// Print is new with #component2 instance
+				// Save is overwritten by #component2 instance
+				assert.deepEqual(oComponent2.getCommand("Create"), {shortcut: "ctrl+a"}, "'Create' Command found");
+				assert.deepEqual(oComponent2.getCommand("Exit"),   {shortcut: "Ctrl+E"}, "'Exit' Command found");
+				assert.deepEqual(oComponent2.getCommand("Print"),  {shortcut: "ctrl+p"}, "'Print' Command found");
+				assert.deepEqual(oComponent2.getCommand("Save"),   {shortcut: "ctrl+z"}, "'Save' Command found");
+
+			});
 		});
 	});
 });
