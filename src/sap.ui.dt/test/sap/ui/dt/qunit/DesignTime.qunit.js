@@ -254,6 +254,17 @@ sap.ui.define([
 			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
 		});
 
+		QUnit.test("when an already created overlay is added as root", function(assert) {
+			var done = assert.async();
+
+			var oElementOverlay = OverlayRegistry.getOverlay(this.oButton1);
+			oElementOverlay.attachIsRootChanged(function(oEvent) {
+				assert.strictEqual(oEvent.getParameter("value"), true, "the isRoot has been changed to true");
+				done();
+			});
+			this.oDesignTime.addRootElement(this.oButton1);
+		});
+
 		QUnit.test("when an Overlay is selected via overlay API and SelectionManager declines this selection", function (assert) {
 			assert.strictEqual(this.oDesignTime.getSelection().length, 0, "and a new selection is created and initially empty");
 			var oElementOverlay = OverlayRegistry.getOverlay(this.oButton1);

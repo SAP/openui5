@@ -709,6 +709,12 @@ function (
 		return aElementOverlays;
 	};
 
+	function ensureRoot(bIsRoot, oElementOverlay) {
+		if (bIsRoot) {
+			oElementOverlay.setIsRoot(true);
+		}
+	}
+
 	/**
 	 * @typedef {object} sap.ui.dt.DesignTime.CreateOverlayParameters
 	 * @property {sap.ui.base.ManagedObject} element - Control instance for which overlay is being created
@@ -745,6 +751,7 @@ function (
 
 		// 2. ElementOverlay is already created
 		if (oElementOverlay) {
+			ensureRoot(mParams.root, oElementOverlay);
 			this._oTaskManager.complete(iTaskId);
 			return Promise.resolve(oElementOverlay);
 		// 3. ElementOverlay is in creation phase
