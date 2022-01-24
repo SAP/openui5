@@ -15,9 +15,9 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	function mockResponse(sData, sEtag, sResponseType) {
+	function mockResponse(sData, sEtag, sResponseType, sContentType) {
 		this.xhr.onCreate = function(oRequest) {
-			var oHeaders = { "Content-Type": "application/json" };
+			var oHeaders = { "Content-Type": sContentType || "application/json"};
 			if (sEtag) {
 				oHeaders.Etag = sEtag;
 			}
@@ -163,6 +163,24 @@ sap.ui.define([
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", allContexts: true, version: "0"}).then(function () {
 				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&allContexts=true&sap-language=en", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when loading flex data with content type 'application/manifest+json'", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}), undefined, undefined, "application/manifest+json");
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?sap-language=en", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
+			}.bind(this));
+		});
+
+		QUnit.test("when loading flex data with content type 'application/json; charset=UTF-8'", function (assert) {
+			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}), undefined, undefined, "application/json; charset=UTF-8");
+			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?sap-language=en", "and the URL was correct");
+				assert.equal(oStubLoadModule.callCount, 0, "loadModule triggered");
 			}.bind(this));
 		});
 	});
