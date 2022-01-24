@@ -2,12 +2,18 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/Host",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils"
 ], function (
 	Card,
+	RequestDataProvider,
 	Host,
-	Core
+	Core,
+	KeyCodes,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -161,4 +167,67 @@ sap.ui.define([
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_dynamic_filter.json");
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.module("Filter values - edge cases", {
+		beforeEach: function () {
+			this.oCard = new Card();
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Double quotes in the SearchFilter", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.stub(RequestDataProvider.prototype, "getData")
+			.onFirstCall().resolves()
+			.onSecondCall().callsFake(function () {
+				// Assert
+				assert.ok(true, "Exception is NOT thrown when double quotes are part of the value");
+				done();
+				return Promise.resolve();
+			});
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			// Arrange
+			var oFilterBar = this.oCard.getAggregation("_filterBar");
+			var oFilter = oFilterBar._getFilters()[0];
+
+			// Act
+			oFilter.getField().$("I").trigger("focus").val("\"city\"").trigger("input");
+			QUnitUtils.triggerKeydown(oFilter.getField().getDomRef("I"), KeyCodes.ENTER);
+		}, this);
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.filters.search",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "{filters>/searchFilter/value}/some/url"
+					}
+				},
+				"configuration": {
+					"filters": {
+						"searchFilter": {
+							"type": "Search"
+						}
+					}
+				},
+				"type": "Object",
+				"content": {
+					"groups": []
+				}
+			}
+		});
+	});
+
 });
