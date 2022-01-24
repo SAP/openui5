@@ -1,7 +1,7 @@
 {
 	"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 	"type": "AdaptiveCard",
-	"version": "1.0",
+	"version": "1.3",
 	"body": [
 		{
 			"type": "TextBlock",
@@ -58,17 +58,28 @@
 			"value": "123456789"
 		},
 		{
-			"type": "TextBlock",
-			"text": "style: text, isMultiLine: true"
+		  "type": "TextBlock",
+		  "text": "style: text, isMultiLine: true"
 		},
 		{
-			"type": "Input.Text",
-			"placeholder": "Comments",
-			"style": "text",
-			"isMultiline": true,
-			"maxLength": 30,
-			"id": "MultiLineVal",
-			"value": "The maximum length is reached."
+		  "type": "Input.Text",
+		  "placeholder": "Comments",
+		  "style": "text",
+		  "isMultiline": true,
+		  "maxLength": 30,
+		  "id": "MultiLineVal",
+		  "value": "The maximum length is reached."
+		},
+		{
+		  "type": "TextBlock",
+		  "text": "Regex validation & Error Message"
+		},
+		{
+		  "type": "Input.Text",
+		  "id": "textValidationInput",
+		  "placeholder": "Put a number in format: +555-123-123456",
+		  "regex": "^\\+[0-9]{3}\\-[0-9]{3}\\-[0-9]{6}$",
+		  "errorMessage": "The format of the input is wrong or incomplete: +555-123-123456"
 		},
 		{
 			"type": "TextBlock",
