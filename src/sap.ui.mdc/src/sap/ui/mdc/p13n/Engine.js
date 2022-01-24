@@ -298,7 +298,11 @@ sap.ui.define([
 			var oModificationSetting = this._determineModification(vControl);
 			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload)
 			.then(function(aChanges){
-				this.stateHandlerRegistry.fireChange(Engine.getControlInstance(vControl));
+				var oControl = Engine.getControlInstance(vControl);
+				this.stateHandlerRegistry.fireChange(oControl);
+				if (oControl._onChangeAppliance instanceof Function) {
+					oControl._onChangeAppliance.call(oControl);
+				}
 				return aChanges;
 			}.bind(this));
 		} else {

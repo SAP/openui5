@@ -54,10 +54,24 @@ sap.ui.define(
         };
 
         /**
-         * Hook which is executed after a set of changes has been applied
+         * Hook which is executed after a chain of changes has been processed by a changehandler.
+         * <b>Note</b>: This hook will be executed whenever a change is applied or reverted, e.g:
+         * <ul>
+         * <li><code>variant appliance</code></li>
+         * <li><code>enduser personalization</code></li>
+         * <li><code>reset triggered</code></li>
+         * </ul>
          *
          */
         AdaptationMixin._onModifications = function() {
+            //
+        };
+
+        /**
+         * Hook which is executed whenever a set of enduser changes being processed during runtime.
+         *
+         */
+        AdaptationMixin._onChangeAppliance = function() {
             //
         };
 
@@ -145,6 +159,7 @@ sap.ui.define(
             this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
             this.validateState = AdaptationMixin.validateState;
             this._onModifications = AdaptationMixin._onModifications;
+            this._onChangeAppliance = AdaptationMixin._onChangeAppliance;
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
         };
