@@ -1702,7 +1702,9 @@ sap.ui.define([
 	 * Creates a new entity for this binding's collection via
 	 * {@link sap.ui.model.odata.v2.ODataModel#createEntry} using the parameters given in
 	 * <code>mParameters</code> and inserts it at the list position specified by the
-	 * <code>bAtEnd</code> parameter.
+	 * <code>bAtEnd</code> parameter. See
+	 * {@link topic:6c47b2b39db9404582994070ec3d57a2#loio4c4cd99af9b14e08bb72470cc7cabff4 Creating
+	 * Entities documentation} for comprehensive information on the topic.
 	 *
 	 * Note: This method requires that the model metadata has been loaded; see
 	 * {@link sap.ui.model.odata.v2.ODataModel#metadataLoaded}.
