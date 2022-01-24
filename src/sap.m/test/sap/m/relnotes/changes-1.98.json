@@ -3,6 +3,32 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "2e232c8e6fb0ec26d72e9ddd9cfb15b8dcdd7894",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent scrolling to top on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000373502022"
+          }
+        ]
+      },
+      {
+        "id": "3d2b7695d7d70cfa3ed87bd891c8624be9b9f098",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fix focus on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180426976"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000372792022"
+          }
+        ]
+      },
+      {
         "id": "0ebc878b9f6faa4a6aa9e1c676fadd927ba7f2f5",
         "type": "FIX",
         "text": " sap.m.MessagePopover: Item bindings are now cloned correctly",
