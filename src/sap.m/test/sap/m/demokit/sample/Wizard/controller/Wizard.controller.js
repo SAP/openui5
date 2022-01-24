@@ -50,12 +50,14 @@ sap.ui.define([
 			var weight = parseInt(this.byId("ProductWeight").getValue());
 
 			if (isNaN(weight)) {
+				this._wizard.setCurrentStep(this.byId("ProductInfoStep"));
 				this.model.setProperty("/productWeightState", "Error");
 			} else {
 				this.model.setProperty("/productWeightState", "None");
 			}
 
 			if (name.length < 6) {
+				this._wizard.setCurrentStep(this.byId("ProductInfoStep"));
 				this.model.setProperty("/productNameState", "Error");
 			} else {
 				this.model.setProperty("/productNameState", "None");
