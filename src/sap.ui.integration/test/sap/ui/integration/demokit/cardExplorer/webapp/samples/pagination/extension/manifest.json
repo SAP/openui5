@@ -1,0 +1,76 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "card.explorer.data.list.card",
+		"type": "card",
+		"title": "Sample for Server-Side Pagination with Extension in Cards",
+		"subTitle": "Sample for Server-Side Pagination with Extension in Cards",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Data",
+				"Pagination",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"extension": "./DataExtension",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"top": {
+					"value": 5,
+					"type": "integer"
+				}
+			}
+		},
+		"data": {
+			"extension": {
+				"method": "getData",
+				"args": [
+					"{paginator>/skip}",
+					"{parameters>/top/value}"
+				]
+			},
+			"path": "/value"
+		},
+		"header": {
+			"title": "Products",
+			"subTitle": "In Stock Information",
+			"icon": {
+				"src": "sap-icon://product"
+			},
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/@odata.count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{ProductName}",
+				"description": "{UnitsInStock} units in stock",
+				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			}
+		},
+		"footer": {
+			"paginator": {
+				"totalCount": "{/@odata.count}",
+				"pageSize": "{parameters>/top/value}"
+			}
+		}
+	}
+}

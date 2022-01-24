@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ClientPropertyBinding",
-	"sap/base/util/deepEqual",
-	"sap/base/util/deepClone"
+	"./PagingModelListBinding"
 ], function (
 	JSONModel,
 	ClientPropertyBinding,
-	deepEqual,
-	deepClone
+	PagingModelListBinding
 ) {
 	"use strict";
 
@@ -77,6 +75,17 @@ sap.ui.define([
 	 */
 	ObservableModel.prototype._fireChange = function () {
 		this.fireEvent("change");
+	};
+
+	ObservableModel.prototype.bindList = function(sPath, oContext, aSorters, aFilters, mParameters) {
+		var oBinding = this._oListBinding  = new PagingModelListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
+		return oBinding;
+	};
+
+	ObservableModel.prototype.sliceData = function (iStartIndex, iEndIndex) {
+		this._oListBinding._iStartIndex = iStartIndex;
+		this._oListBinding._iEndIndex = iEndIndex;
+		this._oListBinding.checkUpdate(true);
 	};
 
 	return ObservableModel;

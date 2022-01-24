@@ -71,7 +71,7 @@ sap.ui.define([
 		switch (sType) {
 			case "List":
 				this._oContentPlaceholder = new ListPlaceholder({
-					maxItems: oConfiguration.maxItems ? parseInt(oConfiguration.maxItems) : 2,
+					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
 					item: oConfiguration.item,
 					itemHeight: ListContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
 				});

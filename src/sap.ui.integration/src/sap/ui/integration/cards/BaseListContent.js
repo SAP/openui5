@@ -78,9 +78,10 @@ sap.ui.define([
 		}
 
 		var oList = this.getInnerList(),
+			bHasPaginator = this.getCard() ? this.getCardInstance().hasPaginator() : false,
 			maxItems = oConfiguration.maxItems;
 
-		if (oList && maxItems) {
+		if (oList && maxItems && !bHasPaginator) {
 			oList.setGrowing(true);
 			//If pass trough parameters maxItems is a string
 			oList.setGrowingThreshold(parseInt(maxItems));
@@ -117,7 +118,7 @@ sap.ui.define([
 		}
 
 		var oInnerList = this.getInnerList(),
-			aItems = oInnerList.getItems(),
+			aItems = this.isA("sap.ui.integration.cards.TimelineContent") ? oInnerList.getContent() : oInnerList.getItems(),
 			aPromises = [],
 			oAction = mItemConfig.actions[0],
 			sActionName,
@@ -191,6 +192,20 @@ sap.ui.define([
 		});
 
 		return oSorter;
+	};
+
+	BaseListContent.prototype.sliceData = function (iStartIndex, iEndIndex) {
+		this.getModel().sliceData(iStartIndex, iEndIndex);
+	};
+
+	BaseListContent.prototype.getDataLength = function () {
+		var oData = this.getModel().getProperty(this.getInnerList().getBindingContext().getPath());
+
+		if (Array.isArray(oData)) {
+			return oData.length;
+		}
+
+		return Object.getOwnPropertyNames(oData).length;
 	};
 
 	return BaseListContent;

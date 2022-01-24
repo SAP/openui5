@@ -88,7 +88,7 @@ sap.ui.define([
 	/**
 	 * @const A list of model names which are used internally by the card.
 	 */
-	var RESERVED_MODEL_NAMES = ["parameters", "filters", "form", "context", "i18n"];
+	var RESERVED_MODEL_NAMES = ["parameters", "filters", "paginator", "form", "context", "i18n"];
 
 	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
@@ -408,6 +408,7 @@ sap.ui.define([
 		this.setModel(new JSONModel()); // always create a default model to isolate the card from a propagated default model
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
+		this.setModel(new JSONModel(), "paginator");
 		this.setModel(new JSONModel(), "form");
 		// this.setModel(new JSONModel(), "csrfTokens");
 		this.setModel(new ContextModel(), "context");
@@ -1038,6 +1039,7 @@ sap.ui.define([
 
 		this.getModel("filters").setData({});
 		this.getModel("parameters").setData({});
+		this.getModel("paginator").setData({});
 		// this.getModel("csrfTokens").setData({});
 
 		this._oContextParameters = null;
@@ -1725,7 +1727,7 @@ sap.ui.define([
 					return;
 				}
 
-				sHeight = ContentClass.getMetadata().getRenderer().getMinHeight(oContentManifest, oError);
+				sHeight = ContentClass.getMetadata().getRenderer().getMinHeight(oContentManifest, oError, this);
 
 				if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 					oError.$().css({"min-height": sHeight});
@@ -1803,7 +1805,7 @@ sap.ui.define([
 		var oLoadingProvider = this.getAggregation("_loadingProvider");
 
 		if (!this._oTemporaryContent && oLoadingProvider) {
-			this._oTemporaryContent = oLoadingProvider.createContentPlaceholder(oContentManifest, sCardType);
+			this._oTemporaryContent = oLoadingProvider.createContentPlaceholder(oContentManifest, sCardType, this);
 
 			this._oTemporaryContent.addEventDelegate({
 				onAfterRendering: function () {
@@ -1811,7 +1813,7 @@ sap.ui.define([
 						return;
 					}
 
-					var sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, this._oTemporaryContent);
+					var sHeight = this._oContentFactory.getClass(sCardType).getMetadata().getRenderer().getMinHeight(oContentManifest, this._oTemporaryContent, this);
 
 					if (this.getHeight() === "auto") { // if there is no height specified the default value is "auto"
 						this._oTemporaryContent.$().css({ "min-height": sHeight });
@@ -2044,8 +2046,10 @@ sap.ui.define([
 	};
 
 	Card.prototype.onDataRequestComplete = function () {
-		var oContent = this.getCardContent();
+		var oContent = this.getCardContent(),
+			oLoadingProvider = this.getAggregation("_loadingProvider");
 
+		this._fireContentDataChange();
 		this.fireEvent("_cardReady");
 		this.hideLoadingPlaceholders(CardArea.Header);
 		this.hideLoadingPlaceholders(CardArea.Filters);
@@ -2054,7 +2058,9 @@ sap.ui.define([
 			this.hideLoadingPlaceholders(CardArea.Content);
 		}
 
-		this.getAggregation("_loadingProvider").setLoading(false);
+		if (oLoadingProvider) {
+			oLoadingProvider.setLoading(false);
+		}
 	};
 
 	/**
@@ -2224,11 +2230,44 @@ sap.ui.define([
 		}
 	};
 
+	Card.prototype._fireContentDataChange = function () {
+		this.fireEvent("_contentDataChange");
+	};
+
 	/**
 	 * @private
 	 */
 	Card.prototype.isSkeleton = function () {
 		return false;
+	};
+
+	/**
+	 * @private
+	 */
+	Card.prototype.getContentPageSize = function (oContentConfig) {
+		var iMaxItems = parseInt((oContentConfig || {}).maxItems) || 0,
+			oFooter = this.getAggregation("_footer"),
+			oPaginator;
+
+		if (!oFooter) {
+			return iMaxItems;
+		}
+
+		oPaginator = oFooter.getAggregation("paginator");
+		if (!oPaginator) {
+			return iMaxItems;
+		}
+
+		if (oPaginator.getPageSize()) {
+			return oPaginator.getPageSize();
+		}
+
+		return iMaxItems;
+	};
+
+	Card.prototype.hasPaginator = function () {
+		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
+		return oManifestFooter && oManifestFooter.paginator;
 	};
 
 	return Card;

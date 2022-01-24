@@ -4,18 +4,18 @@ sap.ui.define([
 	"../services/SampleServices",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/util/ServiceManager",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/m/List",
-	"sap/ui/integration/controls/ListContentItem"
+	"sap/ui/integration/controls/ListContentItem",
+	"sap/ui/core/Core"
 ], function (
 	SampleServices,
 	BaseListContent,
 	ServiceManager,
-	JSONModel,
 	ObservableModel,
 	List,
-	ListContentItem
+	ListContentItem,
+	Core
 ) {
 	"use strict";
 
@@ -28,7 +28,7 @@ sap.ui.define([
 				})
 			}
 		});
-		oList.setModel(new JSONModel([
+		oList.setModel(new ObservableModel([
 			{
 				key: "item1",
 				title: "title 1"
@@ -133,5 +133,31 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oChangeEventSpy.notCalled, "The model is not changed");
+	});
+
+	QUnit.module("Methods", {
+		beforeEach: function () {
+			this.oBLC = new BaseListContent();
+			this.oBLC.getInnerList = function () {
+				if (!this._oList) {
+					this._oList = createFakeList();
+				}
+
+				return this._oList;
+			};
+
+			this.oBLC.setModel(this.oBLC.getInnerList().getModel());
+		},
+		afterEach: function () {
+			this.oBLC.getInnerList().destroy();
+			this.oBLC.destroy();
+		}
+	});
+
+	QUnit.test("sliceData", function (assert) {
+		assert.strictEqual(this.oBLC.getInnerList().getItems().length, 2, "items length is correct");
+		this.oBLC.sliceData(1, 2);
+		Core.applyChanges();
+		assert.strictEqual(this.oBLC.getInnerList().getItems().length, 1, "items length is correct");
 	});
 });

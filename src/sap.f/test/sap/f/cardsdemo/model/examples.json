@@ -217,5 +217,11 @@
 		"description": "Play around with CSRF tokens",
 		"route": "csrfToken",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Pagination",
+		"description": "Play around with pagination.",
+		"route": "pagination",
+		"group": "Other Card Examples"
 	}
 ]

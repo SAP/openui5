@@ -493,4 +493,21 @@ describe("sap.f.Card", function () {
 		navigateBack();
 	});
 
+	it("Pagination", function () {
+		navigateTo("Pagination");
+		var aCardIds = ["card1", "card2"];
+
+		aCardIds.forEach(function (sId) {
+			takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "Pagination",
+					interaction: "root",
+					id: sId
+				}
+			}, "21_Pagination_" + sId);
+		});
+
+		navigateBack();
+	});
 });

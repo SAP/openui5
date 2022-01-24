@@ -168,6 +168,10 @@ sap.ui.define([
 	};
 
 	ActionsStrip.create = function (oCard, aButtons) {
+		if (!aButtons) {
+			return null;
+		}
+
 		var oActionsStrip = new ActionsStrip({
 			card: oCard
 		});

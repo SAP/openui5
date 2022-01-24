@@ -27,10 +27,7 @@ sap.ui.define([
 		var oActionsStrip = ActionsStrip.create(this.oCard, null);
 
 		// Assert
-		assert.strictEqual(oActionsStrip._getToolbar().getContent().length, 0, "No content should be added to the toolbar");
-
-		// Clean up
-		oActionsStrip.destroy();
+		assert.notOk(oActionsStrip, "ActionsStrip is not created.");
 	});
 
 	QUnit.test("2 buttons defined", function (assert) {

@@ -1357,6 +1357,52 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'pagination',
+						target: 'exploreSamples',
+						title: 'Pagination',
+						experimental: true,
+						subSamples: [
+							{
+								title: 'Client-Side Pagination',
+								key: "client",
+								files: [
+									{
+										url: '/samples/pagination/client/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Server-Side Pagination',
+								key: "server",
+								files: [
+									{
+										url: '/samples/pagination/server/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Server-Side Pagination with Extension',
+								key: "extension",
+								files: [
+									{
+										url: '/samples/pagination/extension/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/pagination/extension/DataExtension.js',
+										name: 'DataExtension.js',
+										key: 'DataExtension.js'
+									}
+								]
+							}
+						]
+					},
+					{
 						key: 'parameters',
 						target: 'exploreSamples',
 						title: 'Parameters',
