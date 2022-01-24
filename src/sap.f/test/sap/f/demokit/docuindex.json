@@ -16,13 +16,6 @@
 	  ],
 	  "entities": [
 		{
-		  "id": "sap.f.Avatar",
-		  "name": "Avatar (sap.f)",
-		  "category": "Display",
-		  "since": "1.46",
-		  "samples": ["sap.f.sample.Avatar"]
-		},
-		{
 			"id": "sap.f.AvatarGroup",
 			"name": "Avatar Group",
 			"category": "Display",
@@ -40,20 +33,6 @@
 			"sap.f.sample.DynamicPageWithStickySubheader",
 			"sap.f.sample.DynamicPageWithWizard"
 		  ]
-		},
-		{
-			"id": "sap.f.IllustratedMessage",
-			"name": "Illustrated Message (sap.f)",
-			"category": "Display",
-			"since": "1.88",
-			"samples": [
-			"sap.f.sample.IllustratedMessageInCardNoActivities",
-			"sap.f.sample.IllustratedMessageInCardNoEmail",
-			"sap.f.sample.IllustratedMessageInDialog",
-			"sap.f.sample.IllustratedMessageInPage",
-			"sap.f.sample.IllustratedMessageInPageTNT",
-			"sap.f.sample.IllustratedMessageSessionTimeout"
-			]
 		},
 		{
 		  "id": "sap.f.FlexibleColumnLayout",
@@ -184,36 +163,6 @@
 		  "description": "Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area."
 		},
 		{
-			"id": "sap.f.sample.IllustratedMessageInCardNoActivities",
-			"name": "'NoActivities' Illustrated Message in a Card",
-			"description": "IllustratedMessage as content of sap.f.Card. 'NoActivities' illustration type is being used for the Illustrated Message."
-		},
-		{
-			"id": "sap.f.sample.IllustratedMessageInCardNoEmail",
-			"name": "'NoEmail' Illustrated Message in a Card",
-			"description": "IllustratedMessage as content of sap.f.Card. 'NoEmail' illustration type is being used for the Illustrated Message."
-			},
-		{
-		  "id": "sap.f.sample.IllustratedMessageInDialog",
-		  "name": "Illustrated Message in a Dialog",
-		  "description": "IllustratedMessage as content of sap.m.Dialog."
-		},
-		{
-		  "id": "sap.f.sample.IllustratedMessageInPage",
-		  "name": "Illustrated Message in a Page with Configurable Properties (Default Illustration Set)",
-		  "description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the default ('sapIllus') illustration set."
-		},
-		{
-			"id": "sap.f.sample.IllustratedMessageInPageTNT",
-			"name": "Illustrated Message in a Page with Configurable Properties (TNT Illustration Set)",
-			"description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'tnt' illustration set."
-		},
-		{
-			"id": "sap.f.sample.IllustratedMessageSessionTimeout",
-			"name": "Illustrated Message Session Timeout",
-			"description": "All applications that require user sign-in should employ a mechanism for automating user sign-out. When the inactivity is about to reach that threshold, a session timeout dialog appears automatically to inform the user."
-		},
-		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
 		  "name": "Flexible Column Layout with Routing and One Initial Column",
 		  "description": "Flexible Column Layout as an app with routing that starts with a single initial column."
@@ -242,11 +191,6 @@
 		  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
 		  "name": "Flexible Column Layout (with Event Bus)",
 		  "description": "Clicking on a link in a column opens the next column."
-		},
-		{
-		  "id": "sap.f.sample.Avatar",
-		  "name": "Avatar",
-		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
 		},
 		{
 			"id": "sap.f.sample.AvatarGroup",
