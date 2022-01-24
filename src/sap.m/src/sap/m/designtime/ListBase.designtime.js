@@ -7,6 +7,21 @@ sap.ui.define([],
 	function() {
 		"use strict";
 
+		function isParentListBaseInstanceAndBound(oElement) {
+			var oParent = oElement;
+			while (oParent) {
+				if (oParent.isA("sap.m.ListBase")) {
+					var oBinding = oParent.getBinding("items");
+					if (oBinding) {
+						return true;
+					}
+					return false;
+				}
+				oParent = oParent.getParent();
+			}
+			return false;
+		}
+
 		return {
 			name: {
 				singular: "LIST_BASE_NAME",
@@ -21,16 +36,14 @@ sap.ui.define([],
 			aggregations: {
 				items: {
 					propagateMetadata: function(oElement) {
-						if (oElement.isA("sap.m.ListItemBase")) {
-							var oParent = oElement.getParent();
-							if (oParent && oParent.isA("sap.m.ListBase")) {
-								var oBinding = oParent.getBinding("items");
-								if (oBinding) {
-									return {
-										actions: null // when items aggregation is bound then changes the items via RTA should be prevented
-									};
+						if (isParentListBaseInstanceAndBound(oElement)) {
+							return {
+								// prevent remove & rename actions on "items" aggregation and its inner controls when binding exists
+								actions: {
+									remove: null,
+									rename: null
 								}
-							}
+							};
 						}
 					},
 					domRef: ":sap-domref > .sapMListUl:not(.sapMGrowingList)",

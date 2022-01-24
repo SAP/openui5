@@ -56,19 +56,6 @@ sap.ui.define([
 				}
 			},
 			items: {
-				propagateMetadata: function(oElement) {
-					if (oElement.isA("sap.m.ColumnListItem")) {
-						var oParent = oElement.getParent();
-						if (oParent && oParent.isA("sap.m.Table")) {
-							var oBinding = oParent.getBinding("items");
-							if (oBinding) {
-								return {
-									actions: null // when items aggregation is bound then changes the items via RTA should be prevented
-								};
-							}
-						}
-					}
-				},
 				domRef: ":sap-domref .sapMListItems"
 			},
 			contextMenu: {
