@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<title>DateTimePicker with Timezone</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.DatePicker.gif">
+
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_fiori_3"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<script>
+
+		var app = new sap.m.App("myApp");
+
+		var page1 = new sap.m.Page("page1", {
+			title:"DateTimePicker with Timezone",
+			content : [
+				new sap.m.VBox("VBOX1", {
+					width: "40%",
+					items: [
+						new sap.m.DateTimePicker("DTP1", {
+							displayFormat: "medium",
+							width: "100%",
+							dateValue: new Date(Date.UTC(2000, 10, 20, 8, 10, 10)),
+							showTimezone: true,
+							timezone: "America/Argentina/Buenos_Aires"
+						}),
+						new sap.m.DateTimePicker("DTP2", {
+							displayFormat: "medium",
+							width: "100%",
+							dateValue: new Date(Date.UTC(2000, 10, 20, 8, 10, 10)),
+							timezone: "America/Argentina/Buenos_Aires"
+						})
+					]
+				}),
+				new sap.m.Slider("SLD1", {
+					value: 40,
+					step: 1,
+					min: 1,
+					max: 100,
+					change: function(oEvent) {
+						sap.ui.getCore().byId("VBOX1").setWidth(this.getValue() + "%");
+					}
+				}),
+				new sap.m.Button("BTN20", {
+					text: "20%",
+					press: function() {
+						sap.ui.getCore().byId("SLD1").setValue(20);
+						sap.ui.getCore().byId("VBOX1").setWidth("20%");
+					}
+				}),
+				new sap.m.Button("BTN40", {
+					text: "40%",
+					press: function() {
+						sap.ui.getCore().byId("SLD1").setValue(40);
+						sap.ui.getCore().byId("VBOX1").setWidth("40%");
+					}
+				}),
+				new sap.m.Button("BTNBA", {
+					text: "America/Argentina/Buenos_Aires",
+					press: function() {
+						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
+						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+					}
+				}),
+				new sap.m.Button("BTNNY", {
+					text: "America/New_York",
+					press: function() {
+						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
+						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+					}
+				}),
+				new sap.m.Button("BTNS", {
+					text: "Europe/Sofia",
+					press: function() {
+						sap.ui.getCore().byId("DTP1").setTimezone(this.getText());
+						sap.ui.getCore().byId("DTP2").setTimezone(this.getText());
+					}
+				})
+			],
+		});
+
+		app.addPage(page1);
+		app.placeAt("body");
+
+	</script>
+
+	</head>
+	<body id="body" class="sapUiBody" style="width:1000px">
+	</body>
+</html>

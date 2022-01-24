@@ -19,6 +19,7 @@ module.exports = [
 	"DatePicker.spec.js",
 	"DateRangeSelection.spec.js",
 	"DateTimePicker.spec.js",
+	"DateTimePickerWithTimezone.spec.js",
 	"Dialog.spec.js",
 	"DynamicDateRangeVisual.spec.js",
 	"ExpandableText.spec.js",

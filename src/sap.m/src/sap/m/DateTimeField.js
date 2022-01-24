@@ -128,7 +128,12 @@ sap.ui.define([
 		// convert to date object
 		var oDate;
 		if (sValue) {
-			oDate = this._parseValue(sValue);
+			try {
+				oDate = this._parseValue(sValue);
+			} catch (e) {
+				//ignore parsing error
+			}
+
 			if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				this._bValid = false;
 				Log.warning("Value can not be converted to a valid date", this);

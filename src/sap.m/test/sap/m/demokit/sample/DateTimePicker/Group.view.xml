@@ -1,6 +1,8 @@
 <mvc:View
 	controllerName="sap.m.sample.DateTimePicker.Group"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:layout="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
 	xmlns="sap.m">
 	<Panel
 		id="dateTimePanel"
@@ -68,4 +70,33 @@
 			text="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'long'}}"
 			class="sapUiSmallMargin"/>
 	</Panel>
+	<form:SimpleForm
+		id="simpleForm"
+		columnsL="1"
+		columnsM="1"
+		editable="true"
+		labelSpanL="12"
+		labelSpanM="12"
+		layout="ResponsiveGridLayout">
+		<Title
+			text="Using a timezone"
+			titleStyle="H4" />
+		<Label text="Showing the timezone label" labelFor="DTP8"/>
+		<DateTimePicker
+			id="DTP8"
+			value="2016-02-18-10-32-30"
+			valueFormat="yyyy-MM-dd-HH-mm-ss"
+			showTimezone="true"
+			timezone="America/New_York"
+			class="sapUiSmallMarginBottom" />
+		<Label text="Not showing the timezone label, showing the current time in New York" labelFor="DTP9" />
+		<DateTimePicker
+			id="DTP9"
+			dateValue="{path:'/dateValue', formatOptions: { style: 'medium' }}"
+			timezone="America/New_York"
+			class="sapUiSmallMarginBottom"/>
+		<Input editable="false" value="America/New_York">
+			<layoutData><layout:GridData span="XL2 L3 M4 S4"/></layoutData>
+		</Input>
+	</form:SimpleForm>
 </mvc:View>
