@@ -843,8 +843,8 @@ sap.ui.define([
 			$select : "foo/name.space.OtherType"
 		}
 	}].forEach(function (oFixture, i) {
-		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
-				+ JSON.stringify(oFixture.queryOptions);
+		var sJSON = JSON.stringify(oFixture.queryOptions),
+			sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions" + sJSON;
 
 		/*
 		 * Executes the test for doConvertSystemQueryOptions.
@@ -865,6 +865,7 @@ sap.ui.define([
 				oRequestor.doConvertSystemQueryOptions("/Foo", oFixture.queryOptions,
 					fnResultHandlerSpy, oFixture.dropSystemQueryOptions, bSorted);
 
+				assert.strictEqual(JSON.stringify(oFixture.queryOptions), sJSON, "unchanged");
 				assert.strictEqual(fnResultHandlerSpy.callCount,
 					aExpectedResultHandlerCalls.length);
 				aExpectedResultHandlerCalls.forEach(function (oResult, i) {
