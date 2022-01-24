@@ -1,0 +1,25 @@
+{
+	"_version": "1.9.0",
+
+	"sap.app": {
+		"id": "sap.m.sample.iconOnlyButtons",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.iconOnlyButtons.View",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		}
+	}
+}

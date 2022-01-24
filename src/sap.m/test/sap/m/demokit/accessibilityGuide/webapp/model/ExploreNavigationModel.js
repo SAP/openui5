@@ -461,11 +461,6 @@ sap.ui.define([
                                 key: 'index.html'
                             },
                             {
-                                url: '/samples/iconOnlyButtons/i18n.properties',
-                                name: 'i18n.properties',
-                                key: 'i18n.properties'
-                            },
-                            {
                                 url: '/samples/iconOnlyButtons/manifest.json',
                                 name: 'manifest.json',
                                 key: 'manifest.json',
@@ -475,11 +470,36 @@ sap.ui.define([
                                 url: '/samples/iconOnlyButtons/Component.js',
                                 name: 'Component.js',
                                 key: 'Component.js'
+                            }
+                        ]
+                    },
+                    {
+                        key: 'maskInput',
+                        target: 'exploreSamples',
+                        title: 'Mask Input',
+                        useIFrame: true,
+                        isApplication: true,
+                        files: [
+                            {
+                                url: '/samples/maskInput/View.view.xml',
+                                name: 'View.view.xml',
+                                key: 'View.view.xml'
                             },
                             {
-                                url: '/samples/iconOnlyButtons/Controller.controller.js',
-                                name: 'Controller.controller.js',
-                                key: 'Controller.controller.js'
+                                url: '/samples/maskInput/index.html',
+                                name: 'index.html',
+                                key: 'index.html'
+                            },
+                            {
+                                url: '/samples/maskInput/manifest.json',
+                                name: 'manifest.json',
+                                key: 'manifest.json',
+                                isApplicationManifest: true
+                            },
+                            {
+                                url: '/samples/maskInput/Component.js',
+                                name: 'Component.js',
+                                key: 'Component.js'
                             }
                         ]
                     },
@@ -682,11 +702,6 @@ sap.ui.define([
                                 url: '/samples/buttonShortcut/index.html',
                                 name: 'index.html',
                                 key: 'index.html'
-                            },
-                            {
-                                url: '/samples/buttonShortcut/i18n.properties',
-                                name: 'i18n.properties',
-                                key: 'i18n.properties'
                             },
                             {
                                 url: '/samples/buttonShortcut/manifest.json',

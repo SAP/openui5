@@ -1,0 +1,19 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		height="100%">
+		<App>
+			<Page
+				showHeader="false"
+				id="page"
+				backgroundDesign="Solid">
+				<VBox class="sapUiSmallMargin">
+					<Text text="Descriptive tooltip text should be added, in order to replace the default tooltip comming with the icon." />
+					<Button icon="sap-icon://home" tooltip="Home" />
+					<ToolbarSpacer />
+					<Button icon="sap-icon://home" tooltip="Home" type="Back" />
+				</VBox>
+			</Page>
+		</App>
+</mvc:View>
