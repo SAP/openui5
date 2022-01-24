@@ -3,6 +3,11 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "bd9a4118208e8677b2e2fa116ee4e02ec083f6f1",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Style property for actions enabled"
+      },
+      {
         "id": "b37ac43429042584abdfb34a56e663d0a4418d68",
         "type": "FIX",
         "text": " Integration Cards: High CPU utilization is now fixed",

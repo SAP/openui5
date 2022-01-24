@@ -3,6 +3,22 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "d37a8e742fd9f3058a4bcdd0d0b804b78a94938e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          }
+        ]
+      },
+      {
+        "id": "bd9a4118208e8677b2e2fa116ee4e02ec083f6f1",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Style property for actions enabled"
+      },
+      {
         "id": "9a6ab4f6798a2c858ea92a5d33737a62bf425bdf",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Fix failing QUnit on Firefox",

@@ -3,6 +3,11 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "c18309c28bffd88ee8a407ab1f0395387b4dbedd",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding: oHeaderContext.getObject() returns header data"
+      },
+      {
         "id": "675c00558e741b5a74f0158a68d2def88599fd76",
         "type": "FIX",
         "text": " sap.ui.model.*: JSDoc for parameter bForceUpdate fixed",

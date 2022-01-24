@@ -3,6 +3,136 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "74580c369672c1e6d9c97b2479fd6aedfd7dff6e",
+        "type": "FIX",
+        "text": " FeedListItem : FeedListItemActionButton getting cutoff at right end.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170206159"
+          }
+        ]
+      },
+      {
+        "id": "acadce2a0aab2be92c00e4379720e810e5ab33b5",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: aria role and description adjustment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280013612"
+          }
+        ]
+      },
+      {
+        "id": "5ab58343088a1137cb60620acec045917a977369",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Empty value can now be set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280018792"
+          }
+        ]
+      },
+      {
+        "id": "dd9270ab8498f6cefa8f6c877eab1846d018737f",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "cce0cc65c70cc86c786a47e13c78b3e0e9064ac7",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: added DateTimePicker option"
+      },
+      {
+        "id": "9fa403399e428dbf890693612278df75f89e56be",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent scrolling to top on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000373502022"
+          }
+        ]
+      },
+      {
+        "id": "86ee1ae74679d18f002e4fbb2bd608abab57aabb",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Fix focus on item selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180426976"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000372792022"
+          }
+        ]
+      },
+      {
+        "id": "7fd1c09699471e244a32cac95fff0b4564e667dd",
+        "type": "FIX",
+        "text": " Table: ToolTip added to the clearAll button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280017742"
+          }
+        ]
+      },
+      {
+        "id": "3eb7398249ead50cb088322cf13a93df94b3f552",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Now has correct styling when disabled in horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280016349"
+          }
+        ]
+      },
+      {
+        "id": "a5bbaf046fe6e78ad3a961308638e9a40b5109b7",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: confirm state is properly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280016136"
+          }
+        ]
+      },
+      {
+        "id": "1df8e6389efa26c7665d5943e7561170999e0f0a",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "d37a8e742fd9f3058a4bcdd0d0b804b78a94938e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          }
+        ]
+      },
+      {
         "id": "398e76705b7c4c6d3695132f8744fe9d1335e6a4",
         "type": "FIX",
         "text": " sap.m.MaskInput: screen reader announcments improvement",
