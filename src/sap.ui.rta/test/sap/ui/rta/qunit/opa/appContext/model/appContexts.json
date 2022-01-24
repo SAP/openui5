@@ -1,0 +1,47 @@
+{
+	"appContexts": [
+		{
+			"id": "id-1591275572834-1",
+			"types": {
+				"role": [
+					"SAP_ACH_ADMIN",
+					"MW_ADMIN"
+				]
+			},
+			"title": "German Admin",
+			"description": "ACH Admin for Germany"
+		},
+		{
+			"id": "id-1591275572834-2",
+			"types": {
+				"role": [
+					"DLM_FIORI_COPILOT"
+				]
+			},
+			"title": "DLM Copilot",
+			"description": "DLM copilot contexts for Europe"
+		},
+		{
+			"id": "id-1591275572834-3",
+			"types": {
+				"role": [
+					"SAP_ACH_ADMIN",
+					"MW_ADMIN"
+				]
+			},
+			"title": "England Admin",
+			"description": "ACH Admin for England"
+		},
+		{
+			"id": "id-1591275572834-4",
+			"types": {
+				"role": [
+					"SAP_ACH_ADMIN",
+					"MW_ADMIN"
+				]
+			},
+			"title": "Spain Admin",
+			"description": "ACH Admin for Spain"
+		}
+	]
+}

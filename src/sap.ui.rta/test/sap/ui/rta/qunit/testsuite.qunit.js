@@ -43,6 +43,14 @@ sap.ui.define([
 				}
 			},
 
+			// AppContexts
+			"appContexts/controller/ManageContexts.controller": {
+				group: "AppContexts",
+				coverage: {
+					only: ["sap/ui/rta/appContexts/controller/ManageContexts.controller"]
+				}
+			},
+
 			// AppVariant
 			"appVariant/AppVariantDialog": {
 				group: "AppVariant",
@@ -743,7 +751,7 @@ sap.ui.define([
 
 	var bCompAvailable = false;
 	var oXhr = new XMLHttpRequest();
-	oXhr.onreadystatechange = function() {
+	oXhr.onreadystatechange = function () {
 		if (this.readyState === 4) {
 			switch (this.status) {
 				case 200:

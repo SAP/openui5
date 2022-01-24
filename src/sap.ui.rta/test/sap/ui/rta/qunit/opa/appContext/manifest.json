@@ -1,0 +1,21 @@
+{
+	"sap.app": {
+		"id": "sap.ui.rta.appContext",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.rta.appcontext.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.unified": {}
+			}
+		}
+	}
+}
