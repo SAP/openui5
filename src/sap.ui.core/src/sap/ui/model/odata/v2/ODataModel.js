@@ -4926,7 +4926,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Trigger a <code>POST</code> request to the OData service that was specified in the model constructor.
+	 * Trigger a <code>POST</code> request to the OData service that was specified in the model
+	 * constructor; see
+	 * {@link topic:6c47b2b39db9404582994070ec3d57a2#loio4c4cd99af9b14e08bb72470cc7cabff4 Creating
+	 * Entities documentation} for comprehensive information on the topic.
 	 *
 	 * Please note that deep creates are not supported and may not work.
 	 *
@@ -6512,7 +6515,9 @@ sap.ui.define([
 	/**
 	 * Creates a new entry object which is described by the metadata of the entity type of the
 	 * specified <code>sPath</code> Name. A context object is returned which can be used to bind
-	 * against the newly created object.
+	 * against the newly created object. See
+	 * {@link topic:6c47b2b39db9404582994070ec3d57a2#loio4c4cd99af9b14e08bb72470cc7cabff4 Creating
+	 * Entities documentation} for comprehensive information on the topic.
 	 *
 	 * For each created entry a request is created and stored in a request queue.
 	 * The request queue can be submitted by calling {@link #submitChanges}. As long as the context
