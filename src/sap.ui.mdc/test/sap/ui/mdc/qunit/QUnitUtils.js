@@ -26,12 +26,7 @@ sap.ui.define(function() {
 		}
 
 		if (typeof oTarget.getPropertyHelper === "function") {
-			try {
-				oTarget.getPropertyHelper();
-				bPropertyHelperExists = true;
-			} catch (e) {
-				bPropertyHelperExists = false;
-			}
+			bPropertyHelperExists = !!oTarget.getPropertyHelper();
 
 			if (bPropertyHelperExists) {
 				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
@@ -90,12 +85,7 @@ sap.ui.define(function() {
 		}
 
 		if (typeof oTarget.getPropertyHelper === "function") {
-			try {
-				oTarget.getPropertyHelper();
-				bPropertyHelperExists = true;
-			} catch (e) {
-				bPropertyHelperExists = false;
-			}
+			bPropertyHelperExists = !!oTarget.getPropertyHelper();
 
 			if (bPropertyHelperExists) {
 				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
@@ -154,12 +144,7 @@ sap.ui.define(function() {
 		}
 
 		if (typeof oTarget.getPropertyHelper === "function") {
-			try {
-				oTarget.getPropertyHelper();
-				bPropertyHelperExists = true;
-			} catch (e) {
-				bPropertyHelperExists = false;
-			}
+			bPropertyHelperExists = !!oTarget.getPropertyHelper();
 
 			if (bPropertyHelperExists) {
 				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
@@ -218,12 +203,7 @@ sap.ui.define(function() {
 		}
 
 		if (typeof oTarget.getPropertyHelper === "function") {
-			try {
-				oTarget.getPropertyHelper();
-				bPropertyHelperExists = true;
-			} catch (e) {
-				bPropertyHelperExists = false;
-			}
+			bPropertyHelperExists = !!oTarget.getPropertyHelper();
 
 			if (bPropertyHelperExists) {
 				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);

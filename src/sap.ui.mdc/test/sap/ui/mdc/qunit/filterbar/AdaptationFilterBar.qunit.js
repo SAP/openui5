@@ -113,13 +113,7 @@ sap.ui.define([
 
 		//Init parent
 		this.oTestTable.initialized().then(function(){
-
-			try {
-				this.oAdaptationFilterBar.getPropertyHelper();
-				assert.ok(false, "PropertyHelper not expected");
-			} catch (ex) {
-				assert.ok(true, "Inner FB has no PropertyHelper if not initialzed");
-			}
+			assert.notOk(this.oAdaptationFilterBar.getPropertyHelper(), "PropertyHelper not expected");
 
 			//init AdaptationFilterBar
 			this.oAdaptationFilterBar.initialized().then(function(){

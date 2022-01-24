@@ -8,14 +8,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @namespace
-	 * @name sap.ui.mdc.mixin
-	 * @private
-	 * @experimental As of version 1.82.0
-	 * @ui5-restricted sap.ui.mdc
-	 */
-
-	/**
 	 * Enhances a given control prototype with consolidated handling for external IFilter integration
 	 *
 	 * The following methods are available:

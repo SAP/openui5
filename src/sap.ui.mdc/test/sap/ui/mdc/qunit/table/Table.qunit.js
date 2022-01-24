@@ -3340,7 +3340,7 @@ sap.ui.define([
 			dataProperty: "noWidthCalculation"
 		}));
 
-		this.oTable._pInitPropertyHelper.then(function() {
+		this.oTable.awaitPropertyHelper().then(function() {
 			oPropertyHelper = this.oTable.getPropertyHelper();
 		}.bind(this));
 

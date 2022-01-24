@@ -1192,5 +1192,13 @@ sap.ui.define([
 	* @private
 	*/
 
+	/**
+	 * @namespace
+	 * @name sap.ui.mdc.mixin
+	 * @private
+	 * @experimental As of version 1.82.0
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
 	return thisLib;
 });

@@ -367,6 +367,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype.applySettings = function(mSettings, oScope) {
+		this._setPropertyHelperClass(PropertyHelper);
 		this._applySettings(mSettings, oScope);
 		this._initControlDelegate();
 	};
@@ -662,14 +663,8 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._hasPropertyHelper = function() {
-		try {
-			this.getPropertyHelper();
-			return true;
-		} catch (ex) {
-			return false;
-		}
+		return !!this.getPropertyHelper();
 	};
-
 
 	FilterBarBase.prototype._createPropertyInfoChange = function(oProperty) {
 		return {
@@ -1634,7 +1629,7 @@ sap.ui.define([
 				}.bind(this);
 
 				if (this.bDelegateInitialized && this.getControlDelegate().fetchProperties) {
-					this.initPropertyHelper(PropertyHelper).then(function(oPropertyHelper) {
+					this.initPropertyHelper().then(function(oPropertyHelper) {
 						//this._oPropertyHelper = oPropertyHelper;
 						fnResolveMetadata();
 					});
@@ -1748,10 +1743,6 @@ sap.ui.define([
 			this._changesApplied();
 
 		}.bind(this));
-	};
-
-	FilterBarBase.prototype._getWaitForChangesPromise = function() {
-		return this.getEngine().waitForChanges(this);
 	};
 
 	FilterBarBase.prototype._suspendBinding = function(oFilterField) {

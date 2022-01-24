@@ -453,14 +453,11 @@ sap.ui.define([
 
 	function mergeExtensionsIntoProperties(aProperties, mExtensions) {
 		var iMatchingExtensions = 0;
-
 		mExtensions = mExtensions || {};
-
 		for (var i = 0; i < aProperties.length; i++) {
 			if ("extension" in aProperties[i]) {
 				throwInvalidPropertyError("Property contains invalid attribute 'extension'.", aProperties[i]);
 			}
-
 			if (aProperties[i].name in mExtensions) {
 				aProperties[i].extension = mExtensions[aProperties[i].name];
 				iMatchingExtensions++;
@@ -468,10 +465,62 @@ sap.ui.define([
 				aProperties[i].extension = {};
 			}
 		}
-
 		if (iMatchingExtensions !== Object.keys(mExtensions).length) {
 			throw new Error("At least one property extension does not point to an existing property.");
 		}
+	}
+
+	function _createPrivate(oInstance, oParent, aProperties, mExtensions, aAllowedAttributes, mExtensionAttributeMetadata) {
+		var mPrivate = {};
+		var mInstanceAttributeMetadata = aCommonAttributes.concat(aAllowedAttributes || []).reduce(function(mMetadata, sAttribute) {
+			if (sAttribute in mAttributeMetadata) {
+				mMetadata[sAttribute] = mAttributeMetadata[sAttribute];
+			}
+			return mMetadata;
+		}, Object.assign({}, oInstance._mExperimentalAdditionalAttributes));
+		if (mExtensionAttributeMetadata) {
+			mPrivate.mAttributeMetadata = Object.assign({
+				extension: {
+					type: mExtensionAttributeMetadata,
+					mandatory: true,
+					allowedForComplexProperty: true
+				}
+			}, mInstanceAttributeMetadata);
+			mPrivate.aMandatoryExtensionAttributes = Object.keys(mExtensionAttributeMetadata).filter(function(sAttribute) {
+				return mExtensionAttributeMetadata[sAttribute].mandatory;
+			});
+		} else {
+			mPrivate.mAttributeMetadata = mInstanceAttributeMetadata;
+			mPrivate.aMandatoryExtensionAttributes = [];
+		}
+		mPrivate.aMandatoryAttributes = Object.keys(mPrivate.mAttributeMetadata).filter(function(sAttribute) {
+			return mPrivate.mAttributeMetadata[sAttribute].mandatory;
+		});
+
+		var aClonedProperties = merge([], aProperties);
+		var mProperties = createPropertyMap(aClonedProperties);
+		if (mExtensionAttributeMetadata) {
+			mergeExtensionsIntoProperties(aClonedProperties, merge({}, mExtensions));
+		}
+
+		var oPreviousPrivate = _private.get(oInstance);
+		var aPreviousProperties = oPreviousPrivate && oPreviousPrivate.aRawProperties;
+		_private.set(oInstance, mPrivate);
+		oInstance.validateProperties(aClonedProperties, aPreviousProperties);
+
+
+		mPrivate.oParent = oParent || null;
+		mPrivate.aRawProperties = aProperties;
+		mPrivate.aProperties = aClonedProperties;
+		mPrivate.mProperties = mProperties;
+		mPrivate._ = {
+			mExtensions: mExtensions,
+			aAllowedAttributes: aAllowedAttributes,
+			mExtensionAttributeMetadata: mExtensionAttributeMetadata
+		};
+
+		enrichProperties(oInstance, aClonedProperties);
+		prepareProperties(oInstance, aClonedProperties);
 	}
 
 	/**
@@ -523,7 +572,6 @@ sap.ui.define([
 					throw new Error("Property extensions must be a plain object.");
 				}
 			}
-
 			if (oParent && !BaseObject.isA(oParent, "sap.ui.base.ManagedObject")) {
 				throw new Error("The type of the parent is invalid.");
 			}
@@ -536,50 +584,7 @@ sap.ui.define([
 				}.bind(this));
 			}
 
-			var mPrivate = {};
-			var mInstanceAttributeMetadata = aCommonAttributes.concat(aAllowedAttributes || []).reduce(function(mMetadata, sAttribute) {
-				if (sAttribute in mAttributeMetadata) {
-					mMetadata[sAttribute] = mAttributeMetadata[sAttribute];
-				}
-				return mMetadata;
-			}, Object.assign({}, this._mExperimentalAdditionalAttributes));
-
-			if (mExtensionAttributeMetadata) {
-				mPrivate.mAttributeMetadata = Object.assign({
-					extension: {
-						type: mExtensionAttributeMetadata,
-						mandatory: true,
-						allowedForComplexProperty: true
-					}
-				}, mInstanceAttributeMetadata);
-				mPrivate.aMandatoryExtensionAttributes = Object.keys(mExtensionAttributeMetadata).filter(function(sAttribute) {
-					return mExtensionAttributeMetadata[sAttribute].mandatory;
-				});
-			} else {
-				mPrivate.mAttributeMetadata = mInstanceAttributeMetadata;
-				mPrivate.aMandatoryExtensionAttributes = [];
-			}
-
-			mPrivate.aMandatoryAttributes = Object.keys(mPrivate.mAttributeMetadata).filter(function(sAttribute) {
-				return mPrivate.mAttributeMetadata[sAttribute].mandatory;
-			});
-
-			var aClonedProperties = merge([], aProperties);
-			var mProperties = createPropertyMap(aClonedProperties);
-
-			if (mExtensionAttributeMetadata) {
-				mergeExtensionsIntoProperties(aClonedProperties, merge({}, mExtensions));
-			}
-
-			_private.set(this, mPrivate);
-			this.validateProperties(aClonedProperties);
-
-			mPrivate.oParent = oParent || null;
-			mPrivate.aProperties = aClonedProperties;
-			mPrivate.mProperties = mProperties;
-
-			enrichProperties(this, aClonedProperties);
-			prepareProperties(this, aClonedProperties);
+			_createPrivate(this, oParent, aProperties, mExtensions, aAllowedAttributes, mExtensionAttributeMetadata);
 		}
 	});
 
@@ -591,14 +596,15 @@ sap.ui.define([
 	 * any method that tries to access them might not work as expected.
 	 *
 	 * @param {object[]} aProperties The properties to validate
+	 * @param {object[]} [aPreviousProperties] The previous set of properties to validate against
 	 * @throws {Error} If the properties are invalid
 	 * @protected
 	 */
-	PropertyHelper.prototype.validateProperties = function(aProperties) {
+	PropertyHelper.prototype.validateProperties = function(aProperties, aPreviousProperties) {
 		var oUniquePropertiesSet = new Set();
 
 		for (var i = 0; i < aProperties.length; i++) {
-			this.validateProperty(aProperties[i], aProperties);
+			this.validateProperty(aProperties[i], aProperties, aPreviousProperties);
 			oUniquePropertiesSet.add(aProperties[i].name);
 		}
 
@@ -616,10 +622,11 @@ sap.ui.define([
 	 *
 	 * @param {object} oProperty The property to validate
 	 * @param {object[]} aProperties The entire array properties
+	 * @param {object[]} [aPreviousProperties] The previous set of properties to validate against
 	 * @throws {Error} If the property is invalid
 	 * @protected
 	 */
-	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties) {
+	PropertyHelper.prototype.validateProperty = function(oProperty, aProperties, aPreviousProperties) {
 		if (!isPlainObject(oProperty)) {
 			throwInvalidPropertyError("Property info must be a plain object.", oProperty);
 		}
@@ -639,7 +646,6 @@ sap.ui.define([
 				throwInvalidPropertyError("Property does not contain mandatory attribute '" + sMandatoryAttribute + "'.", oProperty);
 			}
 		});
-
 		_private.get(this).aMandatoryExtensionAttributes.forEach(function(sMandatoryAttribute) {
 			if (!(sMandatoryAttribute in oProperty.extension)) {
 				reportInvalidProperty("Property does not contain mandatory attribute 'extension." + sMandatoryAttribute + "'.", oProperty);
@@ -745,6 +751,21 @@ sap.ui.define([
 	PropertyHelper.prototype.getParent = function() {
 		var oPrivate = _private.get(this);
 		return oPrivate ? oPrivate.oParent : null;
+	};
+
+
+	/**
+	 * Sets all properties known to this helper.
+  	 *
+	 * @param {object[]} aProperties The properties to process in this helper
+	 * @returns {sap.ui.mdc.util.PropertyHelper} returns propertyhelper instance
+	 * @public
+	 * @since 1.100.0
+	 */
+	 PropertyHelper.prototype.setProperties = function (aProperties) {
+		var mPrivate = _private.get(this);
+		_createPrivate(this, mPrivate.oParent, aProperties, mPrivate._.mExtensions, mPrivate._.aAllowedAttributes, mPrivate._.mExtensionAttributeMetadata);
+		return this;
 	};
 
 	/**

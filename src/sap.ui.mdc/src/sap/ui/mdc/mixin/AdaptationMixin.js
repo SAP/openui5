@@ -10,15 +10,6 @@ sap.ui.define(
         "use strict";
 
         /**
-         * @namespace
-         * @name sap.ui.mdc.mixin
-         * @private
-         * @since 1.82.0
-         * @experimental As of version 1.82.0
-         * @ui5-restricted sap.ui.mdc
-         */
-
-        /**
          * Enhances a given control prototype with consolidated handling for adaptation.
          *
          * The following methods are available:
@@ -54,15 +45,15 @@ sap.ui.define(
         };
 
         /**
-         * Hook which is executed after a chain of changes has been processed by a changehandler.
-         * <b>Note</b>: This hook will be executed whenever a change is applied or reverted, e.g:
-         * <ul>
-         * <li><code>variant appliance</code></li>
-         * <li><code>enduser personalization</code></li>
-         * <li><code>reset triggered</code></li>
-         * </ul>
-         *
-         */
+        * Hook which is executed after a chain of changes has been processed by a changehandler.
+        * <b>Note</b>: This hook will be executed whenever a change is applied or reverted, e.g:
+        * <ul>
+        * <li><code>variant appliance</code></li>
+        * <li><code>enduser personalization</code></li>
+        * <li><code>reset triggered</code></li>
+        * </ul>
+        *
+        */
         AdaptationMixin._onModifications = function() {
             //
         };
@@ -154,12 +145,22 @@ sap.ui.define(
             };
         };
 
+        // Needed for unit testing as flex is not available
+        AdaptationMixin._getWaitForChangesPromise = function() {
+            var oEngine = this.getEngine && this.getEngine();
+            if (!oEngine) {
+                throw "Engine instance not found.";
+            }
+            return oEngine.waitForChanges(this);
+        };
+
         return function () {
             this.retrieveInbuiltFilter = AdaptationMixin.retrieveInbuiltFilter;
             this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
             this.validateState = AdaptationMixin.validateState;
             this._onModifications = AdaptationMixin._onModifications;
             this._onChangeAppliance = AdaptationMixin._onChangeAppliance;
+            this._getWaitForChangesPromise = AdaptationMixin._getWaitForChangesPromise;
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
         };

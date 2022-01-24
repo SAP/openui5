@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",  "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/AdaptationMixin"
-], function(CoreControl, DelegateMixin, AdaptationMixin) {
+	"sap/ui/core/Control",  "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/PropertyHelperMixin", "sap/ui/mdc/mixin/AdaptationMixin"
+], function(CoreControl, DelegateMixin, PropertyHelperMixin, AdaptationMixin) {
 	"use strict";
 
 	/**
@@ -26,9 +26,12 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPayload as getPayload
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getTypeUtil as getTypeUtil
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initControlDelegate as initControlDelegate
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.initPropertyHelper as initPropertyHelper
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.awaitPropertyHelper as awaitPropertyHelper
-	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPropertyHelper as getPropertyHelper
+	 *
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.initPropertyHelper as initPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.awaitPropertyHelper as awaitPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.getPropertyHelper as getPropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.finalizePropertyHelper as finalizePropertyHelper
+	 * @borrows sap.ui.mdc.mixin.PropertyHelperMixin.isPropertyHelperFinal as isPropertyHelperFinal
 	 *
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getEngine as getInstance
 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveInbuiltFilter as retrieveInbuiltFilter
@@ -59,8 +62,10 @@ sap.ui.define([
 		renderer: CoreControl.renderer
 	});
 
+
 	DelegateMixin.call(Control.prototype);
 	AdaptationMixin.call(Control.prototype);
+	PropertyHelperMixin.call(Control.prototype);
 
 	return Control;
 });
