@@ -372,5 +372,22 @@ function(
 		return true;
 	};
 
+	BasePlugin.prototype._checkChangeHandlerAndStableId = function(oElementOverlay) {
+		var oAction = this.getAction(oElementOverlay);
+		if (oAction && oAction.changeType) {
+			var oElement = oAction.changeOnRelevantContainer ?
+				oElementOverlay.getRelevantContainer() :
+				oElementOverlay.getElement();
+
+			return this.hasChangeHandler(oAction.changeType, oElement)
+				.then(function(bHasChangeHandler) {
+					return bHasChangeHandler
+						&& this._checkRelevantContainerStableID(oAction, oElementOverlay)
+						&& this.hasStableId(oElementOverlay);
+				}.bind(this));
+		}
+		return Promise.resolve(false);
+	};
+
 	return BasePlugin;
 });

@@ -212,6 +212,56 @@
 			outline-offset: -0.0625rem; //1px
 		}
 	}
+
+	.sapUiRtaResizeHandle {
+		cursor: col-resize;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 0.625rem; // 10px
+		background-clip: content-box;
+		background-color: @_sap_ui_rta_Overlay_Border;
+		-webkit-user-select: none;
+		user-select: none;
+
+		&:before {
+			content:"";
+			position: absolute;
+			top: 10%;
+			bottom: 10%;
+			left: 37.5%;
+			border-left: 1px solid @sapUiHighlightTextColor;
+		}
+		&:after {
+			content:"";
+			position: absolute;
+			top: 25%;
+			bottom: 25%;
+			left: 62.5%;
+			border-left: 1px solid @sapUiHighlightTextColor;
+		}
+	}
+
+	.sapUiRtaResizeHandleExtension {
+		position: relative;
+		top: 0;
+		bottom: 0;
+		width: 0.5rem; // 8px
+		border-right: 0.125rem dotted @_sap_ui_rta_Overlay_Border; // 2px
+		background-clip: content-box;
+		-webkit-user-select: none;
+		user-select: none;
+	}
+
+	.sapUiRtaFullScreenDiv {
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		display: block;
+		position: fixed;
+	}
+
 	.sapUiDtOverlaySelected {
 		transition: box-shadow .25s;
 		box-shadow: @_sap_ui_rta_Overlay_BoxShadow;

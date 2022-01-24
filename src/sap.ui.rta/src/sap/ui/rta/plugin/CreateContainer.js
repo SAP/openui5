@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/BaseCreate",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
 	"sap/ui/dt/Util",
 	"sap/base/util/uid"
 ], function(
 	BaseCreate,
 	FlexUtils,
-	RtaUtils,
 	DtUtil,
 	uid
 ) {
