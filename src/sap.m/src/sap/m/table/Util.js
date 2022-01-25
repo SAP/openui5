@@ -70,7 +70,7 @@ sap.ui.define([
 		var aDateParameters = [2023, 9, 26, 22, 47, 58, 999];
 		var oUTCDate = new Date(Date.UTC.apply(0, aDateParameters));
 		var oLocalDate = new (Function.prototype.bind.apply(Date, [null].concat(aDateParameters)))();
-		var mNumericLimits = { Byte: 3, SByte: 3, Int16: 5, Int32: 9, Int64: 12, Single: 6, Float: 12, Double: 13, Decimal: 15 };
+		var mNumericLimits = { Byte: 3, SByte: 3, Int16: 5, Int32: 9, Int64: 12, Single: 6, Float: 12, Double: 13, Decimal: 15, Integer: 9 };
 		Core.attachThemeChanged(function() { fBooleanWidth = 0; });
 
 		return function(oType, mSettings) {
@@ -108,7 +108,8 @@ sap.ui.define([
 			}
 
 			if (sType.startsWith("Date") || sType.startsWith("Time")) {
-				var oDate = oType.getFormatOptions().UTC ? oUTCDate : oLocalDate;
+				var mFormatOptions = oType.getFormatOptions();
+				var oDate = mFormatOptions.UTC ? oUTCDate : oLocalDate;
 				var sSample = oDate.toLocaleDateString();
 
 				if (sType == "TimeOfDay") {
@@ -117,7 +118,7 @@ sap.ui.define([
 				} else if (oType.isA("sap.ui.model.odata.type.Time")) {
 					sSample = oType.formatValue({ __edmType: "Edm.Time", ms: oUTCDate.valueOf() }, "string");
 				} else {
-					sSample = oType.formatValue(oDate, "string");
+					sSample = oType.formatValue(mFormatOptions.interval ? [oDate, new Date(oDate * 1.009)] : oDate, "string");
 					((oType.oFormat && oType.oFormat.oFormatOptions && oType.oFormat.oFormatOptions.pattern) || "").replace(/[MELVec]{3,4}/, function(sWideFormat) {
 						sSample += (sWideFormat.length == 4 ? "---" : "-");
 					});
@@ -188,6 +189,66 @@ sap.ui.define([
 			return fHeaderWidth;
 		};
 	})();
+
+	/**
+	 * Calculates the width of a table column.
+	 *
+	 * @param {sap.ui.model.odata.type.ODataType[]} vTypes The ODataType instances
+	 * @param {string} [sHeader] The header of the column
+	 * @param {object} [mSettings] The settings object
+	 * @param {int} [mSettings.minWidth=2] The minimum content width of the field in rem
+	 * @param {int} [mSettings.maxWidth=19] The maximum content width of the field in rem
+	 * @param {int} [mSettings.padding=1] The sum of column padding and border in rem
+	 * @param {float} [mSettings.gap=0] The additional content width in rem
+	 * @param {boolean} [mSettings.verticalArrangement=false] Whether the fields are arranged vertically
+	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails
+	 * @returns {string} The calculated width of the column
+	 * @private
+	 * @ui5-restricted sap.fe, sap.ui.mdc, sap.ui.comp
+	 * @since 1.101
+	 */
+	Util.calcColumnWidth = function(vTypes, sHeader, mSettings) {
+		if (!Array.isArray(vTypes)) {
+			vTypes = [vTypes];
+		}
+
+		mSettings = Object.assign({
+			minWidth: 2,
+			maxWidth: 19,
+			defaultWidth: 8,
+			padding: 1,
+			gap: 0,
+			verticalArrangement: false
+		}, mSettings);
+
+		var fHeaderWidth = 0;
+		var iMinWidth = Math.max(1, mSettings.minWidth);
+		var iMaxWidth = Math.max(iMinWidth, mSettings.maxWidth);
+
+		var fContentWidth = mSettings.gap + vTypes.reduce(function(fInnerWidth, vType) {
+			var oType = vType, oTypeSettings = mSettings;
+
+			if (Array.isArray(vType)) {
+				// for internal usage (mdc/Table) every field can provide own width settings
+				// in this case we get [<TypeInstance>, <TypeSettings>][] instead of <TypeInstance>[]
+				oType = vType[0];
+				oTypeSettings = vType[1] || mSettings;
+			}
+
+			var fTypeWidth = Util.calcTypeWidth(oType, oTypeSettings);
+			return mSettings.verticalArrangement ? Math.max(fInnerWidth, fTypeWidth) : fInnerWidth + fTypeWidth + (fInnerWidth && 0.5);
+		}, 0);
+
+		if (sHeader) {
+			fHeaderWidth = Util.calcHeaderWidth(sHeader, fContentWidth, iMaxWidth, iMinWidth);
+		}
+
+		fContentWidth = Math.max(iMinWidth, fContentWidth, fHeaderWidth);
+		fContentWidth = Math.min(fContentWidth, iMaxWidth);
+		fContentWidth = Math.round(fContentWidth * 100) / 100;
+
+		return fContentWidth + mSettings.padding + "rem";
+	};
 
 	/**
 	 * Returns an instance of <code>sap.m.IllustratedMessage</code> in case there are no visible columns in the table.
