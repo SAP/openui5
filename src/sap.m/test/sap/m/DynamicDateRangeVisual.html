@@ -43,62 +43,56 @@
 					}
 				}
 
-				var oVBox = new VBox("vertical-box", {
-					items: [
-						new Label("DDR1-label", {text: "Group headers disabled when there are more then ten options available", labelFor: "DDR1"}),
-						new DynamicDateRange("DDR1", {
-							change: handleChange,
-							width: '300px',
-							options: DynamicDateUtil.getAllOptionKeys()
-						}),
-						new Label("DDR2-label", {text: "Fixed date and date range options with 'Calendar' based UI", labelFor: "DDR2"}),
-						new DynamicDateRange("DDR2", {
-							width: '300px',
-							change: handleChange,
-							options: [
-								"DATE",
-								"DATERANGE",
-								"SPECIFICMONTH",
-								"SPECIFICMONTHINYEAR",
-								"FROM",
-								"TO"
-							],
-						}),
-						new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),
-						new DynamicDateRange("DDR3", {
-							enableGroupHeaders: false,
-							width: '300px',
-							change: handleChange,
-							options: [
-								"LASTDAYS",
-								"LASTMONTHS",
-								"LASTYEARS",
-								"NEXTDAYS",
-								"TODAYFROMTO"
-							],
-						}),
-						new Label("DDR4-label", {text: "DateTime options", labelFor: "DDR4"}),
-						new DynamicDateRange("DDR4", {
-							enableGroupHeaders: false,
-							width: '300px',
-							value: {
-								operator: 'DATETIME',
-								values: [new Date(2000, 11, 20, 17, 0, 0)]
-							},
-							change: handleChange,
-							options: [
-								"DATETIME",
-							],
-						})
-					]
-				}).addStyleClass("sapUiSmallMargin");
-
 				new App({
 					pages: [
-						new Page({
+						new Page("Page1", {
 							title: "DynamicDateRange",
 							content: [
-								oVBox
+								new Label("DDR1-label", {text: "Group headers disabled when there are more then ten options available", labelFor: "DDR1"}),
+								new DynamicDateRange("DDR1", {
+									change: handleChange,
+									width: '300px',
+									options: DynamicDateUtil.getAllOptionKeys()
+								}),
+								new Label("DDR2-label", {text: "Fixed date and date range options with 'Calendar' based UI", labelFor: "DDR2"}),
+								new DynamicDateRange("DDR2", {
+									width: '300px',
+									change: handleChange,
+									options: [
+										"DATE",
+										"DATERANGE",
+										"SPECIFICMONTH",
+										"SPECIFICMONTHINYEAR",
+										"FROM",
+										"TO"
+									],
+								}),
+								new Label("DDR3-label", {text: "Relative date and date range options with 'StepInput' based UI", labelFor: "DDR3"}),
+								new DynamicDateRange("DDR3", {
+									enableGroupHeaders: false,
+									width: '300px',
+									change: handleChange,
+									options: [
+										"LASTDAYS",
+										"LASTMONTHS",
+										"LASTYEARS",
+										"NEXTDAYS",
+										"TODAYFROMTO"
+									],
+								}),
+								new Label("DDR4-label", {text: "DateTime options", labelFor: "DDR4"}),
+								new DynamicDateRange("DDR4", {
+									enableGroupHeaders: false,
+									width: '300px',
+									value: {
+										operator: 'DATETIME',
+										values: [new Date(2000, 11, 20, 17, 0, 0)]
+									},
+									change: handleChange,
+									options: [
+										"DATETIME",
+									],
+								})
 							]
 						})
 					]
