@@ -304,6 +304,19 @@ sap.ui.define(function() {
 				coverage: {
 					only: ["sap/ui/webc/main/Tree"]
 				}
+			},
+			"designtime/RatingIndicator": {
+				title: "QUnit Page for sap.ui.webc.main.RatingIndicator design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				loader: {
+					paths: {
+						dt: "test-resources/sap/ui/webc/main/qunit/designtime/"
+					}
+				},
+				sinon: false,
+				group: "Designtime"
 			}
 		}
 	};
