@@ -167,6 +167,8 @@ describe("sap.m.InputVisualTests", function() {
 			// Should show the updated suggestions
 			browser.actions().sendKeys("C").perform();
 			expect(takeScreenshot()).toLookAs("suggestions_updated_visible");
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 		});
 	});
 
