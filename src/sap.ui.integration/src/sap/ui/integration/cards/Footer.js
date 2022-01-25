@@ -80,6 +80,10 @@ sap.ui.define([
 
 				oRM.openStart("div", oFooter).class("sapFCardFooter");
 
+				if (oActionsStrip) {
+					oRM.class("sapFCardFooterWithActionsStrip");
+				}
+
 				if (oFooter.getCardInstance().isLoading() && oFooter._hasBinding()) {
 					oRM.class("sapFCardFooterLoading");
 				}
