@@ -397,26 +397,26 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("last/next x text", function(assert) {
+	QUnit.test("last/next x text", function(assert) {
 		var oOptionLast = new StandardDynamicDateOption({ key: "LASTDAYS" }),
 			oOptionNext = new StandardDynamicDateOption({ key: "NEXTWEEKS" }),
 			sText;
 
 		sText = oOptionLast.getText(this.ddr);
 
-		var sLastText = oRb.getText("DYNAMIC_DATE_LASTX_TITLE", "days / months");
+		var sLastText = oRb.getText("DYNAMIC_DATE_LASTX_TITLE", "Days / Months");
 		assert.strictEqual(sText, sLastText, "the text is correct");
 
 		sText = oOptionNext.getText(this.ddr);
 
-		var sNextText = oRb.getText("DYNAMIC_DATE_NEXTX_TITLE", "weeks / quarters");
+		var sNextText = oRb.getText("DYNAMIC_DATE_NEXTX_TITLE", "Weeks / Quarters");
 		assert.strictEqual(sText, sNextText, "the text is correct");
 
 		oOptionLast.destroy();
 		oOptionNext.destroy();
 	});
 
-	QUnit.skip("last/next x creating value help UI", function(assert) {
+	QUnit.test("last/next x creating value help UI", function(assert) {
 		var oOptionLast = new StandardDynamicDateOption({ key: "LASTDAYS" }),
 			aControls;
 
@@ -431,8 +431,8 @@ sap.ui.define([
 		assert.strictEqual(aControls[0].getText(), "Value for X:", "label text is correct");
 		assert.strictEqual(aControls[2].getText(), "Time Periods:", "label text is correct");
 		assert.strictEqual(aControls[3].getButtons().length, 2, "two radio buttons are created");
-		assert.strictEqual(aControls[3].getButtons()[0].getText(), "days", "two radio buttons are created");
-		assert.strictEqual(aControls[3].getButtons()[1].getText(), "months", "two radio buttons are created");
+		assert.strictEqual(aControls[3].getButtons()[0].getText(), "Days", "two radio buttons are created");
+		assert.strictEqual(aControls[3].getButtons()[1].getText(), "Months", "two radio buttons are created");
 
 		oOptionLast.destroy();
 	});
