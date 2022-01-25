@@ -126,41 +126,74 @@ sap.ui.define([
 			var sLayer = Layer.USER;
 			var aSuccessfulChanges = [];
 
-			return mPropertyBag.changes.reduce(function(oPromise, oPersonalizationChange) {
-				return oPromise.then(function() {
-					oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
-					return checkChangeSpecificData(oPersonalizationChange, sLayer);
-				}).then(function() {
-					if (!mPropertyBag.ignoreVariantManagement) {
-						// check for preset variantReference
-						if (!oPersonalizationChange.changeSpecificData.variantReference) {
-							var sVariantManagementReference = getRelevantVariantManagementReference(oAppComponent, oPersonalizationChange.selectorControl, mPropertyBag.useStaticArea);
-							if (sVariantManagementReference) {
-								var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
-								oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
+			function createChanges() {
+				var aAddedChanges = [];
+				return mPropertyBag.changes.reduce(function(pPromise, oPersonalizationChange) {
+					return pPromise
+						.then(function() {
+							oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
+							return checkChangeSpecificData(oPersonalizationChange, sLayer);
+						})
+						.then(function() {
+							if (!mPropertyBag.ignoreVariantManagement) {
+								// check for preset variantReference
+								if (!oPersonalizationChange.changeSpecificData.variantReference) {
+									var sVariantManagementReference = getRelevantVariantManagementReference(oAppComponent, oPersonalizationChange.selectorControl, mPropertyBag.useStaticArea);
+									if (sVariantManagementReference) {
+										var sCurrentVariantReference = oVariantModel.oData[sVariantManagementReference].currentVariant;
+										oPersonalizationChange.changeSpecificData.variantReference = sCurrentVariantReference;
+									}
+								}
+							} else {
+								// delete preset variantReference
+								delete oPersonalizationChange.changeSpecificData.variantReference;
 							}
-						}
-					} else {
-						// delete preset variantReference
-						delete oPersonalizationChange.changeSpecificData.variantReference;
-					}
 
-					oPersonalizationChange.changeSpecificData = Object.assign(oPersonalizationChange.changeSpecificData, {developerMode: false, layer: sLayer});
-					return oFlexController.addChange(oPersonalizationChange.changeSpecificData, oPersonalizationChange.selectorControl);
-				}).then(function(oAddedChange) {
-					return oFlexController.applyChange(oAddedChange, oPersonalizationChange.selectorControl);
-				}).then(function(oAppliedChange) {
-					aSuccessfulChanges.push(oAppliedChange);
-				}).catch(function(oError) {
-					Log.error("A Change was not added successfully. Reason:", oError.message);
-				});
-			}, Promise.resolve()).then(function() {
-				(mChangeCreationListeners[sFlexReference] || [])
-					.forEach(function(fnCallback) {
-						fnCallback(aSuccessfulChanges);
+							oPersonalizationChange.changeSpecificData = Object.assign(oPersonalizationChange.changeSpecificData, {developerMode: false, layer: sLayer});
+							return oFlexController.addChange(oPersonalizationChange.changeSpecificData, oPersonalizationChange.selectorControl);
+						})
+						.then(function(oAddedChange) {
+							aAddedChanges.push({
+								changeInstance: oAddedChange,
+								selectorControl: oPersonalizationChange.selectorControl
+							});
+						})
+						.catch(function(oError) {
+							Log.error("A Change was not added successfully. Reason:", oError.message);
+						});
+				}, Promise.resolve())
+					.then(function() {
+						return aAddedChanges;
 					});
-				return aSuccessfulChanges;
-			});
+			}
+
+			function applyChanges(aAddedChanges) {
+				return aAddedChanges.reduce(function(pPromise, oAddedChange) {
+					return pPromise
+						.then(function() {
+							return oFlexController.applyChange(oAddedChange.changeInstance, oAddedChange.selectorControl);
+						})
+						.then(function(oAppliedChange) {
+							aSuccessfulChanges.push(oAppliedChange);
+						})
+						.catch(function(oError) {
+							Log.error("A Change was not applied successfully. Reason:", oError.message);
+						});
+				}, Promise.resolve());
+			}
+
+			// Make sure to first create and add all changes so that change handlers
+			// that rely on change batching in the applier can wait for them, e.g.
+			// when adding multiple columns at once to a MDC table
+			return createChanges()
+				.then(applyChanges)
+				.then(function() {
+					(mChangeCreationListeners[sFlexReference] || [])
+						.forEach(function(fnCallback) {
+							fnCallback(aSuccessfulChanges);
+						});
+					return aSuccessfulChanges;
+				});
 		},
 
 		/**

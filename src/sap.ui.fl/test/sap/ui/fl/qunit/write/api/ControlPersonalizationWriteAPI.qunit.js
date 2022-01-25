@@ -218,6 +218,29 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when adding multiple changes at once", function(assert) {
+			this.fnApplyChangeSpy.restore();
+			var fnApplyChangeStub = sandbox.stub(this.oFlexController, "applyChange")
+				.callsFake(function() {
+					assert.strictEqual(
+						this.fnCreateAndAddChangeSpy.callCount,
+						2,
+						"Both changes have been created and added before one is applied"
+					);
+				}.bind(this));
+
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
+			})
+				.then(function() {
+					assert.ok(
+						this.fnCreateAndAddChangeSpy.calledBefore(fnApplyChangeStub),
+						"then the changes are created before they are applied"
+					);
+					assert.strictEqual(fnApplyChangeStub.callCount, 2, "FlexController.applyChange has been called twice");
+				}.bind(this));
+		});
+
 		QUnit.test("when calling 'add' with three changes, one with an invalid, one without and the other with a valid changeSpecificData", function(assert) {
 			delete this.mMoveChangeData1.changeSpecificData;
 			this.mRenameChangeData1.changeSpecificData = {};
