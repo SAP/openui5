@@ -812,6 +812,471 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_Calendar_CardLevel = {
+			"sap.app": {
+				"id": "test.card.loading.card18"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "calendar.json"
+					}
+				},
+				"type": "Calendar",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"date": "2020-09-18",
+					"maxItems": 5,
+					"maxLegendItems": 5,
+					"noItemsText": "You have nothing planned for this day",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${url}}",
+									"parameters": {
+										"url": "{url}"
+									}
+								}
+							]
+						},
+						"path": "/item"
+					},
+					"specialDate": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"type": "{type}"
+						},
+						"path": "/specialDate"
+					},
+					"legendItem": {
+						"template": {
+							"category": "{category}",
+							"text": "{text}",
+							"type": "{type}"
+						},
+						"path": "/legendItem"
+					},
+					"moreItems": {
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": true,
+								"parameters": {
+									"url": "http://sap.com"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oManifest_Calendar_CardLevel_Error = {
+			"sap.app": {
+				"id": "test.card.loading.card21"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "some/invalid.data.json"
+					}
+				},
+				"type": "Calendar",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"path": "/items"
+					},
+					"date": "2020-09-18",
+					"maxItems": 5,
+					"maxLegendItems": 5,
+					"noItemsText": "You have nothing planned for this day",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${url}}",
+									"parameters": {
+										"url": "{url}"
+									}
+								}
+							]
+						},
+						"path": "/item"
+					},
+					"specialDate": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"type": "{type}"
+						},
+						"path": "/specialDate"
+					},
+					"legendItem": {
+						"template": {
+							"category": "{category}",
+							"text": "{text}",
+							"type": "{type}"
+						},
+						"path": "/legendItem"
+					},
+					"moreItems": {
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": true,
+								"parameters": {
+									"url": "http://sap.com"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oManifest_Calendar_CardLevel_No_Loading = {
+			"sap.app": {
+				"id": "test.card.loading.card20"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "items.json"
+					}
+				},
+				"type": "Calendar",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"json": {
+							"item": [
+								{
+									"start": "2020-09-18T09:00",
+									"end": "2020-09-18T10:00",
+									"title": "Payment reminder",
+									"icon": "sap-icon://desktop-mobile",
+									"type": "Type06",
+									"url": "http://sap.com"
+								},
+								{
+									"start": "2020-09-18T17:00",
+									"end": "2020-09-18T17:30",
+									"title": "Private appointment",
+									"icon": "sap-icon://desktop-mobile",
+									"type": "Type07"
+								},
+								{
+									"start": "2020-09-18T12:00",
+									"end": "2020-09-18T13:00",
+									"title": "Lunch",
+									"text": "working",
+									"icon": "sap-icon://desktop-mobile",
+									"type": "Type03",
+									"url": "http://sap.com"
+								},
+								{
+									"start": "2020-09-16T08:30",
+									"end": "2020-09-18T17:30",
+									"title": "Workshop",
+									"text": "Out of office",
+									"icon": "sap-icon://sap-ui5",
+									"type": "Type07"
+								},
+								{
+									"start": "2020-09-18T14:00",
+									"end": "2020-09-18T16:30",
+									"title": "Discussion with clients",
+									"text": "working",
+									"icon": "sap-icon://desktop-mobile",
+									"url": "http://sap.com"
+								},
+								{
+									"start": "2020-09-18T01:00",
+									"end": "2020-09-18T02:00",
+									"title": "Team meeting",
+									"text": "online meeting",
+									"icon": "sap-icon://sap-ui5",
+									"type": "Type04"
+								},
+								{
+									"start": "2020-09-18T04:00",
+									"end": "2020-09-18T06:30",
+									"title": "Discussion with clients",
+									"text": "working",
+									"icon": "sap-icon://desktop-mobile",
+									"url": "http://sap.com"
+								},
+								{
+									"start": "2020-09-18T01:00",
+									"end": "2020-09-18T02:00",
+									"title": "Team meeting",
+									"text": "online meeting",
+									"icon": "sap-icon://sap-ui5",
+									"type": "Type04"
+								}
+							],
+							"specialDate": [
+								{
+									"start": "2020-09-13",
+									"end": "2020-09-14",
+									"type": "Type08"
+								},
+								{
+									"start": "2020-09-24",
+									"end": "2020-09-24",
+									"type": "Type13"
+								}
+							],
+							"legendItem": [
+								{
+									"category": "calendar",
+									"text": "Team building",
+									"type": "Type08"
+								},
+								{
+									"category": "calendar",
+									"text": "Public holiday",
+									"type": "Type13"
+								},
+								{
+									"category": "appointment",
+									"text": "Reminder",
+									"type": "Type06"
+								},
+								{
+									"category": "appointment",
+									"text": "Private appointment",
+									"type": "Type07"
+								},
+								{
+									"category": "appointment",
+									"text": "Out of office",
+									"type": "Type03"
+								},
+								{
+									"category": "appointment",
+									"text": "Collaboration with other team members",
+									"type": "Type07"
+								}
+							]
+						}
+					},
+					"date": "2020-09-18",
+					"maxItems": 5,
+					"maxLegendItems": 5,
+					"noItemsText": "You have nothing planned for this day",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${url}}",
+									"parameters": {
+										"url": "{url}"
+									}
+								}
+							]
+						},
+						"path": "/item"
+					},
+					"specialDate": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"type": "{type}"
+						},
+						"path": "/specialDate"
+					},
+					"legendItem": {
+						"template": {
+							"category": "{category}",
+							"text": "{text}",
+							"type": "{type}"
+						},
+						"path": "/legendItem"
+					},
+					"moreItems": {
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": true,
+								"parameters": {
+									"url": "http://sap.com"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oManifest_Calendar_ContentLevel = {
+			"sap.app": {
+				"id": "test.card.loading.card19"
+			},
+			"sap.card": {
+				"type": "Calendar",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "calendar.json"
+						}
+					},
+					"date": "2020-09-18",
+					"maxItems": 5,
+					"maxLegendItems": 5,
+					"noItemsText": "You have nothing planned for this day",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${url}}",
+									"parameters": {
+										"url": "{url}"
+									}
+								}
+							]
+						},
+						"path": "/item"
+					},
+					"specialDate": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"type": "{type}"
+						},
+						"path": "/specialDate"
+					},
+					"legendItem": {
+						"template": {
+							"category": "{category}",
+							"text": "{text}",
+							"type": "{type}"
+						},
+						"path": "/legendItem"
+					},
+					"moreItems": {
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": true,
+								"parameters": {
+									"url": "http://sap.com"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
 		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert) {
 
 			// Arrange
@@ -1021,6 +1486,14 @@ sap.ui.define([
 			isLoadingIndicatorShowingContent(oManifest_List_ContentLevel, this.oCard, "List content has a loading placeholder", true, ".sapFCardContentPlaceholder", assert);
 		});
 
+		QUnit.test("Calendar - Loading indicator should be present - card level request", function (assert) {
+			isLoadingIndicatorShowingContent(oManifest_Calendar_CardLevel, this.oCard, "Calendar content has a loading placeholder", true, ".sapFCardContentPlaceholder", assert);
+		});
+
+		QUnit.test("Calendar - Loading indicator should be present - content level request", function (assert) {
+			isLoadingIndicatorShowingContent(oManifest_Calendar_ContentLevel, this.oCard, "Calendar content has a loading placeholder", true, ".sapFCardContentPlaceholder", assert);
+		});
+
 		QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
 			isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
 		});
@@ -1058,12 +1531,24 @@ sap.ui.define([
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel, this.oCard, "List content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
 		});
 
+		QUnit.test("Calendar - Loading indicator should not be present - card level request, content level JSON", function (assert) {
+			isLoadingIndicatorShowingContentDataReady(oManifest_Calendar_CardLevel_No_Loading, this.oCard, "Calendar content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
+		});
+
+		QUnit.test("Calendar - Loading indicator should not be present - card level request", function (assert) {
+			isLoadingIndicatorShowingContentDataReady(oManifest_Calendar_CardLevel, this.oCard, "Calendar content does not have a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
+		});
+
 		QUnit.test("Filter - Loading indicator should not be present when using static items", function (assert) {
 			isLoadingIndicatorShowingFilter(oManifest_Filter_Static_Items, this.oCard, "Filter does not have a loading placeholder", false, ".sapFCardFilterLoading", assert);
 		});
 
 		QUnit.test("List - Loading indicator should be present - content level request", function (assert) {
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_ContentLevel, this.oCard, "List content has a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
+		});
+
+		QUnit.test("Calendar - Loading indicator should be present - content level request", function (assert) {
+			isLoadingIndicatorShowingContentDataReady(oManifest_Calendar_ContentLevel, this.oCard, "Calendar content has a loading placeholder", false, ".sapFCardContentPlaceholder", assert);
 		});
 
 		QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
@@ -1080,6 +1565,10 @@ sap.ui.define([
 
 		QUnit.test("List - error should be visible when request can not be resolved", function (assert) {
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapFCardErrorContent", assert);
+		});
+
+		QUnit.test("Calendar - error should be visible when request can not be resolved", function (assert) {
+			isLoadingIndicatorShowingContentDataReady(oManifest_Calendar_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapFCardErrorContent", assert);
 		});
 
 		QUnit.module("Placeholders lifecycle", {
@@ -1221,6 +1710,15 @@ sap.ui.define([
 				sType = "List";
 
 			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "List", "Loading placeholder is of type ListPlaceholder", assert);
+		});
+
+		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
+			var oConfiguration = {
+					"maxItems": 2
+				},
+				sType = "Calendar";
+
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "Calendar", "Loading placeholder is of type CalendarPlaceholder", assert);
 		});
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
