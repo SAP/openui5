@@ -62,7 +62,7 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	}
 
 	/**
-	 * Calculate gregorian year from japanes era and year
+	 * Calculate Gregorian year from Japanese era and year
 	 *
 	 * @param {object} oJapanese
 	 * @return {int}

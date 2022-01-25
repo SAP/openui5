@@ -2024,7 +2024,7 @@ sap.ui.define([
 				oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with Gannen year");
-			assert.deepEqual(oParsed, oDate, "Date with Gannen year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date with Gannen year is parsed correctly");
 
 			oDate = new Date("Apr 1 2019");
 			sDate = "平成31年4月1日";
@@ -2032,7 +2032,7 @@ sap.ui.define([
 			oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Year ending with 1 is formatted as a number");
-			assert.deepEqual(oParsed, oDate, "Date with numberic year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correctly");
 
 			oDate = new Date("May 1 2019");
 			sDate = "R1/5/1";
@@ -2044,7 +2044,7 @@ sap.ui.define([
 			oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Date is formatted correctly with numeric year");
-			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date with numeric year is parsed correctly");
 
 			oDate = [new Date("May 1 2019"), new Date("May 10 2019")];
 			sDate = "令和元年5月1日～10日";
@@ -2057,7 +2057,7 @@ sap.ui.define([
 			oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Date interval is formatted correctly with Gannen year");
-			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correctly");
 
 			oDate = [new Date("Apr 1 2019"), new Date("May 1 2019")];
 			sDate = "平成31年4月1日～令和元年5月1日";
@@ -2065,7 +2065,7 @@ sap.ui.define([
 			oParsed = oDateFormat.parse(sDate);
 
 			assert.equal(sFormatted, sDate, "Date interval is formatted correctly with Gannen year");
-			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correclty");
+			assert.deepEqual(oParsed, oDate, "Date interval with Gannen year is parsed correctly");
 
 		});
 
