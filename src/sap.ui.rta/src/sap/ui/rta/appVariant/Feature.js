@@ -106,13 +106,23 @@ sap.ui.define([
 				var fnCancel = function() {
 					AppVariantUtils.closeOverviewDialog();
 				};
-				sap.ui.require(["sap/ui/rta/appVariant/AppVariantOverviewDialog"], function(AppVariantOverviewDialog) {
+
+				var oUriParameters = new UriParameters(window.location.href);
+				var sAppContextsEnabled = oUriParameters.get("sap-ui-rta-appContexts");
+
+				var sOverviewPath = "sap/ui/rta/appVariant/AppVariantOverviewDialog";
+				var oProperties = {
+					idRunningApp: oDescriptor["sap.app"].id,
+					isOverviewForKeyUser: bAsKeyUser,
+					layer: sLayer
+				};
+				if (sAppContextsEnabled === "true") {
+					sOverviewPath = "sap/ui/rta/appContexts/AppContextsOverviewDialog";
+					oProperties = {layer: sLayer};
+				}
+				sap.ui.require([sOverviewPath], function(AppVariantOverviewDialog) {
 					if (!oAppVariantOverviewDialog) {
-						oAppVariantOverviewDialog = new AppVariantOverviewDialog({
-							idRunningApp: oDescriptor["sap.app"].id,
-							isOverviewForKeyUser: bAsKeyUser,
-							layer: sLayer
-						});
+						oAppVariantOverviewDialog = new AppVariantOverviewDialog(oProperties);
 					}
 
 					oAppVariantOverviewDialog.attachCancel(fnCancel);

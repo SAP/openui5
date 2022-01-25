@@ -1,0 +1,52 @@
+{
+	"_version": "1.35.0",
+	"sap.app": {
+		"id": "sap.ui.rta.appContexts",
+		"type": "component",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "",
+		"description": "",
+		"ach": "CA-UI5-ABA-AIDX"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.rta.appContexts.view.ManageContexts",
+			"type": "XML",
+			"async": true,
+			"id": "ManageContexts"
+		},
+		"dependencies": {
+			"minUI5Version": "1.87.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.rta.appContexts.i18n.i18n"
+				}
+			},
+			"appContexts": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		}
+	}
+}

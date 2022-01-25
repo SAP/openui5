@@ -1,0 +1,17 @@
+{
+    "values": [
+        {
+            "id": "/TEST/ROLE/HGWRTS_TST",
+            "description": "Role for accessing HGWRTS test landscape"
+        },
+        {
+            "id": "/TEST/ROLE/PROD_AD",
+            "description": "Role for accessing AD prod. landscape"
+        },
+        {
+            "id": "/TEST/ROLE/BQ_MN6",
+            "description": "Superuser Privilege Management for MN6"
+        }
+    ],
+    "lastHitReached": false
+}
