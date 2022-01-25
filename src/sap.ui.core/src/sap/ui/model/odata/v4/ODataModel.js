@@ -1496,17 +1496,16 @@ sap.ui.define([
 
 	/**
 	 * Returns a context with the given path belonging to a matching list binding that has been
-	 * marked with <code>$$getKeepAliveContext</code> (see {@link #bindList}). If such a context
-	 * exists, it is returned and kept alive (see
-	 * {@link sap.ui.model.odata.v4.Context#setKeepAlive}).
+	 * marked with <code>$$getKeepAliveContext</code> (see {@link #bindList}). If such a matching
+	 * binding can be found, a context is returned and kept alive (see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getKeepAliveContext}).
 	 *
 	 * @param {string} sPath
 	 *   A list context path to an entity
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for the context's entity
 	 * @returns {sap.ui.model.odata.v4.Context|undefined}
-	 *   The context, or <code>undefined</code> if such a binding does not exist or does not have
-	 *   such a context
+	 *   The context, or <code>undefined</code> if no matching binding can be found
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the model does not use the <code>autoExpandSelect</code> parameter,
@@ -1516,22 +1515,20 @@ sap.ui.define([
 	 *   </ul>
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.ODataListBinding#getKeepAliveContext
 	 * @since 1.99.0
 	 */
 	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages) {
 		var aListBindings,
 			sListPath,
-			iPredicateIndex = sPath.indexOf("(", sPath.lastIndexOf("/")),
 			that = this;
 
 		if (!this.bAutoExpandSelect) {
 			throw new Error("Missing parameter autoExpandSelect");
 		}
-		if (sPath[0] !== "/" || iPredicateIndex < 0 || !sPath.endsWith(")")) {
+		if (sPath[0] !== "/") {
 			throw new Error("Not a list context path to an entity: " + sPath);
 		}
-		sListPath = sPath.slice(0, iPredicateIndex);
+		sListPath = sPath.slice(0, this.getPredicateIndex(sPath));
 		aListBindings = this.aAllBindings.filter(function (oBinding) {
 			return oBinding.mParameters && oBinding.mParameters.$$getKeepAliveContext
 				&& that.resolve(oBinding.getPath(), oBinding.getContext()) === sListPath;
@@ -1543,6 +1540,25 @@ sap.ui.define([
 		if (aListBindings.length) {
 			return aListBindings[0].getKeepAliveContext(sPath, bRequestMessages);
 		}
+	};
+
+	/**
+	 * Returns the index of the key predicate in the last segment of the given path.
+	 *
+	 * @param {string} sPath - The path
+	 * @returns {number} The index of the key predicate
+	 * @throws {Error} If the last segment contains no key predicate
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getPredicateIndex = function (sPath) {
+		var iPredicateIndex = sPath.indexOf("(", sPath.lastIndexOf("/"));
+
+		if (iPredicateIndex < 0 || !sPath.endsWith(")")) {
+			throw new Error("Not a list context path to an entity: " + sPath);
+		}
+
+		return iPredicateIndex;
 	};
 
 	/**

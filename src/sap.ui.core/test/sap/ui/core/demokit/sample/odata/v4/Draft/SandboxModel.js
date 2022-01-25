@@ -20,6 +20,9 @@ sap.ui.define([
 				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,_Category&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
 					source : "Products_10_true.json"
 				},
+				"Products(ID=10,IsActiveEntity=true)?$select=DraftAdministrativeData,HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,_Category,amount,categoryID,name&$expand=DraftAdministrativeData($select=CreationDateTime,DraftUUID,LastChangeDateTime),_Category($select=ID,IsActiveEntity,name)" : {
+					source : "Products_10_true_full.json"
+				},
 				"Products(ID=10,IsActiveEntity=true)/_Parts?$count=true&$orderby=ID&$select=ID,description,quantity&$skip=0&$top=5" : [{
 					ifMatch : function () {
 						return bActivated;

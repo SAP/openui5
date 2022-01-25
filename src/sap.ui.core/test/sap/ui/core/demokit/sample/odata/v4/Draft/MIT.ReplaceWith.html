@@ -26,11 +26,14 @@
 				</li>
 			</ul>
 		<h2>REALIZE and CHECK</h2>
-		<h3>Edit & Cancel</h3>
+		<h3>Start Up</h3>
 		<ol>
 			<li>Select the first product in the list report.</li>
 			<li><b>Check:</b> An object page for the product appears, no input field is editable,
-			only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
+				only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
+		</ol>
+		<h3>Edit & Cancel</h3>
+		<ol>
 			<li>Press the <code>Edit</code> button.</li>
 			<li><b>Check:</b> Some input fields are now editable, all buttons but <code>Edit</code>
 			are enabled, and the list report shows that the first product is not an active entity.
@@ -75,5 +78,22 @@
 			product is an active entity with its original name.
 			</li>
 		</ol>
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and
+		check at each step that there are no errors and warnings.
+		<h3>Testing with mock data</h3>
+		Start the Draft application URL (adjust host and port if necessary):
+		<ul>
+			<li> local:
+				<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)">
+					http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=10,IsActiveEntity=true)
+				</a>
+			</li>
+		</ul>
+		<h2>REALIZE and CHECK</h2>
+		<li><b>Check:</b> An object page for the product with ID 10 appears, no input field is
+			editable, only the <code>Edit</code> and <code>Refresh</code> buttons are enabled.</li>
+		<li>Repeat the tests "Edit & Cancel", "Edit & Activate" and "Cancel Without Edit" from the
+		    previous run.</li>
 	</body>
 </html>

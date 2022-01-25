@@ -1493,8 +1493,10 @@ sap.ui.define([
 	 *   destroyed, see {@link #destroy}. Supported since 1.84.0
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for this entity. Only used if <code>bKeepAlive</code> is
-	 *   <code>true</code>. The binding keeps requesting messages until it is destroyed. Supported
-	 *   since 1.92.0
+	 *   <code>true</code>. Determines the messages property from the annotation
+	 *   "com.sap.vocabularies.Common.v1.Messages" at the entity type. If found, the binding keeps
+	 *   requesting messages until it is destroyed. Otherwise an error is logged in the console and
+	 *   no messages are requested. Supported since 1.92.0
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> this context is not a list binding's context,
@@ -1509,7 +1511,7 @@ sap.ui.define([
 	 *     <li> the list binding uses data aggregation
 	 *       (see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}),
 	 *     <li> messages are requested, but the model does not use the <code>autoExpandSelect</code>
-	 *       parameter or the annotation "com.sap.vocabularies.Common.v1.Messages" is missing.
+	 *       parameter.
 	 *   </ul>
 	 *
 	 * @public
@@ -1517,32 +1519,29 @@ sap.ui.define([
 	 * @since 1.81.0
 	 */
 	Context.prototype.setKeepAlive = function (bKeepAlive, fnOnBeforeDestroy, bRequestMessages) {
-		var sMessagesPath,
-			that = this;
+		var that = this;
 
 		if (this.isTransient()) {
 			throw new Error("Unsupported transient context " + this);
 		}
-		if (!_Helper.getPrivateAnnotation(this.getValue(), "predicate")) {
-			throw new Error("No key predicate known at " + this);
-		}
+		this.oModel.getPredicateIndex(this.sPath);
 		this.oBinding.checkKeepAlive(this);
 
 		if (bKeepAlive && bRequestMessages) {
 			if (!this.oModel.bAutoExpandSelect) {
 				throw new Error("Missing parameter autoExpandSelect at model");
 			}
-			// the metadata is already known because we have a predicate
-			sMessagesPath = this.oModel.getMetaModel().getObject(_Helper.getMetaPath(this.sPath)
-				+ "/@com.sap.vocabularies.Common.v1.Messages/$Path");
-			if (!sMessagesPath) {
-				throw new Error("Missing @com.sap.vocabularies.Common.v1.Messages");
-			}
-			this.oBinding.fetchIfChildCanUseCache(this, sMessagesPath, {})
-				.then(function (sReducedPath) {
-					return that.fetchValue(sReducedPath);
-				})
-				.catch(this.oModel.getReporter());
+			this.bKeepAlive = bKeepAlive; // must be set before calling fetchIfChildCanUseCache
+			this.oModel.getMetaModel().fetchObject(
+				_Helper.getMetaPath(this.sPath) + "/@com.sap.vocabularies.Common.v1.Messages/$Path"
+			).then(function (sMessagesPath) {
+				if (!sMessagesPath) {
+					throw new Error("Missing @com.sap.vocabularies.Common.v1.Messages");
+				}
+				return that.oBinding.fetchIfChildCanUseCache(that, sMessagesPath, {});
+			}).then(function (sReducedPath) {
+				return that.fetchValue(sReducedPath);
+			}).catch(this.oModel.getReporter());
 		}
 
 		this.bKeepAlive = bKeepAlive;

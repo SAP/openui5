@@ -690,7 +690,7 @@ sap.ui.define([
 				oEntityType = that.fetchType(mTypeForMetaPath, sMetaPath).getResult();
 			}
 			if (sBasePath) {
-				// Key properties, ETag and predicate must only be copied from the result for nested
+				// Key properties and predicate must only be copied from the result for nested
 				// properties. The root property is already loaded and has them already. We check
 				// that they are unchanged in this case.
 				(oEntityType.$Key || []).forEach(function (vKey) {
@@ -699,9 +699,10 @@ sap.ui.define([
 					}
 					aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
 				});
-				aUpdateProperties.push(sBasePath + "/@odata.etag");
 				aUpdateProperties.push(sBasePath + "/@$ui5._/predicate");
 			}
+			// Always copy the ETag for the case that the cached entity is still initial
+			aUpdateProperties.push(_Helper.buildPath(sBasePath, "@odata.etag"));
 			if (mQueryOptions0.$expand) {
 				// intersecting the query options with sRequestedPropertyPath delivers exactly one
 				// entry in $expand at each level (one for each navigation property binding)
@@ -757,7 +758,8 @@ sap.ui.define([
 				throw new Error("GET " + sRequestPath + ": Key predicate changed from "
 					+ _Helper.getPrivateAnnotation(oResource, "predicate") + " to " + sPredicate);
 			}
-			if (oData["@odata.etag"] !== oResource["@odata.etag"]) {
+			// we expect the server to always or never send an ETag for this entity
+			if (oResource["@odata.etag"] && oData["@odata.etag"] !== oResource["@odata.etag"]) {
 				throw new Error("GET " + sRequestPath + ": ETag changed");
 			}
 
@@ -2157,6 +2159,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates an empty element for the given predicate to the cache, adds it to the cache and
+	 * returns it.
+	 *
+	 * @param {string} sPredicate - The predicate
+	 * @returns {object} The empty element
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.createEmptyElement = function (sPredicate) {
+		var oElement = {};
+
+		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
+		this.aElements.$byPredicate[sPredicate] = oElement;
+
+		return oElement;
+	};
+
+	/**
 	 * Replaces the old element at the given index with the given new element.
 	 *
 	 * @param {number} iIndex - The index
@@ -2399,7 +2419,9 @@ sap.ui.define([
 			if (sPredicate) {
 				oKeptElement = this.aElements.$byPredicate[sPredicate];
 				if (oKeptElement) {
-					if (oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
+					// we expect the server to always or never send an ETag for this entity
+					if (!oKeptElement["@odata.etag"]
+							|| oElement["@odata.etag"] === oKeptElement["@odata.etag"]) {
 						_Helper.updateNonExisting(oKeptElement, oElement);
 						oElement = oKeptElement;
 					} else if (this.hasPendingChangesForPath(sPredicate)) {
