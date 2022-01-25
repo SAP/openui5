@@ -2460,6 +2460,11 @@ sap.ui.define([
 		this._sStyleClass = null;
 
 		this._fRegisteredApplyAutomaticallyOnStandardVariant = null;
+
+		if (this._oRolesDialog) {
+			this._oRolesDialog.destroy();
+			this._oRolesDialog = null;
+		}
 	};
 
 	return VariantManagement;
