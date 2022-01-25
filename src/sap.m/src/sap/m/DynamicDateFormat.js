@@ -54,6 +54,7 @@ sap.ui.define([
 			"FROM": ["date"],
 			"TO": ["date"],
 			"SPECIFICMONTH": ["month"],
+			"SPECIFICMONTHINYEAR": ["month", "int"],
 			"TODAYFROMTO": ["int", "int"]
 		};
 		var aStandardDynamicDateRangeKeysArray = Object.keys(library.StandardDynamicDateRangeKeys);
@@ -110,6 +111,7 @@ sap.ui.define([
 			"date": {},
 			"datetime": {},
 			"month": { pattern: "MMMM" },
+			"year": { pattern: "yyyy" },
 			"int": {}
 		};
 
@@ -146,6 +148,7 @@ sap.ui.define([
 
 			oFormat._dateTimeFormatter = DateFormat.getDateTimeInstance(oFormat.oOriginalFormatOptions["datetime"]);
 			oFormat._monthFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["month"]);
+			oFormat._yearFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["year"]);
 			oFormat._numberFormatter = NumberFormat.getInstance(oFormat.oOriginalFormatOptions["int"]);
 			oFormat._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -167,6 +170,14 @@ sap.ui.define([
 				var oDate = new Date();
 				oDate.setMonth(aParams[0]);
 				aParams[0] = this._monthFormatter.format(oDate);
+			} else if (sKey === "SPECIFICMONTHINYEAR") {
+				var oDate = new Date();
+
+				oDate.setMonth(aParams[0]);
+				oDate.setYear(aParams[1]);
+
+				aParams[0] = this._monthFormatter.format(oDate);
+				aParams[1] = this._yearFormatter.format(oDate);
 			} else if (sKey === "LASTDAYS" && aParams[0] === 1) {
 				sKey = "YESTERDAY";
 				aParams = [];
@@ -199,6 +210,7 @@ sap.ui.define([
 		 * Parses a given list string into an array.
 		 *
 		 * @param {string} sValue String value to be parsed
+		 * @param {string} sKey String value of the key we will parse for
 		 * @return {object} The parsed output value
 		 * @public
 		 */

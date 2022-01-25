@@ -74,6 +74,7 @@ sap.ui.define([
 			"YESTERDAY": "YESTERDAY",
 			"TOMORROW": "TOMORROW",
 			"SPECIFICMONTH": "SPECIFICMONTH",
+			"SPECIFICMONTHINYEAR": "SPECIFICMONTHINYEAR",
 			"FIRSTDAYWEEK": "FIRSTDAYWEEK",
 			"LASTDAYWEEK": "LASTDAYWEEK",
 			"FIRSTDAYMONTH":"FIRSTDAYMONTH",
@@ -132,6 +133,7 @@ sap.ui.define([
 			"YESTERDAY": _Groups.SingleDates,
 			"TOMORROW": _Groups.SingleDates,
 			"SPECIFICMONTH": _Groups.Months,
+			"SPECIFICMONTHINYEAR": _Groups.Months,
 			"FIRSTDAYWEEK": _Groups.SingleDates,
 			"LASTDAYWEEK": _Groups.SingleDates,
 			"FIRSTDAYMONTH":_Groups.SingleDates,
@@ -288,6 +290,12 @@ sap.ui.define([
 								type: "month"
 							})];
 						break;
+					case Keys.SPECIFICMONTHINYEAR:
+						this.aValueHelpUITypes = [
+							new DynamicDateValueHelpUIType({
+								type: "custommonth"
+							})];
+						break;
 					case Keys.LASTDAYS:
 					case Keys.LASTWEEKS:
 					case Keys.LASTMONTHS:
@@ -317,6 +325,8 @@ sap.ui.define([
 								additionalText: _resourceBundle.getText("DDR_TODAYFROMTO_TO_ADDITIONAL_LABEL")
 							})];
 						break;
+					default:
+						break;
 				}
 			}
 
@@ -328,7 +338,7 @@ sap.ui.define([
 		 * @param {*} oOptions some parameters that can adapt the UI from outside
 		 * @param {function} fnControlsUpdated A callback invoked when any of the created controls updates its value
 		 *
-		 * Returns an array of controls which is mapped to the parameters of this DynamicDateOption.
+		 * @return {Object[]} Returns an array of controls which is mapped to the parameters of this DynamicDateOption.
 		 */
 		StandardDynamicDateOption.prototype.createValueHelpUI = function(oControl, fnControlsUpdated) {
 			var oOptions = oControl._getOptions(),
@@ -390,8 +400,13 @@ sap.ui.define([
 					case "month":
 						oInputControl = this._createMonthControl(oValue, iIndex, fnControlsUpdated);
 						break;
+					case "custommonth":
+						oInputControl = this._createCustomMonthControl(oValue, iIndex, fnControlsUpdated);
+						break;
 					case "options":
 						oInputControl = this._createOptionsControl(oValue, iIndex, fnControlsUpdated, aParams);
+						break;
+					default:
 						break;
 				}
 
@@ -488,6 +503,7 @@ sap.ui.define([
 						}
 						break;
 					case "month":
+					case "custommonth":
 					case "date":
 					case "daterange":
 						if (!oInputControl.getSelectedDates() || oInputControl.getSelectedDates().length == 0) {
@@ -506,6 +522,8 @@ sap.ui.define([
 						if (oInputControl.getSelectedIndex() < 0) {
 							return false;
 						}
+						break;
+					default:
 						break;
 				}
 			}
@@ -549,6 +567,13 @@ sap.ui.define([
 
 						vOutput = oInputControl.getSelectedDates()[0].getStartDate().getMonth();
 						break;
+					case "custommonth":
+						if (!oInputControl.getSelectedDates() || !oInputControl.getSelectedDates().length) {
+							return null;
+						}
+
+						vOutput = [oInputControl.getSelectedDates()[0].getStartDate().getMonth(), oInputControl.getSelectedDates()[0].getStartDate().getFullYear()];
+						break;
 					case "date":
 						if (!oInputControl.getSelectedDates().length) {
 							return null;
@@ -582,6 +607,8 @@ sap.ui.define([
 
 						var oEndDate = oInputControl.getSelectedDates()[0].getEndDate() || oInputControl.getSelectedDates()[0].getStartDate();
 						vOutput = [oInputControl.getSelectedDates()[0].getStartDate(), oEndDate];
+						break;
+					default:
 						break;
 				}
 
@@ -623,6 +650,12 @@ sap.ui.define([
 				case "SPECIFICMONTH":
 					var oDate = new UniversalDate();
 					oDate.setMonth(oValue.values[0]);
+					oDate = UniversalDateUtils.getMonthStartDate(oDate);
+					return UniversalDateUtils.getRange(0, "MONTH", oDate);
+				case "SPECIFICMONTHINYEAR":
+					var oDate = new UniversalDate();
+					oDate.setMonth(oValue.values[0]);
+					oDate.setYear(oValue.values[1]);
 					oDate = UniversalDateUtils.getMonthStartDate(oDate);
 					return UniversalDateUtils.getRange(0, "MONTH", oDate);
 				case "DATE":

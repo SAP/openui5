@@ -256,6 +256,7 @@ sap.ui.define([
 							"LASTWEEK",
 							"NEXTWEEK",
 							"SPECIFICMONTH",
+							"SPECIFICMONTHINYEAR",
 							"THISMONTH",
 							"LASTMONTH",
 							"NEXTMONTH",
