@@ -154,6 +154,24 @@
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'
 				}"
 				visible="{ui>/v2}" />
+			<Label labelFor="I70" text="Edm.DateTime (no format option) - DateTimePicker (value)"
+				visible="{ui>/v2}" />
+			<DateTimePicker id="I70"
+				value="{
+					parts : [{path : 'v2>DateTime'}, {path : 'TimezoneID'}],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'
+				}"
+				visible="{ui>/v2}" />
+			<Label labelFor="I71"
+				text="Edm.DateTime (showTimezone:'Hide') - DateTimePicker (dateValue)"
+				visible="{ui>/v2}" />
+			<DateTimePicker
+				dateValue="{
+					formatOptions : {showTimezone : 'Hide'},
+					parts : [{path : 'v2>DateTime'}, {path : 'TimezoneID'}],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'
+				}"
+				id="I71" visible="{ui>/v2}" />
 			<Label labelFor="I63" text="Edm.DateTime (2 fields)" visible="{ui>/v2}" />
 			<Input id="I63"
 				value="{
@@ -170,6 +188,45 @@
 				visible="{ui>/v2}">
 				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
 			</Input>
+			<Label labelFor="I72" text="Edm.DateTime (showTimezone:'Hide') - DateTimePicker (value)"
+				visible="{ui>/v2}" />
+			<DateTimePicker id="I72"
+				value="{
+					formatOptions : {showTimezone : 'Hide'},
+					parts : [
+						{path : 'v2>DateTime', type : 'sap.ui.model.odata.type.DateTime'},
+						{path : 'TimezoneID', type : 'sap.ui.model.odata.type.String'}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				visible="{ui>/v2}" />
+			<Text
+				text="{
+					formatOptions : {showTimezone : 'Only'},
+					parts : [{path : 'v2>DateTime'}, {path : 'TimezoneID'}],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				visible="{ui>/v2}">
+				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
+			</Text>
+			<Label labelFor="I73"
+				text="Edm.DateTime (showTimezone:'Hide') - DateTimePicker (dateValue)"
+				visible="{ui>/v2}" />
+			<DateTimePicker
+				dateValue="{
+					formatOptions : {showTimezone : 'Hide'},
+					parts : [
+						{path : 'v2>DateTime', type : 'sap.ui.model.odata.type.DateTime'},
+						{path : 'TimezoneID', type : 'sap.ui.model.odata.type.String'}
+					],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				id="I73" visible="{ui>/v2}" />
+			<Text
+				text="{
+					formatOptions : {showTimezone : 'Only'},
+					parts : [{path : 'v2>DateTime'}, {path : 'TimezoneID'}],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'}"
+				visible="{ui>/v2}">
+				<layoutData><layout:GridData span="XL4 L4 M4 S4"/></layoutData>
+			</Text>
 			<Label labelFor="I65" text="Edm.DateTime (hide time zone, with types for parts)"
 				visible="{ui>/v2}" />
 			<Input id="I65"
@@ -233,6 +290,25 @@
 						{path : 'TimezoneID', type : 'sap.ui.model.odata.type.String'}],
 					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'
 				}" />
+			<Label labelFor="I74" text="Edm.DateTimeOffset ('Show') - DateTimePicker (value)" />
+			<DateTimePicker id="I74"
+				value="{
+					formatOptions : {showTimezone : 'Show'},
+					parts : [
+						{path : 'DateTimeOffset', type : 'sap.ui.model.odata.type.DateTimeOffset'},
+						{path : 'TimezoneID', type : 'sap.ui.model.odata.type.String'}],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'
+				}" />
+			<Label labelFor="I75" text="Edm.DateTimeOffset ('Hide') - DateTimePicker (dateValue)" />
+			<DateTimePicker
+				dateValue="{
+					formatOptions : {showTimezone : 'Hide'},
+					parts : [
+						{path : 'DateTimeOffset', type : 'sap.ui.model.odata.type.DateTimeOffset'},
+						{path : 'TimezoneID', type : 'sap.ui.model.odata.type.String'}],
+					type : 'sap.ui.model.odata.type.DateTimeWithTimezone'
+				}"
+				id="I75" />
 
 			<core:Title text="sap.ui.model.odata.type.Decimal" />
 			<Label text="scale: 3" labelFor="I26"/>
