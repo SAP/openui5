@@ -163,6 +163,15 @@ function(
 			stickyMode: {type: "sap.m.PlanningCalendarStickyMode", group: "Behavior", defaultValue: PlanningCalendarStickyMode.None},
 
 			/**
+			 * Determines scale factor for the appointments.
+			 *
+			 * Acceptable range is from 1 to 6.
+			 * @since 1.99
+			 */
+			scaleFactor: {type: "float", group: "Data", defaultValue: 1},
+
+
+			 /**
 			 * Determines whether the appointments in the grid are draggable.
 			 *
 			 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
@@ -556,6 +565,16 @@ function(
 		this._getHeader().setTitle(sTitle);
 
 		return this.setProperty("title", sTitle);
+	};
+
+	SinglePlanningCalendar.prototype.setScaleFactor = function(iScaleFactor) {
+		if (iScaleFactor <  1 || iScaleFactor > 6) {
+			return;
+		}
+
+		this.setProperty("scaleFactor", parseInt(iScaleFactor));
+		this.getAggregation("_grid").setProperty("scaleFactor", parseInt(iScaleFactor));
+		return this;
 	};
 
 	SinglePlanningCalendar.prototype.setStartDate = function (oDate) {

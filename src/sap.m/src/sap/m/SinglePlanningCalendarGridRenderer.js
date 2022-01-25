@@ -406,7 +406,7 @@ sap.ui.define([
 				oRm.openStart("div");
 				oRm.attr("role", "gridcell");
 				oRm.class("sapMSinglePCRow");
-
+				oRm.style("height", oControl._getRowHeight() + "rem");
 				if (!oControl._isVisibleHour(i)) {
 					oRm.class("sapMSinglePCNonWorkingRow");
 				}
@@ -486,6 +486,8 @@ sap.ui.define([
 				iAppBottom = bAppEndIsOutsideVisibleEndHour ? 0 : oControl._calculateBottomPosition(oAppEndDate),
 				iAppChunkWidth = 100 / (iMaxLevel + 1),
 				bDraggable = oAppointment.getParent().getEnableAppointmentsDragAndDrop(),
+				iScaleFactor = oControl.getProperty("scaleFactor"),
+				iDivider = 2 * iScaleFactor,
 				iStartDayDiff,
 				iEndDayDiff,
 				bArrowLeft,
@@ -553,8 +555,7 @@ sap.ui.define([
 
 			oRm.openStart("div");
 			oRm.class("sapUiCalendarApp");
-
-			oRm.style("min-height", (iRowHeight - (iVerticalPaddingBetweenAppointments + iAppointmentBottomPadding + iAppointmentTopPadding)) / 2 + "rem");
+			oRm.style("min-height", (iRowHeight - ((iVerticalPaddingBetweenAppointments + iAppointmentBottomPadding + iAppointmentTopPadding) * iScaleFactor)) / iDivider + "rem");
 
 			if (oAppointment.getSelected()) {
 				oRm.class("sapUiCalendarAppSel");

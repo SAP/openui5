@@ -320,7 +320,121 @@
 							endDate: new Date(2018, 6, 13, 17, 0, 0)
 						},
 
+						{
+							title: "Appointment 1 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 0, 0),
+							endDate: new Date(2018, 6, 23, 8, 5, 0)
+						},
+						{
+							title: "Appointment 2 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 5, 0),
+							endDate: new Date(2018, 6, 23, 8, 10, 0)
+						},
+						{
+							title: "Appointment 3 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 10, 0),
+							endDate: new Date(2018, 6, 23, 8, 15, 0)
+						},
+						{
+							title: "Appointment 4 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 15, 0),
+							endDate: new Date(2018, 6, 23, 8, 20, 0)
+						},
+						{
+							title: "Appointment 5 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 20, 0),
+							endDate: new Date(2018, 6, 23, 8, 25, 0)
+						},
+						{
+							title: "Appointment 6 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 25, 0),
+							endDate: new Date(2018, 6, 23, 8, 30, 0)
+						},
+						{
+							title: "Appointment 7 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 30, 0),
+							endDate: new Date(2018, 6, 23, 8, 35, 0)
+						},
+						{
+							title: "Appointment 8 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 35, 0),
+							endDate: new Date(2018, 6, 23, 8, 40, 0)
+						},
+						{
+							title: "Appointment 9 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 40, 0),
+							endDate: new Date(2018, 6, 23, 8, 45, 0)
+						},
+						{
+							title: "Appointment 10 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 45, 0),
+							endDate: new Date(2018, 6, 23, 8, 50, 0)
+						},
+						{
+							title: "Appointment 11 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 50, 0),
+							endDate: new Date(2018, 6, 23, 8, 55, 0)
+						},
+						{
+							title: "Appointment 12 5min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 23, 8, 55, 0),
+							endDate: new Date(2018, 6, 23, 9, 0, 0)
+						},
+						{
+							title: "Appointment 1 30min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 24, 8, 0, 0),
+							endDate: new Date(2018, 6, 24, 8, 30, 0)
+						},
+						{
+							title: "Appointment 2 30min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 24, 8, 30, 0),
+							endDate: new Date(2018, 6, 24, 9, 0, 0)
+						},
+						{
+							title: "Appointment 1 1hour",
+							type: "Type06",
+							startDate: new Date(2018, 6, 25, 8, 0, 0),
+							endDate: new Date(2018, 6, 25, 9, 0, 0)
+						},
+						{
+							title: "Appointment 1 20min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 26, 8, 0, 0),
+							endDate: new Date(2018, 6, 26, 8, 20, 0)
+						},
+						{
+							title: "Appointment 2 20min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 26, 8, 20, 0),
+							endDate: new Date(2018, 6, 26, 8, 40, 0)
+						},
+						{
+							title: "Appointment 3 20min",
+							type: "Type06",
+							startDate: new Date(2018, 6, 26, 8, 40, 0),
+							endDate: new Date(2018, 6, 26, 9, 0, 0)
+						},
+
 						/* Full day appointments/blockers */
+						{
+							title: "4 full days - from 23th until 26th",
+							startDate: new Date(2018, 6, 23),
+							endDate: new Date(2018, 6, 26)
+						},
 						{
 							title: "3 full days - from 11th until 13th",
 							startDate: new Date(2018, 6, 11),
@@ -508,6 +622,30 @@
 						fullDay: false,
 						views: [oDayView, oWorkWeekView,oWeekView, oCustomView, oMonthView],
 						actions: [
+							new Button("resetScaleFactor",{
+								icon: "sap-icon://reset",
+								press: function() {
+									var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
+									oSPC.setScaleFactor(1)
+
+								}
+							}),
+							new Button("zoomIn",{
+								icon: "sap-icon://zoom-in",
+								press: function() {
+								var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
+								var iCurrentScaleFactor = oSPC.getScaleFactor();
+								oSPC.setScaleFactor(++iCurrentScaleFactor)
+								}
+							}),
+							new Button("zoomOut",{
+								icon: "sap-icon://zoom-out",
+								press: function() {
+									var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
+									var iCurrentScaleFactor = oSPC.getScaleFactor();
+									oSPC.setScaleFactor(--iCurrentScaleFactor)
+								}
+							}),
 							new ToggleButton("fullDay", {
 								text: "Full day",
 								press: function () {
