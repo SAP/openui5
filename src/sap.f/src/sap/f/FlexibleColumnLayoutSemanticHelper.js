@@ -173,23 +173,66 @@ sap.ui.define([
 	};
 
 	/**
-	 *  Returns an object, describing the current state of the control and the expected action buttons for each column.
+	 * Represents the relative percentage sizes of all columns as integers.
 	 *
-	 *  <ul>The returned object has the following structure:
-	 * 	<li>layout - the value of the <code>layout</code> property</li>
-	 * 	<li>maxColumnsCount - the maximum number of columns that can be displayed at once based on the control width. See {@link sap.f.FlexibleColumnLayout#getMaxColumnsCount}</li>
-	 * 	<li>columnsSizes -  an object with fields <code>beginColumn, midColumn, endColumn</code>, representing the relative percentage sizes of the three columns as integers</li>
-	 * 	<li>columnsVisibility -  an object with fields <code>beginColumn, midColumn, endColumn</code>, representing the visibility of the three columns</li>
-	 * 	<li>isFullScreen - <code>true</code> if only one column is visible at the moment, <code>false</code> otherwise
-	 * 	<b>Note:</b> This may be due to small screen size (phone) or due to a layout, for which a single column takes up the whole width</li>
-	 * 	<li>isLogicallyFullScreen - <code>true</code> if the current <code>layout</code> is one of the following: <code>sap.f.LayoutType.OneColumn, sap.f.LayoutType.MidColumnFullScreen, sap.f.LayoutType.EndColumnFullScreen</code>, <code>false</code> otherwise
-	 * 	<b>Note:</b> While <code>isFullScreen</code> can be <code>true</code> for any layout, due to small screen size, <code>isLogicallyFullScreen</code> will only be <code>true</code> for the layout values, listed above.</li>
-	 * 	<li>actionButtonsInfo - an object with fields <code>midColumn, endColumn</code>, each containing an object, telling whether action buttons should be shown in the <code>mid</code> and <code>end</code> columns, and what value of the <code>layout</code> property should be set upon clicking these buttons.
-	 * 	Each of these objects has the following fields: <code>closeColumn, fullScreen, exitFullScreen</code>. If <code>null</code>, then the respective action button should not be shown, otherwise provides the value of <code>layout</code> property for the action button.</li></ul>
+	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.ColumnsSizes
 	 *
-	 * <b>Note:</b> This method relies on the internal <code>FlexibleColumnLayout</code> reference to be rendered in the DOM tree. For convenience, use methods {@link sap.f.FlexibleColumnLayoutSemanticHelper#isDOMReady} and {@link sap.f.FlexibleColumnLayoutSemanticHelper#whenDOMReady}.
+	 * @property {number} [beginColumn]
+	 *   The relative percentage width of the begin column as integer.
+	 * @property {number} [midColumn]
+	 *   The relative percentage width of the mid column as integer.
+	 * @property {number} [endColumn]
+	 *   The relative percentage width of the end column as integer.
+	 * @public
+	 */
+
+	/**
+	 * Represents the visibility of the columns.
 	 *
-	 * 	Example value:
+	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.ColumnsVisibility
+	 *
+	 * @property {boolean} [beginColumn]
+	 *   The visibility of the begin column.
+	 * @property {boolean} [midColumn]
+	 *   The visibility of the mid column.
+	 * @property {boolean} [endColumn]
+	 *   The visibility of the end column.
+	 * @public
+	 */
+
+	/**
+	 * The configuration of the navigation actions in the columns.
+	 *
+	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.ColumnsNavigationActions
+	 *
+	 * @property {sap.f.FlexibleColumnLayoutSemanticHelper.NavigationActionsTargets} [midColumn]
+	 *   Configuration of the navigation actions of the mid column.
+	 * @property {sap.f.FlexibleColumnLayoutSemanticHelper.NavigationActionsTargets} [endColumn]
+	 *   Configuration of the navigation actions of the end column.
+	 * @public
+	 */
+
+	/**
+	 * Configures the target layouts of the navigation acion buttons in a column.
+	 *
+	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.NavigationActionsTargets
+	 *
+	 * @property {string|null} [fullScreen]
+	 *   The target {@link sap.f.FlexibleColumnLayout#getLayout layout} when the <code>fullscreen</code> navigation action button is pressed.
+	 *   If null, then the respective action button should not be shown.
+	 * @property {string|null} [exitFullScreen]
+	 *   The target {@link sap.f.FlexibleColumnLayout#getLayout layout} when the <code>exitFullScreen</code> navigation action button is pressed.
+	 *   If null, then the respective action button should not be shown.
+	 * @property {string|null} [closeColumn]
+	 *   The target {@link sap.f.FlexibleColumnLayout#getLayout layout} when the <code>closeColumn</code> navigation action button is pressed.
+	 *   If null, then the respective action button should not be shown.
+	 * @public
+	 */
+
+	/**
+	 * Configuration of the state of the <code>FlexibleColumnLayout</code> control and the expected action buttons for each column.
+	 *
+	 * Example value:
 	 *
 	 *  <pre>
 	 *  <code>
@@ -223,8 +266,38 @@ sap.ui.define([
 	 *	}
 	 *  </code>
 	 *  </pre>
+	 *
+	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.UIState
+	 *
+	 * @property {string} [layout]
+	 *  The value of the {@link sap.f.FlexibleColumnLayout#getLayout layout} property.
+	 * @property {number} [maxColumnsCount]
+	 *  The maximum number of columns that can be displayed at once based on the control width. See {@link sap.f.FlexibleColumnLayout#getMaxColumnsCount}
+	 * @property {sap.f.FlexibleColumnLayoutSemanticHelper.ColumnsSizes} [columnsSizes]
+	 *  Represents the relative percentage sizes of all columns as integers.
+	 * @property {sap.f.FlexibleColumnLayoutSemanticHelper.ColumnsVisibility} [columnsVisibility]
+	 *  Represents the visibility of the columns.
+	 * @property {boolean} [isFullScreen]
+	 *  The value is <code>true</code> if only one column is visible at the moment, <code>false</code> otherwise.
+	 *
+	 *  <b>Note:</b> This may be due to small screen size (phone) or due to a layout, for which a single column takes up the whole width.
+	 * @property {boolean} [isLogicallyFullScreen]
+	 *  The value is <code>true</code> if the current <code>layout</code> is one of the following: <code>sap.f.LayoutType.OneColumn, sap.f.LayoutType.MidColumnFullScreen, sap.f.LayoutType.EndColumnFullScreen</code>, <code>false</code> otherwise.
+	 *
+	 *  <b>Note:</b> While <code>isFullScreen</code> can be <code>true</code> for any layout, due to small screen size, <code>isLogicallyFullScreen</code> will only be <code>true</code> for the layout values, listed above.
+	 * @property {sap.f.FlexibleColumnLayoutSemanticHelper.ColumnsNavigationActions} [actionButtonsInfo]
+	 *  The configuration of the navigation actions in the columns.
+	 *
 	 * @public
-	 * @returns {object} The object describing the current UI state
+	 */
+
+	/**
+	 * Returns an object describing the current state of the control and the expected action buttons for each column.
+	 *
+	 * <b>Note:</b> This method relies on the internal <code>FlexibleColumnLayout</code> reference to be rendered in the DOM tree. For convenience, use methods {@link sap.f.FlexibleColumnLayoutSemanticHelper#isDOMReady} and {@link sap.f.FlexibleColumnLayoutSemanticHelper#whenDOMReady}.
+	 *
+	 * @public
+	 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper.UIState} The object describing the current UI state
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype.getCurrentUIState = function () {
 		var sCurrentLayout = this._oFCL.getLayout();
@@ -234,13 +307,11 @@ sap.ui.define([
 	/**
 	 * Returns an object, describing the state that the control will have after navigating to a different view level.
 	 *
-	 * About the format of return value, see: {@link sap.f.FlexibleColumnLayoutSemanticHelper#getCurrentUIState}
-	 *
 	 * @param {int} iNextLevel - the view level that should be represented. 0 means initial (master only), 1 - master-detail,
 	 * 2 - master-detail-detail, 3 and above - subsequent views
 	 *
 	 * @public
-	 * @returns {object} The object describing the next UI state
+	 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper.UIState} The object describing the next UI state
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype.getNextUIState = function (iNextLevel) {
 
