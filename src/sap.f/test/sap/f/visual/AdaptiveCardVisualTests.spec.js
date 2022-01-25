@@ -1,4 +1,4 @@
-/*global describe,it,takeScreenshot,expect, browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 describe('sap.f.AdaptiveCardVisualTests', function() {
 	'use strict';
 
@@ -7,10 +7,16 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 	});
 
 	it('Another Adaptive Card should be visualized', function() {
-		browser.executeScript('document.getElementsByClassName("ac-pushButton")[1].click()');
+		var showMoreButton = element(by.css(".ac-pushButton.expandable"));
+		var captureCard = function() {
+			browser.executeScript('document.getElementById("dueDate").scrollIntoView()').then(function() {
+				expect(takeScreenshot()).toLookAs("another_adaptive_card");
+			});
+		};
 
-		browser.executeScript('document.getElementById("dueDate").scrollIntoView()').then(function() {
-			expect(takeScreenshot()).toLookAs("another_adaptive_card");
+		browser.executeScript("arguments[0].scrollIntoView()", showMoreButton).then(function() {
+			showMoreButton.click();
+			captureCard();
 		});
 	});
 
