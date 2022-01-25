@@ -1735,7 +1735,12 @@ sap.ui.define([
 				},
 				dataSource: oRowBinding,
 				fileType: mCustomConfig.selectedFileType == "pdf" ? "PDF" : "XLSX",
-				fileName: mCustomConfig ? mCustomConfig.fileName : that.getHeader()
+				border: mCustomConfig.border,
+				fontSize: mCustomConfig.fontSize,
+				paperSize: mCustomConfig.selectedPaperSize,
+				doEnableAccessibility: mCustomConfig.doEnableAccessibility,
+				signature: mCustomConfig.signature,
+				signatureReason:  mCustomConfig.signatureReason
 			};
 
 			that._loadExportLibrary().then(function() {
