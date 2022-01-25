@@ -2480,26 +2480,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["$$canonicalPath", "$$noPatch", "$$ownRequest", "$$patchWithoutSideEffects", "$$sharedRequest"]
-	.forEach(function (sName) {
-		QUnit.test("checkBindingParameters, " + sName, function (assert) {
-			var aAllowedParameters = [sName],
-				oBinding = new ODataBinding(),
-				mParameters = {};
+[
+	"$$canonicalPath", "$$getKeepAliveContext", "$$noPatch", "$$ownRequest",
+	"$$patchWithoutSideEffects", "$$sharedRequest"
+].forEach(function (sName) {
+	QUnit.test("checkBindingParameters, " + sName, function (assert) {
+		var aAllowedParameters = [sName],
+			oBinding = new ODataBinding(),
+			mParameters = {};
 
-			["foo", false, undefined].forEach(function (sValue) {
-				mParameters[sName] = sValue;
-				assert.throws(function () {
-					// code under test
-					oBinding.checkBindingParameters(mParameters, aAllowedParameters);
-				}, new Error("Unsupported value for binding parameter '" + sName + "': " + sValue));
-			});
-
-			mParameters[sName] = true;
-
-			// code under test
-			oBinding.checkBindingParameters(mParameters, aAllowedParameters);
+		["foo", false, undefined].forEach(function (sValue) {
+			mParameters[sName] = sValue;
+			assert.throws(function () {
+				// code under test
+				oBinding.checkBindingParameters(mParameters, aAllowedParameters);
+			}, new Error("Unsupported value for binding parameter '" + sName + "': " + sValue));
 		});
+
+		mParameters[sName] = true;
+
+		// code under test
+		oBinding.checkBindingParameters(mParameters, aAllowedParameters);
+	});
 });
 
 	//*********************************************************************************************

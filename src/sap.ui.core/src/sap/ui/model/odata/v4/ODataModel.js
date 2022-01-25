@@ -656,6 +656,9 @@ sap.ui.define([
 	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
 	 *   path computed from its context's path for data service requests; only the value
 	 *   <code>true</code> is allowed.
+	 * @param {boolean} [mParameters.$$getKeepAliveContext]
+	 *   Whether this binding is considered for a match when {@link #getKeepAliveContext} is called;
+	 *   only the value <code>true</code> is allowed. Supported since 1.99.0
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
@@ -1489,6 +1492,57 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getProperty");
+	};
+
+	/**
+	 * Returns a context with the given path belonging to a matching list binding that has been
+	 * marked with <code>$$getKeepAliveContext</code> (see {@link #bindList}). If such a context
+	 * exists, it is returned and kept alive (see
+	 * {@link sap.ui.model.odata.v4.Context#setKeepAlive}).
+	 *
+	 * @param {string} sPath
+	 *   A list context path to an entity
+	 * @param {boolean} [bRequestMessages]
+	 *   Whether to request messages for the context's entity
+	 * @returns {sap.ui.model.odata.v4.Context|undefined}
+	 *   The context, or <code>undefined</code> if such a binding does not exist or does not have
+	 *   such a context
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the model does not use the <code>autoExpandSelect</code> parameter,
+	 *     <li> the path is not a list context path to an entity,
+	 *     <li> multiple list bindings with <code>$$getKeepAliveContext</code> match, or
+	 *     <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
+	 *   </ul>
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataListBinding#getKeepAliveContext
+	 * @since 1.99.0
+	 */
+	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages) {
+		var aListBindings,
+			sListPath,
+			iPredicateIndex = sPath.indexOf("(", sPath.lastIndexOf("/")),
+			that = this;
+
+		if (!this.bAutoExpandSelect) {
+			throw new Error("Missing parameter autoExpandSelect");
+		}
+		if (sPath[0] !== "/" || iPredicateIndex < 0 || !sPath.endsWith(")")) {
+			throw new Error("Not a list context path to an entity: " + sPath);
+		}
+		sListPath = sPath.slice(0, iPredicateIndex);
+		aListBindings = this.aAllBindings.filter(function (oBinding) {
+			return oBinding.mParameters && oBinding.mParameters.$$getKeepAliveContext
+				&& that.resolve(oBinding.getPath(), oBinding.getContext()) === sListPath;
+		});
+
+		if (aListBindings.length > 1) {
+			throw new Error("Multiple bindings with $$getKeepAliveContext for: " + sPath);
+		}
+		if (aListBindings.length) {
+			return aListBindings[0].getKeepAliveContext(sPath, bRequestMessages);
+		}
 	};
 
 	/**

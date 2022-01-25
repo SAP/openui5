@@ -1,0 +1,63 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.Draft.ListReport"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc">
+	<Page showHeader="false">
+		<Table growing="true" growingThreshold="5" id="Products"
+				items="{path : '/Products', parameters : {
+							$count : true,
+							$filter :
+								'IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null',
+							$$getKeepAliveContext : true,
+							$$patchWithoutSideEffects : true
+						}}"
+				mode="SingleSelectMaster" selectionChange="onProductSelect">
+			<headerToolbar>
+				<Toolbar id="productsToolbar">
+					<Title id="productsTitle" level="H2"
+							text="{headerContext>$count} Products">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="false"/>
+						</layoutData>
+					</Title>
+					<SearchField id="filterAmount" search="onFilterProducts"
+							placeholder="Amount greater than" width="50%">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="false"/>
+						</layoutData>
+					</SearchField>
+					<Button enabled="true" icon="sap-icon://refresh"
+							id="refreshProducts" press="onRefreshProducts"
+							tooltip="Refresh Product List"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column hAlign="Right" width="9em">
+					<Button iconFirst="false" icon="{ui>/sSortProductIDIcon}"
+							id="sortByProductId" press="onSortByProductID"
+							text="Product ID"/>
+				</Column>
+				<Column demandPopin="true">
+					<Text text="Is Active Entity"/>
+				</Column>
+				<Column demandPopin="true">
+					<Text text="Name"/>
+				</Column>
+				<Column demandPopin="true" hAlign="Right">
+					<Text text="Amount"/>
+				</Column>
+				<Column demandPopin="true">
+					<Text text="Category ID"/>
+				</Column>
+			</columns>
+			<ColumnListItem type="Navigation">
+				<Text id="productId" text="{ID}"/>
+				<Text id="isActiveEntity" text="{IsActiveEntity}"/>
+				<Text id="productName" text="{name}"/>
+				<Text id="amount" text="{amount}"/>
+				<Text id="categoryID" text="{categoryID}"/>
+			</ColumnListItem>
+		</Table>
+	</Page>
+</mvc:View>

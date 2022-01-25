@@ -164,6 +164,7 @@ sap.ui.define([
 					}
 					break;
 				case "$$canonicalPath":
+				case "$$getKeepAliveContext":
 				case "$$noPatch":
 				case "$$ownRequest":
 				case "$$patchWithoutSideEffects":

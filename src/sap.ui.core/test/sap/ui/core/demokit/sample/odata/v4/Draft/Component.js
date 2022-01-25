@@ -14,6 +14,14 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.Draft.Component", {
 		metadata : {
 			manifest : "json"
+		},
+
+		init : function () {
+			// call the super function
+			UIComponent.prototype.init.apply(this, arguments);
+
+			// create the views based on the url/hash
+			this.getRouter().initialize();
 		}
 	});
 });
