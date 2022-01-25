@@ -28,6 +28,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 
 			oRm.openStart("use");
 			oRm.attr('href', "#" + sSymbolId);
+			oRm.attr('width', "100%");
+			oRm.attr('height', "100%");
 			oRm.openEnd();
 			oRm.close("use");
 
