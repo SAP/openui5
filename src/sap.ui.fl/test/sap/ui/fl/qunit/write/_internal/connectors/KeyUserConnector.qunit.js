@@ -209,6 +209,85 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("KeyUserConnector.getContexts", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		var aReturnedContexts = {
+			lastHitReached: false,
+			values: [
+				{
+					name: "someRoleA",
+					description: "Description of someRoleA"
+				},
+				{
+					name: "someRoleB",
+					description: "Description of someRoleB"
+				}
+			]
+		};
+
+		QUnit.test("given a mock server, when get is triggered, with pagination", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				type: "role",
+				$skip: 100,
+				$filter: "SAP"
+			};
+
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/contexts/?type=role&%24skip=100&%24filter=SAP";
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedContexts});
+			return KeyUserConnector.getContexts(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, aReturnedContexts, "the contexts are returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
+			});
+		});
+
+		QUnit.test("given a mock server, when get is triggered", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser"
+			};
+
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/contexts/";
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: aReturnedContexts});
+			return KeyUserConnector.getContexts(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, aReturnedContexts, "the contexts are returned correctly");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");
+			});
+		});
+	});
+
+	QUnit.module("KeyUserConnector.loadContextDescriptions", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		var aReturnedContexts = {
+			role: [
+				{id: "ZSOME_ROLE_ONE", description: "Some role one description"},
+				{id: "ZSOME_ROLE_TWO", description: "Some role two description"}
+			]};
+
+		QUnit.test("given a mock server, when loadContextDescriptions is triggered", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				flexObjects: { role: ["ZSOME_ROLE_ONE", "ZSOME_ROLE_TWO"]}
+			};
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/contexts/?sap-language=en";
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: aReturnedContexts});
+			return KeyUserConnector.loadContextDescriptions(mPropertyBag).then(function (oResponse) {
+				var call = oStubSendRequest.getCall(0);
+				assert.deepEqual(oResponse.response, aReturnedContexts, "the contexts are returned correctly");
+				assert.equal(call.args[0], sUrl, "the request has the correct url");
+				assert.equal(call.args[1], "POST", "the request has the correct method");
+				assert.deepEqual(call.args[2].payload, JSON.stringify(mPropertyBag.flexObjects), "the request has the correct payload");
+				assert.equal(call.args[2].tokenUrl, "/flex/keyuser/v1/settings", "the request has the correct token url");
+				assert.equal(call.args[2].xsrfToken, InitialConnector.xsrfToken, "the request has the correct xsrfToken");
+			});
+		});
+	});
+
 	QUnit.module("KeyUserConnector handing xsrf token in combination of the apply connector", {
 		afterEach: function() {
 			InitialConnector.xsrfToken = undefined;

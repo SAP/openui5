@@ -1340,7 +1340,7 @@ sap.ui.define([
 			return Storage.getContexts(mPropertyBag).then(function (oResponse) {
 				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
 				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?type=role", "url is correct");
-				assert.ok(oResponse.lastHitReached, "response is as expected");
+				assert.equal(oResponse.lastHitReached, true, "response is as expected");
 			});
 		});
 
