@@ -1390,6 +1390,18 @@ sap.ui.define([
 
 			this.oVariantManagement.openSaveAsDialogForKeyUser("KUStyle", oComponentPromise);
 		});
+
+		QUnit.test("Checking roles dialog destroy when exiting the VM", function(assert) {
+			var oVariantManagement = new VariantManagement("Two", {});
+
+			oVariantManagement._oRolesDialog = {
+				destroy: function() {}
+			};
+
+			assert.ok(oVariantManagement._oRolesDialog);
+			oVariantManagement.exit();
+			assert.equal(oVariantManagement._oRolesDialog, null);
+		});
 	});
 
 	QUnit.done(function() {
