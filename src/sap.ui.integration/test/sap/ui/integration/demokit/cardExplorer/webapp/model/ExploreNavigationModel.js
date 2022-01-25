@@ -1041,13 +1041,29 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Combined Filters',
-								key: 'combinedFilters',
+								title: 'Multiple Filters',
+								key: 'multipleFilters',
 								files: [
 									{
-										url: '/samples/filters/search/combinedFilters.json',
+										url: '/samples/filters/search/multipleFilters/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Multiple Filters with Extension',
+								key: 'multipleFiltersWithExtension',
+								files: [
+									{
+										url: '/samples/filters/search/multipleFiltersWithExtension/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/filters/search/multipleFiltersWithExtension/FilterExtension.js',
+										name: 'FilterExtension.js',
+										key: 'FilterExtension.js'
 									}
 								]
 							}
