@@ -32,7 +32,8 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 			sType = sName.slice(sName.lastIndexOf(".") + 1),
 			oCard = oCardContent.getParent(),
 			bIsCardValid = oCard && oCard.isA("sap.f.ICard"),
-			bLoading = sType !== "AdaptiveContent" && bIsCardValid && oCardContent.isLoading();
+			bLoading = sType !== "AdaptiveContent" && bIsCardValid && oCardContent.isLoading(),
+			oMessageContainer = oCardContent.getAggregation("_messageContainer");
 
 		sClass += sType;
 
@@ -57,6 +58,10 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 
 		if (bLoading) {
 			oRm.renderControl(oCardContent._oLoadingPlaceholder);
+		}
+
+		if (oMessageContainer) {
+			oRm.renderControl(oMessageContainer);
 		}
 
 		this.renderContent(oRm, oCardContent);

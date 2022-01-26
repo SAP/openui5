@@ -271,6 +271,11 @@
 					"pattern": "pagination",
 					"name": "pagination",
 					"target": "pagination"
+				},
+				{
+					"pattern": "message",
+					"name": "message",
+					"target": "message"
 				}
 			],
 			"targets": {
@@ -471,7 +476,11 @@
 				},
 				"pagination": {
 					"id": "pagination",
-					"name": "Pagination",
+					"name": "Pagination"
+				},
+				"message": {
+					"id": "message",
+					"name": "Message",
 					"level": 1
 				}
 			}

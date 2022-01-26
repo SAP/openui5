@@ -1369,6 +1369,24 @@ sap.ui.define([
 										key: 'DataExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Show Message',
+								key: 'showMessage',
+								experimental: true,
+								mockServer: true,
+								files: [
+									{
+										url: '/samples/extension/showMessage/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/showMessage/ShowMessageExtension.js',
+										name: 'ShowMessageExtension.js',
+										key: 'ShowMessageExtension.js'
+									}
+								]
 							}
 						]
 					},

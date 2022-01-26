@@ -8,14 +8,13 @@ sap.ui.define([
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/cards/adaptivecards/elements/hostConfig",
 		"sap/m/VBox",
-		"sap/m/MessageStrip",
 		"sap/ui/core/HTML",
 		"sap/ui/core/Core",
 		"sap/ui/model/json/JSONModel",
 		"sap/base/Log"
 	],
 	function (library, coreLibrary, includeScript, BaseContent, hostConfig,
-			VBox, MessageStrip, HTML, Core, JSONModel, Log) {
+			VBox, HTML, Core, JSONModel, Log) {
 		"use strict";
 
 		// lazy dependencies, loaded on demand
@@ -138,16 +137,13 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._setupCardContent = function () {
-			var oMessageStrip = new MessageStrip(this.getId() + "-message", {showCloseButton: true, visible: false}),
-				oHTMLContainer = new HTML(this.getId() + "content", {
+			var oHTMLContainer = new HTML(this.getId() + "content", {
 					preferDOM: false,
 					content: "<div>&nbsp;</div>"
 				});
 
-			oMessageStrip.addStyleClass("sapUiTinyMargin");
-
 			this.setAggregation("_content", new VBox({
-				items: [oMessageStrip, oHTMLContainer]
+				items: [oHTMLContainer]
 			}));
 		};
 
@@ -315,22 +311,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Displays a message strip on top of the content with the given text.
-		 *
-		 * @param {string} sMessage The message.
-		 * @param {sap.ui.core.MessageType} sType Type of the message.
-		 */
-		AdaptiveContent.prototype.showMessage = function (sMessage, sType) {
-			var oMessage = this.getAggregation("_content").getItems()[0];
-
-			oMessage.applySettings({
-				"type": sType,
-				"text": sMessage,
-				"visible": true
-			});
-		};
-
-		/**
 		 * Replaces MS Cards Elements with UI5WebComponents
 		 *
 		 * @private
@@ -426,7 +406,7 @@ sap.ui.define([
 		 * @private
 		 */
 		AdaptiveContent.prototype._renderMSCardContent = function (oCard) {
-			var oDom = this.getAggregation("_content").getItems()[1].$(),
+			var oDom = this.getAggregation("_content").getItems()[0].$(),
 				bIsLoading = !!this.isLoading();
 
 			// Do not show content until the data for it is fully loaded

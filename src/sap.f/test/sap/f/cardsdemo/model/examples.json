@@ -223,5 +223,11 @@
 		"description": "Play around with pagination.",
 		"route": "pagination",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Message",
+		"description": "Play around with showMessage() method",
+		"route": "message",
+		"group": "Other Card Examples"
 	}
 ]

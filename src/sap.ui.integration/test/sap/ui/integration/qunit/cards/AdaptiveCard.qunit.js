@@ -947,11 +947,12 @@ sap.ui.define([
 
 				// Assert
 				setTimeout(function () { // .getData() returns a Promise and MessageStrip's manipulations are executed in then()'s callbacks
+					Core.applyChanges();
 					assert.ok(oStubRequest.called, "DataProvider's _fetch should have been called");
-					assert.strictEqual(oAdaptiveContent.getAggregation("_content").getItems()[0].getType(), MessageType.Success,
+					assert.strictEqual(oAdaptiveContent.getAggregation("_messageContainer").getItems()[0].getType(), MessageType.Success,
 						"The success execution should put the state of the MessageStrip to Success");
 
-					assert.ok(oAdaptiveContent.getAggregation("_content").getItems()[0].getVisible(),
+					assert.ok(oAdaptiveContent.getAggregation("_messageContainer").getItems()[0].$().is(":visible"),
 						"The execution of data fetching should make the MessageStrip visible");
 
 					// Cleanup

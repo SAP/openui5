@@ -21,7 +21,12 @@
 				"description": "{Position}",
 				"icon": {
 					"src": "{Icon}"
-				}
+				},
+				"actions": [
+					{
+						"type": "Navigation"
+					}
+				]
 			}
 		}
 	}

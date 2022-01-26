@@ -3,21 +3,19 @@ sap.ui.define([
 	"./graphql/mockServer",
 	"./activities/mockServer",
 	"./csrf/mockServer",
+	"./products/mockServer",
+	"./user/mockServer",
 	"sap/ui/core/util/MockServer"
 ], function (
 	SEPMRA_PROD_MAN_mockServer,
 	graphql_mockServer,
 	timeline_mockServer,
 	csrf_mockServer,
+	products_mockServer,
+	user_mockSever,
 	MockServer
 ) {
 	"use strict";
-
-	// configure all mock servers with default delay of 1s
-	MockServer.config({
-		autoRespond: true,
-		autoRespondAfter: 1000
-	});
 
 	var MockServerManager = {};
 
@@ -25,10 +23,17 @@ sap.ui.define([
 		SEPMRA_PROD_MAN_mockServer,
 		graphql_mockServer,
 		timeline_mockServer,
-		csrf_mockServer
+		csrf_mockServer,
+		products_mockServer,
+		user_mockSever
 	];
 
 	MockServerManager.initAll = function (bSampleUsesMockServer) {
+		MockServer.config({
+			autoRespond: true,
+			autoRespondAfter: 600
+		});
+
 		var pAwait = Promise.resolve();
 
 		// init mock server only on demand
@@ -52,8 +57,8 @@ sap.ui.define([
 			return;
 		}
 
-		MockServerManager._aMockServers.map(function (oMockServer) {
-			return oMockServer.destroy();
+		MockServerManager._aMockServers.forEach(function (oMockServer) {
+			oMockServer.destroy();
 		});
 
 		MockServer.destroyAll(); // restore sinon fake server

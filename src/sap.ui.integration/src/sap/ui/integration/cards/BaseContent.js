@@ -6,21 +6,29 @@
 
 sap.ui.define([
 	"./BaseContentRenderer",
+	"sap/m/MessageStrip",
+	"sap/m/VBox",
+	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/InvisibleMessageMode",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/base/util/merge"
 ], function (
 	BaseContentRenderer,
+	MessageStrip,
+	VBox,
+	mLibrary,
 	Core,
 	Control,
+	InvisibleMessage,
+	InvisibleMessageMode,
 	ObservableModel,
 	ManagedObjectObserver,
-	BindingResolver,
 	LoadingProvider,
 	BindingHelper,
 	merge
@@ -64,6 +72,12 @@ sap.ui.define([
 				 */
 				_loadingProvider: {
 					type: "sap.ui.core.Element",
+					multiple: false,
+					visibility: "hidden"
+				},
+
+				_messageContainer: {
+					type: "sap.m.VBox",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -246,6 +260,36 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.getStaticConfiguration = function () {
 		return this.getConfiguration();
+	};
+
+	/**
+	 * Displays a message strip above the content.
+	 *
+	 * @param {string} sMessage The message.
+	 * @param {sap.ui.core.MessageType} sType Type of the message.
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseContent.prototype.showMessage = function (sMessage, sType) {
+		var oMessagePopup = this._getMessageContainer();
+		var oMessage = new MessageStrip({
+			text: sMessage,
+			type: sType,
+			showCloseButton: true,
+			showIcon: true,
+			close: function () {
+				this._getMessageContainer().destroy();
+			}.bind(this)
+		}).addStyleClass("sapFCardContentMessage");
+
+		oMessagePopup.destroyItems();
+		oMessagePopup.addItem(oMessage);
+
+		if (this.getDomRef().contains(document.activeElement)) {
+			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Assertive);
+		} else {
+			InvisibleMessage.getInstance().announce(sMessage, InvisibleMessageMode.Polite);
+		}
 	};
 
 	/**
@@ -549,6 +593,20 @@ sap.ui.define([
 
 	BaseContent.prototype.getDataLength = function () {
 		return 0;
+	};
+
+	BaseContent.prototype._getMessageContainer = function () {
+		var oMessageContainer = this.getAggregation("_messageContainer");
+
+		if (!oMessageContainer) {
+			oMessageContainer = new VBox({
+				renderType: mLibrary.FlexRendertype.Bare,
+				alignItems: mLibrary.FlexAlignItems.Center
+			}).addStyleClass("sapFCardContentMessageContainer");
+			this.setAggregation("_messageContainer", oMessageContainer);
+		}
+
+		return oMessageContainer;
 	};
 
 	return BaseContent;
