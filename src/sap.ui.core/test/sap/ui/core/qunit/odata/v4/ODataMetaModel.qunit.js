@@ -1599,7 +1599,7 @@ sap.ui.define([
 		//TODO mScope[mScope["..."][0].$ReturnType.$Type] is where the next OData simple identifier
 		//     would live in case of entity/complex type, but we would like to avoid warnings for
 		//     primitive types - how to tell the difference?
-//		"/GetEmployeeMaxAge/" : "Edm.Int16",
+		// "/GetEmployeeMaxAge/" : "Edm.Int16",
 		"/GetEmployeeMaxAge/$Function/0/$ReturnType"
 			: mScope["tea_busi.FuGetEmployeeMaxAge"][0].$ReturnType,
 		// Note: "value" is a symbolic name for the whole return type iff it is primitive
@@ -1866,7 +1866,7 @@ sap.ui.define([
 		"/name.space.OverloadedAction@sapui.name" : "name.space.OverloadedAction",
 		"/name.space.OverloadedAction/_it@sapui.name" : "_it",
 		// "/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE/@sapui.name"
-		// 	: "TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE",
+		//  : "TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE",
 		// .../$ ----------------------------------------------------------------------------------
 		"/$" : mScope, // @see #fetchData, but no clone
 		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
@@ -6713,7 +6713,7 @@ sap.ui.define([
 					oCodeListMetaModelMock.expects("requestObject")
 						.withExactArgs("/UnitsOfMeasure/")
 						.resolves({
-//							$kind : "EntityType",
+							// $kind : "EntityType",
 							$Key : bHasAlternateKey === 0
 								? [{MyAlias : "UnitCode"}] // special case: alias is given
 								: ["UnitCode"]
@@ -6722,7 +6722,7 @@ sap.ui.define([
 						.withExactArgs("/UnitsOfMeasure/@Org.OData.Core.V1.AlternateKeys")
 						.returns(bHasAlternateKey ? [{
 							Key : [{
-//								Alias : "ExternalCode",
+								// Alias : "ExternalCode",
 								Name : {$PropertyPath : "ExternalCode"}
 							}]
 						}] : undefined);
@@ -6803,7 +6803,7 @@ sap.ui.define([
 	[{
 		aAlternateKeys : [{
 			Key : [{
-//				Alias : "ExternalCode",
+				// Alias : "ExternalCode",
 				Name : {$PropertyPath : "ExternalCode"}
 			}]
 		}, {}, {}],
@@ -6816,10 +6816,10 @@ sap.ui.define([
 	}, {
 		aAlternateKeys : [{
 			Key : [{
-//				Alias : "ExternalCode",
+				// Alias : "ExternalCode",
 				Name : {$PropertyPath : "ExternalCode"}
 			}, {
-//				Alias : "foo",
+				// Alias : "foo",
 				Name : {$PropertyPath : "foo"}
 			}]
 		}],
@@ -6868,7 +6868,7 @@ sap.ui.define([
 			oCodeListMetaModelMock.expects("requestObject")
 				.withExactArgs("/UnitsOfMeasure/")
 				.resolves({
-//					$kind : "EntityType",
+					// $kind : "EntityType",
 					$Key : ["UnitCode"]
 				});
 			oCodeListMetaModelMock.expects("getObject")
@@ -6931,7 +6931,7 @@ sap.ui.define([
 			oCodeListMetaModelMock.expects("requestObject")
 				.withExactArgs("/UnitsOfMeasure/")
 				.resolves({
-//					$kind : "EntityType",
+					// $kind : "EntityType",
 					$Key : aKeys
 				});
 
@@ -7089,7 +7089,7 @@ sap.ui.define([
 		oCodeListMetaModelMock.expects("requestObject")
 			.withExactArgs("/UnitsOfMeasure/")
 			.resolves({
-//				$kind : "EntityType",
+				// $kind : "EntityType",
 				$Key : ["UnitCode"]
 			});
 		oCodeListMetaModelMock.expects("getObject")
@@ -7159,7 +7159,7 @@ sap.ui.define([
 		oCodeListMetaModelMock.expects("requestObject")
 			.withExactArgs("/UnitsOfMeasure/")
 			.resolves({
-//				$kind : "EntityType",
+				// $kind : "EntityType",
 				$Key : ["UnitCode"]
 			});
 		oCodeListMetaModelMock.expects("getObject")

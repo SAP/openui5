@@ -477,9 +477,9 @@ sap.ui.define([
 // Note: AH.format is used for property bindings only, not for context bindings; thus an empty path
 // (behind the binding parameter's name) is not supported
 //}, {
-//	sInputValue : "_it",
-//	sOutputValue : "~prefix~",
-//	sValue : ""
+//  sInputValue : "_it",
+//  sOutputValue : "~prefix~",
+//  sValue : ""
 }].forEach(function (oFixture) {
 	var sTitle = "path: add prefix, but ignore first segment; " + oFixture.sInputValue;
 

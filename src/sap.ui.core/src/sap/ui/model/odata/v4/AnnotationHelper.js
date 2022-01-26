@@ -110,16 +110,16 @@ sap.ui.define([
 			 * Example for "$AnnotationPath" in the context's path:
 			 * <pre>
 			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
-			 *	&lt;Annotation Term="com.sap.vocabularies.UI.v1.Facets">
-			 *		&lt;Collection>
-			 *			&lt;Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
-			 *				&lt;PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo" />
-			 *			&lt;/Record>
-			 *		&lt;/Collection>
-			 *	&lt;/Annotation>
+			 *   &lt;Annotation Term="com.sap.vocabularies.UI.v1.Facets">
+			 *     &lt;Collection>
+			 *       &lt;Record Type="com.sap.vocabularies.UI.v1.ReferenceFacet">
+			 *         &lt;PropertyValue Property="Target" AnnotationPath="EQUIPMENT_2_PRODUCT/@com.sap.vocabularies.Common.v1.QuickInfo" />
+			 *       &lt;/Record>
+			 *     &lt;/Collection>
+			 *   &lt;/Annotation>
 			 * &lt;/Annotations>
 			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product">
-			 *	&lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Name" />
+			 *   &lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="Name" />
 			 * &lt;/Annotations>
 			 * </pre>
 			 * <pre>
@@ -131,16 +131,16 @@ sap.ui.define([
 			 * Example for "$Path" in the context's path:
 			 * <pre>
 			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi.v0001.EQUIPMENT">
-			 *	&lt;Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
-			 *		&lt;Collection>
-			 *			&lt;Record Type="com.sap.vocabularies.UI.v1.DataField">
-			 *				&lt;PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/Name" />
-			 *			&lt;/Record>
-			 *		&lt;/Collection>
-			 *	&lt;/Annotation>
+			 *   &lt;Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+			 *     &lt;Collection>
+			 *       &lt;Record Type="com.sap.vocabularies.UI.v1.DataField">
+			 *         &lt;PropertyValue Property="Value" Path="EQUIPMENT_2_PRODUCT/Name" />
+			 *       &lt;/Record>
+			 *     &lt;/Collection>
+			 *   &lt;/Annotation>
 			 * &lt;/Annotations>
 			 * &lt;Annotations Target="com.sap.gateway.default.iwbep.tea_busi_product.v0001.Product/Name">
-			 *	&lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="PRODUCT_2_SUPPLIER/Supplier_Name" />
+			 *   &lt;Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo" Path="PRODUCT_2_SUPPLIER/Supplier_Name" />
 			 * &lt;/Annotations>
 			 * </pre>
 			 * <pre>
