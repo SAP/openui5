@@ -334,9 +334,14 @@ function(
 					oTokenizer.removeStyleClass("sapMTokenizerIndicatorDisabled");
 				}
 				this._syncInputWidth(oTokenizer);
-				this._handleInnerVisibility();
-				this._handleNMoreAccessibility();
-				this._registerTokenizerResizeHandler();
+
+				// Prevent layout thrashing from the methods below as the Tokenizer
+				// does not need any adjustments without tokens
+				if (this.getTokens().length) {
+					this._handleInnerVisibility();
+					this._handleNMoreAccessibility();
+					this._registerTokenizerResizeHandler();
+				}
 			}.bind(this)
 		}, this);
 		this._aTokenValidators = [];
