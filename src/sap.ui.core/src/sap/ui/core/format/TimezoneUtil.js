@@ -97,7 +97,7 @@ sap.ui.define([], function() {
 			year: "numeric",
 			timeZone: sTargetTimezone,
 			timeZoneName: 'short',
-			era: 'short'
+			era: 'narrow'
 		};
 
 		var oIntlDate = new Intl.DateTimeFormat("en-US", options);
@@ -128,9 +128,19 @@ sap.ui.define([], function() {
 		var oDate = new Date();
 
 		var iUTCYear = oParts.year;
-		if (oParts.era === "BC") {
-			// there is no year 0
-			// either year 1 AD or year 1 BC
+		if (oParts.era === "B") {
+			// The JS Date uses astronomical year numbering which supports year zero and negative
+			// year numbers.
+			// The Intl.DateTimeFormat API uses eras (no year zero and no negative year numbers).
+			// years around zero overview:
+			// | Astronomical | In Era
+			// |            2 | 2 Anno Domini (era: "A")
+			// |            1 | 1 Anno Domini (era: "A")
+			// |            0 | 1 Before Christ (era: "B")
+			// |           -1 | 2 Before Christ (era: "B")
+			// |           -2 | 3 Before Christ (era: "B")
+			// For the conversion to the JS Date the parts returned by the Intl.DateTimeFormat API
+			// need to be adapted.
 			iUTCYear = (iUTCYear * -1) + 1;
 		}
 		oDate.setUTCFullYear(iUTCYear);
