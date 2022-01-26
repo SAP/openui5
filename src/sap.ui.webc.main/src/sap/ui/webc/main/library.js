@@ -148,7 +148,14 @@ sap.ui.define([
 				"sap.ui.webc.main.TreeItem"
 			],
 			elements: [],
-			extensions: {}
+			extensions: {
+				flChangeHandlers: {
+					"sap.ui.webc.main.RatingIndicator": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					}
+				}
+			}
 		});
 
 		/**

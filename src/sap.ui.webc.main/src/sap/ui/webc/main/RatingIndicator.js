@@ -102,7 +102,8 @@ sap.ui.define([
 				change: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/RatingIndicator.designtime"
 		}
 	});
 
