@@ -194,6 +194,31 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("JSON: given a mock server, when getTexts is triggered", function (assert) {
+			this.xhr = sandbox.useFakeXMLHttpRequest();
+			this.xhr.onCreate = function(oRequest) {
+				var oHeaders = {"Content-Type": "application/xml"};
+				oRequest.addEventListener("loadstart", function(oEvent) {
+					oEvent.target.responseType = "";
+					this.oXHR = oRequest;
+					this.oXHRLoadSpy = sandbox.spy(oRequest, "onload");
+					oEvent.target.respond(200, oHeaders, "<xml></xml>");
+				}.bind(this));
+			}.bind(this);
+			var mPropertyBag = {
+				sourceLanguage: "en-US",
+				targetLanguage: "de-DE",
+				url: "/flexKeyuser",
+				reference: "reference"
+			};
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/translation/texts/reference?sourceLanguage=en-US&targetLanguage=de-DE";
+			return KeyUserConnector.translation.getTexts(mPropertyBag).then(function (oResponse) {
+				assert.equal(this.oXHR.url, sUrl, "the request has the correct url");
+				assert.equal(this.oXHR.method, "GET", "the method is correct");
+				assert.equal(oResponse, "<xml></xml>", "the response is a string");
+			}.bind(this));
+		});
+
 		QUnit.test("given a mock server, when postTranslationTexts is triggered", function (assert) {
 			var mPropertyBag = {
 				url: "/flexKeyuser",
