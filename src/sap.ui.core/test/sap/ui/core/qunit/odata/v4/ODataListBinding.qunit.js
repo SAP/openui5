@@ -8229,18 +8229,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getAllCurrentContexts", function (assert) {
-		var oBinding = {
-				aContexts : ["~oContext1", "~oContext2", /* empty */, "~oContext3"],
-				mPreviousContextsByPath : {
-					"~sPath1" : "~oKeptContext1",
-					"~sPath2" : "~oKeptContext2"
-				}
+[false, true].forEach(function (bFireChange) {
+	QUnit.test("getAllCurrentContexts: bFireChange = " + bFireChange, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCache = {
+				getAllElements : function () {}
 			};
 
+		oBinding.mPreviousContextsByPath = {
+		"~sPath1~" : "~oKeptContext1~",
+		"~sPath2~" : "~oKeptContext2~"
+		};
+
+		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true)
+			.callsArgWith(0, oCache, "path/to/cache");
+		this.mock(oCache).expects("getAllElements").withExactArgs("path/to/cache")
+			.returns("~aElements~");
+		this.mock(oBinding).expects("createContexts").withExactArgs(0, "~aElements~")
+			.callsFake(function () {
+				oBinding.aContexts = ["~oContext0~", undefined, "~oContext2~"];
+				return bFireChange;
+			});
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+			.exactly(bFireChange ? 1 : 0);
+
 		// code under test
-		assert.deepEqual(ODataListBinding.prototype.getAllCurrentContexts.call(oBinding),
-			["~oContext1", "~oContext2", "~oContext3", "~oKeptContext1", "~oKeptContext2"]);
+		assert.deepEqual(oBinding.getAllCurrentContexts(),
+			["~oContext0~", "~oContext2~", "~oKeptContext1~", "~oKeptContext2~"]);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getAllCurrentContexts: no cache yet", function (assert) {
+		var oBinding = this.bindList("relativePath");
+
+		this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func, "", true);
+		this.mock(oBinding).expects("createContexts").withExactArgs(0, []).returns(false);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.deepEqual(oBinding.getAllCurrentContexts(), []);
 	});
 
 	//*********************************************************************************************

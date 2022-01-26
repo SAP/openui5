@@ -2417,6 +2417,11 @@ sap.ui.define([
 				oTable.getItems()[0].getCells()[0].getBinding("text").getType(), // AGE
 				oTypeKeepsEmptyString,
 				"parseKeepsEmptyString ignored, type is cached and used on UI already");
+
+			// code under test (CPOUI5ODATAV4-1402)
+			assert.deepEqual(oTable.getBinding("items").getAllCurrentContexts().map(getPath), [
+				"/TEAMS('1')/TEAM_2_EMPLOYEES('2')"
+			]);
 		});
 	});
 
@@ -37397,6 +37402,116 @@ sap.ui.define([
 	});
 	});
 });
-//TODO what happens to transient contexts of items table when list report is filtered, sorted etc.?
-//TODO what about #setContext (select another row in list report)?
+
+	//*********************************************************************************************
+	// Scenario: #getAllCurrentContexts returns contexts for all records that are available in the
+	// collection cache of a list binding.
+	// JIRA: CPOUI5ODATAV4-1402
+	QUnit.test("OLDB#getAllCurrentContexts", function (assert) {
+		var oBinding,
+			oInput,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="2" visibleRowCount="2">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Input id="grossAmount" value="{GrossAmount}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=4", {
+				value : [
+					{SalesOrderID : "01", GrossAmount : "23"},
+					{SalesOrderID : "02", GrossAmount : "23"},
+					{SalesOrderID : "03", GrossAmount : "23"},
+					{SalesOrderID : "04", GrossAmount : "23"}
+				]
+			})
+			.expectChange("salesOrderID", ["01", "02"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=6&$top=6", {
+					value : [
+						{SalesOrderID : "07", GrossAmount : "23"},
+						{SalesOrderID : "08", GrossAmount : "23"},
+						{SalesOrderID : "09", GrossAmount : "23"},
+						{SalesOrderID : "10", GrossAmount : "23"},
+						{SalesOrderID : "11", GrossAmount : "23"},
+						{SalesOrderID : "12", GrossAmount : "23"}
+					]
+				})
+				.expectChange("salesOrderID",
+					[/*01*/, /*02*/, /*03*/, /*04*/, /*05*/, /*06*/, /*07*/, /*08*/, "09", "10"]);
+
+			oTable.setFirstVisibleRow(8);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oInput = oTable.getRows()[0].getCells()[1];
+
+			that.expectMessages([{
+					message : "Enter a number",
+					targets : [
+						oInput.getId() + "/value"
+					],
+					type : "Error"
+				}]);
+
+			oInput.setValue("INVALID");
+
+			// code under test
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+				"/SalesOrderList('01')",
+				"/SalesOrderList('02')",
+				"/SalesOrderList('03')",
+				"/SalesOrderList('04')",
+				"/SalesOrderList('07')",
+				"/SalesOrderList('08')",
+				"/SalesOrderList('09')",
+				"/SalesOrderList('10')",
+				"/SalesOrderList('11')",
+				"/SalesOrderList('12')"
+			]);
+
+			return Promise.all([
+				that.checkValueState(assert, oInput, "Error", "Enter a number"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// Note: Because the invalid value has to be set via control, changes for that control
+			// cannot be observed via expectChange.
+			assert.strictEqual(oInput.getValue(), "INVALID");
+
+			that.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=4&$top=2", {
+					value : [
+						{SalesOrderID : "05", GrossAmount : "23"},
+						{SalesOrderID : "06", GrossAmount : "23"}
+					]
+				})
+				.expectChange("salesOrderID", [/*01*/, /*02*/, /*03*/, /*04*/, "05", "06"])
+				.expectMessages([]);
+
+			oBinding.attachEventOnce("dataRequested", function () {
+				// code under test
+				assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+					"/SalesOrderList('01')",
+					"/SalesOrderList('02')",
+					"/SalesOrderList('03')",
+					"/SalesOrderList('04')",
+					"/SalesOrderList('07')",
+					"/SalesOrderList('08')",
+					"/SalesOrderList('09')",
+					"/SalesOrderList('10')",
+					"/SalesOrderList('11')",
+					"/SalesOrderList('12')"
+				]);
+			});
+			oTable.setFirstVisibleRow(4);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
