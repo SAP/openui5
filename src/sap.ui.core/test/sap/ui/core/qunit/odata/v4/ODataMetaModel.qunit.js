@@ -6175,35 +6175,39 @@ sap.ui.define([
 						serviceUrl : "/Foo/ValueListService/",
 						synchronizationMode : "None"
 					}),
+					oMetaModel = oModel.getMetaModel(),
 					sPropertyPath = "/VH_BusinessPartnerSet('42')/Country";
 
-				oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"]
-					= {CollectionPath : "foo"};
+				oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#foo"] = {
+						CollectionPath : "foo",
+						SearchSupported : true // BCP: 2280012068
+					};
 				if (bDuplicate) {
 					oAnnotations["@com.sap.vocabularies.Common.v1." + sValueList + "#bar"] = {};
 				}
-				this.mock(oModel.getMetaModel()).expects("fetchEntityContainer").atLeast(1)
+				this.mock(oMetaModel).expects("fetchEntityContainer").atLeast(1)
 					.returns(SyncPromise.resolve(oMetadata));
 
+				assert.strictEqual(oMetaModel.getValueListType(sPropertyPath), ValueListType.Fixed);
+
 				// code under test
-				return oModel.getMetaModel().requestValueListInfo(sPropertyPath)
-					.then(function (oResult) {
-						assert.notOk(bDuplicate);
-						assert.strictEqual(oResult[""].$model, oModel);
-						delete oResult[""].$model;
-						assert.deepEqual(oResult, {
-							"" : {
-								$qualifier : "foo",
-								CollectionPath : "foo"
-							}
-						});
-					}, function (oError) {
-						assert.ok(bDuplicate);
-						assert.strictEqual(oError.message, "Annotation "
-							+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues' but not "
-							+ "exactly one 'com.sap.vocabularies.Common.v1.ValueList' for property "
-							+ sPropertyPath);
+				return oMetaModel.requestValueListInfo(sPropertyPath).then(function (oResult) {
+					assert.notOk(bDuplicate);
+					assert.strictEqual(oResult[""].$model, oModel);
+					delete oResult[""].$model;
+					assert.deepEqual(oResult, {
+						"" : { // for fixed values, actual qualifier is ignored here
+							$qualifier : "foo",
+							CollectionPath : "foo"
+						}
 					});
+				}, function (oError) {
+					assert.ok(bDuplicate);
+					assert.strictEqual(oError.message, "Annotation "
+						+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues' but not "
+						+ "exactly one 'com.sap.vocabularies.Common.v1.ValueList' for property "
+						+ sPropertyPath);
+				});
 			});
 		});
 	});
@@ -6573,56 +6577,6 @@ sap.ui.define([
 		// make sure the first fetchValueListMapping call is resolved only after the second
 		setTimeout(fnResolve1, 0, {foo : oValueListMapping1});
 		return oResultPromise;
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestValueListInfo: ValueListWithFixedValues and ValueList with SearchSupported",
-			function (assert) {
-		var oModel = new ODataModel({
-				serviceUrl : "/Foo/DataService/",
-				synchronizationMode : "None"
-			}),
-			oMetaModelMock = this.mock(oModel.getMetaModel()),
-			oProperty = {
-				$kind : "Property"
-			},
-			oMetadata = {
-				$EntityContainer : "zui5_epm_sample.Container",
-				"zui5_epm_sample.Product" : {
-					$kind : "Entity",
-					Category : oProperty
-				},
-				$Annotations : {
-					"zui5_epm_sample.Product/Category" : {
-						"@com.sap.vocabularies.Common.v1.ValueList#foo" : {
-							CollectionPath : "VH_CategorySet",
-							SearchSupported : true
-						},
-						// Note: SearchSupported === true is equivalent to FixedValues === false
-						// We do not accept both at once, even if they are consistent
-						"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : false
-					}
-				},
-				"zui5_epm_sample.Container" : {
-					ProductList : {
-						$kind : "EntitySet",
-						$Type : "zui5_epm_sample.Product"
-					}
-				}
-			},
-			sPropertyPath = "/ProductList('HT-1000')/Category";
-
-		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
-			.returns(SyncPromise.resolve(oMetadata));
-
-		// code under test
-		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.message, "Must not set 'SearchSupported' in annotation "
-				+ "'com.sap.vocabularies.Common.v1.ValueList' and annotation "
-				+ "'com.sap.vocabularies.Common.v1.ValueListWithFixedValues'");
-		});
 	});
 
 	//*********************************************************************************************

@@ -278,6 +278,8 @@
 				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="zero">
 					<Record>
 						<PropertyValue Property="Label" String="First label" />
+						<!-- BCP: 2280012068 -->
+						<PropertyValue Property="SearchSupported" Bool="true"/>
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList" Qualifier="one">

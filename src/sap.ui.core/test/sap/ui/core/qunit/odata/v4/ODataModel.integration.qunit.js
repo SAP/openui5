@@ -34474,6 +34474,7 @@ sap.ui.define([
 	// Scenario: Evaluate "ValueListRelevantQualifiers" annotation even when
 	// "ValueListWithFixedValues" is present.
 	// JIRA: CPOUI5ODATAV4-1251
+	// BCP: 2280012068 ValueListWithFixedValues takes precedence over SearchSupported
 [0, 1].forEach(function (iValue) {
 	var sTitle = "CPOUI5ODATAV4-1251: ValueListRelevantQualifiers and ValueListWithFixedValues"
 			+ ", value=" + iValue;
