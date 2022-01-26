@@ -113,7 +113,7 @@ sap.ui.define([
 	 *     <li>if <code>aValues</code> is not set, or</li>
 	 *     <li>if the time zone in <code>aValues</code> is not set, or</li>
 	 *     <li>if the timestamp in <code>aValues</code> is not set and the <code>showTimezone</code>
-	 *       format option is set to {@link sap.ui.core.format.DateFormatTimezoneDisplay.Hide}
+	 *       format option is set to <code>sap.ui.core.format.DateFormatTimezoneDisplay.Hide</code>
 	 *     </li>
 	 *   </ul>
 	 * @throws {sap.ui.model.FormatException}
