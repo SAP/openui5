@@ -10,6 +10,12 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Draft.ObjectPage", {
+		getKeyPredicate : function (oContext) {
+			var sPath = oContext.getPath();
+
+			return sPath.slice(sPath.indexOf('(', sPath.lastIndexOf('/')));
+		},
+
 		hasPendingChanges : function (vBindingOrContext, sVerb, bIgnoreKeptAlive) {
 			if (vBindingOrContext.hasPendingChanges(bIgnoreKeptAlive)) {
 				MessageBox.error(
@@ -21,29 +27,29 @@ sap.ui.define([
 			return false;
 		},
 
-		navTo : function (sKey, bShowList) {
+		navTo : function (oContext, bShowList) {
 			if (bShowList === undefined) {
 				bShowList = this.getView().getModel("ui").getProperty("/bShowList");
 			}
 
 			UIComponent.getRouterFor(this)
-				.navTo(bShowList ? "objectPage" : "objectPageNoList", {key : sKey}, true);
+				.navTo(bShowList ? "objectPage" : "objectPageNoList",
+					{key : this.getKeyPredicate(oContext)}, true);
 		},
 
 		onCancel : function () {
 			var oDraftContext = this.getView().getBindingContext(),
-				sActiveKey = "(ID=" + oDraftContext.getProperty("ID") + ",IsActiveEntity=true)",
 				that = this;
 
-			function gotoActiveContext() {
+			function gotoActiveContext(oActiveContext) {
 				that.oActiveContext = null; // not needed anymore
 				oDraftContext.delete("$auto", true);
-				that.navTo(sActiveKey);
+				that.navTo(oActiveContext);
 			}
 
 			if (this.oActiveContext) {
 				oDraftContext.replaceWith(this.oActiveContext);
-				gotoActiveContext();
+				gotoActiveContext(this.oActiveContext);
 			} else {
 				oDraftContext.getModel().bindContext("SiblingEntity(...)", oDraftContext,
 						{$$inheritExpandSelect : true})
@@ -101,10 +107,8 @@ sap.ui.define([
 		},
 
 		onShowList : function () {
-			var sPath = this.getView().getBindingContext().getPath(),
-				sKey = sPath.slice(sPath.lastIndexOf("("));
-
-			this.navTo(sKey, !this.getView().getModel("ui").getProperty("/bShowList"));
+			this.navTo(this.getView().getBindingContext(),
+				!this.getView().getModel("ui").getProperty("/bShowList"));
 		},
 
 		setShowList : function (bShowList) {
@@ -125,12 +129,9 @@ sap.ui.define([
 					oContext, {$$inheritExpandSelect : true})
 				.execute("$auto", false, null, true)
 				.then(function (oSiblingContext) {
-					var oSiblingEntity = oSiblingContext.getObject(),
-						sKey = "(ID=" + oSiblingEntity.ID + ",IsActiveEntity="
-							+ oSiblingEntity.IsActiveEntity + ")";
-
-					that.oActiveContext = oSiblingEntity.IsActiveEntity ? null : oContext;
-					that.navTo(sKey);
+					that.oActiveContext
+						= oSiblingContext.getProperty("IsActiveEntity") ? null : oContext;
+					that.navTo(oSiblingContext);
 
 					return oContext;
 				});
