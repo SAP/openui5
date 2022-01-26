@@ -7,18 +7,18 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'./Label',
 	'./StepInput',
+	'./DateTimePicker',
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/DateRange',
-	'sap/m/DateTimePicker',
 	'sap/ui/unified/calendar/MonthPicker',
 	'sap/ui/unified/calendar/CustomMonthPicker'],
 	function(
 		Element,
 		Label,
 		StepInput,
+		DateTimePicker,
 		Calendar,
 		DateRange,
-		DateTimePicker,
 		MonthPicker,
 		CustomMonthPicker) {
 		"use strict";
@@ -158,7 +158,10 @@ sap.ui.define([
 							return false;
 						}
 						break;
-					default:
+					case "datetime":
+						if (!oInputControl.getDateValue()) {
+							return false;
+						}
 						break;
 				}
 			}
@@ -204,6 +207,13 @@ sap.ui.define([
 						}
 
 						vOutput = [oInputControl.getSelectedDates()[0].getStartDate().getMonth(), oInputControl.getSelectedDates()[0].getStartDate().getFullYear()];
+						break;
+					case "datetime":
+						if (!oInputControl.getDateValue()) {
+							return null;
+						}
+
+						vOutput = oInputControl.getDateValue();
 						break;
 					case "daterange":
 						if (!oInputControl.getSelectedDates().length) {
@@ -310,6 +320,8 @@ sap.ui.define([
 					if (valueHelpUiTypesCount === 1) {
 						// Returns DateTimePicker PopupContent control (single "datetime" option)
 						oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+					} else if (valueHelpUiTypesCount === 2) {
+						oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated);
 					}
 					break;
 				case "daterange":
@@ -335,6 +347,22 @@ sap.ui.define([
 
 			if (oValue && this.getKey() === oValue.operator) {
 				oControl.setValue(oValue.values[iIndex]);
+			}
+
+			if (fnControlsUpdated instanceof Function) {
+				oControl.attachChange(function() {
+					fnControlsUpdated(this);
+				}, this);
+			}
+
+			return oControl;
+		};
+
+		DynamicDateOption.prototype._createDateTimeControl = function(oValue, iIndex, fnControlsUpdated) {
+			var oControl = new DateTimePicker();
+
+			if (oValue && this.getKey() === oValue.operator) {
+				oControl.setDateValue(oValue.values[iIndex]);
 			}
 
 			if (fnControlsUpdated instanceof Function) {

@@ -41,6 +41,7 @@ sap.ui.define([
 			"DATE": ["date"],
 			"DATETIME": ["datetime"],
 			"DATERANGE": ["date", "date"],
+			"DATETIMERANGE": ["datetime", "datetime"],
 			"LASTDAYS": ["int"],
 			"LASTWEEKS": ["int"],
 			"LASTMONTHS": ["int"],
@@ -193,6 +194,9 @@ sap.ui.define([
 
 			var aFormattedParams = aParams.map(function(param) {
 				if (param instanceof Date) {
+					if (sKey === "DATETIMERANGE") {
+						return this._dateTimeFormatter.format(param);
+					}
 					return this._dateFormatter.format(param);
 				}
 
@@ -243,8 +247,8 @@ sap.ui.define([
 							oVal = this._dateFormatter.parse(sCurrentMatch);
 							break;
 						case "datetime":
-								oVal = this._dateTimeFormatter.parse(sCurrentMatch);
-								break;
+							oVal = this._dateTimeFormatter.parse(sCurrentMatch);
+							break;
 						case "month":
 							var aMonthNames = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(function(i) {
 								var oDate = new Date();
