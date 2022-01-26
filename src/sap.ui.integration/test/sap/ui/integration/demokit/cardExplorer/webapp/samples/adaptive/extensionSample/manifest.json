@@ -61,25 +61,15 @@
 			"version": "1.0",
 			"body": [
 				{
-					"type": "TextBlock",
-					"text": "Product Name",
-					"isSubtle": true,
-					"size": "medium"
-				},
-				{
 					"type": "Input.Text",
+					"label": "Product Name",
 					"value": "${product.ProductName}",
 					"style": "text",
 					"id": "ProductName"
 				},
 				{
-					"type": "TextBlock",
-					"text": "Product Category",
-					"isSubtle": true,
-					"size": "medium"
-				},
-				{
 					"type": "Input.ChoiceSet",
+					"label": "Product Category",
 					"id": "CategoryID",
 					"style": "compact",
 					"isMultiSelect": false,
@@ -93,13 +83,8 @@
 					]
 				},
 				{
-					"type": "TextBlock",
-					"text": "Supplier Name",
-					"isSubtle": true,
-					"size": "medium"
-				},
-				{
 					"type": "Input.Text",
+					"label": "Supplier Name",
 					"value": "${product.supplier.CompanyName}",
 					"style": "text",
 					"id": "CompanyName"

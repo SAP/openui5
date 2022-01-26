@@ -59,14 +59,14 @@
 							"items": [
 								{
 									"type": "TextBlock",
-									"text": "{firstName} {lastName}",
+									"text": "${firstName} ${lastName}",
 									"weight": "bolder",
 									"wrap": true
 								},
 								{
 									"type": "TextBlock",
 									"spacing": "None",
-									"text": "{position}",
+									"text": "${position}",
 									"isSubtle": true,
 									"wrap": true
 								}
@@ -76,7 +76,7 @@
 				},
 				{
 					"type": "TextBlock",
-					"text": "{description}",
+					"text": "${description}",
 					"wrap": true
 				},
 				{
@@ -84,19 +84,19 @@
 					"facts": [
 						{
 							"title": "First Name:",
-							"value": "{firstName}"
+							"value": "${firstName}"
 						},
 						{
 							"title": "Last Name:",
-							"value": "{lastName}"
+							"value": "${lastName}"
 						},
 						{
 							"title": "Company:",
-							"value": "{company.name}"
+							"value": "${company.name}"
 						},
 						{
 							"title": "Address:",
-							"value": "{company.address}"
+							"value": "${company.address}"
 						}
 					]
 				}
