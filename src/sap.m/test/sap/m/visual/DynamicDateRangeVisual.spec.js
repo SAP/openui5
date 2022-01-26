@@ -30,7 +30,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 
 	it("Suggestion popover gets opened", function() {
 		var oInput = element(by.id("DDR1-input-inner")),
-			oVBox = element(by.id("vertical-box"));
+			oVBox = element(by.id("Page1"));
 
 		oInput.click();
 		browser.actions().sendKeys("10").perform();
@@ -41,7 +41,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 
 	it("Input error state", function() {
 		var oInput = element(by.id("DDR1-input-inner")),
-			oVBox = element(by.id("vertical-box"));
+			oVBox = element(by.id("Page1"));
 
 		oInput.click();
 		browser.actions().sendKeys("abc").perform();
@@ -185,7 +185,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_list");
 
 		aListItems = element.all(by.css("#DDR4-RP-popover .sapMListItems .sapMSLI"));
-		aListItems.get(0).click(); // select Last X days
+		aListItems.get(0).click(); // select Date and Time
 		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_datepicker");
 
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
