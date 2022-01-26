@@ -3371,11 +3371,13 @@ sap.ui.define([
 			+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
 			+ "&sap-client=003"
 		}].forEach(function (oFixture) {
-			var oRequestor = _Requestor.create("/~/");
+			var sJSON = JSON.stringify(oFixture.o),
+				oRequestor = _Requestor.create("/~/");
 
 			assert.strictEqual(
 				oRequestor.buildQueryString("/Foo", oFixture.o, undefined, true), "?" + oFixture.s,
 				oFixture.s);
+			assert.strictEqual(JSON.stringify(oFixture.o), sJSON, "unchanged");
 		});
 	});
 

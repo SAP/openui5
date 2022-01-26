@@ -793,7 +793,9 @@ sap.ui.define([
 					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
-						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
+						vValue = bSortExpandSelect
+							? vValue.slice().sort().join(",") // Note: Array#sort is "in place"
+							: vValue.join(",");
 					}
 					break;
 				default:

@@ -736,7 +736,7 @@ sap.ui.define([
 					vValue = vValue ? "allpages" : "none";
 					break;
 				case "$expand":
-					vValue = convertExpand([], vValue, "");
+					vValue = convertExpand([], vValue, ""); // Note: returns a new array
 					vValue = (bSortExpandSelect ? vValue.sort() : vValue).join(",");
 					break;
 				case "$orderby":
