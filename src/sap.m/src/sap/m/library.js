@@ -3503,6 +3503,18 @@ sap.ui.define([
 		TO : "TO",
 
 		/**
+		 * The range will start from a date and time selected from a calendar and time picker.
+		 * @public
+		 */
+		FROMDATETIME : "FROMDATETIME",
+
+		/**
+		 * The range will end in a date and time selected from a calendar and time picker.
+		 * @public
+		 */
+		TODATETIME : "TODATETIME",
+
+		/**
 		 * The range will start from the first day of the current year and ends with the date selected from a calendar.
 		 * @public
 		 */

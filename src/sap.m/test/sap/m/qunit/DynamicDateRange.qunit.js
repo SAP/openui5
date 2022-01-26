@@ -780,7 +780,7 @@ sap.ui.define([
 		assert.ok(aValueHelpUITypes1[0].isDestroyed(), "the UI types are destroyed with the option");
 	});
 
-	QUnit.module("StandardDynamicDateOption DateTimeRangeSelection", {
+	QUnit.module("StandardDynamicDateOption DateTimeRange", {
 		beforeEach: function() {
 			this.ddr = new DynamicDateRange();
 			this.ddr.setOptions([]);
