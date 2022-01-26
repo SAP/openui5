@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/RegistrationDelegator",
+	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/library", // library dependency

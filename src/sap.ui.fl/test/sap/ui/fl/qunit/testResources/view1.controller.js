@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.fl.PreprocessorImpl.testResources.view1", {
+	return Controller.extend("sap.ui.fl.ControllerExtension.testResources.view1", {
 		onInit: function () {
 		}
 	});

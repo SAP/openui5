@@ -22,14 +22,14 @@ sap.ui.define([
 	/**
 	 * The implementation of the <code>XmlPreprocessor</code> for the SAPUI5 flexibility services that can be hooked in the <code>View</code> life cycle.
 	 *
-	 * @name sap.ui.fl.XmlPreprocessorImpl
+	 * @name sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor
 	 * @class
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
 	 * @experimental Since 1.27.0
 	 */
-	var XmlPreprocessorImpl = function() {};
+	var XmlPreprocessor = function() {};
 
 	/**
 	 * Asynchronous view processing method.
@@ -42,7 +42,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	XmlPreprocessorImpl.process = function(oView, mProperties) {
+	XmlPreprocessor.process = function(oView, mProperties) {
 		try {
 			if (!mProperties || mProperties.sync) {
 				Log.warning("Flexibility feature for applying changes on an XML view is only available for " +
@@ -96,7 +96,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
+	XmlPreprocessor.getCacheKey = function(mProperties) {
 		var oComponent = Component.get(mProperties.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 
@@ -110,5 +110,5 @@ sap.ui.define([
 		return oChangePersistence.getCacheKey(oAppComponent);
 	};
 
-	return XmlPreprocessorImpl;
+	return XmlPreprocessor;
 }, /* bExport= */true);

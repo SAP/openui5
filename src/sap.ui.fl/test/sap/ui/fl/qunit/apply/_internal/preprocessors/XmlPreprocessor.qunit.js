@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/XmlPreprocessorImpl",
+	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	ManifestUtils,
-	XmlPreprocessorImpl,
+	XmlPreprocessor,
 	ChangePersistenceFactory,
 	ChangePersistence,
 	FlexControllerFactory,
@@ -27,7 +27,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given sap.ui.fl.XmlPreprocessorImpl", {
+	QUnit.module("XmlPreprocessor", {
 		afterEach: function () {
 			sandbox.restore();
 		}
@@ -67,7 +67,7 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 			sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
 
-			return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
 				assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller was created for processing");
 				assert.deepEqual(oProcessedView, oView, "a processed view is returned");
 			});
@@ -103,7 +103,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "isApplication").returns(true);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 
-			return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
 				assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 			});
@@ -128,7 +128,7 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 			sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sCacheKey));
 
-			return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (sReturnedCacheKey) {
+			return XmlPreprocessor.getCacheKey(mProperties).then(function (sReturnedCacheKey) {
 				assert.equal(sReturnedCacheKey, sCacheKey);
 			});
 		});
@@ -155,7 +155,7 @@ sap.ui.define([
 			sandbox.stub(Component, "get");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-			return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (response) {
+			return XmlPreprocessor.getCacheKey(mProperties).then(function (response) {
 				assert.ok(!response, "an 'undefined' was returned to prevent the view caching");
 			});
 		});
@@ -208,7 +208,7 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
 			sandbox.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
 
-			return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
 				assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller creation was triggered for the xml processing");
 				assert.equal(oFlexControllerCreationStub.getCall(0).args[0], sFlexReference, "the controller for the variant was created");
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
@@ -226,7 +226,7 @@ sap.ui.define([
 
 			var oLoggerSpy = sandbox.spy(Log, "warning");
 
-			var oProcessedView = XmlPreprocessorImpl.process(oView, mProperties);
+			var oProcessedView = XmlPreprocessor.process(oView, mProperties);
 
 			assert.equal(oLoggerSpy.callCount, 1, "one warning was raised");
 			assert.equal(oLoggerSpy.getCall(0).args[0], "Flexibility feature for applying changes on an XML view is only available for " +
@@ -268,7 +268,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "isApplication").returns(true);
 
-			return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			return XmlPreprocessor.process(oView, mProperties).then(function (oProcessedView) {
 				assert.deepEqual(oProcessedView, oView, "the original view is returned");
 			});
 		});

@@ -1,45 +1,66 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/PreprocessorImpl",
-	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/mvc/ViewType",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/ViewType"
+	"sap/ui/thirdparty/jquery"
 ], function(
-	PreprocessorImpl,
-	Component,
-	ComponentContainer,
+	Log,
 	ManagedObject,
+	ViewType,
+	View,
+	ComponentContainer,
+	Component,
+	VariantManagementState,
+	ManifestUtils,
+	ControllerExtension,
 	Cache,
 	Layer,
 	Utils,
-	Log,
-	VariantManagementState,
-	ManifestUtils,
 	sinon,
-	jQuery,
-	View,
-	ViewType
+	jQuery
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("sap.ui.fl.PreprocessorImpl", {
+	var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+
+	function createCodeExtChangeContent(oInput) {
+		return Object.assign({
+			fileName: "id_1436877480596_108",
+			namespace: "ui.s2p.mm.purchorder.approve.Component",
+			fileType: "change",
+			layer: Layer.CUSTOMER,
+			creation: "20150720131919",
+			changeType: "codeExt",
+			reference: "<sap-app-id> or <component name>",
+			selector: {
+				controllerName: sControllerName
+			},
+			conditions: {},
+			support: {
+				generator: "WebIde",
+				user: "VIOL"
+			}
+		}, oInput);
+	}
+
+	QUnit.module("sap.ui.fl.ControllerExtension", {
 		beforeEach: function() {
 			sandbox.stub(VariantManagementState, "getInitialChanges").returns([]);
-			this.sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
-			this.oExtensionProvider = new PreprocessorImpl();
+			this.oExtensionProvider = new ControllerExtension();
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -50,19 +71,19 @@ sap.ui.define([
 
 			//check sync case
 			var spy = sandbox.spy(Log, "warning");
-			var aEmptyCodeExtensionSync = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "<component ID>", false);
+			var aEmptyCodeExtensionSync = this.oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", false);
 			//should return empty array and log warning
 			assert.ok(Array.isArray(aEmptyCodeExtensionSync), "Then an array is returned");
 			assert.equal(aEmptyCodeExtensionSync.length, 0, "which is empty");
 			assert.equal(spy.callCount, 1, "and a warning log is written");
-			assert.equal(spy.getCall(0).args[0], "Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl",
+			assert.equal(spy.getCall(0).args[0], "Synchronous extensions are not supported via UI5 Flexibility",
 				"with the correct message.");
 		});
 
 		QUnit.test("When no component id is provided", function(assert) {
 			var spy = sandbox.spy(Log, "warning");
 
-			var oEmptyCodeExtensionPromise = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "", true);
+			var oEmptyCodeExtensionPromise = this.oExtensionProvider.getControllerExtensions(sControllerName, "", true);
 
 			return oEmptyCodeExtensionPromise.then(function(aEmpty) {
 				assert.ok(Array.isArray(aEmpty), "Then an array is returned");
@@ -74,34 +95,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
-			var sModuleName = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/firstCodeExt";
-			sap.ui.predefine(sModuleName, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
-				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {
+			var sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
+			sap.ui.predefine(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension1", {
 					extHookOnInit: function() {},
 					onInit: function() {}
 				});
 			});
-			var oChange = {
-				fileName: "id_1436877480596_108",
-				namespace: "ui.s2p.mm.purchorder.approve.Component",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				creation: "20150720131919",
-				changeType: "codeExt",
+			var oChange = createCodeExtChangeContent({
 				moduleName: sModuleName,
-				reference: "<sap-app-id> or <component name>",
 				content: {
 					codeRef: "myCodeRef.js"
-				},
-				selector: {
-					controllerName: this.sControllerName
-				},
-				conditions: {},
-				support: {
-					generator: "WebIde",
-					user: "VIOL"
 				}
-			};
+			});
 
 			var oFileContent = {
 				changes: {
@@ -148,9 +154,9 @@ sap.ui.define([
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.sControllerName);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sControllerName);
 
-			var oCodeExtensionsPromise = this.oExtensionProvider.getControllerExtensions(this.sControllerName, "<component ID>", true);
+			var oCodeExtensionsPromise = this.oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true);
 
 			return oCodeExtensionsPromise.then(function (aCodeExtensions) {
 				assert.equal(aCodeExtensions.length, 1, "one code extension should be returned");
@@ -170,30 +176,19 @@ sap.ui.define([
 			ManagedObject._sOwnerId = "<component name>";
 
 			// perparation of the changes
-			var sModuleName1 = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/secondCodeExt";
-			var oCodingChange1 = {
-				fileName: "id_1436877480596_108",
-				namespace: "ui.s2p.mm.purchorder.approve.Component",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				creation: "20150720131919",
-				changeType: "codeExt",
-				reference: "<sap-app-id> or <component name>",
+			var sModuleName1 = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/secondCodeExt";
+			var oCodingChange1 = createCodeExtChangeContent({
+				fileName: "myFileName1",
 				moduleName: sModuleName1,
 				content: {
 					codeRef: "myCodeRef1.js"
 				},
 				selector: {
-					controllerName: "sap.ui.fl.PreprocessorImpl.testResources.view1"
-				},
-				conditions: {},
-				support: {
-					generator: "WebIde",
-					user: "VIOL"
+					controllerName: "sap.ui.fl.ControllerExtension.testResources.view1"
 				}
-			};
-			sap.ui.predefine(sModuleName1, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
-				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {
+			});
+			sap.ui.predefine(sModuleName1, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension2", {
 					override: {
 						onInit: function () {
 							assert.strictEqual(this.base.getView().getId(), "testView1", "View1 is available and ID of View1 is correct");
@@ -203,9 +198,19 @@ sap.ui.define([
 				});
 			});
 
-			var sModuleName2 = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/thirdCodeExt";
-			sap.ui.predefine(sModuleName2, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
-				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension3', {
+			var sModuleName2 = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/thirdCodeExt";
+			var oCodingChange2 = createCodeExtChangeContent({
+				fileName: "myFileName2",
+				moduleName: sModuleName2,
+				content: {
+					codeRef: "myCodeRef2.js"
+				},
+				selector: {
+					controllerName: "sap.ui.fl.ControllerExtension.testResources.view2"
+				}
+			});
+			sap.ui.predefine(sModuleName2, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension3", {
 					override: {
 						onInit: function () {
 							assert.strictEqual(this.base.getView().getId(), "testView2", "View2 is available and ID of View2 is correct");
@@ -214,27 +219,6 @@ sap.ui.define([
 					}
 				});
 			});
-			var oCodingChange2 = {
-				fileName: "id_1436877480596_109",
-				namespace: "ui.s2p.mm.purchorder.approve.Component",
-				fileType: "change",
-				layer: Layer.CUSTOMER,
-				creation: "20150720131919",
-				changeType: "codeExt",
-				reference: "<sap-app-id> or <component name>",
-				moduleName: sModuleName2,
-				content: {
-					codeRef: "myCodeRef2.js"
-				},
-				selector: {
-					controllerName: "sap.ui.fl.PreprocessorImpl.testResources.view2"
-				},
-				conditions: {},
-				support: {
-					generator: "WebIde",
-					user: "VIOL"
-				}
-			};
 
 			var oOtherChange1 = {
 				fileName: "id_1436877480126_1",
@@ -275,7 +259,7 @@ sap.ui.define([
 			}
 
 			return Component.create({
-				name: "sap.ui.fl.PreprocessorImpl.testResources",
+				name: "sap.ui.fl.ControllerExtension.testResources",
 				manifest: false
 			}).then(function(oComponent) {
 				sandbox.stub(Component, "get").returns(oComponent);
@@ -284,8 +268,8 @@ sap.ui.define([
 				});
 				oCompCont.placeAt("qunit-fixture");
 				return Promise.all([
-					createView("sap.ui.fl.PreprocessorImpl.testResources.view1", "testView1", "first", oComponent),
-					createView("sap.ui.fl.PreprocessorImpl.testResources.view2", "testView2", "second", oComponent)
+					createView("sap.ui.fl.ControllerExtension.testResources.view1", "testView1", "first", oComponent),
+					createView("sap.ui.fl.ControllerExtension.testResources.view2", "testView2", "second", oComponent)
 				]);
 			});
 		});
@@ -293,7 +277,7 @@ sap.ui.define([
 		QUnit.test("make sure requests are only sent if app component is defined", function (assert) {
 			var done = assert.async();
 			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
-			var oExtensionProvider = new PreprocessorImpl();
+			var oExtensionProvider = new ControllerExtension();
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
 			var spy = sandbox.spy(Log, "warning");
@@ -313,7 +297,7 @@ sap.ui.define([
 		QUnit.test("make sure requests are only sent for app components", function (assert) {
 			var done = assert.async();
 			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
-			var oExtensionProvider = new PreprocessorImpl();
+			var oExtensionProvider = new ControllerExtension();
 
 			var oComponent = {
 				getManifestObject: function () {
@@ -351,8 +335,7 @@ sap.ui.define([
 
 		QUnit.test("make sure requests are only sent for app components (even without manifest)", function (assert) {
 			var done = assert.async();
-			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
-			var oExtensionProvider = new PreprocessorImpl();
+			var oExtensionProvider = new ControllerExtension();
 
 			var oComponent = {
 				getManifest: function () {
@@ -376,6 +359,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		jQuery("#qunit-fixture").hide();
 	});
 });

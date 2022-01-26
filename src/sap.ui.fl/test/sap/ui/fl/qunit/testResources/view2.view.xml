@@ -1,2 +1,2 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc"  controllerName="sap.ui.fl.PreprocessorImpl.testResources.view2">
+<mvc:View xmlns:mvc="sap.ui.core.mvc"  controllerName="sap.ui.fl.ControllerExtension.testResources.view2">
 </mvc:View>

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/XmlPreprocessorImpl",
+	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
 	"sap/ui/thirdparty/sinon-4",
@@ -21,7 +21,7 @@ sap.ui.define([
 	XmlTreeModifier,
 	Component,
 	Storage,
-	XmlPreprocessorImpl,
+	XmlPreprocessor,
 	CacheManager,
 	AddSimpleFormGroup,
 	sinon,
@@ -100,7 +100,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("applies the change after the recreation of the changed control", function (assert) {
-			var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+			var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);
 
@@ -139,7 +139,7 @@ sap.ui.define([
 
 				CacheManager.reset();
 
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				// first create the application
 				return Component.create({
@@ -183,7 +183,7 @@ sap.ui.define([
 
 				CacheManager.reset();
 
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				// first create the application
 				return Component.create({
@@ -273,7 +273,7 @@ sap.ui.define([
 
 			QUnit.test("the cache is still valid in case the default control variant is overruled by a url parameter and stays the same in a further request", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
@@ -320,7 +320,7 @@ sap.ui.define([
 
 			QUnit.test("the cache is invalidated in case the default control variant is overruled by a url parameter differing from the last one", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
@@ -371,7 +371,7 @@ sap.ui.define([
 
 			QUnit.test("the cache is invalidated in case the default control variant is no longer overruled by a url parameter", function(assert) {
 				CacheManager.reset();
-				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessor, "process");
 
 				var mSettings = {
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",

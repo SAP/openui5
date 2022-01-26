@@ -74,7 +74,7 @@ sap.ui.define([
 				}
 			},
 			"initial/_internal/connectors/PersonalizationConnector": {
-				group: "Apply Internal",
+				group: "Initial Internal",
 				coverage: {
 					only: ["sap/ui/fl/initial/_internal/connectors/PersonalizationConnector"]
 				}
@@ -110,6 +110,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/storageResultDisassemble"]
 				}
 			},
+
 			"apply/api/FlexRuntimeInfoAPI": {
 				group: "Apply API",
 				coverage: {
@@ -120,6 +121,15 @@ sap.ui.define([
 				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI"]
+				}
+			},
+			"apply/api/DelegateMediatorAPI": {
+				group: "Apply API",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/api/DelegateMediatorAPI",
+						"sap/ui/fl/apply/_internal/DelegateMediator"
+					]
 				}
 			},
 			"apply/api/SmartVariantManagementApplyAPI": {
@@ -134,6 +144,7 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
+
 			"apply/_internal/changes/Applier": {
 				group: "Apply Internal",
 				coverage: {
@@ -380,10 +391,42 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap"]
 				}
 			},
+			"apply/_internal/preprocessors/ControllerExtension": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/preprocessors/ControllerExtension"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.fl.ControllerExtension.testResources": "test-resources/sap/ui/fl/qunit/testResources"
+					}
+				}
+			},
 			"apply/_internal/ChangesController": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/ChangesController"]
+				}
+			},
+			"apply/_internal/preprocessors/EventHistory": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/preprocessors/EventHistory"]
+				}
+			},
+			"apply/_internal/preprocessors/RegistrationDelegator": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator"]
+				},
+				ui5: {
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			"apply/_internal/preprocessors/XmlPreprocessor": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor"]
 				}
 			},
 			"apply/_internal/extensionPoint/Processor": {
@@ -395,15 +438,6 @@ sap.ui.define([
 					resourceroots: {
 						"sap/ui/fl/qunit/extensionPoint": "test-resources/sap/ui/fl/qunit/apply/_internal/extensionPoint"
 					}
-				}
-			},
-			"apply/api/DelegateMediatorAPI": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/api/DelegateMediatorAPI",
-						"sap/ui/fl/apply/_internal/DelegateMediator"
-					]
 				}
 			},
 			EnforceSemanticRendering: {
@@ -968,11 +1002,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/Cache"]
 				}
 			},
-			EventHistory: {
-				coverage: {
-					only: ["sap/ui/fl/EventHistory"]
-				}
-			},
 			library: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
@@ -1010,24 +1039,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/FakeLrepConnector"]
 				}
 			},
-			PreprocessorImpl: {
-				coverage: {
-					only: ["sap/ui/fl/PreprocessorImpl"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.fl.PreprocessorImpl.testResources": "test-resources/sap/ui/fl/qunit/testResources"
-					}
-				}
-			},
-			RegistrationDelegator: {
-				coverage: {
-					only: ["sap/ui/fl/RegistrationDelegator"]
-				},
-				ui5: {
-					libs: null // The fl library is being loaded inside the test
-				}
-			},
 			Utils: {
 				coverage: {
 					only: ["sap/ui/fl/Utils"]
@@ -1036,11 +1047,6 @@ sap.ui.define([
 			LayerUtils: {
 				coverage: {
 					only: ["sap/ui/fl/LayerUtils"]
-				}
-			},
-			XmlPreprocessorImpl: {
-				coverage: {
-					only: ["sap/ui/fl/XmlPreprocessorImpl"]
 				}
 			},
 

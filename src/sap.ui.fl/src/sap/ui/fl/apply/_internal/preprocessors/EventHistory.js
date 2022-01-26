@@ -2,20 +2,20 @@
  * ${copyright}
  */
 
-sap.ui.define(function () {
+sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	"use strict";
 
 	/**
 	 * Provides a history of events. This is needed to show/hide the personalization icon
 	 *
 	 * @namespace
-	 * @alias sap.ui.fl.EventHistory
+	 * @alias sap.ui.fl.apply._internal.preprocessors.EventHistory
 	 * @experimental Since 1.47.0
 	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl.RegistrationDelegator
+	 * @ui5-restricted sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator
 	 */
 	var EventHistory = function () {
 	};
@@ -34,7 +34,7 @@ sap.ui.define(function () {
 	EventHistory.start = function () {
 		EventHistory._aEventIds.forEach(function(sEventId) {
 			if (EventHistory._aUnsubscribedEventIds.indexOf(sEventId) === -1) {
-				sap.ui.getCore().getEventBus().subscribe("sap.ui", sEventId, EventHistory.saveEvent);
+				oCore.getEventBus().subscribe("sap.ui", sEventId, EventHistory.saveEvent);
 				EventHistory._oHistory[sEventId] = [];
 			}
 		});
@@ -74,7 +74,7 @@ sap.ui.define(function () {
 	 * @return {array} List of events
 	 */
 	EventHistory.getHistoryAndStop = function (sEventId) {
-		sap.ui.getCore().getEventBus().unsubscribe("sap.ui", sEventId, EventHistory.saveEvent);
+		oCore.getEventBus().unsubscribe("sap.ui", sEventId, EventHistory.saveEvent);
 		EventHistory._addUnsubscribedEvent(sEventId);
 		return EventHistory._oHistory[sEventId] || [];
 	};
@@ -86,4 +86,4 @@ sap.ui.define(function () {
 	};
 
 	return EventHistory;
-}, /* bExport= */true);
+});
