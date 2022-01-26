@@ -1735,13 +1735,21 @@ sap.ui.define([
 				},
 				dataSource: oRowBinding,
 				fileType: mCustomConfig.selectedFileType == "pdf" ? "PDF" : "XLSX",
+				fileName: mCustomConfig ? mCustomConfig.fileName : this.getHeader()
+			};
+
+			var mPDFUserSettings = {
 				border: mCustomConfig.border,
 				fontSize: mCustomConfig.fontSize,
 				paperSize: mCustomConfig.selectedPaperSize,
 				doEnableAccessibility: mCustomConfig.doEnableAccessibility,
 				signature: mCustomConfig.signature,
-				signatureReason:  mCustomConfig.signatureReason
+				signatureReason: mCustomConfig.signatureReason
 			};
+
+			if (mExportSettings.fileType === "PDF") {
+				Object.assign(mExportSettings, mPDFUserSettings);
+			}
 
 			that._loadExportLibrary().then(function() {
 				sap.ui.require(["sap/ui/export/ExportUtils"], function(ExportUtils) {
