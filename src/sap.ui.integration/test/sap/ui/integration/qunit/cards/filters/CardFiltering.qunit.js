@@ -90,6 +90,38 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("Are filters properly cleaned up", function (assert) {
+		// Arrange
+		var done = assert.async(),
+		sCity = "sofia";
+
+		this.oCard.attachEventOnce("_ready", function () {
+			// Assert
+			assert.ok(this.oCard.getModel("filters").getData().category, "Category field is correct");
+			assert.strictEqual(this.oCard.getModel("filters").getData().city.value, sCity, "City value is correct");
+
+			this.oCard.attachEventOnce("_ready", function () {
+				sCity = "vienna";
+
+				// Assert
+				assert.notOk(this.oCard.getModel("filters").getData().category, "Category field is not the old one");
+				assert.ok(this.oCard.getModel("filters").getData().category2, "Category field is correct");
+				assert.strictEqual(this.oCard.getModel("filters").getData().city.value, sCity, "City value is correct");
+
+				done();
+
+			}.bind(this));
+
+			// Act - change the manifest
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter_changed.json");
+
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_static_filter.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.test("configurationChange event is fired", function (assert) {
 		// Arrange
 		var done = assert.async(),

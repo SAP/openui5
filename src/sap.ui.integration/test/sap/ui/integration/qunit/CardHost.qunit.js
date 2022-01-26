@@ -130,6 +130,7 @@ sap.ui.define([
 
 			assert.strictEqual(oActionSheet.getButtons()[0].getText(), "Host action", "Action added from the host is still there");
 
+			oAI.destroy();
 			done();
 		}.bind(this));
 
