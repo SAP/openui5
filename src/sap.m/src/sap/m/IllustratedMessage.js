@@ -257,10 +257,10 @@ sap.ui.define([
 	};
 
 	IllustratedMessage.MEDIA = {
-		BASE: "sapFIllustratedMessage-Base",
-		SPOT: "sapFIllustratedMessage-Spot",
-		DIALOG: "sapFIllustratedMessage-Dialog",
-		SCENE: "sapFIllustratedMessage-Scene"
+		BASE: "sapMIllustratedMessage-Base",
+		SPOT: "sapMIllustratedMessage-Spot",
+		DIALOG: "sapMIllustratedMessage-Dialog",
+		SCENE: "sapMIllustratedMessage-Scene"
 	};
 
 	IllustratedMessage.RESIZE_HANDLER_ID = {

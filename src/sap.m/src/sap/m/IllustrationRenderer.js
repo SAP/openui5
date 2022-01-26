@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		var sSymbolId = oIllustration._sSymbolId;
 
 		oRm.openStart("svg", oIllustration);
-		oRm.class("sapFIllustration");
+		oRm.class("sapMIllustration");
 		oRm.openEnd();
 
 			oRm.openStart("use");

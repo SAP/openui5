@@ -27,18 +27,18 @@ sap.ui.define([], function () {
 
 		// IllustratedMessage's Root DOM Element.
 		oRm.openStart("figure", oIllustratedMessage);
-		oRm.class("sapFIllustratedMessage");
+		oRm.class("sapMIllustratedMessage");
 		oRm.openEnd();
 
 			oRm.renderControl(oIllustratedMessageIllustration);
 
 			oRm.openStart("figcaption").openEnd();
 				oRm.renderControl(oIllustratedMessageTitle);
-				oRm.renderControl(oIllustratedMessageDescription.addStyleClass("sapFIllustratedMessageDescription"));
+				oRm.renderControl(oIllustratedMessageDescription.addStyleClass("sapMIllustratedMessageDescription"));
 			oRm.close("figcaption");
 
 			oRm.openStart("div");
-			oRm.class("sapFIllustratedMessageAdditionalContent"); // helper class in order to hide the additional content when on Base breakpoint
+			oRm.class("sapMIllustratedMessageAdditionalContent"); // helper class in order to hide the additional content when on Base breakpoint
 			oRm.openEnd();
 				oIllustratedMessageAdditionalContent.forEach(function (oControl) {
 					oRm.renderControl(oControl);
