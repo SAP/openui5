@@ -79,9 +79,14 @@ sap.ui.define(["sap/base/assert"],
 	}
 
 	/**
-	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document. If there is call to
-	 * <code>includeStylesheet</code> providing the sId of an already included stylesheet, the existing element will be
-	 * replaced.
+	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document.
+	 *
+	 * If <code>includeStylesheet</code> is called with an <code>sId</code> of an already included stylesheet and:
+	 * <ul>
+	 * <li>either <code>fnLoadCallback</code> or <code>fnErrorCallback</code> is given: the old stylesheet is deleted and a new one is inserted</li>
+	 * <li><code>vUrl</code> is different from the existing one's: the old stylesheet is deleted and a new one is inserted</li>
+	 * <li>otherwise: no action</li>
+	 * </ul>
 	 *
 	 * @param {string|object} vUrl the URL of the stylesheet to load or a configuration object
 	 * @param {string} vUrl.url the URL of the stylesheet to load
