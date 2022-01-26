@@ -1097,6 +1097,7 @@ sap.ui.define([
 	/**
 	 * Getter for the end point in time of the shown interval
 	 * @returns {Date} JavaScript date object with the end date
+	 * @since 1.87
 	 * @public
 	 */
 	PlanningCalendar.prototype.getEndDate = function () {
