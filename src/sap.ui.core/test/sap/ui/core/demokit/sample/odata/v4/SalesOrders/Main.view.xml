@@ -397,6 +397,7 @@
 								}
 							},
 							$orderby : 'ItemPosition',
+							$$ownRequest : true,
 							$$updateGroupId : 'SalesOrderUpdateGroup'
 						},
 						path : 'SO_2_SOITEM',
