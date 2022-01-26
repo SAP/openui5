@@ -27,6 +27,8 @@ function (
 			{
 				"type": "Input.ChoiceSet",
 				"id": "CompactSelectValWithValue",
+				"label": "Select",
+				"isRequired": true,
 				"style": "compact",
 				"value": "1",
 				"choices": [
@@ -52,6 +54,8 @@ function (
 				"type": "Input.ChoiceSet",
 				"id": "SingleSelectVal",
 				"style": "expanded",
+				"label": "Radiobuttons",
+				"isRequired": true,
 				"wrap": true,
 				"value": "2",
 				"choices": [
@@ -76,6 +80,8 @@ function (
 			{
 				"type": "Input.ChoiceSet",
 				"id": "MultiSelectVal",
+				"label": "Checkboxes",
+				"isRequired": true,
 				"isMultiSelect": true,
 				"value": "1,3",
 				"wrap": true,
@@ -120,6 +126,7 @@ function (
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			var oSelect = document.querySelector("#CompactSelectValWithValue ui5-select"),
+				oLabel = document.querySelector("#CompactSelectValWithValue ui5-label"),
 				aOptions = oSelect.children,
 				oSelectedOption = aOptions[0],
 				iCount = oSelect.childElementCount;
@@ -130,6 +137,10 @@ function (
 			assert.ok(oSelectedOption.selected, "The correct option is selected");
 			assert.strictEqual(oSelectedOption.innerHTML, "Red", "The choice title is mapped correctly");
 			assert.strictEqual(oSelectedOption.value, "1", "The choice value is mapped correctly");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Select", "Label text is correctly mapped");
+			assert.ok(oSelect.required, "required attribute is set on the ui5-select");
+			assert.strictEqual(oSelect.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
 
 			for (var i = 0; i < aOptions.length; i++) {
 				var oOption = aOptions[i];
@@ -151,6 +162,7 @@ function (
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			var oRBContainer = document.querySelector("#SingleSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
+				oLabel = document.querySelector("#SingleSelectVal ui5-label"),
 				aRadioButtons = oRBContainer.children,
 				aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[3]._toggleInputs,
 				oSelectedRB = aRadioButtons[1];
@@ -161,6 +173,11 @@ function (
 			assert.strictEqual(oSelectedRB.text, "Green", "The choice title is mapped correctly");
 			assert.strictEqual(oSelectedRB.value, "2", "The choice value is mapped correctly");
 			assert.ok(aToggleInputs.length === aRadioButtons.length, "The options are correctly mapped");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Radiobuttons", "Label text is correctly mapped");
+			assert.ok(oRBContainer.getAttribute("aria-required"), "aria-required attribute is set on the wrapper");
+			assert.ok(oRBContainer.getAttribute("role"), "radiogroup", "role is set on the wrapper");
+			assert.strictEqual(oRBContainer.getAttribute("aria-labelledby"), oLabel.id, "aria-labelledby refers to the id of the label");
 
 
 			for (var i = 0; i < aRadioButtons.length; i++) {
@@ -184,6 +201,7 @@ function (
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			var oCBContainer = document.querySelector("#MultiSelectVal .sapFCardAdaptiveContentChoiceSetWrapper"),
+				oLabel = document.querySelector("#MultiSelectVal ui5-label"),
 				aCheckBoxs = oCBContainer.children,
 				aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[5]._toggleInputs,
 				oFirstCheckedCB = aCheckBoxs[0],
@@ -198,6 +216,11 @@ function (
 			assert.strictEqual(oFirstCheckedCB.value, "1", "The choice value is mapped correctly");
 			assert.strictEqual(oSecondCheckedCB.text, "Blue", "The choice title is mapped correctly");
 			assert.strictEqual(oSecondCheckedCB.value, "3", "The choice value is mapped correctly");
+			assert.strictEqual(oLabel.tagName.toLowerCase(), "ui5-label", "ui5-label webcomponent is rendered");
+			assert.strictEqual(oLabel.textContent, "Checkboxes", "Label text is correctly mapped");
+			assert.ok(oCBContainer.getAttribute("aria-describedby"), "aria-describedby attribute is set on the wrapper");
+			assert.ok(oCBContainer.getAttribute("role"), "group", "role is set on the wrapper");
+			assert.strictEqual(oCBContainer.getAttribute("aria-labelledby"), oLabel.id, "aria-labelledby refers to the id of the label");
 
 			for (var i = 0; i < aCheckBoxs.length; i++) {
 				var oCB = aCheckBoxs[i];

@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (AdaptiveCards) {
+sap.ui.define([
+	"sap/ui/integration/thirdparty/adaptivecards",
+	"sap/ui/integration/cards/adaptivecards/overwrites/inputsGeneralOverwrites"
+], function (AdaptiveCards, InputsOverwrites) {
 	"use strict";
 	function UI5InputNumber() {
 		AdaptiveCards.NumberInput.apply(this, arguments);
@@ -20,6 +23,16 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 * @since 1.74
 	 */
 	UI5InputNumber.prototype = Object.create(AdaptiveCards.NumberInput.prototype);
+
+	UI5InputNumber.prototype.overrideInternalRender = function () {
+		var oInput = AdaptiveCards.TextInput.prototype.overrideInternalRender.call(this, arguments);
+
+		InputsOverwrites.overwriteLabel(this);
+		InputsOverwrites.overwriteRequired(this);
+
+		return oInput;
+	};
+
 	UI5InputNumber.prototype.internalRender = function () {
 		this._numberInputElement = document.createElement("ui5-step-input");
 
@@ -43,6 +56,10 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 			return this._numberInputElement ? this._numberInputElement.value : undefined;
 		}
 	});
+
+	UI5InputNumber.prototype.updateInputControlAriaLabelledBy = function () {
+		InputsOverwrites.overwriteAriaLabelling(this, "accessible-name-ref");
+	};
 
 	return UI5InputNumber;
 });

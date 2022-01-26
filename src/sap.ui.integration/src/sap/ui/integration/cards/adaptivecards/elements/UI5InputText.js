@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (AdaptiveCards) {
+sap.ui.define([
+	"sap/ui/integration/thirdparty/adaptivecards",
+	"sap/ui/integration/cards/adaptivecards/overwrites/inputsGeneralOverwrites"
+	], function (AdaptiveCards, InputsOverwrites) {
 	"use strict";
 	function UI5InputText() {
 		AdaptiveCards.TextInput.apply(this, arguments);
@@ -20,6 +23,16 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 	 * @since 1.74
 	 */
 	UI5InputText.prototype = Object.create(AdaptiveCards.TextInput.prototype);
+
+	UI5InputText.prototype.overrideInternalRender = function () {
+		var oInput = AdaptiveCards.TextInput.prototype.overrideInternalRender.call(this, arguments);
+
+		InputsOverwrites.overwriteLabel(this);
+		InputsOverwrites.overwriteRequired(this);
+
+		return oInput;
+	};
+
 	UI5InputText.prototype.internalRender = function () {
 		//when this.isMultiline is true, we have to render an ui5-textarea instead of ui5-input
 		if (this.isMultiline) {
@@ -57,5 +70,10 @@ sap.ui.define(["sap/ui/integration/thirdparty/adaptivecards"], function (Adaptiv
 		}.bind(this));
 		return oInput;
 	};
+
+	UI5InputText.prototype.updateInputControlAriaLabelledBy = function () {
+		InputsOverwrites.overwriteAriaLabelling(this, "accessible-name-ref");
+	};
+
 	return UI5InputText;
 });
