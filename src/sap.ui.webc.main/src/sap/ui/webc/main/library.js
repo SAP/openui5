@@ -150,7 +150,15 @@ sap.ui.define([
 			elements: [],
 			extensions: {
 				flChangeHandlers: {
+					"sap.ui.webc.main.RangeSlider": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
 					"sap.ui.webc.main.RatingIndicator": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.Slider": {
 						"hideControl": "default",
 						"unhideControl": "default"
 					}

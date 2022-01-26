@@ -305,6 +305,14 @@ sap.ui.define(function() {
 					only: ["sap/ui/webc/main/Tree"]
 				}
 			},
+			"designtime/RangeSlider": {
+				title: "QUnit Page for sap.ui.webc.main.RangeSlider design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/RatingIndicator": {
 				title: "QUnit Page for sap.ui.webc.main.RatingIndicator design time and rta enabling",
 				ui5: {
@@ -314,6 +322,14 @@ sap.ui.define(function() {
 					paths: {
 						dt: "test-resources/sap/ui/webc/main/qunit/designtime/"
 					}
+				},
+				sinon: false,
+				group: "Designtime"
+			},
+			"designtime/Slider": {
+				title: "QUnit Page for sap.ui.webc.main.Slider design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
 				},
 				sinon: false,
 				group: "Designtime"
