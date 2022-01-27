@@ -419,7 +419,6 @@ sap.ui.define([
 		var bHasCreatedContexts, sResolvedPath,
 			bForceUpdate = oContext && oContext.isRefreshForced(),
 			bPreliminary = oContext && oContext.isPreliminary(),
-			bTransient = oContext && oContext.isTransient && oContext.isTransient(),
 			bUpdated = oContext && oContext.isUpdated();
 
 		// If binding is initial or not a relative binding, nothing to do here
@@ -448,7 +447,7 @@ sap.ui.define([
 			// ensure that data state is updated with each change of the context
 			this.checkDataState();
 			// If path does not resolve or parent context is created, reset current list
-			if (!sResolvedPath || bTransient) {
+			if (!sResolvedPath || this._hasTransientParentContext()) {
 				if (bHasCreatedContexts || this.aAllKeys || this.aKeys.length > 0
 						|| this.iLength > 0) {
 					this.aAllKeys = null;
@@ -967,11 +966,9 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var oEntityType, sResolvedPath,
-			bChangeDetected = false,
-			bRelativeAndTransient = this.isRelative()
-				&& this.oContext && this.oContext.isTransient && this.oContext.isTransient();
+			bChangeDetected = false;
 
-		if (bRelativeAndTransient) {
+		if (this._hasTransientParentContext()) {
 			return;
 		}
 		this.bPendingRefresh = false;
@@ -1089,11 +1086,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataListBinding.prototype.initialize = function() {
-		var bRelativeAndTransient = this.isRelative()
-				&& this.oContext && this.oContext.isTransient && this.oContext.isTransient();
-
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial
-				&& !bRelativeAndTransient) {
+				&& !this._hasTransientParentContext()) {
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + this.getResolvedPath());
 			}
@@ -1777,7 +1771,7 @@ sap.ui.define([
 				throw new Error("Parameter '" + sParameterKey + "' is not supported");
 			}
 		});
-		if (this.oContext && this.oContext.isTransient && this.oContext.isTransient()) {
+		if (this._hasTransientParentContext()) {
 			throw new Error("Parent context is transient");
 		}
 		if (this.bUseExpandedList) {
@@ -1955,6 +1949,18 @@ sap.ui.define([
 		return this.getLength() - this._getCreatedContexts().filter(function (oContext) {
 				return oContext.isInactive();
 			}).length;
+	};
+
+	/**
+	 * Returns whether this binding is relative and has a transient parent context.
+	 *
+	 * @returns {boolean} Whether this binding is relative and has a transient parent context
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._hasTransientParentContext = function () {
+		return this.isRelative()
+			&& !!(this.oContext && this.oContext.isTransient && this.oContext.isTransient());
 	};
 
 	return ODataListBinding;
