@@ -268,18 +268,26 @@
 				<code>Sales Order Line Items</code> table indicating that there are issues.</li>
 			<li><b>Check:</b> There are 8 line items, one is highlighted as an error and has a
 				quantity field with value state error "Enter a minimum value of 2"</li>
+			<li>Press the <code>Create sales order line item</code> button in the
+				<code>Sales Order Line Items</code> table.</li>
+			<li><b>Check:</b> The new sales order line item is at the end of the list.</li>
 			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
 				table from <code>Show All</code> to <code>With Error Messages</code>.<br />
-				<b>Check:</b> Only the line item with the error is displayed.<br />
+				<b>Check:</b> Only the item with the error and the new item at the end are
+				displayed.<br />
 			</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				still <code>4</code>.</li>
 			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
 				table from <code>With Error Messages</code> to <code>Show All</code>.<br />
-				<b>Check:</b> All 8 line items are displayed again.<br />
+				<b>Check:</b> All 9 line items are displayed and the new sales order line item is
+				still at the end of the list.<br />
 			</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				still <code>4</code>.</li>
+			<li>Click on <code>Cancel sales order changes</code> button in the
+				<code>Sales Orders Details</code>.</li>
+			<li><b>Check:</b> The new sales order item is gone.</li>
 			<li>Enter any text in the note input field of the first sales order item.</li>
 			<li>Enter a quantity higher than 1 in the quantity input field of the second sales order
 				item.</li>
