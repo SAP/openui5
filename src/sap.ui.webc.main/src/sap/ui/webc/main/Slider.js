@@ -168,7 +168,8 @@ sap.ui.define([
 				input: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Slider.designtime"
 		}
 	});
 
