@@ -323,7 +323,7 @@ sap.ui.define([
 	 * use the <code>items</code> aggregation instead.
 	 *
 	 * @param {object[]} aConditions Conditions to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -356,7 +356,7 @@ sap.ui.define([
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
 	 * @param {string} sDataType DataType to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -373,7 +373,7 @@ sap.ui.define([
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
 	 * @param {string} oDataTypeConstraints Constraints to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -390,7 +390,7 @@ sap.ui.define([
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
 	 * @param {string} oDataTypeFormatOptions Format options to be set
-	 * @returns {sap.ui.mdc.Field} Reference to <code>this</code> to allow method chaining
+	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
@@ -400,6 +400,20 @@ sap.ui.define([
 	 * @function
 	 */
 
-	return Field;
+	/**
+	 * Sets a new value for property <code>multipleLines</code>.
+	 *
+	 * @param {boolean} [bMultipleLines=false] New value for property <code>multipleLines</code>
+	 * @returns {sap.ui.mdc.MultiValueField} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @deprecated This property is not supported for multi-value fields.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.MultiValueField#setMultipleLines
+	 * @function
+	 */
+
+	 return Field;
 
 });

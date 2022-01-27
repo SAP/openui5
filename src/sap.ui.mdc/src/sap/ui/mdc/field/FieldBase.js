@@ -225,6 +225,8 @@ sap.ui.define([
 				 *
 				 * This property only affects types that support multiple lines.
 				 *
+				 * This property is only used for single-value fields.
+				 *
 				 * <b>Note</b> If the data type used doesn't support multiple lines an error is thrown.
 				 */
 				multipleLines: {
