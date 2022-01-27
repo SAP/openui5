@@ -1731,7 +1731,8 @@ sap.ui.define([
 			var oRowBinding = that._getRowBinding();
 			var mExportSettings = {
 				workbook: {
-					columns: aSheetColumns
+					columns: aSheetColumns,
+					context: {title: that.getHeader()}
 				},
 				dataSource: oRowBinding,
 				fileType: mCustomConfig.selectedFileType == "pdf" ? "PDF" : "XLSX",
@@ -1744,7 +1745,8 @@ sap.ui.define([
 				paperSize: mCustomConfig.selectedPaperSize,
 				doEnableAccessibility: mCustomConfig.doEnableAccessibility,
 				signature: mCustomConfig.signature,
-				signatureReason: mCustomConfig.signatureReason
+				signatureReason: mCustomConfig.signatureReason,
+				orientation: mCustomConfig.selectedOrientation
 			};
 
 			if (mExportSettings.fileType === "PDF") {
