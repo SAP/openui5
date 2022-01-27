@@ -2919,6 +2919,30 @@ sap.ui.define([
 				}
 			}
 		}
+	}, {
+		childPath : "*",
+		childQueryOptions : {},
+		expected : {$select : ["*"]}
+	}, {
+		childPath : "NavigationProperty_1/*",
+		childQueryOptions : {},
+		expected : {
+			$expand : {
+				NavigationProperty_1 : {
+					$select : ["Property_1", "Property_2", "*"]
+				}
+			}
+		}
+	}, {
+		childPath : "NavigationProperty_1/namespace.*",
+		childQueryOptions : {},
+		expected : {
+			$expand : {
+				NavigationProperty_1 : {
+					$select : ["Property_1", "Property_2", "namespace.*"]
+				}
+			}
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("wrapChildQueryOptions, " + oFixture.childPath, function (assert) {
 			var oMetaModel = {
@@ -2934,6 +2958,10 @@ sap.ui.define([
 			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments) {
 				var sPropertyMetaPath = "/EMPLOYEES/" + aMetaPathSegments.slice(0, j + 1).join("/"),
 					sKind = sSegment.split("_")[0];
+
+				if (sSegment.endsWith("*")) {
+					return; // no metadata available here
+				}
 
 				oMetaModelMock.expects("fetchObject")
 					.withExactArgs(sPropertyMetaPath)
@@ -2951,6 +2979,23 @@ sap.ui.define([
 
 			assert.deepEqual(mWrappedQueryOptions, oFixture.expected);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions: */$ref just fails", function (assert) {
+		var oMetaModel = {
+				// Note: "this" not needed, save Function#bind below
+				fetchObject : function () {}
+			};
+
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs("/.../*/$ref")
+			.returns(SyncPromise.resolve());
+
+		assert.throws(function () {
+			// code under test
+			_Helper.wrapChildQueryOptions("/...", "*/$ref", {}, oMetaModel.fetchObject);
+		}); // don't care about exact failure, don't invent Log.error() message
 	});
 
 	//*********************************************************************************************
