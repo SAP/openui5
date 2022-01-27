@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils"
 ], function(
+	ChangeVisualizationUtils
 ) {
 	"use strict";
 
@@ -19,7 +21,7 @@ sap.ui.define([
 	 * @param {string} sFallbackLabel - New label as a fallback if change handler provides no info
 	 * @returns {object} Localized description
 	 */
-	RenameVisualization.getDescription = function (mPayload, sFallbackLabel) {
+	RenameVisualization.getDescription = function(mPayload, sFallbackLabel) {
 		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sKey = mPayload.originalLabel
 			? "TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO"
@@ -27,11 +29,21 @@ sap.ui.define([
 		var sDescriptionText = oRtaResourceBundle.getText(
 			sKey,
 			[
+				ChangeVisualizationUtils.shortenString(mPayload.newLabel) || sFallbackLabel,
+				ChangeVisualizationUtils.shortenString(mPayload.originalLabel)
+			]
+		);
+		var sDescriptionTooltip = oRtaResourceBundle.getText(
+			sKey,
+			[
 				mPayload.newLabel || sFallbackLabel,
 				mPayload.originalLabel
 			]
 		);
-		return {descriptionText: sDescriptionText};
+		return {
+			descriptionText: sDescriptionText,
+			descriptionTooltip: sDescriptionTooltip
+		};
 	};
 
 	return RenameVisualization;

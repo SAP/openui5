@@ -1,29 +1,18 @@
 /******************************************************************
 	Style of the RTA Change Visualization - Quartz hcw theme
 *******************************************************************/
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor: @sapUiAccent6;  // #004ccb
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorFocus: black;
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover: @sapUiAccent7; // #105B5B
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid: @sapUiAccent5; // #365892
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover: @sapUiHcEnhancedForeground; // #006500
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColor: @sapUiAccent3; // #973333
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus: black;
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid: @sapUiHcHighlightBackground; // #EC8B46
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover:@sapUiAccent4; // #961D7C
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor: white;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight: @sapUiContentFocusColor	;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium: @sapUiContentFocusColor;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: @sapUiContentFocusColor;
 
-.sapUiRtaChangeIndicatorChange {
-	&:hover {
-		border: 1px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover;
-
-		.sapUiRtaChangeIndicatorText{
-			background: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover;
-			color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor;
-		}
-	}
+.sapUiRtaChangeIndicatorColorLight{
+	opacity: 0.4;
 }
 
-.sapUiRtaChangeIndicatorText {
-	background: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor;
-	color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor;
+.sapUiRtaChangeIndicatorColorMedium{
+	opacity: 0.6;
+}
+
+.sapUiRtaChangeIndicatorColorDark{
+	opacity: 0.85;
 }

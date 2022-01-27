@@ -250,11 +250,14 @@ function (
 	};
 
 	Selection.prototype._selectOverlay = function (oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (!this.getIsActive()) {
-			preventEventDefaultAndPropagation(oEvent);
+			// Propagation should be stopped at the root overlay to prevent the selection of the underlying elements
+			if (oOverlay.isRoot()) {
+				preventEventDefaultAndPropagation(oEvent);
+			}
 			return;
 		}
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var bMultiSelection = oEvent.metaKey || oEvent.ctrlKey;
 		var bContextMenu = oEvent.type === "contextmenu";
 
@@ -287,7 +290,11 @@ function (
 			// In Visualization Mode we must prevent MouseDown-Event for Overlays
 			// We have to close open PopOvers from the ChangeVisualization because they
 			// should close on MouseDown
-			preventEventDefaultAndPropagation(oEvent);
+			var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+			// Propagation should be stopped at the root overlay to prevent the selection of the underlying elements
+			if (oOverlay.isRoot()) {
+				preventEventDefaultAndPropagation(oEvent);
+			}
 			InstanceManager.getOpenPopovers().forEach(function(oPopOver) {
 				if (oPopOver._bOpenedByChangeIndicator) {
 					oPopOver.close();
@@ -303,11 +310,14 @@ function (
 	 * @private
 	 */
 	Selection.prototype._onMouseover = function(oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (!this.getIsActive()) {
-			preventEventDefaultAndPropagation(oEvent);
+			// Propagation should be stopped at the root overlay to prevent the selection of the underlying elements
+			if (oOverlay.isRoot()) {
+				preventEventDefaultAndPropagation(oEvent);
+			}
 			return;
 		}
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay.isSelectable()) {
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();
@@ -324,11 +334,14 @@ function (
 	 * @private
 	 */
 	Selection.prototype._onMouseleave = function(oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (!this.getIsActive()) {
-			preventEventDefaultAndPropagation(oEvent);
+			// Propagation should be stopped at the root overlay to prevent the selection of the underlying elements
+			if (oOverlay.isRoot()) {
+				preventEventDefaultAndPropagation(oEvent);
+			}
 			return;
 		}
-		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay.isSelectable()) {
 			this._removePreviousHover();
 			preventEventDefaultAndPropagation(oEvent);

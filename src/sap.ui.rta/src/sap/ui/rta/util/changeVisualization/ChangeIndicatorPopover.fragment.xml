@@ -6,7 +6,6 @@
 		showHeader="false"
 		placement="PreferredTopOrFlip"
 		class="sapUiRtaPopover">
-		<Label visible="false" text="Changes"/>
 		<Table
 			ariaLabelledBy="Changes"
 			items="{details>/}"
@@ -16,7 +15,7 @@
 			<columns>
 				<Column
 					width="auto">
-					<Text text="{i18n>TIT_CHANGEVISUALIZATION_CHANGE}" />
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_TYPE}" />
 				</Column>
 				<Column
 					width="auto">
@@ -30,11 +29,13 @@
 			<items>
 				<ColumnListItem>
 					<cells>
-						<Text
-							text="{details>changeTitle}" />
+						<core:Icon
+							src="{details>icon}"
+							class="sapUiTinyMarginBegin"/>
 						<HBox alignItems="Center">
 							<Text
-								text="{details>description}"/>
+								text="{details>description}"
+								tooltip="{details>descriptionTooltip}"/>
 							<Button
 								visible="{= !!${details>detailButtonText}}"
 								text="{details>detailButtonText}"

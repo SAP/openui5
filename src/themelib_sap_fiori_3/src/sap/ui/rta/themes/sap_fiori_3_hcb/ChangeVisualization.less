@@ -1,30 +1,18 @@
 /******************************************************************
 	Style of the RTA Change Visualization - Quartz hcb theme
 *******************************************************************/
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor: @sapUiAccent6;  // #6bd3ff
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorFocus: white;
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover: @sapUiAccent8; // #B2E484
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid: @sapUiAccent5; // #8CA7D5
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG: black;
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover: @sapUiHcEnhancedForeground; // #03B803
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColor: @sapUiAccent1; // #FFC847
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus: white;
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid: @sapUiAccent2; // #ED884A
-@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover:@sapUiAccent4; // #E269C9
-@_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor: black;
-.sapUiRtaChangeIndicatorChange{
-	&:hover{
-		border: 1px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover;
-		.sapUiRtaChangeIndicatorText{
-			background: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover;
-			color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor;
-		}
-	}
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorLight: @sapUiContentContrastFocusColor	;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorMedium: @sapUiContentContrastFocusColor;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark: @sapUiContentContrastFocusColor;
+
+.sapUiRtaChangeIndicatorColorLight{
+	opacity: 0.4;
 }
-.sapUiRtaChangeIndicatorChangeSolid{
-	background: radial-gradient(circle, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor 72%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid 100%);
+
+.sapUiRtaChangeIndicatorColorMedium{
+	opacity: 0.6;
 }
-.sapUiRtaChangeIndicatorText {
-	background: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor;
-	color: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor;
+
+.sapUiRtaChangeIndicatorColorDark{
+	opacity: 0.85;
 }
