@@ -86,7 +86,7 @@ sap.ui.define([
 			var aValueTypes = DynamicDateUtil.getOption(oValue.operator).getValueTypes();
 
 			oResult.values = oResult.values.map(function(oValue, index) {
-				if (aValueTypes[index] === "date") {
+				if (aValueTypes[index] === "date" || aValueTypes[index] === "datetime") {
 					return oTimestampInputFormat.parse(oValue);
 				}
 
@@ -126,7 +126,7 @@ sap.ui.define([
 			aValueTypes = DynamicDateUtil.getOption(oValue.operator).getValueTypes();
 
 			oResult.values = oResult.values.map(function(oValue, index) {
-				if (aValueTypes[index] === "date") {
+				if (aValueTypes[index] === "date" || aValueTypes[index] === "datetime") {
 					return oTimestampInputFormat.format(oValue);
 				}
 
