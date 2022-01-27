@@ -242,6 +242,10 @@ function(
 		this._updateWidth();
 	};
 
+	SegmentedButton.prototype.onThemeChanged = function () {
+		this._handleContainerResize();
+	};
+
 	/**
 	 * Method to handle container resize events and trigger needed reset/recalculation if needed.
 	 * @private
