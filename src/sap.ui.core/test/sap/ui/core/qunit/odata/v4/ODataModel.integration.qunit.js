@@ -1144,7 +1144,7 @@ sap.ui.define([
 				that = this;
 
 			this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
-//					"@odata.count" : "1", // short read no $count parameter needed
+					// "@odata.count" : "1", // short read no $count parameter needed
 					value : [{
 						Note : "First SalesOrder",
 						SalesOrderID : "42"
@@ -10938,7 +10938,7 @@ sap.ui.define([
 					Team_Id : "1"
 				}
 				// action advertisement
-//				"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee" : {}
+				// "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee" : {}
 			})
 			.expectChange("name", "Frederic Fall")
 			.expectChange("city", "Walldorf");
@@ -11865,8 +11865,8 @@ sap.ui.define([
 
 		this.expectChange("name", null);
 		return this.createView(assert, sView, oModel).then(function () {
-//TODO the query options for the function import are not enhanced
-//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
+			//TODO the query options for the function import are not enhanced
+			// that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {Name : "Jonathan Smith"})
 				.expectChange("name", "Jonathan Smith");
 
@@ -13939,8 +13939,8 @@ sap.ui.define([
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {
 						title : "Third Title"
 					}
-//					ID : "2",
-//					Name : "Frederic Spring"
+					// ID : "2",
+					// Name : "Frederic Spring"
 				})
 				.expectChange("name", "Frederic Spring")
 				.expectChange("title", "Third Title");
@@ -14020,8 +14020,8 @@ sap.ui.define([
 					url : "EMPLOYEES('2')"
 				}, {
 					"#com.sap.gateway.default.iwbep.tea_busi.v0001.AcSetIsAvailable" : {}
-//					ID : "2",
-//					Name : "Frederic Spring"
+					// ID : "2",
+					// Name : "Frederic Spring"
 				})
 				.expectChange("enabled", 1)
 				.expectChange("name", "Frederic Spring");
@@ -23015,7 +23015,7 @@ sap.ui.define([
 		}).then(function () {
 			// TODO return value context not supported here
 			// assert.strictEqual(aResults[0].getPath(),
-			// 	"Artists(ArtistID='2',IsActiveEntity=false)");
+			//     "Artists(ArtistID='2',IsActiveEntity=false)");
 		});
 	});
 
@@ -23748,14 +23748,15 @@ sap.ui.define([
 			// select the same sales order again in the binding hierarchy, new request is sent;
 			//TODO if Binding.refresh considers unbound bindings this request is expected.
 			// Will be fixed with CPOUI5UISERVICESV3-1701
-/*			that.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
-					+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
-					value : [
-						{ItemPosition : "0", Note : "Test1", SalesOrderID : "0500000347"},
-						{ItemPosition : "1", Note : "Test2", SalesOrderID : "0500000347"}
-					]
-				})
-*/
+			/* eslint-disable no-tabs */
+			// that.expectRequest("SalesOrderList('0500000347')/SO_2_SOITEM"
+			// 		+ "?$select=ItemPosition,Messages,Note,SalesOrderID&$skip=0&$top=100", {
+			// 		value : [
+			// 			{ItemPosition : "0", Note : "Test1", SalesOrderID : "0500000347"},
+			// 			{ItemPosition : "1", Note : "Test2", SalesOrderID : "0500000347"}
+			// 		]
+			// 	})
+			/* eslint-enable no-tabs */
 			that.expectChange("note", ["Test1", "Test2"]);
 
 			that.oView.byId("tableSOItems").setBindingContext(
@@ -23831,7 +23832,7 @@ sap.ui.define([
 			}, /Cannot refresh entity due to pending changes:/);
 
 			//TODO: hasPendingChanges on binding will be fixed with CPOUI5UISERVICESV3-1701
-//			assert.ok(that.oView.byId("equipments").getBinding("items").hasPendingChanges());
+			// assert.ok(that.oView.byId("equipments").getBinding("items").hasPendingChanges());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -24691,7 +24692,7 @@ sap.ui.define([
 					},
 					payload : {NetAmount : "0"}
 				}, {
-//					"@odata.etag" : "ETag2", // not ignored, but unused by the rest of this test
+					// "@odata.etag" : "ETag2", // not ignored, but unused by the rest of this test
 					NetAmount : "$$patchWithoutSideEffects ignores this",
 					Messages : [{
 						code : "n/a",
@@ -24705,7 +24706,7 @@ sap.ui.define([
 					batchNo : 3,
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount,NetAmount"
 				}, {
-//					"@odata.etag" : "ETag2",
+					// "@odata.etag" : "ETag2",
 					GrossAmount : "0.00", // side effect
 					NetAmount : "0.00", // "side effect": decimal places added
 					Messages : [{ // side effect: reported, even if not selected
@@ -26703,7 +26704,7 @@ sap.ui.define([
 		return this.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
 			.setParameter("TeamID", "23")
 			.execute("$auto");
-//
+/* eslint-disable no-tabs */
 // Note: "Cannot delete due to pending changes" --> this scenario is currently impossible
 //
 //	}, function () {
@@ -26724,6 +26725,7 @@ sap.ui.define([
 //			});
 //
 //		return oRoomIdBinding.getContext().delete(); // DELETE also triggers retry
+/* eslint-enable no-tabs */
 	}, function (assert) {
 		this.expectRequest({
 			method : "PATCH",
@@ -27527,8 +27529,8 @@ sap.ui.define([
 </FlexBox>';
 
 		//TODO avoid the following $expand
-//		+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
-//		+ ";$expand=_Friend($select=ArtistID,IsActiveEntity))"
+		// + "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+		// + ";$expand=_Friend($select=ArtistID,IsActiveEntity))"
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
 				+ "?$select=ArtistID,IsActiveEntity", {
 				ArtistID : "42",
@@ -31767,7 +31769,7 @@ sap.ui.define([
 				.requestSideEffects([{$NavigationPropertyPath : ""}], "$direct");
 
 			//TODO fix Context#getIndex to not return -1; [...]
-//			assert.strictEqual(oNewContext.getIndex(), 0);
+			// assert.strictEqual(oNewContext.getIndex(), 0);
 
 			return Promise.all([
 				oSideEffectsPromise.then(mustFail(assert), function (oError0) {
@@ -32656,10 +32658,10 @@ sap.ui.define([
 		this.rIgnoredCanceledErrors = /^Cache discarded as a new cache has been created$/;
 		// Timing: whether the inner list binding for the virtual context is destroyed early...
 		// this.expectCanceledError("Failed to create cache for binding " + sODLB + ": /MANAGERS",
-		// 		"Cache discarded as a new cache has been created")
-		// 	.expectCanceledError(sODLB + ": /MANAGERS: Failed to enhance query options for"
-		//			+ " auto-$expand/$select for child ID",
-		// 		"Cache discarded as a new cache has been created");
+		//         "Cache discarded as a new cache has been created")
+		//     .expectCanceledError(sODLB + ": /MANAGERS: Failed to enhance query options for"
+		//         + " auto-$expand/$select for child ID",
+		//         "Cache discarded as a new cache has been created");
 		this.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
 				value : [
 					{ID : "2", Name : "Frederic Fall"}
@@ -33135,9 +33137,9 @@ sap.ui.define([
 				getGroupHeader : function (oGroupInfo) {
 					that.checkValue(assert, oGroupInfo.key, "groupHeader");
 					// Note: no need to really return an instance here
-//					return new CustomListItem({content : [
-//						new Text({text : oGroupInfo.key})
-//					]});
+					// return new CustomListItem({content : [
+					//     new Text({text : oGroupInfo.key})
+					// ]});
 				}
 			},
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
@@ -33219,7 +33221,7 @@ sap.ui.define([
 
 			//TODO how could changes to a property affect the list's grouping?
 			// @see v2.ODataListBinding#checkUpdate
-//			oItemsBinding.getCurrentContexts()[0].setProperty("AGE", 42, null);
+			// oItemsBinding.getCurrentContexts()[0].setProperty("AGE", 42, null);
 
 			// code under test
 			oItemsBinding.enableExtendedChangeDetection(false, vKey);
@@ -35289,7 +35291,7 @@ sap.ui.define([
 
 	return oHiddenBinding.getBoundContext();
 // }, function (oModel) {
-// 	return oModel.createBindingContext("/TEAMS('42')");
+//     return oModel.createBindingContext("/TEAMS('42')");
 }].forEach(function (fnCreateContext, i) {
 	QUnit.test("CPOUI5ODATAV4-766: re-read dependent if parent is new, #" + i, function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),

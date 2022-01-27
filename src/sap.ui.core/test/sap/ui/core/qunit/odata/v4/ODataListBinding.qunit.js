@@ -721,8 +721,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("applyParameters: $$aggregation not deepEqual, " + bSuspended, function (assert) {
 		var oAggregation = {
-//				aggregate : {GrossAmount : {subtotals : true}},
-//				groupLevels : ["LifecycleStatus"]
+				// aggregate : {GrossAmount : {subtotals : true}},
+				// groupLevels : ["LifecycleStatus"]
 			},
 			sApply = "A.P.P.L.E.",
 			oBinding = this.bindList("/EMPLOYEES"),
@@ -733,8 +733,8 @@ sap.ui.define([
 
 		oBinding.mQueryOptions.$apply = sApply; // no change in $apply
 		oBinding.mParameters.$$aggregation = {
-//			aggregate : {GrossAmount : {}},
-//			groupLevels : ["LifecycleStatus"]
+			// aggregate : {GrossAmount : {}},
+			// groupLevels : ["LifecycleStatus"]
 		};
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
@@ -767,8 +767,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("applyParameters: from updateAnalyticalInfo, " + bSuspended, function (assert) {
 		var oAggregation = {
-//				aggregate : {GrossAmount : {subtotals : true}},
-//				groupLevels : ["LifecycleStatus"]
+				// aggregate : {GrossAmount : {subtotals : true}},
+				// groupLevels : ["LifecycleStatus"]
 			},
 			sApply = "A.P.P.L.E.",
 			oBinding = this.bindList("/EMPLOYEES"),
@@ -3271,7 +3271,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.strictEqual(oBinding.aFilters, undefined);
 		//TODO does not work with ODataModel.integration "suspend/resume"
-//		assert.strictEqual(oBinding.mParameters, undefined);
+		// assert.strictEqual(oBinding.mParameters, undefined);
 		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
 		assert.strictEqual(oBinding.aPreviousData, undefined);
 		assert.strictEqual(oBinding.mQueryOptions, undefined);

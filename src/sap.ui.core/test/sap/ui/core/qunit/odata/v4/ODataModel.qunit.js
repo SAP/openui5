@@ -1422,7 +1422,7 @@ sap.ui.define([
 				TEAM_2_EMPLOYEES : {},
 				FOO1 : {},
 				FOO2 : {},
-//				"FOO3" : {}
+				// "FOO3" : {}
 				FOO4 : {}
 			}
 		}

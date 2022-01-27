@@ -1048,7 +1048,7 @@ sap.ui.define([
 		this.oDiff = undefined;
 		this.aFilters = undefined;
 		this.oHeaderContext = undefined;
-//		this.mParameters = undefined;
+		// this.mParameters = undefined;
 		this.mPreviousContextsByPath = undefined;
 		this.aPreviousData = undefined;
 		this.mQueryOptions = undefined;

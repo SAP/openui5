@@ -2505,7 +2505,7 @@ sap.ui.define([
 			function (assert) {
 		var oListBinding = {
 				oCache : null,
-//				getBoundContext : function () {},
+				// getBoundContext : function () {},
 				getContext : function () { return {}; },
 				getPath : function () { return "TEAM_2_EMPLOYEES"; },
 				toString : function () { return "Foo Bar"; }

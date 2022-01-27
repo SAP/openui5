@@ -298,23 +298,23 @@ sap.ui.define([
 	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 	 * @example
 	 * {
-	 *		$expand : {
-	 *			"SO_2_BP" : true,
-	 *			"SO_2_SOITEM" : {
-	 *				"$expand" : {
-	 *					"SOITEM_2_PRODUCT" : {
-	 *						"$apply" : "filter(Price gt 100)",
-	 *						"$expand" : {
-	 *							"PRODUCT_2_BP" : null,
-	 *						},
-	 *						"$select" : "CurrencyCode"
-	 *					},
-	 *					"SOITEM_2_SO" : null
-	 *				}
-	 *			}
-	 *		},
-	 *		"sap-client" : "003"
-	 *	}
+     *   $expand : {
+     *     "SO_2_BP" : true,
+     *     "SO_2_SOITEM" : {
+     *       "$expand" : {
+     *         "SOITEM_2_PRODUCT" : {
+     *           "$apply" : "filter(Price gt 100)",
+     *           "$expand" : {
+     *               "PRODUCT_2_BP" : null,
+     *           },
+     *           "$select" : "CurrencyCode"
+     *         },
+     *         "SOITEM_2_SO" : null
+     *       }
+     *     }
+     *   },
+     *   "sap-client" : "003"
+     * }
 	 *
 	 * @public
 	 */
