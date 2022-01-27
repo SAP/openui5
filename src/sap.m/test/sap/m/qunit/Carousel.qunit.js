@@ -1853,5 +1853,61 @@ sap.ui.define([
 		}.bind(this), sinonClockTickValue);
 	});
 
+	QUnit.module("Active pages in nested carousels", {
+		beforeEach: function () {
+			this.oOuterCarousel = new Carousel();
+			this.oInnerCarousel = new Carousel({
+				id: "innerCarousel",
+				height: '25%',
+				width: '50%'
+			});
+
+			var text1 = new sap.m.Text({
+				id: "text1",
+				text: 'text1'
+			});
+			var text2 = new sap.m.Text({
+				id: "text2",
+				text: 'text2'
+			});
+			var text3 = new sap.m.Text({
+				id: "text3",
+				text: 'text3'
+			});
+
+			this.oOuterCarousel.insertPage(text1);
+			this.oOuterCarousel.insertPage(this.oInnerCarousel);
+			this.oInnerCarousel.insertPage(text3);
+			this.oInnerCarousel.insertPage(text2);
+			this.oOuterCarousel.setActivePage(this.oOuterCarousel.getPages()[0]);
+			this.oOuterCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oOuterCarousel.destroy();
+			this.oInnerCarousel.destroy();
+		}
+	});
+
+	QUnit.test("The inner carousel active page is still visible on outer carousel page change", function (assert) {
+		// arrange
+		function forceTransitionComplete(oCarousel) {
+			oCarousel._oMobifyCarousel.onTransitionComplete();
+			sap.ui.getCore().applyChanges();
+		}
+		var sContentSelector = ".sapMCrslInner > .sapMCrslActive";
+		assert.strictEqual(this.oInnerCarousel.$().find(sContentSelector).length > 0, true, "Inner carousel has visible active page");
+
+		// act
+		this.oOuterCarousel.$().find("a.sapMCrslNext").trigger("click");
+		forceTransitionComplete(this.oOuterCarousel);
+
+		this.oOuterCarousel.$().find("a.sapMCrslPrev").trigger("click");
+		forceTransitionComplete(this.oOuterCarousel);
+
+		// assert
+		assert.strictEqual(this.oInnerCarousel.$().find(sContentSelector).length > 0, true, "Inner carousel has visible active page after outer carousel page change");
+	});
+
 	return waitForThemeApplied();
 });
