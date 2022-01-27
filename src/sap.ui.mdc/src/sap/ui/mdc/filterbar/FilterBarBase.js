@@ -720,6 +720,18 @@ sap.ui.define([
 		this._aCollectedChangePromises.push(oChangePromise);
 	};
 
+	FilterBarBase.prototype._registerOnEngineOnModificationEnd = function() {
+		this._oConditionChangeStartedPromise = new Promise(function(resolve) {
+			this._fConditionChangeStartedPromiseResolve = resolve;
+		}.bind(this));
+	};
+
+	FilterBarBase.prototype._onChangeAppliance = function() {
+		if (this._fConditionChangeStartedPromiseResolve) {
+			this._fConditionChangeStartedPromiseResolve();
+			this._fConditionChangeStartedPromiseResolve = null;
+		}
+	};
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
@@ -727,7 +739,6 @@ sap.ui.define([
 			var mOrigConditions = {};
 			mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], aConditions));
 			this._cleanupConditions(mOrigConditions[sFieldPath]);
-
 			this._addConditionChange(mOrigConditions, sFieldPath);
 		}.bind(this);
 
@@ -745,6 +756,7 @@ sap.ui.define([
 					if (this._hasPropertyHelper() || this._getPropertyByName(sFieldPath)) {
 						fAddConditionChange(sFieldPath, aConditions);
 					} else {
+						this._registerOnEngineOnModificationEnd();
 						this._retrieveMetadata().then(function() {
 							fAddConditionChange(sFieldPath, aConditions);
 						});
@@ -1006,7 +1018,12 @@ sap.ui.define([
 		var oPromise = oEvent.getParameter("promise");
 		if (oPromise) {
 			oPromise.then(function() {
-				if (this._aCollectedChangePromises && this._aCollectedChangePromises.length > 0) {
+
+				if (this._oConditionChangeStartedPromise) {
+					this._oConditionChangeStartedPromise.then(function() {
+						this.triggerSearch();
+					}.bind(this));
+				} else if (this._aCollectedChangePromises && this._aCollectedChangePromises.length > 0) {
 					var aChangePromises = this._aCollectedChangePromises.slice();
 					Promise.all(aChangePromises).then(function() {
 						this.triggerSearch();
@@ -1946,6 +1963,9 @@ sap.ui.define([
 
 		this._aFIChanges = null;
 		this._aCollectedChangePromises = null;
+
+		this._oConditionChangeStartedPromise = null;
+		this._fConditionChangeStartedPromiseResolve	= undefined;
 	};
 
 	return FilterBarBase;

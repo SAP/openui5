@@ -907,4 +907,39 @@ sap.ui.define([
 		}.bind(this));
 
 	});
+
+	QUnit.module("Check optional hook executions on registered control instances", {
+		beforeEach: function() {
+			this.oEngine = Engine.getInstance();
+			this.oControl = new Control("MyCustomHookTestControl");
+			this.oEngine.registerAdaptation(this.oControl, {
+				controller: {
+					HookTest: Controller
+				}
+			});
+		},
+		afterEach: function() {
+			this.oControl.destroy();
+			this.oEngine.destroy();
+		}
+	});
+
+	QUnit.test("Check '_onChangeAppliance' hook execution", function(assert){
+
+		var done = assert.async();
+
+		this.oControl._onChangeAppliance = function() {
+			assert.ok(true, "Hook executed");
+			done();
+		};
+
+		this.oEngine._processChanges(this.oControl, [{
+			selectorElement: this.oControl,
+			changeSpecificData: {
+				changeType: "someTestChange",
+				content: {}
+			}
+		}]);
+
+	});
 });

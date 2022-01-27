@@ -140,6 +140,52 @@ sap.ui.define([
 
     });
 
+    QUnit.test("check reaction to the basic search 'submit' with an filter change event", function(assert){
+        var nIdx = 0;
+        var oFilterField = new FilterField();
+
+        var fTestPromiseResolve = null;
+        var oTestPromise = new Promise(function(resolve) {
+            fTestPromiseResolve = resolve;
+        });
+
+        sinon.stub(this.oFilterBarBase, "triggerSearch");
+        sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+        sinon.stub(this.oFilterBarBase, "_retrieveMetadata").returns(Promise.resolve());
+        this.oFilterBarBase._addConditionChange = function() {
+            assert.equal(++nIdx, 1);
+            this.oFilterBarBase._onChangeAppliance();
+        }.bind(this);
+        this.oFilterBarBase.triggerSearch = function() {
+            assert.equal(++nIdx, 2);
+            fTestPromiseResolve();
+        };
+        var oRegisterModigicationSpy = sinon.spy(this.oFilterBarBase, "_registerOnEngineOnModificationEnd");
+
+        this.oFilterBarBase.setBasicSearchField(oFilterField);
+
+        this.oFilterBarBase._bPersistValues = true;
+        sinon.stub(this.oFilterBarBase, "_isPersistenceSupported").returns(true);
+
+        this.oFilterBarBase._handleConditionModelPropertyChange({ getParameter: function(sParam) {
+            if (sParam === "path") {
+                return "/conditions/$search";
+            } else if (sParam === "value") {
+                return [{
+                    "operator": "EQ",
+                    "values": ["SomeTestValue"],
+                    "validated": "Validated"
+                }];
+            }
+        }});
+        assert.ok(oRegisterModigicationSpy.calledOnce);
+        assert.ok(this.oFilterBarBase._oConditionChangeStartedPromise);
+
+        oFilterField.fireSubmit({promise: Promise.resolve()});
+
+        return oTestPromise;
+    });
+
     QUnit.test("Check 'valid' promise - do not provide parameter", function(assert){
         var done = assert.async();
 
