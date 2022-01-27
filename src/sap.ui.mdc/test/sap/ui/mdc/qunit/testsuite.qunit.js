@@ -318,12 +318,11 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					module: "./v4server/V4ServerTest.qunit",
 					sinon: false
 				},
-				/* TO-Do: Check whether this is still needed with new MDC Chart
 				"Integration Testsuite": {
 					title: "Integration Testsuite",
 					group: "Testsuite",
 					page: "test-resources/sap/ui/mdc/integration/testsuite.qunit.html"
-				},*/
+				},
 				"Chart": {
 					group: "Chart",
 					module: "./chart/Chart.qunit",
