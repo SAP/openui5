@@ -4434,7 +4434,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("#getAllElements without path", function (assert) {
 		var oCache = this.createCache("Employees"),
-			oPromise = new SyncPromise(function () {}); // not (yet) resolved
+			oPromise = new SyncPromise(function () {});
 
 		oCache.aElements = ["~oElement0~", oPromise, "~oElement2~"];
 
