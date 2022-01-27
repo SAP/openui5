@@ -196,6 +196,12 @@
 			right: auto;
 		}
 
+		.positioned16 {
+			position: absolute !important;
+			top: 550px;
+			right: 10px;
+		}
+
 		.vbox {
 			position: absolute !important;
 			top: 100px;
@@ -636,6 +642,44 @@
 			contentHeight: "50%"
 		});
 
+		var oButton16 = new sap.m.Button("btn16", {
+			text: "Nested Popovers",
+			press: function () {
+				oPopoverNested.openBy(this);
+			}
+		});
+		oButton16.addStyleClass("positioned16");
+
+		var oPopoverNested = new sap.m.Popover("popNested", {
+			title: "Nested Popovers",
+			placement: sap.m.PlacementType.Auto,
+			content: [
+				new sap.m.HBox({
+					items: [
+						new sap.m.Button("nestedBtn", {
+							text: "Open Nested Popover",
+							press: function () {
+								var oPopover = new sap.m.Popover({
+									title: "Description",
+									placement: sap.m.PlacementType.Bottom
+								});
+
+								oPopover.addStyleClass("sapUiContentPadding");
+								oPopover.addContent(new sap.m.Text({ text: "Further Descripton" }));
+								oPopover.openBy(this);
+							}
+						}),
+						new sap.m.Link("defocus", { text: "Close" })
+					],
+					justifyContent: sap.m.FlexJustifyContent.SpaceAround,
+					alignItems: sap.m.FlexAlignItems.Center
+				})
+			],
+			contentWidth: "20em",
+			contentHeight: "20em"
+		});
+		oPopoverNested.addStyleClass("sapUiContentPadding");
+
 		var oVBox = new sap.m.VBox({
 			items: [
 				new sap.m.Button("with-h-with-f", {
@@ -726,7 +770,7 @@
 				oCustomCssButton,
 			],
 			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oChangeToFioriTheme, oChangeToBelizeTheme
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oButton15, oButton16, oChangeToFioriTheme, oChangeToBelizeTheme
 			]
 		});
 
