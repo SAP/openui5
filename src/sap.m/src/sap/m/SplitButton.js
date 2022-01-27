@@ -188,6 +188,7 @@ function(
 
 			if (!oCtrl) {
 				oCtrl = new Button({
+					id: this.getId() + "-textButton",
 					width: '100%',
 					icon: this.getIcon(),
 					text: this.getText(),
@@ -205,6 +206,7 @@ function(
 
 			if (!oCtrl) {
 				oCtrl = new Button({
+					id: this.getId() + "-arrowButton",
 					icon: "sap-icon://slim-arrow-down",
 					press: this._handleAction.bind(this, true),
 					tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP"),
