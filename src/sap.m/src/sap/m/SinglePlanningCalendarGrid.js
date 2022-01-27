@@ -1213,15 +1213,15 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype._findSrcControl = function (oEvent) {
 			// data-sap-ui-related - This is a relation to appointment object.
 			// This is the connection between the DOM Element and the Object representing an appointment.
-			var $targetElement = oEvent.target,
-				$targetsParentElement = $targetElement.parentElement,
+			var oTargetElement = oEvent.target,
+				oTargetsParentElement = oTargetElement.parentElement,
 				sAppointmentId;
-			if (!$targetsParentElement) {
+			if (!oTargetsParentElement) {
 				return oEvent.srcControl;
-			} else if ($targetsParentElement.classList.contains("sapUiCalendarRowApps")) {
-				sAppointmentId = $targetsParentElement.getAttribute("data-sap-ui-related");
+			} else if (oTargetsParentElement.classList.contains("sapUiCalendarRowApps")) {
+				sAppointmentId = oTargetsParentElement.getAttribute("data-sap-ui-related") || oTargetsParentElement.id;
 			} else {
-				sAppointmentId = $targetElement.getAttribute("data-sap-ui-related");
+				sAppointmentId = oTargetElement.getAttribute("data-sap-ui-related") || oTargetElement.id;
 			}
 
 			// finding the appointment
