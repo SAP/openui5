@@ -186,7 +186,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 
         this.element = element;
         this.$element = $(element);
-        this.$inner = this.$element.find('.' + this._getClass('inner'));
+        this.$inner = this.$element.find('> .' + this._getClass('inner'));
         this.$items = this.$inner.children();
 
         this.$start = this.$items.eq(0);
@@ -556,9 +556,7 @@ Mobify.UI.Carousel = (function($, Utils) {
 
         for (i = 0; i < this.$items.length; i++) {
 			if (i != this._index - 1) {
-				if (this.$items.eq(i).closest(".sapMCrsl")[0] === this.$element[0]) { // to ensure active class removal is not propagated to inner carousels when nested carousels are used
-					this.$items.eq(i).removeClass(sActiveClass);
-				}
+				this.$items.eq(i).removeClass(sActiveClass);
 			}
 		}
 
