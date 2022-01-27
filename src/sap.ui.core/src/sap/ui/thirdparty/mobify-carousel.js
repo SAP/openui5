@@ -556,7 +556,9 @@ Mobify.UI.Carousel = (function($, Utils) {
 
         for (i = 0; i < this.$items.length; i++) {
 			if (i != this._index - 1) {
-				this.$items.eq(i).removeClass(sActiveClass);
+				if (this.$items.eq(i).closest(".sapMCrsl")[0] === this.$element[0]) { // to ensure active class removal is not propagated to inner carousels when nested carousels are used
+					this.$items.eq(i).removeClass(sActiveClass);
+				}
 			}
 		}
 
