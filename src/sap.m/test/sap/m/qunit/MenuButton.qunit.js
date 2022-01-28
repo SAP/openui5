@@ -112,6 +112,22 @@ sap.ui.define([
 		oMenuButton.destroy();
 	});
 
+	QUnit.test("MenuButton sets a stableID to both text and action button in the internal split button", function (assert) {
+		// arrange
+		var oMenuButton = new MenuButton("splitButton", { buttonMode: MenuButtonMode.Split });
+		oMenuButton.placeAt("content");
+		oCore.applyChanges();
+		var oMenuButtonInner = oMenuButton.getDomRef("internalSplitBtn");
+		// assert
+		assert.strictEqual(oMenuButtonInner.children[0].firstElementChild.id, "splitButton-internalSplitBtn-textButton", "there is an element with -internalSplitBtn-textButton suffix");
+
+		// assert
+		assert.strictEqual(oMenuButtonInner.children[0].lastElementChild.id, "splitButton-internalSplitBtn-arrowButton", "there is an element with -internalSplitBtn-arrowButton suffix");
+
+		// cleanup
+		oMenuButton.destroy();
+	});
+
 	QUnit.test("Property - Default Values", function(assert) {
 		this.sut.destroy();
 		this.sut = null;
