@@ -346,13 +346,13 @@ sap.ui.define([
 
 			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 			this._oFormatAriaApp = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
+				pattern: "EEEE dd/MM/yyyy 'at' HH:mm:ss a"
 			});
 			this._oFormatAriaFullDayCell = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY"
+				pattern: "EEEE dd/MM/yyyy"
 			});
 			this._oFormatAriaCell = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' HH a"
+				pattern: "EEEE dd/MM/yyyy 'at' HH a"
 			});
 
 			//the id of the SPC's legend if any
@@ -1311,7 +1311,7 @@ sap.ui.define([
 
 		SinglePlanningCalendarGrid.prototype._getDateFormatter = function () {
 			if (!(this._oDateFormat instanceof DateFormat)) {
-				this._oDateFormat = DateFormat.getDateTimeInstance({ pattern: "YYYYMMdd-HHmm" });
+				this._oDateFormat = DateFormat.getDateTimeInstance({ pattern: "yyyyMMdd-HHmm" });
 			}
 			return this._oDateFormat;
 		};
