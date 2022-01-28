@@ -158,22 +158,9 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if VENDOR layer is enabled
 		 * @private
 		 * @ui5-restricted
-		 * @deprecated
 		 */
 		isVendorLayer: function() {
 			return LayerUtils.isVendorLayer();
-		},
-
-		/**
-		 * Indicates if a developer layer is selected.
-		 * Any layer below Customer is considered a developer layer.
-		 *
-		 * @returns {boolean} <code>true</code> if a developer layer is enabled
-		 * @private
-		 * @ui5-restricted
-		 */
-		isDeveloperLayer: function() {
-			return LayerUtils.isDeveloperLayer();
 		},
 
 		/**
@@ -185,7 +172,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		isVariantDownport: function() {
-			return LayerUtils.isVendorLayer() && Utils.isHotfixMode();
+			return SmartVariantManagementApplyAPI.isVendorLayer() && Utils.isHotfixMode();
 		},
 
 		/**
