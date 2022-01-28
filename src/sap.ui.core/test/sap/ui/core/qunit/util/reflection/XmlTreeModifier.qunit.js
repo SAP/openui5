@@ -831,6 +831,12 @@ function(
 			assert.strictEqual(XmlTreeModifier.getParent(oTooltipBase), oHBox, "then the parent control is returned as parent");
 		});
 
+		QUnit.test("when getParent is called for control without parent", function (assert) {
+			var sXmlString = "<Button text='Button1' id='button1'></Button>";
+			var oXmlButton = XMLHelper.parse(sXmlString, "application/xml");
+			assert.strictEqual(XmlTreeModifier.getParent(oXmlButton), null, "then 'null' is returned as parent");
+		});
+
 		QUnit.test("when getChangeHandlerModule is called for control instance on which changeHandler is defined", function (assert) {
 			var oDynamicPageTitle = XmlTreeModifier._children(this.oXmlView)[6];
 			assert.strictEqual(XmlTreeModifier.getChangeHandlerModulePath(oDynamicPageTitle), CHANGE_HANDLER_PATH, "then the changehandler path defined at the control instance is returned");

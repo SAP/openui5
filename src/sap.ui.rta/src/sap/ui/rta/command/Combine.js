@@ -26,6 +26,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
+				newElementId: {
+					type: "string"
+				},
 				source: {
 					type: "any"
 				},
@@ -47,6 +50,7 @@ sap.ui.define([
 			aFieldIds.push(oField.getId());
 		});
 		var mSpecificInfo = {
+			newElementId: this.getNewElementId(),
 			changeType: this.getChangeType(),
 			sourceControlId: this.getSource().getId(),
 			combineElementIds: aFieldIds
