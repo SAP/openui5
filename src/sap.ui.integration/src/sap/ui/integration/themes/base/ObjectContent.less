@@ -101,3 +101,19 @@
 	color: @sapUiTileTextColor;
 	height: 1rem;
 }
+
+.sapFCardObjectContent {
+
+	.sapFAvatarGroupInactive {
+		pointer-events: none;
+
+		&.sapFAvatarGroupIndividual .sapFAvatarGroupItem {
+			pointer-events: none;
+		}
+	}
+
+	.sapFAvatarGroupMoreButton.sapMBtnDisabled {
+		cursor: default;
+		opacity: 1;
+	}
+}

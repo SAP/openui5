@@ -135,6 +135,20 @@ sap.ui.define([
 		return this._sGroupType;
 	};
 
+	AvatarGroupItem.prototype._setInteractive = function (bInteractive) {
+		if (this._bInteractive === bInteractive) {
+			return;
+		}
+
+		this._bInteractive = bInteractive;
+
+		this.invalidate();
+	};
+
+	AvatarGroupItem.prototype._getInteractive = function () {
+		return this._bInteractive;
+	};
+
 	AvatarGroupItem.prototype._setAvatarColor = function (sValue) {
 		this._sAvatarColor = sValue;
 		this._getAvatar().setBackgroundColor(sValue);

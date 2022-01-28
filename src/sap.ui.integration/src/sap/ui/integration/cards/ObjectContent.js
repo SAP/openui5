@@ -20,9 +20,13 @@ sap.ui.define([
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Utils",
+	"sap/f/AvatarGroup",
+	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
-	"sap/f/cards/NumericSideIndicator"
+	"sap/f/cards/NumericSideIndicator",
+	"sap/f/library"
 ], function (
 	BaseContent,
 	ObjectContentRenderer,
@@ -42,9 +46,13 @@ sap.ui.define([
 	AlignedFlowLayout,
 	Rem,
 	BindingHelper,
+	BindingResolver,
 	Utils,
+	AvatarGroup,
+	AvatarGroupItem,
 	NumericIndicators,
-	NumericSideIndicator
+	NumericSideIndicator,
+	fLibrary
 ) {
 	"use strict";
 
@@ -54,10 +62,14 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = mLibrary.AvatarColor;
 
+	var ButtonType = mLibrary.ButtonType;
+
 	var FlexRendertype = mLibrary.FlexRendertype;
 
 	// shortcut for sap.ui.integration.CardActionArea
 	var ActionArea = library.CardActionArea;
+
+	var AvatarGroupType = fLibrary.AvatarGroupType;
 
 	/**
 	 * Constructor for a new <code>ObjectContent</code>.
@@ -73,7 +85,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @experimental
 	 * @since 1.64
 	 * @alias sap.ui.integration.cards.ObjectContent
 	 */
@@ -270,6 +281,9 @@ sap.ui.define([
 			case "Status":
 				oControl = this._createStatusItem(oItem, vVisible);
 				break;
+			case "IconGroup":
+				oControl = this._createIconGroupItem(oItem);
+				break;
 
 			// deprecated types
 			case "link":
@@ -401,6 +415,57 @@ sap.ui.define([
 		}
 
 		return oControl;
+	};
+
+	ObjectContent.prototype._createIconGroupItem = function (oItem) {
+		var oTemplateConfig = oItem.template;
+		if (!oTemplateConfig) {
+			return null;
+		}
+
+		var oIconGroup = new AvatarGroup({
+			avatarDisplaySize: oItem.size || AvatarSize.XS,
+			groupType: AvatarGroupType.Individual
+		});
+
+		// Disable "show more" button
+		oIconGroup._oShowMoreButton.setType(ButtonType.Transparent);
+		oIconGroup._oShowMoreButton.setEnabled(false);
+
+		if (oTemplateConfig.actions) {
+			oIconGroup.attachPress(function (oEvent) {
+				this._onIconGroupPress(oEvent, oTemplateConfig.actions);
+			}.bind(this));
+		} else {
+			// make avatars non-interactive, disable press and hover cursor
+			oIconGroup._setInteractive(false);
+		}
+
+		var oItemTemplate = new AvatarGroupItem({
+			src: BindingHelper.formattedProperty(oTemplateConfig.icon.src, function (sValue) {
+				return this._oIconFormatter.formatSrc(sValue);
+			}.bind(this)),
+			initials: oTemplateConfig.icon.text
+		});
+
+		oIconGroup.bindAggregation("items", {
+			path: oItem.path || "/",
+			template: oItemTemplate,
+			templateShareable: false // destroy the template when the AvatarGroup is destroyed
+		});
+
+		return oIconGroup;
+	};
+
+	ObjectContent.prototype._onIconGroupPress = function (oEvent, oActionTemplate) {
+		if (oEvent.getParameter("overflowButtonPressed")) {
+			// ignore presses on the "show more" button
+		} else {
+			var oItem = oEvent.getParameter("eventSource");
+			var aResolvedActions = BindingResolver.resolveValue(oActionTemplate, oItem, oItem.getBindingContext().getPath());
+			var oAction = aResolvedActions[0];
+			this.getActions().fireAction(this, oAction.type, oAction.parameters);
+		}
 	};
 
 	ObjectContent.prototype._createAFLayout = function () {

@@ -27,7 +27,8 @@ sap.ui.define(["sap/f/library"],
 				sGroupType = oAvatarGroup.getGroupType(),
 				sAvatarGroupTypeClass = sAvatarGroupClass + sGroupType,
 				aItems = oAvatarGroup.getItems(),
-				bShowMoreButton = oAvatarGroup._shouldShowMoreButton();
+				bShowMoreButton = oAvatarGroup._shouldShowMoreButton(),
+				bInteractive = oAvatarGroup.getProperty("_interactive");
 
 			oRm.openStart("div", oAvatarGroup)
 				.class(sAvatarGroupClass)
@@ -36,6 +37,10 @@ sap.ui.define(["sap/f/library"],
 
 			if (bShowMoreButton) {
 				oRm.class("sapFAvatarGroupShowMore");
+			}
+
+			if (!bInteractive) {
+				oRm.class("sapFAvatarGroupNonInteractive");
 			}
 
 			if (oAvatarGroup._bAutoWidth) {

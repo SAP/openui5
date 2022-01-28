@@ -48,14 +48,23 @@ function (
 		// Assert
 		assert.ok($oDomRef, "The AvatarGroupItem is rendered");
 		assert.ok($oDomRef.hasClass("sapFAvatarGroupItem"), "The AvatarGroupItem has 'sapFAvatarGroupItem' class");
-		assert.strictEqual($oDomRef.attr("tabindex"), undefined, "The AvatarGroup has tabindex=-1 when it is in Group mode");
+		assert.strictEqual($oDomRef.attr("tabindex"), undefined, "The AvatarGroupItem has no tabindex when it is in Group mode");
 
 		// Act
 		oAvatarGroupItem._setGroupType("Individual");
+		oAvatarGroupItem._setInteractive(true);
 		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual($oDomRef.attr("tabindex"), "0", "The AvatarGroup has tabindex=0 when it is in Individual mode");
+		assert.strictEqual($oDomRef.attr("tabindex"), "0", "The AvatarGroupItem has tabindex=0 when it is in Individual mode");
+
+		// Act
+		oAvatarGroupItem._setGroupType("Individual");
+		oAvatarGroupItem._setInteractive(false);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual($oDomRef.attr("tabindex"), undefined, "The AvatarGroupItem has no tabindex when it is in Individual mode and is not interactive");
 
 		// Clean up
 		oAvatarGroupItem.destroy();
