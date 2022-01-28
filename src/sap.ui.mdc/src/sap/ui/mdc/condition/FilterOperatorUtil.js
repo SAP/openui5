@@ -44,6 +44,10 @@ function(
 			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		});
 
+		// shared ListFieldHelp for month operators
+		var oMonthFieldHelp;
+
+
 
 		/**
 		 * Utilities to handle {@link sap.ui.mdc.condition.Operator Operators} and {@link sap.ui.mdc.condition.ConditionObject conditions}.
@@ -457,6 +461,86 @@ function(
 							return UniversalDateUtils.ranges.lastDays(iDuration);
 						}
 					}),
+					firstDayWeek: new RangeOperator({
+						name: "FIRSTDAYWEEK",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.firstDayOfWeek();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					lastDayWeek: new RangeOperator({
+						name: "LASTDAYWEEK",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.lastDayOfWeek();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					firstDayMonth: new RangeOperator({
+						name: "FIRSTDAYMONTH",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.firstDayOfMonth();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					lastDayMonth: new RangeOperator({
+						name: "LASTDAYMONTH",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.lastDayOfMonth();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					firstDayQuarter: new RangeOperator({
+						name: "FIRSTDAYQUARTER",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.firstDayOfQuarter();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					lastDayQuarter: new RangeOperator({
+						name: "LASTDAYQUARTER",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.lastDayOfQuarter();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					firstDayYear: new RangeOperator({
+						name: "FIRSTDAYYEAR",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.firstDayOfYear();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
+					lastDayYear: new RangeOperator({
+						name: "LASTDAYYEAR",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.lastDayOfYear();
+						},
+						formatRange: function(aRange, oDataType) {
+							return oDataType.formatValue(aRange[0], "string");
+						}
+					}),
 					todayFromTo: new RangeOperator({
 						alias: "TODAYXYDAYS",
 						name: "TODAYFROMTO",
@@ -684,7 +768,7 @@ function(
 						valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 }}],
 						paramTypes: ["(.+)"],
 						additionalInfo: "",
-						// defaultValues: [0],
+						label: [oMessageBundle.getText("operators.SPECIFICMONTH_MONTH.label")],
 						defaultValues: function() {
 							var oDate = new UniversalDate();
 							return [
@@ -722,60 +806,114 @@ function(
 									}
 									aValues.push(sValue);
 								}
-								return [_getMonths.apply(this).indexOf(aValues[0])];
+								return [_getIndexOfMonth.call(this, aValues[0])];
 							}
 
 							return null;
 						},
 						createControl: function(oType, sPath, iIndex, sId, aClass)  {
-							var getMonthItems = function() {
-								if (!this._aMonthsItems) {
-									var aMonths = _getMonths.apply(this);
-									this._aMonthsItems = [];
-
-									for (var i = 0; i < 12; i++) {
-										this._aMonthsItems.push({
-											text: aMonths[i],
-											key: i
-										});
-									}
-								}
-
-								return this._aMonthsItems;
-							}.bind(this);
-
-							var ListFieldHelp = sap.ui.require("sap/ui/mdc/field/ListFieldHelp");
-							var ListItem = sap.ui.require("sap/ui/core/ListItem");
 							var Field = sap.ui.require("sap/ui/mdc/Field");
-							if (!ListFieldHelp || !ListItem || !Field) {
+							if (Field && _getMonthFieldHelp.call(this)) {
+
+								var oField = new Field(sId, {
+									value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
+									additionalValue: { path: sPath, formatter: function(iValue) { return oMonthFieldHelp.getTextForKey(iValue); }, mode: 'OneWay' },
+									display: 'Description',
+									width: "100%",
+									fieldHelp: "LFHForSpecificMonth"
+								});
+
+								return oField;
+							} else {
 								Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
 								return null;
 							}
-							if (!this._oListFieldHelp) {
-								this._oListFieldHelp = new ListFieldHelp({
-									id: "LFHForSpecificMonth",
-									items: {
-										path: "$items>/",
-										template: new ListItem({
-											text: {
-												path: "$items>text"
-											},
-											key: {
-												path: "$items>key"
-											}
-										}),
-										templateShareable: false
+						}
+					}),
+					specificMonthInYear: new RangeOperator({
+						name: "SPECIFICMONTHINYEAR",
+						valueTypes: [{ name: "sap.ui.model.type.Integer", constraints: { minimum: 0, maximum: 11 }},
+									{ name: "sap.ui.model.type.Integer", constraints: { minimum: 1, maximum: 9999 }}],
+						paramTypes: ["(.+)", "(.+)"],
+						additionalInfo: "",
+						label: [oMessageBundle.getText("operators.SPECIFICMONTHINYEAR_MONTH.label"), oMessageBundle.getText("operators.SPECIFICMONTHINYEAR_YEAR.label")],
+						defaultValues: function() {
+							var oDate = new UniversalDate();
+							return [
+								oDate.getMonth(),
+								oDate.getFullYear()
+							];
+						},
+						calcRange: function(iMonth, iYear) {
+							var oDate = new UniversalDate();
+							oDate.setMonth(iMonth);
+							oDate.setYear(iYear);
+							oDate = UniversalDateUtils.getMonthStartDate(oDate);
+							return UniversalDateUtils.getRange(0, "MONTH", oDate);
+						},
+						format: function(oCondition, oType, sDisplayFormat, bHideOperator) {
+							var iValue = oCondition.values[0];
+							var iYear = oCondition.values[1];
+							var sTokenText = this.tokenFormat;
+							var sReplace = _getMonths.apply(this)[iValue];
+
+							if (bHideOperator) {
+								return sReplace + "," + iYear;
+							} else {
+								var replaceRegExp0 = new RegExp("\\$" + 0 + "|" + 0 + "\\$" + "|" + "\\{" + 0 + "\\}", "g");
+								var replaceRegExp1 = new RegExp("\\$" + 1 + "|" + 1 + "\\$" + "|" + "\\{" + 1 + "\\}", "g");
+								sTokenText = sReplace == null ? null : sTokenText.replace(replaceRegExp0, sReplace);
+								return sTokenText.replace(replaceRegExp1, iYear);
+							}
+						},
+						getValues: function(sText, sDisplayFormat, bDefaultOperator) {
+							var aMatch = sText.match(this.tokenParseRegExp);
+							var aValues;
+							if (aMatch || (bDefaultOperator && sText)) {
+								aValues = [];
+								for (var i = 0; i < this.valueTypes.length; i++) {
+									var sValue;
+									if (aMatch) {
+										sValue = aMatch[i + 1];
+									} else if ((bDefaultOperator && sText)) { // only month provided
+										sValue = sText;
 									}
-								}).setModel(new JSONModel(getMonthItems()), "$items");
+									aValues.push(sValue);
+								}
+								return [_getIndexOfMonth.call(this, aValues[0]), aValues[1]];
 							}
 
-							var oField = new Field(sId, {
-								value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
-								additionalValue: { path: sPath, formatter: function(iValue) { return this._oListFieldHelp.getTextForKey(iValue); }.bind(this), mode: 'OneWay' },
-								display: 'Description',
-								width: "100%",
-								fieldHelp: "LFHForSpecificMonth"
-							});
+							return null;
+						},
+						createControl: function(oType, sPath, iIndex, sId, aClass)  {
+							var oField;
+							var Field = sap.ui.require("sap/ui/mdc/Field");
+							if (!Field) {
+								Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
+								return null;
+							}
+
+							if (iIndex == 0) {
+								if (_getMonthFieldHelp.call(this)) {
+
+									oField = new Field(sId, {
+										value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
+										additionalValue: { path: sPath, formatter: function(iValue) { return oMonthFieldHelp.getTextForKey(iValue); }, mode: 'OneWay' },
+										display: 'Description',
+										width: "100%",
+										fieldHelp: "LFHForSpecificMonth"
+									});
+								} else {
+									Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
+								}
+							}
+
+							if (iIndex == 1) {
+								oField = new Field(sId, {
+									value: { path: "$this>", type: oType, mode: 'TwoWay', targetType: 'raw' },
+									width: "100%"
+								});
+							}
 
 							return oField;
 						}
@@ -785,6 +923,13 @@ function(
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.yearToDate();
+						}
+					}),
+					dateToYear: new RangeOperator({
+						name: "DATETOYEAR",
+						valueTypes: [Operator.ValueType.Static],
+						calcRange: function() {
+							return UniversalDateUtils.ranges.dateToYear();
 						}
 					})
 				},
@@ -1382,6 +1527,14 @@ function(
 				 FilterOperatorUtil._mOperators.today,
 				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.tomorrow,
+				 FilterOperatorUtil._mOperators.firstDayWeek,
+				 FilterOperatorUtil._mOperators.lastDayWeek,
+				 FilterOperatorUtil._mOperators.firstDayMonth,
+				 FilterOperatorUtil._mOperators.lastDayMonth,
+				 FilterOperatorUtil._mOperators.firstDayQuarter,
+				 FilterOperatorUtil._mOperators.lastDayQuarter,
+				 FilterOperatorUtil._mOperators.firstDayYear,
+				 FilterOperatorUtil._mOperators.lastDayYear,
 				 FilterOperatorUtil._mOperators.todayFromTo,
 				 FilterOperatorUtil._mOperators.lastDays,
 				 FilterOperatorUtil._mOperators.nextDays,
@@ -1393,6 +1546,7 @@ function(
 				 FilterOperatorUtil._mOperators.nextWeeks,
 
 				 FilterOperatorUtil._mOperators.specificMonth,
+				 FilterOperatorUtil._mOperators.specificMonthInYear,
 				 FilterOperatorUtil._mOperators.thisMonth,
 				 FilterOperatorUtil._mOperators.lastMonth,
 				 FilterOperatorUtil._mOperators.lastMonths,
@@ -1416,7 +1570,8 @@ function(
 				 FilterOperatorUtil._mOperators.nextYear,
 				 FilterOperatorUtil._mOperators.nextYears,
 
-				 FilterOperatorUtil._mOperators.yearToDate
+				 FilterOperatorUtil._mOperators.yearToDate,
+				 FilterOperatorUtil._mOperators.dateToYear
 				]
 		);
 		FilterOperatorUtil.setOperatorsForType(
@@ -1535,6 +1690,64 @@ function(
 			}
 
 			return this._aMonths;
+		}
+
+		function _getIndexOfMonth(sMonth) {
+			var sLowerCaseMonth = sMonth.toLowerCase();
+			var aMonths = _getMonths.apply(this);
+			var iIndex = -1;
+			aMonths.some(function(sElement, i) {
+				if (sElement.toLowerCase() == sLowerCaseMonth) {
+					iIndex = i;
+					return true;
+				}
+			});
+			return iIndex;
+		}
+
+		function _getMonthFieldHelp() {
+			if (!oMonthFieldHelp) {
+				var ListFieldHelp = sap.ui.require("sap/ui/mdc/field/ListFieldHelp");
+				var ListItem = sap.ui.require("sap/ui/core/ListItem");
+				if (!ListFieldHelp || !ListItem) {
+					Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
+					return null;
+				}
+
+				var getMonthItems = function() {
+					if (!this._aMonthsItems) {
+						var aMonths = _getMonths.apply(this);
+						this._aMonthsItems = [];
+
+						for (var i = 0; i < 12; i++) {
+							this._aMonthsItems.push({
+								text: aMonths[i],
+								key: i
+							});
+						}
+					}
+
+					return this._aMonthsItems;
+				}.bind(this);
+
+				oMonthFieldHelp = new ListFieldHelp({
+					id: "LFHForSpecificMonth",
+					items: {
+						path: "$items>/",
+						template: new ListItem({
+							text: {
+								path: "$items>text"
+							},
+							key: {
+								path: "$items>key"
+							}
+						}),
+						templateShareable: false
+					}
+				}).setModel(new JSONModel(getMonthItems()), "$items");
+			}
+
+			return oMonthFieldHelp;
 		}
 
 		return FilterOperatorUtil;
