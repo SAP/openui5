@@ -32,31 +32,11 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Card Types',
-				icon: 'sap-icon://overview-chart',
+				title: 'Declarative Card Types',
+				icon: 'sap-icon://SAP-icons-TNT/requirement-diagram',
 				target: 'learnDetail',
-				key: 'types',
+				key: 'types_declarative',
 				items: [
-					{
-						title: 'Adaptive',
-						target: 'learnDetail',
-						key: 'adaptive'
-					},
-					{
-						title: 'Analytical',
-						target: 'learnDetail',
-						key: 'analytical'
-					},
-					{
-						title: 'Calendar',
-						target: 'learnDetail',
-						key: 'calendar'
-					},
-					{
-						title: 'Component',
-						target: 'learnDetail',
-						key: 'component'
-					},
 					{
 						title: 'List',
 						target: 'learnDetail',
@@ -73,9 +53,37 @@ sap.ui.define([
 						key: 'table'
 					},
 					{
+						title: 'Analytical',
+						target: 'learnDetail',
+						key: 'analytical'
+					},
+					{
+						title: 'Calendar',
+						target: 'learnDetail',
+						key: 'calendar'
+					},
+					{
 						title: 'Timeline',
 						target: 'learnDetail',
 						key: 'timeline'
+					}
+				]
+			},
+			{
+				title: 'Other Card Types',
+				icon: 'sap-icon://SAP-icons-TNT/internal-block-diagram',
+				target: 'learnDetail',
+				key: 'types_other',
+				items: [
+					{
+						title: 'Adaptive',
+						target: 'learnDetail',
+						key: 'adaptive'
+					},
+					{
+						title: 'Component',
+						target: 'learnDetail',
+						key: 'component'
 					},
 					{
 						title: 'WebPage',
