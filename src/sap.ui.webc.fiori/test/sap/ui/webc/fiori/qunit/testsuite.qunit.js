@@ -106,6 +106,14 @@ sap.ui.define(function() {
 				coverage: {
 					only: ["sap/ui/webc/fiori/Wizard"]
 				}
+			},
+			"designtime/Page": {
+				title: "QUnit Page for sap.ui.webc.fiori.Page design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.fiori","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
 			}
 		}
 	};
