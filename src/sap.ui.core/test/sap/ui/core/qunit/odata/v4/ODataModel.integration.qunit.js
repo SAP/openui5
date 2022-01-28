@@ -30694,6 +30694,46 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Show that a property binding for the first element of an expanded collection works
+	// w/o sending own requests, even if system query options are present for that expand.
+	// BCP: 2280025746
+	QUnit.test("BCP: 2280025746", function (assert) {
+		var sView = '\
+<Table items="{path : \'/SalesOrderList\', parameters : {\
+		$expand : {\
+			SO_2_SOITEM : {\
+				$count : true,\
+				$filter : \'Note ne \\\'\\\'\',\
+				$levels : 1,\
+				$orderby : \'ItemPosition\',\
+				$search : \'covfefe\'\
+			}\
+		}\
+	}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Text id="item0Note" text="{SO_2_SOITEM/0/Note}"/>\
+</Table>';
+
+		this.expectRequest("SalesOrderList?$expand=SO_2_SOITEM($count=true;$filter=Note ne ''"
+				+ ";$levels=1;$orderby=ItemPosition;$search=covfefe;$select=ItemPosition,Note"
+				+ ",SalesOrderID)&$select=SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						"@odata.count" : "1",
+						ItemPosition : "10",
+						Note : "covfefe",
+						SalesOrderID : "1"
+					}]
+				}]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("item0Note", ["covfefe"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a new entity without using a UI and persist it.
 	// ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges work as expected even if
 	// late properties below a list binding want to reuse the parent binding's cache. Relative list

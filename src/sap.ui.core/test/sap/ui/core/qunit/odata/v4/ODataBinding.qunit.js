@@ -803,6 +803,7 @@ sap.ui.define([
 						},
 						resolve : function () {}
 					},
+					mParameters : {}, // not a property binding
 					sPath : "relative",
 					bRelative : true,
 					updateAggregatedQueryOptions : function () {} // binding is a parent binding
@@ -824,7 +825,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
 				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			oExpectation = this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
-				.withArgs(sinon.match.same(oContext), "relative")
+				.withExactArgs(sinon.match.same(oContext), "relative",
+					sinon.match.instanceOf(SyncPromise), false)
 				.returns(SyncPromise.resolve("/reduced/path"));
 
 			// code under test
@@ -857,6 +859,7 @@ sap.ui.define([
 						},
 						resolve : function () {}
 					},
+					mParameters : {}, // not a property binding
 					sPath : "relative",
 					bRelative : true,
 					updateAggregatedQueryOptions : function () {} // binding is a parent binding
@@ -878,7 +881,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
 				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
-				.withArgs(sinon.match.same(oContext), "relative")
+				.withExactArgs(sinon.match.same(oContext), "relative",
+					sinon.match.instanceOf(SyncPromise), false)
 				.returns(SyncPromise.resolve(undefined));
 
 			// code under test
@@ -912,6 +916,7 @@ sap.ui.define([
 							bAutoExpandSelect : true,
 							resolve : function () {}
 						},
+						// no mParameters here! (the only non-parent binding is ODPropertyBinding)
 						sPath : "relative",
 						bRelative : true
 					}),
@@ -931,7 +936,7 @@ sap.ui.define([
 					.returns(oQueryOptionsPromise);
 				this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 					.withExactArgs(sinon.match.same(oContext), "relative",
-						sinon.match.same(oQueryOptionsPromise))
+						sinon.match.same(oQueryOptionsPromise), true)
 					.returns(SyncPromise.resolve(bCanUseCache ? "/reduced/path" : undefined));
 
 				// code under test

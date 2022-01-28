@@ -548,6 +548,31 @@ sap.ui.define([
 			$select : ["ID"]
 		}
 	}, {
+		aggregatedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$orderby : "~orderby~",
+					$select : ["Team_Id", "Name"]
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$select : ["Team_Id", "MEMBER_COUNT"]
+				}
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				EMPLOYEE_2_TEAM : {
+					$orderby : "~orderby~",
+					$select : ["Team_Id", "Name", "MEMBER_COUNT"]
+				}
+			}
+		},
+		bIsProperty : true
+	}, {
 		aggregatedQueryOptions : {$select : ["Team_Id"]},
 		childQueryOptions : {$select : ["*"]},
 		expectedQueryOptions : {$select : ["Team_Id", "*"]}
@@ -628,7 +653,7 @@ sap.ui.define([
 
 			// code under test
 			bMergeSuccess = oBinding.aggregateQueryOptions(oFixture.childQueryOptions,
-				"/base/metapath", false);
+				"/base/metapath", false, oFixture.bIsProperty);
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.expectedQueryOptions);
 			assert.strictEqual(bMergeSuccess, true);
@@ -848,12 +873,12 @@ sap.ui.define([
 					oBindingMock.expects("aggregateQueryOptions")
 						.exactly(oFixture.hasChildQueryOptions ? 1 : 0)
 						.withExactArgs(sinon.match.same(mChildQueryOptions), "/Set",
-							bCacheCreationPending ? sinon.match.falsy : true)
+							bCacheCreationPending ? sinon.match.falsy : true, "~bIsProperty~")
 						.returns(oFixture.canMergeQueryOptions);
 
 					// code under test
 					oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
-						SyncPromise.resolve(mChildLocalQueryOptions));
+						SyncPromise.resolve(mChildLocalQueryOptions), "~bIsProperty~");
 
 					return Promise.all([oPromise, oBinding.oCachePromise]).then(function (aResult) {
 						assert.strictEqual(aResult[0],
@@ -942,7 +967,7 @@ sap.ui.define([
 				.returns("reducedChildMetaPath");
 			oHelperMock.expects("wrapChildQueryOptions").returns({});
 			oBindingMock.expects("aggregateQueryOptions")
-				.withExactArgs({}, "/Set", /*bIsCacheImmutable*/true)
+				.withExactArgs({}, "/Set", /*bIsCacheImmutable*/true, "~bIsProperty~")
 				.returns(false);
 			if (bRejected) {
 				this.mock(oBinding.oModel).expects("reportError")
@@ -955,7 +980,7 @@ sap.ui.define([
 
 			// code under test
 			oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
-				SyncPromise.resolve(mChildLocalQueryOptions));
+				SyncPromise.resolve(mChildLocalQueryOptions), "~bIsProperty~");
 
 			return Promise.all([oPromise, !bRejected && oCachePromise]).then(function (aResults) {
 				var sReducedPath = aResults[0];
@@ -1090,7 +1115,7 @@ sap.ui.define([
 				sinon.match.same(mChildLocalQueryOptions), sinon.match.same(fnFetchMetadata))
 			.returns({});
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs({}, "/Set/navigation", oFixture.cacheImmmutable)
+			.withExactArgs({}, "/Set/navigation", oFixture.cacheImmmutable, "~bIsProperty~")
 			.callsFake(function () {
 				oBinding.mLateQueryOptions = mLateQueryOptions;
 				return true;
@@ -1112,7 +1137,8 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oFixture.rejected ? undefined : "/some/path"));
 
 		// code under test
-		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath", mChildLocalQueryOptions);
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath", mChildLocalQueryOptions,
+			"~bIsProperty~");
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
@@ -1204,7 +1230,7 @@ sap.ui.define([
 				sinon.match.same(mChildLocalQueryOptions), sinon.match.same(fnFetchMetadata))
 			.returns({});
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs({}, "/Set", /*bIsCacheImmutable*/false)
+			.withExactArgs({}, "/Set", /*bIsCacheImmutable*/false, "~bIsProperty~")
 			.returns(false);
 		oHelperMock.expects("merge").never();
 		oCache0Mock.expects("setQueryOptions").never();
@@ -1226,7 +1252,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath@foo.bar",
-			SyncPromise.resolve(mChildLocalQueryOptions));
+			SyncPromise.resolve(mChildLocalQueryOptions), "~bIsProperty~");
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
@@ -1302,12 +1328,12 @@ sap.ui.define([
 				sinon.match.same(fnFetchMetadata))
 			.returns(mWrappedChildQueryOptions);
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), "/Set", undefined)
+			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), "/Set", undefined, false)
 			.returns(true);
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "",
-			SyncPromise.resolve(mChildQueryOptions));
+			SyncPromise.resolve(mChildQueryOptions), false);
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
@@ -1442,17 +1468,18 @@ sap.ui.define([
 			.withExactArgs("/reduced/child/metapath/" + sPath, "/Set")
 			.returns(sPath);
 		this.mock(oBinding).expects("aggregateQueryOptions")
-			.withExactArgs({$select : ["foo.bar.AcFoo"]}, "/Set", bImmutable)
+			.withExactArgs({$select : ["foo.bar.AcFoo"]}, "/Set", bImmutable, "~bIsProperty~")
 			.returns(!bImmutable);
 		this.mock(oMetaModel).expects("fetchObject").withExactArgs("/Set/")
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		return oBinding.fetchIfChildCanUseCache(oContext, sPath).then(function (sReducedPath) {
-			assert.strictEqual(sReducedPath,
-				bImmutable ? undefined : "/reduced/child/path/" + sPath);
-			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
-		});
+		return oBinding.fetchIfChildCanUseCache(oContext, sPath, null, "~bIsProperty~")
+			.then(function (sReducedPath) {
+				assert.strictEqual(sReducedPath,
+					bImmutable ? undefined : "/reduced/child/path/" + sPath);
+				assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+			});
 	});
 });
 
@@ -1502,7 +1529,8 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			oBinding.fetchIfChildCanUseCache(oContext, sChildPath).getResult(),
+			oBinding.fetchIfChildCanUseCache(oContext, sChildPath, null, "~bIsProperty~")
+				.getResult(),
 			"/reduced/child/path");
 		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 	});
@@ -1534,7 +1562,8 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			oBinding.fetchIfChildCanUseCache(oContext, "childPath").getResult(),
+			oBinding.fetchIfChildCanUseCache(oContext, "childPath", null, "~bIsProperty~")
+				.getResult(),
 			"/resolved/child/path");
 		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 	});
@@ -1562,7 +1591,8 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			oBinding.fetchIfChildCanUseCache(oContext, "childPath").getResult(),
+			oBinding.fetchIfChildCanUseCache(oContext, "childPath", null, "~bIsProperty~")
+				.getResult(),
 			"/resolved/child/path");
 		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 	});
@@ -1636,7 +1666,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("aggregateQueryOptions").never();
 
 		// code under test
-		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath, oChildQueryOptionsPromise);
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath, oChildQueryOptionsPromise,
+			"~bIsProperty~");
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
@@ -1681,8 +1712,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath,
-			SyncPromise.resolve());
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath, SyncPromise.resolve());
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, undefined);
@@ -1750,12 +1780,13 @@ sap.ui.define([
 			.withExactArgs("/reduced/child/path", "/Function")
 			.returns("value");
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mChildQueryOptions), "/Function", bImmutable)
+			.withExactArgs(sinon.match.same(mChildQueryOptions), "/Function", bImmutable,
+				"~bIsProperty~")
 			.returns(!bImmutable);
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, sChildPath,
-			SyncPromise.resolve(mChildQueryOptions));
+			SyncPromise.resolve(mChildQueryOptions), "~bIsProperty~");
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, bImmutable ? undefined : "/reduced/child/path");
@@ -1796,8 +1827,8 @@ sap.ui.define([
 		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 
 		// code under test
-		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
-			SyncPromise.resolve({}));
+		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath", SyncPromise.resolve({}),
+			"~bIsProperty~");
 
 		return oPromise.then(function (bUseCache) {
 			assert.strictEqual(bUseCache, "/resolved/child/path");
@@ -1880,7 +1911,7 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oBinding.fetchIfChildCanUseCache(oContext, "SOITEMS_2_SO/Note",
-			oChildQueryOptionsPromise);
+			oChildQueryOptionsPromise, "~bIsProperty~");
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/SalesOrderList('42')/Note");
