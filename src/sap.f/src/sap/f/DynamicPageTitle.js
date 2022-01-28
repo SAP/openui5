@@ -991,7 +991,10 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._toggleTopAreaVisibility = function(bShoudShowTopArea) {
 		if (this.getDomRef()) {
-			this.$("top").toggleClass("sapUiHidden", !bShoudShowTopArea);
+			var oTopArea = this.getDomRef().querySelector("[id$='top']");
+			if (oTopArea) {
+				oTopArea.classList.toggle("sapUiHidden", !bShoudShowTopArea);
+			}
 		}
 	};
 
@@ -1089,19 +1092,34 @@ sap.ui.define([
 		}
 
 		if (Device.system.phone && this.getSnappedTitleOnMobile()) {
-			this.$snappedTitleOnMobileWrapper.toggleClass("sapUiHidden", bExpanded);
-			this.$topArea.toggleClass("sapUiHidden", !bExpanded);
-			this.$mainArea.toggleClass("sapUiHidden", !bExpanded);
-			this.$().toggleClass("sapContrast", !bExpanded);
+			var oSnappedTitleOnMobileWrapper = this.getDomRef().querySelector("[id$='snapped-title-on-mobile-wrapper']");
+			var oTopArea = this.getDomRef().querySelector("[id$='top']");
+			var oMainArea = this.getDomRef().querySelector("[id$='main']");
+			if (oSnappedTitleOnMobileWrapper) {
+				oSnappedTitleOnMobileWrapper.classList.toggle("sapUiHidden", bExpanded);
+			}
+			if (oTopArea) {
+				oTopArea.classList.toggle("sapUiHidden", !bExpanded);
+			}
+			if (oMainArea) {
+				oMainArea.classList.toggle("sapUiHidden", !bExpanded);
+			}
+			this.getDomRef().classList.toggle("sapContrast", !bExpanded);
 		} else {
 			// Snapped heading
 			if (exists(this.getSnappedHeading())) {
-				this.$snappedHeadingWrapper.toggleClass("sapUiHidden", bExpanded);
+				var oSnappedHeadingWrapper = this.getDomRef().querySelector("[id$='snapped-heading-wrapper']");
+				if (oSnappedHeadingWrapper) {
+					oSnappedHeadingWrapper.classList.toggle("sapUiHidden", bExpanded);
+				}
 			}
 
 			// Expanded heading
 			if (exists(this.getExpandedHeading())) {
-				this.$expandHeadingWrapper.toggleClass("sapUiHidden", !bExpanded);
+				var oExpandHeadingWrapper = this.getDomRef().querySelector("[id$='expand-heading-wrapper']");
+				if (oExpandHeadingWrapper) {
+					oExpandHeadingWrapper.classList.toggle("sapUiHidden", !bExpanded);
+				}
 			}
 
 			if (bUserInteraction && oldExpandedState !== bExpanded) {
@@ -1112,14 +1130,20 @@ sap.ui.define([
 
 		// Snapped content
 		if (exists(this.getSnappedContent())) {
-			this.$snappedWrapper.toggleClass("sapUiHidden", bExpanded);
-			this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
+			var oSnappedWrapper = this.getDomRef().querySelector("[id$='snapped-wrapper']");
+			if (oSnappedWrapper) {
+				oSnappedWrapper.classList.toggle("sapUiHidden", bExpanded);
+				oSnappedWrapper.parentNode.classList.toggle("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
+			}
 		}
 
 		// Expanded content
 		if (exists(this.getExpandedContent())) {
-			this.$expandWrapper.toggleClass("sapUiHidden", !bExpanded);
-			this.$expandWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
+			var oExpandWrapper = this.getDomRef().querySelector("[id$='expand-wrapper']");
+			if (oExpandWrapper) {
+				oExpandWrapper.classList.toggle("sapUiHidden", !bExpanded);
+				oExpandWrapper.parentNode.classList.toggle("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
+			}
 		}
 	};
 
@@ -1177,7 +1201,9 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._toggleExpandButton = function (bToggle) {
 		this._setShowExpandButton(bToggle);
-		this._getExpandButton().$().toggleClass("sapUiHidden", !bToggle);
+		if (this._getExpandButton() && this._getExpandButton().getDomRef()) {
+			this._getExpandButton().getDomRef().classList.toggle("sapUiHidden", !bToggle);
+		}
 	};
 
 	/**
