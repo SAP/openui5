@@ -1,0 +1,30 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<Dialog title="Settings" class="sapUiContentPadding" contentWidth="350px" id="AppSettingsDialog">
+		<content>
+			<VBox class="sapUiTinyMarginTop">
+				<Label text="Theme:" design="Standard" labelFor="ThemeSelect" />
+				<Select width="100%" class="sapUiSmallMarginBottom" items="{appSettings>/themes}" selectedKey="{appSettings>/theme}">
+					<core:Item key="{appSettings>key}" text="{appSettings>text}"/>
+				</Select>
+				<Label text="Content Density" design="Standard" labelFor="DensityModeSwitch"/>
+				<Select width="100%" items="{appSettings>/contentDensities}" selectedKey="{appSettings>/contentDensity}">
+					<core:Item key="{appSettings>key}" text="{appSettings>text}"/>
+				</Select>
+				<Link text="Learn about content density" href="topic/e54f729da8e3405fae5e4fe8ae7784c1" target="_blank" class="sapUiTinyMarginTop"/>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Right-to-left mode" design="Standard" labelFor="RTLSwitch" />
+					<Switch state="{appSettings>/rtl}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+				</HBox>
+			</VBox>
+		</content>
+		<buttons>
+			<Button text="Reset" type="Transparent" press="handleAppSettings('reset')" class="sapUiTinyMarginRight"/>
+			<Button text="Apply" type="Emphasized" press="handleAppSettings('apply')" />
+			<Button text="Close" type="Default" press="handleAppSettings('close')" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

@@ -27,6 +27,7 @@
 
 						</items>
 					</IconTabHeader>
+					<Button icon="sap-icon://action-settings" type="Transparent" press="handleAppSettings('open')"/>
 				</tnt:ToolHeader>
 			</tnt:header>
 			<tnt:sideContent>
