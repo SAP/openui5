@@ -8,543 +8,12 @@ sap.ui.define([
 		selectedKey: 'learnGettingStarted',
 		navigation: [
 			{
-				title: 'Card Types',
-				icon: 'sap-icon://overview-chart',
-				key: 'types',
+				title: 'Declarative Card Types',
+				icon: 'sap-icon://SAP-icons-TNT/requirement-diagram',
+				key: 'types_declarative',
 				target: 'exploreOverview',
 				hasExpander: false,
 				items: [
-					{
-						title: 'Adaptive',
-						target: 'exploreSamples',
-						key: 'adaptive',
-						subSamples: [
-							{
-								title: 'Card',
-								key: 'adaptive',
-								files: [
-									{
-										url: '/samples/adaptive/adaptive.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/dt/Configuration.js',
-										name: 'dt/Configuration.js',
-										key: 'designtime.js'
-									}
-								]
-							},
-							{
-								title: 'RichTextBlock',
-								key: 'richtext',
-								files: [
-									{
-										url: '/samples/adaptive/richtext.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Form',
-								key: 'form',
-								files: [
-									{
-										url: '/samples/adaptive/form.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Templating',
-								key: 'templating',
-								files: [
-									{
-										url: '/samples/adaptive/templating.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/templating-content.json',
-										name: 'templating-content.json',
-										key: 'templating-content.json'
-									}
-								]
-							},
-							{
-								title: 'Data & Templating',
-								key: 'data',
-								files: [
-									{
-										url: '/samples/adaptive/data.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/data-json.json',
-										name: 'data.json',
-										key: 'data.json'
-									}
-								]
-							},
-							{
-								title: 'Markdown',
-								key: 'markdown',
-								files: [
-									{
-										url: '/samples/adaptive/markdown.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Submit Action',
-								key: 'adaptive-action-submit',
-								files: [
-									{
-										url: '/samples/adaptive/action-submit.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Submit Action with Custom Payload',
-								key: 'adaptive-action-submit-custom-payload',
-								files: [
-									{
-										url: '/samples/adaptive/action-submit-custom-payload.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Submit with Extension',
-								key: 'extension',
-								files: [
-									{
-										url: '/samples/adaptive/extensionSample/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/adaptive/extensionSample/SampleExtension.js',
-										name: 'SampleExtension.js',
-										key: 'SampleExtension.js'
-									},
-									{
-										url: '/samples/adaptive/extensionSample/i18n/i18n.properties',
-										name: 'i18n/i18n.properties',
-										key: 'i18n/i18n.properties'
-									}
-								]
-							},
-							{
-								title: 'Open URL Action',
-								key: 'adaptive-action-openurl',
-								files: [
-									{
-										url: '/samples/adaptive/action-openurl.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Styled Actions',
-								key: 'styled-actions',
-								files: [
-									{
-										url: '/samples/adaptive/action-styling.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							}
-						]
-					},
-					{
-						title: 'Analytical',
-						target: 'exploreSamples',
-						key: 'analytical',
-						subSamples: [
-							{
-								title: 'Line',
-								key: 'line',
-								settings: {
-									rows: 5,
-									columns: 4
-								},
-								files: [
-									{
-										url: '/samples/analytical/line.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Stacked Column',
-								key: 'stackedColumn',
-								settings: {
-									rows: 5,
-									columns: 4
-								},
-								files: [
-									{
-										url: '/samples/analytical/stackedColumn.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Donut',
-								key: 'donut',
-								settings: {
-									rows: 3,
-									columns: 3
-								},
-								files: [
-									{
-										url: '/samples/analytical/donut.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Bubble',
-								key: 'bubble',
-								settings: {
-									rows: 5,
-									columns: 6
-								},
-								files: [
-									{
-										url: '/samples/analytical/bubble/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/bubble/data.json',
-										name: 'data.json',
-										key: 'data.json'
-									}
-								]
-							},
-							{
-								title: 'Bar with Reference Lines',
-								key: 'barWithReferenceLines',
-								settings: {
-									rows: 5,
-									columns: 6
-								},
-								files: [
-									{
-										url: '/samples/analytical/barWithReferenceLines/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/barWithReferenceLines/data.json',
-										name: 'data.json',
-										key: 'data.json'
-									}
-								]
-							},
-							{
-								title: 'Column with Conditional Colors',
-								key: 'columnWithConditionalColors',
-								settings: {
-									rows: 5,
-									columns: 6
-								},
-								files: [
-									{
-										url: '/samples/analytical/columnWithConditionalColors/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/columnWithConditionalColors/data.json',
-										name: 'data.json',
-										key: 'data.json'
-									}
-								]
-							},
-							{
-								title: 'Navigation from Chart Sectors',
-								key: 'chartActions',
-								experimental: true,
-								settings: {
-									rows: 5,
-									columns: 4
-								},
-								files: [
-									{
-										url: '/samples/analytical/chartActions/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Details Popover',
-								key: 'detailsPopover',
-								experimental: true,
-								settings: {
-									rows: 5,
-									columns: 4
-								},
-								files: [
-									{
-										url: '/samples/analytical/detailsPopover/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/analytical/detailsPopover/data.json',
-										name: 'data.json',
-										key: 'data.json'
-									}
-								]
-							}
-						]
-					},
-					{
-						title: 'Calendar',
-						target: 'exploreSamples',
-						key: 'calendar',
-						subSamples: [
-							{
-								title: 'Calendar',
-								key: 'calendar',
-								settings: {
-									columns: 7
-								},
-								files: [
-									{
-										url: '/samples/calendar/calendar.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									}
-								]
-							},
-							{
-								title: 'Fetch Data with Extension',
-								key: 'extension',
-								experimental: true,
-								settings: {
-									columns: 7
-								},
-								files: [
-									{
-										url: '/samples/calendar/extensionSample/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/calendar/extensionSample/SampleExtension.js',
-										name: 'SampleExtension.js',
-										key: 'SampleExtension.js'
-									}
-								]
-							}
-						],
-						settings: {
-							columns: 7
-						},
-						files: [
-							{
-								url: '/samples/calendar/calendar.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
-							}
-						]
-					},
-					{
-						title: 'Component',
-						target: 'exploreSamples',
-						key: 'component',
-						subSamples: [
-							{
-								title: 'Media',
-								key: 'media',
-								files: [
-									{
-										url: '/samples/component/cardContent/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/cardContent/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/component/cardContent/Main.controller.js',
-										name: 'Main.controller.js',
-										key: 'Main.controller.js'
-									},
-									{
-										url: '/samples/component/cardContent/View.view.xml',
-										name: 'View.view.xml',
-										key: 'View.view.xml'
-									},
-									{
-										url: '/samples/component/cardContent/Image.png',
-										name: 'Image.png',
-										key: 'Image.png'
-									}
-								]
-							},
-							{
-								title: 'Media, header at bottom',
-								key: 'mediaBottom',
-								files: [
-									{
-										url: '/samples/component/cardContentHeaderBottom/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/cardContentHeaderBottom/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/component/cardContentHeaderBottom/Main.controller.js',
-										name: 'Main.controller.js',
-										key: 'Main.controller.js'
-									},
-									{
-										url: '/samples/component/cardContentHeaderBottom/View.view.xml',
-										name: 'View.view.xml',
-										key: 'View.view.xml'
-									},
-									{
-										url: '/samples/component/cardContentHeaderBottom/Image.png',
-										name: 'Image.png',
-										key: 'Image.png'
-									}
-								]
-							},
-							{
-								title: 'Buy bus ticket',
-								key: 'busTicket',
-								files: [
-									{
-										url: '/samples/component/cardContentControls/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/cardContentControls/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/component/cardContentControls/View.view.xml',
-										name: 'View.view.xml',
-										key: 'View.view.xml'
-									},
-									{
-										url: '/samples/component/cardContentControls/Main.controller.js',
-										name: 'Main.controller.js',
-										key: 'Main.controller.js'
-									}
-								]
-							},
-							{
-								title: 'Advanced',
-								key: 'advanced',
-								files: [
-									{
-										url: '/samples/component/advanced/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/advanced/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/component/advanced/Main.controller.js',
-										name: 'Main.controller.js',
-										key: 'Main.controller.js'
-									},
-									{
-										url: '/samples/component/advanced/View.view.xml',
-										name: 'View.view.xml',
-										key: 'View.view.xml'
-									}
-								]
-							},
-							{
-								title: 'Trigger action',
-								key: 'triggerAction',
-								files: [
-									{
-										url: '/samples/component/triggerAction/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/triggerAction/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/component/triggerAction/Main.controller.js',
-										name: 'Main.controller.js',
-										key: 'Main.controller.js'
-									},
-									{
-										url: '/samples/component/triggerAction/View.view.xml',
-										name: 'View.view.xml',
-										key: 'View.view.xml'
-									}
-								]
-							},
-							{
-								title: 'Custom Actions',
-								key: 'customActions',
-								files: [
-									{
-										url: '/samples/component/customActions/manifest.json',
-										name: 'manifest.json',
-										key: 'manifest.json'
-									},
-									{
-										url: '/samples/component/customActions/Component.js',
-										name: 'Component.js',
-										key: 'Component.js'
-									},
-									{
-										url: '/samples/component/customActions/Main.controller.js',
-										name: 'Main.controller.js',
-										key: 'Main.controller.js'
-									},
-									{
-										url: '/samples/component/customActions/View.view.xml',
-										name: 'View.view.xml',
-										key: 'View.view.xml'
-									},
-									{
-										url: '/samples/component/customActions/Image.png',
-										name: 'Image.png',
-										key: 'Image.png'
-									}
-								]
-							}
-						]
-					},
 					{
 						title: 'List',
 						target: 'exploreSamples',
@@ -828,15 +297,214 @@ sap.ui.define([
 							},
 							{
 								title: 'Grouping',
-									key: 'grouping',
-									settings: {
-										columns: 6
-									},
-									files: [{
-										url: '/samples/table/grouping.json',
+								key: 'grouping',
+								settings: {
+									columns: 6
+								},
+								files: [{
+									url: '/samples/table/grouping.json',
+									name: 'manifest.json',
+									key: 'manifest.json'
+								}]
+							}
+						]
+					}, {
+						title: 'Analytical',
+						target: 'exploreSamples',
+						key: 'analytical',
+						subSamples: [
+							{
+								title: 'Line',
+								key: 'line',
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/line.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
-									}]
+									}
+								]
+							},
+							{
+								title: 'Stacked Column',
+								key: 'stackedColumn',
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/stackedColumn.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Donut',
+								key: 'donut',
+								settings: {
+									rows: 3,
+									columns: 3
+								},
+								files: [
+									{
+										url: '/samples/analytical/donut.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Bubble',
+								key: 'bubble',
+								settings: {
+									rows: 5,
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/analytical/bubble/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/bubble/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Bar with Reference Lines',
+								key: 'barWithReferenceLines',
+								settings: {
+									rows: 5,
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/analytical/barWithReferenceLines/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/barWithReferenceLines/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Column with Conditional Colors',
+								key: 'columnWithConditionalColors',
+								settings: {
+									rows: 5,
+									columns: 6
+								},
+								files: [
+									{
+										url: '/samples/analytical/columnWithConditionalColors/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/columnWithConditionalColors/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Navigation from Chart Sectors',
+								key: 'chartActions',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/chartActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Details Popover',
+								key: 'detailsPopover',
+								experimental: true,
+								settings: {
+									rows: 5,
+									columns: 4
+								},
+								files: [
+									{
+										url: '/samples/analytical/detailsPopover/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/analytical/detailsPopover/data.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							}
+						]
+					},
+					{
+						title: 'Calendar',
+						target: 'exploreSamples',
+						key: 'calendar',
+						subSamples: [
+							{
+								title: 'Calendar',
+								key: 'calendar',
+								settings: {
+									columns: 7
+								},
+								files: [
+									{
+										url: '/samples/calendar/calendar.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Fetch Data with Extension',
+								key: 'extension',
+								experimental: true,
+								settings: {
+									columns: 7
+								},
+								files: [
+									{
+										url: '/samples/calendar/extensionSample/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/calendar/extensionSample/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
+									}
+								]
+							}
+						],
+						settings: {
+							columns: 7
+						},
+						files: [
+							{
+								url: '/samples/calendar/calendar.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
 							}
 						]
 					},
@@ -887,6 +555,346 @@ sap.ui.define([
 										url: '/samples/timeline/images/Sabine_Mayer.png',
 										name: 'images/Sabine_Mayer.png',
 										key: 'images/Sabine_Mayer.png'
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				title: 'Other Card Types',
+				icon: 'sap-icon://SAP-icons-TNT/internal-block-diagram',
+				key: 'types_other',
+				target: 'exploreOverview',
+				hasExpander: false,
+				items: [
+					{
+						title: 'Adaptive',
+						target: 'exploreSamples',
+						key: 'adaptive',
+						subSamples: [
+							{
+								title: 'Card',
+								key: 'adaptive',
+								files: [
+									{
+										url: '/samples/adaptive/adaptive.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									}
+								]
+							},
+							{
+								title: 'RichTextBlock',
+								key: 'richtext',
+								files: [
+									{
+										url: '/samples/adaptive/richtext.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Form',
+								key: 'form',
+								files: [
+									{
+										url: '/samples/adaptive/form.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Templating',
+								key: 'templating',
+								files: [
+									{
+										url: '/samples/adaptive/templating.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/templating-content.json',
+										name: 'templating-content.json',
+										key: 'templating-content.json'
+									}
+								]
+							},
+							{
+								title: 'Data & Templating',
+								key: 'data',
+								files: [
+									{
+										url: '/samples/adaptive/data.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/data-json.json',
+										name: 'data.json',
+										key: 'data.json'
+									}
+								]
+							},
+							{
+								title: 'Markdown',
+								key: 'markdown',
+								files: [
+									{
+										url: '/samples/adaptive/markdown.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Submit Action',
+								key: 'adaptive-action-submit',
+								files: [
+									{
+										url: '/samples/adaptive/action-submit.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Submit Action with Custom Payload',
+								key: 'adaptive-action-submit-custom-payload',
+								files: [
+									{
+										url: '/samples/adaptive/action-submit-custom-payload.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Submit with Extension',
+								key: 'extension',
+								files: [
+									{
+										url: '/samples/adaptive/extensionSample/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/adaptive/extensionSample/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
+									},
+									{
+										url: '/samples/adaptive/extensionSample/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									}
+								]
+							},
+							{
+								title: 'Open URL Action',
+								key: 'adaptive-action-openurl',
+								files: [
+									{
+										url: '/samples/adaptive/action-openurl.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Styled Actions',
+								key: 'styled-actions',
+								files: [
+									{
+										url: '/samples/adaptive/action-styling.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							}
+						]
+					},
+					{
+						title: 'Component',
+						target: 'exploreSamples',
+						key: 'component',
+						subSamples: [
+							{
+								title: 'Media',
+								key: 'media',
+								files: [
+									{
+										url: '/samples/component/cardContent/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/cardContent/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/cardContent/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/cardContent/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/cardContent/Image.png',
+										name: 'Image.png',
+										key: 'Image.png'
+									}
+								]
+							},
+							{
+								title: 'Media, header at bottom',
+								key: 'mediaBottom',
+								files: [
+									{
+										url: '/samples/component/cardContentHeaderBottom/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/cardContentHeaderBottom/Image.png',
+										name: 'Image.png',
+										key: 'Image.png'
+									}
+								]
+							},
+							{
+								title: 'Buy bus ticket',
+								key: 'busTicket',
+								files: [
+									{
+										url: '/samples/component/cardContentControls/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/cardContentControls/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/cardContentControls/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/cardContentControls/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									}
+								]
+							},
+							{
+								title: 'Advanced',
+								key: 'advanced',
+								files: [
+									{
+										url: '/samples/component/advanced/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/advanced/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/advanced/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/advanced/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									}
+								]
+							},
+							{
+								title: 'Trigger action',
+								key: 'triggerAction',
+								files: [
+									{
+										url: '/samples/component/triggerAction/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/triggerAction/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/triggerAction/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/triggerAction/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									}
+								]
+							},
+							{
+								title: 'Custom Actions',
+								key: 'customActions',
+								files: [
+									{
+										url: '/samples/component/customActions/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/customActions/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/customActions/Main.controller.js',
+										name: 'Main.controller.js',
+										key: 'Main.controller.js'
+									},
+									{
+										url: '/samples/component/customActions/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/customActions/Image.png',
+										name: 'Image.png',
+										key: 'Image.png'
 									}
 								]
 							}

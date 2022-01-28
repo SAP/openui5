@@ -36,8 +36,11 @@ sap.ui.define([
 		When.onTheToolHeader.iPressOnSection("Explore");
 		Then.onTheToolHeader.iShouldBeOnSection("ExploreSamples");
 
-		When.onTheNavigationList.iSwitchToSample("types");
-		Then.onTheExploreOverviewPage.iShouldSeeSampleTitle("Card Types");
+		When.onTheNavigationList.iSwitchToSample("types_declarative");
+		Then.onTheExploreOverviewPage.iShouldSeeSampleTitle("Declarative Card Types");
+
+		When.onTheNavigationList.iSwitchToSample("types_other");
+		Then.onTheExploreOverviewPage.iShouldSeeSampleTitle("Other Card Types");
 
 		When.onTheNavigationList.iSwitchToSample("list");
 		Then.onTheExploreSamplesPage.iShouldSeeSampleTitle("List");
