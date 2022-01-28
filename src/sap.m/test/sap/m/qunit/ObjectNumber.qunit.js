@@ -272,7 +272,7 @@ sap.ui.define([
 
 		assert.notOk(oEmphasizedInfoElement, "Additional SPAN for emphasized information isn't created");
 		assert.notOk(oStateElement, "Additional SPAN for the state isn't created");
-		assert.strictEqual(oControlRef.getAttribute("role"), "group", "Inactive ObjectNumbers have 'group' role");
+		assert.strictEqual(oControlRef.getAttribute("role"), null, "Inactive ObjectNumbers don't have a role");
 		assert.strictEqual(oControlRef.getAttribute("aria-roledescription"), sControlName,
 			"Control's name is added in aria-roledescription");
 	});
