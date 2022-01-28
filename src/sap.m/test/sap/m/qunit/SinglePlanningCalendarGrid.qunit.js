@@ -345,6 +345,17 @@ sap.ui.define([
 
 		// Destroy
 		oGrid.destroy();
+
+	});
+
+	QUnit.test("Formatters pattern is correct", function (assert) {
+		// Prepare
+		var oGrid = new SinglePlanningCalendarGrid();
+
+		assert.strictEqual(oGrid._oFormatStartEndInfoAria.oFormatOptions.pattern.indexOf("EEEE dd/MM/yyyy"), 0, "Start End Aria info pattern is correct (contains 'yyyy' instead of 'YYYY'");
+		assert.strictEqual(oGrid._oFormatAriaFullDayCell.oFormatOptions.pattern.indexOf("EEEE dd/MM/yyyy"), 0, "Full day cell Aria info pattern is correct (contains 'yyyy' instead of 'YYYY'");
+		assert.strictEqual(oGrid._getDateFormatter().oFormatOptions.pattern, "yyyyMMdd-HHmm", "Grid cell pattern is correct (contains 'yyyy' instead of 'YYYY'");
+
 	});
 
 	QUnit.module("Events");
