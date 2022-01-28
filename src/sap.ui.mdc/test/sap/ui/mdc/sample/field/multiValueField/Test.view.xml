@@ -9,8 +9,12 @@
 
 	<m:App id="MyApp" defaultTransitionName="show">
 		<m:Page id="P0" title="MultiValueField" titleLevel="H1">
-			<form:SimpleForm layout="ColumnLayout" editable="true"
-				columnsXL="4" columnsL="3" columnsM="2">
+			<m:headerContent>
+				<m:ToggleButton press="onEditPress" text="Edit" />
+				<m:ToggleButton press="onSizePress" text="Size" />
+			</m:headerContent>
+			<form:SimpleForm id="form" layout="ColumnLayout" editable="false"
+				columnsXL="2" columnsL="2" columnsM="2">
 				<c:Title text="items in JSON Model"></c:Title>
 
 				<m:Label text="editable field"></m:Label>
@@ -61,11 +65,21 @@
 					editMode="Display"
 					placeholder="Placeholder"
 					showEmptyIndicator="true"
-					change="handleChange"
-					liveChange="handleLiveChange"
 					fieldHelp="FVH1">
 					<mdcField:MultiValueFieldItem key="{view>ProductId}" description="{view>Name}" />
 				</mdc:MultiValueField>
+
+				<m:Label text="Text"></m:Label>
+				<m:Text id="F2_1"
+					emptyIndicatorMode="On"
+					text="{path: 'view>/items', formatter: '._formatItemsForText'}">
+				</m:Text>
+
+				<m:Label text="ExpandableText"></m:Label>
+				<m:ExpandableText id="F2_2"
+					emptyIndicatorMode="On"
+					text="{path: 'view>/items', formatter: '._formatItemsForText'}">
+				</m:ExpandableText>
 
 				<m:Label text="editable date field"></m:Label>
 				<mdc:MultiValueField id="F3"

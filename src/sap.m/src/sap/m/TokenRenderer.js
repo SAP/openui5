@@ -38,7 +38,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 		var vSetSize = oControl.getProperty("setsize");
 
 		// write the HTML into the render manager
-		oRm.openStart("div", oControl).attr("tabindex", "-1").class("sapMToken");
+		oRm.openStart("div", oControl).class("sapMToken");
+
+		this._setAttributes(oRm, oControl);
 
 		if (oControl.getSelected()) {
 			oRm.class("sapMTokenSelected");
@@ -114,6 +116,22 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 			oRm.text(title);
 		}
 		oRm.close("span");
+	};
+
+
+/**
+	 * Callback for specific rendering of token tabindex attributes.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager currently rendering this control
+	 * @param {sap.m.Token}
+	 *            oControl the Token that should be rendered
+	 * @private
+	 *
+	 * @ui5-restricted sap.ui.mdc.field.TokenDisplayRenderer
+	 */
+	TokenRenderer._setAttributes = function(oRm, oControl) {
+		oRm.attr("tabindex", "-1");
 	};
 
 

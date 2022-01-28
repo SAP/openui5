@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/field/MultiValueFieldDelegate",
 	"sap/m/MessageBox",
-	"sap/base/util/merge"
+	"sap/m/Token",
+	"sap/base/util/merge",
+	"sap/m/MessageToast"
 ], function(
 		Controller,
 		Filter,
@@ -23,7 +25,9 @@ sap.ui.define([
 		ConditionValidated,
 		MultiValueFieldDelegate,
 		MessageBox,
-		merge
+		Token,
+		merge,
+		MessageToast
 		) {
 	"use strict";
 
@@ -210,6 +214,20 @@ sap.ui.define([
 			return sText;
 		},
 
+		_formatItemsForText: function(aItems) {
+			var sText = "";
+
+			for (var i = 0; i < aItems.length; i++) {
+				var oItem = aItems[i];
+				sText = sText + oItem.Name + "(" + oItem.ProductId + ")";
+				if (i < aItems.length - 1 ) {
+					sText += " · ";
+				}
+			}
+
+			return sText;
+		},
+
 		_formatDateItems: function(aItems) {
 			var sText = "";
 
@@ -219,6 +237,31 @@ sap.ui.define([
 			}
 
 			return sText;
+		},
+
+		onEditPress: function (oEvent) {
+			var oForm = this.byId("form");
+			if (oEvent.getSource().getPressed()) {
+				oForm.setEditable(true);
+				// MessageToast.show(oEvent.getSource().getId() + " Pressed");
+			} else {
+				oForm.setEditable(false);
+				// MessageToast.show(oEvent.getSource().getId() + " Unpressed");
+			}
+		},
+
+		onSizePress: function (oEvent) {
+			var $body = jQuery("body");
+
+			if (oEvent.getSource().getPressed()) {
+				$body.removeClass("sapUiSizeCompact");
+				$body.addClass("sapUiSizeCozy");
+				MessageToast.show("Cozy");
+			} else {
+				$body.removeClass("sapUiSizeCozy");
+				$body.addClass("sapUiSizeCompact");
+				MessageToast.show("Compact");
+			}
 		}
 	});
 });

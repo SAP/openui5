@@ -15,6 +15,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/TokenizerDisplay",
+	"sap/ui/mdc/field/TokenDisplay",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
 	"sap/ui/mdc/field/content/DefaultContent",
 	"sap/ui/mdc/enum/EditMode",
@@ -70,6 +72,8 @@ sap.ui.define([
 	FieldValueHelpDelegate,
 	FieldInput,
 	FieldMultiInput,
+	TokenizerDisplay,
+	TokenDisplay,
 	DynamicDateRangeConditionsType,
 	DefaultContent,
 	EditMode,
@@ -393,9 +397,9 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 		assert.equal(oContent.getModel("$field"), oField._oManagedObjectModel, "Text has ManagedObjectModel of Field");
-		assert.equal(oContent.getBindingPath("text"), "/conditions", "Text value bound to Fields Conditions");
+		assert.equal(oContent.getBindingPath("tokens"), "/conditions", "Tokens value bound to Fields Conditions");
 		assert.notOk(oField.getEditable(), "getEditable");
 		// TODO: test for formatter
 
@@ -425,7 +429,7 @@ sap.ui.define([
 	QUnit.test("display mode rendering, async loading of control", function(assert) {
 
 		var oStub = sinon.stub(sap.ui, "require");
-		oStub.withArgs("sap/m/ExpandableText").onFirstCall().returns(undefined);
+		oStub.withArgs("sap/ui/mdc/field/TokenizerDisplay").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
 		oField.setEditMode(EditMode.Display);
@@ -440,7 +444,7 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			var oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent, "default content exist");
-			assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
+			assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 			fnDone();
 		}, 0);
 
@@ -570,11 +574,11 @@ sap.ui.define([
 		aContent = oField.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "Field has internal content");
-		assert.equal(oContent && oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
+		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 		assert.notOk(oSegmentedButton.getDomRef(), "SegmentedButton is not rendered");
 		assert.notEqual(oField._oContentFactory._oConditionType, oConditionType, "ConditionType of SegmentedButton not used in Field");
-		assert.notOk(oField._oContentFactory._oConditionType, "no ConditionType used");
-		assert.ok(oField._oContentFactory._oConditionsType._bCreatedByField, "ConditionsType is created by Field");
+		assert.ok(oField._oContentFactory._oConditionType, "ConditionType used");
+		assert.ok(oField._oContentFactory._oConditionType._bCreatedByField, "ConditionType is created by Field");
 
 		oField.setEditMode(EditMode.Edit);
 		oField.destroyContentEdit();
@@ -706,7 +710,7 @@ sap.ui.define([
 		assert.ok(aContent.length > 0, "default content exist");
 		assert.equal(aContent.length, 1, "1 content control");
 		oContent1 = aContent && aContent.length > 0 && aContent[0];
-		assert.ok(oContent1 instanceof ExpandableText, "Text rendered");
+		assert.ok(oContent1 instanceof TokenizerDisplay, "TokenizerDisplay rendered");
 
 		// editable: again 2 Fields but currency readOnly
 		oContent1 = undefined; oContent2 = undefined;
@@ -758,10 +762,10 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		var oContentDomRef = oContent && oContent.getDomRef();
-		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 		assert.ok(oContentDomRef, "content control is rendered");
-		assert.ok(jQuery(oContentDomRef.children[0].children[0]).hasClass("sapMEmptyIndicator"), "Empty indicator rendered in ExpandableText control");
-		assert.notEqual(jQuery(oContentDomRef.children[0].children[0]).css("display"), "none", "Empty indicator not hidden");
+		assert.ok(jQuery(oContentDomRef.children[3]).hasClass("sapMEmptyIndicator"), "Empty indicator rendered in ExpandableText control");
+		assert.notEqual(jQuery(oContentDomRef.children[3]).css("display"), "none", "Empty indicator not hidden");
 
 		// single value
 		oField.setMaxConditions(1);
@@ -1029,8 +1033,8 @@ sap.ui.define([
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
-			assert.equal(oContent.getText && oContent.getText(), "Test", "Text set on Text control");
+			assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
+			assert.equal(oContent.getTokens && oContent.getTokens()[0].getText(), "Test", "Text set on Text control");
 
 			aContent = oFieldSearch.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
@@ -1072,7 +1076,7 @@ sap.ui.define([
 			assert.equal(oContent.getValue(), "Hello", "Value set on Input control");
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getText && oContent.getText(), "Hello (Test)", "Text set on Text control");
+			assert.equal(oContent.getTokens && oContent.getTokens()[0].getText(), "Hello (Test)", "Text set on Text control");
 
 			oFieldEditMulti.setDisplay(FieldDisplay.ValueDescription);
 			oFieldEditSingle.setDisplay(FieldDisplay.ValueDescription);
@@ -1110,8 +1114,8 @@ sap.ui.define([
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.ok(oContent instanceof ExpandableText, "ExpandableText rendered");
-			assert.equal(oContent.getText && oContent.getText(), "Test", "Text set on ExpandableText control");
+			assert.ok(oContent instanceof TokenizerDisplay, "TokenizerDisplay rendered");
+			assert.equal(oContent.getTokens && oContent.getTokens()[0].getText(), "Test", "Text set on Token control");
 			fnDone();
 		}, 0);
 
@@ -1543,7 +1547,7 @@ sap.ui.define([
 
 		oFieldEditMulti.setTextAlign("End");
 		oFieldEditSingle.setTextAlign("End");
-		oFieldDisplay.setTextAlign("End");
+		// oFieldDisplay.setTextAlign("End");
 		oCore.applyChanges();
 
 		var aContent = oFieldEditMulti.getAggregation("_content");
@@ -1554,9 +1558,9 @@ sap.ui.define([
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getTextAlign(), "End", "TextAlign set on Input control");
 
-		aContent = oFieldDisplay.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
-		assert.equal(oContent.getTextAlign(), "End", "TextAlign set on Text control");
+		// aContent = oFieldDisplay.getAggregation("_content");
+		// oContent = aContent && aContent.length > 0 && aContent[0];
+		// assert.equal(oContent.getTextAlign(), "End", "TextAlign set on Text control");
 
 	});
 
@@ -1564,7 +1568,7 @@ sap.ui.define([
 
 		oFieldEditMulti.setTextDirection("RTL");
 		oFieldEditSingle.setTextDirection("RTL");
-		oFieldDisplay.setTextDirection("RTL");
+		// oFieldDisplay.setTextDirection("RTL");
 		oCore.applyChanges();
 
 		var aContent = oFieldEditMulti.getAggregation("_content");
@@ -1575,9 +1579,9 @@ sap.ui.define([
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getTextDirection(), "RTL", "TextDirection set on Input control");
 
-		aContent = oFieldDisplay.getAggregation("_content");
-		oContent = aContent && aContent.length > 0 && aContent[0];
-		assert.equal(oContent.getTextDirection(), "RTL", "TextDirection set on Text control");
+		// aContent = oFieldDisplay.getAggregation("_content");
+		// oContent = aContent && aContent.length > 0 && aContent[0];
+		// assert.equal(oContent.getTextDirection(), "RTL", "TextDirection set on Text control");
 
 	});
 
@@ -1942,7 +1946,7 @@ sap.ui.define([
 			assert.equal(oField.getValueState(), "None", "ValueState after switch to display mode");
 			aContent = oField.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getText(), "", "Text in content control");
+			assert.equal(oContent.getTokens().length, 0, "No tokens in content control");
 
 			oPromise.then(function(vResult) {
 				assert.notOk(true, "Promise must not be resolved");

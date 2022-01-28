@@ -8,9 +8,11 @@ sap.ui.define([
 	"sap/m/ExpandableText",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/TokenizerDisplay",
+	"sap/ui/mdc/field/TokenDisplay",
 	"sap/m/TextArea",
 	"sap/m/Token"
-], function(QUnit, DefaultContent, Field, mLibrary, Text, ExpandableText, FieldInput, FieldMultiInput, TextArea, Token) {
+], function(QUnit, DefaultContent, Field, mLibrary, Text, ExpandableText, FieldInput, FieldMultiInput, TokenizerDisplay, TokenDisplay, TextArea, Token) {
 	"use strict";
 
 	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
@@ -41,14 +43,13 @@ sap.ui.define([
 		},
 		"DisplayMultiValue": {
 			getPathsFunction: "getDisplayMultiValue",
-			paths: ["sap/m/ExpandableText"],
-			instances: [ExpandableText],
+			paths: [ "sap/ui/mdc/field/TokenizerDisplay", "sap/ui/mdc/field/TokenDisplay"],
+			instances: [TokenizerDisplay, TokenDisplay],
 			createFunction: "createDisplayMultiValue",
 			bindings: [
 				{
-					text: "$field>/conditions",
-					textAlign: "$field>/textAlign",
-					textDirection: "$field>/textDirection",
+					tokens: "$field>/conditions",
+					//textAlign: "$field>/textAlign",
 					tooltip: "$field>/tooltip"
 				},
 				{}
@@ -240,7 +241,7 @@ sap.ui.define([
 
 		assert.deepEqual(DefaultContent.getControlNames("Edit"), ["sap/ui/mdc/field/FieldInput"], "Correct default controls returned for ContentMode 'Edit'");
 		assert.deepEqual(DefaultContent.getControlNames("Display"), ["sap/m/Text"], "Correct default controls returned for ContentMode 'Display'");
-		assert.deepEqual(DefaultContent.getControlNames("DisplayMultiValue"), ["sap/m/ExpandableText"], "Correct default controls returned for ContentMode 'DisplayMultiValue'");
+		assert.deepEqual(DefaultContent.getControlNames("DisplayMultiValue"), ["sap/ui/mdc/field/TokenizerDisplay", "sap/ui/mdc/field/TokenDisplay"], "Correct default controls returned for ContentMode 'DisplayMultiValue'");
 		assert.deepEqual(DefaultContent.getControlNames("DisplayMultiLine"), ["sap/m/ExpandableText"], "Correct default controls returned for ContentMode 'DisplayMultiLine'");
 		assert.deepEqual(DefaultContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct default controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DefaultContent.getControlNames("EditMultiLine"), ["sap/m/TextArea"], "Correct default controls returned for ContentMode 'EditMultiLine'");

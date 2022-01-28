@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/TokenizerDisplay",
 	"sap/m/TextArea",
 	"sap/m/DatePicker",
 	"sap/m/DateRangeSelection",
@@ -25,7 +26,7 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/TimePicker",
 	"sap/m/DynamicDateRange"
-], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
+], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, EditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
@@ -322,7 +323,7 @@ sap.ui.define([
 				contentTypeName: "DateContent",
 				expectedControls: [
 					[Text],
-					[ExpandableText],
+					[TokenizerDisplay],
 					[ExpandableText],
 					[DynamicDateRange],
 					[FieldMultiInput],
@@ -337,7 +338,7 @@ sap.ui.define([
 				contentTypeName: "DateTimeContent",
 				expectedControls: [
 					[Text],
-					[ExpandableText],
+					[TokenizerDisplay],
 					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
@@ -352,7 +353,7 @@ sap.ui.define([
 				contentTypeName: "DefaultContent",
 				expectedControls: [
 					[Text],
-					[ExpandableText],
+					[TokenizerDisplay],
 					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
@@ -397,7 +398,7 @@ sap.ui.define([
 				contentTypeName: "TimeContent",
 				expectedControls: [
 					[Text],
-					[ExpandableText],
+					[TokenizerDisplay],
 					[ExpandableText],
 					[FieldInput],
 					[FieldMultiInput],
@@ -412,7 +413,7 @@ sap.ui.define([
 				contentTypeName: "UnitContent",
 				expectedControls: [
 					[Text],
-					[ExpandableText],
+					[TokenizerDisplay],
 					[ExpandableText],
 					[FieldInput, FieldInput],
 					[FieldMultiInput, FieldInput],
