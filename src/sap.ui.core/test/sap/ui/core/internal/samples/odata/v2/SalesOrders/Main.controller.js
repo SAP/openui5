@@ -576,9 +576,6 @@ sap.ui.define([
 
 		onTriggerCreateActivateSalesOrder : function () {
 			this.createInactiveSalesOrder(true);
-			//FIXME: Currently not working scenario: Open "Sales Orders" table, select first
-			// inactive row, enter a "Note", tab out or press enter -> updateBindings leads triggers
-			// an unexpected request to SalesOrderSet('id-...')/ToLineItems...
 			this.getView().getModel().updateBindings(true); // enforce update of status icon + text
 		},
 

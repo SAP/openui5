@@ -223,7 +223,7 @@ sap.ui.define([
 		var aContexts, oInterval, aIntervals, iLimit, oSkipAndTop,
 			aContextData = [];
 
-		if (this.bInitial) {
+		if (this.bInitial || this._hasTransientParentContext()) {
 			return [];
 		}
 
@@ -416,7 +416,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v2.Context#isTransient}
 	 */
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var bHasCreatedContexts, sResolvedPath,
+		var sResolvedPath,
 			bForceUpdate = oContext && oContext.isRefreshForced(),
 			bPreliminary = oContext && oContext.isPreliminary(),
 			bUpdated = oContext && oContext.isUpdated();
@@ -435,9 +435,6 @@ sap.ui.define([
 			return;
 		}
 		if (Context.hasChanged(this.oContext, oContext)) {
-			if (this.oContext !== oContext) {
-				bHasCreatedContexts = this._getCreatedContexts().length > 0;
-			}
 			this.oContext = oContext;
 			sResolvedPath = this.getResolvedPath(); // resolved path with the new context
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
@@ -448,14 +445,11 @@ sap.ui.define([
 			this.checkDataState();
 			// If path does not resolve or parent context is created, reset current list
 			if (!sResolvedPath || this._hasTransientParentContext()) {
-				if (bHasCreatedContexts || this.aAllKeys || this.aKeys.length > 0
-						|| this.iLength > 0) {
-					this.aAllKeys = null;
-					this.aKeys = [];
-					this.iLength = 0;
-					this.bLengthFinal = true;
-					this._fireChange({reason : ChangeReason.Context});
-				}
+				this.aAllKeys = null;
+				this.aKeys = [];
+				this.iLength = 0;
+				this.bLengthFinal = true;
+				this._fireChange({reason : ChangeReason.Context});
 
 				return;
 			}
@@ -1097,6 +1091,7 @@ sap.ui.define([
 				if (this.bDataAvailable) {
 					this._fireChange({reason: ChangeReason.Change});
 				} else {
+					this.resetData();
 					this._fireRefresh({reason: ChangeReason.Refresh});
 				}
 			}
@@ -1203,7 +1198,7 @@ sap.ui.define([
 		this.aKeys = [];
 		this.aAllKeys = null;
 		this.iLength = 0;
-		this.bLengthFinal = false;
+		this.bLengthFinal = this._hasTransientParentContext() || !this.isResolved();
 		this.sChangeReason = undefined;
 		this.bDataAvailable = false;
 		this.bLengthRequested = false;

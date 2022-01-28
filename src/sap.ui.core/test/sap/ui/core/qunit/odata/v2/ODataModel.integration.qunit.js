@@ -12761,4 +12761,114 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: When enforcing the update of a relative list binding with a transient context via
+	// ODataModel#updateBindings(true), there is no backend request.
+	// JIRA: CPOUI5MODELS-755
+	QUnit.test("No request for relative list binding with transient context", function (assert) {
+		var oModel = createSalesOrdersModel({useBatch : false}),
+			sView = '\
+<FlexBox id="objectPage">\
+	<t:Table id="table" rows="{ToSalesOrders}">\
+		<Text id="id" text="{SalesOrderID}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreatedContext = oModel.createEntry("/BusinessPartnerSet"),
+				oListBinding = that.oView.byId("table").getBinding("rows");
+
+			that.oView.byId("objectPage").bindElement({
+				path : oCreatedContext.getPath()
+			});
+
+			// code under test
+			oModel.updateBindings(/*bForceUpdate*/true);
+
+			assert.strictEqual(oListBinding.getLength(), 0);
+			assert.strictEqual(oListBinding.getCount(), 0);
+			assert.strictEqual(oListBinding.isLengthFinal(), true);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Opening an object page with a given persisted context starts reading a list via a
+	// navigation property. When immediately changing the object page's context to a transient
+	// context before the response is processed, then the read list data is not propagated to the
+	// list binding.
+	// JIRA: CPOUI5MODELS-755
+	QUnit.test("Immediate change to transient context stops data propagation to list binding",
+			function (assert) {
+		var oContext, oObjectPage, fnResolve, oSalesOrderList,
+			oModel = createSalesOrdersModel(),
+			oRequestPromise = new Promise(function (resolve) { fnResolve = resolve; }),
+			sView = '\
+<Select id="salesOrderList" items="{/SalesOrderSet}">\
+	<MenuItem text="{SalesOrderID}" />\
+</Select>\
+<FlexBox id="objectPage">\
+	<Text id="customer" text="{CustomerName}"/>\
+	<t:Table rows="{ToLineItems}" visibleRowCount="2">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Text id="itemNote" text="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=100", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('42')"},
+					CustomerName : "Customer A",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectValue("itemPosition", ["", ""])
+			.expectValue("itemNote", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oObjectPage = that.oView.byId("objectPage");
+			oSalesOrderList = that.oView.byId("salesOrderList");
+			oContext = oSalesOrderList.getItems()[0].getBindingContext();
+
+			that.expectRequest("SalesOrderSet('42')/ToLineItems?$skip=0&$top=102", oRequestPromise)
+				.expectValue("customer", "Customer A");
+
+			// code under test: triggers request
+			oObjectPage.setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oContext = oSalesOrderList.getBinding("items").create({CustomerName : "Customer B"});
+
+			that.expectValue("customer", "Customer B");
+
+			// code under test: set transient context
+			oObjectPage.setBindingContext(oContext);
+
+			// code under test: server data processed
+			fnResolve({
+				statusCode : 200,
+				data : {
+					results : [{
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='10')"
+						},
+						ItemPosition : "10",
+						Note : "Position 10",
+						SalesOrderID : "42"
+					}]
+				}
+			});
+
+			return Promise.all([
+				oRequestPromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

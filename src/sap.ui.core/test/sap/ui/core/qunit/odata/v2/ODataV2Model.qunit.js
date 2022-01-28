@@ -6252,7 +6252,7 @@ sap.ui.define([
 
 	QUnit.test("createEntry and relative bindings (setContext)", function(assert) {
 		var done = assert.async();
-		assert.expect(2);
+		assert.expect(3);
 		this.oModel.metadataLoaded().then(function() {
 			var fnSuccess = function() {
 				assert.ok(false, "success handler must not be called");
@@ -6270,7 +6270,7 @@ sap.ui.define([
 			oContextBinding.setContext(oCreatedContext);
 			var oListBinding = this.oModel.bindList("Items");
 			oListBinding.attachChange(function() {
-				assert.ok(false, "ListBinding change must not be fired");
+				assert.ok(true, "ListBinding change must be fired");
 			});
 			oListBinding.attachRefresh(function() {
 				oListBinding.getContexts(0,10);
