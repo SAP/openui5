@@ -47,11 +47,16 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 
 		// action button
 		if (oControl.getActions().length > 0) {
-			oRm.openStart("div", sMyId + "-action-button");
-			oRm.class('sapMFeedListItemActionButton');
-			oRm.openEnd();
-			oRm.renderControl(oControl.getAggregation("_actionButton"));
-			oRm.close("div");
+			var isAllActionsNotVisible = oControl.getActions().every(function (oAction) {
+				return oAction.getVisible() === false ;
+			});
+			if (!isAllActionsNotVisible) {
+				oRm.openStart("div", sMyId + "-action-button");
+				oRm.class('sapMFeedListItemActionButton');
+				oRm.openEnd();
+				oRm.renderControl(oControl.getAggregation("_actionButton"));
+				oRm.close("div");
+			}
 		}
 
 		// text (starting with sender)
