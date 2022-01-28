@@ -79,7 +79,7 @@ sap.ui.define([
 					__metadata : {},
 					String : "foo"
 				}, {
-//					"__metadata" : {},
+					// "__metadata" : {},
 					Boolean : true
 				}]
 			}
@@ -97,7 +97,7 @@ sap.ui.define([
 					__metadata : {},
 					String : "foo"
 				}, {
-//					"__metadata" : {},
+					// "__metadata" : {},
 					Boolean : true
 				}]
 			}
@@ -1136,7 +1136,7 @@ sap.ui.define([
 				result : "time'PT13H47M26S'"}
 			// TODO V2 literal formatting does not support milliseconds
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
-			// 	result : "time'PT13H47M26.123S'"},
+			//     result : "time'PT13H47M26.123S'"},
 		].forEach(function (oFixture) {
 			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
 			asV2Requestor0._setDateTimeFormatter();

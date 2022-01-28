@@ -62,7 +62,7 @@ sap.ui.define([
 				case "1":
 					return SyncPromise.resolve({
 						$kind : "NavigationProperty"
-//						$isCollection : false
+						// $isCollection : false
 					});
 
 				case "N":
@@ -231,7 +231,7 @@ sap.ui.define([
 			headers : {
 				"Content-Type" : "application/json; odata.metadata=minimal;charset=utf-8"
 			},
-//			"responseText" : JSON.stringify(this.body)
+			// "responseText" : JSON.stringify(this.body)
 			status : 412,
 			statusText : "Precondition Failed"
 		}
@@ -2526,12 +2526,14 @@ sap.ui.define([
 			"/Me/toE/" : {$select : ["e"]},
 			"/Me/toG/" : {$select : ["g"]}
 		}
+/* eslint-disable no-tabs */
 //	}, { //TODO who would need this?
 //		aPaths : ["E"],
 //		mResult : {
 //			$select : ["E/toF"],
 //			"sap-client" : "123"
 //		}
+/* eslint-enable no-tabs */
 	}, {
 		aPaths : ["X", "*", "Z"],
 		mResult : {
