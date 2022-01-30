@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define(["sap/ui/core/format/TimezoneUtil"],
 	function (TimezoneUtil) {
 		"use strict";
@@ -930,5 +930,25 @@ sap.ui.define(["sap/ui/core/format/TimezoneUtil"],
 			var sLocalTimezone = TimezoneUtil.getLocalTimezone();
 			assert.ok(aIanaTimezones.includes(sLocalTimezone), "Local timezone should be in list: " + sLocalTimezone);
 		});
+
+		QUnit.module("Fixed date with end of January such that", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers(new Date("2022-01-31T15:22:33Z").getTime());
+			},
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("convert to from UTC to UTC", function (assert) {
+			// The date creation from fields provided by the Intl.DateTimeFormat API must be in the
+			// correct order and use the UNIX epoch start date (new Date(0)).
+			// Otherwise if created from a new Date() with date January 31st when calling
+			// setUTCMonth, it would automatically shift to the next month, because February does
+			// not have the 31 days.
+			var oDate = new Date("2021-11-13T15:22:33Z");
+			assert.deepEqual(TimezoneUtil.convertToTimezone(oDate, "UTC"), oDate, "Date should be converted.");
+		});
+
 	}
 );
