@@ -2,9 +2,12 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library", "sap/m/PlacementType"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, PlacementType) {
+	"sap/m/OverflowToolbarButton", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library", "sap/m/library"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
 	var ResponsivePopover, List, Bar, SearchField, StandardListItem, InvisibleText, Device, oRb;
@@ -289,5 +292,4 @@ sap.ui.define([
 	};
 
 	return ChartTypeButton;
-
 });

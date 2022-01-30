@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/InvisibleMessageMode",
+	"sap/ui/core/library",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/util/LoadingProvider",
@@ -26,7 +26,7 @@ sap.ui.define([
 	Core,
 	Control,
 	InvisibleMessage,
-	InvisibleMessageMode,
+	coreLibrary,
 	ObservableModel,
 	ManagedObjectObserver,
 	LoadingProvider,
@@ -34,6 +34,9 @@ sap.ui.define([
 	merge
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.InvisibleMessageMode
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new <code>BaseContent</code>.

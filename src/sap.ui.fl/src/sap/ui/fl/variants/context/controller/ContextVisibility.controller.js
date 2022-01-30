@@ -4,21 +4,24 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/library",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/m/MessageStrip",
-	"sap/ui/core/MessageType",
 	"sap/base/util/restricted/_isEqual"
 ], function (
 	Controller,
 	Fragment,
+	coreLibrary,
 	WriteStorage,
 	Layer,
 	MessageStrip,
-	MessageType,
 	_isEqual
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	function buildQueryParameterMap(mConfig) {
 		var mDefaultValues = {layer: Layer.CUSTOMER, type: "role"};

@@ -20,11 +20,11 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
-	"sap/ui/layout/form/SimpleFormLayout",
 	// needs to be preloaded for the test to work
 	"sap/ui/layout/form/ResponsiveGridLayout"
 ],
@@ -45,13 +45,16 @@ function(
 	IconPool,
 	Title,
 	SimpleForm,
+	layoutLibrary,
 	Filter,
 	FilterOperator,
 	JSONModel,
-	RtaUtils,
-	SimpleFormLayout
+	RtaUtils
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.layout.form.SimpleFormLayout
+	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	var ValueState = coreLibrary.ValueState;
 
