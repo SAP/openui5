@@ -363,7 +363,6 @@ sap.ui.define([
 			oComponent: oComponent,
 			selector: oComponent,
 			invalidateCache: false,
-			includeVariants: true,
 			// includeCtrlVariants: true,
 			currentLayer: Layer.CUSTOMER,
 			includeDirtyChanges: true
@@ -374,10 +373,14 @@ sap.ui.define([
 	ChangeVisualization.prototype._updateChangeRegistry = function() {
 		return this._collectChanges().then(function(aChanges) {
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getChangeIds();
-			var oCurrentChanges = aChanges.reduce(function(oChanges, oChange) {
-				oChanges[oChange.getId()] = oChange;
-				return oChanges;
-			}, {});
+			var oCurrentChanges = aChanges
+				.filter(function(oChange) {
+					return oChange.getFileType() === 'change';
+				})
+				.reduce(function(oChanges, oChange) {
+					oChanges[oChange.getId()] = oChange;
+					return oChanges;
+				}, {});
 			var aCurrentChangeIds = Object.keys(oCurrentChanges);
 
 			// Remove registered changes which no longer exist
