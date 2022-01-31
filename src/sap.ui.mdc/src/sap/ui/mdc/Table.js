@@ -995,21 +995,20 @@ sap.ui.define([
 	};
 
 	Table.prototype._onModifications = function() {
-		if (!this._oTable) {
-			return;
-		}
-		var oColumnWidth = this.getCurrentState().xConfig;
-		var oColumnWidthContent = oColumnWidth.aggregations && oColumnWidth.aggregations.columns;
-
-		this.getColumns().forEach(function(oColumn, iIndex) {
-			var sWidth = oColumnWidthContent && oColumnWidthContent[oColumn.getDataProperty()] && oColumnWidthContent[oColumn.getDataProperty()].width;
-			var oInnerColumn = this._oTable.getColumns()[iIndex];
-			if (!sWidth && oInnerColumn.getWidth() !== oColumn.getWidth()) {
-				oInnerColumn.setWidth(oColumn.getWidth());
-			} else if (sWidth && sWidth !== oInnerColumn.getWidth()) {
-				oInnerColumn.setWidth(sWidth);
-			}
-		}, this);
+		var oMDCTable = this;
+		this.initialized().then(function() {
+			var oColumnWidth = oMDCTable.getCurrentState().xConfig;
+			var oColumnWidthContent = oColumnWidth.aggregations && oColumnWidth.aggregations.columns;
+			oMDCTable.getColumns().forEach(function(oColumn, iIndex) {
+				var sWidth = oColumnWidthContent && oColumnWidthContent[oColumn.getDataProperty()] && oColumnWidthContent[oColumn.getDataProperty()].width;
+				var oInnerColumn = oMDCTable._oTable.getColumns()[iIndex];
+				if (!sWidth && oInnerColumn.getWidth() !== oColumn.getWidth()) {
+					oInnerColumn.setWidth(oColumn.getWidth());
+				} else if (sWidth && sWidth !== oInnerColumn.getWidth()) {
+					oInnerColumn.setWidth(sWidth);
+				}
+			});
+		});
 	};
 
 	Table.prototype.setP13nMode = function(aMode) {
