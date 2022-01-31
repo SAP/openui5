@@ -108,9 +108,6 @@ sap.ui.define([], function() {
 		for (var sKey in oParts) {
 			var oPart = oParts[sKey];
 			if (oPart.type !== "literal") {
-				if (oPart.type === "month") {
-					oPart.value--;
-				}
 				oDateParts[oPart.type] = oPart.value;
 			}
 		}
@@ -125,9 +122,9 @@ sap.ui.define([], function() {
 	 * @private
 	 */
 	TimezoneUtil._getDateFromParts = function(oParts) {
-		var oDate = new Date();
+		var oDate = new Date(0);
 
-		var iUTCYear = oParts.year;
+		var iUTCYear = parseInt(oParts.year);
 		if (oParts.era === "B") {
 			// The JS Date uses astronomical year numbering which supports year zero and negative
 			// year numbers.
@@ -143,13 +140,16 @@ sap.ui.define([], function() {
 			// need to be adapted.
 			iUTCYear = (iUTCYear * -1) + 1;
 		}
-		oDate.setUTCFullYear(iUTCYear);
-		oDate.setUTCMonth(oParts.month || 0);
-		oDate.setUTCDate(oParts.day || 1);
-		oDate.setUTCHours(oParts.hour || 0);
-		oDate.setUTCMinutes(oParts.minute || 0);
-		oDate.setUTCSeconds(oParts.second || 0);
-		oDate.setUTCMilliseconds(oParts.fractionalSecond || 0);
+
+		// Date.UTC cannot be used here to be able to support dates before the UNIX epoch
+		oDate.setUTCFullYear(iUTCYear,
+			parseInt(oParts.month) - 1,
+			parseInt(oParts.day));
+		oDate.setUTCHours(
+			parseInt(oParts.hour),
+			parseInt(oParts.minute),
+			parseInt(oParts.second),
+			parseInt(oParts.fractionalSecond));
 
 		return oDate;
 	};
