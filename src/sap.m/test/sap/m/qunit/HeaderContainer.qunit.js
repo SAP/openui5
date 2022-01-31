@@ -1333,7 +1333,7 @@ sap.ui.define([
 					assert.ok(this.oHeaderContainer._oArrowPrev,  "Previous Arrow is present.");
 					assert.ok(this.oHeaderContainer._oArrowNext,  "Next Arrow is present.");
 					assert.ok(isRightArrowVisible,"Right arrow indicator is not hidden.");
-					assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Preperty gridLayout is true.");
+					assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Property gridLayout is true.");
 					assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
 					assert.equal(Device.resize.width >= ScreenSizes.xsmall, true,  "Large screen size.");
 					this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
@@ -1386,9 +1386,11 @@ sap.ui.define([
 				assert.ok(this.oHeaderContainer._oArrowNext, "Next Arrow is present.");
 				assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
 				assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
-				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Preoerty gridLayout is true.");
+				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Property gridLayout is true.");
 				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
 				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
+				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstop", "scrollstop Event is bound.");
 				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
 				fnDone();
 			}.bind(this)
@@ -1441,9 +1443,11 @@ sap.ui.define([
 				assert.ok(this.oHeaderContainer._oArrowNext, "Next Arrow is present.");
 				assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
 				assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
-				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Preperty gridLayout is true.");
+				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Property gridLayout is true.");
 				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
 				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
+				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstop", "scrollstop Event is bound.");
 				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
 				sap.ui.getCore().getConfiguration().setRTL(false);
 				fnDone();

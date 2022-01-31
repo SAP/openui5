@@ -348,7 +348,43 @@ sap.ui.define([
 						this._handleMobileScrolling();
 					}
 					if (this._isMobileView()) {
-						this._handleMobileScrolling();
+						var aItems = this._filterVisibleItems();
+						this.aItemSize = [];
+						this.aItemScrollValue = [0];
+						var fnGetItemSize = function (oItem) {
+							return oItem.getDomRef().parentElement.offsetWidth
+									+ parseFloat(getComputedStyle(oItem.getDomRef().parentElement).marginLeft)
+									+ parseFloat(getComputedStyle(oItem.getDomRef().parentElement).marginRight);
+						};
+						for (var i = 0; i < aItems.length; i++) {
+							this.aItemSize.push(fnGetItemSize(aItems[i]));
+							this.aItemScrollValue.push(this.aItemScrollValue[i] ? this.aItemScrollValue[i] + this.aItemSize[i] : this.aItemSize[i]);
+						}
+						this._oScrollCntr.attachBrowserEvent("scrollstop", function(oEvent){
+								if (!this.triggerScrollStop) {
+									this.triggerScrollStop = true;
+									var iScrollValue = 0, iScrollOffset = 15;
+									var iCurrectScrollValue = this._bRtl ? Math.abs(oEvent.currentTarget.scrollLeft) : oEvent.currentTarget.scrollLeft;
+									var value = this.aItemScrollValue.reduce(function(a, b) {
+										var aDiff = Math.abs(a - iCurrectScrollValue);
+										var bDiff = Math.abs(b - iCurrectScrollValue);
+										if (aDiff == bDiff) {
+											return a > b ? a : b;
+										} else {
+											return bDiff < aDiff ? b : a;
+										}
+									});
+									if (iCurrectScrollValue == 0) {
+										iScrollValue = 0;
+										this.triggerScrollStop = false;
+									} else {
+										iScrollValue = value - iScrollOffset - iCurrectScrollValue;
+									}
+									this._scroll(iScrollValue, this.getScrollTime());
+								} else {
+									this.triggerScrollStop = false;
+								}
+							}.bind(this));
 					}
 				}.bind(this)
 			});
@@ -644,37 +680,30 @@ sap.ui.define([
 				var iSize = 0,
 					iButtonSize = 0;
 
-				var OFFSET = 10, mobileOffset = 7;
+				var OFFSET = 10;
 
-				if (!this._isMobileView()) {
-					// RTL button offset fixes
-					if (this._bRtl && bHorizontal) {
-						if (!$prevButton.is(":visible")) {
-							iButtonSize = $prevButton.width();
-						}
+				// RTL button offset fixes
+				if (this._bRtl && bHorizontal) {
+					if (!$prevButton.is(":visible")) {
+						iButtonSize = $prevButton.width();
+					}
 
-						if (!$nextButton.is(":visible")) {
-							iButtonSize = $nextButton.width();
-						}
+					if (!$nextButton.is(":visible")) {
+						iButtonSize = $nextButton.width();
 					}
 				}
+
 				for (var i = 0; i < aItems.length && i < iIndex; i++) {
 					iSize += fnGetItemSize(aItems[i]);
 				}
-				if (this._isMobileView()) {
-					return iSize !== 0 ? iSize - mobileOffset - iButtonSize : 0;
-				} else {
-					return iSize !== 0 ? iSize + OFFSET - iButtonSize : 0;
-				}
+
+				return iSize !== 0 ? iSize + OFFSET - iButtonSize : 0;
 
 			}.bind(this);
 
 			var fnGetItemSize = function (oItem) {
-				if (this._isMobileView()) {
-					return oItem.$().parent().outerWidth(true);
-				}
 				return bHorizontal ? oItem.$().parent().outerWidth(true) : oItem.$().parent().outerHeight(true);
-			}.bind(this);
+			};
 
 			// this function ensures that after clicking right arrow (left for RTL) at least on item is shown
 			// this does not by default happen in some cases when items are not of the same size
@@ -711,18 +740,10 @@ sap.ui.define([
 				// for different browser implementation (especially in RTL) we want to avoid offsetLeft and its variations
 				// we sum width (height for vertical) of each item and compare it with scrolling start position
 				for (var i = 0; i < aItems.length; i++) {
-					if (this._isMobileView()) {
-						iSize = iSize + fnGetItemSize(aItems[i]) - 7;
-						if (iSize > Math.ceil(iScroll)) {
-							iTarget = i;
-							break;
-						}
-					} else {
-						iSize += fnGetItemSize(aItems[i]);
-						if (iSize >= iScroll) {
-							iTarget = i;
-							break;
-						}
+					iSize += fnGetItemSize(aItems[i]);
+					if (iSize >= iScroll) {
+						iTarget = i;
+						break;
 					}
 				}
 
@@ -806,21 +827,21 @@ sap.ui.define([
 
 				$ButtonContainer = this.$("prev-button-container");
 				oOldScrollBack = $ButtonContainer.is(":visible");
-				if (oOldScrollBack && !bScrollBack && !this._isMobileView()()) {
+				if (oOldScrollBack && !bScrollBack) {
 					$ButtonContainer.hide();
 					this.$().removeClass("sapMHrdrTopPadding");
 				}
-				if (!oOldScrollBack && bScrollBack && !this._isMobileView()) {
+				if (!oOldScrollBack && bScrollBack) {
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrTopPadding");
 				}
 				$ButtonContainer = this.$("next-button-container");
 				var oOldScrollForward = $ButtonContainer.is(":visible");
-				if (oOldScrollForward && !bScrollForward && !this._isMobileView()) {
+				if (oOldScrollForward && !bScrollForward) {
 					$ButtonContainer.hide();
 					this.$().removeClass("sapMHrdrBottomPadding");
 				}
-				if (!oOldScrollForward && bScrollForward && !this._isMobileView()) {
+				if (!oOldScrollForward && bScrollForward) {
 					$ButtonContainer.show();
 					this.$().addClass("sapMHrdrBottomPadding");
 				}
@@ -848,27 +869,7 @@ sap.ui.define([
 							iDelta = iPos - fCurrent,
 							oScroller = that._oScrollCntr.getDomRef();
 
-						if (that._isMobileView()) {
-							var bForward;
-							if (iDelta > 0) {
-								bForward = true;
-								if (that._bRtl) {
-									bForward = false;
-								}
-                                that._scroll(that._getScrollValue(bForward), that.getScrollTime());
-                                bScrolling = false;
-                            } else {
-								bForward = false;
-								if (that._bRtl) {
-									bForward = true;
-								}
-                                that._scroll(that._getScrollValue(bForward), that.getScrollTime());
-                                bScrolling = false;
-                            }
-						} else {
-							bIsHorizontal ? oScroller.scrollLeft += iDelta : oScroller.scrollTop += iDelta;
-						}
-
+						bIsHorizontal ? oScroller.scrollLeft += iDelta : oScroller.scrollTop += iDelta;
 						iPos = fCurrent;
 
 						// prevent navigation
