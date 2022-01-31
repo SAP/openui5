@@ -325,5 +325,32 @@
         ]
       }
     ]
+  },
+  "1.96.4": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "665ae1a382579690a430464d150790c6d06a48bf",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "ebea30e32bcad47755239003021d4ece66bfbb1f",
+        "type": "FIX",
+        "text": " strengthen CSS Classes for Theme Parameters with !important",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170198976"
+          }
+        ]
+      }
+    ]
   }
 }

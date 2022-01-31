@@ -779,5 +779,109 @@
         ]
       }
     ]
+  },
+  "1.96.4": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "665ae1a382579690a430464d150790c6d06a48bf",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "0f5e0d5f28cf67bd3b2410af4c3ac2d4dd7bfc33",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "8f27fcbe48972a4d69336771fd615098c104dbda",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "5c8cae13e439fe4a29b79e18d827b741ce7e551e",
+        "type": "FIX",
+        "text": " sap.m.StepInput: string values are parsed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180419994"
+          }
+        ]
+      },
+      {
+        "id": "f40e84532e15847a9e38bea90aab853a8e33f7c2",
+        "type": "FIX",
+        "text": " sap.m.Label: aria-label attribute is now set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430748"
+          }
+        ]
+      },
+      {
+        "id": "ddfcc7daa2c6a69b56ef433e9f19b75b85cf587c",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: container width changed event properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080431926"
+          }
+        ]
+      },
+      {
+        "id": "eb5e9108f6afa2997d6a96c20472d6a19eb83f11",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: The UI uses displayFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170322236"
+          }
+        ]
+      },
+      {
+        "id": "e7eb947cdcbfdf62627c97c959d6c4dbca4480f6",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Compact mode density respected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180395055"
+          }
+        ]
+      },
+      {
+        "id": "0ccc02fb40f092c387151d7e4783fa087ed94db6",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator:  Visual enhacements according to the specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070370098"
+          }
+        ]
+      }
+    ]
   }
 }

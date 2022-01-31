@@ -57,5 +57,21 @@
         ]
       }
     ]
+  },
+  "1.96.4": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "68e0c74cd97b4ee6f98962b1c53489db27c34f51",
+        "type": "FIX",
+        "text": " \"72\" font: use the bold font for fallback with font-weight 700",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180400449"
+          }
+        ]
+      }
+    ]
   }
 }

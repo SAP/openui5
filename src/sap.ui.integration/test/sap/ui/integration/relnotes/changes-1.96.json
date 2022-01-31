@@ -116,5 +116,21 @@
         ]
       }
     ]
+  },
+  "1.96.4": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "e5a73e0edf61a5d6b109d6324dadce143bd8a949",
+        "type": "FIX",
+        "text": " Integration card: High CPU utilization is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180389313"
+          }
+        ]
+      }
+    ]
   }
 }
