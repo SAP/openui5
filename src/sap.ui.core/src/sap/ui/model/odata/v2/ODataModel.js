@@ -2920,7 +2920,7 @@ sap.ui.define([
 			oResultValue = {};
 			for (i = 0; i < aOwnPropSelect.length; i++) {
 				sSelect = aOwnPropSelect[i];
-				if (oValue[sSelect] !== undefined) {
+				if (oValue[sSelect] !== undefined || oValue.__metadata.created) {
 					oResultValue[sSelect] = oValue[sSelect];
 				} else {
 					Log.fatal("No data loaded for select property: " + sSelect + " of entry: " + that.getKey(oValue));
