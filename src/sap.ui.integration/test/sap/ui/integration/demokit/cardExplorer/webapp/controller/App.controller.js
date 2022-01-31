@@ -4,26 +4,30 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/base/Log",
 	"sap/ui/core/routing/History",
+	"sap/ui/core/Fragment",
 	"../model/DocumentationNavigationModel",
 	"../model/ExploreNavigationModel",
 	"../model/IntegrateNavigationModel",
 	"../model/OverviewNavigationModel",
 	"../model/DesigntimeNavigationModel",
 	"../model/ExploreSettingsModel",
-	"../model/HomeModel"
+	"../model/HomeModel",
+	"../model/AppSettingsModel"
 ], function (
 	mLibrary,
 	BaseController,
 	Device,
 	Log,
 	History,
+	Fragment,
 	DocumentationNavigationModel,
 	ExploreNavigationModel,
 	IntegrateNavigationModel,
 	OverviewNavigationModel,
 	DesigntimeNavigationModel,
 	ExploreSettingsModel,
-	HomeModel
+	HomeModel,
+	AppSettingsModel
 ) {
 	"use strict";
 
@@ -37,9 +41,6 @@ sap.ui.define([
 
 			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
 
-			// apply content density mode to root view
-			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
-
 			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
 			this.getRouter().attachBypassed(function () {
 				this.navToRoute("overview/introduction");
@@ -47,6 +48,7 @@ sap.ui.define([
 
 			this.getView().setModel(ExploreSettingsModel, "settings");
 			this.getView().setModel(HomeModel, "home");
+			this.getView().setModel(AppSettingsModel, "appSettings");
 
 			Device.media.attachHandler(this.onDeviceSizeChange, this);
 			this.onDeviceSizeChange();
@@ -279,6 +281,44 @@ sap.ui.define([
 			}
 
 			this.setModel(oModel);
+		},
+
+		_appSettingsDialog: null,
+
+		handleAppSettings: function (sAction) {
+			switch (sAction) {
+				case 'open': {
+					if (!this._appSettingsDialog) {
+						Fragment.load({
+							name: "sap.ui.demo.cardExplorer.view.AppSettingsDialog",
+							controller: this
+						}).then(function (oDialog) {
+							// connect dialog to the root view of this component (models, lifecycle)
+							this.getView().addDependent(oDialog);
+							this._appSettingsDialog = oDialog;
+							this._appSettingsDialog.open();
+						}.bind(this));
+					} else {
+						this._appSettingsDialog.open();
+					}
+					break;
+				}
+				case 'reset': {
+					AppSettingsModel.resetValues();
+					break;
+				}
+				case 'close': {
+					this._appSettingsDialog.close();
+					break;
+				}
+				case 'apply': {
+					AppSettingsModel.saveValues();
+					AppSettingsModel.applyValues();
+					this._appSettingsDialog.close();
+					break;
+				}
+				default: break;
+			}
 		}
 	});
 });
