@@ -187,40 +187,36 @@ sap.ui.define([
     });
 
     QUnit.test("Check 'valid' promise - do not provide parameter", function(assert){
-        var done = assert.async();
+        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+
+        sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(true);
 
         var oValid = this.oFilterBarBase.validate();
 
-        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
-
-        oValid.then(function(){
+        return oValid.then(function(){
             assert.ok(true, "Valid Promise resolved");
             assert.equal(oSearchSpy.callCount, 1, "Search executed by default");
-            done();
         });
     });
 
     QUnit.test("Check 'valid' promise - explicitly fire search", function(assert){
-        var done = assert.async();
+        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
+        sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(true);
 
         var oValid = this.oFilterBarBase.triggerSearch();
 
-        var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
-
-        oValid.then(function(){
+        return oValid.then(function(){
             assert.ok(true, "Valid Promise resolved");
             assert.equal(oSearchSpy.callCount, 1, "Search executed");
-            done();
         });
     });
 
     QUnit.test("Check 'valid' promise - do not fire search", function(assert){
         var done = assert.async();
 
-        var oValid = this.oFilterBarBase.validate(true);
-
         var oSearchSpy = sinon.spy(this.oFilterBarBase, "fireSearch");
 
+        var oValid = this.oFilterBarBase.validate(true);
         oValid.then(function(){
             assert.ok(true, "Valid Promise resolved");
             assert.equal(oSearchSpy.callCount, 0, "No Search executed");
@@ -241,6 +237,39 @@ sap.ui.define([
             done();
         }.bind(this));
 
+    });
+
+    QUnit.test("Check validate without/with existing metadata", function(assert){
+        var done = assert.async();
+
+        sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(false);
+        sinon.stub(this.oFilterBarBase, "_retrieveMetadata").returns(Promise.resolve());
+        sinon.stub(this.oFilterBarBase, '_validate').callsFake(function fakeFn() {
+            this.oFilterBarBase._fResolvedSearchPromise();
+            this.oFilterBarBase._fRejectedSearchPromise = null;
+            this.oFilterBarBase._fResolvedSearchPromise = null;
+        }.bind(this));
+
+
+
+        var oValidPromise = this.oFilterBarBase.validate();
+
+        return oValidPromise.then(function(){
+            assert.ok(this.oFilterBarBase._retrieveMetadata.calledOnce);
+
+
+            this.oFilterBarBase._retrieveMetadata.reset();
+            this.oFilterBarBase._hasMetadata.restore();
+            sinon.stub(this.oFilterBarBase, "_hasMetadata").returns(true);
+
+            oValidPromise = this.oFilterBarBase.validate();
+
+            return oValidPromise.then(function(){
+                assert.ok(!this.oFilterBarBase._retrieveMetadata.calledOnce);
+                done();
+            }.bind(this));
+
+        }.bind(this));
     });
 
     QUnit.test("Check cleanup for metadata promise", function(assert){

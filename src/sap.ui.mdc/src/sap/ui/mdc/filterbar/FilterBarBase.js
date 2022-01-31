@@ -926,7 +926,7 @@ sap.ui.define([
 
 		var bFireSearch = !bSuppressSearch;
 
-		return this.initialized().then(function() {
+		var fValidateFc = function() {
 			if (!this._oValidationPromise) {
 
 				this._oValidationPromise = new Promise(function(resolve, reject) {
@@ -942,7 +942,16 @@ sap.ui.define([
 			}
 
 			return this._oValidationPromise;
+		}.bind(this);
 
+		return this.initialized().then(function() {
+			if (!this._hasMetadata()) {
+				return this._retrieveMetadata().then(function() {
+					return fValidateFc();
+				});
+			} else {
+				return fValidateFc();
+			}
 		}.bind(this));
 	};
 
@@ -953,6 +962,9 @@ sap.ui.define([
 		}
 	};
 
+	FilterBarBase.prototype._hasMetadata = function() {
+		return (this._hasPropertyHelper() || (this.getPropertyInfo().length > 0));
+	};
 
 	FilterBarBase.prototype._getRequiredFieldsWithoutValues = function() {
 		var aReqFiltersWithoutValue = [];
