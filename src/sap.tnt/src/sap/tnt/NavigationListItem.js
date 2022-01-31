@@ -392,8 +392,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			expandIconControl.setTooltip(this._getExpandIconTooltip(false));
 
 			var $container = this.$().find('.sapTntNavLIGroupItems');
+			var oDomRef = this.getDomRef();
 			$container.stop(true, true).slideDown(duration || 'fast', function () {
-				$container.toggleClass('sapTntNavLIHiddenGroupItems');
+				oDomRef.querySelector(".sapTntNavLIGroupItems").classList.toggle('sapTntNavLIHiddenGroupItems');
 			});
 
 			this.getNavigationList()._updateNavItems();
@@ -418,8 +419,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			expandIconControl.setTooltip(this._getExpandIconTooltip(true));
 
 			var $container = this.$().find('.sapTntNavLIGroupItems');
+			var oDomRef = this.getDomRef();
 			$container.stop(true, true).slideUp(duration || 'fast', function () {
-				$container.toggleClass('sapTntNavLIHiddenGroupItems');
+				oDomRef.querySelector(".sapTntNavLIGroupItems").classList.toggle('sapTntNavLIHiddenGroupItems');
 			});
 
 			this.getNavigationList()._updateNavItems();
