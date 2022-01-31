@@ -15,6 +15,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/MultiValueFieldDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/ui/mdc/field/MultiValueFieldItem",
+	"sap/ui/mdc/field/TokenizerDisplay",
+	"sap/ui/mdc/field/TokenDisplay",
 	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/m/Label",
 	"sap/m/Text",
@@ -47,6 +49,8 @@ sap.ui.define([
 	FieldMultiInput,
 	MultiValueFieldDelegate,
 	MultiValueFieldItem,
+	TokenizerDisplay,
+	TokenDisplay,
 	FieldHelpBase,
 	Label,
 	Text,
@@ -158,7 +162,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent, "content exist");
-		assert.equal(oContent.getMetadata().getName(), "sap.m.ExpandableText", "sap.m.ExpandableText is used");
+		assert.equal(oContent.getMetadata().getName(), "sap.ui.mdc.field.TokenizerDisplay", "sap.ui.mdc.field.TokenizerDisplay is used");
 
 		oField.setEditMode(EditMode.ReadOnly);
 		oCore.applyChanges();
@@ -238,7 +242,6 @@ sap.ui.define([
 
 	QUnit.test("conditions & Tokens", function(assert) {
 
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 		var fnDone = assert.async();
 		setTimeout(function() { // async set of condition
 			var aConditions = oFieldEdit.getConditions();
@@ -256,7 +259,12 @@ sap.ui.define([
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
-			assert.equal(oContent.getText(), "Text 1" + oResourceBundle.getText("field.SEPARATOR") + "Text 2" + oResourceBundle.getText("field.SEPARATOR") + "Text 3", "Text set on Text control");
+			aTokens = oContent.getTokens();
+			assert.ok(aTokens.length, 3, "Tokens created");
+			assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
+			assert.equal(aTokens[1].getText(), "Text 2", "Token1 text");
+			assert.equal(aTokens[2].getText(), "Text 3", "Token2 text");
+
 			fnDone();
 		}, 0);
 

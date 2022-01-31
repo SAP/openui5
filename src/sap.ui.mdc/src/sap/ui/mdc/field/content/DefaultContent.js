@@ -11,6 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	var TokenizerRenderMode = mLibrary.TokenizerRenderMode;
 
 	/**
 	 * Object-based definition of the default content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -29,7 +30,7 @@ sap.ui.define([
 			return ["sap/m/Text"];
 		},
 		getDisplayMultiValue: function() {
-			return this.getDisplayMultiLine();
+			return ["sap/ui/mdc/field/TokenizerDisplay", "sap/ui/mdc/field/TokenDisplay"];
 		},
 		getDisplayMultiLine: function() {
 			return ["sap/m/ExpandableText"];
@@ -300,7 +301,28 @@ sap.ui.define([
 		 * @since 1.96
 		 */
 		createDisplayMultiValue: function(oContentFactory, aControlClasses, sId) {
-			return this.createDisplayMultiLine(oContentFactory, aControlClasses, sId); // for now just return the same asl in MultiLine mode
+			var Tokenizer = aControlClasses[0];
+			var Token = aControlClasses[1];
+			var oConditionType = oContentFactory.getConditionType();
+			var oToken = new Token(sId + "-token", {
+				text: {
+					path: '$field>',
+					type: oConditionType
+				}
+			});
+
+			var oTokenizer = new Tokenizer(sId, {
+				editable: false,
+				// textAlign: "{$field>/textAlign}",
+				emptyIndicatorMode: EmptyIndicatorMode.Auto,
+				renderMode: TokenizerRenderMode.Narrow,
+				width: "100%",
+				tooltip: "{$field>/tooltip}",
+				tokens: { path: "$field>/conditions", template: oToken },
+				dependents: [oToken] // to destroy it if Control is destroyed
+			});
+
+			return [oTokenizer];
 		},
 		/**
 		 * Creates the suitable controls for content mode <code>EditForHelp</code>.

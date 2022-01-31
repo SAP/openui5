@@ -26,8 +26,10 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 		if (oControl.getParent() && (oControl.getParent() instanceof sap.m.MultiInput || oControl.getParent() instanceof sap.m.MultiComboBox)) {
 			oRm.openStart("div", oControl);
 		} else {
-			oRm.openStart("div", oControl).attr("tabindex", "0");
+			oRm.openStart("div", oControl);
+			this._renderTabIndex(oRm, oControl);
 		}
+
 
 		oRm.class("sapMTokenizer");
 
@@ -92,10 +94,10 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 
 		oRm.openEnd();
 
-		TokenizerRenderer._renderTokens(oRm, oControl);
+		this._renderTokens(oRm, oControl);
 
 		oRm.close("div");
-		TokenizerRenderer._renderIndicator(oRm, oControl);
+		this._renderIndicator(oRm, oControl);
 		oRm.close("div");
 	};
 
@@ -124,10 +126,42 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	TokenizerRenderer._renderIndicator = function(oRm, oControl){
 		oRm.openStart("span");
 		oRm.class("sapMTokenizerIndicator");
+
+		this._renderIndicatorTabIndex(oRm, oControl);
+
 		if (oControl.getHiddenTokensCount() === 0) {
 			oRm.class("sapUiHidden");
 		}
 		oRm.openEnd().close("span");
+	};
+
+	/**
+	 * Callback for specific rendering of Tokenizer tabindex attribute.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager currently rendering this control
+	 * @param {sap.m.Tokenizer}
+	 *            oControl the Tokenizer that should be rendered
+	 * @private
+	 *
+	 * @ui5-restricted sap.ui.mdc.field.TokenizerDisplayRenderer
+	 */
+	TokenizerRenderer._renderTabIndex = function(oRm, oControl) {
+		oRm.attr("tabindex", "0");
+	};
+
+	/**
+	 * Callback for specific rendering of Tokenizer N-more indicator tabindex attribute.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager currently rendering this control
+	 * @param {sap.m.Tokenizer}
+	 *            oControl the Tokenizer that should be rendered
+	 * @private
+	 *
+	 * @ui5-restricted sap.ui.mdc.field.TokenizerDisplayRenderer
+	 */
+	TokenizerRenderer._renderIndicatorTabIndex = function(oRm, oControl) {
 	};
 
 	return TokenizerRenderer;
