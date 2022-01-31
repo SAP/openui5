@@ -861,7 +861,7 @@ sap.ui.define([
 		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
 		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKeyFirst: true, checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException, control: "Control"}), "getItemForValue called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", dataType: oConditionType._oDefaultType, inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKeyFirst: true, checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException, control: "Control"}), "getItemForValue called");
 
 		oCondition = oConditionType.parseValue("Item3");
 		assert.ok(oCondition, "Result returned");
@@ -2907,7 +2907,9 @@ sap.ui.define([
 			sinon.stub(oValueHelp, "getItemForValue").callsFake(fnGetItemsForValue);
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true);
 
+			oValueType = new StringType(); // use odata-String type to parse "" to null -> so "" cannot be a value for typing
 			oConditionType = new ConditionType({
+				valueType: oValueType,
 				display: FieldDisplay.Description,
 				fieldHelpID: "VH1",
 				operators: ["EQ"],
@@ -2924,6 +2926,8 @@ sap.ui.define([
 			oValueHelp = undefined;
 			oConditionType.destroy();
 			oConditionType = undefined;
+			oValueType.destroy();
+			oValueType = undefined;
 			bAsyncCalled = undefined;
 		}
 	});
@@ -2934,6 +2938,7 @@ sap.ui.define([
 		var oConfig = { // to compare
 			value: "I1",
 			parsedValue: "I1",
+			dataType: oValueType,
 			checkKey: true,
 			checkDescription: false,
 			context: {inParameters: undefined, outParameters: undefined, payload: undefined},
@@ -2966,6 +2971,7 @@ sap.ui.define([
 		var oConfig = { // to compare
 			value: "I2",
 			parsedValue: "I2",
+			dataType: oValueType,
 			checkKey: true,
 			checkKeyFirst: true,
 			checkDescription: true,

@@ -108,6 +108,12 @@ sap.ui.define([
 
 	};
 
+	ODataFieldBaseDelegate.getDefaultValueHelpDelegate = function(oPayload) {
+
+		return {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}};
+
+	};
+
 	ODataFieldBaseDelegate.getTypeUtil = function (oPayload) {
 		return TypeUtil;
 	};

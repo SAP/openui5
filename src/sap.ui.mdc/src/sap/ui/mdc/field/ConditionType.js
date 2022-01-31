@@ -144,7 +144,7 @@ sap.ui.define([
 					var vKey = bIsUnit ? oCondition.values[0][1] : oCondition.values[0];
 
 					return SyncPromise.resolve().then(function() {
-						return _getDescription.call(this, vKey, oCondition, oBindingContext, oConditionModel, sConditionModelName);
+						return _getDescription.call(this, vKey, oCondition, oType, oBindingContext, oConditionModel, sConditionModelName);
 					}.bind(this)).then(function(vDescription) { // if description needs to be requested -> return if it is resolved
 						if (vDescription) {
 							oCondition = merge({}, oCondition); // do not manipulate original object
@@ -555,7 +555,7 @@ sap.ui.define([
 		}
 
 		return SyncPromise.resolve().then(function() {
-			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oType, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		}.bind(this)).then(function(oResult) {
 			return fnGetResult.call(this, oResult, fnSuccess);
 		}.bind(this)).catch(function(oException) {
@@ -884,7 +884,7 @@ sap.ui.define([
 
 	}
 
-	function _getItemForValue(vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
@@ -893,6 +893,7 @@ sap.ui.define([
 		var oConfig = {
 				value: vValue,
 				parsedValue: vParsedValue,
+				dataType: oType,
 				inParameters: undefined, // TODO: needed?
 				outParameters: undefined, // TODO: needed?
 				bindingContext: oBindingContext,
@@ -915,31 +916,32 @@ sap.ui.define([
 
 	}
 
-	function _getDescription(vKey, oCondition, oBindingContext, oConditionModel, sConditionModelName) {
+	function _getDescription(vKey, oCondition, oType, oBindingContext, oConditionModel, sConditionModelName) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 		var oControl = this.oFormatOptions.control;
 		if (oDelegate) {
-			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName, oCondition.payload, oControl);
+			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName, oCondition.payload, oControl, oType);
 		} else if (oFieldHelp) {
 			if (oFieldHelp.isA("sap.ui.mdc.ValueHelp")) {
-					var oConfig = {
-						value: vKey,
-						parsedValue: vKey,
-						context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
-						bindingContext: oBindingContext,
-						conditionModel: oConditionModel,
-						conditionModelName: sConditionModelName,
-						checkKey: true,
-						checkDescription: false,
-						caseSensitive: true, // case sensitive as used to get description for known key
-						exception: FormatException,
-						control: oControl
-					};
-					return oFieldHelp.getItemForValue(oConfig);
-				} else {
+				var oConfig = {
+					value: vKey,
+					parsedValue: vKey,
+					dataType: oType,
+					context: {inParameters: oCondition.inParameters, outParameters: oCondition.outParameters, payload: oCondition.payload},
+					bindingContext: oBindingContext,
+					conditionModel: oConditionModel,
+					conditionModelName: sConditionModelName,
+					checkKey: true,
+					checkDescription: false,
+					caseSensitive: true, // case sensitive as used to get description for known key
+					exception: FormatException,
+					control: oControl
+				};
+				return oFieldHelp.getItemForValue(oConfig);
+			} else {
 				return oFieldHelp.getTextForKey(vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
 			}
 		}

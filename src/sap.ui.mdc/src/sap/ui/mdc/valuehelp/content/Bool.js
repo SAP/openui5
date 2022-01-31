@@ -107,7 +107,7 @@ sap.ui.define([
 		return Promise.resolve().then(function () {
 			// don't need to create items for this, just use the type to check
 			var oGlobalConfig = this.getConfig();
-			var oType = oGlobalConfig && oGlobalConfig.dataType;
+			var oType = oConfig.dataType || (oGlobalConfig && oGlobalConfig.dataType);
 
 			if (oType) {
 				if (oConfig.checkKey) {

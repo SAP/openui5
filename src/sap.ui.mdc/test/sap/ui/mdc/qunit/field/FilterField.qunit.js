@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/mdc/field/FieldValueHelp",
+	"sap/ui/mdc/ValueHelp",
+	"sap/ui/mdc/valuehelp/Dialog",
+	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/field/FieldInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
@@ -20,7 +22,9 @@ sap.ui.define([
 		jQuery,
 		qutils,
 		FilterField,
-		FieldValueHelp,
+		ValueHelp,
+		Dialog,
+		Conditions,
 		FieldInput,
 		FieldMultiInput,
 		FilterOperatorUtil,
@@ -80,7 +84,7 @@ sap.ui.define([
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
 		assert.equal(oFilterField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 		var oFieldHelp = oCore.byId(oFilterField._sDefaultFieldHelp);
-		assert.ok(oFieldHelp && oFieldHelp instanceof FieldValueHelp, "FieldValueHelp used");
+		assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
 
 	});
 
