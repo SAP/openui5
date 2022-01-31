@@ -7,13 +7,16 @@ sap.ui.define([
 ], function (Engine, Table) {
 	"use strict";
 
-	// Returns the designTime metadata for the control. By default all the properties which are not part of the allowed list array will be ignored from RTA/DTA
-	function enhanceDesignTimeMetadata(aAllowed, sKey, oAllowedDesignTime) {
-		var oObject = {};
-		oObject[sKey] = {
-			ignore: !aAllowed.includes(sKey)
-		};
-		Object.assign(oAllowedDesignTime, oObject);
+	// Returns the designTime metadata for the control. By default all the properties/aggregations which are not part of the allowed list array will be ignored from RTA/DTA
+	function enhanceDesignTimeMetadata(aAllowed, sKey, oDesignTime) {
+		var bAllowed = aAllowed.includes(sKey);
+		var oObject = bAllowed && oDesignTime[sKey] || {};
+		if (!Object.keys(oObject).length) {
+			oObject[sKey] = {
+				ignore: !bAllowed
+			};
+		}
+		Object.assign(oDesignTime, oObject);
 	}
 
 	// Returns the designTime object for RTA/DTA
