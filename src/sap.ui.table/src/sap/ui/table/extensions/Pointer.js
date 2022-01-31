@@ -739,6 +739,10 @@ sap.ui.define([
 					return;
 				}
 
+				if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
+					window.getSelection().empty();
+				}
+
 				var sSelectedText = window.getSelection().toString();
 				if (!oEvent.shiftKey && sSelectedText.length > 0 && sSelectedText !== "\n") {
 					Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
