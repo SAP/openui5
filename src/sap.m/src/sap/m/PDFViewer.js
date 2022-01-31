@@ -481,7 +481,8 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._isEmbeddedModeAllowed = function () {
-			return this._isDisplayTypeAuto() ? Device.system.desktop : this._isDisplayTypeEmbedded();
+			//Check if Desktop View is emulated from mobile as well
+			return this._isDisplayTypeAuto() ? Device.system.desktop && !Device.browser.mobile : this._isDisplayTypeEmbedded();
 		};
 
 		/**
