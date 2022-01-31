@@ -14,19 +14,22 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	var VersionInfo = {};
 
 	/**
-	 * Loads the version info file (resources/sap-ui-version.json) asynchronously and returns a Promise.
-	 * The returned Promise resolves with the version info files content.
+	 * Loads the version info asynchronously from resource "sap-ui-version.json".
 	 *
-	 * If a library name is specified then the version info of the individual library will be retrieved.
+	 * By default, the returned promise will resolve with the whole version info file's content.
+	 * If a library name is specified in the options, then the promise will resolve with the
+	 * version info for that library only or with <code>undefined</code>, if the named library
+	 * is not listed in the version info file.
 	 *
-	 * In case of the version info file is not available an error will occur when calling this function.
+	 * If loading the version info file fails, the promise will be rejected with the corresponding
+	 * error.
 	 *
-	 * @param {object} mOptions an object map (see below)
-	 * @param {string} mOptions.library name of the library (e.g. "sap.ui.core")
-	 * @return {Promise} a Promise which resolves with one of these values:
-	 *                   the full version info,
-	 *                   the library specific one,
-	 *                   undefined if library is not listed or there was an error during loading.
+	 * @param {object} [mOptions] Map of options
+	 * @param {string} [mOptions.library] Name of a library (e.g. "sap.ui.core")
+	 * @returns {Promise<object|undefined>}
+	 *    A promise which resolves with the full version info or with the library specific version
+	 *    info or <code>undefined</code> if the library is not listed; if an error occurred during
+	 *    loading, then the promise is rejected.
 	 * @since 1.56.0
 	 * @public
 	 * @static
