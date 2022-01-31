@@ -3,4 +3,15 @@
 /* Horizon theme                                       */
 /* =================================================== */
 
-@_sap_ui_rta_Toolbar_Personalization_BaseColor: darken(saturate(@sapPrimary1, 5), 9); //#2a3a48
+@_sap_ui_rta_Toolbar_Personalization_BaseColor: @sapUiToolbarBackground;
+@_sap_ui_rta_Toolbar_Personalization_TextColor: @sapUiShellTextColor;
+
+.sapUiRtaToolbar.type_personalization {
+  .sapMBtn {
+    .sapMBtnTransparent.sapMBtnInner {
+      .sapMBtnContent {
+        text-shadow: none;
+      }
+    }
+  }
+}

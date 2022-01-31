@@ -3,21 +3,78 @@
 /* Horizon theme                            */
 /* ======================================== */
 
-@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG: lighten(saturate(@sapPrimary2, 40%), 42%); //#CAE4FB
-@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite; //#fff
-@_sap_ui_rta_Toolbar_Base_BaseColor: @sapPrimary1; //#3f5161;
-@_sap_ui_rta_Toolbar_Base_BtnHover: fade(lighten(@sapPrimary1, 18%), 50%); //rgba(99, 127, 153, 0.5)
+@_sap_ui_rta_Toolbar_Base_SegBBtnHoverBG: @sapUiToolbarBackground;
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiShellTextColor;
+@_sap_ui_rta_Toolbar_Base_BaseColor: @sapUiToolbarBackground;
+@_sap_ui_rta_Toolbar_Base_BtnHover: @sapUiShellTextColor;
+@_sap_ui_rta_Toolbar_Base_BtnSelected: @sapUiSelected;
 
 .sapUiRtaMode {
 	.sapUiRtaToolbar {
+
+		.sapMSegB {
+			.sapMSegBBtn {
+				margin:0px 2px;
+				.sapMSegBBtnInnerWrapper {
+					background-color: @sapUiToolbarBackground;
+				}
+			}
+		}
+
 		.sapMBtn {
 			&.sapMBtnDisabled .sapMBtnInner {
 				opacity: 1.0;
 			}
+		}
+
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+
+			&:hover .sapMSegBBtnInner,
+			&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
+				color: @_sap_ui_rta_Toolbar_Base_BtnHover;
+			}
+
+			&:focus .sapMSegBBtnInner {
+				outline: 0.0625rem solid @_sap_ui_rta_Toolbar_Base_BtnSelected; //1px
+				outline-offset: -0.0625rem; //1px
+				border-radius: @sapUiElementBorderCornerRadius;
+			}
+
+			&.sapMSegBBtnSel {
+
+				&:hover .sapMSegBBtnInner::after {
+					border-bottom: 0.125rem solid @_sap_ui_rta_Toolbar_Base_BtnHover; //2px
+					border-radius: 0;
+				}
+
+				& .sapMSegBBtnInner::after {
+					border-radius: 0;
+				}
+			}
+		}
+		.sapMBtn:focus .sapMFocusable {
+			border: 0.0625rem solid @_sap_ui_rta_Toolbar_Base_BtnSelected; //1px
+		}
+		.sapUiRtaToolbarSwitcherSection {
+			.sapMSegBBtn:hover {
+				.sapUiIcon,
+				&.sapMSegBBtnSel .sapMSegBBtnInner .sapUiIcon {
+					color: @_sap_ui_rta_Toolbar_Base_BtnHover;
+				}
+			}
+		}
+
+		.sapMTB:not(.sapMTB-Info-CTX) {
+			border-top-right-radius: 0;
+			border-top-left-radius: 0;
 		}
 	}
 }
 
 .sapUiSizeCozy .sapUiRtaToolbar .sapMSegB .sapMSegBBtn .sapMSegBBtnInner {
 	line-height: 2rem; //32px
+}
+
+html.sap-desktop .sapUiRtaMode .sapMSegBBtnFocusable:focus .sapMSegBBtnInner:after {
+	border: none;
 }
