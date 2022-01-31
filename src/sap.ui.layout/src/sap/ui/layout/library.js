@@ -549,6 +549,9 @@ sap.ui.define([
 		/**
 		 * Uses the <code>GridLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
+		 * @deprecated As of version 1.67.0,
+		 * as the <code>sap.ui.commons</code> library is deprecated, and the <code>GridLayout</code> must not be used in responsive applications.
+		 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
 		 */
 		GridLayout : "GridLayout",
 
