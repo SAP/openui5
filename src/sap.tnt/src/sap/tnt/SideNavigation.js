@@ -174,7 +174,7 @@ sap.ui.define([
 			}
 
 			if (isExpanded) {
-				$this.toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
+				this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
 
 				if (itemAggregation) {
 					itemAggregation.setExpanded(isExpanded);
@@ -213,10 +213,10 @@ sap.ui.define([
 				return;
 			}
 
-			this.$().toggleClass('sapTntSideNavigationNotExpandedWidth', !isExpanded);
+			this.getDomRef().classList.toggle('sapTntSideNavigationNotExpandedWidth', !isExpanded);
 
 			if (!isExpanded) {
-				this.$().toggleClass('sapTntSideNavigationNotExpanded', !isExpanded);
+				this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded', !isExpanded);
 
 				if (this.getAggregation('item')) {
 					this.getAggregation('item').setExpanded(isExpanded);
