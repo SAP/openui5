@@ -133,7 +133,7 @@ sap.ui.define([
 	QUnit.test("getOperatorsForType", function(assert) {
 
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.String).length, 20, "Default operators for String");
-		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 44, "Default operators for date");
+		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Date).length, 54, "Default operators for date");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.DateTime).length, 12, "Default operators for datetime");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Time).length, 12, "Default operators for time");
 		assert.equal(FilterOperatorUtil.getOperatorsForType(BaseType.Numeric).length, 12, "Default operators for numeric");
@@ -1260,6 +1260,86 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
+			"FIRSTDAYWEEK": [{
+				formatArgs: [Condition.createCondition("FIRSTDAYWEEK", [undefined])],
+				formatValue: "First Date in This Week",
+				parseArgs: ["First Date in This Week"],
+				parsedValue: "",
+				condition: Condition.createCondition("FIRSTDAYWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"LASTTDAYWEEK": [{
+				formatArgs: [Condition.createCondition("LASTTDAYWEEK", [undefined])],
+				formatValue: "Last Date in This Week",
+				parseArgs: ["Last Date in This Week"],
+				parsedValue: "",
+				condition: Condition.createCondition("LASTTDAYWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"FIRSTDAYMONTH": [{
+				formatArgs: [Condition.createCondition("FIRSTDAYMONTH", [undefined])],
+				formatValue: "First Date in This Month",
+				parseArgs: ["First Date in This Month"],
+				parsedValue: "",
+				condition: Condition.createCondition("FIRSTDAYMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"LASTTDAYMONTH": [{
+				formatArgs: [Condition.createCondition("LASTTDAYMONTH", [undefined])],
+				formatValue: "Last Date in This Month",
+				parseArgs: ["Last Date in This Month"],
+				parsedValue: "",
+				condition: Condition.createCondition("LASTTDAYMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"FIRSTDAYQUARTER": [{
+				formatArgs: [Condition.createCondition("FIRSTDAYQUARTER", [undefined])],
+				formatValue: "First Date in This Quarter",
+				parseArgs: ["First Date in This Quarter"],
+				parsedValue: "",
+				condition: Condition.createCondition("FIRSTDAYQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"LASTTDAYQUARTER": [{
+				formatArgs: [Condition.createCondition("LASTTDAYQUARTER", [undefined])],
+				formatValue: "Last Date in This Quarter",
+				parseArgs: ["Last Date in This Quarter"],
+				parsedValue: "",
+				condition: Condition.createCondition("LASTTDAYQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"FIRSTDAYYEAR": [{
+				formatArgs: [Condition.createCondition("FIRSTDAYYEAR", [undefined])],
+				formatValue: "First Date in This Year",
+				parseArgs: ["First Date in This Year"],
+				parsedValue: "",
+				condition: Condition.createCondition("FIRSTDAYYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"LASTTDAYYEAR": [{
+				formatArgs: [Condition.createCondition("LASTTDAYYEAR", [undefined])],
+				formatValue: "Last Date in This Year",
+				parseArgs: ["Last Date in This Year"],
+				parsedValue: "",
+				condition: Condition.createCondition("LASTTDAYYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
 			"TODAYFROMTO": [{
 				formatArgs: [Condition.createCondition("TODAYFROMTO", [4, 6])],
 				formatValue: "Today -4 / +6 days",
@@ -1465,7 +1545,17 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-
+			"SPECIFICMONTHINYEAR": [{
+				formatArgs: [Condition.createCondition("SPECIFICMONTHINYEAR", [4, 2000])],
+				formatValue: "Month in Year (May,2000)",
+				parsedValue: "42000",
+				condition: Condition.createCondition("SPECIFICMONTHINYEAR", [4, 2000], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				longText: "Month in Year",
+				tokenText: "Month in Year ({0},{1})"
+			}],
 			"LASTQUARTER": [{
 				formatArgs: [Condition.createCondition("LASTQUARTER", [undefined])],
 				formatValue: "Last quarter",
@@ -1657,6 +1747,16 @@ sap.ui.define([
 				formatValue: "Year to date",
 				parsedValue: "",
 				condition: Condition.createCondition("YEARTODATE", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+
+			"DATETOYEAR": [{
+				formatArgs: [Condition.createCondition("DATETOYEAR", [undefined])],
+				formatValue: "Date to year",
+				parsedValue: "",
+				condition: Condition.createCondition("DATETOYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
