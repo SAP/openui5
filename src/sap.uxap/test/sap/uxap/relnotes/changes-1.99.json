@@ -3,6 +3,17 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "6843eafce1489a7c97cfd23bd8ac14648a162a98",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ObjectPageState tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280011569"
+          }
+        ]
+      },
+      {
         "id": "f1f26ea6b91c06817e4b6d581e368bb71cd2ca80",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix hiding of footer without animations",

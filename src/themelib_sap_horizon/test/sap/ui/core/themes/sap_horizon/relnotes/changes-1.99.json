@@ -3,6 +3,17 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "10b6691d561121d5825c8841561447edbfa8ef2b",
+        "type": "FIX",
+        "text": " sap.m.Page: Section top position adapted when InfoBar used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180434227"
+          }
+        ]
+      },
+      {
         "id": "3eb7398249ead50cb088322cf13a93df94b3f552",
         "type": "FIX",
         "text": " sap.m.MenuButton: Now has correct styling when disabled in horizon",

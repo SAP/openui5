@@ -3,6 +3,60 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "196e4a3312bbf22d87211cedce025e8284258c64",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "60bf347349529229aa6e002010a98819df32419e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "5da45c5640461cfe101b67f359dafcac7411dd50",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo: ValueListWithFixedValues takes precedence over SearchSupported",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280012068"
+          }
+        ]
+      },
+      {
+        "id": "e3fb8f1347a3636beafb0fe8b130847db9b4904f",
+        "type": "FEATURE",
+        "text": " sap.ui.model.odata.type.DateTimeWithTimezone: introduced new type"
+      },
+      {
+        "id": "d6a2fd81910e8cad1c7a4771d319ee8be4099547",
+        "type": "FEATURE",
+        "text": " DateFormat: Show date with IANA timezone names"
+      },
+      {
+        "id": "22dc281ccadee2264dce3e65f925daf663ccd280",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts: do not fill up array with undefined in case of Infinity",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280015704"
+          }
+        ]
+      },
+      {
         "id": "c18309c28bffd88ee8a407ab1f0395387b4dbedd",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataListBinding: oHeaderContext.getObject() returns header data"

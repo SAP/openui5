@@ -3,6 +3,21 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "8fdb21cbbbca90f9525622afaa656b8bb4785249",
+        "type": "FIX",
+        "text": " mdc.FilterBar: sequence during SUBMIT corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180430298"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280008776"
+          }
+        ]
+      },
+      {
         "id": "b563689bbe350db075eb7ef62bc39ffc314ab561",
         "type": "FIX",
         "text": " ListFieldHelp: use minWidth of Field",
