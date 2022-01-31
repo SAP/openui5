@@ -186,6 +186,7 @@ sap.ui.define([
 			var sDir, sOtherDir;
 			var sSizeValue = this.getSecondaryContentSize();
 			var bShow = this.getShowSecondaryContent();
+			var oSecondaryContentContainer = null;
 
 			if (bVertical) {
 				// Vertical mode
@@ -218,6 +219,9 @@ sap.ui.define([
 				this._contentContainer.css(sDir, "0");
 			}
 
+			if (this.getDomRef()) {
+				oSecondaryContentContainer = this.getDomRef().querySelector("[id$='pane']");
+			}
 			if (!bShow) {
 				// The theming parameter is something along the lines of "500ms", the "ms"-part is
 				// ignored by parseInt.
@@ -227,10 +231,14 @@ sap.ui.define([
 				// Maybe we could also allow "s"-values and then multiply everything below 20 with 1000...?
 
 				this._closeContentDelayId = setTimeout(function() {
-					this._secondaryContentContainer.toggleClass("sapUiUfdSplitContSecondClosed", true);
-				}.bind(this), iHideDelay);
+					if (oSecondaryContentContainer) {
+						oSecondaryContentContainer.classList.toggle("sapUiUfdSplitContSecondClosed", true);
+					}
+				}, iHideDelay);
 			} else {
-				this._secondaryContentContainer.toggleClass("sapUiUfdSplitContSecondClosed", false);
+				if (oSecondaryContentContainer) {
+					oSecondaryContentContainer.classList.toggle("sapUiUfdSplitContSecondClosed", false);
+				}
 			}
 
 		}

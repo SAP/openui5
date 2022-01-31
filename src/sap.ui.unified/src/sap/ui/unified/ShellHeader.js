@@ -208,7 +208,12 @@ sap.ui.define([
 
 	ShellHeader.prototype.onAfterRendering = function(){
 		this._refresh();
-		this.$("hdr-center").toggleClass("sapUiUfdShellAnim", !this._noHeadCenterAnim);
+		if (this.getDomRef()) {
+			var oHdrCenter = this.getDomRef().querySelector("[id$='hdr-center']");
+				if (oHdrCenter) {
+				oHdrCenter.classList.toggle("sapUiUfdShellAnim", !this._noHeadCenterAnim);
+			}
+		}
 	};
 
 	ShellHeader.prototype.onThemeChanged = function(){
@@ -237,15 +242,19 @@ sap.ui.define([
 
 		var oUser = this.getUser(),
 			isPhoneSize = jQuery("html").hasClass("sapUiMedia-Std-Phone"),
-			searchVisible = !this.$("hdr-search").hasClass("sapUiUfdShellHidden"),
-			$logo = this.$("icon");
+			searchVisible = !this.$("hdr-search").hasClass("sapUiUfdShellHidden");
 
 		if (oUser) {
 			oUser._refreshImage();
 			oUser._checkAndAdaptWidth(searchVisible && !!this.getSearch());
 		}
 
-		$logo.parent().toggleClass("sapUiUfdShellHidden", isPhoneSize && searchVisible && !!this.getSearch());
+		if (this.getDomRef()) {
+			var oIcon = this.getDomRef().querySelector("[id$='icon']");
+				if (oIcon) {
+				oIcon.parentNode.classList.toggle("sapUiUfdShellHidden", isPhoneSize && searchVisible && !!this.getSearch());
+			}
+		}
 
 		var	we = this.$("hdr-end").outerWidth(),
 			wb = this.$("hdr-begin").outerWidth(),

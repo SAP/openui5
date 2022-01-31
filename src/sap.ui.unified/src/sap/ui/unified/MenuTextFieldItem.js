@@ -170,7 +170,9 @@ sap.ui.define([
 	};
 
 	MenuTextFieldItem.prototype.hover = function(bHovered, oMenu){
-		this.$().toggleClass("sapUiMnuItmHov", bHovered);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiMnuItmHov", bHovered);
+		}
 
 		if (bHovered && oMenu.checkEnabled(this)) {
 			oMenu.closeSubmenu(false, true);
@@ -314,9 +316,13 @@ sap.ui.define([
 
 	MenuTextFieldItem.prototype.setValueState = function(sValueState){
 		this.setProperty("valueState", sValueState, true);
-		var $tf = this.$("tf");
-		$tf.toggleClass("sapUiMnuTfItemTfErr", sValueState == ValueState.Error);
-		$tf.toggleClass("sapUiMnuTfItemTfWarn", sValueState == ValueState.Warning);
+		if (this.getDomRef()) {
+			var oTf = this.getDomRef().querySelector("[id$='tf']");
+			if (oTf) {
+				oTf.classList.toggle("sapUiMnuTfItemTfErr", sValueState == ValueState.Error);
+				oTf.classList.toggle("sapUiMnuTfItemTfWarn", sValueState == ValueState.Warning);
+			}
+		}
 		var sTooltip = ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
 		if (sTooltip) {
 			this.$().attr("title", sTooltip);

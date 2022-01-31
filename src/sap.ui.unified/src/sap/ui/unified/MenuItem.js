@@ -153,7 +153,9 @@ sap.ui.define(['sap/ui/core/IconPool', './MenuItemBase', './library', 'sap/ui/co
 	};
 
 	MenuItem.prototype.hover = function(bHovered, oMenu){
-		this.$().toggleClass("sapUiMnuItmHov", bHovered);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiMnuItmHov", bHovered);
+		}
 	};
 
 	MenuItem.prototype.focus = function(oMenu){

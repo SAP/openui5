@@ -115,7 +115,9 @@ sap.ui.define([
 	ShellHeadItem.prototype.setStartsSection = function(bStartsSection){
 		bStartsSection = !!bStartsSection;
 		this.setProperty("startsSection", bStartsSection, true);
-		this.$().toggleClass("sapUiUfdShellHeadItmDelim", bStartsSection);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadItmDelim", bStartsSection);
+		}
 		return this;
 	};
 
@@ -123,7 +125,9 @@ sap.ui.define([
 	ShellHeadItem.prototype.setShowSeparator = function(bShowSeparator){
 		bShowSeparator = !!bShowSeparator;
 		this.setProperty("showSeparator", bShowSeparator, true);
-		this.$().toggleClass("sapUiUfdShellHeadItmSep", bShowSeparator);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadItmSep", bShowSeparator);
+		}
 		return this;
 	};
 
@@ -137,7 +141,7 @@ sap.ui.define([
 		}
 
 		if (bToggleEnabled) {
-			$This.toggleClass("sapUiUfdShellHeadItmSel", bSelected);
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadItmSel", bSelected);
 			$This.attr("aria-pressed", bSelected);
 		} else {
 			$This.removeClass("sapUiUfdShellHeadItmSel");
@@ -168,7 +172,9 @@ sap.ui.define([
 	ShellHeadItem.prototype.setShowMarker = function(bMarker){
 		bMarker = !!bMarker;
 		this.setProperty("showMarker", bMarker, true);
-		this.$().toggleClass("sapUiUfdShellHeadItmMark", bMarker);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadItmMark", bMarker);
+		}
 		return this;
 	};
 

@@ -1227,9 +1227,15 @@ sap.ui.define([
 		}
 
 		if ($Menu.outerHeight(true) > iMaxHeight) {
-			$Menu.css("max-height", iMaxHeight + "px").toggleClass("sapUiMnuScroll", true);
+			$Menu.css("max-height", iMaxHeight + "px");
+			if (oMenu.getDomRef()) {
+				oMenu.getDomRef().classList.toggle("sapUiMnuScroll", true);
+			}
 		} else {
-			$Menu.css("max-height", "").toggleClass("sapUiMnuScroll", false);
+			$Menu.css("max-height", "");
+			if (oMenu.getDomRef()) {
+				oMenu.getDomRef().classList.toggle("sapUiMnuScroll", false);
+			}
 		}
 	}
 

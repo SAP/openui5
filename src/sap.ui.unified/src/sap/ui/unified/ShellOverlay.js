@@ -110,12 +110,17 @@ sap.ui.define([
 
 		if (this._getAnimActive()) {
 			setTimeout(function(){
-				jQuery(document.getElementById("sap-ui-blocklayer-popup")).toggleClass("sapUiUfdShellOvrlyBlyTp", false);
+				var oBlockLayer = document.getElementById("sap-ui-blocklayer-popup");
+				if (oBlockLayer) {
+					oBlockLayer.classList.toggle("sapUiUfdShellOvrlyBlyTp", false);
+				}
 			}, 50);
 		}
 
 		setTimeout(function(){
-			this.$().toggleClass("sapUiUfdShellOvrlyOpening", false);
+			if (this.getDomRef()) {
+				this.getDomRef().classList.toggle("sapUiUfdShellOvrlyOpening", false);
+			}
 		}.bind(this), this._getAnimDuration(true));
 	};
 
@@ -129,14 +134,20 @@ sap.ui.define([
 			return;
 		}
 
-		this.$().toggleClass("sapUiUfdShellOvrlyCntntHidden", true).toggleClass("sapUiUfdShellOvrlyClosing", true);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellOvrlyCntntHidden", true);
+			this.getDomRef().classList.toggle("sapUiUfdShellOvrlyClosing", true);
+		}
 
 		this._setSearchWidth();
 
 		setTimeout(function(){
 			var $Bl = jQuery(document.getElementById("sap-ui-blocklayer-popup"));
 			if (Popup.blStack.length == 1 && this._getAnimActive() && $Bl.hasClass("sapUiUfdShellOvrlyBly")) {
-				$Bl.toggleClass("sapUiUfdShellOvrlyBlyTp", true);
+				var oBlockLayer = document.getElementById("sap-ui-blocklayer-popup");
+				if (oBlockLayer) {
+					oBlockLayer.classList.toggle("sapUiUfdShellOvrlyBlyTp", true);
+				}
 			}
 		}.bind(this), Math.max(this._getAnimDuration(false) - this._getBLAnimDuration(), 0));
 
@@ -236,7 +247,9 @@ sap.ui.define([
 		}
 
 		setTimeout(function(){
-			this.$().toggleClass("sapUiUfdShellOvrlyCntntHidden", false);
+			if (this.getDomRef()) {
+				this.getDomRef().classList.toggle("sapUiUfdShellOvrlyCntntHidden", false);
+			}
 			this.$("search").css("width", "");
 		}.bind(this), 10);
 	};

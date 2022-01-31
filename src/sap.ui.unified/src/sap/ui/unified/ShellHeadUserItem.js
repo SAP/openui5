@@ -120,7 +120,9 @@ sap.ui.define([
 		var $Ref = this.$(),
 			$NameRef = this.$("name");
 		var iBeforeWidth = $Ref.width();
-		$Ref.toggleClass("sapUiUfdShellHeadUsrItmLimit", false);
+		if (this.getDomRef()) {
+			this.getDomRef().classList.toggle("sapUiUfdShellHeadUsrItmLimit", false);
+		}
 		//User name cannot be larger than 240px
 		//(if a search field is shown in the shell this max size decreases depending on the screen width)
 		var iMax = 240;
@@ -128,7 +130,9 @@ sap.ui.define([
 			iMax = Math.min(iMax, 0.5 * document.documentElement.clientWidth - 225);
 		}
 		if (iMax < $NameRef.width()) {
-			$Ref.toggleClass("sapUiUfdShellHeadUsrItmLimit", true);
+			if (this.getDomRef()) {
+				this.getDomRef().classList.toggle("sapUiUfdShellHeadUsrItmLimit", true);
+			}
 		}
 		return iBeforeWidth != $Ref.width();
 	};
