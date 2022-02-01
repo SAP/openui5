@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/util/DataProvider",
+	"sap/ui/integration/util/Utils",
 	"sap/ui/core/Core",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
@@ -28,6 +29,7 @@ sap.ui.define([
 		Header,
 		Filter,
 		DataProvider,
+		Utils,
 		Core,
 		CoreManifest,
 		Log,
@@ -2094,6 +2096,33 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_DefaultHeader_NoContent);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
+		});
+
+		QUnit.test("Error is logged when binding syntax is not 'complex'", function (assert) {
+			// Arrange
+			var oLogSpy = this.spy(Log, "error");
+			this.stub(Utils, "isBindingSyntaxComplex").returns(false);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.bindingSyntax"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {},
+					"content": {
+						"item": { }
+					}
+				}
+			});
+
+			// Act
+			this.oCard.startManifestProcessing(DOM_RENDER_LOCATION);
+
+			// Assert
+			assert.ok(
+				oLogSpy.calledWith(sinon.match(/^Cannot parse manifest. Complex binding syntax is not enabled.*/)),
+				"Error message should be logged"
+			);
 		});
 
 		QUnit.module("Component Card");

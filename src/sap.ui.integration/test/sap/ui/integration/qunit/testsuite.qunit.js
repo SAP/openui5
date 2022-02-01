@@ -12,6 +12,7 @@ sap.ui.define(function () {
 			},
 			ui5: {
 				language: "en",
+				compatVersion: "edge",
 				libs: ["sap.f", "sap.m", "sap.ui.integration"], // Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
 				noConflict: true,
 				// preload: "auto",
