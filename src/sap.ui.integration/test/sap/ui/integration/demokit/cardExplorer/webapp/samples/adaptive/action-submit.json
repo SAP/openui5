@@ -45,37 +45,22 @@
 	  "version": "1.0",
 	  "body": [
 		{
-		  "type": "TextBlock",
-		  "text": "Your Name",
-		  "isSubtle": true,
-		  "size": "medium"
-		},
-		{
 		  "type": "Input.Text",
+		  "label": "Your Name",
 		  "placeholder": "Last, First",
 		  "style": "text",
 		  "id": "SimpleVal"
 		},
 		{
-		  "type": "TextBlock",
-		  "text": "Email address",
-		  "isSubtle": true,
-		  "size": "medium"
-		},
-		{
 		  "type": "Input.Text",
+		  "label": "Email address",
 		  "placeholder": "youremail@example.com",
 		  "style": "email",
 		  "id": "EmailVal"
 		},
 		{
-		  "type": "TextBlock",
-		  "text": "Phone Number",
-		  "isSubtle": true,
-		  "size": "medium"
-		},
-		{
 		  "type": "Input.Text",
+		  "label": "Phone Number",
 		  "placeholder": "xxx.xxx.xxxx",
 		  "style": "tel",
 		  "id": "TelVal",
