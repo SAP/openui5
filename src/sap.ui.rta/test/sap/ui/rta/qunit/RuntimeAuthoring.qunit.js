@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/qunit/QUnitUtils",
@@ -31,6 +32,7 @@ sap.ui.define([
 	KeyCodes,
 	SmartVariantManagementApplyAPI,
 	FlexRuntimeInfoAPI,
+	Change,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	QUnitUtils,
@@ -324,7 +326,26 @@ sap.ui.define([
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function(iNumberOfChanges) {
 					assert.strictEqual(iNumberOfChanges, 1, "then the change is written");
-				});
+					var mPropertyBag = {
+						oComponent: oComp,
+						selector: oComp,
+						invalidateCache: false,
+						currentLayer: this.oRta.getLayer(),
+						includeDirtyChanges: true
+					};
+					return PersistenceWriteAPI._getUIChanges(mPropertyBag).then(function(aChanges) {
+						assert.strictEqual(
+							aChanges[0].getApplyState(),
+							Change.applyState.APPLY_FINISHED,
+							"then the change keeps its apply state"
+						);
+						assert.notStrictEqual(
+							aChanges[0].getRevertData(),
+							null,
+							"then the change keeps its revert data"
+						);
+					});
+				}.bind(this));
 		});
 
 		QUnit.test("when stopping rta with saving changes and versioning is disabled", function(assert) {
