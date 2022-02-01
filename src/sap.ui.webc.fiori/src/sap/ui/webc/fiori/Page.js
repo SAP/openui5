@@ -119,8 +119,8 @@ sap.ui.define([
 				 * Defines the footer HTML Element.
 				 */
 				footer: {
-					type: "sap.ui.core.Control",
-					multiple: true,
+					type: "sap.ui.webc.fiori.IBar",
+					multiple: false,
 					slot: "footer"
 				},
 
@@ -128,8 +128,8 @@ sap.ui.define([
 				 * Defines the header HTML Element.
 				 */
 				header: {
-					type: "sap.ui.core.Control",
-					multiple: true,
+					type: "sap.ui.webc.fiori.IBar",
+					multiple: false,
 					slot: "header"
 				}
 			}

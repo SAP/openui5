@@ -22,6 +22,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			expanded: {
 				type: Boolean,
 			},
+			indeterminate: {
+				type: Boolean,
+			},
 			additionalText: {
 				type: String,
 			},
@@ -154,7 +157,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			return this.expanded ? TreeListItem.i18nBundle.getText(i18nDefaults.TREE_ITEM_COLLAPSE_NODE) : TreeListItem.i18nBundle.getText(i18nDefaults.TREE_ITEM_EXPAND_NODE);
 		}
 		static async onDefine() {
-			TreeListItem.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
+			[TreeListItem.i18nBundle] = await Promise.all([
+				i18nBundle.getI18nBundle("@ui5/webcomponents"),
+				super.onDefine(),
+			]);
 		}
 	}
 	TreeListItem.define();

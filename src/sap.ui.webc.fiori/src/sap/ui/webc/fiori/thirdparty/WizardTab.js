@@ -71,31 +71,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.fireEvent("selection-change-requested");
 			}
 		}
-		_onkeydown(event) {
-			if (this.disabled) {
-				return;
-			}
-			if (Keys.isSpace(event) || Keys.isEnter(event)) {
-				event.preventDefault();
-				this.fireEvent("selection-change-requested");
-			}
-		}
 		_onkeyup(event) {
 			if (this.disabled) {
 				return;
 			}
-			if (Keys.isSpace(event)) {
+			if ((Keys.isSpace(event) || Keys.isEnter(event)) && !Keys.isSpaceShift(event)) {
+				event.preventDefault();
 				this.fireEvent("selection-change-requested");
 			}
 		}
 		_onfocusin() {
-			if (this.disabled) {
-				return;
-			}
 			this.fireEvent("focused");
 		}
 		get tabIndex() {
-			return this.disabled ? undefined : this._tabIndex;
+			return this._tabIndex;
 		}
 		get hasTexts() {
 			return this.titleText || this.subtitleText;

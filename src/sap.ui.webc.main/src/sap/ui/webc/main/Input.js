@@ -32,6 +32,22 @@ sap.ui.define([
 	 * <br>
 	 * <b>Note:</b> If you are using the <code>sap.ui.webc.main.Input</code> as a single npm module, don't forget to import the <code>InputSuggestions</code> module from "@ui5/webcomponents/dist/features/InputSuggestions.js" to enable the suggestions functionality.
 	 *
+	 * <h3>Keyboard Handling</h3> The <code>sap.ui.webc.main.Input</code> provides the following keyboard shortcuts: <br>
+	 *
+	 *
+	 *
+	 * <ul>
+	 *     <li>[F4], [ALT]+[UP], or [ALT]+[DOWN] - Opens value help if available, same as clicking the value help icon. (Does not open suggestion list.)</li>
+	 *     <li>[ESC] - Closes the suggestion list, if open. If closed or not enabled, cancels changes and reverts to the value which the Input field had when it got the focus.</li>
+	 *     <li>[ENTER] or [RETURN] - If suggestion list is open takes over the current matching item and closes it. If value state or group header is focused, does nothing.</li>
+	 *     <li>[DOWN] - Focuses the next matching item in the suggestion list.</li>
+	 *     <li>[UP] - Focuses the previous matching item in the suggestion list.</li>
+	 *     <li>[HOME] - If focus is in the text input, moves caret before the first character. If focus is in the list, highlights the first item and updates the input accordingly.</li>
+	 *     <li>[END] - If focus is in the text input, moves caret after the last character. If focus is in the list, highlights the last item and updates the input accordingly.</li>
+	 *     <li>[PAGEUP] - If focus is in the list, moves highlight up by page size (10 items by default). If focus is in the input, does nothing.</li>
+	 *     <li>[PAGEDOWN] - If focus is in the list, moves highlight down by page size (10 items by default). If focus is in the input, does nothing.</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -204,13 +220,15 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
-				 * Receives id(or many ids) of the controls that label the input.
+				 * Receives id(or many ids) of the controls that label this control.
 				 */
 				ariaLabelledBy: {
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}

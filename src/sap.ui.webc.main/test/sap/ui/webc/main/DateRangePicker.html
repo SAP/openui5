@@ -2,7 +2,6 @@
 <html>
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <title>DateRangePicker - sap.ui.webc.main</title>
     <script src="shared-config.js"></script>
@@ -103,11 +102,11 @@
 
 
                 var oDateRangePicker7Button = new Button({
-                    text: "getEndDateValue",
+                    text: "getDateValueUTC",
                     click: function(oEvent) {
-                        console.log("Calling getEndDateValue...");
-                        var result = oDateRangePicker.getEndDateValue();
-                        console.log("... getEndDateValue returned: ", result);
+                        console.log("Calling getDateValueUTC...");
+                        var result = oDateRangePicker.getDateValueUTC();
+                        console.log("... getDateValueUTC returned: ", result);
                     }
                 });
                 oDateRangePicker7Button.placeAt("methodButtons");
@@ -115,6 +114,18 @@
 
 
                 var oDateRangePicker8Button = new Button({
+                    text: "getEndDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getEndDateValue...");
+                        var result = oDateRangePicker.getEndDateValue();
+                        console.log("... getEndDateValue returned: ", result);
+                    }
+                });
+                oDateRangePicker8Button.placeAt("methodButtons");
+
+
+
+                var oDateRangePicker9Button = new Button({
                     text: "getStartDateValue",
                     click: function(oEvent) {
                         console.log("Calling getStartDateValue...");
@@ -122,7 +133,7 @@
                         console.log("... getStartDateValue returned: ", result);
                     }
                 });
-                oDateRangePicker8Button.placeAt("methodButtons");
+                oDateRangePicker9Button.placeAt("methodButtons");
 
 
                 var oDateRangePicker = new DateRangePicker({

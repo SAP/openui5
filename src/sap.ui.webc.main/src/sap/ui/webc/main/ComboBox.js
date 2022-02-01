@@ -26,17 +26,32 @@ sap.ui.define([
 	 *
 	 * The <code>sap.ui.webc.main.ComboBox</code> component represents a drop-down menu with a list of the available options and a text input field to narrow down the options.
 	 *
-	 * It is commonly used to enable users to select an option from a predefined list. <h3>Structure</h3> The <code>sap.ui.webc.main.ComboBox</code> consists of the following elements:
+	 * It is commonly used to enable users to select an option from a predefined list.
+	 *
+	 * <h3>Structure</h3> The <code>sap.ui.webc.main.ComboBox</code> consists of the following elements:
 	 * <ul>
 	 *     <li> Input field - displays the selected option or a custom user entry. Users can type to narrow down the list or enter their own value.
 	 *     <li> Drop-down arrow - expands\collapses the option list.</li>
 	 *     <li> Option list - the list of available options.</li>
 	 * </ul>
+	 *
 	 * <h3>Keyboard Handling</h3>
 	 *
-	 * The <code>sap.ui.webc.main.ComboBox</code> provides advanced keyboard handling.
+	 * The <code>sap.ui.webc.main.ComboBox</code> provides advanced keyboard handling. <br>
 	 *
-	 * <h4>Picker</h4> If the <code>sap.ui.webc.main.ComboBox</code> is focused, you can open or close the drop-down by pressing <code>F4</code>, <code>ALT+UP</code> or <code>ALT+DOWN</code> keys. <br>
+	 *
+	 *
+	 * <ul>
+	 *     <li>[F4], [ALT]+[UP], or [ALT]+[DOWN] - Toggles the picker.</li>
+	 *     <li>[ESC] - Closes the picker, if open. If closed, cancels changes and reverts the typed in value.</li>
+	 *     <li>[ENTER] or [RETURN] - If picker is open, takes over the currently selected item and closes it.</li>
+	 *     <li>[DOWN] - Selects the next matching item in the picker.</li>
+	 *     <li>[UP] - Selects the previous matching item in the picker.</li>
+	 *     <li>[PAGEDOWN] - Moves selection down by page size (10 items by default).</li>
+	 *     <li>[PAGEUP] - Moves selection up by page size (10 items by default). </li>
+	 *     <li>[HOME] - If focus is in the ComboBox, moves cursor at the beginning of text. If focus is in the picker, selects the first item.</li>
+	 *     <li>[END] - If focus is in the ComboBox, moves cursor at the end of text. If focus is in the picker, selects the last item.</li>
+	 * </ul>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -185,6 +200,7 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
@@ -192,6 +208,7 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}

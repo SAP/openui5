@@ -45,6 +45,8 @@ sap.ui.define([
 	 *     <li>root - Used to style the outermost wrapper of the <code>sap.ui.webc.fiori.ShellBar</code></li>
 	 * </ul>
 	 *
+	 * <h3>Keyboard Handling</h3>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -60,6 +62,16 @@ sap.ui.define([
 			library: "sap.ui.webc.fiori",
 			tag: "ui5-shellbar-ui5",
 			properties: {
+
+				/**
+				 * An object of strings that defines several additional accessibility texts for even further customization.
+				 *
+				 * It supports the following fields: - <code>profileButtonTitle</code>: defines the tooltip for the profile button - <code>logoTitle</code>: defines the tooltip for the logo
+				 */
+				accessibilityTexts: {
+					type: "object",
+					defaultValue: {}
+				},
 
 				/**
 				 * Defines the <code>notificationsCount</code>, displayed in the notification icon top-right corner.

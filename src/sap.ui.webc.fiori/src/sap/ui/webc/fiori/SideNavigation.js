@@ -32,6 +32,8 @@ sap.ui.define([
 	 *
 	 * Use the available <code>sap.ui.webc.fiori.SideNavigationItem</code> and <code>sap.ui.webc.fiori.SideNavigationSubItem</code> components to build your menu. The items can consist of text only or an icon with text. The use or non-use of icons must be consistent for all items on one level. You must not combine entries with and without icons on the same level. We strongly recommend that you do not use icons on the second level.
 	 *
+	 * <h3>Keyboard Handling</h3>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

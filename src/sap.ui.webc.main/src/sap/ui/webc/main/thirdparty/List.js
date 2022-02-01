@@ -16,6 +16,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-list",
 		managedSlots: true,
+		fastNavigation: true,
 		slots:  {
 			header: {
 				type: HTMLElement,
@@ -460,6 +461,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		onItemPress(event) {
 			const pressedItem = event.detail.item;
+			if (!this.fireEvent("item-click", { item: pressedItem }, true)) {
+				return;
+			}
 			if (!this._selectionRequested && this.mode !== ListMode.Delete) {
 				this._selectionRequested = true;
 				this.onSelectionRequested({
@@ -471,8 +475,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					},
 				});
 			}
-			this.fireEvent("item-press", { item: pressedItem });
-			this.fireEvent("item-click", { item: pressedItem });
 			this._selectionRequested = false;
 		}
 		onItemClose(event) {

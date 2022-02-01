@@ -77,6 +77,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			this._colSpan = this.visibleColCount();
 		}
+		_onfocusin(event) {
+			this.parentElement._itemNavigation.setCurrentItem(this);
+		}
 		static async onDefine() {
 			TableGroupRow.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}

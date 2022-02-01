@@ -55,6 +55,8 @@ sap.ui.define([
 	 *     <li>content - Used to style the wrapper of the content</li>
 	 * </ul>
 	 *
+	 * <h3>Keyboard Handling</h3>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

@@ -217,6 +217,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return staticAreaItem.querySelector(".ui5-valuestatemessage-popover");
 		}
 		_resetFilter() {
+			this._userTypedValue = null;
+			this.inner.setSelectionRange(0, this.value.length);
 			this._filteredItems = this._filterItems("");
 			this._selectMatchingItem();
 		}
@@ -268,28 +270,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return item;
 			});
 		}
-		async handleArrowKeyPress(event) {
-			if (this.readonly || !this._filteredItems.length) {
+		handleNavKeyPress(event) {
+			if (this.focused && (Keys.isHome(event) || Keys.isEnd(event)) && this.value) {
 				return;
 			}
 			const isOpen = this.open;
-			const isArrowDown = Keys.isDown(event);
-			const isArrowUp = Keys.isUp(event);
 			const currentItem = this._filteredItems.find(item => {
 				return isOpen ? item.focused : item.selected;
 			});
 			const indexOfItem = this._filteredItems.indexOf(currentItem);
 			event.preventDefault();
-			if ((this.focused === true && isArrowUp && isOpen) || (this._filteredItems.length - 1 === indexOfItem && isArrowDown)) {
+			if (this.focused && isOpen && (Keys.isUp(event) || Keys.isPageUp(event) || Keys.isPageDown(event))) {
+				return;
+			}
+			if (this._filteredItems.length - 1 === indexOfItem && Keys.isDown(event)) {
 				return;
 			}
 			this._isKeyNavigation = true;
-			if (isArrowDown) {
-				this._handleArrowDown(event, indexOfItem);
-			}
-			if (isArrowUp) {
-				this._handleArrowUp(event, indexOfItem);
-			}
+			this[`_handle${event.key}`](event, indexOfItem);
 		}
 		_handleItemNavigation(event, indexOfItem, isForward) {
 			const isOpen = this.open;
@@ -302,7 +300,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._clearFocus();
 			if (isOpen) {
 				this._itemFocused = true;
-				this.value = isGroupItem ? this.filterValue : currentItem.text;
+				this.value = isGroupItem ? "" : currentItem.text;
 				this.focused = false;
 				currentItem.focused = true;
 			} else {
@@ -317,7 +315,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			this._announceSelectedItem(indexOfItem);
 			const item = this._getFirstMatchingItem(this.value);
-			this._applyAtomicValueAndSelection(item, "", true);
+			this._applyAtomicValueAndSelection(item, (this.open ? this._userTypedValue : null), true);
 			if ((item && !item.selected)) {
 				this.fireEvent("selection-change", {
 					item,
@@ -359,12 +357,47 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			indexOfItem = !isOpen && this.hasValueState && indexOfItem === -1 ? 0 : indexOfItem;
 			this._handleItemNavigation(event, --indexOfItem, false );
 		}
+		_handlePageUp(event, indexOfItem) {
+			const isProposedIndexValid = indexOfItem - ComboBox.SKIP_ITEMS_SIZE > -1;
+			indexOfItem = isProposedIndexValid ? indexOfItem - ComboBox.SKIP_ITEMS_SIZE : 0;
+			const shouldMoveForward = this._filteredItems[indexOfItem].isGroupItem && !this.open;
+			if (!isProposedIndexValid && this.hasValueStateText && this.open) {
+				this._clearFocus();
+				this._itemFocused = false;
+				this._isValueStateFocused = true;
+				return;
+			}
+			this._handleItemNavigation(event, indexOfItem, shouldMoveForward);
+		}
+		_handlePageDown(event, indexOfItem) {
+			const itemsLength = this._filteredItems.length;
+			const isProposedIndexValid = indexOfItem + ComboBox.SKIP_ITEMS_SIZE < itemsLength;
+			indexOfItem = isProposedIndexValid ? indexOfItem + ComboBox.SKIP_ITEMS_SIZE : itemsLength - 1;
+			const shouldMoveForward = this._filteredItems[indexOfItem].isGroupItem && !this.open;
+			this._handleItemNavigation(event, indexOfItem, shouldMoveForward);
+		}
+		_handleHome(event, indexOfItem) {
+			const shouldMoveForward = this._filteredItems[0].isGroupItem && !this.open;
+			if (this.hasValueStateText && this.open) {
+				this._clearFocus();
+				this._itemFocused = false;
+				this._isValueStateFocused = true;
+				return;
+			}
+			this._handleItemNavigation(event, 0, shouldMoveForward);
+		}
+		_handleEnd(event, indexOfItem) {
+			this._handleItemNavigation(event, this._filteredItems.length - 1, true );
+		}
+		_keyup(event) {
+			this._userTypedValue = this.value.substring(0, this.inner.selectionStart);
+		}
 		_keydown(event) {
-			const isArrowKey = Keys.isDown(event) || Keys.isUp(event);
+			const isNavKey = Keys.isDown(event) || Keys.isUp(event) || Keys.isPageUp(event) || Keys.isPageDown(event) || Keys.isHome(event) || Keys.isEnd(event);
 			this._autocomplete = !(Keys.isBackSpace(event) || Keys.isDelete(event));
 			this._isKeyNavigation = false;
-			if (isArrowKey) {
-				this.handleArrowKeyPress(event);
+			if (isNavKey && !this.readonly && this._filteredItems.length) {
+				this.handleNavKeyPress(event);
 			}
 			if (Keys.isEnter(event)) {
 				this._fireChangeEvent();
@@ -390,6 +423,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					this._itemFocused = true;
 					selectedItem.focused = true;
 					this.focused = false;
+				} else if (this.open && this._filteredItems.length) {
+					this._handleItemNavigation(event, 0, true );
 				} else {
 					this.focused = true;
 				}
@@ -445,6 +480,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const value = (item && item.text) || "";
 			this.inner.value = value;
 			if (highlightValue) {
+				filterValue = filterValue || "";
 				this.inner.setSelectionRange(filterValue.length, value.length);
 			}
 			this.value = value;
@@ -542,11 +578,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get shouldOpenValueStateMessagePopover() {
-			return this.focused && this.hasValueStateText && !this._iconPressed
+			return this.focused && !this.readonly && this.hasValueStateText && !this._iconPressed
 				&& !this.open && !this._isPhone;
 		}
 		get shouldDisplayDefaultValueStateMessage() {
 			return !this.valueStateMessage.length && this.hasValueStateText;
+		}
+		get _valueStatePopoverHorizontalAlign() {
+			return this.effectiveDir !== "rtl" ? "Left" : "Right";
 		}
 		get _valueStateMessageIcon() {
 			const iconPerValueState = {
@@ -613,6 +652,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 	}
+	ComboBox.SKIP_ITEMS_SIZE = 10;
 	ComboBox.define();
 
 	return ComboBox;

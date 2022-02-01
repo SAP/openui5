@@ -41,6 +41,9 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 		}
 		async connectedCallback() {
 			this.setAttribute(this.constructor.getMetadata().getPureTag(), "");
+			if (this.constructor.getMetadata().supportsF6FastNavigation()) {
+				this.setAttribute("data-sap-ui-fastnavgroup", "true");
+			}
 			const slotsAreManaged = this.constructor.getMetadata().slotsAreManaged();
 			this._inDOM = true;
 			if (slotsAreManaged) {
@@ -142,7 +145,8 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 				}
 				child = this.constructor.getMetadata().constructor.validateSlotValue(child, slotData);
 				if (child.isUI5Element && slotData.invalidateOnChildChange) {
-					child.attachInvalidate(this._getChildChangeListener(slotName));
+					const method = (child.attachInvalidate || child._attachChange).bind(child);
+					method(this._getChildChangeListener(slotName));
 				}
 				if (SlotsHelper.isSlot(child)) {
 					this._attachSlotChange(child, slotName);
@@ -183,7 +187,8 @@ sap.ui.define(['./thirdparty/merge', './Boot', './UI5ElementMetadata', './EventP
 			const children = this._state[propertyName];
 			children.forEach(child => {
 				if (child && child.isUI5Element) {
-					child.detachInvalidate(this._getChildChangeListener(slotName));
+					const method = (child.detachInvalidate || child._detachChange).bind(child);
+					method(this._getChildChangeListener(slotName));
 				}
 				if (SlotsHelper.isSlot(child)) {
 					this._detachSlotChange(child, slotName);

@@ -223,6 +223,7 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
@@ -230,6 +231,7 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}
@@ -282,7 +284,7 @@ sap.ui.define([
 				}
 			},
 			methods: ["closePicker", "formatValue", "isInValidRange", "isOpen", "isValid", "openPicker"],
-			getters: ["dateValue", "endDateValue", "startDateValue"]
+			getters: ["dateValue", "dateValueUTC", "endDateValue", "startDateValue"]
 		}
 	});
 
@@ -332,9 +334,16 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the currently selected date represented as a Local JavaScript Date instance.
+	 * Returns the <b>Note:</b> The getter method is inherited and not supported. If called it will return an empty value.
 	 * @public
 	 * @name sap.ui.webc.main.DateRangePicker#getDateValue
+	 * @function
+	 */
+
+	/**
+	 * Returns the <b>Note:</b> The getter method is inherited and not supported. If called it will return an empty value.
+	 * @public
+	 * @name sap.ui.webc.main.DateRangePicker#getDateValueUTC
 	 * @function
 	 */
 

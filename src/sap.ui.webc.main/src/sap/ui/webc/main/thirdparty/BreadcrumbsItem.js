@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5El
 			return metadata;
 		}
 		get stableDomRef() {
-			return `${this._id}-stable-dom-ref`;
+			return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
 		}
 	}
 	BreadcrumbsItem.define();

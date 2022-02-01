@@ -22,8 +22,10 @@ sap.ui.define([
 			noLibraryCSS: true,
 			designtime: "sap/ui/webc/main/designtime/library.designtime",
 			interfaces: [
+				"sap.ui.webc.fiori.IBar",
 				"sap.ui.webc.fiori.IFilterItem",
 				"sap.ui.webc.fiori.IFilterItemOption",
+				"sap.ui.webc.fiori.IMediaGalleryItem",
 				"sap.ui.webc.fiori.INotificationAction",
 				"sap.ui.webc.fiori.INotificationListItem",
 				"sap.ui.webc.fiori.IProductSwitchItem",
@@ -39,17 +41,27 @@ sap.ui.define([
 				"sap.ui.webc.fiori.BarDesign",
 				"sap.ui.webc.fiori.FCLLayout",
 				"sap.ui.webc.fiori.IllustrationMessageType",
+				"sap.ui.webc.fiori.MediaGalleryItemLayout",
+				"sap.ui.webc.fiori.MediaGalleryLayout",
+				"sap.ui.webc.fiori.MediaGalleryMenuHorizontalAlign",
+				"sap.ui.webc.fiori.MediaGalleryMenuVerticalAlign",
 				"sap.ui.webc.fiori.PageBackgroundDesign",
+				"sap.ui.webc.fiori.SideContentFallDown",
+				"sap.ui.webc.fiori.SideContentPosition",
+				"sap.ui.webc.fiori.SideContentVisibility",
 				"sap.ui.webc.fiori.TimelineLayout",
 				"sap.ui.webc.fiori.UploadState"
 			],
 			controls: [
 				"sap.ui.webc.fiori.Bar",
 				"sap.ui.webc.fiori.BarcodeScannerDialog",
+				"sap.ui.webc.fiori.DynamicSideContent",
 				"sap.ui.webc.fiori.FilterItem",
 				"sap.ui.webc.fiori.FilterItemOption",
 				"sap.ui.webc.fiori.FlexibleColumnLayout",
 				"sap.ui.webc.fiori.IllustratedMessage",
+				"sap.ui.webc.fiori.MediaGallery",
+				"sap.ui.webc.fiori.MediaGalleryItem",
 				"sap.ui.webc.fiori.NotificationAction",
 				"sap.ui.webc.fiori.NotificationListGroupItem",
 				"sap.ui.webc.fiori.NotificationListItem",
@@ -89,6 +101,17 @@ sap.ui.define([
 
 
 		/**
+		 * Interface for components that may be slotted inside <code>ui5-page</code> as header and footer.
+		 *
+		 * @name sap.ui.webc.fiori.IBar
+		 * @interface
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
 		 * Interface for components that may be slotted inside <code>ui5-view-settings-dialog</code> as filter items
 		 *
 		 * @name sap.ui.webc.fiori.IFilterItem
@@ -107,6 +130,17 @@ sap.ui.define([
 		 * @public
 		 * @since 1.97.0
 		 * @experimental Since 1.97.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+
+		/**
+		 * Interface for components that can be slotted inside <code>ui5-media-gallery</code> as items.
+		 *
+		 * @name sap.ui.webc.fiori.IMediaGalleryItem
+		 * @interface
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
 		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
@@ -352,58 +386,298 @@ Use to display both a master and a detail page when the user should focus on the
 		thisLib.IllustrationMessageType = {
 
 			/**
-			 * "BeforeSearch" illustration type.
+			 * "Add Column" illustration type.
+			 * @public
+			 */
+			AddColumn: "AddColumn",
+
+			/**
+			 * "Add People" illustration type.
+			 * @public
+			 */
+			AddPeople: "AddPeople",
+
+			/**
+			 * "Balloon Sky" illustration type.
+			 * @public
+			 */
+			BalloonSky: "BalloonSky",
+
+			/**
+			 * "Before Search" illustration type.
 			 * @public
 			 */
 			BeforeSearch: "BeforeSearch",
 
 			/**
-			 * "NoActivities" illustration type.
+			 * "Connection" illustration type.
+			 * @public
+			 */
+			Connection: "Connection",
+
+			/**
+			 * "Empty Calendar" illustration type.
+			 * @public
+			 */
+			EmptyCalendar: "EmptyCalendar",
+
+			/**
+			 * "Empty List" illustration type.
+			 * @public
+			 */
+			EmptyList: "EmptyList",
+
+			/**
+			 * "Empty Planning Calendar" illustration type.
+			 * @public
+			 */
+			EmptyPlanningCalendar: "EmptyPlanningCalendar",
+
+			/**
+			 * "Error Screen" illustration type.
+			 * @public
+			 */
+			ErrorScreen: "ErrorScreen",
+
+			/**
+			 * "Filter Table" illustration type.
+			 * @public
+			 */
+			FilterTable: "FilterTable",
+
+			/**
+			 * "Group Table" illustration type.
+			 * @public
+			 */
+			GroupTable: "GroupTable",
+
+			/**
+			 * "No Activities" illustration type.
 			 * @public
 			 */
 			NoActivities: "NoActivities",
 
 			/**
-			 * "NoData" illustration type.
+			 * "No Data" illustration type.
 			 * @public
 			 */
 			NoData: "NoData",
 
 			/**
-			 * "NoEntries" illustration type.
+			 * "No Entries" illustration type.
 			 * @public
 			 */
 			NoEntries: "NoEntries",
 
 			/**
-			 * "NoMail" illustration type.
+			 * "No Filter Results" illustration type.
+			 * @public
+			 */
+			NoFilterResults: "NoFilterResults",
+
+			/**
+			 * "No Email" illustration type.
 			 * @public
 			 */
 			NoMail: "NoMail",
 
 			/**
-			 * "NoNotifications" illustration type.
+			 * "No Email v1" illustration type.
+			 * @public
+			 */
+			NoMail_v1: "NoMail_v1",
+
+			/**
+			 * "No Notifications" illustration type.
 			 * @public
 			 */
 			NoNotifications: "NoNotifications",
 
 			/**
-			 * "NoSavedItems" illustration type.
+			 * "No Saved Items" illustration type.
 			 * @public
 			 */
 			NoSavedItems: "NoSavedItems",
 
 			/**
-			 * "NoSearchResults" illustration type.
+			 * "No Saved Items v1" illustration type.
+			 * @public
+			 */
+			NoSavedItems_v1: "NoSavedItems_v1",
+
+			/**
+			 * "No Search Results" illustration type.
 			 * @public
 			 */
 			NoSearchResults: "NoSearchResults",
 
 			/**
-			 * "NoTasks" illustration type.
+			 * "No Tasks" illustration type.
 			 * @public
 			 */
 			NoTasks: "NoTasks",
+
+			/**
+			 * "No Tasks v1" illustration type.
+			 * @public
+			 */
+			NoTasks_v1: "NoTasks_v1",
+
+			/**
+			 * "Page Not Found" illustration type.
+			 * @public
+			 */
+			PageNotFound: "PageNotFound",
+
+			/**
+			 * "Reload Screen" illustration type.
+			 * @public
+			 */
+			ReloadScreen: "ReloadScreen",
+
+			/**
+			 * "Resize Column" illustration type.
+			 * @public
+			 */
+			ResizeColumn: "ResizeColumn",
+
+			/**
+			 * "Search Earth" illustration type.
+			 * @public
+			 */
+			SearchEarth: "SearchEarth",
+
+			/**
+			 * "Search Folder" illustration type.
+			 * @public
+			 */
+			SearchFolder: "SearchFolder",
+
+			/**
+			 * "Simple Balloon" illustration type.
+			 * @public
+			 */
+			SimpleBalloon: "SimpleBalloon",
+
+			/**
+			 * "Simple Bell" illustration type.
+			 * @public
+			 */
+			SimpleBell: "SimpleBell",
+
+			/**
+			 * "Simple Calendar" illustration type.
+			 * @public
+			 */
+			SimpleCalendar: "SimpleCalendar",
+
+			/**
+			 * "Simple CheckMark" illustration type.
+			 * @public
+			 */
+			SimpleCheckMark: "SimpleCheckMark",
+
+			/**
+			 * "Simple Connection" illustration type.
+			 * @public
+			 */
+			SimpleConnection: "SimpleConnection",
+
+			/**
+			 * "Simple Empty Doc" illustration type.
+			 * @public
+			 */
+			SimpleEmptyDoc: "SimpleEmptyDoc",
+
+			/**
+			 * "Simple Empty List" illustration type.
+			 * @public
+			 */
+			SimpleEmptyList: "SimpleEmptyList",
+
+			/**
+			 * "Simple Error" illustration type.
+			 * @public
+			 */
+			SimpleError: "SimpleError",
+
+			/**
+			 * "Simple Magnifier" illustration type.
+			 * @public
+			 */
+			SimpleMagnifier: "SimpleMagnifier",
+
+			/**
+			 * "Simple Mail" illustration type.
+			 * @public
+			 */
+			SimpleMail: "SimpleMail",
+
+			/**
+			 * "Simple No Saved Items" illustration type.
+			 * @public
+			 */
+			SimpleNoSavedItems: "SimpleNoSavedItems",
+
+			/**
+			 * "Simple Not Found Magnifier" illustration type.
+			 * @public
+			 */
+			SimpleNotFoundMagnifier: "SimpleNotFoundMagnifier",
+
+			/**
+			 * "Simple Reload" illustration type.
+			 * @public
+			 */
+			SimpleReload: "SimpleReload",
+
+			/**
+			 * "Simple Task" illustration type.
+			 * @public
+			 */
+			SimpleTask: "SimpleTask",
+
+			/**
+			 * "Sleeping Bell" illustration type.
+			 * @public
+			 */
+			SleepingBell: "SleepingBell",
+
+			/**
+			 * "Sort Column" illustration type.
+			 * @public
+			 */
+			SortColumn: "SortColumn",
+
+			/**
+			 * "Success Balloon" illustration type.
+			 * @public
+			 */
+			SuccessBalloon: "SuccessBalloon",
+
+			/**
+			 * "Success CheckMark" illustration type.
+			 * @public
+			 */
+			SuccessCheckMark: "SuccessCheckMark",
+
+			/**
+			 * "Success HighFive" illustration type.
+			 * @public
+			 */
+			SuccessHighFive: "SuccessHighFive",
+
+			/**
+			 * "Success Screen" illustration type.
+			 * @public
+			 */
+			SuccessScreen: "SuccessScreen",
+
+			/**
+			 * "Tent" illustration type.
+			 * @public
+			 */
+			Tent: "Tent",
 
 			/**
 			 * "TntCodePlaceholder" illustration type.
@@ -514,16 +788,134 @@ Use to display both a master and a detail page when the user should focus on the
 			TntUnsuccessfulAuth: "TntUnsuccessfulAuth",
 
 			/**
-			 * "UnableToLoad" illustration type.
+			 * "Unable To Load" illustration type.
 			 * @public
 			 */
 			UnableToLoad: "UnableToLoad",
 
 			/**
-			 * "UnableToUpload" illustration type.
+			 * "Unable To Load Image" illustration type.
 			 * @public
 			 */
-			UnableToUpload: "UnableToUpload"
+			UnableToLoadImage: "UnableToLoadImage",
+
+			/**
+			 * "Unable To Upload" illustration type.
+			 * @public
+			 */
+			UnableToUpload: "UnableToUpload",
+
+			/**
+			 * "Upload Collection" illustration type.
+			 * @public
+			 */
+			UploadCollection: "UploadCollection"
+		};
+
+
+		/**
+		 * Defines the layout of the content displayed in the <code>ui5-media-gallery-item</code>.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.MediaGalleryItemLayout = {
+
+			/**
+			 * Recommended to use when the item contains an image.<br> When a thumbnail is selected, it makes the corresponding enlarged content appear in a square display area.
+			 * @public
+			 */
+			Square: "Square",
+
+			/**
+			 * Recommended to use when the item contains video content.<br> When a thumbnail is selected, it makes the corresponding enlarged content appear in a wide display area (stretched to fill all of the available width) for optimal user experiance.
+			 * @public
+			 */
+			Wide: "Wide"
+		};
+
+
+		/**
+		 * Defines the layout type of the thumbnails list of the <code>ui5-media-gallery</code> component.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.MediaGalleryLayout = {
+
+			/**
+			 * The layout is determined automatically.
+			 * @public
+			 */
+			Auto: "Auto",
+
+			/**
+			 * Displays the layout as a horizontal split between the thumbnails list and the selected image.
+			 * @public
+			 */
+			Horizontal: "Horizontal",
+
+			/**
+			 * Displays the layout as a vertical split between the thumbnails list and the selected image.
+			 * @public
+			 */
+			Vertical: "Vertical"
+		};
+
+
+		/**
+		 * Defines the horizontal alignment of the thumbnails menu of the <code>ui5-media-gallery</code> component.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.MediaGalleryMenuHorizontalAlign = {
+
+			/**
+			 * Displays the menu on the left side of the target.
+			 * @public
+			 */
+			Left: "Left",
+
+			/**
+			 * Displays the menu on the right side of the target.
+			 * @public
+			 */
+			Right: "Right"
+		};
+
+
+		/**
+		 * Types for the vertical alignment of the thumbnails menu of the <code>ui5-media-gallery</code> component.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.MediaGalleryMenuVerticalAlign = {
+
+			/**
+			 * Displays the menu at the bottom of the reference control.
+			 * @public
+			 */
+			Bottom: "Bottom",
+
+			/**
+			 * Displays the menu at the top of the reference control.
+			 * @public
+			 */
+			Top: "Top"
 		};
 
 
@@ -555,6 +947,111 @@ Use to display both a master and a detail page when the user should focus on the
 			 * @public
 			 */
 			Transparent: "Transparent"
+		};
+
+
+		/**
+		 * SideContent FallDown options.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.SideContentFallDown = {
+
+			/**
+			 * Side content falls down on breakpoints below L
+			 * @public
+			 */
+			BelowL: "BelowL",
+
+			/**
+			 * Side content falls down on breakpoints below M
+			 * @public
+			 */
+			BelowM: "BelowM",
+
+			/**
+			 * Side content falls down on breakpoints below XL
+			 * @public
+			 */
+			BelowXL: "BelowXL",
+
+			/**
+			 * Side content falls down on breakpoint M and the minimum width for the side content
+			 * @public
+			 */
+			OnMinimumWidth: "OnMinimumWidth"
+		};
+
+
+		/**
+		 * Side Content position options.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.SideContentPosition = {
+
+			/**
+			 * The side content is on the right side of the main container in left-to-right mode and on the left side in right-to-left mode.
+			 * @public
+			 */
+			End: "End",
+
+			/**
+			 * The side content is on the left side of the main container in left-to-right mode and on the right side in right-to-left mode.
+			 * @public
+			 */
+			Start: "Start"
+		};
+
+
+		/**
+		 * Side Content visibility options.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.SideContentVisibility = {
+
+			/**
+			 * Show the side content on any breakpoint
+			 * @public
+			 */
+			AlwaysShow: "AlwaysShow",
+
+			/**
+			 * Don't show the side content on any breakpoints
+			 * @public
+			 */
+			NeverShow: "NeverShow",
+
+			/**
+			 * Show the side content on XL breakpoint
+			 * @public
+			 */
+			ShowAboveL: "ShowAboveL",
+
+			/**
+			 * Show the side content on L and XL breakpoints
+			 * @public
+			 */
+			ShowAboveM: "ShowAboveM",
+
+			/**
+			 * Show the side content on M, L and XL breakpoints
+			 * @public
+			 */
+			ShowAboveS: "ShowAboveS"
 		};
 
 

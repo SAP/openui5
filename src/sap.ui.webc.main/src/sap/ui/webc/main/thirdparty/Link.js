@@ -30,12 +30,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: "",
 			},
-			 ariaHaspopup: {
-				type: String,
-				defaultValue: undefined,
-			},
 			 accessibleRole: {
 				type: String,
+			},
+			 accessibilityAttributes: {
+				type: Object,
 			},
 			_rel: {
 				type: String,
@@ -76,10 +75,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Link_css;
 		}
 		onBeforeRendering() {
-			const needsNoReferrer = this.target === "_blank"
+			const needsNoReferrer = this.target !== "_self"
 				&& this.href
 				&& this._isCrossOrigin();
-			this._rel = needsNoReferrer ? "noreferrer" : undefined;
+			this._rel = needsNoReferrer ? "noreferrer noopener" : undefined;
 		}
 		_isCrossOrigin() {
 			const loc = window.location;

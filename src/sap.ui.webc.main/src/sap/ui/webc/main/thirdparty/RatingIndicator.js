@@ -103,17 +103,30 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.disabled || this.readonly) {
 				return;
 			}
-			const down = Keys.isDown(event) || Keys.isLeft(event);
-			const up = Keys.isRight(event) || Keys.isUp(event) || Keys.isSpace(event) || Keys.isEnter(event);
-			if (down || up) {
+			const isDecrease = Keys.isDown(event) || Keys.isLeft(event);
+			const isIncrease = Keys.isRight(event) || Keys.isUp(event);
+			const isIncreaseWithReset = Keys.isSpace(event) || Keys.isEnter(event);
+			const isMin = Keys.isHome(event);
+			const isMax = Keys.isEnd(event);
+			const isNumber = (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105);
+			if (isDecrease || isIncrease || isIncreaseWithReset || isMin || isMax || isNumber) {
 				event.preventDefault();
-				if (down && this.value > 0) {
+				if (isDecrease && this.value > 0) {
 					this.value = Math.round(this.value - 1);
-					this.fireEvent("change");
-				} else if (up && this.value < this.max) {
+				} else if (isIncrease && this.value < this.max) {
 					this.value = Math.round(this.value + 1);
-					this.fireEvent("change");
+				} else if (isIncreaseWithReset) {
+					const proposedValue = Math.round(this.value + 1);
+					this.value = proposedValue > this.max ? 0 : proposedValue;
+				} else if (isMin) {
+					this.value = 0;
+				} else if (isMax) {
+					this.value = this.max;
+				} else if (isNumber) {
+					const pressedNumber = parseInt(event.key);
+					this.value = pressedNumber > this.max ? this.max : pressedNumber;
 				}
+				this.fireEvent("change");
 			}
 		}
 		_onfocusin() {

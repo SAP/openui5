@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/types/ItemNavigationBehavior', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', './generated/templates/ColorPaletteTemplate.lit', './generated/templates/ColorPaletteDialogTemplate.lit', './ColorPaletteItem', './generated/i18n/i18n-defaults', './generated/themes/ColorPalette.css', './generated/themes/ColorPaletteStaticArea.css'], function (UI5Element, litRender, i18nBundle, ItemNavigation, CSSColor, ItemNavigationBehavior, Device, Keys, FeaturesRegistry, ColorPaletteTemplate_lit, ColorPaletteDialogTemplate_lit, ColorPaletteItem, i18nDefaults, ColorPalette_css, ColorPaletteStaticArea_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/types/ItemNavigationBehavior', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', './generated/templates/ColorPaletteTemplate.lit', './generated/templates/ColorPaletteDialogTemplate.lit', './ColorPaletteItem', './Button', './generated/i18n/i18n-defaults', './generated/themes/ColorPalette.css', './generated/themes/ColorPaletteStaticArea.css'], function (UI5Element, litRender, i18nBundle, ItemNavigation, CSSColor, ItemNavigationBehavior, Device, Keys, FeaturesRegistry, ColorPaletteTemplate_lit, ColorPaletteDialogTemplate_lit, ColorPaletteItem, Button, i18nDefaults, ColorPalette_css, ColorPaletteStaticArea_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -70,7 +70,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		static get dependencies() {
 			const ColorPaletteMoreColors = FeaturesRegistry.getFeature("ColorPaletteMoreColors");
-			return [ColorPaletteItem].concat(ColorPaletteMoreColors ? ColorPaletteMoreColors.dependencies : []);
+			return [ColorPaletteItem, Button].concat(ColorPaletteMoreColors ? ColorPaletteMoreColors.dependencies : []);
 		}
 		static async onDefine() {
 			const ColorPaletteMoreColors = FeaturesRegistry.getFeature("ColorPaletteMoreColors");
@@ -130,18 +130,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 		}
 		_onclick(event) {
-			if (event.target.localName === "ui5-color-palette-item") {
+			if (event.target.hasAttribute("ui5-color-palette-item")) {
 				this.selectColor(event.target);
 			}
 		}
 		_onkeyup(event) {
-			if (Keys.isSpace(event) && event.target.localName === "ui5-color-palette-item") {
+			if (Keys.isSpace(event) && event.target.hasAttribute("ui5-color-palette-item")) {
 				event.preventDefault();
 				this.selectColor(event.target);
 			}
 		}
 		_onkeydown(event) {
-			if (Keys.isEnter(event) && event.target.localName === "ui5-color-palette-item") {
+			if (Keys.isEnter(event) && event.target.hasAttribute("ui5-color-palette-item")) {
 				this.selectColor(event.target);
 			}
 		}

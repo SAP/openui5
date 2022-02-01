@@ -44,7 +44,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Represents the "additionalText" text, which is displayed in the tab filter.
+				 * Represents the "additionalText" text, which is displayed in the tab.
 				 */
 				additionalText: {
 					type: "string",

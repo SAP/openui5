@@ -38,6 +38,18 @@ sap.ui.define([
 	 * <br>
 	 * <b>Note:</b> Currently, when a column is shown as a pop-in, the visual indication for selection is not presented over it.
 	 *
+	 * <h3>Keyboard Handling</h3>
+	 *
+	 *
+	 *
+	 * <ul>
+	 *     <li>[F7] - If focus is on an interactive control inside an item, moves focus to the corresponding item.</li>
+	 *     <li>[CTRL]+[A] - Selects all items, if MultiSelect mode is enabled.</li>
+	 *     <li>[HOME]/[END] - Focuses the first/last item.</li>
+	 *     <li>[PAGEUP]/[PAGEDOWN] - Moves focus up/down by page size (20 items by default).</li>
+	 *     <li>[ALT]+[UP]/[DOWN] - Switches focus between header, last focused item, and More button (if applies) in either direction.</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

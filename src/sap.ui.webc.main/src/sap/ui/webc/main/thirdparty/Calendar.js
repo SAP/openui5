@@ -9,6 +9,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 
 	const metadata = {
 		tag: "ui5-calendar",
+		fastNavigation: true,
 		properties:  {
 			selectionMode: {
 				type: CalendarSelectionMode,

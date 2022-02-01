@@ -7,9 +7,10 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const safari = !ie && !chrome && /(Version|PhantomJS)\/(\d+\.\d+).*Safari/.test(ua);
 	const webkit = !ie && /webkit/.test(ua);
 	const windows = navigator.platform.indexOf("Win") !== -1;
+	const iOS = navigator.platform.match(/iPhone|iPad|iPod/) || (navigator.userAgent.match(/Mac/) && "ontouchend" in document);
 	const android = !windows && /Android/.test(ua);
 	const androidPhone = android && /(?=android)(?=.*mobile)/i.test(ua);
-	const ipad = /ipad/i.test(ua);
+	const ipad = /ipad/i.test(ua) || (/Macintosh/i.test(ua) && "ontouchend" in document);
 	let windowsVersion;
 	let webkitVersion;
 	let tablet;
@@ -77,11 +78,15 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 	const isCombi = () => {
 		return isTablet() && isDesktop();
 	};
+	const isIOS = () => {
+		return iOS;
+	};
 
 	exports.isChrome = isChrome;
 	exports.isCombi = isCombi;
 	exports.isDesktop = isDesktop;
 	exports.isIE = isIE;
+	exports.isIOS = isIOS;
 	exports.isPhone = isPhone;
 	exports.isSafari = isSafari;
 	exports.isTablet = isTablet;

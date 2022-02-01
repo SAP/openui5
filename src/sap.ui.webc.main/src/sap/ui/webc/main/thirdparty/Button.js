@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/isLegacyBrowser', 'sap/ui/webc/common/thirdparty/base/Device', './types/ButtonDesign', './generated/templates/ButtonTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/Button.css', './generated/themes/Button.ie11.css'], function (UI5Element, litRender, Keys, FeaturesRegistry, i18nBundle, isLegacyBrowser, Device, ButtonDesign, ButtonTemplate_lit, Icon, i18nDefaults, Button_css, Button_ie11_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/isLegacyBrowser', 'sap/ui/webc/common/thirdparty/base/Device', './types/ButtonDesign', './generated/templates/ButtonTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/Button.css', './generated/themes/Button.ie11.css'], function (UI5Element, litRender, Keys, AriaLabelHelper, FeaturesRegistry, i18nBundle, isLegacyBrowser, Device, ButtonDesign, ButtonTemplate_lit, Icon, i18nDefaults, Button_css, Button_ie11_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -46,6 +46,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			accessibleName: {
 				type: String,
 				defaultValue: undefined,
+			},
+			 accessibleNameRef: {
+				type: String,
+				defaultValue: "",
 			},
 			ariaExpanded: {
 				type: String,
@@ -215,6 +219,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get showIconTooltip() {
 			return this.iconOnly && !this.title;
+		}
+		get ariaLabelText() {
+			return AriaLabelHelper.getEffectiveAriaLabelText(this);
 		}
 		static async onDefine() {
 			Button.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");

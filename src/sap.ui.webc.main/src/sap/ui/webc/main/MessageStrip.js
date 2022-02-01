@@ -29,6 +29,8 @@ sap.ui.define([
 	 *
 	 * For the <code>sap.ui.webc.main.MessageStrip</code> component, you can define whether it displays an icon in the beginning and a close button. Moreover, its size and background can be controlled with CSS.
 	 *
+	 * <h3>Keyboard Handling</h3>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

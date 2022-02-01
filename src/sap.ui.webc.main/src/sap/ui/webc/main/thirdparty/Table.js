@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './CheckBox', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Device, Keys, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, CheckBox, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './CheckBox', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Device, Keys, TabbableElements, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, CheckBox, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -15,11 +15,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-table",
 		managedSlots: true,
+		fastNavigation: true,
 		slots:  {
 			"default": {
 				propertyName: "rows",
 				type: HTMLElement,
 				individualSlots: true,
+				invalidateOnChildChange: true,
 			},
 			columns: {
 				type: HTMLElement,
@@ -130,16 +132,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				navigationMode: NavigationMode__default.Vertical,
 				affectedPropertiesNames: ["_columnHeader"],
 				getItemsCallback: () => [this._columnHeader, ...this.rows],
+				skipItemsSize: 20,
 			});
 			this.fnOnRowFocused = this.onRowFocused.bind(this);
 			this._handleResize = this.popinContent.bind(this);
 			this.tableEndObserved = false;
 			this.addEventListener("ui5-selection-requested", this._handleSelect.bind(this));
+			this._prevNestedElementIndex = 0;
 		}
 		onBeforeRendering() {
 			const columnSettings = this.getColumnPropagationSettings();
 			const columnSettingsString = JSON.stringify(columnSettings);
 			const rowsCount = this.rows.length;
+			const selectedRows = this.selectedRows;
 			this.rows.forEach((row, index) => {
 				if (row._columnsInfoString !== columnSettingsString) {
 					row._columnsInfo = columnSettings;
@@ -157,6 +162,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 			this._noDataDisplayed = !this.rows.length && !this.hideNoData;
 			this.visibleColumnsCount = this.visibleColumns.length;
+			this._allRowsSelected = selectedRows.length === this.rows.length;
+			this._previousFocusedRow = this._previousFocusedRow || this.rows[0] || null;
 		}
 		onAfterRendering() {
 			if (this.growsOnScroll) {
@@ -169,6 +176,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.growingIntersectionObserver = this.getIntersectionObserver();
 			}
 			ResizeHandler__default.register(this.getDomRef(), this._handleResize);
+			this._itemNavigation.setCurrentItem(this.rows.length ? this.rows[0] : this._columnHeader);
+			this.rows.forEach((row, index) => {
+				row._tabbableElements = TabbableElements.getTabbableElements(row);
+				if (index > 0) {
+					row._tabbableElements.forEach(el => el.setAttribute("tabindex", "-1"));
+				}
+			});
 		}
 		onExitDOM() {
 			ResizeHandler__default.deregister(this.getDomRef(), this._handleResize);
@@ -178,12 +192,71 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.tableEndObserved = false;
 			}
 		}
+		_onkeydown(event) {
+			if (Keys.isCtrlA(event)) {
+				event.preventDefault();
+				this.isMultiSelect && this._selectAll(event);
+				return;
+			}
+			const isAltUp = Keys.isUpAlt(event);
+			if (isAltUp || Keys.isDownAlt(event)) {
+				return this._handleArrowAlt(isAltUp, event.target);
+			}
+		}
+		_handleArrowAlt(shouldMoveUp, focusedElement) {
+			const focusedElementType = this.getFocusedElementType(focusedElement);
+			const moreButton = this.getMoreButton();
+			if (shouldMoveUp) {
+				switch (focusedElementType) {
+				case "tableRow":
+					this._previousFocusedRow = focusedElement;
+					return this._onColumnHeaderClick();
+				case "columnHeader":
+					return moreButton ? moreButton.focus() : this._previousFocusedRow.focus();
+				case "moreButton":
+					return this._previousFocusedRow ? this._previousFocusedRow.focus() : this._onColumnHeaderClick();
+				}
+			} else {
+				switch (focusedElementType) {
+				case "tableRow":
+					this._previousFocusedRow = focusedElement;
+					return moreButton ? moreButton.focus() : this._onColumnHeaderClick();
+				case "columnHeader":
+					if (this._previousFocusedRow) {
+						return this._previousFocusedRow.focus();
+					}
+					if (moreButton) {
+						return moreButton.focus();
+					}
+					return;
+				case "moreButton":
+					return this._onColumnHeaderClick();
+				}
+			}
+		}
+		getFocusedElementType(element) {
+			if (element === this.getColumnHeader()) {
+				return "columnHeader";
+			}
+			if (element === this.getMoreButton()) {
+				return "moreButton";
+			}
+			if (this.rows.includes(element)) {
+				return "tableRow";
+			}
+		}
 		onRowFocused(event) {
 			this._itemNavigation.setCurrentItem(event.target);
 		}
 		_onColumnHeaderClick(event) {
 			this.getColumnHeader().focus();
 			this._itemNavigation.setCurrentItem(this._columnHeader);
+		}
+		_onColumnHeaderKeydown(event) {
+			if (Keys.isSpace(event)) {
+				event.preventDefault();
+				this.isMultiSelect && this._selectAll();
+			}
 		}
 		_onLoadMoreKeydown(event) {
 			if (Keys.isSpace(event)) {
@@ -253,7 +326,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this[`_handle${this.mode}`](event);
 		}
 		_selectAll(event) {
-			const bAllSelected = event.target.checked;
+			const bAllSelected = !this._allRowsSelected;
 			const previouslySelectedRows = this.rows.filter(row => row.selected);
 			this._allRowsSelected = bAllSelected;
 			this.rows.forEach(row => {
@@ -277,6 +350,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		getColumnHeader() {
 			return this.getDomRef() && this.getDomRef().querySelector(`#${this._id}-columnHeader`);
+		}
+		getMoreButton() {
+			return this.growsWithButton && this.getDomRef() && this.getDomRef().querySelector(`#${this._id}-growingButton`);
 		}
 		handleResize(event) {
 			this.checkTableInViewport();
@@ -340,9 +416,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get styles() {
 			return {
-				table: {
-					height: "48px",
-				},
 				busy: {
 					position: this.busyIndPosition,
 				},

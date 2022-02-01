@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', './generated/templates/ColorPalettePopoverTemplate.lit', './generated/themes/ColorPalettePopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/i18n/i18n-defaults', './Button', './ResponsivePopover', './ColorPalette'], function (UI5Element, litRender, i18nBundle, CSSColor, ColorPalettePopoverTemplate_lit, ColorPalettePopover_css, ResponsivePopoverCommon_css, i18nDefaults, Button, ResponsivePopover, ColorPalette) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', './generated/templates/ColorPalettePopoverTemplate.lit', './generated/themes/ColorPalettePopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/i18n/i18n-defaults', './Button', './Title', './ResponsivePopover', './ColorPalette'], function (UI5Element, litRender, i18nBundle, CSSColor, ColorPalettePopoverTemplate_lit, ColorPalettePopover_css, ResponsivePopoverCommon_css, i18nDefaults, Button, Title, ResponsivePopover, ColorPalette) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -57,6 +57,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return [
 				ResponsivePopover,
 				Button,
+				Title,
 				ColorPalette,
 			];
 		}
@@ -73,10 +74,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_colorPalette() {
 			return this.responsivePopover.content[0].querySelector("[ui5-color-palette]");
 		}
-		closePopover() {
-			this.responsivePopover.close();
+		showAt(opener) {
+			this._openPopover(opener);
 		}
 		openPopover(opener) {
+			console.warn("The method 'openPopover' is deprecated and will be removed in future, use 'showAt' instead.");
+			this._openPopover(opener);
+		}
+		_openPopover(opener) {
 			this._respPopover();
 			this.responsivePopover.showAt(opener, true);
 			if (this.showDefaultColor) {
@@ -84,6 +89,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			} else {
 				this._colorPalette().focusColorElement(this._colorPalette().colorPaletteNavigationElements[0], this._colorPalette()._itemNavigation);
 			}
+		}
+		closePopover() {
+			this.responsivePopover.close();
 		}
 		onSelectedColor(event) {
 			this.closePopover();

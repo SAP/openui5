@@ -32,7 +32,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			_isBusy: {
 				type: Boolean,
-				noAttribute: true,
 			},
 		},
 	};
@@ -107,7 +106,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_handleKeydown(event) {
-			if (!this.active) {
+			if (!this._isBusy) {
 				return;
 			}
 			event.stopImmediatePropagation();
@@ -118,7 +117,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_preventEvent(event) {
-			if (this.active) {
+			if (this._isBusy) {
 				event.stopImmediatePropagation();
 			}
 		}

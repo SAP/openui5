@@ -151,7 +151,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.valueBeforeItemSelection = "";
 			this.valueBeforeItemPreview = "";
 			this.suggestionSelectionCanceled = false;
-			this._changeFired = false;
+			this._changeFiredValue = null;
 			this.previousValue = undefined;
 			this.firstRendering = true;
 			this.highlightValue = "";
@@ -213,6 +213,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isEnter(event)) {
 				return this._handleEnter(event);
 			}
+			if (Keys.isPageUp(event)) {
+				return this._handlePageUp(event);
+			}
+			if (Keys.isPageDown(event)) {
+				return this._handlePageDown(event);
+			}
+			if (Keys.isHome(event)) {
+				return this._handleHome(event);
+			}
+			if (Keys.isEnd(event)) {
+				return this._handleEnd(event);
+			}
 			if (Keys.isEscape(event)) {
 				return this._handleEscape(event);
 			}
@@ -226,6 +238,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._keyDown = true;
 		}
 		_onkeyup(event) {
+			if (Keys.isDelete(event)) {
+				this.value = event.target.value;
+			}
 			this._keyDown = false;
 			this._backspaceKeyDown = false;
 		}
@@ -258,6 +273,30 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			this.focused = true;
 		}
+		_handlePageUp(event) {
+			if (this._isSuggestionsFocused) {
+				this.Suggestions.onPageUp(event);
+			} else {
+				event.preventDefault();
+			}
+		}
+		_handlePageDown(event) {
+			if (this._isSuggestionsFocused) {
+				this.Suggestions.onPageDown(event);
+			} else {
+				event.preventDefault();
+			}
+		}
+		_handleHome(event) {
+			if (this._isSuggestionsFocused) {
+				this.Suggestions.onHome(event);
+			}
+		}
+		_handleEnd(event) {
+			if (this._isSuggestionsFocused) {
+				this.Suggestions.onEnd(event);
+			}
+		}
 		_handleEscape() {
 			const hasSuggestions = this.showSuggestions && !!this.Suggestions;
 			const isOpen = hasSuggestions && this.open;
@@ -286,7 +325,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onfocusout(event) {
 			const focusedOutToSuggestions = this.Suggestions && event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.contains(this.Suggestions.responsivePopover);
 			const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
-			if (focusedOutToSuggestions	|| focusedOutToValueStateMessage) {
+			if (focusedOutToSuggestions || focusedOutToValueStateMessage) {
 				event.stopImmediatePropagation();
 				return;
 			}
@@ -316,11 +355,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.open = true;
 			}
 		}
-		_handleChange(event) {
-			if (!this._changeFired) {
+		_handleNativeInputChange() {
+			clearTimeout(this._nativeChangeDebounce);
+			this._nativeChangeDebounce = setTimeout(() => this._handleChange(), 100);
+		}
+		_handleChange() {
+			if (this._changeFiredValue !== this.value) {
+				this._changeFiredValue = this.value;
 				this.fireEvent(this.EVENT_CHANGE);
 			}
-			this._changeFired = false;
 		}
 		_scroll(event) {
 			const detail = event.detail;
@@ -329,8 +372,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				scrollContainer: detail.targetRef,
 			});
 		}
-		async _handleInput(event) {
-			const inputDomRef = await this.getInputDOMRef();
+		_handleInput(event) {
+			const inputDomRef = this.getInputDOMRefSync();
 			const emptyValueFiredOnNumberInput = this.value && this.isTypeNumber && !inputDomRef.value;
 			this.suggestionSelectionCanceled = false;
 			if (emptyValueFiredOnNumberInput && !this._backspaceKeyDown) {
@@ -422,8 +465,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.valueBeforeItemSelection = itemText;
 				this.lastConfirmedValue = itemText;
 				this.fireEvent(this.EVENT_INPUT);
-				this.fireEvent(this.EVENT_CHANGE);
-				this._changeFired = true;
+				this._handleChange();
 			}
 			this.valueBeforeItemPreview = "";
 			this.suggestionSelectionCanceled = false;
@@ -471,7 +513,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			const valueChanged = (this.previousValue !== undefined) && (this.previousValue !== this.value);
 			if (Device.isIE() && action === this.ACTION_ENTER && valueChanged) {
-				this.fireEvent(this.EVENT_CHANGE);
+				this._handleChange();
 			}
 		}
 		async getInputValue() {
@@ -484,6 +526,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		async getInputDOMRef() {
 			if (Device.isPhone() && this.Suggestions) {
 				await this.Suggestions._getSuggestionPopover();
+				return this.Suggestions && this.Suggestions.responsivePopover.querySelector(".ui5-input-inner-phone");
+			}
+			return this.nativeInput;
+		}
+		getInputDOMRefSync() {
+			if (Device.isPhone() && this.Suggestions) {
 				return this.Suggestions && this.Suggestions.responsivePopover.querySelector(".ui5-input-inner-phone");
 			}
 			return this.nativeInput;
@@ -526,6 +574,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				item: suggestion,
 				targetRef: item,
 			});
+		}
+		onItemMouseDown(event) {
+			event.preventDefault();
 		}
 		onItemSelected(item, keyboardUsed) {
 			this.selectSuggestion(item, keyboardUsed);
@@ -655,7 +706,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.getSlottedNodes("valueStateMessage").map(el => el.cloneNode(true));
 		}
 		get shouldDisplayOnlyValueStateMessage() {
-			return this.hasValueStateMessage && !this.open && this.focused;
+			return this.hasValueStateMessage && !this.readonly && !this.open && this.focused;
 		}
 		get shouldDisplayDefaultValueStateMessage() {
 			return !this.valueStateMessage.length && this.hasValueStateMessage;
@@ -693,6 +744,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get _isPhone() {
 			return Device.isPhone();
 		}
+		get _isSuggestionsFocused() {
+			return !this.focused && this.Suggestions && this.Suggestions.isOpened();
+		}
 		get _placeholder() {
 			return this.placeholder;
 		}
@@ -709,6 +763,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		</svg>
 		`;
 			return this.valueState !== ValueState__default.None ? result : "";
+		}
+		get _valueStatePopoverHorizontalAlign() {
+			return this.effectiveDir !== "rtl" ? "Left" : "Right";
 		}
 		get _valueStateMessageInputIcon() {
 			const iconPerValueState = {

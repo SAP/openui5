@@ -9,8 +9,10 @@ sap.ui.define(['../asset-registries/Themes', '../ManagedStyles', './getThemeDesi
 		if (!isThemeBaseRegistered()) {
 			return;
 		}
-		const cssText = await Themes.getThemeProperties(BASE_THEME_PACKAGE, theme);
-		ManagedStyles.createOrUpdateStyle(cssText, "data-ui5-theme-properties", BASE_THEME_PACKAGE);
+		const cssData = await Themes.getThemeProperties(BASE_THEME_PACKAGE, theme);
+		if (cssData) {
+			ManagedStyles.createOrUpdateStyle(cssData, "data-ui5-theme-properties", BASE_THEME_PACKAGE);
+		}
 	};
 	const deleteThemeBase = () => {
 		ManagedStyles.removeStyle("data-ui5-theme-properties", BASE_THEME_PACKAGE);
@@ -21,8 +23,10 @@ sap.ui.define(['../asset-registries/Themes', '../ManagedStyles', './getThemeDesi
 			if (packageName === BASE_THEME_PACKAGE) {
 				return;
 			}
-			const cssText = await Themes.getThemeProperties(packageName, theme);
-			ManagedStyles.createOrUpdateStyle(cssText, "data-ui5-theme-properties", packageName);
+			const cssData = await Themes.getThemeProperties(packageName, theme);
+			if (cssData) {
+				ManagedStyles.createOrUpdateStyle(cssData, "data-ui5-theme-properties", packageName);
+			}
 		});
 	};
 	const detectExternalTheme = () => {

@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		tag: "ui5-panel",
 		languageAware: true,
 		managedSlots: true,
+		fastNavigation: true,
 		slots:  {
 			header: {
 				type: HTMLElement,

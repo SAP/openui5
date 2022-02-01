@@ -36,6 +36,8 @@ sap.ui.define([
 	 *     <li>bar - Used to style the wrapper of the content of the component</li>
 	 * </ul>
 	 *
+	 * <h3>Keyboard Handling</h3>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -44,12 +46,16 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.fiori.Bar
+	 * @implements sap.ui.webc.fiori.IBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Bar = WebComponent.extend("sap.ui.webc.fiori.Bar", {
 		metadata: {
 			library: "sap.ui.webc.fiori",
 			tag: "ui5-bar-ui5",
+			interfaces: [
+				"sap.ui.webc.fiori.IBar"
+			],
 			properties: {
 
 				/**

@@ -73,19 +73,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.getFormat().format(localDate, true);
 		}
 		getFormat() {
-			let dateFormat;
-			if (this._isPattern) {
-				dateFormat = DateFormat__default.getInstance({
+			return this._isPattern
+				? DateFormat__default.getInstance({
+					strictParsing: true,
 					pattern: this._formatPattern,
 					calendarType: this._primaryCalendarType,
-				});
-			} else {
-				dateFormat = DateFormat__default.getInstance({
+				})
+				: DateFormat__default.getInstance({
+					strictParsing: true,
 					style: this._formatPattern,
 					calendarType: this._primaryCalendarType,
 				});
-			}
-			return dateFormat;
 		}
 		static async onDefine() {
 			[DateComponentBase.i18nBundle] = await Promise.all([

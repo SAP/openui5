@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/icons/accept', './Icon', './Label', './types/WrappingType', './generated/i18n/i18n-defaults', './generated/templates/CheckBoxTemplate.lit', './generated/themes/CheckBox.css'], function (Device, UI5Element, litRender, i18nBundle, ValueState, FeaturesRegistry, Keys, accept, Icon, Label, WrappingType, i18nDefaults, CheckBoxTemplate_lit, CheckBox_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/icons/accept', './Icon', './Label', './types/WrappingType', './generated/i18n/i18n-defaults', './generated/templates/CheckBoxTemplate.lit', './generated/themes/CheckBox.css'], function (Device, UI5Element, litRender, i18nBundle, ValueState, FeaturesRegistry, AriaLabelHelper, Keys, accept, Icon, Label, WrappingType, i18nDefaults, CheckBoxTemplate_lit, CheckBox_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -12,6 +12,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		tag: "ui5-checkbox",
 		languageAware: true,
 		properties:  {
+			accessibleNameRef: {
+				type: String,
+				defaultValue: "",
+			},
+			accessibleName: {
+				type: String,
+			},
 			disabled: {
 				type: Boolean,
 			},
@@ -145,6 +152,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				"Success": CheckBox.i18nBundle.getText(i18nDefaults.VALUE_STATE_SUCCESS),
 			};
 		}
+		get ariaLabelText() {
+			return AriaLabelHelper.getEffectiveAriaLabelText(this);
+		}
 		get classes() {
 			return {
 				main: {
@@ -162,7 +172,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return this.indeterminate && this.checked ? "mixed" : this.checked;
 		}
 		get ariaLabelledBy() {
-			return this.text ? `${this._id}-label` : undefined;
+			if (!this.ariaLabelText) {
+				return this.text ? `${this._id}-label` : undefined;
+			}
+			return undefined;
 		}
 		get ariaDescribedBy() {
 			return this.hasValueState ? `${this._id}-descr` : undefined;

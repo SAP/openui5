@@ -34,6 +34,19 @@ sap.ui.define([
 	 * <b>Note:</b> If no selected step is defined, the first step will be auto selected. <br>
 	 * <b>Note:</b> If multiple selected steps are defined, the last step will be selected.
 	 *
+	 * <h3>Keyboard Handling</h3> The user can navigate using the following keyboard shortcuts: <br>
+	 *
+	 *
+	 * <h4>Wizard Progress Navigation</h4>
+	 * <ul>
+	 *     <li>[LEFT], [DOWN] - Focus moves backward to the WizardProgressNavAnchors.</li>
+	 *     <li>[UP], [RIGHT] - Focus moves forward to the WizardProgressNavAnchor.</li>
+	 *     <li>[SPACE] or [ENTER], [RETURN] - Selects an active step</li>
+	 *     <li>[HOME] or [PAGE UP] - Focus goes to the first step</li>
+	 *     <li>[END] or [PAGE DOWN] - Focus goes to the last step</li>
+	 * </ul>
+	 *
+	 *
 	 * <h4>Content</h4> The content occupies the main part of the page. It can hold any type of HTML elements. It's defined by using the <code>sap.ui.webc.fiori.WizardStep</code> as slotted element within the <code>sap.ui.webc.fiori.Wizard</code>.
 	 *
 	 * <h3>Scrolling</h3> The component handles user scrolling by selecting the closest step, based on the current scroll position and scrolls to particular place, when the user clicks on the step within the navigation area. <br>

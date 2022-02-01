@@ -14,6 +14,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			expanded: {
 				type: Boolean,
 			},
+			indeterminate: {
+				type: Boolean,
+			},
 			hasChildren: {
 				type: Boolean,
 			},

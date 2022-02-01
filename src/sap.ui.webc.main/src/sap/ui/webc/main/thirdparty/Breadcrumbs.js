@@ -153,15 +153,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 				label = this._currentLocationLabel;
 			for (let i = this._overflowSize; i < items.length; i++) {
 				const item = items[i],
-					link = this.shadowRoot.querySelector(`.ui5-breadcrumbs-link-wrapper #${item._id}-link`);
+					link = this.shadowRoot.querySelector(`#${item._id}-link-wrapper`);
 				map.set(item, this._getElementWidth(link) || 0);
 			}
-			if (this._endsWithCurrentLocationLabel && label) {
+			if (items.length && this._endsWithCurrentLocationLabel && label) {
 				const item = items[items.length - 1];
 				map.set(item, this._getElementWidth(label));
 			}
 			if (!this._isOverflowEmpty) {
-				this._dropdownArrowLinkWidth = this._getElementWidth(this._dropdownArrowLink);
+				this._dropdownArrowLinkWidth = this._getElementWidth(
+					this.shadowRoot.querySelector(".ui5-breadcrumbs-dropdown-arrow-link-wrapper"),
+				);
 			}
 		}
 		_updateOverflow() {
@@ -213,7 +215,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			this.fireEvent("item-click", { item });
 		}
 		_onOverflowListItemSelect(event) {
-			const listItem = event.detail.item,
+			const listItem = event.detail.selectedItems[0],
 				items = this.getSlottedNodes("items"),
 				item = items.find(x => `${x._id}-li` === listItem.id);
 			window.open(item.href, item.target || "_self", "noopener,noreferrer");
@@ -258,7 +260,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 		}
 		get _currentLocationText() {
 			const items = this.getSlottedNodes("items");
-			if (this._endsWithCurrentLocationLabel && items.length > 1) {
+			if (this._endsWithCurrentLocationLabel && items.length) {
 				const item = items[items.length - 1];
 				if (this._isItemVisible(item)) {
 					return item.innerText;

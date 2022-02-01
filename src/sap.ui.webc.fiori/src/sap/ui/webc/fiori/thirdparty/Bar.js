@@ -9,6 +9,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-bar",
 		managedSlots: true,
+		fastNavigation: true,
 		properties:  {
 			design: {
 				type: BarDesign,
@@ -69,6 +70,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"ui5-bar-root-shrinked": this._shrinked,
 				},
 			};
+		}
+		onBeforeRendering() {
+			[...this.startContent, ...this.middleContent, ...this.endContent].forEach(element => element.classList.add("ui5-bar-content"));
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this, this._handleResizeBound);

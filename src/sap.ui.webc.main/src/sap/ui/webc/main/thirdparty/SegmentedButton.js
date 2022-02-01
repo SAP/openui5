@@ -11,7 +11,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		tag: "ui5-segmented-button",
 		altTag: "ui5-segmentedbutton",
 		languageAware: true,
-		properties:   {},
+		properties:   {
+			 accessibleName: {
+				type: String,
+				defaultValue: undefined,
+			},
+		},
 		managedSlots: true,
 		slots:  {
 			"default": {

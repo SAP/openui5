@@ -6,9 +6,9 @@
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
 	"./library",
-	"./thirdparty/Label",
-	"sap/ui/core/LabelEnablement"
-], function(WebComponent, library, Label, LabelEnablement) {
+	"sap/ui/core/LabelEnablement",
+	"./thirdparty/Label"
+], function(WebComponent, library, LabelEnablement) {
 	"use strict";
 
 	var WrappingType = library.WrappingType;
@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Label
+	 * @implements sap.ui.core.Label
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Label = WebComponent.extend("sap.ui.webc.main.Label", {
@@ -101,12 +102,15 @@ sap.ui.define([
 
 				/**
 				 * Association to the labelled control.
+				 * <br>
+				 *
 				 * By default, the label sets the for attribute to the ID of the labelled control. This can be changed by implementing the function getIdForLabel on the labelled control.
 				 */
 				labelFor: {
 					type: "sap.ui.core.Control",
 					multiple: false,
 					mapping: {
+						type: "property",
 						to: "for"
 					}
 				}

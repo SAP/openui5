@@ -54,8 +54,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 			this.focus();
 		}
 		tokenDelete(event) {
-			this.fireEvent("token-delete", {
-				token: event.detail.ref,
+			const focusedToken = event.detail.ref;
+			const selectedTokens = this.tokens.filter(token => token.selected);
+			if (selectedTokens.indexOf(focusedToken) === -1) {
+				selectedTokens.push(focusedToken);
+			}
+			selectedTokens.forEach(token => {
+				this.fireEvent("token-delete", { token });
 			});
 			this.focus();
 		}
@@ -81,7 +86,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 		}
 		_onkeydown(event) {
 			super._onkeydown(event);
-			if (Keys.isLeft(event)) {
+			const isHomeInBeginning = Keys.isHome(event) && event.target.selectionStart === 0;
+			if (Keys.isLeft(event) || isHomeInBeginning) {
 				this._skipOpenSuggestions = true;
 				return this._handleLeft(event);
 			}
@@ -95,19 +101,44 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/u
 			}
 		}
 		_onTokenizerKeydown(event) {
-			if (Keys.isRight(event)) {
-				const lastTokenIndex = this.tokenizer._tokens.length - 1;
-				if (this.tokenizer._tokens[lastTokenIndex] === document.activeElement) {
+			const rightCtrl = Keys.isRightCtrl(event);
+			const isCtrl = !!(event.metaKey || event.ctrlKey);
+			const tokens = this.tokens;
+			if (Keys.isRight(event) || Keys.isEnd(event) || rightCtrl) {
+				event.preventDefault();
+				const lastTokenIndex = this.tokens.length - 1;
+				if (event.target === this.tokens[lastTokenIndex] && this.tokens[lastTokenIndex] === document.activeElement) {
 					setTimeout(() => {
 						this.focus();
 					}, 0);
+				} else if (rightCtrl) {
+					event.preventDefault();
+					return this.tokenizer._handleArrowCtrl(event.target, this.tokens, true);
 				}
+			}
+			this.tokenizer._handleItemNavigation(event, tokens);
+			if (isCtrl && ["c", "x"].includes(event.key.toLowerCase())) {
+				event.preventDefault();
+				const isCut = event.key.toLowerCase() === "x";
+				const selectedTokens = tokens.filter(token => token.selected);
+				if (isCut) {
+					const cutResult = this.tokenizer._fillClipboard("cut", selectedTokens);
+					selectedTokens.forEach(token => {
+						this.fireEvent("token-delete", { token });
+					});
+					this.focus();
+					return cutResult;
+				}
+				return this.tokenizer._fillClipboard("copy", selectedTokens);
 			}
 		}
 		_handleLeft() {
 			const cursorPosition = this.getDomRef().querySelector(`input`).selectionStart;
-			if (cursorPosition === 0) {
-				this.tokenizer._focusLastToken();
+			const tokens = this.tokens;
+			const lastToken = tokens.length && tokens[tokens.length - 1];
+			if (cursorPosition === 0 && lastToken) {
+				lastToken.focus();
+				this.tokenizer._itemNav.setCurrentItem(lastToken);
 			}
 		}
 		_onfocusout(event) {

@@ -40,7 +40,9 @@ sap.ui.define([
 	 *
 	 * <br>
 	 * <br>
-	 * <h3>Keyboard Handling</h3> The <code>sap.ui.webc.main.List</code> provides advanced keyboard handling. When a list is focused the user can use the following keyboard shortcuts in order to perform a navigation: <br>
+	 * <h3>Keyboard Handling</h3>
+	 *
+	 * <h4>Basic Navigation</h4> The <code>sap.ui.webc.main.List</code> provides advanced keyboard handling. When a list is focused the user can use the following keyboard shortcuts in order to perform a navigation: <br>
 	 *
 	 *
 	 *
@@ -54,8 +56,7 @@ sap.ui.define([
 	 * <ul>
 	 *     <li>[SPACE] - Select an item (if <code>type</code> is 'Active') when <code>mode</code> is selection</li>
 	 *     <li>[DELETE] - Delete an item if <code>mode</code> property is <code>Delete</code></li>
-	 * </ul> <br>
-	 * <br>
+	 * </ul>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -228,6 +229,7 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
@@ -235,6 +237,7 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}
@@ -246,6 +249,7 @@ sap.ui.define([
 				 * Fired when an item is activated, unless the item's <code>type</code> property is set to <code>Inactive</code>.
 				 */
 				itemClick: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The clicked item.
