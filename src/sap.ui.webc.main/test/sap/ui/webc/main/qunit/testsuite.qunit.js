@@ -305,6 +305,22 @@ sap.ui.define(function() {
 					only: ["sap/ui/webc/main/Tree"]
 				}
 			},
+			"designtime/Input": {
+				title: "QUnit Page for sap.ui.webc.main.Input design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
+			"designtime/MultiInput": {
+				title: "QUnit Page for sap.ui.webc.main.MultiInput design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/RangeSlider": {
 				title: "QUnit Page for sap.ui.webc.main.RangeSlider design time and rta enabling",
 				ui5: {

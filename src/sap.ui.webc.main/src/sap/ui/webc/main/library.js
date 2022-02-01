@@ -150,6 +150,14 @@ sap.ui.define([
 			elements: [],
 			extensions: {
 				flChangeHandlers: {
+					"sap.ui.webc.main.Input": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.MultiInput": {
+						"hideControl": "default",
+						"unhideControl": "default"
+					},
 					"sap.ui.webc.main.RangeSlider": {
 						"hideControl": "default",
 						"unhideControl": "default"

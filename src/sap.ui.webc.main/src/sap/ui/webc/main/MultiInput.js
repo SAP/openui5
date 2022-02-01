@@ -300,6 +300,7 @@ sap.ui.define([
 					parameters: {}
 				}
 			},
+			designtime: "sap/ui/webc/main/designtime/MultiInput.designtime",
 			getters: ["previewItem"]
 		}
 	});

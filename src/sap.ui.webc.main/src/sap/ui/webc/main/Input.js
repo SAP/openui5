@@ -267,6 +267,7 @@ sap.ui.define([
 					}
 				}
 			},
+			designtime: "sap/ui/webc/main/designtime/Input.designtime",
 			getters: ["previewItem"]
 		}
 	});
