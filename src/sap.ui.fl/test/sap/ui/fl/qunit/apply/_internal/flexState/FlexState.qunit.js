@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/sinon-4"
@@ -24,7 +23,6 @@ sap.ui.define([
 	LayerUtils,
 	Utils,
 	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Log,
 	merge,
 	sinon
@@ -257,6 +255,24 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when clearState is called while there are dirty changes", function(assert) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			return FlexState.initialize({
+				reference: sReference,
+				component: {},
+				componentId: sComponentId
+			})
+				.then(function() {
+					oChangePersistence.addDirtyChange({});
+					FlexState.clearState(sReference);
+					assert.strictEqual(
+						oChangePersistence.getDirtyChanges().length,
+						0,
+						"then dirty changes are removed"
+					);
+				});
+		});
+
 		QUnit.test("when clearAndInitialize is called for two component references", function(assert) {
 			var sReferenceComponent2 = "second.reference.Component";
 			var sReference2 = "second.reference";
@@ -277,11 +293,6 @@ sap.ui.define([
 				reference: sReference2,
 				componentId: sComponentId
 			}))
-			.then(function () {
-				// add some instances for testing purposes
-				ChangePersistenceFactory._instanceCache[sReference2] = sinon.stub();
-				FlexControllerFactory._instanceCache[sReference2] = sinon.stub();
-			})
 			.then(FlexState.clearAndInitialize.bind(null, {
 				reference: sReferenceComponent2,
 				componentId: sComponentId
@@ -289,10 +300,6 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(FlexState.clearState.calledWith(sReferenceComponent2), "then state was cleared for reference2.Component");
 				assert.ok(FlexState.clearState.calledWith(sReference2), "then state was cleared for reference2");
-				assert.strictEqual(ChangePersistenceFactory._instanceCache[sReference2], undefined, "then state was cleared for reference2");
-				assert.strictEqual(ChangePersistenceFactory._instanceCache[sReferenceComponent2], undefined, "then state was cleared for sReferenceComponent2");
-				assert.strictEqual(FlexControllerFactory._instanceCache[sReference2], undefined, "then state was cleared for reference2");
-				assert.strictEqual(FlexControllerFactory._instanceCache[sReferenceComponent2], undefined, "then state was cleared for sReferenceComponent2");
 			});
 		});
 
