@@ -626,6 +626,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 
 		// Assert
 		assert.strictEqual(oCurrentLocation.$().attr("aria-current"), "page", "Current location should have correct aria attribute");
+		assert.strictEqual(oCurrentLocation.$().attr("role"), "link", "Current location should have correct role attribute");
 	});
 
 	QUnit.test("Keyboard Handling", function (assert) {

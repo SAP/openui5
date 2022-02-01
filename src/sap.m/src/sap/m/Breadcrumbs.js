@@ -231,6 +231,7 @@ sap.ui.define([
 				onAfterRendering: function () {
 					oCurrentLocation.$().attr("aria-current", "page");
 					oCurrentLocation.$().attr("tabindex", 0);
+					oCurrentLocation.$().attr("role", "link");
 				}
 			});
 
