@@ -43,10 +43,10 @@ sap.ui.define([
 	 * @static
 	 * @constant
 	 * @typedef {Object} sap.m.p13n.SortItem
-	 * @property {String} name The unique key of the item
-	 * @property {String} label The label describing the personalization item
-	 * @property {Boolean} sorted Defines the sorting state of the personalization item
-	 * @property {Boolean} descending Defines the descending state of the personalization item
+	 * @property {string} name The unique key of the item
+	 * @property {string} label The label describing the personalization item
+	 * @property {boolean} sorted Defines the sorting state of the personalization item
+	 * @property {boolean} descending Defines the descending state of the personalization item
 	 *
 	 * @public
 	 */
