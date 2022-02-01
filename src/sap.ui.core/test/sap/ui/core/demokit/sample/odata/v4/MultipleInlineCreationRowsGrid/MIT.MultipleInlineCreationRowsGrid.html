@@ -20,37 +20,87 @@
 		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid</a></li>
 
 		<h2>REALIZE and CHECK</h2>
+		<h3>Test app within draft mode (SubmitMode.Auto)</h3>
 		<ol>
 			<li><b>Check</b>: A list with three products appears.</li>
-			<li>Select the first product with ID 10.</li>
-			<li><b>Check</b>: A table with title "3 Parts" appears. It contains three product parts,
-				followed by three empty rows.</li>
-			<li><b>Check</b>: The delete button is active for the parts and inactive for the empty
-				rows.</li>
+			<li>Select the first product with ID "10".</li>
+			<li><b>Check</b>: A table with title "Product 10, 3 Parts" appears. It contains three
+				product parts, followed by three empty rows.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button is active for the persisted parts
+				and inactive for the empty rows.</li>
 
-			<li>Enter "99" into the ID field of the first empty row and press
-				<code>Enter</code>.</li>
-			<li><b>Check</b>: The delete button of the row becomes active.</li>
-			<li><b>Check</b>: The table title changes to "4 Parts".</li>
+			<li>Enter "99" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
 			<li><b>Check</b>: A new empty row appears.</li>
 
-			<li>Enter "100" into the ID field of the first empty row and press
-				<code>Enter</code>.</li>
+			<li>Enter "100" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
 			<li><b>Check</b>: An error message "Key exists already" appears.</li>
-			<li><b>Check</b>: The delete button of the row becomes active.</li>
-			<li><b>Check</b>: The table title changes to "5 Parts".</li>
+			<li><b>Check:</b> The <code>ID</code> field has a colored border indicating the error.
+				</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
 			<li><b>Check</b>: A new empty row appears.</li>
 
-			<li>Enter "101" into the ID field of the first empty row and press
-				<code>Enter</code>.</li>
-			<li><b>Check</b>: The delete button of the row becomes active.</li>
-			<li><b>Check</b>: The table title changes to "6 Parts".</li>
+			<li>Enter "101" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 6 Parts".</li>
 			<li><b>Check</b>: A new empty row appears.</li>
 
-			<li>Click on the delete button of the fifth row with the ID "100"</li>
-			<li>Confirm the dialog with clicking on "Ok"</li>
-			<li><b>Check</b>: The table title changes to "5 Parts".</li>
+			<li>Click on The <code>Delete part</code> button of the fifth row with the ID
+				"100".</li>
+			<li>Confirm the dialog with clicking on <code>Ok</code>.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 5 Parts".</li>
 			<li><b>Check</b>: The row disappears.</li>
+		</ol>
+		<h3>Test app within non-draft mode (SubmitMode.API)</h3>
+		<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid&updateGroupId=update">http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.MultipleInlineCreationRowsGrid&updateGroupId=update</a></li>
+		<ol>
+			<li><b>Check</b>: A list with three products appears.</li>
+			<li>Select the first product with ID "10".</li>
+			<li><b>Check</b>: A table with title "Product 10, 3 Parts" appears. It contains three
+				product parts, followed by three empty rows.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button is active for the persisted parts
+				and inactive for the empty rows.</li>
+			<li>Enter "99" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li><b>Check</b>: No other product can be selected
+				(because of the now active part "99").</li>
+			<li>Press <code>Save</code>.</li>
+			<li><b>Check</b>: The product with ID "99" now has the status "persisted".</li>
+			<li><b>Check</b>: Other products now can be selected again.</li>
+			<li>Select the first product with ID "10".</li>
+			<li>Enter "100" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li>Press <code>Save</code>.</li>
+			<li><b>Check</b>: An error message "Key exists already" appears.</li>
+			<li><b>Check:</b> The <code>ID</code> field has a colored border indicating the error.
+				</li>
+			<li>Close the message popover.</li>
+			<li>Press <code>Cancel</code>.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 3 Parts".</li>
+			<li><b>Check</b>: The row disappears.</li>
+			<li>Enter "101" into the <code>ID</code> field of the first empty row and press
+				"Enter" key.</li>
+			<li><b>Check</b>: The <code>Delete part</code> button of the row becomes active.</li>
+			<li><b>Check</b>: The table title changes to "Product 10, 4 Parts".</li>
+			<li><b>Check</b>: A new empty row appears.</li>
+			<li>Press <code>Save</code>.</li>
+			<li><b>Check</b>: No other product can be selected
+				(because of the now active part "101").</li>
+			<li>Press <code>Save</code>.</li>
+			<li><b>Check</b>: The product with <code>ID</code> "101" now has the status
+				"persisted".</li>
+			<li><b>Check</b>: Other products now can be selected again.</li>
 		</ol>
 	</body>
 </html>

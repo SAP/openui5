@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/v4/ODataUtils"
-], function (Log, UriParameters, library, MessageBox, Controller, Sorter, JSONModel, ODataUtils) {
+	"sap/ui/model/odata/v4/ODataUtils",
+	"sap/ui/model/odata/v4/SubmitMode"
+], function (Log, UriParameters, library, MessageBox, Controller, Sorter, JSONModel, ODataUtils,
+		SubmitMode) {
 	"use strict";
 
 	var sEmptyRowCount = UriParameters.fromQuery(window.location.search).get("emptyRows"),
@@ -36,7 +38,9 @@ sap.ui.define([
 
 		createInactiveRows : function (iCount) {
 			var oBinding = this.getView().byId("parts").getBinding("rows"),
-				i;
+				bInactive,
+				i,
+				that = this;
 
 			function createEmptyRow() {
 				var oContext = oBinding.create({}, true, true, /*bInactive*/true);
@@ -45,6 +49,9 @@ sap.ui.define([
 					if (!oError.canceled) {
 						throw oError; // unexpected error
 					}
+					bInactive = oContext.isInactive();
+				}).finally(function () {
+					that.incrementActive(bInactive ? 0 : -1);
 				});
 			}
 
@@ -76,8 +83,18 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
+		incrementActive : function (iIncrement) {
+			this.oUIModel.setProperty("/iActive",
+				this.oUIModel.getProperty("/iActive") + iIncrement);
+		},
+
 		onActivate : function () {
 			this.createInactiveRows(1);
+			this.incrementActive(1);
+		},
+
+		onCancel : function () {
+			return this.getView().getModel().resetChanges();
 		},
 
 		onDelete : function (oEvent) {
@@ -104,18 +121,22 @@ sap.ui.define([
 		onInit : function () {
 			var oPartsBinding,
 				oProductsBinding,
-				oView = this.getView();
+				oView = this.getView(),
+				oModel = oView.getModel();
 
 			this.initMessagePopover("showMessages");
 			this.oUIModel = new JSONModel({
+				iActive : 0,
 				sActivity : "",
+				bAPI : oModel.getGroupProperty(oModel.getUpdateGroupId(), "submit")
+					=== SubmitMode.API,
 				sLayout : LayoutType.OneColumn,
 				iMessages : 0,
 				bSortPartsQuantity : true,
 				sSortPartsQuantityIcon : ""
 			});
 			oView.setModel(this.oUIModel, "ui");
-			oView.setModel(oView.getModel(), "headerContext");
+			oView.setModel(oModel, "headerContext");
 			oProductsBinding = oView.byId("products").getBinding("items");
 			oProductsBinding.attachDataRequested(this.showLoading, this);
 			oProductsBinding.attachDataReceived(this.showNothing, this);
@@ -134,6 +155,17 @@ sap.ui.define([
 					.attachEventOnce("dataReceived",
 						this.createInactiveRows.bind(this, iEmptyRowCount));
 			}
+		},
+
+		onSave : function () {
+			var oView = this.getView(),
+				oModel = oView.getModel();
+
+			oView.setBusy(true);
+
+			return oModel.submitBatch(oModel.getUpdateGroupId()).finally(function () {
+				oView.setBusy(false);
+			});
 		},
 
 		onSelectProduct : function (oEvent) {
@@ -169,7 +201,7 @@ sap.ui.define([
 		setPartsContext : function (oContext) {
 			this.deleteInactiveRows();
 			this.getView().byId("parts").setBindingContext(oContext);
-			this.byId("partCount").setBindingContext(
+			this.byId("partsTitle").setBindingContext(
 				this.getView().byId("parts").getBinding("rows").getHeaderContext(),
 				"headerContext");
 			this.createInactiveRows(iEmptyRowCount);
