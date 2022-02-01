@@ -10,7 +10,7 @@ sap.ui.define([
 			{
 				title: 'Declarative Card Types',
 				icon: 'sap-icon://SAP-icons-TNT/requirement-diagram',
-				key: 'types_declarative',
+				key: 'typesDeclarative',
 				target: 'exploreOverview',
 				hasExpander: false,
 				items: [
@@ -565,7 +565,7 @@ sap.ui.define([
 			{
 				title: 'Other Card Types',
 				icon: 'sap-icon://SAP-icons-TNT/internal-block-diagram',
-				key: 'types_other',
+				key: 'typesOther',
 				target: 'exploreOverview',
 				hasExpander: false,
 				items: [
