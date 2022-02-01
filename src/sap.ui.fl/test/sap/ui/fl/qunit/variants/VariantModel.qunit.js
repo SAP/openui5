@@ -1803,6 +1803,60 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when calling '_handleSaveEvent' on a USER variant with setDefault, executeOnSelect and public boxes checked", function(assert) {
+			var sVMReference = "variantMgmtId1";
+			var oVariantManagement = new VariantManagement(sVMReference);
+			var oCopiedVariant = new Variant({
+				content: {
+					title: "Personalization Test Variant",
+					variantManagementReference: sVMReference,
+					variantReference: "variant1",
+					layer: Layer.USER
+				}
+			});
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
+			var oCopyVariantStub = sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant]);
+			var oAddVariantChangeStub = sandbox.stub(this.oModel, "addVariantChange").returns();
+			var oEvent = {
+				getParameters: function() {
+					return {
+						name: "Test",
+						def: true,
+						"public": true,
+						execute: true
+					};
+				},
+				getSource: function() {
+					return oVariantManagement;
+				}
+			};
+
+			return this.oModel._handleSaveEvent(oEvent)
+				.then(function() {
+					assert.ok(
+						oCopyVariantStub.calledOnceWith(sinon.match({
+							layer: Layer.PUBLIC
+						})),
+						"then the variant is created on the PUBLIC layer"
+					);
+					assert.strictEqual(
+						oAddVariantChangeStub.callCount,
+						2,
+						"then addVariantChange() was called twice; for setDefault and setExecuteOnSelect"
+					);
+					assert.ok(
+						oAddVariantChangeStub.alwaysCalledWith(
+							sVMReference,
+							sinon.match({
+								layer: Layer.USER
+							})
+						),
+						"then the variant changes are created on the USER layer"
+					);
+					oVariantManagement.destroy();
+				});
+		});
+
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default box unchecked", function(assert) {
 			var done = assert.async();
 			var sVMReference = "variantMgmtId1";

@@ -1285,14 +1285,15 @@ sap.ui.define([
 				return this.oFlexController.saveSequenceOfDirtyChanges(this._getDirtyChangesFromVariantChanges(aSourceVariantChanges), oAppComponent);
 			}
 
-			var sLayer = mParameters.layer || (mParameters.public ? Layer.PUBLIC : Layer.USER);
+			var sVariantLayer = mParameters.layer || (mParameters.public ? Layer.PUBLIC : Layer.USER);
+			var sVariantChangeLayer = mParameters.layer || Layer.USER;
 
 			// handle triggered "SaveAs" button
 			var sNewVariantReference = mParameters.newVariantReference || Utils.createDefaultFileName();
 			var mPropertyBag = {
 				variantManagementReference: sVariantManagementReference,
 				appComponent: oAppComponent,
-				layer: sLayer,
+				layer: sVariantLayer,
 				title: mParameters.name,
 				contexts: mParameters.contexts,
 				sourceVariantReference: sSourceVariantReference,
@@ -1308,7 +1309,7 @@ sap.ui.define([
 							defaultVariant: sNewVariantReference,
 							originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
 							appComponent: oAppComponent,
-							layer: sLayer,
+							layer: sVariantChangeLayer,
 							variantManagementReference: sVariantManagementReference
 						};
 						var oSetDefaultChange = this.addVariantChange(sVariantManagementReference, mPropertyBagSetDefault);
@@ -1320,7 +1321,7 @@ sap.ui.define([
 							executeOnSelect: true,
 							variantReference: sNewVariantReference,
 							appComponent: oAppComponent,
-							layer: sLayer,
+							layer: sVariantChangeLayer,
 							variantManagementReference: sVariantManagementReference
 						};
 						var oSetExecuteChange = this.addVariantChange(sVariantManagementReference, mPropertyBagSetExecute);
