@@ -53,9 +53,9 @@ sap.ui.define([
 	 * @static
 	 * @constant
 	 * @typedef {Object} sap.m.p13n.GroupItem
-	 * @property {String} name The unique key of the item
-	 * @property {String} label The label describing the personalization item
-	 * @property {Boolean} grouped Defines the grouping state of the personalization item
+	 * @property {string} name The unique key of the item
+	 * @property {string} label The label describing the personalization item
+	 * @property {boolean} grouped Defines the grouping state of the personalization item
 	 *
 	 * @public
 	 */

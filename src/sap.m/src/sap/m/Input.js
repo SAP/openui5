@@ -1218,7 +1218,7 @@ function(
 	 *
 	 * @protected
 	 * @param {jQuery.Event} oEvent Ontap event.
-	 * @returns {Boolean} If the popover should be openened.
+	 * @returns {boolean} If the popover should be openened.
 	 */
 	Input.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
 		return this.isMobileDevice()
