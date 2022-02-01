@@ -3,6 +3,49 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "60bf347349529229aa6e002010a98819df32419e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "f6a962a86edc642f2cec20cd266299a75b68027e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: since tag for getEndDate function added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280033424"
+          }
+        ]
+      },
+      {
+        "id": "5462e5d4933af51f2fff73869b73ddd80ce39a65",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: New DateTimeRange option"
+      },
+      {
+        "id": "5bad3402de824d812953afc77e78068a0012c29f",
+        "type": "FIX",
+        "text": " DynamicDateRange: timestamp support for \"datetime\" operator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280031911"
+          }
+        ]
+      },
+      {
+        "id": "aa682026f255543af0c8d456a70fb8fdd1ea9ff3",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Adjust row height to represent zoom in/out behavior"
+      },
+      {
         "id": "74580c369672c1e6d9c97b2479fd6aedfd7dff6e",
         "type": "FIX",
         "text": " FeedListItem : FeedListItemActionButton getting cutoff at right end.",
@@ -23,6 +66,11 @@
             "reference": "2280013612"
           }
         ]
+      },
+      {
+        "id": "d8e138c4c48f030acf0e7c464c5f203472676c1b",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Adding new month option that allows picking year as well"
       },
       {
         "id": "5ab58343088a1137cb60620acec045917a977369",

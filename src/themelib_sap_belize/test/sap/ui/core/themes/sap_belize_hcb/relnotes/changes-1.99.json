@@ -1,0 +1,18 @@
+{
+  "1.99.0": {
+    "date": "January 2022",
+    "notes": [
+      {
+        "id": "9c15312da478b247b6bffc8067639e00adecd216",
+        "type": "FIX",
+        "text": " \"72\" font: use the bold font for fallback with font-weight 700",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180400449"
+          }
+        ]
+      }
+    ]
+  }
+}

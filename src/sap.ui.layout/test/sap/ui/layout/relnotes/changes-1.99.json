@@ -3,6 +3,11 @@
     "date": "January 2022",
     "notes": [
       {
+        "id": "8c1e3eac70923d4dc2f2e1ab4dd3e86857d1c564",
+        "type": "FIX",
+        "text": " sap.m.BlockLayoutCellRenderer: tag names must be lower case"
+      },
+      {
         "id": "a892d535c00890b16c78b94912502ae0743dda10",
         "type": "FIX",
         "text": " GridBoxLayout: prevent exception when hidden",
