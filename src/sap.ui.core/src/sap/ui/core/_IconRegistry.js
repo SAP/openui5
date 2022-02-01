@@ -709,7 +709,16 @@ sap.ui.define([
 				'qr-code': 0x1e28f,
 				'space-navigation': 0xe290,
 				'in-progress': 0x1e291,
-				'not-editable': 0xe292
+				'not-editable': 0xe292,
+				'bookmark-2': 0xe296,
+				'detail-less': 0xe297,
+				'detail-more': 0xe298,
+				'flag-2': 0x1e299,
+				'folder-2': 0xe29a,
+				'heart': 0xe293,
+				'heart-2': 0xe294,
+				'paint-bucket': 0xe29b,
+				'tri-state': 0xe295
 			}
 		};
 

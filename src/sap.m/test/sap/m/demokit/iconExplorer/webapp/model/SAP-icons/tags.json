@@ -6543,5 +6543,128 @@
 			"editable false",
 			"crossed-out"
 		]
+	},
+	"bookmark-2": {
+		"tags": [
+			"bookmark",
+			"later",
+			"marker",
+			"save",
+			"remove selection",
+			"choose me",
+			"not selected",
+			"unfilled"
+		]
+	},
+	"detail-less": {
+		"tags": [
+			"detail",
+			"hide detail",
+			"popin",
+			"table",
+			"less",
+			"information",
+			"data",
+			"hide",
+			"reduce"
+		]
+	},
+	"detail-more": {
+		"tags": [
+			"detail",
+			"show detail",
+			"popin",
+			"table",
+			"more",
+			"information",
+			"data",
+			"show",
+			"extend",
+			"grow"
+		]
+	},
+	"flag-2": {
+		"tags": [
+			"unflag",
+			"flag",
+			"unmark",
+			"mark",
+			"remove marker",
+			"important",
+			"remove selection",
+			"choose me",
+			"not selected",
+			"unfilled"
+		]
+	},
+	"folder-2": {
+		"tags": [
+			"folder",
+			"full",
+			"content",
+			"detail",
+			"choose",
+			"selected",
+			"filled"
+		]
+	},
+	"heart": {
+		"tags": [
+			"heart",
+			"full",
+			"love",
+			"feeling",
+			"emotion",
+			"care",
+			"favorite",
+			"choose",
+			"selected",
+			"filled",
+			"content"
+		]
+	},
+	"heart-2": {
+		"tags": [
+			"heart",
+			"empty",
+			"unfulfilled",
+			"love",
+			"unloved",
+			"not loved",
+			"feeling",
+			"emotion",
+			"care",
+			"unfavorite",
+			"choose me",
+			"not selected",
+			"unfilled"
+		]
+	},
+	"paint-bucket": {
+		"tags": [
+			"filled",
+			"color",
+			"colour",
+			"bucket",
+			"spill",
+			"drop",
+			"fill"
+		]
+	},
+	"tri-state": {
+		"tags": [
+			"third",
+			"state",
+			"parial",
+			"selected",
+			"square",
+			"box",
+			"table",
+			"tree",
+			"list",
+			"selection",
+			"tri",
+			"tri-state"
+		]
 	}
 }
