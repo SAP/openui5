@@ -176,10 +176,6 @@ sap.ui.define([
 		 * The function <code>foo</code> is called with arguments such that <code>
 		 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 		 * holds.
-		 * This use is not supported within an expression binding, that is, <code>&lt;Text
-		 * text="{= ${parts: [{path: 'Label'}, {path: 'Value'}], formatter: 'foo'} }"/></code>
-		 * does not work as expected because the property <code>requiresIContext = true</code> is
-		 * ignored.
 		 *
 		 * To distinguish those two use cases, just check whether <code>oInterface.getModel() ===
 		 * undefined</code>, in which case the formatter is called on root level of a composite
@@ -195,6 +191,22 @@ sap.ui.define([
 		 * @since 1.27.1
 		 */
 		return /** @lends sap.ui.core.util.XMLPreprocessor.IContext */ {
+			/**
+			 * @param {number} iStart - Start index of slice
+			 * @param {number} iEnd - End index of slice
+			 * @returns {sap.ui.core.util.XMLPreprocessor.IContext}
+			 *   Sliced interface or <code>this</code> in case no slice is needed
+			 *
+			 * @private
+			 */
+			_slice : function (iStart, iEnd) {
+				getBindingOrContext(0); // just to trigger lazy init of vBindingOrContext
+				return !iStart && iEnd >= vBindingOrContext.length
+					? this // no slice needed
+					: createContextInterface(null, mSettings, undefined,
+						vBindingOrContext.slice(iStart, iEnd));
+			},
+
 			/**
 			 * Returns a context interface for the indicated part in case of the root formatter of a
 			 * composite binding. The new interface provides access to the original settings, but

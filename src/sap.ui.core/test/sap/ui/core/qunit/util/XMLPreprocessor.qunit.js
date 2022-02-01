@@ -19,7 +19,7 @@ sap.ui.define([
 ], function (Log, ObjectPath, BindingParser, ManagedObject, SyncPromise, Component,
 		XMLTemplateProcessor, XMLPreprocessor, BindingMode, ChangeReason, Context, JSONModel,
 		Measurement, XMLHelper) {
-	/*global QUnit, sinon, window */
+	/*global QUnit, sinon */
 	/*eslint consistent-this: 0, max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
 
@@ -1507,6 +1507,9 @@ sap.ui.define([
 							));
 						}
 
+						assert.strictEqual(oInterface._slice(0, i), oInterface);
+						assert.strictEqual(oInterface._slice(0, i + 1), oInterface);
+
 						assert.throws(function () {
 							oInterface.getInterface(i);
 						}, new RegExp("Invalid index of part: " + i));
@@ -1552,6 +1555,11 @@ sap.ui.define([
 				{m : "[ 0] Binding not ready for attribute text", d : 5},
 				{m : "[ 0] text = [Customer] {CustomerName}", d : 6},
 				{m : "[ 0] text = [Customer]", d : 7},
+				{m : "[ 0] text = Customer: {CustomerName}", d : 8},
+				{m : "[ 0] text = [Customer] {CustomerName}", d : 9},
+				{m : "[ 0] text = Customer: [Customer] {CustomerName}", d : 10},
+				{m : "[ 0] text = Customer - [Customer] {CustomerName}", d : 11},
+				{m : "[ 0] text = [Customer] {CustomerName} - Customer", d : 12},
 				{m : "[ 0] Finished processing qux"}
 			], [
 				mvcView(),
@@ -1564,6 +1572,20 @@ sap.ui.define([
 				'<Text text="{parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
 					+ ' formatter: \'foo.Helper.formatParts\'}"/>',
 				'<Text text="{formatter: \'foo.Helper.formatParts\', path: \'Title/Label\'}"/>',
+				// check that requiresIContext works inside expression binding
+				'<Text text="{= ${Title/Label/String} + \': \''
+					+ '+ ${formatter: \'foo.Helper.help\', path: \'Title/Value\'} }"/>',
+				'<Text text="{= ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} }"/>',
+				'<Text text="{= ${Title/Label/String} + \': \''
+					+ ' + ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} }"/>',
+				'<Text text="{= ${formatter: \'foo.Helper.help\', path: \'Title/Label\'}'
+					+ ' + \' - \' + ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} }"/>',
+				'<Text text="{= ${parts: [{path: \'Title/Label\'}, {path: \'Title/Value\'}],'
+					+ ' formatter: \'foo.Helper.formatParts\'} + \' - \''
+					+ ' + ${formatter: \'foo.Helper.help\', path: \'Title/Label\'} }"/>',
 				'</mvc:View>'
 			], {
 				models : oModel,
@@ -1578,7 +1600,12 @@ sap.ui.define([
 				// Note: XML serializer outputs &gt; encoding...
 				'<Text text="{unrelated&gt;/some/path}"/>',
 				'<Text text="[Customer] {CustomerName}"/>',
-				'<Text text="[Customer]"/>'
+				'<Text text="[Customer]"/>',
+				'<Text text="Customer: {CustomerName}"/>',
+				'<Text text="[Customer] {CustomerName}"/>',
+				'<Text text="Customer: [Customer] {CustomerName}"/>',
+				'<Text text="Customer - [Customer] {CustomerName}"/>',
+				'<Text text="[Customer] {CustomerName} - Customer"/>'
 			]);
 		});
 	});
