@@ -374,14 +374,18 @@ sap.ui.define([
 			Then.onTheMainPage.checkMessageStrip("SO_2_SOITEM", "Error");
 			Then.onTheMainPage.checkMessagesButtonCount(4);
 			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
+			When.onTheMainPage.pressCreateSalesOrderItemButton(); // new item must survive filtering
 			When.onTheMainPage.setFilter("Error");
 			Then.onTheMainPage.checkMessagesButtonCount(4); // messages still existing
-			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
+			Then.onTheMainPage.checkTableLength(2, "SO_2_SOITEM");
 			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(0, "Error",
 				sQuantityError);
 			When.onTheMainPage.setFilter("Show All");
-			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
+			Then.onTheMainPage.checkTableLength(9, "SO_2_SOITEM");
 			Then.onTheMainPage.checkMessagesButtonCount(4);
+			Then.onTheMainPage.checkSalesOrderLineItemGrossAmount(8, "1,137.64");
+			When.onTheMainPage.pressCancelSalesOrderChangesButton();
+			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
 			When.onTheMainPage.changeNoteInLineItem(0, "EPM DG: SO ID 0500000006 Item 0000000010");
 			When.onTheMainPage.changeQuantityInLineItem(0, "2");
 			When.onTheMainPage.pressSaveSalesOrderButton();
