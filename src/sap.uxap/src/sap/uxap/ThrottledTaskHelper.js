@@ -62,6 +62,10 @@ sap.ui.define([
 			return oReturnPromise;
 		},
 
+		isPending: function() {
+			return this._iTimer != null;
+		},
+
 		_getPromise: function () {
 
 			if (!this._oPromise) {
