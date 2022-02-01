@@ -13,9 +13,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	var ValueState = coreLibrary.ValueState;
 
 	/**
-	 * Input renderer.
+	 * InputBase renderer.
 	 *
 	 * @namespace
+	 * @alias sap.m.InputBaseRenderer
+	 * @static
+	 * @protected
 	 */
 	var InputBaseRenderer = {
 		apiVersion: 2
