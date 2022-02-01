@@ -43,7 +43,7 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 }
 
 .sapMST.TwoByOne {
-	width: 23rem;
+	width: 22.5rem;
 }
 
 .sapMST.TwoByHalf {
@@ -73,4 +73,13 @@ html.sap-desktop .sapMST:focus .sapMSTFocusDiv:after,
 html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 	border: none;
 	border-radius: @sapElement_BorderCornerRadius;
+}
+
+html.sap-desktop .sapMST:hover {
+	box-shadow: @sapContent_Shadow1 !important;;
+
+	.sapMGT:hover {
+		box-shadow: none !important;
+	}
+
 }

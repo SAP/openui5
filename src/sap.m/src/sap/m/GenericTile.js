@@ -1199,7 +1199,7 @@ sap.ui.define([
 		var aContent = this.getTileContent();
 		var sAdditionalTooltip = this.getAdditionalTooltip();
 
-		if (!this._isInActionScope() && this.getMode() === GenericTileMode.ContentMode) {
+		if (!this._isInActionScope() && (this.getMode() === GenericTileMode.ContentMode || this.getMode() === GenericTileMode.ArticleMode)) {
 			for (var i = 0; i < aContent.length; i++) {
 				if (typeof aContent[i]._getAriaAndTooltipText === "function") {
 					sText += (bIsFirst ? "" : "\n") + aContent[i]._getAriaAndTooltipText();

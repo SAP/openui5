@@ -20,7 +20,6 @@ sap.ui.define([
 	// shortcut for sap.m.GenericTileScope
 	var GenericTileScope = library.GenericTileScope;
 
-
 	QUnit.module("Property scope values", {
 		beforeEach: function() {
 			this.oSlideTile = new SlideTile();
@@ -899,68 +898,134 @@ sap.ui.define([
 
 	QUnit.module("SlideTile with GenericTiles", {
 		beforeEach: function() {
-			this.oTile1 = new GenericTile({
-				tileContent: [new TileContent({
-					content: new NewsContent()
-				})]
-			}).placeAt("qunit-fixture");
-			this.oSlideTile = new SlideTile("st-news", {
-				displayTime:200000,
-				tiles: [new GenericTile({
-					mode: "ArticleMode",
-					subheader: "Tile1",
-					frameType: "TwoByOne",
-					header: "Tile1",
-					url: "#",
-					enableNavigationButton: true,
-					tileContent: new TileContent({
-						unit: "EUR",
-						footer: "Current Quarter",
-						content: new NewsContent()
-					})
-				}),
-				new GenericTile({
-					mode: "ArticleMode",
-					subheader: "Tile2",
-					frameType: "TwoByOne",
-					header: "Tile2",
-					url: "#",
-					enableNavigationButton: true,
-					tileContent: new TileContent({
-						unit: "EUR",
-						footer: "Current Quarter",
-						content: new NewsContent()
-					})
-				}),
-				new GenericTile({
-					mode: "ArticleMode",
-					subheader: "Tile3",
-					frameType: "TwoByOne",
-					header: "Tile3",
-					url: "#",
-					enableNavigationButton: true,
-					tileContent: new TileContent({
-						unit: "EUR",
-						footer: "Current Quarter",
-						content: new NewsContent()
-					})
-				})]
-			}).placeAt("qunit-fixture");
-			this.oTile2 = new GenericTile({
-				tileContent: [new TileContent({
-					content: new NewsContent()
-				})]
-			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			if (this.initialScreenWidth && this.initialWidth) {
+				this.resetMobileView();
+			}
 		},
 		afterEach: function() {
-			this.oSlideTile.destroy();
-			this.oSlideTile = null;
+			if (this.oSlideTile) {
+				this.oSlideTile.destroy();
+				this.oSlideTile = null;
+			}
+			if (this.oTile1) {
+				this.oTile1.destroy();
+				this.oTile1 = null;
+			}
+			if (this.oTile2) {
+				this.oTile2.destroy();
+				this.oTile2 = null;
+			}
+		},
+		createTile: function() {
+			return new GenericTile({
+				tileContent: [
+					new TileContent({
+						content: new NewsContent()
+				})]
+			});
+		},
+		createSlideTile: function(bIsMobile){
+			var iHeight, iWidth, sSizeBehavior;
+			if (bIsMobile) {
+				iHeight = "176px";
+				iWidth = "304px";
+				sSizeBehavior = "Small";
+			} else {
+				iHeight = "256px";
+				iWidth = "862px";
+				sSizeBehavior = "Responsive";
+			}
+			return new SlideTile("st-news", {
+				displayTime:200000,
+				height: iHeight,
+				width: iWidth,
+				sizeBehavior: sSizeBehavior,
+				tiles: [
+					new GenericTile({
+						mode: "ArticleMode",
+						frameType: "Stretch",
+						url: "#",
+						enableNavigationButton: true,
+						backgroundImage: "test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png",
+						sizeBehavior: sSizeBehavior,
+						tileContent: new TileContent({
+							unit: "EUR",
+							footer: "Current Quarter",
+							content: new NewsContent({
+								contentText: this.createTitle(),
+								subheader: this.createTitle()
+							})
+						})
+					}),
+					new GenericTile({
+						mode: "ArticleMode",
+						frameType: "Stretch",
+						url: "#",
+						enableNavigationButton: true,
+						backgroundImage: "test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png",
+						sizeBehavior: sSizeBehavior,
+						tileContent: new TileContent({
+							unit: "EUR",
+							footer: "Current Quarter",
+							content: new NewsContent({
+								contentText: this.createTitle(),
+								subheader: this.createTitle()
+							})
+						})
+					}),
+					new GenericTile({
+						mode: "ArticleMode",
+						frameType: "Stretch",
+						url: "#",
+						enableNavigationButton: true,
+						backgroundImage: "test-resources/sap/m/demokit/sample/SlideTile/images/NewsImage2.png",
+						sizeBehavior: sSizeBehavior,
+						tileContent: new TileContent({
+							unit: "EUR",
+							footer: "Current Quarter",
+							content: new NewsContent({
+								contentText: this.createTitle(),
+								subheader: this.createTitle()
+							})
+						})
+					})
+				]
+			});
+		},
+		createTitle: function() {
+			return "Very Long Long Long Long Long Long Long Long Long Long Long Long "
+						+ "Long Long Long Long Long Long Long Long Long Long Long Long "
+						+ "Long Long Long Long Long Long Long Long Long Long Long Long "
+						+ "Long Long Long Long Long Long Long Long Long Long Long Long "
+						+ "Long Long Long Long Long Long title";
+		},
+		initializeMobileView: function() {
+			this.initialScreenWidth = Device.resize.width;
+			this.initialWidth = document.getElementById("qunit-fixture").offsetWidth;
+			Device.resize.width = 320;
+			document.getElementById("qunit-fixture").style.width = "320px";
+			Device.system.desktop = false;
+			Device.system.phone = true;
+			document.querySelector("html").classList.add("sap-phone");
+			document.querySelector("html").classList.remove("sap-desktop");
+		},
+		resetMobileView: function(){
+			Device.resize.width = this.initialScreenWidth;
+			document.getElementById("qunit-fixture").style.width = this.initialWidth;
+			Device.system.desktop = true;
+			Device.system.phone = false;
+			document.querySelector("html").classList.remove("sap-phone");
+			document.querySelector("html").classList.add("sap-desktop");
 		}
 	});
 
 	QUnit.test("Tab Navigation on tiles", function(assert) {
 		var bForward = true;
+		this.oTile1 = this.createTile().placeAt("qunit-fixture");
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		this.oTile2 = this.createTile().placeAt("qunit-fixture");
+		oCore.applyChanges();
+
 		document.getElementById(this.oTile1.getId()).focus();
 		assert.equal(document.activeElement.id, this.oTile1.getId(), "Focus on Tile1");
 
@@ -986,6 +1051,75 @@ sap.ui.define([
 			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
 		}
 		assert.equal(document.activeElement.id, this.oTile2.getId(), "Focus on Tile2");
+	});
+
+	QUnit.test("CSS Rendering Normal Device", function(assert){
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.equal(true,true,"ok");
+		var aContextTextTitle = document.querySelectorAll(".sapMNwCCTxt");
+		var aSubHeaderTitle = document.querySelectorAll(".sapMNwCSbh .sapMFT");
+		var aTileContainerContentArea = document.querySelectorAll(".sapMTileCntContent");
+		var aGenericTile = document.querySelectorAll(".sapMGTBackgroundImage");
+		for (var i = 0; i < aContextTextTitle.length; i++ ) {
+			var oContextProperties = getComputedStyle(aContextTextTitle[i]);
+			assert.equal(oContextProperties.webkitLineClamp, 2, "Property set Correctly");
+			assert.equal(oContextProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
+			assert.equal(oContextProperties.webkitBoxOrient.toLowerCase(), "vertical", "Property set Correctly");
+			assert.equal(oContextProperties.maxWidth.toLowerCase(), "none", "Property set Correctly");
+		}
+		for (var i = 0; i < aSubHeaderTitle.length; i++ ) {
+			var aSubHeaderTitleProperties = getComputedStyle(aSubHeaderTitle[i]);
+			assert.equal(aSubHeaderTitleProperties.textOverflow.toLowerCase(), "ellipsis", "Property set Correctly");
+			assert.equal(aSubHeaderTitleProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
+			assert.equal(aSubHeaderTitleProperties.wordWrap.toLowerCase(), "break-word", "Property set Correctly");
+			assert.equal(aSubHeaderTitleProperties.whiteSpace.toLowerCase(), "nowrap", "Property set Correctly");
+		}
+		for (var i = 0; i < aTileContainerContentArea.length; i++ ) {
+			var oTileContentAreaProperties = getComputedStyle(aTileContainerContentArea[i]);
+			assert.equal(oTileContentAreaProperties.marginTop, "16px", "Property set Correctly");
+		}
+		for (var i = 0; i < aGenericTile.length; i++ ) {
+			assert.ok(aGenericTile[i].ariaLabel.toLowerCase(), "Property set Correctly");
+		}
+		assert.equal();
+	});
+
+	QUnit.test("CSS Rendering Mobile Device", function(assert){
+		this.initializeMobileView();
+		this.oSlideTile = this.createSlideTile(true).placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.equal(true,true,"ok");
+		var aContextTextTitle = document.querySelectorAll(".sapMNwCCTxt");
+		var aSubHeaderTitle = document.querySelectorAll(".sapMNwCSbh .sapMFT");
+		var aTileContainerContentArea = document.querySelectorAll(".sapMTileCntContent");
+		var aGenericTile = document.querySelectorAll(".sapMGTBackgroundImage");
+		var aTileContentArea = document.querySelectorAll(".sapMGTContent");
+		for (var i = 0; i < aContextTextTitle.length; i++ ) {
+			var oContextProperties = getComputedStyle(aContextTextTitle[i]);
+			assert.equal(oContextProperties.webkitLineClamp, 2, "Property set Correctly");
+			assert.equal(oContextProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
+			assert.equal(oContextProperties.webkitBoxOrient.toLowerCase(), "vertical", "Property set Correctly");
+			assert.equal(oContextProperties.maxWidth.toLowerCase(), "284px", "Property set Correctly");
+		}
+		for (var i = 0; i < aSubHeaderTitle.length; i++ ) {
+			var aSubHeaderTitleProperties = getComputedStyle(aSubHeaderTitle[i]);
+			assert.equal(aSubHeaderTitleProperties.textOverflow.toLowerCase(), "ellipsis", "Property set Correctly");
+			assert.equal(aSubHeaderTitleProperties.overflow.toLowerCase(), "hidden", "Property set Correctly");
+			assert.equal(aSubHeaderTitleProperties.wordWrap.toLowerCase(), "break-word", "Property set Correctly");
+			assert.equal(aSubHeaderTitleProperties.whiteSpace.toLowerCase(), "nowrap", "Property set Correctly");
+		}
+		for (var i = 0; i < aTileContainerContentArea.length; i++ ) {
+			var oTileContentAreaProperties = getComputedStyle(aTileContainerContentArea[i]);
+			assert.equal(oTileContentAreaProperties.marginTop, "4px", "Property set Correctly");
+		}
+		for (var i = 0; i < aGenericTile.length; i++ ) {
+			assert.ok(aGenericTile[i].ariaLabel.toLowerCase(), "Property set Correctly");
+		}
+		for (var i = 0; i < aTileContentArea.length; i++ ) {
+			assert.ok(parseInt(getComputedStyle(aTileContentArea[i]).height), 114, "Property set Correctly");
+		}
+		assert.equal();
 	});
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
