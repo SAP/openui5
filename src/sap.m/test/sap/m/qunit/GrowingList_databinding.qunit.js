@@ -1,15 +1,17 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, jQuery, JSONModel, Sorter, List, StandardListItem, App, Page, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/test/TestUtils"
+], function(createAndAppendDiv, jQuery, JSONModel, ODataV4Model, Sorter, List, StandardListItem, App, Page, oCore, TestUtils) {
 	"use strict";
 	createAndAppendDiv("content");
 
@@ -171,4 +173,75 @@ sap.ui.define([
 		assert.equal(info(2).text, "B", "Third item should be titled 'Adelheid'");
 	});
 
+	QUnit.module("OData V4", {
+		before: function() {
+			// The TestUtils FakeServer Cannot be used together with the sap.ui.core.util.MockServer!
+			this.oFakeServer = TestUtils.useFakeServer(sinon.sandbox.create(), "sap/ui/core/demokit/sample/odata/v4/Products/data", {
+				"/MyService/$metadata": {
+					source: "metadata.xml"
+				},
+				"/MyService/ProductList(ProductID='DD402')/PRODUCT_2_BP?$skip=0&$top=2": {
+					message: {value: [{CompanyName: "Super Corp."}, {CompanyName: "International Fraud Ltd."}]}
+				},
+				"/MyService/ProductList(ProductID='DD424')/PRODUCT_2_BP?$skip=0&$top=2": {
+					message: {value: [{CompanyName: "Food Store"}, {CompanyName: "Fishing Shop"}]}
+				},
+				"/MyService/ProductList(ProductID='DD522')/PRODUCT_2_BP?$skip=0&$top=2": {
+					code: 500,
+					message: {error: {code: "010", message: {value: "The requested entity does not exist."}}}
+				}
+			});
+		},
+		beforeEach: function() {
+			this.oModel = new ODataV4Model({
+				serviceUrl: "/MyService/",
+				synchronizationMode: "None",
+				operationMode: "Server"
+			});
+			this.oList = new List({
+				growing: true,
+				growingThreshold: 2,
+				items: {
+					path: "",
+					template: new StandardListItem({title: "{CompanyName}"})
+				},
+				models: this.oModel,
+				bindingContexts: this.oModel.createBindingContext("/ProductList(ProductID='DD402')/PRODUCT_2_BP")
+			});
+
+			this.oList.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oList.destroy();
+		},
+		after: function() {
+			this.oFakeServer.restore();
+		}
+	});
+
+	QUnit.test("Change binding context", function(assert) {
+		var that = this;
+
+		return new Promise(function(resolve) {
+			that.oList.attachEventOnce("updateFinished", resolve);
+		}).then(function() {
+			assert.ok(that.oList.getItems().length === 2, "List has items");
+			assert.ok(!that.oList.getDomRef("nodata"), "NoData not visible");
+			return new Promise(function(resolve) {
+				that.oList.setBindingContext(that.oModel.createBindingContext("/ProductList(ProductID='DD522')/PRODUCT_2_BP"));
+				that.oList.attachEventOnce("updateFinished", resolve);
+			});
+		}).then(function() {
+			assert.ok(that.oList.getItems().length === 0, "List has no items");
+			assert.ok(that.oList.getDomRef("nodata"), "NoData visible");
+			return new Promise(function(resolve) {
+				that.oList.setBindingContext(that.oModel.createBindingContext("/ProductList(ProductID='DD424')/PRODUCT_2_BP"));
+				that.oList.attachEventOnce("updateFinished", resolve);
+			});
+		}).then(function() {
+			assert.ok(that.oList.getItems().length === 2, "List has items");
+		});
+	});
 });

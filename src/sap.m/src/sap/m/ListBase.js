@@ -734,6 +734,11 @@ function(
 			this._hideBusyIndicator();
 			delete this._dataReceivedHandlerId;
 		}.bind(this), 0);
+
+		if (this._oGrowingDelegate) {
+			// inform growing delegate to handle
+			this._oGrowingDelegate._onBindingDataReceivedListener(oEvent);
+		}
 	};
 
 	ListBase.prototype.destroyItems = function(bSuppressInvalidate) {

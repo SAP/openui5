@@ -60,6 +60,7 @@ sap.ui.define([
 			this._bLoading = false;
 			this._sGroupingPath = "";
 			this._bDataRequested = false;
+			this._bSkippedItemsUpdateUntilDataReceived = false;
 			this._oContainerDomRef = null;
 			this._iLastItemsCount = 0;
 			this._iTriggerTimer = 0;
@@ -481,6 +482,8 @@ sap.ui.define([
 				this._iLimit = oControl.getGrowingThreshold();
 			}
 
+			this._bSkippedItemsUpdateUntilDataReceived = false;
+
 			// fire growing started event if data was requested this is a followup call of updateItems
 			if (this._bDataRequested) {
 				this._bDataRequested = false;
@@ -497,6 +500,9 @@ sap.ui.define([
 
 				// a partial response may already be contained, so only return here without updating the list when diff is empty
 				if (aContexts.diff && !aContexts.diff.length) {
+					if (sChangeReason === ChangeReason.Context) {
+						this._bSkippedItemsUpdateUntilDataReceived = true;
+					}
 					return;
 				}
 			}
@@ -599,6 +605,14 @@ sap.ui.define([
 
 			if (!this._bDataRequested) {
 				this._onAfterPageLoaded(sChangeReason);
+			}
+		},
+
+		_onBindingDataReceivedListener: function(oEvent) {
+			if (this._bSkippedItemsUpdateUntilDataReceived && !oEvent.getParameter("data") /* request failed */) {
+				this._bSkippedItemsUpdateUntilDataReceived = false;
+				this.destroyListItems();
+				this._onAfterPageLoaded();
 			}
 		},
 
