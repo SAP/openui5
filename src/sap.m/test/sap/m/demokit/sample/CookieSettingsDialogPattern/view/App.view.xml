@@ -7,7 +7,6 @@
 		<Button
 			text="Open Cookie Settings Dialog"
 			press=".onOCSDButtonPress"
-			class="sapUiSmallMarginBottom"
-			ariaHasPopup="Dialog" />
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

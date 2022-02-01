@@ -12,7 +12,7 @@
 		</VBox>
 	</HBox>
 
-	<Toolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress" ariaHasPopup="dialog" ariaLabelledBy="myText">
+	<Toolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress" ariaLabelledBy="myText">
 		<Title id="toolbarTitle" text="Toolbar with active property set to true"></Title>
 		<ToolbarSpacer/>
 		<core:Icon src="sap-icon://undo" width="2rem" />
