@@ -1,6 +1,8 @@
 sap.ui.define([
+	"../Constants",
 	"sap/base/strings/formatMessage"
 ], function (
+	Constants,
 	formatMessage
 ) {
 	"use strict";
@@ -22,7 +24,9 @@ sap.ui.define([
 				var oZip = new JSZip(),
 					oFolder = oZip.folder(sFolderName);
 
-				oFolder.folder(".card");
+				if (sExtension === Constants.CARD_BUNDLE_EXTENSION) {
+					oFolder.folder(".card");
+				}
 
 				aFiles.forEach(function (oFile) {
 					if (oFileUtils.isBlob(oFile.name)) {
