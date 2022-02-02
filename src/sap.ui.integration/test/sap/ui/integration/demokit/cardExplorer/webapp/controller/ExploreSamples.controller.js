@@ -476,6 +476,10 @@ sap.ui.define([
 				mParameters = oEvent.getParameter("parameters"),
 				sMessage;
 
+			if (this._oCurrSample.interceptActions === false) {
+				return;
+			}
+
 			sMessage = "Action '" + sType + "'";
 
 			if (mParameters) {

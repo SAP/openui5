@@ -39,12 +39,18 @@ sap.ui.define([
 		pExecuteAction
 			.then(function(sResponseText) {
 				oCard.showMessage(sResponseText, MessageType.Success);
-				oCard.refreshData();
+
+				if (oActionParams.method === "addToFavorites") {
+					oActionSource.setVisible(false);
+				} else if (oActionParams.method === "remove") {
+					oCard.refreshData();
+				}
 			})
 			.catch(function (aResponse) {
 				var oResponse = aResponse[1];
 
 				oCard.showMessage(oResponse.responseText, MessageType.Error);
+
 				oActionSource.setEnabled(true);
 			});
 	};

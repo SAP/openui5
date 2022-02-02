@@ -49,7 +49,7 @@ sap.ui.define([
 			}
 
 			// simulate error for certain products
-			if (sProductId === "HT-1002" || sProductId === "HT-1003") {
+			if (sProductId === "HT-1050" || sProductId === "HT-1030") {
 				return false;
 			}
 

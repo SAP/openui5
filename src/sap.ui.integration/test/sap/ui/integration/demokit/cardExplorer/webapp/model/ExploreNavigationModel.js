@@ -1396,6 +1396,7 @@ sap.ui.define([
 								key: 'showMessage',
 								experimental: true,
 								mockServer: true,
+								interceptActions: false,
 								files: [
 									{
 										url: '/samples/extension/showMessage/manifest.json',
