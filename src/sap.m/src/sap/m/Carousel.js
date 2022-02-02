@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
-	"sap/m/MessagePage",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
 	"./CarouselRenderer",
 	"./CarouselLayout",
 	"sap/ui/events/KeyCodes",
@@ -27,7 +28,8 @@ sap.ui.define([
 	Device,
 	ResizeHandler,
 	coreLibrary,
-	MessagePage,
+	IllustratedMessage,
+	IllustratedMessageType,
 	CarouselRenderer,
 	CarouselLayout,
 	KeyCodes,
@@ -164,7 +166,12 @@ sap.ui.define([
 			 * <b>Note:</b> When this property is used, the <code>loop</code> property is ignored.
 			 * @since 1.62
 			 */
-			customLayout: { type: "sap.m.CarouselLayout", multiple: false }
+			customLayout: { type: "sap.m.CarouselLayout", multiple: false },
+
+			/**
+			 * Message page, that is shown when no pages are loaded or provided
+			 */
+			_emptyPage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
 		},
 		associations : {
 
@@ -315,10 +322,6 @@ sap.ui.define([
 		if (this._sResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
-		}
-		if (this.oMessagePage) {
-			this.oMessagePage.destroy();
-			this.oMessagePage = null;
 		}
 		this.$().off('afterSlide');
 
@@ -785,21 +788,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Private method that creates error message page when no pages are loaded
+	 * Private method that creates message page when no pages are loaded or provided
 	 *
 	 * @private
 	 */
-	Carousel.prototype._getErrorPage = function () {
-		if (!this.oMessagePage) {
-			this.oMessagePage = new MessagePage({
-				text: this._oRb.getText("CAROUSEL_ERROR_MESSAGE"),
-				description: "",
-				icon: "sap-icon://document",
-				showHeader: false
+	Carousel.prototype._getEmptyPage = function () {
+		if (!this.getAggregation("_emptyPage")) {
+			var emptyPage = new IllustratedMessage({
+				illustrationType: IllustratedMessageType.NoData
 			});
+
+			this.setAggregation("_emptyPage", emptyPage);
 		}
 
-		return this.oMessagePage;
+		return this.getAggregation("_emptyPage");
 	};
 
 	/**

@@ -253,7 +253,8 @@
 			  "sap.m.sample.Carousel",
 			  "sap.m.sample.CarouselWithControls",
 			  "sap.m.sample.CarouselWithDisplayOptions",
-			  "sap.m.sample.CarouselWithMorePages"
+			  "sap.m.sample.CarouselWithMorePages",
+			  "sap.m.sample.CarouselEmptyMessages"
 		  ]
 		},
 		{
@@ -1917,6 +1918,11 @@
 			"id": "sap.m.sample.CarouselWithMorePages",
 			"name": "Carousel with Multiple Items at Once",
 			"description": "The customLayout aggregation determines how many pages are displayed in Carousel's visible area."
+		},
+		{
+		  "id": "sap.m.sample.CarouselEmptyMessages",
+		  "name": "Carousel Without Pages",
+		  "description": "When the carousel have no pages loaded or provided illustrated message will be shown."
 		},
 		{
 			"id": "sap.m.sample.ComparisonPattern",

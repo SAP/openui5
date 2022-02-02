@@ -101,6 +101,10 @@ sap.ui.define([
 	CarouselRenderer._renderInnerDiv = function (oRM, oCarousel, aPages, sPageIndicatorPlacement) {
 		oRM.openStart("div").class("sapMCrslInner");
 
+		if (!aPages.length) {
+			oRM.class("sapMCrslInnerNoPages");
+		}
+
 		if (aPages.length > 1 && (oCarousel.getShowPageIndicator() || oCarousel.getArrowsPlacement() === CarouselArrowsPlacement.PageIndicator)) {
 
 			if (sPageIndicatorPlacement === PlacementType.Bottom) {
@@ -139,7 +143,7 @@ sap.ui.define([
 		if (aPages.length) {
 			aPages.forEach(fnRenderPage);
 		} else {
-			oRM.renderControl(oCarousel._getErrorPage());
+			oRM.renderControl(oCarousel._getEmptyPage());
 		}
 
 		oRM.close("div");

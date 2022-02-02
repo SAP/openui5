@@ -97,7 +97,8 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getHeight(), '100%', "Default 'height' value is 100%");
 		assert.strictEqual(this.oCarousel.getVisible(), true, "Default 'visible' value is true");
 		assert.strictEqual(this.oCarousel.getActivePage(), null, "Default 'activePage' value is null");
-		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 1, "When there are no pages set initially there is sap.m.MessagePage with error message");
+		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMIllustratedMessage").length, 1, "When there are no pages set initially there is sap.m.IllustratedMessage rendered");
+		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMCrslInnerNoPages").length, 1, "When there are no pages set initially there is 'sapMCrslInnerNoPages' class applied");
 		assert.strictEqual(this.oCarousel.getShowPageIndicator(), true, "Default 'showPageIndicator' value is true");
 		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
 		assert.strictEqual(this.oCarousel.getArrowsPlacement(), CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
@@ -1313,7 +1314,8 @@ sap.ui.define([
 		this.oCarousel.bindAggregation("pages",{path:"/wrongPath", template:new Text({text: "{text}"})});
 
 		assert.strictEqual(this.oCarousel.getPages().length, 0, "There are no pages in the carousel when the binding is wrong (or other similar issue)");
-		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 1, "When there is wrong binding path there is sap.m.MessagePage with error message");
+		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMIllustratedMessage").length, 1, "When there is wrong binding path there is sap.m.IllustratedMessage rendered");
+		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMCrslInnerNoPages").length, 1, "When there is wrong binding path there is 'sapMCrslInnerNoPages' class applied");
 	});
 
 
@@ -1330,7 +1332,8 @@ sap.ui.define([
 			Core.applyChanges();
 
 			assert.strictEqual(this.oCarousel.getPages().length, 3, "There are 3 pages in the carousel");
-			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 0, "When there is late binding there is no sap.m.MessagePage with error message");
+			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMIllustratedMessage").length, 0, "When there is late binding there is no sap.m.IllustratedMessage rendered");
+			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMCrslInnerNoPages").length, 0, "When there is late binding there is no 'sapMCrslInnerNoPages' class applied");
 			done();
 		}.bind(this), 1000);
 	});
