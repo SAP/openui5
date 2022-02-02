@@ -822,24 +822,33 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc
          */
         Chart.prototype._showDrillDown = function (oDrillBtn) {
-            if (DrillStackHandler) {
+            if (!this.oDrillPopover) {
+                if (DrillStackHandler) {
+                    this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
+                    this.oDrillPopover.attachAfterClose(function(){
+                        delete this.oDrillPopover;
+                    }.bind(this));
 
-                DrillStackHandler.createDrillDownPopover(this);
-                return DrillStackHandler.showDrillDownPopover(this, oDrillBtn);
-            }
+                    return DrillStackHandler.showDrillDownPopover(this, oDrillBtn);
+                }
 
-            return new Promise(function (resolve, reject) {
-                sap.ui.require([
-                    "sap/ui/mdc/chart/DrillStackHandler"
-                ], function (DrillStackHandlerLoaded) {
-                    DrillStackHandler = DrillStackHandlerLoaded;
-                    DrillStackHandler.createDrillDownPopover(this);
-                    DrillStackHandler.showDrillDownPopover(this, oDrillBtn)
-                        .then(function (oDrillDownPopover) {
-                            resolve(oDrillDownPopover);
-                        });
+                return new Promise(function (resolve, reject) {
+                    sap.ui.require([
+                        "sap/ui/mdc/chart/DrillStackHandler"
+                    ], function (DrillStackHandlerLoaded) {
+                        DrillStackHandler = DrillStackHandlerLoaded;
+                        this.oDrillPopover = DrillStackHandler.createDrillDownPopover(this);
+                        this.oDrillPopover.attachAfterClose(function(){
+                            delete this.oDrillPopover;
+                        }.bind(this));
+
+                        DrillStackHandler.showDrillDownPopover(this, oDrillBtn)
+                            .then(function (oDrillDownPopover) {
+                                resolve(oDrillDownPopover);
+                            });
+                    }.bind(this));
                 }.bind(this));
-            }.bind(this));
+            }
         };
 
         /**
