@@ -50,6 +50,7 @@ sap.ui.define([
 	"sap/ui/model/Context",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/String",
@@ -107,6 +108,7 @@ sap.ui.define([
 	Context,
 	FormatException,
 	ParseException,
+	ValidateException,
 	IntegerType,
 	Currency,
 	StringType,
@@ -2992,7 +2994,7 @@ sap.ui.define([
 				display: FieldDisplay.Description,
 				fieldHelp: oFieldHelp,
 				dataType: "sap.ui.model.type.String",
-				dataTypeConstraints: {search: '^[A-Za-z0-5]+$'}, // to test validation error
+				dataTypeConstraints: {search: '^$|^[A-Za-z0-5]+$'}, // to test validation error
 				//				change: _myChangeHandler,
 				liveChange: _myLiveChangeHandler,
 				submit: _mySubmitHandler
@@ -3955,6 +3957,10 @@ sap.ui.define([
 		sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemsForValue);
 		sinon.stub(oFieldHelp, "isOpen").returns(true); // to simulate open suggestion
 
+		var oType = oField._oContentFactory.retrieveDataType();
+		sinon.stub(oType, "validateValue").withArgs(null).throws(new ValidateException("NoNull")); // fake null not allowd
+		oType.validateValue.callThrough();
+
 		var fnDone = assert.async();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -4050,12 +4056,12 @@ sap.ui.define([
 												fnDone();
 											}).catch(function(oException) {
 												assert.ok(true, "Promise must be rejected");
-												assert.equal(oException.message, "Enter a valid value");
+												assert.equal(oException.message, "NoNull");
 												assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
 												setTimeout(function() { // for model update
 													setTimeout(function() { // for ManagedObjectModel update
 														assert.equal(oContent.getValueState(), "Error", "ValueState set");
-														assert.equal(oContent.getValueStateText(), "Enter a valid value", "ValueStateText");
+														assert.equal(oContent.getValueStateText(), "NoNull", "ValueStateText");
 														aConditions = oCM.getConditions("Name");
 														assert.equal(aConditions.length, 1, "one condition in Codition model");
 														assert.equal(aConditions[0] && aConditions[0].values[0], "Unknown", "condition value");
@@ -4376,7 +4382,7 @@ sap.ui.define([
 		});
 		var fnGetItemsForValue = function(oConfig) {
 			vGetItemsForValue = oConfig.value;
-			if (oConfig.value === "X") {
+			if (oConfig.value === "CAD") {
 				return oFHPromise;
 			} else if (oConfig.value === "USD") {
 				return oFHPromise;
@@ -4385,7 +4391,7 @@ sap.ui.define([
 		};
 		sinon.stub(oFieldHelp, "getItemForValue").callsFake(fnGetItemsForValue);
 
-		oContent2._$input.val("X");
+		oContent2._$input.val("CAD"); // just reuse valid currency as otherwise type thows error before FieldHelp
 
 		setTimeout(function() { // for fieldGroup delay
 			oIcon.focus();

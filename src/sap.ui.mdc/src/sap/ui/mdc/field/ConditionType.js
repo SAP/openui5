@@ -525,8 +525,8 @@ sap.ui.define([
 				oType.validateValue(vCheckParsedValue);
 			}
 		} catch (oException) {
-			if (oException && !(oException instanceof ParseException) && !(oException instanceof ValidateException)) {// FormatException could also occur
-				// unknown error -> just raise it
+			if (oException && !(bCheckDescription && (oException instanceof ParseException || oException instanceof ValidateException))) {
+				// unknown error or no search for description -> just raise it
 				throw oException;
 			}
 			bCheckKey = false; // cannot be a valid key
