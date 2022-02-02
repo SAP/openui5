@@ -303,5 +303,8 @@ sap.ui.define([
 	 * @function
 	 */
 
+	/* CUSTOM CODE START */
+	/* CUSTOM CODE END */
+
 	return Popover;
 });

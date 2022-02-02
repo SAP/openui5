@@ -285,8 +285,8 @@ sap.ui.define([
 					}
 				}
 			},
-			designtime: "sap/ui/webc/main/designtime/Input.designtime",
-			getters: ["previewItem"]
+			getters: ["previewItem"],
+			designtime: "sap/ui/webc/main/designtime/Input.designtime"
 		}
 	});
 
@@ -296,6 +296,9 @@ sap.ui.define([
 	 * @name sap.ui.webc.main.Input#getPreviewItem
 	 * @function
 	 */
+
+	/* CUSTOM CODE START */
+	/* CUSTOM CODE END */
 
 	return Input;
 });
