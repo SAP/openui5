@@ -1246,10 +1246,10 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If this binding
 	 *   <ul>
-	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},</li>
-	 *   <li>is an operation binding,</li>
-	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>false</code>,</li>
-	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.</li>
+	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},
+	 *   <li>is an operation binding,
+	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>false</code>,
+	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.
 	 *   </ul>
 	 *
 	 * @public
@@ -1309,12 +1309,12 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 *   If this binding
-	 *  <ul>
-	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},</li>
-	 *   <li>is an operation binding,</li>
-	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>true</code>,</li>
-	 *   <li>has pending changes that cannot be ignored,</li>
-	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.</li>
+	 *   <ul>
+	 *   <li>is relative to a {@link sap.ui.model.odata.v4.Context},
+	 *   <li>is an operation binding,
+	 *   <li>has {@link sap.ui.model.Binding#isSuspended} set to <code>true</code>,
+	 *   <li>has pending changes that cannot be ignored,
+	 *   <li>is not a root binding. Use {@link #getRootBinding} to determine the root binding.
 	 *   </ul>
 	 *
 	 * @public

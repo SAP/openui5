@@ -2317,6 +2317,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
 		this.mock(oBinding).expects("createRefreshPromise").never(); // iCurrentEnd === 0
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, true);
 
 		// code under test
 		return oBinding.refreshInternal("", "myGroup", false);
@@ -2483,14 +2484,15 @@ sap.ui.define([
 					});
 			});
 		});
-		this.mock(oBinding).expects("reset").exactly(iNoOfCalls).callsFake(function () {
-			oBinding.iActiveContexts = 0;
-			oBinding.iCreatedContexts = 0;
-			if (!bAsync) {
-				// simulate #getContexts call sync to "Refresh" event
-				oBinding.resolveRefreshPromise(oReadPromise);
-			}
-		});
+		this.mock(oBinding).expects("reset").exactly(iNoOfCalls)
+			.withExactArgs(ChangeReason.Refresh, true).callsFake(function () {
+				oBinding.iActiveContexts = 0;
+				oBinding.iCreatedContexts = 0;
+				if (!bAsync) {
+					// simulate #getContexts call sync to "Refresh" event
+					oBinding.resolveRefreshPromise(oReadPromise);
+				}
+			});
 		this.mock(oBinding).expects("getDependentBindings").exactly(iNoOfCalls).withExactArgs()
 			.returns([oDependentBinding]);
 		this.mock(oDependentBinding).expects("refreshInternal").exactly(iNoOfCalls)
@@ -2575,7 +2577,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		return oBinding.refreshInternal("path", "myGroup", /*bCheckUpdate (ignored)*/false, true)
+		return oBinding.refreshInternal("path", "myGroup", true, true)
 			.then(function () {
 				assert.ok(false);
 			}, function (oReturnedError) {
@@ -2616,7 +2618,7 @@ sap.ui.define([
 		this.mock(oBinding.oHeaderContext).expects("checkUpdate").withExactArgs();
 
 		// code under test
-		return oBinding.refreshInternal("path", "myGroup", /*bCheckUpdate (ignored)*/false, true)
+		return oBinding.refreshInternal("path", "myGroup", true, true)
 			.then(function () {
 				assert.ok(false);
 			}, function (oReturnedError) {
@@ -2636,29 +2638,62 @@ sap.ui.define([
 		this.mock(oBinding).expects("removeCachesAndMessages").never();
 		this.mock(oBinding).expects("fetchCache").never();
 		this.mock(oBinding).expects("createRefreshPromise").never();
-		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, true);
+		this.mock(oBinding).expects("reset")
+			.withExactArgs(ChangeReason.Refresh, /*bDropTransient*/undefined);
 
-		// code under test
-		assert.ok(oBinding.refreshInternal("", "myGroup").isFulfilled());
+		// code under test (as called from #requestRefresh)
+		assert.ok(oBinding.refreshInternal("", "myGroup", true).isFulfilled());
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bCheckUpdate) {
 	[false, true].forEach(function (bSuspended) {
-		var sTitle = "refreshInternal: dependent bindings, suspended=" + bSuspended;
+		var sTitle = "refreshInternal: dependent bindings, suspended=" + bSuspended
+				+ ", keep transient=" + bCheckUpdate;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
 					{$$groupId : "myGroup"}),
-				oChild0 = {refreshInternal : function () {}},
+				oChild0 = {
+					getContext : getNonKeptContext,
+					refreshInternal : function () {}
+				},
 				oChild0Refreshed = false,
-				oChild1 = {refreshInternal : function () {}},
+				oChild1 = {
+					getContext : getKeptContext,
+					hasPendingChanges : function () { return false; },
+					refreshInternal : function () {}
+				},
 				oChild1Refreshed = false,
-				oChild2 = {refreshInternal : function () {}},
+				oChild2 = {
+					getContext : getNonKeptContext,
+					refreshInternal : function () {}
+				},
 				oChild2Refreshed = false,
-				oChild3 = {refreshInternal : function () {}},
+				oChild3 = {
+					getContext : getNonKeptContext,
+					refreshInternal : function () {}
+				},
 				oChild3RefreshedIfSuspended = false,
+				oChild4 = {
+					getContext : getKeptContext,
+					hasPendingChanges : function () { return true; },
+					refreshInternal : function () {}
+				},
 				oRefreshResult,
 				sResourcePathPrefix = "foo";
+
+			function getKeptContext() {
+				return {
+					isKeepAlive : function () { return true; }
+				};
+			}
+
+			function getNonKeptContext() {
+				return {
+					isKeepAlive : function () { return false; }
+				};
+			}
 
 			this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs()
 				.returns(bSuspended);
@@ -2667,13 +2702,13 @@ sap.ui.define([
 			this.mock(oBinding).expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
 				.withExactArgs("myGroup", true);
 			this.mock(oBinding).expects("reset").exactly(bSuspended ? 0 : 1)
-				.withExactArgs(ChangeReason.Refresh, true)
+				.withExactArgs(ChangeReason.Refresh, bCheckUpdate ? undefined : true)
 				.callsFake(function () {
 					// BCP: 002075129400006474012021 reset may result in a destroyed child binding
 					oChild3.bIsBeingDestroyed = true;
 				});
 			this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-				.returns([oChild0, oChild1, oChild2, oChild3]);
+				.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
 			this.mock(oChild0).expects("refreshInternal")
 				.withExactArgs(sResourcePathPrefix, "myGroup", false, undefined)
 				.returns(new Promise(function (resolve) {
@@ -2706,9 +2741,10 @@ sap.ui.define([
 						resolve();
 					});
 				}));
+			this.mock(oChild4).expects("refreshInternal").exactly(bCheckUpdate ? 0 : 1);
 
 			// code under test
-			oRefreshResult = oBinding.refreshInternal(sResourcePathPrefix, "myGroup", false);
+			oRefreshResult = oBinding.refreshInternal(sResourcePathPrefix, "myGroup", bCheckUpdate);
 			if (!bSuspended) {
 				oBinding.resolveRefreshPromise(Promise.resolve()); // simulate getContexts
 			}
@@ -2721,6 +2757,7 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//********************************************************************************************
 [

@@ -642,6 +642,7 @@ sap.ui.define([
 				if (that.oModel) {
 					that.oModel.destroy();
 				}
+				sap.ui.getCore().getMessageManager().removeAllMessages();
 				// reset the language
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
@@ -6865,6 +6866,13 @@ sap.ui.define([
 				});
 
 			oBinding.setValue("changed");
+
+			assert.ok(oBinding.hasPendingChanges());
+			assert.ok(oBinding.hasPendingChanges(true), "JIRA: CPOUI5ODATAV4-1382");
+			assert.throws(function () {
+				oBinding.refresh();
+			}, new Error("Refresh on this binding is not supported"));
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -34059,10 +34067,11 @@ sap.ui.define([
 	//    BCP: 2170211215 Check that #setAggregation is throwing an error (mPreviousContextsByPath)
 	// 4. Modify a property. See that the list has pending changes.
 	// 5. Delete the filter. Expect no request for the late properties.
-	// 6. Submit the list's pending changes. (JIRA: CPOUI5ODATAV4-1104)
-	// 7. Filter the list, so that the context remains. Give the sales order a new ETag. See that
+	// 6. Refresh (JIRA: CPOUI5ODATAV4-1382)
+	// 7. Submit the list's pending changes. (JIRA: CPOUI5ODATAV4-1104)
+	// 8. Filter the list, so that the context remains. Give the sales order a new ETag. See that
 	//    the late properties are requested again.
-	// 8. BCP: 2170211215 Check that #setAggregation is throwing an error (aContexts)
+	// 9. BCP: 2170211215 Check that #setAggregation is throwing an error (aContexts)
 	// JIRA: CPOUI5ODATAV4-340
 	QUnit.test("CPOUI5ODATAV4-340: Context#setKeepAlive", function (assert) {
 		var oKeptContext,
@@ -34134,8 +34143,19 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "(5)");
 		}).then(function () {
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
+					value : [{"@odata.etag" : "etag1", SalesOrderID : "1"}]
+				});
+
+			return Promise.all([
+				// code under test
+				oTableBinding.requestRefresh(),
+				that.waitForChanges(assert, "(6)")
+			]);
+		}).then(function () {
 			assert.ok(oTableBinding.hasPendingChanges());
 			assert.notOk(oTableBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+			assert.strictEqual(oKeptContext.getProperty("BuyerID"), "42a", "change kept alive");
 
 			that.expectChange("buyerId", "42b")
 				.expectRequest({
@@ -34149,7 +34169,7 @@ sap.ui.define([
 			return Promise.all([
 				oKeptContext.setProperty("BuyerID", "42b"),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert, "(6)")
+				that.waitForChanges(assert, "(7)")
 			]);
 		}).then(function () {
 			assert.strictEqual(oKeptContext.getProperty("BuyerID"), "42c");
@@ -34166,7 +34186,7 @@ sap.ui.define([
 
 			oTableBinding.filter(new Filter("SalesOrderID", FilterOperator.EQ, "1"));
 
-			return that.waitForChanges(assert, "(7)");
+			return that.waitForChanges(assert, "(8)");
 		}).then(function () {
 			assert.throws(function () {
 				oTableBinding.setAggregation({});
@@ -36097,6 +36117,7 @@ sap.ui.define([
 	// (3) changeParameters
 	// (4) suspend/resume
 	// JIRA: CPOUI5ODATAV4-874
+	// (5) refresh (JIRA: CPOUI5ODATAV4-1382)
 	//
 	// Do likewise with a kept-alive context
 	// JIRA: CPOUI5ODATAV4-926
@@ -36106,7 +36127,7 @@ sap.ui.define([
 	// remain functional without blocking those APIs.
 	// JIRA: CPOUI5ODATAV4-1104
 [false, true].forEach(function (bWithPendingChanges) {
-	var sTitle = "Absolute ODLB: sort/filter/changeParameters/resume & late properties"
+	var sTitle = "Absolute ODLB: sort/filter/changeParameters/resume/refresh & late properties"
 			+ ", with pending changes: " + bWithPendingChanges;
 
 	QUnit.test(sTitle, function (assert) {
@@ -36114,6 +36135,7 @@ sap.ui.define([
 			oCreationRowContext,
 			oListBinding,
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sNewNote,
 			oSetPropertyPromise,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
@@ -36165,8 +36187,9 @@ sap.ui.define([
 			assert.notOk(aContexts[1].hasPendingChanges());
 
 			if (bWithPendingChanges) {
-				that.expectChange("listNote", [, "pending"]);
-				oSetPropertyPromise = aContexts[1].setProperty("Note", "pending", "update");
+				sNewNote = "pending";
+				that.expectChange("listNote", [, sNewNote]);
+				oSetPropertyPromise = aContexts[1].setProperty("Note", sNewNote, "update");
 
 				// "creation row"
 				oCreationRowContext
@@ -36174,9 +36197,10 @@ sap.ui.define([
 						{$$updateGroupId : "never"})
 					.create();
 			} else { // Note: this does not count as a pending change!
+				sNewNote = "no patch";
 				// just try it to make sure nothing breaks
-				that.expectChange("listNote", [, "no patch"]);
-				oNoPatchPromise = aContexts[1].setProperty("Note", "no patch", null);
+				that.expectChange("listNote", [, sNewNote]);
+				oNoPatchPromise = aContexts[1].setProperty("Note", sNewNote, null);
 			}
 			aContexts[1].setKeepAlive(true); // change "keep alive" flag *after* PATCH exists
 
@@ -36198,10 +36222,7 @@ sap.ui.define([
 						Note : "Note 1.1"
 					}]
 				})
-				.expectChange("listNote", [
-					bWithPendingChanges ? "pending" : "no patch", // no ETag -> kept-alive wins
-					"Note 1.1"
-				])
+				.expectChange("listNote", [sNewNote, "Note 1.1"])
 				.expectChange("note", "Note 1.1")
 				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "FR"})
 				.expectChange("noteLanguage", "FR");
@@ -36265,10 +36286,7 @@ sap.ui.define([
 						SalesOrderID : "2"
 					}]
 				})
-				.expectChange("listNote", [
-					"Note 1.4",
-					bWithPendingChanges ? "pending" : "no patch" // no ETag -> kept-alive wins
-				])
+				.expectChange("listNote", ["Note 1.4", sNewNote])
 				.expectChange("note", "Note 1.4")
 				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "ES"})
 				.expectChange("noteLanguage", "ES");
@@ -36278,16 +36296,53 @@ sap.ui.define([
 			oListBinding.sort();
 			oListBinding.filter();
 			oListBinding.changeParameters({foo : undefined});
+			oListBinding.refresh();
 			oListBinding.resume();
 
 			return that.waitForChanges(assert, "(4) suspend/resume");
+		}).then(function () {
+			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
+			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
+			if (!bWithPendingChanges) {
+				sNewNote = "Note 2.5";
+				//TODO why is this request missing above in (4)?! --> CPOUI5ODATAV4-1180
+				that.expectRequest("SalesOrderList?$select=GrossAmount,Note,NoteLanguage"
+						+ ",SalesOrderID&$filter=SalesOrderID eq '2'", {
+						value : [{
+							GrossAmount : "3.00",
+							Note : sNewNote, // not shown on "keptAlivePage"
+							NoteLanguage : "EN", // not shown on "keptAlivePage"
+							SalesOrderID : "2"
+						}]
+					})
+					.expectChange("listNote", [, sNewNote])
+					.expectChange("grossAmount", "3.00");
+			}
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						Note : "Note 1.5",
+						SalesOrderID : "1"
+					}, {
+						Note : sNewNote,
+						SalesOrderID : "2"
+					}]
+				})
+				.expectChange("listNote", ["Note 1.5"])
+				.expectChange("note", "Note 1.5")
+				.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {NoteLanguage : "JP"})
+				.expectChange("noteLanguage", "JP");
+
+			return Promise.all([
+				oListBinding.requestRefresh(),
+				that.waitForChanges(assert, "(5) refresh")
+			]);
 		}).then(function () {
 			var oSetPropertyPromise2;
 
 			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges);
 			assert.notOk(oListBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
-			assert.strictEqual(aContexts[1].getProperty("Note"),
-				bWithPendingChanges ? "pending" : "no patch");
+			assert.strictEqual(aContexts[1].getProperty("Note"), sNewNote);
 
 			if (bWithPendingChanges) {
 				that.expectChange("listNote", [, "updated"]);
@@ -36295,12 +36350,13 @@ sap.ui.define([
 				// code under test
 				oSetPropertyPromise2 = aContexts[1].setProperty("Note", "updated", "update");
 
+				sNewNote = "from server";
 				that.expectRequest({
 						method : "PATCH",
 						url : "SalesOrderList('2')",
 						payload : {Note : "updated"}
-					}, {ID : "2", Note : "from server"})
-					.expectChange("listNote", [, "from server"]);
+					}, {ID : "2", Note : sNewNote})
+					.expectChange("listNote", [, sNewNote]);
 			}
 
 			return Promise.all([
@@ -36310,8 +36366,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "submit (no) pending changes")
 			]);
 		}).then(function () {
-			assert.strictEqual(aContexts[1].getProperty("Note"),
-				bWithPendingChanges ? "from server" : "no patch");
+			assert.strictEqual(aContexts[1].getProperty("Note"), sNewNote);
 			assert.strictEqual(oModel.hasPendingChanges("never"), bWithPendingChanges);
 			assert.notOk(oModel.hasPendingChanges("update"));
 			assert.strictEqual(oListBinding.hasPendingChanges(), bWithPendingChanges,
@@ -36342,6 +36397,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1104
 	//
 	// A transient item must also not be ignored by the list report (JIRA: CPOUI5ODATAV4-1409)
+	// Also check with refresh (JIRA: CPOUI5ODATAV4-1382)
 	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - do not ignore indirect kept-alive", function (assert) {
 		var oItemsTableBinding,
 			oKeptAliveItem,
@@ -36401,6 +36457,16 @@ sap.ui.define([
 				// code under test
 				oListReportBinding.filter(new Filter("SalesOrderID", FilterOperator.NE, "42"));
 			}, new Error("Cannot filter due to pending changes"));
+
+			assert.throws(function () {
+				// code under test
+				oListReportBinding.refresh();
+			}, new Error("Cannot refresh due to pending changes"));
+
+			assert.throws(function () {
+				// code under test
+				oKeptAliveItem.refresh();
+			}, new Error("Cannot refresh entity due to pending changes: " + oKeptAliveItem));
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -37225,6 +37291,8 @@ sap.ui.define([
 	// added at the end, outside of the visible area. The list is then filtered, sorted, etc.
 	// Show that the transient ones properly survive.
 	// JIRA: CPOUI5ODATAV4-1362
+	//
+	// Add refresh (JIRA: CPOUI5ODATAV4-1382)
 	QUnit.test("CPOUI5ODATAV4-1362", function (assert) {
 		var oBinding,
 			oContextA,
@@ -37358,6 +37426,25 @@ sap.ui.define([
 				that.waitForChanges(assert, "suspend/resume")
 			]);
 		}).then(function () {
+			that.expectRequest("TEAMS?$count=true&$select=Name,Team_Id&$filter=MANAGER_ID ne '666'"
+					+ "&$skip=0&$top=3", {
+					"@odata.count" : "2",
+					value : [{
+						Name : "Team #1 * T *",
+						Team_Id : "TEAM_01"
+					}, {
+						Name : "Team #3 *** TDO ***",
+						Team_Id : "TEAM_03"
+					}]
+				})
+				.expectChange("name", ["Team #1 * T *", "Team #3 *** TDO ***"]);
+
+			return Promise.all([
+				// code under test (JIRA: CPOUI5ODATAV4-1382)
+				oBinding.requestRefresh(),
+				that.waitForChanges(assert, "refresh")
+			]);
+		}).then(function () {
 			// Note: this proves that change listeners have survived the refresh
 			that.expectChange("name", [,, "New A Team"]);
 
@@ -37392,7 +37479,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectChange("id", [, "TEAM_03", "TEAM_A", "TEAM_C"])
-				.expectChange("name", [, "Team #3 *** TDO", "New 'A' Team", "New 'C' Team"]);
+				.expectChange("name", [, "Team #3 *** TDO ***", "New 'A' Team", "New 'C' Team"]);
 
 			oTable.setFirstVisibleRow(1);
 
@@ -37411,7 +37498,9 @@ sap.ui.define([
 	// between the root binding and the list binding is an addt'l hurdle for ignoring transient
 	// rows on suspend.
 	// JIRA: CPOUI5ODATAV4-1409
-["changeParameters", "filter", "resume", "sort"].forEach(function (sMethod) {
+	//
+	// Add refresh (JIRA: CPOUI5ODATAV4-1382)
+["changeParameters", "filter", "refresh", "resume", "sort"].forEach(function (sMethod) {
 	[false, true].forEach(function (bRelative) {
 	var sTitle = "CPOUI5ODATAV4-1362: created persisted, " + sMethod
 			+ ", $$ownRequest = " + bRelative;
@@ -37426,7 +37515,7 @@ sap.ui.define([
 			oTable,
 			sTeams = bRelative ? "Departments(Sector='EMEA',ID='UI5')/DEPARTMENT_2_TEAMS" : "TEAMS",
 			sView = bRelative ? '\
-<FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}">\
+<FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}" id="objectPage">\
 	<FlexBox binding="{}">\
 		<t:Table id="table"\
 			rows="{parameters : {$$ownRequest : true}, path : \'DEPARTMENT_2_TEAMS\'}"\
@@ -37524,10 +37613,21 @@ sap.ui.define([
 					break;
 
 				case "refresh":
+					if (bRelative) {
+						assert.throws(function () {
+							// code under test
+							oBinding.refresh();
+						}, new Error("Refresh on this binding is not supported"));
+					}
+
+					// Note: expect no request for "objectPage" as there's no ODPrB there!
 					that.expectRequest(sTeams + "?$select=Name,Team_Id&$skip=0&$top=2", oResult);
 
 					// code under test
-					oPromise = oBinding.requestRefresh();
+					oPromise = (bRelative
+						? that.oView.byId("objectPage").getObjectBinding()
+						: oBinding
+						).requestRefresh();
 					break;
 
 				case "resume":

@@ -376,7 +376,6 @@ sap.ui.define([
 
 		onFilter : function (oEvent) {
 			var oBinding = this.byId("SalesOrderList").getBinding("items"),
-				// TODO validation
 				sQuery = this.getView().getModel("ui").getProperty("/filterValue");
 
 			if (oBinding.hasPendingChanges(true)) {
@@ -645,8 +644,9 @@ sap.ui.define([
 		 * Refreshes (parts of) the UI. Offers to reset changes via two-way binding before, because
 		 * otherwise the refresh would fail.
 		 *
-		 * @param {object} oRefreshable
-		 *   The object to be refreshed, either the model or a binding
+		 * @param {sap.ui.model.odata.v4.ODataModel|sap.ui.model.odata.v4.ODataBinding
+		 *     |sap.ui.model.odata.v4.Context} oRefreshable
+		 *   The object to be refreshed, either the model or a binding or a context
 		 * @param {string} sRefreshableText
 		 *   The text used for the refreshable in the confirmation dialog if there are pending
 		 *   changes
@@ -655,10 +655,13 @@ sap.ui.define([
 		 *   is reset.
 		 */
 		refresh : function (oRefreshable, sRefreshableText, aUpdateGroupIds) {
-			if (oRefreshable.hasPendingChanges()) {
-				MessageBox.confirm(
-					"There are pending changes. Do you really want to refresh " + sRefreshableText
-						+ "?",
+			var bIgnoreKeptAlive = "isInitial" in oRefreshable
+					? true // supported only for bindings
+					: undefined;
+
+			if (oRefreshable.hasPendingChanges(bIgnoreKeptAlive)) {
+				MessageBox.confirm("There are pending changes which will be reset first."
+						+ " Do you really want to refresh " + sRefreshableText + "?",
 					function onConfirm(sCode) {
 						if (sCode === "OK") {
 							if (aUpdateGroupIds) {

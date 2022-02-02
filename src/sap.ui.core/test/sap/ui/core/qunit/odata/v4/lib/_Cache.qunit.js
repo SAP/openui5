@@ -10452,6 +10452,25 @@ sap.ui.define([
 	},
 	sFilter : "~Bar~ or ~Foo~",
 	iTop : 2
+}, {
+	sTitle : "transient elements need to be ignored",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : {key : "Foo"},
+		"($uid=id-1-23)" : {"@$ui5._" : {transientPredicate : "($uid=id-1-23)"}},
+		"('Bar')" : {key : "Bar"},
+		"($uid=id-1-42)" : {"@$ui5._" : {transientPredicate : "($uid=id-1-42)"}}
+	},
+	sFilter : "~Bar~ or ~Foo~",
+	iTop : 2
+}, {
+	sTitle : "kept-alive elements w/ changes need to be ignored",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : {key : "Foo"},
+		"('Bar')" : {key : "Bar"},
+		"('Baz')" : {bChanges : true}
+	},
+	sFilter : "~Bar~ or ~Foo~",
+	iTop : 2
 }].forEach(function (oFixture) {
 	QUnit.test(oFixture.sTitle, function (assert) {
 		var mByPredicate = {},
@@ -10478,12 +10497,15 @@ sap.ui.define([
 
 			oCache.aElements.$byPredicate[sPredicate] = oElement;
 
-			oHelperMock.expects("getKeyFilter")
+			oCacheMock.expects("hasPendingChangesForPath")
+				.exactly("key" in oElement || oElement.bChanges ? 1 : 0)
+				.withExactArgs(sPredicate).returns(oElement.bChanges);
+			oHelperMock.expects("getKeyFilter").exactly("key" in oElement ? 1 : 0)
 				.withExactArgs(sinon.match.same(oElement), oCache.sMetaPath,
 					sinon.match.same(mTypes))
 				.returns("~" + oElement.key + "~");
 
-			if (!oElement.bDeleted) {
+			if (!oElement.bDeleted && "key" in oElement) {
 				// this is only needed in case the kept entity is still available after refresh
 				oResponse.value.push(oElement);
 				mByPredicate[sPredicate] = oElement;
@@ -10534,10 +10556,11 @@ sap.ui.define([
 
 			assert.deepEqual(oResult, undefined);
 			Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
-				if (!oFixture.mKeptAliveElementsByPredicate[sPredicate].bDeleted) {
-					mByPredicateAfterRefresh[sPredicate]
-						= oFixture.mKeptAliveElementsByPredicate[sPredicate];
-				} else {
+				var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
+
+				if (!oElement.bDeleted) {
+					mByPredicateAfterRefresh[sPredicate] = oElement;
+				} else if ("key" in oElement) {
 					iCallCount += 1;
 					sinon.assert.calledWithExactly(fnOnRemove, sPredicate);
 				}

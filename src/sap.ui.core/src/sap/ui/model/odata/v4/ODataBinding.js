@@ -433,7 +433,7 @@ sap.ui.define([
 		this.oCache = undefined;
 		this.oFetchCacheCallToken = oCallToken;
 		if (bKeepQueryOptions) {
-			// asynchronously re-create an equivalent cache
+			// asynchronously re-create an equivalent cache, but skip auto-$expand/$select
 			this.oCachePromise = SyncPromise.resolve(Promise.resolve()).then(function () {
 				return that.createAndSetCache(that.mCacheQueryOptions, oCache.getResourcePath(),
 					oContext, bKeepCacheOnError, oCache);
@@ -826,11 +826,12 @@ sap.ui.define([
 	 *   Whether to ignore changes which will not be lost by APIs like
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters changeParameters},
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#filter filter},
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#refresh refresh} (since 1.100.0),
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort sort}, or
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#suspend suspend} because they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
-	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
-	 *   of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding
+	 *   (since 1.97.0). Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient}
+	 *   contexts of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
 	 *   Since 1.99.0, the same happens for bindings using the <code>$$ownRequest</code> parameter
 	 *   (see {@link sap.ui.model.odata.v4.ODataModel#bindList}).
 	 * @returns {boolean}
@@ -988,8 +989,8 @@ sap.ui.define([
 	 * the last call determines the binding's data; it is <b>independent</b> of the order of calls
 	 * to {@link sap.ui.model.odata.v4.ODataModel#submitBatch} with the given group ID.
 	 *
-	 * If there are pending changes, an error is thrown. Use {@link #hasPendingChanges} to check if
-	 * there are pending changes. If there are changes, call
+	 * If there are pending changes that cannot be ignored, an error is thrown. Use
+	 * {@link #hasPendingChanges} to check if there are such pending changes. If there are, call
 	 * {@link sap.ui.model.odata.v4.ODataModel#submitBatch} to submit the changes or
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * {@link #refresh}.
@@ -1004,10 +1005,18 @@ sap.ui.define([
 	 *
 	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
 	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
-	 * @throws {Error}
-	 *   If the given group ID is invalid, the binding has pending changes, refresh on this
-	 *   binding is not supported, a group ID different from the binding's group ID is specified
-	 *   for a suspended binding, or a value of type boolean is given.
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given group ID is invalid,
+	 *     <li> there are pending changes that cannot be ignored,
+	 *     <li> refresh on this binding is not supported,
+	 *     <li> a group ID different from the binding's group ID is specified for a suspended
+	 *       binding,
+	 *     <li> or a value of type boolean is given.
+	 *   </ul> Since 1.100.0, pending changes are ignored if they relate to a
+	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding, and
+	 *   {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
+	 *   {@link #getRootBinding root binding} do not count as pending changes.
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -1157,7 +1166,7 @@ sap.ui.define([
 		if (!this.isRoot()) {
 			throw new Error("Refresh on this binding is not supported");
 		}
-		if (this.hasPendingChanges()) {
+		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot refresh due to pending changes");
 		}
 		this.oModel.checkGroupId(sGroupId);

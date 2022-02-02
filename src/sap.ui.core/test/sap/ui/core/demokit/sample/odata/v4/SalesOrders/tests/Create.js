@@ -126,9 +126,6 @@ sap.ui.define([
 			// Create a sales order, refresh w/o saving
 			When.onTheMainPage.pressCreateSalesOrdersButton();
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
-			// Cancel refresh
-			When.onTheMainPage.pressRefreshSalesOrdersButton();
-			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
 			When.onTheMainPage.pressRefreshAllButton();
 			When.onTheRefreshConfirmation.cancel();
@@ -137,8 +134,10 @@ sap.ui.define([
 				When.onTheMainPage.filterGrossAmount("1000");
 				Then.onTheMainPage.checkID(0, "");
 			}
-			// Confirm refresh
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
+			Then.onTheMainPage.checkID(0, "");
+			// Confirm refresh
+			When.onTheMainPage.pressRefreshAllButton();
 			When.onTheRefreshConfirmation.confirm();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
 			Then.onTheMainPage.checkID(0);
@@ -162,7 +161,6 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.pressRefreshSalesOrdersButton();
-				When.onTheRefreshConfirmation.cancel();
 				Then.onTheMainPage.checkID(0, "");
 				When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 				When.onTheMainPage.firstSalesOrderIsAtPos0();
