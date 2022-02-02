@@ -289,8 +289,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			}
 
 			if (!(isHalfFrame && isContentPresent)) {
-				if (oControl.getSubheader() && (!oControl._isIconMode())) {//Restrict creation of SubHeader for IconMode
-					this._renderSubheader(oRm, oControl);
+				if (oControl.getSubheader()) {
+					//Restrict creation of SubHeader for IconMode & OneByOne frameType
+					if (!(oControl._isIconMode() && oControl.getFrameType() == frameTypes.OneByOne)) {
+						this._renderSubheader(oRm, oControl);
+					}
 				}
 			}
 

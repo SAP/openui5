@@ -1182,6 +1182,7 @@ html[data-sap-ui-browser*='ff'] {
 
 		.sapMGTHdrContent {
 			height: 1.25rem;
+			width: calc(100% - 20%);
 		}
 		.sapMGTContent {
 			height: 2.625rem;
@@ -1473,6 +1474,13 @@ html[data-sap-ui-browser*='ff'] {
 }
 .sapMGTIconMode.sapMTileSmallPhone.sapMGT.sapMGTOneByOne .sapMGTHdrContent .sapMText {
 	text-align: left !important;
+}
+.sapMGTIconMode .sapMGTSubHdrTxt{
+	line-height: 1rem;
+	.sapMText{
+		font-size: 0.875rem;
+		color: @sapUiContentLabelColor;
+	}
 }
 
 @media (min-width:320px) and (max-width:599px){
