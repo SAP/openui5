@@ -51,6 +51,9 @@ sap.ui.define([
 			sortConditions: {
 				ignore: true
 			},
+			filterConditions: {
+				ignore: true
+			},
 			showChartTooltip: {
 				ignore: true
 			},

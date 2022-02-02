@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'./SortFlex', './ChartItemFlex'
-], function(SortFlex, ChartItemFlex) {
+	'./SortFlex', './ChartItemFlex', './ConditionFlex'
+], function(SortFlex, ChartItemFlex, ConditionFlex) {
 	"use strict";
 	/**
 	 * Chart-control-specific change handler that enables the storing of changes in the layered repository of the flexibility services.
@@ -56,6 +56,8 @@ sap.ui.define([
 		},
 		removeSort: SortFlex.removeSort,
 		addSort: SortFlex.addSort,
-		moveSort: SortFlex.moveSort
+		moveSort: SortFlex.moveSort,
+		addCondition: ConditionFlex.addCondition,
+		removeCondition: ConditionFlex.removeCondition
 	};
 }, /* bExport= */true);

@@ -4,8 +4,10 @@
 sap.ui.define([
     "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/library"
-], function(ChartDelegate, ODataMetaModelUtil, MDCLib) {
+    "sap/ui/mdc/library",
+    "./Books.FB.delegate",
+    "sap/ui/mdc/enum/FieldDisplay"
+], function(ChartDelegate, ODataMetaModelUtil, MDCLib, BooksFBDelegate, FieldDisplay) {
     "use strict";
 
     var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -47,7 +49,7 @@ sap.ui.define([
                     }
 
                     if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"]){
-                        aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oFilterRestrictionsInfo, oSortRestrictionsInfo));
+                        aProperties = aProperties.concat(this._createPropertyInfosForAggregatable(sKey, oPropertyAnnotations, oObj, oFilterRestrictionsInfo, oSortRestrictionsInfo));
                     }
 
                     if (oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
@@ -68,6 +70,7 @@ sap.ui.define([
                             aggregatable: false,
                             maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                             sortKey: sKey,
+                            typeConfig: this.getTypeUtil().getTypeConfig(oObj.$Type, null, {}),
                             kind:  "Groupable", //TODO: Rename in type; Only needed for P13n Item Panel
                             availableRoles: this._getLayoutOptionsForType("groupable"), //for p13n
                             role: MDCLib.ChartItemRoleType.category, //standard, normally this should be interpreted from UI.Chart annotation
@@ -78,8 +81,68 @@ sap.ui.define([
             }
             return aProperties;
         }.bind(this));
+
     };
 
+    var getFullId = function(oControl, sVHId) {
+		var oView = oControl.getParent();
+		while (!oView.isA("sap.ui.core.mvc.View")) {
+			oView = oView.getParent();
+		}
+		return oView.getId() + "--" + sVHId;
+	};
+
+    SampleChartDelegate.getFilterDelegate = function() {
+		return {
+			addItem: function(sPropertyName, oTable) {
+				return BooksFBDelegate.addItem(sPropertyName, oTable)
+				.then(function(oFilterField) {
+
+					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
+
+					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
+					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
+
+					oFilterField.setDataTypeConstraints(oConstraints);
+					oFilterField.setDataTypeFormatOptions(oFormatOptions);
+
+					if (sPropertyName === "author_ID") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FH1"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "title") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FH4"));
+					} else if (sPropertyName === "published") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHPublished"));
+						oFilterField.setOperators(["EQ", "GT", "LT", "BT", "MEDIEVAL", "RENAISSANCE", "MODERN", "LASTYEAR"]);
+					} else if (sPropertyName === "language_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHLanguage"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "stock") {
+						oFilterField.setMaxConditions(1);
+						oFilterField.setOperators(["BT"]);
+					} else if (sPropertyName === "classification_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHClassification"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "genre_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHGenre"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "subgenre_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHSubGenre"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "detailgenre_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FHDetailGenre"));
+						oFilterField.setDisplay(FieldDisplay.Description);
+					} else if (sPropertyName === "currency_code") {
+						oFilterField.setFieldHelp(getFullId(oTable, "FH-Currency"));
+						oFilterField.setDisplay(FieldDisplay.Value);
+						oFilterField.setMaxConditions(1);
+						oFilterField.setOperators(["EQ"]);
+					}
+					return oFilterField;
+				});
+			}
+		};
+	};
 
     return SampleChartDelegate;
 }, /* bExport= */ true);

@@ -149,18 +149,19 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Container.prototype.addView = function (oContainerItem) {
+	Container.prototype.addView = function (vContainerItem) {
+		this._addToNavigator(typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem);
 		AbstractContainer.prototype.addView.apply(this, arguments);
-		this._addToNavigator(oContainerItem);
 		return this;
 	};
 
 	/**
 	* @override
 	*/
-	Container.prototype.removeView = function (oContainerItem) {
+	Container.prototype.removeView = function (vContainerItem) {
+		this._removeFromNavigator(typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem);
 		AbstractContainer.prototype.removeView.apply(this, arguments);
-		this._removeFromNavigator(oContainerItem);
+		return this;
 	};
 
 	/*

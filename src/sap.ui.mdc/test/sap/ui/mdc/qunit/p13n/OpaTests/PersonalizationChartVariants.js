@@ -23,10 +23,27 @@ sap.ui.define([
 		timeout: 45
 	});
 
+	var aFilterItems = [
+		{p13nItem: "Author ID", value: null},
+		{p13nItem: "Classification", value: null},
+		{p13nItem: "DetailGenre", value: null},
+		{p13nItem: "Genre", value: null},
+		{p13nItem: "Language", value: null},
+		{p13nItem: "Price (average)", value: null},
+		{p13nItem: "Price (max)", value: null},
+		{p13nItem: "Price (min)", value: null},
+		{p13nItem: "SubGenre", value: null},
+		{p13nItem: "Title", value: null},
+		{p13nItem: "Words (average)", value: null},
+		{p13nItem: "Words (max)", value: null},
+		{p13nItem: "Words (min)", value: null}
+	];
+
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	// Apply a variant and switch back to the standard
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimensions and measures appears", function(Given, When, Then) {
+		Given.enableAndDeleteLrepLocalStorage();
 		Given.iStartMyAppInAFrame({
 			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
 			autoWait: true
@@ -277,6 +294,146 @@ sap.ui.define([
 		Then.theVariantManagementIsDirty(false);
 
 		Given.enableAndDeleteLrepLocalStorage();
+	});
+
+	var oChartConditions = {
+		Title:[
+			{operator:"Contains",values:["Pride"],validated:"NotValidated"}
+		]
+	};
+
+	opaTest("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
+
+		Then.thePersonalizationDialogOpens();
+
+		//check filter field creation
+		Then.iShouldSeeP13nFilterItems(aFilterItems);
+
+		//enter some filter values
+		When.iEnterTextInFilterDialog("Title", "*Pride*");
+
+		When.iPressDialogOk();
+
+
+		//create a new variant 'FilterVariantTest'
+		When.iSaveVariantAs("Sorted by Price (average)", "FilterVariantTest");
+		Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+		//select a default variant
+		When.iSelectDefaultVariant("FilterVariantTest");
+		Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+		//restart app
 		Then.iTeardownMyAppFrame();
+
+	});
+
+	opaTest("Switch Variant after restart without opening the dialog", function (Given, When, Then) {
+
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
+
+		//check default variant appliance
+		Then.iShouldSeeSelectedVariant("FilterVariantTest");
+
+		When.iSelectVariant("Standard");
+	});
+
+	opaTest("Close 'FilterVariantTest' appliance after restart", function (Given, When, Then) {
+		When.iSelectVariant("FilterVariantTest");
+
+		//Recheck default variant appliance
+		Then.iShouldSeeConditons("sap.ui.mdc.Chart",oChartConditions);
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
+
+		When.iPressDialogOk();
+	});
+
+	opaTest("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
+
+		Then.thePersonalizationDialogOpens();
+
+		//check values from variant
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Title",
+			index: 9,
+			values: ["Pride"]
+		});
+
+		When.iPressDialogOk();
+
+		//Check chart conditions
+		Then.iShouldSeeConditons("sap.ui.mdc.Chart",oChartConditions);
+	});
+
+	opaTest("Check if Variant remains unchanged after dialog closes", function (Given, When, Then) {
+
+		//Variant Management is not dirty --> no changes made
+		Then.theVariantManagementIsDirty(false);
+
+	});
+
+	opaTest("Check that filter dialog changes values upon variant switch", function (Given, When, Then) {
+
+		When.iSelectVariant("Standard");
+
+		//no filters on standard
+		Then.iShouldSeeConditons("sap.ui.mdc.Chart",{filter: {}});
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
+
+		//check values from variant
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Title",
+			index: 9,
+			values: [undefined]
+		});
+
+		When.iPressDialogOk();
+
+		Then.theVariantManagementIsDirty(false);
+	});
+
+	opaTest("Switch back to 'FilterVariantTest' to check reappliance of condition values", function (Given, When, Then) {
+
+		//Switch back to check condition appliance in filter dialog
+		When.iSelectVariant("FilterVariantTest");
+
+		//open Dialog
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
+		//open 'filter' tab
+		When.iSwitchToP13nTab("Filter");
+
+		Then.thePersonalizationDialogOpens();
+
+		//check values persisted in variant --> values should be present again
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Title",
+			index: 9,
+			values: ["Pride"]
+		});
+		//close dialogs
+		When.iPressDialogOk();
+
+		//tear down app
+		Then.iTeardownMyAppFrame();
+
 	});
 });
