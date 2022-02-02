@@ -360,6 +360,40 @@ sap.ui.define([
 		oGrid.destroy();
 	});
 
+	QUnit.test("_findSrcControl", function(assert) {
+		// Prepare
+		var oAppointment = new CalendarAppointment({
+				startDate: new Date(2022,0,20),
+				endDate: new Date(2022,11,31)
+			}),
+			oGrid = new SinglePlanningCalendarGrid({
+				startDate: new Date(2022,0,25),
+				appointments: [oAppointment]
+			}),
+			oFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
+
+		oGrid.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oGrid.ontap({
+			target: {
+				parentElement: oAppointment.getDomRef(),
+				classList: {
+					contains: function() {
+						return false;
+					}
+				}
+			}
+		});
+
+		// Assert
+		assert.ok(oFireAppointmentSelectSpy.calledOnce, "AppointmentSelect event is fired");
+
+		// Destroy
+		oGrid.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect: select a single appointment", function (assert) {
