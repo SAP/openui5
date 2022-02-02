@@ -304,7 +304,7 @@ sap.ui.define([
 		 */
 		getParent: function (oControl) {
 			var oParent = oControl.parentNode;
-			if (!XmlTreeModifier.getId(oParent) && !XmlTreeModifier._isExtensionPoint(oParent)) {
+			if (oParent && !XmlTreeModifier.getId(oParent) && !XmlTreeModifier._isExtensionPoint(oParent)) {
 				//go to the real control, jump over aggregation node
 				oParent = oParent.parentNode;
 			}

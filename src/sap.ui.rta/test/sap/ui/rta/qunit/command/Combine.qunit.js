@@ -14,6 +14,7 @@ sap.ui.define([
 		designtimeActionStructure: "combine"
 	}, {
 		changeType: "combineStuff",
+		newElementId: "my-new-fancy-element-id",
 		source: new Control("source"),
 		combineElements: [
 			new Control("combineElement1"),
@@ -21,6 +22,7 @@ sap.ui.define([
 		]
 	}, {
 		changeType: "combineStuff",
+		newElementId: "my-new-fancy-element-id",
 		sourceControlId: "source",
 		combineElementIds: ["combineElement1", "combineElement2"]
 	});

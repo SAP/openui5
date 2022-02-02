@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/ui/core/mvc/View",
 	"sap/ui/core/Core"
 ], function(
 	Button,
@@ -29,6 +30,7 @@ sap.ui.define([
 	Utils,
 	sinon,
 	RtaQunitUtils,
+	View,
 	oCore
 ) {
 	"use strict";
@@ -137,12 +139,12 @@ sap.ui.define([
 					this.oButton3,
 					this.oButton4
 				]
-			}).placeAt("qunit-fixture");
+			});
 			this.oPanel2 = new Panel("panel2", {
 				content: [
 					this.oButton5
 				]
-			}).placeAt("qunit-fixture");
+			});
 
 			this.oOverflowToolbarButton1 = new OverflowToolbarButton("owerflowbutton1");
 			this.oButton6 = new Button("button6");
@@ -152,6 +154,14 @@ sap.ui.define([
 					this.oOverflowToolbarButton1,
 					this.oButton6,
 					this.oCheckBox1
+				]
+			});
+
+			this.oView = new View({
+				content: [
+					this.oPanel,
+					this.oPanel2,
+					this.OverflowToolbar
 				]
 			}).placeAt("qunit-fixture");
 

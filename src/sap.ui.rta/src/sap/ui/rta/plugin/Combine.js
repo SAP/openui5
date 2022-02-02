@@ -5,11 +5,15 @@
 sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils",
-	"sap/ui/dt/Util"
+	"sap/ui/fl/Utils",
+	"sap/ui/dt/Util",
+	"sap/base/util/uid"
 ], function(
 	Plugin,
 	Utils,
-	DtUtil
+	FlUtils,
+	DtUtil,
+	uid
 ) {
 	"use strict";
 
@@ -165,11 +169,14 @@ sap.ui.define([
 		});
 		var oDesignTimeMetadata = oCombineElementOverlay.getDesignTimeMetadata();
 		var sVariantManagementReference = this.getVariantManagementReference(oCombineElementOverlay);
+		var oView = FlUtils.getViewForControl(oCombineElement);
+		var sNewElementId = oView.createId(uid());
 
 		return this.getCommandFactory().getCommandFor(
 			oCombineElement,
 			"combine",
 			{
+				newElementId: sNewElementId,
 				source: oCombineElement,
 				combineElements: aElements
 			},
