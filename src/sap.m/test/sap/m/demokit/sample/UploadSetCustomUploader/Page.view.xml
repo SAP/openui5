@@ -16,6 +16,7 @@
 				maxFileSize="200"
 				mediaTypes="text/plain,application/msword,image/jpeg"
 				uploadUrl="../../../../upload"
+				uploadButtonInvisible="false"
 				items="{path: '/items', templateShareable: false}">
 			<upload:items>
 				<upload:UploadSetItem

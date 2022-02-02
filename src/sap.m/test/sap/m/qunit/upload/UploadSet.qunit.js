@@ -106,6 +106,14 @@ sap.ui.define([
 		this.oUploadSet.setUploader(oOrigUploader);
 	});
 
+	QUnit.test("File upload button is not visible after setting uploadButtonInvisible to true", function(assert) {
+		//Arrange
+		this.oUploadSet.setUploadButtonInvisible(true);
+
+		//Assert
+		assert.equal(this.oUploadSet.getDefaultFileUploader().getVisible(), false, "File Uploader is not visible");
+	});
+
 	QUnit.test("Event beforeItemRemoved is called at proper time and with correct parameters, prevent default applies.", function (assert) {
 		assert.expect(4);
 		var oItem = this.oUploadSet.getItems()[0];
@@ -454,6 +462,31 @@ sap.ui.define([
 
 		return oEvent;
 	}
+	QUnit.module("Rendering of UploadSet with hideUploadButton = true", {
+		beforeEach: function () {
+			this.oUploadSet = new UploadSet("uploadSet", {
+				items: {
+					path: "/items",
+					template: TestUtils.createItemTemplate(),
+					templateShareable: false,
+					uploadButtonInvisible: true
+				}
+			}).setModel(new JSONModel(getData()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("File upload button is visible after setting uploadButtonInvisible to false", function(assert) {
+		//Arrange
+		this.oUploadSet.setUploadButtonInvisible(false);
+		//Assert
+		assert.equal(this.oUploadSet.getDefaultFileUploader().getVisible(), true, "File Uploader is visible");
+	});
 
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {

@@ -101,6 +101,11 @@ sap.ui.define([
 				 */
 				uploadUrl: {type: "string", defaultValue: null},
 				/**
+				 * If set to true, the button used for uploading files become invisible.
+				 * @since 1.99.0
+				 */
+				 uploadButtonInvisible: {type: "boolean", group: "Appearance", defaultValue: false},
+				/**
 				 * HTTP request method chosen for file upload.
 				 * @since 1.90
 				 */
@@ -664,6 +669,16 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSet.prototype.setUploadButtonInvisible = function (bUploadButtonInvisible) {
+		if (this.getUploadButtonInvisible() === bUploadButtonInvisible) {
+			return this;
+		}
+		this.setProperty("uploadButtonInvisible", bUploadButtonInvisible, true);
+		this.getDefaultFileUploader().setVisible(!bUploadButtonInvisible);
+
+		return this;
+	};
+
 	UploadSet.prototype.setUploadEnabled = function (bEnable) {
 		if (bEnable !== this.getUploadEnabled()) {
 			this.getDefaultFileUploader().setEnabled(bEnable); // TODO: This can go, FileUploader doesn't upload anymore
@@ -797,7 +812,8 @@ sap.ui.define([
 				uploadAborted: [this._onUploadAborted, this],
 				typeMissmatch: [this._fireFileTypeMismatch, this],
 				fileSizeExceed: [this._fireFileSizeExceed, this],
-				filenameLengthExceed: [this._fireFilenameLengthExceed, this]
+				filenameLengthExceed: [this._fireFilenameLengthExceed, this],
+				visible: !this.getUploadButtonInvisible()
 			});
 		}
 
