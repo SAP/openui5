@@ -145,7 +145,6 @@ sap.ui.define([
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
 					"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
 					"xx-viewCache"          : { type : "boolean",  defaultValue : true },
-					"xx-test-mobile"        : { type : "boolean",  defaultValue : false },
 					"xx-depCache"           : { type : "boolean",  defaultValue : false },
 					"xx-libraryPreloadFiles": { type : "string[]", defaultValue : [] },
 					"xx-componentPreload"   : { type : "string",   defaultValue : "" },
