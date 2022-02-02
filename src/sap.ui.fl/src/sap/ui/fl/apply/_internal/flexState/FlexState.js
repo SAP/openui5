@@ -82,7 +82,6 @@ sap.ui.define([
 	var _oShellNavigationService;
 	var _oURLParsingService;
 	var _oChangePersistenceFactory;
-	var _oFlexControllerFactory;
 	var _mFlexObjectInfo = {
 		appDescriptorChanges: {
 			prepareFunction: prepareAppDescriptorMap,
@@ -298,12 +297,10 @@ sap.ui.define([
 	//       is migrated from changePersistenceFactory to the FlexState
 	function lazyLoadModules() {
 		return Promise.all([
-			Utils.requireAsync("sap/ui/fl/ChangePersistenceFactory"),
-			Utils.requireAsync("sap/ui/fl/FlexControllerFactory")
+			Utils.requireAsync("sap/ui/fl/ChangePersistenceFactory")
 		])
 			.then(function(aModules) {
 				_oChangePersistenceFactory = aModules[0];
-				_oFlexControllerFactory = aModules[1];
 			})
 			.catch(function(oError) {
 				Log.error("Error loading modules: " + oError.message);
@@ -383,11 +380,11 @@ sap.ui.define([
 			delete _mInitPromises[sReference];
 			// TODO: get rid of the following deletes as far as the change state
 			//       is migrated from changePersistenceFactory to the FlexState
-			if (_oChangePersistenceFactory && _oChangePersistenceFactory._instanceCache) {
-				delete _oChangePersistenceFactory._instanceCache[sReference];
-			}
-			if (_oFlexControllerFactory && _oFlexControllerFactory._instanceCache) {
-				delete _oFlexControllerFactory._instanceCache[sReference];
+			if (
+				_oChangePersistenceFactory
+				&& (_oChangePersistenceFactory._instanceCache || {}).hasOwnProperty(sReference)
+			) {
+				_oChangePersistenceFactory._instanceCache[sReference].removeDirtyChanges();
 			}
 		} else {
 			Object.keys(_mInstances).forEach(function(sReference) {
