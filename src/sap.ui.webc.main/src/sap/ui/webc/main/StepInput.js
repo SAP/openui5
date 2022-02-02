@@ -192,6 +192,7 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
@@ -199,6 +200,7 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}

@@ -88,6 +88,22 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines whether the selection of a tree node is displayed as partially selected. <br>
+				 * <br>
+				 * <b>Note:</b> The indeterminate state can be set only programatically and can’t be achieved by user interaction, meaning that the resulting visual state depends on the values of the <code>indeterminate</code> and <code>selected</code> properties:
+				 * <ul>
+				 *     <li> If a tree node has both <code>selected</code> and <code>indeterminate</code> set to <code>true</code>, it is displayed as partially selected.
+				 *     <li> If a tree node has <code>selected</code> set to <code>true</code> and <code>indeterminate</code> set to <code>false</code>, it is displayed as selected.
+				 *     <li> If a tree node has <code>selected</code> set to <code>false</code>, it is displayed as not selected regardless of the value of the <code>indeterminate</code> property.
+				 * </ul> <br>
+				 * <b>Note:</b> This property takes effect only when the <code>sap.ui.webc.main.Tree</code> is in <code>MultiSelect</code> mode.
+				 */
+				indeterminate: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines whether the tree node is selected by the user. Only has effect if the <code>sap.ui.webc.main.Tree</code> is in one of the following modes: in <code>SingleSelect</code>, <code>SingleSelectBegin</code>, <code>SingleSelectEnd</code> and <code>MultiSelect</code>.
 				 */
 				selected: {

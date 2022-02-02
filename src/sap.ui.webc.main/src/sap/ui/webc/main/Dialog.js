@@ -50,7 +50,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Sets the accessible aria name of the component.
+				 * Defines the accessible name of the component.
 				 */
 				accessibleName: {
 					type: "string",
@@ -161,6 +161,21 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					slot: "header"
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

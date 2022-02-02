@@ -11,6 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	var TabLayout = library.TabLayout;
+	var TabsOverflowMode = library.TabsOverflowMode;
 
 	/**
 	 * Constructor for a new <code>TabContainer</code>.
@@ -32,6 +33,8 @@ sap.ui.define([
 	 *     <li><code>sap.ui.webc.main.Tab</code> - contains all the information on an item (text and icon)</li>
 	 *     <li><code>sap.ui.webc.main.TabSeparator</code> - used to separate tabs with a vertical line</li>
 	 * </ul>
+	 *
+	 * <h3>Keyboard Handling</h3>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -77,7 +80,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the overflow select list is displayed. <br>
 				 * <br>
-				 * The overflow select list represents a list, where all tab filters are displayed so that it's easier for the user to select a specific tab filter.
+				 * The overflow select list represents a list, where all tabs are displayed so that it's easier for the user to select a specific tab.
 				 */
 				showOverflow: {
 					type: "boolean",
@@ -102,6 +105,26 @@ sap.ui.define([
 				tabLayout: {
 					type: "sap.ui.webc.main.TabLayout",
 					defaultValue: TabLayout.Standard
+				},
+
+				/**
+				 * Defines the overflow mode of the tab strip. If you have a large number of tabs, only the tabs that can fit on screen will be visible. All other tabs that can 't fit on the screen are available in an overflow tab "More".
+				 *
+				 * <br>
+				 * <br>
+				 * <b>Note:</b> Only one overflow at the end would be displayed by default, but when set to <code>StartAndEnd</code>, there will be two overflows on both ends, and tab order will not change on tab selection.
+				 *
+				 * <br>
+				 * <br>
+				 * Available options are:
+				 * <ul>
+				 *     <li><code>End</code></li>
+				 *     <li><code>StartAndEnd</code></li>
+				 * </ul>
+				 */
+				tabsOverflowMode: {
+					type: "sap.ui.webc.main.TabsOverflowMode",
+					defaultValue: TabsOverflowMode.End
 				},
 
 				/**
@@ -133,6 +156,15 @@ sap.ui.define([
 					type: "sap.ui.webc.main.IButton",
 					multiple: false,
 					slot: "overflowButton"
+				},
+
+				/**
+				 * Defines the button which will open the start overflow menu if available. If nothing is provided to this slot, the default button will be used.
+				 */
+				startOverflowButton: {
+					type: "sap.ui.webc.main.IButton",
+					multiple: false,
+					slot: "startOverflowButton"
 				}
 			},
 			events: {

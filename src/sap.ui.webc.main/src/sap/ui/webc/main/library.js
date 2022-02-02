@@ -54,6 +54,7 @@ sap.ui.define([
 				"sap.ui.webc.main.CalendarSelectionMode",
 				"sap.ui.webc.main.CarouselArrowsPlacement",
 				"sap.ui.webc.main.GrowingMode",
+				"sap.ui.webc.main.HasPopup",
 				"sap.ui.webc.main.InputType",
 				"sap.ui.webc.main.LinkDesign",
 				"sap.ui.webc.main.ListGrowingMode",
@@ -72,6 +73,7 @@ sap.ui.define([
 				"sap.ui.webc.main.TableGrowingMode",
 				"sap.ui.webc.main.TableMode",
 				"sap.ui.webc.main.TableRowType",
+				"sap.ui.webc.main.TabsOverflowMode",
 				"sap.ui.webc.main.TitleLevel",
 				"sap.ui.webc.main.ToastPlacement",
 				"sap.ui.webc.main.WrappingType"
@@ -125,6 +127,7 @@ sap.ui.define([
 				"sap.ui.webc.main.SegmentedButtonItem",
 				"sap.ui.webc.main.Select",
 				"sap.ui.webc.main.Slider",
+				"sap.ui.webc.main.SplitButton",
 				"sap.ui.webc.main.StandardListItem",
 				"sap.ui.webc.main.StepInput",
 				"sap.ui.webc.main.SuggestionGroupItem",
@@ -811,6 +814,49 @@ sap.ui.define([
 
 
 		/**
+		 * Different types of HasPopup.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.HasPopup = {
+
+			/**
+			 * Dialog popup type.
+			 * @public
+			 */
+			Dialog: "Dialog",
+
+			/**
+			 * Grid popup type.
+			 * @public
+			 */
+			Grid: "Grid",
+
+			/**
+			 * ListBox popup type.
+			 * @public
+			 */
+			ListBox: "ListBox",
+
+			/**
+			 * Menu popup type.
+			 * @public
+			 */
+			Menu: "Menu",
+
+			/**
+			 * Tree popup type.
+			 * @public
+			 */
+			Tree: "Tree"
+		};
+
+
+		/**
 		 * Defines input types
 		 *
 		 * @enum {string}
@@ -1393,6 +1439,31 @@ sap.ui.define([
 			 * @public
 			 */
 			Inactive: "Inactive"
+		};
+
+
+		/**
+		 * Different types of overflow modes.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.99.0
+		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.TabsOverflowMode = {
+
+			/**
+			 * End type is used if there should be only one overflow with hidden the tabs at the end of the tab container.
+			 * @public
+			 */
+			End: "End",
+
+			/**
+			 * StartAndEnd type is used if there should be two overflows on both ends of the tab container.
+			 * @public
+			 */
+			StartAndEnd: "StartAndEnd"
 		};
 
 

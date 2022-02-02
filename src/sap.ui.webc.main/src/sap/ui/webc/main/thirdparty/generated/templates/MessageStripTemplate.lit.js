@@ -4,7 +4,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], funct
 	const block1 = (context, tags, suffix) => litRender.html`<div class="ui5-message-strip-icon-wrapper" aria-hidden="true">${ context.iconProvided ? block2() : block3(context, tags, suffix) }</div>`;
 	const block2 = (context, tags, suffix) => litRender.html`<slot name="icon"></slot>`;
 	const block3 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} name="${litRender.ifDefined(context.standardIconName)}" class="ui5-message-strip-icon"></${litRender.scopeTag("ui5-icon", tags, suffix)}>`;
-	const block4 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-button", tags, suffix)} icon="decline" design="Transparent" class="ui5-message-strip-close-button" title="${litRender.ifDefined(context._closeButtonText)}" @click=${context._closeClick}></${litRender.scopeTag("ui5-button", tags, suffix)}>`;
+	const block4 = (context, tags, suffix) => litRender.html`<${litRender.scopeTag("ui5-button", tags, suffix)} icon="decline" design="Transparent" class="ui5-message-strip-close-button" ._buttonAccInfo="${litRender.ifDefined(context.accInfo.button)}" @click=${context._closeClick}></${litRender.scopeTag("ui5-button", tags, suffix)}>`;
 
 	return block0;
 

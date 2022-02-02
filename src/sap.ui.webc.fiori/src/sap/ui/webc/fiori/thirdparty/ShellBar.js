@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/Popover', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/search', 'sap/ui/webc/common/thirdparty/icons/bell', 'sap/ui/webc/common/thirdparty/icons/overflow', 'sap/ui/webc/common/thirdparty/icons/grid', './generated/i18n/i18n-defaults', './generated/templates/ShellBarTemplate.lit', './generated/templates/ShellBarPopoverTemplate.lit', './generated/themes/ShellBar.css'], function (UI5Element, litRender, ResizeHandler, FeaturesRegistry, AnimationMode$1, AnimationMode, Keys, StandardListItem, List, Popover, Button, i18nBundle, search, bell, overflow, grid, i18nDefaults, ShellBarTemplate_lit, ShellBarPopoverTemplate_lit, ShellBar_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/Popover', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/search', 'sap/ui/webc/common/thirdparty/icons/bell', 'sap/ui/webc/common/thirdparty/icons/overflow', 'sap/ui/webc/common/thirdparty/icons/grid', './generated/i18n/i18n-defaults', './generated/templates/ShellBarTemplate.lit', './generated/templates/ShellBarPopoverTemplate.lit', './generated/themes/ShellBar.css'], function (UI5Element, litRender, ResizeHandler, FeaturesRegistry, AnimationMode$1, AnimationMode, Keys, Render, StandardListItem, List, Popover, Button, i18nBundle, search, bell, overflow, grid, i18nDefaults, ShellBarTemplate_lit, ShellBarPopoverTemplate_lit, ShellBar_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -15,6 +15,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-shellbar",
 		languageAware: true,
+		fastNavigation: true,
 		properties:  {
 			primaryTitle: {
 				type: String,
@@ -34,6 +35,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			showCoPilot: {
 				type: Boolean,
 			},
+			 accessibilityTexts: {
+				type: Object,
+			},
 			breakpointSize: {
 				type: String,
 			},
@@ -47,9 +51,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Boolean,
 			},
 			_itemsInfo: {
-				type: Object,
-			},
-			_actionList: {
 				type: Object,
 			},
 			_header: {
@@ -168,14 +169,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._isInitialRendering = true;
 			this._focusedItem = null;
 			this._defaultItemPressPrevented = false;
-			this._actionList = {
-				itemPress: event => {
-					if (!this._defaultItemPressPrevented) {
-						this.overflowPopover.close();
-					}
-					this._defaultItemPressPrevented = false;
-				},
-			};
 			this.menuItemsObserver = new MutationObserver(() => {
 				this._updateClonedMenuItems();
 			});
@@ -206,7 +199,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_menuItemPress(event) {
 			this.menuPopover.close();
 			this.fireEvent("menu-item-click", {
-				item: event.detail.item,
+				item: event.detail.selectedItems[0],
 			}, true);
 		}
 		_logoPress() {
@@ -387,6 +380,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					input.focus();
 				}
 			}, 100);
+		}
+		async _handleActionListClick(event) {
+			if (!this._defaultItemPressPrevented) {
+				this.closeOverflow();
+				await Render.renderFinished();
+			}
+			this._defaultItemPressPrevented = false;
 		}
 		_handleCustomActionPress(event) {
 			const refItemId = event.target.getAttribute("data-ui5-external-action-item-id");
@@ -586,7 +586,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"ui5-shellbar-menu-button--interactive": this.hasMenuItems,
 					"ui5-shellbar-menu-button": true,
 				},
-				title: {},
 				items: {
 					notification: {
 						"ui5-shellbar-hidden-button": this.isIconHidden("bell"),
@@ -676,7 +675,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_LABEL);
 		}
 		get _logoText() {
-			return ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_LOGO);
+			return this.accessibilityTexts.logoTitle || ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_LOGO);
 		}
 		get _copilotText() {
 			return ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_COPILOT);
@@ -693,7 +692,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return ((size === "S") || searchBtnHidden);
 		}
 		get _profileText() {
-			return ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_PROFILE);
+			return this.accessibilityTexts.profileButtonTitle || ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_PROFILE);
 		}
 		get _productsText() {
 			return ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_PRODUCTS);

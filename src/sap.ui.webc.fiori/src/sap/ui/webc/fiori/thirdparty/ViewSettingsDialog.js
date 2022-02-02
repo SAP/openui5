@@ -78,6 +78,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			if (this._currentSettings.filters && this._currentSettings.filters.length) {
 				this._setAdditionalTexts();
 			}
+			if (!this.shouldBuildSort && this.shouldBuildFilter) {
+				this._currentMode = ViewSettingsDialogMode.Filter;
+			}
 		}
 		_setAdditionalTexts() {
 			this.filterItems.forEach((filter, index) => {
@@ -125,6 +128,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				}
 			}
 			return "";
+		}
+		get shouldBuildSort() {
+			return !!this.sortItems.length;
+		}
+		get shouldBuildFilter() {
+			return !!this.filterItems.length;
+		}
+		get hasPagination() {
+			return this.shouldBuildSort && this.shouldBuildFilter;
 		}
 		get _filterByTitle() {
 			return `${ViewSettingsDialog.i18nBundle.getText(i18nDefaults.VSD_FILTER_BY)}: ${this._selectedFilter.text}`;
@@ -287,7 +299,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			this._dialog && this._dialog.close();
 		}
 		_focusRecentlyUsedControl() {
-			if (!Object.keys(this._recentlyFocused).length) {
+			if (!this._recentlyFocused || !Object.keys(this._recentlyFocused).length) {
 				return;
 			}
 			const recentlyFocusedSelectedItems = this._recentlyFocused.getSelectedItems(),

@@ -26,6 +26,19 @@ sap.ui.define([
 	 * <h3>Responsive Behavior</h3> You can change the size of the Rating Indicator by changing its <code>font-size</code> CSS property. <br>
 	 * Example: <code>&lt;ui5-rating-indicator style="font-size: 3rem;">&lt;/ui5-rating-indicator></code>
 	 *
+	 * <h3>Keyboard Handling</h3> When the <code>sap.ui.webc.main.RatingIndicator</code> is focused, the user can change the rating with the following keyboard shortcuts: <br>
+	 *
+	 *
+	 *
+	 * <ul>
+	 *     <li>[RIGHT/UP] - Increases the value of the rating by one step. If the highest value is reached, does nothing</li>
+	 *     <li>[LEFT/DOWN] - Decreases the value of the rating by one step. If the lowest value is reached, does nothing.</li>
+	 *     <li>[HOME] - Sets the lowest value.</li>
+	 *     <li>[END] - Sets the highest value.</li>
+	 *     <li>[SPACE/ENTER/RETURN] - Increases the value of the rating by one step. If the highest value is reached, sets the rating to the lowest value.</li>
+	 *     <li>Any number - Changes value to the corresponding number. If typed number is larger than the number of values, sets the highest value.</li>
+	 * </ul>
+	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *

@@ -97,6 +97,9 @@ sap.ui.define(['./types/DataType', './util/isDescendantOf', './util/StringHelper
 		slotsAreManaged() {
 			return !!this.metadata.managedSlots;
 		}
+		supportsF6FastNavigation() {
+			return !!this.metadata.fastNavigation;
+		}
 		getProperties() {
 			return this.metadata.properties || {};
 		}

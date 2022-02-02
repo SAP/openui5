@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/main/thirdparty/ResponsivePopover', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/Tree', 'sap/ui/webc/main/thirdparty/TreeItem', './generated/templates/SideNavigationTemplate.lit', './generated/templates/SideNavigationItemPopoverContentTemplate.lit', './generated/themes/SideNavigation.css'], function (UI5Element, litRender, ResponsivePopover, List, StandardListItem, Tree, TreeItem, SideNavigationTemplate_lit, SideNavigationItemPopoverContentTemplate_lit, SideNavigation_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/main/thirdparty/ResponsivePopover', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/Tree', 'sap/ui/webc/main/thirdparty/TreeItem', './generated/templates/SideNavigationTemplate.lit', './generated/templates/SideNavigationItemPopoverContentTemplate.lit', './generated/themes/SideNavigation.css', './generated/themes/SideNavigationPopover.css'], function (UI5Element, litRender, ResponsivePopover, List, StandardListItem, Tree, TreeItem, SideNavigationTemplate_lit, SideNavigationItemPopoverContentTemplate_lit, SideNavigation_css, SideNavigationPopover_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -13,6 +13,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-side-navigation",
 		managedSlots: true,
+		fastNavigation: true,
 		properties:  {
 			collapsed: {
 				type: Boolean,
@@ -50,7 +51,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return metadata;
 		}
 		static get staticAreaStyles() {
-			return [SideNavigation_css];
+			return [SideNavigationPopover_css];
 		}
 		static get render() {
 			return litRender__default;

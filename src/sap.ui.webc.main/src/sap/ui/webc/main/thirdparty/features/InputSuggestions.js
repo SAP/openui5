@@ -69,6 +69,49 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			}
 			return false;
 		}
+		onPageUp(event) {
+			event.preventDefault();
+			const isItemIndexValid = this.selectedItemIndex - 10 > -1;
+			if (this._hasValueState && !isItemIndexValid) {
+				this._focusValueState();
+				return true;
+			}
+			this._moveItemSelection(this.selectedItemIndex,
+				isItemIndexValid ? this.selectedItemIndex -= 10 : this.selectedItemIndex = 0);
+			return true;
+		}
+		onPageDown(event) {
+			event.preventDefault();
+			const items = this._getItems();
+			const lastItemIndex = items.length - 1;
+			const isItemIndexValid = this.selectedItemIndex + 10 <= lastItemIndex;
+			if (this._hasValueState && !items) {
+				this._focusValueState();
+				return true;
+			}
+			this._moveItemSelection(this.selectedItemIndex,
+				isItemIndexValid ? this.selectedItemIndex += 10 : this.selectedItemIndex = lastItemIndex);
+			return true;
+		}
+		onHome(event) {
+			event.preventDefault();
+			if (this._hasValueState) {
+				this._focusValueState();
+				return true;
+			}
+			this._moveItemSelection(this.selectedItemIndex, this.selectedItemIndex = 0);
+			return true;
+		}
+		onEnd(event) {
+			event.preventDefault();
+			const lastItemIndex = this._getItems().length - 1;
+			if (this._hasValueState && !lastItemIndex) {
+				this._focusValueState();
+				return true;
+			}
+			this._moveItemSelection(this.selectedItemIndex, this.selectedItemIndex = lastItemIndex);
+			return true;
+		}
 		onTab(event) {
 			if (this._isItemOnTarget()) {
 				this.onItemSelected(null, true);
@@ -135,7 +178,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this._getComponent().onItemPreviewed(item);
 		}
 		onItemPress(oEvent) {
-			this.onItemSelected(oEvent.detail.item, false );
+			this.onItemSelected(oEvent.detail.selectedItems[0], false );
 		}
 		_beforeOpen() {
 			this._attachItemsListeners();
@@ -143,8 +186,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		}
 		async _attachItemsListeners() {
 			const list = await this._getList();
-			list.removeEventListener("ui5-item-press", this.fnOnSuggestionItemPress);
-			list.addEventListener("ui5-item-press", this.fnOnSuggestionItemPress);
+			list.removeEventListener("ui5-selection-change", this.fnOnSuggestionItemPress);
+			list.addEventListener("ui5-selection-change", this.fnOnSuggestionItemPress);
 			list.removeEventListener("ui5-item-focused", this.fnOnSuggestionItemFocus);
 			list.addEventListener("ui5-item-focused", this.fnOnSuggestionItemFocus);
 			list.removeEventListener("mouseover", this.fnOnSuggestionItemMouseOver);
@@ -203,16 +246,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		_selectNextItem() {
 			const itemsCount = this._getItems().length;
 			const previousSelectedIdx = this.selectedItemIndex;
-			const hasValueState = this.component.hasValueStateMessage;
-			if (hasValueState && previousSelectedIdx === null && !this.component._isValueStateFocused) {
-				this.component._isValueStateFocused = true;
-				this.component.focused = false;
-				this.component.hasSuggestionItemSelected = false;
-				this.selectedItemIndex = null;
+			if (this._hasValueState && previousSelectedIdx === null && !this.component._isValueStateFocused) {
+				this._focusValueState();
 				return;
 			}
-			if ((previousSelectedIdx === null && !hasValueState) || this.component._isValueStateFocused) {
-				this.component._isValueStateFocused = false;
+			if ((previousSelectedIdx === null && !this._hasValueState) || this.component._isValueStateFocused) {
+				this._clearValueStateFocus();
 				--this.selectedItemIndex;
 			}
 			if (previousSelectedIdx !== null && previousSelectedIdx + 1 > itemsCount - 1) {
@@ -223,8 +262,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		_selectPreviousItem() {
 			const items = this._getItems();
 			const previousSelectedIdx = this.selectedItemIndex;
-			const hasValueState = this.component.hasValueStateMessage;
-			if (hasValueState && previousSelectedIdx === 0 && !this.component._isValueStateFocused) {
+			if (this._hasValueState && previousSelectedIdx === 0 && !this.component._isValueStateFocused) {
 				this.component.hasSuggestionItemSelected = false;
 				this.component._isValueStateFocused = true;
 				this.selectedItemIndex = null;
@@ -259,6 +297,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				return;
 			}
 			this.component.focused = false;
+			this._clearValueStateFocus();
 			this.accInfo = {
 				currentPos: nextIdx + 1,
 				listSize: items.length,
@@ -365,6 +404,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		}
 		sanitizeText(text) {
 			return encodeXML__default(text);
+		}
+		get _hasValueState() {
+			return this.component.hasValueStateMessage;
+		}
+		_focusValueState() {
+			const items = this._getItems();
+			this.component._isValueStateFocused = true;
+			this.component.focused = false;
+			this.component.hasSuggestionItemSelected = false;
+			this.selectedItemIndex = null;
+			items && this._scrollItemIntoView(items[0]);
+			this._deselectItems();
+		}
+		_clearValueStateFocus() {
+			this.component._isValueStateFocused = false;
 		}
 		static get dependencies() {
 			return [

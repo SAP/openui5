@@ -83,7 +83,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const illustrationData = Illustrations.getIllustrationDataSync(this.name);
 			if (illustrationData === ILLUSTRATION_NOT_FOUND) {
 				this.invalid = true;
-				return console.warn(`Required illustration is not registered. You can either import the illustration as a module in order to use it e.g. "@ui5/webcomponents-fiori/dist/illustrations/${this.name}.js".`);
+				const illustrationPath = this.name.includes("Tnt") ? `tnt/${this.name.replace("Tnt", "")}` : this.name;
+				return console.warn(`Required illustration is not registered. You can either import the illustration as a module in order to use it e.g. "@ui5/webcomponents-fiori/dist/illustrations/${illustrationPath}.js".`);
 			}
 			this.invalid = false;
 			this.spotSvg = illustrationData.spotSvg;

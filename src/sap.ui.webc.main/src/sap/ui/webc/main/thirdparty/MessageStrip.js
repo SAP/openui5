@@ -9,6 +9,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		tag: "ui5-message-strip",
 		altTag: "ui5-messagestrip",
 		languageAware: true,
+		fastNavigation: true,
 		properties:  {
 			design: {
 				type: MessageStripDesign,
@@ -78,11 +79,22 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				"Warning": "alert",
 			};
 		}
+		static designAnnouncementMappings() {
+			return {
+				"Information": MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_INFORMATION),
+				"Positive": MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_SUCCESS),
+				"Negative": MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_ERROR),
+				"Warning": MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_WARNING),
+			};
+		}
 		get hiddenText() {
-			return `Message Strip ${this.design} ${this.hideCloseButton ? "" : "closable"}`;
+			return `${MessageStrip.designAnnouncementMappings()[this.design]} ${this.hideCloseButton ? "" : this._closableText}`;
 		}
 		get _closeButtonText() {
 			return MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_CLOSE_BUTTON);
+		}
+		get _closableText() {
+			return MessageStrip.i18nBundle.getText(i18nDefaults.MESSAGE_STRIP_CLOSABLE);
 		}
 		get classes() {
 			return {
@@ -102,6 +114,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get designClasses() {
 			return MessageStrip.designClassesMappings()[this.design];
+		}
+		get accInfo() {
+			return {
+				"button": {
+					"title": this._closeButtonText,
+				},
+			};
 		}
 	}
 	MessageStrip.define();

@@ -53,6 +53,35 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * An object of strings that defines several additional accessibility attribute values for customization depending on the use case.
+				 *
+				 * It supports the following fields:
+				 *
+				 *
+				 * <ul>
+				 *     <li><code>expanded</code>: Indicates whether the anchor element, or another grouping element it controls, is currently expanded or collapsed. Accepts the following string values:
+				 *         <ul>
+				 *             <li><code>true</code></li>
+				 *             <li><code>false</code></li>
+				 *             <ul>
+				 *     </li>
+				 *     <li><code>hasPopup</code>: Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by the anchor element. Accepts the following string values:
+				 *         <ul>
+				 *             <li><code>Dialog</code></li>
+				 *             <li><code>Grid</code></li>
+				 *             <li><code>ListBox</code></li>
+				 *             <li><code>Menu</code></li>
+				 *             <li><code>Tree</code></li>
+				 *         </ul>
+				 *     </li>
+				 * </ul>
+				 */
+				accessibilityAttributes: {
+					type: "object",
+					defaultValue: {}
+				},
+
+				/**
 				 * Defines the component design. <br>
 				 * <br>
 				 * <b>Note:</b> Avaialble options are <code>Default</code>, <code>Subtle</code>, and <code>Emphasized</code>.
@@ -125,6 +154,7 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
@@ -132,6 +162,7 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}

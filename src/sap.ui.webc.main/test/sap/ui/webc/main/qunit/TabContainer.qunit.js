@@ -83,6 +83,13 @@ sap.ui.define([
 						// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
 					}
 				}),
+				startOverflowButton: new Button({
+					icon: "employee",
+					text: "Some text...",
+					click: function(oEvent) {
+						// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+					}
+				}),
 				tabSelect: function(oEvent) {
 					// console.log("Event tabSelect fired for TabContainer with parameters: ", oEvent.getParameters());
 				}

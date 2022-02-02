@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/accept', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/less', './Icon', './types/SwitchDesign', './generated/i18n/i18n-defaults', './generated/templates/SwitchTemplate.lit', './generated/themes/Switch.css'], function (UI5Element, litRender, Keys, Device, i18nBundle, accept, decline, less, Icon, SwitchDesign, i18nDefaults, SwitchTemplate_lit, Switch_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/icons/accept', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/less', './Icon', './types/SwitchDesign', './generated/i18n/i18n-defaults', './generated/templates/SwitchTemplate.lit', './generated/themes/Switch.css'], function (UI5Element, litRender, Keys, Device, i18nBundle, AriaLabelHelper, accept, decline, less, Icon, SwitchDesign, i18nDefaults, SwitchTemplate_lit, Switch_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -24,6 +24,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			textOff: {
 				type: String,
+			},
+			 accessibleNameRef: {
+				type: String,
+				defaultValue: "",
 			},
 		},
 		events:  {
@@ -107,6 +111,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get hiddenText() {
 			return this.checked ? this.accessibilityOnText : this.accessibilityOffText;
+		}
+		get ariaLabelText() {
+			return AriaLabelHelper.getEffectiveAriaLabelText(this);
 		}
 		static get dependencies() {
 			return [Icon];

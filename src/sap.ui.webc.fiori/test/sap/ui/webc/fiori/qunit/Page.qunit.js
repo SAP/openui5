@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/Core",
 	"sap/ui/webc/fiori/Page",
-	"sap/ui/webc/main/Button"
-], function(createAndAppendDiv, Core, Page, Button) {
+	"sap/ui/webc/main/Button",
+	"sap/ui/webc/fiori/Bar"
+], function(createAndAppendDiv, Core, Page, Button, Bar) {
 	"use strict";
 
 	createAndAppendDiv("uiArea");
@@ -14,52 +15,6 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oPage = new Page({
 				content: [
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					})
-				],
-				footer: [
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					}),
-					new Button({
-						icon: "employee",
-						text: "Some text...",
-						click: function(oEvent) {
-							// console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-						}
-					})
-				],
-				header: [
 					new Button({
 						icon: "employee",
 						text: "Some text...",

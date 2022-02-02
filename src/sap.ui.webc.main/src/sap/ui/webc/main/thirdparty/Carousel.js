@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-carousel",
 		languageAware: true,
+		fastNavigation: true,
 		properties:  {
 			cyclic: {
 				type: Boolean,

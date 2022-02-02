@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Keys', './Label', './RadioButtonGroup', './types/WrappingType', './generated/templates/RadioButtonTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/RadioButton.css'], function (Device, FeaturesRegistry, UI5Element, litRender, i18nBundle, ValueState, Keys, Label, RadioButtonGroup, WrappingType, RadioButtonTemplate_lit, i18nDefaults, RadioButton_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/Keys', './Label', './RadioButtonGroup', './types/WrappingType', './generated/templates/RadioButtonTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/RadioButton.css'], function (Device, FeaturesRegistry, UI5Element, litRender, i18nBundle, ValueState, AriaLabelHelper, Keys, Label, RadioButtonGroup, WrappingType, RadioButtonTemplate_lit, i18nDefaults, RadioButton_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -40,6 +40,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				defaultValue: WrappingType.None,
 			},
 			accessibleName: {
+				type: String,
+			},
+			accessibleNameRef: {
 				type: String,
 			},
 			_tabIndex: {
@@ -214,7 +217,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			return this.disabled ? "true" : undefined;
 		}
 		get ariaLabelText() {
-			return [this.text, this.accessibleName].filter(Boolean).join(" ");
+			return [AriaLabelHelper.getEffectiveAriaLabelText(this), this.text].filter(Boolean).join(" ");
 		}
 		get ariaDescribedBy() {
 			return this.hasValueState ? `${this._id}-descr` : undefined;

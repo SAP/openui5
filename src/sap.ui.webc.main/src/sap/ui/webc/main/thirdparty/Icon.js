@@ -26,7 +26,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			showTooltip: {
 				type: Boolean,
 			},
-			role: {
+			accessibleRole: {
 				type: String,
 			},
 			ariaHidden: {
@@ -72,12 +72,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static async onDefine() {
 			this.createGlobalStyle();
 		}
-		_onfocusin(event) {
+		_onFocusInHandler(event) {
 			if (this.interactive) {
 				this.focused = true;
 			}
 		}
-		_onfocusout(event) {
+		_onFocusOutHandler(event) {
 			this.focused = false;
 		}
 		_onkeydown(event) {
@@ -119,14 +119,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.ariaHidden;
 		}
 		get tabIndex() {
-			return this.interactive ? "0" : "-1";
+			return this.interactive ? "0" : undefined;
 		}
 		get isDecorative() {
 			return this.effectiveAccessibleRole === PRESENTATION_ROLE;
 		}
 		get effectiveAccessibleRole() {
-			if (this.role) {
-				return this.role;
+			if (this.accessibleRole) {
+				return this.accessibleRole;
 			}
 			if (this.interactive) {
 				return "button";
@@ -172,6 +172,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.ltr = iconData.ltr;
 			this.packageName = iconData.packageName;
 			this._onclick = this.interactive ? this._onClickHandler.bind(this) : undefined;
+			this._onfocusout = this.interactive ? this._onFocusOutHandler.bind(this) : undefined;
+			this._onfocusin = this.interactive ? this._onFocusInHandler.bind(this) : undefined;
 			if (this.accessibleName) {
 				this.effectiveAccessibleName = this.accessibleName;
 			} else if (this.accData) {

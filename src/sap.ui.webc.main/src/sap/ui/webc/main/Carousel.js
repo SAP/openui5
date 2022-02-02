@@ -46,7 +46,10 @@ sap.ui.define([
 	 *     <li>The items you want to display are uniform and very similar.</li>
 	 * </ul>
 	 *
-	 * <h3>Keyboard Handling</h3> When the <code>sap.ui.webc.main.Carousel</code> is focused the user can navigate between the items with the following keyboard shortcuts: <br>
+	 * <h3>Keyboard Handling</h3>
+	 *
+	 * <h4>Basic Navigation</h4> When the <code>sap.ui.webc.main.Carousel</code> is focused the user can navigate between the items with the following keyboard shortcuts: <br>
+	 *
 	 *
 	 *
 	 *

@@ -64,6 +64,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines if the component is checked. <br>
 				 * <br>
 				 * <b>Note:</b> The property can be changed with user interaction, either by cliking/tapping on the component, or by pressing the Enter or Space key.
@@ -162,6 +170,21 @@ sap.ui.define([
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",
 					defaultValue: WrappingType.None
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

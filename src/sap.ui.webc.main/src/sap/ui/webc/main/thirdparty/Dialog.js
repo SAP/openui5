@@ -20,9 +20,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			headerText: {
 				type: String,
 			},
-			accessibleName: {
-				type: String,
-			},
 			stretch: {
 				type: Boolean,
 			},
@@ -77,17 +74,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		get _ariaLabelledBy() {
 			let ariaLabelledById;
-			if (this.headerText !== "" && !this.accessibleName) {
+			if (this.headerText !== "" && !this._ariaLabel) {
 				ariaLabelledById = "ui5-popup-header-text";
 			}
 			return ariaLabelledById;
-		}
-		get _ariaLabel() {
-			let ariaLabel;
-			if (this.header.length > 0 && !!this.accessibleName) {
-				ariaLabel = this.accessibleName;
-			}
-			return this.accessibleName ? this.accessibleName : ariaLabel;
 		}
 		get _ariaModal() {
 			return true;
@@ -103,6 +93,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		get _headerTabIndex() {
 			return this._movable ? "0" : undefined;
+		}
+		get _showResizeHandle() {
+			return this.resizable && this.onDesktop;
 		}
 		_show() {
 			super._show();

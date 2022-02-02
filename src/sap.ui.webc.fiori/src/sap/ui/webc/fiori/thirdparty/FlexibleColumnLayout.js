@@ -12,6 +12,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 
 	const metadata = {
 		tag: "ui5-flexible-column-layout",
+		fastNavigation: true,
 		properties:  {
 			layout: {
 				type: FCLLayout,
@@ -21,6 +22,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Boolean,
 			},
 			accessibilityTexts: {
+				type: Object,
+			},
+			accessibilityRoles: {
 				type: Object,
 			},
 			_width: {
@@ -353,6 +357,27 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get accEndColumnText() {
 			return this.accessibilityTexts.endColumnAccessibleName || FlexibleColumnLayout.i18nBundle.getText(i18nDefaults.FCL_END_COLUMN_TXT);
+		}
+		get accStartArrowContainerText() {
+			return this.accessibilityTexts.startArrowContainerAccessibleName || undefined;
+		}
+		get accEndArrowContainerText() {
+			return this.accessibilityTexts.endArrowContainerAccessibleName || undefined;
+		}
+		get accStartColumnRole() {
+			return this.accessibilityRoles.startColumnRole || "region";
+		}
+		get accMiddleColumnRole() {
+			return this.accessibilityRoles.midColumnRole || "region";
+		}
+		get accEndColumnRole() {
+			return this.accessibilityRoles.endColumnRole || "region";
+		}
+		get accStartArrowContainerRole() {
+			return this.accessibilityRoles.startArrowContainerRole || undefined;
+		}
+		get accEndArrowContainerRole() {
+			return this.accessibilityRoles.endArrowContainerRole || undefined;
 		}
 		get _effectiveLayoutsByMedia() {
 			return this._layoutsConfiguration || FCLLayout$1.getLayoutsByMedia();

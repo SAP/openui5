@@ -157,6 +157,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			if (this.isOpen()) {
 				return;
 			}
+			if (Keys.isEnter(event)) {
+				this._updateValueAndFireEvents(event.target.value, true, ["change", "value-changed"]);
+			}
 			if (Keys.isPageUpShiftCtrl(event)) {
 				event.preventDefault();
 				this._modifyDateValue(1, "year");
@@ -201,6 +204,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				return;
 			}
 			if (updateValue) {
+				this._getInput().getInputDOMRef().then(innnerInput => {
+					innnerInput.value = value;
+				});
 				this.value = value;
 				this._updateValueState();
 			}

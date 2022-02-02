@@ -92,6 +92,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/mai
 				super.onDefine(),
 			]);
 		}
+		onBeforeRendering() {
+		}
 		async _initInputField() {
 			await Render.renderFinished();
 			const inp = this.shadowRoot.getElementById("ui5-uci-edit-input");

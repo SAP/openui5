@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return litRender__default;
 		}
 		get stableDomRef() {
-			return `${this._id}-stable-dom-ref`;
+			return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
 		}
 	}
 	ShellBarItem.define();

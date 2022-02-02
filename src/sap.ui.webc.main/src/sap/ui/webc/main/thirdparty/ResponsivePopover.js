@@ -40,6 +40,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		static get dependencies() {
 			return [
+				...Popover.dependencies,
 				Button,
 				Dialog,
 				Title,

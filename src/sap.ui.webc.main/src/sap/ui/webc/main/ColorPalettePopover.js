@@ -102,9 +102,26 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+			methods: ["openPopover", "showAt"]
 		}
 	});
+
+	/**
+	 * Shows the ColorPalettePopover. <b>Note:</b> The method is deprecated and will be removed in future, use <code>showAt</code> instead.
+	 * @param {HTMLElement} opener the element that the popover is shown at
+	 * @public
+	 * @name sap.ui.webc.main.ColorPalettePopover#openPopover
+	 * @function
+	 */
+
+	/**
+	 * Shows the ColorPalettePopover.
+	 * @param {HTMLElement} opener the element that the popover is shown at
+	 * @public
+	 * @name sap.ui.webc.main.ColorPalettePopover#showAt
+	 * @function
+	 */
 
 	return ColorPalettePopover;
 });

@@ -147,8 +147,71 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onkeydown(event) {
 			if (Keys.isSpace(event)) {
 				event.preventDefault();
-				this._handleTokenSelection(event);
+				return this._handleTokenSelection(event, false);
 			}
+			this._handleItemNavigation(event, this.tokens);
+		}
+		_handleItemNavigation(event, tokens) {
+			const isCtrl = !!(event.metaKey || event.ctrlKey);
+			if (Keys.isLeftCtrl(event) || Keys.isRightCtrl(event)) {
+				event.preventDefault();
+				return this._handleArrowCtrl(event.target, tokens, Keys.isRightCtrl(event));
+			}
+			if (Keys.isLeftCtrl(event)) {
+				event.preventDefault();
+				return this._handleArrowCtrl(event.target, tokens, false);
+			}
+			if (Keys.isLeftShift(event) || Keys.isRightShift(event) || Keys.isLeftShiftCtrl(event) || Keys.isRightShiftCtrl(event)) {
+				event.preventDefault();
+				return this._handleArrowShift(event.target, tokens, (Keys.isRightShift(event) || Keys.isRightShiftCtrl(event)));
+			}
+			if (Keys.isHome(event) || Keys.isEnd(event)) {
+				return this._handleHome(tokens, Keys.isEnd(event));
+			}
+			if (isCtrl && event.key.toLowerCase() === "a") {
+				event.preventDefault();
+				return this._toggleTokenSelection(tokens);
+			}
+		}
+		_handleHome(tokens, endKeyPressed) {
+			if (!tokens || !tokens.length) {
+				return -1;
+			}
+			const index = endKeyPressed ? tokens.length - 1 : 0;
+			tokens[index].focus();
+			this._itemNav.setCurrentItem(tokens[index]);
+		}
+		_calcNextTokenIndex(focusedToken, tokens, backwards) {
+			if (!tokens.length) {
+				return -1;
+			}
+			const focusedTokenIndex = tokens.indexOf(focusedToken);
+			let nextIndex = backwards ? (focusedTokenIndex + 1) : (focusedTokenIndex - 1);
+			if (nextIndex >= tokens.length) {
+				nextIndex = tokens.length - 1;
+			}
+			if (nextIndex < 0) {
+				nextIndex = 0;
+			}
+			return nextIndex;
+		}
+		_handleArrowCtrl(focusedToken, tokens, backwards) {
+			const nextIndex = this._calcNextTokenIndex(focusedToken, tokens, backwards);
+			if (nextIndex === -1) {
+				return;
+			}
+			tokens[nextIndex].focus();
+			this._itemNav.setCurrentItem(tokens[nextIndex]);
+		}
+		_handleArrowShift(focusedToken, tokens, backwards) {
+			const nextIndex = this._calcNextTokenIndex(focusedToken, tokens, backwards);
+			if (nextIndex === -1) {
+				return;
+			}
+			focusedToken.selected = true;
+			tokens[nextIndex].selected = true;
+			tokens[nextIndex].focus();
+			this._itemNav.setCurrentItem(tokens[nextIndex]);
 		}
 		_click(event) {
 			this._handleTokenSelection(event);
@@ -156,14 +219,36 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onmousedown(event) {
 			this._itemNav.setCurrentItem(event.target);
 		}
-		_handleTokenSelection(event) {
-			if (event.target.localName === "ui5-token") {
-				this._tokens.forEach(token => {
+		_toggleTokenSelection(tokens) {
+			if (!tokens || !tokens.length) {
+				return;
+			}
+			const tokensAreSelected = tokens.every(token => token.selected);
+			tokens.forEach(token => { token.selected = !tokensAreSelected; });
+		}
+		_handleTokenSelection(event, deselectAll = true) {
+			if (event.target.hasAttribute("ui5-token")) {
+				const deselectTokens = deselectAll ? this._tokens : [event.target];
+				deselectTokens.forEach(token => {
 					if (token !== event.target) {
 						token.selected = false;
 					}
 				});
 			}
+		}
+		_fillClipboard(shortcutName, tokens) {
+			const tokensTexts = tokens.filter(token => token.selected).map(token => token.text).join("\r\n");
+			const cutToClipboard = event => {
+				if (event.clipboardData) {
+					event.clipboardData.setData("text/plain", tokensTexts);
+				} else {
+					event.originalEvent.clipboardData.setData("text/plain", tokensTexts);
+				}
+				event.preventDefault();
+			};
+			document.addEventListener(shortcutName, cutToClipboard);
+			document.execCommand(shortcutName);
+			document.removeEventListener(shortcutName, cutToClipboard);
 		}
 		scrollToStart() {
 			this.contentDom.scrollLeft = 0;
@@ -191,13 +276,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (!this.contentDom) {
 				return [];
 			}
+			this._getTokens().forEach(token => {
+				token.overflows = false;
+			});
 			return this._getTokens().filter(token => {
 				const isRTL = this.effectiveDir === "rtl";
 				const elementEnd = isRTL ? "left" : "right";
 				const parentRect = this.contentDom.getBoundingClientRect();
 				const tokenRect = token.getBoundingClientRect();
-				const tokenEnd = tokenRect[elementEnd];
-				const parentEnd = parentRect[elementEnd];
+				const tokenEnd = parseInt(tokenRect[elementEnd]);
+				const parentEnd = parseInt(parentRect[elementEnd]);
 				token.overflows = isRTL ? ((tokenEnd < parentEnd) && !this.expanded) : ((tokenEnd > parentEnd) && !this.expanded);
 				return token.overflows;
 			});

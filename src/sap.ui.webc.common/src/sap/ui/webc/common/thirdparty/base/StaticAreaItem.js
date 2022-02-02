@@ -9,6 +9,9 @@ sap.ui.define(['./StaticArea', './updateShadowRoot', './Render', './util/getEffe
 		setOwnerElement(ownerElement) {
 			this.ownerElement = ownerElement;
 			this.classList.add(this.ownerElement._id);
+			if (this.ownerElement.hasAttribute("data-ui5-static-stable")) {
+				this.setAttribute("data-ui5-stable", this.ownerElement.getAttribute("data-ui5-static-stable"));
+			}
 		}
 		update() {
 			if (this._rendered) {

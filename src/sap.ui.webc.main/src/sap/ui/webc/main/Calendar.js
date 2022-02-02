@@ -82,6 +82,7 @@ sap.ui.define([
 	 * </ul> <br>
 	 *
 	 *
+	 *
 	 * <h3>Calendar types</h3> The component supports several calendar types - Gregorian, Buddhist, Islamic, Japanese and Persian. By default the Gregorian Calendar is used. In order to use the Buddhist, Islamic, Japanese or Persian calendar, you need to set the <code>primaryCalendarType</code> property and import one or more of the following modules: <br>
 	 * <br>
 	 *

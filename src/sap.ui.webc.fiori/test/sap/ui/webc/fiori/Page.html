@@ -2,7 +2,6 @@
 <html>
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <title>Page - sap.ui.webc.fiori</title>
     <script src="shared-config.js"></script>
@@ -13,9 +12,10 @@
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/Page",
-                "sap/ui/webc/main/Button"
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/fiori/Bar"
             ], function(
-                Page, Button
+                Page, Button, Bar
             ) {
 
 
@@ -43,52 +43,148 @@
                             }
                         })
                     ],
-                    footer: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ],
-                    header: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        })
-                    ]
+                    footer: new Bar({
+                        content: [
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ],
+                        endContent: [
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ],
+                        startContent: [
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ]
+                    }),
+                    header: new Bar({
+                        content: [
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ],
+                        endContent: [
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ],
+                        startContent: [
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            new Button({
+                                icon: "employee",
+                                text: "Some text...",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                }
+                            })
+                        ]
+                    })
                 });
                 oPage.placeAt("testControl");
             });

@@ -25,6 +25,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 		static get styles() {
 			return [DatePicker.styles, DateRangePicker_css];
 		}
+		get dateValue() {
+			return null;
+		}
+		get dateValueUTC() {
+			return null;
+		}
 		get _startDateTimestamp() {
 			return this._extractFirstTimestamp(this.value);
 		}

@@ -169,6 +169,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					icon: opt.icon,
 					value: opt.value,
 					textContent: opt.textContent,
+					title: opt.title,
 					id: opt._id,
 					stableDomRef: opt.stableDomRef,
 				};
@@ -286,7 +287,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._filteredItems[index].selected = true;
 		}
 		_handleItemPress(event) {
-			const item = event.detail.item;
+			const item = event.detail.selectedItems[0];
 			const selectedItemIndex = this._getSelectedItemIndex(item);
 			this._handleSelectionChange(selectedItemIndex);
 		}
@@ -410,7 +411,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"ui5-valuestatemessage--information": this.valueState === ValueState__default.Information,
 				},
 				popover: {
-					"ui5-valuestatemessage-popover": this.hasValueState,
+					"ui5-select-popover-valuestate": this.hasValueState,
 				},
 			};
 		}

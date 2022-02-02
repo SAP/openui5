@@ -227,7 +227,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_tokenizerFocusOut(event) {
 			this._tokenizerFocused = false;
 			const tokensCount = this._tokenizer.tokens.length - 1;
-			if (!event.relatedTarget || event.relatedTarget.localName !== "ui5-token") {
+			if (!event.relatedTarget || !event.relatedTarget.hasAttribute("ui5-token")) {
 				this._tokenizer.tokens.forEach(token => { token.selected = false; });
 				this._tokenizer.scrollToStart();
 			}
@@ -511,7 +511,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.shadowRoot.querySelector("[ui5-tokenizer]");
 		}
 		inputFocusIn() {
-			if (!Device.isPhone()) {
+			if (!Device.isPhone() || this.readonly) {
 				this.focused = true;
 			} else {
 				this._innerInput.blur();
@@ -585,7 +585,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return !this.valueStateMessage.length && this.hasValueStateMessage;
 		}
 		get shouldDisplayOnlyValueStateMessage() {
-			return this.focused && this.hasValueStateMessage && !this._iconPressed;
+			return this.focused && !this.readonly && this.hasValueStateMessage && !this._iconPressed;
 		}
 		get valueStateTextMappings() {
 			return {
@@ -615,6 +615,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get _tokenizerExpanded() {
 			return (this._isFocusInside || this.open) && !this.readonly;
+		}
+		get _valueStatePopoverHorizontalAlign() {
+			return this.effectiveDir !== "rtl" ? "Left" : "Right";
 		}
 		get classes() {
 			return {

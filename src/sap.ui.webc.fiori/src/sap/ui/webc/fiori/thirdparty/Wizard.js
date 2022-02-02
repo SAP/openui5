@@ -27,6 +27,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const metadata = {
 		tag: "ui5-wizard",
 		managedSlots: true,
+		fastNavigation: true,
 		properties:  {
 			width: {
 				type: Float__default,
@@ -73,7 +74,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._prevContentHeight = 0;
 			this.selectionRequestedByScroll = false;
 			this._itemNavigation = new ItemNavigation__default(this, {
-				navigationMode: NavigationMode__default.Horizontal,
+				navigationMode: NavigationMode__default.Auto,
 				getItemsCallback: () => this.enabledStepsInHeaderDOM,
 			});
 			this._onStepResize = this.onStepResize.bind(this);
@@ -118,9 +119,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		static get SCROLL_DEBOUNCE_RATE() {
 			return 25;
-		}
-		static get CONTENT_TOP_OFFSET() {
-			return 32;
 		}
 		static get staticAreaTemplate() {
 			return WizardPopoverTemplate_lit;
@@ -177,7 +175,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		storeStepScrollOffsets() {
 			this.stepScrollOffsets = this.slottedSteps.map(step => {
 				const contentItem = this.getStepWrapperByRefId(step._id);
-				return contentItem.offsetTop + contentItem.offsetHeight - Wizard.CONTENT_TOP_OFFSET;
+				return contentItem.offsetTop + contentItem.offsetHeight;
 			});
 		}
 		onSelectionChangeRequested(event) {
@@ -359,8 +357,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get _steps() {
 			const lastEnabledStepIndex = this.getLastEnabledStepIndex();
+			const stepsInfo = this.getStepsInfo();
 			return this.steps.map((step, idx) => {
 				step.stretch = idx === lastEnabledStepIndex;
+				step.stepContentAriaLabel = `${this.navStepDefaultHeading} ${stepsInfo[idx].number} ${stepsInfo[idx].titleText}`;
 				return step;
 			});
 		}
@@ -398,7 +398,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return Array.from(this.shadowRoot.querySelectorAll("[ui5-wizard-tab]"));
 		}
 		get enabledStepsInHeaderDOM() {
-			return this.stepsInHeaderDOM.filter(step => !step.disabled);
+			return this.stepsInHeaderDOM;
 		}
 		get phoneMode() {
 			if (Device.isPhone()) {
@@ -538,8 +538,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		switchSelectionFromOldToNewStep(selectedStep, stepToSelect, stepToSelectIndex, changeWithClick) {
 			if (selectedStep && stepToSelect) {
-				selectedStep.selected = false;
-				stepToSelect.selected = true;
+				if (!stepToSelect.disabled) {
+					selectedStep.selected = false;
+					stepToSelect.selected = true;
+				}
 				this.fireEvent("step-change", {
 					step: stepToSelect,
 					previousStep: selectedStep,

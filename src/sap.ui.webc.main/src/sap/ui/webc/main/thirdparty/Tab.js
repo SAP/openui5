@@ -38,6 +38,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				defaultValue: "-1",
 				noAttribute: true,
 			},
+			_selected: {
+				type: Boolean,
+			},
 		},
 		events:  {
 		},
@@ -84,7 +87,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return executeTemplate__default(this.constructor.overflowTemplate, this);
 		}
 		get stableDomRef() {
-			return `${this._id}-stable-dom-ref`;
+			return this.getAttribute("stable-dom-ref") || `${this._id}-stable-dom-ref`;
 		}
 		getTabInStripDomRef() {
 			return this._getTabInStripDomRef;
@@ -109,10 +112,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.disabled || undefined;
 		}
 		get effectiveSelected() {
-			return this.selected || false;
+			return this.selected || this._selected;
 		}
 		get effectiveHidden() {
-			return !this.selected;
+			return !this.effectiveSelected;
 		}
 		get ariaLabelledBy() {
 			const labels = [];
@@ -127,9 +130,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return labels.join(" ");
 		}
-		get headerClasses() {
+		get stripClasses() {
 			const classes = ["ui5-tab-strip-item"];
-			if (this.selected) {
+			if (this.effectiveSelected) {
 				classes.push("ui5-tab-strip-item--selected");
 			}
 			if (this.disabled) {

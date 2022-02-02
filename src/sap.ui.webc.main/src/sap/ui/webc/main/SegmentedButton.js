@@ -39,6 +39,15 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.webc.main",
 			tag: "ui5-segmented-button-ui5",
+			properties: {
+
+				/**
+				 * Sets the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				}
+			},
 			defaultAggregation: "items",
 			aggregations: {
 

@@ -48,7 +48,7 @@ sap.ui.define([
 	 * <h3>Keyboard Handling</h3> The <code>sap.ui.webc.main.DatePicker</code> provides advanced keyboard handling. If the <code>sap.ui.webc.main.DatePicker</code> is focused, you can open or close the drop-down by pressing <code>F4</code>, <code>ALT+UP</code> or <code>ALT+DOWN</code> keys. Once the drop-down is opened, you can use the <code>UP</code>, <code>DOWN</code>, <code>LEFT</code>, <code>RIGHT</code> arrow keys to navigate through the dates and select one by pressing the <code>Space</code> or <code>Enter</code> keys. Moreover you can use TAB to reach the buttons for changing month and year. <br>
 	 *
 	 *
-	 * If the <code>sap.ui.webc.main.DatePicker</code> is focused and the picker dialog is not opened the user can increment or decrement the corresponding field of the JS date object referenced by <code>dateValue</code> propery by using the following shortcuts: <br>
+	 * If the <code>sap.ui.webc.main.DatePicker</code> input field is focused and its corresponding picker dialog is not opened, then users can increment or decrement the date referenced by <code>dateValue</code> property by using the following shortcuts: <br>
 	 *
 	 * <ul>
 	 *     <li>[PAGEDOWN] - Decrements the corresponding day of the month by one</li>
@@ -246,6 +246,7 @@ sap.ui.define([
 				}
 			},
 			associations: {
+
 				/**
 				 * Receives id(or many ids) of the controls that label this control.
 				 */
@@ -253,6 +254,7 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: true,
 					mapping: {
+						type: "property",
 						to: "accessibleNameRef",
 						formatter: "_getAriaLabelledByForRendering"
 					}

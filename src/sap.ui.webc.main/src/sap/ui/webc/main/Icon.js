@@ -70,6 +70,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines the accessibility role of the component.
+				 */
+				accessibleRole: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Defines the background color of the control
 				 */
 				backgroundColor: {

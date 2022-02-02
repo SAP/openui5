@@ -37,12 +37,6 @@ sap.ui.define([
 	 * <br>
 	 * <h3>Keyboard Handling</h3>
 	 *
-	 *
-	 * <ul>
-	 *     <li>[SPACE, ENTER, RETURN] - If focus is on the layout toggle button (arrow button), once activated, it triggers the associated action (such as expand/collapse the column).</li>
-	 * </ul> <br>
-	 * <br>
-	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -60,9 +54,19 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * An object of strings that defines additional accessibility roles for further customization.
+				 *
+				 * It supports the following fields: - <code>startColumnRole</code>: the accessibility role for the <code>startColumn</code> - <code>startArrowContainerRole</code>: the accessibility role for the first arrow container (between the <code>begin</code> and <code>mid</code> columns) - <code>midColumnRole</code>: the accessibility role for the <code>midColumn</code> - <code>endArrowContainerRole</code>: the accessibility role for the second arrow container (between the <code>mid</code> and <code>end</code> columns) - <code>endColumnRole</code>: the accessibility role for the <code>endColumn</code>
+				 */
+				accessibilityRoles: {
+					type: "object",
+					defaultValue: {}
+				},
+
+				/**
 				 * An object of strings that defines several additional accessibility texts for even further customization.
 				 *
-				 * It supports the following fields: - <code>startColumnAccessibleName</code>: the accessibility name for the <code>startColumn</code> region - <code>midColumnAccessibleName</code>: the accessibility name for the <code>midColumn</code> region - <code>endColumnAccessibleName</code>: the accessibility name for the <code>endColumn</code> region - <code>startArrowLeftText</code>: the text that the first arrow (between the <code>begin</code> and <code>mid</code> columns) will have when pointing to the left - <code>startArrowRightText</code>: the text that the first arrow (between the <code>begin</code> and <code>mid</code> columns) will have when pointing to the right - <code>endArrowLeftText</code>: the text that the second arrow (between the <code>mid</code> and <code>end</code> columns) will have when pointing to the left - <code>endArrowRightText</code>: the text that the second arrow (between the <code>mid</code> and <code>end</code> columns) will have when pointing to the right
+				 * It supports the following fields: - <code>startColumnAccessibleName</code>: the accessibility name for the <code>startColumn</code> region - <code>midColumnAccessibleName</code>: the accessibility name for the <code>midColumn</code> region - <code>endColumnAccessibleName</code>: the accessibility name for the <code>endColumn</code> region - <code>startArrowLeftText</code>: the text that the first arrow (between the <code>begin</code> and <code>mid</code> columns) will have when pointing to the left - <code>startArrowRightText</code>: the text that the first arrow (between the <code>begin</code> and <code>mid</code> columns) will have when pointing to the right - <code>endArrowLeftText</code>: the text that the second arrow (between the <code>mid</code> and <code>end</code> columns) will have when pointing to the left - <code>endArrowRightText</code>: the text that the second arrow (between the <code>mid</code> and <code>end</code> columns) will have when pointing to the right - <code>startArrowContainerAccessibleName</code>: the text that the first arrow container (between the <code>begin</code> and <code>mid</code> columns) will have as <code>aria-label</code> - <code>endArrowContainerAccessibleName</code>: the text that the second arrow container (between the <code>mid</code> and <code>end</code> columns) will have as <code>aria-label</code>
 				 */
 				accessibilityTexts: {
 					type: "object",
@@ -160,7 +164,7 @@ sap.ui.define([
 						 * The current layout
 						 */
 						layout: {
-							type: "sap.ui.webc.fiori.FCLLayout"
+							type: "FCLLayout"
 						},
 
 						/**
