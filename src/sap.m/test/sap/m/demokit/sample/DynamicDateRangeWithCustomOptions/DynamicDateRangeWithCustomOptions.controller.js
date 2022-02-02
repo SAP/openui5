@@ -307,6 +307,11 @@ sap.ui.define([
 		_createFilter: function(oValue) {
 			if (oValue) {
 				var aDates = DynamicDateUtil.toDates(oValue);
+				if (oValue.operator === "FROM" || oValue.operator === "FROMDATETIME") {
+					return new Filter("PerfomDateTime", FilterOperator.GT, aDates[0]);
+				} else if (oValue.operator === "TO" || oValue.operator === "TODATETIME") {
+					return new Filter("PerfomDateTime", FilterOperator.LT, aDates[0]);
+				}
 				return new Filter("orderTime", FilterOperator.BT, aDates[0], aDates[1]);
 			} else {
 				// Reset the curretnly applied filters
