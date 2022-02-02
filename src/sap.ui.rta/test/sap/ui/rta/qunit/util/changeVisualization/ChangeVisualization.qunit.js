@@ -156,6 +156,9 @@ sap.ui.define([
 			getId: function() {
 				return sId;
 			},
+			getFileType: function() {
+				return "change";
+			},
 			getDefinition: function() {
 				return {
 					support: {
@@ -554,6 +557,34 @@ sap.ui.define([
 					fnDone();
 				}.bind(this));
 			this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
+		});
+
+		QUnit.test("when changes have different fileTypes", function(assert) {
+			var aMockChanges = [
+				createMockChange("newCtrlVariant", undefined, "ctrlVariant", {
+					getFileType: function() {
+						return "ctrl_variant";
+					}
+				}),
+				createMockChange("newVariant", undefined, "variant", {
+					getFileType: function() {
+						return "variant";
+					}
+				}),
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2")
+			];
+			prepareChanges(aMockChanges);
+			this.oRta.setMode("visualization");
+			return waitForMethodCall(this.oRta.getToolbar(), "setModel")
+				.then(function() {
+					oCore.applyChanges();
+					assert.strictEqual(
+						this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories[0].count,
+						2,
+						"then only changes with the fileType \"change\" are applied and visible"
+					);
+				}.bind(this));
 		});
 
 		QUnit.test("when details are selected for a change", function(assert) {
