@@ -8731,6 +8731,59 @@ sap.ui.define([
 			assert.ok(oSpy.notCalled);
 		});
 
+		QUnit.test("it should fire liveChange event on ARROW Key navigation if a new item is selected", function (assert) {
+			//arrange
+			var fnFireSelectionChangeSpy = this.spy(this.oSelect, "fireEvent");
+
+			// act
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
+
+			// assert
+			assert.ok(fnFireSelectionChangeSpy.calledOnce, "liveChange fired once on successful item navigation");
+			assert.ok(fnFireSelectionChangeSpy.calledWithExactly("liveChange",
+				{selectedItem: this.oSelect.getItems()[1], id: this.oSelect.getId()}), "the correct item is passed with the event");
+		});
+
+		QUnit.test("it shouldn't fire liveChange event on ARROW Key navigation if no new item is selected", function (assert) {
+			//arrange
+			var fnFireSelectionChangeSpy = this.spy();
+			this.oSelect.attachLiveChange(fnFireSelectionChangeSpy);
+
+			// act
+			qutils.triggerKeydown(this.oSelect.getDomRef(), KeyCodes.ARROW_UP);
+
+			// assert
+			assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "liveChange isn't fired on unsuccessful item navigation");
+		});
+
+		QUnit.test("it should fire liveChange event on Character Key press if a new item is selected", function (assert) {
+			//arrange
+			var fnFireSelectionChangeSpy = this.spy(this.oSelect, "fireEvent");
+
+			// act
+			qutils.triggerKeypress(this.oSelect.getDomRef(), "G");
+
+			// assert
+			assert.ok(fnFireSelectionChangeSpy.calledOnce, "liveChange fired once on successful item navigation");
+			assert.ok(fnFireSelectionChangeSpy.calledWithExactly("liveChange",
+				{selectedItem: this.oSelect.getItems()[1], id: this.oSelect.getId()}), "the correct item is passed with the event");
+		});
+
+		QUnit.test("it should fire liveChange event on revert selection", function (assert) {
+			//arrange
+			var fnFireSelectionChangeSpy;
+
+			// act
+			qutils.triggerKeypress(this.oSelect.getDomRef(), "G");
+			fnFireSelectionChangeSpy = this.spy(this.oSelect, "fireEvent");
+			this.oSelect._revertSelection();
+
+			// assert
+			assert.ok(fnFireSelectionChangeSpy.calledOnce, "liveChange fired once on revert item navigation");
+			assert.ok(fnFireSelectionChangeSpy.calledWithExactly("liveChange",
+				{selectedItem: this.oSelect.getItems()[0], id: this.oSelect.getId()}), "the correct item is passed with the event");
+		});
+
 		QUnit.module("onsapfocusleave");
 
 		QUnit.test("it should restore the focus to select if select list item gets the focus", function (assert) {
