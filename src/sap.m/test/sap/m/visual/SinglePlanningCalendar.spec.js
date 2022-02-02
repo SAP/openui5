@@ -54,9 +54,9 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 	it("should be possible to select an appointment", function (){
 		var oSPC = element(by.id("SinglePlanningCalendar"));
-		element(by.id("__appointment0-SinglePlanningCalendar-43-5_0")).click();
+		element(by.id("__appointment0-SinglePlanningCalendar-62-5_0")).click();
 		expect(takeScreenshot(oSPC)).toLookAs("appointment_select");
-		element(by.id("__appointment0-SinglePlanningCalendar-43-5_0")).click();
+		element(by.id("__appointment0-SinglePlanningCalendar-62-5_0")).click();
 		expect(takeScreenshot(oSPC)).toLookAs("deselect_appointment");
 	});
 
