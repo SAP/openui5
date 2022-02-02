@@ -1762,12 +1762,10 @@ sap.ui.define([
 							return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : null;
 						}).then(function(oFilterConfig) {
 							if (oFilterConfig) {
-								mExportSettings.workbook.context = {
-									metaSheetName: oFilterConfig.name,
-									metainfo: [
-										oFilterConfig
-									]
-								};
+								var oContext = mExportSettings.workbook.context;
+
+								oContext.metaSheetName =  oFilterConfig.name;
+								oContext.metainfo = [oFilterConfig];
 							}
 						});
 					}
