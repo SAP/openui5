@@ -44,7 +44,9 @@ sap.ui.define([
 		this._dateInputElement.minDate = this.min || "";
 		this._dateInputElement.maxDate = this.max || "";
 
-		this._dateInputElement.addEventListener("change", function () {
+		InputsOverwrites.createValueStateElement(this, this._dateInputElement);
+
+		this._dateInputElement.addEventListener("input", function () {
 			this.valueChanged();
 		}.bind(this));
 
@@ -54,6 +56,20 @@ sap.ui.define([
 
 	UI5InputDate.prototype.updateInputControlAriaLabelledBy = function () {
 		InputsOverwrites.overwriteAriaLabelling(this, "accessible-name-ref");
+	};
+
+	UI5InputDate.prototype.showValidationErrorMessage = function () {
+		if (this.renderedInputControlElement) {
+			this.renderedInputControlElement.valueState = "Error";
+		}
+	};
+
+	UI5InputDate.prototype.resetValidationFailureCue = function () {
+		AdaptiveCards.TextInput.prototype.resetValidationFailureCue.call(this, arguments);
+
+		if (this.renderedInputControlElement) {
+			this.renderedInputControlElement.valueState = "None";
+		}
 	};
 
 	return UI5InputDate;

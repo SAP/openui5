@@ -162,5 +162,27 @@ sap.ui.define([
 		InputsOverwrites.overwriteAriaLabelling(this, sAttribute);
 	};
 
+	UI5ChoiceSet.prototype.showValidationErrorMessage = function () {
+		if (!this._toggleInputs || !this._toggleInputs.length) {
+			return;
+		}
+
+		this._toggleInputs.forEach(function(oToggleInput){
+			oToggleInput.valueState = "Error";
+		});
+	};
+
+	UI5ChoiceSet.prototype.resetValidationFailureCue = function () {
+		AdaptiveCards.TextInput.prototype.resetValidationFailureCue.call(this, arguments);
+
+		if (!this._toggleInputs || !this._toggleInputs.length) {
+			return;
+		}
+
+		this._toggleInputs.forEach(function (oToggleInput) {
+			oToggleInput.valueState = "None";
+		});
+	};
+
 	return UI5ChoiceSet;
 });

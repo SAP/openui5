@@ -82,6 +82,7 @@
 								"id": "SingleSelectVal",
 								"label": "Do you have a driver's license?",
 								"style": "expanded",
+								"isRequired": true,
 								"choices": [
 									{
 										"title": "Yes",
@@ -98,6 +99,7 @@
 								"id": "MultiSelectVal",
 								"label": "How do you want to be notified?",
 								"isMultiSelect": true,
+								"isRequired": true,
 								"choices": [
 									{
 										"title": "Via mail",

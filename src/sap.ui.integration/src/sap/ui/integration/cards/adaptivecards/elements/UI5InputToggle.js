@@ -60,5 +60,19 @@ sap.ui.define([
 		InputsOverwrites.overwriteAriaLabelling(this, "aria-labelledby");
 	};
 
+	UI5InputToggle.prototype.showValidationErrorMessage = function () {
+		if (this._checkboxInputElement) {
+			this._checkboxInputElement.valueState = "Error";
+		}
+	};
+
+	UI5InputToggle.prototype.resetValidationFailureCue = function () {
+		AdaptiveCards.TextInput.prototype.resetValidationFailureCue.call(this, arguments);
+
+		if (this._checkboxInputElement) {
+			this._checkboxInputElement.valueState = "None";
+		}
+	};
+
 	return UI5InputToggle;
 });

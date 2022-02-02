@@ -33,6 +33,7 @@ sap.ui.define([
 						oData = oEvent.getParameter("parameters").data;
 					});
 
+					oCard.$().find("ui5-input")[0].value = "value";
 					oCard.$().find("ui5-button").eq(21).trigger("click");
 				},
 				success: function () {
