@@ -156,5 +156,8 @@ sap.ui.define([
 		}
 	});
 
+	/* CUSTOM CODE START */
+	/* CUSTOM CODE END */
+
 	return StandardListItem;
 });

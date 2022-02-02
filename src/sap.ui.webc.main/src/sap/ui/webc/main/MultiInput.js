@@ -302,8 +302,8 @@ sap.ui.define([
 					parameters: {}
 				}
 			},
-			designtime: "sap/ui/webc/main/designtime/MultiInput.designtime",
-			getters: ["previewItem"]
+			getters: ["previewItem"],
+			designtime: "sap/ui/webc/main/designtime/MultiInput.designtime"
 		}
 	});
 
@@ -313,6 +313,9 @@ sap.ui.define([
 	 * @name sap.ui.webc.main.MultiInput#getPreviewItem
 	 * @function
 	 */
+
+	/* CUSTOM CODE START */
+	/* CUSTOM CODE END */
 
 	return MultiInput;
 });

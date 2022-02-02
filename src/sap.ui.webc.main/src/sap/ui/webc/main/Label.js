@@ -120,5 +120,8 @@ sap.ui.define([
 
 	LabelEnablement.enrich(Label.prototype);
 
+	/* CUSTOM CODE START */
+	/* CUSTOM CODE END */
+
 	return Label;
 });

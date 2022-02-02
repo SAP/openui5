@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @since 1.92.0
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Icon
-	 * @implements sap.ui.webc.main.IIcon
+	 * @implements sap.ui.webc.main.IIcon, sap.ui.core.IFormContent
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Icon = WebComponent.extend("sap.ui.webc.main.Icon", {
@@ -55,7 +55,8 @@ sap.ui.define([
 			library: "sap.ui.webc.main",
 			tag: "ui5-icon-ui5",
 			interfaces: [
-				"sap.ui.webc.main.IIcon"
+				"sap.ui.webc.main.IIcon",
+				"sap.ui.core.IFormContent"
 			],
 			properties: {
 
@@ -163,6 +164,14 @@ sap.ui.define([
 			}
 		}
 	});
+
+	/* CUSTOM CODE START */
+
+	Icon.prototype.getFormDoNotAdjustWidth = function() {
+		return true;
+	};
+
+	/* CUSTOM CODE END */
 
 	return Icon;
 });
