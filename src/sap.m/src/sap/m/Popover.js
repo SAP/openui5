@@ -595,6 +595,17 @@ sap.ui.define([
 				}
 
 				that._deregisterContentResizeHandler();
+
+				if (this._sTimeoutId && arguments.length > 1) {
+					clearTimeout(this._sTimeoutId);
+					this._sTimeoutId = null;
+					var sAutoclose = arguments[1];
+
+					if (typeof sAutoclose == "string" && sAutoclose == "autocloseBlur" && this._isFocusInsidePopup()) {
+						return;
+					}
+				}
+
 				Popup.prototype.close.apply(this, bBooleanParam ? [] : arguments);
 				that.removeDelegate(that._oRestoreFocusDelegate);
 			};

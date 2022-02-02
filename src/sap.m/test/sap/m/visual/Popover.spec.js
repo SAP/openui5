@@ -129,6 +129,17 @@ describe("sap.m.Popover", function () {
 
 			expect(takeScreenshot()).toLookAs("nested-popovers-inner-closed" + "-" + sMode);
 		});
+
+		it("Should close only the nested popover when the parent is clicked", function () {
+			element(by.id("btn16")).click();
+			element(by.id("nestedBtn")).click();
+
+			expect(takeScreenshot()).toLookAs("nested-popover-click" + "-" + sMode);
+
+			element(by.id("defocus")).click();
+
+			expect(takeScreenshot()).toLookAs("inner-popover-closed-click" + "-" + sMode);
+		});
 	}
 
 	executeSpecs("window");
