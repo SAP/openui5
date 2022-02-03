@@ -42,9 +42,7 @@ sap.ui.define([
 		"Edm.Time": "TimeOfDay"
 	};
 
-	var mMainEntitySet = {};
-
-
+	var InstanceCache = new Map();
 
 	ODataFilterBarDelegate._fetchPropertiesByMetadata = function(oControl, mPropertyBag) {
 
@@ -243,6 +241,109 @@ sap.ui.define([
 	ODataFilterBarDelegate.addItem = function(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
 	};
+
+
+	ODataFilterBarDelegate._getInstanceCacheEntry = function(oControl, sKey) {
+		var sId = oControl.getId && oControl.getId() || oControl.id;
+		var oCacheEntry = InstanceCache.get(sId);
+		return oCacheEntry && oCacheEntry[sKey];
+	};
+	ODataFilterBarDelegate._setInstanceCacheEntry = function(oControl, sKey, oValue) {
+		var sId = oControl.getId && oControl.getId() || oControl.id;
+		var oCacheEntry = InstanceCache.get(sId) || {};
+		oCacheEntry[sKey] = oValue;
+		InstanceCache.set(sId, oCacheEntry);
+	};
+
+	ODataFilterBarDelegate._addPropertyInfoEntry = function(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier) {
+
+		if (aFetchedProperties) {
+			var nIdx = aFetchedProperties.findIndex(function(oEntry) {
+				return oEntry.name === sPropertyName;
+			});
+
+			if (nIdx >= 0) {
+				aPropertyInfo.push({
+					name: sPropertyName,
+					dataType: aFetchedProperties[nIdx].typeConfig.className,
+					maxConditions: aFetchedProperties[nIdx].maxConditions,
+					constraints: aFetchedProperties[nIdx].constraints,
+					formatOption: aFetchedProperties[nIdx].formatOptions,
+					required: aFetchedProperties[nIdx].required,
+					caseSensitive: aFetchedProperties[nIdx].caseSensitive,
+					display: aFetchedProperties[nIdx].display,
+					label: aFetchedProperties[nIdx].label,
+					hiddenFilter: aFetchedProperties[nIdx].hiddenFilter
+				});
+				oModifier.setProperty(oControl, "propertyInfo", aPropertyInfo);
+			} else {
+				Log.error("ConditionFlex-ChangeHandler: no type info for property '" + sPropertyName + "'");
+			}
+		}
+	};
+
+
+	ODataFilterBarDelegate._updatePropertyInfo = function(sPropertyName, oFilterBar, mPropertyBag) {
+
+		if (oFilterBar.isA && oFilterBar.isA("sap.ui.mdc.FilterBar")) {
+			return Promise.resolve();
+		}
+
+		var oModifier = mPropertyBag.modifier;
+
+		return oModifier.getProperty(oFilterBar, "propertyInfo")
+		.then(function(aPropertyInfo) {
+			if (!aPropertyInfo) {
+				return Promise.resolve();
+			}
+			var nIdx = aPropertyInfo.findIndex(function(oEntry) {
+				return oEntry.name === sPropertyName;
+			});
+
+			if (nIdx < 0) {
+
+				var aFetchedProperties = ODataFilterBarDelegate._getInstanceCacheEntry(oFilterBar, "fetchedProperties");
+				if (aFetchedProperties) {
+					ODataFilterBarDelegate._addPropertyInfoEntry(oFilterBar, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
+				} else {
+					//fetch
+					return ODataFilterBarDelegate.fetchProperties(oFilterBar, mPropertyBag)
+					.then(function(aProperties) {
+						ODataFilterBarDelegate._setInstanceCacheEntry(oFilterBar, "fetchedProperties", aProperties);
+						ODataFilterBarDelegate._addPropertyInfoEntry(oFilterBar, sPropertyName, aPropertyInfo, aProperties, oModifier);
+					});
+				}
+			}
+		});
+	};
+
+
+	/**
+	 * This methods is called during the appliance of the add condition change.
+	 * This intention is to update the propertyInfo property.
+	 *
+	 * @param {string} sPropertyName The name of a property.
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
+	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+	 */
+	ODataFilterBarDelegate.addCondition = function(sPropertyName, oFilterBar, mPropertyBag) {
+		return ODataFilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag);
+	};
+
+	/**
+	 * This methods is called during the appliance of the remove condition change.
+	 * This intention is to update the propertyInfo property.
+	 *
+	 * @param {string} sPropertyName The name of a property.
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
+	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+	 */
+	ODataFilterBarDelegate.removeCondition = function(sPropertyName, oFilterBar, mPropertyBag) {
+		return ODataFilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag);
+	};
+
 
 	/**
 	 * Can be used to trigger any necessary follow-up steps on removal of filter items. The returned boolean value inside the Promise can be used to
@@ -558,7 +659,11 @@ sap.ui.define([
 	 * @param {object} oFilterBar - the instance of filter bar
 	 * @returns {Promise} once resolved an array of property info is returned
 	 */
-	ODataFilterBarDelegate.fetchProperties = function (oFilterBar) {
+	ODataFilterBarDelegate.fetchProperties = function (oFilterBar, mPropertyBag) {
+
+		if (!(oFilterBar.isA && oFilterBar.isA("sap.ui.mdc.FilterBar")) && mPropertyBag) {
+			return ODataFilterBarDelegate._fetchPropertiesByMetadata(oFilterBar, mPropertyBag);
+		}
 
 		var sModelName = oFilterBar.getDelegate().payload.modelName;
 		var sEntitySet = oFilterBar.getDelegate().payload.collectionName;
@@ -567,9 +672,9 @@ sap.ui.define([
 
 				var oMetaModel;
 
-				var sCachKey = oFilterBar.getId() + '->' + sEntitySet;
-				if (mMainEntitySet[sCachKey]) {
-					resolve(mMainEntitySet[sCachKey]);
+				var oCachedEntitySet = ODataFilterBarDelegate._getInstanceCacheEntry(oFilterBar, "fetchedProperties");
+				if (oCachedEntitySet) {
+					resolve(oCachedEntitySet);
 					return;
 				}
 
@@ -592,7 +697,7 @@ sap.ui.define([
 						ODataFilterBarDelegate._fetchEntitySet(oMetaModel, '/' + sEntitySet, aVisitedEntityTypes, null, oParamInfo).then(function(aProperties) {
 
 							if (oParamInfo.parameterNavigationName && (oParamInfo.parameters.length > 0)) {
-								window[oFilterBar.getId() + '->' + sEntitySet + "-Parameters"] = oParamInfo;
+								ODataFilterBarDelegate._setInstanceCacheEntry(oFilterBar, sEntitySet + "-Parameters", oParamInfo);
 
 								//parameters are initially at the top of the result
 								aProperties.sort(function(p1, p2) {
@@ -620,7 +725,7 @@ sap.ui.define([
 								return mProperties[sName];
 							});
 
-							mMainEntitySet[sCachKey] = aProperties;
+							ODataFilterBarDelegate._setInstanceCacheEntry(oFilterBar, "fetchedProperties", aProperties);
 							resolve(aProperties);
 						});
 					}
@@ -631,17 +736,8 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-
 	ODataFilterBarDelegate.cleanup = function (oFilterBar) {
-		var sFilterBarId = oFilterBar.getId() + "->";
-
-		Object.keys(mMainEntitySet).forEach(function(sKey){
-			if (sKey.indexOf(sFilterBarId) === 0) {
-
-				delete window[sFilterBarId + sKey + "-Parameters"];
-				delete mMainEntitySet[sKey];
-			}
-		});
+		InstanceCache.delete(oFilterBar.getId());
 	};
 
 	ODataFilterBarDelegate.getTypeUtil = function (oPayload) {

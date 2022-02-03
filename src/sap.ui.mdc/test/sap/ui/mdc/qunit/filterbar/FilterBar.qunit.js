@@ -152,7 +152,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("add Filter", function (assert) {
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([]);
 		var oFilterField = new FilterField({ conditions: "{cm>/conditions/filter}" });
 
 		assert.equal(oFilterBar.getFilterItems().length, 0);
@@ -166,7 +165,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("remove Filter", function (assert) {
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([]);
 		var oFilterField = new FilterField();
 		oFilterBar.addFilterItem(oFilterField);
 
@@ -223,8 +221,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("check api setFocusOnFirstErroneousField", function (assert) {
-
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([]);
 		var oFilterField0 = new FilterField({ conditions: "{cm>/conditions/filter0}" });
 		var oFilterField1 = new FilterField({ conditions: "{cm>/conditions/filter1}" });
 		var oFilterField2 = new FilterField({ conditions: "{cm>/conditions/filter2}" });
@@ -386,7 +382,6 @@ sap.ui.define([
 
 
 	QUnit.test("check _getFilterField", function (assert) {
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([]);
 		var oFilterField = new FilterField({ conditions: "{cm>/conditions/filter}" });
 
 		oFilterBar.addFilterItem(oFilterField);
@@ -572,7 +567,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("check _getFilterItemLayout", function (assert) {
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([]);
 		var oFilterField = new FilterField();
 		oFilterBar.addFilterItem(oFilterField);
 
@@ -680,15 +674,12 @@ sap.ui.define([
 
 					oTestHandler.processChanges = function(aChanges){
 						assert.ok(aChanges);
-						assert.equal(aChanges.length, 2); // condition model does not know about filterExpression="Single"...
+						assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
 
-						assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo");
-						assert.equal(aChanges[0].changeSpecificData.content.name, "key");
-
-						assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition");
-						assert.ok(aChanges[1].changeSpecificData.content.condition.inParameters);
-						assert.ok(aChanges[1].changeSpecificData.content.condition.inParameters["conditions/in"]);
-						assert.equal(aChanges[1].changeSpecificData.content.condition.inParameters["conditions/in"], "INTEST");
+						assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition");
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"]);
+						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"], "INTEST");
 						done();
 					};
 
@@ -747,11 +738,10 @@ sap.ui.define([
 						iCount++;
 						FlexUtil.handleChanges(aChanges);
 						if (iCount === 2) {
-							assert.equal(aResultingChanges.length, 3, "correct amount of changes created");
+							assert.equal(aResultingChanges.length, 2, "correct amount of changes created");
 
-							assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo");
+							assert.equal(aChanges[0].changeSpecificData.changeType, "addCondition");
 							assert.equal(aChanges[1].changeSpecificData.changeType, "addCondition");
-							assert.equal(aChanges[2].changeSpecificData.changeType, "addCondition");
 
 
 							assert.ok(FlexUtil.handleChanges.calledTwice);
@@ -808,14 +798,12 @@ sap.ui.define([
 
 						FlexUtil.handleChanges(aChanges);
 
-						assert.equal(aResultingChanges.length, 2);
-						assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addPropertyInfo");
-						assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
+						assert.equal(aResultingChanges.length, 1);
 
-						assert.equal(aResultingChanges[1].selectorElement, oFilterBar);
-						assert.equal(aResultingChanges[1].changeSpecificData.changeType, "addCondition");
-						assert.equal(aResultingChanges[1].changeSpecificData.content.name, "key");
-						assert.deepEqual(aResultingChanges[1].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
+						assert.equal(aResultingChanges[0].selectorElement, oFilterBar);
+						assert.equal(aResultingChanges[0].changeSpecificData.changeType, "addCondition");
+						assert.equal(aResultingChanges[0].changeSpecificData.content.name, "key");
+						assert.deepEqual(aResultingChanges[0].changeSpecificData.content.condition, { operator: "EQ", values: ["foo"], validated: undefined});
 						done();
 					};
 
@@ -876,27 +864,24 @@ sap.ui.define([
 						state: {"key": [Condition.createCondition("EQ", ["foo"], { "in1": "IN1_TEST", "in2": "IN2_TEST" })]}
 					}).then(function(aChanges){
 
-						assert.equal(aChanges.length, 2);
+						assert.equal(aChanges.length, 1);
 
-						assert.equal(aChanges[0].changeSpecificData.changeType, "addPropertyInfo");
-						assert.equal(aChanges[0].selectorElement, oFilterBar);
-						assert.ok(aChanges[1].changeSpecificData.content.condition.inParameters);
-						assert.equal(Object.keys(aChanges[1].changeSpecificData.content.condition.inParameters).length, 2);
-						assert.ok(aChanges[1].changeSpecificData.content.condition.inParameters["in1"]);
-						assert.equal(aChanges[1].changeSpecificData.content.condition.inParameters["in1"], "IN1_TEST");
-						assert.ok(aChanges[1].changeSpecificData.content.condition.inParameters["in2"]);
-						assert.equal(aChanges[1].changeSpecificData.content.condition.inParameters["in2"], "IN2_TEST");
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
+						assert.equal(Object.keys(aChanges[0].changeSpecificData.content.condition.inParameters).length, 2);
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in1"]);
+						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in1"], "IN1_TEST");
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in2"]);
+						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in2"], "IN2_TEST");
 
 						var oTestHandler = TestModificationHandler.getInstance();
 
 						oTestHandler.processChanges = function(aCallbackChanges){
 
-							assert.equal(aChanges.length, 2);
-							assert.equal(aCallbackChanges.length, 2);
+							assert.equal(aChanges.length, 1);
+							assert.equal(aCallbackChanges.length, 1);
 
-							assert.equal(aCallbackChanges[0].changeSpecificData.changeType, "addPropertyInfo");
-							assert.equal(aCallbackChanges[1].changeSpecificData.changeType, "addCondition");
-							assert.ok(!aCallbackChanges[1].changeSpecificData.content.condition.inParameters);
+							assert.equal(aCallbackChanges[0].changeSpecificData.changeType, "addCondition");
+							assert.ok(!aCallbackChanges[0].changeSpecificData.content.condition.inParameters);
 							done();
 						};
 
@@ -1097,7 +1082,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("check getSearch", function (assert) {
-		sinon.stub(oFilterBar, "getPropertyInfoSet").returns([]);
 		assert.strictEqual(oFilterBar.getSearch(), "", "No search text initially");
 
 		oFilterBar.setInternalConditions({ "$search": [{ values: ["foo"] }] }); // simulate typed in text on basic search

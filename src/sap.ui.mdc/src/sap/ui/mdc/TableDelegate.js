@@ -111,7 +111,33 @@ sap.ui.define([
 			 */
 			addItem: function(sPropertyName, oTable) {
 				return Promise.resolve(null);
-			}
+			},
+
+			/**
+			 * This methods is called during the appliance of the add condition change.
+			 * This intention is to update the propertyInfo property.
+			 *
+			 * @param {string} sPropertyName The name of a property.
+			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+			 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+			 */
+			addCondition: function(sPropertyName, oControl, mPropertyBag) {
+				return Promise.resolve();
+		    },
+
+			/**
+			 * This methods is called during the appliance of the remove condition change.
+			 * This intention is to update the propertyInfo property.
+			 *
+			 * @param {string} sPropertyName The name of a property.
+			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
+			 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+			 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+			 */
+		    removeCondition: function(sPropertyName, oControl, mPropertyBag) {
+				return Promise.resolve();
+		    }
 		};
 	};
 
@@ -141,6 +167,7 @@ sap.ui.define([
 		}
 		return Promise.resolve(oExportCapabilities);
 	};
+
 
 	return TableDelegate;
 });
