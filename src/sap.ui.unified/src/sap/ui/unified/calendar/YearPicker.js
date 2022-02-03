@@ -276,6 +276,8 @@ sap.ui.define([
 
 	YearPicker.prototype.onmouseup = function(oEvent){
 
+		 var $DomRefs = this._oItemNavigation.getItemDomRefs();
+
 		// fire select event on mouseup to prevent closing MonthPicker during click
 
 		if (this._bMousedownChange) {
@@ -286,8 +288,10 @@ sap.ui.define([
 			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
 		) {
 			var iIndex = this._oItemNavigation.getFocusedIndex();
-			this._selectYear(iIndex);
-			this.fireSelect();
+			if (!$DomRefs[iIndex].classList.contains("sapUiCalItemDsbl")) {
+				this._selectYear(iIndex);
+				this.fireSelect();
+			}
 		}
 
 	};
@@ -472,7 +476,7 @@ sap.ui.define([
 	};
 
 	YearPicker.prototype.ontouchstart = function (oEvent){
-		if (!Device.system.desktop && oEvent.target.classList.contains("sapUiCalItem")){
+		if (!Device.system.desktop && oEvent.target.classList.contains("sapUiCalItem") && !oEvent.target.classList.contains("sapUiCalItemDsbl")){
 			oEvent.target.classList.add("sapUiCalItemSel");
 		}
 	};
