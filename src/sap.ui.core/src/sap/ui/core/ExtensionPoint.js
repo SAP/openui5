@@ -111,7 +111,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 					// We cannot model the Fragment class as a dependency of the ExtensionPoint class,
 					// since the XML Fragments rely on the XMLTP for parsing and thus create a cyclic dependency:
 					// XMLTP -> ExtensionPoint -> Fragment -> XMLTP
-					var Fragment = sap.ui.require("sap.ui.core.Fragment");
+					var Fragment = sap.ui.require("sap/ui/core/Fragment");
 
 					oFactoryConfig.fragmentName = oExtensionConfig.fragmentName;
 					oFactoryConfig.containingView = oView;
