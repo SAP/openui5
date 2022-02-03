@@ -27,7 +27,7 @@ sap.ui.define([], function () {
 			bLoading = oHeader.isLoading(),
 			oError = oHeader.getAggregation("_error"),
 			oToolbar = oHeader.getToolbar(),
-			sTabIndex = oHeader._isInsideGridContainer() ? "-1" : "0";
+			sTabIndex = oHeader._isFocusable() ? "0" : "-1";
 
 		oRm.openStart("div", oHeader)
 			.attr("tabindex", sTabIndex)

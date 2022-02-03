@@ -94,7 +94,21 @@ sap.ui.define([
 		 * @public
 		 * @experimental Since 1.87
 		 */
-		MonthChange: "MonthChange"
+		MonthChange: "MonthChange",
+
+		/**
+		 * Used for showing more details about the card.
+		 * @public
+		 * @experimental Since 1.100
+		 */
+		ShowCard: "ShowCard",
+
+		/**
+		 * Used for hiding the appeared details about the card.
+		 * @public
+		 * @experimental Since 1.100
+		 */
+		HideCard: "HideCard"
 	};
 
 	/**

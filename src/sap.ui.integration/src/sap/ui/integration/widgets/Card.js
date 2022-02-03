@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual",
+	"sap/base/util/each",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/model/ObservableModel",
@@ -49,6 +50,7 @@ sap.ui.define([
 	Log,
 	merge,
 	deepEqual,
+	each,
 	DataProviderFactory,
 	JSONModel,
 	ObservableModel,
@@ -404,7 +406,14 @@ sap.ui.define([
 				/**
 				 * The host.
 				 */
-				host: {}
+				host: {},
+
+				/**
+				 * The opener card.
+				 * @private
+				 * @ui5-restricted
+				 */
+				openerReference: { visibility: "hidden" }
 			}
 		},
 		renderer: CardRenderer
@@ -465,6 +474,9 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#destroyActionDefinition as destroyActionDefinition
 		 * @borrows sap.ui.integration.widgets.Card#showLoadingPlaceholders as showLoadingPlaceholders
 		 * @borrows sap.ui.integration.widgets.Card#hideLoadingPlaceholders as hideLoadingPlaceholders
+		 * @borrows sap.ui.integration.widgets.Card#showCard as showCard
+		 * @borrows sap.ui.integration.widgets.Card#hide as hide
+		 * @borrows sap.ui.integration.widgets.Card#getOpener as getOpener
 		 */
 		this._oLimitedInterface = new Interface(this, [
 			"getDomRef",
@@ -489,7 +501,10 @@ sap.ui.define([
 			"indexOfActionDefinition",
 			"destroyActionDefinition",
 			"showLoadingPlaceholders",
-			"hideLoadingPlaceholders"
+			"hideLoadingPlaceholders",
+			"showCard",
+			"hide",
+			"getOpener"
 		]);
 	};
 
@@ -2371,6 +2386,97 @@ sap.ui.define([
 	Card.prototype.hasPaginator = function () {
 		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
 		return oManifestFooter && oManifestFooter.paginator;
+	};
+
+	/**
+	 * Shows a child card. By default opens in a dialog.
+	 * @private
+	 * @ui5-restricted
+	 * @param {Object} oParameters The settings for showing the card.
+	 * @param {String|Object} oParameters.manifest Url to a manifest or the manifest itself.
+	 * @param {String} oParameters.baseUrl If manifest is an object - specify the base url to the card.
+	 * @param {Object} oParameters.parameters Parameters to be passed to the new card.
+	 * @param {Object} oParameters.data Data to be passed to the new card.
+	 * @returns {Promise} Promise which resolves with the created card.
+	 */
+	Card.prototype.showCard = function (oParameters) {
+		var oChildCard = this._createChildCard(oParameters);
+
+		oParameters._cardId = oChildCard.getId();
+
+		this.triggerAction({
+			type: "ShowCard",
+			parameters: oParameters
+		});
+
+		return Promise.resolve(oChildCard);
+	};
+
+	/**
+	 * Hides the card.
+	 * @private
+	 * @ui5-restricted
+	 */
+	Card.prototype.hide = function () {
+		this.triggerAction({
+			type: "HideCard"
+		});
+	};
+
+	/**
+	 * Gets the card which has opened this one if any.
+	 * @private
+	 * @ui5-restricted
+	 * @returns {sap.ui.integration.widgets.Card} The card which opened the current one.
+	 */
+	Card.prototype.getOpener = function () {
+		var oOpener = Core.byId(this.getAssociation("openerReference"));
+
+		if (!oOpener) {
+			return null;
+		}
+
+		return oOpener._oLimitedInterface;
+	};
+
+	/**
+	 * Creates the child card.
+	 *
+	 * @private
+	 * @ui5-restricted
+	 * @param {Object} oParameters The parameters for the card.
+	 * @returns {sap.ui.integration.widgets.Card} The result card.
+	 */
+	Card.prototype._createChildCard = function (oParameters) {
+		var vManifest = oParameters.manifest,
+			sBaseUrl = oParameters.baseUrl,
+			oData = oParameters.data,
+			oChildCard = new Card({
+				width: oParameters.width,
+				host: this.getHostInstance(),
+				parameters: oParameters.parameters
+			});
+
+		oChildCard.setAssociation("openerReference", this);
+
+		if (oData) {
+			each(oData, function (sModelName, oModelData) {
+				var oModel = new JSONModel(oModelData);
+				oChildCard.setModel(oModel, sModelName);
+			});
+		}
+
+		if (typeof vManifest === "string") {
+			oChildCard.setManifest(this.getRuntimeUrl(vManifest));
+			if (sBaseUrl) {
+				oChildCard.setBaseUrl(sBaseUrl);
+			}
+		} else {
+			oChildCard.setManifest(vManifest);
+			oChildCard.setBaseUrl(sBaseUrl || this.getRuntimeUrl("/"));
+		}
+
+		return oChildCard;
 	};
 
 	return Card;

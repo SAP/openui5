@@ -12,7 +12,9 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/integration/cards/actions/ShowCardAction",
+	"sap/ui/integration/cards/actions/HideCardAction"
 ], function (
 	library,
 	Log,
@@ -24,7 +26,9 @@ sap.ui.define([
 	NavigationAction,
 	BindingHelper,
 	BindingResolver,
-	capitalize
+	capitalize,
+	ShowCardAction,
+	HideCardAction
 ) {
 	"use strict";
 
@@ -434,16 +438,19 @@ sap.ui.define([
 
 	CardActions._createHandler = function (mConfig) {
 		var _ActionClass = null;
-
 		switch (mConfig.action.type) {
 			case CardActionType.Custom:
 				_ActionClass = CustomAction; break;
 			case CardActionType.DateChange:
 				_ActionClass = DateChangeAction; break;
+			case CardActionType.HideCard:
+				_ActionClass = HideCardAction; break;
 			case CardActionType.MonthChange:
 				_ActionClass = MonthChangeAction; break;
 			case CardActionType.Navigation:
 				_ActionClass = NavigationAction; break;
+			case CardActionType.ShowCard:
+				_ActionClass = ShowCardAction; break;
 			case CardActionType.Submit:
 				_ActionClass = SubmitAction; break;
 			default:

@@ -1,0 +1,104 @@
+{
+	"sap.app": {
+		"id": "sap.f.cardsdemo.showCard.orderDetails",
+		"type": "card",
+		"title": "Sample of an Snack Card",
+		"subTitle": "Sample of an Snack Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample",
+				"Snack"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Orders",
+				"parameters": {
+					"$format": "json",
+					"$filter": "OrderID eq {parameters>/orderId/value}"
+				}
+			},
+			"path": "/value/0"
+		},
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind_V4"
+				}
+			},
+			"parameters": {
+				"orderId": {
+					"value": 10249
+				}
+			}
+		},
+		"header": {
+			"data": {
+				"path": "/value/0"
+			},
+			"icon": {
+				"src": "sap-icon://sap-ui5"
+			},
+			"title": "Order for {ShipName}",
+			"subTitle": "ID {parameters>/orderId/value}"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Name",
+							"value": "{ShipName}"
+						},
+						{
+							"label": "Address",
+							"value": "{ShipAddress}"
+						},
+						{
+							"label": "Country",
+							"value": "{ShipCountry}"
+						},
+						{
+							"label": "City",
+							"value": "{ShipCity}"
+						},
+						{
+							"label": "Postal code",
+							"value": "{ShipPostalCode}"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Close",
+					"buttonType": "Reject",
+					"actions": [
+						{
+							"type": "HideCard"
+						}
+					]
+				}
+			]
+		}
+	}
+}

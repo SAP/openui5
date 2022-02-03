@@ -62,7 +62,13 @@ sap.ui.define([
 				 * Set to true to show that the data timestamp is currently updating.
 				 * @private
 				 */
-				dataTimestampUpdating: { type: "boolean", defaultValue: false, visibility: "hidden" }
+				dataTimestampUpdating: { type: "boolean", defaultValue: false, visibility: "hidden" },
+
+				/**
+				 * Set to true to false if header shouldn't be focusable.
+				 * @private
+				 */
+				focusable: { type: "boolean", defaultValue: true, visibility: "hidden" }
 			},
 			aggregations: {
 				/**
@@ -241,6 +247,31 @@ sap.ui.define([
 	 */
 	BaseHeader.prototype.getAriaRoleDescription = function () {
 		return this.hasListeners("press") ? this._oRb.getText("ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER") : this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD_HEADER");
+	};
+
+	BaseHeader.prototype._isFocusable = function() {
+		var bIsInsideGrid = this._isInsideGridContainer();
+
+		return this.getProperty("focusable") && !bIsInsideGrid;
+	};
+
+	/**
+	 * Returns if the control is inside a sap.f.GridContainer
+	 *
+	 * @private
+	 */
+	BaseHeader.prototype._isInsideGridContainer = function() {
+		var oParent = this.getParent();
+		if (!oParent) {
+			return false;
+		}
+
+		oParent = oParent.getParent();
+		if (!oParent) {
+			return false;
+		}
+
+		return oParent.isA("sap.f.GridContainer");
 	};
 
 	return BaseHeader;

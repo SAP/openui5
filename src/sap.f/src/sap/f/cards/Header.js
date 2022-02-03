@@ -308,24 +308,5 @@ sap.ui.define([
 		return this;
 	};
 
-	/**
-	 * Returns if the control is inside a sap.f.GridContainer
-	 *
-	 * @private
-	 */
-	Header.prototype._isInsideGridContainer = function() {
-		var oParent = this.getParent();
-		if (!oParent) {
-			return false;
-		}
-
-		oParent = oParent.getParent();
-		if (!oParent) {
-			return false;
-		}
-
-		return oParent.isA("sap.f.GridContainer");
-	};
-
 	return Header;
 });
