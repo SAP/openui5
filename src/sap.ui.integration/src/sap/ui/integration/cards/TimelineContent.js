@@ -140,6 +140,7 @@ sap.ui.define([
 	 * Handler for when data is changed.
 	 */
 	TimelineContent.prototype.onDataChanged = function () {
+		this._handleNoItemsError(this.getParsedConfiguration().item);
 		this._checkHiddenNavigationItems(this.getParsedConfiguration().item);
 	};
 

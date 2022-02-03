@@ -18,7 +18,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/util/LoaderExtensions",
 	"sap/m/HBox",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize"
 ],
 	function (
 		Card,
@@ -38,7 +40,9 @@ sap.ui.define([
 		mLibrary,
 		LoaderExtensions,
 		HBox,
-		JSONModel
+		JSONModel,
+		IllustratedMessageType,
+		IllustratedMessageSize
 	) {
 		"use strict";
 
@@ -810,6 +814,84 @@ sap.ui.define([
 							"url": "fake-url"
 						}
 					}
+				}
+			}
+		};
+
+		var oManifest_Bad_Url_List = {
+			"sap.app": {
+				"id": "test.card.badDataUrl"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {},
+				"content": {
+					"item": {}
+				},
+				"data": {
+					"json": []
+				}
+			}
+		};
+
+		var oManifest_No_Data_List = {
+			"sap.app": {
+				"id": "test.card.NoData"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {},
+				"content": {
+					"item": {
+						"title": ""
+					}
+				},
+				"data": {
+					"json": []
+				}
+			}
+		};
+		var oManifest_No_Data_Table = {
+			"sap.app": {
+				"id": "test.card.NoData"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {},
+				"content": {
+					"row": {
+						"columns": [{
+							"title": "Sales Order",
+							"value": "{salesOrder}",
+							"identifier": true
+						},
+							{
+								"title": "Customer",
+								"value": "{customerName}"
+							},
+							{
+								"title": "Net Amount",
+								"value": "{netAmount}",
+								"hAlign": "End"
+							},
+							{
+								"title": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							},
+							{
+								"title": "Delivery Progress",
+								"progressIndicator": {
+									"percent": "{deliveryProgress}",
+									"text": "{= format.percent(${deliveryProgress} / 100)}",
+									"state": "{statusState}"
+								}
+							}
+						]
+					}
+				},
+				"data": {
+					json: []
 				}
 			}
 		};
@@ -1858,10 +1940,12 @@ sap.ui.define([
 		QUnit.module("Error handling", {
 			beforeEach: function () {
 				this.oCard = new Card();
+				this.oRb = Core.getLibraryResourceBundle("sap.ui.integration");
 			},
 			afterEach: function () {
 				this.oCard.destroy();
 				this.oCard = null;
+				this.oRb = null;
 			}
 		});
 
@@ -1900,19 +1984,95 @@ sap.ui.define([
 			});
 
 			// Act
-			this.oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.badDataUrl"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {},
-					"content": {},
-					"data": {
-						"request": "invalidurl"
-					}
-				}
-			});
+			this.oCard.setManifest(oManifest_Bad_Url_List);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("IllustratedMessage should be set by developer", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+					Core.applyChanges();
+					var oErrorConfiguration = {
+						"noData": {
+							"type": "NoEntries",
+							"title": "No new products",
+							"description": "Please review later",
+							"size": "Auto"
+						}
+					};
+					var oIllustratedMessage = this.oCard._getIllustratedMessage(oErrorConfiguration, true);
+					// Assert
+					assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "The message type set by developer is correct");
+					assert.strictEqual(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The message size set by developer is correct");
+					assert.strictEqual(oIllustratedMessage.getTitle(), "No new products", "The message title set by developer is correct");
+					assert.strictEqual(oIllustratedMessage.getDescription(), "Please review later", "The message description set by developer is correct");
+
+					// Clean up
+					done();
+			}.bind(this));
+			// Act
+			this.oCard.setManifest(oManifest_Bad_Url_List);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("IllustratedMessage should be used for error in List Card", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oIllustratedMessage = this.oCard._getIllustratedMessage();
+				// Assert
+
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.UnableToLoad, "Default message type is used for list");
+
+				// Clean up
+				done();
+			}.bind(this));
+			// Act
+			this.oCard.setManifest(oManifest_Bad_Url_List);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("IllustratedMessage should be used for error in no data scenario - List Card", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oIllustratedMessage = this.oCard._getIllustratedMessage(undefined, true);
+				// Assert
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoData, "Illustrated message type should be no data for List Card");
+				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+
+				// Clean up
+				done();
+			}.bind(this));
+			// Act
+			this.oCard.setManifest(oManifest_No_Data_List);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.test("IllustratedMessage should be used for error in no data scenario - Table Card", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+				var oIllustratedMessage = this.oCard._getIllustratedMessage(undefined, true);
+				// Assert
+				assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoEntries, "Illustrated message type should be no data for Table Card");
+				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "Correct message is displayed");
+
+				// Clean up
+				done();
+			}.bind(this));
+			// Act
+			this.oCard.setManifest(oManifest_No_Data_Table);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});

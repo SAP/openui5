@@ -1554,16 +1554,162 @@
 			"sap.card": {
 				"type": "Object",
 				"header": {
-					"title": "Header Title",
-					"subTitle": "Top Products by Lorem Ipsum",
 					"data": {
 						"request": {
 							"url": "fake-url"
 						}
 					}
+				},
+			  "content": {
+				"data": {
+				  "request": {
+					"url": "fake-url"
+				  }
 				}
+			  }
 			}
+		},
+	  	"ListNodata-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.i7-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "List",
+		  "header": {
+			"title": "List Without Data in Response",
+			"subTitle": ""
+		  },
+		  "content": {
+			"data": {
+			  "json": []
+			},
+			"item": {
+			  "title": {
+				"value": "{Name}"
+			  },
+			  "description": {
+				"value": "{Description}"
+			  }
+			}
+		  }
 		}
+	  },
+	  	"TableNodata-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.i7-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "Table",
+		  "header": {
+			"title": "Table Without Data in Response",
+			"subTitle": ""
+		  },
+		  "content": {
+			"data": {
+			  "json": []
+			},
+			"row": {
+			  "columns": [{
+				"title": "Sales Order",
+				"value": "{salesOrder}",
+				"identifier": true
+			  },
+				{
+				  "title": "Customer",
+				  "value": "{customerName}"
+				},
+				{
+				  "title": "Net Amount",
+				  "value": "{netAmount}",
+				  "hAlign": "End"
+				},
+				{
+				  "title": "Status",
+				  "value": "{status}",
+				  "state": "{statusState}"
+				},
+				{
+				  "title": "Delivery Progress",
+				  "progressIndicator": {
+					"percent": "{deliveryProgress}",
+					"text": "{= format.percent(${deliveryProgress} / 100)}",
+					"state": "{statusState}"
+				  }
+				}
+			  ]
+			}
+		  }
+		}
+	  },
+	  	"Custom-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.custom-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "configuration": {
+			"messages": {
+			  "error": {
+				"type": "NoMail",
+				"title": "No New Mail",
+				"description": "Unable to retrieve data from server. Check connection or contact administrator.",
+				"size": "Auto"
+			  }
+			}
+		  },
+		  "type": "List",
+		  "header": {
+			"title": "Inbox"
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Product",
+				"parameters": {
+				  "$format": "json"
+				}
+			  },
+			  "path": "/value"
+			},
+			"item": {
+			  "title": "{ProductName}",
+			  "description": "{UnitsInStock} units in stock",
+			  "highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+			},
+			"maxItems": 5
+		  }
+		}
+	  },
+	  	"BadUrl-error": {
+		"sap.app": {
+		  "id": "cardsdemo.noHeaderNoContent.i7-error",
+		  "type": "card"
+		},
+		"sap.card": {
+		  "type": "List",
+		  "header": {
+			"title": "List with Bad Request",
+			"subTitle": ""
+		  },
+		  "content": {
+			"data": {
+			  "request": {
+				"url": "fake-url"
+			  }
+			},
+			"item": {
+			  "title": {
+				"value": "{Name}"
+			  },
+			  "description": {
+				"value": "{Description}"
+			  }
+			}
+		  }
+		}
+	  }
 	},
 	"minHeight": {
 		"donut": {
