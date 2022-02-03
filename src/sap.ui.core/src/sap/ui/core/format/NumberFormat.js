@@ -2274,9 +2274,24 @@ sap.ui.define([
 	 */
 	function checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency, oGroupingRegExp) {
 		if (sValueWithGrouping.includes(oOptions.groupingSeparator)) {
+
+			// remove leading minus sign, it is irrelevant for grouping check
+			// "-123.456" -> "123.456"
+			sValueWithGrouping = sValueWithGrouping.replace(/^-/, "");
+
 			// remove leading zeros
 			// "001.234" -> "1.234"
-			sValueWithGrouping = sValueWithGrouping.replace(/^(-?)0+(\d)/, "$1$2");
+			sValueWithGrouping = sValueWithGrouping.replace(/^0+(\d)/, "$1");
+
+			// only a number below 1 starts with 0, e.g. 0,123
+			// (it cannot contain a grouping separator character)
+			// here the leading zeros before numbers were removed and it has a grouping separator
+			// character, e.g. 0.123
+			// --> if it still starts here with 0 it is invalid
+			if (sValueWithGrouping.startsWith("0")) {
+				return false;
+			}
+
 			// remove scientific notation
 			// "1.234e+1" -> "1.234"
 			if (bScientificNotation) {
@@ -2298,6 +2313,8 @@ sap.ui.define([
 			// Examples:
 			// 1234.567 --> is invalid (as the user might have meant a decimal separator)
 			// 234.567 --> is valid (as this is a fully grouped number)
+			// the assumption here is: sValueWithGrouping only consists of
+			// grouping separator, number characters and decimal separator (no other characters)
 			var iNumberOfGroupingSeparators =
 				oOptions.groupingSeparator
 					? sValueWithGrouping.split(oGroupingRegExp).length - 1

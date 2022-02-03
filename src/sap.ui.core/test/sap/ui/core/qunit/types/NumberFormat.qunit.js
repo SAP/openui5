@@ -3442,7 +3442,15 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFloatFormat.format(1234), "1.234", "Format to '1.234'");
 
 		// valid numbers
+		assert.deepEqual(oFloatFormat.parse("0"), 0, "Parse '0'");
+		assert.deepEqual(oFloatFormat.parse("0,345"), 0.345, "Parse '0,345'");
+		assert.deepEqual(oFloatFormat.parse("-0,345"), -0.345, "Parse '-0,345'");
+		assert.deepEqual(oFloatFormat.parse(",345"), 0.345, "Parse ',345'");
+		assert.deepEqual(oFloatFormat.parse("-,345"), -0.345, "Parse '-,345'");
 		assert.deepEqual(oFloatFormat.parse("1.234"), 1234, "Parse '1.234'");
+		assert.deepEqual(oFloatFormat.parse("-234.567"), -234567, "Parse '-234.567'");
+		assert.deepEqual(oFloatFormat.parse("234.567"), 234567, "Parse '234.567'");
+		assert.deepEqual(oFloatFormat.parse("00234.567"), 234567, "Parse '00234.567'");
 		assert.deepEqual(oFloatFormat.parse("1.234.567"), 1234567, "Parse '1.234.567'");
 		assert.deepEqual(oFloatFormat.parse("1.234,56"), 1234.56, "Parse '1.234,56'");
 		assert.deepEqual(oFloatFormat.parse("1.234.567,89"), 1234567.89, "Parse '1.234.567,89'");
@@ -3503,9 +3511,16 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		// special case
 		// One grouping separator is present, at least one is missing and no decimal separator is present.
 		assert.deepEqual(oFloatFormat.parse("1234.567"), NaN, "Parse '1234.567'");
+		assert.deepEqual(oFloatFormat.parse("-.234.567"), NaN, "Parse '-.234.567'");
 		assert.deepEqual(oFloatFormat.parse("1234234.567"), NaN, "Parse '1234234.567'");
 		assert.deepEqual(oFloatFormat.parse("1234.234567"), NaN, "Parse '1234.234567'");
 		assert.deepEqual(oFloatFormat.parse("1.234234567"), NaN, "Parse '1.234234567'");
+
+		// leading zeros
+		assert.deepEqual(oFloatFormat.parse(".345"), NaN, "Parse '.345'");
+		assert.deepEqual(oFloatFormat.parse("-.345"), NaN, "Parse '-.345'");
+		assert.deepEqual(oFloatFormat.parse("0.345"), NaN, "Parse '0.345'");
+		assert.deepEqual(oFloatFormat.parse("-0.345"), NaN, "Parse '-0.345'");
 	});
 
 	QUnit.test("Float groupingEnabled=false (de-DE)", function (assert) {
