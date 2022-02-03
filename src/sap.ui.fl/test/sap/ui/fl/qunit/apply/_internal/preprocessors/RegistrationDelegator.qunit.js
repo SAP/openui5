@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/preprocessors/EventHistory",
+	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
-	"sap/ui/fl/EventHistory",
-	"sap/ui/fl/RegistrationDelegator",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
 	"sap/ui/thirdparty/jquery",
@@ -20,9 +20,9 @@ sap.ui.define([
 	Component,
 	ExtensionPoint,
 	ManifestUtils,
-	ChangeHandlerRegistration,
 	EventHistory,
 	RegistrationDelegator,
+	ChangeHandlerRegistration,
 	DelegateMediatorAPI,
 	DelegateMediator,
 	jQuery,
@@ -33,7 +33,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("sap.ui.fl.RegistrationDelegator", {
+	QUnit.module("sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator", {
 		afterEach: function() {
 			sandbox.restore();
 		}

@@ -17,19 +17,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function isCodeExt(oChange) {
-		return oChange.getChangeType() === "codeExt";
-	}
-
-	function isForController (sControllerName, oChange) {
-		var sSelectorControllerName = oChange.getSelector().controllerName;
-		return sControllerName === sSelectorControllerName;
-	}
-
 	/**
-	 * The implementation of the <code>Preprocessor</code> for the SAPUI5 flexibility services that can be hooked in the <code>View</code> life cycle.
+	 * Provides the Controller Extensions to the ControllerExtensionProvider from the core
 	 *
-	 * @name sap.ui.fl.PreprocessorImpl
+	 * @name sap.ui.fl.apply._internal.preprocessors.ControllerExtension
 	 * @class
 	 * @constructor
 	 * @author SAP SE
@@ -38,7 +29,36 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.core
 	 */
-	var PreprocessorImpl = function() {};
+	var ControllerExtension = function() {};
+
+	function isCodeExt(oChange) {
+		return oChange.getChangeType() === "codeExt";
+	}
+
+	function isForController(sControllerName, oChange) {
+		var sSelectorControllerName = oChange.getSelector().controllerName;
+		return sControllerName === sSelectorControllerName;
+	}
+
+	function getExtensionModules(aCodeExtModuleNames) {
+		if (aCodeExtModuleNames.length === 0) {
+			return Promise.resolve([]);
+		}
+
+		return new Promise(function(resolve) {
+			sap.ui.require(
+				aCodeExtModuleNames,
+				function() {
+					// arguments are not a real array. This creates one for further processing
+					resolve(Array.prototype.slice.call(arguments));
+				},
+				function(oError) {
+					Log.error("Code Extension not found", oError.message);
+					resolve([]);
+				}
+			);
+		});
+	}
 
 	/**
 	 * Provides an array of extension providers. An extension provider is an object which were defined as controller extensions. These objects
@@ -49,9 +69,8 @@ sap.ui.define([
 	 * @param {boolean} bAsync - Flag whether <code>Promise</code> should be returned or not (async=true)
 	 * @returns {Promise|Array} An empty array in case of a sync processing or a Promise with all successful loaded controller extensions
 	 * @see sap.ui.core.mvc.Controller for an overview of the available functions on controllers.
-	 * @since 1.34.0
 	 */
-	PreprocessorImpl.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
+	ControllerExtension.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
 		if (bAsync) {
 			if (!sComponentId) {
 				Log.warning("No component ID for determining the anchor of the code extensions was passed.");
@@ -80,41 +99,13 @@ sap.ui.define([
 					return oChange.getModuleName();
 				});
 
-				return PreprocessorImpl.getExtensionModules(aExtensionModules);
+				return getExtensionModules(aExtensionModules);
 			});
 		}
 
-		Log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
+		Log.warning("Synchronous extensions are not supported via UI5 Flexibility");
 		return [];
 	};
 
-	/**
-	 * Asynchronous loading of all passed controller extensions.
-	 *
-	 * @param {Array} aCodeExtModuleNames - Names of all controller extensions which have to be requested
-	 * @returns {Promise} Promise resolved with an array with all successful loaded controller extensions
-	 * @since 1.60.0
-	 */
-	PreprocessorImpl.getExtensionModules = function(aCodeExtModuleNames) {
-		if (aCodeExtModuleNames.length === 0) {
-			return Promise.resolve([]);
-		}
-
-		return new Promise(function(resolve) {
-			sap.ui.require(
-				aCodeExtModuleNames,
-				function() {
-					// arguments are not a real array. This creates one for further processing
-					var aModules = Array.prototype.slice.call(arguments);
-					resolve(aModules);
-				},
-				function(oError) {
-					Log.error("Code Extension not found", oError.message);
-					resolve([]);
-				}
-			);
-		});
-	};
-
-	return PreprocessorImpl;
-}, /* bExport= */true);
+	return ControllerExtension;
+});
