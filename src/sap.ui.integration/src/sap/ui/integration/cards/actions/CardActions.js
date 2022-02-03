@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/cards/actions/MonthChangeAction",
 	"sap/ui/integration/cards/actions/SubmitAction",
 	"sap/ui/integration/cards/actions/NavigationAction",
+	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/strings/capitalize"
 ], function (
@@ -21,6 +22,7 @@ sap.ui.define([
 	MonthChangeAction,
 	SubmitAction,
 	NavigationAction,
+	BindingHelper,
 	BindingResolver,
 	capitalize
 ) {
@@ -236,14 +238,13 @@ sap.ui.define([
 			bVal;
 
 		if (typeof oAction.enabled === "object") {
-			oBindingInfo = oAction.enabled;
-			oBindingInfo.formatter = function (vValue) {
+			oBindingInfo = BindingHelper.formattedProperty(oAction.enabled, function (vValue) {
 				if (!vValue || vValue === "false") {
 					return vDisabled;
 				}
 
 				return vEnabled;
-			};
+			});
 		}
 
 		if (oBindingInfo) {

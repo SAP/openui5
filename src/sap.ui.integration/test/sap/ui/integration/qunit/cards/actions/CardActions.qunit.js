@@ -987,6 +987,68 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_ActionsStrip = {
+			"sap.app": {
+				"id": "card.explorer.footer.manyButtons",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"firstName": "Donna",
+						"company": {
+							"email": "mail@mycompany.com",
+							"emailSubject": "Subject"
+						}
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Contact Details",
+							"items": [
+								{
+									"label": "First Name",
+									"value": "{firstName}"
+								}
+							]
+						}
+					]
+				},
+				"footer": {
+					"actionsStrip": [
+						{
+							"text": "Disabled",
+							"overflowPriority": "High",
+							"actions": [
+								{
+									"enabled": false,
+									"type": "Custom",
+									"parameters": {
+										"method": "approve"
+									}
+								}
+							]
+						},
+						{
+							"buttonType": "Transparent",
+							"text": "Enabled: {= !${company/email} }",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= !${company/email} }",
+									"parameters": {
+										"url": "mailto:{company/email}?subject={company/emailSubject}"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
@@ -1898,6 +1960,41 @@ sap.ui.define([
 			});
 
 			oCard.setManifest(oIntegrationCardManifest);
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		});
+
+		QUnit.module("ActionsStrip", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+			}
+		});
+
+		QUnit.test("Complex expression binding", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEvent("_ready", function () {
+				var oActionsStrip  = oCard.getAggregation("_footer").getActionsStrip(),
+					aButtons = oActionsStrip._getToolbar().getContent();
+
+				// Assert
+				assert.notOk(aButtons[1].getEnabled(), "Button is disabled.");
+				assert.notOk(aButtons[2].getEnabled(), "Button is disabled.");
+
+				done();
+			});
+
+			oCard.setManifest(oManifest_ActionsStrip);
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
