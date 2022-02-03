@@ -2176,6 +2176,10 @@ sap.ui.define([
 			for (i = 0; i < aMetaPathSegments.length; i += 1) {
 				sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
 				sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
+				if (aMetaPathSegments[i].endsWith("*")) {
+					oProperty = null;
+					continue; // no, don't break! fail in case path continues
+				}
 				oProperty = fnFetchMetadata(sPropertyMetaPath).getResult();
 				if (oProperty.$kind === "NavigationProperty") {
 					mQueryOptionsForPathPrefix.$expand = {};
@@ -2191,7 +2195,7 @@ sap.ui.define([
 					return undefined;
 				}
 			}
-			if (oProperty.$kind === "Property") {
+			if (!oProperty || oProperty.$kind === "Property") {
 				if (Object.keys(mChildQueryOptions).length > 0) {
 					Log.error("Failed to enhance query options for auto-$expand/$select as the"
 							+ " child binding has query options, but its path '" + sChildMetaPath

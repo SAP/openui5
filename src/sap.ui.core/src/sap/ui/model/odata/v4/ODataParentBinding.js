@@ -860,9 +860,13 @@ sap.ui.define([
 		sMetaPath = _Helper.getMetaPath(oModel.resolve(this.sPath, oContext));
 		mConvertedQueryOptions = Object.assign({}, mQueryOptions, {$select : []});
 		return SyncPromise.all(mQueryOptions.$select.map(function (sSelectPath) {
-			return _Helper.fetchPropertyAndType(
-				fnFetchMetadata, sMetaPath + "/" + sSelectPath
-			).then(function () {
+			var sMetaSelectPath = sMetaPath + "/" + sSelectPath;
+
+			if (sMetaSelectPath.endsWith(".*")) { // fetch metadata for namespace itself
+				sMetaSelectPath = sMetaSelectPath.slice(0, -1);
+			}
+
+			return _Helper.fetchPropertyAndType(fnFetchMetadata, sMetaSelectPath).then(function () {
 				var mWrappedQueryOptions = _Helper.wrapChildQueryOptions(
 						sMetaPath, sSelectPath, {}, fnFetchMetadata);
 

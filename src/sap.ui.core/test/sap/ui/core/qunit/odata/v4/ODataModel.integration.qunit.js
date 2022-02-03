@@ -1880,6 +1880,7 @@ sap.ui.define([
 		 */
 		setFormatter : function (assert, oControl, sControlId, bInList) {
 			var oBindingInfo = oControl.getBindingInfo("text") || oControl.getBindingInfo("value"),
+				bFoundInList,
 				oHere,
 				sName,
 				fnOriginalFormatter = oBindingInfo.formatter,
@@ -1892,15 +1893,23 @@ sap.ui.define([
 				&& this.mIsListByControlId[sControlId] !== bInList) {
 					throw new Error("Inconsistent usage of array values for " + sControlId);
 			}
-			this.mIsListByControlId[sControlId] = bInList;
-			if (!bInList) {
-				for (oHere = oControl; oHere; oHere = oHere.getParent()) {
-					sName = oHere.getMetadata().getName();
-					if (sName.includes("Column") || sName.includes("List")) {
-						throw new Error("Missing bInList for sControlId: " + sControlId);
-					}
+			for (oHere = oControl; oHere; oHere = oHere.getParent()) {
+				sName = oHere.getMetadata().getName();
+				if (sName.includes("Column") || sName.includes("List")) {
+					bFoundInList = true;
+					break;
 				}
 			}
+			if (bInList) {
+				if (!bFoundInList && oControl.getParent() && !sControlId.endsWith("__IN_LIST")) {
+					// there are exceptions for direct calls to #setFormatter and some weird cases
+					// with no list/table
+					throw new Error("Unexpected bInList for sControlId: " + sControlId);
+				}
+			} else if (bFoundInList) {
+				throw new Error("Missing bInList for sControlId: " + sControlId);
+			}
+			this.mIsListByControlId[sControlId] = bInList;
 
 			oBindingInfo.formatter = function (sValue) {
 				var oBinding,
@@ -36553,7 +36562,7 @@ sap.ui.define([
 			sView = '<Text id="code" text="{Messages/0/code}"/>',
 			that = this;
 
-		this.expectChange("code", []);
+		this.expectChange("code");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = oModel.bindList("/SalesOrderList"),
@@ -36561,7 +36570,7 @@ sap.ui.define([
 					Messages : [{code : "foo"}]
 				});
 
-			that.expectChange("code", ["foo"]);
+			that.expectChange("code", "foo");
 
 			that.oView.setBindingContext(oContext);
 
@@ -36947,7 +36956,7 @@ sap.ui.define([
 <IconTabBar id="employees" items="{/EMPLOYEES}">\
 	<items>\
 		<IconTabFilter key="foo">\
-			<Text id="id" text="{ID}"/>\
+			<Text id="id__IN_LIST" text="{ID}"/>\
 			<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
 				<Text text="{Name}"/>\
 			</Table>\
@@ -36963,7 +36972,8 @@ sap.ui.define([
 						EMPLOYEE_2_EQUIPMENTS : []
 					}]
 			})
-			.expectChange("id", ["1"]);
+			// "__IN_LIST" confirms that control is in list, although no list/table seems present
+			.expectChange("id__IN_LIST", ["1"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("EMPLOYEES?$select=ID"
@@ -36973,7 +36983,7 @@ sap.ui.define([
 							EMPLOYEE_2_EQUIPMENTS : []
 						}]
 				})
-				.expectChange("id", ["2"]);
+				.expectChange("id__IN_LIST", ["2"]);
 
 			return Promise.all([
 				// code under test
@@ -37555,5 +37565,73 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A binding tries to use $select=* with autoExpandSelect on.
+	// BCP: 2280017225
+	QUnit.test("BCP: 2280017225 - simplest case", function (assert) {
+		var sView = '\
+<FlexBox binding="{path : \'/SalesOrderList(\\\'1\\\')\', parameters : {$select : \'*\'}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</FlexBox>';
+
+		// Note: most properties are omitted from response data to improve readability
+		this.expectRequest("SalesOrderList('1')?$select=*,SalesOrderID", {SalesOrderID : "1"})
+			.expectChange("id", "1");
+
+		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+	});
+	//TODO w/ the following inside the FlexBox, there is a timing issue here with destroyed ODCB
+	// (SOITEM_2_SO) trying to delegate ODPaB#fetchIfChildCanUseCache up...
+	// <List items="{SO_2_SOITEM}">\
+	//    <CustomListItem binding="{path : \'SOITEM_2_SO\', parameters : {$select : \'*\'}}">\
+	//        <Text id="note" text="{Note}"/>
+
+	//*********************************************************************************************
+	// Scenario: A binding tries to use $select=SO_2_BP/* with autoExpandSelect on.
+	// BCP: 2280017225
+	QUnit.test("BCP: 2280017225 - select path ends with *", function (assert) {
+		var sView = '\
+<FlexBox binding="{path : \'/SalesOrderList(\\\'1\\\')\', parameters : {$select : \'SO_2_BP/*\'}}">\
+	<Text id="name" text="{SO_2_BP/CompanyName}"/>\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_BP($select=*,BusinessPartnerID,CompanyName)", {
+				SalesOrderID : "1",
+				SO_2_BP : {
+					BusinessPartnerID : "2",
+					CompanyName : "SAP" // etc.
+				}
+			})
+			.expectChange("name", "SAP");
+
+		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
+	});
+
+	//*********************************************************************************************
+	// Scenario: A binding tries to use $select=<namespace>.* with autoExpandSelect on in order to
+	// retrieve all action/function advertisements.
+	// BCP: 2280017225
+	QUnit.test("BCP: 2280017225 - select a namespace", function (assert) {
+		var sView = '\
+<FlexBox binding="{path : \'/SalesOrderList(\\\'1\\\')\', parameters : {\
+		$select : \'com.sap.gateway.default.zui5_epm_sample.v0002.*\'\
+	}}">\
+	<Text id="on"\
+		text="{= !!%{#com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm} }"/>\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderList('1')"
+				+ "?$select=SalesOrderID,com.sap.gateway.default.zui5_epm_sample.v0002.*"
+				// Note: the following could be absorbed, but who cares?
+				+ ",com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm", {
+				"#com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm" : {}, // etc.
+				SalesOrderID : "1"
+			})
+			.expectChange("on", true);
+
+		return this.createView(assert, sView, createSalesOrdersModel({autoExpandSelect : true}));
 	});
 });

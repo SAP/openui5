@@ -3681,10 +3681,12 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			bProcessedBar = false,
 			bProcessedFoo = false,
+			bProcessedNamespace = false,
 			bProcessedQualifiedName = false,
+			bProcessedStarOperator = false,
 			oPromise,
 			mQueryOptionsFromParameters = {
-				$select : ["foo", "bar", "qualified.Name"],
+				$select : ["foo", "bar", "qualified.Name", "namespace.*", "*"],
 				$expand : {}
 			},
 			mQueryOptionsAsString = JSON.stringify(mQueryOptionsFromParameters),
@@ -3734,13 +3736,36 @@ sap.ui.define([
 			.withExactArgs("fnFetchMetadata", "/meta/path/qualified.Name")
 			.returns(Promise.resolve().then(function () {
 				oHelperMock.expects("wrapChildQueryOptions")
-					.withExactArgs("/meta/path", "qualified.Name", {},
-						"fnFetchMetadata")
+					.withExactArgs("/meta/path", "qualified.Name", {}, "fnFetchMetadata")
 					.returns(undefined);
 				oHelperMock.expects("addToSelect")
 					.withExactArgs(sinon.match.same(mResolvedQueryOptions), ["qualified.Name"])
 					.callsFake(function () {
 						bProcessedQualifiedName = true;
+					});
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs("fnFetchMetadata", "/meta/path/namespace.")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "namespace.*", {}, "fnFetchMetadata")
+					.returns(undefined);
+				oHelperMock.expects("addToSelect")
+					.withExactArgs(sinon.match.same(mResolvedQueryOptions), ["namespace.*"])
+					.callsFake(function () {
+						bProcessedNamespace = true;
+					});
+			}));
+		oHelperMock.expects("fetchPropertyAndType")
+			.withExactArgs("fnFetchMetadata", "/meta/path/*")
+			.returns(Promise.resolve().then(function () {
+				oHelperMock.expects("wrapChildQueryOptions")
+					.withExactArgs("/meta/path", "*", {}, "fnFetchMetadata")
+					.returns(undefined);
+				oHelperMock.expects("addToSelect")
+					.withExactArgs(sinon.match.same(mResolvedQueryOptions), ["*"])
+					.callsFake(function () {
+						bProcessedStarOperator = true;
 					});
 			}));
 
@@ -3753,7 +3778,9 @@ sap.ui.define([
 			assert.strictEqual(oResult, mResolvedQueryOptions);
 			assert.strictEqual(bProcessedBar, true);
 			assert.strictEqual(bProcessedFoo, true);
+			assert.strictEqual(bProcessedNamespace, true);
 			assert.strictEqual(bProcessedQualifiedName, true);
+			assert.strictEqual(bProcessedStarOperator, true);
 			assert.strictEqual(JSON.stringify(mQueryOptionsFromParameters), mQueryOptionsAsString,
 				"original query options unchanged");
 		});
