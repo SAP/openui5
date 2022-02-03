@@ -3,5 +3,26 @@
 /* Horizon theme                                  */
 /* ============================================== */
 
-@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapPrimary1; //#3f5161;
-@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiWhite; //#fff
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiToolbarBackground;
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiShellTextColor;
+@_sap_ui_rta_Toolbar_Adaptation_BorderDarkColor: @sapUiButtonEmphasizedBorderColor;
+
+.sapUiRtaMode {
+
+  .sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+    border: 0.188rem dashed @_sap_ui_rta_Toolbar_Adaptation_BorderDarkColor;
+    border-image: none;
+
+    .sapMFlexBox {
+      background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
+    }
+  }
+
+  .sapMList {
+    padding: 3px;
+  }
+
+  .sapUiRtaVersionHistory {
+    border: none;
+  }
+}
