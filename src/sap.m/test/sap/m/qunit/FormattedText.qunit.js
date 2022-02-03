@@ -313,4 +313,23 @@ sap.ui.define([
 		// Cleanup
 		oFT.destroy();
 	});
+
+	QUnit.test("Focus is applied on the first available anchor tag", function (assert) {
+		// Arrange
+		var oFT = new FormattedText({
+			htmlText: '<a class="CustomLink" href="https://www.sap.com/">link</a>'
+		});
+
+		oFT.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oFT.focus();
+
+		// Assert
+		assert.ok(document.activeElement.classList.contains("CustomLink"), "Focus is properly applied");
+
+		// Cleanup
+		oFT.destroy();
+	});
 });
