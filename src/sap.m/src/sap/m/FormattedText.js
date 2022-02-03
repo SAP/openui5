@@ -365,6 +365,9 @@ function(
 			this._renderingRules = bLimit ? _limitedRenderingRules : _defaultRenderingRules;
 		};
 
+		FormattedText.prototype.getFocusDomRef = function () {
+			return this.getDomRef() && this.getDomRef().querySelector("a");
+		};
 
 		return FormattedText;
 	});
