@@ -43,7 +43,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign(),
 			oAccAttributes = {
-				role: "group",
 				roledescription: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME")
 			};
 
