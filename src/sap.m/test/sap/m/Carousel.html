@@ -538,7 +538,7 @@
 			width: "320px",
 			liveChange: function (oEvent) {
 				var numberOfImages = Number(oEvent.getSource().getValue());
-				if (!numberOfImages || numberOfImages < 1 || numberOfImages > 9){
+				if (!numberOfImages || numberOfImages < 1 || numberOfImages > 12){
 					return;
 				}
 
@@ -554,7 +554,7 @@
 			}
 		});
 		var oNumberOfImagesInputLabel = new sap.m.Label({
-			text: "Number of images to display (Can be a number between 1 and 9)",
+			text: "Number of images to display (Can be a number between 1 and 12)",
 			labelFor: oNumberOfImagesInput
 		});
 
