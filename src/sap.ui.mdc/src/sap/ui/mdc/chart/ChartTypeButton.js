@@ -135,11 +135,14 @@ sap.ui.define([
 		}
 
 		this.oReadyPromise.then(function() {
-			this.oPopover = this._createPopover(oButton, oMDCChart);
-			this.oPopover.attachAfterClose(function(){
-				this.oPopover.destroy();
-			}.bind(this));
-			return this.oPopover.openBy(oButton);
+			if (!this.oPopover){
+				this.oPopover = this._createPopover(oButton, oMDCChart);
+				this.oPopover.attachAfterClose(function(){
+					this.oPopover.destroy();
+					delete this.oPopover;
+				}.bind(this));
+				return this.oPopover.openBy(oButton);
+			}
 		}.bind(this));
 	};
 
