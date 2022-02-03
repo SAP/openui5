@@ -2410,14 +2410,14 @@ sap.ui.define([
 		this._onColumnPress(oEvent.getParameter("column"));
 	};
 
-	// TODO: maybe selectedContexts should be an association
-	// TODO: The API is unstable/unreliable in GridTable scenarios and has to be worked upon
 	/**
-	 * Gets contexts from the table that have been selected by the user.
+	 * Gets contexts that have been selected by the user.
 	 *
-	 * @returns {Array} Contexts of rows/items selected by the user
+	 * @returns {sap.ui.model.Context[]} The selected contexts
 	 * @private
-	 * @experimental The API is unstable/unreliable in GridTable scenarios
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
+	 * @experimental The API is subject to change.
 	 */
 	Table.prototype.getSelectedContexts = function() {
 		if (this._oTable) {
@@ -2435,9 +2435,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * API to get clear selection from the table.
+	 * Clears the selection.
 	 *
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * MDC_PUBLIC_CANDIDATE
 	 */
 	Table.prototype.clearSelection = function() {
 		if (this._oTable) {
