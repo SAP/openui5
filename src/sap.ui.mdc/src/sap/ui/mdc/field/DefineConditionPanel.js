@@ -27,10 +27,10 @@ sap.ui.define([
 	'sap/ui/layout/Grid',
 	'sap/ui/layout/GridData',
 	'sap/m/library',
-	'sap/m/ScrollContainer',
 	'sap/m/Button',
 	'sap/m/Panel',
-	'sap/base/Log'
+	'sap/base/Log',
+	'sap/ui/core/InvisibleMessage'
 ], function(
 		Control,
 		ManagedObjectObserver,
@@ -57,10 +57,10 @@ sap.ui.define([
 		Grid,
 		GridData,
 		mLibrary,
-		ScrollContainer,
 		Button,
 		Panel,
-		Log
+		Log,
+		InvisibleMessage
 		) {
 	"use strict";
 
@@ -72,6 +72,7 @@ sap.ui.define([
 
 	var ButtonType = mLibrary.ButtonType;
 	var ValueState = coreLibrary.ValueState;
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -192,6 +193,8 @@ sap.ui.define([
 
 			Control.prototype.init.apply(this, arguments);
 
+			this.oInvisibleMessage = InvisibleMessage.getInstance();
+
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 
 			this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
@@ -256,6 +259,8 @@ sap.ui.define([
 			if (iIndex > 0 && aConditions.length - 1 === iIndex) {
 				this._bFocusLastRemoveBtn = true; // as remove-Button will disappear and focus should set on the last row remove button
 			}
+
+			this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.DEFINECONDITIONS_REMOVECONDITION_ANNOUNCE"), InvisibleMessageMode.Polite);
 
 			// try to reset valueState and value of value Fields inside the removed row
 			var oGrid = this.byId("conditions");
@@ -1018,6 +1023,11 @@ sap.ui.define([
 		oPanel.addContent(oInvisibleOperatorText);
 		oPanel.addContent(oGrid);
 
+		this._oInvisibleAddOperatorButtonText = new InvisibleText({
+			text: oMessageBundle.getText("valuehelp.DEFINECONDITIONS_ADDCONDITION_DESCRIPTION")
+		});
+		oPanel.addContent(this._oInvisibleAddOperatorButtonText);
+
 		var oAddBtn = new Button(this.getId() + "--addBtn", {
 			press: this.addCondition.bind(this),
 			type: ButtonType.Default,
@@ -1029,8 +1039,9 @@ sap.ui.define([
 				visibleS: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
 				visibleM: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
 				visibleL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)},
-				visibleXL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)}})}
-		);
+				visibleXL: {path: "$this>/conditions", formatter: _getAddButtonVisible.bind(this)}}),
+			ariaDescribedBy: this._oInvisibleAddOperatorButtonText
+		});
 
 		oGrid.addContent(oAddBtn);
 
