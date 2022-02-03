@@ -200,6 +200,15 @@ sap.ui.define([
 	});
 
 	/* CUSTOM CODE START */
+
+	/**
+	 * Checkbox without label must not be stretched in Form.
+	 * @returns {boolean} True if the <code>Form</code> should not adjust the width of the CheckBox component wrapper
+	 */
+	CheckBox.prototype.getFormDoNotAdjustWidth = function() {
+		return this.getText() ? false : true;
+	};
+
 	/* CUSTOM CODE END */
 
 	return CheckBox;
