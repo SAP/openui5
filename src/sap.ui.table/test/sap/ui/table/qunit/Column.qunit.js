@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/table/CreationRow",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
-	"sap/m/table/ColumnMenu",
-	"sap/m/table/QuickAction",
-	"sap/m/table/Item",
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/table/columnmenu/Item",
 	"sap/m/Text",
 	"sap/ui/core/Core"
 ], function(TableQUnitUtils, qutils, Column, Table, CreationRow, JSONModel, Menu, ColumnMenu, QuickAction, Item, Text, oCore) {

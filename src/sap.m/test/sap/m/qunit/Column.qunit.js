@@ -9,9 +9,9 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
 	"sap/m/Label",
-	"sap/m/table/ColumnMenu",
-	"sap/m/table/QuickAction",
-	"sap/m/table/Item"
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/table/columnmenu/Item"
 ], function(Core, Table, Device, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item) {
 	"use strict";
 

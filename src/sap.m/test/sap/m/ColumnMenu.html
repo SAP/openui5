@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>sap.m.table.ColumnMenu</title>
+	<title>sap.m.table.columnmenu.Menu</title>
 	<script src="shared-config.js"></script>
 	<script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m, sap.ui.layout"
 		data-sap-ui-xx-bindingSyntax="complex">
@@ -22,15 +22,30 @@
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
-				"sap/m/table/ColumnMenu",
-				"sap/m/table/Item",
-				"sap/m/table/QuickAction",
-				"sap/ui/table/Table",
-				"sap/ui/table/Column",
-				"sap/m/table/QuickAction",
-				"sap/m/table/ActionItem",
+				"sap/m/table/columnmenu/Menu",
+				"sap/m/table/columnmenu/Item",
+				"sap/m/table/columnmenu/QuickAction",
+				"sap/m/table/columnmenu/QuickSort",
+				"sap/m/table/columnmenu/QuickSortItem",
+				"sap/m/table/columnmenu/QuickGroup",
+				"sap/m/table/columnmenu/QuickGroupItem",
+				"sap/m/table/columnmenu/QuickTotal",
+				"sap/m/table/columnmenu/QuickTotalItem",
+				"sap/m/table/columnmenu/ActionItem",
 				"sap/m/Table",
-			], function (ColumnMenu, Item, QuickAction, Table, Column, QuickAction, ActionItem, Table) {
+			], function (
+				ColumnMenu,
+				Item,
+				QuickAction,
+				QuickSort,
+				QuickSortItem,
+				QuickGroup,
+				QuickGroupItem,
+				QuickTotal,
+				QuickTotalItem,
+				ActionItem,
+				Table
+			) {
 				var oData = {"items": []};
 				for (var i = 0; i < 25; i++) {
 					oData["items"].push({
@@ -40,33 +55,53 @@
 					});
 				}
 
-				var oQuickSort = new QuickAction({
-					label: "Quick Sort",
-					content: new sap.m.HBox({
-						items: [
-							new sap.m.Button({ text: "Ascending" }),
-							new sap.m.Button({ text: "Descending" })
-						]
-					})
+				var oQuickSort = new QuickSort({
+					items : [
+						new QuickSortItem ({
+							key: "propertyA",
+							label: "A",
+							sortOrder: "Ascending"
+						})
+					]
 				});
 
 				var oQuickFilter = new QuickAction({
-					label: "Quick Filter",
+					label: "Quick Filter:",
 					content: new sap.m.ComboBox()
 				});
 
-				var oQuickGroup = new QuickAction({
-					label: "Quick Group",
-					content: new sap.m.HBox({
-						items: [
-							new sap.m.Button({ text: "Criterion A" }),
-							new sap.m.Button({ text: "Criterion B" })
-						]
-					})
+				var oQuickGroup = new QuickGroup({
+					items: [
+						new QuickGroupItem({
+							key: "PropertyA",
+							label: "Criterion A",
+							grouped: true
+						}),
+						new QuickGroupItem({
+							key: "PropertyB",
+							label: "Criterion B",
+							grouped: false
+						})
+					]
+				});
+
+				var oQuickTotal = new QuickTotal({
+					items: [
+						new QuickTotalItem({
+							key: "PropertyA",
+							label: "Property A",
+							totaled: false
+						}),
+						new QuickTotalItem({
+							key: "PropertyB",
+							label: "Property B",
+							totaled: true
+						})
+					]
 				});
 
 				var oQuickCustomAction = new QuickAction({
-					label: "Quick Custom",
+					label: "Quick Custom:",
 					content: new sap.m.Button({ text: "Execute Custom Action" })
 				});
 
@@ -163,7 +198,7 @@
 				}
 
 				var oMenu = new ColumnMenu({
-					_quickActions: [oQuickSort, oQuickFilter, oQuickGroup],
+					_quickActions: [oQuickSort, oQuickFilter, oQuickGroup, oQuickTotal],
 					quickActions: [oQuickCustomAction],
 					_items: [oReset, oItemFilter, oItemGroup, oItemTable, oActionItem],
 					items: aItems
@@ -178,6 +213,7 @@
 					oMenu.openBy(this);
 				});
 
+				oButton.addDependent(oMenu);
 				oButton.placeAt("body");
 
 				var oButton2 = new sap.m.Button({

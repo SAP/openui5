@@ -9,14 +9,14 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new ColumnMenuEntry.
+	 * Constructor for a new Entry.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] ID for the new Entry, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new Entry
 	 *
 	 * @class
-	 * This control serves as a base class for elements residing inside the sap.m.table.ColumnMenu.
-	 * This base class is faceless and should be inherited to implement ColumnMenu items and quick actions.
+	 * The Entry serves as a base class for elements residing inside the sap.m.table.columnmenu.Menu.
+	 * This base class is faceless and should be inherited to implement Menu items and quick actions.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
@@ -26,9 +26,9 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 *
-	 * @alias sap.m.table.ColumnMenuEntry
+	 * @alias sap.m.table.columnmenu.Entry
 	 */
-	var ColumnMenuEntry = Element.extend("sap.m.table.ColumnMenuEntry", {
+	var Entry = Element.extend("sap.m.table.columnmenu.Entry", {
 		metadata: {
 			"abstract": true,
 			library: "sap.m",
@@ -39,19 +39,19 @@ sap.ui.define([
 	});
 
 	/**
-	 * This method can be used to retrieve the ColumnMenu, in which the entry resides in.
+	 * This method can be used to retrieve the Menu, in which the entry resides in.
 	 *
 	 * If an entry is internally creating entries that use #getMenu or #getParent,
 	 * and returns them in #getEffectiveItems or #getEffectiveQuickActions, they
 	 * must be its children in the control tree.
 	 *
-	 * @returns {sap.m.ColumnMenu} The menu of the entry
+	 * @returns {sap.m.table.columnmenu.Menu} The menu of the entry
 	 * @public
 	 */
-	ColumnMenuEntry.prototype.getMenu = function () {
+	Entry.prototype.getMenu = function () {
 		var oElement = this.getParent();
 		while (oElement) {
-			if (oElement.isA("sap.m.table.ColumnMenu")) {
+			if (oElement.isA("sap.m.table.columnmenu.Menu")) {
 				return oElement;
 			}
 			oElement = oElement.getMenu();
@@ -65,7 +65,7 @@ sap.ui.define([
 	 * @returns {string} The label property specified in the control
 	 * @abstract
 	 */
-	ColumnMenuEntry.prototype.getLabel = function () {
+	Entry.prototype.getLabel = function () {
 		if (this.getMetadata().hasProperty("label")) {
 			return this.getProperty("label");
 		}
@@ -78,14 +78,14 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} The control specified in the content aggregation
 	 * @abstract
 	 */
-	ColumnMenuEntry.prototype.getContent = function () {
+	Entry.prototype.getContent = function () {
 		if (this.getMetadata().hasAggregation("content")) {
 			return this.getAggregation("content");
 		}
 		throw new Error(this + " does not implement #getContent");
 	};
 
-	ColumnMenuEntry.prototype.setVisible = function (bVisible) {
+	Entry.prototype.setVisible = function (bVisible) {
 		if (this.getVisible() == bVisible) {
 			return this;
 		}
@@ -95,5 +95,5 @@ sap.ui.define([
 		return this;
 	};
 
-	return ColumnMenuEntry;
+	return Entry;
 });

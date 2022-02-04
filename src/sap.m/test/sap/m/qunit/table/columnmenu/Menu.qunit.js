@@ -1,12 +1,12 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/m/table/ColumnMenu",
-	"sap/m/table/QuickAction",
-	"sap/m/table/Item",
+	"sap/m/table/columnmenu/Menu",
+	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
 	"sap/ui/core/Core"
-], function (QUnitUtils, ColumnMenu, QuickAction, Item, Button, oCore) {
+], function (QUnitUtils, Menu, QuickAction, Item, Button, oCore) {
 	"use strict";
 	// Test setup
 
@@ -33,7 +33,7 @@ sap.ui.define([
 				}
 			}
 
-			this.oColumnMenu = new ColumnMenu({
+			this.oColumnMenu = new Menu({
 				quickActions: aQuickActions,
 				items: aItems,
 				_quickActions: aPQuickActions,
@@ -93,7 +93,7 @@ sap.ui.define([
 
 	QUnit.module("Destruction", {
 		beforeEach: function() {
-			this.oColumnMenu = new ColumnMenu({
+			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
 				items: [new Item({label: sText, content: new Button({text: sText})})],
 				_quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
@@ -131,7 +131,7 @@ sap.ui.define([
 			];
 			var aPItems = [new Item({label: sText, content: new Button({text: sText})})];
 
-			this.oColumnMenu = new ColumnMenu({
+			this.oColumnMenu = new Menu({
 				quickActions: bQuickActions ? aQuickActions : undefined,
 				items: bItems ? aItems : undefined,
 				_quickActions: bPQuickActions ? aPQuickActions : null,
@@ -184,6 +184,7 @@ sap.ui.define([
 
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
+		this.clock.tick(500);
 
 		assert.equal(oSpy.callCount, 1);
 		assert.equal(aCalls[0].source, "$default");
@@ -238,6 +239,7 @@ sap.ui.define([
 		// Navigate to item
 		var sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
+		this.clock.tick(500);
 		oCore.applyChanges();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
@@ -263,7 +265,7 @@ sap.ui.define([
 	QUnit.module("Button states", {
 		beforeEach: function () {
 			this.oItem = new Item({label: sText, content: new Button({text: sText})});
-			this.oColumnMenu = new ColumnMenu({
+			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
 				items: [this.oItem]
 			});
@@ -362,7 +364,7 @@ sap.ui.define([
 
 	QUnit.module("Control tree", {
 		beforeEach: function () {
-			this.oColumnMenu = new ColumnMenu({
+			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
 				items: [new Item({label: sText, content: new Button({text: sText})})],
 				_quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],

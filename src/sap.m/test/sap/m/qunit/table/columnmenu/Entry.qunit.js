@@ -1,15 +1,15 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/m/table/ColumnMenuEntry",
-	"sap/m/table/ColumnMenu"
-], function (QUnitUtils, ColumnMenuEntry, ColumnMenu) {
+	"sap/m/table/columnmenu/Entry",
+	"sap/m/table/columnmenu/Menu"
+], function (QUnitUtils, Entry, Menu) {
 	"use strict";
 
 	QUnit.module("Instantiation");
 
 	QUnit.test("Instantiate ColumnMenuEntry", function(assert) {
-		var oEntry = new ColumnMenuEntry({
+		var oEntry = new Entry({
 			visible: true
 		});
 		assert.ok(oEntry);
@@ -18,7 +18,7 @@ sap.ui.define([
 	// Test setup
 	QUnit.module("Plain ColumnMenuEntry", {
 		beforeEach: function () {
-			this.oEntry = new ColumnMenuEntry({
+			this.oEntry = new Entry({
 				visible: true
 			});
 		},
@@ -45,8 +45,8 @@ sap.ui.define([
 
 	QUnit.module("ColumnMenuEntry with ColumnMenu Parent", {
 		beforeEach: function () {
-			this.oEntry = new ColumnMenuEntry();
-			this._oMenu = new ColumnMenu();
+			this.oEntry = new Entry();
+			this._oMenu = new Menu();
 			this.oEntry.setParent(this._oMenu);
 		},
 		afterEach: function () {
