@@ -331,8 +331,11 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(sFormatted, "", "Empty string formatted.");
 		assert.deepEqual(oFormat.parse(""), [NaN, undefined], "[NaN, undefined] is returned.");
 		assert.deepEqual(oFormat.parse("123.456,789 BTC"), null, "null is returned.");
-		assert.deepEqual(oFormat.parse("12,3,456 BTC"), null, "null is returned.");
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFormat.parse("12,3,456 BTC"), [123456, "BTC"], "null is returned.");
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
 		assert.deepEqual(oFormat.parse("12,3456 BTC"), null, "null is returned.");
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
 		assert.deepEqual(oFormat.parse("123.456 BTC"), [123.456, "BTC"], "[NaN, undefined] is returned.");
 
 		// emptyString: ""
@@ -1737,27 +1740,27 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(aResult[0], 12000000, "Number is parsed correctly");
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 
-		// 1 grouping separators present and missing ones
-		assert.deepEqual(oFormat.parse("INR 100 00 00,000 Cr Cr"), null, "missing grouping");
-		assert.deepEqual(oFormat.parse("INR 100 00,00 000 Cr Cr"), null, "missing grouping");
-		assert.deepEqual(oFormat.parse("INR 100,00 00 000 Cr Cr"), null, "missing grouping");
-
-		// 2 grouping separators present and missing ones
-		assert.deepEqual(oFormat.parse("INR 100,00 00,000 Cr Cr"), [1e+23, "INR"], "missing grouping");
-		assert.deepEqual(oFormat.parse("INR 100 00,00,000 Cr Cr"), [1e+23, "INR"], "missing grouping");
-		assert.deepEqual(oFormat.parse("INR 100,00,00 000 Cr Cr"), [1e+23, "INR"], "missing grouping");
-
-
-		// invalid numbers
-		// correct grouping: INR 1,00,00,000,00,00,000,00,00,000,00,00,000 Cr Cr
 		// correct grouping: INR 100,00,00,000 Cr Cr
-		assert.deepEqual(oFormat.parse("INR 1,00,00,00,000 Cr Cr"), null, "Invalid grouping");
-		assert.deepEqual(oFormat.parse("INR 10,000,00,000 Cr Cr"), null, "Invalid grouping");
-		assert.deepEqual(oFormat.parse("INR 10,000,000,00 Cr Cr"), null, "Invalid grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00,00,00000 Cr Cr"), null, "Invalid grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00 00,00,000 Cr Cr"), null, "Invalid grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00,00 00 000 Cr Cr"), null, "Invalid grouping");
-		assert.deepEqual(oFormat.parse("INR 1,00 00 00 000 Cr Cr"), null, "Invalid grouping");
+
+		// tolerated, as single separator with grouping base size (assumingly a grouping separator)
+		assert.deepEqual(oFormat.parse("INR 100 00 00,000 Cr Cr"), [1e+23, "INR"], "missing grouping");
+
+		// not tolerated, because single separator with wrong grouping base size (assumingly a decimal separator)
+		assert.deepEqual(oFormat.parse("INR 100 00,00 000 Cr Cr"), null, "ambiguous grouping");
+		assert.deepEqual(oFormat.parse("INR 100,00 00 000 Cr Cr"), null, "ambiguous grouping");
+		assert.deepEqual(oFormat.parse("INR 1,00 00 00 000 Cr Cr"), null, "ambiguous grouping");
+		assert.deepEqual(oFormat.parse("INR 100 00 00 0,00 Cr Cr"), null, "ambiguous grouping");
+
+		// tolerated, despite wrong grouping, because of multiple grouping separators
+		assert.deepEqual(oFormat.parse("INR 100,00 00,000 Cr Cr"), [1e+23, "INR"], "incomplete grouping");
+		assert.deepEqual(oFormat.parse("INR 100 00,00,000 Cr Cr"), [1e+23, "INR"], "incomplete grouping");
+		assert.deepEqual(oFormat.parse("INR 100,00,00 000 Cr Cr"), [1e+23, "INR"], "incomplete grouping");
+		assert.deepEqual(oFormat.parse("INR 1,00,00,00,000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
+		assert.deepEqual(oFormat.parse("INR 10,000,00,000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
+		assert.deepEqual(oFormat.parse("INR 10,000,000,00 Cr Cr"), [1e+23, "INR"], "wrong grouping");
+		assert.deepEqual(oFormat.parse("INR 1,00,00,00000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
+		assert.deepEqual(oFormat.parse("INR 1,00 00,00,000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
+		assert.deepEqual(oFormat.parse("INR 1,00,00 00 000 Cr Cr"), [1e+23, "INR"], "wrong grouping");
 	});
 
 	QUnit.test("getScale", function (assert) {
