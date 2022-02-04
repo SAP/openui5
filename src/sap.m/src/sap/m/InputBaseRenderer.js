@@ -210,7 +210,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	InputBaseRenderer.getAriaRole = function(oControl) {
 		return "textbox";
@@ -222,7 +222,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String|undefined}
+	 * @returns {string|undefined}
 	 */
 	InputBaseRenderer.getAriaLabelledBy = function(oControl) {
 		if (this.getLabelledByAnnouncement(oControl)) {
@@ -236,7 +236,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	InputBaseRenderer.getLabelledByAnnouncement = function(oControl) {
 		return "";
@@ -268,7 +268,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String|undefined}
+	 * @returns {string|undefined}
 	 */
 	InputBaseRenderer.getAriaDescribedBy = function(oControl) {
 		if (this.getDescribedByAnnouncement(oControl)) {
@@ -282,7 +282,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	InputBaseRenderer.getDescribedByAnnouncement = function(oControl) {
 		return "";

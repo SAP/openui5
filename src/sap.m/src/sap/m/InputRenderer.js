@@ -132,7 +132,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control.
-	 * @returns {String|undefined}
+	 * @returns {string|undefined}
 	 */
 	InputRenderer.getAriaDescribedBy = function (oControl) {
 
@@ -163,7 +163,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	InputRenderer.getAriaRole = function (oControl) {
 		return "";
