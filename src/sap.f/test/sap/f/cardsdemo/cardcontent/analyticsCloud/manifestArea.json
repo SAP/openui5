@@ -55,7 +55,7 @@
 				"_url": "{{destinations.sacData}}/firefly-service/api/v1/prg/AnalyticCards",
 				"url": "./dataArea.json",
 				"parameters": {
-					"story": "{{parameters.storyId}}",
+					"story": "{parameters>/storyId/value}",
 					"sap-language": "{{parameters.LOCALE}}"
 				},
 				"withCredentials": true
@@ -78,7 +78,7 @@
 				{
 					"type": "Navigation",
 					"parameters": {
-						"url": "{{parameters.url}};storyId={{parameters.storyId}}"
+						"url": "{parameters>/url/value};storyId={parameters>/storyId/value}"
 					}
 				}
 			]

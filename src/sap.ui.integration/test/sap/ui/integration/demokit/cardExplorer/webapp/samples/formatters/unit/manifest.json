@@ -34,7 +34,7 @@
 		},
 		"header": {
 			"title": "Fleet management",
-			"subTitle": "Company vehicles located further than {= format.unit(150, '{{parameters.cardUnitType}}', 'de')} from base are highlighted in red",
+			"subTitle": "Company vehicles located further than {= format.unit(150, ${parameters>/cardUnitType/value}, 'de')} from base are highlighted in red",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -81,7 +81,7 @@
 					"src": "{image}"
 				},
 				"info": {
-					"value": "{= format.unit(${Distance}, '{{parameters.cardUnitType}}')}"}
+					"value": "{= format.unit(${Distance}, ${parameters>/cardUnitType/value})}"}
 			}
 		}
 	}

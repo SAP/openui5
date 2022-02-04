@@ -26,7 +26,7 @@
 				Unlike the manifest parameters the dynamic parameters are not related to the manifest processing
 				and cannot be changed from outside the card.
 				They are accessed by using UI5's binding syntax with a named model "parameters" (e.g.
-				"{parameters>/visibleItems}").
+				"{parameters>/visibleItems/value}").
 			</p>
 
 			<table>
@@ -62,7 +62,7 @@
 		"type": "List",
 		"header": {
 			"title": "Some title",
-			"subTitle": "Number of items: {parameters>/visibleItems}"
+			"subTitle": "Number of items: {parameters>/visibleItems/value}"
 		},
 		...
 	}

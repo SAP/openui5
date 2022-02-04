@@ -50,24 +50,24 @@
 			}
 		},
 		"header": {
-			"title": "Top orders for last {{parameters.periodAge}} years",
-			"subTitle": "Since: {= format.dateTime(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'MMMM d, y'})}",
+			"title": "Top orders for last {parameters>/periodAge/value} years",
+			"subTitle": "Since: {= format.dateTime(dateRange.start('{parameters>/periodInterval/value}', {parameters>/periodAge/value}), {pattern: 'MMMM d, y'})}",
 			"icon": {
 				"src": "sap-icon://compare-2"
 			},
 			"status": {
-				"text": "top {{parameters.maxItems}}"
+				"text": "top {parameters>/maxItems/value}"
 			}
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "{{parameters.northwindServiceUrl}}/Orders",
+					"url": "{parameters>/northwindServiceUrl/value}/Orders",
 					"parameters": {
 						"$format": "json",
-						"$top": "{{parameters.maxItems}}",
+						"$top": "{parameters>/maxItems/value}",
 						"$orderby": "Freight desc",
-						"$filter": "OrderDate ge datetime'{= format.dateTime(dateRange.start('{{parameters.periodInterval}}', '{{parameters.periodAge}}'), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.dateTime(dateRange.end('{{parameters.periodInterval}}', '{{parameters.periodAge}}'), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
+						"$filter": "OrderDate ge datetime'{= format.dateTime(dateRange.start('{parameters>/periodInterval/value}', '{parameters>/periodAge/value}'), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.dateTime(dateRange.end('{parameters>/periodInterval/value}', '{parameters>/periodAge/value}'), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
 					}
 				},
 				"path": "/value/"

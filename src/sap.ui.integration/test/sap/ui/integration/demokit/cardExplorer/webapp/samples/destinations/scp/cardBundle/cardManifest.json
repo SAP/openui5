@@ -26,7 +26,7 @@
 				"url": "{{destinations.Northwind}}/Products",
 				"parameters": {
 					"$format": "json",
-					"$top": "{{parameters.maxItems}}",
+					"$top": "{parameters>/maxItems/value}",
 					"$orderby": "ProductID asc"
 				}
 			}
@@ -49,9 +49,9 @@
 		},
 		"header": {
 			"title": "SAP Cloud Platform Destination",
-			"subTitle": "First {{parameters.maxItems}} products from destination Northwind",
+			"subTitle": "First {parameters>/maxItems/value} products from destination Northwind",
 			"status": {
-				"text": "top {{parameters.maxItems}}"
+				"text": "top {parameters>/maxItems/value}"
 			}
 		},
 		"content": {

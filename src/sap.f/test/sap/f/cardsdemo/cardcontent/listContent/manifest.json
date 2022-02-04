@@ -70,7 +70,7 @@
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
-						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
 					},
 					"highlight": "{state}"
 				}
@@ -110,7 +110,7 @@
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
-						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
 					},
 					"highlight": "{state}"
 				}
@@ -152,7 +152,7 @@
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
-						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
 					},
 					"highlight": "{state}"
 				}
@@ -180,7 +180,7 @@
 			"content": {
 				"data": {
 					"request": {
-						"url": "http://api.apixu.com/v1/current.json?key=4fbdcdb5a8c24190bc3145021191302&q={{parameters.city}}"
+						"url": "http://api.apixu.com/v1/current.json?key=4fbdcdb5a8c24190bc3145021191302&q={parameters>/city/value}"
 					}
 				},
 				"item": {
@@ -232,7 +232,7 @@
 						"value": "{Name}, {{parameters.TODAY_ISO}}"
 					},
 					"description": {
-						"value": "Stationed in: {{parameters.city}}, {{parameters.country}}"
+						"value": "Stationed in: {parameters>/city/value}, {parameters>/country/value}"
 					},
 					"highlight": "{state}"
 				}

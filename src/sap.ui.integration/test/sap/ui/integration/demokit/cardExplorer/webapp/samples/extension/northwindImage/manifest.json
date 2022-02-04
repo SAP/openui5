@@ -41,7 +41,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{destinations.Northwind_V3}}/Employees({{parameters.employeeId}})",
+				"url": "{{destinations.Northwind_V3}}/Employees({parameters>/employeeId/value})",
 				"parameters": {
 					"$format": "json"
 				}

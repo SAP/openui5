@@ -34,7 +34,7 @@
 		},
 		"header": {
 			"title": "Order status",
-			"subTitle": "Orders exceeding {= format.currency(50.00, '{{parameters.cardCurrency}}', {currencyCode:true}, 'de')} are highlighted as important",
+			"subTitle": "Orders exceeding {= format.currency(50.00, '{parameters>/cardCurrency/value}', {currencyCode:true}, 'de')} are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -81,7 +81,7 @@
 					"src": "{image}"
 				},
 				"info": {
-					"value": "{= format.currency(${Price}, '{{parameters.cardCurrency}}', {currencyCode:false})}"
+					"value": "{= format.currency(${Price}, ${parameters>/cardCurrency/value}, {currencyCode:false})}"
 				}
 			}
 		}

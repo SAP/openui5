@@ -20,7 +20,7 @@
 			<p>
 				Parameters are means to provide dynamic values for certain card attributes.
 				The manifest parameters are replaced during manifest processing and
-				can be used with a double bracket syntax like: "<code>{{parameters.city}}</code>".
+				can be used with a double bracket syntax like: "<code>{parameters>/city/value}</code>".
 				Parameters can be used inside "<code>sap.card</code>" scope.
 			</p>
 			<p>
@@ -189,8 +189,8 @@
 		},
 		"type": "List",
 		"header": {
-			"title": "Customers & Suppliers of '{{parameters.companyName}}'",
-			"subTitle": "Situated in {{parameters.city}}.",
+			"title": "Customers & Suppliers of '{parameters>/companyName/value}'",
+			"subTitle": "Situated in {parameters>/city/value}.",
 			"icon": {
 				"src": "sap-icon://customer-briefing"
 			}
@@ -200,7 +200,7 @@
 				"request": {
 					"url": "https://services.odata.org/V2/Northwind/Northwind.svc/Customer_and_Suppliers_by_Cities",
 					"parameters": {
-						"$filter": "{{parameters.city}}",
+						"$filter": "{parameters>/city/value}",
 					}
 				},
 				"path": "/articles"
@@ -232,7 +232,7 @@ oCard.setParameters(oParameters);</pre>
 		"type": "List",
 		"header": {
 			"title": "Some title",
-			"subTitle": "Date: {{parameters.TODAY_ISO}}"
+			"subTitle": "Date: {parameters>/TODAY_ISO/value}"
 		},
 		...
 	}

@@ -46,7 +46,7 @@
 				"url": "{{destinations.northwind}}/Order_Details",
 				"parameters": {
 					"$expand": "Product",
-					"$filter": "OrderID eq {{parameters.OrderID}}"
+					"$filter": "OrderID eq {parameters>/OrderID/value}"
 				}
 			},
 			"path": "/value"

@@ -53,7 +53,7 @@
 		"type": "AdaptiveCard",
 		"header": {
 			"title": "Edit product from Northwind",
-			"subTitle": "ProductID: {{parameters.productId}}"
+			"subTitle": "ProductID: {parameters>/productId/value}"
 		},
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

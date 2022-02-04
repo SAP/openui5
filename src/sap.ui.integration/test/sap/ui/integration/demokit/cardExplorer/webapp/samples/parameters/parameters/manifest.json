@@ -74,8 +74,8 @@
 			}
 		},
 		"header": {
-			"title": "Orders update until {{parameters.to}}",
-			"subTitle": "Situated in {{parameters.country}} with freight limit {{parameters.freightLimit}}",
+			"title": "Orders update until {parameters>/to/value}",
+			"subTitle": "Situated in {parameters>/country/value} with freight limit {parameters>/freightLimit/value}",
 			"icon": {
 				"src": "sap-icon://choropleth-chart"
 			}
@@ -83,10 +83,10 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "{{parameters.northwindServiceUrl}}/Orders",
+					"url": "{parameters>/northwindServiceUrl/value}/Orders",
 					"parameters": {
 						"$format": "json",
-						"$filter": "OrderDate gt {{parameters.fromDate}} and OrderDate lt {{parameters.to}} and ShipCountry eq '{{parameters.country}}'",
+						"$filter": "OrderDate gt {parameters>/fromDate/value} and OrderDate lt {parameters>/to/value} and ShipCountry eq '{parameters>/country/value}'",
 						"$orderby": "CustomerID"
 					}
 				},
@@ -108,13 +108,13 @@
 						"title": "Freight",
 						"value": "{Freight}",
 						"hAlign": "End",
-						"state": "{= ${Freight} < {{parameters.freightLimit}} ? 'Success' : 'Error'}"
+						"state": "{= ${Freight} < ${parameters>/freightLimit/value} ? 'Success' : 'Error'}"
 					}
 				],
 				"actions": [
 					{
 						"type": "Navigation",
-						"enabled": "{{parameters.clickable}}",
+						"enabled": "{parameters>/clickable/value}",
 						"parameters": {
 							"url": "https://sap.com"
 						}

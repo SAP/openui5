@@ -27,9 +27,9 @@
 				"url": "{{destinations.myDestination}}/Products",
 				"parameters": {
 					"$format": "json",
-					"$top": "{{parameters.maxItems}}",
+					"$top": "{parameters>/maxItems/value}",
 					"$orderby": "ProductID asc",
-					"$filter": "SupplierID eq {{parameters.supplierId}} and CategoryID eq {{parameters.categoryId}}"
+					"$filter": "SupplierID eq {parameters>/supplierId/value} and CategoryID eq {parameters>/categoryId/value}"
 				}
 			}
 		},
@@ -57,9 +57,9 @@
 		},
 		"header": {
 			"title": "Host context sample",
-			"subTitle": "Top {{parameters.maxItems}} products for supplier {context>/sample/supplier/title/value} in category {context>/sample/category/title/value}",
+			"subTitle": "Top {parameters>/maxItems/value} products for supplier {context>/sample/supplier/title/value} in category {context>/sample/category/title/value}",
 			"status": {
-				"text": "top {{parameters.maxItems}}"
+				"text": "top {parameters>/maxItems/value}"
 			}
 		},
 		"content": {
