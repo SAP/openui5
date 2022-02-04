@@ -115,5 +115,32 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * Returns the feature set for exporting data in the MDC Table.
+	 *
+	 * @returns {Promise} Export capabilities with specific features
+	 * @protected
+	 */
+	TableDelegate.fetchExportCapabilities = function() {
+		var oExportCapabilities = {
+			"XLSX": {} // default
+		};
+
+		// This is a temporary approach for testing purposes
+		if (new URL(window.location.href).search.indexOf("sap-ui-xx-enablePDFExport=true") > -1) {
+			oExportCapabilities["PDF"] = {
+				DocumentDescriptionReference: "../../../../default/iwbep/common/0001/$metadata",
+				DocumentDescriptionCollection: "MyDocumentDescriptions",
+				ArchiveFormat: true,
+				Signature: true,
+				CoverPage: true,
+				FitToPage: false,
+				ResultSizeDefault: 5000,
+				ResultSizeMaximum: 20000
+			};
+		}
+		return Promise.resolve(oExportCapabilities);
+	};
+
 	return TableDelegate;
 });
