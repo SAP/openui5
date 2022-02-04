@@ -2,50 +2,52 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/ui/core/UIComponent",
+	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/base/Log",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	_omit,
-	UIComponent,
+	Log,
 	JsControlTreeModifier,
-	ChangesController,
+	UIComponent,
 	DescriptorChangeTypes,
+	FlexCustomData,
+	VariantManagementState,
+	FlexState,
 	ManifestUtils,
+	ChangesController,
+	Settings,
+	Condenser,
+	FlexObjectState,
+	Storage,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	FlexCustomData,
-	Condenser,
 	ChangePersistenceFactory,
-	FlexState,
-	FlexObjectState,
-	VariantManagementState,
-	Change,
 	ChangePersistence,
+	Change,
 	Layer,
 	Utils,
 	jQuery,
-	sinon,
-	Log,
-	Settings
+	sinon
 ) {
 	"use strict";
 
@@ -582,14 +584,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.USER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({}));
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo");
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.callCount, 0, "flex/info never called");
+				assert.equal(oGetInfoStub.callCount, 0, "flex/info never called");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 			});
@@ -600,10 +601,9 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.reject({status: 404, text: ""}));
 			var oBaseLogStub = sandbox.stub(Log, "error");
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(Storage, "getFlexInfo").rejects({status: 404, text: ""});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
@@ -620,14 +620,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: false});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.callCount, 1, "flex/info is called once");
+				assert.equal(oGetInfoStub.callCount, 1, "flex/info is called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 			});
@@ -638,14 +637,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: true}));
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextProvided is true by default");
@@ -657,14 +655,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: true}));
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.callCount, 1, "flex/info is called once");
+				assert.equal(oGetInfoStub.callCount, 1, "flex/info is called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
 			});
@@ -675,14 +672,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: true}));
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextProvided is true by default");
@@ -694,14 +690,13 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false}));
 
-			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
 				assert.equal(oResetAndPublishInfo.allContextsProvided, false, "allContextProvided is false");

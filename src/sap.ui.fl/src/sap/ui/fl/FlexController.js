@@ -88,7 +88,7 @@ sap.ui.define([
 		this._oChangePersistence = undefined;
 		this._sComponentName = sComponentName || "";
 		if (this._sComponentName) {
-			this._createChangePersistence();
+			this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName());
 		}
 	};
 
@@ -159,7 +159,7 @@ sap.ui.define([
 
 		var oChange = this.createBaseChange(oChangeSpecificData, oAppComponent);
 
-		return this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier)
+		return ChangeHandlerStorage.getChangeHandler(oChange.getChangeType(), sControlType, oControl, JsControlTreeModifier, oChange.getLayer())
 			.then(function(oChangeHandler) {
 				if (oChangeHandler) {
 					return oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
@@ -515,29 +515,13 @@ sap.ui.define([
 
 		return this._oChangePersistence.getChangesForView(mPropertyBag)
 			.then(Applier.applyAllChangesForXMLView.bind(Applier, mPropertyBag))
-			.catch(this._handlePromiseChainError.bind(this, mPropertyBag.view));
+			.catch(handleXMLApplyError.bind(this, mPropertyBag.view));
 	};
 
-	FlexController.prototype._handlePromiseChainError = function(oView, oError) {
+	function handleXMLApplyError(oView, oError) {
 		Log.error("Error processing view " + oError + ".");
 		return oView;
-	};
-
-	/**
-	 * Retrieves the change handler for the given change and control
-	 *
-	 * @param {sap.ui.fl.Change} oChange - Change instance
-	 * @param {string} sControlType - Mame of the ui5 control type i.e. sap.m.Button
-	 * @param {sap.ui.core.Control} oControl - Control for which to retrieve the change handler
-	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
-	 * @returns {Promise} Change handler or undefined if not found, wrapped in a promise.
-	 * @private
-	 */
-	FlexController.prototype._getChangeHandler = function(oChange, sControlType, oControl, oModifier) {
-		var sChangeType = oChange.getChangeType();
-		var sLayer = oChange.getLayer();
-		return ChangeHandlerStorage.getChangeHandler(sChangeType, sControlType, oControl, oModifier, sLayer);
-	};
+	}
 
 	/**
 	 * Retrieves the changes for the complete UI5 component
@@ -564,17 +548,6 @@ sap.ui.define([
 	 */
 	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oComponent) {
 		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oComponent);
-	};
-
-	/**
-	 * Creates a new instance of sap.ui.fl.Persistence based on the current component and caches the instance in a private member
-	 *
-	 * @returns {sap.ui.fl.Persistence} persistence instance
-	 * @private
-	 */
-	FlexController.prototype._createChangePersistence = function() {
-		this._oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.getComponentName());
-		return this._oChangePersistence;
 	};
 
 	/**
@@ -651,19 +624,5 @@ sap.ui.define([
 		return this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aDirtyChanges);
 	};
 
-	/**
-	 * Send a flex/info request to the backend.
-	 *
-	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the backend
-	 *
-	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
-	 */
-	FlexController.prototype.getResetAndPublishInfo = function(mPropertyBag) {
-		mPropertyBag.reference = this._sComponentName;
-		return this._oChangePersistence.getResetAndPublishInfo(mPropertyBag);
-	};
-
 	return FlexController;
-}, true);
+});

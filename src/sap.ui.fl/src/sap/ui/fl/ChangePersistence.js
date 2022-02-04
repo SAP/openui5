@@ -3,53 +3,55 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
-	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/Change",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Variant",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Component",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/performance/Measurement",
+	"sap/base/util/restricted/_union",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
-	"sap/base/util/restricted/_union",
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/write/_internal/condenser/Condenser"
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/condenser/Condenser",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/Variant",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement"
 ], function(
-	DependencyHandler,
-	StorageUtils,
-	Change,
-	Layer,
-	Variant,
-	Utils,
-	LayerUtils,
-	Cache,
-	Settings,
-	Applier,
-	Storage,
-	JsControlTreeModifier,
-	Component,
-	JSONModel,
-	Measurement,
+	union,
 	includes,
 	merge,
-	union,
 	UriParameters,
 	Log,
+	JsControlTreeModifier,
+	Component,
+	Applier,
+	ChangesUtils,
+	DependencyHandler,
 	VariantManagementState,
 	FlexState,
-	Condenser
+	StorageUtils,
+	Settings,
+	Condenser,
+	Storage,
+	Cache,
+	Change,
+	LayerUtils,
+	Layer,
+	Utils,
+	Variant,
+	JSONModel,
+	Measurement
 ) {
 	"use strict";
 
@@ -58,10 +60,10 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @author SAP SE
-	 * @version 1.37.0-SNAPSHOT
+	 * @version ${version}
 	 * @experimental Since 1.25.0
-	 * @param {object} mComponent Component data to initiate <code>ChangePersistence</code> instance
-	 * @param {string} mComponent.name Name of the component this instance is responsible for
+	 * @param {object} mComponent - Component data to initiate <code>ChangePersistence</code> instance
+	 * @param {string} mComponent.name - Name of the component this instance is responsible for
 	 */
 	var ChangePersistence = function(mComponent) {
 		this._mComponent = mComponent;
@@ -131,19 +133,17 @@ sap.ui.define([
 	 * @param {object} oChangeOrChangeContent Change instance or content of the change
 	 *
 	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
-	 * @public
 	 */
-	ChangePersistence.prototype._preconditionsFulfilled = function(oChangeOrChangeContent) {
+	function preconditionsFulfilled(oChangeOrChangeContent) {
 		var oChangeContent = oChangeOrChangeContent instanceof Change ? oChangeOrChangeContent.getDefinition() : oChangeOrChangeContent;
 
-		function isControlVariantChange() {
-			if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")) {
-				return oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
-			}
+		var bControlVariantChange = false;
+		if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")) {
+			bControlVariantChange = oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
 		}
 
-		return oChangeContent.fileType === "change" || isControlVariantChange();
-	};
+		return oChangeContent.fileType === "change" || bControlVariantChange;
+	}
 
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
@@ -199,7 +199,7 @@ sap.ui.define([
 				if (sCurrentLayer) {
 					aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
 				} else if (LayerUtils.isLayerFilteringRequired(this._oUShellURLParsingService) && bFilterMaxLayer) {
-					fnFilter = this._filterChangeForMaxLayer.bind(this);
+					fnFilter = filterChangeForMaxLayer.bind(this);
 					//If layer filtering required, excludes changes in higher layer than the max layer
 					aChanges = aChanges.filter(fnFilter);
 				} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
@@ -220,21 +220,21 @@ sap.ui.define([
 
 	ChangePersistence.prototype._checkAndGetChangeInstances = function(aChanges, oChangeFileContent) {
 		return aChanges
-			.filter(this._preconditionsFulfilled)
+			.filter(preconditionsFulfilled)
 			.map(getChangeInstance.bind(this, oChangeFileContent));
 	};
 
-	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeOrChangeContent) {
-		if (LayerUtils.isOverMaxLayer(this._getLayerFromChangeOrChangeContent(oChangeOrChangeContent), this._oUShellURLParsingService)) {
+	function filterChangeForMaxLayer(oChangeOrChangeContent) {
+		if (LayerUtils.isOverMaxLayer(getLayerFromChangeOrChangeContent(oChangeOrChangeContent), this._oUShellURLParsingService)) {
 			if (!this._bHasChangesOverMaxLayer) {
 				this._bHasChangesOverMaxLayer = true;
 			}
 			return false;
 		}
 		return true;
-	};
+	}
 
-	ChangePersistence.prototype._getLayerFromChangeOrChangeContent = function(oChangeOrChangeContent) {
+	function getLayerFromChangeOrChangeContent(oChangeOrChangeContent) {
 		var sChangeLayer;
 		if (oChangeOrChangeContent instanceof Variant || oChangeOrChangeContent instanceof Change) {
 			sChangeLayer = oChangeOrChangeContent.getLayer();
@@ -242,7 +242,7 @@ sap.ui.define([
 			sChangeLayer = oChangeOrChangeContent.layer;
 		}
 		return sChangeLayer;
-	};
+	}
 
 	ChangePersistence.prototype._getAllCtrlVariantChanges = function(oChangeFileContent, bIncludeCtrlVariants, fnFilter) {
 		if (!bIncludeCtrlVariants) {
@@ -443,40 +443,6 @@ sap.ui.define([
 		return this._bChangesMapCreated;
 	};
 
-	ChangePersistence.prototype.changesHavingCorrectViewPrefix = function(mPropertyBag, oChange) {
-		var oModifier = mPropertyBag.modifier;
-		var oAppComponent = mPropertyBag.appComponent;
-		var oSelector = oChange.getSelector();
-		if (!oSelector || !mPropertyBag) {
-			return false;
-		}
-		if (oSelector.viewSelector) {
-			var sSelectorViewId = oModifier.getControlIdBySelector(oSelector.viewSelector, oAppComponent);
-			return sSelectorViewId === mPropertyBag.viewId;
-		}
-		var sSelectorId = oSelector.id;
-		if (sSelectorId) {
-			var sViewId;
-			if (oChange.getSelector().idIsLocal) {
-				if (oAppComponent) {
-					sViewId = oAppComponent.getLocalId(mPropertyBag.viewId);
-				}
-			} else {
-				sViewId = mPropertyBag.viewId;
-			}
-			var iIndex = 0;
-			var sSelectorIdViewPrefix;
-			do {
-				iIndex = sSelectorId.indexOf("--", iIndex);
-				sSelectorIdViewPrefix = sSelectorId.slice(0, iIndex);
-				iIndex++;
-			} while (sSelectorIdViewPrefix !== sViewId && iIndex > 0);
-
-			return sSelectorIdViewPrefix === sViewId;
-		}
-		return false;
-	};
-
 	/**
 	 * Gets the changes for the given view id. The complete view prefix has to match.
 	 *
@@ -502,8 +468,8 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.getChangesForView = function(mPropertyBag) {
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
-			return aChanges.filter(this.changesHavingCorrectViewPrefix.bind(this, mPropertyBag));
-		}.bind(this));
+			return aChanges.filter(ChangesUtils.filterChangeByView.bind(undefined, mPropertyBag));
+		});
 	};
 
 	/**
@@ -670,8 +636,8 @@ sap.ui.define([
 		var aAllChanges = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;
 		var aChangesClone = aAllChanges.slice(0);
 		var aDirtyChangesClone = aDirtyChanges.slice(0);
-		var aRequests = this._getRequests(aDirtyChanges);
-		var aStates = this._getStates(aDirtyChanges);
+		var aRequests = getRequests(aDirtyChanges);
+		var aStates = getStates(aDirtyChanges);
 
 		if (aStates.length === 1 && aRequests.length === 1 && aStates[0] === Change.states.NEW) {
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
@@ -697,7 +663,7 @@ sap.ui.define([
 				if (aCondensedChanges.length) {
 					return Storage.write({
 						layer: sLayer,
-						flexObjects: this._prepareDirtyChanges(aCondensedChanges),
+						flexObjects: prepareDirtyChanges(aCondensedChanges),
 						transport: sRequest,
 						isLegacyVariant: false,
 						parentVersion: sParentVersion
@@ -737,33 +703,32 @@ sap.ui.define([
 
 		return aDirtyChanges.reduce(function(oPreviousPromise, oDirtyChange) {
 			return oPreviousPromise
-				.then(this._performSingleSaveAction(oDirtyChange, oFirstNewChange, sParentVersion))
+				.then(performSingleSaveAction.bind(undefined, oDirtyChange, oFirstNewChange, sParentVersion))
 				.then(this._updateCacheAndDirtyState.bind(this, oDirtyChange, bSkipUpdateCache));
 		}.bind(this), Promise.resolve());
 	};
 
-	ChangePersistence.prototype._performSingleSaveAction = function(oDirtyChange, oFirstChange, sParentVersion) {
-		return function() {
-			switch (oDirtyChange.getState()) {
-				case Change.states.NEW:
-					if (sParentVersion !== undefined) {
-						sParentVersion = oDirtyChange === oFirstChange ? sParentVersion : sap.ui.fl.Versions.Draft;
-					}
-					return Storage.write({
-						layer: oDirtyChange.getLayer(),
-						flexObjects: [oDirtyChange.getDefinition()],
-						transport: oDirtyChange.getRequest(),
-						parentVersion: sParentVersion
-					});
-				case Change.states.DELETED:
-					return Storage.remove({
-						flexObject: oDirtyChange.getDefinition(),
-						layer: oDirtyChange.getLayer(),
-						transport: oDirtyChange.getRequest()
-					});
-			}
-		};
-	};
+	function performSingleSaveAction(oDirtyChange, oFirstChange, sParentVersion) {
+		switch (oDirtyChange.getState()) {
+			case Change.states.NEW:
+				if (sParentVersion !== undefined) {
+					sParentVersion = oDirtyChange === oFirstChange ? sParentVersion : sap.ui.fl.Versions.Draft;
+				}
+				return Storage.write({
+					layer: oDirtyChange.getLayer(),
+					flexObjects: [oDirtyChange.getDefinition()],
+					transport: oDirtyChange.getRequest(),
+					parentVersion: sParentVersion
+				});
+			case Change.states.DELETED:
+				return Storage.remove({
+					flexObject: oDirtyChange.getDefinition(),
+					layer: oDirtyChange.getLayer(),
+					transport: oDirtyChange.getRequest()
+				});
+			default:
+		}
+	}
 
 	/**
 	 * Updates the cache with the dirty change passed and removes it from the array of dirty changes if present.
@@ -811,7 +776,7 @@ sap.ui.define([
 		}, this);
 	};
 
-	ChangePersistence.prototype._getRequests = function(aDirtyChanges) {
+	function getRequests(aDirtyChanges) {
 		var aRequests = [];
 
 		aDirtyChanges.forEach(function(oChange) {
@@ -822,9 +787,9 @@ sap.ui.define([
 		});
 
 		return aRequests;
-	};
+	}
 
-	ChangePersistence.prototype._getStates = function(aDirtyChanges) {
+	function getStates(aDirtyChanges) {
 		var aStates = [];
 
 		aDirtyChanges.forEach(function(oChange) {
@@ -835,9 +800,9 @@ sap.ui.define([
 		});
 
 		return aStates;
-	};
+	}
 
-	ChangePersistence.prototype._prepareDirtyChanges = function(aDirtyChanges) {
+	function prepareDirtyChanges(aDirtyChanges) {
 		var aChanges = [];
 
 		aDirtyChanges.forEach(function(oChange) {
@@ -845,7 +810,7 @@ sap.ui.define([
 		});
 
 		return aChanges;
-	};
+	}
 
 	ChangePersistence.prototype.getDirtyChanges = function() {
 		return this._aDirtyChanges;
@@ -1058,19 +1023,6 @@ sap.ui.define([
 			}
 			return aChangesToRevert;
 		}.bind(this));
-	};
-
-	/**
-	 * Send a flex/info request to the backend.
-	 *
-	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the backend
-	 *
-	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
-	 */
-	ChangePersistence.prototype.getResetAndPublishInfo = function(mPropertyBag) {
-		return Storage.getFlexInfo(mPropertyBag);
 	};
 
 	return ChangePersistence;

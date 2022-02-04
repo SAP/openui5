@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
@@ -16,6 +17,7 @@ sap.ui.define([
 	Text,
 	JsControlTreeModifier,
 	Control,
+	UIComponent,
 	FlexCustomData,
 	ChangeUtils,
 	ChangeHandlerRegistration,
@@ -177,6 +179,109 @@ sap.ui.define([
 		QUnit.test("with change neither being applied not already applied", function(assert) {
 			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
 			assert.equal(ChangeUtils.checkIfDependencyIsStillValidSync({}, this.oModifier, {}, ""), true, "the dependency is still valid");
+		});
+	});
+
+	QUnit.module("filterChangeByView", {
+		beforeEach: function() {
+			this.oAppComponent = new UIComponent("app");
+		},
+		afterEach: function() {
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with normal UI Changes", function(assert) {
+			var mPropertyBag = {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oAppComponent,
+				viewId: "app---view1"
+			};
+			var oChange1 = new Change({
+				selector: {
+					id: "view1--controlId",
+					idIsLocal: true
+				}
+			});
+			var oChange2 = new Change({
+				selector: {
+					id: "app---view1--controlId",
+					idIsLocal: false
+				}
+			});
+			var oChange3 = new Change({
+				selector: {
+					id: "app---view1--controlId",
+					idIsLocal: true
+				}
+			});
+			var oChange4 = new Change({
+				selector: {
+					id: "view1--view2--controlId",
+					idIsLocal: true
+				}
+			});
+			var oChange5 = new Change({
+				selector: {
+					id: "view2--controlId",
+					idIsLocal: true
+				}
+			});
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange1), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange2), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange4), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange5), false, "");
+
+			mPropertyBag.viewId = "app---view2";
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange1), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange2), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange4), false, "the changes does not belong to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange5), true, "the change belongs to the view");
+		});
+
+		QUnit.test("without proper selector", function(assert) {
+			var oChange1 = new Change({});
+			assert.strictEqual(ChangeUtils.filterChangeByView({}, oChange1), false, "the changes does not belong to the view");
+
+			oChange1.setSelector({});
+			assert.strictEqual(ChangeUtils.filterChangeByView({}, oChange1), false, "the changes does not belong to the view");
+		});
+
+		QUnit.test("with changes having a viewSelector", function(assert) {
+			var mPropertyBag = {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oAppComponent,
+				viewId: "app---view1"
+			};
+			var oChange1 = new Change({
+				selector: {
+					viewSelector: {
+						id: "view1",
+						idIsLocal: true
+					}
+				}
+			});
+			var oChange2 = new Change({
+				selector: {
+					viewSelector: {
+						id: "app---view1",
+						idIsLocal: false
+					}
+				}
+			});
+			var oChange3 = new Change({
+				selector: {
+					viewSelector: {
+						id: "view2",
+						idIsLocal: true
+					}
+				}
+			});
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange1), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange2), true, "the change belongs to the view");
+			assert.strictEqual(ChangeUtils.filterChangeByView(mPropertyBag, oChange3), false, "the changes does not belong to the view");
 		});
 	});
 
