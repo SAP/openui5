@@ -25,6 +25,7 @@ function (
 				"value": 1,
 				"label": "Number",
 				"isRequired": true,
+				"errorMessage": "Error",
 				"id": "WithValue"
 			},
 			{
@@ -59,6 +60,7 @@ function (
 			var oNumberInput = document.querySelector("#WithValue ui5-step-input");
 			var oLabel = document.querySelector("#WithValue ui5-label");
 			var oNumInputWithoutValue = document.querySelector("#ValueNotSpecified ui5-step-input");
+			var oValueStateMessage = document.querySelector("#WithValue div[slot]");
 
 
 			//Assert
@@ -72,6 +74,8 @@ function (
 			assert.strictEqual(oNumberInput.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
 			assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
 			assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
+			assert.strictEqual(oValueStateMessage.getAttribute("slot"), "valueStateMessage", "valueStateMessage is rendered");
+			assert.strictEqual(oValueStateMessage.innerText, "Error", "valueStateMessage is set correctly");
 
 			done();
 		}.bind(this));

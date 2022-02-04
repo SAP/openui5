@@ -42,7 +42,9 @@ sap.ui.define([
 			oTextArea.value = this.defaultValue || "";
 			oTextArea.maxlength = this.maxLength || null;
 
-			oTextArea.addEventListener("change", function () {
+			InputsOverwrites.createValueStateElement(this, oTextArea);
+
+			oTextArea.addEventListener("input", function () {
 				this.valueChanged();
 			}.bind(this));
 			return oTextArea;
@@ -65,7 +67,10 @@ sap.ui.define([
 		oInput.placeholder = this.placeholder || "";
 		oInput.value = this.defaultValue || "";
 		oInput.maxlength = this.maxLength || null;
-		oInput.addEventListener("change", function () {
+
+		InputsOverwrites.createValueStateElement(this, oInput);
+
+		oInput.addEventListener("input", function () {
 			this.valueChanged();
 		}.bind(this));
 		return oInput;
@@ -73,6 +78,20 @@ sap.ui.define([
 
 	UI5InputText.prototype.updateInputControlAriaLabelledBy = function () {
 		InputsOverwrites.overwriteAriaLabelling(this, "accessible-name-ref");
+	};
+
+	UI5InputText.prototype.showValidationErrorMessage = function () {
+		if (this.renderedInputControlElement) {
+			this.renderedInputControlElement.valueState = "Error";
+		}
+	};
+
+	UI5InputText.prototype.resetValidationFailureCue = function () {
+		AdaptiveCards.TextInput.prototype.resetValidationFailureCue.call(this, arguments);
+
+		if (this.renderedInputControlElement) {
+			this.renderedInputControlElement.valueState = "None";
+		}
 	};
 
 	return UI5InputText;

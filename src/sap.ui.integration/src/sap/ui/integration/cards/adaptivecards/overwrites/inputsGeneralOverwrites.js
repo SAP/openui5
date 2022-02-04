@@ -92,5 +92,22 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates the value state message slot
+	 *
+	 * @param {object} oAdaptiveCardElement The adaptive cards input element
+	 * @param {string} oElement The HTML element on which to set the slot
+	 */
+	InputsOverwrites.createValueStateElement = function(oAdaptiveCardElement, oElement) {
+		if (!oAdaptiveCardElement.errorMessage) {
+			return;
+		}
+
+		var oValueStateMessage = document.createElement("div");
+		oValueStateMessage.setAttribute("slot", "valueStateMessage");
+		oValueStateMessage.innerText = oAdaptiveCardElement.errorMessage;
+		oElement.appendChild(oValueStateMessage);
+	};
+
 	return InputsOverwrites;
 });

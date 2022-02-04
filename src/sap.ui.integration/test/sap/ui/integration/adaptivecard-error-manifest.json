@@ -1,0 +1,165 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "adaptivecard.embedded",
+		"type": "card"
+	},
+	"sap.card": {
+		"configuration": {
+		  "actionHandlers": {
+				"submit": {
+					"url": "./adaptivecard-manifest.json",
+					"method": "POST"
+				}
+		  }
+		},
+		"header": {
+			"title": "Adaptive Card - Error Handling",
+				"subTitle": "sap.ui.integration",
+				"icon": {
+					"src": "sap-icon://sap-ui5"
+				},
+				"status": {
+					"text": "11.12.2019"
+				}
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"type": "AdaptiveCard",
+			"version": "1.3",
+			"body": [
+				{
+					"type": "Input.Text",
+					"label": "Label",
+					"placeholder": "Full Name",
+					"style": "text",
+					"id": "SingleLineVal",
+					"isRequired": true,
+					"errorMessage": "Please enter your name."
+				},
+				{
+					"type": "Input.Text",
+					"label": "Additional Information",
+					"style": "text",
+					"isMultiline": true,
+					"maxLength": 30,
+					"id": "MultiLineVal",
+					"isRequired": true,
+					"errorMessage": "Please add additional information."
+				},
+				{
+					"type": "Input.Text",
+					"id": "textValidationInput",
+					"placeholder": "Format: +555-123-123456",
+					"regex": "^\\+[0-9]{3}\\-[0-9]{3}\\-[0-9]{6}$",
+					"label": "Phone"
+				},
+				{
+					"type": "Input.Number",
+					"label": "Age",
+					"min": 0,
+					"max": 120,
+					"id": "NumVal",
+					"isRequired": true,
+					"errorMessage": "Please add your age."
+				},
+				{
+					"type": "Input.Date",
+					"label": "Due Date",
+					"id": "DateVal",
+					"isRequired": true,
+					"errorMessage": "Please add due date."
+				},
+				{
+					"type": "Input.Time",
+					"label": "Start time",
+					"min": "12:00",
+					"max": "17:00",
+					"id": "TimeVal",
+					"isRequired": true,
+					"errorMessage": "Please add a valid start time."
+				},
+				{
+					"type": "Input.ChoiceSet",
+					"id": "CompactSelectVal",
+					"style": "compact",
+					"label": "Gender",
+					"isRequired": true,
+					"errorMessage": "Error",
+					"choices": [
+						{
+							"title": "Male",
+							"value": "1"
+						},
+						{
+							"title": "Female",
+							"value": "2"
+						},
+						{
+							"title": "Other",
+							"value": "3"
+						}
+					]
+				},
+				{
+					"type": "Input.ChoiceSet",
+					"id": "SingleSelectVal",
+					"style": "expanded",
+					"label": "Are you a student?",
+					"choices": [
+						{
+							"title": "Yes",
+							"value": "1"
+						},
+						{
+							"title": "No",
+							"value": "2"
+						}
+					],
+					"isRequired": true,
+					"errorMessage": "This field is required."
+				},
+				{
+					"type": "Input.ChoiceSet",
+					"id": "MultiSelectVal",
+					"isMultiSelect": true,
+					"wrap": true,
+					"label": "Favourite colors",
+					"choices": [
+						{
+							"title": "Red",
+							"value": "1"
+						},
+						{
+							"title": "Green",
+							"value": "2"
+						},
+						{
+							"title": "Blue",
+							"value": "3"
+						}
+					],
+					"isRequired": true,
+					"errorMessage": "This field is required."
+				},
+				{
+					"type": "Input.Toggle",
+					"title": "I agree to be notified via phone call.",
+					"id": "ValueOffValueOn",
+					"wrap": true,
+					"valueOff": "Falsy value",
+					"valueOn": "Truthy value",
+					"isRequired": true,
+					"errorMessage": "This field is required."
+				}
+			],
+			"actions": [
+				{
+					"type": "Action.Submit",
+					"title": "Confirm"
+				}
+			]
+		}
+	}
+}

@@ -6,6 +6,30 @@ describe('sap.f.AdaptiveCardVisualTests', function() {
 		expect(takeScreenshot()).toLookAs('initial');
 	});
 
+	it('Error handling - empty required field', function() {
+		var submitButton = element(by.css(".ac-pushButton"));
+		var captureCard = function() {
+			browser.executeScript('document.getElementById("SimpleVal").scrollIntoView()').then(function() {
+				expect(takeScreenshot()).toLookAs("error-card");
+			});
+		};
+
+		browser.executeScript("arguments[0].scrollIntoView()", submitButton).then(function() {
+			submitButton.click();
+			captureCard();
+		});
+	});
+
+	it('Error handling - valid input field', function() {
+		var oInput = element(by.css("#SimpleVal"));
+
+		browser.executeScript('document.getElementById("SimpleVal").scrollIntoView()').then(function() {
+			oInput.click();
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot()).toLookAs("valid-card");
+		});
+	});
+
 	it('Another Adaptive Card should be visualized', function() {
 		var showMoreButton = element(by.css(".ac-pushButton.expandable"));
 		var captureCard = function() {

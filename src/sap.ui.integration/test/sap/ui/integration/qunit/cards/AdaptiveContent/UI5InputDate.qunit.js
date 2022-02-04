@@ -21,7 +21,8 @@ function (
 				"type": "Input.Date",
 				"id": "DateVal",
 				"label": "Date",
-				"isRequired": true
+				"isRequired": true,
+				"errorMessage": "Error"
 			},
 			{
 				"type": "Input.Date",
@@ -60,6 +61,8 @@ function (
 			var oDateInput = document.querySelector("#DateVal ui5-date-picker");
 			var oLabel = document.querySelector("#DateVal ui5-label");
 			var oDateInputWithPlaceholder = document.querySelector("#DateInputWithPlaceholder ui5-date-picker");
+			var oValueStateMessage = document.querySelector("#DateVal div[slot]");
+
 
 			//Assert
 			assert.strictEqual(oDateInput.tagName.toLowerCase(), "ui5-date-picker", "ui5-date-picker webcomponent is rendered");
@@ -75,6 +78,8 @@ function (
 			assert.strictEqual(oDateInputWithPlaceholder.minDate, "2017-01-01", "The minimum date available for selection is correct");
 			assert.strictEqual(oDateInputWithPlaceholder.maxDate, "2022-01-01", "The maximum date available for selection is correct");
 			assert.notOk(oDateInputWithPlaceholder.required, "required attribute should not be set");
+			assert.strictEqual(oValueStateMessage.getAttribute("slot"), "valueStateMessage", "valueStateMessage is rendered");
+			assert.strictEqual(oValueStateMessage.innerText, "Error", "valueStateMessage is set correctly");
 
 			done();
 		}.bind(this));

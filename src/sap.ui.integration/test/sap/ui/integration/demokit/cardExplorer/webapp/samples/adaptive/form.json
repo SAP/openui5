@@ -38,6 +38,7 @@
 					"type": "Input.Text",
 					"label": "Your Name",
 					"isRequired": true,
+					"errorMessage": "Please enter a name",
 					"placeholder": "Last, First",
 					"style": "text",
 					"id": "SimpleVal"
@@ -45,6 +46,7 @@
 				{
 					"type": "Input.Text",
 					"label": "Email address",
+					"errorMessage": "Please enter an email",
 					"isRequired": true,
 					"placeholder": "youremail@example.com",
 					"style": "email",
@@ -53,6 +55,7 @@
 				{
 					"type": "Input.Text",
 					"label": "Phone Number",
+					"errorMessage": "Please enter a number",
 					"isRequired": true,
 					"placeholder": "xxx.xxx.xxxx",
 					"style": "tel",
@@ -71,6 +74,7 @@
 					"type": "Input.Date",
 					"label": "Starting Date",
 					"isRequired": true,
+					"errorMessage": "Please enter a date",
 					"placeholder": "Start Date",
 					"id": "DateVal",
 					"value": "2017-09-20"

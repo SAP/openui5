@@ -43,7 +43,9 @@ sap.ui.define([
 		this._numberInputElement.max = this.max;
 		this._numberInputElement.style.width = "13.125rem"; // the default width of the ui5-input web component
 
-		this._numberInputElement.addEventListener("change", function (oEvent) {
+		InputsOverwrites.createValueStateElement(this, this._numberInputElement);
+
+		this._numberInputElement.addEventListener("input", function (oEvent) {
 			this.valueChanged();
 		}.bind(this));
 
@@ -59,6 +61,20 @@ sap.ui.define([
 
 	UI5InputNumber.prototype.updateInputControlAriaLabelledBy = function () {
 		InputsOverwrites.overwriteAriaLabelling(this, "accessible-name-ref");
+	};
+
+	UI5InputNumber.prototype.showValidationErrorMessage = function () {
+		if (this.renderedInputControlElement) {
+			this.renderedInputControlElement.valueState = "Error";
+		}
+	};
+
+	UI5InputNumber.prototype.resetValidationFailureCue = function () {
+		AdaptiveCards.TextInput.prototype.resetValidationFailureCue.call(this, arguments);
+
+		if (this.renderedInputControlElement) {
+			this.renderedInputControlElement.valueState = "None";
+		}
 	};
 
 	return UI5InputNumber;

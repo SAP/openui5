@@ -26,6 +26,7 @@ function (
 				"maxLength": 40,
 				"label": "Text",
 				"isRequired": true,
+				"errorMessage": "Error",
 				"value": "Some text"
 			},
 			{
@@ -83,6 +84,7 @@ function (
 			Core.applyChanges();
 			var oTextInput = document.querySelector("#TextInput ui5-input");
 			var oLabel = document.querySelector("#TextInput ui5-label");
+			var oValueStateMessage = document.querySelector("#TextInput div[slot]");
 
 			//Assert
 			assert.strictEqual(oTextInput.tagName.toLowerCase(), "ui5-input", "ui5-input webcomponent is rendered");
@@ -95,6 +97,8 @@ function (
 			assert.strictEqual(oLabel.textContent, "Text", "Label text is correctly mapped");
 			assert.ok(oTextInput.required, "required attribute is set");
 			assert.strictEqual(oTextInput.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
+			assert.strictEqual(oValueStateMessage.getAttribute("slot"), "valueStateMessage", "valueStateMessage is rendered");
+			assert.strictEqual(oValueStateMessage.innerText, "Error", "valueStateMessage is set correctly");
 
 			done();
 		}.bind(this));

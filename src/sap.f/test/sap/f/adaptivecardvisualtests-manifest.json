@@ -52,10 +52,10 @@
 								{
 									"type": "Input.Text",
 									"separator": true,
-									"placeholder": "Name",
+									"label": "Name",
+									"isRequired": true,
 									"style": "text",
-									"id": "SimpleVal",
-									"value": "Some text"
+									"id": "SimpleVal"
 								},
 								{
 									"type": "TextBlock",
