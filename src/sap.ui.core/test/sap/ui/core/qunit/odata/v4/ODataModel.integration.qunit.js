@@ -37171,7 +37171,7 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oBinding.hasPendingChanges(), true);
 			assert.strictEqual(oBinding.hasPendingChanges(true), false);
-			oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, "666"));
+			oBinding.filter(new Filter("MANAGER_ID", FilterOperator.NE, 666));
 
 			return that.waitForChanges(assert, "filter");
 		}).then(function () {
