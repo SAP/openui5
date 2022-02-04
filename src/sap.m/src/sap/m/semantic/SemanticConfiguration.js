@@ -250,8 +250,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("add"),
-					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD")
+					text: oBundle.getText("SEMANTIC_CONTROL_ADD")
 				};
 			},
 			order: 0,
@@ -263,8 +262,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("favorite"),
-					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FAVORITE")
+					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE")
 				};
 			},
 			order: 1,
@@ -276,8 +274,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("flag"),
-					text: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FLAG")
+					text: oBundle.getText("SEMANTIC_CONTROL_FLAG")
 				};
 			},
 			order: 2,
@@ -304,8 +301,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("sort"),
-					text: oBundle.getText("SEMANTIC_CONTROL_SORT"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT")
+					text: oBundle.getText("SEMANTIC_CONTROL_SORT")
 				};
 			},
 			constraints: "IconOnly"
@@ -336,8 +332,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("filter"),
-					text: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
+					text: oBundle.getText("SEMANTIC_CONTROL_FILTER")
 				};
 			},
 			constraints: "IconOnly"
@@ -368,8 +363,7 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					icon: IconPool.getIconURI("group-2"),
-					text: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP")
+					text: oBundle.getText("SEMANTIC_CONTROL_GROUP")
 				};
 			},
 			constraints: "IconOnly"
@@ -478,7 +472,6 @@ sap.ui.define([
 							return aMessages.length || 0;
 						}
 					},
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
 					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",
