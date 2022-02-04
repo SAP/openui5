@@ -123,7 +123,7 @@ sap.ui.define([
 	 * This includes the flexState entities as well as the <code>sap.ui.fl.ChangePersistence</code>.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Control} mPropertyBag.control - Retrieves the associated flex persistence
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
 	 * @param {boolean} mPropertyBag.invalidateCache - Flag if the cache should be invalidated
 	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant changes should be included
 	 * @param {boolean} mPropertyBag.includeDirtyChanges - Flag if dirty UI changes should be included

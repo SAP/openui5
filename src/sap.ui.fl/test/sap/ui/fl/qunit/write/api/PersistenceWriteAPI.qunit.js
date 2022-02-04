@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
@@ -36,6 +37,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	FlexState,
 	FlexObjectState,
+	VariantManagementState,
 	Change,
 	ChangePersistence,
 	Layer,
@@ -843,6 +845,99 @@ sap.ui.define([
 				.then(function (oMessage) {
 					assert.ok(oMessage.showWarning, "then the warning is shown");
 					assert.strictEqual(oMessage.warningType, "mixedChangesWarning", "then the show mixed change warning type is returned");
+				});
+		});
+	});
+
+	QUnit.module("When calling _getUIChanges() with onlyCurrentVariants = true", {
+		before: function() {
+			var sVMReference1 = "VariantManagementReference1";
+			var sVMReference2 = "VariantManagementReference2";
+			this.aMockChanges = [
+				{
+					getVariantReference: function() {
+						return "Variant1";
+					}
+				},
+				{
+					getVariantReference: function() {
+						return "Variant1";
+					}
+				},
+				{
+					getVariantReference: function() {
+						return "Variant2";
+					}
+				},
+				{
+					getVariantReference: function() {
+						return "";
+					}
+				}
+			];
+			this.getComponent = function(sVariant1, sVariant2) {
+				return {
+					getModel: function() {
+						return {
+							getCurrentVariantReference: function(sVariantManagementReference) {
+								if (sVariantManagementReference === sVMReference1) {
+									return sVariant1;
+								}
+								if (sVariantManagementReference === sVMReference2) {
+									return sVariant2;
+								}
+								return undefined;
+							}
+						};
+					}
+				};
+			};
+			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns([
+				sVMReference1,
+				sVMReference2
+			]);
+			sandbox.stub(FlexObjectState, "getFlexObjects").resolves(this.aMockChanges);
+			sandbox.stub(Utils, "getAppComponentForControl").callsFake(function(oComponent) {
+				return oComponent;
+			});
+		},
+		after: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and there are changes on each currently selected Variant from two Variant Management References + one variant-independent change", function(assert) {
+			var oComponent = this.getComponent("Variant1", "Variant2");
+
+			return PersistenceWriteAPI._getUIChanges({
+				selector: oComponent,
+				onlyCurrentVariants: true
+			})
+				.then(function(aChanges) {
+					assert.strictEqual(aChanges.length, 4, "then all changes are returned");
+				});
+		});
+
+		QUnit.test("and there is one variant-dependent change on a currently not selected Variant", function(assert) {
+			var oComponent = this.getComponent("DumbVariant", "Variant2");
+
+			return PersistenceWriteAPI._getUIChanges({
+				selector: oComponent,
+				onlyCurrentVariants: true
+			})
+				.then(function(aChanges) {
+					assert.strictEqual(aChanges.length, 2, "then only the change from the selected variant + the variant-independent change are returned");
+				});
+		});
+
+		QUnit.test("and there are two variant-dependent changes on currently not selected Variants", function(assert) {
+			var oComponent = this.getComponent("DumbVariant", "AnotherDumbVariant");
+
+			return PersistenceWriteAPI._getUIChanges({
+				selector: oComponent,
+				onlyCurrentVariants: true
+			})
+				.then(function(aChanges) {
+					assert.strictEqual(aChanges.length, 1, "then only the variant-independent change is returned");
 				});
 		});
 	});
