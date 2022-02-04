@@ -269,6 +269,10 @@ sap.ui.define([
 		oOption.destroy();
 	});
 
+	QUnit.test("This month parsing is working correctly" , function(assert) {
+		assert.strictEqual(this.ddr._parseValue("This Month").operator, "THISMONTH","The parsing is correct");
+	});
+
 	QUnit.test("no toDates", function(assert) {
 		var oOption = new CustomDynamicDateOption({ key: "KEY" });
 

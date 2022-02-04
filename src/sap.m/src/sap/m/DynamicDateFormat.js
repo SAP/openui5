@@ -139,6 +139,7 @@ sap.ui.define([
 			oFormat.oLocaleData = LocaleData.getInstance(oLocale);
 			oFormat.oOriginalFormatOptions = deepExtend({}, DynamicDateFormat.oDefaultDynamicDateFormat, oFormatOptions);
 			oFormat._dateFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["date"]);
+			oFormat._dateTimeFormatter = DateFormat.getDateTimeInstance(oFormat.oOriginalFormatOptions["datetime"]);
 			// hack the date formatter not to parse relative
 			// dates like: "next month", "next quarter", "previous week"
 			[oFormat._dateFormatter].concat(oFormat._dateFormatter.aFallbackFormats).forEach(function(f) {
@@ -147,7 +148,12 @@ sap.ui.define([
 				};
 			});
 
-			oFormat._dateTimeFormatter = DateFormat.getDateTimeInstance(oFormat.oOriginalFormatOptions["datetime"]);
+			[oFormat._dateTimeFormatter].concat(oFormat._dateTimeFormatter.aFallbackFormats).forEach(function(f) {
+				f.parseRelative = function() {
+					return null;
+				};
+			});
+
 			oFormat._monthFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["month"]);
 			oFormat._yearFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["year"]);
 			oFormat._numberFormatter = NumberFormat.getInstance(oFormat.oOriginalFormatOptions["int"]);
