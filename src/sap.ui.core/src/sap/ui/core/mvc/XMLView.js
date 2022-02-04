@@ -93,6 +93,14 @@ sap.ui.define([
 	 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
 	 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
 	 *
+	 * <strong>Note:</strong><br>
+	 * The XML view offers special handling for context binding and style classes.
+	 * You can specify them via the <code>binding</code> and <code>class</code> attributes on a control's XML node.
+	 * Please be aware that these attributes are not properties of the respective controls and thus
+	 * are not supported by a control's constructor.
+	 * For more information, see {@link topic:91f05e8b6f4d1014b6dd926db0e91070 Context Binding (Element Binding)}
+	 * and {@link topic:b564935324f449209354c7e2f9903f22 Using CSS Style Sheets in XML Views}.
+	 *
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
 	 *
