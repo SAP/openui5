@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/m/plugins/ColumnResizer',
 	'sap/m/Table',
 	'sap/m/Column',
+	'sap/m/table/columnmenu/Menu',
 	'sap/m/ColumnListItem',
 	'sap/m/Text'
 ], function(
@@ -22,6 +23,7 @@ sap.ui.define([
 	ColumnResizer,
 	Table,
 	Column,
+	Menu,
 	ColumnListItem,
 	Text
 ) {
@@ -658,6 +660,32 @@ sap.ui.define([
 
 		oResizerButton.firePress(oColumn);
 
+		assert.ok(fnStartResizingSpy.calledOnce, "startResizing called once");
+		assert.ok(fnStartResizingSpy.calledWith(oColumn.getDomRef()), "startResizing called with correct args");
+
+		oMatchMediaStub.restore();
+	});
+
+	QUnit.test("getColumnResizeQuickAction", function(assert) {
+		var oColumn = this.oTable.getColumns()[0],
+			oColumnMenu = new Menu(),
+			fnMenuCloseSpy = sinon.spy(oColumnMenu, "close"),
+			fnStartResizingSpy = sinon.spy(this.oColumnResizer, "startResizing");
+
+		var oMatchMediaStub = sinon.stub(window, "matchMedia");
+		oMatchMediaStub.withArgs("(hover:none)").returns({
+			matches: true
+		});
+
+		var oResizerQuickAction = this.oColumnResizer.getColumnResizeQuickAction(oColumn, oColumnMenu);
+		assert.ok(oResizerQuickAction.isA("sap.m.table.columnmenu.QuickAction"), "sap.m.table.columnmenu.QuickAction instance returned");
+		assert.strictEqual(oResizerQuickAction.getLabel(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMN_MENU_RESIZE"), "correct label set");
+		assert.strictEqual(oResizerQuickAction.getContent().getIcon(), "sap-icon://resize-horizontal", "correct icon set");
+		assert.ok(oResizerQuickAction.getContent().hasListeners("press"), "press event registered");
+
+		oResizerQuickAction.getContent().firePress(oColumn);
+
+		assert.ok(fnMenuCloseSpy.calledOnce, "menu close called once");
 		assert.ok(fnStartResizingSpy.calledOnce, "startResizing called once");
 		assert.ok(fnStartResizingSpy.calledWith(oColumn.getDomRef()), "startResizing called with correct args");
 

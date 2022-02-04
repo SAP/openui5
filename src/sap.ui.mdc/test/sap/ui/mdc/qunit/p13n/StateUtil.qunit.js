@@ -700,70 +700,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Create different group changes via 'applyExternalState'", function(assert){
-
-		var done = assert.async();
-
-		var oState = {
-			groupLevels: [
-				{
-					name: "String"
-				}
-			]
-		};
-
-		//add new grouping
-		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
-			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
-
-			assert.equal(aChanges[0].getChangeType(), "addGroup", "Correct change type created");
-			assert.deepEqual(this.oTable.getGroupConditions().groupLevels, oState.groupLevels, "Correct groupLevels object created");
-
-			oState.groupLevels[0].grouped = false;
-
-			//remove grouping
-			StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
-				assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
-
-				assert.equal(aChanges[0].getChangeType(), "removeGroup", "Correct change type created");
-				assert.deepEqual(this.oTable.getGroupConditions().groupLevels, [], "Correct groupLevels object created");
-
-				done();
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("Create different aggregate changes via 'applyExternalState'", function(assert){
-
-		var done = assert.async();
-
-		var oState = {
-			aggregations: {
-				String : {}
-			}
-		};
-
-		//add new grouping
-		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
-			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
-
-			assert.equal(aChanges[0].getChangeType(), "addAggregate", "Correct change type created");
-			assert.deepEqual(this.oTable.getAggregateConditions(), oState.aggregations, "Correct aggregation object created");
-
-			oState.aggregations["String"].aggregated = false;
-
-			//remove grouping
-			StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
-				assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
-
-				assert.equal(aChanges[0].getChangeType(), "removeAggregate", "Correct change type created");
-				assert.deepEqual(this.oTable.getAggregateConditions(), {}, "Correct aggregations object created");
-
-				done();
-			}.bind(this));
-		}.bind(this));
-	});
-
 	QUnit.test("Create different width/supplementaryConfig changes via 'applyExternalState'", function(assert){
 
 		var done = assert.async();
@@ -883,6 +819,106 @@ sap.ui.define([
 		}.bind(this));
 
 	});
+
+	QUnit.module("API tests for Table with V4 Analytics", {
+		before: function(){
+			TableDelegate.fetchProperties = fetchProperties;
+			TableDelegate.addItem = function(sPropertyName) {
+				return Promise.resolve(new Column({dataProperty: sPropertyName}));
+			};
+			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate" ' +
+				'delegate="{name: \'sap/ui/mdc/odata/v4/TableDelegate\', payload: {}}"></mdc:Table></mvc:View>';
+
+			return createAppEnvironment(sTableView, "V4AnalyticsTable").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+			}.bind(this));
+		},
+		beforeEach: function(){
+			this.oTable = this.oView.byId('mdcTable');
+			this.oTable.removeAllColumns();
+
+			return this.oTable.retrieveInbuiltFilter().then(function(){
+				sinon.stub(this.oTable.getInbuiltFilter(), "_toInternal").callsFake(function(oProperty, oXCondition) {
+					return oXCondition;
+				});
+			}.bind(this));
+		},
+		afterEach: function(){
+			this.oTable.getInbuiltFilter()._toInternal.restore();
+			this.oTable.setSortConditions(undefined);
+		},
+		after: function(){
+			this.oUiComponentContainer = null;
+			this.oTable.destroy();
+			this.oView = null;
+		}
+	});
+
+	QUnit.test("Create different group changes via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			groupLevels: [
+				{
+					name: "String"
+				}
+			]
+		};
+
+		//add new grouping
+		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+			assert.equal(aChanges[0].getChangeType(), "addGroup", "Correct change type created");
+			assert.deepEqual(this.oTable.getGroupConditions().groupLevels, oState.groupLevels, "Correct groupLevels object created");
+
+			oState.groupLevels[0].grouped = false;
+
+			//remove grouping
+			StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+				assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+				assert.equal(aChanges[0].getChangeType(), "removeGroup", "Correct change type created");
+				assert.deepEqual(this.oTable.getGroupConditions().groupLevels, [], "Correct groupLevels object created");
+
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Create different aggregate changes via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			aggregations: {
+				String : {}
+			}
+		};
+
+		//add new grouping
+		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+			assert.equal(aChanges[0].getChangeType(), "addAggregate", "Correct change type created");
+			assert.deepEqual(this.oTable.getAggregateConditions(), oState.aggregations, "Correct aggregation object created");
+
+			oState.aggregations["String"].aggregated = false;
+
+			//remove grouping
+			StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+				assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+				assert.equal(aChanges[0].getChangeType(), "removeAggregate", "Correct change type created");
+				assert.deepEqual(this.oTable.getAggregateConditions(), {}, "Correct aggregations object created");
+
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
 	/* TO-Do: Check whether this is still needed with new MDC Chart
 	var _retrieveChartMetaData = function () {
 		return Promise.resolve({

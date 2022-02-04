@@ -63,5 +63,9 @@ sap.ui.define([
 		}
 	};
 
+	TestTableDelegate.getSupportedP13nModes = function() {
+		return ["Sort", "Filter", "Column", "Group"];
+	};
+
 	return TestTableDelegate;
 });

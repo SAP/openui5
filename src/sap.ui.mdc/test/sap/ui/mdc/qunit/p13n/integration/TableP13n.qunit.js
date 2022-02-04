@@ -187,37 +187,39 @@ sap.ui.define([
 	QUnit.test("handleP13n callback execution",function(assert){
 		var done = assert.async();
 
-		//first we need to open the settings dialog to ensure that all models have been prepared
-		Engine.getInstance().uimanager.show(this.oTable, "Column").then(function(oP13nControl){
+		this.oTable.initialized().then(function(){
+			//first we need to open the settings dialog to ensure that all models have been prepared
+			Engine.getInstance().uimanager.show(this.oTable, "Column").then(function(oP13nControl){
 
-			//trigger event handler manually --> usually triggered by user interaction
-			//user interaction manipulates the inner model of the panel,
-			//to mock user interaction we directly act the change on the p13n panel model
-			var oColumnController = Engine.getInstance().getController(this.oTable, "Column");
-			var aItems = oColumnController.getP13nData();
-			aItems.pop();
-			sinon.stub(oColumnController, "getP13nData").returns(aItems);
+				//trigger event handler manually --> usually triggered by user interaction
+				//user interaction manipulates the inner model of the panel,
+				//to mock user interaction we directly act the change on the p13n panel model
+				var oColumnController = Engine.getInstance().getController(this.oTable, "Column");
+				var aItems = oColumnController.getP13nData();
+				aItems.pop();
+				sinon.stub(oColumnController, "getP13nData").returns(aItems);
 
-			var oModificationHandler = TestModificationHandler.getInstance();
-			oModificationHandler.processChanges = function(aChanges){
-				assert.ok(aChanges,"event has been executed");
-				assert.equal(aChanges.length, 1, "correct amounf oc changes has been created");
+				var oModificationHandler = TestModificationHandler.getInstance();
+				oModificationHandler.processChanges = function(aChanges){
+					assert.ok(aChanges,"event has been executed");
+					assert.equal(aChanges.length, 1, "correct amounf oc changes has been created");
 
-				//check that only required information is present in the change content
-				var oChangeContent = aChanges[0].changeSpecificData.content;
-				assert.ok(oChangeContent.name);
-				assert.ok(!oChangeContent.hasOwnProperty("descending"));
-				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
-				assert.equal(oChangeContent.name, oPropertyHelper.getProperties()[1].name,
-					"The stored key should be equal to the 'name' in property info (NOT PATH!)");
-				Engine.getInstance()._setModificationHandler(this.oTable, FlexModificationHandler.getInstance());
-				done();
-				oColumnController.getP13nData.restore();
-			}.bind(this);
-			Engine.getInstance()._setModificationHandler(this.oTable, oModificationHandler);
+					//check that only required information is present in the change content
+					var oChangeContent = aChanges[0].changeSpecificData.content;
+					assert.ok(oChangeContent.name);
+					assert.ok(!oChangeContent.hasOwnProperty("descending"));
+					var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+					assert.equal(oChangeContent.name, oPropertyHelper.getProperties()[1].name,
+						"The stored key should be equal to the 'name' in property info (NOT PATH!)");
+					Engine.getInstance()._setModificationHandler(this.oTable, FlexModificationHandler.getInstance());
+					done();
+					oColumnController.getP13nData.restore();
+				}.bind(this);
+				Engine.getInstance()._setModificationHandler(this.oTable, oModificationHandler);
 
-			Engine.getInstance().handleP13n(this.oTable, ["Column"]);
+				Engine.getInstance().handleP13n(this.oTable, ["Column"]);
 
+			}.bind(this));
 		}.bind(this));
 
 	});
@@ -226,22 +228,24 @@ sap.ui.define([
 		var done = assert.async();
 		var oBtn = new Button();
 
-		Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
 
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
-			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
+				//check container
+				assert.ok(oP13nControl, "Container has been created");
+				assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
+				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
-			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+				//check inner panel
+				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
+				assert.ok(oInnerTable, "Inner Table has been created");
+				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 
-			//we have to remove one from '_getAvailableItems' as it also contains the empty selector ($none)
-			assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length - 1, oPropertyHelper.getProperties().length, "correct amount of items has been set");
-			done();
+				//we have to remove one from '_getAvailableItems' as it also contains the empty selector ($none)
+				assert.equal(oP13nControl.getContent()[0]._getAvailableItems().length - 1, oPropertyHelper.getProperties().length, "correct amount of items has been set");
+				done();
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -268,21 +272,23 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().uimanager.show(this.oTable, "Sort", oBtn).then(function(oP13nControl){
 
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
+				//check container
+				assert.ok(oP13nControl, "Container has been created");
+				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
+				//check inner panel
+				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SortPanel"), "Correct panel created");
+				assert.ok(oInnerTable, "Inner Table has been created");
 
-			//-1 non sortable property
-			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
-			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
-			done();
+				//-1 non sortable property
+				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+				assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
+				done();
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -311,21 +317,23 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		Engine.getInstance().uimanager.show(this.oTable, "Column", oBtn).then(function(oP13nControl){
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().uimanager.show(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
+				//check container
+				assert.ok(oP13nControl, "Container has been created");
+				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
+				//check inner panel
+				var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+				assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
+				assert.ok(oInnerTable, "Inner Table has been created");
 
-			//-1 non visible property
-			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
-			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
-			done();
+				//-1 non visible property
+				var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+				assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
+				done();
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -355,25 +363,26 @@ sap.ui.define([
 			{name:"col2", descending: true}
 		];
 
-		Engine.getInstance().createChanges({
-			control: this.oTable,
-			key: "Sort",
-			state: aP13nData,
-			suppressAppliance: true
-		}).then(function(aChanges){
-			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 1, "one change created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "addSort", "once sort change created");
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().createChanges({
+				control: this.oTable,
+				key: "Sort",
+				state: aP13nData,
+				suppressAppliance: true
+			}).then(function(aChanges){
+				assert.ok(aChanges, "changes created");
+				assert.equal(aChanges.length, 1, "one change created");
+				assert.equal(aChanges[0].changeSpecificData.changeType, "addSort", "once sort change created");
 
-			//Sort changes should only store 'name' and 'descending' and 'index'
-			assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 3, "Only name, index + descending persisted");
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("descending"), "Correct attribute persisted");
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
+				//Sort changes should only store 'name' and 'descending' and 'index'
+				assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 3, "Only name, index + descending persisted");
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("descending"), "Correct attribute persisted");
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
 
-			done();
-		});
-
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (create new columns)", function(assert){
@@ -384,23 +393,25 @@ sap.ui.define([
 			{name:"col4", position: 3}
 		];
 
-		Engine.getInstance().createChanges({
-			control: this.oTable,
-			key: "Column",
-			state: aP13nData,
-			suppressAppliance: true
-		}).then(function(aChanges){
-			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 2, "one change created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "addColumn", "once column change created");
-			assert.equal(aChanges[1].changeSpecificData.changeType, "addColumn", "once column change created");
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().createChanges({
+				control: this.oTable,
+				key: "Column",
+				state: aP13nData,
+				suppressAppliance: true
+			}).then(function(aChanges){
+				assert.ok(aChanges, "changes created");
+				assert.equal(aChanges.length, 2, "one change created");
+				assert.equal(aChanges[0].changeSpecificData.changeType, "addColumn", "once column change created");
+				assert.equal(aChanges[1].changeSpecificData.changeType, "addColumn", "once column change created");
 
-			//addColumn changes should only store 'name' and 'index'
-			assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 2, "Only name + index persisted");
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
-			done();
-		});
+				//addColumn changes should only store 'name' and 'index'
+				assert.equal(Object.keys(aChanges[0].changeSpecificData.content).length, 2, "Only name + index persisted");
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (remove non present column from calculation)", function(assert){
@@ -411,17 +422,19 @@ sap.ui.define([
 			{name:"col4", visible: false}// column is not present, so no change should be created
 		];
 
-		Engine.getInstance().createChanges({
-			control: this.oTable,
-			key: "Column",
-			state: aP13nData,
-			suppressAppliance: true
-		}).then(function(aChanges){
-			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 1, "one change created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "addColumn", "once column change created");
-			done();
-		});
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().createChanges({
+				control: this.oTable,
+				key: "Column",
+				state: aP13nData,
+				suppressAppliance: true
+			}).then(function(aChanges){
+				assert.ok(aChanges, "changes created");
+				assert.equal(aChanges.length, 1, "one change created");
+				assert.equal(aChanges[0].changeSpecificData.changeType, "addColumn", "once column change created");
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (remove existing column)", function(assert){
@@ -431,20 +444,22 @@ sap.ui.define([
 			{name:"col1", visible: false}
 		];
 
-		Engine.getInstance().createChanges({
-			control: this.oTable,
-			key: "Column",
-			state: aP13nData,
-			suppressAppliance: true
-		}).then(function(aChanges){
-			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 1, "one change created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "removeColumn", "once column change created");
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().createChanges({
+				control: this.oTable,
+				key: "Column",
+				state: aP13nData,
+				suppressAppliance: true
+			}).then(function(aChanges){
+				assert.ok(aChanges, "changes created");
+				assert.equal(aChanges.length, 1, "one change created");
+				assert.equal(aChanges[0].changeSpecificData.changeType, "removeColumn", "once column change created");
 
-			//removeColumn changes should only store 'name'
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-			done();
-		});
+				//removeColumn changes should only store 'name'
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+				done();
+			});
+		}.bind(this));
 	});
 
 	QUnit.test("use 'createChanges' to create changes without UI panel (move existing column)", function(assert){
@@ -454,21 +469,23 @@ sap.ui.define([
 			{name:"col1", position: 1}//position changed
 		];
 
-		Engine.getInstance().createChanges({
-			control: this.oTable,
-			key: "Column",
-			state: aP13nData,
-			suppressAppliance: true
-		}).then(function(aChanges){
-			assert.ok(aChanges, "changes created");
-			assert.equal(aChanges.length, 1, "one change created");
-			assert.equal(aChanges[0].changeSpecificData.changeType, "moveColumn", "once column change created");
+		this.oTable.initialized().then(function(){
+			Engine.getInstance().createChanges({
+				control: this.oTable,
+				key: "Column",
+				state: aP13nData,
+				suppressAppliance: true
+			}).then(function(aChanges){
+				assert.ok(aChanges, "changes created");
+				assert.equal(aChanges.length, 1, "one change created");
+				assert.equal(aChanges[0].changeSpecificData.changeType, "moveColumn", "once column change created");
 
-			//moveColumn changes should only store 'name' and 'index'
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
-			assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
-			done();
-		});
+				//moveColumn changes should only store 'name' and 'index'
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("name"), "Correct attribute persisted");
+				assert.ok(aChanges[0].changeSpecificData.content.hasOwnProperty("index"), "Correct attribute persisted");
+				done();
+			});
+		}.bind(this));
 	});
 
 });

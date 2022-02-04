@@ -140,6 +140,15 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				},
 				module: "./table/CreationRow.qunit"
 			},
+			"Menu": {
+				group: "Table",
+				coverage: {
+					only: "[sap/ui/mdc]",
+					never: "[sap/ui/mdc/qunit]",
+					branchTracking: true
+				},
+				module: "./table/Menu.qunit"
+			},
 			"TableFlex": {
 				group: "Table",
 				coverage: {

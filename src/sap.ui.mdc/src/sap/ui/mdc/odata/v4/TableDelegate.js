@@ -32,6 +32,7 @@ sap.ui.define([
 	/*global Set */
 
 	var TableType = library.TableType;
+	var P13nMode = library.TableP13nMode;
 	var TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
 
 	/**
@@ -293,6 +294,16 @@ sap.ui.define([
 		}
 
 		return aItems;
+	};
+
+	Delegate.getSupportedP13nModes = function(oTable) {
+		var aSupportedModes = TableDelegate.getSupportedP13nModes(oTable);
+
+		if (oTable._getStringType() === TableType.Table) {
+			aSupportedModes = aSupportedModes.concat([P13nMode.Group, P13nMode.Aggregate]);
+		}
+
+		return aSupportedModes;
 	};
 
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {

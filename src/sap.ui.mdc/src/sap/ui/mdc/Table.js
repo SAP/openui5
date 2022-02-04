@@ -14,8 +14,11 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/m/ColumnHeaderPopover",
+	"sap/m/ColumnPopoverSelectListItem",
+	"sap/m/ColumnPopoverActionItem",
 	"sap/m/OverflowToolbar",
 	"sap/m/library",
+	"sap/m/table/columnmenu/Menu",
 	"sap/ui/core/Core",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/dnd/DragDropInfo",
@@ -28,6 +31,7 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
 	"sap/base/util/Deferred",
+	"sap/base/util/UriParameters",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/mdc/p13n/subcontroller/ColumnController",
@@ -35,13 +39,13 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
 	"sap/ui/mdc/p13n/subcontroller/GroupController",
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
-	"sap/m/ColumnPopoverSelectListItem",
-	"sap/m/ColumnPopoverActionItem",
 	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/base/ManagedObjectMetadata",
-	"sap/ui/mdc/table/RowSettings"
+	"sap/ui/mdc/table/RowSettings",
+	"sap/ui/mdc/table/menu/QuickActionContainer",
+	"sap/ui/mdc/table/menu/ItemContainer",
+	"sap/ui/base/ManagedObjectMetadata"
 ], function(
 	Control,
 	ActionToolbar,
@@ -54,8 +58,11 @@ sap.ui.define([
 	Text,
 	Title,
 	ColumnHeaderPopover,
+	ColumnPopoverSelectListItem,
+	ColumnPopoverActionItem,
 	OverflowToolbar,
 	MLibrary,
+	ColumnMenu,
 	Core,
 	NumberFormat,
 	DragDropInfo,
@@ -68,6 +75,7 @@ sap.ui.define([
 	capitalize,
 	deepEqual,
 	Deferred,
+	UriParameters,
 	InvisibleMessage,
 	InvisibleText,
 	ColumnController,
@@ -75,23 +83,25 @@ sap.ui.define([
 	FilterController,
 	GroupController,
 	AggregateController,
-	ColumnPopoverSelectListItem,
-	ColumnPopoverActionItem,
 	ColumnWidthController,
 	ActionToolbarAction,
 	RowActionItem,
-	ManagedObjectMetadata,
-	RowSettings
+	RowSettings,
+	QuickActionContainer,
+	ItemContainer,
+	ManagedObjectMetadata
 ) {
 	"use strict";
 
 	var SelectionMode = library.SelectionMode;
 	var TableType = library.TableType;
 	var RowAction = library.RowAction;
+	var P13nMode = library.TableP13nMode;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
 	var ToolbarStyle = MLibrary.ToolbarStyle;
 	var MultiSelectMode = library.MultiSelectMode;
 	var TitleLevel = coreLibrary.TitleLevel;
+	var SortOrder = coreLibrary.SortOrder;
 	var internalMap = new window.WeakMap();
 	var internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -587,6 +597,7 @@ sap.ui.define([
 		constructor: function() {
 			this._oTableReady = new Deferred();
 			this._oFullInitialize = new Deferred();
+			this._bUseColumnMenu = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-columnmenu") === "true";
 
 			Control.apply(this, arguments);
 			this.bCreated = true;
@@ -1014,9 +1025,8 @@ sap.ui.define([
 	Table.prototype.setP13nMode = function(aMode) {
 		var aOldP13nMode = this.getP13nMode();
 
-		var aSortedKeys = null;
+		var aSortedKeys = [];
 		if (aMode && aMode.length > 1){
-			aSortedKeys = [];
 			var mKeys = aMode.reduce(function(mMap, sKey, iIndex){
 				mMap[sKey] = true;
 				return mMap;
@@ -1067,9 +1077,14 @@ sap.ui.define([
 			ColumnWidth: ColumnWidthController
 		};
 
+		if (this._aSupportedP13nModes) {
+			aMode = aMode.filter(function(sMode) {
+				return this._aSupportedP13nModes.includes(sMode);
+			}.bind(this));
+		}
+
 		aMode.forEach(function(sMode){
-			var sKey = sMode;
-			oRegisterConfig.controller[sKey] = mRegistryOptions[sMode];
+			oRegisterConfig.controller[sMode] = mRegistryOptions[sMode];
 		});
 
 		if (this.getEnableColumnResize()) {
@@ -1326,6 +1341,7 @@ sap.ui.define([
 			oType.loadTableModules()
 		];
 
+		this._aSupportedP13nModes = ["Sort", "Filter", "Column", "Group", "Aggregate"];
 		if (this.isFilteringEnabled()) {
 			aInitPromises.push(this.retrieveInbuiltFilter());
 		}
@@ -1338,6 +1354,9 @@ sap.ui.define([
 			}
 
 			var oDelegate = this.getControlDelegate();
+			this._aSupportedP13nModes = oDelegate.getSupportedP13nModes(this);
+			this._updateAdaptation(this.getP13nMode());
+
 			if (oDelegate.preInit) {
 				// Call after libraries are loaded, but before initializing controls.
 				// This allows the delegate to load additional modules, e.g. from previously loaded libraries, in parallel.
@@ -1595,7 +1614,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether filter personalization is enabled
 	 */
 	Table.prototype.isFilteringEnabled = function() {
-		return this.getP13nMode().indexOf("Filter") > -1;
+		return this.getP13nMode().includes(P13nMode.Filter) && this.getSupportedP13nModes().includes(P13nMode.Filter);
 	};
 
 	/**
@@ -1605,7 +1624,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether sort personalization is enabled
 	 */
 	Table.prototype.isSortingEnabled = function() {
-		return this.getP13nMode().indexOf("Sort") > -1;
+		return this.getP13nMode().includes(P13nMode.Sort) && this.getSupportedP13nModes().includes(P13nMode.Sort);
 	};
 
 	/**
@@ -1615,7 +1634,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether group personalization is enabled
 	 */
 	Table.prototype.isGroupingEnabled = function () {
-		return this.getP13nMode().indexOf("Group") > -1;
+		return this.getP13nMode().includes(P13nMode.Group) && this.getSupportedP13nModes().includes(P13nMode.Group);
 	};
 
 	/**
@@ -1625,7 +1644,11 @@ sap.ui.define([
 	 * @returns {boolean} Whether aggregation personalization is enabled
 	 */
 	Table.prototype.isAggregationEnabled = function () {
-		return this.getP13nMode().indexOf("Aggregate") > -1;
+		return this.getP13nMode().includes(P13nMode.Aggregate) && this.getSupportedP13nModes().includes(P13nMode.Aggregate);
+	};
+
+	Table.prototype.getSupportedP13nModes = function() {
+		return this._aSupportedP13nModes || [];
 	};
 
 	Table.prototype._getP13nButtons = function() {
@@ -2038,82 +2061,106 @@ sap.ui.define([
 
 		var oParent = oColumn.getParent(),
 			iIndex = oParent.indexOfColumn(oColumn),
-			oMDCColumn = this.getColumns()[iIndex],
-			bResizeButton = this._bMobileTable && this.getEnableColumnResize();
+			oMDCColumn = this.getColumns()[iIndex];
 
 		this._fullyInitialized().then(function() {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-			var oProperty = this.getPropertyHelper().getProperty(oMDCColumn.getDataProperty());
+			if (this._bUseColumnMenu) {
+				if (!this._oColumnHeaderMenu) {
+					this._oQuickActionContainer = new QuickActionContainer({table: this});
+					this._oItemContainer = new ItemContainer({table: this});
+					this._oColumnHeaderMenu = new ColumnMenu({
+						_quickActions: [this._oQuickActionContainer],
+						_items: [this._oItemContainer]
+					});
+					oColumn.addDependent(this._oColumnHeaderMenu);
+				}
 
-			if (this._oPopover) {
-				this._oPopover.destroy();
-				this._oPopover = null;
-			}
+				Promise.all([
+					this._oQuickActionContainer.initializeQuickActions(oMDCColumn),
+					this._oItemContainer.initializeItems()
+				]).then(function() {
+					if (this._oQuickActionContainer.hasQuickActions() || this._oItemContainer.hasItems()) {
+						if (this._oColumnHeaderMenu._oItemsContainer) {
+							this._oColumnHeaderMenu._oItemsContainer.destroy();
+							this._oColumnHeaderMenu._oItemsContainer = null;
+						}
+						this._oColumnHeaderMenu.openBy(oColumn);
+					}
+				}.bind(this));
+			} else {
+				var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc"),
+					bResizeButton = this._bMobileTable && this.getEnableColumnResize();
 
-			if (this.isSortingEnabled() && oProperty) {
-				var aAscendItems = [];
-				var aDescendItems = [];
+				if (this._oPopover) {
+					this._oPopover.destroy();
+					this._oPopover = null;
+				}
+				if (this.isSortingEnabled()) {
+					var aAscendItems = [] , aDescendItems = [];
+					var aSortableProperties = this.getPropertyHelper().getProperty(oMDCColumn.getDataProperty()).getSortableProperties();
+					aSortableProperties.forEach(function(oProperty) {
+						aAscendItems.push(new Item({
+							text: oProperty.label,
+							key: oProperty.name
+						}));
+						aDescendItems.push(new Item({
+							text: oProperty.label,
+							key: oProperty.name
+						}));
+					});
 
-				oProperty.getSortableProperties().forEach(function(oProperty) {
-					aAscendItems.push(new Item({
-						text: oProperty.label,
-						key: oProperty.name
-					}));
-					aDescendItems.push(new Item({
+					// create ColumnHeaderPopover
+					if (aAscendItems.length > 0) {
+						this._oPopover = new ColumnHeaderPopover({
+							items: [
+								new ColumnPopoverSelectListItem({
+									items: aAscendItems,
+									label: oResourceBundle.getText("table.SETTINGS_ASCENDING"),
+									icon: "sap-icon://sort-ascending",
+									action: [SortOrder.Ascending, this._onCustomSort, this]
+								}),
+								new ColumnPopoverSelectListItem({
+									items: aDescendItems,
+									label: oResourceBundle.getText("table.SETTINGS_DESCENDING"),
+									icon: "sap-icon://sort-descending",
+									action: [SortOrder.Descending, this._onCustomSort, this]
+								})
+							]
+						});
+						oColumn.addDependent(this._oPopover);
+					}
+				}
+
+				var aFilterable = [];
+				var oDelegate = this.getControlDelegate();
+				var aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
+
+				this.getPropertyHelper().getFilterableProperties(oMDCColumn.getDataProperty()).forEach(function(oProperty) {
+					aFilterable.push(new Item({
 						text: oProperty.label,
 						key: oProperty.name
 					}));
 				});
 
-				// create ColumnHeaderPopover
-				if (aAscendItems.length > 0) {
-					this._oPopover = new ColumnHeaderPopover({
-						items: [
-							new ColumnPopoverSelectListItem({
-								items: aAscendItems,
-								label: oResourceBundle.getText("table.SETTINGS_ASCENDING"),
-								icon: "sap-icon://sort-ascending",
-								action: [false, this._onCustomSort, this]
-							}),
-							new ColumnPopoverSelectListItem({
-								items: aDescendItems,
-								label: oResourceBundle.getText("table.SETTINGS_DESCENDING"),
-								icon: "sap-icon://sort-descending",
-								action: [true, this._onCustomSort, this]
-							})
-						]
+				if (this.isFilteringEnabled() && aFilterable.length) {
+					var oFilter = new ColumnPopoverSelectListItem({
+						label: oResourceBundle.getText("table.SETTINGS_FILTER"),
+						icon: "sap-icon://filter",
+						action: [onShowFilterDialog, this]
 					});
-					oColumn.addDependent(this._oPopover);
+					aHeaderItems.unshift(oFilter);
 				}
-			}
-			var oDelegate = this.getControlDelegate();
-			var aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
 
-			if (this.isFilteringEnabled() && oProperty && oProperty.getFilterableProperties().length > 0) {
-				aHeaderItems.unshift(new ColumnPopoverSelectListItem({
-					label: oResourceBundle.getText("table.SETTINGS_FILTER"),
-					icon: "sap-icon://filter",
-					action: [onShowFilterDialog, this]
-				}));
-			}
+				if (bResizeButton) {
+					var oColumnResize = ResponsiveTableType.startColumnResize(this._oTable, oColumn);
+					oColumnResize && aHeaderItems.push(oColumnResize);
+				}
 
-			if (bResizeButton) {
-				var oColumnResize = ResponsiveTableType.startColumnResize(this._oTable, oColumn);
-				oColumnResize && aHeaderItems.push(oColumnResize);
-			}
-
-			aHeaderItems.forEach(function(oItem) {
-				this._createPopover(oItem, oColumn);
-			}, this);
-
-			if (this._oPopover) {
-				this._oPopover.openBy(oColumn);
-				this._oPopover.getAggregation("_popover").attachAfterClose(function() {
-					this._bSuppressOpenMenu = false;
+				aHeaderItems.forEach(function(oItem) {
+					this._createPopover(oItem, oColumn);
 				}, this);
-				this._bSuppressOpenMenu = true;
+				this._oPopover && this._oPopover.openBy(oColumn);
 			}
-
 		}.bind(this));
 	};
 
@@ -2128,10 +2175,18 @@ sap.ui.define([
 		}
 	};
 
-	Table.prototype._onCustomSort = function(oEvent, bDescending) {
+	Table.prototype._onCustomSort = function(oEvent, sSortOrder) {
 		var sSortProperty = oEvent.getParameter("property");
 
-		TableSettings.createSort(this, sSortProperty, bDescending, true);
+		this.getCurrentState().sorters.forEach(function(oProp) {
+			if (oProp.name === sSortProperty) {
+				if (oProp.descending && sSortOrder === SortOrder.Descending || !oProp.descending && sSortOrder === SortOrder.Ascending) {
+					sSortOrder = SortOrder.None;
+				}
+			}
+		});
+
+		TableSettings.createSort(this, sSortProperty, sSortOrder, true);
 	};
 
 	Table.prototype._onColumnResize = function(oEvent) {
@@ -2646,10 +2701,10 @@ sap.ui.define([
 				var oSorter = aSorters.find(function(oSorter) {
 					return aSortablePaths.indexOf(oSorter.sPath) > -1;
 				});
-				var sSortOrder = oSorter && oSorter.bDescending ? "Descending" : "Ascending";
+				var sSortOrder = oSorter && oSorter.bDescending ? SortOrder.Descending : SortOrder.Ascending;
 
 				if (bMobileTable) {
-					oInnerColumn.setSortIndicator(oSorter ? sSortOrder : "None");
+					oInnerColumn.setSortIndicator(oSorter ? sSortOrder : SortOrder.None);
 				} else {
 					oInnerColumn.setSorted(!!oSorter).setSortOrder(sSortOrder);
 				}

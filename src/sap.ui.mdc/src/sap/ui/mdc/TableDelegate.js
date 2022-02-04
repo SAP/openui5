@@ -7,9 +7,11 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/AggregationBaseDelegate", "sap/ui/core/library", "sap/ui/core/Core"
-], function(AggregationBaseDelegate, coreLibrary, Core) {
+	"sap/ui/mdc/AggregationBaseDelegate", "./library", "sap/ui/core/library", "sap/ui/core/Core"
+], function(AggregationBaseDelegate, library, coreLibrary, Core) {
 	"use strict";
+
+	var P13nMode = library.TableP13nMode;
 
 	/**
 	 * Base delegate for {@link sap.ui.mdc.Table}.
@@ -168,6 +170,9 @@ sap.ui.define([
 		return Promise.resolve(oExportCapabilities);
 	};
 
+	TableDelegate.getSupportedP13nModes = function() {
+		return [P13nMode.Column, P13nMode.Sort, P13nMode.Filter];
+	};
 
 	return TableDelegate;
 });
