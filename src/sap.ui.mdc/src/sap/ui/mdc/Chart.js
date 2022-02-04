@@ -257,7 +257,7 @@ sap.ui.define([
                         multiple: false
                     },
                     /**
-                     * <code>VariantManagement<code> control for the table.
+                     * <code>VariantManagement<code> control for the chart.
                      */
                     variant: {
                         type: "sap.ui.fl.variants.VariantManagement",
