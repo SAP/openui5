@@ -362,7 +362,7 @@ sap.ui.define([
 					// even though the sourceValidationFailed event is fired, the default behaviour is to continue.
 					// when preventDefault is on event object is called, the rendering ends up with error
 					if (!Device.browser.firefox && this.fireEvent("sourceValidationFailed", {}, true)) {
-						this._showMessageBox();
+						this._fireLoadedEvent();
 						return;
 					}
 				}
