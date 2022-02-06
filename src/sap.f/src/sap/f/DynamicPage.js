@@ -699,22 +699,15 @@ sap.ui.define([
 		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		if (exists(this.$contentFitContainer)) {
-			if (this.getDomRef()) {
-				var oContentFitContainer = this.getDomRef().querySelector("[id$='contentFitContainer']");
-				if (oContentFitContainer) {
-					oContentFitContainer.classList.toggle("sapFDynamicPageContentFitContainerFooterVisible", bShow);
-				}
-			}
+			this.getDomRef("contentFitContainer").classList.toggle("sapFDynamicPageContentFitContainerFooterVisible", bShow);
 		}
 
 		if (bUseAnimations) {
 			this._toggleFooterAnimation(bShow, oFooter);
 		} else {
-			if (this.getDomRef()) {
-				var oFooterWrapper = this.getDomRef().querySelector("[id$='footerWrapper']");
-				if (oFooterWrapper) {
-					oFooterWrapper.classList.toggle("sapUiHidden", !bShow);
-				}
+			var oFooterWrapper = this.getDomRef("footerWrapper");
+			if (oFooterWrapper) {
+				oFooterWrapper.classList.toggle("sapUiHidden", !bShow);
 			}
 		}
 
@@ -901,13 +894,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._toggleHeaderBackground = function (bShow) {
-		if (this.getDomRef()) {
-			var oHeaderInContentWrapper = this.getDomRef().querySelector("[id$='headerWrapper']");
-			if (oHeaderInContentWrapper) {
-				oHeaderInContentWrapper.classList.toggle("sapFDynamicPageHeaderSolid", bShow);
-			}
+		var oHeaderInContentWrapper = this.getDomRef("headerWrapper");
+		if (oHeaderInContentWrapper) {
+			oHeaderInContentWrapper.classList.toggle("sapFDynamicPageHeaderSolid", bShow);
 		}
-};
+	};
 
 	/**
 	 * Appends header to content area.
@@ -1439,11 +1430,9 @@ sap.ui.define([
 			bFitContent = this.getFitContent(),
 			bToggleClass = bFitContent || bNoScrollBar;
 
-		if (this.getDomRef()) {
-			var oContentFitContainer = this.getDomRef().querySelector("[id$='contentFitContainer']");
-			if (oContentFitContainer) {
-				oContentFitContainer.classList.toggle("sapFDynamicPageContentFitContainer", bToggleClass);
-			}
+		var oContentFitContainer = this.getDomRef("contentFitContainer");
+		if (oContentFitContainer) {
+			oContentFitContainer.classList.toggle("sapFDynamicPageContentFitContainer", bToggleClass);
 		}
 	};
 

@@ -426,6 +426,7 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype.onAfterRendering = function () {
+		window.thisXXX = this;
 		this._cacheDomElements();
 		this._attachFocusSpanHandlers();
 		this._toggleState(this._bExpandedState);
@@ -990,11 +991,9 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._toggleTopAreaVisibility = function(bShoudShowTopArea) {
-		if (this.getDomRef()) {
-			var oTopArea = this.getDomRef().querySelector("[id$='top']");
-			if (oTopArea) {
-				oTopArea.classList.toggle("sapUiHidden", !bShoudShowTopArea);
-			}
+		var oTopArea = this.getDomRef("top");
+		if (oTopArea) {
+			oTopArea.classList.toggle("sapUiHidden", !bShoudShowTopArea);
 		}
 	};
 
@@ -1092,9 +1091,9 @@ sap.ui.define([
 		}
 
 		if (Device.system.phone && this.getSnappedTitleOnMobile()) {
-			var oSnappedTitleOnMobileWrapper = this.getDomRef().querySelector("[id$='snapped-title-on-mobile-wrapper']");
-			var oTopArea = this.getDomRef().querySelector("[id$='top']");
-			var oMainArea = this.getDomRef().querySelector("[id$='main']");
+			var oSnappedTitleOnMobileWrapper = this.getDomRef("snapped-title-on-mobile-wrapper");
+			var oTopArea = this.getDomRef("top");
+			var oMainArea = this.getDomRef("main");
 			if (oSnappedTitleOnMobileWrapper) {
 				oSnappedTitleOnMobileWrapper.classList.toggle("sapUiHidden", bExpanded);
 			}
@@ -1108,7 +1107,7 @@ sap.ui.define([
 		} else {
 			// Snapped heading
 			if (exists(this.getSnappedHeading())) {
-				var oSnappedHeadingWrapper = this.getDomRef().querySelector("[id$='snapped-heading-wrapper']");
+				var oSnappedHeadingWrapper = this.getDomRef("snapped-heading-wrapper");
 				if (oSnappedHeadingWrapper) {
 					oSnappedHeadingWrapper.classList.toggle("sapUiHidden", bExpanded);
 				}
@@ -1116,7 +1115,7 @@ sap.ui.define([
 
 			// Expanded heading
 			if (exists(this.getExpandedHeading())) {
-				var oExpandHeadingWrapper = this.getDomRef().querySelector("[id$='expand-heading-wrapper']");
+				var oExpandHeadingWrapper = this.getDomRef("expand-heading-wrapper");
 				if (oExpandHeadingWrapper) {
 					oExpandHeadingWrapper.classList.toggle("sapUiHidden", !bExpanded);
 				}
@@ -1130,7 +1129,7 @@ sap.ui.define([
 
 		// Snapped content
 		if (exists(this.getSnappedContent())) {
-			var oSnappedWrapper = this.getDomRef().querySelector("[id$='snapped-wrapper']");
+			var oSnappedWrapper = this.getDomRef("snapped-wrapper");
 			if (oSnappedWrapper) {
 				oSnappedWrapper.classList.toggle("sapUiHidden", bExpanded);
 				oSnappedWrapper.parentNode.classList.toggle("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
@@ -1139,7 +1138,7 @@ sap.ui.define([
 
 		// Expanded content
 		if (exists(this.getExpandedContent())) {
-			var oExpandWrapper = this.getDomRef().querySelector("[id$='expand-wrapper']");
+			var oExpandWrapper = this.getDomRef("expand-wrapper");
 			if (oExpandWrapper) {
 				oExpandWrapper.classList.toggle("sapUiHidden", !bExpanded);
 				oExpandWrapper.parentNode.classList.toggle("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);

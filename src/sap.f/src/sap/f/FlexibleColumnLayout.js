@@ -1168,11 +1168,10 @@ sap.ui.define([
 			bInsetMidColumn,
 			bRestoreFocusOnBackNavigation,
 			oPendingAnimationEnd = {};
-		var oDomRef = this.getDomRef();
 		var mColumnsDomRef = {
-			begin: oDomRef ? oDomRef.querySelector("[id$='beginColumn']") : null,
-			mid: oDomRef ? oDomRef.querySelector("[id$='midColumn']") : null,
-			end: oDomRef ? oDomRef.querySelector("[id$='endColumn']") : null
+			begin: this.getDomRef("beginColumn"),
+			mid: this.getDomRef("midColumn"),
+			end: this.getDomRef("endColumn")
 		};
 
 		// Stop here if the control isn't rendered yet
@@ -1356,11 +1355,10 @@ sap.ui.define([
 			bShouldConcealColumn = oOptions.shouldConcealColumn,
 			iNewWidth = oOptions.iNewWidth,
 			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
-		var oDomRef = this.getDomRef();
 		var mColumnsDomRef = {
-			begin: oDomRef ? oDomRef.querySelector("[id$='beginColumn']") : null,
-			mid: oDomRef ? oDomRef.querySelector("[id$='midColumn']") : null,
-			end: oDomRef ? oDomRef.querySelector("[id$='endColumn']") : null
+			begin: this.getDomRef("beginColumn"),
+			mid: this.getDomRef("midColumn"),
+			end: this.getDomRef("endColumn")
 		};
 
 		if (mColumnsDomRef[sColumn]) {
