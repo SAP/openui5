@@ -403,11 +403,9 @@ sap.ui.define([
 	/*Restricted API for Launchpad to set a Strong BG style*/
 	ShellLayout.prototype._setStrongBackground = function(bUseStongBG){
 		this._useStrongBG = !!bUseStongBG;
-		if (this.getDomRef()) {
-			var oStrongBg = this.getDomRef().querySelector("[id$='strgbg']");
-			if (oStrongBg) {
-				oStrongBg.classList.toggle("sapUiStrongBackgroundColor", this._useStrongBG);
-			}
+		var oStrongBg = this.getDomRef("strgbg");
+		if (oStrongBg) {
+			oStrongBg.classList.toggle("sapUiStrongBackgroundColor", this._useStrongBG);
 		}
 	};
 

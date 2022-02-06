@@ -186,7 +186,7 @@ sap.ui.define([
 			var sDir, sOtherDir;
 			var sSizeValue = this.getSecondaryContentSize();
 			var bShow = this.getShowSecondaryContent();
-			var oSecondaryContentContainer = null;
+			var oSecondaryContentContainer = this.getDomRef("pane");
 
 			if (bVertical) {
 				// Vertical mode
@@ -219,9 +219,6 @@ sap.ui.define([
 				this._contentContainer.css(sDir, "0");
 			}
 
-			if (this.getDomRef()) {
-				oSecondaryContentContainer = this.getDomRef().querySelector("[id$='pane']");
-			}
 			if (!bShow) {
 				// The theming parameter is something along the lines of "500ms", the "ms"-part is
 				// ignored by parseInt.

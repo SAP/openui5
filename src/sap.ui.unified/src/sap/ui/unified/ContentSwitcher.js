@@ -106,16 +106,13 @@ sap.ui.define([
 	 * sapUiUnifiedCSwitcherVisible
 	 */
 	ContentSwitcher.prototype._showActiveContent = function(iNumber) {
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			var oContents1 = oDomRef.querySelector("[id$='content1']");
-			var oContents2 = oDomRef.querySelector("[id$='content2']");
-			if (oContents1) {
-				oContents1.classList.toggle("sapUiUfdCSwitcherVisible", iNumber === 1);
-			}
-			if (oContents2) {
-				oContents2.classList.toggle("sapUiUfdCSwitcherVisible", iNumber === 2);
-			}
+		var oContents1 = this.getDomRef("content1");
+		var oContents2 = this.getDomRef("content2");
+		if (oContents1) {
+			oContents1.classList.toggle("sapUiUfdCSwitcherVisible", iNumber === 1);
+		}
+		if (oContents2) {
+			oContents2.classList.toggle("sapUiUfdCSwitcherVisible", iNumber === 2);
 		}
 	};
 
