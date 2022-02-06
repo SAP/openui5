@@ -5455,4 +5455,57 @@ sap.ui.define([
 		return oRequestQueuedPromise;
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getObject: missing selected property for a created entity", function (assert) {
+		var oEntity = {
+				__metadata : {
+					created : {},
+					uri : "~uri"
+				}
+			},
+			oEntityType = {
+				navigationProperty : "~navigationProperties",
+				property : "~properties"
+			},
+			oModel = {
+				oMetadata : {_getEntityTypeByPath : function () {}},
+				_filterOwnExpand : function () {},
+				_filterOwnSelect : function () {},
+				_getObject : function () {},
+				_splitEntries : function () {},
+				resolve : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			mParameters = {
+				select : "~select"
+			};
+
+		oModelMock.expects("resolve").withArgs("~path", "~context").returns("~resolvedPath");
+		oModelMock.expects("_getObject").withArgs("~resolvedPath").returns(oEntity);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withArgs("~resolvedPath")
+			.returns(oEntityType);
+		oModelMock.expects("_splitEntries").withArgs("~select").returns("~selects");
+		oModelMock.expects("_filterOwnSelect")
+			.withArgs("~selects", "~properties")
+			.returns(["selectedProperty"]);
+		oModelMock.expects("_filterOwnExpand")
+			.withArgs([], "~selects")
+			.returns([/*selected expanded navigation properties*/]);
+		oModelMock.expects("_filterOwnSelect")
+			.withArgs("~selects", "~navigationProperties")
+			.returns([/*deferred expanded navigation properties*/]);
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype.getObject.call(oModel, "~path", "~context", mParameters),
+			{
+				__metadata : {
+					created : {},
+					uri : "~uri"
+				},
+				selectedProperty : undefined
+			});
+	});
 });

@@ -12718,4 +12718,47 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Load list data with $select, create a new entry in the list, but only few
+	// properties are initially set.
+	// JIRA: CPOUI5MODELS-656
+	QUnit.test("ODataListBinding#create: use $select", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartnerSet\',\
+		parameters : {select : \'Address,BusinessPartnerID,CompanyName\'}}">\
+	<Text id="id" text="{BusinessPartnerID}" />\
+	<Input id="name" value="{CompanyName}" />\
+	<Input id="city" value="{Address/City}" />\
+</Table>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=100"
+					+ "&$select=Address%2cBusinessPartnerID%2cCompanyName", {
+				results : [{
+					__metadata : {uri : "/BusinessPartnerSet('1')"},
+					Address : {
+						__metadata : {"type":"GWSAMPLE_BASIC.CT_Address"},
+						City : "Walldorf"
+					},
+					CompanyName : "SAP",
+					BusinessPartnerID : "1"
+				}]
+			})
+			.expectValue("id", ["1"])
+			.expectValue("name", ["SAP"])
+			.expectValue("city", ["Walldorf"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("id", ["", "1"])
+				.expectValue("name", ["Foo", "SAP"])
+				.expectValue("city", ["", "Walldorf"]);
+
+			that.oView.byId("table").getBinding("items").create({CompanyName : "Foo"});
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
