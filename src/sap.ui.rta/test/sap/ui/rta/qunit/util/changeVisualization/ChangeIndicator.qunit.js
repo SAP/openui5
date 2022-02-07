@@ -211,8 +211,8 @@ sap.ui.define([
 						oRtaResourceBundle.getText(
 							"TXT_CHANGEVISUALIZATION_CHANGE_RENAME_FROM_TO",
 							[
-								"AfterValueOfAFieldWithAnExtr...ectlyDisplayWithoutAnyIssues",
-								"BeforeValueOfAFieldWithAnExt...ectlyDisplayWithoutAnyIssues"
+								"AfterValueOfAFieldWithAnExt(...)ctlyDisplayWithoutAnyIssues",
+								"BeforeValueOfAFieldWithAnEx(...)ctlyDisplayWithoutAnyIssues"
 							]
 						),
 						"then a description for the change is displayed"

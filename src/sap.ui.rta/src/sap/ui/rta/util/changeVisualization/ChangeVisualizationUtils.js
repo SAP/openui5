@@ -24,9 +24,9 @@ sap.ui.define([
 		}
 		var iStringLength = sString.length;
 		if (iStringLength > 60) {
-			var sFirstPart = sString.substring(0, 28);
-			var sLastPart = sString.substring(iStringLength - 28);
-			sString = sFirstPart + "..." + sLastPart;
+			var sFirstPart = sString.substring(0, 27);
+			var sLastPart = sString.substring(iStringLength - 27);
+			sString = sFirstPart + "(...)" + sLastPart;
 		}
 		return sString;
 	};
