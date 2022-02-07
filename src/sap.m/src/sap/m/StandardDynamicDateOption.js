@@ -705,6 +705,9 @@ sap.ui.define([
 					var oStart = UniversalDate.getInstance(oValue.values[0]);
 					var oEnd = UniversalDate.getInstance(oValue.values[1]);
 
+					oStart.setMilliseconds(0);
+					oEnd.setMilliseconds(999);
+
 					return [oStart, oEnd];
 				case "TODAY":
 					return UniversalDateUtils.ranges.today();
@@ -777,9 +780,17 @@ sap.ui.define([
 				case "TO":
 					return [UniversalDate.getInstance(oValue.values[0])];
 				case "FROMDATETIME":
-					return [UniversalDate.getInstance(oValue.values[0])];
+					var oDate = UniversalDate.getInstance(oValue.values[0]);
+
+					oDate.setMilliseconds(0);
+
+					return [oDate];
 				case "TODATETIME":
-					return [UniversalDate.getInstance(oValue.values[0])];
+					var oDate = UniversalDate.getInstance(oValue.values[0]);
+
+					oDate.setMilliseconds(999);
+
+					return [oDate];
 				case "YEARTODATE":
 					return UniversalDateUtils.ranges.yearToDate();
 				case "DATETOYEAR":
