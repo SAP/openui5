@@ -112,6 +112,9 @@ sap.ui.define([
 				isProductiveSystem: function () {
 					return true;
 				},
+				isCustomerSystem: function () {
+					return false;
+				},
 				isAppVariantSaveAsEnabled: function() {
 					return true;
 				},

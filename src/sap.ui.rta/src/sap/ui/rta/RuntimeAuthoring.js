@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/library",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
@@ -74,6 +75,7 @@ sap.ui.define([
 	Layer,
 	LayerUtils,
 	flexLibrary,
+	Settings,
 	FlexUtils,
 	JSONModel,
 	Measurement,
@@ -247,10 +249,6 @@ sap.ui.define([
 				this.startService("receiver");
 			}
 
-			if (this._shouldValidateFlexEnabled()) {
-				this.attachEvent("start", validateFlexEnabled.bind(null, this));
-			}
-
 			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "CrossApplicationNavigation"])
 				.then(function (mUShellServices) {
 					this._mUShellServices = mUShellServices;
@@ -264,15 +262,11 @@ sap.ui.define([
 	});
 
 	RuntimeAuthoring.prototype._shouldValidateFlexEnabled = function () {
-		var sHostname = document.location.hostname;
-		var bShouldValidateFlexEnabled = sHostname.endsWith(".sap" + ".corp") || sHostname === "localhost";
-
-		if (bShouldValidateFlexEnabled) {
-			var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-rta-skip-flex-validation");
-			bShouldValidateFlexEnabled = sUriParam !== "true";
-		}
-
-		return bShouldValidateFlexEnabled;
+		var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-rta-skip-flex-validation");
+		return Settings.getInstance()
+			.then(function (oSettings) {
+				return !oSettings.isCustomerSystem() && sUriParam !== "true";
+			});
 	};
 
 	RuntimeAuthoring.prototype.addDependent = function (oObject, sName, bCreateGetter) {
@@ -562,7 +556,11 @@ sap.ui.define([
 					this.fnOnPersonalizationChangeCreation
 				);
 			}.bind(this))
-			.then(function () {
+			.then(this._shouldValidateFlexEnabled)
+			.then(function (bShouldValidateFlexEnabled) {
+				if (bShouldValidateFlexEnabled) {
+					validateFlexEnabled(this);
+				}
 				this._sStatus = STARTED;
 				this.fireStart({
 					editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()

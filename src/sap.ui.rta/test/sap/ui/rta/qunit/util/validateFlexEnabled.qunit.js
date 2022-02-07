@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageBox",
 	"sap/base/Log",
+	"sap/base/util/UriParameters",
 	"sap/ui/dt/Util",
+	"sap/ui/fl/registry/Settings",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/model/json/JSONModel",
@@ -24,7 +26,9 @@ function (
 	Button,
 	MessageBox,
 	Log,
+	UriParameters,
 	DtUtil,
+	Settings,
 	includes,
 	sinon,
 	JSONModel,
@@ -97,9 +101,49 @@ function (
 		oRta.setMode("navigation");
 	}
 
+	QUnit.module("flexEnabled flag determination", {
+		before: function () {
+			this.oRta = new RuntimeAuthoring();
+		},
+		afterEach: function () {
+			sandbox.restore();
+		},
+		after: function () {
+			this.oRta.destroy();
+		}
+	}, function () {
+		QUnit.test("when the system is a customer system", function (assert) {
+			sandbox.stub(Settings.prototype, "isCustomerSystem").returns(true);
+			return this.oRta._shouldValidateFlexEnabled()
+				.then(function (bShouldValidateFlexEnabled) {
+					assert.notOk(bShouldValidateFlexEnabled, "then flex enablement is not validated");
+				});
+		});
+
+		QUnit.test("when the system is a SAP system", function (assert) {
+			sandbox.stub(Settings.prototype, "isCustomerSystem").returns(false);
+			return this.oRta._shouldValidateFlexEnabled()
+				.then(function (bShouldValidateFlexEnabled) {
+					assert.ok(bShouldValidateFlexEnabled, "then flex enablement is validated");
+				});
+		});
+
+		QUnit.test("when the system is a SAP system and the skipValidation parameter is set", function (assert) {
+			sandbox.stub(Settings.prototype, "isCustomerSystem").returns(false);
+			sandbox.stub(UriParameters.prototype, "get")
+				.callThrough()
+				.withArgs("sap-ui-rta-skip-flex-validation")
+				.returns("true");
+			return this.oRta._shouldValidateFlexEnabled()
+				.then(function (bShouldValidateFlexEnabled) {
+					assert.notOk(bShouldValidateFlexEnabled, "then flex enablement is not validated");
+				});
+		});
+	});
+
 	QUnit.module("flexEnabled set to `true` and there is unstable control when RTA is started", {
 		beforeEach: function () {
-			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").returns(true);
+			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").resolves(true);
 
 			this.oComponent = _getMockedComponent(true, true);
 
@@ -224,7 +268,7 @@ function (
 
 	QUnit.module("flexEnabled set to `true` and there are no unstable controls", {
 		beforeEach: function () {
-			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").returns(true);
+			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").resolves(true);
 			this.oComponent = this.oComponent = _getMockedComponent(true, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -329,7 +373,7 @@ function (
 
 	QUnit.module("flexEnabled is not set and there is an unstable control", {
 		beforeEach: function () {
-			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").returns(true);
+			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").resolves(true);
 			this.oComponent = this.oComponent = _getMockedComponent(false, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {

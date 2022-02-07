@@ -251,6 +251,46 @@ sap.ui.define([
 			assert.equal(this.cut.isVersioningEnabled(sLayer), false);
 		});
 
+		QUnit.test("when systemType is CUSTOMER", function (assert) {
+			var oSettings = new Settings({
+				systemType: 'CUSTOMER'
+			});
+			assert.ok(oSettings.isCustomerSystem(), "then isCustomerSystem returns true");
+		});
+
+		QUnit.test("when systemType is SAP", function (assert) {
+			var oSettings = new Settings({
+				systemType: 'SAP'
+			});
+			assert.notOk(oSettings.isCustomerSystem(), "then isCustomerSystem returns false");
+		});
+
+		QUnit.test("when systemType is set and hostname includes localhost", function (assert) {
+			var oSettings = new Settings({
+				systemType: 'CUSTOMER'
+			});
+			sandbox.stub(oSettings, "_getHostname").returns("localhost");
+			assert.ok(oSettings.isCustomerSystem(), "then systemType wins over hostname");
+		});
+
+		QUnit.test("when systemType is not set and hostname includes localhost", function (assert) {
+			var oSettings = new Settings({});
+			sandbox.stub(oSettings, "_getHostname").returns("localhost");
+			assert.notOk(oSettings.isCustomerSystem(), "then isCustomerSystem returns false");
+		});
+
+		QUnit.test("when systemType is not set and hostname includes .sap .corp", function (assert) {
+			var oSettings = new Settings({});
+			sandbox.stub(oSettings, "_getHostname").returns("someSystem.wdf.sap" + ".corp");
+			assert.notOk(oSettings.isCustomerSystem(), "then isCustomerSystem returns false");
+		});
+
+		QUnit.test("when systemType is not set and hostname is not a SAP system", function (assert) {
+			var oSettings = new Settings({});
+			sandbox.stub(oSettings, "_getHostname").returns("example.com");
+			assert.ok(oSettings.isCustomerSystem(), "then isCustomerSystem returns true");
+		});
+
 		QUnit.test("get instance from flex settings request when load settings promise is not available", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
