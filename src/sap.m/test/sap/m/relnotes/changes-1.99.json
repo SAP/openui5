@@ -1,7 +1,94 @@
 {
   "1.99.0": {
-    "date": "January 2022",
+    "date": "February 2022",
     "notes": [
+      {
+        "id": "4c00e900a3a77386e52748009868c6dcd6c2655b",
+        "type": "FIX",
+        "text": " PDFViewer - Handle sourceValidation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240085710"
+          }
+        ]
+      },
+      {
+        "id": "6dcc6b24f2f03b25cf37abfba5c3b1cd4c023baa",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: apply focus on the first focusable element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170287752"
+          }
+        ]
+      },
+      {
+        "id": "f1be3a35b414dd78b73e1a55c36425404ed835c0",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: IllustratedMessage used for empty carousel"
+      },
+      {
+        "id": "7dcbed900b55bbfcab66edd7c58e736e4c0ad097",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: proper year set in grid cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000709492022"
+          }
+        ]
+      },
+      {
+        "id": "d0d64fb026dfea00a67191c717b47fe68892d5ae",
+        "type": "FIX",
+        "text": " sap.m.InputRenderer: Open up visibility to be 'protected'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280038175"
+          }
+        ]
+      },
+      {
+        "id": "ea008e00986d518205ddd49c0173486a6336803a",
+        "type": "FEATURE",
+        "text": " sap.m.Breadcrumbs: Link role added to currentLocation"
+      },
+      {
+        "id": "2ad52039ae638c7d250c08111921c8cea4b0310f",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: role group is removed for non interactive control instnaces",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180187431"
+          }
+        ]
+      },
+      {
+        "id": "7df97e8a6e60ce44dbe9d3bbf9fc9e14c3c1a35f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointmentSelect event is properly fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280035754"
+          }
+        ]
+      },
+      {
+        "id": "0851fe2f32907370ff9453a7a454c26b1a68a5c1",
+        "type": "FIX",
+        "text": " sap.m.Popover: Nested popovers close on inner click prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280033839"
+          }
+        ]
+      },
       {
         "id": "60bf347349529229aa6e002010a98819df32419e",
         "type": "FIX",
@@ -44,6 +131,29 @@
         "id": "aa682026f255543af0c8d456a70fb8fdd1ea9ff3",
         "type": "FEATURE",
         "text": " sap.m.SinglePlanningCalendar: Adjust row height to represent zoom in/out behavior"
+      },
+      {
+        "id": "ccc30eef21519e437addf607402a4ab96429cfd9",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Item bindings are now cloned correctly and with bound model",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280014165"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280016537"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180409546"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970404487"
+          }
+        ]
       },
       {
         "id": "74580c369672c1e6d9c97b2479fd6aedfd7dff6e",

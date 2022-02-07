@@ -1,7 +1,23 @@
 {
   "1.99.0": {
-    "date": "January 2022",
+    "date": "February 2022",
     "notes": [
+      {
+        "id": "aee22437cef1a488ebd8e51888de0b35320828f4",
+        "type": "FIX",
+        "text": " sap.f.PlanningCalendarInCardLegend: hardcoded text replaced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280038183"
+          }
+        ]
+      },
+      {
+        "id": "487b76c4e4b53eef261f65de6e3a01854f12e6c1",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Custom error message is introduced"
+      },
       {
         "id": "7946dd117269e2be4a4a7522f362f0a5d596c971",
         "type": "FEATURE",
