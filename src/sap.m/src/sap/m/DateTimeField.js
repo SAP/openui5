@@ -134,7 +134,11 @@ sap.ui.define([
 				//ignore parsing error
 			}
 
-			if (!oDate || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
+			if (Array.isArray(oDate)) {
+				oDate = oDate[0];
+			}
+
+			if (!oDate || !oDate.getTime || oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				this._bValid = false;
 				Log.warning("Value can not be converted to a valid date", this);
 			}
