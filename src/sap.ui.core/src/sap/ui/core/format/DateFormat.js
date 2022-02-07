@@ -277,14 +277,15 @@ sap.ui.define([
 	 * // output: "America/New_York"
 	 *
 	 * @param {Date} oJSDate The date to format
-	 * @param {string} sTimezone The IANA timezone ID in which the date will be calculated and
-	 *   formatted e.g. "America/New_York".
+	 * @param {string} [sTimezone] The IANA timezone ID in which the date will be calculated and
+	 *   formatted e.g. "America/New_York". If omitted, the timezone will be taken from {@link sap.ui.core.Configuration#getTimezone}.
 	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
-	 * @throws {Error} If <code>sTimezone</code> is omitted.
 	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone.format
 	 * @function
 	 * @public
 	 * @since 1.99
+	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
+	 *   To be on the safe side, always call with a valid timezone.
 	 */
 
 	/**
@@ -310,13 +311,12 @@ sap.ui.define([
 	 * // output: [undefined, "America/New_York"]
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
-	 * @param {string} sTimezone The IANA timezone ID which should be used to convert the date
-	 *   e.g. "America/New_York".
+	 * @param {string} [sTimezone] The IANA timezone ID which should be used to convert the date
+	 *   e.g. "America/New_York". If omitted, the timezone will be taken from {@link sap.ui.core.Configuration#getTimezone}.
 	 * @param {boolean} [bStrict] Whether to be strict with regards to the value ranges of date fields,
 	 * e.g. for a month pattern of <code>MM</code> and a value range of [1-12]
 	 * <code>strict</code> ensures that the value is within the range;
 	 * if it is larger than <code>12</code> it cannot be parsed and <code>null</code> is returned
-	 * @throws {Error} If <code>sTimezone</code> is omitted.
 	 * @return {Array} the parsed values
 	 * <ul>
 	 *   <li>An array containing datetime and timezone depending on the showTimezone option
@@ -332,6 +332,8 @@ sap.ui.define([
 	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone.parse
 	 * @function
 	 * @since 1.99
+	 * @experimental As of 1.99.0 certain aspects of this API are not settled yet, i.e. the defaulting for the timezone parameter might change.
+	 *   To be on the safe side, always call with a valid timezone.
 	 */
 
 	/**
@@ -1802,15 +1804,12 @@ sap.ui.define([
 	DateFormat.prototype.format = function(vJSDate, bUTC) {
 		var sTimezone;
 		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
-			if (typeof bUTC !== "string") {
-				throw new TypeError("The timezone must be specified");
-			}
 			// UTC and timezone are not supported at the same time, therefore set bUTC to false
 			sTimezone = bUTC;
 			bUTC = false;
 
 			// timezone is required to calculate the timezone offset therefore it must be a valid IANA timezone ID
-			if (!TimezoneUtil.isValidTimezone(sTimezone)) {
+			if (sTimezone != null && !TimezoneUtil.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return "";
 			}
@@ -2223,22 +2222,19 @@ sap.ui.define([
 	 */
 	DateFormat.prototype.parse = function(sValue, bUTC, bStrict) {
 		var sTimezone;
-		if (bUTC === undefined) {
+		if (bUTC === undefined && this.type !== mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
 			bUTC = this.oFormatOptions.UTC;
 		}
 		// preserve UTC parameter for fallback instances (must inherit format option UTC from parent)
 		var bUTCInputParameter = bUTC;
 		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
-			if (typeof bUTC !== "string") {
-				throw new TypeError("The timezone must be specified");
-			}
 
 			// UTC and timezone are not supported at the same time, therefore set bUTC to false
 			sTimezone = bUTC;
 			bUTC = false;
 
 			// timezone is required to calculate the timezone offset therefore it must be a valid IANA timezone ID
-			if (!TimezoneUtil.isValidTimezone(sTimezone)) {
+			if (sTimezone != null && !TimezoneUtil.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return null;
 			}
