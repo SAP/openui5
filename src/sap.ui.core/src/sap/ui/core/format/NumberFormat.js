@@ -1788,7 +1788,7 @@ sap.ui.define([
 		}
 
 		// strict grouping validation
-		var bIsGroupingValid = checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency, oGroupingRegExp);
+		var bIsGroupingValid = checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp);
 		if (!bIsGroupingValid) {
 			// treat invalid grouping the same way as if the value cannot be parsed
 			return (oOptions.type === mNumberType.CURRENCY || oOptions.type === mNumberType.UNIT) ? null : NaN;
@@ -2251,12 +2251,34 @@ sap.ui.define([
 
 	/**
 	 * Checks if grouping is performed correctly (decimal separator is not confused with grouping separator).
+	 * The examples use the German locale.
+	 *
+	 * Validity:
+	 * * The grouping is valid if there are at least 2 grouping separators present.
+	 *   Because there can only be one decimal separator, and by writing 2 grouping separators there is no confusion.
+	 *   E.g. 1.2.3
+	 * * The grouping is valid if there is a decimal separator and one grouping separator present.
+	 *   Because the user wrote both, there cannot be a confusion.
+	 *   (If it was confused, it has already been taken care by the syntax check.)
+	 *   E.g. 1.2,3
+	 *
+	 * Invalidity:
+	 * * If there is exactly one grouping separator present, no decimal separator, and the grouping
+	 *   separator at the most right grouping position is wrong.
+	 *   E.g. 1.2
+	 *   E.g. 1.234567
 	 *
 	 * The grouping is checked even if the groupingEnabled format is set to <code>false</code>, because the
 	 * input could be copied from external sources which might have wrong grouping separators.
 	 *
+	 * The empty grouping separator is ignored and <code>true</code> is returned, because it cannot be validated.
+	 *
+	 * An additional check is performed which invalidates a wrong number syntax
+	 * E.g. 0.123
+	 * E.g. -.123
+	 *
 	 * @param {string} sValueWithGrouping the normalized value which only contains the grouping (e.g. "1.000"),
-	 *  the following modifications are applied:
+	 *  i.e. the following modifications were already applied:
 	 *  <ul>
 	 *   <li>remove percent symbol</li>
 	 *   <li>remove leading plus</li>
@@ -2265,30 +2287,32 @@ sap.ui.define([
 	 *   <li>remove short/long format (e.g. "Mio"/"Million")</li>
 	 *   <li>resolve lenient symbols</li>
 	 *  </ul>
-	 * @param {object} oOptions the format options, relevant are: groupingSeparator and decimalSeparator
+	 * @param {object} oOptions the format options, relevant are: groupingSeparator, groupingSize, groupingBaseSize and decimalSeparator
 	 * @param {boolean} bScientificNotation is scientific notation, e.g. "1.234e+1"
-	 * @param {boolean} bIndianCurrency is an indian currency, e.g. number in combination with currency "INR" and locale is "en_IN"
 	 * @param {RegExp} oGroupingRegExp grouping regular expression
 	 * @returns {boolean} true if the grouping is done correctly, e.g. "1.23" is not grouped correctly for grouping separator "." and groupingSize 3
 	 * @private
 	 */
-	function checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, bIndianCurrency, oGroupingRegExp) {
-		if (sValueWithGrouping.includes(oOptions.groupingSeparator)) {
+	function checkGrouping(sValueWithGrouping, oOptions, bScientificNotation, oGroupingRegExp) {
+		if (oOptions.groupingSeparator && sValueWithGrouping.includes(oOptions.groupingSeparator)) {
+			// All following checks are only done, if the value contains at least one (non-falsy) grouping separator.
+			// The examples below use the German locale:
+			// groupingSeparator: '.'
+			// decimalSeparator: ','
+			// groupingSize: 3
 
 			// remove leading minus sign, it is irrelevant for grouping check
 			// "-123.456" -> "123.456"
 			sValueWithGrouping = sValueWithGrouping.replace(/^-/, "");
 
-			// remove leading zeros
+			// remove leading zeros before non-zero digits
 			// "001.234" -> "1.234"
+			// "0.234" -> "0.234"
 			sValueWithGrouping = sValueWithGrouping.replace(/^0+(\d)/, "$1");
 
-			// only a number below 1 starts with 0, e.g. 0,123
-			// (it cannot contain a grouping separator character)
-			// here the leading zeros before numbers were removed and it has a grouping separator
-			// character, e.g. 0.123
-			// --> if it still starts here with 0 it is invalid
-			if (sValueWithGrouping.startsWith("0")) {
+			// if value still starts with 0, or it starts with a grouping separator, it is invalid
+			// e.g. "0.123", ".123" (invalid)
+			if (sValueWithGrouping.startsWith("0") || sValueWithGrouping.startsWith(oOptions.groupingSeparator)) {
 				return false;
 			}
 
@@ -2297,67 +2321,32 @@ sap.ui.define([
 			if (bScientificNotation) {
 				sValueWithGrouping = sValueWithGrouping.replace(/[eE].*/, "");
 			}
-			// remove decimals part
-			var bValueHasDecimalSeparator = sValueWithGrouping.includes(oOptions.decimalSeparator);
-			if (oOptions.decimalSeparator !== oOptions.groupingSeparator && bValueHasDecimalSeparator) {
-				sValueWithGrouping = sValueWithGrouping.split(oOptions.decimalSeparator)[0];
+
+			// if value includes a decimal separator, it is valid and no further checks are needed.
+			// Integer types are skipped, which often have identical decimal and grouping separators configured
+			// e.g. "1.2,3" (valid)
+			if (oOptions.decimalSeparator !== oOptions.groupingSeparator
+				&& sValueWithGrouping.includes(oOptions.decimalSeparator)) {
+				return true;
 			}
 
-			// create value with correct grouping using the same logic as in #format (expectation)
-			var sValueNoGrouping = sValueWithGrouping.replace(oGroupingRegExp, "");
-			var sValueGroupingExpectation = applyGrouping(sValueNoGrouping, oOptions, bIndianCurrency);
-
-			// Special case:
-			// If no decimal separator, but exactly one grouping separator is present,
-			// there must be no other grouping separator missing.
-			// Examples:
-			// 1234.567 --> is invalid (as the user might have meant a decimal separator)
-			// 234.567 --> is valid (as this is a fully grouped number)
-			// the assumption here is: sValueWithGrouping only consists of
-			// grouping separator, number characters and decimal separator (no other characters)
-			var iNumberOfGroupingSeparators =
-				oOptions.groupingSeparator
-					? sValueWithGrouping.split(oGroupingRegExp).length - 1
-					: 0;
-			if (!bValueHasDecimalSeparator && iNumberOfGroupingSeparators === 1) {
-				return sValueWithGrouping === sValueGroupingExpectation;
+			// if value doesn't include exactly one grouping separator, it is valid and no further checks are needed
+			// e.g. 1.2.3 (valid)
+			if (sValueWithGrouping.split(oGroupingRegExp).length !== 2) {
+				return true;
 			}
 
-			// Check if each character from the value is in the same order as in the expectation.
-			// This is done to compare the strings and ignore missing grouping separators.
-			// Grouping separators do not have to be explicitly checked because:
-			// - the grouping separator is not a number
-			// - the difference between the value and the expectation are only grouping separators
-			// Examples:
-			// sValueWithGrouping:          1234.567891
-			// sValueGroupingExpectation:   1.234.567.891
-			if (!checkMissingChars(sValueWithGrouping, sValueGroupingExpectation)) {
+			// find least-significant ("lowest") grouping separator
+			var iLowestGroupingIndex = sValueWithGrouping.length - sValueWithGrouping.lastIndexOf(oOptions.groupingSeparator);
+			var iBaseGroupSize = oOptions.groupingBaseSize || oOptions.groupingSize;
+			// if least-significant grouping size doesn't match grouping base size, the value is invalid
+			// e.g. 12.34 (invalid)
+			if (iLowestGroupingIndex !== iBaseGroupSize + oOptions.groupingSeparator.length) {
 				return false;
 			}
 		}
-		return true;
-	}
 
-	/**
-	 * Check if each character from the value is in the same order as in the expectation.
-	 * Additional characters in the expectation are ignored.
-	 *
-	 * @param {string} sValue current value, e.g. "1234.567891"
-	 * @param {string} sExpectation expected value, e.g. "1.234.567.891"
-	 * @returns {boolean} true if each character from the value is in the same order as in the expectation
-	 * @private
-	 */
-	function checkMissingChars(sValue, sExpectation) {
-		var iCurrentIndex = 0;
-		for (var i = 0; i < sExpectation.length; i++) {
-			var sExpectedChar = sExpectation[i];
-			var sCurrentChar = sValue[iCurrentIndex];
-			if (sExpectedChar === sCurrentChar) {
-				iCurrentIndex++;
-			}
-		}
-		// sValue has been processed completely
-		return iCurrentIndex === sValue.length;
+		return true;
 	}
 
 	/**
