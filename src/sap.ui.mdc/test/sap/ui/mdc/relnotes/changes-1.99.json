@@ -1,7 +1,18 @@
 {
   "1.99.0": {
-    "date": "January 2022",
+    "date": "February 2022",
     "notes": [
+      {
+        "id": "4a5bc34d60dfbf91113f4c0b6d2df4a92de559da",
+        "type": "FIX",
+        "text": " mdc.FilterBar: ensure metadata availability during validate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280021008"
+          }
+        ]
+      },
       {
         "id": "8fdb21cbbbca90f9525622afaa656b8bb4785249",
         "type": "FIX",

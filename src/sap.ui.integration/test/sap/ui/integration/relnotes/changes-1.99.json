@@ -1,7 +1,17 @@
 {
   "1.99.0": {
-    "date": "January 2022",
+    "date": "February 2022",
     "notes": [
+      {
+        "id": "487b76c4e4b53eef261f65de6e3a01854f12e6c1",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Custom error message is introduced"
+      },
+      {
+        "id": "dffe7fe6baf799ec261f34dd781afe442a2b2b23",
+        "type": "FEATURE",
+        "text": " sap.ui.integration CardExplorer"
+      },
       {
         "id": "8c3d9ce59e435e458a7cff7a550c519b6cf2250d",
         "type": "FEATURE",
