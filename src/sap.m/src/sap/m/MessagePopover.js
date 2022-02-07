@@ -141,6 +141,7 @@ function(
 
 					/**
 					 * Defines whether the MessageItems are grouped or not.
+					 * @since 1.73
 					 */
 					groupItems: { type: "boolean", group: "Behavior", defaultValue: false }
 				},
