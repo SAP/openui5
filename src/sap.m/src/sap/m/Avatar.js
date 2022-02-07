@@ -11,8 +11,9 @@ sap.ui.define([
     "sap/ui/events/KeyCodes",
     "sap/base/Log",
     "sap/ui/core/Icon",
-    "./library"
-], function(Control, IconPool, AvatarRenderer, KeyCodes, Log, Icon, library) {
+    "./library",
+	"sap/ui/core/library"
+], function(Control, IconPool, AvatarRenderer, KeyCodes, Log, Icon, library, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.AvatarType
@@ -29,6 +30,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.AvatarShape
 	var AvatarShape = library.AvatarShape;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	// shortcut for Accent colors keys only (from AvatarColor enum)
 	var AccentColors = Object.keys(AvatarColor).filter(function (sCurrColor) {
@@ -170,7 +174,20 @@ sap.ui.define([
 				 *
 				 * @since 1.97
 				 */
-				decorative : {type : "boolean", group : "Accessibility", defaultValue : false}
+				decorative : {type : "boolean", group : "Accessibility", defaultValue : false},
+
+				/**
+				 * Specifies the value of the <code>aria-haspopup</code> attribute
+				 *
+				 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
+				 *
+				 * NOTE: Use this property only when an avatar is related to a popover/popup. The value needs to be equal to the main/root role of the popup - e.g. dialog,
+				 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
+				 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of dialogs displayed as on overlay over the application.
+				 *
+				 * @since 1.99.0
+				 */
+				ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 
 			},
 			aggregations : {
