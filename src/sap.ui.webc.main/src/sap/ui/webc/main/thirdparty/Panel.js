@@ -62,9 +62,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Boolean,
 				noAttribute: true,
 			},
-			_buttonAccInfo: {
-				type: Object,
-			},
 		},
 		events:  {
 			toggle: {},
@@ -187,8 +184,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get accInfo() {
 			return {
 				"button": {
-					"ariaExpanded": this.expanded,
-					"ariaControls": `${this._id}-content`,
+					"accessibilityAttributes": {
+						"expanded": this.expanded,
+						"controls": `${this._id}-content`,
+					},
 					"title": this.toggleButtonTitle,
 					"ariaLabelButton": !this.nonFocusableButton && this.useAccessibleNameForToggleButton ? this.effectiveAccessibleName : undefined,
 				},

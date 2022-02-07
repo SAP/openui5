@@ -71,6 +71,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: "",
 			},
+			showClearIcon: {
+				type: Boolean,
+			},
+			effectiveShowClearIcon: {
+				type: Boolean,
+			},
 			focused: {
 				type: Boolean,
 			},
@@ -176,6 +182,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.enableSuggestions();
 				this.suggestionsTexts = this.Suggestions.defaultSlotProperties(this.highlightValue);
 			}
+			this.effectiveShowClearIcon = (this.showClearIcon && !!this.value && !this.readonly && !this.disabled);
 			this.open = this.open && (!!this.suggestionItems.length || this._isPhone);
 			const FormSupport = FeaturesRegistry.getFeature("FormSupport");
 			if (FormSupport) {
@@ -325,6 +332,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onfocusout(event) {
 			const focusedOutToSuggestions = this.Suggestions && event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.contains(this.Suggestions.responsivePopover);
 			const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
+			this._preventNextChange = this.effectiveShowClearIcon && this.shadowRoot.contains(event.relatedTarget);
 			if (focusedOutToSuggestions || focusedOutToValueStateMessage) {
 				event.stopImmediatePropagation();
 				return;
@@ -360,9 +368,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._nativeChangeDebounce = setTimeout(() => this._handleChange(), 100);
 		}
 		_handleChange() {
+			if (this._preventNextChange) {
+				this._preventNextChange = false;
+				return;
+			}
 			if (this._changeFiredValue !== this.value) {
 				this._changeFiredValue = this.value;
 				this.fireEvent(this.EVENT_CHANGE);
+			}
+		}
+		_clear() {
+			this.value = "";
+			this.fireEvent(this.EVENT_INPUT);
+			this._handleChange();
+			if (!this._isPhone) {
+				this.focus();
 			}
 		}
 		_scroll(event) {

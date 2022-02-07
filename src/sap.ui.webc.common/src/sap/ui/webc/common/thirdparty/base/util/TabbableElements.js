@@ -20,6 +20,9 @@ sap.ui.define(['exports', './isNodeTabbable'], function (exports, isNodeTabbable
 				const children = currentNode.shadowRoot.children;
 				currentNode = Array.from(children).find(node => node.tagName !== "STYLE");
 			}
+			if (!currentNode) {
+				return;
+			}
 			if (isNodeTabbable(currentNode)) {
 				tabbablesNodes.push(currentNode);
 			}

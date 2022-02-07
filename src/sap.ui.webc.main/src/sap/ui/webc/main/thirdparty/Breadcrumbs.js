@@ -207,7 +207,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			const link = event.target,
 				items = this.getSlottedNodes("items"),
 				item = items.find(x => `${x._id}-link` === link.id);
-			this.fireEvent("item-click", { item });
+			if (!this.fireEvent("item-click", { item }, true)) {
+				event.preventDefault();
+			}
 		}
 		_onLabelPress() {
 			const items = this.getSlottedNodes("items"),
@@ -218,9 +220,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			const listItem = event.detail.selectedItems[0],
 				items = this.getSlottedNodes("items"),
 				item = items.find(x => `${x._id}-li` === listItem.id);
-			window.open(item.href, item.target || "_self", "noopener,noreferrer");
-			this.responsivePopover.close();
-			this.fireEvent("item-click", { item });
+			if (this.fireEvent("item-click", { item }, true)) {
+				window.open(item.href, item.target || "_self", "noopener,noreferrer");
+				this.responsivePopover.close();
+			}
 		}
 		async _respPopover() {
 			const staticAreaItem = await this.getStaticAreaItemDomRef();

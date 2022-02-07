@@ -85,6 +85,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isTabNext(event) || Keys.isTabPrevious(event)) {
 				this._tabMarked = true;
 			}
+			if (Keys.isTabNext(event) || Keys.isTabPrevious(event)) {
+				this._tabMarked = true;
+			}
 			if (Keys.isSpace(event) && event.target.tagName.toLowerCase() === "tr") {
 				event.preventDefault();
 			}
@@ -115,7 +118,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_ontouchend() {
 			this.deactivate();
 		}
-		_onfocusout() {
+		_onfocusout(event) {
 			this.deactivate();
 			if (!this._tabMarked) {
 				this._tabbableElements.forEach(el => el.setAttribute("tabindex", -1));
@@ -124,8 +127,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_onfocusin(event, forceSelfFocus = false) {
+			const tableRowRoot = this.shadowRoot.querySelector(".ui5-table-row-root");
 			if (forceSelfFocus || this._getActiveElementTagName() === "ui5-table-cell") {
-				this.shadowRoot.querySelector(".ui5-table-row-root").focus();
+				tableRowRoot.focus();
 				this.activate();
 			}
 			this._tabbableElements.forEach(el => el.setAttribute("tabindex", 0));

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/Popover', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/search', 'sap/ui/webc/common/thirdparty/icons/bell', 'sap/ui/webc/common/thirdparty/icons/overflow', 'sap/ui/webc/common/thirdparty/icons/grid', './generated/i18n/i18n-defaults', './generated/templates/ShellBarTemplate.lit', './generated/templates/ShellBarPopoverTemplate.lit', './generated/themes/ShellBar.css'], function (UI5Element, litRender, ResizeHandler, FeaturesRegistry, AnimationMode$1, AnimationMode, Keys, Render, StandardListItem, List, Popover, Button, i18nBundle, search, bell, overflow, grid, i18nDefaults, ShellBarTemplate_lit, ShellBarPopoverTemplate_lit, ShellBar_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/main/thirdparty/StandardListItem', 'sap/ui/webc/main/thirdparty/List', 'sap/ui/webc/main/thirdparty/Popover', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/types/HasPopup', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/search', 'sap/ui/webc/common/thirdparty/icons/bell', 'sap/ui/webc/common/thirdparty/icons/overflow', 'sap/ui/webc/common/thirdparty/icons/grid', './generated/i18n/i18n-defaults', './generated/templates/ShellBarTemplate.lit', './generated/templates/ShellBarPopoverTemplate.lit', './generated/themes/ShellBar.css'], function (UI5Element, litRender, ResizeHandler, FeaturesRegistry, AnimationMode$1, AnimationMode, Keys, Render, StandardListItem, List, Popover, Button, HasPopup, i18nBundle, search, bell, overflow, grid, i18nDefaults, ShellBarTemplate_lit, ShellBarPopoverTemplate_lit, ShellBar_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -10,6 +10,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	var List__default = /*#__PURE__*/_interopDefaultLegacy(List);
 	var Popover__default = /*#__PURE__*/_interopDefaultLegacy(Popover);
 	var Button__default = /*#__PURE__*/_interopDefaultLegacy(Button);
+	var HasPopup__default = /*#__PURE__*/_interopDefaultLegacy(HasPopup);
 
 	const HANDLE_RESIZE_DEBOUNCE_RATE = 200;
 	const metadata = {
@@ -663,7 +664,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.menuItems.length > 0;
 		}
 		get menuBtnHasPopup() {
-			return this.hasMenuItems ? true : undefined;
+			return this.hasMenuItems ? HasPopup__default.Menu : undefined;
 		}
 		get menuBtnTabindex() {
 			return this.hasMenuItems ? "0" : "-1";
@@ -715,13 +716,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					"title": this._productsText,
 				},
 				search: {
-					"ariaExpanded": this.showSearchField,
 					"title": this._searchText,
+					"accessibilityAttributes": {
+						expanded: this.showSearchField,
+					},
 				},
 				overflow: {
 					"title": this._overflowText,
-					"ariaHaspopup": true,
-					"ariaExpanded": this._overflowPopoverExpanded,
+					"accessibilityAttributes": {
+						hasPopup: HasPopup__default.Menu,
+						expanded: this._overflowPopoverExpanded,
+					},
 				},
 			};
 		}

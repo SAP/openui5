@@ -165,6 +165,15 @@ sap.ui.define([
 						type: "slot",
 						to: "div"
 					}
+				},
+
+				/**
+				 * Defines the width of the control
+				 */
+				width: {
+					type: "sap.ui.core.CSSSize",
+					defaultValue: null,
+					mapping: "style"
 				}
 			},
 			defaultAggregation: "items",

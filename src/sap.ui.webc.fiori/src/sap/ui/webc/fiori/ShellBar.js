@@ -219,7 +219,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fired, when a menu item is activated <b>Note:</b> You can prevent closing of oveflow popover by calling <code>event.preventDefault()</code>.
+				 * Fired, when a menu item is activated <b>Note:</b> You can prevent closing of overflow popover by calling <code>event.preventDefault()</code>.
 				 */
 				menuItemClick: {
 					parameters: {
@@ -248,7 +248,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fired, when the product switch icon is activated. <b>Note:</b> You can prevent closing of oveflow popover by calling <code>event.preventDefault()</code>.
+				 * Fired, when the product switch icon is activated. <b>Note:</b> You can prevent closing of overflow popover by calling <code>event.preventDefault()</code>.
 				 */
 				productSwitchClick: {
 					allowPreventDefault: true,

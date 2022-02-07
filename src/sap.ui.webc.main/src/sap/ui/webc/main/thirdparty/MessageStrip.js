@@ -115,13 +115,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get designClasses() {
 			return MessageStrip.designClassesMappings()[this.design];
 		}
-		get accInfo() {
-			return {
-				"button": {
-					"title": this._closeButtonText,
-				},
-			};
-		}
 	}
 	MessageStrip.define();
 

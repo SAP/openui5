@@ -125,9 +125,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get _containerAriaHasPopup() {
 			return this._isGroup ? this._getAriaHasPopup() : undefined;
 		}
-		get _overflowButtonAccInfo() {
+		get _overflowButtonAccAttributes() {
 			return {
-				ariaHaspopup: this._isGroup ? undefined : this._getAriaHasPopup(),
+				hasPopup: this._isGroup ? undefined : this._getAriaHasPopup(),
 			};
 		}
 		get _role() {

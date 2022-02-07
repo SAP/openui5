@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/animations/slideDown', 'sap/ui/webc/common/thirdparty/base/animations/slideUp', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/MediaRange', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-up', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', './generated/i18n/i18n-defaults', './Button', './Icon', './List', './ResponsivePopover', './types/TabContainerTabsPlacement', './generated/templates/TabContainerTemplate.lit', './generated/templates/TabContainerPopoverTemplate.lit', './generated/themes/TabContainer.css', './generated/themes/ResponsivePopoverCommon.css', './types/TabLayout', './types/TabsOverflowMode'], function (UI5Element, litRender, ResizeHandler, slideDown, slideUp, AnimationMode$1, AnimationMode, ItemNavigation, Keys, MediaRange, i18nBundle, slimArrowUp, slimArrowDown, i18nDefaults, Button, Icon, List, ResponsivePopover, TabContainerTabsPlacement, TabContainerTemplate_lit, TabContainerPopoverTemplate_lit, TabContainer_css, ResponsivePopoverCommon_css, TabLayout, TabsOverflowMode) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/animations/slideDown', 'sap/ui/webc/common/thirdparty/base/animations/slideUp', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/MediaRange', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-up', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', './generated/i18n/i18n-defaults', './Button', './Icon', './List', './ResponsivePopover', './types/TabContainerTabsPlacement', './generated/templates/TabContainerTemplate.lit', './generated/templates/TabContainerPopoverTemplate.lit', './generated/themes/TabContainer.css', './generated/themes/ResponsivePopoverCommon.css', './types/TabLayout', './types/TabsOverflowMode'], function (UI5Element, litRender, ResizeHandler, Render, slideDown, slideUp, AnimationMode$1, AnimationMode, ItemNavigation, Keys, MediaRange, i18nBundle, slimArrowUp, slimArrowDown, i18nDefaults, Button, Icon, List, ResponsivePopover, TabContainerTabsPlacement, TabContainerTemplate_lit, TabContainerPopoverTemplate_lit, TabContainer_css, ResponsivePopoverCommon_css, TabLayout, TabsOverflowMode) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -316,11 +316,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				await this._onOverflowClick(event);
 			}
 		}
-		_handleResize() {
+		async _handleResize() {
 			if (this.responsivePopover && this.responsivePopover.opened) {
 				this.responsivePopover.close();
 			}
 			this._updateMediaRange();
+			await Render.renderFinished();
 			this._setItemsForStrip();
 		}
 		_setItemsForStrip() {
