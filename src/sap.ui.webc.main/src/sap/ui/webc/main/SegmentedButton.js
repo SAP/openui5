@@ -91,6 +91,22 @@ sap.ui.define([
 	 */
 
 	/* CUSTOM CODE START */
+
+	// eslint-disable-next-line no-warning-comments
+	// TODO: Currently the width of the SegmentedButton component is handled internally by the SegmentedButton web component.
+	// There is difference on how that is done in the sap.m library thus this needs to be aligned.
+	// However, once aligned the code below may be needed as the width should not be changed by the form.
+
+	/**
+	* <code>SegmentedButton</code> must not be stretched in Form because ResizeHandler is used internally
+	* in order to manage the width of the SegmentedButton depending on the container size
+	* @protected
+	* @returns {boolean} True this method always returns <code>true</code>
+	*/
+	SegmentedButton.prototype.getFormDoNotAdjustWidth = function () {
+		return true;
+	};
+
 	/* CUSTOM CODE END */
 
 	return SegmentedButton;

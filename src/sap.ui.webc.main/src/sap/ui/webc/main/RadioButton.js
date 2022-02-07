@@ -174,6 +174,15 @@ sap.ui.define([
 	});
 
 	/* CUSTOM CODE START */
+
+	/**
+	 * RadioButton without label must not be stretched in Form.
+	 * @returns {boolean} True if the <code>Form</code> should not adjust the width of the RadioButton component wrapper
+	 */
+	RadioButton.prototype.getFormDoNotAdjustWidth = function() {
+		return this.getText() ? false : true;
+	};
+
 	/* CUSTOM CODE END */
 
 	return RadioButton;
