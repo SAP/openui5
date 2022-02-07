@@ -412,9 +412,9 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent("DTP2-inner", KeyCodes.ENTER, false, false, false);
 		jQuery("#DTP2").find("input").trigger("change"); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, "DTP2", "Change event fired");
-		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
+		assert.equal(sValue, "37+02+2016:10+11", "Value of event has entered value if it is invalid");
 		assert.ok(!bValid, "Value is not valid");
-		assert.equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if invalid");
+		assert.equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if it is invalid");
 		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
 
 		sValue = "";
@@ -895,6 +895,162 @@ sap.ui.define([
 		assert.ok(oPopupContent[1].isA("sap.m.internal.DateTimePickerPopup"), "There is a sap.m.internal.DateTimePickerPopup created in the popup content");
 
 		// Clean up
+		oDTP.destroy();
+	});
+
+	QUnit.module("Timezones");
+
+	QUnit.test("value + timezone", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker({
+			value: "Feb 2, 2022, 8:25:00 AM America/New_York",
+			timezone: "America/New_York"
+		});
+
+		// assert
+		assert.equal(oDTP.getDateValue().getTime(), 1643808300000, "dateValue contains the correct date and time");
+
+		// act
+		oDTP.setValue("Feb 2, 2022, 9:25:00 AM America/New_York");
+
+		// assert
+		assert.equal(oDTP.getDateValue().getTime(), 1643811900000, "dateValue contains the correct date and time");
+
+		// act
+		oDTP.setTimezone("Asia/Kabul");
+
+		// assert
+		assert.equal(oDTP.getDateValue().getTime(), 1643777700000, "dateValue contains the correct date and time");
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia/Kabul", "the time part of the value stays the same");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("dateValue + timezone", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker({
+			dateValue: new Date(Date.UTC(2022, 1, 2, 13, 25, 0)),
+			timezone: "America/New_York"
+		});
+
+		// assert
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 8:25:00 AM America/New_York", "the value is correct");
+
+		// act
+		oDTP.setDateValue(new Date(Date.UTC(2022, 1, 2, 14, 25, 0)));
+
+		// assert
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM America/New_York", "the value is correct");
+
+		// act
+		oDTP.setTimezone("Asia/Kabul");
+
+		// assert
+		assert.equal(oDTP.getDateValue().getTime(), 1643777700000, "dateValue contains the correct date and time");
+		assert.equal(oDTP.getValue(), "Feb 2, 2022, 9:25:00 AM Asia/Kabul", "the time part of the value stays the same");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("input value", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker({
+			value: "Feb 2, 2022, 8:25:00 AM America/New_York",
+			timezone: "America/New_York"
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.$("inner").val(), "Feb 2, 2022, 8:25:00 AM", "correct displayed value");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("showTimezone", function(assert) {
+		var oDTP;
+
+		// arrange
+		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
+			return "Asia/Kabul";
+		});
+
+		oDTP = new DateTimePicker().placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.equal(oDTP.$("timezoneLabel").length, 0, "no timezone label");
+
+		// act
+		oDTP.setShowTimezone(true);
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.$("timezoneLabel").length, 1, "has a timezone label");
+		assert.equal(oDTP.$("timezoneLabel").text(), "Asia/Kabul", "the label text is the default timezone");
+
+		// act
+		oDTP.setTimezone("America/New_York");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.$("timezoneLabel").text(), "America/New_York", "the label text is the provided timezone");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("displayFormatType + timezone", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker({
+			value: "Feb 18, 2016, 10:00:00 AM",
+			displayFormatType: "Islamic"
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
+
+		// act
+		oDTP.setTimezone("America/New_York");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.getValue(), "Feb 18, 2016, 10:00:00 AM America/New_York", "value is correct");
+		assert.equal(oDTP.$("inner").val(), "Jum. I 9, 1437 AH, 10:00:00 AM", "correct displayed value");
+		assert.equal(oDTP.getDateValue().getTime(), 1455807600000, "correct dateValue");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("bound dateValue + timezone", function(assert) {
+		// arrange
+		var oModel = new JSONModel({ date: new Date(Date.UTC(2016, 1, 18, 15, 0, 0)) }),
+			oDTP = new DateTimePicker("dtpb", {
+				dateValue: { path: '/date' },
+				timezone: "America/New_York" // UTC-5
+			}).setModel(oModel),
+			oInputRef;
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oInputRef = oDTP.$("inner");
+
+		// assert
+		assert.equal(oInputRef.val(), "Feb 18, 2016, 10:00:00 AM", "correct displayed value");
+
+		// act - type into the input
+		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
+		qutils.triggerKeyboardEvent("dtpb-inner", KeyCodes.ENTER, false, false, false);
+		oInputRef.trigger("change");
+
+		// assert
+		assert.equal(oDTP.getDateValue().getTime(), Date.UTC(2016, 1, 18, 14, 0, 0), "correct dateValue");
+
+		// clean
 		oDTP.destroy();
 	});
 });

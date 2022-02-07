@@ -238,6 +238,9 @@ sap.ui.define([
 			},
 			DateTimePicker: {
 				title: "DateTimePicker - sap.m",
+				coverage: {
+					only: ["sap/m/DateTimePicker"]
+				},
 				ui5: {
 					language: "en-US",
 					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary

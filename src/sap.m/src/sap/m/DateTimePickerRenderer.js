@@ -28,6 +28,46 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 		return mAccessibilityState;
 	};
 
+	DateTimePickerRenderer.writeAdditionalContent = function(oRm, oControl) {
+		var sTimezone = oControl._getTimezone(true);
+
+		if (!oControl._getShowTimezone()) {
+			return;
+		}
+
+		oRm.openStart("div", oControl.getId() + "-timezoneLabel");
+		oRm.class("sapMDTPTimezoneLabel");
+		oRm.attr("title", sTimezone);
+		oRm.openEnd();
+
+		oRm.openStart("span");
+		oRm.openEnd();
+		oRm.text(sTimezone);
+		oRm.close("span");
+
+		oRm.close("div");
+
+		oRm.openStart("span");
+		oRm.class("sapMDummyContent");
+		oRm.openEnd();
+
+		// try to choose the date that is the longest when formatted
+		oRm.text(oControl._getFormatter(true).format(
+			new Date(2000, 10, 20, 10, 10, 10),
+			sap.ui.getCore().getConfiguration().getTimezone()));
+		oRm.close("span");
+	};
+
+	DateTimePickerRenderer.addOuterClasses = function(oRm, oControl) {
+		DatePickerRenderer.addOuterClasses(oRm, oControl);
+
+		oRm.class("sapMDTP");
+
+		if (oControl._getShowTimezone()) {
+			oRm.class("sapMDTPWithTimezone");
+		}
+	};
+
 	return DateTimePickerRenderer;
 
 }, /* bExport= */ true);

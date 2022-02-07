@@ -182,6 +182,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 		this.writeInnerContent(oRm, oControl);
 		this.closeInputTag(oRm, oControl);
 
+		this.writeAdditionalContent(oRm, oControl);
+
 		// write the end icons after the inner part
 		if (aEndIcons.length) {
 			this.writeIcons(oRm, aEndIcons);
@@ -551,6 +553,16 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.writeInnerContent = function(oRm, oControl) {};
+
+	/**
+	 * Writes additional content inside the input container, after the input.
+	 *
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 * @ui5-restricted sap.m.DateTimePickerRenderer, sap.m.DateTimeFieldRenderer
+	 */
+	InputBaseRenderer.writeAdditionalContent = function(oRm, oControl) {};
 
 	/**
 	 * Renders icons from the icon aggregations.

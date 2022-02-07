@@ -35,6 +35,72 @@
 	float: left;
 }
 
+.sapMDTP.sapMDTPWithTimezone {
+	min-width: 6.875rem;
+}
+
+.sapMDTP.sapMDTPWithTimezone .sapMInputBaseContentWrapper {
+	display: flex;
+	justify-content: flex-start;
+	position: relative;
+
+	& > * {
+		flex-basis: auto;
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	& > input {
+		padding-right: 0;
+		width: ~'calc(100% - 4rem)';
+		min-width: 2rem;
+	}
+
+	& > .sapMDTPTimezoneLabel {
+		flex-grow: 1;
+		flex-shrink: 1;
+		min-width: 0;
+	}
+}
+
+.sapMDTP.sapMDTPWithTimezone .sapMInputBaseContentWrapper .sapMDummyContent {
+	visibility: hidden;
+	position: absolute;
+	left: 0;
+	width: auto;
+	padding-left: 0.625rem;
+	font-size: 0.875rem;
+}
+
+.sapMDTP.sapMDTPWithTimezone .sapMInputBaseContentWrapper .sapMDTPTimezoneLabel {
+	background: transparent;
+	box-sizing: border-box;
+	border: none;
+
+	font-size: 0.875rem;
+	font-style: italic;
+	color: @sapField_PlaceholderTextColor;
+
+	padding: 0 0.25rem 0 0.25rem;
+	height: 100%;
+	line-height: normal;
+
+	vertical-align: inherit;
+
+	display: flex;
+	justify-content: start;
+	align-items: center;
+
+	cursor: pointer;
+
+	& > span {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding-right: 0.125rem;
+	}
+}
+
 /* Compact mode */
 .sapUiSizeCompact .sapMDateTimePopupCont {
 	height: 21rem;
