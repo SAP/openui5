@@ -186,7 +186,7 @@ sap.ui.define([
 					});
 				},
 				pressMore : function () {
-					Helper.pressMoreButton(this, sViewName);
+					Helper.pressMoreButton(this, sViewName, "SO_2_SOITEM");
 				},
 				sortByGrossAmount : function () {
 					Helper.pressButton(this, sViewName, "sortByGrossAmount");
