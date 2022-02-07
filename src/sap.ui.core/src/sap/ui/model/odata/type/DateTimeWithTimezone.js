@@ -51,6 +51,7 @@ sap.ui.define([
 	 * @extends sap.ui.model.CompositeType
 	 * @public
 	 * @since 1.99.0
+	 * @experimental The behavior of this type may change in the future.
 	 * @version ${version}
 	 */
 	var DateTimeWithTimezone = CompositeType.extend("sap.ui.model.odata.type.DateTimeWithTimezone",
