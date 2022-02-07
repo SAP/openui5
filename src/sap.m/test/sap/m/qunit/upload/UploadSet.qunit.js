@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/dnd/DragAndDrop"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop) {
 	"use strict";
 
 	function getData() {
@@ -292,7 +293,7 @@ sap.ui.define([
 			//Assert
 			assert.ok(oEvent.getParameter("item"), "item param present");
 			assert.ok(oEvent.getParameter("response"), "response param present");
-			assert.equal(oEvent.getParameter("responseXML"), null, "response xml param present");
+			assert.equal(oEvent.getParameter("responseXML"), null, "response xml param not present");
 			assert.ok(oEvent.getParameter("readyState"), "readystate param present");
 			assert.ok(oEvent.getParameter("status"), "status param present");
 			assert.ok(oEvent.getParameter("headers"), "headers param present");
@@ -414,6 +415,46 @@ sap.ui.define([
 		assert.ok(document.querySelector(".sapMUCNoDataPage"), "No Data template is visible");
 	});
 
+	function createNativeDragEventDummy(sEventType) {
+		var oEvent;
+
+		if (typeof Event === "function") {
+			oEvent = new Event(sEventType, {
+				bubbles: true,
+				cancelable: true
+			});
+		} else { // IE
+			oEvent = document.createEvent("Event");
+			oEvent.initEvent(sEventType, true, true);
+		}
+
+		oEvent.dataTransfer = {
+			types: [],
+				dropEffect: "",
+				setDragImage: function() {},
+			setData: function() {}
+		};
+
+		return oEvent;
+	}
+
+	function createjQueryDragEventDummy(sEventType, oControl, bRemoveId, bRemoveDraggable) {
+		var oEvent = jQuery.Event(sEventType);
+		var oTarget = oControl.getDomRef();
+
+		oEvent.target = oTarget;
+		if (bRemoveId === true) {
+			delete oTarget.dataset.sapUi;
+			oTarget.removeAttribute("id");
+		}
+		if (bRemoveDraggable === true) {
+			oTarget.draggable = false;
+		}
+		oEvent.originalEvent = createNativeDragEventDummy(sEventType);
+
+		return oEvent;
+	}
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);
@@ -433,22 +474,35 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Drag & Drop behaviour on change of UploadEnabled property", function(assert) {
-		//Arrange
-		this.oUploadSet.setUploadEnabled(true);
-		//Act
-		this.$RootNode.trigger("dragenter");
-		//Assert
-		assert.notOk(this.oUploadSet.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is visible when UploadEnabled is true");
-
-		//Arrange
-		this.oUploadSet.$("drag-drop-area").addClass("sapMUCDragDropOverlayHide");
-		this.oUploadSet.setUploadEnabled(false);
-		//Act
-		this.$RootNode.trigger("dragenter");
-		//Assert
-		assert.ok(this.oUploadSet.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "The UploadCollection drag overlay is not visible when UploadEnabled is false");
+	QUnit.test("Dragged into target area", function(assert) {
+		var oTargetDomRef = this.oUploadSet.getList().getDomRef();
+		oTargetDomRef.focus();
+		var oDropInfo = this.oUploadSet.getList().getDragDropConfig()[1];
+		oDropInfo.attachDragEnter(function(oEvent) {
+			assert.ok(oEvent.getParameter("dragSession"), "drag session exists");
+		});
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
 	});
 
+	QUnit.test("Drag and drop lifecycle & drag session", function(assert) {
+		var oEvent = createjQueryDragEventDummy("dragstart", this.oUploadSet.getList().getItems()[0]);
+		oEvent.target.focus();
+		DragAndDrop.preprocessEvent(oEvent);
+		assert.notEqual(oEvent.dragSession, null, "dragstart: A drag session was created for item");
+
+		var oDragSession = oEvent.dragSession;
+		this.oUploadSet.attachItemDrop(function(oEvent) {
+			assert.ok(oEvent.getParameter("dragSession"), "Drop item event triggered");
+		});
+
+		oEvent = createjQueryDragEventDummy("drop", this.oUploadSet.getList().getItems()[0], false);
+		DragAndDrop.preprocessEvent(oEvent);
+		assert.ok(oEvent.dragSession === oDragSession, "drop: Drag session was preserved");
+
+		oEvent = createjQueryDragEventDummy("dragend", this.oUploadSet.getList().getItems()[0], false);
+		DragAndDrop.preprocessEvent(oEvent);
+		assert.ok(oEvent.dragSession === oDragSession, "dragend: Drag session was preserved");
+
+	});
 
 });

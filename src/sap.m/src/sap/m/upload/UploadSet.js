@@ -21,9 +21,11 @@ sap.ui.define([
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/Uploader",
 	"sap/m/upload/UploadSetRenderer",
-	"sap/m/upload/UploaderHttpRequestMethod"
+	"sap/m/upload/UploaderHttpRequestMethod",
+	"sap/ui/core/dnd/DragDropInfo",
+	"sap/ui/core/dnd/DropInfo"
 ], function (Control, Icon, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
-			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod) {
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo) {
 	"use strict";
 
 	/**
@@ -372,6 +374,37 @@ sap.ui.define([
 						 */
 						items: {type: "sap.m.upload.UploadSetItem[]"}
 					}
+				},
+				/**
+				 * This event is fired when the user starts dragging an uploaded item.
+				 * @event
+				 * @param {sap.ui.base.Event} oControlEvent
+				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+				 * @param {object} oControlEvent.getParameters
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that will be dragged
+				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+				 * @public
+				 * @since 1.99
+				 */
+				itemDragStart: {
+				},
+
+				/**
+				 * This event is fired when an uploaded item is dropped on the new list position.
+				 * @event
+				 * @param {sap.ui.base.Event} oControlEvent
+				 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+				 * @param {object} oControlEvent.getParameters
+				 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.draggedControl The element being dragged
+				 * @param {sap.ui.core.Element} oControlEvent.getParameters.droppedControl The element being dropped
+				 * @param {string} oControlEvent.getParameters.dropPosition The calculated position of the drop action relative to the <code>droppedControl</code>, possible values are <code>Before</code>, <code>On</code>, <code>After</code>
+				 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+				 * @public
+				 * @since 1.99
+				 */
+				 itemDrop: {
 				}
 			}
 		},
@@ -404,7 +437,6 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.exit = function () {
-		this._unbindDragAndDrop();
 		this._oNoDataIcon.destroy();
 		this._oNoDataIcon = null;
 	};
@@ -414,7 +446,6 @@ sap.ui.define([
 	/* ===================== */
 
 	UploadSet.prototype.onBeforeRendering = function () {
-		this._unbindDragAndDrop();
 	};
 
 	UploadSet.prototype.onAfterRendering = function () {
@@ -428,8 +459,6 @@ sap.ui.define([
 				oInput.trigger("focus");
 			}
 		}
-
-		this._bindDragAndDrop();
 	};
 
 	UploadSet.prototype.onkeydown = function (oEvent) {
@@ -656,13 +685,55 @@ sap.ui.define([
 		if (!this._oList) {
 			this._oList = new List(this.getId() + "-list", {
 				selectionChange: [this._handleSelectionChange, this],
-				headerToolbar: this.getToolbar()
+				headerToolbar: this.getToolbar(),
+				dragDropConfig: [
+					new DragDropInfo({
+						dropPosition: "Between",
+						sourceAggregation: "items",
+						targetAggregation: "items",
+						dragStart: [this._onDragStartItem, this],
+						drop: [this._onDropItem, this]
+					})
+					,
+					new DropInfo({
+						dropEffect:"Move",
+						dropPosition:"OnOrBetween",
+						dragEnter: [this._onDragEnterFile, this],
+						drop: [this._onDropFile, this]
+					})
+				]
 			});
 			this._oList.addStyleClass("sapMUCList");
 			this.addDependent(this._oList);
 		}
 
 		return this._oList;
+	};
+
+	UploadSet.prototype._onDragStartItem = function (oEvent) {
+		this.fireItemDragStart(oEvent);
+	};
+
+	UploadSet.prototype._onDropItem = function (oEvent) {
+		this.fireItemDrop(oEvent);
+	};
+
+	UploadSet.prototype._onDragEnterFile = function (oEvent) {
+		var oDragSession = oEvent.getParameter("dragSession");
+		var oDraggedControl = oDragSession.getDragControl();
+		if (oDraggedControl) {
+			oEvent.preventDefault();
+		}
+	};
+
+	UploadSet.prototype._onDropFile = function (oEvent) {
+		jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
+		var oFiles;
+		oEvent.preventDefault();
+		if (this.getUploadEnabled()) {
+			oFiles = oEvent.getParameter("browserEvent").dataTransfer.files;
+			this._processNewFileObjects(oFiles);
+		}
 	};
 
 	/**
@@ -1130,28 +1201,6 @@ sap.ui.define([
 		}
 
 		return this._oDragDropHandlers;
-	};
-
-	UploadSet.prototype._bindDragAndDrop = function () {
-		this._$Body = jQuery(document.body);
-		Object.keys(this._getDragDropHandlers().body).forEach(function (sEvent) {
-			this._$Body.on(sEvent, this._getDragDropHandlers().body[sEvent]);
-		}.bind(this));
-		this._$DragDropArea = this.$("drag-drop-area");
-		Object.keys(this._getDragDropHandlers().set).forEach(function (sEvent) {
-			this.$().on(sEvent, this._getDragDropHandlers().set[sEvent]);
-		}.bind(this));
-	};
-
-	UploadSet.prototype._unbindDragAndDrop = function () {
-		if (this._$Body) {
-			Object.keys(this._getDragDropHandlers().body).forEach(function (sEvent) {
-				this._$Body.off(sEvent, this._getDragDropHandlers().body[sEvent]);
-			}.bind(this));
-		}
-		Object.keys(this._getDragDropHandlers().set).forEach(function (sEvent) {
-			this.$().off(sEvent, this._getDragDropHandlers().set[sEvent]);
-		}.bind(this));
 	};
 
 	UploadSet.prototype._checkRestrictions = function () {
