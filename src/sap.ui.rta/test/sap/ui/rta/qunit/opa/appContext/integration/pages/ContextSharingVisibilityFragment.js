@@ -11,7 +11,7 @@ sap.ui.define([
 		onTheContextSharingVisibilityFragmentPage: {
 			actions: {
 				iSelectRadioButton: function (sRadioButtonTitle) {
-					this.waitFor({
+					return this.waitFor({
 						controlType: "sap.m.RadioButton",
 						properties: {
 							text: sRadioButtonTitle

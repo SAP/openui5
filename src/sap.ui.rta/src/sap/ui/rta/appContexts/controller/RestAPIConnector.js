@@ -11,7 +11,7 @@ sap.ui.define([
 	var RestAPIConnector = {
 		getAppContextData: function () {
 			//TODO: logic to retrieve backend data is missing here
-			return;
+			return { appContext: [] };
 		}
 
 	};

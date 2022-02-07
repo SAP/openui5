@@ -46,7 +46,7 @@
 				demandPopin="true"
 				popinDisplay="Inline"
 				hAlign="Left">
-				<Text text="{i18n>CLM_HEADER_TITLE}" />
+				<Text text="{i18n>APP_CONTEXT_TITLE}" />
 			</Column>
 			<Column
 				width="8rem"
@@ -62,7 +62,7 @@
 				demandPopin="true"
 				popinDisplay="Inline"
 				hAlign="Left">
-				<Text text="{i18n>CLM_HEADER_ACTIONS_HEADER}" />
+				<Text text="{i18n>APP_CONTEXT_ACTIONS}" />
 			</Column>
 		</columns>
 		<dragDropConfig>
@@ -83,7 +83,7 @@
 					<Text 
 						text="{ parts: ['appContexts>types/role', 'appContexts>types/country'], formatter: '.formatContextColumnCell'}" 
 						tooltip="{ parts: ['appContexts>types/role', 'appContexts>types/country'], formatter: '.formatContextTooltip'}" />
-					<MenuButton text="{i18n>MAA_DIALOG_ACTIONS}">
+					<MenuButton text="{i18n>APP_CONTEXT_ACTIONS}">
 						<menu>
 							<Menu itemSelected="onMenuAction">
 								<items>
