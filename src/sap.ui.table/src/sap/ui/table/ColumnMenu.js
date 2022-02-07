@@ -405,7 +405,7 @@ sap.ui.define([
 
 	/**
 	 * sets a new filter value into the filter field
-	 * @param {String} sValue value of the filter input field to be set
+	 * @param {string} sValue value of the filter input field to be set
 	 * @returns {this} this reference for chaining
 	 * @private
 	 */

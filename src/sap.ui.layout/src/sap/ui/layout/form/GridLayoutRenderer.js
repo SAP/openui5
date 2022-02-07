@@ -23,7 +23,7 @@ sap.ui.define([
 	 * Renders the HTML for the given form content, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLayout an object representation of the Layout control that should be rendered
+	 * @param {sap.ui.layout.form.GridLayout} oLayout an object representation of the Layout control that should be rendered
 	 * @param {sap.ui.layout.form.Form} oForm, a form control to render its content
 	 */
 	GridLayoutRenderer.renderForm = function(rm, oLayout, oForm){

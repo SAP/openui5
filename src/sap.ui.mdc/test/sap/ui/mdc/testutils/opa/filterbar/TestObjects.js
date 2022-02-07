@@ -33,7 +33,7 @@ sap.ui.define([
 				 * 		Closes the personalization dialog.
 				 * 	</li>
 				 * </ol>
-				 * @param {sap.ui.core.Control | String} oFilterBar Instance / ID of the <code>FilterBar</code> that is filtered
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>FilterBar</code> that is filtered
 				 * @param {Object} oSettings Map containing the settings for the filter personalization. Key is the label of the given group in the <code>FilterBar</code> personalization dialog, and value is an array containing the labels of the <code>FilterField</code>
 				 * @returns
 				 */
@@ -56,7 +56,7 @@ sap.ui.define([
 				 * 		Closes the personalization dialog.
 				 * 	</li>
 				 * </ol>
-				 * @param {sap.ui.core.Control | String} oFilterBar Instance / ID of the <code>FilterBar</code>
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>FilterBar</code>
 				 * @returns
 				 */
 				iResetThePersonalization: function(oFilterBar) {
@@ -65,7 +65,7 @@ sap.ui.define([
 				/**
 				 * OPA5 test action
 				 * Presses the apply filters button of the <code>FilterBar</code>.
-				 * @param {sap.ui.core.Control | String} oFilterBar Instance / ID of the <code>FilterBar</code>
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>FilterBar</code>
 				 * @returns
 				 */
 				iExpectSearch: function(oFilterBar) {
@@ -87,8 +87,8 @@ sap.ui.define([
 				 * 		Closes the personalization dialog.
 				 * 	</li>
 				 * </ol>
-				 * @param {sap.ui.core.Control | String} oFilterBar Instance / ID of the <code>FilterBar</code>
-				 * @param {String} sFilterLabel Label of the <code>FilterField</code>
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>FilterBar</code>
+				 * @param {string} sFilterLabel Label of the <code>FilterField</code>
 				 * @param {Object} mSettings Map containing the settings for the filter values. Key is the label of the given group in the <code>FilterBar</code> personalization dialog, and value is an object containing the label of the <code>FilterField</code> and the values that are entered
 				 * @returns
 				 */
@@ -98,8 +98,8 @@ sap.ui.define([
 				/**
 				 * OPA5 test action
 				 * Clears all values of a <code>FilterField</code> with a given label on the <code>FilterBar</code>.
-				 * @param {sap.ui.core.Control | String} oFilterBar Instance / ID of the <code>FilterBar</code>
-				 * @param {String} sFilterLabel Label of the <code>FilterField</code>
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>FilterBar</code>
+				 * @param {string} sFilterLabel Label of the <code>FilterField</code>
 				 * @returns
 				 */
 				iClearFilterValue: function(oFilterBar, sFilterLabel) {
@@ -123,8 +123,8 @@ sap.ui.define([
 				 * 		If the value is an empty array, the given <code>FilterFields</code> doesn't have a value.
 				 *  </li>
 				 * </ul>
-				 * @param {sap.ui.core.Control | String} oFilterBar Instance / ID of the <code>FilterBar</code>
-				 * @param {String[] | Object} vSettings
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>FilterBar</code>
+				 * @param {string[] | Object} vSettings
 				 * @returns
 				 */
 				iShouldSeeFilters: function(oFilterBar, vSettings) {

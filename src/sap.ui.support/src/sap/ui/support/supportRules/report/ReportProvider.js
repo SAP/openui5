@@ -304,8 +304,8 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/security/en
 	/**
 	 * Creates an html string containing the whole report.
 	 * @param {Object} oData - the data required to create a report
-	 * @param {String} [sBaseUrl] - the base path to javascript and css resources
-	 * @returns {String} the complete html.
+	 * @param {string} [sBaseUrl] - the base path to javascript and css resources
+	 * @returns {string} the complete html.
 	 */
 	function getReportHtml(oData, sBaseUrl) {
 		if (!sBaseUrl) {
@@ -337,9 +337,9 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/security/en
 
 	/**
 	 * Replace any placeholder like {{placeholder}} with the corresponding value from oContext.
-	 * @param {String} sTemplate the string template containing the placeholders.
+	 * @param {string} sTemplate the string template containing the placeholders.
 	 * @param {Object} oContext the object containing the values for the placeholders.
-	 * @returns {String} the processed template.
+	 * @returns {string} the processed template.
 	 */
 	function replacePlaceholders(sTemplate, oContext) {
 		var sPlaceholder,

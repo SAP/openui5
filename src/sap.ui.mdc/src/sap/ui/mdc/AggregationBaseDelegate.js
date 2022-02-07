@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		/**
 		 * Creates an instance of the implementing MDC Control's default aggregation.
 		 *
-		 * @param {String} sPropertyName The name of the property info object/JSON
+		 * @param {string} sPropertyName The name of the property info object/JSON
 		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC Control
 		 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility change API
 		 * <b>Note:</b>

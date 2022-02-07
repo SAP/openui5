@@ -51,7 +51,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	var Passport = {};
 
 	/**
-	 * @returns {String} a generated a passport header
+	 * @returns {string} a generated a passport header
 	 * @private
 	 */
 	Passport.header = function(trcLvl, RootID, TransID, component, action) {
@@ -123,7 +123,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	};
 
 	/**
-	 * @param {String} lvl Tracing level to be calculated
+	 * @param {string} lvl Tracing level to be calculated
 	 * @return {int[]} Array with two int representations of characters for trace level
 	 * @private
 	 */
@@ -149,7 +149,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	};
 
 	/**
-	 * @returns {String} a generated GUID
+	 * @returns {string} a generated GUID
 	 * @private
 	 */
 	Passport.createGUID = function() {

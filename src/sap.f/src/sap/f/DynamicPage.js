@@ -1083,7 +1083,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the current scroll position.
-	 * @returns {Number}
+	 * @returns {int}
 	 * @private
 	 */
 	DynamicPage.prototype._getScrollPosition = function () {
@@ -1115,8 +1115,8 @@ sap.ui.define([
 	/**
 	 * Sets the appropriate scroll position of the <code>ScrollBar</code> and <code>DynamicPage</code> content wrapper,
 	 * based on the used device.
-	 * @param {Number} iNewScrollPosition
-	 * @param {Number} bSuppressToggleHeader - flag to raise in cases where we only want to adjust the vertical positioning of the visible content, without changing the <code>headerExpanded</code> state of the <code>DynamicPage</code>
+	 * @param {number} iNewScrollPosition
+	 * @param {boolean} bSuppressToggleHeader - flag to raise in cases where we only want to adjust the vertical positioning of the visible content, without changing the <code>headerExpanded</code> state of the <code>DynamicPage</code>
 	 * @private
 	 */
 	DynamicPage.prototype._setScrollPosition = function (iNewScrollPosition, bSuppressToggleHeader) {
@@ -1216,7 +1216,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the appropriate height at which the header can collapse (snap).
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._getSnappingHeight = function () {
@@ -1238,7 +1238,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the maximum scroll position, depending on the content size.
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._getMaxScrollPosition = function() {
@@ -1274,7 +1274,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the height of the <code>DynamicPage</code> control.
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._getOwnHeight = function () {
@@ -1283,7 +1283,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the combined height of the title and the header.
-	 * @returns {Number} the combined height of the title and the header
+	 * @returns {number} the combined height of the title and the header
 	 * @private
 	 */
 	DynamicPage.prototype._getEntireHeaderHeight = function () {
@@ -1306,7 +1306,7 @@ sap.ui.define([
 	/**
 	 * Determines if the header is larger than what's allowed for it to be pinned.
 	 * If the header becomes more than 60% of the screen height it cannot be pinned.
-	 * @param {Number} iControlHeight
+	 * @param {number} iControlHeight
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -1349,7 +1349,7 @@ sap.ui.define([
 	/**
 	 * Determines the height that is needed to correctly offset the <code>ScrollBar</code>,
 	 * when <code>preserveHeaderStateOnScroll</code> is set to <code>false</code>.
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._measureScrollBarOffsetHeight = function () {
@@ -1465,7 +1465,7 @@ sap.ui.define([
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
 	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
 	 * thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
-	 * @param {Number} iWidth - the actual width of the control
+	 * @param {number} iWidth - the actual width of the control
 	 * @private
 	 */
 	DynamicPage.prototype._updateMedia = function (iWidth) {
@@ -1675,7 +1675,7 @@ sap.ui.define([
 	 * so it doesn't confuse any calculations based on it.
 	 * Otherwise, it returns the DOM element height, using <code>Element.getBoundingClientRect()</code>.
 	 * @param  {sap.ui.core.Control} oControl
-	 * @return {Number} the height of the control
+	 * @return {number} the height of the control
 	 */
 	DynamicPage.prototype._getHeight = function (oControl) {
 		var $ControlDom;
@@ -1693,7 +1693,7 @@ sap.ui.define([
 	 * Determines the width of a control safely. If the control doesn't exist it returns 0,
 	 * so it doesn't confuse any calculations based on it. If it exists it just returns its DOM element width.
 	 * @param  {sap.ui.core.Control} oControl
-	 * @return {Number} the width of the control
+	 * @return {number} the width of the control
 	 */
 	DynamicPage.prototype._getWidth = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
@@ -1702,7 +1702,7 @@ sap.ui.define([
 	/**
 	 * Determines the height of the <code>DynamicPage</code> outer header DOM element (the title area),
 	 * the wrapper of the <code>DynamicPageTitle</code> and <code>DynamicPageHeader</code>.
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._getTitleAreaHeight = function () {
@@ -1711,7 +1711,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the height of the <code>DynamicPageTitle</code> and if it's not present it returns 0.
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._getTitleHeight = function () {
@@ -1720,7 +1720,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the height of the <code>DynamicPageHeader</code> and if it's not present it returns 0.
-	 * @returns {Number}
+	 * @returns {number}
 	 * @private
 	 */
 	DynamicPage.prototype._getHeaderHeight = function () {

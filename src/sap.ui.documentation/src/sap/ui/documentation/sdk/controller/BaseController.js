@@ -159,7 +159,7 @@ sap.ui.define([
 
 			/**
 			 * Opens a legal disclaimer for Links Popover.
-			 * @param {sap.ui.base.Event} oEvent: the <code>Image</code> press event
+			 * @param {sap.ui.base.Event} oEvent the <code>Image</code> press event
 			 * @public
 			 */
 			onDisclaimerLinkPress: function (oEvent) {

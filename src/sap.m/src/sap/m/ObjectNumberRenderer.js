@@ -36,7 +36,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', './library', 'sap/
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oON An object representation of the control that should be rendered
+	 * @param {sap.m.ObjectNumber} oON An object representation of the control that should be rendered
 	 */
 	ObjectNumberRenderer.render = function(oRm, oON) {
 		var sTooltip = oON.getTooltip_AsString(),

@@ -19,16 +19,16 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMDCLink: {
 			actions: {
-                 /**
-                  * Object to identify a <code>sap.ui.mdc.Link</code>. Should contain at least one of the following properties: <code>text</code> and <code>id</code>.
-                 * @typedef {Object} LinkIdentifier
-                 * @property {String} id ID of a given <code>sap.m.Link</code> that represents the <code>sap.ui.mdc.Link</code>
-                 * @property {String} text Text of a given <code>sap.m.Link</code> that represents the <code>sap.ui.mdc.Link</code>
+                /**
+                 * Object to identify a <code>sap.ui.mdc.Link</code>. Should contain at least one of the following properties: <code>text</code> and <code>id</code>.
+                 * @typedef {object} LinkIdentifier
+                 * @property {string} id ID of a given <code>sap.m.Link</code> that represents the <code>sap.ui.mdc.Link</code>
+                 * @property {string} text Text of a given <code>sap.m.Link</code> that represents the <code>sap.ui.mdc.Link</code>
                  */
                 /**
                  * Opa5 test action
                  * @param {LinkIdentifier} oLinkIdentifier The object to identify the <code>sap.ui.mdc.Link</code>
-                 * @param {String[]} aLinks Array containing the texts of the links that are the result of the personalization
+                 * @param {string[]} aLinks Array containing the texts of the links that are the result of the personalization
                  * @returns {Promise} OPA waitFor
                  * 1. Opens the personalization dialog of a given <code>sap.ui.mdc.Link</code>.
                  * 2. Selects all links given by <code>aLinks</code> and deselects all other links.
@@ -68,7 +68,7 @@ sap.ui.define([
                 /**
                 * Opa5 test action
                 * @param {LinkIdentifier} oLinkIdentifier The object to identify the <code>sap.ui.mdc.Link</code> that opens the popover
-                * @param {String} sLink The text of the link that is to be clicked on the popover
+                * @param {string} sLink The text of the link that is to be clicked on the popover
                 * @returns {Promise} OPA waitFor
                 * 1. Presses a given <code>sap.ui.mdc.Link</code> to open its popover.
                 * 2. Presses a link on the opened popover defined by <code>sLink</code>.
@@ -98,7 +98,7 @@ sap.ui.define([
                 /**
                  * Opa5 test action
                  * @param {LinkIdentifier} oLinkIdentifier The object to identify the <code>sap.ui.mdc.Link</code> that opens the popover
-                 * @param {String[]} aLinks Array containing the texts of the links that are visible on the popover
+                 * @param {string[]} aLinks Array containing the texts of the links that are visible on the popover
                  * @returns {Promise} OPA waitFor
                  * Creates an assumption that there is an open popover for a given <code>sap.ui.mdc.Link</code> and checks that all given links defined in <code>aLinks</code> are on that popover in a defined order.
                  */

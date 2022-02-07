@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/core/library'],
 			 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 			 *
 			 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-			 * @param {sap.ui.core.Control} oMessagePage an object representation of the control that should be rendered
+			 * @param {sap.m.MessagePage} oMessagePage an object representation of the control that should be rendered
 			 */
 			MessagePageRenderer.render = function(oRm, oMessagePage) {
 				this.startOpeningDiv(oRm, oMessagePage);

@@ -231,8 +231,8 @@ sap.ui.define([
 
 	/**
 	 * Returns property "ignore" of aggregation DT metadata
-	 * @param {Object} oElement Element whose aggregation has to be checked
-	 * @param {String} sAggregationName Name of the Aggregation
+	 * @param {sap.ui.core.Element} oElement Element whose aggregation has to be checked
+	 * @param {string} sAggregationName Name of the Aggregation
 	 * @return {boolean} if ignored
 	 * @public
 	 */

@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the
 	 *            render output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.ui.core.LocalBusyIndicator}
 	 *            oControl an object representation of the control that should
 	 *            be rendered
 	 * @private
@@ -51,7 +51,7 @@ sap.ui.define(function() {
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the
 	 *            render output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.ui.core.LocalBusyIndicator}
 	 *            oControl an object representation of the control that should
 	 *            be rendered
 	 */

@@ -215,7 +215,7 @@ sap.ui.define([
 	/*
 	* Returns the current mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	*
-	* @returns {String}
+	* @returns {string}
 	*/
 	SemanticShareMenu.prototype._getMode = function() {
 		return this._mode;
@@ -225,7 +225,7 @@ sap.ui.define([
 	/*
 	 * Sets the <code>ShareMenu</code> mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	 *
-	 * @param {String} sMode
+	 * @param {string} sMode
 	 * @returns {this}
 	 */
 	SemanticShareMenu.prototype._setMode = function (sMode) {
@@ -315,8 +315,8 @@ sap.ui.define([
 	/*
 	* Determines the insert index of the custom controls to be added.
 	*
-	* @param {Number} iIndex
-	* @returns {Number}
+	* @param {int} iIndex
+	* @returns {int}
 	*/
 	SemanticShareMenu.prototype._getCustomActionInsertIndex = function(iIndex) {
 		var iCustomActionsCount = this._aCustomShareActions.length;
@@ -334,7 +334,7 @@ sap.ui.define([
 	* Determines the insert index of the semantic controls to be added.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {Number}
+	* @returns {int}
 	*/
 	SemanticShareMenu.prototype._getSemanticActionInsertIndex = function(oSemanticControl) {
 		this._aShareMenuActions.sort(this._sortControlByOrder.bind(this));

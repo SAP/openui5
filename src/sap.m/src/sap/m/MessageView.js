@@ -140,7 +140,7 @@ sap.ui.define([
 				 * @callback sap.m.MessageView~asyncURLHandler
 				 * @param {object} config A single parameter object
 				 * @param {string} config.url URL to validate
-				 * @param {string|Int} config.id ID of the validation job
+				 * @param {string|int} config.id ID of the validation job
 				 * @param {object} config.promise Object grouping a promise's reject and resolve methods
 				 * @param {function} config.promise.resolve Method to resolve promise
 				 * @param {function} config.promise.reject Method to reject promise
@@ -1173,7 +1173,7 @@ sap.ui.define([
 	 * Handles click on a list item
 	 *
 	 * @param {sap.m.MessageListItem} oListItem ListItem that is pressed
-	 * @param {String} sTransiotionName name of transition could be slide, show, flip or fade
+	 * @param {string} sTransiotionName name of transition could be slide, show, flip or fade
 	 * @private
 	 */
 	MessageView.prototype._fnHandleForwardNavigation = function (oListItem, sTransiotionName) {

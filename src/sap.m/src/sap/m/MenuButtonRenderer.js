@@ -23,7 +23,7 @@ sap.ui.define([],
 		 * @param {sap.ui.core.RenderManager} oRm
 		 *            The RenderManager that can be used for writing to
 		 *            the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oMenuButton
+		 * @param {sap.m.MenuButton} oMenuButton
 		 *            The MenuButton to be rendered
 		 */
 		MenuButtonRenderer.render = function(oRm, oMenuButton) {

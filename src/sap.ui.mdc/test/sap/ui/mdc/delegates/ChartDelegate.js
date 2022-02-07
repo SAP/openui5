@@ -50,7 +50,7 @@ sap.ui.define([
         return {
             /**
              *
-             * @param {String} sPropertyName The property name
+             * @param {string} sPropertyName The property name
              * @param {Object} oMDCChart Instance of the chart TODO: Which one? MDC or inner?
              * @since 1.88
              * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
@@ -256,7 +256,7 @@ sap.ui.define([
 
     /**
      * Sets tooltips visible/invisible on inner chart
-     * @param {bool}  bFlag true for visible, false for invisible
+     * @param {boolean}  bFlag true for visible, false for invisible
      */
     ChartDelegate.setChartTooltipVisibility = function(bFlag) {
         //Nothing to do here

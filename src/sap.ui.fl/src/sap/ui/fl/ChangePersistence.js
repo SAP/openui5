@@ -103,7 +103,7 @@ sap.ui.define([
 	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
 	 * object.
 	 *
-	 * @returns {String} component name
+	 * @returns {string} component name
 	 * @public
 	 */
 	ChangePersistence.prototype.getComponentName = function() {

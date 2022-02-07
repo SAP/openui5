@@ -369,8 +369,8 @@ sap.ui.define([
 	 * Extract potential label part from the passed managed object instance
 	 *
 	 * @param {sap.ui.base.ManagedObject} oElement - managed object class instance for which label has to be extracted
-	 * @param {Function} [fnFunction] - custom function for retrieving label
-	 * @return {String|undefined} label string or undefined when no label can be extracted
+	 * @param {function} [fnFunction] - custom function for retrieving label
+	 * @return {string|undefined} label string or undefined when no label can be extracted
 	 */
 	ElementUtil.getLabelForElement = function(oElement, fnFunction) {
 		if (!ElementUtil.isElementValid(oElement)) {
@@ -435,7 +435,7 @@ sap.ui.define([
 	/**
 	 * The AggregationBindingStack contains element id and aggregation name of the bound control together with a stack containing
 	 * information about the traversed elements for an Overlay which is part of an aggregation binding.
-	 * @typedef {Object} sap.ui.dt.ElementUtil.AggregationBindingStack
+	 * @typedef {object} sap.ui.dt.ElementUtil.AggregationBindingStack
 	 * @property {string} elementId - id of the bound control.
 	 * @property {string} aggregation - name of the bound aggregation.
 	 * @property {string} templateId - id of the binding template.

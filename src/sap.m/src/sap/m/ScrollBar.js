@@ -127,7 +127,7 @@ function(Control, ScrollBarRenderer) {
 	/**
 	 * Sets <code>scrollTop</code> on <code>_$ScrollRef</code>
 	 *
-	 * @param {Number} iScrollPosition the scroll position
+	 * @param {number} iScrollPosition the scroll position
 	 * @private
 	 */
 	ScrollBar.prototype._setScrollPosition = function (iScrollPosition) {

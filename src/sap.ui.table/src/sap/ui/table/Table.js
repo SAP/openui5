@@ -2839,9 +2839,9 @@ sap.ui.define([
 	/**
 	 * Returns the summed width of all rendered columns
 	 * @private
-	 * @param {Number} iStartColumn starting column for calculating the width
-	 * @param {Number} iEndColumn ending column for calculating the width
-	 * @returns {Number} the summed column width
+	 * @param {int} iStartColumn starting column for calculating the width
+	 * @param {int} iEndColumn ending column for calculating the width
+	 * @returns {number} the summed column width
 	 */
 	Table.prototype._getColumnsWidth = function(iStartColumn, iEndColumn) {
 		// first calculate the min width of the table for all columns

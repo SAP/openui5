@@ -30,7 +30,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/m/library', 'sap
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the renderer output buffer
-	 * @param {sap.ui.core.Control} oLabel An object representation of the control that should be rendered
+	 * @param {sap.m.Label} oLabel An object representation of the control that should be rendered
 	 */
 	LabelRenderer.render = function(rm, oLabel){
 		// convenience variable

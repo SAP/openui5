@@ -134,7 +134,7 @@ sap.ui.define([
 		this._liveResize        = true;
 		this._keyboardEnabled   = true;
 		this._bHorizontal       = true;
-		/** @type {Number[]} */
+		/** @type {number[]} */
 		this._calculatedSizes   = [];
 		this._move              = {};
 
@@ -570,8 +570,8 @@ sap.ui.define([
 	/**
 	 * Resizes the contents after a bar has been moved
 	 *
-	 * @param {Number} [iLeftContent] Number of the first (left) content that is resized
-	 * @param {Number} [iPixels] Number of pixels to increase the first and decrease the second content
+	 * @param {int} [iLeftContent] Number of the first (left) content that is resized
+	 * @param {number} [iPixels] Number of pixels to increase the first and decrease the second content
 	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the
 	 * content areas)
 	 */
@@ -636,7 +636,7 @@ sap.ui.define([
 	 * Resizes as soon as the current stack is done. Can be used in cases where several resize-relevant
 	 * actions are done in a loop to make sure only one resize calculation is done at the end.
 	 *
-	 * @param {Number} [iDelay=0] Number of milliseconds to wait before doing the resize
+	 * @param {int} [iDelay=0] Number of milliseconds to wait before doing the resize
 	 * @private
 	 */
 	Splitter.prototype._delayedResize = function(iDelay) {
@@ -1056,8 +1056,8 @@ sap.ui.define([
 	 * Compares two (simple, one-dimensional) arrays. If all values are the same, false is returned -
 	 * If values differ or at least one of the values is no array, true is returned.
 	 *
-	 * @param {Number[]} [aSizes1] The array of numbers to compare against
-	 * @param {Number[]} [aSizes2] The array of numbers that is compared to the first one
+	 * @param {number[]} [aSizes1] The array of numbers to compare against
+	 * @param {number[]} [aSizes2] The array of numbers that is compared to the first one
 	 * @returns {boolean} True if the size-arrays differ, false otherwise
 	 * @private
 	 */

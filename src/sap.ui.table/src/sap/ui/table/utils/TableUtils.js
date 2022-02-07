@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @type {sap.ui.table.utils.TableUtils.CellType}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.ui.table.utils.TableUtils.CellType
+	 * @typedef {object} sap.ui.table.utils.TableUtils.CellType
 	 * @property {int} DATACELL - Data cell.
 	 * @property {int} COLUMNHEADER - Column header cell.
 	 * @property {int} ROWHEADER - Row header cell.
@@ -82,7 +82,7 @@ sap.ui.define([
 	 *
 	 * @type {sap.ui.table.utils.TableUtils.BaseSize}
 	 * @static
-	 * @typedef {Object} sap.ui.table.utils.TableUtils.BaseSize
+	 * @typedef {object} sap.ui.table.utils.TableUtils.BaseSize
 	 * @property {int} sapUiSizeCondensed - The default base size in pixels in condensed content density.
 	 * @property {int} sapUiSizeCompact - The default base siz in pixels in compact content density.
 	 * @property {int} sapUiSizeCozy - The default base siz in pixels in cozy content density.
@@ -117,7 +117,7 @@ sap.ui.define([
 	 *
 	 * @type {sap.ui.table.utils.TableUtils.DefaultRowHeight}
 	 * @static
-	 * @typedef {Object} sap.ui.table.utils.TableUtils.DefaultRowHeight
+	 * @typedef {object} sap.ui.table.utils.TableUtils.DefaultRowHeight
 	 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
 	 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
 	 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
@@ -135,7 +135,7 @@ sap.ui.define([
 	 *
 	 * @type {sap.ui.table.utils.TableUtils.ThemeParameters}
 	 * @static
-	 * @typedef {Object} sap.ui.table.utils.TableUtils.ThemeParameters
+	 * @typedef {object} sap.ui.table.utils.TableUtils.ThemeParameters
 	 * @property {string} navigationIcon - Name of the navigation icon.
 	 * @property {string} deleteIcon - Name of the delete icon.
 	 * @property {string} clearSelectionIcon - Name of the clearSelection icon.
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * @type {sap.ui.table.utils.TableUtils.ROWS_UPDATE_REASON}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.ui.table.utils.TableUtils.ROWS_UPDATE_REASON
+	 * @typedef {object} sap.ui.table.utils.TableUtils.ROWS_UPDATE_REASON
 	 * @property {string} Sort - {@link sap.ui.model.ChangeReason.Sort}
 	 * @property {string} Filter - {@link sap.ui.model.ChangeReason.Filter}
 	 * @property {string} Change - {@link sap.ui.model.ChangeReason.Change}
@@ -563,7 +563,7 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {sap.ui.table.utils.TableUtils.FocusedItemInfo | null} Returns the information about the focused item, or <code>null</code>, if the
 		 *                                                           item navigation is not yet initialized.
-		 * @typedef {Object} sap.ui.table.utils.TableUtils.FocusedItemInfo
+		 * @typedef {object} sap.ui.table.utils.TableUtils.FocusedItemInfo
 		 * @property {int} cell Index of focused cell in the ItemNavigation.
 		 * @property {int} columnCount Number of columns in the ItemNavigation.
 		 * @property {int} cellInRow Index of the cell in the row.
@@ -647,7 +647,7 @@ sap.ui.define([
 		 *     <li><b>cell</b>: Is <code>null</code>, if the cell is not a table cell.</li>
 		 * </ul>
 		 *
-		 * @typedef {Object} sap.ui.table.utils.TableUtils.CellInfo
+		 * @typedef {object} sap.ui.table.utils.TableUtils.CellInfo
 		 * @property {sap.ui.table.utils.TableUtils.CellType} [type] The type of the cell.
 		 * @property {int | null} [rowIndex] The index of the row the cell is inside.
 		 * @property {int | null} columnIndex The index of the column, in the <code>columns</code> aggregation, the cell is inside.
@@ -968,7 +968,7 @@ sap.ui.define([
 		 * sapUiSizeCompact, sapUiSizeCondensed, sapUiSizeCozy
 		 *
 		 * @param {sap.ui.table.Table} oControl Instance of the table.
-		 * @returns {String | undefined} name of the content density style class or undefined if none was found.
+		 * @returns {string | undefined} name of the content density style class or undefined if none was found.
 		 */
 		getContentDensity: function(oControl) {
 			var sContentDensity;

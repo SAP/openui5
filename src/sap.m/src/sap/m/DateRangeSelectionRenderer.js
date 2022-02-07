@@ -18,7 +18,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
 	 *
 	 * @public
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 * @param {sap.m.DateRangeSelection} oControl An object representation of the control that should be rendered.
 	 */
 	DateRangeSelectionRenderer.writeInnerValue = function(oRm, oControl) {
 

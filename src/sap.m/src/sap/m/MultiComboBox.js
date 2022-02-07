@@ -3495,7 +3495,7 @@ function(
 	 * Function calculates the available space for the tokenizer
 	 *
 	 * @private
-	 * @return {String | null} CSSSize in px
+	 * @return {string | null} CSSSize in px
 	 */
 	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
@@ -3794,7 +3794,7 @@ function(
 	/**
 	 * Handles the clear icon press.
 	 *
-	 * @param {jquery.Event} oEvent The event object
+	 * @param {sap.ui.base.Event} oEvent The press event object
 	 * @returns {void}
 	 *
 	 * @override

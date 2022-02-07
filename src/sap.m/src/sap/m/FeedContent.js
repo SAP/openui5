@@ -131,7 +131,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the Alttext
-	 * @returns {String} The AltText text
+	 * @returns {string} The AltText text
 	 */
 	FeedContent.prototype.getAltText = function() {
 		var sAltText = "";

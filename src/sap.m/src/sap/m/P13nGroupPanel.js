@@ -210,8 +210,8 @@ sap.ui.define([
 	 * @public
 	 * @param {array} aOperations array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
 	 */
-	P13nGroupPanel.prototype.setOperations = function(aOperation) {
-		this._aOperations = aOperation;
+	P13nGroupPanel.prototype.setOperations = function(aOperations) {
+		this._aOperations = aOperations;
 
 		if (this._oGroupPanel) {
 			this._oGroupPanel.setOperations(this._aOperations);

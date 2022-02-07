@@ -565,7 +565,7 @@ sap.ui.define([
 		 * Gets the current breakpoint, related to the width, which is passed to the method.
 		 * @private
 		 * @param {int} iWidth The parent container width
-		 * @returns {String} Breakpoint corresponding to the width passed
+		 * @returns {string} Breakpoint corresponding to the width passed
 		 */
 		DynamicSideContent.prototype._getBreakPointFromWidth = function (iWidth) {
 			if (iWidth <= S_M_BREAKPOINT && this._currentBreakpoint !== S) {

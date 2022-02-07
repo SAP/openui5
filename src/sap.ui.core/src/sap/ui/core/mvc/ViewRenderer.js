@@ -20,7 +20,7 @@ sap.ui.define(function() {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.mvc.View} oControl an object representation of the control that should be rendered
 	 */
 	ViewRenderer.render = function(rm, oControl) {
 		rm.openStart("div", oControl);

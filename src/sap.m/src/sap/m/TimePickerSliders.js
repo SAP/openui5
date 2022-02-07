@@ -1087,8 +1087,9 @@ sap.ui.define([
 		 *  00:00:00 with displayFormat "mm:HH:ss" -> 00:24:00
 		 *  0:00:00 with displayFormat "H:mm:ss" -> 24:00:00
 		 *  00:0:00 with displayFormat "mm:H:ss" -> 00:24:00
-		 * @param iIndexHH index of the HH in the displayFormat
-		 * @param iIndexH index of the H in the displayFormat
+		 * @param {string} sValue Value to replace the zeroes in
+		 * @param {int} iIndexOfHH index of the HH in the displayFormat
+		 * @param {int} iIndexOfH index of the H in the displayFormat
 		 * @private
 		 */
 		TimePickerSliders._replaceZeroHoursWith24 = function (sValue, iIndexOfHH, iIndexOfH) {
@@ -1111,8 +1112,9 @@ sap.ui.define([
 		 *  00:24:00 with displayFormat "mm:HH:ss" -> 00:00:00
 		 *  24:00:00 with displayFormat "H:mm:ss" -> 0:00:00
 		 *  00:24:00 with displayFormat "mm:H:ss" -> 00:0:00
-		 * @param iIndexHH index of the HH in the displayFormat
-		 * @param iIndexH index of the H in the displayFormat
+		 * @param {string} sValue Value to replace the 24 with zeroes in
+		 * @param {int} iIndexOfHH index of the HH in the displayFormat
+		 * @param {int} iIndexOfH index of the H in the displayFormat
 		 * @private
 		 */
 		TimePickerSliders._replace24HoursWithZero = function (sValue, iIndexOfHH, iIndexOfH) {

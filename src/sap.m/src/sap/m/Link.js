@@ -383,7 +383,7 @@ function(
 	/**
 	 * Checks if the given sUri is valid depending on the validateUrl property
 	 *
-	 * @param {String} sUri
+	 * @param {string} sUri
 	 * @returns {boolean}
 	 * @private
 	 */

@@ -362,12 +362,12 @@ sap.ui.define([
 	 * Setter for flexSettings. Checks the Uri for parameters that override the layer.
 	 * builds the rootNamespace and namespace parameters from the other parameters
 	 *
-	 * @param {Object} [mFlexSettings] property bag
-	 * @param {String} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
-	 * @param {Boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
-	 * @param {String} [mFlexSettings.baseId] base ID of the app
-	 * @param {String} [mFlexSettings.projectId] project ID
-	 * @param {String} [mFlexSettings.scenario] Key representing the current scenario
+	 * @param {object} [mFlexSettings] property bag
+	 * @param {string} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
+	 * @param {boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
+	 * @param {string} [mFlexSettings.baseId] base ID of the app
+	 * @param {string} [mFlexSettings.projectId] project ID
+	 * @param {string} [mFlexSettings.scenario] Key representing the current scenario
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
@@ -393,7 +393,7 @@ sap.ui.define([
 	/**
 	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer or the layer from the uri parameter, if there is one
 	 *
-	 * @returns {String} the layer after checking the uri parameters
+	 * @returns {string} the layer after checking the uri parameters
 	 * @private
 	 */
 	RuntimeAuthoring.prototype.getLayer = function () {

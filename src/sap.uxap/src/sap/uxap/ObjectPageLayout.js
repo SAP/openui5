@@ -585,8 +585,8 @@ sap.ui.define([
 	 * <li> If the provided starting entry is not found, the <code>sap.ui.core.TitleLevel.Auto</code> is returned.</li>
 	 * <li> If the provided starting entry is the last entry, the last entry is returned.</li>
 	 * </ul>
-	 * @param {String} sTitleLevel the <code>sap.ui.core.TitleLevel</code> entry to start from
-	 * @returns {String} <code>sap.ui.core.TitleLevel</code> entry
+	 * @param {string} sTitleLevel the <code>sap.ui.core.TitleLevel</code> entry to start from
+	 * @returns {string} <code>sap.ui.core.TitleLevel</code> entry
 	 * @since 1.44
 	 */
 	ObjectPageLayout._getNextTitleLevelEntry = function(sTitleLevel) {
@@ -2461,7 +2461,7 @@ sap.ui.define([
 	* thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
 	* <b>Note:</b>
 	* The method is called, when the <code>ObjectPageDynamicPageHeaderTitle</code> is being used.
-	* @param {Number} iWidth - the actual width of the control
+	* @param {number} iWidth - the actual width of the control
 	* @param {Object} oMedia - object containing CSS classes for the respective media (Phone, Tablet, etc.)
 	* @private
 	*/
@@ -2809,8 +2809,8 @@ sap.ui.define([
 	 * If the <code>sectionTitleLevel</code> has value of <code>sap.ui.core.TitleLevel.Auto</code>,
 	 * <code>sap.ui.core.TitleLevel.H3</code> is returned for <code>ObjectPageSection</code> and
 	 * <code>sap.ui.core.TitleLevel.H4</code> for <code>ObjectPageSubSection</code>.
-	 * @param {Object} oSectionBase <code>ObjectPageSectionBase</code> instance
-	 * @returns {String} <code>sap.ui.core.TitleLevel</code>
+	 * @param {sap.uxap.ObjectPageSectionBase} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @returns {string} <code>sap.ui.core.TitleLevel</code>
 	 * @since 1.44
 	 * @private
 	 */
@@ -4785,7 +4785,7 @@ sap.ui.define([
 	 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
 	 * If it exists, it returns the DOM element width.
 	 * @param  {sap.ui.core.Control} oControl
-	 * @return {Number} the width of the control
+	 * @return {number} the width of the control
 	 */
 	ObjectPageLayout.prototype._getWidth = function (oControl) {
 		var oDomReference = oControl.getDomRef();

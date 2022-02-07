@@ -205,11 +205,11 @@ function(
 		 * instance to be announced by screen readers because the value state
 		 * popup and the aria-errormessage attribute is added on the fly and not announced otherwise
 		 *
-		 * @param {string} sStateType The value state type to be announced by screen readers
+		 * @param {string} sValueStateType The value state type to be announced by screen readers
 		 *
 		 * @private
 		 */
-		SliderTooltip.prototype._invisibleMessageAnnouncement = function (sValueStateType, bOpenValueStateMessage) {
+		SliderTooltip.prototype._invisibleMessageAnnouncement = function (sValueStateType) {
 			if (sValueStateType !== ValueState.Error) {
 				return;
 			}

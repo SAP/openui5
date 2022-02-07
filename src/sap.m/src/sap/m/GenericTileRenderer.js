@@ -439,7 +439,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	 *
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control whose title should be rendered
+	 * @param {sap.m.GenericTile} oControl an object representation of the control whose title should be rendered
 	 */
 	GenericTileRenderer._renderHeader = function(oRm, oControl) {
 		oRm.openStart("div", oControl.getId() + "-hdr-text");
@@ -458,7 +458,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	 *
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control whose description should be rendered
+	 * @param {sap.m.GenericTile} oControl an object representation of the control whose description should be rendered
 	 */
 	GenericTileRenderer._renderSubheader = function(oRm, oControl) {
 		oRm.openStart("div", oControl.getId() + "-subHdr-text");

@@ -1336,8 +1336,8 @@ sap.ui.define([
 	/**
 	 * Adjusts the column after resize
 	 *
-	 * @param sColumn, the column name
-	 * @param oOptions, the resize options
+	 * @param {string} sColumn the column name
+	 * @param {object} oOptions the resize options
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._afterColumnResize = function (sColumn, oOptions) {
@@ -1365,7 +1365,7 @@ sap.ui.define([
 	/**
 	 * Obtains the current width of a column
 	 *
-	 * @param sColumn, the column name
+	 * @param {string} sColumn the column name
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidth = function (sColumn) {
@@ -1394,8 +1394,8 @@ sap.ui.define([
 	 * Caches the new width of the column and fires an event if
 	 * width changed compared to previous cached value
 	 *
-	 * @param sColumn, the column name
-	 * @param iNewWidth, the new column width
+	 * @param {string} sColumn the column name
+	 * @param {number} iNewWidth the new column width
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._cacheColumnWidth = function(sColumn, iNewWidth) {
@@ -1462,8 +1462,8 @@ sap.ui.define([
 	/**
 	 * Checks if a column can be resized with an animation
 	 *
-	 * @param sColumn, the column name
-	 * @param oOptions, the column resize options
+	 * @param {string} sColumn the column name
+	 * @param {object} oOptions the column resize options
 	 * @returns {boolean|*}
 	 * @private
 	 */

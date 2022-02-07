@@ -81,7 +81,7 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	/**
 	 * @protected
 	 * @param {object} oConfiguration The manifest configuration of the content
-	 * @param {sap.ui.core.Control} oContent The content
+	 * @param {sap.ui.integration.cards.BaseContent} oContent The content
 	 * @returns {string} Min height in Rems.
 	 */
 	BaseContentRenderer.getMinHeight = function (oConfiguration, oContent) {

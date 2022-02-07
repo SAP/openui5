@@ -808,8 +808,8 @@ sap.ui.define([
 	 * Determines and registeres the ModificationHandler per control instance
 	 *
 	 * @private
-	 * @param {String} sControlId The control id
-	 * @param {String} sAncestorControlId The control ancestor id
+	 * @param {string} sControlId The control id
+	 * @param {string} sAncestorControlId The control ancestor id
 	 *
 	 * @returns {boolean} Returns whether an according ancestor could be found.
 	 */

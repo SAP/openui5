@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @type {sap.m.p13n.Item}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.m.p13n.Item
+	 * @typedef {object} sap.m.p13n.Item
 	 * @property {string} name The unique key of the item
 	 * @property {string} label The label describing the personalization item
 	 * @property {boolean} visible Defines the selection state of the personalization item
@@ -169,8 +169,8 @@ sap.ui.define([
 	 * Sets the personalization state of the panel instance.
 	 *
 	 * @public
-	 * @param {sap.m.p13n.Item} aP13nData An array containing the personalization state that is represented by the <code>BasePanel</code>.
-	 * @returns {sap.m.p13n.BasePanel} The BasePanel instance
+	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>BasePanel</code>.
+	 * @returns {this} The BasePanel instance
 	 */
 	BasePanel.prototype.setP13nData = function(aP13nData) {
 		this._getP13nModel().setProperty("/items", merge([], aP13nData));
@@ -178,10 +178,10 @@ sap.ui.define([
 	};
 
 	/**
-	 *
+	 * Returns the personalization state that is currently displayed by the <code>BasePanel</code>.
 	 * @public
 	 * @param {boolean} bOnlyActive Determines whether only the present items is included
-	 * @returns {Array} An array containing the personalization state that is currently displayed by the <code>BasePanel</code>
+	 * @returns {sap.m.p13n.Item[]} An array containing the personalization state that is currently displayed by the <code>BasePanel</code>
 	 */
 	BasePanel.prototype.getP13nData = function (bOnlyActive) {
 		var aItems = merge([], this._getP13nModel().getProperty("/items"));

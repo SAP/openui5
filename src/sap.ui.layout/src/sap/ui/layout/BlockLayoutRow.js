@@ -2,10 +2,6 @@
  * ${copyright}
  */
 
-/**
-  * @typedef {Object} sap.ui.layout.BlockRowColorSets
-  * @typedef {Object} sap.ui.layout.BlockLayoutRow
-  */
 sap.ui.define([
     'sap/ui/core/Control',
     './library',

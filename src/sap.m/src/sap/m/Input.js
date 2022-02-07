@@ -1303,7 +1303,6 @@ function(
 	 * If no custom filter is set or default filtering is forced, this function will apply the default filter to the column item.
 	 *
 	 * @private
-	 * @param {sap.m.ColumnListItem} oColumnListItem The sap.m.ColumnListItem that is selected
 	 * @param {boolean} bForceDefaultFiltering Whether or not to apply the default filter even if custom one is set
 	 *
 	 * @returns {function} The row filtering function(s) to execute on the selected row item.
@@ -1893,7 +1892,7 @@ function(
 	 *
 	 * Adds the aria-desribedby text with the number of available suggestions.
 	 *
-	 * @param {Integer} iNumItems
+	 * @param {int} iNumItems
 	 * @private
 	 */
 	Input.prototype._applySuggestionAcc = function(iNumItems) {
@@ -3133,7 +3132,7 @@ function(
 	 * Gets filtered items.
 	 * Table/List item agnostic.
 	 *
-	 * @param {String} sValue The value, to be used as a filter
+	 * @param {string} sValue The value, to be used as a filter
 	 * @returns {Object} A filtering result object, containing the matching items and list groups
 	 * @private
 	 */
@@ -3167,7 +3166,7 @@ function(
 	 *
 	 * @private
 	 * @param {Array} aTabularRows Array of table rows
-	 * @param {String} sValue The value, to be used as a filter
+	 * @param {string} sValue The value, to be used as a filter
 	 * @returns {Object} A filtering result object, containing the matching items and list groups
 	 */
 	Input.prototype.filterTabularItems = function (aTabularRows, sValue) {

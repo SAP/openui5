@@ -95,7 +95,7 @@ sap.ui.define([
 	/**
 	 * Returns the component name of the FlexController
 	 *
-	 * @returns {String} the name of the component
+	 * @returns {string} the name of the component
 	 * @public
 	 */
 	FlexController.prototype.getComponentName = function() {

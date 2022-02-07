@@ -55,8 +55,9 @@ sap.ui.define([
 	 * Sets the value of BadgeCustomData and updates the Badge DOM element.
 	 *
 	 * @private
-	 * @param {string} Value to be.
-	 * @return {this} this BadgeCustomData reference for chaining.
+	 * @param {string} sValue Value to be.
+	 * @returns {this} this BadgeCustomData reference for chaining.
+	 * @override
 	 */
 	BadgeCustomData.prototype.setValue =  function (sValue) {
 		if (this.getValue() === sValue) { return this; }
@@ -110,8 +111,9 @@ sap.ui.define([
 	 * Sets the key property of BadgeCustomData as it can be only 'badge'.
 	 *
 	 * @private
-	 * @param {string} Key to be.
-	 * @return {this} this BadgeCustomData reference for chaining.
+	 * @param {string} sKey Key to be.
+	 * @returns {this} this BadgeCustomData reference for chaining.
+	 * @override
 	 */
 	BadgeCustomData.prototype.setKey = function () {
 		return this;

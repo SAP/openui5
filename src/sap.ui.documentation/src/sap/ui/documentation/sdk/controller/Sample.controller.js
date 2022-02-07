@@ -431,7 +431,7 @@ sap.ui.define([
 			/**
 			 * Extends the sSampleId with the relative path defined in sIframePath and returns the resulting path.
 			 * @param {string} sSampleId
-			 * @param {string} sIframe
+			 * @param {string} sIframePath
 			 * @returns {string}
 			 * @private
 			 */

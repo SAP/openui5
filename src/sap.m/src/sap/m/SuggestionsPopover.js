@@ -156,7 +156,7 @@ sap.ui.define([
 	/**
 	 * Helper function that creates  (List/Table) for the suggestion popup.
 	 *
-	 * @param {string} sParent The input control that instantiates this suggestions popover
+	 * @param {string} sParentId The input control that instantiates this suggestions popover
 	 * @param {sap.ui.core.Control} oContent Typically a List or a Table which would be Popover's content
 	 * @public
 	 */
@@ -296,7 +296,6 @@ sap.ui.define([
 	 * Handles the list navigation on <code>onsapdown</code>.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handleArrowDown = function(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader) {
 		// if the focus is on the input and there is no VSH available, return the first selectable item
@@ -327,7 +326,6 @@ sap.ui.define([
 	 * Handles the list navigation on <code>onsapup</code>.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handleArrowUp = function(aSelectableItems, iSelectedItemIndex, bFocusInInput, bHasValueStateHeader) {
 		// if the focus is on the input field, do nothing
@@ -352,7 +350,6 @@ sap.ui.define([
 	 * Handles the list navigation on <code>onsapend</code>.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handleEnd = function(aSelectableItems, bHasValueStateHeader) {
 		// if the focus is on the VSH, we should remove the active state
@@ -367,7 +364,6 @@ sap.ui.define([
 	 * Handles the list navigation on <code>onsaphome</code>.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handleHome = function(aSelectableItems, bHasValueStateHeader) {
 		// if a VSH is present, Home key should move the focus to it
@@ -384,7 +380,6 @@ sap.ui.define([
 	 * Handles the list navigation on <code>onsappagedown</code>.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handlePageDown = function(aSelectableItems, iSelectedItemIndex, bHasValueStateHeader) {
 		// if the focus is on the VSH, we should remove the active state
@@ -399,7 +394,6 @@ sap.ui.define([
 	 * Handles the list navigation on <code>onsappageup</code>.
 	 *
 	 * @private
-	 * @param {jQuery.Event} oEvent Arrow key event.
 	 */
 	SuggestionsPopover.prototype.handlePageUp = function(aSelectableItems, iSelectedItemIndex, bHasValueStateHeader) {
 		// if there is an item one page up, return the item
@@ -495,7 +489,6 @@ sap.ui.define([
 	 * Handles the navigation inside the list.
 	 *
 	 * @private
-	 * @param {sap.ui.core.Control} oParent The input control that instantiates this suggestions popover
 	 * @param {sap.m.GroupHeaderListItem | sap.m.StandardListItem | sap.m.ColumnListItem} oItem The item to be selected.
 	 */
 	SuggestionsPopover.prototype.handleSelectionFromList = function(oItem) {

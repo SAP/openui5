@@ -328,8 +328,8 @@ sap.ui.define([
 	 * Get text for given key
 	 *
 	 * @protected
-	 * @param {String} sTextKey Given text key
-	 * @returns {String} Translated text
+	 * @param {string} sTextKey Given text key
+	 * @returns {string} Translated text
 	 */
 	Utils.getText = function(sTextKey) {
 		return Core.getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
@@ -340,7 +340,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {Map} mParameters Map of given parameters
-	 * @returns {String} encoded URI parameters
+	 * @returns {string} encoded URI parameters
 	 */
 	 Utils.getUriParameters = function(mParameters) {
 		if (!mParameters) {
@@ -364,7 +364,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {Array} aIntents Given intents
-	 * @returns {Promise<Array<Boolean>>} Resolves with an array of booleans
+	 * @returns {Promise<Array<boolean>>} Resolves with an array of booleans
 	 */
 	Utils.isNavigationSupportedForIntents = function(aIntents) {
 		return FlexUtils.getUShellService("CrossApplicationNavigation").then(function(oCrossAppNavigationService) {

@@ -33,7 +33,7 @@ sap.ui.define([
 	 * Renders the Carousel's HTML, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oCarousel An object representation of the control that should be rendered
+	 * @param {sap.m.Carousel} oCarousel An object representation of the control that should be rendered
 	 */
 	CarouselRenderer.render = function (oRM, oCarousel){
 		var aPages = oCarousel.getPages(),

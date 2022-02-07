@@ -560,7 +560,7 @@ sap.ui.define([
 
 	/*
 	 * This hook method is called if growing feature is enabled and after new page loaded
-	 * @overwrite
+	 * @override
 	 */
 	Table.prototype.onBeforePageLoaded = function() {
 		if (this.getAlternateRowColors()) {
@@ -572,7 +572,7 @@ sap.ui.define([
 
 	/*
 	 * This hook method is called if growing feature is enabled and after new page loaded
-	 * @overwrite
+	 * @override
 	 */
 	Table.prototype.onAfterPageLoaded = function() {
 		this.updateSelectAllCheckbox();
@@ -586,7 +586,7 @@ sap.ui.define([
 
 	/*
 	 * This hook method is called from renderer to determine whether items should render or not
-	 * @overwrite
+	 * @override
 	 */
 	Table.prototype.shouldRenderItems = function() {
 		return this.getColumns().some(function(oColumn) {
@@ -597,7 +597,7 @@ sap.ui.define([
 	/*
 	 * This hook method is called from GrowingEnablement to determine whether
 	 * growing should suppress Table invalidation
-	 * @overwrite
+	 * @override
 	 */
 	Table.prototype.shouldGrowingSuppressInvalidation = function() {
 		if (this.getAutoPopinMode()) {
@@ -637,7 +637,7 @@ sap.ui.define([
 
 	/*
 	 * Returns items container DOM reference
-	 * @overwrite
+	 * @override
 	 */
 	Table.prototype.getItemsContainerDomRef = function() {
 		return this.getDomRef("tblBody");
@@ -645,7 +645,7 @@ sap.ui.define([
 
 	/*
 	 * Sets DOM References for keyboard navigation
-	 * @overwrite
+	 * @override
 	 */
 	Table.prototype.setNavigationItems = function(oItemNavigation) {
 		var $Header = this.$("tblHeader");

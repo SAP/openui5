@@ -326,7 +326,7 @@ sap.ui.define([
     /**
      * Sets the visibility of the legend
      * This is called by the MDC Chart, do not call it directly!
-     * @param {bool} bVisible true to show legend, false to hide
+     * @param {boolean} bVisible true to show legend, false to hide
      *
      * @experimental
      * @private
@@ -1239,7 +1239,7 @@ sap.ui.define([
 
     /**
      * Returns whether the inner chart is currently bound
-     * @returns {bool} true if inner chart is bound; false if not
+     * @returns {boolean} true if inner chart is bound; false if not
      */
     ChartDelegate.getInnerChartBound = function (oMDCChart) {
         var oState = this._getState(oMDCChart);
@@ -1415,7 +1415,7 @@ sap.ui.define([
 
     /**
      * Sets tooltips visible/invisible on inner chart
-     * @param {bool}  bFlag true for visible, false for invisible
+     * @param {boolean}  bFlag true for visible, false for invisible
      */
     ChartDelegate.setChartTooltipVisibility = function (oMDCChart, bFlag) {
 

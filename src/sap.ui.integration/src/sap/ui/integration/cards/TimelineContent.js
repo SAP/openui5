@@ -212,7 +212,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @overwrite
+	 * @override
 	 * @returns {sap.suite.ui.commons.Timeline} The inner timeline.
 	 */
 	TimelineContent.prototype.getInnerList = function () {

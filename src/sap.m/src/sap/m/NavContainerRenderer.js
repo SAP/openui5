@@ -20,7 +20,7 @@ sap.ui.define(["sap/ui/core/InvisibleRenderer"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl The control that should be rendered
+	 * @param {sap.m.NavContainer} oControl The control that should be rendered
 	 */
 	NavContainerRenderer.render = function(oRm, oControl) {
 

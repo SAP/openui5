@@ -215,12 +215,12 @@ sap.ui.define([
 			},
 			/**
 			 * Scrolls to a specific position in scroll container.
-			 * @param {int} iHorizontalPosition Horizontal position of the scrollbar
-			 * @param {int} iVerticalPosition Vertical position of the scrollbar
-			 * @param {int} [iTime=0]
+			 * @param {int} x Horizontal position of the scrollbar
+			 * @param {int} y Vertical position of the scrollbar
+			 * @param {int} [time=0]
 			 *           The duration of animated scrolling in milliseconds. To scroll immediately without animation,
 			 *           give 0 as value.
-			 * @param {function} fnCallback
+			 * @param {function} fnScrollEndCallback
 			 * @returns {this}
 			 * @public
 			 */

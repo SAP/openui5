@@ -1077,7 +1077,7 @@ function(
 	 * This method can be called to reset remembered selection
 	 * and does not change selection of the items until binding update.
 	 *
-	 * @param {String[]} aSelectedPaths valid binding context path array
+	 * @param {string[]} aSelectedPaths valid binding context path array
 	 * @since 1.26
 	 * @protected
 	 */
@@ -1089,7 +1089,7 @@ function(
 	 * Returns internal remembered selected context paths as a copy if rememberSelections is set to true,
 	 * else returns the binding context path for the current selected items.
 	 *
-	 * @return {String[]} selected items binding context path
+	 * @return {string[]} selected items binding context path
 	 * @since 1.26
 	 * @protected
 	 */
@@ -1757,7 +1757,7 @@ function(
 	 * After swipeContent is shown, user can interact with this control(e.g Tap). After interaction is done, you can/should use this method to hide swipeContent from screen.
 	 * Note: If users try to tap inside of the list but outside of the swipeContent then control hides automatically.
 	 *
-	 * @param {any} oCallback
+	 * @param {function} callback
 	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
 	 * @type this
 	 * @public

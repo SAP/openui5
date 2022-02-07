@@ -617,10 +617,10 @@ sap.ui.define([
 	 * Calculates the size for an image inside the LightBox.
 	 *
 	 * @private
-	 * @param {int} imageWidth The natural width of the loaded images in px.
-	 * @param {int} imageHeight The natural height of the loaded images in px.
-	 * @param {int} footerHeight The footer height in px.
-	 * @returns {Object} An object holding the calculated dimensions of the image
+	 * @param {int} iImageWidth The natural width of the loaded images in px.
+	 * @param {int} iImageHeight The natural height of the loaded images in px.
+	 * @param {int} iFooterHeight The footer height in px.
+	 * @returns {{width: int, height: int}} An object holding the calculated dimensions of the image
 	 */
 	LightBox.prototype._getDimensions = function (iImageWidth, iImageHeight, iFooterHeight) {
 		// minimum size of the lightbox

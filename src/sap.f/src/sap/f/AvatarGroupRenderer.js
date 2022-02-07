@@ -20,7 +20,7 @@ sap.ui.define(["sap/f/library"],
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oAvatarGroup an object representation of the control that should be rendered
+		 * @param {sap.f.AvatarGroup} oAvatarGroup an object representation of the control that should be rendered
 		 */
 		AvatarGroupRenderer.render = function (oRm, oAvatarGroup) {
 			var sAvatarGroupClass = "sapFAvatarGroup",

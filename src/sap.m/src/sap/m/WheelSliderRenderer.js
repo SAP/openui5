@@ -20,7 +20,7 @@ sap.ui.define([],
 		 * Renders the HTML for a {@link sap.m.WheelSlider}, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.WheelSlider} oControl An object representation of the control that should be rendered
 		 */
 		WheelSliderRenderer.render = function(oRm, oControl) {
 			var iIndex,
@@ -145,7 +145,7 @@ sap.ui.define([],
 		 * Adds a class to the current element in the RenderManager's buffer based on the number of visible items in the slider.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.WheelSlider} oControl An object representation of the control that should be rendered
 		 * @protected
 		 */
 		WheelSliderRenderer.addItemValuesCssClass = function(oRm, oControl) {

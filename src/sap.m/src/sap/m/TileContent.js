@@ -137,7 +137,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	/**
 	 * Returns the ContentType
 	 * @private
-	 * @returns {String} The ContentType text
+	 * @returns {string} The ContentType text
 	 */
 	TileContent.prototype._getContentType = function() {
 		if (this.getContent()) {
@@ -151,7 +151,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	/**
 	 * Returns the Footer text
 	 * @private
-	 * @returns {String} The Footer text
+	 * @returns {string} The Footer text
 	 */
 	TileContent.prototype._getFooterText = function() {
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
@@ -175,7 +175,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	/**
 	 * Returns the Alttext
 	 *
-	 * @returns {String} The AltText text
+	 * @returns {string} The AltText text
 	 */
 	TileContent.prototype.getAltText = function() {
 		var sAltText = "";

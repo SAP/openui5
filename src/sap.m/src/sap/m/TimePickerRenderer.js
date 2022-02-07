@@ -49,8 +49,8 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * Returns the inner aria labelledby announcement texts for the accessibility.
 		 *
 		 * @overrides sap.m.InputBaseRenderer.getLabelledByAnnouncement
-		 * @param {sap.ui.core.Control} oControl an object representation of the control.
-		 * @returns {String}
+		 * @param {sap.m.TimePicker} oControl an object representation of the control.
+		 * @returns {string}
 		 */
 		TimePickerRenderer.getLabelledByAnnouncement = function(oControl) {
 			// In the TimePicker we need to render the placeholder should be placed as
@@ -87,7 +87,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 *
 		 * @overrides sap.m.InputBaseRenderer.writeInnerAttributes
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.m.TimePicker} oControl an object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerAttributes = function (oRm, oControl) {
 			if (oControl._isMobileDevice()) {

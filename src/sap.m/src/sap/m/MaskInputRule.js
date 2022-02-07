@@ -46,7 +46,7 @@ sap.ui.define(['sap/ui/core/Element', "sap/base/Log"], function(Element, Log) {
 	/*
 	 * Sets <code>maskFormatSymbol</code> property.
 	 * @override
-	 * @param {String} sNewMaskFormatSymbol The new format symbol
+	 * @param {string} sNewMaskFormatSymbol The new format symbol
 	 * @returns {this} The <code>this</code> pointer for chaining
 	 */
 	MaskInputRule.prototype.setMaskFormatSymbol = function (sNewMaskFormatSymbol) {
@@ -61,7 +61,7 @@ sap.ui.define(['sap/ui/core/Element', "sap/base/Log"], function(Element, Log) {
 	/*
 	 * Sets <code>regex</code> property.
 	 * @override
-	 * @param {String} sNewRegex The new regular expression
+	 * @param {string} sNewRegex The new regular expression
 	 * @returns {this} The <code>this</code> pointer for chaining
 	 */
 	MaskInputRule.prototype.setRegex = function (sNewRegex) {
@@ -75,7 +75,7 @@ sap.ui.define(['sap/ui/core/Element', "sap/base/Log"], function(Element, Log) {
 
 	/**
 	 * Converts the rule into a string.
-	 * @returns {String} String representation of this instance
+	 * @returns {string} String representation of this instance
 	 */
 	MaskInputRule.prototype.toString = function(){
 		return this.getMaskFormatSymbol() + ":" + this.getRegex();
@@ -101,7 +101,7 @@ sap.ui.define(['sap/ui/core/Element', "sap/base/Log"], function(Element, Log) {
 
 	/**
 	 * Checks if the specified regular expression is valid.
-	 * @param {String} sRegex The regular expression string to be validated
+	 * @param {string} sRegex The regular expression string to be validated
 	 * @returns {boolean} True of the specified regular expression string is valid, false otherwise
 	 * @private
 	 */

@@ -562,7 +562,7 @@ sap.ui.define([
 		 *
 		 * @private
 		 */
-		 TimePickerClock.prototype._resetLongTouch = function() {
+		TimePickerClock.prototype._resetLongTouch = function() {
 			if (this._longTouchId) {
 				clearTimeout(this._longTouchId);
 			}
@@ -571,10 +571,9 @@ sap.ui.define([
 		/**
 		 * Starts new long touch period.
 		 *
-		 * @param {boolean} bStartNew Whether to start new long touch period after clearing previous one
 		 * @private
 		 */
-		 TimePickerClock.prototype._startLongTouch = function() {
+		TimePickerClock.prototype._startLongTouch = function() {
 			this._longTouchId = setTimeout(function() {
 				var iValue = this._iSelectedValue;
 				this._longTouchId = null;
@@ -582,7 +581,7 @@ sap.ui.define([
 					this._toggle2400();
 				}
 			}.bind(this), LONG_TOUCH_DURATION);
-		 };
+		};
 
 		/**
 		 * Returns real maximum value of the clock items depending on existing of inner items.
@@ -603,7 +602,7 @@ sap.ui.define([
 		 * @returns {this} the clock object for chaining
 		 * @private
 		 */
-		 TimePickerClock.prototype._toggle2400 = function(bSkipSelection) {
+		TimePickerClock.prototype._toggle2400 = function(bSkipSelection) {
 			var bIs24HoursVisible = this._get24HoursVisible(),
 				iValue = bIs24HoursVisible ? 0 : 24;
 			this._cancelTouchOut = true;

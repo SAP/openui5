@@ -182,7 +182,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {String} ID of the default variant
+		 * @returns {string} ID of the default variant
 		 * @private
 		 * @ui5-restricted
 		 * @deprecated

@@ -17,7 +17,7 @@ sap.ui.define([
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager RenderManager object
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that will be rendered
+	 * @param {sap.m.CustomTreeItem} oControl An object representation of the control that will be rendered
 	 */
 	CustomTreeItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.class("sapMCTI");

@@ -42,7 +42,7 @@ sap.ui.define([
 	 * @type {sap.m.p13n.SortItem}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.m.p13n.SortItem
+	 * @typedef {object} sap.m.p13n.SortItem
 	 * @property {string} name The unique key of the item
 	 * @property {string} label The label describing the personalization item
 	 * @property {boolean} sorted Defines the sorting state of the personalization item

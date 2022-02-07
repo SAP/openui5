@@ -264,7 +264,7 @@ sap.ui.define([
 	/**
 	 * Sets the personalization state of the panel instance.
 	 * @public
-	 * @param {sap.m.p13n.Item} aP13nData An array containing the personalization state that is represented by the <code>SelectionPanel</code>.
+	 * @param {sap.m.p13n.Item[]} aP13nData An array containing the personalization state that is represented by the <code>SelectionPanel</code>.
 	 */
 	SelectionPanel.prototype.setP13nData = function() {
 		this._oListControl.removeSelections();

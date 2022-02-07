@@ -28,7 +28,7 @@ sap.ui.define([
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLayout an object representation of the control that should be rendered
+	 * @param {sap.ui.layout.form.FormLayout} oLayout an object representation of the control that should be rendered
 	 */
 	FormLayoutRenderer.render = function(rm, oLayout){
 		var oForm = oLayout.getParent();
@@ -42,7 +42,7 @@ sap.ui.define([
 	 * Renders the HTML for the given form content, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLayout an object representation of the Layout control that should be rendered
+	 * @param {sap.ui.layout.form.FormLayout} oLayout an object representation of the Layout control that should be rendered
 	 * @param {sap.ui.layout.form.Form} oForm, a form control to render its content
 	 */
 	FormLayoutRenderer.renderForm = function(rm, oLayout, oForm){
@@ -263,7 +263,9 @@ sap.ui.define([
 	};
 
 	/*
-	 * Writes the accessibility attributes for FormContainers
+	 * Writes the accessibility attributes for FormContainers.
+	 * @param {sap.ui.core.RenderManager} rm
+	 * @param {sap.ui.layout.form.FormContainer} oContainer
 	 */
 	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
 

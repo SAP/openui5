@@ -1884,7 +1884,7 @@ sap.ui.define([
 		/**
 		 * Handles the clear icon press.
 		 *
-		 * @param {jquery.Event} oEvent The event object
+		 * @param {sap.ui.base.Event} oEvent The press event object
 		 * @returns {void}
 		 *
 		 * @override

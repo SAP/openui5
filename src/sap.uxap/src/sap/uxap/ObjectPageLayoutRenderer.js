@@ -14,6 +14,12 @@ sap.ui.define(["sap/ui/Device"],
 			apiVersion: 2
 		};
 
+		/**
+		 * This method is called to render AnchorBar
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.uxap.ObjectPageLayout} oControl an object representation of the control that should be rendered
+		 */
 		ObjectPageLayoutRenderer.render = function (oRm, oControl) {
 			var aSections,
 				oHeader = oControl.getHeaderTitle(),
@@ -209,7 +215,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * This method is called to render AnchorBar
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.uxap.ObjectPageLayout} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._renderAnchorBar = function (oRm, oControl, oAnchorBar, bRender) {
 			var aSections = oControl.getAggregation("sections"),
@@ -265,7 +271,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * This hook method is called to render objectpagelayout header content
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.uxap.ObjectPageLayout} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer.renderHeaderContent = function (oRm, oControl) {
 			oRm.renderControl(oControl._getHeaderContent());
@@ -275,7 +281,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * This hook method is called to render objectpagelayout footer content
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.uxap.ObjectPageLayout} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer.renderFooterContent = function (oRm, oControl) {
 
@@ -285,7 +291,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * This internal method is called to render objectpagelayout footer content
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oObjectPageLayout an object representation of the control that should be rendered
+		 * @param {sap.uxap.ObjectPageLayout} oObjectPageLayout an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._renderFooterContentInternal = function (oRm, oObjectPageLayout, sFooterTag, oLandmarkInfo, oRb) {
 			var oFooter = oObjectPageLayout.getFooter(),
@@ -319,7 +325,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * This method is called to rerender headerContent
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.uxap.ObjectPageLayout} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._rerenderHeaderContentArea = function (oRm, oControl) {
 			var sHeaderContentDOMId = oControl._bHeaderInTitleArea ? "stickyHeaderContent" : "headerContent",

@@ -25,7 +25,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 * Add classes to the ComboBox.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBox} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
@@ -36,7 +36,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 * Add inner classes to the ComboBox's input element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBox} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
@@ -48,7 +48,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBox} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
@@ -64,7 +64,7 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 * Adds attributes to the input element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBox} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxRenderer.writeInnerAttributes = function(oRm, oControl) {
 			var bOpen = oControl.isOpen(), bIsGroupHeader, oSelectedItem, oListItem;

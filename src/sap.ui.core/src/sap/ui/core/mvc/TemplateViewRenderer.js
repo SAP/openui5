@@ -22,7 +22,7 @@ sap.ui.define(['./ViewRenderer'],
 	 * Renders the Template, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for rendering the view content
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.mvc.TemplateView} oControl an object representation of the control that should be rendered
 	 */
 	TemplateViewRenderer.render = function(rm, oControl){
 		// write the HTML into the render manager

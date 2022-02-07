@@ -421,7 +421,6 @@ sap.ui.define([
 	 * @param {object} mOptions.type Either <code>sap.ui.viewExtension</code>, <code>sap.ui.controllerReplacement</code>, <code>sap.ui.viewReplacement</code>, <code>sap.ui.viewModification</code> or <code>sap.ui.controllerExtension</code>
 	 * @param {object} mOptions.name Name of the customizing configuration
 	 * @param {object} [mOptions.extensionName] If type <code>sap.ui.viewExtension</code>, the extension name must be provided
-	 * @param {object} oExtInfo Config object containing the view/fragment and extension name
 	 * @throws {Error} If 'getExtensionComponent' function is given, but does not return an instance.
 	 * @returns {object|undefined} Object containing the customizing config or <code>undefined</code>
 	 * @static

@@ -156,7 +156,7 @@ sap.ui.define([
 	/**
 	 * Returns the alternative text
 	 *
-	 * @returns {String} The alternative text
+	 * @returns {string} The alternative text
 	 */
 	ImageContent.prototype.getAltText = function () {
 		var oContent = this.getAggregation("_content");

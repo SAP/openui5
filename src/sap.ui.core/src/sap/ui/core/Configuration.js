@@ -2062,7 +2062,7 @@ sap.ui.define([
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {string} sStyle must be one of decimal, group, plusSign, minusSign.
+		 * @param {string} sType must be one of decimal, group, plusSign, minusSign.
 		 * @param {string} sSymbol will be used to represent the given symbol type
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public

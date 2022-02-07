@@ -75,7 +75,7 @@ sap.ui.define([
 	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
 	*
 	* @param {sap.f.semantic.SemanticControl} oControl
-	* @returns {String}
+	* @returns {int}
 	*/
 	SemanticContainer.prototype._getControlOrder = function(oControl) {
 		var sType = (oControl._getType && oControl._getType()) || oControl.getMetadata().getName();
@@ -89,7 +89,7 @@ sap.ui.define([
 	* The constraints might be <code>IconOnly</code> and <code>Navigation</code>.
 	*
 	* @param {sap.f.semantic.SemanticControl | sap.m.Button} oControl
-	* @returns {String}
+	* @returns {string}
 	*/
 	SemanticContainer.prototype._getConstraints = function(oControl) {
 		return SemanticConfiguration.getConstraints(oControl.getMetadata().getName());
@@ -130,7 +130,7 @@ sap.ui.define([
 	/**
 	* Calls container`s method.
 	*
-	* @param {String} sMethod the method to be called
+	* @param {string} sMethod the method to be called
 	* @returns {Object | Array<T>}
 	*/
 	SemanticContainer.prototype._callContainerAggregationMethod = function(sMethod) {
@@ -141,9 +141,9 @@ sap.ui.define([
 	* Sorts the <code>SemanticControl</code> instances by the order
 	* defined in the <code>sap.f.semantic.SemanticConfiguration</code>.
 	*
-	* @param {String} oControlA
-	* @param {String} oControlB
-	* @returns {Number}
+	* @param {sap.f.semantic.SemanticControl} oControlA
+	* @param {sap.f.semantic.SemanticControl} oControlB
+	* @returns {int}
 	*/
 	SemanticContainer.prototype._sortControlByOrder = function(oControlA, oControlB) {
 		return this._getControlOrder(oControlA) - this._getControlOrder(oControlB);

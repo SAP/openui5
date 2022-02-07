@@ -371,8 +371,8 @@ sap.ui.define([
 	/**
 	 * Updates the storage of the current variant for a given variant management control.
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {String} mPropertyBag.variantManagementReference - Variant management reference
-	 * @param {String} mPropertyBag.newVariantReference - Newly selected variant reference
+	 * @param {string} mPropertyBag.variantManagementReference - Variant management reference
+	 * @param {string} mPropertyBag.newVariantReference - Newly selected variant reference
 	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - Application component responsible for the variant management reference
 	 * @param {boolean} [mPropertyBag.internallyCalled] - If set variant model is not set to busy explicitly
 	 * @param {string} [mPropertyBag.scenario] - The current scenario, e.g. 'saveAs'
@@ -668,14 +668,14 @@ sap.ui.define([
 
 	/**
 	 * Copies a variant.
-	 * @param {Object} mPropertyBag - Map of properties
-	 * @param {String} mPropertyBag.variantManagementReference - Variant management reference
-	 * @param {String} mPropertyBag.title - Title for the variant
+	 * @param {object} mPropertyBag - Map of properties
+	 * @param {string} mPropertyBag.variantManagementReference - Variant management reference
+	 * @param {string} mPropertyBag.title - Title for the variant
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Model's app component
-	 * @param {String} mPropertyBag.layer - Layer on which the new variant should be created
-	 * @param {String} mPropertyBag.newVariantReference - <code>variantReference</code> for the new variant
-	 * @param {String} mPropertyBag.sourceVariantReference - <code>variantReference</code> of the source variant
-	 * @param {String} mPropertyBag.generator - Information about who created the change
+	 * @param {string} mPropertyBag.layer - Layer on which the new variant should be created
+	 * @param {string} mPropertyBag.newVariantReference - <code>variantReference</code> for the new variant
+	 * @param {string} mPropertyBag.sourceVariantReference - <code>variantReference</code> of the source variant
+	 * @param {string} mPropertyBag.generator - Information about who created the change
 	 * @param {object} mPropertyBag.contexts - Context structure containing roles and countries
 	 * @returns {Promise} Promise resolving to dirty changes created during variant copy
 	 * @private
@@ -847,9 +847,9 @@ sap.ui.define([
 	 * Opens the <i>Manage Views</i> dialog.
 	 * Returns a promise which resolves to changes made from the manage dialog, based on the parameters passed.
 	 * @param {sap.ui.fl.variants.VariantManagement} oVariantManagementControl - Variant management control
-	 * @param {String} sVariantManagementReference - Variant management reference
-	 * @param {String} sLayer - Current layer
-	 * @param {String} sClass - Style class assigned to the management dialog
+	 * @param {string} sVariantManagementReference - Variant management reference
+	 * @param {string} sLayer - Current layer
+	 * @param {string} sClass - Style class assigned to the management dialog
 	 * @param {Promise<sap.ui.core.ComponentContainer>} oContextSharingComponentPromise - Promise resolving with the ComponentContainer
 	 * @returns {Promise} Promise which resolves when "manage" event is fired from the variant management control
 	 * @public
@@ -935,17 +935,17 @@ sap.ui.define([
 	 * Sets the passed properties on a variant for the passed variant management reference and
 	 * returns the content for change creation
 	 * @param {sap.ui.fl.variants.VariantManagement} sVariantManagementReference - Variant management reference
-	 * @param {Object} mPropertyBag - Map of properties
-	 * @param {String} mPropertyBag.variantReference - Variant reference for which properties should be set
-	 * @param {String} mPropertyBag.changeType - Change type due to which properties are being set
-	 * @param {String} mPropertyBag.layer - Current layer
-	 * @param {String} mPropertyBag.appComponent - App component instance
-	 * @param {String} [mPropertyBag.title] - New app title value for <code>setTitle</code> change type
+	 * @param {object} mPropertyBag - Map of properties
+	 * @param {string} mPropertyBag.variantReference - Variant reference for which properties should be set
+	 * @param {string} mPropertyBag.changeType - Change type due to which properties are being set
+	 * @param {string} mPropertyBag.layer - Current layer
+	 * @param {string} mPropertyBag.appComponent - App component instance
+	 * @param {string} [mPropertyBag.title] - New app title value for <code>setTitle</code> change type
 	 * @param {boolean} [mPropertyBag.visible] - New visible value for <code>setVisible</code> change type
 	 * @param {object} [mPropertyBag.contexts] - New contexts object (e.g. roles) for <code>setContexts</code> change type
 	 * @param {boolean} [mPropertyBag.favorite] - New favorite value for <code>setFavorite</code> change type
 	 * @param {boolean} [mPropertyBag.executeOnSelect] - New executeOnSelect value for <code>setExecuteOnSelect</code> change type
-	 * @param {String} [mPropertyBag.defaultVariant] - New default variant for <code>setDefault</code> change type
+	 * @param {string} [mPropertyBag.defaultVariant] - New default variant for <code>setDefault</code> change type
 	 * @param {boolean} [bUpdateCurrentVariant] - Update current variant
 	 * @returns {object} Additional content for change creation
 	 * @public

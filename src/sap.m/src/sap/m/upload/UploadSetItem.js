@@ -902,7 +902,7 @@ sap.ui.define([
 
 	/**
 	 * Checks if and how compliance with the file type restriction changed for this item.
-	 * @param {String[]} aTypes List of allowed file types.
+	 * @param {string[]} aTypes List of allowed file types.
 	 * @private
 	 */
 	UploadSetItem.prototype._checkTypeRestriction = function (aTypes) {
@@ -953,7 +953,7 @@ sap.ui.define([
 
 	/**
 	 * Checks if and how compliance with the mime type restriction changed for this item.
-	 * @param {String[]} aTypes List of allowed mime types.
+	 * @param {string[]} aTypes List of allowed mime types.
 	 * @private
 	 */
 	UploadSetItem.prototype._checkMediaTypeRestriction = function (aTypes) {

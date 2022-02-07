@@ -266,7 +266,7 @@ sap.ui.define([
 	 * Returns the <code>ObjectPageSectionBase</code> internal title if present,
 	 * otherwise - the public title.
 	 * @private
-	 * @returns {String} the title
+	 * @returns {string} the title
 	 */
 	ObjectPageSectionBase.prototype._getTitle = function () {
 		return this._getInternalTitle() || this.getTitle();
@@ -287,7 +287,7 @@ sap.ui.define([
 	 * value to be se to the aria-level attribute title level fallbacks to TitleLevel.H2 as this is the default
 	 * aria-level according to aria specification
 	 *
-	 * @returns {String} the <code>aria-level</code>
+	 * @returns {string} the <code>aria-level</code>
 	 * @since 1.44
 	 * @private
 	 */
@@ -305,7 +305,7 @@ sap.ui.define([
 	 * Returns the <code>ObjectPageSectionBase</code> <code>titleLevel</code>
 	 * if explicitly defined and different from <code>sap.ui.core.TitleLevel.Auto</code>.
 	 * Otherwise, the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code> is returned.
-	 * @returns {String}
+	 * @returns {string}
 	 * @since 1.44
 	 * @private
 	 */
@@ -317,7 +317,7 @@ sap.ui.define([
 	/**
 	 * Sets the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
 	 * The method is used by the <code>ObjectPageLayout</code> to apply the <code>sectionTitleLevel</code> property.
-	 * @param {String} sTitleLevel
+	 * @param {string} sTitleLevel
 	 * @since 1.44
 	 * @private
 	 */
@@ -333,7 +333,7 @@ sap.ui.define([
 	/**
 	 * Returns the <code>ObjectPageSectionBase</code> internal <code>titleLevel</code>.
 	 * The internal <code>titleLevel</code> is set by the <code>ObjectPageLayout</code>.
-	 * @returns {String}
+	 * @returns {string}
 	 * @since 1.44
 	 * @private
 	 */

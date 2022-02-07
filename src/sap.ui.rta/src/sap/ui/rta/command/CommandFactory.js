@@ -532,12 +532,12 @@ sap.ui.define([
 	 * @param {string} sCommand - Command type
 	 * @param {object} mSettings -  Initial settings for the new command (command specific settings, looks diffrent for each and every command)
 	 * @param {sap.ui.dt.DesignTimeMetadata} oDesignTimeMetadata - Contains the action used in the command
-	 * @param {Object} [mFlexSettings] - Property bag
-	 * @param {String} [mFlexSettings.layer] - The Layer in which RTA should be started. Default: "CUSTOMER"
-	 * @param {Boolean} [mFlexSettings.developerMode] - Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
-	 * @param {String} [mFlexSettings.baseId] - Base ID of the app
-	 * @param {String} [mFlexSettings.projectId] - Project ID
-	 * @param {String} [mFlexSettings.scenario] - Key representing the current scenario
+	 * @param {object} [mFlexSettings] - Property bag
+	 * @param {string} [mFlexSettings.layer] - The Layer in which RTA should be started. Default: "CUSTOMER"
+	 * @param {boolean} [mFlexSettings.developerMode] - Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
+	 * @param {string} [mFlexSettings.baseId] - Base ID of the app
+	 * @param {string} [mFlexSettings.projectId] - Project ID
+	 * @param {string} [mFlexSettings.scenario] - Key representing the current scenario
 	 * @returns {Promise} A promise which will return the created command
 	 */
 	CommandFactory.getCommandFor = function (vElement, sCommand, mSettings, oDesignTimeMetadata, mFlexSettings) {

@@ -17,8 +17,8 @@ sap.ui.define(['sap/ui/core/Renderer', './ListBaseRenderer'],
 	/**
 	 * Returns the ARIA accessibility role.
 	 *
-	 * @param {sap.ui.core.Control} oControl An object representation of the control
-	 * @returns {String}
+	 * @param {sap.m.Tree} oControl An object representation of the control
+	 * @returns {string}
 	 */
 	TreeRenderer.getAriaRole = function(oControl) {
 		return "tree";

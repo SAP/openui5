@@ -742,9 +742,9 @@ sap.ui.define([
 
         /**
          * Handle the touchmove event happening on the slider.
-         * @param {Int} [fInitialPointerPosition] Mouse pointer's initial position
-         * @param {Int} [aInitialRange] Initial range array
-         * @param {HTMLElement} [aHandles] The handle that should be updated
+         * @param {int} [fInitialPointerPosition] Mouse pointer's initial position
+         * @param {int[]} [aInitialRange] Initial range array
+         * @param {HTMLElement[]} [aHandles] The handle that should be updated
          * @param {jQuery.Event} oEvent The event object.
          * @private
          * @override
@@ -806,7 +806,6 @@ sap.ui.define([
         /**
          * Updates values of the advanced tooltips.
          *
-         * @param {string} sNewValue The new value
          * @protected
          */
         RangeSlider.prototype.updateAdvancedTooltipDom = function () {

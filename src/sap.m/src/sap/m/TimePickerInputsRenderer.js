@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Renders the HTML for the given {@link sap.m.TimePickerInputs} control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.TimePickerInputs} oControl An object representation of the control that should be rendered
 	 */
 	TimePickerInputsRenderer.render = function(oRm, oControl) {
 		var aControls = oControl.getAggregation("_inputs"),

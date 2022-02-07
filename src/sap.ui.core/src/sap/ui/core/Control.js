@@ -273,6 +273,7 @@ sap.ui.define([
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
 	 * @returns {this} reference to the newly created clone
+	 * @override
 	 * @public
 	 */
 	Control.prototype.clone = function() {

@@ -960,7 +960,7 @@ sap.ui.define([
 	 * @type {sap.ui.mdc.field.FieldHelpItem}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.ui.mdc.field.FieldHelpItem
+	 * @typedef {object} sap.ui.mdc.field.FieldHelpItem
 	 * @property {any} key Key of the item
 	 * @property {string} description Description of the item
 	 * @property {object} [inParameters] In parameters of the item. For each field path a value is stored

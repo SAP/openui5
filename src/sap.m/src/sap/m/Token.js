@@ -307,7 +307,6 @@ sap.ui.define([
 	 * Sets the Token's <code>truncated</code> property.
 	 *
 	 * @param {boolean} bValue The new property value.
-	 * @param {boolean} bSkipInvalidation true if control invalidation should not happen.
 	 * @returns {this} this reference for method chaining.
 	 * @private
 	 * @ui5-restricted sap.m.Tokenizer

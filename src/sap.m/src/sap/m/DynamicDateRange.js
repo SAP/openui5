@@ -1220,7 +1220,7 @@ sap.ui.define([
 		 * Returns ARIA accessibility role for the control.
 		 *
 		 * @param {sap.ui.core.Control} oControl an object representation of the control
-		 * @returns {String}
+		 * @returns {string}
 		 */
 		DynamicDateRangeInputRenderer.getAriaRole = function(oControl) {
 			return "combobox";
@@ -1290,7 +1290,6 @@ sap.ui.define([
 		/**
 		 * Getter for the originating control.
 		 *
-		 * @param {void}
 		 * @returns {sap.ui.core.Control}
 		 */
 		DynamicDateRangeInput.prototype._getControlOrigin = function() {

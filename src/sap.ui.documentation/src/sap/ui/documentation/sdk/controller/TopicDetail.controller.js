@@ -403,7 +403,7 @@ sap.ui.define([
 			/**
 			 *  Iterates over all links marked as external and adds a icon and disclaimer proxy
 			 *
-			 * @param oElement, the dom ref to the container
+			 * @param {Element} oElement the DOM ref to the container
 			 * @private
 			 */
 			_fixExternalLinks: function (oElement) {
@@ -430,7 +430,7 @@ sap.ui.define([
 			 *  1. First loop - calculates the sum of all colgroup children
 			 *  2. Second loop - transforms the origin values to percent
 			 *
-			 * @param oElement, the dom ref to the container
+			 * @param {Element} oElement the DOM ref to the container
 			 * @private
 			 */
 			_computeColumnGroupValues: function (oElement) {
@@ -469,8 +469,8 @@ sap.ui.define([
 			 * 1) The link is a non SAP and the icon image is link-external.png
 			 * 2) The link is a SAP and the icon image is link-sap.png
 			 *
-			 * @param aDomRef, the dom ref to the external link
-			 * @param sHref, the url string
+			 * @param {Element} aDomRef the DOM ref to the external link
+			 * @param {string} sHref the url string
 			 * @private
 			 */
 			_addIconToExternalUrl: function (aDomRef, sHref) {
@@ -527,9 +527,9 @@ sap.ui.define([
 			 * 3) The first seven symbols from the ID used in the Demo Kit URLs are added at the end
 			 * 4) The file type is added at the end “.md”
 			 *
-			 * @param sUrl, the url of the file in the internal repo
-			 * @param sTitle, the title of the file
-			 * @returns {string}, the url of the file in the GitHub repo
+			 * @param {string} sUrl the url of the file in the internal repo
+			 * @param {string} sTitle the title of the file
+			 * @returns {string} the url of the file in the GitHub repo
 			 * @private
 			 */
 			_formatToGitHubUrl: function(sUrl, sTitle) {

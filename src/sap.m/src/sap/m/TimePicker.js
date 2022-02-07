@@ -2149,7 +2149,7 @@ function(
 		 * Shifts hours, minutes and seconds indexes if period ("a", see http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table)
 		 * is before corresponding hours, minutes & seconds fields.
 		 *
-		 * @param {Number} shiftValue the shift value
+		 * @param {number} shiftValue the shift value
 		 */
 		TimeSemanticMaskHelper.prototype.shiftIndexes = function(shiftValue) {
 			if (this.iAmPmChar1Index < this.iHourNumber1Index) { //both a and h,hh,H,HH exist in this case

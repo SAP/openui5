@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * @param {sap.ui.core.RenderManager}
 	 *          rm the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.GroupHeaderListItem}
 	 *          oLI an object representation of the list item that should be
 	 *          rendered
 	 */
@@ -60,7 +60,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 	 * @param {sap.ui.core.RenderManager}
 	 *          rm the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.GroupHeaderListItem}
 	 *          oLI an object representation of the list item that should be
 	 *          rendered
 	 */

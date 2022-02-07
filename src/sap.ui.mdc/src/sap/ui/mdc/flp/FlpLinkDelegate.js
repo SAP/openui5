@@ -56,7 +56,7 @@ sap.ui.define([
 	 * Calculates the type of link that should be displayed
 	 * @param {Object} oPayload - The Payload of the Link given by the application
 	 * @returns {Promise} once resolved an object oLinkType is returned
-	 * @returns {Number} oLinkType.type - 0 (Text) | 1 (Direct Link) | 2 (Popup)
+	 * @returns {int} oLinkType.type - 0 (Text) | 1 (Direct Link) | 2 (Popup)
 	 * @returns {sap.ui.mdc.link.LinkItem} oLinkType.directLink - instance of {@link sap.ui.mdc.link.LinkItem} which should be used for direct navigation
 	 * In case oLinkType.type is 0 the Link will get rendered as a text
 	 * In case oLinkType.type is 1 the Link will get rendered as a Link but it won't have a Popover - it will trigger a direct navigation on press
@@ -214,7 +214,7 @@ sap.ui.define([
 	 * Retrieves the actual targets for the navigation of the link. This uses the UShell loaded by the {@link sap.ui.mdc.link.Factory} to retrieve
 	 * the navigation targets from the FLP service.
 	 * @private
-	 * @param {String} sAppStateKey key of the appstate (not used yet)
+	 * @param {string} sAppStateKey key of the appstate (not used yet)
 	 * @param {Object} oSemanticAttributes calculated by _calculateSemanticAttributes
 	 * @param {Object} oPayload given by the application
 	 * @param {Object} oInfoLog of type {@link sap.ui.mdc.link.Log} - the corresponding InfoLog of the Link
@@ -343,7 +343,7 @@ sap.ui.define([
 	 * This will return an array of the SemanticObjects as strings given by the payload.
 	 * @private
 	 * @param {Object} oPayload defined by the application
-	 * @returns {String[]} containing SemanticObjects based of the payload
+	 * @returns {string[]} containing SemanticObjects based of the payload
 	 */
 	FlpLinkDelegate._getSemanticObjects = function(oPayload) {
 		return oPayload.semanticObjects ? oPayload.semanticObjects : [];
@@ -401,7 +401,7 @@ sap.ui.define([
 	 * Converts a given array of SemanticObjectMapping into a Map containing SemanticObjects as Keys and a Map of it's corresponding SemanticObjectMappings as values.
 	 * @private
 	 * @param {Object[]} aSemanticObjectMappings of type {@link sap.ui.mdc.link.SemanticObjectMapping}
-	 * @returns {Map<String, Map<String, String>>} mSemanticObjectMappings
+	 * @returns {Object<string, Object<string, string>>} mSemanticObjectMappings
 	 */
 	FlpLinkDelegate._convertSemanticObjectMapping = function(aSemanticObjectMappings) {
 		if (!aSemanticObjectMappings.length) {
@@ -424,7 +424,7 @@ sap.ui.define([
 	 * Converts a given array of SemanticObjectUnavailableActions into a Map containing SemanticObjects as Keys and a Map of it's corresponding SemanticObjectUnavailableActions as values.
 	 * @private
 	 * @param {Object[]} aSemanticObjectUnavailableActions of type {@link sap.ui.mdc.link.SemanticObjectUnavailableAction}
-	 * @returns {Map<String, Map<String, String>>} mSemanticObjectUnavailableActions
+	 * @returns {Object<string, Object<string, string>>} mSemanticObjectUnavailableActions
 	 */
 	FlpLinkDelegate._convertSemanticObjectUnavailableAction = function(aSemanticObjectUnavailableActions) {
 		if (!aSemanticObjectUnavailableActions.length) {

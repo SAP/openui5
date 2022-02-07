@@ -25,7 +25,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the slider that should be rendered.
 		 */
 		SliderRenderer.render = function(oRm, oSlider) {
 			var bEnabled = oSlider.getEnabled(),
@@ -91,7 +91,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * This hook method is reserved for derived classes to render more handles.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the slider that should be rendered.
 		 */
 		SliderRenderer.renderHandles = function(oRm, oSlider, sForwardedLabels) {
 			this.renderHandle(oRm, oSlider,  {
@@ -131,7 +131,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
 			oRm.attr("title", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
@@ -155,7 +155,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.writeAccessibilityState = function(oRm, oSlider, mOptions) {
 			var fSliderValue = oSlider.getValue(),
@@ -285,7 +285,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * This method is reserved for derived classes to add extra CSS classes to the HTML root element of the control.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 * @since 1.36
 		 */
 		SliderRenderer.addClass = function(oRm, oSlider) {
@@ -296,7 +296,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * This method is reserved for derived classes to add extra CSS classes to the inner element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 * @since 1.38
 		 */
 		SliderRenderer.addInnerClass = function(oRm, oSlider) {
@@ -307,7 +307,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * This method is reserved for derived classes to add extra CSS classes to the progress indicator element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 * @since 1.38
 		 */
 		SliderRenderer.addProgressIndicatorClass = function(oRm, oSlider) {
@@ -318,7 +318,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * This method is reserved for derived classes to add extra CSS classes to the handle element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 * @since 1.38
 		 */
 		SliderRenderer.addHandleClass = function(oRm, oSlider) {
@@ -329,7 +329,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		 * This hook method is reserved for derived classes to render the labels.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @param {sap.m.Slider} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.renderLabels = function (oRm, oSlider) {
 			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);

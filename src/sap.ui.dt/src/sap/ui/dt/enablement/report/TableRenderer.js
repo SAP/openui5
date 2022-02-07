@@ -17,7 +17,7 @@ sap.ui.define(function() {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oTable An object representation of the control that should be rendered.
+	 * @param {sap.ui.dt.enablement.report.Table} oTable An object representation of the control that should be rendered.
 	 */
 	TableRenderer.render = function(rm, oTable) {
 		rm.addClass("sapUiDtTableReport");

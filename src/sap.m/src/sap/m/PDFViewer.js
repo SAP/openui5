@@ -360,7 +360,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param string oClickedButtonId
+		 * @param {string} oClickedButtonId
 		 * @private
 		 */
 		PDFViewer.prototype._onSourceValidationErrorMessageBoxCloseListener = function (oClickedButtonId) {

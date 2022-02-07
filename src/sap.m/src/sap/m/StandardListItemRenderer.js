@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	 * {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 */
 	StandardListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		var sIconURI = oLI.getIcon(),
@@ -55,7 +55,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the list item content element.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @protected
 	 */
 	StandardListItemRenderer.renderLIContent = function(rm, oLI) {
@@ -97,7 +97,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the title wrapper.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @protected
 	 */
 	StandardListItemRenderer.renderTitleWrapper = function(rm, oLI) {
@@ -141,7 +141,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the title text.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @protected
 	 */
 	StandardListItemRenderer.renderTitle = function(rm, oLI) {
@@ -151,7 +151,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the description text.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @protected
 	 */
 	StandardListItemRenderer.renderDescription = function (rm, oLI) {
@@ -195,7 +195,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the info text.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @protected
 	 */
 	StandardListItemRenderer.renderInfo = function (rm, oLI) {
@@ -229,7 +229,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the expand/collapse text.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @param {string} sWrapArea Defines the wrapping text area
 	 * @protected
 	 */
@@ -253,7 +253,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 	/**
 	 * Renders the wrapping behavior of the text.
 	 * @param {sap.ui.core.RenderManager} rm The <code>RenderManager</code> that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oLI An object representation of the control that is rendered
+	 * @param {sap.m.StandardListItem} oLI An object representation of the control that is rendered
 	 * @param {string} sWrapArea Defines the wrapping text area
 	 * @protected
 	 */

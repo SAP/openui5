@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
-		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 * @param {sap.m.Switch} oSwitch An object representation of the control that should be rendered.
 		 */
 		SwitchRenderer.render = function(oRm, oSwitch) {
 			var bState = oSwitch.getState(),
@@ -181,7 +181,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 * @param {sap.m.Switch} oSwitch An object representation of the control that should be rendered.
 		 */
 		SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
 			var mAriaLabelledby = oSwitch.getAriaLabelledBy(),
@@ -210,7 +210,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSwitch An object representation of the control that should be rendered.
+		 * @param {sap.m.Switch} oSwitch An object representation of the control that should be rendered.
 		 * @param {object} mOptions
 		 */
 		SwitchRenderer.renderInvisibleElement = function(oRm, oSwitch, mOptions) {

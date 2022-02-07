@@ -297,7 +297,7 @@ sap.ui.define([
 	 * Returns the accessibility attributes for a given <code>TabStripItem</code>.
 	 *
 	 * @param {sap.m.TabStripItem} oItem The <code>TabStripItem</code> to prepare accessibility attributes for
-	 * @param {sap.ui.core.Control} oTabStripParent The <code>TabStrip</code> parent control
+	 * @param {sap.m.TabStrip} oTabStripParent The <code>TabStrip</code> parent control
 	 * @param {sap.m.TabStripItem} oSelectedItem The <code>TabStripItem</code> that is currently selected
 	 * @returns {Object} The accessibility attributes for given <code>TabStripItem</code>
 	 * @private

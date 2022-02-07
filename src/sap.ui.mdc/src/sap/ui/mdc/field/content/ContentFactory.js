@@ -89,7 +89,7 @@ sap.ui.define([
 	 * Creates the suitable controls for the given content type and mode and returns the control instances.
 	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
 	 * @param {sap.ui.mdc.enum.ContentMode} sContentMode A given content mode
-	 * @param {String} sId ID of the {@link sap.ui.mdc.field.FieldBase}
+	 * @param {string} sId ID of the {@link sap.ui.mdc.field.FieldBase}
 	 * @returns {sap.ui.core.Control[]} Array containing the created controls
 	 */
 	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId) {
@@ -130,9 +130,9 @@ sap.ui.define([
 	 * Determines in which {@link sap.ui.mdc.enum.ContentMode} the given content type is displayed.
 	 * @param {sap.ui.mdc.field.content.DefaultContent} oContentType The content type object
 	 * @param {sap.ui.mdc.enum.EditMode} sEditMode The display mode of the {@link sap.ui.mdc.field.FieldBase}
-	 * @param {Integer} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
+	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {boolean} bMultipleLines Determines if the content type has a multiple line input
-	 * @param {String[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
+	 * @param {string[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
 	 * @returns {sap.ui.mdc.enum.ContentMode} sContentMode A given content mode
 	 */
 	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
@@ -161,7 +161,7 @@ sap.ui.define([
 	/**
 	 * Determines which content type object to use.
 	 * @param {sap.ui.mdc.enum.BaseType} sBaseType Base type determined by {@link sap.ui.mdc.field.FieldBase}
-	 * @param {Integer} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
+	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {boolean} bIsTriggerable Checks if the {@link sap.ui.mdc.field.FieldBase} is triggerable or not - needed for link content type
 	 * @returns {sap.ui.mdc.field.content.DefaultContent} oContentType Content type object
 	 */
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	/**
 	 * Defines to which property the field value is bound.
-	 * @param {String} sBoundProperty the name of the property.
+	 * @param {string} sBoundProperty the name of the property.
 	 */
 	ContentFactory.prototype.setBoundProperty = function(sBoundProperty) {
 		this._sBoundProperty = sBoundProperty;

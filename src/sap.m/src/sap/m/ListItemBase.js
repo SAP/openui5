@@ -695,7 +695,7 @@ function(
 	/**
 	 * Destroys generated mode/type controls
 	 *
-	 * @param {String[]} aControls array of control names
+	 * @param {string[]} aControls array of control names
 	 * @private
 	 */
 	ListItemBase.prototype.destroyControls = function(aControls) {

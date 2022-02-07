@@ -2090,7 +2090,7 @@ sap.ui.define([
 	/**
 	 * Decides if the card needs a loading placeholder based on card level data provider
 	 *
-	 * @returns {Boolean} Should card has a loading placeholder based on card level data provider.
+	 * @returns {boolean} Should card has a loading placeholder based on card level data provider.
 	 */
 	Card.prototype.isLoading = function () {
 		var oLoadingProvider = this.getAggregation("_loadingProvider");

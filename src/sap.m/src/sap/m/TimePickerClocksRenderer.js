@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Renders the HTML for the given {@link sap.m.TimePickerClocks} control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.TimePickerClocks} oControl An object representation of the control that should be rendered
 	 */
 	TimePickerClocksRenderer.render = function(oRm, oControl) {
 		oRm.openStart("div", oControl); // outer wrapper
@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Renders the buttons for the given {@link sap.m.TimePickerClocks} control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.TimePickerClocks} oControl An object representation of the control that should be rendered
 	 */
 	TimePickerClocksRenderer.renderButtons = function(oRm, oControl) {
 		var aButtons = oControl.getAggregation("_buttons"),
@@ -81,7 +81,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Renders the clocks for the given {@link sap.m.TimePickerClocks} control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.TimePickerClocks} oControl An object representation of the control that should be rendered
 	 */
 	TimePickerClocksRenderer.renderClocks = function(oRm, oControl) {
 		var aClocks = oControl.getAggregation("_clocks"),

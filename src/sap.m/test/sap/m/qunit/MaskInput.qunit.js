@@ -1463,9 +1463,8 @@ sap.ui.define([
 	}
 
 	/**
-	 *
-	 * @param oControl
-	 * @returns {iFrom | Number, iTo | Number}
+	 * @param {sap.ui.core.Control} oControl
+	 * @returns {{iFrom: number, iTo: number}}
 	 */
 	function getCurrentSelection (oControl) {
 		var $oControl = jQuery(oControl.getFocusDomRef())[0],

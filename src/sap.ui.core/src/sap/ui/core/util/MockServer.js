@@ -256,12 +256,13 @@ sap.ui
 
 			/**
 			 * Generates a floating-point, pseudo-random number in the range [0, 1[
-			 * using a linear congruential generator with drand48 parameters
-			 * the seed is fixed, so the generated random sequence is always the same
-			 * each property type has a own seed. Valid types are:
+			 * using a linear congruential generator with drand48 parameters.
+			 *
+			 * The seed is fixed, so the generated random sequence is always the same
+			 * each property type has an own seed. Valid types are:
 			 * String, DateTime, Int, Decimal, Boolean, Byte, Double, Single, SByte, Time, Guid, Binary, DateTimeOffset
 			 * @private
-			 * @param {string} specific property type of random mock value to be generated
+			 * @param {string} sType specific property type of random mock value to be generated
 			 * @return (number) pseudo-random number
 			 */
 			MockServer.prototype._getPseudoRandomNumber = function (sType) {
@@ -280,7 +281,7 @@ sap.ui
 			 * @private
 			 */
 			MockServer.prototype._resetPseudoRandomNumberGenerator = function () {
-					this._oRandomSeed = {};
+				this._oRandomSeed = {};
 			};
 
 
@@ -324,7 +325,7 @@ sap.ui
 
 			/**
 			 * Attaches an event handler to be called before the built-in request processing of the mock server
-			 * @param {string} event type according to HTTP Method
+			 * @param {string} sHttpMethod - event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit.
 			 * The callback function exposes an event with parameters, depending on the type of the request.
 			 * oEvent.getParameters() lists the parameters as per the request. Examples are:
@@ -339,7 +340,7 @@ sap.ui
 
 			/**
 			 * Attaches an event handler to be called after the built-in request processing of the mock server
-			 * @param {string} event type according to HTTP Method
+			 * @param {string} sHttpMethod - event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * The callback function exposes an event with parameters, depending on the type of the request.
 			 * oEvent.getParameters() lists the parameters as per the request. Examples are:
@@ -354,7 +355,7 @@ sap.ui
 
 			/**
 			 * Removes a previously attached event handler
-			 * @param {string} event type according to HTTP Method
+			 * @param {string} sHttpMethod - event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
@@ -366,7 +367,7 @@ sap.ui
 
 			/**
 			 * Removes a previously attached event handler
-			 * @param {string} event type according to HTTP Method
+			 * @param {string} sHttpMethod - event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
@@ -601,7 +602,7 @@ sap.ui
 
 			/**
 			 * Removes duplicate entries from the given array
-			 * @param {object} aDataSet
+			 * @param {array} aDataSet
 			 * @private
 			 */
 			MockServer.prototype._arrayUnique = function(array) {
@@ -659,7 +660,8 @@ sap.ui
 			/**
 			 * Applies the $filter OData system query option string on the given array.
 			 * This function is called recursively on expressions in brackets.
-			 * @param {string} sString
+			 * @param {array} aDataSet
+			 * @param {string} sODataQueryValue
 			 * @private
 			 */
 			MockServer.prototype._recursiveOdataQueryFilter = function(aDataSet, sODataQueryValue) {
@@ -1587,8 +1589,8 @@ sap.ui
 
 			/**
 			 * verify entitytype keys type ((e.g. Int, String, SByte, Time, DateTimeOffset, Decimal, Double, Single, Boolean, DateTime)
-			 * @param {oEntitySet} the entity set for verification
-			 * @param {aRequestedKeys} aRequestedKeys the requested Keys
+			 * @param {Object} oEntitySet the entity set for verification
+			 * @param {string[]} aRequestedKeys aRequestedKeys the requested Keys
 			 * @return boolean
 			 * @private
 			 */
@@ -1641,9 +1643,9 @@ sap.ui
 			 * Takes a string '<poperty1>=<value1>, <poperty2>=<value2>,...' and creates an
 			 * object (hash map) out of it.
 			 *
-			 * @param {sKeys}
-			 *            the string of porperty/value pairs
-			 * @param {object}
+			 * @param {string} sKeys
+			 *            the string of property/value pairs
+			 * @param {object} oEntitySet
 			 *            object consisting of the parsed properties
 			 */
 			MockServer.prototype._parseKeys = function(sKeys, oEntitySet) {

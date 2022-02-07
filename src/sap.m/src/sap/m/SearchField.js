@@ -596,7 +596,7 @@ sap.ui.define([
 
 	/**
 	 * Process the input event (key press or paste). Update value and fire the liveChange event.
-	 * @param {oEvent} jQuery Event
+	 * @param {jQuery.Event} oEvent jQuery Event
 	 * @private
 	 */
 	SearchField.prototype.onInput = function() {

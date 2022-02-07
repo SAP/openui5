@@ -328,7 +328,7 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.ui.fl.Utils} Utils Flexibility utility class
 	 * @param {sap.ui.fl.apply.api.FlexRuntimeInfoAPI} FlexRuntimeInfoAPI Flexibility runtime info API
-	 * @returns {String} Generated ID of the panel
+	 * @returns {string} Generated ID of the panel
 	 */
 	Link.prototype._createPanelId = function(Utils, FlexRuntimeInfoAPI) {
 		var oField;

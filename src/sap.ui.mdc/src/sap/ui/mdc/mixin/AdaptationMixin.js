@@ -118,7 +118,7 @@ sap.ui.define(
          * Triggers a validation of the control by calling <code>validateState</code>, which is implemented in the control delegate.
          *
          * @param {Object} oTheoreticalState The theoretical state to be validated; see also {@link sap.ui.mdc.p13n.StateUtil StateUtil}
-         * @param {String} [sKey] The name of the control to be validated
+         * @param {string} [sKey] The name of the control to be validated
          *
          * @returns {object} The value returned by {@link sap.ui.mdc.AggregationBaseDelegate#validateState validateState}
          */

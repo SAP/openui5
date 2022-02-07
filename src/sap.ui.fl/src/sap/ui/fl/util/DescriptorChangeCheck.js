@@ -97,7 +97,7 @@ sap.ui.define([
 	 * Returns the namespace prefix to be used for the given layer.
 	 * Null means no prefix must be used.
 	 * @param {string} sLayer - The target layer
-	 * @returns {String|null} The prefix to be used. null means there must not be a prefix
+	 * @returns {string|null} The prefix to be used. null means there must not be a prefix
 	 */
 	function getNamespacePrefixForLayer(sLayer) {
 		var sPrefix = layer_prefixes[sLayer];

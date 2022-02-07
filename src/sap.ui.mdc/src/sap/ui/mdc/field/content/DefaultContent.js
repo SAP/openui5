@@ -59,8 +59,8 @@ sap.ui.define([
 		/**
 		 * Determines which controls to return for a given {@link sap.ui.mdc.enum.ContentMode}.
 		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode The given content mode
-		 * @param {String} sOperator Name of the operator if the <code>EditOperator</code> content mode is used
-		 * @returns {String[]} aControlNames Names of the determined controls
+		 * @param {string} sOperator Name of the operator if the <code>EditOperator</code> content mode is used
+		 * @returns {string[]} aControlNames Names of the determined controls
 		 */
 		getControlNames: function(sContentMode, sOperator) {
 			var aControlNames;
@@ -102,9 +102,9 @@ sap.ui.define([
 		 * Creates the suitable controls for the given content mode and returns the control instances.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls this function
 		 * @param {sap.ui.mdc.enum.ContentMode} sContentMode a given content mode
-		 * @param {String} sOperator Name of the operator if the <code>EditOperator</code> content mode is used
+		 * @param {string} sOperator Name of the operator if the <code>EditOperator</code> content mode is used
 		 * @param {Object[]} aControls Array containing the control classes that are to be created
-		 * @param {String} sId ID of the {@link sap.ui.mdc.field.FieldBase}
+		 * @param {string} sId ID of the {@link sap.ui.mdc.field.FieldBase}
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		create: function(oContentFactory, sContentMode, sOperator, aControls, sId) {
@@ -134,7 +134,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>Edit</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createEdit: function(oContentFactory, aControlClasses, sId) {
@@ -171,7 +171,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>EditMultiValue</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createEditMultiValue: function(oContentFactory, aControlClasses, sId) {
@@ -218,7 +218,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>EditMultiLine</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createEditMultiLine: function(oContentFactory, aControlClasses, sId) {
@@ -251,7 +251,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>Display</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 */
 		createDisplay: function(oContentFactory, aControlClasses, sId) {
@@ -274,7 +274,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>DisplayMultiLine</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 * @since 1.91
 		 */
@@ -296,7 +296,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>DisplayMultiValue</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 * @since 1.96
 		 */
@@ -328,7 +328,7 @@ sap.ui.define([
 		 * Creates the suitable controls for content mode <code>EditForHelp</code>.
 		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
 		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
-		 * @param {String} sId ID of the field control
+		 * @param {string} sId ID of the field control
 		 * @returns {sap.ui.core.Control[]} Array containing the created controls
 		 * @since 1.96
 		 */

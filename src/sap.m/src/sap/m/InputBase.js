@@ -747,9 +747,9 @@ function(
 		return this.$("inner").getSelectedText();
 	};
 
-	/**
-	 * Overwrite setProperty function to know value property changes via API
-	 * @overwrite
+	/*
+	 * Override setProperty function to know value property changes via API
+	 * @override
 	 */
 	InputBase.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 		if (sPropertyName == "value") {
@@ -841,11 +841,10 @@ function(
 	};
 
 	/**
-	 * If there is <code>sap.m.FormattedText</code> aggragation for value state message
+	 * If there is <code>sap.m.FormattedText</code> aggregation for value state message
 	 * return the links in it, if any.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
-	 * @returns {array} Links in a value state message containing <code>sap.m.FormattedText</code>
+	 * @returns {sap.m.Link[]} Links in a value state message containing <code>sap.m.FormattedText</code>
 	 * @private
 	 */
 	InputBase.prototype._aValueStateLinks = function() {
@@ -873,7 +872,6 @@ function(
 	 * If ValueStateText is sap.m.FormattedText containing
 	 * link(s) - close ValueStateMessage after press on <code>sap.m.Link</code>
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	InputBase.prototype._attachValueStateLinkPress = function() {

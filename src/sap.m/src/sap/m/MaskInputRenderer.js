@@ -17,7 +17,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'], function(Renderer
 	 * Returns the accessibility state of the control.
 	 *
 	 * @override
-	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @param {sap.m.MaskInput} oControl an object representation of the control.
 	 * @returns {Object}
 	 */
 	MaskInputRenderer.getAccessibilityState = function (oControl) {

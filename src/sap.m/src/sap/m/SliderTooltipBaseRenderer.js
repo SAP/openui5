@@ -23,7 +23,7 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the renderer output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.SliderTooltipBase} oControl An object representation of the control that should be rendered
 		 */
 		SliderTooltipBaseRenderer.render = function (oRM, oControl) {
 			oRM.openStart("div", oControl)
@@ -39,7 +39,7 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.SliderTooltipBase} oControl An object representation of the control that should be rendered.
 		 */
 		SliderTooltipBaseRenderer.renderTooltipContent = function (oRM, oControl) {};
 

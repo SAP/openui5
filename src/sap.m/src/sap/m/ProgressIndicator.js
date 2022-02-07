@@ -377,8 +377,8 @@ sap.ui.define([
 	/**
 	 * Determines the CSS class, which should be applied to the <code>ProgressIndicator</code>
 	 * for the given <code>percentValue</code>.
-	 * @param {Number} fPercentValue
-	 * @return {String} the CSS class
+	 * @param {number} fPercentValue
+	 * @return {string} the CSS class
 	 * @since 1.44
 	 * @private
 	 */

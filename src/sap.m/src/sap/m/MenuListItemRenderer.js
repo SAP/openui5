@@ -24,7 +24,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		 * Renders the HTML starting tag of the <code>MenuListItem</code>.
 		 *
 		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+		 * @param {sap.m.MenuListItem} oLI an object representation of the control that should be rendered
 		 * @protected
 		 */
 		MenuListItemRenderer.openItemTag = function(rm, oLI) {
@@ -55,7 +55,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/library'
 		 * @param {sap.ui.core.RenderManager}
 		 *          rm the RenderManager that can be used for writing to the
 		 *          Render-Output-Buffer
-		 * @param {sap.ui.core.Control}
+		 * @param {sap.m.MenuListItem}
 		 *          oLI an object representation of the control that should be
 		 *          rendered
 		 */

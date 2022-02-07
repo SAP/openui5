@@ -815,7 +815,6 @@ function(
 	 *
 	 *         NOTE: It depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type this
 	 * @public
 	 * @since 1.10.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -857,7 +856,6 @@ function(
 	 *         In order to use the transitionParameters property, the data property must be used (at least "null" must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type this
 	 * @public
 	 * @since 1.10.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -872,10 +870,10 @@ function(
 
 	/**
 	 * Proxy to the _safeBackToPage methods of the internal nav containers
-	 * @param pageId
-	 * @param transitionName
-	 * @param backData
-	 * @param oTransitionParameters
+	 * @param {string} pageId
+	 * @param {string} transitionName
+	 * @param {object} backData
+	 * @param {object} oTransitionParameters
 	 * @private
 	 */
 	SplitContainer.prototype._safeBackToPage = function(pageId, transitionName, backData, oTransitionParameters) {
@@ -899,7 +897,7 @@ function(
 	 *         Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show" and the names of any registered custom transitions.
 	 * @param {object} oData
 	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
-	 * @type this
+	 * @returns {this}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -937,7 +935,6 @@ function(
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -957,14 +954,13 @@ function(
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
+	 * @param {object} oTransitionParameters
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
 	 *         In order to use the transitionParameters property, the data property must be used (at least "null" must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -992,14 +988,13 @@ function(
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
+	 * @param {object} oTransitionParameters
 	 *         This optional object can contain additional information for the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *
 	 *         For a proper parameter order, the data parameter must be given when the transitionParameters parameter is used (it can be given as "null").
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1018,14 +1013,13 @@ function(
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
+	 * @param {object} oTransitionParameters
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
 	 *         In order to use the transitionParameters property, the data property must be used (at least "null" must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1050,14 +1044,13 @@ function(
 	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
+	 * @param {object} oTransitionParameters
 	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
 	 *         In order to use the transitionParameters property, the data property must be used (at least "null" must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.ui.core.Control
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1078,14 +1071,13 @@ function(
 	 *         For back navigation this can be used, for example, when returning from a detail page to transfer any settings done there.
 	 *
 	 *         When the transitionParameters object is used, this data object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
+	 * @param {object} oTransitionParameters
 	 *         This optional object can give additional information to the transition function, like the DOM element, which triggered the transition or the desired transition duration.
 	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
 	 *
 	 *         In order to use the transitionParameters property, the data property must be used (at least "null" must be given) for a proper parameter order.
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.ui.core.Control
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1283,7 +1275,7 @@ function(
 	 *         The content entities between which this SplitContainer navigates in either master area or detail area depending on the master parameter. These can be of type sap.m.Page, sap.ui.core.mvc.View, sap.m.Carousel or any other control with fullscreen/page semantics.
 	 * @param {boolean} bMaster
 	 *         States if the page should be added to the master area. If it's set to false, the page is added to detail area.
-	 * @type this
+	 * @returns {this}
 	 * @public
 	 * @since 1.11.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1300,7 +1292,7 @@ function(
 	/**
 	 * Used to make the master page visible when in ShowHideMode and the device is in portrait mode.
 	 *
-	 * @type this
+	 * @@returns {this}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1356,7 +1348,7 @@ function(
 	/**
 	 * Used to hide the master page when in ShowHideMode and the device is in portrait mode.
 	 *
-	 * @type this
+	 * @returns {this}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1482,7 +1474,8 @@ function(
 	 *
 	 * @param {string} sId
 	 *         The ID of the page that needs to be fetched
-	 * @type sap.ui.core.Control
+	 * @returns {sap.ui.core.Control|null}
+	 *         The requested page
 	 * @public
 	 * @since 1.11.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1496,7 +1489,7 @@ function(
 	 * Returns the page with the given ID in detail area. If there's no page that has the given ID, null is returned.
 	 *
 	 * @param {string} sId The ID of the page that needs to be fetched.
-	 * @type sap.ui.core.Control
+	 * @returns {sap.ui.core.Control|null} the requested page
 	 * @public
 	 * @since 1.11.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1509,11 +1502,11 @@ function(
 	/**
 	 * Returns the page with the given ID from either master area, or detail area depending on the master parameter (if there's no page that has the given ID, null is returned).
 	 *
-	 * @param {string} sId
+	 * @param {string} pageId
 	 *         The ID of the page that needs to be fetched
 	 * @param {boolean} bMaster
 	 *         If the page with given ID should be fetched from the master area. If it's set to false, the page will be fetched from detail area.
-	 * @type sap.ui.core.Control
+	 * @returns {sap.ui.core.Control|null}
 	 * @public
 	 * @since 1.11.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1528,12 +1521,12 @@ function(
 
 
 	/**
-	 *
 	 * Returns whether master area is currently displayed on the screen.
+	 *
 	 * In desktop browser or tablet, this method returns true when master area is displayed on the screen, regardless if in portrait or landscape mode.
 	 * On mobile phone devices, this method returns true when the currently displayed page is from the pages, which are added to the master area, otherwise, it returns false.
 	 *
-	 * @type boolean
+	 * @returns {boolean}
 	 * @public
 	 * @since 1.16.5
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

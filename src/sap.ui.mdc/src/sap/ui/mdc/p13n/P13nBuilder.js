@@ -29,8 +29,8 @@ sap.ui.define([
          * @param {object} oP13nUI Control displayed in the content area
          * @param {object} mDialogSettings Settings to overwrite popover default properties, such as: <code>contentHeight</code>
          * @param {object} [mDialogSettings.reset] Reset settings for the custom header creation
-         * @param {Function} [mDialogSettings.reset.onExecute] Callback executed upon triggering a reset
-         * @param {String} [mDialogSettings.reset.warningText] Warning which is displyed prior to executing the reset
+         * @param {function} [mDialogSettings.reset.onExecute] Callback executed upon triggering a reset
+         * @param {string} [mDialogSettings.reset.warningText] Warning which is displyed prior to executing the reset
          *
          * @returns {Promise} promise resolving in the Popover instance
          */
@@ -74,8 +74,8 @@ sap.ui.define([
          * @param {object} oP13nUI Control displayed in the content area
          * @param {object} mDialogSettings Settings to overwrite dialog default properties, such as: <code>contentHeight</code>
          * @param {object} [mDialogSettings.reset] Reset settings for the custom header creation
-         * @param {Function} [mDialogSettings.reset.onExecute] Callback executed upon triggering a reset
-         * @param {String} [mDialogSettings.reset.warningText] Warning which is displyed prior to executing the reset
+         * @param {function} [mDialogSettings.reset.onExecute] Callback executed upon triggering a reset
+         * @param {string} [mDialogSettings.reset.warningText] Warning which is displyed prior to executing the reset
          *
          * @returns {Promise} Promise resolving in the Dialog instance
          */
@@ -147,9 +147,9 @@ sap.ui.define([
         /**
          *
          * @param {object} mSettings Settings object to create a customHeader including a reset Button
-         * @param {String} mSettings.title Title for the custom reset header
+         * @param {string} mSettings.title Title for the custom reset header
          * @param {function} mSettings.reset Control specific reset handling
-         * @param {String} [mSettings.warningText] Text which is displayed prior to executing to reset execution
+         * @param {string} [mSettings.warningText] Text which is displayed prior to executing to reset execution
          *
          * @returns {sap.m.Bar} The created custom header Bar
          */

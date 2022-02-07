@@ -323,8 +323,7 @@ sap.ui.define([
 		/**
 		 * Retrieves the enabled items DOM references.
 		 *
-		 * @param {object} [oDomRef] The selectList DOM reference.
-		 * @returns {array} The enabled items DOM references.
+		 * @returns {Element[]} The enabled items DOM references.
 		 * @private
 		 */
 		SelectList.prototype._queryEnabledItemsDomRefs = function() {
@@ -589,6 +588,8 @@ sap.ui.define([
 		/*
 		 * Synchronize selected item and key.
 		 *
+		 * @param {object} [mOptions] Options
+		 * @param {boolean} [mOptions.forceSelection] Whether to force a selection
 		 * @protected
 		 */
 		SelectList.prototype.synchronizeSelection = function(mOptions) {

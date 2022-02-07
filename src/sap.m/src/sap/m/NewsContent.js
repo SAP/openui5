@@ -128,7 +128,7 @@ sap.ui.define([
 	/**
 	 * Returns the AltText
 	 *
-	 * @returns {String} The AltText text
+	 * @returns {string} The AltText text
 	 */
 	NewsContent.prototype.getAltText = function() {
 		var sAltText = "";

@@ -35,7 +35,7 @@ sap.ui.define([
 		 * Pretty printer for specific file types.
 		 *
 		 * @param {Object} oData - Data to be formatted
-		 * @param {String} sFileType - File type of data
+		 * @param {string} sFileType - File type of data
 		 * @returns {Object} Data after formatting
 		 * @public
 		 */
@@ -99,8 +99,8 @@ sap.ui.define([
 
 		/**
 		 * Removes leading and trailing slashes from a string.
-		 * @param {String} sNamespace - Input string
-		 * @returns {String} String after removing leading and trailing slashes
+		 * @param {string} sNamespace - Input string
+		 * @returns {string} String after removing leading and trailing slashes
 		 * @public
 		 */
 		cleanLeadingAndTrailingSlashes: function (sNamespace) {

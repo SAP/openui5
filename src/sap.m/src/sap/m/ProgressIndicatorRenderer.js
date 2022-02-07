@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ProgressIndicator} oControl an object representation of the control that should be rendered
 	 */
 	ProgressIndicatorRenderer.render = function(oRm, oControl) {
 		var fPercentValue = oControl.getPercentValue(),

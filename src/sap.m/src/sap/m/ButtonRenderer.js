@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager} oRm
 	 *            the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oButton
+	 * @param {sap.m.Button} oButton
 	 *            the button to be rendered
 	 */
 	ButtonRenderer.render = function(oRm, oButton) {
@@ -236,7 +236,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager} oRm
 	 *            the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oButton
+	 * @param {sap.m.Button} oButton
 	 *            the button to be rendered
 	 * @private
 	 */
@@ -267,7 +267,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager} oRm
 	 *	      the RenderManager that can be used for writing to
 	 *	      the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oButton
+	 * @param {sap.m.Button} oButton
 	 *	      the button to be rendered
 	 * @param {sap.ui.core.URI} sURI
 	 *            URI of the icon to be written

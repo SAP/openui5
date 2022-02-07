@@ -18,7 +18,7 @@ sap.ui.define([], function () {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.f.GridContainer} oControl an object representation of the control that should be rendered
 	 */
 	GridContainerRenderer.render = function (oRM, oControl) {
 		var sId = oControl.getId(),
@@ -83,7 +83,7 @@ sap.ui.define([], function () {
 	 * Renders a single item in the grid.
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oItem The grid item
-	 * @param {sap.ui.core.Control} oControl The control
+	 * @param {sap.f.GridContainer} oControl The control
 	 * @param {int} iIndex The index of the grid item
 	 */
 	GridContainerRenderer.renderItem = function (oRM, oItem, oControl, iIndex) {
@@ -121,7 +121,7 @@ sap.ui.define([], function () {
 	/**
 	 * Gets styles and classes which has to be applied to an item's wrapper element.
 	 * @param {sap.ui.core.Control} oItem The grid item
-	 * @param {sap.ui.core.Control} oControl The grid
+	 * @param {sap.f.GridContainer} oControl The grid
 	 * @returns {object} An object containing styles and classes
 	 */
 	GridContainerRenderer.getStylesForItemWrapper = function (oItem, oControl) {

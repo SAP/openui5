@@ -190,7 +190,7 @@ function(
 	 *
 	 * @static
 	 * @protected
-	 * @param {String} sWidth
+	 * @param {string} sWidth
 	 * @return {boolean}
 	 */
 	Toolbar.isRelativeWidth = function(sWidth) {
@@ -207,8 +207,8 @@ function(
 	 *
 	 * @static
 	 * @protected
-	 * @param {String} sId Control ID
-	 * @return {String} width
+	 * @param {string} sId Control ID
+	 * @return {string} width
 	 */
 	Toolbar.getOrigWidth = function(sId) {
 		var oControl = sap.ui.getCore().byId(sId);
@@ -228,7 +228,7 @@ function(
 	 * @static
 	 * @protected
 	 * @param {sap.ui.core.Control} oControl UI5 Control
-	 * @param {String} [sShrinkClass] Shrink item class name
+	 * @param {string} [sShrinkClass] Shrink item class name
 	 * @returns {true|false|undefined|Object}
 	 */
 	Toolbar.checkShrinkable = function(oControl, sShrinkClass) {

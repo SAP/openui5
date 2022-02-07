@@ -658,7 +658,7 @@ sap.ui.define([
 			},
 
 			/**
-			 * @typedef {Object} sap.ui.core.routing.RouteInfo
+			 * @typedef {object} sap.ui.core.routing.RouteInfo
 			 * @property {string} name The route name
 			 * @property {Object.<string, string>} arguments The route data
 			 * @public

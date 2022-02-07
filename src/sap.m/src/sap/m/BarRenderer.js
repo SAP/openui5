@@ -24,7 +24,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Bar} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.render = BarInPageEnabler.prototype.render;
 
@@ -36,7 +36,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 	 * Adds classes attributes and styles to the root tag
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Bar} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.decorateRootElement = function (oRM, oControl) {
 		oRM.class("sapMBar");
@@ -66,7 +66,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Bar} oControl An object representation of the control that should be rendered
 	 */
 	BarRenderer.renderBarContent = function(oRM, oControl) {
 		//left content area
@@ -131,7 +131,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 
 	/**
 	 * Makes the RenderManager render all controls in an array.
-	 * @param {sap.ui.core.Control} aControls The Controls to be rendered
+	 * @param {sap.ui.core.Control[]} aControls The Controls to be rendered
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.m.Bar} oBar An object representation of the control that should be rendered
 	 */
@@ -153,7 +153,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 	/**
 	 * Determines which tag or context class the Bar should have.
 	 * @protected
-	 * @param {sap.m.BarBase} oControl The Bar control
+	 * @param {sap.m.Bar} oControl The Bar control
 	 * @returns {string} The context class
 	 */
 	BarRenderer.getContext = function(oControl) {
@@ -167,7 +167,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 	 * Adds width style to 100% in case of the given content container is the only container with content amongst the three (left, middle, right)
 	 * @param {string} sArea The content container - one of the left, middle or right
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oControl the Bar instance
+	 * @param {sap.m.Bar} oControl the Bar instance
 	 * @private
 	 */
 	function writeWidthIfContentOccupiesWholeArea(sArea, oRm, oControl) {

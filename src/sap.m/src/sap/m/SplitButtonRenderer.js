@@ -27,7 +27,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText", "sap/ui/core/Shortc
 		 * @param {sap.ui.core.RenderManager} oRm
 		 *            the RenderManager that can be used for writing to
 		 *            the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oButton
+		 * @param {sap.m.SplitButton} oButton
 		 *            the button to be rendered
 		 */
 		SplitButtonRenderer.render = function(oRm, oButton) {

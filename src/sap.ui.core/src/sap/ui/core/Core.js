@@ -3548,13 +3548,13 @@ sap.ui.define([
 	 * @param {string} sUIAreaId id of the UIArea that received the event
 	 * @private
 	 */
-	Core.prototype._handleControlEvent = function(/**event*/oEvent, sUiAreaId) {
+	Core.prototype._handleControlEvent = function(/**event*/oEvent, sUIAreaId) {
 		// Create a copy of the event
 		var oEventClone = jQuery.Event(oEvent.type);
 		Object.assign(oEventClone, oEvent);
 		oEventClone.originalEvent = undefined;
 
-		this.fireControlEvent({"browserEvent": oEventClone, "uiArea": sUiAreaId});
+		this.fireControlEvent({"browserEvent": oEventClone, "uiArea": sUIAreaId});
 	};
 
 

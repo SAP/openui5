@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render
 	 *            output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.ui.layout.Grid}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */

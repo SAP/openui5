@@ -158,8 +158,8 @@ sap.ui.define([
 		 * Determines the content for a given startUpParameter name
 		 *
 		 * @param {sap.ui.core.Component} oComponent - component instance
-		 * @param {String} sParameterName - startUpParameterName that shall be determined
-		 * @returns {String} content of found startUpParameter
+		 * @param {string} sParameterName - startUpParameterName that shall be determined
+		 * @returns {string} content of found startUpParameter
 		 * @private
 		 */
 		_getComponentStartUpParameter: function(oComponent, sParameterName) {
@@ -185,7 +185,7 @@ sap.ui.define([
 		/**
 		 * Gets the component instance for a component ID.
 		 *
-		 * @param {String} sComponentId component ID
+		 * @param {string} sComponentId component ID
 		 * @returns {sap.ui.core.Component} component for the component ID
 		 * @private
 		 */
@@ -201,7 +201,7 @@ sap.ui.define([
 		 * Returns ComponentId of the control. If the control has no component, it walks up the control tree in order to find a control having one
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {String} The component id or empty string if component id couldn't be found
+		 * @returns {string} The component id or empty string if component id couldn't be found
 		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @private
 		 */
@@ -346,7 +346,7 @@ sap.ui.define([
 		 * Returns OwnerId of the control
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {String} The owner id
+		 * @returns {string} The owner id
 		 * @see sap.ui.core.Component.getOwnerIdFor
 		 * @private
 		 */
@@ -392,8 +392,8 @@ sap.ui.define([
 		 * used: For example en-us will be converted to EN. If the browser language already is in ISO 639-1, it will be returned after an upper case
 		 * conversion: For example de will be converted to DE.
 		 *
-		 * @param {String} sBrowserLanguage - Language in RFC4646
-		 * @returns {String} Language in ISO 639-1. Empty string if conversion was not successful
+		 * @param {string} sBrowserLanguage - Language in RFC4646
+		 * @returns {string} Language in ISO 639-1. Empty string if conversion was not successful
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.convertBrowserLanguageToISO639_1
@@ -426,7 +426,7 @@ sap.ui.define([
 		/**
 		 * Returns the current language in ISO 639-1 format.
 		 *
-		 * @returns {String} Language in ISO 639-1. Empty string if language cannot be determined
+		 * @returns {string} Language in ISO 639-1. Empty string if language cannot be determined
 		 * @public
 		 */
 		getCurrentLanguage: function() {
@@ -454,8 +454,8 @@ sap.ui.define([
 		/**
 		 * Converts ASCII coding into a string. Required for restoring stored code extensions
 		 *
-		 * @param {String} ascii string containing ascii code valid numbers separated by ','
-		 * @returns {String} parsedString parsed string
+		 * @param {string} ascii string containing ascii code valid numbers separated by ','
+		 * @returns {string} parsedString parsed string
 		 */
 		asciiToString: function(ascii) {
 			var asciiArray = ascii.split(",");
@@ -471,8 +471,8 @@ sap.ui.define([
 		/**
 		 * Converts a string into ASCII coding. Required for restoring stored code extensions
 		 *
-		 * @param {String} string string which has to be encoded
-		 * @returns {String} ascii imput parsed to ascii numbers separated by ','
+		 * @param {string} string string which has to be encoded
+		 * @returns {string} ascii imput parsed to ascii numbers separated by ','
 		 */
 		stringToAscii: function(string) {
 			var ascii = "";

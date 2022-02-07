@@ -1,4 +1,4 @@
-/*!
+	/*!
 * ${copyright}
 */
 
@@ -629,7 +629,7 @@ function(
 	 * Overwrites the aggregation setter in order to have ID validation logic as some strings
 	 * are reserved for the predefined tabs.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {object} oCustomTab The custom tab to be added
 	 * @returns {this} this pointer for chaining
@@ -729,7 +729,7 @@ function(
 	/**
 	 * Sets the title of the internal dialog.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {string} sTitle The title text for the dialog
 	 * @return {this} this pointer for chaining
@@ -1123,7 +1123,7 @@ function(
 	/**
 	 * Adds a sort item and sets the association to reflect the selected state.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.m.ViewSettingsItem} oItem The item to be added to the aggregation
 	 * @return {this} this pointer for chaining
@@ -1140,7 +1140,7 @@ function(
 	/**
 	 * Adds a group item and sets the association to reflect the selected state.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.m.ViewSettingsItem} oItem The item to be added to the group items
 	 * @return {this} this pointer for chaining
@@ -1157,7 +1157,7 @@ function(
 	/**
 	 * Adds a preset filter item and sets the association to reflect the selected state.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.m.ViewSettingsItem} oItem The selected item or a string with the key
 	 * @return {this} this pointer for chaining
@@ -1174,7 +1174,7 @@ function(
 	/**
 	 * Sets the selected sort item (either by key or by item).
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item or the item's key string
 	 * @return {this} this pointer for chaining
@@ -1214,7 +1214,7 @@ function(
 	/**
 	 * Sets the selected group item (either by key or by item).
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item or the item's key string
 	 * @return {this} this pointer for chaining
@@ -1255,7 +1255,7 @@ function(
 	/**
 	 * Sets the selected preset filter item.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.m.ViewSettingsItem|string|null} vItemOrKey The selected item or the item's key string
 	 * @return {this} this pointer for chaining
@@ -1376,7 +1376,7 @@ function(
 	 * Returns the selected filters as an array of ViewSettingsItems.
 	 *
 	 * It can be used to create matching sorters and filters to apply the selected settings to the data.
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @return {sap.m.ViewSettingsItem[]} An array of selected filter items
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -2523,7 +2523,7 @@ function(
 	 * Gets or creates the sap.m.Button which is used inside the SegmentedButton for representation of the custom tab.
 	 * @private
 	 * @param {Object} oCustomTab with options for the button
-	 * @param {String} sButtonIdPrefix preffix for the button id
+	 * @param {string} sButtonIdPrefix preffix for the button id
 	 * @returns {sap.m.Button} The created button
 	 */
 	ViewSettingsDialog.prototype._getTabButton = function (oCustomTab, sButtonIdPrefix) {
@@ -2810,7 +2810,7 @@ function(
 	/**
 	 * Removes a filter Item and resets the remembered page if it was the filter detail page of the removed filter.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param { int| sap.m.ViewSettingsFilterItem | string } vFilterItem The filter item's index, or the item itself, or its id
 	 * @returns {sap.m.ViewSettingsFilterItem|null} The removed item or null
@@ -2838,7 +2838,7 @@ function(
 	/**
 	 * Removes all filter Items and resets the remembered page if it was a filter detail page and all of its filter items are being removed.
 	 *
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @returns {sap.m.ViewSettingsFilterItem[]} the removed items
 	 */

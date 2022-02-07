@@ -209,7 +209,7 @@ sap.ui.define([
 	/**
 	 * Creates the Column for the specified property info and table
 	 *
-	 * @param {String} sPropertyName The property info name
+	 * @param {string} sPropertyName The property info name
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @returns {Promise} Promise that resolves with the instance of mdc.table.Column
 	 * @private

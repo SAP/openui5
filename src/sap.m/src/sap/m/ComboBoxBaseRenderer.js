@@ -24,7 +24,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 		 * Retrieves the accessibility state of the control.
 		 * To be overwritten by subclasses.
 		 *
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBoxBase} oControl An object representation of the control that should be rendered.
 		 * @returns {object} The accessibility state of the control
 		 */
 		ComboBoxBaseRenderer.getAccessibilityState = function (oControl) {
@@ -41,7 +41,7 @@ sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/co
 		 * Add classes to the control.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBoxBase} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxBaseRenderer.addOuterClasses = function (oRm, oControl) {
 			ComboBoxTextFieldRenderer.addOuterClasses.apply(this, arguments);

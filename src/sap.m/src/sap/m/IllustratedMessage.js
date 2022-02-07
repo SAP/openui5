@@ -512,7 +512,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
-	 * @param {Number} iWidth - the actual width of the control
+	 * @param {number} iWidth - the actual width of the control
 	 * @private
 	 */
 	IllustratedMessage.prototype._updateMedia = function (iWidth) {

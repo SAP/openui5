@@ -40,7 +40,7 @@ sap.ui.define([
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.SinglePlanningCalendarMonthGrid} oControl An object representation of the control that should be rendered
 		 */
 		SinglePlanningCalendarMonthGridRenderer.render = function(oRm, oControl) {
 			var oLocaleData = oControl._getCoreLocaleData();

@@ -1114,11 +1114,11 @@ sap.ui.define([
 
 		/**
 		 * Checking when an arrow key is pressed from the keyboard weather the cell focus should go in
-		 * the next or preveous day or week
+		 * the next or previous day or week
 		 *
-		 * @param {sap.ui.unified.CalendarDate} oCellStartDate The start date the cell or the visible part of the appointment
+		 * @param {Date} oFocusedElement The start date of the focused cell or of the visible part of the appointment
 		 * @param {int} iDirection The key the was pressed
-		 * @returns {boolean} Idicator if the gird border is reached
+		 * @returns {boolean} Indicator if the gird border is reached
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._isBorderReached = function(oFocusedElement, iDirection) {
@@ -1135,7 +1135,7 @@ sap.ui.define([
 		 * Ensures that the focus is moved from an appointment to the correct cell from the visible grid area or
 		 * borderReached event is fired when the correct cell to focus is outside of the visible grid area.
 		 *
-		 * @param {object} oEvent The event object that is passed to the onsapup, onsapdown, onsapright, on sapleft handlers
+		 * @param {sap.ui.unified.CalendarAppointment} oAppointment Appointment from which to start navigation
 		 * @param {int} iDirection Number representing the key code of the pressed arrow from the keyboard
 		 * @private
 		 */
@@ -1335,8 +1335,8 @@ sap.ui.define([
 		 * Takes a string date and integer hour and returns a JS Date object as a result.
 		 * Example: this._parseDateStringAndHours("20180614-0000", 4) -> Thu Jun 14 2018 04:00:00 GMT+0300 (Eastern European Summer Time)
 		 *
-		 * @param {string} iRow the row to be checked
-		 * @param {int} iRow the row to be checked
+		 * @param {string} sDay the date string to parse
+		 * @param {int} iHours the hours to be set
 		 * @returns {Date} The parsed JavaScript date object.
 		 * @private
 		 */

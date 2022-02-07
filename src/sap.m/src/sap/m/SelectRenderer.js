@@ -332,7 +332,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * This method is reserved for derived class to add extra classes to the HTML root element of the control.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 * @protected
 		 */
 		SelectRenderer.addClass = function(oRm, oSelect) {};
@@ -342,7 +342,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.addValueStateClasses = function(oRm, oSelect) {
 			oRm.class(SelectRenderer.CSS_CLASS + "State");
@@ -353,7 +353,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * Gets accessibility role.
 		 * To be overwritten by subclasses.
 		 *
-		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 * @protected
 		 */
 		SelectRenderer.getAriaRole = function(oSelect) {
@@ -373,7 +373,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
 			var sValueState = oSelect.getValueState(),
@@ -441,7 +441,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * Render value state accessibility DOM nodes for screen readers.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.Select} oControl An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.renderAccessibilityDomNodes = function (oRm, oControl) {
 			var sValueState = oControl.getValueState(),

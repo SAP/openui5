@@ -342,7 +342,7 @@ function(
 	 * @param {sap.ui.core.Element} oChildElement - Element which position is being looked for
 	 * @param {string} sAggregationName - Aggregation name
 	 * @param {Function} [fnGetIndex] - Custom handler for retreiving index
-	 * @returns {Number} index of the element
+	 * @returns {int} index of the element
 	 */
 	Utils.getIndex = function(oParentElement, oChildElement, sAggregationName, fnGetIndex) {
 		var iIndex;

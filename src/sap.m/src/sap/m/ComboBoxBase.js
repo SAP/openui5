@@ -505,7 +505,7 @@ sap.ui.define([
 		 * Function is called when the clear icon is pressed.
 		 * Should be overwritten by subclasses.
 		 *
-		 * @param {jQuery.Event} oEvent The event object
+		 * @param {sap.ui.base.Event} oEvent The press event object
 		 * @protected
 		 * @ui5-restricted sap.m.ComboBox, sap.m.MultiComboBox
 		 */

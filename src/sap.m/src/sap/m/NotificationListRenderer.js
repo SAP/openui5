@@ -19,8 +19,8 @@ sap.ui.define(['sap/ui/core/Renderer',
 		/**
 		 * Returns the ARIA accessibility role.
 		 *
-		 * @param {sap.ui.core.Control} oControl An object representation of the control
-		 * @returns {String}
+		 * @param {sap.m.NotificationList} oControl An object representation of the control
+		 * @returns {string}
 		 */
 		NotificationListRenderer.getAriaRole = function(oControl) {
 			return "list";

@@ -20,7 +20,7 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.unified.ColorPicker} oControl an object representation of the control that should be rendered
 	 */
 	ColorPickerRenderer.render = function(oRm, oControl){
 		var sDisplayMode = oControl.getDisplayMode(),
@@ -211,7 +211,7 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 	 * Renders the ColorPicker's swatches and hex field.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.unified.ColorPicker} oControl an object representation of the control that should be rendered
 	 */
 	ColorPickerRenderer.renderDesktopSwatchesAndHexFields = function(oRm, oControl) {
 		oRm.openStart("div");
@@ -243,7 +243,7 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 	 * Renders the ColorPicker's swatches when mobile for both Default & Simplified display mode.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.unified.ColorPicker} oControl an object representation of the control that should be rendered
 	 */
 	ColorPickerRenderer.renderMobileSwatches = function(oRm, oControl) {
 		oRm.openStart("div");

@@ -24,7 +24,7 @@ sap.ui.define([
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oWebComponent an object representation of the control that should be rendered
+		 * @param {sap.ui.webc.common.WebComponent} oWebComponent an object representation of the control that should be rendered
 		 */
 		WebComponentRenderer.render = function(oRm, oWebComponent){
 			var sTag = oWebComponent.getMetadata().getTag();

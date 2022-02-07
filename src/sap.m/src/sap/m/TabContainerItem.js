@@ -176,8 +176,6 @@ sap.ui.define(['sap/ui/core/Element',
 		/**
 		 * Function is called when image control needs to be loaded.
 		 *
-		 * @param {string} sImgId - id to be used for the image
-		 * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
 		 * @return {sap.ui.core.Control} The image
 		 * @private
 		 */

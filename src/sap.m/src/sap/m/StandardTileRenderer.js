@@ -24,7 +24,7 @@ sap.ui.define(['./TileRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/R
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oTile An object representation of the control that should be rendered
+	 * @param {sap.m.StandardTile} oTile An object representation of the control that should be rendered
 	 */
 	StandardTileRenderer._renderContent = function(rm, oTile) {
 		var infoState = oTile.getInfoState();

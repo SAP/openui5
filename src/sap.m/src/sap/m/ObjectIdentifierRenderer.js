@@ -27,7 +27,7 @@ sap.ui.define(['./library', 'sap/ui/core/Core'],
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm The RenderManager that can be used for writing to the render
 	 *            output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.ObjectIdentifier}
 	 *            oOI An object representation of the control that should be
 	 *            rendered
 	 */

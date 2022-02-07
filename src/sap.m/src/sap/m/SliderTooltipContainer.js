@@ -275,7 +275,7 @@ function(
 		 * @param {float} fMin Min property of the Slider/RangeSlider.
 		 * @param {float} fMax Max property of the Slider/RangeSlider.
 		 * @private
-		 * @return {String}
+		 * @return {string}
 		 */
 		SliderTooltipContainer.prototype._getTooltipPosition = function (fTooltipValue, fMin, fMax) {
 			var fPerValue = SliderUtilities.getPercentOfValue(+(fTooltipValue), fMin, fMax),

@@ -34,7 +34,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	 * Used to render each of the handles of the RangeSlider.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+	 * @param {sap.m.RangeSlider} oControl An object representation of the slider that should be rendered.
 	 * @param {object} mOptions Options used for specificity of the handles
 	 */
 	RangeSliderRenderer.renderHandle = function (oRM, oControl, mOptions) {
@@ -81,7 +81,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	 * To be overwritten by subclasses.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+	 * @param {sap.m.RangeSlider} oSlider An object representation of the control that should be rendered.
 	 * @param {string} fValue The current value for the accessibility state
 	 */
 	RangeSliderRenderer.writeAccessibilityState = function(oRm, oSlider, fValue) {
@@ -114,7 +114,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	 * Renders the lower range label under the left part of the RangeSlider control.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+	 * @param {sap.m.RangeSlider} oControl An object representation of the slider that should be rendered.
 	 */
 	RangeSliderRenderer.renderStartLabel = function (oRM, oControl) {
 		oRM.openStart("div")
@@ -128,7 +128,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	 * Renders the higher range label under the right part of the RangeSlider control.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+	 * @param {sap.m.RangeSlider} oControl An object representation of the slider that should be rendered.
 	 */
 	RangeSliderRenderer.renderEndLabel = function (oRM, oControl) {
 		oRM.openStart("div")
@@ -143,7 +143,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 	 * Renders the label under the RangeSlider control.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the slider that should be rendered.
+	 * @param {sap.m.RangeSlider} oControl An object representation of the slider that should be rendered.
 	 */
 	RangeSliderRenderer.renderLabels = function (oRM, oControl) {
 		if (!oControl.getEnableTickmarks()) {

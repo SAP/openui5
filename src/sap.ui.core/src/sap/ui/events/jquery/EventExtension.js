@@ -44,7 +44,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/events/PseudoEvents"
 		/**
 		 * Returns an array of names (as strings) identifying {@link module:sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
 		 *
-		 * @returns {String[]} Array of names identifying {@link module:sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
+		 * @returns {string[]} Array of names identifying {@link module:sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
 		 * @public
 		 */
 		jQuery.Event.prototype.getPseudoTypes = function() {

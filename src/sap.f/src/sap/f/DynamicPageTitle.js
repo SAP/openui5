@@ -685,7 +685,7 @@ sap.ui.define([
 	/**
 	 * Checks if an action already exists in <code>DynamicPageTitle</code> actions/navigationActions.
 	 * @param {sap.ui.core.Control} oAction
-	 * @param {String} sAggregationName
+	 * @param {string} sAggregationName
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -893,7 +893,7 @@ sap.ui.define([
 	/**
 	 * Toggles navigation actions placement change if certain preconditions are met.
 	 *
-	 * @param {Number} iCurrentWidth
+	 * @param {number} iCurrentWidth
 	 * @private
 	 */
 	DynamicPageTitle.prototype._updateTopAreaVisibility = function (iCurrentWidth) {
@@ -916,7 +916,7 @@ sap.ui.define([
 	/**
 	 * Handles control re-sizing.
 	 * <b>Note:</b> The method is called by the parent <code>DynamicPage</code>.
-	 * @param {Number} iCurrentWidth
+	 * @param {number} iCurrentWidth
 	 * @private
 	 */
 	DynamicPageTitle.prototype._onResize = function (iCurrentWidth) {
@@ -1038,9 +1038,9 @@ sap.ui.define([
 
 	/**
 	 * Sets flex-shrink CSS style to the Heading, Content and Actions areas
-	 * @param {Number} fHeadingFactor - Heading shrink factor
-	 * @param {Number} fContentFactor - Content shrink factor
-	 * @param {Number} fActionsFactor - Actions shrink factor
+	 * @param {number} fHeadingFactor - Heading shrink factor
+	 * @param {number} fContentFactor - Content shrink factor
+	 * @param {number} fActionsFactor - Actions shrink factor
 	 * @private
 	 */
 	DynamicPageTitle.prototype._setShrinkFactors = function(fHeadingFactor, fContentFactor, fActionsFactor) {
@@ -1051,7 +1051,7 @@ sap.ui.define([
 
 	/**
 	 * Determines if the <code>navigationActions</code> should be rendered in the top area.
-	 * @param {Number} iCurrentWidth
+	 * @param {number} iCurrentWidth
 	 * @returns {boolean}
 	 * @private
 	 */

@@ -18,7 +18,7 @@ sap.ui.define([
 		onTheMDCChart: {
 			actions: {
                 /**
-                 * @typedef {Object} ChartPersonalizationConfiguration
+                 * @typedef {object} ChartPersonalizationConfiguration
                  * @property {string} key Key of the value that is the result of the personalization
                  * @property {string} role Role of the given value
                  */
@@ -38,7 +38,7 @@ sap.ui.define([
                     return p13nActions.iPersonalizeChart.call(this, oChart, sChartType, aConfigurations);
                 },
                 /**
-                 * @typedef {Object} SortPersonalizationConfiguration
+                 * @typedef {object} SortPersonalizationConfiguration
                  * @property {string} key Key of the item that is the result of the personalization
                  * @property {boolean} descending Determines whether the sort direction is descending
                  */

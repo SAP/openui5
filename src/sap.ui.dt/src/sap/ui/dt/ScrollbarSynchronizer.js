@@ -114,7 +114,7 @@ function(
 	/**
 	 * Check if a Dom Node is a target for this Scrollbar Synchronizer
 	 * @param  {Element}  oDomNode Element to be checked
-	 * @return {Boolean}          Returns true if the node is a target
+	 * @return {boolean}          Returns true if the node is a target
 	 */
 	ScrollbarSynchronizer.prototype.hasTarget = function (oDomNode) {
 		return this.getTargets().indexOf(oDomNode) > -1;

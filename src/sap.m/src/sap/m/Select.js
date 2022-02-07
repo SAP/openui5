@@ -2048,9 +2048,8 @@ function(
 		/**
 		 * Synchronizes the <code>selectedItem</code> association and the <code>selectedItemId</code> property.
 		 *
-		 * @param {sap.ui.core.Item} vItem
-		 * @param {string} sKey
-		 * @param {array} [aItems]
+		 * @param {object} [mOptions] Options
+		 * @param {boolean} [mOptions.forceSelection] Whether to force a selection
 		 */
 		Select.prototype.synchronizeSelection = function() {
 			SelectList.prototype.synchronizeSelection.apply(this, arguments);

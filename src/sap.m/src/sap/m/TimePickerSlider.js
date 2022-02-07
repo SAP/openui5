@@ -1405,7 +1405,7 @@ sap.ui.define([
 
 		/**
 		 * Informs the <code>TimePickerSliders</code> for a change value.
-		 * @param {string} selected value
+		 * @param {string} sValue selected value
 		 * @private
 		 */
 		TimePickerSlider.prototype._fireSelectedValueChange = function (sValue) {

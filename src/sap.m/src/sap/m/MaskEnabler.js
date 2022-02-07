@@ -382,7 +382,7 @@ sap.ui.define([
 
 		/**
 		 * Overrides the method in order to validate the placeholder symbol.
-		 * @param {String} sSymbol The placeholder symbol
+		 * @param {string} sSymbol The placeholder symbol
 		 * @override
 		 * @returns {sap.ui.base.MaskInput} <code>this</code> pointer for chaining
 		 */
@@ -413,7 +413,7 @@ sap.ui.define([
 		/**
 		 * Sets the mask for this instance.
 		 * The mask is mandatory.
-		 * @param {String} sMask The mask
+		 * @param {string} sMask The mask
 		 * @returns {sap.m.MaskInput} <code>this</code> pointer for chaining
 		 * @throws {Error} Throws an error if the input is invalid
 		 */
@@ -430,7 +430,7 @@ sap.ui.define([
 
 		/**
 		 * Verifies whether a character at a given position is allowed according to its mask rule.
-		 * @param {String} sChar The character
+		 * @param {string} sChar The character
 		 * @param {int} iIndex The position of the character
 		 * @returns {boolean} Whether a character at a given position is allowed
 		 * @protected
@@ -444,10 +444,10 @@ sap.ui.define([
 		 * Subclasses may override this method in order to get some additional behavior. For instance, switching current input
 		 * character with other for time input purposes. As an example, if the user enters "2" (in 12-hour format), the consumer may use
 		 * this method to replace the input from "2" to "02".
-		 * @param {String} sChar The current character from the input
+		 * @param {string} sChar The current character from the input
 		 * @param {int} iPlacePosition The position the character should occupy
 		 * @param {string} sCurrentInputValue The value currently inside the input field (may differ from the property value)
-		 * @returns {String} A string that replaces the character
+		 * @returns {string} A string that replaces the character
 		 * @protected
 		 */
 		this._feedReplaceChar = function (sChar, iPlacePosition, sCurrentInputValue) {
@@ -505,7 +505,7 @@ sap.ui.define([
 
 		/**
 		 * Converts the char array to a string representation.
-		 * @returns {String} The char array converted to a string
+		 * @returns {string} The char array converted to a string
 		 * @private
 		 */
 		CharArray.prototype.toString = function () {
@@ -600,7 +600,7 @@ sap.ui.define([
 
 		/**
 		 * Applies a rule to a character.
-		 * @param {String} sChar The character to which the rule will be applied
+		 * @param {string} sChar The character to which the rule will be applied
 		 * @param {int} iIndex The index of the rule
 		 * @returns {boolean} True if the character passes the validation rule, false otherwise.
 		 * @private
@@ -853,7 +853,7 @@ sap.ui.define([
 
 		/**
 		 * Applies rules and updates the DOM input value.
-		 * @param {String} sMaskInputValue The input string to which the rules will be applied
+		 * @param {string} sMaskInputValue The input string to which the rules will be applied
 		 * @private
 		 */
 		this._applyAndUpdate = function (sMaskInputValue) {
@@ -1161,7 +1161,7 @@ sap.ui.define([
 
 		/**
 		 * @param {Array} aMask The mask from which the mask value array will be built
-		 * @param {String} sPlaceholderSymbol The symbol marker of the mask
+		 * @param {string} sPlaceholderSymbol The symbol marker of the mask
 		 * @param {Array} aRules The rules from which the mask value array is built
 		 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 		 * @private
@@ -1311,7 +1311,7 @@ sap.ui.define([
 		/**
 		 * Checks if a given character belongs to an RTL language
 		 * @private
-		 * @param {String} sString The checked character
+		 * @param {string} sString The checked character
 		 * @returns {boolean} Whether a given character belongs to an RTL language
 		 */
 		this._isRtlChar = function (sString) {

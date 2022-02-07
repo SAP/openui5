@@ -94,7 +94,7 @@ sap.ui.define([
 	 * {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer.
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered.
+	 * @param {sap.ui.integration.controls.ListContentitem} oLI an object representation of the control that should be rendered.
 	 * @public
 	 */
 	ListContentItemRenderer.render = function(rm, oLI) {

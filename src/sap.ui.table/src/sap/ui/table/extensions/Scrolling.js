@@ -61,7 +61,7 @@ sap.ui.define([
 	/**
 	 * The configuration options for event listeners.
 	 *
-	 * @typedef {Object} sap.ui.table.extensions.Scrolling.EventListenerOptions
+	 * @typedef {object} sap.ui.table.extensions.Scrolling.EventListenerOptions
 	 * @property {sap.ui.table.extensions.Scrolling.ScrollDirection} scrollDirection The scroll direction.
 	 * @private
 	 */
@@ -79,7 +79,7 @@ sap.ui.define([
 	/**
 	 * The interface of a process.
 	 *
-	 * @typedef {Object} ProcessInterface
+	 * @typedef {object} ProcessInterface
 	 * @property {function} cancel Cancels the process.
 	 * @property {function():boolean} isCancelled Whether the process is cancelled.
 	 * @property {function(function)} addCancelListener Adds a listener that is called when the process is cancelled.
@@ -91,7 +91,7 @@ sap.ui.define([
 	/**
 	 * Information about a process.
 	 *
-	 * @typedef {Object} ProcessInfo
+	 * @typedef {object} ProcessInfo
 	 * @property {string} id The id.
 	 * @property {int} rank The rank.
 	 * @property {boolean} cancellable Whether the process can be cancelled.

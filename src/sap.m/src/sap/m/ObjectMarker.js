@@ -443,7 +443,7 @@ sap.ui.define([
 	 * @param {object} oType The object type
 	 * @param {string} sType The string type
 	 * @param {string} sAdditionalInfo The additional information
-	 * @returns {String} concatenated from type and additionalInfo text
+	 * @returns {string} concatenated from type and additionalInfo text
 	 * @private
 	 */
 	ObjectMarker.prototype._getMarkerText = function (oType, sType, sAdditionalInfo) {

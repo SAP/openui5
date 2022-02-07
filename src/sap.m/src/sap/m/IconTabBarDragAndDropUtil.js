@@ -30,7 +30,7 @@ sap.ui.define([
 
 			/**
 			 * Inserts control at correct place in the DOM.
-			 * @param {String} sInsertAfterBeforePosition comes from drop event, it can be "Before" or "After"
+			 * @param {string} sInsertAfterBeforePosition comes from drop event, it can be "Before" or "After"
 			 * @param {object} $DraggedControl control that is being dragged
 			 * @param {object} $DroppedControl control that the dragged control will be dropped on
 			 */
@@ -80,7 +80,7 @@ sap.ui.define([
 			/**
 			 * Handles drop event.
 			 * @param {object} oContext from which context function is called (sap.m.IconTabHeader or sap.m.IconTabSelectList)
-			 * @param {String} sDropPosition comes from drop event, it can be "Before", "After", or "On"
+			 * @param {string} sDropPosition comes from drop event, it can be "Before", "After", or "On"
 			 * @param {object} oDraggedControl control that is being dragged
 			 * @param {object} oDroppedControl control that the dragged control will be dropped on
 			 * @param {boolean} bIgnoreRTL should RTL configuration be ignored for drag and drop logic

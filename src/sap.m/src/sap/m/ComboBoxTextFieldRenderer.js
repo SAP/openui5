@@ -29,7 +29,7 @@ sap.ui.define([
 		 * Add attributes to the input element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBoxTextField} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.writeInnerAttributes = function(oRm, oControl) {
 			oRm.attr("role", "combobox");
@@ -53,7 +53,7 @@ sap.ui.define([
 		 * Add extra styles for input container.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @param {sap.m.ComboBoxTextField} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.addOuterStyles = function(oRm, oControl) {
 			oRm.style("max-width", oControl.getMaxWidth());

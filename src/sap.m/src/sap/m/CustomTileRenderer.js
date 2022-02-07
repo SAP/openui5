@@ -18,7 +18,7 @@ sap.ui.define(['./TileRenderer', 'sap/ui/core/Renderer'],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *                rm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.CustomTile}
 	 *                oControl An object representation of the control that should be rendered
 	 */
 	 CustomTileRenderer.render = function(rm, oControl) {

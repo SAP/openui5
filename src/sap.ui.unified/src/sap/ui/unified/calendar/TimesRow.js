@@ -1278,8 +1278,8 @@ sap.ui.define([
 
 	/*
 	 * Getter for the time's preferred hour symbol. Possible options are h|H|k|K.
-	 * @param {String} sTimeFormatShort Hours time format
-	 * @return {String} Hours pattern.
+	 * @param {string} sTimeFormatShort Hours time format
+	 * @return {string} Hours pattern.
 	 * @private
 	 */
 	function _getPreferredHourSymbol(sTimeFormatShort){

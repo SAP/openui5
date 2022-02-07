@@ -22,8 +22,8 @@ sap.ui.define([ "sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model
 	/**
 	 * Returns the clipboard text from the provided parameter.
 	 *
-	 * @param {ClipboardEvent|String} vEventOrText The paste event of the browser or the textual content of the clipboard returned from the navigator.clipboard.readText() API
-	 * @return {String} The textual content of the clipboard extracted from the parameter
+	 * @param {ClipboardEvent|string} vEventOrText The paste event of the browser or the textual content of the clipboard returned from the navigator.clipboard.readText() API
+	 * @return {string} The textual content of the clipboard extracted from the parameter
 	 */
 	PasteHelper.getClipboardText = function(vEventOrText) {
 		return (typeof vEventOrText == "string") ? vEventOrText : vEventOrText.clipboardData.getData("text");
@@ -33,7 +33,7 @@ sap.ui.define([ "sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model
 	 * Parses the clipboard data from the <code>paste</code> event or <code>Clipboard.readText</code> API and converts the data into a
 	 * two-dimensional array that can be used further in SAPUI5 controls, for example, for importing data from spreadsheets to SAPUI5 tables.
 	 *
-	 * @param {ClipboardEvent|String} vEventOrText The paste event of the browser or the textual content of the clipboard returned from the navigator.clipboard.readText() API
+	 * @param {ClipboardEvent|string} vEventOrText The paste event of the browser or the textual content of the clipboard returned from the navigator.clipboard.readText() API
 	 *         This contains the clipboard data in the following export format: <br>
 	 *         Cells are separated by tabs, lines by new line characters (\n, \r, and \r\n are supported). The cells containing
 	 *         more than one line separated by new line characters are enclosed by double quotes (if there are already some

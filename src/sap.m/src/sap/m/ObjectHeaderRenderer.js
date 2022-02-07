@@ -77,7 +77,7 @@ sap.ui.define([
 	/**
 	 * A row is considered empty if both input parameters are empty.
 	 *
-	 * @param {sap.ui.core.Control} oLeft control to be checked
+	 * @param {sap.m.ObjectAttribute} oLeft control to be checked
 	 *
 	 * @param {sap.ui.core.Control[]} aRight array of controls to be checked
 	 *
@@ -159,7 +159,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.m.ObjectHeader} oOH the ObjectHeader that contains markers
 	 *
-	 * @returns {Array} array of {sap.m.ObjectMarker} controls
+	 * @returns {sap.m.ObjectMarker[]} array of ObjectMarker controls
 	 *
 	 * @private
 	 */
@@ -229,7 +229,7 @@ sap.ui.define([
 	 * sap.m.ProgressIndicator and returns only the visible once that should be rendered
 	 *
 	 * @param {sap.m.ObjectHeader} oOH an object to be rendered
-	 * @returns {array} The visible statuses
+	 * @returns {Array<sap.m.ObjectStatus|sap.m.ProgressIndicator>} The visible statuses
 	 * @private
 	 */
 	ObjectHeaderRenderer._getVisibleStatuses = function(oOH) {

@@ -505,7 +505,7 @@ sap.ui.define([
 
 	/**
 	* Shows the busy state and is called after the renderer is finished.
-	* @overwrite
+	* @override
 	* @protected
 	* @returns {this} this pointer for chaining
 	*/
@@ -521,7 +521,7 @@ sap.ui.define([
 
 	/**
 	* Invalidates the dialog instead of this control, as there is no renderer.
-	* @overwrite
+	* @override
 	* @protected
 	* @returns {this} this pointer for chaining
 	*/
@@ -647,9 +647,9 @@ sap.ui.define([
 
 	/**
 	 * Enables/Disables busy state.
-	 * @overwrite
+	 * @override
 	 * @public
-	 * @param {boolean} flag for enabling busy indicator
+	 * @param {boolean} bBusy flag for enabling busy indicator
 	 * @returns {this} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setBusy = function (bBusy) {
@@ -664,7 +664,7 @@ sap.ui.define([
 
 	/**
 	 * Gets current busy state.
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @returns {boolean} value of currtent busy state.
 	 */
@@ -689,7 +689,7 @@ sap.ui.define([
 
 	/**
 	 * Enables/Disables multi selection mode.
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {boolean} bMulti flag for multi selection mode
 	 * @returns {this} this pointer for chaining
@@ -713,7 +713,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the title of the internal dialog
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {string} sTitle the title text for the dialog
 	 * @returns {this} this pointer for chaining
@@ -748,7 +748,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the no data text of the internal table
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {string} sNoDataText the no data text for the table
 	 */
@@ -760,7 +760,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves the internal List's no data text property
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @returns {string} the current no data text
 	 */
@@ -770,7 +770,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves content width of the select dialog {@link sap.m.Dialog}
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @returns {sap.ui.core.CSSSize} sWidth the content width of the internal dialog
 	 */
@@ -782,7 +782,7 @@ sap.ui.define([
 	 * Sets content width of the select dialog {@link sap.m.Dialog}
 	 * @param {sap.ui.core.CSSSize} sWidth the new content width value for the dialog
 	 * @public
-	 * @overwrite
+	 * @override
 	 * @returns {this} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setContentWidth = function (sWidth) {
@@ -793,7 +793,7 @@ sap.ui.define([
 
 	/**
 	 * Retrieves content height of the select dialog {@link sap.m.Dialog}
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @returns {sap.ui.core.CSSSize} sHeight the content height of the internal dialog
 	 */
@@ -805,7 +805,7 @@ sap.ui.define([
 	 * Sets content height of the select dialog {@link sap.m.Dialog}
 	 * @param {sap.ui.core.CSSSize} sHeight the new content height value for the dialog
 	 * @public
-	 * @overwrite
+	 * @override
 	 * @returns {this} this pointer for chaining
 	 */
 	TableSelectDialog.prototype.setContentHeight = function (sHeight) {
@@ -901,10 +901,10 @@ sap.ui.define([
 
 	/**
 	 * Sets the model for the internal table and the current control, so that both controls can be used with data binding.
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {sap.ui.model.Model} oModel The model that holds the data for the table
-	 * @param {string} [sName] The optional model name
+	 * @param {string} [sModelName] The optional model name
 	 * @returns {this} This pointer for chaining
 	 */
 	TableSelectDialog.prototype.setModel = function (oModel, sModelName) {

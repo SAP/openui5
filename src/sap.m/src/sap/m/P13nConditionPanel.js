@@ -677,7 +677,7 @@ sap.ui.define([
 	 * sets the LayoutMode.
 	 *
 	 * @private
-	 * @param {string} sLayoutMode define the layout mode for the condition row. The value can be Desktop, Tablet or Phone.
+	 * @param {string} sMode define the layout mode for the condition row. The value can be "Desktop", "Tablet" or "Phone".
 	 */
 	P13nConditionPanel.prototype._updateConditionFieldSpans = function(sMode) {
 		if (this._aConditionsFields) {

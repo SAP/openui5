@@ -21,7 +21,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer"],
 	 * @param {sap.ui.core.RenderManager}
 	 *          oRenderManager the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.ActionListItem}
 	 *          oControl an object representation of the control that should be
 	 *          rendered
 	 */

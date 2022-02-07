@@ -19,7 +19,7 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered.
+	 * @param {sap.m.Toolbar} oControl an object representation of the control that should be rendered.
 	 */
 	ToolbarRenderer.render = BarInPageEnabler.prototype.render;
 
@@ -29,7 +29,7 @@ sap.ui.define(['./BarInPageEnabler'],
 	 *
 	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oToolbar An object representation of the control that should be rendered.
+	 * @param {sap.m.Toolbar} oToolbar An object representation of the control that should be rendered.
 	 */
 	ToolbarRenderer.writeAccessibilityState = function(oRm, oToolbar) {
 		var oAccInfo = {
@@ -55,7 +55,7 @@ sap.ui.define(['./BarInPageEnabler'],
 	 * Add classes attributes and styles to the root tag
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oToolbar an object representation of the control that should be rendered
+	 * @param {sap.m.Toolbar} oToolbar an object representation of the control that should be rendered
 	 */
 	ToolbarRenderer.decorateRootElement = function (oRm, oToolbar) {
 		this.writeAccessibilityState(oRm, oToolbar);

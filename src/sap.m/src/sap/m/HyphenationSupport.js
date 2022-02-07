@@ -65,7 +65,7 @@ sap.ui.define([
 		 * first tries to set the <code>nodeValue</code> of the first child if it exists.
 		 *
 		 * @param {HTMLElement} oDomRef DOM reference of the text node container.
-		 * @param {String} [sNodeValue] new Node value.
+		 * @param {string} [sNodeValue] new Node value.
 		 * @private
 		 */
 		function setNodeValue(oDomRef, sNodeValue) {

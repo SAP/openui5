@@ -106,7 +106,6 @@ function(
 
 	/**
 	 * Returns 'not-adaptable' flag as boolean
-	 * @param {Object} oElement Element instance
 	 * @return {boolean} Returns 'true' if not adaptable
 	 * @public
 	 */
@@ -125,10 +124,10 @@ function(
 	};
 
 	/**
-	 * Returns a DOM representation for an Element or aggregation, if it can be found or undefined
-	 * @param {Object} oElement Element we need DomRef for
-	 * @param {String|Function} vDomRef Selector or Function for fetchting DomRef
-	 * @param {String} [sAggregationName] Aggregation Name
+	 * Returns a DOM representation for an Element or aggregation, if it can be found or undefined.
+	 * @param {sap.ui.core.Element} oElement Element we need DomRef for
+	 * @param {string|function} vDomRef Selector or Function for fetchting DomRef
+	 * @param {string} [sAggregationName] Aggregation Name
 	 * @return {jQuery} Returns associated DOM references wrapped by jQuery object
 	 * @public
 	 */

@@ -232,8 +232,7 @@ sap.ui.define([
 	/**
 	 * Sets the subtitle of the image.
 	 * @public
-	 * @param {string} subtitleText The image subtitle
-	 * @method
+	 * @param {string} sSubtitleText The image subtitle
 	 * @returns {this} Pointer to the control instance for chaining.
 	 */
 	LightBoxItem.prototype.setSubtitle = function (sSubtitleText) {

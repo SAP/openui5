@@ -286,7 +286,7 @@ sap.ui.define([
 	/**
 	 * The event is fired when + is pressed.
 	 *
-	 * @param {jQuery.Event} The event object.
+	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	TreeItemBase.prototype.onsapplus = function(oEvent) {
 		this.informTree("ExpanderPressed", true);
@@ -295,7 +295,7 @@ sap.ui.define([
 	/**
 	 * The event is fired when - is pressed.
 	 *
-	 * @param {jQuery.Event} The event object.
+	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	TreeItemBase.prototype.onsapminus = function(oEvent) {
 		this.informTree("ExpanderPressed", false);
@@ -304,7 +304,7 @@ sap.ui.define([
 	/**
 	 * The event is fired when the right arrow key is pressed.
 	 *
-	 * @param {jQuery.Event} The event object.
+	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	TreeItemBase.prototype.onsapright = function(oEvent) {
 		if (oEvent.srcControl !== this || this.isLeaf()) {
@@ -323,7 +323,7 @@ sap.ui.define([
 	/**
 	 * The event is fired when the left arrow key is pressed.
 	 *
-	 * @param {jQuery.Event} The event object.
+	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	TreeItemBase.prototype.onsapleft = function(oEvent) {
 		if (oEvent.srcControl !== this || this.isTopLevel() && !this.getExpanded()) {
@@ -345,7 +345,7 @@ sap.ui.define([
 	/**
 	 * The event is fired when the backspace key is pressed.
 	 *
-	 * @param {jQuery.Event} The event object.
+	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	TreeItemBase.prototype.onsapbackspace = function(oEvent) {
 		// Only set focus on parent when the event is fired by item itself.

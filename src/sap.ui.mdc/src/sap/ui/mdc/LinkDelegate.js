@@ -30,8 +30,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 			return Promise.resolve(null);
 		},
 		/**
-		 * @typedef {Object} sap.ui.mdc.LinkDelegate.LinkType
-		 * @property {Number} type 0 (Text) | 1 (Direct Link) | 2 (Popup)
+		 * @typedef {object} sap.ui.mdc.LinkDelegate.LinkType
+		 * @property {number} type 0 (Text) | 1 (Direct Link) | 2 (Popup)
 		 * If <code>oLinkType.type</code> is 0, the link is rendered as a text.
 		 * If <code>oLinkType.type</code> is 1, the link is rendered as a link. When pressed the link triggers a direct navigation instead.
 		 * If <code>oLinkType.type</code> is 2, the link is rendered as a link and opens a popover (default).

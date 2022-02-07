@@ -29,7 +29,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
+		 * @param {sap.m.SelectionList} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.render = function(oRm, oList) {
 			this.writeOpenListTag(oRm, oList, { elementData: true });
@@ -74,7 +74,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
+		 * @param {sap.m.SelectionList} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.renderItems = function(oRm, oList) {
 			var iSize = oList._getNonSeparatorItemsCount(),
@@ -114,7 +114,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
+		 * @param {sap.m.SelectionList} oList An object representation of the control that should be rendered.
 		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
 		 * @param {object} mStates
 		 * @param {boolean} bForceSelectedVisualState Forces the visual focus (selected state) to be se on the item.
@@ -236,7 +236,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
+		 * @param {sap.m.SelectionList} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.writeAccessibilityState = function(oRm, oList) {
 			oRm.accessibilityState(oList, {
@@ -249,7 +249,7 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon",
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
+		 * @param {sap.m.SelectionList} oList An object representation of the control that should be rendered.
 		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
 		 * @param {object} mStates
 		 */

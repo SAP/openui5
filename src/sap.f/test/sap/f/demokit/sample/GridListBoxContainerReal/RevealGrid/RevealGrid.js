@@ -9,8 +9,8 @@ sap.ui.define([
 
 		/**
 		 * Toggles an overlay over the given Grid based layout to outline all grid cells.
-		 * @param {String[]|String} oId ID of the Grid based layout control
-		 * @param {object} oView The view that the Grid based control is held in
+		 * @param {string[]|string} oId ID of the Grid based layout control
+		 * @param {sap.ui.core.mvc.View} oView The view that the Grid based control is held in
 		 */
 		toggle: function (oId, oView) {
 			if (typeof oId == "string") {
@@ -40,8 +40,8 @@ sap.ui.define([
 
 		/**
 		 * Destroys an overlay.
-		 * @param {String[]|String} oId ID of the Grid based layout control
-		 * @param {object} oView The view that the Grid based control is held in
+		 * @param {atring[]|atring} oId ID of the Grid based layout control
+		 * @param {sap.ui.core.mvc.View} oView The view that the Grid based control is held in
 		 */
 		destroy: function (oId, oView) {
 			if (typeof oId == "string") {

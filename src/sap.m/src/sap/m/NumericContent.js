@@ -342,7 +342,7 @@ sap.ui.define([
 	/**
 	 * Returns the AltText
 	 *
-	 * @returns {String} The alternative text
+	 * @returns {string} The alternative text
 	 */
 	NumericContent.prototype.getAltText = function () {
 		var sValue = this.getValue();

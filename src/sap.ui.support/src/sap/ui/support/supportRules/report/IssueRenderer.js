@@ -160,8 +160,8 @@ sap.ui.define(['sap/base/Log', 'sap/base/security/encodeXML'], function(Log, enc
 	/**
 	 * Creates an html string containing the issues.
 	 * @param {Object} issues - the issues in viewmodel format
-	 * @param {Boolean} enableFiltering - if true renders the severity filters
-	 * @returns {String}
+	 * @param {boolean} enableFiltering - if true renders the severity filters
+	 * @returns {string}
 	 */
 	function render(issues, enableFiltering) {
 		var content = '';

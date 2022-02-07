@@ -15,7 +15,7 @@ sap.ui.define([], function() {
 	* Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	*
 	* @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the Render-Output-Buffer
-	* @param {sap.ui.core.Control} oSemanticPage An object representation of the control that should be rendered
+	* @param {sap.f.semantic.SemanticPage} oSemanticPage An object representation of the control that should be rendered
 	*/
 	SemanticPageRenderer.render = function(oRenderManager, oSemanticPage) {
 		oRenderManager.openStart("div", oSemanticPage);

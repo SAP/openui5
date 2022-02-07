@@ -351,7 +351,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @overwrite
+	 * @override
 	 * @returns {sap.m.Table} The inner table.
 	 */
 	TableContent.prototype.getInnerList = function () {

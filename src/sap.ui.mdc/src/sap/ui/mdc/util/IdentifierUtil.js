@@ -22,8 +22,8 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		/**
 		 * Static function that replaces special characters with a underscore.<br>
 		 *
-		 * @param {String} sName - String whose special characters shall be replaced.
-		 * @returns {String} Cleaned up String
+		 * @param {string} sName - String whose special characters shall be replaced.
+		 * @returns {string} Cleaned up String
 		 * @protected
 		 */
 		replace: function(sName) {
@@ -42,8 +42,8 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 * Static function that creates the id for a FilterField, dependant on the FilterBar control<br>
 		 *
 		 * @param {sap.ui.mdc.FilterBar} oFilterBar - based on it, the id will be determined
-		 * @param {String} sKey - the property path/name
-		 * @returns {String} the calculated id
+		 * @param {string} sKey - the property path/name
+		 * @returns {string} the calculated id
 		 * @protected
 		 */
 		getFilterFieldId : function(oFilterBar, sKey) {
@@ -54,7 +54,7 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 		 * Static function that determines the key of the property<br>
 		 *
 		 * @param {Object} oProperty - contains the meta dada
-		 * @returns {String} the key of the property path/name
+		 * @returns {string} the key of the property path/name
 		 * @protected
 		 */
 		getPropertyKey:  function(oProperty) {

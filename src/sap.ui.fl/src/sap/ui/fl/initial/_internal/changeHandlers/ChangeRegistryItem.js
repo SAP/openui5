@@ -16,12 +16,12 @@ sap.ui.define([
 	/**
 	 * Object to define a change on a specific control type with it's permissions
 	 * @constructor
-	 * @param {Object} mParam - Parameter description below
-	 * @param {Object} mParam.changeTypeMetadata - Change type metadata this registry item is describing
-	 * @param {String} mParam.changeTypeMetadata.name - Semantic name to identify the change type
-	 * @param {String} mParam.changeTypeMetadata.changeHandler - Full qualified name of the function which is executed when a change for this change type is merged or applied
+	 * @param {object} mParam - Parameter description below
+	 * @param {object} mParam.changeTypeMetadata - Change type metadata this registry item is describing
+	 * @param {string} mParam.changeTypeMetadata.name - Semantic name to identify the change type
+	 * @param {string} mParam.changeTypeMetadata.changeHandler - Full qualified name of the function which is executed when a change for this change type is merged or applied
 	 * @param {sap.ui.fl.Layer[]} mParam.changeTypeMetadata.layers - Layer permissions
-	 * @param {String} mParam.controlType - Control type this registry item is assigned to
+	 * @param {string} mParam.controlType - Control type this registry item is assigned to
 	 * @alias sap.ui.fl.registry.ChangeRegistryItem
 	 *
 	 * @author SAP SE
@@ -54,7 +54,7 @@ sap.ui.define([
 	/**
 	 * Get the name of a change type
 	 *
-	 * @returns {String} Returns the name of the change type of the item
+	 * @returns {string} Returns the name of the change type of the item
 	 */
 	ChangeRegistryItem.prototype.getChangeTypeName = function() {
 		return this._changeType;
@@ -63,7 +63,7 @@ sap.ui.define([
 	/**
 	 * Get the control type
 	 *
-	 * @returns {String} Returns the control type the item is assigned to
+	 * @returns {string} Returns the control type the item is assigned to
 	 */
 	ChangeRegistryItem.prototype.getControlType = function() {
 		return this._controlType;
@@ -72,7 +72,7 @@ sap.ui.define([
 	/**
 	 * Get the control type
 	 *
-	 * @returns {String} Returns the control type the item is assigned to
+	 * @returns {string} Returns the control type the item is assigned to
 	 */
 	ChangeRegistryItem.prototype.getLayers = function() {
 		return this._layers;

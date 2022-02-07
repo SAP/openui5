@@ -1654,7 +1654,7 @@ function(
 	 * Function calculates the available space for the tokenizer
 	 *
 	 * @private
-	 * @return {String | null} CSSSize in px
+	 * @return {string | null} CSSSize in px
 	 */
 	MultiInput.prototype._calculateSpaceForTokenizer = function () {
 		var oDomRef = this.getDomRef();

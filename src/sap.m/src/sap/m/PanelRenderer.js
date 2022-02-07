@@ -21,7 +21,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *          oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.Panel}
 	 *          oControl an object representation of the control that should be rendered
 	 */
 	PanelRenderer.render = function(oRm, oControl) {

@@ -131,7 +131,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {String} sAppVariantId - Application variant ID
+	 * @param {string} sAppVariantId - Application variant ID
 	 * @param {sap.ui.fl.Selector} vSelector - Selector
 	 * @returns {Promise} Resolved promise
 	 * @description Creates the app variant with all inline changes in backend.
@@ -145,7 +145,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {String} sAppVariantId - Application variant ID
+	 * @param {string} sAppVariantId - Application variant ID
 	 * @returns {Promise} Resolved promise
 	 * @description Deletes the app variant from backend.
 	 */
@@ -158,7 +158,7 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {Object} oDescriptor - Contains the app variant descriptor information
-	 * @param {Boolean} bSaveAsTriggeredFromRtaToolbar - Boolean value which tells if 'Save As' is triggered from the UI adaptation header bar
+	 * @param {boolean} bSaveAsTriggeredFromRtaToolbar - Boolean value which tells if 'Save As' is triggered from the UI adaptation header bar
 	 * @returns {Object} Contains the information to create the app variant
 	 * @description Processes the Save As Dialog and consolidates the input parameters from the 'Save As' dialog as an object.
 	 */
@@ -193,7 +193,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {Boolean} bCopyUnsavedChanges - Boolean value which tells whether the dirty changes exist and need to be copied
+	 * @param {boolean} bCopyUnsavedChanges - Boolean value which tells whether the dirty changes exist and need to be copied
 	 * @returns {Promise} Server response
 	 * @description Clears the RTA command stack
 	 */
@@ -208,9 +208,9 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {String} sAppVariantId - Contains the application variant ID
-	 * @param {String} sReferenceAppId - Contains the reference application ID
-	 * @param {Boolean} bSaveAs - Indicates whether the app is currently being saved
+	 * @param {string} sAppVariantId - Contains the application variant ID
+	 * @param {string} sReferenceAppId - Contains the reference application ID
+	 * @param {boolean} bSaveAs - Indicates whether the app is currently being saved
 	 * @returns {Promise} Server response
 	 * @description In 'Save As' scenario: The app variant gets assigned to the same catalog(s) as the original app;
 	 * In 'Deletion' scenario: The app variant is unassigned from all catalogs.
@@ -226,9 +226,9 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {String} sIamId - Identity Access Management ID of SAP Fiori app
-	 * @param {String} sAppVarId - Application variant ID
-	 * @param {Boolean} bCreation - Indicates that app is being created
+	 * @param {string} sIamId - Identity Access Management ID of SAP Fiori app
+	 * @param {string} sAppVarId - Application variant ID
+	 * @param {boolean} bCreation - Indicates that app is being created
 	 * @returns {Promise} Resolved promise
 	 * @description When the app variant creation/deletion and catalog assignment/unassignment are executed successfully, this asynchronous process gets triggered. It talks to the server every 2.5 secs.
 	 * In case of creation: It checks whether the new FLP tile is available.

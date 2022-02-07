@@ -874,7 +874,7 @@ sap.ui.define([
 	 * This method overrides runs when the list updates its items.
 	 * The reason for the update is given by sReason, which for example, can be when the
 	 * list is filtered or when it grows.
-	 * @param {String} sReason reason for update
+	 * @param {string} sReason reason for update
 	 */
 	FacetFilterList.prototype.updateItems = function(sReason) {
 		var oPrevActiveElement = document.activeElement;

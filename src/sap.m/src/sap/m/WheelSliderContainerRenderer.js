@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * Renders the HTML for the given {@link sap.m.WheelSliderContainer} control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.WheelSliderContainer} oControl An object representation of the control that should be rendered
 	 */
 	WheelSliderContainerRenderer.render = function(oRM, oControl) {
 		var aSliders = oControl.getSliders(),

@@ -186,7 +186,7 @@ sap.ui.define([
 
 	/**
 	 * An object type that represents card menu action properties.
-	 * @typedef {Object}
+	 * @typedef {object}
 	 * @public
 	 * @experimental since 1.79
 	 * @property {sap.ui.integration.CardActionType} type The type of the action.

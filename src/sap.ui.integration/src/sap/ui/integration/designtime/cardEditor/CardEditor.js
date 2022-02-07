@@ -258,7 +258,7 @@ sap.ui.define([
 	 * Returns a promise with a runtime change and a designtime change
 	 *
 	 * @param {object} oPropertyBag - Property bag
-	 * @param {String} oPropertyBag.layer - Layer of the Change
+	 * @param {string} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with both designtime and runtime change
 	 */
 	CardEditor.prototype.getChanges = function (oPropertyBag) {
@@ -297,7 +297,7 @@ sap.ui.define([
 
 	/**
 	 * @param {object} oPropertyBag - Property bag
-	 * @param {String} oPropertyBag.layer - Layer of the Change
+	 * @param {string} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with the change definition for the designtime delta change
 	 */
 	CardEditor.prototype.getDesigntimeChangeDefinition = function (oPropertyBag) {
@@ -351,8 +351,8 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {Object} oPropertyBag - Property bag
-	 * @param {String} oPropertyBag.layer - Layer of the Change
+	 * @param {object} oPropertyBag - Property bag
+	 * @param {string} oPropertyBag.layer - Layer of the Change
 	 * @returns {Promise<object>} Promise with the change definition for the current delta changes
 	 */
 	CardEditor.prototype.getDeltaChangeDefinition = function (oPropertyBag) {

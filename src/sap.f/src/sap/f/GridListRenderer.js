@@ -45,7 +45,7 @@ sap.ui.define([
 	 * Adds classes for grid stylings.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.f.GridList} oControl an object representation of the control that should be rendered
 	 */
 	GridListRenderer.renderGridAttributes = function (oRM, oControl) {
 		var oGridLayout = oControl.getGridLayoutConfiguration();

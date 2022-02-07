@@ -335,8 +335,8 @@ sap.ui.define([
 	 * Performs a variant switch.
 	 *
 	 * @param {object} oTargetOverlay Target variant management overlay
-	 * @param {String} sNewVariantReference The new variant reference
-	 * @param {String} sCurrentVariantReference The current variant reference
+	 * @param {string} sNewVariantReference The new variant reference
+	 * @param {string} sCurrentVariantReference The current variant reference
 	 * @public
 	 */
 	ControlVariant.prototype.switchVariant = function(oTargetOverlay, sNewVariantReference, sCurrentVariantReference) {

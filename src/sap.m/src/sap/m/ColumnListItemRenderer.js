@@ -111,7 +111,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRenderManager the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.ColumnListItem}
 	 *            oControl an object representation of the control that should be
 	 *            rendered
 	 */

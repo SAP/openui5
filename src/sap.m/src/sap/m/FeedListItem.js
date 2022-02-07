@@ -543,7 +543,7 @@ function(
 	 * this value, the text of the FeedListItem is collapsed once the text reaches this limit.
 	 *
 	 * @private
-	 * @returns {String} Collapsed string based on the "maxCharacter" property. If the size of the string before collapsing
+	 * @returns {string} Collapsed string based on the "maxCharacter" property. If the size of the string before collapsing
 	 * is smaller than the provided threshold, it returns null.
 	 */
 	FeedListItem.prototype._getCollapsedText = function() {
@@ -648,8 +648,8 @@ function(
 	 * Converts an HTML text to plain text by removing all the HTML tags
 	 *
 	 * @private
-	 * @param {String} htmlText The HtmlText to be converted
-	 * @returns {String} plain text
+	 * @param {string} htmlText The HtmlText to be converted
+	 * @returns {string} plain text
 	 */
 	FeedListItem.prototype._convertHtmlToPlainText = function(htmlText) {
 		var oRegex = /(<([^>]+)>)/ig;
@@ -660,8 +660,8 @@ function(
 	 * Converts the plain text to HTML text by adding the corresponding HTML tags
 	 *
 	 * @private
-	 * @param {String} inputText The input plain text
-	 * @returns {String} the HTML text
+	 * @param {string} inputText The input plain text
+	 * @returns {string} the HTML text
 	 */
 	FeedListItem.prototype._convertPlainToHtmlText = function(inputText) {
 		var sFullText = this._sFullText;

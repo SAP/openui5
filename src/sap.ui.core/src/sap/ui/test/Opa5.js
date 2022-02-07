@@ -1113,7 +1113,7 @@ sap.ui.define([
 		/**
 		 * Settings for a new page object, consisting of actions and assertions.
 		 *
-		 * @typedef {Object} sap.ui.test.PageObjectDefinition
+		 * @typedef {object} sap.ui.test.PageObjectDefinition
 		 *
 		 * @property {string} [viewName]
 		 *   When a <code>viewName</code> is given, all <code>waitFor</code> calls inside of the page object

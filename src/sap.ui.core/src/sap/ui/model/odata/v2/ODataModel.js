@@ -7879,7 +7879,7 @@ sap.ui.define([
 	 * path prefix. Use <code>fullTarget</code> to determine whether a message matches the resolved
 	 * binding path prefix.
 	 *
-	 * @param {string} sMessageTarget
+	 * @param {string} sMessagePath
 	 *   The messages target used as key in <code>this.mMessages</code>
 	 * @param {string} sPathPrefix
 	 *   The resolved binding path prefix

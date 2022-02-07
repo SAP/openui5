@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/table/Row'],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oTable an object representation of the control that should be rendered
+	 * @param {sap.ui.table.RowAction} oAction an object representation of the control that should be rendered
 	 */
 	RowActionRenderer.render = function(rm, oAction) {
 		rm.openStart("div", oAction);

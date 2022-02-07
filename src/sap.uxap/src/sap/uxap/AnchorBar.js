@@ -1013,7 +1013,7 @@ sap.ui.define([
 	 * Determines the width of a control safely. If the control doesn't exist, it returns 0.
 	 * If it exists, it returns the DOM element width.
 	 * @param  {sap.ui.core.Control} oControl
-	 * @return {Number} the width of the control
+	 * @return {number} the width of the control
 	 */
 	AnchorBar.prototype._getWidth = function (oControl) {
 		var oDomReference = oControl.getDomRef();

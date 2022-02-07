@@ -52,8 +52,8 @@ sap.ui.define([
 
 
     /**
-     * @typedef {Object} ZoomState
-     * @property {bool} enabled <code>true</code> if zooming is enabled
+     * @typedef {object} ZoomState
+     * @property {boolean} enabled <code>true</code> if zooming is enabled
      * @property {number} currentZoomLevel Current zoom level of the chart in percent (between 0 and 1)
      */
     /**
@@ -68,9 +68,9 @@ sap.ui.define([
     };
 
     /**
-     * @typedef {Object} SelectionDetails
+     * @typedef {object} SelectionDetails
      * @property {string} eventId  ID of the selection event
-     * @property {sap.core.Control} reference Reference to inner chart
+     * @property {sap.ui.core.Control} reference Reference to inner chart
      */
     /**
      ** Returns the event handler for <code>chartSelectionDetails</code> as an object.
@@ -87,7 +87,7 @@ sap.ui.define([
     /**
      * Sets the visibility of the legend.
      * <b>Note:</b> This function is called by the MDC chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#setLegendVisible LegendVisible} instead.
-     * @param {bool} bVisible <code>true</code> to show legend, <code>false</code> to hide
+     * @param {boolean} bVisible <code>true</code> to show legend, <code>false</code> to hide
      *
      * @experimental
      * @private
@@ -204,11 +204,11 @@ sap.ui.define([
     };
 
     /**
-     * @typedef {Object} ChartTypeObject
+     * @typedef {object} ChartTypeObject
      * @property {string} key Unique key of the chart type
      * @property {string} icon URI for the icon for the current chart type
      * @property {string} text Name of the current chart type
-     * @property {bool} selected Whether the chart type is the one currently used
+     * @property {boolean} selected Whether the chart type is the one currently used
      */
     /**
      * Returns the current chart type.
@@ -344,7 +344,7 @@ sap.ui.define([
 
     /**
      * Returns the information whether the inner chart is currently bound.
-     * @returns {bool} <code>true</code> if inner chart is bound; <code>false</code> if not
+     * @returns {boolean} <code>true</code> if inner chart is bound; <code>false</code> if not
      *
      * @experimental
      * @private
@@ -369,7 +369,7 @@ sap.ui.define([
     /**
      * Sets tooltips to visible/invisible for the inner chart.
      * <b>Note:</b> This function is called by the MDC chart only. You must not call it directly but use {@link sap.ui.mdc.Chart#setShowChartTooltip setShowChartTooltip} instead.
-     * @param {bool}  bFlag <code>true</code> for visible, <code>false</code> for invisible
+     * @param {boolean}  bFlag <code>true</code> for visible, <code>false</code> for invisible
      *
      * @experimental
      * @private

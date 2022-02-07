@@ -159,8 +159,8 @@ sap.ui.define([
 	 * Returns control changes for a given variant reference.
 	 *
 	 * @param {object} mPropertyBag Object with the necessary properties
-	 * @param {String} mPropertyBag.vmReference - Variant management reference
-	 * @param {String} mPropertyBag.vReference - ID of the variant
+	 * @param {string} mPropertyBag.vmReference - Variant management reference
+	 * @param {string} mPropertyBag.vReference - ID of the variant
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included, <code>true</code> by default
 	 *
@@ -226,7 +226,7 @@ sap.ui.define([
 	 * Returns the current variant reference for a given variant management reference.
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {String} mPropertyBag.vmReference - Variant management reference
+	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @returns {string} Reference of the current variant
 	 */

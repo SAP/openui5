@@ -199,7 +199,7 @@ sap.ui.define([
 		/**
 		 * Handles the focus/blur events.
 		 *
-		 * @param oRootRef e.g. document.body
+		 * @param {FocusEvent} oBrowserEvent Native browser focus/blur event object
 		 * @private
 		 */
 		FocusHandler.prototype.onEvent = function(oBrowserEvent){

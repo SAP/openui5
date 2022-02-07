@@ -47,7 +47,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * @param {sap.ui.core.RenderManager}
 	 *          oRenderManager the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
+	 * @param {sap.m.ListBase}
 	 *          oControl an object representation of the control that should be
 	 *          rendered
 	 */
@@ -207,7 +207,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * This hook method is called to render container attributes
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ListBase} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderContainerAttributes = function(rm, oControl) {
 	};
@@ -216,7 +216,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * This hook method is called after <ul> and before first <li>
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ListBase} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderListHeadAttributes = function(rm, oControl) {
 	};
@@ -225,7 +225,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * This hook method is called to render list tag
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ListBase} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.openStart("ul", oControl.getId("listUl"));
@@ -239,8 +239,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	/**
 	 * Returns aria accessibility role
 	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String}
+	 * @param {sap.m.ListBase} oControl an object representation of the control
+	 * @returns {string}
 	 */
 	ListBaseRenderer.getAriaRole = function(oControl) {
 		return "listbox";
@@ -249,7 +249,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	/**
 	 * Returns aria accessibility role for the no data entry.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	ListBaseRenderer.getNoDataAriaRole = function() {
 		return null;
@@ -258,8 +258,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	/**
 	 * Returns the inner aria labelledby ids for the accessibility
 	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String|undefined} header id
+	 * @param {sap.m.ListBase} oControl an object representation of the control
+	 * @returns {string|undefined} header id
 	 */
 	ListBaseRenderer.getAriaLabelledBy = function(oControl) {
 		var oHeaderTBar = oControl.getHeaderToolbar();
@@ -279,8 +279,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	/**
 	 * Returns the inner aria describedby ids for the accessibility
 	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
-	 * @returns {String|undefined}
+	 * @param {sap.m.ListBase} oControl an object representation of the control
+	 * @returns {string|undefined}
 	 */
 	ListBaseRenderer.getAriaDescribedBy = function(oControl) {
 		if (oControl.getFooterText()) {
@@ -291,7 +291,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	/**
 	 * Returns the accessibility state of the control
 	 *
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @param {sap.m.ListBase} oControl an object representation of the control
 	 */
 	ListBaseRenderer.getAccessibilityState = function(oControl) {
 		var sRole = this.getAriaRole(oControl);
@@ -313,7 +313,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * This hook method is called to finish list rendering
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ListBase} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderListEndAttributes = function(rm, oControl) {
 		rm.close("ul");
@@ -323,7 +323,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * This hook method is called to render no data field
 	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ListBase} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
 		rm.openStart("li", oControl.getId("nodata"));
@@ -369,8 +369,8 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 *
 	 * This method should be used when text is used frequently.
 	 *
-	 * @param {String} sBundleText bundle key of the announcement
-	 * @returns {String} id of the generated invisible ARIA node
+	 * @param {string} sBundleText bundle key of the announcement
+	 * @returns {string} id of the generated invisible ARIA node
 	 * @protected
 	 */
 	ListBaseRenderer.getAriaAnnouncement = function(sBundleText) {

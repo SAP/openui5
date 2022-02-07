@@ -165,9 +165,9 @@ sap.ui.define([
 	 * This method can be used to remove a view from the <code>AbstractContainer</code> instance.
 	 *
 	 * @param {string|sap.m.p13n.AbstractContainerItem} vContainerItem View that is removed
-	 * @param {boolean} bSuppress Supress invalidate
+	 * @param {boolean} bSuppress Suppress invalidate
 	 *
-	 * @returns {sap.m.p13n.AbstractContainer} The <code>AbstractContainer<code> instance
+	 * @returns {this} The <code>AbstractContainer<code> instance
 	 */
 	AbstractContainer.prototype.removeView = function(vContainerItem, bSuppress){
 		var oContainerItem = typeof vContainerItem == "string" ? this.getView(vContainerItem) : vContainerItem;
@@ -183,9 +183,8 @@ sap.ui.define([
 	 * This method can be used to add a view to the <code>AbstractContainer</code> instance.
 	 *
 	 * @param {sap.m.p13n.AbstractContainerItem} vContainerItem <code>AbstractContainerItem</code> that is added
-	 * @param {boolean} bSuppress Supress invalidate
 	 *
-	 * @returns {sap.m.p13n.AbstractContainer} The <code>AbstractContainer<code> instance
+	 * @returns {this} The <code>AbstractContainer<code> instance
 	 */
 	AbstractContainer.prototype.addView = function(vContainerItem) {
 		if (vContainerItem && vContainerItem.getContent() && !vContainerItem.getContent().hasStyleClass("sapUiMAbstractContainerContent")){
@@ -270,7 +269,7 @@ sap.ui.define([
 	/**
 	 * Gets a plain representation of the current views.
 	 *
-	 * @returns {object} The current view aggeregation as map
+	 * @returns {object} The current view aggregation as map
 	 */
 	AbstractContainer.prototype.getViewMap = function() {
 		return this.getViews().map(function(o){

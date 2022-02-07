@@ -23,8 +23,8 @@ sap.ui.define([], function() {
 		 * Returns the width from the metadata attributes. min-width if there is no width specified
 		 *
 		 * @param {object} oProperyInfo - OData metadata for the table field
-		 * @param {Number} iMax - The max width (optional, default 20)
-		 * @param {Number} iMin - The min width (optional, default 3)
+		 * @param {number} iMax - The max width (optional, default 20)
+		 * @param {number} iMin - The min width (optional, default 3)
 		 * @returns {string} - width of the property in em
 		 * @private
 		 */

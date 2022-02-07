@@ -1019,10 +1019,11 @@ sap.ui.define([
 		/**
 		 * Attaches events of the clocks.
 		 *
-		 * @param {sap.m.Input} oInput Input object to attach events to
+		 * @param {sap.m.TimePickerClock} oClock Clock to attach events to
+		 * @param {sap.m.internal.ToggleSpinButton} oButton button to attach events to
 		 * @private
 		 */
-		 TimePickerClocks.prototype._attachEvents = function(oClock, oButton) {
+		TimePickerClocks.prototype._attachEvents = function(oClock, oButton) {
 
 			oClock.attachChange(function(oEvent) {
 				var iSelected = oEvent.getParameter("value"),
@@ -1076,7 +1077,7 @@ sap.ui.define([
 		 * @param {int} iClockIndex the index (in _clocks aggregation) of the clock
 		 * @private
 		 */
-		 TimePickerClocks.prototype._switchClock = function(iClockIndex) {
+		TimePickerClocks.prototype._switchClock = function(iClockIndex) {
 			var aClocks = this.getAggregation("_clocks"),
 				aButtons = this.getAggregation("_buttons"),
 				oActiveClock = this._getActiveClock();
@@ -1159,7 +1160,7 @@ sap.ui.define([
 		 * @param {boolean} bEnabled An enabled state
 		 * @private
 		 */
-		 TimePickerClocks.prototype._setControlValueAndEnabled = function (oClock, oButton, vValue, bEnabled) {
+		TimePickerClocks.prototype._setControlValueAndEnabled = function (oClock, oButton, vValue, bEnabled) {
 			oClock.setSelectedValue(parseInt(vValue));
 			oClock.setEnabled(bEnabled);
 			oButton.setEnabled(bEnabled);

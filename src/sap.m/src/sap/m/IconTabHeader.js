@@ -473,7 +473,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the selected item based on key.
-	 * @overwrite
+	 * @override
 	 * @public
 	 * @param {string} sKey The key of the item to be selected
 	 * @return {this} this pointer for chaining
@@ -1410,7 +1410,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @overwrite
+	 * @override
 	 */
 	//overwritten method, returns for most cases the iconDomRef. if the given tab has no icon, the textDomRef is returned.
 	IconTabHeader.prototype.getFocusDomRef = function (oFocusTab) {

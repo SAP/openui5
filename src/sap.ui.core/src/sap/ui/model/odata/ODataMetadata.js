@@ -1528,14 +1528,14 @@ sap.ui.define([
 		}
 		return this.bMessageScopeSupported;
 	};
+
 	/**
 	 * Check whether the given path points to a entity collection or not (single entity or not known).
 	 *
-	 * @param {sPath} Entity path
+	 * @param {string} sPath Entity path
 	 * @returns {boolean} Whether the path points to a collection.
 	 * @private
 	 */
-
 	ODataMetadata.prototype._isCollection = function(sPath){
 		var bCollection = false;
 		var iIndex = sPath.lastIndexOf("/");

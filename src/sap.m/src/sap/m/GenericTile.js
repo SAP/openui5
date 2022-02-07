@@ -1170,7 +1170,7 @@ sap.ui.define([
 	 * Gets the header, subheader and image description text of GenericTile
 	 *
 	 * @private
-	 * @returns {String} The text
+	 * @returns {string} The text
 	 */
 	GenericTile.prototype._getHeaderAriaAndTooltipText = function () {
 		var sText = "";
@@ -1195,7 +1195,7 @@ sap.ui.define([
 	 * Gets the ARIA label or tooltip text of the content in GenericTile
 	 *
 	 * @private
-	 * @returns {String} The text
+	 * @returns {string} The text
 	 */
 	GenericTile.prototype._getContentAriaAndTooltipText = function () {
 		var sText = "";
@@ -1225,7 +1225,7 @@ sap.ui.define([
 	 * Returns a text for the ARIA label as combination of header and content texts
 	 * when the tooltip is empty
 	 * @private
-	 * @returns {String} The ARIA label text
+	 * @returns {string} The ARIA label text
 	 */
 	GenericTile.prototype._getAriaAndTooltipText = function () {
 		var sAriaText = (this.getTooltip_AsString() && !this._isTooltipSuppressed())
@@ -1254,7 +1254,7 @@ sap.ui.define([
 	 * calls _getAriaAndTooltipText to get text.
 	 *
 	 * @private
-	 * @returns {String} Text for ARIA label.
+	 * @returns {string} Text for ARIA label.
 	 */
 	GenericTile.prototype._getAriaText = function () {
 		var sAriaText = this.getTooltip_Text();
@@ -1276,7 +1276,7 @@ sap.ui.define([
 	 * If the application provides a specific tooltip, the returned string is equal to the tooltip text.
 	 * If the tooltip provided by the application is a string of only white spaces, the function returns null.
 	 *
-	 * @returns {String} Text for tooltip or null.
+	 * @returns {string} Text for tooltip or null.
 	 * @private
 	 */
 	GenericTile.prototype._getTooltipText = function () {
@@ -1537,7 +1537,7 @@ sap.ui.define([
 	/**
 	 * Set and return aggregation of Icon to be rendered in IconMode
 	 * @param {*} oIcon Icon to be displayed on the GenericTile.
-	 * @returns {String} Returns the icon hidden aggregation
+	 * @returns {string} Returns the icon hidden aggregation
 	 * @private
 	 */
 	 GenericTile.prototype._generateIconAggregation = function (oIcon) {

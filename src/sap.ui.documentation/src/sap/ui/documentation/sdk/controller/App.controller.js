@@ -1338,7 +1338,7 @@ sap.ui.define([
 
 			/**
 			 * Event handler for the rating to update the label and the data
-			 * @param {sap.ui.base.Event}
+			 * @param {sap.ui.base.Event} oEvent
 			 */
 			onPressRatingButton: function(oEvent) {
 				var that = this;

@@ -72,7 +72,7 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	 *
 	 * @returns {sap.m.ListMode|""} Mode of the list item.
 	 * @protected
-	 * @overwrite
+	 * @override
 	 */
 	ActionListItem.prototype.getMode = function() {
 		return ListMode.None;

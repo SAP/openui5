@@ -20,7 +20,7 @@ function(SupportLib) {
 	/**
 	 * Determines <code>Control</code> computed height.
 	 * @param {sap.ui.core.Control} oControl
-	 * @returns {Number}
+	 * @returns {number}
 	 */
 	var getControlHeight = function(oControl) {
 		return oControl.getDomRef().getBoundingClientRect().height;

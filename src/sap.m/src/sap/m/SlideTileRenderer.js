@@ -21,7 +21,7 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl the control to be rendered
+	 * @param {sap.m.SlideTile} oControl the control to be rendered
 	 */
 	SlideTileRenderer.render = function(oRm, oControl) {
 		var sTooltip = oControl.getTooltip_AsString(),

@@ -255,7 +255,7 @@ sap.ui.define([
 		/**
 		 * Processes all groups: sort groups by name and enrich the model data
 		 * Sorting is done in the model once for faster processing in the views
-		 * @param {string} sFontName name of currently selected font to be loaded
+		 * @param {array} oGroups name of currently selected font to be loaded
 		 * @private
 		 */
 		_processGroups : function(oGroups) {
@@ -329,7 +329,7 @@ sap.ui.define([
 
 		/**
 		 * Calculates the top tag and relates the tags from the "all" group to each group
-		 * @param {string} sFontName name of currently selected font to be loaded
+		 * @param {array} oGroups name of currently selected font to be loaded
 		 * @private
 		 */
 		_calculateTagsPerGroup: function (oGroups) {
@@ -393,7 +393,7 @@ sap.ui.define([
 		/**
 		 * Finds icon metadata in the all group
 		 * @param {Object} oAllGroup a map of all icons for the current font
-		 * @param {Object} {oCurrentIcon} the item to look up
+		 * @param {Object} oCurrentIcon the item to look up
 		 * @returns {Object} the icon metadata requested
 		 * @private
 		 */

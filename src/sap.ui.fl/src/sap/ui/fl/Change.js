@@ -291,7 +291,7 @@ sap.ui.define([
 	/**
 	 * Returns the change type.
 	 *
-	 * @returns {String} Change type of the file, for example <code>LabelChange</code>
+	 * @returns {string} Change type of the file, for example <code>LabelChange</code>
 	 * @public
 	 */
 	Change.prototype.getChangeType = function () {
@@ -303,7 +303,7 @@ sap.ui.define([
 	/**
 	 * Returns the file name.
 	 *
-	 * @returns {String} <code>fileName</code> of the file
+	 * @returns {string} <code>fileName</code> of the file
 	 * @public
 	 */
 	Change.prototype.getFileName = function () {
@@ -315,7 +315,7 @@ sap.ui.define([
 	/**
 	 * Returns the file type.
 	 *
-	 * @returns {String} <code>fileType</code> of the file
+	 * @returns {string} <code>fileType</code> of the file
 	 * @public
 	 */
 	Change.prototype.getFileType = function () {
@@ -349,7 +349,7 @@ sap.ui.define([
 	/**
 	 * Returns the namespace. The namespace of the change is also the namespace of the change file in the repository.
 	 *
-	 * @returns {String} Namespace of the change file
+	 * @returns {string} Namespace of the change file
 	 *
 	 * @public
 	 */
@@ -371,7 +371,7 @@ sap.ui.define([
 	/**
 	 * Returns the name of module which this change refers to (XML or JS).
 	 *
-	 * @returns {String} Module name
+	 * @returns {string} Module name
 	 *
 	 * @public
 	 */
@@ -393,7 +393,7 @@ sap.ui.define([
 	/**
 	 * Returns the project ID of the change. There might be multiple projects adapting a base application. The project ID helps to see where the change is coming from. If no <code>projectIDid</code> is specified, it is the <code>sap.app/id</code>.
 	 *
-	 * @returns {String} Project ID of the change file
+	 * @returns {string} Project ID of the change file
 	 *
 	 * @public
 	 */
@@ -620,7 +620,7 @@ sap.ui.define([
 	/**
 	 * Gets the creation timestamp.
 	 *
-	 * @returns {String} Creation timestamp
+	 * @returns {string} Creation timestamp
 	 *
 	 * @public
 	 */

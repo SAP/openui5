@@ -212,7 +212,7 @@ sap.ui.define([
 
 	/**
 	 * @private
-	 * @returns {String} Contains information of the InfoLog | "No logging data available"
+	 * @returns {string} Contains information of the InfoLog | "No logging data available"
 	 */
 	Log.prototype._getLogFormattedText = function() {
 		return (!this.isEmpty()) ? "---------------------------------------------\nsap.ui.mdc.Link:\nBelow you can see detailed information regarding semantic attributes which have been calculated for one or more semantic objects defined in a Link control. Semantic attributes are used to create the URL parameters. Additionally you can see all links containing the URL parameters.\n" + this.getFormattedText() : "No logging data available";

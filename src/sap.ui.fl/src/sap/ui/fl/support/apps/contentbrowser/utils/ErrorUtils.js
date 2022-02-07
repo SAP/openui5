@@ -59,9 +59,9 @@ function (MessagePopoverItem, MessagePopover) {
 
 	/**
 		 * Displays error message.
-		 * @param {String} sType - message type
-		 * @param {String} sTitle - message title
-		 * @param {String} sDescription - message description
+		 * @param {string} sType - message type
+		 * @param {string} sTitle - message title
+		 * @param {string} sDescription - message description
 		 * @public
 		 */
 	ErrorUtils.displayError = function (sType, sTitle, sDescription) {

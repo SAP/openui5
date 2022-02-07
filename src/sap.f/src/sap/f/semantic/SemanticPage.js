@@ -943,7 +943,7 @@ sap.ui.define([
 	* Process the given control,
 	* before setting it to one of the <code>sap.f.semantic.SemanticPage</code> aggregations.
 	* @param {sap.ui.core.Control} oControl
-	* @param {String} sType
+	* @param {string} sType
 	* @private
 	*/
 	SemanticPage.prototype._onAddAggregation = function (oControl, sType) {
@@ -956,7 +956,7 @@ sap.ui.define([
 	* Process the given control,
 	* after removing it from one of the <code>sap.f.semantic.SemanticPage</code> aggregations.
 	* @param {sap.ui.core.Control} oControl
-	* @param {String} sType
+	* @param {string} sType
 	* @private
 	*/
 	SemanticPage.prototype._onRemoveAggregation = function (oControl, sType) {
@@ -1238,7 +1238,7 @@ sap.ui.define([
 	* Retrieves a <code>sap.f.semantic.SemanticContainer</code> instance
 	* for the given placement - TITLE_TEXT, TITLE_ICON, FOOTER_LEFT, FOOTER_RIGHT or SHARE_MENU.
 	*
-	* @param {String} sPlacement
+	* @param {string} sPlacement
 	* @returns {sap.f.semantic.SemanticContainer | null}
 	* @private
 	*/

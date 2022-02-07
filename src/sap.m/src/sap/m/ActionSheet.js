@@ -603,7 +603,7 @@ sap.ui.define([
 
 	/**
 	 * Extends the afterClose event by providing context information.
-	 * @param {sap.m.Button | null} Action selected on Popover close
+	 * @param {sap.m.Button | null} oAction Action selected on Popover close
 	 * @private
 	 */
 	ActionSheet.prototype._onAfterClose = function (oAction) {

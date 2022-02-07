@@ -126,7 +126,7 @@ sap.ui.define([
 
 		/**
 		 * Navigate to the generic cart view
-		 * @param {sap.ui.base.Event} @param oEvent the button press event
+		 * @param {sap.ui.base.Event} oEvent the button press event
 		 */
 		onToggleCart: function (oEvent) {
 			var bPressed = oEvent.getParameter("pressed");

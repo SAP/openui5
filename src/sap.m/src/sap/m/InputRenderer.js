@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.Input} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.addOuterClasses = function (oRm, oControl) {
 		oRm.class("sapMInput");
@@ -44,7 +44,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.Input} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.writeInnerAttributes = function (oRm, oControl) {
 		var bShowSuggestions = oControl.getShowSuggestion();
@@ -75,7 +75,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.Input} oControl an object representation of the control that should be rendered
 	 */
 	InputRenderer.addInnerClasses = function (oRm, oControl) {
 	};
@@ -99,7 +99,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 * @param {sap.m.Input} oControl An object representation of the control that should be rendered.
 	 */
 	InputRenderer.writeDecorations = function (oRm, oControl) {
 		if (oControl.getDescription()) {
@@ -121,7 +121,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 *
 	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 * @param {sap.m.Input} oControl An object representation of the control that should be rendered.
 	 */
 	InputRenderer.addWrapperStyles = function (oRm, oControl) {
 		oRm.style("width", oControl.getDescription() ? oControl.getFieldWidth() : "100%");
@@ -131,7 +131,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * Returns the inner aria describedby ids for the accessibility.
 	 *
 	 * @protected
-	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @param {sap.m.Input} oControl an object representation of the control.
 	 * @returns {string|undefined}
 	 */
 	InputRenderer.getAriaDescribedBy = function (oControl) {
@@ -162,7 +162,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 	 * Hook for the subclasses.
 	 *
 	 * @protected
-	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @param {sap.m.Input} oControl an object representation of the control
 	 * @returns {string}
 	 */
 	InputRenderer.getAriaRole = function (oControl) {

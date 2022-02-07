@@ -2364,7 +2364,7 @@ sap.ui.define([
 	 * Otherwise returns <code>undefined</code>
 	 *
 	 * @param {string} sValue string value, e.g. "9e+4" or "1.2345e+25"
-	 * @returns {Number} if value can be parsed to integer e.g. 90000, <code>undefined</code> otherwise
+	 * @returns {int} if value can be parsed to integer e.g. 90000, <code>undefined</code> otherwise
 	 */
 	function getInteger(sValue) {
 		// when resolving the e-notation check if there is still a dot character present and after the dot character there are no zeros

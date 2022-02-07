@@ -18,7 +18,7 @@ sap.ui.define([],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oShell an object representation of the control that should be rendered
+	 * @param {sap.ui.unified.ShellLayout} oShell an object representation of the control that should be rendered
 	 */
 	ShellLayoutRenderer.render = function(rm, oShell){
 		var id = oShell.getId();

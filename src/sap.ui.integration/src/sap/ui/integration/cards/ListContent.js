@@ -377,7 +377,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @overwrite
+	 * @override
 	 * @returns {sap.m.List} The inner list.
 	 */
 	ListContent.prototype.getInnerList = function () {

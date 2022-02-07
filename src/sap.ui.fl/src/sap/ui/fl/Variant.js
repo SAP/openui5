@@ -155,7 +155,7 @@ sap.ui.define([
 	/**
 	 * Returns the title
 	 *
-	 * @returns {String} Title of the variant
+	 * @returns {string} Title of the variant
 	 * @public
 	 */
 	Variant.prototype.getTitle = function () {
@@ -167,7 +167,7 @@ sap.ui.define([
 	/**
 	 * Returns the file type
 	 *
-	 * @returns {String} fileType of the variant
+	 * @returns {string} fileType of the variant
 	 * @public
 	 */
 	Variant.prototype.getFileType = function () {
@@ -200,7 +200,7 @@ sap.ui.define([
 	 * Returns the namespace. The variants' namespace is
 	 * also the namespace of the change file in the repository.
 	 *
-	 * @returns {String} Namespace of the variants document
+	 * @returns {string} Namespace of the variants document
 	 *
 	 * @public
 	 */
@@ -380,7 +380,7 @@ sap.ui.define([
 	/**
 	 * Gets the creation timestamp
 	 *
-	 * @returns {String} creation timestamp
+	 * @returns {string} creation timestamp
 	 *
 	 * @public
 	 */

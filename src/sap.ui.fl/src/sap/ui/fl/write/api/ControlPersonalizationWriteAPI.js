@@ -201,7 +201,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector[]} mPropertyBag.selectors - Array of selectors, at least one selector is necessary
-		 * @param {String[]} [mPropertyBag.changeTypes] - Types of changes to be deleted
+		 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes to be deleted
 		 *
 		 * @returns {Promise} Promise that resolves after the deletion took place and changes are reverted
 		 *
@@ -262,7 +262,7 @@ sap.ui.define([
 		 *
 	 	 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {String[]} [mPropertyBag.changes] - Array of changes to be saved; if not provided, all unsaved changes will be saved
+		 * @param {string[]} [mPropertyBag.changes] - Array of changes to be saved; if not provided, all unsaved changes will be saved
 		 *
 		 * @returns {Promise} Promise that is resolved when the changes have been saved
 		 *

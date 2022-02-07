@@ -46,7 +46,7 @@ sap.ui.define([
 	/**
 	 * Creates or returns an instance of the FlexController
 	 *
-	 * @param {String} sComponentName - Name of the component
+	 * @param {string} sComponentName - Name of the component
 	 * @returns {sap.ui.fl.FlexController} instance
 	 *
 	 */

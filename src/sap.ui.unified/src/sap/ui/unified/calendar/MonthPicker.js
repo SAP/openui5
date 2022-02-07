@@ -271,7 +271,7 @@ sap.ui.define([
 	 * Sets year internally for the MonthPicker control
 	 * @ui5-restricted sap.ui.unified.Calendar
 	 * @private
-	 * @param {Int} iYear month picker year
+	 * @param {int} iYear month picker year
 	 */
 	MonthPicker.prototype._setYear = function (iYear) {
 		this._iYear = iYear;

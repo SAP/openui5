@@ -18,7 +18,7 @@ sap.ui.define(['./RenderManager'], function(RenderManager) {
 		 * Renders either the configured content or a dummy div that will be replaced after rendering
 		 *
 		 * @param {sap.ui.core.RenderManager} [oRM] The RenderManager instance
-		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
+		 * @param {sap.ui.core.HTML} [oControl] The instance of the invisible control
 		 */
 		render : function(oRM, oControl) {
 			// render an invisible, but easily identifiable placeholder for the content

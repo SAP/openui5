@@ -299,9 +299,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function determines the callback to be executed on N-more label press.
+	 * Opens or closes the token popup when N-more label is pressed.
 	 *
-	 * @param {function} fCallback The callback
 	 * @private
 	 */
 	Tokenizer.prototype._handleNMoreIndicatorPress = function () {
@@ -1362,7 +1361,7 @@ sap.ui.define([
 	 * Function parses given text, and text is separated by line break.
 	 *
 	 * @private
-	 * @param {String} sString  The texts that needs to be parsed
+	 * @param {string} sString  The texts that needs to be parsed
 	 * @returns {array} Array of string after parsing
 	 */
 	Tokenizer.prototype._parseString = function(sString) {

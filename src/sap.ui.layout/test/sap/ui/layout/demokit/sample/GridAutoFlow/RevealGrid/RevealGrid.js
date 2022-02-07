@@ -9,7 +9,7 @@ sap.ui.define([
 
 		/**
 		 * Toggles an overlay over the given Grid based layout to outline all grid cells.
-		 * @param {String[]|String} oId ID of the Grid based layout control
+		 * @param {string[]|string} oId ID of the Grid based layout control
 		 * @param {object} oView The view that the Grid based control is held in
 		 */
 		toggle: function (oId, oView) {

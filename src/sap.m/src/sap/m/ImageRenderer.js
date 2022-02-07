@@ -27,7 +27,7 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS", "sap/ui/core/libr
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oImage The control that should be rendered
+	 * @param {sap.m.Image} oImage The control that should be rendered
 	 */
 	ImageRenderer.render = function(oRm, oImage) {
 		var sMode = oImage.getMode(),

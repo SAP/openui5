@@ -4256,7 +4256,6 @@ sap.ui.define([
 	 * is called and the method implementation might rely on those conditions.
 	 *
 	 * @param {string} sName name of the aggregation to refresh
-	 * @param {sap.ui.model.ChangeReason} sChangeReason the change reason
 	 * @protected
 	 */
 	ManagedObject.prototype.refreshAggregation = function(sName) {
@@ -4825,8 +4824,8 @@ sap.ui.define([
 	/**
 	 * Calls a registered listener during propagation
 	 *
-	 * @param {string|boolean} 	sName If set true all listeners will be called.
-	 * 							If a name is specified only the listener for this name is called
+	 * @param {function} listener
+	 *      If given, the given function will be called, other wise all propagation listeners will be called.
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 */

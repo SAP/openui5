@@ -143,7 +143,7 @@ sap.ui.define([
 
 	/**
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {String} Returns the confirmation text
+	 * @return {string} Returns the confirmation text
 	 * @private
 	 */
 	Remove.prototype._getConfirmationText = function(oOverlay) {

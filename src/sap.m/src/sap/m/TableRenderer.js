@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 	 *
 	 * @param {sap.ui.core.RenderManager} rm RenderManager
 	 * @param {sap.m.ListBase} oTable Table control
-	 * @param {String} type Whether "Head" or "Foot"
+	 * @param {string} type Whether "Head" or "Foot"
 	 */
 	TableRenderer.renderColumns = function(rm, oTable, type) {
 		var index = 0,

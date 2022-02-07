@@ -904,8 +904,7 @@ sap.ui.define([
 	 * Retrieves parent ids from a given data set
 	 *
 	 * @param {Array} aData Lookup array to search for parent ids
-	 * @param {boolean} bExcludeRootNodes Can be set to exclude root node elements
-	 * @returns {Array} Array of all parent ids
+	 * @returns {Object<string,string>} Map of all parent ids
 	 *
 	 * @private
 	 */

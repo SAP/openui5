@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/Device"],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.m.ActionSheet} oControl an object representation of the control that should be rendered
 	 */
 	ActionSheetRenderer.render = function(oRm, oControl){
 		var aActionButtons = oControl._getAllButtons(),

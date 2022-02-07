@@ -40,7 +40,7 @@ sap.ui.define([
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+		 * @param {sap.m.SinglePlanningCalendarGrid} oControl An object representation of the control that should be rendered
 		 */
 		SinglePlanningCalendarGridRenderer.render = function (oRm, oControl) {
 			oRm.openStart("div", oControl);
@@ -722,7 +722,7 @@ sap.ui.define([
 		 *
 		 * @param {Date} oAppStartDate start date of the appointment
 		 * @param {Date} oAppEndDate end date of the appointment
-		 * @return {String} Returns maximum allowed rows for the appointment as string
+		 * @return {string} Returns maximum allowed rows for the appointment as string
 		 * @private
 		 */
 		SinglePlanningCalendarGridRenderer._getLineClamp = function (oAppStartDate, oAppEndDate) {
