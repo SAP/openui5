@@ -393,4 +393,20 @@ sap.ui.define([
 		assert.ok(oIconPoolSpy.called, "XML Http request is made with UploadSet item's URL");
 	});
 
+	QUnit.test("Test for thumnail url when mediaType not defined", function (assert) {
+		//Setup
+		var oItem = this.oUploadSet.getItems()[0];
+		this.oUploadSet.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Assert
+		oItem.setFileName("sample");
+		oItem.setThumbnailUrl();
+		oItem.setMediaType();
+
+		oCore.applyChanges();
+
+		assert.equal(oItem._getIcon().getSrc(), 'sap-icon://document', "Default document icon is set as list item icon");
+	});
+
 });

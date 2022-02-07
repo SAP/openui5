@@ -522,7 +522,7 @@ sap.ui.define([
 	UploadSetItem.prototype._getIconByFileType = function () {
 		var sFileExtension = UploadSetItem._splitFileName(this.getFileName()).extension;
 		if (!sFileExtension) {
-			return "";
+			return "sap-icon://document";
 		}
 
 		switch (sFileExtension.toLowerCase()) {
