@@ -42,6 +42,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				sTooltip = oAvatar.getTooltip_AsString(),
 				aLabelledBy = oAvatar.getAriaLabelledBy(),
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
+				aHasPopup = oAvatar.getAriaHasPopup(),
 				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null,
 				sDefaultTooltip = oAvatar._getDefaultTooltip();
 
@@ -88,6 +89,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			// aria-describedby references
 			if (aDescribedBy && aDescribedBy.length > 0) {
 				oRm.attr("aria-describedby", aDescribedBy.join(" "));
+			}
+			// aria-haspopup references
+			if (aHasPopup && aHasPopup !== "None") {
+				oRm.attr("aria-haspopup", aHasPopup.toLowerCase());
 			}
 			oRm.openEnd();
 			if (sActualDisplayType === AvatarType.Icon || sImageFallbackType === AvatarType.Icon) {

@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/URI",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	oCore,
+	coreLibrary,
 	Device,
 	KeyCodes,
 	URI,
@@ -633,6 +635,33 @@ sap.ui.define([
 
 		assert.strictEqual($oAvatar.attr("aria-hidden"), "true", "Aria-hidden should be set to default avatars");
 		assert.strictEqual($oAvatar.attr("role"), "presentation", "Aria role should be 'img' on decorative avatars");
+	});
+
+	QUnit.test("Appearance of the aria-haspopup attribute", function (assert) {
+		var AriaHasPopup = coreLibrary.aria.HasPopup,
+			oAvatarDomRef;
+
+		// setup
+		this.oAvatar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oAvatarDomRef = this.oAvatar.getDomRef();
+
+		// check initial aria-haspopup state
+		assert.notOk(oAvatarDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute initially.");
+
+		// act
+		this.oAvatar.setAriaHasPopup(AriaHasPopup.Menu);
+		oCore.applyChanges();
+
+		// check if aria-haspopup appears
+		assert.equal(oAvatarDomRef.getAttribute("aria-haspopup"), AriaHasPopup.Menu.toLowerCase(), "There is aria-haspopup attribute with proper value after the avatar property is being set to something different than None.");
+
+		// act
+		this.oAvatar.setAriaHasPopup(AriaHasPopup.None);
+		oCore.applyChanges();
+
+		// check if aria-haspopup disappears
+		assert.notOk(oAvatarDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute after the avatar property is being set to None.");
 	});
 
 	QUnit.module("Avatar backgroundColor API", {
