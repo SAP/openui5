@@ -336,7 +336,10 @@
 				{ "name" : "table-row" },
 				{ "name" : "table-column" },
 				{ "name" : "clear-all" },
-				{ "name" : "sum" }
+				{ "name" : "sum" },
+				{ "name" : "detail-less" },
+				{ "name" : "detail-more" },
+				{ "name" : "tri-state" }
 			]
 		},
 		{
@@ -350,7 +353,8 @@
 				{ "name" : "folder-blank" },
 				{ "name" : "work-history" },
 				{ "name" : "folder" },
-				{ "name" : "batch-payments" }
+				{ "name" : "batch-payments" },
+				{ "name" : "folder-2" }
 			]
 		},
 		{
@@ -381,7 +385,9 @@
 				{ "name" : "text-color" },
 				{ "name" : "strikethrough" },
 				{ "name" : "text" },
-				{ "name" : "translate" }
+				{ "name" : "translate" },
+				{ "name" : "detail-less" },
+				{ "name" : "detail-more" }
 			]
 		},
 		{
