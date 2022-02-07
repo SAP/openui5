@@ -151,6 +151,15 @@ sap.ui.define([
 				value: {
 					type: "float",
 					defaultValue: 0
+				},
+
+				/**
+				 * Defines the width of the control
+				 */
+				width: {
+					type: "sap.ui.core.CSSSize",
+					defaultValue: null,
+					mapping: "style"
 				}
 			},
 			events: {

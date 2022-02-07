@@ -47,7 +47,10 @@ sap.ui.define([
 	 *     <li>[CTRL]+[A] - Selects all items, if MultiSelect mode is enabled.</li>
 	 *     <li>[HOME]/[END] - Focuses the first/last item.</li>
 	 *     <li>[PAGEUP]/[PAGEDOWN] - Moves focus up/down by page size (20 items by default).</li>
-	 *     <li>[ALT]+[UP]/[DOWN] - Switches focus between header, last focused item, and More button (if applies) in either direction.</li>
+	 *     <li>[ALT]+[DOWN]/[UP] - Switches focus between header, last focused item, and More button (if applies) in either direction.</li>
+	 *     <li>[SHIFT]+[DOWN]/[UP] - Selects the next/previous item in a MultiSelect table, if the current item is selected (Range selection). Otherwise, deselects them (Range deselection).</li>
+	 *     <li>[SHIFT]+[HOME]/[END] - Range selection to the first/last item of the List.</li>
+	 *     <li>[CTRL]+[HOME]/[END] - Same behavior as HOME & END.</li> *
 	 * </ul>
 	 *
 	 * @author SAP SE

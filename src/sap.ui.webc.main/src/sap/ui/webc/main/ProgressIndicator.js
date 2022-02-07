@@ -96,6 +96,15 @@ sap.ui.define([
 				valueState: {
 					type: "sap.ui.core.ValueState",
 					defaultValue: ValueState.None
+				},
+
+				/**
+				 * Defines the width of the control
+				 */
+				width: {
+					type: "sap.ui.core.CSSSize",
+					defaultValue: null,
+					mapping: "style"
 				}
 			}
 		}

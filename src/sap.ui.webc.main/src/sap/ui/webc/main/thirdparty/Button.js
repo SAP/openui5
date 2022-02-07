@@ -51,16 +51,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: "",
 			},
-			ariaExpanded: {
-				type: String,
+			accessibilityAttributes: {
+				type: Object,
 			},
 			nonInteractive: {
 				type: Boolean,
 			},
 			_iconSettings: {
-				type: Object,
-			},
-			_buttonAccInfo: {
 				type: Object,
 			},
 			_tabIndex: {
@@ -191,14 +188,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return node.nodeType !== Node.COMMENT_NODE
 				&& (node.nodeType !== Node.TEXT_NODE || node.nodeValue.trim().length !== 0);
 			}).length;
-		}
-		get accInfo() {
-			return {
-				"ariaExpanded": this.ariaExpanded || (this._buttonAccInfo && this._buttonAccInfo.ariaExpanded),
-				"ariaControls": this._buttonAccInfo && this._buttonAccInfo.ariaControls,
-				"ariaHaspopup": this._buttonAccInfo && this._buttonAccInfo.ariaHaspopup,
-				"title": this.title || (this._buttonAccInfo && this._buttonAccInfo.title),
-			};
 		}
 		static typeTextMappings() {
 			return {

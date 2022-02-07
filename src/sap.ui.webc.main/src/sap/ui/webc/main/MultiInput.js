@@ -111,6 +111,14 @@ sap.ui.define([
 				},
 
 				/**
+				 * Defines whether the clear icon of the input will be shown.
+				 */
+				showClearIcon: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines whether the component should show suggestions, if such are present. <br>
 				 * <br>
 				 * <b>Note:</b> You need to import the <code>InputSuggestions</code> module from <code>"@ui5/webcomponents/dist/features/InputSuggestions.js"</code> to enable this functionality.
@@ -184,6 +192,15 @@ sap.ui.define([
 						type: "slot",
 						to: "div"
 					}
+				},
+
+				/**
+				 * Defines the width of the control
+				 */
+				width: {
+					type: "sap.ui.core.CSSSize",
+					defaultValue: null,
+					mapping: "style"
 				}
 			},
 			defaultAggregation: "suggestionItems",

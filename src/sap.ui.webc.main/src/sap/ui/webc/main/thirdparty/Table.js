@@ -157,7 +157,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				row.mode = this.mode;
 			});
 			this.visibleColumns = this.columns.filter((column, index) => {
-				column.sticky = this.stickyColumnHeader;
 				return !this._hiddenColumns[index];
 			});
 			this._noDataDisplayed = !this.rows.length && !this.hideNoData;
@@ -202,6 +201,82 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (isAltUp || Keys.isDownAlt(event)) {
 				return this._handleArrowAlt(isAltUp, event.target);
 			}
+			if ((Keys.isUpShift(event) || Keys.isDownShift(event)) && this.isMultiSelect) {
+				this._handleArrowNav(event);
+			}
+			if (Keys.isHomeCtrl(event)) {
+				event.preventDefault();
+				this._itemNavigation._handleHome(event);
+				this._itemNavigation._applyTabIndex();
+				this._itemNavigation._focusCurrentItem();
+			}
+			if (Keys.isEndCtrl(event)) {
+				event.preventDefault();
+				this._itemNavigation._handleEnd(event);
+				this._itemNavigation._applyTabIndex();
+				this._itemNavigation._focusCurrentItem();
+			}
+			if ((Keys.isHomeShift(event) || Keys.isEndShift(event)) && this.isMultiSelect) {
+				this._handleHomeEndSelection(event);
+			}
+		}
+		_handleArrowNav(event) {
+			const isRowFocused = this.currentElement.localName === "tr";
+			if (!isRowFocused) {
+				return;
+			}
+			const previouslySelectedRows = this.selectedRows;
+			const currentItem = this.currentItem;
+			const currentItemIdx = this.currentItemIdx;
+			const prevItemIdx = currentItemIdx - 1;
+			const nextItemIdx = currentItemIdx + 1;
+			const prevItem = this.rows[prevItemIdx];
+			const nextItem = this.rows[nextItemIdx];
+			const wasSelected = currentItem.selected;
+			if ((Keys.isUpShift(event) && !prevItem) || (Keys.isDownShift(event) && !nextItem)) {
+				return;
+			}
+			if (Keys.isUpShift(event)) {
+				currentItem.selected = currentItem.selected && !prevItem.selected;
+				prevItem.selected = currentItem.selected || (wasSelected && !currentItem.selected);
+				prevItem.focus();
+			}
+			if (Keys.isDownShift(event)) {
+				currentItem.selected = currentItem.selected && !nextItem.selected;
+				nextItem.selected = currentItem.selected || (wasSelected && !currentItem.selected);
+				nextItem.focus();
+			}
+			const selectedRows = this.selectedRows;
+			this.fireEvent("selection-change", {
+				selectedRows,
+				previouslySelectedRows,
+			});
+		}
+		_handleHomeEndSelection(event) {
+			const isRowFocused = this.currentElement.localName === "tr";
+			if (!isRowFocused) {
+				return;
+			}
+			const rows = this.rows;
+			const previouslySelectedRows = this.selectedRows;
+			const currentItemIdx = this.currentItemIdx;
+			if (Keys.isHomeShift(event)) {
+				rows.slice(0, currentItemIdx + 1).forEach(item => {
+					item.selected = true;
+				});
+				rows[0].focus();
+			}
+			if (Keys.isEndShift(event)) {
+				rows.slice(currentItemIdx).forEach(item => {
+					item.selected = true;
+				});
+				rows[rows.length - 1].focus();
+			}
+			const selectedRows = this.selectedRows;
+			this.fireEvent("selection-change", {
+				selectedRows,
+				previouslySelectedRows,
+			});
 		}
 		_handleArrowAlt(shouldMoveUp, focusedElement) {
 			const focusedElementType = this.getFocusedElementType(focusedElement);
@@ -463,6 +538,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get selectedRows() {
 			return this.rows.filter(row => row.selected);
+		}
+		get currentItemIdx() {
+			return this.rows.indexOf(this.currentItem);
+		}
+		get currentItem() {
+			return this.getRootNode().activeElement;
+		}
+		get currentElement() {
+			return this._itemNavigation._getCurrentItem();
 		}
 	}
 	Table.define();

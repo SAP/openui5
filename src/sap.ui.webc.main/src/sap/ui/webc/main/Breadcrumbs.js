@@ -106,9 +106,10 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * Fires when a <code>BreadcrumbsItem</code> is clicked.
+				 * Fires when a <code>BreadcrumbsItem</code> is clicked. <b>Note:</b> You can prevent browser location change by calling <code>event.preventDefault()</code>.
 				 */
 				itemClick: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The clicked item.

@@ -30,9 +30,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			last: {
 				type: Boolean,
 			},
-			sticky: {
-				type: Boolean,
-			},
 		},
 	};
 	class TableColumn extends UI5Element__default {
