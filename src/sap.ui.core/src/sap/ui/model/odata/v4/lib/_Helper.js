@@ -897,7 +897,7 @@ sap.ui.define([
 					return "duration'" + vValue + "'";
 
 				case "Edm.String":
-					return "'" + vValue.replace(rSingleQuote, "''") + "'";
+					return "'" + String(vValue).replace(rSingleQuote, "''") + "'";
 
 				default:
 					throw new Error("Unsupported type: " + sType);

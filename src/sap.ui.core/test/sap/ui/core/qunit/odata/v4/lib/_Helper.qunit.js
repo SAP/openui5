@@ -618,7 +618,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// t: the tested type
 	// v: the value to format
-	// e: the literal (if different to v)
+	// l: the literal (if different to v)
+	// p: the parsed value (if different to v)
 	[
 		{t : "Edm.Binary", v : "1qkYNh/P5uvZ0zA+siScD=", l : "binary'1qkYNh/P5uvZ0zA+siScD='"},
 		{t : "Edm.Boolean", v : true, l : "true"},
@@ -645,7 +646,9 @@ sap.ui.define([
 		{t : "Edm.String", v : "more ''quotes''", l : "'more ''''quotes'''''"},
 		{t : "Edm.String", v : "s'om\"e", l : "'s''om\"e'"},
 		{t : "Edm.String", v : null, l : "null"},
-		{t : "Edm.TimeOfDay", v : "18:59:59.999"}
+		{t : "Edm.TimeOfDay", v : "18:59:59.999"},
+		// "lenient" handling, format/parse not symmetric here!
+		{t : "Edm.String", v : 1234, l : "'1234'", p : "1234"}
 	].forEach(function (oFixture) {
 		var sTitle = "formatLiteral/parseLiteral: " + oFixture.t + " " + oFixture.v;
 
@@ -661,7 +664,7 @@ sap.ui.define([
 					break;
 				default:
 					assert.strictEqual(_Helper.parseLiteral(sLiteral, oFixture.t, "path"),
-						oFixture.v);
+						oFixture.p || oFixture.v);
 			}
 		});
 	});
