@@ -230,26 +230,27 @@ sap.ui.define([
 	}
 
 	function checkAndEnrichReveal(mReveal, mInvisibleElement, oPlugin, sTargetAggregation) {
-		return Promise.resolve().then(function() {
-			var oInvisibleElement = mInvisibleElement.element;
-			var oDesignTimeMetadata;
-			var mRevealAction;
-			var bRevealEnabled = false;
-			var oHasChangeHandlerPromise = Promise.resolve();
-			var sSourceAggregation = mInvisibleElement.sourceAggregation;
+		var oInvisibleElement = mInvisibleElement.element;
+		var oDesignTimeMetadata;
+		var mRevealAction;
+		var bRevealEnabled = false;
+		var oHasChangeHandlerPromise = Promise.resolve(false);
+		var sSourceAggregation = mInvisibleElement.sourceAggregation;
 
-			var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
-			if (oOverlay) {
-				oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var oOverlay = OverlayRegistry.getOverlay(oInvisibleElement);
+		if (oOverlay) {
+			oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 
-				mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
-				if (mRevealAction && mRevealAction.changeType) {
-					var oRevealSelector = oInvisibleElement;
-					if (mRevealAction.changeOnRelevantContainer) {
-						oRevealSelector = oOverlay.getRelevantContainer();
-					}
+			mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oInvisibleElement);
+			if (mRevealAction && mRevealAction.changeType) {
+				var oRevealSelector = oInvisibleElement;
+				if (mRevealAction.changeOnRelevantContainer) {
+					oRevealSelector = oOverlay.getRelevantContainer();
+				}
 
-					oHasChangeHandlerPromise = oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
+				oHasChangeHandlerPromise = oPlugin.hasChangeHandler(mRevealAction.changeType, oRevealSelector).then(function(bHasChangeHandler) {
+					// Element can be made invalid while the check is running (e.g. destroyed during undo of split)
+					if (ElementUtil.isElementValid(oInvisibleElement)) {
 						var mParents = AdditionalElementsUtils.getParents(true, oOverlay, oPlugin);
 						if (bHasChangeHandler) {
 							if (mRevealAction.changeOnRelevantContainer) {
@@ -269,27 +270,27 @@ sap.ui.define([
 								return Utils.checkTargetZone(oAggregationOverlay, oOverlay, oPlugin);
 							}
 						}
-						return bRevealEnabled;
-					});
+					}
+					return bRevealEnabled;
+				});
+			}
+		}
+
+		return oHasChangeHandlerPromise.then(function(bIncludeReveal) {
+			if (bIncludeReveal) {
+				mReveal.elements.push({
+					element: oInvisibleElement,
+					designTimeMetadata: oDesignTimeMetadata,
+					action: mRevealAction,
+					sourceAggregation: sSourceAggregation,
+					targetAggregation: sTargetAggregation
+				});
+				var mName = oDesignTimeMetadata.getName(oInvisibleElement);
+				if (mName) {
+					mReveal.controlTypeNames.push(mName);
 				}
 			}
-
-			return oHasChangeHandlerPromise.then(function(bIncludeReveal) {
-				if (bIncludeReveal) {
-					mReveal.elements.push({
-						element: oInvisibleElement,
-						designTimeMetadata: oDesignTimeMetadata,
-						action: mRevealAction,
-						sourceAggregation: sSourceAggregation,
-						targetAggregation: sTargetAggregation
-					});
-					var mName = oDesignTimeMetadata.getName(oInvisibleElement);
-					if (mName) {
-						mReveal.controlTypeNames.push(mName);
-					}
-				}
-				return mReveal;
-			});
+			return mReveal;
 		});
 	}
 
