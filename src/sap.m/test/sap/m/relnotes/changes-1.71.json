@@ -2962,5 +2962,54 @@
         ]
       }
     ]
+  },
+  "1.71.42": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "1d3afe9d8fb1f0b5ed911a9a28040b49eb379471",
+        "type": "FIX",
+        "text": " PDFViewer - Handle sourceValidation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240085710"
+          }
+        ]
+      },
+      {
+        "id": "eabdd99845848ce1a026f4d73cc58fd82a695155",
+        "type": "FIX",
+        "text": " ui.unified.calendar.YearPicker: disabled years can't be selected on mobile now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000616532022"
+          }
+        ]
+      },
+      {
+        "id": "d4be8e709e4b58c19bfe7c0fad7ec5eef9cf62aa",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: proper year set in grid cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000709492022"
+          }
+        ]
+      },
+      {
+        "id": "c70fa03b25712cab347c09f14ebd2c08141b6ab9",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -455,5 +455,32 @@
         ]
       }
     ]
+  },
+  "1.71.42": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "eabdd99845848ce1a026f4d73cc58fd82a695155",
+        "type": "FIX",
+        "text": " ui.unified.calendar.YearPicker: disabled years can't be selected on mobile now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000616532022"
+          }
+        ]
+      },
+      {
+        "id": "f13a05740742d6550902d3588ef9469c8b999a23",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: proper month names are shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009116052021"
+          }
+        ]
+      }
+    ]
   }
 }
