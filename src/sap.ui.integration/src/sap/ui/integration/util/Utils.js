@@ -3,12 +3,16 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
 	'sap/base/util/isPlainObject',
 	"sap/base/Log"
-], function (Locale,
-			 isPlainObject,
-			 Log) {
+], function (
+	Core,
+	Locale,
+	isPlainObject,
+	Log
+) {
 	"use strict";
 
 	/**
@@ -200,6 +204,14 @@ sap.ui.define([
 		}
 
 		return vData;
+	};
+
+	Utils.isBindingSyntaxComplex = function () {
+		if (Utils._isBindingSyntaxComplex === undefined) {
+			Utils._isBindingSyntaxComplex = Core.getConfiguration().getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") >= 0;
+		}
+
+		return Utils._isBindingSyntaxComplex;
 	};
 
 	return Utils;

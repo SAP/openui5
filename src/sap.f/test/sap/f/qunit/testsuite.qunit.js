@@ -98,6 +98,9 @@ sap.ui.define(function () {
 				}
 			},
 			"GridContainer": {
+				ui5: {
+					compatVersion: "edge"
+				},
 				coverage: {
 					only: [
 						"sap/f/GridContainer",
