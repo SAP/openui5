@@ -80,7 +80,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			setTimeout(function () {
-				assert.strictEqual(this.oCard.getCardContent().getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "an empty list is displayed");
+				assert.strictEqual(this.oCard.getCardContent().getItems()[0].getTitle(), this.oRb.getText("CARD_NO_ITEMS_ERROR_LISTS"), "an empty list is displayed");
 
 				// Act
 				this.oCard.getModel("filters").setProperty("/shipper/value", "3");

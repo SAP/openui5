@@ -24,7 +24,8 @@
 	  "messages": {
 		"noData": {
 		  "type": "NoSearchResults",
-		  "title": "No products are available with your inquiry",
+		  "title": "No products found",
+		  "description": "There were no products matching your inquiry",
 		  "size": "Auto"
 		}
 	  }
