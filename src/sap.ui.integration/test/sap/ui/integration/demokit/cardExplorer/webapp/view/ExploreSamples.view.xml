@@ -23,7 +23,7 @@
 						</Bar>
 					</customHeader>
 					<MessageStrip
-						text="This sample includes cards that demonstrate the additional logic for integration with the host environment. If you want to use them in SAP Business Application Studio, they have to be imported there as an application."
+						text="This sample includes cards that demonstrate the additional logic for integration with the host environment. If you want to use it in SAP Business Application Studio, it has to be imported there as an application."
 						visible="{settings>/isApplication}"
 						class="sapUiSmallMargin"
 						showIcon="true"
