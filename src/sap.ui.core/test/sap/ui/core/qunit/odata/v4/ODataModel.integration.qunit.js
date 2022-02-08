@@ -33824,6 +33824,113 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Multiple creation rows, grid table
+	//
+	// Create contexts at different insert positions:
+	//   "end of end", "end of start", "start of end" (not allowed), "start of start"
+	//
+	// (1) read items
+	// (2) add multiple inline creation rows (and expect the "start of end" exception)
+	// (3) delete inline creation rows
+	//
+	// JIRA: CPOUI5ODATAV4-1379
+[{
+	title : "end of end",
+	firstInsertAtEnd : true,
+	secondInsertAtEnd : true,
+	secondExpectChange : [, "First", "Second", "Third"]
+}, {
+	title : "end of start",
+	firstInsertAtEnd : false,
+	secondInsertAtEnd : true,
+	secondExpectChange : ["First", "Second", "Third", "Note 10"],
+	thirdExpectChange : ["Note 10"]
+}, {
+	title : "start of end (not allowed)",
+	firstInsertAtEnd : true,
+	secondInsertAtEnd : false,
+	secondExpectChange : [, "First"]
+}, {
+	title : "start of start",
+	firstInsertAtEnd : false,
+	secondInsertAtEnd : false,
+	secondExpectChange : ["Third", "Second", "First", "Note 10"],
+	thirdExpectChange : ["Note 10"]
+}].forEach(function (oFixture) {
+	var sTitle = "Multiple inline creation rows, grid table; insert position: " + oFixture.title;
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oContext0,
+			oContext1,
+			oContext2,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{path : \'SO_2_SOITEM\',\
+		parameters : {$$ownRequest : true}}">\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("note", ["Note 10"])
+				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
+					+ "$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=110", {
+					value : [{SalesOrderID : "42", Note : "Note 10"}]
+				});
+
+			oBinding = that.oView.byId("table").getBinding("rows");
+			oBinding.setContext(oModel.createBindingContext("/SalesOrderList('42')"));
+
+			return that.waitForChanges(assert, "(1) read SOITEMs");
+		}).then(function () {
+			that.expectChange("note", oFixture.secondExpectChange);
+
+			// code under test
+			oContext0 = oBinding.create({Note : "First"}, true, oFixture.firstInsertAtEnd, true);
+
+			if (!oFixture.secondInsertAtEnd && oFixture.firstInsertAtEnd) {
+				assert.throws(function () {
+					// code under test
+					oBinding.create({Note : "Second"}, true, oFixture.secondInsertAtEnd, true);
+				}, new Error("Cannot create at the start after creation at end"));
+			} else {
+				// code under test
+				oContext1 = oBinding.create({Note : "Second"}, true, oFixture.secondInsertAtEnd,
+					true);
+				oContext2 = oBinding.create({Note : "Third"}, true, oFixture.secondInsertAtEnd,
+					true);
+			}
+
+			// code under test
+			assert.strictEqual(oBinding.isFirstCreateAtEnd(), oFixture.firstInsertAtEnd);
+
+			return that.waitForChanges(assert, "(2) add inline creation rows");
+		}).then(function () {
+			if (oFixture.thirdExpectChange) {
+				that.expectChange("note", oFixture.thirdExpectChange);
+			}
+
+			oContext0.delete();
+			if (oContext1) {
+				oContext1.delete();
+			}
+			if (oContext2) {
+				oContext2.delete();
+			}
+
+			return Promise.all([
+				checkCanceled(assert, oContext0.created()),
+				oContext1 && checkCanceled(assert, oContext1.created()),
+				oContext2 && checkCanceled(assert, oContext2.created()),
+				that.waitForChanges(assert, "(3) delete inline creation rows")
+			]);
+		});
+	});
+});
+	//*********************************************************************************************
 	// Scenario: Create a row and delete it again. Then request more data and check the count.
 	//
 	// JIRA: CPOUI5ODATAV4-1321

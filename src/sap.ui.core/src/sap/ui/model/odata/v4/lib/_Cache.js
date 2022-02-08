@@ -290,7 +290,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a transient entity at the front of the list and adds a POST request to the batch
+	 * Creates a transient entity, inserts it in the list and adds a POST request to the batch
 	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
 	 * with an Error object, the POST request is automatically added again to the same batch
 	 * group (for SubmitMode.API) or parked (for SubmitMode.Auto or SubmitMode.Direct). Parked POST
@@ -306,6 +306,9 @@ sap.ui.define([
 	 *   A (temporary) key predicate for the transient entity: "($uid=...)"
 	 * @param {string} [oEntityData={}]
 	 *   The initial entity data
+	 * @param {boolean} bAtEndOfCreated
+	 *   Whether the newly created entity should be inserted after previously created entities or at
+	 *   the front of the list.
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an error object each time a POST request for the create
 	 *   fails
@@ -319,7 +322,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.prototype.create = function (oGroupLock, oPostPathPromise, sPath, sTransientPredicate,
-			oEntityData, fnErrorCallback, fnSubmitCallback) {
+			oEntityData, bAtEndOfCreated, fnErrorCallback, fnSubmitCallback) {
 		var aCollection = this.getValue(sPath),
 			sGroupId = oGroupLock.getGroupId(),
 			bKeepTransientPath = oEntityData && oEntityData["@$ui5.keepTransientPath"],
@@ -435,7 +438,11 @@ sap.ui.define([
 			addToCount(this.mChangeListeners, sPath, aCollection, 1);
 		}
 
-		aCollection.unshift(oEntityData);
+		if (bAtEndOfCreated) {
+			aCollection.splice(aCollection.$created, 0, oEntityData);
+		} else {
+			aCollection.unshift(oEntityData);
+		}
 		aCollection.$created += 1;
 		// if the nested collection is empty $byPredicate is not available, create it on demand
 		aCollection.$byPredicate = aCollection.$byPredicate || {};

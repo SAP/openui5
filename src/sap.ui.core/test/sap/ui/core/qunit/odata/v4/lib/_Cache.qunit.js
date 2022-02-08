@@ -4938,7 +4938,7 @@ sap.ui.define([
 		// code under test
 		oReadPromise = this.mockRequestAndRead(oCache, 0, "Employees", 0, 3);
 		oCreatePromise = oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
-			"($uid=id-1-23)", {}, null, function fnSubmitCallback() {});
+			"($uid=id-1-23)", {}, null, false, function fnSubmitCallback() {});
 
 		return Promise.all([oReadPromise, oCreatePromise]).then(function () {
 			assert.deepEqual(oCache.aElements, [
@@ -5552,14 +5552,14 @@ sap.ui.define([
 				.callsArg(5) // fnSubmit
 				.resolves({});
 			oCache.create(oCreateGroupLock0, SyncPromise.resolve("Employees"), "", "($uid=id-1-23)",
-				{}, null, function fnSubmitCallback() {});
+				{}, null, false, function fnSubmitCallback() {});
 			this.mock(oCreateGroupLock1).expects("getGroupId").withExactArgs().returns("create");
 			this.oRequestorMock.expects("request").withArgs("POST", "Employees",
 				sinon.match.same(oCreateGroupLock1))
 				.callsArg(5) // fnSubmit
 				.resolves({});
 			oCache.create(oCreateGroupLock1, SyncPromise.resolve("Employees"), "", "($uid=id-1-24)",
-				{}, null, function fnSubmitCallback() {});
+				{}, null, false, function fnSubmitCallback() {});
 
 			// code under test
 			assert.strictEqual(oCache.getResourcePathWithQuery(oFixture.iStart, oFixture.iEnd),
@@ -5579,14 +5579,14 @@ sap.ui.define([
 			.callsArg(5) // fnSubmit
 			.resolves({});
 		oCache.create(oCreateGroupLock0, SyncPromise.resolve("Employees"), "", "($uid=id-1-23)", {},
-			null, function fnSubmitCallback() {});
+			null, false, function fnSubmitCallback() {});
 		this.mock(oCreateGroupLock1).expects("getGroupId").withExactArgs().returns("create");
 		this.oRequestorMock.expects("request").withArgs("POST", "Employees",
 				sinon.match.same(oCreateGroupLock1))
 			.callsArg(5) // fnSubmit
 			.resolves({});
 		oCache.create(oCreateGroupLock1, SyncPromise.resolve("Employees"), "", "($uid=id-1-24)", {},
-			null, function fnSubmitCallback() {});
+			null, false, function fnSubmitCallback() {});
 
 		// Note: we forbid ranges which contain created entities
 		assert.throws(function () {
@@ -6585,7 +6585,7 @@ sap.ui.define([
 				oCache.registerChange("$count", oCountChangeListener);
 
 				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-					sTransientPredicate, {}, null, function fnSubmitCallback() {});
+					sTransientPredicate, {}, null, false, function fnSubmitCallback() {});
 			})
 			.then(function () {
 				var oReadGroupLock = {unlock : function () {}};
@@ -6834,7 +6834,7 @@ sap.ui.define([
 
 			// code under test
 			oCreatePromise = oCache.create(oGroupLock, SyncPromise.resolve(sPostPath), sPathInCache,
-				sTransientPredicate, oInitialData, null, function fnSubmitCallback() {});
+				sTransientPredicate, oInitialData, null, false, function fnSubmitCallback() {});
 
 			// initial data is synchronously available
 			assert.strictEqual(aCollection[0], oEntityDataCleaned);
@@ -6989,7 +6989,7 @@ sap.ui.define([
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, oPostPathPromise, "('0')/TEAM_2_EMPLOYEES",
-			"($uid=id-1-23)", oEntityData, fnErrorCallback);
+			"($uid=id-1-23)", oEntityData, false, fnErrorCallback);
 
 		assert.deepEqual(aCollection, [{
 			"@$ui5._" : {
@@ -7166,7 +7166,7 @@ sap.ui.define([
 
 		// code under test
 		oPostPromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, oEntityData, null, function fnSubmitCallback() {
+			sTransientPredicate, oEntityData, null, false, function fnSubmitCallback() {
 			});
 
 		assert.strictEqual(oCache.hasPendingChangesForPath(""), true, "pending changes for root");
@@ -7332,7 +7332,7 @@ sap.ui.define([
 			.returns(oFetchTypesPromise);
 
 		oCreatePromise = oCache.create(oCreateGroupLock0, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, {}, oCallbacks.fnError, oCallbacks.fnSubmit);
+			sTransientPredicate, {}, false, oCallbacks.fnError, oCallbacks.fnSubmit);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			var oCreateGroupLock1 = {getGroupId : function () {}};
@@ -7458,7 +7458,7 @@ sap.ui.define([
 
 			// code under test
 			oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
-				sTransientPredicate, {Name : null}, function fnErrorCallback() {},
+				sTransientPredicate, {Name : null}, false, function fnErrorCallback() {},
 				function fnSubmitCallback() {});
 
 			return oFailedPostPromise.then(undefined, function () {
@@ -7510,7 +7510,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	//TODO move to _Cache!
 [false, true].forEach(function (bInactive) {
-	var sTitle = "CollectionCache: create entity without initial data, bInactive=" + bInactive;
+	[false, true].forEach(function (bAtEndOfCreated) {
+	var sTitle = "CollectionCache: create entity without initial data, bInactive=" + bInactive
+		+ " bAtEndOfCreated=" + bAtEndOfCreated;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees"),
@@ -7526,6 +7528,12 @@ sap.ui.define([
 			};
 
 		oCache.aElements.$count = 42;
+
+		if (bAtEndOfCreated) {
+			oCache.aElements.$created = 1;
+			oCache.aElements.push({/*created*/});
+			oCache.aElements.push({/*read*/});
+		}
 		this.mock(oCreateGroupLock).expects("getGroupId").withExactArgs()
 			.returns(bInactive ? "$inactive.updateGroup" : "updateGroup");
 		this.oRequestorMock.expects("request")
@@ -7544,10 +7552,10 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.create(oCreateGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, undefined, null, function fnSubmitCallback() {});
+			sTransientPredicate, undefined, bAtEndOfCreated, null, function fnSubmitCallback() {});
 
 		if (bInactive) {
-			assert.deepEqual(oCache.aElements[0], {
+			assert.deepEqual(oCache.aElements[bAtEndOfCreated ? 1 : 0], {
 				"@$ui5._" : {
 					postBody : {},
 					transient : "$inactive.updateGroup",
@@ -7558,7 +7566,7 @@ sap.ui.define([
 			});
 			assert.strictEqual(oCache.iActiveElements, 0);
 		} else {
-			assert.deepEqual(oCache.aElements[0], {
+			assert.deepEqual(oCache.aElements[bAtEndOfCreated ? 1 : 0], {
 				"@$ui5._" : {
 					postBody : {},
 					transient : "updateGroup",
@@ -7572,7 +7580,8 @@ sap.ui.define([
 		this.mock(oUpdateGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
 		this.oRequestorMock.expects("relocate").exactly(bInactive ? 1 : 0)
 			.withExactArgs("$inactive.updateGroup",
-				sinon.match.same(oCache.aElements[0]["@$ui5._"].postBody), "updateGroup");
+				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5._"].postBody),
+				"updateGroup");
 		oHelperMock.expects("updateAll")
 			.withExactArgs({}, sTransientPredicate, sinon.match.object, {Name : "foo"});
 		this.mock(oCountChangeListener).expects("onChange").exactly(bInactive ? 1 : 0)
@@ -7580,22 +7589,25 @@ sap.ui.define([
 		oCache.registerChange("$count", oCountChangeListener);
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[0]), bInactive
+				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]), bInactive
 					? {Name : "foo", "@$ui5.context.isInactive" : false}
 					: {Name : "foo"}
 				);
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[0]), sinon.match.same(oResponseData), undefined);
+				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
+				sinon.match.same(oResponseData), undefined);
 		this.mock(oUpdateGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
 		oCache.update(oUpdateGroupLock, "Name", "foo", this.spy(), undefined, sTransientPredicate);
 
-		assert.strictEqual(oCache.aElements[0]["@$ui5._"].transient, "updateGroup");
+		assert.strictEqual(oCache.aElements[bAtEndOfCreated ? 1 : 0]["@$ui5._"].transient,
+			"updateGroup");
 		assert.strictEqual(oCache.iActiveElements, 1);
 
 		return oPromise;
+	});
 	});
 });
 
@@ -7740,7 +7752,7 @@ sap.ui.define([
 
 		// code under test
 		return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-				oEntityData, oCallbacks.errorCallback, oCallbacks.submitCallback)
+				oEntityData, false, oCallbacks.errorCallback, oCallbacks.submitCallback)
 			.then(function () {
 				assert.ok(false, "Unexpected success");
 			}, function (oError) {
@@ -7907,7 +7919,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 
 		oCreatedPromise = oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
-			sTransientPredicate, {}, null, function fnSubmitCallback() {});
+			sTransientPredicate, {}, null, false, function fnSubmitCallback() {});
 
 		assert.strictEqual(oCache.aElements.$created, 1);
 

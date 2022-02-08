@@ -2278,12 +2278,13 @@ sap.ui.define([
 			this.mock(oCache).expects("create")
 				.withExactArgs("groupLock", "EMPLOYEES", "TEAM_2_EMPLOYEES", sTransientPredicate,
 					sinon.match.same(oInitialData),
+					"bAtEndOfCreated",
 					sinon.match.same(fnError), sinon.match.same(fnSubmit))
 				.returns(oCreatePromise);
 
 			// code under test
 			return oBinding.createInCache("groupLock", "EMPLOYEES", "/TEAMS('1')/TEAM_2_EMPLOYEES",
-					sTransientPredicate, oInitialData, fnError, fnSubmit)
+					sTransientPredicate, oInitialData, "bAtEndOfCreated", fnError, fnSubmit)
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
@@ -2320,14 +2321,15 @@ sap.ui.define([
 			.returns("TEAM_2_EMPLOYEES");
 		this.mock(oCache).expects("create")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "TEAM_2_EMPLOYEES",
-				sTransientPredicate, sinon.match.same(oInitialData), sinon.match.same(fnError),
+				sTransientPredicate, sinon.match.same(oInitialData), "bAtEndOfCreated",
+				sinon.match.same(fnError),
 				sinon.match.same(fnSubmit))
 			.returns(oCreatePromise);
 
 		// code under test
 		return oBinding.createInCache(
 				oGroupLock, "EMPLOYEES", "/TEAMS('1')/TEAM_2_EMPLOYEES", sTransientPredicate,
-				oInitialData, fnError, fnSubmit
+				oInitialData, "bAtEndOfCreated", fnError, fnSubmit
 			).then(function (oResult) {
 				assert.strictEqual(oResult, oCreateResult);
 			});
@@ -2360,13 +2362,14 @@ sap.ui.define([
 
 		this.mock(oParentBinding).expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrderList('4711')/SO_2_SCHEDULE",
-				"/path", sTransientPredicate, oInitialData, sinon.match.same(fnError),
-				sinon.match.same(fnSubmit))
+				"/path", sTransientPredicate, oInitialData, "bAtEndOfCreated",
+				sinon.match.same(fnError), sinon.match.same(fnSubmit))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
 			oBinding.createInCache(oGroupLock, "SalesOrderList('4711')/SO_2_SCHEDULE", "/path",
-				sTransientPredicate, oInitialData, fnError, fnSubmit).getResult(), oResult);
+				sTransientPredicate, oInitialData, "bAtEndOfCreated", fnError, fnSubmit)
+				.getResult(), oResult);
 	});
 
 	//*********************************************************************************************
