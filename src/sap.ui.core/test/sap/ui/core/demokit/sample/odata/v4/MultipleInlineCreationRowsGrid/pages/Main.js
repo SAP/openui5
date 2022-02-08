@@ -38,6 +38,21 @@ sap.ui.define([
 				}
 			}
 		},
+		onTheMessagePopover : {
+			actions : {
+				close : function () {
+					this.waitFor({
+						actions : function (oMessagePopover) {
+							oMessagePopover.close();
+						},
+						controlType : "sap.m.MessagePopover",
+						success : function (aControls) {
+							Opa5.assert.strictEqual(aControls.length, 1, "Message Popover closed");
+						}
+					});
+				}
+			}
+		},
 		onTheObjectPage : {
 			actions : {
 				confirmDeletion : function () {
@@ -50,8 +65,14 @@ sap.ui.define([
 						}
 					});
 				},
-				enterPartId : function (iRow, sId) {
+				enterPartId : function (iRow, sId, bPressSave) {
 					Helper.changeInputValue(this, sViewName, /partId/, sId, iRow);
+					if (bPressSave) {
+						Helper.pressButton(this, sViewName, "save");
+					}
+				},
+				pressCancel : function (iRow) {
+					Helper.pressButton(this, sViewName, "cancel");
 				},
 				pressDeletePartButton : function (iRow) {
 					this.waitFor({
@@ -86,7 +107,14 @@ sap.ui.define([
 					});
 				},
 				checkPartsTableTitle : function (sTableTitle) {
-					Helper.checkTextValue(this, sViewName, "partCount", sTableTitle);
+					this.waitFor({
+						controlType : "sap.m.Title",
+						id : "partsTitle",
+						success : function (oTitle) {
+							Opa5.assert.ok(oTitle.getText(), sTableTitle);
+						},
+						viewName : sViewName
+					});
 				},
 				checkPart : function (iRow, sExpectedPartId, sExpectedState) {
 					Helper.waitForSortedByID(this, {

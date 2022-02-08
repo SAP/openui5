@@ -5,8 +5,9 @@
 // parameters via query options.
 sap.ui.define([
 	"sap/ui/core/sample/common/SandboxModelHelper",
-	"sap/ui/model/odata/v4/ODataModel"
-], function (SandboxModelHelper, ODataModel) {
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils"
+], function (SandboxModelHelper, ODataModel, TestUtils) {
 	"use strict";
 
 	var oMockData = {
@@ -60,6 +61,10 @@ sap.ui.define([
 	return ODataModel.extend(
 		"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.SandboxModel", {
 		constructor : function (mParameters) {
+			mParameters = SandboxModelHelper.adaptModelParameters(mParameters,
+				TestUtils.retrieveData("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
+					+ ".updateGroupId")); // updateGroupId controlled by OPA
+
 			return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
 		}
 	});

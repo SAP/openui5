@@ -33637,13 +33637,18 @@ sap.ui.define([
 	// (5) set note in third creation row -> successful POST, context not transient any more
 	//
 	// JIRA: CPOUI5ODATAV4-1264
-	QUnit.test("Multiple creation rows, grid table", function (assert) {
+	// JIRA: CPOUI5ODATAV4-1380 (allow SubmitMode.API)
+[false, true].forEach(function (bAPI) {
+	QUnit.test("Multiple creation rows, grid table, SubmitMode.API = " + bAPI, function (assert) {
 		var oBinding,
 			oContext1,
 			oContext2,
 			oContext3,
 			iEventCount = 0,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : bAPI ? "update" : undefined
+			}),
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <t:Table id="table" rows="{path : \'SO_2_SOITEM\',\
@@ -33695,7 +33700,10 @@ sap.ui.define([
 			assert.strictEqual(oContext2.isTransient(), true);
 			assert.strictEqual(oContext3.isTransient(), true);
 
-			return that.waitForChanges(assert, "(1)");
+			return Promise.all([
+				bAPI && oModel.submitBatch("update"), // no POST sent
+				that.waitForChanges(assert, "(1)")
+			]);
 		}).then(function () {
 			assert.strictEqual(oBinding.getCount(), 1);
 			assert.strictEqual(oBinding.getLength(), 4);
@@ -33733,7 +33741,10 @@ sap.ui.define([
 			assert.strictEqual(oContext1.isTransient(), true);
 			assert.strictEqual(iEventCount, 1, "createActivate was fired");
 
-			return that.waitForChanges(assert, "(2)");
+			return Promise.all([
+				bAPI && oModel.submitBatch("update"),
+				that.waitForChanges(assert, "(2)")
+			]);
 		}).then(function () {
 			assert.strictEqual(oContext1.hasPendingChanges(), true);
 			assert.strictEqual(oContext1.isInactive(), false);
@@ -33752,7 +33763,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oModel.submitBatch("$auto"),
+				oModel.submitBatch(bAPI ? "update" : "$auto"),
 				oContext1.created(),
 				that.waitForChanges(assert, "(3)")
 			]);
@@ -33796,6 +33807,7 @@ sap.ui.define([
 			assert.strictEqual(iEventCount, 2, "createActivate was fired");
 
 			return Promise.all([
+				bAPI && oModel.submitBatch("update"),
 				oContext3.created(),
 				that.waitForChanges(assert, "(5)")
 			]);
@@ -33809,6 +33821,7 @@ sap.ui.define([
 			assert.strictEqual(iEventCount, 2, "no further createActivate events");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Create a row and delete it again. Then request more data and check the count.

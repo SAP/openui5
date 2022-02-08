@@ -23,8 +23,13 @@ sap.ui.getCore().attachInit(function () {
 			QUnit.skip("Test runs only with realOData=false");
 		} else {
 			//*****************************************************************************
-			opaTest("Edit Product", function (Given, When, Then) {
+[false, true].forEach(function (bSubmitModeAPI) {
+			opaTest("Edit Product: API group: " + bSubmitModeAPI, function (Given, When, Then) {
 				var aExpectedLogs = [];
+
+				TestUtils.setData(
+					"sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.updateGroupId",
+					bSubmitModeAPI ? "update" : undefined);
 
 				When.onAnyPage.applySupportAssistant();
 				Given.iStartMyUIComponent({
@@ -37,7 +42,7 @@ sap.ui.getCore().attachInit(function () {
 
 				When.onTheListReport.selectProduct(0);
 				Then.onTheObjectPage.checkPartsLength(6);
-				Then.onTheObjectPage.checkPartsTableTitle("3 Parts");
+				Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 3 Parts");
 				Then.onTheObjectPage.checkPart(0, "1", "persisted");
 				Then.onTheObjectPage.checkPart(1, "2", "persisted");
 				Then.onTheObjectPage.checkPart(2, "3", "persisted");
@@ -46,9 +51,9 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheObjectPage.checkPart(5, "", "inactive");
 
 				// activate row 4
-				When.onTheObjectPage.enterPartId(3, "99");
+				When.onTheObjectPage.enterPartId(3, "99", bSubmitModeAPI);
 				Then.onTheObjectPage.checkPartsLength(7);
-				Then.onTheObjectPage.checkPartsTableTitle("4 Parts");
+				Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
 				Then.onTheObjectPage.checkPart(3, "99", "persisted");
 				Then.onTheObjectPage.checkPart(6, "", "inactive");
 
@@ -60,29 +65,50 @@ sap.ui.getCore().attachInit(function () {
 						+ " will be repeated automatically",
 					details : "Key exists already"
 				});
-				When.onTheObjectPage.enterPartId(4, "100");
+				When.onTheObjectPage.enterPartId(4, "100", bSubmitModeAPI);
 				Then.onTheObjectPage.checkPartsLength(8);
-				Then.onTheObjectPage.checkPartsTableTitle("5 Parts");
+				Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");
 				Then.onTheObjectPage.checkPart(4, "100", "transient");
 				Then.onTheObjectPage.checkPartIdErrorState(4, "Key exists already");
 				Then.onTheObjectPage.checkPart(7, "", "inactive");
+				When.onTheMessagePopover.close();
+				if (bSubmitModeAPI) {
+					// test selection mode NONE, try to select Product 20
+					When.onTheListReport.selectProduct(1);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");
 
-				// activate row 6
-				When.onTheObjectPage.enterPartId(5, "101");
-				Then.onTheObjectPage.checkPartsLength(9);
-				Then.onTheObjectPage.checkPartsTableTitle("6 Parts");
-				Then.onTheObjectPage.checkPart(5, "101", "persisted");
-				Then.onTheObjectPage.checkPart(8, "", "inactive");
+					// delete row 5 (has to be deleted before activating and submitting row 6)
+					When.onTheObjectPage.pressCancel();
+					Then.onTheObjectPage.checkPartsLength(7);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
+					Then.onTheObjectPage.checkPart(3, "99", "persisted");
+					Then.onTheObjectPage.checkPart(4, "", "inactive");
+					Then.onTheObjectPage.checkPart(5, "", "inactive");
+					Then.onTheObjectPage.checkPart(6, "", "inactive");
 
-				// delete row 5
-				When.onTheObjectPage.pressDeletePartButton(4);
-				When.onTheObjectPage.confirmDeletion();
-				Then.onTheObjectPage.checkPartsLength(8);
-				Then.onTheObjectPage.checkPartsTableTitle("5 Parts");
-				Then.onTheObjectPage.checkPart(4, "101", "persisted");
-				Then.onTheObjectPage.checkPart(5, "", "inactive");
-				Then.onTheObjectPage.checkPart(6, "", "inactive");
+					// activate row 6
+					When.onTheObjectPage.enterPartId(5, "101", bSubmitModeAPI);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");
+					Then.onTheObjectPage.checkPart(4, "", "inactive");
+					Then.onTheObjectPage.checkPart(5, "101", "persisted");
+					Then.onTheObjectPage.checkPart(6, "", "inactive");
+				} else {
+					// activate row 6
+					When.onTheObjectPage.enterPartId(5, "101", bSubmitModeAPI);
+					Then.onTheObjectPage.checkPartsLength(9);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 6 Parts");
+					Then.onTheObjectPage.checkPart(5, "101", "persisted");
+					Then.onTheObjectPage.checkPart(8, "", "inactive");
 
+					// delete row 5
+					When.onTheObjectPage.pressDeletePartButton(4);
+					When.onTheObjectPage.confirmDeletion();
+					Then.onTheObjectPage.checkPartsLength(8);
+					Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 5 Parts");
+					Then.onTheObjectPage.checkPart(4, "101", "persisted");
+					Then.onTheObjectPage.checkPart(5, "", "inactive");
+					Then.onTheObjectPage.checkPart(6, "", "inactive");
+				}
 				When.onTheListReport.selectProduct(1); // setContext detects no transient active
 				Then.onTheObjectPage.checkPartsLength(6);
 				Then.onTheObjectPage.checkPart(0, "201", "persisted");
@@ -112,6 +138,7 @@ sap.ui.getCore().attachInit(function () {
 				Then.onAnyPage.analyzeSupportAssistant();
 				Then.iTeardownMyUIComponent();
 			});
+});
 
 			QUnit.start();
 		}

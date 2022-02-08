@@ -4148,7 +4148,11 @@ sap.ui.define([
 	}, {
 		sGroupId : "$auto",
 		bInactive : true,
-		sTitle : "create: inactive"
+		sTitle : "create: inactive, with $auto groupId"
+	}, {
+		sGroupId : "deferred",
+		bInactive : true,
+		sTitle : "create: inactive, with deferred groupId"
 	}].forEach(function (oFixture) {
 		QUnit.test(oFixture.sTitle, function (assert) {
 			var oBinding,
@@ -4202,8 +4206,6 @@ sap.ui.define([
 					.exactly(oFixture.sGroupId === "$direct" ? 0 : 1)
 					.returns(oFixture.sGroupId === "$auto");
 				oBindingMock.expects("getUpdateGroupId").withExactArgs().returns(oFixture.sGroupId);
-				oModelMock.expects("isAutoGroup").exactly(oFixture.bInactive ? 1 : 0)
-					.withExactArgs(oFixture.sGroupId).returns(true);
 				oBindingMock.expects("lockGroup")
 					.withExactArgs(oFixture.bInactive
 							? "$inactive." + oFixture.sGroupId
@@ -4493,22 +4495,6 @@ sap.ui.define([
 		assert.throws(function () {
 			oBinding.create({}, false, false, true);
 		}, new Error("Missing $$ownRequest at " + oBinding));
-
-		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("create: bInactive for non-auto groups", function (assert) {
-		var oBinding = this.bindList("/TEAMS");
-
-		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~update~");
-		this.mock(this.oModel).expects("isAutoGroup").withExactArgs("~update~").returns(false);
-
-		// code under test
-		assert.throws(function () {
-			oBinding.create({}, false, false, true);
-		}, new Error("bInactive only supported for update group with SubmitMode.Auto: "
-			+ oBinding));
 
 		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
 	});

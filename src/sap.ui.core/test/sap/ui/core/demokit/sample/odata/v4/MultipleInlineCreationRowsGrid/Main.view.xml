@@ -12,6 +12,10 @@
 		<Toolbar>
 			<Button enabled="true" icon="sap-icon://refresh" id="refresh"
 				press="onRefresh" tooltip="Refresh"/>
+			<Button id="save" text="Save" press="onSave" visible="{ui>/bAPI}"
+				tooltip="Save changes"/>
+			<Button id="cancel" text="Cancel" press="onCancel" visible="{ui>/bAPI}"
+				tooltip="Reset changes"/>
 			<BusyIndicator text="{ui>/sActivity}" visible="{= !!${ui>/sActivity} }"/>
 			<ToolbarSpacer/>
 			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
@@ -29,7 +33,13 @@
 							$$patchWithoutSideEffects : true,
 							$select : ['HasDraftEntity']
 						}
-					}" mode="SingleSelectMaster" selectionChange="onSelectProduct">
+					}" mode="{= ${ui>/iActive} ? 'None' : 'SingleSelectMaster'}"
+					selectionChange="onSelectProduct">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="Products" titleStyle="H3"/>
+						</Toolbar>
+					</headerToolbar>
 					<columns>
 						<Column width="3em">
 							<Text text="ID"/>
@@ -59,7 +69,8 @@
 							visibleRowCount="20">
 						<t:extension>
 							<Toolbar design="Transparent" class="sapMTBHeader-CTX">
-								<Text id="partCount" text="{headerContext>$count} Parts"/>
+								<Title id="partsTitle"
+									text="Product: {ID}, {headerContext>$count} Parts"/>
 							</Toolbar>
 						</t:extension>
 						<t:columns>

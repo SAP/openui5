@@ -808,8 +808,6 @@ sap.ui.define([
 	 *     <li> entities are created both at the start and at the end,
 	 *     <li> <code>bAtEnd</code> is <code>true</code> and the binding does not know the final
 	 *       length,
-	 *     <li> <code>bInactive</code> is <code>true</code> and the update group ID does not have
-	 *       {@link sap.ui.model.odata.v4.SubmitMode.Auto}.
 	 *     <li> <code>bInactive</code> is <code>true</code>, the list binding is relative and does
 	 *       not use the <code>$$ownRequest</code> parameter
 	 *       (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
@@ -846,10 +844,6 @@ sap.ui.define([
 		if (bInactive) {
 			if (this.isRelative() && !this.mParameters.$$ownRequest) {
 				throw new Error("Missing $$ownRequest at " + this);
-			}
-			if (!this.oModel.isAutoGroup(sGroupId)) {
-				throw new Error("bInactive only supported for update group with SubmitMode.Auto: "
-					+ this);
 			}
 			sGroupId = "$inactive." + sGroupId;
 		} else {
