@@ -173,6 +173,10 @@ sap.ui.define([
 					"sap.ui.webc.main.Slider": {
 						"hideControl": "default",
 						"unhideControl": "default"
+					},
+					"sap.ui.webc.main.Table": {
+						"hideControl": "default",
+						"unhideControl": "default"
 					}
 				}
 			}
