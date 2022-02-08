@@ -997,13 +997,19 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesInDependents
 	 */
-	ODataParentBinding.prototype.hasPendingChangesInDependents = function (bIgnoreKeptAlive) {
+	ODataParentBinding.prototype.hasPendingChangesInDependents = function (bIgnoreKeptAlive0) {
 		return this.getDependentBindings().some(function (oDependent) {
 			var oCache = oDependent.oCache,
-				bHasPendingChanges;
+				bHasPendingChanges,
+				bIgnoreKeptAlive = bIgnoreKeptAlive0; // new copy for this dependent only
 
-			if (bIgnoreKeptAlive && oDependent.oContext.isKeepAlive()) {
-				return false;
+			if (bIgnoreKeptAlive) {
+				if (oDependent.oContext.isKeepAlive()) {
+					return false; // changes can be safely ignored here
+				}
+				if (oDependent.oContext.getIndex() !== undefined) {
+					bIgnoreKeptAlive = false; // context of ODLB which is not kept alive: unsafe!
+				}
 			}
 			if (oCache !== undefined) {
 				// Pending changes for this cache are only possible when there is a cache already
