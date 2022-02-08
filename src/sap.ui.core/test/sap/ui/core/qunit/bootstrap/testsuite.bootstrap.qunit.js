@@ -271,6 +271,9 @@ sap.ui.define(function() {
 					logLevel: "WARNING",
 					noConflict: "true",
 					libs: "sap.ui.core"
+				},
+				qunit: {
+					reorder: false
 				}
 			},
 			"PreloadCfg-optimized-ui5loader-async": {
