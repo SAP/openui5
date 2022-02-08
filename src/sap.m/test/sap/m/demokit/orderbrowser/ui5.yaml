@@ -1,4 +1,4 @@
-specVersion: '1.0'
+specVersion: '2.6'
 metadata:
   name: BrowseOrders
 type: application
