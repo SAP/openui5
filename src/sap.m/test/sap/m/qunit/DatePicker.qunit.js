@@ -1054,6 +1054,85 @@ sap.ui.define([
 		oGetDateValue.restore();
 	});
 
+	QUnit.test("Year and year range pickers are correctly managed when the year is the first one available", function (assert) {
+		var oCalendar;
+
+		// prepare
+		this.oDp.setMaxDate(new Date(2020, 0, 1));
+
+		// act
+		this.oDp.toggleOpen();
+		oCalendar = this.oDp._getCalendar();
+		oCalendar._showYearPicker();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error and year picker is opened");
+		assert.deepEqual(oCalendar.getAggregation("header").getTextButton2(), "2010 - 2029", "text is correct");
+		assert.deepEqual(oCalendar._getYearPicker()._iSelectedIndex, 10, "Focus is correct");
+
+		// act
+		oCalendar._showYearRangePicker();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error and year range picker is opened");
+		assert.deepEqual(oCalendar._getYearRangePicker()._iSelectedIndex, 4, "Focus is correct");
+
+		// act
+		oCalendar._selectYearRange();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error after selection and year picker is opened");
+
+		// act
+		oCalendar._selectYear();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error after selection and year picker is closed");
+	});
+
+	QUnit.test("Year and year range pickers are correctly managed when the year is the last one available", function (assert) {
+		var oCalendar;
+
+		// prepare
+		this.oDp.setMinDate(new Date(9999, 11, 1));
+
+		// act
+		this.oDp.toggleOpen();
+		oCalendar = this.oDp._getCalendar();
+		oCalendar._showYearPicker();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error and year picker is opened");
+		assert.deepEqual(oCalendar.getAggregation("header").getTextButton2(), "9980 - 9999", "text is correct");
+		assert.deepEqual(oCalendar._getYearPicker()._iSelectedIndex, 19, "Focus is correct");
+
+		// act
+		oCalendar._showYearRangePicker();
+		oCore.applyChanges();
+
+		assert.ok(true, "There is no thrown error and year range picker is opened");
+		assert.deepEqual(oCalendar._getYearRangePicker()._iSelectedIndex, 8, "Focus is correct");
+
+		// act
+		oCalendar._selectYearRange();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error after selection and year picker is opened");
+
+		// act
+		oCalendar._selectYear();
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(true, "There is no thrown error after selection and year picker is closed");
+	});
+
 
 	QUnit.module("interaction");
 
@@ -1377,9 +1456,9 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DP3-icon"); //to load the picker and initialize the calendar
 		oDP3._fillDateRange();
 		//Assert
-		var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
+		var oNewMaxDateUTC = new Date(Date.UTC(oNewMaxDate.getFullYear(), oNewMaxDate.getMonth(), oNewMaxDate.getDate()));
 		var oFocusedDate = oDP3._getCalendar()._getFocusedDate().toUTCJSDate();
-		assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DP3: focused date equals min date when current dateValue out of min/max range");
+		assert.equal(oFocusedDate.toString(), oNewMaxDateUTC.toString(), "DP3: focused date equals max date when current dateValue is past and out of min/max range");
 
 		//Cleanup
 		qutils.triggerEvent("mousedown", "DP3-icon");
@@ -1390,10 +1469,10 @@ sap.ui.define([
 		oDP3._fillDateRange();
 
 		//Assert
-		var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
+		oNewMaxDateUTC = new Date(Date.UTC(oNewMaxDate.getFullYear(), oNewMaxDate.getMonth(), oNewMaxDate.getDate()));
 		oFocusedDate = oDP3._getCalendar()._getFocusedDate().toUTCJSDate();
-		assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DP3: focused date equals min date when" +
-			" current <dateValue> is null");
+		assert.equal(oFocusedDate.toString(), oNewMaxDateUTC.toString(), "DP3: focused date equals max date when" +
+			" current <dateValue> is null and the allowed date range is passed");
 
 		//Prepare
 		oSpyLogError.resetHistory();
@@ -1522,7 +1601,7 @@ sap.ui.define([
 		oDP.focus();
 		qutils.triggerEvent("click", sIconId);
 		//Assert
-		assert.equal(oDP._getCalendar()._getFocusedDate().toLocalJSDate().toString(), oDP._getCalendar().getMinDate().toString(),
+		assert.equal(oDP._getCalendar()._getFocusedDate().toLocalJSDate().toString(), oDP._getCalendar().getMaxDate().toString(),
 			".. should focus a date equal to the <minDate>");
 
 		//Cleanup

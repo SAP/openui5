@@ -323,10 +323,10 @@ sap.ui.define([
 
 	QUnit.test("opening picker when current values are outside min/max range", function(assert) {
 		//Prepare
-		var oMinDate = new Date(2014,0,1),
+		var oMaxDate = new Date(2014,0,1),
 			oDRS = new DateRangeSelection({
-			minDate: oMinDate,
-			maxDate: new Date(2014,11,31)
+			minDate: new Date(2014,0,1),
+			maxDate: oMaxDate
 		});
 		oDRS.setDateValue(new Date(2001, 0, 1));
 		oDRS.setSecondDateValue(new Date(2001, 0, 10));
@@ -339,10 +339,10 @@ sap.ui.define([
 		oDRS._fillDateRange();
 
 		//Assert
-		var oNewMinDateUTC = new Date(Date.UTC(oMinDate.getFullYear(), oMinDate.getMonth(), oMinDate.getDate()));
+		var oNewMaxDateUTC = new Date(Date.UTC(oMaxDate.getFullYear(), oMaxDate.getMonth(), oMaxDate.getDate()));
 		var oFocusedDate = oDRS._oCalendar._getFocusedDate().toUTCJSDate();
 		var aSelectedDates = oDRS._oCalendar.getSelectedDates();
-		assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DRS: focused date equals min date " +
+		assert.equal(oFocusedDate.toString(), oNewMaxDateUTC.toString(), "DRS: focused date equals min date " +
 			"when current dateValue & secondDateValue  are out of min/max range");
 		assert.equal(aSelectedDates[0].getStartDate(), undefined, "DRS: has empty selection's startDate when current dateValue & secondDateValue " +
 			"are out of min/max range");

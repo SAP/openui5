@@ -42,6 +42,8 @@ sap.ui.define([
 		var oDate = oYRP.getProperty("_middleDate") ? oYRP.getProperty("_middleDate") : oYRP._getDate(),
 			oSelectedDate = new CalendarDate(oDate, oYRP.getPrimaryCalendarType()),
 			oFirstDate = new CalendarDate(oSelectedDate, oYRP.getPrimaryCalendarType()),
+			oMinYear = CalendarUtils._minDate(oYRP.getProperty("primaryCalendarType")).getYear(),
+			oMaxYear = CalendarUtils._maxDate(oYRP.getProperty("primaryCalendarType")).getYear(),
 			oSecondDate,
 			sFirstYear = "",
 			sSecondYear = "",
@@ -53,7 +55,12 @@ sap.ui.define([
 
 		oFirstDate.setYear(oFirstDate.getYear() - Math.floor(oYRP.getRangeSize() / 2));
 		oFirstDate.setYear(oFirstDate.getYear() - Math.floor(iYears / 2) * oYRP.getRangeSize());
-		oFirstDate = oYRP._checkFirstDate(oFirstDate);
+
+		if (oFirstDate.getYear() < oMinYear) {
+			oFirstDate.setYear(oMinYear);
+		} else if (oFirstDate.getYear() > oMaxYear - iYears) {
+			oFirstDate.setYear(oMaxYear - Math.floor(iYears) * oYRP.getRangeSize() + 1);
+		}
 
 		oSecondDate = new CalendarDate(oFirstDate, oYRP.getPrimaryCalendarType());
 		oSecondDate.setYear(oSecondDate.getYear() + oYRP.getRangeSize() - 1);
