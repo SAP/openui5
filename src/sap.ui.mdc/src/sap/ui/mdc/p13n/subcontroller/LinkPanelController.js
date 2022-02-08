@@ -38,6 +38,7 @@ sap.ui.define([
 
     LinkPanelController.prototype.getAdaptationUI = function(oPropertyHelper) {
         var oSelectionPanel = new SelectionPanel({
+            showHeader: true,
             fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
             enableCount: true,
             linkPressed: this._onLinkPressed.bind(this)
