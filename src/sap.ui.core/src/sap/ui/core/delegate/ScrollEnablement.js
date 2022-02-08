@@ -244,7 +244,10 @@ sap.ui.define([
 					$OffsetParent = $Element.offsetParent(),
 					oAddUpPosition;
 
-				while (!$OffsetParent.is(this._$Container)) {
+				// Not positioned elements (position = "unset" or "fixed") are skipped and not returned as offsetParent.
+				// If the this._$Container is not positioned this function ends in infinite loop.
+				// Last value returned from offsetParent is the root html element or null.
+				while (!$OffsetParent.is(this._$Container) && !$OffsetParent.is("html") && $OffsetParent.length) {
 					oAddUpPosition = $OffsetParent.position();
 					oElementPosition.top += oAddUpPosition.top;
 					oElementPosition.left += oAddUpPosition.left;
