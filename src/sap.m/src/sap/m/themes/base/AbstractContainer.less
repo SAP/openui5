@@ -21,9 +21,8 @@
 	flex-direction: column;
 
 	&>section {
-		flex-grow: 1;
-		position: unset;
-		top: 0;
+		position: relative;
+		top: 0 !important; // we need to overwrite the top argument for a section when using the AbstractContainer, otherwise top is overriden by other styles
 	}
 
 	>footer:not(.sapUiHidden) {
