@@ -1263,5 +1263,21 @@
         ]
       }
     ]
+  },
+  "1.71.43": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "b93025d260a6df7f6dcb9f3d70fde8e7df85da7f",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: clean up the previous tap handler on new mousedown event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080020695"
+          }
+        ]
+      }
+    ]
   }
 }
