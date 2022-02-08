@@ -30,9 +30,18 @@
 	}
 }
 
+.sapFDynamicPageTitleWrapper {
+	position: absolute;
+	padding-right: 0;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 2;
+}
+
 html[data-sap-ui-browser^="ff"].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 	 .sapFDynamicPageTitleWrapper {
-		padding-right: 17px;
+		right: 17px;
 	}
 
 	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
@@ -186,7 +195,7 @@ html[data-sap-ui-browser^="ie"] {
 
 html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 	.sapFDynamicPageTitleWrapper {
-		padding-right: 12px;
+		right: 12px;
 	}
 
 	.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl {
