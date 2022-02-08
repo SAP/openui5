@@ -36,6 +36,7 @@ sap.ui.define([
 			oFieldInfoBase = new FieldInfoBase("F1-I", {
 				dataUpdate: _myDataUpdateHandler
 			});
+			sinon.stub(oFieldInfoBase, "checkDirectNavigation").returns(Promise.resolve(false));
 			oField.addDependent(oFieldInfoBase);
 			oCore.applyChanges();
 		},
@@ -149,6 +150,7 @@ sap.ui.define([
 			oFieldInfoBase = new CustomFieldInfo("F1-I", {
 				dataUpdate: _myDataUpdateHandler
 			});
+			sinon.stub(oFieldInfoBase, "checkDirectNavigation").returns(Promise.resolve(false));
 			oField.addDependent(oFieldInfoBase);
 			oCore.applyChanges();
 		},

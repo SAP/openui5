@@ -313,6 +313,7 @@ sap.ui.define([
 		};
 	};
 
+	/* Not needed as we navigate directly in case of a mdc.Link as FieldInfo. Keeping the coding in as we might implement other FieldInfos in the future.
 	QUnit.test("item: with 'text'", function(assert) {
 		enableFakeFlpConnector({});
 		var oField = this.oField;
@@ -349,6 +350,7 @@ sap.ui.define([
 			}, 100);
 		});
 	});
+	*/
 
 	QUnit.test("content", function(assert) {
 		enableFakeFlpConnector({});

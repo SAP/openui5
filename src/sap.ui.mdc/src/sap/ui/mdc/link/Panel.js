@@ -164,25 +164,26 @@ sap.ui.define([
 			oEvent.preventDefault();
 			this.getBeforeNavigationCallback()(oEvent).then(function(bNavigate) {
 				if (bNavigate) {
-					this.navigate(sHref);
+					Panel.navigate(sHref);
 				}
-			}.bind(this));
+			});
 		}
 	};
 
-	Panel.prototype.navigate = function(sHref) {
+	Panel.oNavigationPromise = undefined;
+
+	Panel.navigate = function(sHref) {
 		if (sHref.indexOf("#") === 0 && sap.ushell && sap.ushell.Container && sap.ushell.Container.getServiceAsync) {
 			// if we are inside a FLP -> navigate with CrossApplicationNavigation
-			var that = this;
-			if (!that.oNavigationPromise) {
-				that.oNavigationPromise = sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {
+			if (!Panel.oNavigationPromise) {
+				Panel.oNavigationPromise = sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then(function (oCrossApplicationNavigation) {
 					oCrossApplicationNavigation.toExternal({
 						target: {
 							// navigate to href without #
 							shellHash: sHref.substring(1)
 						}
 					});
-					that.oNavigationPromise = undefined;
+					Panel.oNavigationPromise = undefined;
 				});
 			}
 		} else {

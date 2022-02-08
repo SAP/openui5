@@ -13,7 +13,7 @@ sap.ui.define([
     var aLinkItems = [
         new LinkItem({
             text: "testLInkItem",
-            href: "",
+            href: window.location.href + "#Link1",
             initiallyVisible: true
         })
     ];
