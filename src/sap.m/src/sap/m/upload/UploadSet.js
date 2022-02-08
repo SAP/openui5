@@ -565,10 +565,15 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-        var oListItem;
+        var oListItem,oItems;
         Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
-        if (oObject && (sAggregationName === "items" || sAggregationName === "incompleteItems")) {
-            oListItem = oObject._getListItem();
+        if (sAggregationName === "items" || sAggregationName === "incompleteItems") {
+			if (typeof oObject === 'number') { // "oObject" is the index now
+				oItems = this.getItems();
+				oListItem = oItems[oObject];
+			} else if (typeof oObject === 'object') { // the object itself is given or has just been retrieved
+				oListItem = oObject._getListItem();
+			}
             var oItem = this.getList().removeAggregation("items", oListItem, bSuppressInvalidate);
             if (oItem && oObject) {
                 oObject.destroy();
