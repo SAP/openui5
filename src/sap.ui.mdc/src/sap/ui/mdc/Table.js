@@ -38,7 +38,10 @@ sap.ui.define([
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/m/ColumnPopoverActionItem",
 	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController",
-	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
+	"sap/ui/mdc/table/RowActionItem",
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/mdc/table/RowSettings"
 ], function(
 	Control,
 	ActionToolbar,
@@ -75,7 +78,10 @@ sap.ui.define([
 	ColumnPopoverSelectListItem,
 	ColumnPopoverActionItem,
 	ColumnWidthController,
-	ActionToolbarAction
+	ActionToolbarAction,
+	RowActionItem,
+	ManagedObjectMetadata,
+	RowSettings
 ) {
 	"use strict";
 
@@ -158,6 +164,7 @@ sap.ui.define([
 				 * Actions available for a table row.
 				 *
 				 * @since 1.60
+				 * @deprecated as of version 1.98, use row settings instead.
 				 */
 				rowAction: {
 					type: "sap.ui.mdc.RowAction[]",
@@ -871,10 +878,11 @@ sap.ui.define([
 
 		if (this._oTable) {
 			// Apply the new setting to the existing table
+			this._oRowActions = {};
 			if (this._isOfType(TableType.ResponsiveTable)) {
-				ResponsiveTableType.updateRowSettings(this._oTemplate, oRowSettings);
+				ResponsiveTableType.updateRowSettings(this, oRowSettings, this._onResponsiveRowActionPress);
 			} else {
-				GridTableType.updateRowSettings(this._oTable, oRowSettings);
+				GridTableType.updateRowSettings(this._oTable, oRowSettings, [this._onRowActionPress, this]);
 			}
 
 			this._bForceRebind = true;
@@ -940,14 +948,19 @@ sap.ui.define([
 		return this;
 	};
 
+	// TODO: Temporary solution until apps adapted changes. Remove this, as this is replaced by rowSettings
 	Table.prototype.setRowAction = function(aActions) {
-		var aOldActions = this.getRowAction();
-
 		this.setProperty("rowAction", aActions, true);
 
-		if (!deepEqual(aOldActions.sort(), this.getRowAction().sort())) {
-			this._updateRowAction();
+		var oRowSettings = this.getRowSettings() || new RowSettings();
+
+		oRowSettings.removeAllAggregation("rowActions");
+		if (this.getRowAction().indexOf(RowAction.Navigation) > -1) {
+			oRowSettings.addRowAction(new RowActionItem({
+				type: RowAction.Navigation
+			}));
 		}
+		this.setRowSettings(oRowSettings);
 
 		return this;
 	};
@@ -1288,10 +1301,9 @@ sap.ui.define([
 		if (!this._oTable) {
 			return;
 		}
-		var bNavigation = this.getRowAction().indexOf(RowAction.Navigation) > -1;
 		var oType = this._bMobileTable ? ResponsiveTableType : GridTableType;
 		// For ResponsiveTable itemPress event is registered during creation
-		oType.updateRowAction(this, bNavigation, this._bMobileTable ? undefined : this._onRowActionPress);
+		oType.updateRowActions(this, this.getRowSettings(), this._bMobileTable ? this._onResponsiveRowActionPress : this._onRowActionPress);
 	};
 
 	Table.prototype._initializeContent = function() {
@@ -2350,6 +2362,7 @@ sap.ui.define([
 		this.fireRowPress({
 			bindingContext: oEvent.getParameter("listItem").getBindingContext()
 		});
+		ResponsiveTableType._onRowActionPress.apply(this, [oEvent]);
 	};
 
 	Table.prototype._onSelectionChange = function(oEvent) {
@@ -2386,13 +2399,6 @@ sap.ui.define([
 	Table.prototype._onCellClick = function(oEvent) {
 		this.fireRowPress({
 			bindingContext: oEvent.getParameter("rowBindingContext")
-		});
-	};
-
-	Table.prototype._onRowActionPress = function(oEvent) {
-		var oRow = oEvent.getParameter("row");
-		this.fireRowPress({
-			bindingContext: oRow.getBindingContext()
 		});
 	};
 

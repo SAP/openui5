@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/mdc/sample/controller/Controller.controller",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Core",
@@ -12,6 +12,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.sample.ResponsiveTable.Controller", {
 
 		onInit: function() {
+			Controller.prototype.onInit.apply(this, arguments);
 			this.oDataStatePlugin = this.byId("dataStatePlugin");
 			this.oMessageManager = oCore.getMessageManager();
 			this.oMessageManager.registerObject(this.getView(), true);

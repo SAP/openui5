@@ -9,7 +9,6 @@ sap.ui.define([
 
 	var InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerMultiSelectionPlugin, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
 	var RowCountMode = library.RowCountMode;
-	var RowAction = library.RowAction;
 
 	/**
 	 * Constructor for a new <code>GridTableType</code>.
@@ -166,15 +165,6 @@ sap.ui.define([
 		return oColumn;
 	};
 
-	GridTableType.createNavigationRowAction = function(sIdPrefix, aEventInfo) {
-		return new InnerRowAction(sIdPrefix + "--rowAction", {
-			items: new InnerRowActionItem(sIdPrefix + "--rowActionItem", {
-				type: RowAction.Navigation,
-				press: aEventInfo
-			})
-		});
-	};
-
 	GridTableType.createMultiSelectionPlugin = function(oTable, aEventInfo) {
 		return new InnerMultiSelectionPlugin(oTable.getId() + "--multiSelectPlugin", {
 			selectionMode: TableTypeBase.getSelectionMode(oTable),
@@ -206,14 +196,7 @@ sap.ui.define([
 		oTable._oTable.getPlugins()[0].setSelectionMode(sSelectionMode);
 	};
 
-	GridTableType.updateNavigation = function(oTable, fnRowActionPress) {
-		oTable._oTable.setRowActionTemplate(this.createNavigationRowAction(oTable.getId(), [
-			fnRowActionPress, oTable
-		]));
-		oTable._oTable.setRowActionCount(1);
-	};
-
-	GridTableType.clearNavigation = function(oTable) {
+	GridTableType.removeRowActions = function(oTable) {
 		var oInnerRowAction = oTable._oTable.getRowActionTemplate();
 		if (oInnerRowAction) {
 			oInnerRowAction.destroy();
@@ -222,20 +205,79 @@ sap.ui.define([
 		oTable._oTable.setRowActionCount();
 	};
 
-	GridTableType.updateRowAction = function(oTable, bNavigation, fnRowActionPress) {
-		this.clearNavigation(oTable);
-		if (bNavigation) {
-			this.updateNavigation(oTable, fnRowActionPress);
-		}
-	};
-
-	GridTableType.updateRowSettings = function(oTable, oRowSettings) {
+	GridTableType.updateRowSettings = function(oTable, oRowSettings, fnRowActionPress) {
 		var oInnerRowSettings = new InnerRowSettings(undefined, oRowSettings.getAllSettings());
-
+		this.updateRowActions(oTable.getParent(), oRowSettings, fnRowActionPress);
 		oTable.getRowSettingsTemplate().destroy();
 		oTable.setRowSettingsTemplate(oInnerRowSettings);
 	};
 
+	GridTableType.updateRowActions = function (oTable, oRowSettings) {
+		this.removeRowActions(oTable);
+		if (!oRowSettings) {
+			return;
+		}
+		if (!oRowSettings.isBound("rowActions") && (!oRowSettings.getRowActions() || oRowSettings.getRowActions().length == 0)) {
+			return;
+		}
+
+		var oRowActions = oRowSettings.getAllActions();
+		if ("templateInfo" in oRowActions) {
+			var oTemplateInfo = oRowActions.templateInfo;
+			// Set template for inner row actions using temporary metadata
+			oRowActions.items.template = new InnerRowActionItem({
+				type: oTemplateInfo.type,
+				visible: oTemplateInfo.visible,
+				icon: oTemplateInfo.icon,
+				text: oTemplateInfo.text,
+				press: [this._onRowActionPress, oTable]
+			});
+			// Remove temporary metadata from row actions object
+			delete oRowActions.templateInfo;
+		} else {
+			oRowActions.items = oRowActions.items.map(function (oRowActionItem) {
+				var oInnerRowActionItem = new InnerRowActionItem({
+					type: oRowActionItem.isBound("type") ? oRowActionItem.getBindingInfo("type") : oRowActionItem.getType(),
+					visible: oRowActionItem.isBound("visible") ? oRowActionItem.getBindingInfo("visible") : oRowActionItem.getVisible(),
+					icon: oRowActionItem.isBound("icon") ? oRowActionItem.getBindingInfo("icon") : oRowActionItem._getIcon(),
+					text: oRowActionItem.isBound("text") ? oRowActionItem.getBindingInfo("text") : oRowActionItem._getText(),
+					press: [this._onRowActionPress, oTable]
+				});
+				// Add custom data for MDC row action, so original is retrievable from inner row action item
+				oInnerRowActionItem.data("rowAction", oRowActionItem);
+				return oInnerRowActionItem;
+			}, this);
+		}
+
+		var oInnerRowAction = new InnerRowAction(oTable.getId() + "--rowAction", oRowActions);
+		oTable._oTable.setRowActionTemplate(oInnerRowAction);
+		oTable._oTable.setRowActionCount(oRowSettings.getRowActionCount());
+	};
+
+	GridTableType._onRowActionPress = function (oEvent) {
+		var oInnerRowActionItem = oEvent.getParameter("item");
+		var oRowActionsInfo = this.getRowSettings().getAllActions();
+
+		if (this.getRowSettings().isBound("rowActions")) {
+			var sActionModel = oRowActionsInfo.items.model;
+			var oActionContext = oInnerRowActionItem.getBindingContext(sActionModel);
+
+			// Create a one time clone for the MDC RowAction and 'switch' binding context based on press action
+			if (!this._oRowActionItem) {
+				this._oRowActionItem = oRowActionsInfo.items.template.clone();
+			}
+			this._oRowActionItem.setBindingContext(oActionContext, oRowActionsInfo.items.model);
+
+			// Set model for row settings, as it is not propagated
+			this._oRowActionItem.setModel(this.getModel(sActionModel), sActionModel);
+			this.getRowSettings().addDependent(this._oRowActionItem);
+		} else {
+			this._oRowActionItem = oInnerRowActionItem.data("rowAction");
+		}
+		this._oRowActionItem.firePress({
+			bindingContext: oEvent.getParameter("row").getBindingContext()
+		});
+	};
 
 	return GridTableType;
 });
