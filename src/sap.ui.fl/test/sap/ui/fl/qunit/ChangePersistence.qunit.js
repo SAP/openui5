@@ -1332,7 +1332,7 @@ sap.ui.define([
 			});
 			var oCustomerChange = new Change({
 				layer: Layer.CUSTOMER,
-				fileName: "2"
+				fileName: "3"
 			});
 			this.oChangePersistence.addDirtyChange(oVendorChange);
 			this.oChangePersistence.addDirtyChange(oUserChange);
@@ -1349,6 +1349,29 @@ sap.ui.define([
 						"only one change remains in the ChangePersistence"
 					);
 				}.bind(this));
+		});
+
+		QUnit.test("when calling removeDirtyChanges without any layer specified", function(assert) {
+			var oVendorChange = new Change({
+				layer: Layer.VENDOR,
+				fileName: "1"
+			});
+			var oUserChange = new Change({
+				layer: Layer.USER,
+				fileName: "2"
+			});
+			var oCustomerChange = new Change({
+				layer: Layer.CUSTOMER,
+				fileName: "3"
+			});
+			this.oChangePersistence.addDirtyChange(oVendorChange);
+			this.oChangePersistence.addDirtyChange(oUserChange);
+			this.oChangePersistence.addDirtyChange(oCustomerChange);
+
+			return this.oChangePersistence.removeDirtyChanges()
+				.then(function(aChangesToBeRemoved) {
+					assert.strictEqual(aChangesToBeRemoved.length, 3, "all changes are removed");
+				});
 		});
 
 		QUnit.test("when calling removeDirtyChanges with a generator and a change is in a different layer", function(assert) {

@@ -958,10 +958,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes unsaved changes and reverts these.
+	 * Removes unsaved changes.
 	 *
-	 * @param {string|string[]} vLayer - Layer or multiple layers for which changes shall be deleted
-	 * @param {sap.ui.core.Component} oComponent - Component instance
+	 * @param {string|string[]} [vLayer] - Layer or multiple layers for which changes shall be deleted. If omitted, changes on all layers are considered.
+	 * @param {sap.ui.core.Component} [oComponent] - Component instance, required if oControl is specified
 	 * @param {string} [oControl] - Control for which the changes should be deleted. If omitted, all changes for the app component are considered.
 	 * @param {string} [sGenerator] - Generator of changes (optional)
 	 * @param {string[]} [aChangeTypes] - Types of changes (optional)
@@ -969,13 +969,13 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves after the deletion took place
 	 */
 	ChangePersistence.prototype.removeDirtyChanges = function(vLayer, oComponent, oControl, sGenerator, aChangeTypes) {
-		var aLayers = [].concat(vLayer);
+		var aLayers = [].concat(vLayer || []);
 		var aDirtyChanges = this._aDirtyChanges;
 
 		var aChangesToBeRemoved = aDirtyChanges.filter(function (oChange) {
 			var bChangeValid = true;
 
-			if (!aLayers.includes(oChange.getLayer())) {
+			if (aLayers.length && !aLayers.includes(oChange.getLayer())) {
 				return false;
 			}
 
