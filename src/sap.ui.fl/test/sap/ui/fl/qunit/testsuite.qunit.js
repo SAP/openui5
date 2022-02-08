@@ -307,6 +307,18 @@ sap.ui.define([
 					}
 				}
 			},
+			"apply/_internal/flexObjects/FlexObject": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/FlexObject.js"]
+				}
+			},
+			"apply/_internal/flexObjects/FlexObjectFactory": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"]
+				}
+			},
 			"apply/_internal/flexObjects/CompVariant": {
 				group: "Apply Internal",
 				coverage: {
