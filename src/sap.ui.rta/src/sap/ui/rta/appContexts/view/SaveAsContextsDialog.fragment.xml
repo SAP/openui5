@@ -41,7 +41,7 @@
 								required="true"
 								id="savecontextdialog-title-label"
 								labelFor="savecontextdialog-title-input"
-								text="{i18n>MAA_DIALOG_TITLE}"/>
+								text="{i18n>APP_CONTEXT_TITLE}"/>
 							<Input
 								id="savecontextdialog-title-input"
 								value="{title}"

@@ -191,6 +191,8 @@ sap.ui.define(
 
 			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRoles("/TEST/ROLE/HGWRTS_TST");
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnRemoveRoleButton("/TEST/ROLE/HGWRTS_TST");
+			When.onTheContextSharingVisibilityFragmentPage.iSelectRadioButton(testData.radioButtons.onlyForSpecificUsers);
+			Then.onTheContextSharingVisibilityFragmentPage.iShouldSeeSelectedRolesSection();
 			When.onTheContextSharingVisibilityFragmentPage.iClickOnAddRoleButton();
 
 			Then.onTheAppContextRoleDialogPage.iShouldSeeRoleDialog();
