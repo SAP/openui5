@@ -36340,11 +36340,13 @@ sap.ui.define([
 	// items table is not kept-alive, but one of the items contexts is. Pending change in there must
 	// not be ignored when filtering etc. in list report.
 	// JIRA: CPOUI5ODATAV4-1104
+	//
+	// A transient item must also not be ignored by the list report (JIRA: CPOUI5ODATAV4-1409)
 	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - do not ignore indirect kept-alive", function (assert) {
 		var oItemsTableBinding,
 			oKeptAliveItem,
 			oListReportBinding,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "update"}),
 			oSetPropertyPromise,
 			sView = '\
 <Table id="listReport" items="{/SalesOrderList}">\
@@ -36414,6 +36416,20 @@ sap.ui.define([
 			return Promise.all([
 				checkCanceled(assert, oSetPropertyPromise),
 				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oTransientItem = oItemsTableBinding.create({ItemPosition : "0000"});
+
+			assert.strictEqual(oTransientItem.hasPendingChanges(), true);
+			assert.strictEqual(oItemsTableBinding.hasPendingChanges(), true);
+			assert.strictEqual(oItemsTableBinding.hasPendingChanges(true), false);
+			assert.strictEqual(oListReportBinding.hasPendingChanges(), true);
+			// code under test (JIRA: CPOUI5ODATAV4-1409)
+			assert.strictEqual(oListReportBinding.hasPendingChanges(true), true, "do not ignore!");
+
+			return Promise.all([
+				oTransientItem.delete(), // cleanup
+				checkCanceled(assert, oTransientItem.created())
 			]);
 		});
 	});
@@ -37410,7 +37426,7 @@ sap.ui.define([
 			oTable,
 			sTeams = bRelative ? "Departments(Sector='EMEA',ID='UI5')/DEPARTMENT_2_TEAMS" : "TEAMS",
 			sView = bRelative ? '\
-<FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}" id="objectPage">\
+<FlexBox binding="{/Departments(Sector=\'EMEA\',ID=\'UI5\')}">\
 	<FlexBox binding="{}">\
 		<t:Table id="table"\
 			rows="{parameters : {$$ownRequest : true}, path : \'DEPARTMENT_2_TEAMS\'}"\
