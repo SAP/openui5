@@ -9,7 +9,7 @@ sap.ui.define([
 		"sap/ui/webc/common/library",
 		"sap/ui/webc/common/thirdparty/base/CSP",
 		"./thirdparty/Assets",
-		"./LibraryConfiguration"
+		"./library.config"
 	], // library dependency
 	function(commonLibrary, CSP) {
 
