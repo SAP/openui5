@@ -16,6 +16,8 @@ sap.ui.define([], function () {
 			 * Denotes the Visual Editor for the manifest (BAS editor)
 			 */
 			VISUAL: "VISUAL"
-		}
+		},
+
+		CARD_BUNDLE_EXTENSION: "card.zip"
 	};
 });

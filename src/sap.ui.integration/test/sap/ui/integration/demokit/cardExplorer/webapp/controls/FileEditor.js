@@ -312,7 +312,7 @@ sap.ui.define([
 				}
 
 				this.fireManifestChange({
-					value: this.getManifestFile().content,
+					value: this.getCardManifestFile().content,
 					reRender: true
 				});
 
@@ -338,8 +338,8 @@ sap.ui.define([
 		}
 
 		// for now only editing the manifest and designtime files is allowed
-		if (this._getHeader().getSelectedKey() === this.getManifestFile().key) {
-			this.getManifestFile().content = oEvent.getParameter("value");
+		if (this._getHeader().getSelectedKey() === this.getCardManifestFile().key) {
+			this.getCardManifestFile().content = oEvent.getParameter("value");
 			this.fireManifestChange({
 				value: oEvent.getParameter("value")
 			});
@@ -394,7 +394,7 @@ sap.ui.define([
 	};
 
 	FileEditor.prototype.validateManifest = function () {
-		this.getManifestContent()
+		this.getCardManifestContent()
 			.then(function (sManifest) {
 				return SchemaValidator.validate(JSON.parse(sManifest)["sap.card"]);
 			})
@@ -417,8 +417,8 @@ sap.ui.define([
 	/**
 	 * @returns {Promise} Promise resolved with the manifest as string.
 	 */
-	FileEditor.prototype.getManifestContent = function () {
-		var oManifestFile = this.getManifestFile();
+	FileEditor.prototype.getCardManifestContent = function () {
+		var oManifestFile = this.getCardManifestFile();
 
 		// always try to return the content first, in case it is already loaded and edited
 		if (oManifestFile.content) {
@@ -428,7 +428,7 @@ sap.ui.define([
 		}
 	};
 
-	FileEditor.prototype.getManifestFile = function () {
+	FileEditor.prototype.getCardManifestFile = function () {
 		return this._aFiles.find(function (oFile) {
 			if (oFile.key !== "designtime.js" && this._isFileEditable(oFile)) {
 				return oFile;
@@ -436,9 +436,14 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	FileEditor.prototype.setManifestContent = function (sValue) {
-		this.getManifestFile().content = sValue;
+	FileEditor.prototype.setCardManifestContent = function (sValue) {
+		this.getCardManifestFile().content = sValue;
 		this._update();
+	};
+
+	FileEditor.prototype.getApplicationManifestContent = function () {
+		var iInd = this._findIndex("manifest.json");
+		return this._aFiles[iInd].promise;
 	};
 
 	FileEditor.prototype.getDesigntimeFile = function () {

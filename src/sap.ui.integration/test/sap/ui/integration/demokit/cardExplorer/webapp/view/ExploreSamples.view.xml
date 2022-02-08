@@ -22,6 +22,12 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
+					<MessageStrip
+						text="This sample includes cards that demonstrate the additional logic for integration with the host environment. If you want to use them in SAP Business Application Studio, they have to be imported there as an application."
+						visible="{settings>/isApplication}"
+						class="sapUiSmallMargin"
+						showIcon="true"
+					/>
 					<MessageStrip text="This feature is experimental - it may be deleted, or incompatible API changes may be done before its official public release." visible="{= !!${/sample/experimental} || !!${/subSample/experimental} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
 					<MessageStrip text="This sample uses a mock server which may interfere with your data requests." visible="{= !!${/sample/mockServer} || !!${/subSample/mockServer} }" showIcon="true" type="Warning" class="sapUiSmallMargin"/>
 					<f:GridContainer id="cardContainer" visible="{= !${settings>/useIFrame} }"></f:GridContainer>
@@ -52,8 +58,13 @@
 							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="Download" text="Download" type="Transparent">
 								<menu>
 									<Menu>
-										<MenuItem text="Manifest File" icon="sap-icon://document-text" press=".onDownloadManifestFile" />
-										<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press=".onDownloadZip" />
+										<MenuItem text="Manifest File" 
+											icon="sap-icon://document-text"
+											visible="{= !${settings>/isApplication} }"
+											press=".onDownloadCardManifestFile" />
+										<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}"
+											icon="sap-icon://attachment-zip-file"
+											press=".onDownloadZip" />
 									</Menu>
 								</menu>
 								<layoutData>

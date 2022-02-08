@@ -137,7 +137,7 @@ sap.ui.define([
 		onCardEditorConfigurationChangeDebounced: function (oValues) {
 			if (this._sEditSource === "cardEditor") {
 				var sManifest = JSON.stringify(oValues.manifest, '\t', 4);
-				this._oFileEditor.setManifestContent(sManifest);
+				this._oFileEditor.setCardManifestContent(sManifest);
 				var sDesigntimeHeader = "sap.ui.define([\"sap/ui/integration/Designtime\"], function (\n	Designtime\n) {\n	\"use strict\";\n	return function () {\r		return new Designtime(";
 				var sDesigntime = sDesigntimeHeader + oValues.configurationstring + ");\n	};\n});\n";
 				this._oFileEditor.setDesigntimeContent(sDesigntime);
@@ -150,7 +150,7 @@ sap.ui.define([
 		},
 
 		onRunPressed: function (oEvent) {
-			this._oFileEditor.getManifestContent().then(function (sManifest) {
+			this._oFileEditor.getCardManifestContent().then(function (sManifest) {
 				this._updateSample(sManifest, true);
 			}.bind(this));
 		},
@@ -261,12 +261,12 @@ sap.ui.define([
 			} else {
 				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
 				this._sEditSource = "codeEditor";
-				this._oFileEditor.getManifestContent().then(function (sManifest) {
+				this._oFileEditor.getCardManifestContent().then(function (sManifest) {
 					var sJson = JSON.parse(sManifest);
 					var templatePath = this._sanitizePath(ObjectPath.get(["sap.card", "designtime"], sJson) || "");
 					if (templatePath === "sap/ui/integration/designtime/cardEditor/ConfigurationTemplate") {
 						delete sJson["sap.card"].designtime;
-						this._oFileEditor.setManifestContent(JSON.stringify(sJson, '\t', 4));
+						this._oFileEditor.setCardManifestContent(JSON.stringify(sJson, '\t', 4));
 					}
 				}.bind(this));
 			}
@@ -282,38 +282,40 @@ sap.ui.define([
 		/**
 		 * Downloads only the manifest.json file.
 		 */
-		onDownloadManifestFile: function () {
-			this._oFileEditor.getManifestContent().then(function (sJSON) {
+		 onDownloadCardManifestFile: function () {
+			this._oFileEditor.getCardManifestContent().then(function (sJSON) {
 				FileUtils.downloadFile(sJSON, "manifest", "json", "application/json");
 			});
 		},
 
 		/**
 		 * Downloads all files that the example consists of.
+		 * @param {string} sManifest The card's or application's manifest.
 		 * @param {string} sExtension The archive extension.
 		 */
-		_onDownloadCompressed: function (sExtension) {
-			Promise.all([
-				this._oFileEditor.getManifestContent(),
-				this._oFileEditor.getFilesWithContent()
-			]).then(function (aArgs) {
-				var MANIFEST = 0,
-					FILES = 1;
+		_onDownloadCompressed: function (sManifest, sExtension) {
+			this._oFileEditor.getFilesWithContent()
+				.then(function (aFiles) {
+					var sArchiveName = formatter.formatExampleName(JSON.parse(sManifest));
 
-				var sArchiveName = formatter.formatExampleName(JSON.parse(aArgs[MANIFEST]));
-
-				FileUtils.downloadFilesCompressed(aArgs[FILES], sArchiveName, sExtension);
-			});
+					FileUtils.downloadFilesCompressed(aFiles, sArchiveName, sExtension);
+				});
 		},
 
 		onDownloadZip: function () {
-			var sZipName = "card.zip";
+			var sArchiveExtension = Constants.CARD_BUNDLE_EXTENSION,
+				pGetManifestContent;
 
 			if (exploreSettingsModel.getProperty("/isApplication")) {
-				sZipName = "zip";
+				sArchiveExtension = "zip";
+				pGetManifestContent = this._oFileEditor.getApplicationManifestContent();
+			} else {
+				pGetManifestContent = this._oFileEditor.getCardManifestContent();
 			}
 
-			this._onDownloadCompressed(sZipName);
+			pGetManifestContent.then(function (sManifest) {
+				this._onDownloadCompressed(sManifest, sArchiveExtension);
+			}.bind(this));
 		},
 
 		onSubSampleChange: function (oEvent) {
@@ -334,7 +336,7 @@ sap.ui.define([
 		_initVisualEditor: function () {
 			var	sBaseUrl = this._oCardSample.getBaseUrl();
 			if (!sBaseUrl || sBaseUrl === "") {
-				sBaseUrl = this._oFileEditor.getManifestFile().url;
+				sBaseUrl = this._oFileEditor.getCardManifestFile().url;
 				var sManifestFileName = sBaseUrl.split("/").pop();
 				sBaseUrl = "." + sBaseUrl.substring(0, sBaseUrl.length - sManifestFileName.length);
 			}
@@ -360,7 +362,7 @@ sap.ui.define([
 					this.byId("editPage").addContent(this._oVisualEditor);
 				}.bind(this))
 				.then(function () {
-					return this._oFileEditor.getManifestContent();
+					return this._oFileEditor.getCardManifestContent();
 				}.bind(this))
 				.then(function (sManifestContent) {
 					sJson = JSON.parse(sManifestContent);
@@ -556,53 +558,8 @@ sap.ui.define([
 				oFrameWrapperEl = this.byId("iframeWrapper"),
 				bUseIFrame = !!oCurrentSample.useIFrame;
 
-			//disable "Configuration Editor" if there is not designtime.js file
-			if (oCurrentSample && oCurrentSample.files) {
-				exploreSettingsModel.getData().designtimeEnabled = false;
-				var i = 0;
-				while (i < oCurrentSample.files.length) {
-					if (oCurrentSample.files[i].key === "designtime.js") {
-						exploreSettingsModel.getData().designtimeEnabled = true;
-						break;
-					}
-					i++;
-				}
-			}
-			//open a popover to highlight Configuration Editor button
-			if (exploreSettingsModel.getData().designtimeEnabled) {
-				var configEditorMenuBtn = this.byId("openConfigurationEditorButton");
-			    var oView = this.getView();
-				if (!this._pPopover) {
-					this._pPopover = Fragment.load({
-						id: oView.getId(),
-						name: "sap.ui.demo.cardExplorer.view.Popover",
-						controller: this
-					}).then(function(oPopover) {
-						oView.addDependent(oPopover);
-						return oPopover;
-					});
-
-					configEditorMenuBtn.setType("Ghost");
-					this._pPopover.then(function(oPopover) {
-					   setTimeout(function() {
-						   oPopover.openBy(configEditorMenuBtn);
-					   }, 150);
-					});
-				}
-			}
-			//enable/disable menu items of "Configuration Editor" according to card mode, enable all menu items by default
-			exploreSettingsModel.getData().configMode = "All";
-			if (oCurrentSample.configMode) {
-				exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
-				exploreSettingsModel.refresh();
-			}
-			exploreSettingsModel.getData().previewPosition = "right";
-			if (oCurrentSample.previewPosition) {
-				exploreSettingsModel.getData().previewPosition = oCurrentSample.previewPosition;
-				exploreSettingsModel.refresh();
-			}
+			this._updateConfigurationEditorMenu(oCurrentSample);
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
-			this._oCurrSample = oCurrentSample;
 
 			Promise.all([
 				this._initCardSample(oCurrentSample),
@@ -628,7 +585,7 @@ sap.ui.define([
 					oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
 					oFrameWrapperEl.invalidate();
 				} else {
-					var sManifestUrl = this._oFileEditor.getManifestFile().url,
+					var sManifestUrl = this._oFileEditor.getCardManifestFile().url,
 						oLayoutSettings = {
 							minRows: 1,
 							columns: 4
@@ -726,6 +683,54 @@ sap.ui.define([
 				};
 
 			oFrameWrapperEl.addEventDelegate(oDelegate, this);
+		},
+
+		_updateConfigurationEditorMenu: function (oCurrentSample) {
+			//disable "Configuration Editor" if there is no designtime.js file
+			if (oCurrentSample && oCurrentSample.files) {
+				exploreSettingsModel.getData().designtimeEnabled = false;
+				var i = 0;
+				while (i < oCurrentSample.files.length) {
+					if (oCurrentSample.files[i].key === "designtime.js") {
+						exploreSettingsModel.getData().designtimeEnabled = true;
+						break;
+					}
+					i++;
+				}
+			}
+			//open a popover to highlight Configuration Editor button
+			if (exploreSettingsModel.getData().designtimeEnabled) {
+				var configEditorMenuBtn = this.byId("openConfigurationEditorButton");
+				var oView = this.getView();
+				if (!this._pPopover) {
+					this._pPopover = Fragment.load({
+						id: oView.getId(),
+						name: "sap.ui.demo.cardExplorer.view.Popover",
+						controller: this
+					}).then(function(oPopover) {
+						oView.addDependent(oPopover);
+						return oPopover;
+					});
+
+					configEditorMenuBtn.setType("Ghost");
+					this._pPopover.then(function(oPopover) {
+						setTimeout(function() {
+							oPopover.openBy(configEditorMenuBtn);
+						}, 150);
+					});
+				}
+			}
+			//enable/disable menu items of "Configuration Editor" according to card mode, enable all menu items by default
+			exploreSettingsModel.getData().configMode = "All";
+			if (oCurrentSample.configMode) {
+				exploreSettingsModel.getData().configMode = oCurrentSample.configMode;
+				exploreSettingsModel.refresh();
+			}
+			exploreSettingsModel.getData().previewPosition = "right";
+			if (oCurrentSample.previewPosition) {
+				exploreSettingsModel.getData().previewPosition = oCurrentSample.previewPosition;
+				exploreSettingsModel.refresh();
+			}
 		},
 
 		createFrame: function (sSample) {
