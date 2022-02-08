@@ -54,6 +54,8 @@ sap.ui.define([
 			"NEXTYEARS": ["int"],
 			"FROM": ["date"],
 			"TO": ["date"],
+			"FROMDATETIME": ["datetime"],
+			"TODATETIME": ["datetime"],
 			"SPECIFICMONTH": ["month"],
 			"SPECIFICMONTHINYEAR": ["month", "int"],
 			"TODAYFROMTO": ["int", "int"]
@@ -194,7 +196,7 @@ sap.ui.define([
 
 			var aFormattedParams = aParams.map(function(param) {
 				if (param instanceof Date) {
-					if (sKey === "DATETIMERANGE") {
+					if (sKey === "DATETIMERANGE" || sKey === "FROMDATETIME" || sKey === "TODATETIME") {
 						return this._dateTimeFormatter.format(param);
 					}
 					return this._dateFormatter.format(param);

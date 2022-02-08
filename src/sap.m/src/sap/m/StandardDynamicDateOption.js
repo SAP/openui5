@@ -108,6 +108,8 @@ sap.ui.define([
 			"NEXTYEARS": "NEXTYEARS",
 			"FROM": "FROM",
 			"TO": "TO",
+			"FROMDATETIME": "FROMDATETIME",
+			"TODATETIME": "TODATETIME",
 			"YEARTODATE": "YEARTODATE",
 			"DATETOYEAR":"DATETOYEAR",
 			"TODAYFROMTO": "TODAYFROMTO",
@@ -168,6 +170,8 @@ sap.ui.define([
 			"NEXTYEARS": _Groups.DateRanges,
 			"FROM": _Groups.DateRanges,
 			"TO": _Groups.DateRanges,
+			"FROMDATETIME": _Groups.DateRanges,
+			"TODATETIME": _Groups.DateRanges,
 			"YEARTODATE": _Groups.DateRanges,
 			"DATETOYEAR": _Groups.DateRanges,
 			"TODAYFROMTO": _Groups.DateRanges,
@@ -225,6 +229,12 @@ sap.ui.define([
 				case Keys.NEXTQUARTERS:
 				case Keys.NEXTYEARS:
 					return this._getXPeriodTitle(aParams[1].getOptions());
+				case Keys.FROMDATETIME:
+				case Keys.TODATETIME:
+				case Keys.DATETIMERANGE:
+					return oControl._findOption(sKey)._bAdditionalTimeText ?
+						_resourceBundle.getText("DYNAMIC_DATE_" + sKey + "_TITLE") + " (" + _resourceBundle.getText("DYNAMIC_DATE_DATETIME_TITLE") + ")" :
+						_resourceBundle.getText("DYNAMIC_DATE_" + sKey + "_TITLE");
 				default:
 					return _resourceBundle.getText("DYNAMIC_DATE_" + sKey + "_TITLE");
 			}
@@ -267,6 +277,8 @@ sap.ui.define([
 						this.aValueHelpUITypes = [];
 						break;
 					case Keys.DATETIME:
+					case Keys.FROMDATETIME:
+					case Keys.TODATETIME:
 						this.aValueHelpUITypes = [
 							new DynamicDateValueHelpUIType({
 								type: "datetime"
@@ -763,6 +775,10 @@ sap.ui.define([
 				case "FROM":
 					return [oValue.values[0], oValue.values[0]];
 				case "TO":
+					return [oValue.values[0], oValue.values[0]];
+				case "FROMDATETIME":
+					return [oValue.values[0], oValue.values[0]];
+				case "TODATETIME":
 					return [oValue.values[0], oValue.values[0]];
 				case "YEARTODATE":
 					return UniversalDateUtils.ranges.yearToDate();

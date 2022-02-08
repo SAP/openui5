@@ -178,6 +178,7 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 
 	it("DateTime option", function() {
 		var oValueHelp = element(by.id("DDR4-input-vhi")),
+			oPage = element(by.id("Page1")),
 			oPopover, aListItems;
 
 		oValueHelp.click();
@@ -192,7 +193,27 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_timepicker");
 
+		element(by.css("#DDR4-RP-popover .sapMBtnBack")).click();
+		aListItems.get(1).click(); // select From Date and Time
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
+		expect(takeScreenshot(oPage)).toLookAs("fromdatetime_option_datepicker");
+
+		oValueHelp.click();
+		aListItems.get(1).click(); // select To Date and Time
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
+		expect(takeScreenshot(oPage)).toLookAs("todatetime_option_datepicker");
+
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-	});
+	}, iDefaultTimeout);
 
 });

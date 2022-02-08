@@ -240,6 +240,8 @@ sap.ui.define([
 							"DATETIMERANGE",
 							"FROM",
 							"TO",
+							"FROMDATETIME",
+							"TODATETIME",
 							"YEARTODATE",
 							"DATETOYEAR",
 							"LASTDAYS",
@@ -428,6 +430,13 @@ sap.ui.define([
 					if (typeof (vOption) === "string") {
 						return this._createHeaderListItem(vOption);
 					}
+					if (vOption.getKey() === "FROMDATETIME") {
+						vOption._bAdditionalTimeText = !!this._findOption("FROM");
+					} else if (vOption.getKey() === "TODATETIME") {
+						vOption._bAdditionalTimeText = !!this._findOption("TO");
+					} else if (vOption.getKey() === "DATETIMERANGE") {
+						vOption._bAdditionalTimeText = !!this._findOption("DATERANGE");
+					}
 					return this._createListItem(vOption);
 				}, this).forEach(function(oItem) {
 					oItem.addDelegate(this._oListItemDelegate, this);
@@ -439,6 +448,19 @@ sap.ui.define([
 
 				this._openPopup();
 			}
+		};
+
+		/**
+		 * Searches if there is an option with the given key included.
+		 *
+		 * @param {string} sKey option key to be searched against
+		 * @returns  {object|undefined} object if the object exists
+		 * @private
+		 */
+		DynamicDateRange.prototype._findOption = function(sKey) {
+			return this._getOptions().find(function(oOption) {
+				return oOption.getKey() === sKey;
+			});
 		};
 
 		/**
@@ -1304,7 +1326,7 @@ sap.ui.define([
 			var oNavControl = StandardListItem.prototype.getNavigationControl.apply(this, arguments),
 				sOptionKey = this.getOptionKey(),
 				aValueTypes = DynamicDateUtil.getOption(sOptionKey).getValueTypes(),
-				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "DATETIMERANGE", "FROM", "TO"].includes(sOptionKey),
+				bDateOption = ["SPECIFICMONTH", "DATE", "DATERANGE", "FROM", "TO"].includes(sOptionKey),
 				bDateTimeOption = aValueTypes && aValueTypes.length && aValueTypes[0] === "datetime",
 				sNavgationIconURI;
 
