@@ -158,10 +158,19 @@ sap.ui.define([
 			android_tablet: Device.system.tablet && Device.os.android,
 
 			/**
-			 * Whether the running device is a tablet.
-			 * If a desktop browser runs in mobile device simulation mode (with URL parameter
-			 * sap-ui-xx-test-mobile), this property will also be set according to the simulated platform. This
-			 * property will be false when runs in desktop browser.
+			 * If this flag is set to <code>true</code>, the device is recognized as a tablet.
+			 *
+			 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
+			 *
+			 * <b>Note:</b> This flag is also <code>true</code> for some browsers running on desktop devices. See the documentation for {@link sap.ui.Device.system.combi} devices.
+			 * You can use the following logic to ensure that the current device is a tablet device:
+			 *
+			 * <pre>
+			 * if(sap.ui.Device.system.tablet && !sap.ui.Device.system.desktop){
+			 *	...tablet related commands...
+			 * }
+			 * </pre>
+			 *
 			 * @type {boolean}
 			 * @deprecated since 1.17.0 use {@link sap.ui.Device.system.tablet} instead
 			 * @public
@@ -169,10 +178,14 @@ sap.ui.define([
 			tablet: Device.system.tablet,
 
 			/**
-			 * Whether the running device is a phone.
-			 * If a desktop browser runs in mobile device simulation mode (with URL parameter
-			 * sap-ui-xx-test-mobile), this property will also be set according to the simulated platform. This
-			 * property will be false when runs in desktop browser.
+			 * If this flag is set to <code>true</code>, the device is recognized as a phone.
+			 *
+			 * Furthermore, a CSS class <code>sap-phone</code> is added to the document root element.
+			 *
+			 * <b>Note:</b> In case a phone requests a web page as a "Desktop Page", it is possible
+			 * that all properties except <code>Device.system.phone</code> are set to <code>true</code>.
+			 * In this case it is not possible to differentiate between tablet and phone relying on the user agent.
+			 *
 			 * @type {boolean}
 			 * @deprecated since 1.17.0 use {@link sap.ui.Device.system.phone} instead
 			 * @public
@@ -180,9 +193,14 @@ sap.ui.define([
 			phone: Device.system.phone,
 
 			/**
-			 * Whether the running device is a desktop browser.
-			 * If a desktop browser runs in mobile device simulation mode (with URL parameter
-			 * sap-ui-xx-test-mobile), this property will be false.
+			 * If this flag is set to <code>true</code>, the device is recognized as a desktop system.
+			 *
+			 * Furthermore, a CSS class <code>sap-desktop</code> is added to the document root element.
+			 *
+			 * <b>Note:</b> This flag is by default also true for Safari on iPads running on iOS 13 or higher.
+			 * The end user can change this behavior by disabling "Request Desktop Website -> All websites" within the iOS settings.
+			 * See also the documentation for {@link sap.ui.Device.system.combi} devices.
+			 *
 			 * @type {boolean}
 			 * @deprecated since 1.17.0 use {@link sap.ui.Device.system.desktop} instead
 			 * @public
