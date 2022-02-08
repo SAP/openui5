@@ -379,6 +379,15 @@ sap.ui.define([
 			return Control.prototype.destroy.call(this, arguments);
 		};
 
+		/**
+		 * Maps the "enabled" property to the "disabled" attribute
+		 * @param bEnabled
+		 * @returns {boolean}
+		 * @private
+		 */
+		WebComponent.prototype._mapEnabled = function(bEnabled) {
+			return !bEnabled;
+		};
 
 		/**
 		 * Maps the "textDirection" property to the "dir" attribute

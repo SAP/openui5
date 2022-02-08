@@ -5,10 +5,11 @@
 // Provides control sap.ui.webc.main.Button.
 sap.ui.define([
 	"sap/ui/webc/common/WebComponent",
+	'sap/ui/core/EnabledPropagator',
 	"./library",
 	"sap/ui/core/library",
 	"./thirdparty/Button"
-], function(WebComponent, library, coreLibrary) {
+], function(WebComponent, EnabledPropagator, library, coreLibrary) {
 	"use strict";
 
 	var TextDirection = coreLibrary.TextDirection;
@@ -123,11 +124,16 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines whether the component is disabled. A disabled component can't be pressed or focused, and it is not in the tab chain.
+				 * Defines whether the component is enabled. A disabled component can't be pressed or focused, and it is not in the tab chain.
 				 */
-				disabled: {
+				enabled: {
 					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					mapping: {
+						type: "attribute",
+						to: "disabled",
+						formatter: "_mapEnabled"
+					}
 				},
 
 				/**
@@ -219,6 +225,9 @@ sap.ui.define([
 	});
 
 	/* CUSTOM CODE START */
+
+	EnabledPropagator.call(Button.prototype);
+
 	/* CUSTOM CODE END */
 
 	return Button;
