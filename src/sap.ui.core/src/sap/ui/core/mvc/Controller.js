@@ -259,7 +259,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName the controller name
 		 * @param {boolean} bAsync Load async or not
-		 * @return {{sap.ui.core.mvc.Controller | Promise} oController <code>Promise</code> in case of asynchronous loading
+		 * @return {sap.ui.core.mvc.Controller | Promise} oController <code>Promise</code> in case of asynchronous loading
 		 *           or <code>undefined</code> in case of synchronous loading
 		 */
 		function loadControllerClass(sName, bAsync) {
