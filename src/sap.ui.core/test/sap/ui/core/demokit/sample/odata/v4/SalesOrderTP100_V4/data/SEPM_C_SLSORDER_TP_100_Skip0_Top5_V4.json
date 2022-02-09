@@ -1,6 +1,6 @@
 {
 	"@odata.metadataEtag" : "W/\"20170704153235\"",
-	"@odata.count" : "10",
+	"@odata.count" : "11",
 	"value" : [{
 		"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa706494433",
 		"SalesOrder" : "500000000",

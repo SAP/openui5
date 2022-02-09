@@ -434,7 +434,7 @@ sap.ui.define([
 					pressButton(this, "showMessages");
 				},
 				pressMoreButton : function () {
-					Helper.pressMoreButton(this, sViewName);
+					Helper.pressMoreButton(this, sViewName, "SalesOrderList");
 				},
 				pressOpenSimulateDiscountDialog : function () {
 					pressButton(this, "openSimulateDiscountDialog");

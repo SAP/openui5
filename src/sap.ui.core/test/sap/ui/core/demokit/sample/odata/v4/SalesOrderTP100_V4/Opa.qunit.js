@@ -33,9 +33,9 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			When.onTheMainPage.pressMoreButton(/SalesOrders-trigger/);
+			When.onTheMainPage.pressMoreButton("SalesOrders");
 			When.onTheMainPage.selectSalesOrder(1);
-			When.onTheMainPage.pressMoreButton(/SalesOrderItems-trigger/);
+			When.onTheMainPage.pressMoreButton("SalesOrderItems");
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

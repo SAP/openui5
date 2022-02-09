@@ -11,8 +11,8 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				pressMoreButton : function () {
-					Helper.pressMoreButton(this, sViewName);
+				pressMoreButton : function (sTableControlId) {
+					Helper.pressMoreButton(this, sViewName, sTableControlId);
 				},
 				selectSalesOrder : function (iRow) {
 					Helper.selectColumnListItem(this, sViewName, iRow);

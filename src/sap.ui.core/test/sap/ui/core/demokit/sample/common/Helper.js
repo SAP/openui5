@@ -371,13 +371,17 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  An instance of Opa5 to access the current page object
 		 * @param {string} sViewName
 		 *  The name of the view which contains the more button as a sap.m.CustomListItem
+		 * @param {string} sTableControlId
+		 *  The ID of the table control containing the 'More' button
 		 */
-		pressMoreButton : function (oOpa5, sViewName) {
+		pressMoreButton : function (oOpa5, sViewName, sTableControlId) {
 			oOpa5.waitFor({
 				actions : new Press(),
 				controlType : "sap.m.CustomListItem",
+				id : new RegExp(sTableControlId + "-trigger"),
 				success : function (aControls) {
-					Opa5.assert.ok(true, "Pressed more button: " + aControls[0].getId());
+					Opa5.assert.strictEqual(aControls.length, 1, "Multiple 'More' buttons found");
+					Opa5.assert.ok(true, "Pressed 'More' button: " + aControls[0].getId());
 				},
 				viewName : sViewName
 			});
