@@ -3,6 +3,42 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "1c2bd851e3ab6651a2a5a7c38246198990a7d74c",
+        "type": "FIX",
+        "text": " AbstractContainer - Change section's position to relative",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000735512022"
+          }
+        ]
+      },
+      {
+        "id": "d986ba6664509a3216ba23b241df2a5f1f446714",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Introduce new From and To options with time"
+      },
+      {
+        "id": "c5a30e5f80d672444736664bf0ea59a2997aa9cf",
+        "type": "FEATURE",
+        "text": " sap.m.Avatar: new API exposed to set aria-haspopup attribute"
+      },
+      {
+        "id": "d0f4f2d3e3d8b6589b6b7a76c038bd149ddfcf4f",
+        "type": "FEATURE",
+        "text": " sap.m.DateTimePicker: Support timezones"
+      },
+      {
+        "id": "4ae5e591a13d0add981febfaa680461a58d326f7",
+        "type": "FEATURE",
+        "text": " UploadButtonInvisible property has been added to Uploadset"
+      },
+      {
+        "id": "6223d6f964a7de45962e3dccef91b2faa3d58007",
+        "type": "FEATURE",
+        "text": " UploadSet: Drag and drop for UploadSetItems has been added"
+      },
+      {
         "id": "4c00e900a3a77386e52748009868c6dcd6c2655b",
         "type": "FIX",
         "text": " PDFViewer - Handle sourceValidation error",
@@ -12,6 +48,16 @@
             "reference": "2240085710"
           }
         ]
+      },
+      {
+        "id": "3bb462d507d6b54517999c9182d5fae5426f1d30",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Sample for Empty Carousel enhanced with slider"
+      },
+      {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
       },
       {
         "id": "6dcc6b24f2f03b25cf37abfba5c3b1cd4c023baa",

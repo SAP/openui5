@@ -3,6 +3,22 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "4223f5cd97847100f79f1d5deaf008d5b6f9f58a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: less strict checks for parsing grouping separators",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
+      },
+      {
         "id": "fdc3ae8d31438c6ce364f07b5ef41f6a44f54be7",
         "type": "FIX",
         "text": " ExtensionPoint: Activate probing for Fragment class",

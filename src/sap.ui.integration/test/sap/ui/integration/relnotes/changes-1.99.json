@@ -3,6 +3,11 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "408f49d24dfca90e6d7c8a1d59fd3d4d4ddb7d34",
+        "type": "FEATURE",
+        "text": " Card Explorer: Differentiate application samples from card samples"
+      },
+      {
         "id": "487b76c4e4b53eef261f65de6e3a01854f12e6c1",
         "type": "FEATURE",
         "text": " sap.ui.integration.widgets.Card: Custom error message is introduced"
