@@ -2030,7 +2030,7 @@ sap.ui.define([
 				// test data
 				sUpdateTimer : "updateTimer",
 				bForceUpdate : bForceUpdate,
-				mChangedEntities4checkUpdate : "commulatedChangedEntities"
+				mChangedEntities4checkUpdate : "cumulatedChangedEntities"
 			};
 
 		this.mock(window).expects("clearTimeout").withExactArgs("updateTimer");

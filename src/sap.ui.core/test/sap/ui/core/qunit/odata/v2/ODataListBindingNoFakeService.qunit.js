@@ -759,24 +759,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkExpandedList: getResolvedPath is called", function (assert) {
+[true,false].forEach(function (bIsResolved) {
+	QUnit.test("checkExpandedList: isResolved=" + bIsResolved, function (assert) {
 		var oModel = {_getObject : function () {}},
 			oBinding = {
 				oContext : "~oContext",
 				oModel : oModel,
 				sPath : "~sPath",
-				getResolvedPath : function () {}
+				isResolved : function () {}
 			};
 
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(bIsResolved);
 		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext")
-			.returns(undefined);
+			.returns(bIsResolved ? undefined : []);
 
 		// code under test
 		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding), false);
 		assert.strictEqual(oBinding.bUseExpandedList, false);
 		assert.strictEqual(oBinding.aExpandRefs, undefined);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_refresh: getResolvedPath is called", function (assert) {
