@@ -1194,4 +1194,29 @@ sap.ui.define([
 		//clean
 		oDatesRow.destroy();
 	});
+
+	QUnit.module("Other");
+
+	QUnit.test("CalendarDateInterval year range picker interaction sets proper start date", function(assert) {
+		//arrange
+		var oCDI = new CalendarDateInterval({
+			startDate: new Date(2022, 1, 7),
+			days: 7
+		});
+
+		oCDI.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//act
+		oCDI.getAggregation("month")[0]._focusDate(new CalendarDate(2022, 1, 9), true, false);
+		oCDI._focusDateExtend(new CalendarDate(2029, 1, 9), true, false);
+		oCore.applyChanges();
+
+		//assert
+		assert.equal(oCDI.getAggregation("month")[0].getStartDate().getTime(), new Date(2029, 1, 7).getTime(), "New start date is properly set");
+
+		//clean
+		oCDI.destroy();
+	});
+
 });
