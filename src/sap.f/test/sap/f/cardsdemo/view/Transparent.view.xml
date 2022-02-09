@@ -1,0 +1,23 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:f="sap.f"
+	displayBlock="true">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
+		<f:Card id="containerCard" class="sapUiTinyMargin sapFCardTransparent" width="100%">
+			<f:content>
+				<HBox>
+					<w:Card class="sapUiTinyMargin" id="todo1" manifest="{manifests>/transparent/todo1}" baseUrl="./" width="300px"></w:Card>
+					<w:Card class="sapUiTinyMargin" id="todo2" manifest="{manifests>/transparent/todo1}" baseUrl="./" width="300px"></w:Card>
+				</HBox>
+			</f:content>
+		</f:Card>
+
+		<w:Card class="sapUiTinyMargin sapFCardTransparent" id="object1" manifest="{manifests>/transparent/object1}" baseUrl="./" width="600px"></w:Card>
+		<w:Card class="sapUiTinyMargin sapFCardTransparent" id="list1" manifest="{manifests>/transparent/list1}" baseUrl="./" width="300px"></w:Card>
+		<w:Card class="sapUiTinyMargin sapFCardTransparent" id="todo3" manifest="{manifests>/transparent/todo1}" baseUrl="./" width="300px"></w:Card>
+		<core:HTML id="cardCustomElement" content="&lt;ui-integration-card manifest=&quot;./cardsdemo/cardcontent/objectcontent/manifest.json&quot; class=&quot;sapFCardTransparent&quot;&gt;&lt;/ui-integration-card&gt;" />
+	</Page>
+</mvc:View>

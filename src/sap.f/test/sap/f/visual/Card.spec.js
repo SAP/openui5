@@ -514,4 +514,22 @@ describe("sap.f.Card", function () {
 
 		navigateBack();
 	});
+
+	it("Transparent Card", function () {
+		navigateTo("Transparent Card");
+		var aCardIds = ["containerCard", "list1", "object1", "todo3"];
+
+		aCardIds.forEach(function (sId) {
+			takePictureOfElement({
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "Transparent",
+					interaction: "root",
+					id: sId
+				}
+			}, "22_Transparent_Card_" + sId);
+		});
+
+		navigateBack();
+	});
 });

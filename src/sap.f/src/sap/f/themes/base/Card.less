@@ -35,6 +35,23 @@
 	outline: none;
 }
 
+/* ui5-restricted task center */
+.sapFCardTransparent.sapFCard,
+ui-integration-card.sapFCardTransparent > [data-sap-ui-area] > .sapFCard {
+	border: none;
+	border-radius: 0%;
+	background: transparent;
+	box-shadow: unset;
+
+	& > .sapFCardHeader,
+	& > .sapFCardFilterBar,
+	& > .sapFCardFooter {
+		background: transparent;
+		border: none;
+		border-radius: 0%;
+	}
+}
+
 .sapFCardMaxItems > .sapMGrowingList,
 .sapFCardMaxItems .sapSuiteUiCommonsTimelineShowMoreWrapper {
 	display: none;
