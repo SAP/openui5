@@ -1,7 +1,18 @@
 {
   "1.99.0": {
-    "date": "January 2022",
+    "date": "February 2022",
     "notes": [
+      {
+        "id": "5fb55bad7730a121b98335af51e4e7e8cfc23642",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Color of the status message icon in the Header for Fiori 3 HCB/HCW fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280014012"
+          }
+        ]
+      },
       {
         "id": "10b6691d561121d5825c8841561447edbfa8ef2b",
         "type": "FIX",

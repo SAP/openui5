@@ -3,6 +3,11 @@
     "date": "February 2022",
     "notes": [
       {
+        "id": "ca70fae089df930e22d33e12c74b94612c469bc9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.01 and v4.13"
+      },
+      {
         "id": "10b6691d561121d5825c8841561447edbfa8ef2b",
         "type": "FIX",
         "text": " sap.m.Page: Section top position adapted when InfoBar used",
