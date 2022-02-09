@@ -195,19 +195,9 @@ sap.ui.define([
 						success : function (oTable) {
 							var oBinding = oTable.getBinding("items"),
 								oNewContext = oBinding.create({
-								"SalesOrderID" : "",
-								// properties
 								"BuyerID" : "0100000000",
-								"ChangedAt" : "1970-01-01T00:00:00Z",
-								"CreatedAt" : "1970-01-01T00:00:00Z",
-								"CurrencyCode" : "EUR",
-								"GrossAmount" : "0.00",
 								"LifecycleStatus" : "N",
-								"LifecycleStatusDesc" : "New",
-								"Note" : "RAISE_ERROR",
-								"NoteLanguage" : "E",
-								// navigation property
-								"SO_2_BP" : null
+								"Note" : "RAISE_ERROR"
 							});
 						oNewContext.created().then(function () {
 							var sSalesOrderID = oNewContext.getProperty("SalesOrderID");
