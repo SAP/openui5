@@ -274,9 +274,15 @@ sap.ui.define([
 		} else {
 			this._oRowActionItem = oInnerRowActionItem.data("rowAction");
 		}
+		var oRow = oEvent.getParameter("row");
 		this._oRowActionItem.firePress({
-			bindingContext: oEvent.getParameter("row").getBindingContext()
+			bindingContext: oRow.getBindingContext()
 		});
+		if (this._oTableRowAction) {
+			this.fireRowPress({
+				bindingContext: oRow.getBindingContext()
+			});
+		}
 	};
 
 	return GridTableType;
