@@ -37,10 +37,9 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 
 		oRm.openStart("div", oControl.getId() + "-timezoneLabel");
 		oRm.class("sapMDTPTimezoneLabel");
-		oRm.attr("title", sTimezone);
 		oRm.openEnd();
 
-		oRm.openStart("span");
+		oRm.openStart("span", oControl.getId() + "-timezoneID");
 		oRm.openEnd();
 		oRm.text(sTimezone);
 		oRm.close("span");
@@ -66,6 +65,16 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 		if (oControl._getShowTimezone()) {
 			oRm.class("sapMDTPWithTimezone");
 		}
+	};
+
+	DateTimePickerRenderer.getAriaDescribedBy = function(oControl) {
+		var sDescribedBy = InputBaseRenderer.getAriaDescribedBy.apply(this, arguments);
+
+		if (oControl._getShowTimezone()) {
+			sDescribedBy += " " + oControl.getId() + "-timezoneID";
+		}
+
+		return sDescribedBy;
 	};
 
 	return DateTimePickerRenderer;

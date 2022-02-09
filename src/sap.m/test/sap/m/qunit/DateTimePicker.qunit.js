@@ -625,6 +625,33 @@ sap.ui.define([
 		}, 400);
 	});
 
+	QUnit.test("showTimezone and aria-describedBy", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker("DTPACC")
+			.placeAt("qunit-fixture"),
+			oInputRef;
+		oCore.applyChanges();
+
+		oInputRef = oDTP.$("inner");
+
+		// assert
+		assert.ok(oInputRef.attr("aria-describedby").indexOf("DTPACC-timezoneID") === -1,
+			"the timezone id is not included in the aria-describedby DOM references");
+
+		// act
+		oDTP.setShowTimezone(true);
+		oCore.applyChanges();
+
+		oInputRef = oDTP.$("inner");
+
+		// assert
+		assert.ok(oInputRef.attr("aria-describedby").indexOf("DTPACC-timezoneID") > -1,
+			"the timezone id is included in the aria-describedby DOM references");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Calendar and TimePicker");
 
 	QUnit.test("Open picker on small screen", function(assert) {
