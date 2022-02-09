@@ -23,12 +23,6 @@ describe("sap.m.MenuButton", function() {
 		expect(takeScreenshot(oPage)).toLookAs('menubutton_menu_items_enabled');
 	});
 
-	it('Menu button parts are visible and aligned', function() {
-		var oPage = element(by.id("page0"));
-
-		expect(takeScreenshot(oPage)).toLookAs('menu_buttons_in_page');
-	});
-
 	it('Change to Compact Mode', function() {
 		var oSelect = element(by.id("density_select")),
 			oCompactItem = element(by.id("item_compact")),
