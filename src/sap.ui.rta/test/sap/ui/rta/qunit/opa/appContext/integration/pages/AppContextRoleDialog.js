@@ -67,7 +67,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getText(), "Select Roles");
+							Opa5.assert.strictEqual(oControl.getText(), "Select Roles", "I see role dialog");
 						}
 					});
 				},
@@ -78,7 +78,10 @@ sap.ui.define([
 						properties: {
 							title: sRoleTitle
 						},
-						searchOpenDialogs: true
+						searchOpenDialogs: true,
+						success: function () {
+							Opa5.assert.ok(true, "I see role title: " + sRoleTitle);
+						}
 					});
 				}
 			}

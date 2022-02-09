@@ -28,7 +28,7 @@ sap.ui.define([
 							text: "Open AppContext Dialog"
 						},
 						success: function () {
-							Opa5.assert.ok(true, "The button is visible");
+							Opa5.assert.ok(true, "I see open app context dialog button");
 						},
 						errorMessage: "I should see the open app context dialog button."
 					});

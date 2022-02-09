@@ -158,7 +158,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.ok(oControl.getVisible());
+							Opa5.assert.ok(oControl.getVisible(), "I see app context dialog is opened");
 						}
 					});
 				},
@@ -168,7 +168,7 @@ sap.ui.define([
 						searchOpenDialogs: true,
 						success: function (oTable) {
 							var aItems = oTable.getItems();
-							Opa5.assert.equal(aItems.length, iRowCount);
+							Opa5.assert.equal(aItems.length, iRowCount, "I see correct amount of app contexts");
 						}
 					});
 				},
@@ -181,12 +181,12 @@ sap.ui.define([
 							var aCells = aItems[iPosition].getCells();
 							var sRank = aCells[0].getText();
 							var sTitle = aCells[1].getTitle();
-							Opa5.assert.equal(sRank, iPosition + 1);
-							Opa5.assert.equal(sTitle, sExpectedTitle);
+							Opa5.assert.equal(sRank, iPosition + 1, "I see correct app context rank");
+							Opa5.assert.equal(sTitle, sExpectedTitle, "I see correct app context title");
 							if (iRoleCount) {
 								var sRoleAndCountryDescription = aCells[2].getText();
-								var sExpectedSubstring = iRoleCount === 1 ? iRoleCount + " role" : iRoleCount + " roles";
-								Opa5.assert.equal(true, sRoleAndCountryDescription.includes(sExpectedSubstring));
+								var sExpectedSubstring = iRoleCount === 1 ? iRoleCount + " Role" : iRoleCount + " Roles";
+								Opa5.assert.equal(true, sRoleAndCountryDescription.includes(sExpectedSubstring), "I see correct assigned role count");
 							}
 						}
 					});

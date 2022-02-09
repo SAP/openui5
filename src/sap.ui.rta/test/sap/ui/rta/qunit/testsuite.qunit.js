@@ -24,11 +24,18 @@ sap.ui.define([
 				only: ["sap/ui/rta"],
 				branchTracking: true
 			},
-			page: "test-resources/sap/ui/rta/qunit/testsandbox.qunit.html?test={name}",
+			page: "test-resources/sap/ui/rta/qunit/testsandbox.qunit.html?testsuite={suite}&test={name}",
 			autostart: true
 		},
 		// keep tests in alphabetical order!
 		tests: {
+			// Opa Testsuite
+			"opa/testsuite": {
+				title: "Opa Testsuite",
+				group: "Opa Testsuite",
+				page: "test-resources/sap/ui/rta/qunit/opa/testsuite.opa.qunit.html"
+			},
+
 			// API
 			"api/startKeyUserAdaptation": {
 				group: "API",
