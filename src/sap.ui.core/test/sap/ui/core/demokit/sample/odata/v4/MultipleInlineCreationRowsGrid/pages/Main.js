@@ -116,25 +116,30 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkPart : function (iRow, sExpectedPartId, sExpectedState) {
+				checkPart : function (iRow, sExpectedPartId, sExpectedState, sExpectedDescription) {
 					Helper.waitForSortedByID(this, {
 						autoWait : false, // to match also disabled delete buttons
 						matchers : function (oControl) {
 							return oControl.getBindingContext()
 								&& oControl.getBindingContext().getIndex() === iRow;
 						},
-						id : /partDelete|partId|partState/,
+						id : /partDelete|partId|partState|description/,
 						success : function (aControls) {
-							var bDeletable = aControls[0].getEnabled(),
-								sPartId = aControls[1].getValue(),
-								sState = aControls[2].getTooltip();
-							Opa5.assert.strictEqual(aControls.length, 3, "exactly 3 controls");
+							var sDescription = aControls[0].getValue(),
+								bDeletable = aControls[1].getEnabled(),
+								sPartId = aControls[2].getValue(),
+								sState = aControls[3].getTooltip();
+							Opa5.assert.strictEqual(aControls.length, 4, "exactly 4 controls");
 							Opa5.assert.strictEqual(sPartId, sExpectedPartId,
 								"Row: " + iRow + ", Part ID: " + sPartId);
 							Opa5.assert.strictEqual(bDeletable, sExpectedState !== "inactive",
 								"Row: " + iRow + ", deletable: " + bDeletable);
 							Opa5.assert.strictEqual(sState, sExpectedState,
 								"Row: " + iRow + ", state: " + sState);
+							if (sExpectedDescription) {
+								Opa5.assert.strictEqual(sDescription, sExpectedDescription,
+									"Row: " + iRow + ", description: " + sDescription);
+							}
 						},
 						viewName : sViewName
 					});
