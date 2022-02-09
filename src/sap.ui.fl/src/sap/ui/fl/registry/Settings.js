@@ -331,7 +331,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the system ID of the connected back end.
-	 * Taken from the property 'system' of the flex settings. Only filled for an ABAP backend.
+	 * This is taken from the <code>system</code> property of the flex settings. Only filled for an ABAP back end.
 	 *
 	 * @returns {string} System ID of the connected back end or undefined (when property <code>system</code> does not exist in the flex settings file)
 	 */
@@ -341,7 +341,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the client of the connected back end.
-	 * Taken from the property 'client' of the flex settings. Only filled for an ABAP backend.
+	 * This is taken from the <code>client</code> property of the flex settings. Only filled for an ABAP back end.
 	 *
 	 * @returns {string} Client of the connected backend or undefined (when property <code>system</code> does not exist in the flex settings file)
 	 */
@@ -349,9 +349,39 @@ sap.ui.define([
 		return this._oSettings.client;
 	};
 
+	// Used for stubbing in tests
+	Settings.prototype._getHostname = function () {
+		return document.location.hostname;
+	};
+
+	/**
+	 * Detects whether the system is a customer system.
+	 * This is taken from the <code>systemType</code> property of the flex settings (only filled for an ABAP back end)
+	 * or the hostname.
+	 *
+	 * @returns {boolean} <code>true</code> if it is a customer system
+	 */
+	 Settings.prototype.isCustomerSystem = function () {
+		var sSystemType = this._oSettings.systemType;
+		var bIsCustomerSystem = {
+			CUSTOMER: true,
+			SAP: false
+		}[sSystemType];
+		var sHostname = this._getHostname();
+
+		return bIsCustomerSystem !== undefined
+			? bIsCustomerSystem
+			// Fallback if back end has no info, guess based on hostname
+			: !(
+				sHostname.endsWith(".sap" + ".corp") // Prevent SEC-236 violation
+				|| sHostname === "localhost"
+				|| sHostname === "127.0.0.1"
+			);
+	};
+
 	/**
 	 * Getter for the id of the current user.
-	 * Taken from the property 'userId' of the flex settings. Only filled when UShell is available.
+	 * This is taken from the <code>userId</code> property of the flex settings. Only filled when UShell is available.
 	 *
 	 * @returns {string} User ID of the current user. Undefined if UShell is not available.
 	 */
