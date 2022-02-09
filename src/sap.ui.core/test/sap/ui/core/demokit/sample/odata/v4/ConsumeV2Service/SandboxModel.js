@@ -11,10 +11,8 @@ sap.ui.define([
 	"use strict";
 
 	var oMockData = {
+			sFilterBase : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 			mFixture : {
-				"$metadata" : {
-					source : "metadataV2.xml"
-				},
 				"EdmTypesCollection?$select=Boolean,Byte,GlobalUID,ID,Int16,Int32,SByte,String&$skip=0&$top=100" : {
 					source : "EdmTypesV2.json"
 				},
@@ -22,7 +20,12 @@ sap.ui.define([
 					source : "EdmTypesV2_SingleEntity.json"
 				}
 			},
-			sFilterBase : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+			aRegExps : [{
+				regExp : /^GET [\w\/]+\/ZUI5_EDM_TYPES\/\$metadata\?sap-language=..$/,
+				response : {
+					source : "metadataV2.xml"
+				}
+			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/ConsumeV2Service/data"
 		};
 
