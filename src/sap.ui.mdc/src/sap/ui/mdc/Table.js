@@ -874,6 +874,11 @@ sap.ui.define([
 	// ----End Type----
 
 	Table.prototype.setRowSettings = function(oRowSettings) {
+		if (this._oTableRowAction) {
+			if (oRowSettings.getRowActions().length == 0) {
+				oRowSettings.addRowAction(this._oTableRowAction);
+			}
+		}
 		this.setAggregation("rowSettings", oRowSettings, true);
 
 		if (this._oTable) {
@@ -954,11 +959,12 @@ sap.ui.define([
 
 		var oRowSettings = this.getRowSettings() || new RowSettings();
 
-		oRowSettings.removeAllAggregation("rowActions");
+		oRowSettings.destroyRowActions();
 		if (this.getRowAction().indexOf(RowAction.Navigation) > -1) {
-			oRowSettings.addRowAction(new RowActionItem({
+			this._oTableRowAction = new RowActionItem({
 				type: RowAction.Navigation
-			}));
+			});
+			oRowSettings.addRowAction(this._oTableRowAction);
 		}
 		this.setRowSettings(oRowSettings);
 
