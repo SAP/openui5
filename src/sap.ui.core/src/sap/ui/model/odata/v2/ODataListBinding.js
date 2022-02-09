@@ -480,10 +480,9 @@ sap.ui.define([
 		// don't send additional requests
 		// $expand loads all associated entities, no paging parameters possible, so we can safely
 		// assume all data is available
-		var bResolves = !!this.getResolvedPath(),
-			oRef = this.oModel._getObject(this.sPath, this.oContext);
+		var oRef = this.oModel._getObject(this.sPath, this.oContext);
 
-		if (!bResolves || oRef === undefined || this.mCustomParams
+		if (!this.isResolved() || oRef === undefined || this.mCustomParams
 				|| (this.sOperationMode === OperationMode.Server
 					&& (this.aApplicationFilters.length > 0 || this.aFilters.length > 0
 						|| this.aSorters.length > 0))) {
