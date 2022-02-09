@@ -139,6 +139,7 @@ sap.ui.define([
 	// ----------------------- Protected methods --------------------------------------------
 
 	/**
+	 * Returns the parent control.
 	 * @returns {sap.ui.mdc.Field} <code>Field</code> control
 	 * @protected
 	 */
