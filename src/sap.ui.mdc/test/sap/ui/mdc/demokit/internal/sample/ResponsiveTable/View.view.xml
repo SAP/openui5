@@ -40,8 +40,7 @@
 			selectionMode="Multi"
 			height="100%"
 			enableAutoColumnWidth="true"
-			paste="onPaste"
-			rowPress="onRowPress">
+			paste="onPaste">
 		<mdc:dataStateIndicator>
 			<plugins:DataStateIndicator id="dataStatePlugin" filter=".dataStateFilter" />
 		</mdc:dataStateIndicator>

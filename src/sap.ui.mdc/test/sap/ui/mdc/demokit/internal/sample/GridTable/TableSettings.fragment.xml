@@ -31,9 +31,6 @@
 						<form:FormElement label="Navigation">
 							<CheckBox select="onToggleNavigation"/>
 						</form:FormElement>
-						<form:FormElement label="Bound Navigation">
-							<CheckBox select="onToggleBoundNavigation"/>
-						</form:FormElement>
 						<form:FormElement label="Navigation Indicator">
 							<CheckBox select="onToggleNavIndicator"/>
 						</form:FormElement>

@@ -39,12 +39,6 @@
 						<form:FormElement label="Highlights">
 							<CheckBox select="onToggleHighlight"/>
 						</form:FormElement>
-						<form:FormElement label="Navigation">
-							<CheckBox select="onToggleNavigation"/>
-						</form:FormElement>
-						<form:FormElement label="Bound Navigation">
-							<CheckBox select="onToggleResponsiveBoundNavigation"/>
-						</form:FormElement>
 						<form:FormElement label="Navigation Indicator">
 							<CheckBox select="onToggleNavIndicator"/>
 						</form:FormElement>

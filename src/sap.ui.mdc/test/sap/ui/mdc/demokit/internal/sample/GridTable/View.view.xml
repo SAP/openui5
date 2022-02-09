@@ -22,8 +22,7 @@
 			paste="Toast.show(${$parameters>data})"
 			enableExport="true"
 			showPasteButton="true"
-			beforeExport="onBeforeExport"
-			rowPress="onRowPress">
+			beforeExport="onBeforeExport">
 		<mdc:type>
 			<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>
 		</mdc:type>
