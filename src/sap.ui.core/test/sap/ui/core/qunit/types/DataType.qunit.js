@@ -1,12 +1,12 @@
 /*global sinon, QUnit, globalUtil */
 sap.ui.define([
 	"sap/ui/base/DataType",
-	"sap/ui/base/Object",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
-	"sap/ui/core/Popup" // provides data type sap.ui.core.Popup.Dock
-], function (DataType, BaseObject, Log, ObjectPath, isPlainObject) {
+	"sap/ui/core/Popup", // provides enum sap.ui.core.Popup.Dock
+	'sap/ui/core/library' // provides data type sap.ui.core.Collision
+], function (DataType, Log, ObjectPath, isPlainObject) {
 	"use strict";
 
 	function random(values) {
@@ -741,6 +741,44 @@ sap.ui.define([
 		assert.ok(DataType.getType("sap.ui.core.Popup.Dock") === type, "multiple calls should return same type object");
 	});
 
+	QUnit.test("type sap.ui.core.Collision", function (assert) {
+		var oType = DataType.getType("sap.ui.core.Collision");
+
+		assert.ok(!!oType, "type 'sap.ui.core.Collision' exists");
+		assert.ok(oType instanceof DataType, "type is a DataType");
+		assert.equal(oType.getBaseType().getName(), "string", "base type is string");
+		assert.equal(oType.getPrimitiveType().getName(), "string", "primitive type is string");
+
+		assert.equal(oType.isValid("flip"), true, "single 'flip' is allowed");
+		assert.equal(oType.isValid("fit"), true, "single 'fit' is allowed");
+		assert.equal(oType.isValid("flipfit"), true, "single 'flipfit' is allowed");
+		assert.equal(oType.isValid("none"), true, "single 'none' is allowed");
+
+		assert.equal(oType.isValid("flip flip"), true, "'flip flip' is allowed");
+		assert.equal(oType.isValid("flip fit"), true, "'flip fit' is allowed");
+		assert.equal(oType.isValid("flip flipfit"), true, "'flip flipfit' is allowed");
+		assert.equal(oType.isValid("flip none"), true, "'flip none' is allowed");
+
+		assert.equal(oType.isValid("fit flip"), true, "'fit flip' is allowed");
+		assert.equal(oType.isValid("fit fit"), true, "'fit fit' is allowed");
+		assert.equal(oType.isValid("fit flipfit"), true, "'fit flipfit' is allowed");
+		assert.equal(oType.isValid("fit none"), true, "'fit none' is allowed");
+
+		assert.equal(oType.isValid("flipfit flip"), true, "'flipfit flip' is allowed");
+		assert.equal(oType.isValid("flipfit fit"), true, "'flipfit fit' is allowed");
+		assert.equal(oType.isValid("flipfit flipfit"), true, "'flipfit flipfit' is allowed");
+		assert.equal(oType.isValid("flipfit none"), true, "'flipfit none' is allowed");
+
+		assert.equal(oType.isValid("none flip"), true, "'none flip' is allowed");
+		assert.equal(oType.isValid("none fit"), true, "'none fit' is allowed");
+		assert.equal(oType.isValid("none flipfit"), true, "'none flipfit' is allowed");
+		assert.equal(oType.isValid("none none"), true, "'none none' is allowed");
+
+		assert.equal(oType.isValid("MyCollision"), false, "any string other than provided by sap.ui.core.Popup.CollisionMode is not allowed");
+		assert.equal(oType.isValid(42), false, "number value must not be accepted");
+		assert.equal(oType.isValid({}), false, "object value must not be accepted");
+		assert.equal(oType.isValid(""), false, "empty string must be valid");
+	});
 
 	QUnit.module("Normalizer");
 
