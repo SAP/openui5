@@ -488,6 +488,22 @@ sap.ui.define([
 		assert.equal(this.oUploadSet.getDefaultFileUploader().getVisible(), true, "File Uploader is visible");
 	});
 
+	QUnit.test("Remove Aggregation supports index", function (assert) {
+		assert.equal(this.oUploadSet.getItems().length, 2, "2 items are present before operation");
+
+		this.oUploadSet.removeItem(0);
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oUploadSet.getItems().length, 1, "item is successfully removed using index");
+
+		this.oUploadSet.removeAggregation("items",0);
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oUploadSet.getItems().length, 0, "item is successfully removed using index");
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);
