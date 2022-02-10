@@ -635,6 +635,11 @@ sap.ui.define([
 				this.oRta.getPopupManager()._onModeChange(oEvent);
 				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
 
+				// change mode to 'visualization'
+				oEvent = new Event("testevent", this.oRta, { mode: "visualization" });
+				this.oRta.getPopupManager()._onModeChange(oEvent);
+				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to visualization mode");
+
 				// change mode to 'navigation'
 				oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
 				this.oRta.getPopupManager()._onModeChange(oEvent);

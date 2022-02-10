@@ -325,7 +325,7 @@ sap.ui.define([
 	 */
 	PopupManager.prototype._setModal = function (bSetModal, oPopupElement) {
 		var bOriginalModalState = this._oModalState.get(oPopupElement.oPopup);
-		if (typeof bOriginalModalState !== "boolean" && bSetModal && this.getRta().getMode() === 'adaptation') {
+		if (typeof bOriginalModalState !== "boolean" && bSetModal && this.getRta().getMode() !== 'navigation') {
 			this._oModalState.set(oPopupElement.oPopup, oPopupElement.oPopup.getModal());
 			oPopupElement.oPopup.setModal(true);
 		} else if (typeof bOriginalModalState === "boolean" && bSetModal === false) {
