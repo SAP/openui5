@@ -30,11 +30,19 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for DateFormat - must not be used: To get a DateFormat instance, please use getDateInstance, getDateTimeInstance or getTimeInstance.
+	 * Constructor for DateFormat - must not be used:
+	 * <ul>
+	 *   <li>To get a {@link sap.ui.core.format.DateFormat} instance, please use {@link sap.ui.core.format.DateFormat.getDateInstance}, {@link sap.ui.core.format.DateFormat.getDateTimeInstance} or {@link sap.ui.core.format.DateFormat.getTimeInstance}</li>
+	 *   <li>To get a {@link sap.ui.core.format.DateFormat.DateTimeWithTimezone} instance, please use {@link sap.ui.core.format.DateFormat.getDateTimeWithTimezoneInstance}</li>
+	 * </ul>
 	 *
 	 * @class
 	 * The DateFormat is a static class for formatting and parsing single date and time values or date and time intervals according
 	 * to a set of format options.
+	 *
+	 * Important:
+	 * Every Date is converted with the timezone taken from {@link sap.ui.core.Configuration#getTimezone}.
+	 * The timezone falls back to the browser's local timezone.
 	 *
 	 * Supported format options are pattern based on Unicode LDML Date Format notation. Please note that only a subset of the LDML date symbols
 	 * is supported.
@@ -1791,7 +1799,10 @@ sap.ui.define([
 	/**
 	 * Format a date according to the given format options.
 	 *
-	 * @example <caption>DateTime (with local timezone "Europe/Berlin")</caption>
+	 * Uses the timezone from {@link sap.ui.core.Configuration#getTimezone}, which falls back to the
+	 * browser's local timezone to convert the given date.
+	 *
+	 * @example <caption>DateTime (with timezone "Europe/Berlin")</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 * DateFormat.getDateTimeInstance().format(oDate);
 	 * // output: "Dec 24, 2021, 2:37:00 PM"
@@ -2209,7 +2220,10 @@ sap.ui.define([
 	/**
 	 * Parse a string which is formatted according to the given format options.
 	 *
-	 * @example <caption>DateTime (with local timezone "Europe/Berlin")</caption>
+	 * Uses the timezone from {@link sap.ui.core.Configuration#getTimezone}, which falls back to the
+	 * browser's local timezone to convert the given date.
+	 *
+	 * @example <caption>DateTime (with timezone "Europe/Berlin")</caption>
 	 * var oDate = new Date(Date.UTC(2021, 11, 24, 13, 37));
 	 * DateFormat.getDateTimeInstance().parse("Dec 24, 2021, 2:37:00 PM");
 	 * // output: oDate
