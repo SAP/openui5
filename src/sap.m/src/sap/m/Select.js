@@ -2798,7 +2798,7 @@ function(
 		 * an empty string <code>""</code> or <code>undefined</code>, the value of <code>sKey</code> is changed to match
 		 * the <code>key</code> of the first enabled item and the first enabled item is selected (if any items exist).
 		 *
-		 * In the case that an item has the default key value, it is selected instead.
+		 * In the case that an item has the default key value and <code>forceSelection</code> property is set to <code>true</code>, it is selected instead.
 		 * If duplicate keys exist, the first item matching the key is selected.
 		 *
 		 * @returns {this} <code>this</code> to allow method chaining.
