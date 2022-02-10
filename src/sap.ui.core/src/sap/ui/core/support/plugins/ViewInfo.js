@@ -552,7 +552,7 @@ sap.ui.define([
 							oData.Attributes[oAttribute.name] = {
 								value: oAttribute.value,
 								__enabled: false,
-								__docu: ViewInfo.DemokitUrl + oProperty._oParent.getName() + ".html#" + oProperty._sGetter,
+								__docu: ViewInfo.DemokitUrl + oProperty._oParent.getName() + "#" + oProperty._sGetter,
 								__original: oAttribute.value,
 								__change: fnChangeAttribute(oProperty, oNode, sId),
 								__add: true
@@ -569,7 +569,7 @@ sap.ui.define([
 							value2: aControls[0] && aControls[0][oProperty._sGetter] ? aControls[0] && aControls[0][oProperty._sGetter]() : null,
 							__controls: aControls,
 							__enabled: aControls[0] && this._propertyChangeDebugger[aControls[0].getId() + "__" + aProperties[i]] != null,
-							__docu: ViewInfo.DemokitUrl + oProperty._oParent.getName() + ".html#" + oProperty._sGetter,
+							__docu: ViewInfo.DemokitUrl + oProperty._oParent.getName() + "#" + oProperty._sGetter,
 							__original: oNode.getAttribute(aProperties[i]),
 							__changed: null
 						};
@@ -676,7 +676,7 @@ sap.ui.define([
 
 		};
 
-		ViewInfo.DemokitUrl = "https://sapui5.hana.ondemand.com/#docs/api/symbols/";
+		ViewInfo.DemokitUrl = "https://openui5.hana.ondemand.com/api/";
 
 		ViewInfo.prototype.updateObjectInfo = function(oData, iIdx, sReason) {
 			var oObjectViewer = this.aObjectViewers[iIdx],
@@ -697,14 +697,14 @@ sap.ui.define([
 					var sControlName = oData.parentNode.namespaceURI + "." + oData.parentNode.localName;
 					var sAggr = "get" + oData.localName.substring(0,1).toUpperCase() + oData.localName.substring(1);
 
-					sHeader += "<a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sControlName + ".html\">" + sControlName + "</a> (" + oData.tagName + ") ";
-					sHeader +=  ": <a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sControlName + ".html#" + sAggr + "\">" + oData.localName + " aggregation</a>";
+					sHeader += "<a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sControlName + "\">" + sControlName + "</a> (" + oData.tagName + ") ";
+					sHeader +=  ": <a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sControlName + "#" + sAggr + "\">" + oData.localName + " aggregation</a>";
 
 				} else {
 						var sControlName = oData.namespaceURI + "." + oData.localName;
-						sHeader += "<a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sControlName + ".html\">" + sControlName + "</a> (" + oData.tagName + ") ";
+						sHeader += "<a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sControlName + "\">" + sControlName + "</a> (" + oData.tagName + ") ";
 						var sParentName = window.opener.jQuery.sap.getObject(Object.keys(oDataObject.Control)[0]).getMetadata().getParent().getName();
-						sHeader += ": <a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sParentName + ".html\">" + sParentName + "</a>";
+						sHeader += ": <a target=\"_docu\" href=\"" + ViewInfo.DemokitUrl + sParentName + "\">" + sParentName + "</a>";
 				}
 			} catch (ex) {
 				sHeader += "";

@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Set text or icon when active property is true",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectStatus",
-				href: "https://sapui5.hana.ondemand.com/#/api/sap.m.ObjectStatus"
+				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectStatus"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectStatus")

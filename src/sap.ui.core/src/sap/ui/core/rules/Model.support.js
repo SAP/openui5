@@ -118,19 +118,19 @@ sap.ui.define([
 		resolution: "Check the binding path for typos",
 		resolutionurls: [
 			{
-				href: "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.Context",
+				href: "https://openui5.hana.ondemand.com/api/sap.ui.model.Context",
 				text: "API Reference: Context"
 			},
 			{
-				href: "https://sapui5.hana.ondemand.com/#/topic/e5310932a71f42daa41f3a6143efca9c",
+				href: "https://openui5.hana.ondemand.com/topic/e5310932a71f42daa41f3a6143efca9c",
 				text: "Documentation: Data Binding Tutorial"
 			},
 			{
-				href: "https://sapui5.hana.ondemand.com/#/topic/97830de2d7314e93b5c1ee3878a17be9",
+				href: "https://openui5.hana.ondemand.com/topic/97830de2d7314e93b5c1ee3878a17be9",
 				text: "Documentation: Data Binding Tutorial - Step 12: Aggregation Binding Using Templates"
 			},
 			{
-				href: "https://sapui5.hana.ondemand.com/#/topic/6c7c5c266b534e7ea9a28f861dc515f5",
+				href: "https://openui5.hana.ondemand.com/topic/6c7c5c266b534e7ea9a28f861dc515f5",
 				text: "Documentation: Data Binding Tutorial - Step 13: Element Binding"
 			}
 		],
@@ -222,16 +222,16 @@ sap.ui.define([
 			resolution : "Use the '$select' binding parameter when binding an aggregation against "
 				+ "an OData V4 model, or 'select' in case of an OData V2 model",
 			resolutionurls : [{
-				href : "https://sapui5.hana.ondemand.com/#/topic/408b40efed3c416681e1bd8cdd8910d4.html#loio408b40efed3c416681e1bd8cdd8910d4/section_useSelectQuery",
+				href : "https://openui5.hana.ondemand.com/topic/408b40efed3c416681e1bd8cdd8910d4.html#loio408b40efed3c416681e1bd8cdd8910d4/section_useSelectQuery",
 				text : "Documentation: Performance: Speed Up Your App"
 			}, {
-				href : "https://sapui5.hana.ondemand.com/#/topic/10ca58b701414f7f93cd97156f898f80",
+				href : "https://openui5.hana.ondemand.com/topic/10ca58b701414f7f93cd97156f898f80",
 				text : "OData V4 only: Automatic determination of $expand and $select"
 			}, {
-				href : "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.odata.v4.ODataModel%23methods/bindList",
+				href : "https://openui5.hana.ondemand.com/api/sap.ui.model.odata.v4.ODataModel%23methods/bindList",
 				text : "Documentation: v4.ODataModel#bindList"
 			}, {
-				href : "https://sapui5.hana.ondemand.com/#/api/sap.ui.model.odata.v2.ODataModel%23methods/bindList",
+				href : "https://openui5.hana.ondemand.com/api/sap.ui.model.odata.v2.ODataModel%23methods/bindList",
 				text : "Documentation: v2.ODataModel#bindList"
 			}],
 			title : "Model: Use the $select/select binding parameter when binding aggregations to "

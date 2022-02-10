@@ -19,8 +19,8 @@ Third-party module license information is also available in machine-readable for
 
 Try it!
 -------
-Check out our [control playground](https://openui5.hana.ondemand.com/#/controls)
-as well as a number of [sample applications](https://openui5.hana.ondemand.com/#/demoapps).
+Check out our [control playground](https://openui5.hana.ondemand.com/controls)
+as well as a number of [sample applications](https://openui5.hana.ondemand.com/demoapps).
 
 Get it!
 -------

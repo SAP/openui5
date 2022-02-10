@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Set type of the ObjectMarker",
 			resolutionurls: [{
 				text: "API Reference: sap.m.ObjectMarker",
-				href: "https://sapui5.hana.ondemand.com/#/api/sap.m.ObjectMarker"
+				href: "https://openui5.hana.ondemand.com/api/sap.m.ObjectMarker"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.ObjectMarker")

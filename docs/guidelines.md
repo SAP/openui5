@@ -46,7 +46,7 @@ General
 JavaScript Coding Guidelines
 ----------------------------
 
--   No global JavaScript variables; Use AMD modules for encapsulation. For more information, see [Best Practices for Loading Modules](https://openui5.hana.ondemand.com/#/topic/00737d6c1b864dc3ab72ef56611491c4.html) and [API Reference: `sap.ui.define`](https://openui5.hana.ondemand.com/#/api/sap.ui/methods/sap.ui.define).
+-   No global JavaScript variables; Use AMD modules for encapsulation. For more information, see [Best Practices for Loading Modules](https://openui5.hana.ondemand.com/topic/00737d6c1b864dc3ab72ef56611491c4.html) and [API Reference: `sap.ui.define`](https://openui5.hana.ondemand.com/api/sap.ui/methods/sap.ui.define).
     -   This also means: no undeclared variables
     -   When using global variables introduced by other libraries, declare the usage in a special "global"-comment: `/*global JSZip, OpenAjax */`
 -   Do not access internal (private) members of other objects
@@ -295,7 +295,7 @@ General:
 -   Proper API documentation
 -   Translation: all texts visible in the UI must be translatable
     -   Do not provide translations, only provide the "developer english" version in messagebundle.properties, but annotate properly for translators, see [this page](guidelines/translationfiles.md) for details.
--   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/#/topic/91f087396f4d1014b6dd926db0e91070)
+-   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/topic/91f087396f4d1014b6dd926db0e91070)
 -   Make sure other Open Source libraries (or parts of them) are officially approved before adding them to UI5. Do not add code you "found" somewhere.
 
 For controls in addition:
