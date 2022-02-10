@@ -84,7 +84,8 @@ sap.ui.define([
 			properties : {
 
 				/**
-				 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with an Icon name parameter and an optional collection parameter which is required when using application extended Icons. A list of standard FontIcon is available here.
+				 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with an Icon name parameter and an optional collection parameter which is required when using application extended Icons.
+				 * A list of standard icons is available in the <a href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html">Icon Explorer</a>.
 				 */
 				src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
