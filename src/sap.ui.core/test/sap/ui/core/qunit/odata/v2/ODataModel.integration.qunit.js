@@ -12871,4 +12871,32 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Setting a null context to a unresolved list binding does not trigger change events.
+	// BCP: 2280055052
+	QUnit.test("No change event when setting null context to unresolved ODLB", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<Table id="table" items="{ToSalesOrders}">\
+	<Text text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			oTable.getBinding("items").attachChange(function () {
+				assert.ok(false, "must not trigger change event");
+			});
+			oTable.attachUpdateFinished(undefined, function () {
+				assert.ok(false, "must not trigger updateFinished event");
+			});
+
+			// code under test
+			oTable.setBindingContext(null);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

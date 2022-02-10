@@ -416,7 +416,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v2.Context#isTransient}
 	 */
 	ODataListBinding.prototype.setContext = function (oContext) {
-		var sResolvedPath,
+		var bHadNonTransientContext, sResolvedPath,
 			bForceUpdate = oContext && oContext.isRefreshForced(),
 			bPreliminary = oContext && oContext.isPreliminary(),
 			bUpdated = oContext && oContext.isUpdated();
@@ -435,6 +435,7 @@ sap.ui.define([
 			return;
 		}
 		if (Context.hasChanged(this.oContext, oContext)) {
+			bHadNonTransientContext = this.isResolved() && !this._hasTransientParentContext();
 			this.oContext = oContext;
 			sResolvedPath = this.getResolvedPath(); // resolved path with the new context
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
@@ -449,7 +450,9 @@ sap.ui.define([
 				this.aKeys = [];
 				this.iLength = 0;
 				this.bLengthFinal = true;
-				this._fireChange({reason : ChangeReason.Context});
+				if (bHadNonTransientContext) {
+					this._fireChange({reason : ChangeReason.Context});
+				}
 
 				return;
 			}
