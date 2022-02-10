@@ -560,6 +560,7 @@ sap.ui.define([
 
 			this._updateConfigurationEditorMenu(oCurrentSample);
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
+			this._oCurrSample = oCurrentSample;
 
 			Promise.all([
 				this._initCardSample(oCurrentSample),
