@@ -1335,7 +1335,7 @@ function(
 	 */
 	Input.prototype._doSelect = function(iStart, iEnd) {
 		if (Device.support.touch) {
-			return;
+			return this;
 		}
 		var oDomRef = this._$input[0];
 		if (oDomRef) {

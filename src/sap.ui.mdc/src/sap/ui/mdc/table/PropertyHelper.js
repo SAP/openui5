@@ -55,7 +55,7 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aProperties
 	 *     The properties to process in this helper
-	 * @param {object<string, object>} [mExtensions]
+	 * @param {Object<string, object>} [mExtensions]
 	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
 	 *     The extension of a property is stored in a reserved <code>extension</code> attribute, and its attributes must be specified with
 	 *     <code>mExtensionAttributeMetadata</code>.

@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 *
 	 * @param sValue {string} Typed in value.
 	 * @param oInput {sap.m.Input} Input to act upon.
-	 * @param aItems {array<T>} Items to pick from.
+	 * @param aItems {Array<T>} Items to pick from.
 	 * @param vTextGetter {string|function} Name of method in oInput or a function which extracts the text.
 	 * @returns {Array<T>} A sorted array of matching items. The first item is the one that's being highlighted.
 	 */
@@ -63,9 +63,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 * A custom getter string could be provided to support further scenarios. The default one is <code>getText</code>.
 	 *
 	 * @param sTextToFilter {string}
-	 * @param aItems {array<T>}
+	 * @param aItems {Array<T>}
 	 * @param vTextGetter {string|function}
-	 * @returns {array<T>}
+	 * @returns {Array<T>}
 	 * @private
 	 */
 	function _filterItems(sTextToFilter, aItems, vTextGetter) {
@@ -108,9 +108,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 * 2. ["bar", "foo"]
 	 *
 	 * @param sTextToFilter {string}
-	 * @param aItems {array<T>}
+	 * @param aItems {Array<T>}
 	 * @param vTextGetter {string|function}
-	 * @returns {array<T>}
+	 * @returns {Array<T>}
 	 * @private
 	 */
 	function _sortItems(sTextToFilter, aItems, vTextGetter) {
@@ -147,7 +147,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 *
 	 * @param oItem {Object}
 	 * @param vTextGetter {string|function}
-	 * @returns {array<string>}
+	 * @returns {Array<string>}
 	 * @private
 	 */
 	function _extractTextsFromItem(oItem, vTextGetter) {
@@ -189,7 +189,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	/**
 	 * Returns the first/best match of a startsWith.
 	 *
-	 * @param aTexts {array<string>}
+	 * @param aTexts {Array<string>}
 	 * @param sSearch {string}
 	 * @returns {string}
 	 * @private
