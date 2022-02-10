@@ -1068,36 +1068,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes all dependent bindings with the given parameters and waits for them to have
-	 * finished.
-	 *
-	 * @param {string} sResourcePathPrefix
-	 *   The resource path prefix which is used to delete the dependent caches and corresponding
-	 *   messages; may be "" but not <code>undefined</code>
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh
-	 * @param {boolean} [bCheckUpdate]
-	 *   If <code>true</code>, a property binding is expected to check for updates
-	 * @param {boolean} [bKeepCacheOnError]
-	 *   If <code>true</code>, the binding data remains unchanged if the refresh fails
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving when all dependent bindings are refreshed; it is rejected
-	 *   when the refresh fails; the promise is resolved immediately on a suspended binding
-	 * @throws {Error}
-	 *   If the binding's root binding is suspended and a group ID different from the binding's
-	 *   group ID is given
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.refreshDependentBindings = function (sResourcePathPrefix, sGroupId,
-			bCheckUpdate, bKeepCacheOnError) {
-		return SyncPromise.all(this.getDependentBindings().map(function (oDependentBinding) {
-			return oDependentBinding.refreshInternal(sResourcePathPrefix, sGroupId, bCheckUpdate,
-				bKeepCacheOnError);
-		}));
-	};
-
-	/**
 	 * Recursively refreshes all dependent list bindings that have no own cache.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}

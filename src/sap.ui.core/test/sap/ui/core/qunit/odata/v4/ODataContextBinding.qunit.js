@@ -4854,6 +4854,46 @@ sap.ui.define([
 		}, new Error("Unsupported " + oBinding));
 	});
 
+	//*********************************************************************************************
+	QUnit.test("refreshDependentBindings", function (assert) {
+		var oBinding = this.bindContext("/path"),
+			aDependentBindings = [{
+				refreshInternal : function () {}
+			}, {
+				refreshInternal : function () {}
+			}],
+			bDependent0Refreshed = false,
+			oDependent0Promise = new Promise(function (resolve) { // no need for SyncPromise
+				bDependent0Refreshed = true;
+				resolve();
+			}),
+			bDependent1Refreshed = false,
+			oDependent1Promise = new Promise(function (resolve) { // no need for SyncPromise
+				bDependent1Refreshed = true;
+				resolve();
+			}),
+			oPromise;
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns(aDependentBindings);
+		this.mock(aDependentBindings[0]).expects("refreshInternal")
+			.withExactArgs("resource/path/prefix", "group", "~bCheckUpdate~", "~bKeepCacheOnError~")
+			.returns(oDependent0Promise);
+		this.mock(aDependentBindings[1]).expects("refreshInternal")
+			.withExactArgs("resource/path/prefix", "group", "~bCheckUpdate~", "~bKeepCacheOnError~")
+			.returns(oDependent1Promise);
+
+		// code under test
+		oPromise = oBinding.refreshDependentBindings("resource/path/prefix", "group",
+			"~bCheckUpdate~", "~bKeepCacheOnError~");
+
+		assert.ok(oPromise.isPending(), "a SyncPromise");
+		return oPromise.then(function () {
+			assert.strictEqual(bDependent0Refreshed, true);
+			assert.strictEqual(bDependent1Refreshed, true);
+		});
+	});
+
 	//*******************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
