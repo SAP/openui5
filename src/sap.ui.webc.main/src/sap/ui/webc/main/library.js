@@ -162,6 +162,11 @@ sap.ui.define([
 						"hideControl": "default",
 						"unhideControl": "default"
 					},
+					"sap.ui.webc.main.Panel": {
+						"hideControl": "default",
+						"unhideControl": "default",
+						"moveControls": "default"
+					},
 					"sap.ui.webc.main.RangeSlider": {
 						"hideControl": "default",
 						"unhideControl": "default"

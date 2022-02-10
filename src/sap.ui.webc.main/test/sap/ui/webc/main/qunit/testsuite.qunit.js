@@ -321,6 +321,14 @@ sap.ui.define(function() {
 				sinon: false,
 				group: "Designtime"
 			},
+			"designtime/Panel": {
+				title: "QUnit Page for sap.ui.webc.main.Panel design time and rta enabling",
+				ui5: {
+					libs: ["sap.ui.webc.main","sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/RangeSlider": {
 				title: "QUnit Page for sap.ui.webc.main.RangeSlider design time and rta enabling",
 				ui5: {
