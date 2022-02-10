@@ -1658,7 +1658,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._triggerReloadOnStart = function(oReloadInfo) {
-		if (this._getUShellService("CrossApplicationNavigation")) {
+		if (this._getUShellService("CrossApplicationNavigation") && this._oVersionsModel.getProperty("/versioningEnabled")) {
 			if (oReloadInfo.isDraftAvailable) {
 				// clears FlexState and triggers reloading of the flex data without blocking
 				VersionsAPI.loadDraftForApplication({
