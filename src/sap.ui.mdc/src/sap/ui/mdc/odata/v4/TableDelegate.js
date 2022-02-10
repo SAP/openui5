@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"../../TableDelegate",
+	"../../table/V4AnalyticsPropertyHelper",
 	"../../util/loadModules",
 	"../../library",
 	"sap/m/ColumnPopoverSelectListItem",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver"
 ], function(
 	TableDelegate,
+	V4AnalyticsPropertyHelper,
 	loadModules,
 	library,
 	ColumnPopoverSelectListItem,
@@ -49,37 +51,14 @@ sap.ui.define([
 	var Delegate = Object.assign({}, TableDelegate);
 
 	/**
-	 * Fetches the model-specific <code>PropertyHelper</code> class or instance.
+	 * Gets the model-specific <code>PropertyHelper</code> class to create an instance of.
 	 *
-	 * <b>Note:</b> The <code>PropertyHelper</code> class adds the extension of a property to the reserved attribute "extension". It is not allowed to
-	 * add an <code>extension</code> attribute in the standard <code>PropertyInfo</code>.
-	 *
-	 * @example <caption>Initializing a <code>PropertyHelper</code> with extensions:</caption>
-	 * new PropertyHelper(
-	 *     [{
-	 *         name: "propA",
-	 *         label: "Property A",
-	 *         extension: {
-	 *             messageType: "Success"
-	 *         }
-	 *     }, {
-	 *         name: "propB",
-	 *         label: "Property B"
-	 *     }]
-	 * )
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @param {object[]} aProperties <code>PropertyInfo</code>
-	 * @param {Promise<Object<string, object>|null>} mExtensions The property extensions
-	 * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A <code>Promise</code> that resolves with the <code>PropertyHelper</code> class
-	 * or instance
+	 * @returns {sap.ui.mdc.table.V4AnalyticsPropertyHelper} The <code>PropertyHelper</code> class.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Delegate.fetchPropertyHelper = function(oTable, aProperties, mExtensions) {
-		return loadModules("sap/ui/mdc/table/V4AnalyticsPropertyHelper").then(function(aResult) {
-			return aResult[0];
-		});
+	Delegate.getPropertyHelperClass = function() {
+		return V4AnalyticsPropertyHelper;
 	};
 
 	/**
@@ -705,10 +684,9 @@ sap.ui.define([
 			return oDelegate.fetchPropertyExtensionsForBinding(oTable, aProperties);
 		}).then(function(mExtensionsForBinding) {
 			mExtensions = mExtensionsForBinding;
-			return oDelegate.fetchPropertyHelper(oTable, aProperties, mExtensions);
+			return oDelegate.getPropertyHelperClass();
 		}).then(function(PropertyHelper) {
-			var bIsPropertyHelperInstance = PropertyHelper.constructor === PropertyHelper;
-			mTableMap.oPropertyHelperForBinding = bIsPropertyHelperInstance ? PropertyHelper : new PropertyHelper(aProperties, mExtensions, oTable);
+			mTableMap.oPropertyHelperForBinding = new PropertyHelper(aProperties, mExtensions, oTable);
 			return mTableMap.oPropertyHelperForBinding;
 		});
 	}
