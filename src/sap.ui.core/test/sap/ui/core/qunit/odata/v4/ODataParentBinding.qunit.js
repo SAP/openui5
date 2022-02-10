@@ -3051,57 +3051,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshDependentBindings", function (assert) {
-		var oBinding = new ODataParentBinding({oContext : {/* sap.ui.model.Context */}}),
-			bCheckUpdate = {},
-			aDependentBindings = [{
-				refreshInternal : function () {}
-			}, {
-				refreshInternal : function () {}
-			}],
-			bDependent0Refreshed = false,
-			oDependent0Promise = new SyncPromise(function (resolve) {
-				setTimeout(function () {
-					bDependent0Refreshed = true;
-					resolve();
-				});
-			}),
-			bDependent1Refreshed = false,
-			oDependent1Promise = new SyncPromise(function (resolve) {
-				setTimeout(function () {
-					bDependent1Refreshed = true;
-					resolve();
-				});
-			}),
-			bKeepCacheOnError = {},
-			sResourcePathPrefix = {/*Path needed to avoid deleting all Caches*/},
-			oPromise;
-
-		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-			.returns(aDependentBindings);
-		this.mock(aDependentBindings[0]).expects("refreshInternal")
-			.withExactArgs(sinon.match.same(sResourcePathPrefix), "group",
-					sinon.match.same(bCheckUpdate), sinon.match.same(bKeepCacheOnError)
-				)
-			.returns(oDependent0Promise);
-		this.mock(aDependentBindings[1]).expects("refreshInternal")
-			.withExactArgs(sinon.match.same(sResourcePathPrefix), "group",
-					sinon.match.same(bCheckUpdate), sinon.match.same(bKeepCacheOnError)
-				)
-			.returns(oDependent1Promise);
-
-		// code under test
-		oPromise = oBinding.refreshDependentBindings(sResourcePathPrefix, "group", bCheckUpdate,
-			bKeepCacheOnError);
-
-		assert.ok(oPromise.isPending(), "a SyncPromise");
-		return oPromise.then(function () {
-			assert.strictEqual(bDependent0Refreshed, true);
-			assert.strictEqual(bDependent1Refreshed, true);
-		});
-	});
-
-	//*********************************************************************************************
 [false, true].forEach(function (bCanceled) {
 	var sTitle = "createRefreshPromise/resolveRefreshPromise, canceled=" + bCanceled;
 
