@@ -43,6 +43,9 @@
 				"stringLabelTrans": {
 					"value": "StringValue"
 				},
+				"stringLabelTrans2": {
+					"value": "StringValue"
+				},
 				"stringWithDescription": {
 					"value": "StringValue"
 				},

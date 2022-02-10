@@ -11,20 +11,22 @@
 </head>
 
 <body class="sapUiBody sapUiSizeCompact">
+	<h2>sap.ui.integration.cardEditor - Test pages</h2>
 	<div id="global">
-		<h2>Settings</h2>
+		<h3>Settings</h3>
 		<label>Page Language:</label>
 		<select id="languageSelect" onchange="switchLanguage(this)">
 		</select>
 		<label>Theme:</label>
 		<select onchange="switchTheme(this)">
-			<option value="sap_fiori_3">sap_fiori_3</option>
-			<option value="sap_fiori_3_dark">sap_fiori_3_dark</option>
-			<option value="sap_hcb">sap_hcb</option>
+			<option value="sap_fiori_3">SAP Quartz Light</option>
+			<option value="sap_fiori_3_dark">SAP Quartz Dark</option>
+			<option value="sap_fiori_3_hcb">SAP High Contrast Black</option>
+			<option value="sap_fiori_3_hcw">SAP High Contrast White</option>
 		</select>
 	</div>
 	<div id="editor">
-		<h2>Admin Mode (only)</h2>
+		<h3>Admin Mode (only)</h3>
 		<ui-integration-card-editor id="cardEditorAdmin" mode="admin" allow-dynamic-values="true" allow-settings="true">
 		</ui-integration-card-editor>
 		<div class="buttons">
@@ -41,7 +43,7 @@
 				Delete Values (Admin Mode)
 			</button>
 		</div>
-		<h2>Content Mode (only)</h2>
+		<h3>Content Mode (only)</h3>
 		<ui-integration-card-editor id="cardEditorContent" preview-position="left" mode="content" allow-dynamic-values="true"
 			allow-settings="true">
 		</ui-integration-card-editor>
@@ -59,7 +61,7 @@
 				Delete Values (Content Mode)
 			</button>
 		</div>
-		<h2>Translation Mode (only)</h2>
+		<h3>Translation Mode (only)</h3>
 		<label>Translation Language:</label>
 		<select id="translationLanguageSelectForOnlyMode" onchange="switchTranslationLanguageForOnlyMode(this)">
 		</select>
@@ -80,15 +82,15 @@
 				Delete Values (Translation Mode)
 			</button>
 		</div>
-		<h2>All Merged Layers </h2>
+		<h3>All Merged Layers </h3>
 		<div id="all">
 
 		</div>
-		<h2>Content Mode (with admin layer)</h2>
+		<h3>Content Mode (with admin layer)</h3>
 		<div id="admincontent">
 
 		</div>
-		<h2>Translation Mode (with admin + content layer)</h2>
+		<h3>Translation Mode (with admin + content layer)</h3>
 		<label>Translation Language:</label>
 		<select id="translationLanguageSelectForAllMode" onchange="switchTranslationLanguageForAllMode(this)">
 		</select>
