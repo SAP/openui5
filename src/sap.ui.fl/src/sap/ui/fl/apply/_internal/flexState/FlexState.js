@@ -320,7 +320,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
 	 * @param {string} [mPropertyBag.version] - Number of the version in which the state should be initialized
 	 * @param {boolean} [mPropertyBag.partialFlexState=false] - if true state is initialized partially and does not include flex bundles
-	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized
+	 * @returns {Promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = function(mPropertyBag) {
 		return Promise.all([
@@ -362,7 +362,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
 	 * @param {string} [mPropertyBag.version] - Number of the version in which the state should be initialized
-	 * @returns {promise<undefined>} Resolves a promise as soon as FlexState is initialized again
+	 * @returns {Promise<undefined>} Resolves a promise as soon as FlexState is initialized again
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);

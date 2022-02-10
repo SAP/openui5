@@ -643,7 +643,7 @@ function(
 		/**
 		 * Create the instance of the <code>TabStripSelect</code>.
 		 *
-		 * @param { array<sap.m.TabStripItem> } aTabStripItems Array with the <code>TabStripItems</code>
+		 * @param { Array<sap.m.TabStripItem> } aTabStripItems Array with the <code>TabStripItems</code>
 		 * @returns {CustomSelect} The created <code>CustomSelect</code>
 		 * @private
 		 */

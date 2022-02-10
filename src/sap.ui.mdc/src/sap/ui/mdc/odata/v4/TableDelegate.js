@@ -70,7 +70,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {object[]} aProperties <code>PropertyInfo</code>
-	 * @param {Promise<object<string, object>|null>} mExtensions The property extensions
+	 * @param {Promise<Object<string, object>|null>} mExtensions The property extensions
 	 * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A <code>Promise</code> that resolves with the <code>PropertyHelper</code> class
 	 * or instance
 	 * @private
@@ -92,7 +92,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {object[]} aProperties <code>PropertyInfo</code>
-	 * @returns {Promise<object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
+	 * @returns {Promise<Object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
 	 * @protected
 	 */
 	Delegate.fetchPropertyExtensions = function(oTable, aProperties) {
@@ -119,7 +119,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {object[]} aProperties <code>PropertyInfo</code>
-	 * @returns {Promise<object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
+	 * @returns {Promise<Object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
 	 * @protected
 	 */
 	Delegate.fetchPropertyExtensionsForBinding = function(oTable, aProperties) {

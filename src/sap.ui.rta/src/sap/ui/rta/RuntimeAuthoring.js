@@ -328,7 +328,7 @@ sap.ui.define([
 
 	/**
 	 * Getter method for plugins.
-	 * @returns {object<sap.ui.rta.plugin.Plugin>} map with plugins
+	 * @returns {Object<string, sap.ui.rta.plugin.Plugin>} map with plugins
 	 */
 	RuntimeAuthoring.prototype.getPlugins = function () {
 		return this.getPluginManager

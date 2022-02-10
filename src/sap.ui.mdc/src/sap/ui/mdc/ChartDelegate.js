@@ -240,7 +240,7 @@ sap.ui.define([
     /**
      * Gets the available chart types for the current state of the inner chart.
      *
-     * @returns {array<ChartTypeObject>} Array containing the available chart types
+     * @returns {Array<ChartTypeObject>} Array containing the available chart types
      *
      * @experimental
      * @private
@@ -266,7 +266,7 @@ sap.ui.define([
      * Returns all sorted dimensions of an inner chart as property.
      * This is used to determine possible drilldown dimensions in the drill down popover of the MDC chart.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {Promise<array<sap.ui.mdc.chart.Item>>} <code>Promise</code> containing an array of dimensions that is sorted
+     * @returns {Promise<Array<sap.ui.mdc.chart.Item>>} <code>Promise</code> containing an array of dimensions that is sorted
      *
      * @experimental
      * @private
@@ -280,7 +280,7 @@ sap.ui.define([
      * This function is used by the breadcrumb navigation.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {array<sap.ui.mdc.chart.Item>} Array of MDC items that are drillable
+     * @returns {Array<sap.ui.mdc.chart.Item>} Array of MDC items that are drillable
      *
      * @experimental
      * @private

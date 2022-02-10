@@ -36,7 +36,7 @@ sap.ui.define([
 
 	/**
 	* Registers the given validator types. If a validator type is already registered, it will be skipped and must first be deregistered using the <code>ValidatorRegistry.deregisterValidator</code> function.
-	* @param {object<string, string>} mNames - Validator types and paths to register
+	* @param {Object<string, string>} mNames - Validator types and paths to register
 	* @public
 	* @function
 	* @name sap.ui.integration.designtime.baseEditor.validator.ValidatorRegistry.registerValidators
