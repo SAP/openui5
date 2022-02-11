@@ -571,7 +571,7 @@ sap.ui.define([
 			var oListBinding = this._getListBinding();
 			var oDelegate = this._getValueHelpDelegate();
 			var oDelegatePayload = this._getValueHelpDelegatePayload();
-			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, oListBinding);
+			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, this, oListBinding);
 		}
 
 		return bSearchSupported;

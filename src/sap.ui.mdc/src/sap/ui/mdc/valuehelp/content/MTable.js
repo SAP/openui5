@@ -186,7 +186,7 @@ sap.ui.define([
 			bUseFilter = false;
 		}
 
-		if (sFilterFields === "$search" && oDelegate && oDelegate.isSearchSupported(oDelegatePayload, oListBinding)){
+		if (sFilterFields === "$search" && oDelegate && oDelegate.isSearchSupported(oDelegatePayload, this, oListBinding)){
 			if (!oListBinding.isSuspended() && bUseFilter) {
 				// as we trigger two changes this would result to two requests therefore we suspend the binding
 				oListBinding.suspend();
