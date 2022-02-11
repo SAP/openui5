@@ -88,7 +88,7 @@
     "grunt-timer": "^0.5.4",
     "js-yaml": "^3.13.1",
     "json2json": "^0.2.4",
-    "karma": "^6.3.3",
+    "karma": "^6.3.14",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
     "karma-junit-reporter": "^2.0.1",
