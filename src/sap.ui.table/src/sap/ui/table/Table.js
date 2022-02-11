@@ -538,7 +538,7 @@ sap.ui.define([
 					/**
 					 * binding context of the row which has been clicked so that selection has been changed
 					 */
-					rowContext : {type : "object"},
+					rowContext : {type : "sap.ui.model.Context"},
 
 					/**
 					 * array of row indices which selection has been changed (either selected or deselected)
