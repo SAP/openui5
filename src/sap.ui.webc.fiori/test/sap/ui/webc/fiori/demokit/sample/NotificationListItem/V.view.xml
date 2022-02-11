@@ -1,0 +1,33 @@
+<mvc:View controllerName="sap.ui.webc.fiori.sample.NotificationListItem.C" xmlns="sap.ui.webc.main" xmlns:fiori="sap.ui.webc.fiori" xmlns:mvc="sap.ui.core.mvc" height="100%">
+    <Toast id="demoToast" duration="1000"></Toast>
+
+    <fiori:Page>
+        <fiori:header>
+            <fiori:Bar>
+                <fiori:middleContent>
+                    <Title text="NotificationListItem"></Title>
+                </fiori:middleContent>
+            </fiori:Bar>
+        </fiori:header>
+
+        <fiori:content>
+            <fiori:NotificationListItem titleText="Some text..." close="handleClose">
+                <fiori:actions>
+                    <fiori:NotificationAction icon="employee" text="Some text..."></fiori:NotificationAction>
+                    <fiori:NotificationAction icon="employee" text="Some text..."></fiori:NotificationAction>
+                    <fiori:NotificationAction icon="employee" text="Some text..."></fiori:NotificationAction>
+                </fiori:actions>
+                <fiori:avatar>
+                    <Avatar icon="employee">
+                        <content><Button icon="employee" text="Some text..."></Button></content>
+                    </Avatar>
+                </fiori:avatar>
+                <fiori:footnotes>
+                    <Button icon="employee" text="Some text..."></Button>
+                    <Button icon="employee" text="Some text..."></Button>
+                    <Button icon="employee" text="Some text..."></Button>
+                </fiori:footnotes>
+            </fiori:NotificationListItem>
+        </fiori:content>
+    </fiori:Page>
+</mvc:View>

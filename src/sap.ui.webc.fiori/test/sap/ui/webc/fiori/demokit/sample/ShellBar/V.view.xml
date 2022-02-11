@@ -1,0 +1,69 @@
+<mvc:View controllerName="sap.ui.webc.fiori.sample.ShellBar.C" xmlns="sap.ui.webc.main" xmlns:fiori="sap.ui.webc.fiori" xmlns:mvc="sap.ui.core.mvc" height="100%">
+    <Toast id="demoToast" duration="1000"></Toast>
+
+    <fiori:Page>
+        <fiori:header>
+            <fiori:Bar>
+                <fiori:middleContent>
+                    <Title text="ShellBar"></Title>
+                </fiori:middleContent>
+            </fiori:Bar>
+        </fiori:header>
+
+        <fiori:content>
+            <fiori:ShellBar coPilotClick="handleCoPilotClick" logoClick="handleLogoClick" menuItemClick="handleMenuItemClick" notificationsClick="handleNotificationsClick" productSwitchClick="handleProductSwitchClick" profileClick="handleProfileClick">
+                <fiori:items>
+                    <fiori:ShellBarItem icon="employee" text="Some text..."></fiori:ShellBarItem>
+                    <fiori:ShellBarItem icon="employee" text="Some text..."></fiori:ShellBarItem>
+                    <fiori:ShellBarItem icon="employee" text="Some text..."></fiori:ShellBarItem>
+                </fiori:items>
+                <fiori:logo>
+                    <Avatar icon="employee">
+                        <content><Button icon="employee" text="Some text..."></Button></content>
+                    </Avatar>
+                </fiori:logo>
+                <fiori:menuItems>
+                    <CustomListItem>
+                        <content>
+                            <Button icon="employee" text="Some text..."></Button>
+                            <Button icon="employee" text="Some text..."></Button>
+                            <Button icon="employee" text="Some text..."></Button>
+                        </content>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <content>
+                            <Button icon="employee" text="Some text..."></Button>
+                            <Button icon="employee" text="Some text..."></Button>
+                            <Button icon="employee" text="Some text..."></Button>
+                        </content>
+                    </CustomListItem>
+                    <CustomListItem>
+                        <content>
+                            <Button icon="employee" text="Some text..."></Button>
+                            <Button icon="employee" text="Some text..."></Button>
+                            <Button icon="employee" text="Some text..."></Button>
+                        </content>
+                    </CustomListItem>
+                </fiori:menuItems>
+                <fiori:profile>
+                    <Avatar icon="employee">
+                        <content><Button icon="employee" text="Some text..."></Button></content>
+                    </Avatar>
+                </fiori:profile>
+                <fiori:searchField><Input placeholder="This is my placeholder value" value="Control value" valueState="Warning" valueStateMessage="Value State Message">
+                    <icon>
+                        <Icon name="add"></Icon>
+                        <Icon name="add"></Icon>
+                        <Icon name="add"></Icon>
+                    </icon>
+                    <suggestionItems>
+                        <SuggestionGroupItem text="Some text..."></SuggestionGroupItem>
+                        <SuggestionGroupItem text="Some text..."></SuggestionGroupItem>
+                        <SuggestionGroupItem text="Some text..."></SuggestionGroupItem>
+                    </suggestionItems></Input>
+                </fiori:searchField>
+                <fiori:startButton><Button icon="employee" text="Some text..."></Button></fiori:startButton>
+            </fiori:ShellBar>
+        </fiori:content>
+    </fiori:Page>
+</mvc:View>
