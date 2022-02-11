@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/m/InstanceManager",
 	"sap/ui/dt/Overlay",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
@@ -18,6 +19,7 @@ sap.ui.define([
 	ManagedObject,
 	InstanceManager,
 	Overlay,
+	OverlayRegistry,
 	flUtils,
 	Component,
 	ComponentContainer,
@@ -56,17 +58,17 @@ sap.ui.define([
 				 * To set the associated controls as an autoCloseArea for all Popover/Dialog open in RTA mode.
 				 * Needs to be filled before the popup is open.
 				 */
-				autoCloseAreas: {type: "sap.ui.core.Control", multiple: true, singularName: "autoCloseArea"}
+				autoCloseAreas: { type: "sap.ui.core.Control", multiple: true, singularName: "autoCloseArea" }
 			},
 			events: {
 				open: {
 					parameters: {
-						oControl: {type: "sap.ui.core.Control"}
+						oControl: { type: "sap.ui.core.Control" }
 					}
 				},
 				close: {
 					parameters: {
-						oControl: {type: "sap.ui.core.Control"}
+						oControl: { type: "sap.ui.core.Control" }
 					}
 				}
 			},
@@ -83,7 +85,7 @@ sap.ui.define([
 		// create map for modal states
 		this._oModalState = new Map();
 		this._aPopupFilters = [this._isSupportedPopup.bind(this), this._isPopupAdaptable.bind(this)];
-		this._aPopupFilters.forEach(function (fnFilter) {
+		this._aPopupFilters.forEach(function(fnFilter) {
 			ZIndexManager.addPopupFilter(fnFilter);
 		});
 	};
@@ -213,13 +215,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Setting visibility hidden on the other root element overlays
+	 * keeps the focus on the current popover overlay
+	 * @param {boolean} bVisible - Overlay visibility
+	 * @param {sap.m.Popover} oPopover - Current popover
+	 */
+	PopupManager.prototype._adjustRootOverlayVisibility = function(bVisible, oPopover) {
+		this.getRta()._oDesignTime.getRootElements().forEach(function(oRootElement) {
+			if (oRootElement.getId() !== oPopover.getId()) {
+				OverlayRegistry.getOverlay(oRootElement).setVisible(bVisible);
+			}
+		});
+	};
+
+	/**
 	 * Attached to RTA mode change
 	 * @param  {sap.ui.base.Event} oEvent The Event triggered by the mode change
 	 */
 	PopupManager.prototype._onModeChange = function(oEvent) {
 		var sNewMode = oEvent.getParameters().mode;
-
-		var fnApplyFocusAndSetModal = function (sMode, oPopover) {
+		var fnApplyFocusAndSetModal = function(sMode, oPopover) {
 			if (sMode === 'navigation') {
 				// add focus handlers
 				oPopover.oPopup[this._getFocusEventName("add")]();
@@ -323,13 +338,19 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	PopupManager.prototype._setModal = function (bSetModal, oPopupElement) {
+	PopupManager.prototype._setModal = function(bSetModal, oPopupElement) {
 		var bOriginalModalState = this._oModalState.get(oPopupElement.oPopup);
 		if (typeof bOriginalModalState !== "boolean" && bSetModal && this.getRta().getMode() !== 'navigation') {
 			this._oModalState.set(oPopupElement.oPopup, oPopupElement.oPopup.getModal());
+			if (this._isPopupAdaptable(oPopupElement)) {
+				this._adjustRootOverlayVisibility(false, oPopupElement);
+			}
 			oPopupElement.oPopup.setModal(true);
 		} else if (typeof bOriginalModalState === "boolean" && bSetModal === false) {
 			oPopupElement.oPopup.setModal(bOriginalModalState);
+			if (this._isPopupAdaptable(oPopupElement)) {
+				this._adjustRootOverlayVisibility(true, oPopupElement);
+			}
 			this._oModalState.delete(oPopupElement.oPopup);
 		}
 	};
@@ -393,7 +414,7 @@ sap.ui.define([
 		if (!this.fnOriginalPopupOnAfterRendering) {
 			this.fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
 		}
-		oPopup.onAfterRendering = function () {
+		oPopup.onAfterRendering = function() {
 			var vOriginalReturn = this.fnOriginalPopupOnAfterRendering.apply(oPopup, arguments);
 			oPopup[this._getFocusEventName("remove")]();
 			return vOriginalReturn;
@@ -431,7 +452,7 @@ sap.ui.define([
 		return function(oPopupElement) {
 			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
 			if (this._isSupportedPopup(oPopupElement)) {
-				if (this._isPopupAdaptable(oPopupElement, false)
+				if (this._isPopupAdaptable(oPopupElement)
 					&& this.getRta()._oDesignTime) {
 					this.getRta()._oDesignTime.removeRootElement(oPopupElement);
 				}
@@ -595,7 +616,7 @@ sap.ui.define([
 	PopupManager.prototype.exit = function() {
 		this._restoreInstanceFunctions();
 		delete this._oModalState;
-		this._aPopupFilters.forEach(function (fnFilter) {
+		this._aPopupFilters.forEach(function(fnFilter) {
 			ZIndexManager.removePopupFilter(fnFilter);
 		});
 	};
