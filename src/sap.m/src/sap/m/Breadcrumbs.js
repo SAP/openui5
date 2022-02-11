@@ -40,7 +40,10 @@ sap.ui.define([
 	var SelectType = library.SelectType,
 
 		// shortcut for sap.m.BreadCrumbsSeparatorStyle
-		SeparatorStyle = library.BreadcrumbsSeparatorStyle;
+		SeparatorStyle = library.BreadcrumbsSeparatorStyle,
+
+		// shortcut for texts resource bundle
+		oResource = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
 	 * Constructor for a new <code>Breadcrumbs</code>.
@@ -133,10 +136,15 @@ sap.ui.define([
 		DoubleGreaterThan: ">>"
 	};
 
+	Breadcrumbs._getResourceBundleText = function (sText, vOptions) {
+		return oResource.getText(sText, vOptions);
+	};
+
 	/*************************************** Framework lifecycle events ******************************************/
 
 	Breadcrumbs.prototype.init = function () {
 		this._sSeparatorSymbol = Breadcrumbs.STYLE_MAPPER[this.getSeparatorStyle()];
+		this._aCachedInvisibleTexts = [];
 		this._getInvisibleText();
 	};
 
@@ -151,6 +159,9 @@ sap.ui.define([
 		if (this._bControlsInfoCached) {
 			this._updateSelect(true);
 		}
+
+		this._destroyInvisibleTexts();
+		this._aCachedInvisibleTexts = this._buildInvisibleTexts();
 	};
 
 	Breadcrumbs.prototype.onAfterRendering = function () {
@@ -175,6 +186,7 @@ sap.ui.define([
 	Breadcrumbs.prototype.exit = function () {
 		this._resetControl();
 		this._destroyItemNavigation();
+		this._destroyInvisibleTexts();
 
 		if (this._oInvisibleText) {
 			this._oInvisibleText.destroy();
@@ -194,7 +206,7 @@ sap.ui.define([
 
 
 	Breadcrumbs.prototype._getInvisibleText = function() {
-		var oAriaLabelText = BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_LABEL");
+		var oAriaLabelText = Breadcrumbs._getResourceBundleText("BREADCRUMB_LABEL");
 
 		if (!this._oInvisibleText) {
 			this._oInvisibleText = new InvisibleText({ id: this.getId() + "-InvisibleText"});
@@ -213,7 +225,7 @@ sap.ui.define([
 				autoAdjustWidth: true,
 				icon: IconPool.getIconURI("slim-arrow-down"),
 				type: SelectType.IconOnly,
-				tooltip: BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_SELECT_TOOLTIP")
+				tooltip: Breadcrumbs._getResourceBundleText("BREADCRUMB_SELECT_TOOLTIP")
 			})), true);
 		}
 		return this.getAggregation("_select");
@@ -229,15 +241,23 @@ sap.ui.define([
 
 			oCurrentLocation.addEventDelegate({
 				onAfterRendering: function () {
-					oCurrentLocation.$().attr("aria-current", "page");
-					oCurrentLocation.$().attr("tabindex", 0);
-					oCurrentLocation.$().attr("role", "link");
-				}
+					this._setCurrentLocationAccInfo(oCurrentLocation);
+				}.bind(this)
 			});
 
 			this.setAggregation("_currentLocation", oCurrentLocation).addStyleClass("sapMBreadcrumbsCurrentLocation");
 		}
 		return this.getAggregation("_currentLocation");
+	};
+
+	Breadcrumbs.prototype._setCurrentLocationAccInfo = function (oCurrentLocation) {
+		var aVisibleItems = this._getControlsForBreadcrumbTrail(),
+			positionText = Breadcrumbs._getResourceBundleText("BREADCRUMB_ITEM_POS", [aVisibleItems.length, aVisibleItems.length]);
+
+		oCurrentLocation.$().attr("aria-current", "page");
+		oCurrentLocation.$().attr("tabindex", 0);
+		oCurrentLocation.$().attr("role", "link");
+		oCurrentLocation.$().attr("aria-label", this.getCurrentLocationText() + " " + positionText);
 	};
 
 	function fnConvertArguments(sAggregationName, aArguments) {
@@ -281,6 +301,22 @@ sap.ui.define([
 		aLinks.forEach(this._deregisterControlListener, this);
 		this._resetControl();
 		return vResult;
+	};
+
+	Breadcrumbs.prototype._destroyInvisibleTexts = function () {
+		var oControl;
+		this._aCachedInvisibleTexts.forEach(function (oData) {
+			oControl = sap.ui.getCore().byId(oData.controlId);
+
+			// remove reference to the invisible text on the sap.m.Link control
+			// check for control existence as it might have been destroyed already
+			if (oControl && oControl.removeAriaLabelledBy) {
+				oControl.removeAriaLabelledBy(oData.invisibleText.getId());
+			}
+
+			oData.invisibleText.destroy();
+		});
+		this._aCachedInvisibleTexts = [];
 	};
 
 	/*************************************** Select Handling ******************************************/
@@ -444,6 +480,43 @@ sap.ui.define([
 			width: getElementWidth(oControl.$().parent()),
 			bCanOverflow: oControl instanceof Link
 		};
+	};
+
+	/**
+	 * Creates InvisibleText instances for the Link controls in the Breadcrumbs.
+	 * Used to add the position and the size of the controls to their ariaLabelledBy association.
+	 * An array of objects is returned for the instances to be destroyed on next invalidation with the following properties:
+	 * - controlId: the id of the Link to later remove the InvisibleText instance id from the ariaLabelledBy association
+	 * - invisibleText: the InvisibleText control itself to be destroyed
+	 */
+	Breadcrumbs.prototype._buildInvisibleTexts = function() {
+		var aVisibleItems = this._getControlsForBreadcrumbTrail(), // all visible links outside the drop-down, including current location
+			iItemCount = aVisibleItems.length,
+			oInvisibleText,
+			oInvisibleTexts = [];
+
+		aVisibleItems.forEach(function(oItem, iIndex) {
+			if (!oItem.isA("sap.m.Link")) {
+				// only links are relevant for the ariaLabelledBy association
+				return;
+			}
+
+			oInvisibleText = new InvisibleText({
+				text: Breadcrumbs._getResourceBundleText("BREADCRUMB_ITEM_POS", [iIndex + 1, iItemCount])
+			}).toStatic();
+
+			if (oItem.getAriaLabelledBy().indexOf(oItem.getId()) === -1) {
+				oItem.addAriaLabelledBy(oItem.getId());
+			}
+
+			oItem.addAriaLabelledBy(oInvisibleText.getId());
+			oInvisibleTexts.push({
+				controlId: oItem.getId(),
+				invisibleText: oInvisibleText
+			});
+		});
+
+		return oInvisibleTexts;
 	};
 
 	Breadcrumbs.prototype._getControlDistribution = function (iMaxContentSize) {

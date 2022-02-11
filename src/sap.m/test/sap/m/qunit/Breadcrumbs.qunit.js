@@ -615,6 +615,28 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 		});
 	});
 
+	QUnit.test("Position and size of the items", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
+			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation(),
+			oLinks = oStandardBreadCrumbsControl._getControlsForBreadcrumbTrail(),
+			oFirstLink = oLinks[0],
+			aAriaLabelledByFirstLink,
+			oInvisibleTextData;
+
+		oStandardBreadCrumbsControl.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		aAriaLabelledByFirstLink = oFirstLink.getAriaLabelledBy();
+		oInvisibleTextData = oStandardBreadCrumbsControl._aCachedInvisibleTexts.find(function (oItem) {
+			return oItem.controlId === oFirstLink.getId();
+		});
+
+		assert.strictEqual(oInvisibleTextData.invisibleText.getText(), "1 of " + oLinks.length, "Announcement is correct");
+		assert.ok(aAriaLabelledByFirstLink.includes(oInvisibleTextData.invisibleText.getId()), "Announcement is correct");
+
+		assert.ok(oCurrentLocation.$().attr("aria-label").indexOf(oLinks.length + " of " + oLinks.length) > -1, "Aria label is correct");
+	});
+
 	QUnit.test("Current location aria attributes", function (assert) {
 		// Arrange
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
