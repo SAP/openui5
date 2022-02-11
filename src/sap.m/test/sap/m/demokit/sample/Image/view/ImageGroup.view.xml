@@ -13,8 +13,7 @@
 				<Image ariaDetails="detailsActiveImage" src="{img>/products/pic3}"
 					width="{/imageWidth}"
 					decorative="false"
-					press="handleImage3Press"
-					ariaHasPopup="Menu"/>
+					press="handleImage3Press" />
 			</VBox>
 			<VBox>
 				<Text text="Image using SVG format:" class="sapUiSmallMarginBottom" />
