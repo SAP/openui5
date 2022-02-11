@@ -45,7 +45,7 @@
 				"actionsStrip": [
 					{
 						"text": "Add to Favorites",
-						"visible": "{IsFavorite}",
+						"visible": "{= !${IsFavorite} }",
 						"actions": [
 							{
 								"type": "Custom",
