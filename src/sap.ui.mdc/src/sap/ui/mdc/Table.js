@@ -1829,7 +1829,7 @@ sap.ui.define([
 		this._loadExportLibrary().then(function() {
 			sap.ui.require(['sap/ui/export/ExportUtils'], function(ExportUtils) {
 				that.getControlDelegate().fetchExportCapabilities().then(function(oExportCapabilities) {
-					ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, that, undefined, oExportCapabilities).then(function(oUserInput) {
+					ExportUtils.getExportSettingsViaDialog(that._cachedExportSettings, oExportCapabilities, that).then(function(oUserInput) {
 						that._cachedExportSettings = oUserInput;
 						that._onExport(oUserInput);
 					});
