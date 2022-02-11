@@ -206,6 +206,46 @@ sap.ui.define([
 		assert.ok(oDTP._oClocks.getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
 	});
 
+	QUnit.test("valueFormat and displayFormat when value is bound", function(assert) {
+		var oModel = new JSONModel({ date: new Date(Date.UTC(2016, 1, 18, 8, 0, 0)) }),
+			oDTP,
+			oInputRef;
+
+		// arrange
+		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
+			return "Europe/Sofia";
+		});
+
+		// both value format and display format should
+		// be ignored when the value is bound to a known type
+		oDTP = new DateTimePicker("dtpb", {
+			valueFormat: "dd-MM-yyyy-HH-mm-ss",
+			displayFormat: "short",
+			value: {
+				path: '/date',
+				type: "sap.ui.model.type.DateTime"
+			}
+		}).setModel(oModel);
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oInputRef = oDTP.$("inner");
+
+		// assert
+		assert.equal(oInputRef.val(), "Feb 18, 2016, 10:00:00 AM", "correct displayed value");
+
+		// act - type into the input
+		oInputRef.val("Feb 18, 2016, 9:00:00 AM");
+		qutils.triggerKeyboardEvent("dtpb-inner", KeyCodes.ENTER, false, false, false);
+		oInputRef.trigger("change");
+
+		// assert
+		assert.equal(oModel.getProperty('/date').getTime(), Date.UTC(2016, 1, 18, 7, 0, 0), "correct model value");
+
+		// clean
+		oDTP.destroy();
+	});
 
 	QUnit.module("Rendering");
 

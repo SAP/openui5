@@ -626,10 +626,6 @@ sap.ui.define([
 			oBinding = this.getBinding("value") || this.getBinding("dateValue"),
 			oBindingType = oBinding && oBinding.getType && oBinding.getType();
 
-		if (sFormat) {
-			oFormatOptions[this._checkStyle(sFormat) ? "style" : "pattern"] = sFormat;
-		}
-
 		if (bDisplayFormat || !this._getTimezone()
 			|| (oBindingType && this._isSupportedBindingType(oBindingType))) {
 			oFormatOptions.showTimezone = DateFormatTimezoneDisplay.Hide;
@@ -647,6 +643,10 @@ sap.ui.define([
 
 		if (oFormatOptions.strictParsing === undefined) {
 			oFormatOptions.strictParsing = true;
+		}
+
+		if (sFormat && (!oBinding || !oBindingType || !this._isSupportedBindingType(oBindingType))) {
+			oFormatOptions[this._checkStyle(sFormat) ? "style" : "pattern"] = sFormat;
 		}
 
 		return oFormatOptions;
