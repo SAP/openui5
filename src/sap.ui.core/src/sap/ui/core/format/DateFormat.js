@@ -72,6 +72,18 @@ sap.ui.define([
 	// Cache for parsed CLDR DatePattern
 	var mCldrDatePattern = {};
 
+	/**
+	 * Timezone parameter type check
+	 *
+	 * @param {string} sTimezone The timezone to check
+	 * @throws {TypeError} Thrown if the parameter <code>sTimezone</code> is provided and has the wrong type.
+	 */
+	var checkTimezoneParameterType = function (sTimezone) {
+		if (typeof sTimezone !== "string" && !(sTimezone instanceof String) && sTimezone != null) {
+			throw new TypeError("The given timezone must be a string.");
+		}
+	};
+
 	DateFormat.oDateInfo = {
 		type: mDateFormatTypes.DATE,
 		oDefaultFormatOptions: {
@@ -287,8 +299,10 @@ sap.ui.define([
 	 *
 	 * @param {Date} oJSDate The date to format
 	 * @param {string} [sTimezone] The IANA timezone ID in which the date will be calculated and
-	 *   formatted e.g. "America/New_York". If omitted, the timezone will be taken from {@link sap.ui.core.Configuration#getTimezone}.
-	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
+	 *   formatted e.g. "America/New_York". If the parameter is omitted, <code>null</code> or an empty string, the timezone
+	 *   will be taken from {@link sap.ui.core.Configuration#getTimezone}. For an invalid IANA timezone ID, an empty string will be returned.
+	 * @throws {TypeError} Thrown if the parameter <code>sTimezone</code> is provided and has the wrong type.
+	 * @return {string} the formatted output value. If an invalid date or timezone is given, an empty string is returned.
 	 * @name sap.ui.core.format.DateFormat.DateTimeWithTimezone.format
 	 * @function
 	 * @public
@@ -321,11 +335,13 @@ sap.ui.define([
 	 *
 	 * @param {string} sValue the string containing a formatted date/time value
 	 * @param {string} [sTimezone] The IANA timezone ID which should be used to convert the date
-	 *   e.g. "America/New_York". If omitted, the timezone will be taken from {@link sap.ui.core.Configuration#getTimezone}.
+	 *   e.g. "America/New_York". If the parameter is omitted, <code>null</code> or an empty string, the timezone will be taken
+	 *   from {@link sap.ui.core.Configuration#getTimezone}. For an invalid IANA timezone ID, <code>null</code> will be returned.
 	 * @param {boolean} [bStrict] Whether to be strict with regards to the value ranges of date fields,
 	 * e.g. for a month pattern of <code>MM</code> and a value range of [1-12]
 	 * <code>strict</code> ensures that the value is within the range;
 	 * if it is larger than <code>12</code> it cannot be parsed and <code>null</code> is returned
+	 * @throws {TypeError} Thrown if the parameter <code>sTimezone</code> is provided and has the wrong type.
 	 * @return {Array} the parsed values
 	 * <ul>
 	 *   <li>An array containing datetime and timezone depending on the showTimezone option
@@ -1820,8 +1836,8 @@ sap.ui.define([
 			sTimezone = bUTC;
 			bUTC = false;
 
-			// timezone is required to calculate the timezone offset therefore it must be a valid IANA timezone ID
-			if (sTimezone != null && !TimezoneUtil.isValidTimezone(sTimezone)) {
+			checkTimezoneParameterType(sTimezone);
+			if (sTimezone && !TimezoneUtil.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return "";
 			}
@@ -2248,8 +2264,8 @@ sap.ui.define([
 			sTimezone = bUTC;
 			bUTC = false;
 
-			// timezone is required to calculate the timezone offset therefore it must be a valid IANA timezone ID
-			if (sTimezone != null && !TimezoneUtil.isValidTimezone(sTimezone)) {
+			checkTimezoneParameterType(sTimezone);
+			if (sTimezone && !TimezoneUtil.isValidTimezone(sTimezone)) {
 				Log.error("The given timezone isn't valid.");
 				return null;
 			}

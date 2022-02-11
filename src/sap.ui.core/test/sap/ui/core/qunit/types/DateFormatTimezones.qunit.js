@@ -124,13 +124,13 @@ sap.ui.define([
 				"Nov 2021, 8 AM America/New_York", "New timezone should be be applied.");
 		});
 
-		QUnit.test("Timezone parameter is null or undefined", function (assert) {
+		QUnit.test("Timezone parameter is empty string, null or undefined", function (assert) {
 			var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
 			var oDateEDT = new Date("2021-10-13T13:22:33Z");
 
-			[null, undefined].forEach(function(sTimezone) {
-				assert.equal(oDateTimeWithTimezoneFormat.format(oDateEDT, sTimezone), "Oct 13, 2021, 3:22:33 PM Europe/Berlin", "default to Europe/Berlin");
-			});
+			assert.equal(oDateTimeWithTimezoneFormat.format(oDateEDT, ""), "Oct 13, 2021, 3:22:33 PM Europe/Berlin", "default to Europe/Berlin");
+			assert.equal(oDateTimeWithTimezoneFormat.format(oDateEDT, null), "Oct 13, 2021, 3:22:33 PM Europe/Berlin", "default to Europe/Berlin");
+			assert.equal(oDateTimeWithTimezoneFormat.format(oDateEDT, undefined), "Oct 13, 2021, 3:22:33 PM Europe/Berlin", "default to Europe/Berlin");
 		});
 
 		QUnit.module("DateTimeWithTimezone format de-DE", {
@@ -288,8 +288,10 @@ sap.ui.define([
 			var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
 			var oDateEDT = new Date("2021-10-13T13:22:33Z");
 
-			[false, true, {}, 0].forEach(function(sTimezone) {
-				assert.equal(oDateTimeWithTimezoneFormat.format(oDateEDT, sTimezone), "", "timezone not valid");
+			[true, false, 0, 1, {}].forEach(function(sTimezone) {
+				assert.throws(function() {
+					oDateTimeWithTimezoneFormat.format(oDateEDT, sTimezone);
+				}, new TypeError("The given timezone must be a string."), "timezone not valid for '" + sTimezone + "'");
 			});
 		});
 
@@ -563,14 +565,14 @@ sap.ui.define([
 			assert.equal(oParseResult1, null, "cannot be parsed.");
 		});
 
-		QUnit.test("Timezone parameter is null or undefined", function (assert) {
+		QUnit.test("Timezone parameter is empty string, null or undefined", function (assert) {
 			var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
 			var sDate = "Oct 13, 2021, 9:22:33 AM America/New_York";
 			var iTimestampExpectedEDT = Date.UTC(2021, 9, 13, 13, 22, 33, 0);
 
-			[null, undefined].forEach(function(sTimezone) {
-				assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, sTimezone), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
-			});
+			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, ""), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
+			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, null), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
+			assert.deepEqual(oDateTimeWithTimezoneFormat.parse(sDate, undefined), [new Date(iTimestampExpectedEDT), "America/New_York"], "use the timezone from the parsed string");
 		});
 
 		QUnit.module("DateTimeWithTimezone parse de-DE", {
@@ -793,8 +795,10 @@ sap.ui.define([
 			var oDateTimeWithTimezoneFormat = DateFormat.getDateTimeWithTimezoneInstance();
 			var sDate = "Oct 13, 2021, 9:22:33 AM America/New_York";
 
-			[false, true, {}, 0].forEach(function(sTimezone) {
-				assert.equal(oDateTimeWithTimezoneFormat.parse(sDate, sTimezone), null, "timezone not valid");
+			[true, false, 0, 1, {}].forEach(function(sTimezone) {
+				assert.throws(function() {
+					oDateTimeWithTimezoneFormat.parse(sDate, sTimezone);
+				}, new TypeError("The given timezone must be a string."), "timezone not valid");
 			});
 		});
 
