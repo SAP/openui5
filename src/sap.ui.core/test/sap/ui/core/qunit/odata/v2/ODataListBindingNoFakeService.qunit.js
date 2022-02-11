@@ -629,7 +629,8 @@ sap.ui.define([
 				checkDataState : function () {},
 				checkExpandedList : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {}
+				isRelative : function () {},
+				isResolved : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
 			oNewContext = {
@@ -642,6 +643,8 @@ sap.ui.define([
 		this.mock(Context).expects("hasChanged")
 			.withExactArgs("~oContext", sinon.match.same(oNewContext))
 			.returns(true);
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("_hasTransientParentContext").withExactArgs().returns(false);
 		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("resolveDeep")
 			.withExactArgs("~sPath", sinon.match.same(oNewContext))
@@ -674,8 +677,10 @@ sap.ui.define([
 				_hasTransientParentContext : function () {},
 				checkDataState : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {}
+				isRelative : function () {},
+				isResolved : function () {}
 			},
+			oBindingMock = this.mock(oBinding),
 			oNewV2Context = {
 				isPreliminary : function () {},
 				isRefreshForced : function () {},
@@ -685,18 +690,20 @@ sap.ui.define([
 		this.mock(oNewV2Context).expects("isRefreshForced").withExactArgs().returns(false);
 		this.mock(oNewV2Context).expects("isPreliminary").withExactArgs().returns(false);
 		this.mock(oNewV2Context).expects("isUpdated").withExactArgs().returns(false);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		oBindingMock.expects("isRelative").withExactArgs().returns(true);
 		this.mock(Context).expects("hasChanged")
 			.withExactArgs("~oContext", sinon.match.same(oNewV2Context))
 			.returns(true);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("_hasTransientParentContext").withExactArgs().returns(false);
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("resolveDeep")
 			.withExactArgs("~sPath", sinon.match.same(oNewV2Context))
 			.returns("~resolvedDeepPath");
-		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(true);
-		this.mock(oBinding).expects("checkDataState").withExactArgs();
-		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(true);
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
+		oBindingMock.expects("_checkPathType").withExactArgs().returns(true);
+		oBindingMock.expects("checkDataState").withExactArgs();
+		oBindingMock.expects("_hasTransientParentContext").withExactArgs().returns(true);
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
 		// code under test
 		ODataListBinding.prototype.setContext.call(oBinding, oNewV2Context);
@@ -706,6 +713,62 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iLength, 0);
 		assert.strictEqual(oBinding.bLengthFinal, true);
 	});
+
+	//*********************************************************************************************
+[undefined, null, {}].forEach(function (oOldContext, i) {
+	[undefined, null, {}].forEach(function (oNewContext, j) {
+	var sTitle = "setContext: no _fireChange for falsy and transient transitions #" + i + ", " + j;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {resolveDeep : function () {}},
+			oBinding = {
+				oContext : oOldContext,
+				oModel : oModel,
+				sPath : "~sPath",
+				_checkPathType : function () {},
+				_hasTransientParentContext : function () {},
+				checkDataState : function () {},
+				getResolvedPath : function () {},
+				isRelative : function () {},
+				isResolved : function () {}
+			},
+			oBindingMock = this.mock(oBinding);
+
+		if (oNewContext) {
+			oNewContext.isPreliminary = function () {};
+			oNewContext.isRefreshForced = function () {};
+			oNewContext.isUpdated = function () {};
+			this.mock(oNewContext).expects("isRefreshForced").withExactArgs().returns(false);
+			this.mock(oNewContext).expects("isPreliminary").withExactArgs().returns(false);
+			this.mock(oNewContext).expects("isUpdated").withExactArgs().returns(false);
+		}
+		oBindingMock.expects("isRelative").withExactArgs().returns(true);
+		this.mock(Context).expects("hasChanged")
+			.withExactArgs(sinon.match.same(oOldContext), sinon.match.same(oNewContext))
+			.returns(true);
+		oBindingMock.expects("isResolved").withExactArgs().returns(!!oOldContext);
+		oBindingMock.expects("_hasTransientParentContext")
+			.withExactArgs()
+			.exactly(oOldContext ? 1 : 0)
+			.returns(true);
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~sPath", sinon.match.same(oNewContext))
+			.returns("~resolvedDeepPath");
+		oBindingMock.expects("_checkPathType").withExactArgs().returns(true);
+		oBindingMock.expects("checkDataState").withExactArgs();
+		oBindingMock.expects("_hasTransientParentContext").withExactArgs().returns(true);
+
+		// code under test
+		ODataListBinding.prototype.setContext.call(oBinding, oNewContext);
+
+		assert.strictEqual(oBinding.aAllKeys, null);
+		assert.deepEqual(oBinding.aKeys, []);
+		assert.strictEqual(oBinding.iLength, 0);
+		assert.strictEqual(oBinding.bLengthFinal, true);
+	});
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("setContext: set updated context while there are transient entities",
@@ -729,28 +792,32 @@ sap.ui.define([
 				checkDataState : function () {},
 				checkExpandedList : function () {},
 				getResolvedPath : function () {},
-				isRelative : function () {}
-			};
+				isRelative : function () {},
+				isResolved : function () {}
+			},
+			oBindingMock = this.mock(oBinding);
 
 		this.mock(oContext).expects("isRefreshForced").withExactArgs().returns(true);
 		this.mock(oContext).expects("isPreliminary").withExactArgs().returns(false);
 		this.mock(oContext).expects("isUpdated").withExactArgs().returns(false);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		oBindingMock.expects("isRelative").withExactArgs().returns(true);
 		this.mock(Context).expects("hasChanged")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oContext))
 			.returns(true);
-		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("_hasTransientParentContext").withExactArgs().returns(false);
+		oBindingMock.expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("resolveDeep")
 			.withExactArgs("~sPath", sinon.match.same(oContext))
 			.returns("~resolvedDeepPath");
-		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(true);
-		this.mock(oBinding).expects("checkDataState").withExactArgs();
-		this.mock(oBinding).expects("_hasTransientParentContext").withExactArgs().returns(false);
-		this.mock(oBinding).expects("_initSortersFilters").withExactArgs();
-		this.mock(oBinding).expects("checkExpandedList").withExactArgs().returns(false);
-		oRemoveExpectation = this.mock(oBinding).expects("_removePersistedCreatedContexts")
+		oBindingMock.expects("_checkPathType").withExactArgs().returns(true);
+		oBindingMock.expects("checkDataState").withExactArgs();
+		oBindingMock.expects("_hasTransientParentContext").withExactArgs().returns(false);
+		oBindingMock.expects("_initSortersFilters").withExactArgs();
+		oBindingMock.expects("checkExpandedList").withExactArgs().returns(false);
+		oRemoveExpectation = oBindingMock.expects("_removePersistedCreatedContexts")
 			.withExactArgs();
-		oRefreshExpectation = this.mock(oBinding).expects("_refresh").withExactArgs();
+		oRefreshExpectation = oBindingMock.expects("_refresh").withExactArgs();
 
 		// code under test
 		ODataListBinding.prototype.setContext.call(oBinding, oContext);
