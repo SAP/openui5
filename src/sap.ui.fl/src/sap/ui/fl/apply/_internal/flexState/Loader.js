@@ -3,12 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/base/util/deepClone",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Utils"
 ], function(
-	deepClone,
 	ManifestUtils,
 	ApplyStorage,
 	Utils

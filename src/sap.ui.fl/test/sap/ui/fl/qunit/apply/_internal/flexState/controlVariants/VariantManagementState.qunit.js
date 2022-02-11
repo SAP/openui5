@@ -75,17 +75,6 @@ sap.ui.define([
 			assert.strictEqual(oResetStub.lastCall.args[1], sComponentId, "the component ID was passed");
 		});
 
-		QUnit.test("when resetContent is called", function(assert) {
-			var oClearStub = sandbox.stub(FlexState, "clearFilteredResponse");
-
-			var sReference = "flexReference";
-			var sComponentId = "componentId";
-			VariantManagementState.resetContent(sReference, sComponentId);
-			assert.strictEqual(oClearStub.callCount, 1, "the FlexState was called once");
-			assert.strictEqual(oClearStub.lastCall.args[0], sReference, "the reference was passed");
-			assert.strictEqual(oClearStub.lastCall.args[1], sComponentId, "the component ID was passed");
-		});
-
 		QUnit.test("when getContent is called", function(assert) {
 			var oClearStub = sandbox.stub(FlexState, "getVariantsState");
 
