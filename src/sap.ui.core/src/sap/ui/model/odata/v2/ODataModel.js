@@ -1950,12 +1950,15 @@ sap.ui.define([
 	 *   Whether this binding does not propagate model messages to the control; supported since
 	 *   1.82.0. Some composite types like {@link sap.ui.model.type.Currency} automatically ignore
 	 *   model messages for some of their parts depending on their format options; setting this
-	 *   parameter to <code>true</code> or <code>false</code> overrules the automatism of the type.
+	 *   parameter to <code>true</code> or <code>false</code> overrules the automatism of the type
 	 *
 	 *   For example, a binding for a currency code is used in a composite binding for rendering the
 	 *   proper number of decimals, but the currency code is not displayed in the attached control.
 	 *   In that case, messages for the currency code shall not be displayed at that control, only
-	 *   messages for the amount.
+	 *   messages for the amount
+	 * @param {boolean} [mParameters.useUndefinedIfUnresolved]
+	 *   Whether the value of the created property binding is <code>undefined</code> if it is
+	 *   unresolved; if not set, its value is <code>null</code>. Supported since 1.100.0
 	 * @returns {sap.ui.model.PropertyBinding} The new property binding
 	 * @public
 	 */
@@ -2995,16 +2998,29 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {string} sPath Binding path
-	 * @param {object} [oContext] Binding context
-	 * @param {boolean} [bOriginalValue] Whether to return the original value read from the server even if changes where made
-	 * @returns {any} vValue Value for the given path/context
+	 * Returns the value of the entity or entity property referenced by the given <code>sPath</code>
+	 * and <code>oContext</code>.
+	 *
+	 * @param {string} sPath
+	 *   Binding path
+	 * @param {object} [oContext]
+	 *   Binding context
+	 * @param {boolean} [bOriginalValue]
+	 *   Whether to return the original value read from the server even if changes where made
+	 * @param {boolean} [bUseUndefinedIfUnresolved]
+	 *   Whether to return <code>undefined</code> if the given path and context do not yield a
+	 *   resolved path; if not set, the method returns <code>null</code>
+	 * @returns {any} vValue
+	 *   Value for the given path/context
+	 *
 	 * @private
 	 */
-	ODataModel.prototype._getObject = function(sPath, oContext, bOriginalValue) {
+	ODataModel.prototype._getObject = function(sPath, oContext, bOriginalValue,
+			bUseUndefinedIfUnresolved) {
 		var oChangedNode, oCodeListPromise, sCodeListTerm, sDataPath, sKey, oMetaContext,
 			oMetaModel, sMetaPath, oOrigNode, sResolvedPath, iSeparator,
-			oNode = this.isLegacySyntax() ? this.oData : null;
+			vUnresolvedDefault = bUseUndefinedIfUnresolved ? undefined : null,
+			oNode = this.isLegacySyntax() ? this.oData : vUnresolvedDefault;
 
 		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
 		if (!sResolvedPath && this.bCanonicalRequests) {

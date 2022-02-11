@@ -13,8 +13,8 @@ sap.ui.define([
 	"use strict";
 
 	var oDemoDateTime = new Date(Date.UTC(new Date().getFullYear(), 11, 31, 23, 59, 58)),
-		sObjectRequiresHide = "Type 'object' requires format option 'showTimezone' set to "
-			+ "sap.ui.core.format.DateFormatTimezoneDisplay.Hide";
+		sObjectNotOnly = "For type 'object', the format option 'showTimezone' must not be set to "
+			+ "sap.ui.core.format.DateFormatTimezoneDisplay.Only";
 
 	/*
 	 * Returns the formatter. Creates it lazily.
@@ -47,9 +47,12 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @class This class represents the <code>DateTimeWithTimezone</code> composite type which has
 	 * the parts timestamp and time zone. The type formats the timestamp part using the time zone
-	 * part. For this, the timestamp part has to be provided in the UTC time zone.
+	 * part. For this, the timestamp part has to be provided in the UTC time zone. When using this
+	 * type with the {@link sap.ui.model.odata.v2.ODataModel}, you need to set the parameter
+	 * <code>useUndefinedIfUnresolved</code> for both parts.
 	 * @extends sap.ui.model.CompositeType
 	 * @public
+	 * @see {sap.ui.model.odata.v2.ODataModel#bindProperty}
 	 * @since 1.99.0
 	 * @experimental The behavior of this type may change in the future.
 	 * @version ${version}
@@ -112,7 +115,8 @@ sap.ui.define([
 	 *   The formatted output value; <code>null</code>,
 	 *   <ul>
 	 *     <li>if <code>aValues</code> is not set, or</li>
-	 *     <li>if the time zone in <code>aValues</code> is not set, or</li>
+	 *     <li>if the time zone or timestamp in <code>aValues</code> is <code>undefined</code>, or
+	 *     </li>
 	 *     <li>if the timestamp in <code>aValues</code> is not set and the <code>showTimezone</code>
 	 *       format option is set to <code>sap.ui.core.format.DateFormatTimezoneDisplay.Hide</code>
 	 *     </li>
@@ -124,8 +128,8 @@ sap.ui.define([
 	 *     <li>a timestamp is given in <code>aValues</code> that is not an instance of
 	 *       <code>Date</code>,</li>
 	 *     <li>the <code>sTargetType</code> is "object" or an equivalent primitive type, and the
-	 *       <code>showTimezone</code> format option is not
-	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Hide</code></li>
+	 *       <code>showTimezone</code> format option is
+	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Only</code></li>
 	 *   </ul>
 	 * @public
 	 */
@@ -135,8 +139,8 @@ sap.ui.define([
 			sTimezone = aValues && aValues[1];
 
 		if (!aValues
-				|| !sTimezone // time zone is mandatory
-				|| oTimestamp === undefined // data is not yet available (OData V4)
+				|| sTimezone === undefined // data is not yet available
+				|| oTimestamp === undefined // data is not yet available
 				// if time zone is not shown falsy timestamps cannot be formatted -> return null
 				|| (!oTimestamp && sShowTimezone === DateFormatTimezoneDisplay.Hide)) {
 			return null;
@@ -149,8 +153,8 @@ sap.ui.define([
 
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "object":
-				if (sShowTimezone !== DateFormatTimezoneDisplay.Hide) {
-					throw new FormatException(sObjectRequiresHide);
+				if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
+					throw new FormatException(sObjectNotOnly);
 				}
 
 				return oTimestamp;
@@ -232,13 +236,10 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li><code>sSourceType</code> is unsupported,</li>
 	 *     <li>the value is not parsable,</li>
-	 *     <li>the <code>showTimezone</code> format option is
-	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Only</code> but no value is given,
-	 *     </li>
 	 *     <li><code>aCurrentValues</code> is not given,</li>
 	 *     <li>the <code>sSourceType</code> is "object" or an equivalent primitive type, and the
-	 *       <code>showTimezone</code> format option is not
-	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Hide</code>,</li>
+	 *       <code>showTimezone</code> format option is
+	 *       <code>sap.ui.core.format.DateFormatTimezoneDisplay.Only</code>,</li>
 	 *     <li>the <code>sSourceType</code> is "object" or an equivalent primitive type, and the
 	 *       value is not an instance of <code>Date</code></li>
 	 *   </ul>
@@ -246,7 +247,7 @@ sap.ui.define([
 	 * @public
 	 */
 	DateTimeWithTimezone.prototype.parseValue = function (vValue, sSourceType, aCurrentValues) {
-		var sCurrentTimezone, aDateWithTimezone,
+		var aDateWithTimezone,
 			sShowTimezone = this.oFormatOptions.showTimezone;
 
 		if (!aCurrentValues) {
@@ -255,17 +256,12 @@ sap.ui.define([
 
 		switch (this.getPrimitiveType(sSourceType)) {
 			case "object":
-				if (sShowTimezone !== DateFormatTimezoneDisplay.Hide) {
-					throw new ParseException(sObjectRequiresHide);
+				if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
+					throw new ParseException(sObjectNotOnly);
 				}
 
 				if (!vValue) {
 					return [null, /*unchanged*/undefined];
-				}
-
-				if (!aCurrentValues[1]) {
-					throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
-						.getText("EnterDateTimeTimezoneFirst"));
 				}
 
 				if (!(vValue instanceof Date)) {
@@ -276,31 +272,15 @@ sap.ui.define([
 			case "string":
 				if (!vValue) {
 					if (sShowTimezone === DateFormatTimezoneDisplay.Only) {
-						throw new ParseException(this._getErrorMessage());
+						return [/*unchanged*/undefined, null];
 					}
 
 					return [null, /*unchanged*/undefined];
 				}
 
-				if (!aCurrentValues[1] && sShowTimezone === DateFormatTimezoneDisplay.Hide) {
-					throw new ParseException(sap.ui.getCore().getLibraryResourceBundle()
-						.getText("EnterDateTimeTimezoneFirst"));
-				}
-
-				sCurrentTimezone = aCurrentValues[1]
-					|| sap.ui.getCore().getConfiguration().getTimezone();
-				aDateWithTimezone = getFormatter(this).parse(vValue, sCurrentTimezone);
+				aDateWithTimezone = getFormatter(this).parse(vValue, aCurrentValues[1]);
 				if (!aDateWithTimezone) {
 					throw new ParseException(this._getErrorMessage());
-				}
-				// if time zone has been defaulted because current value does not have a time zone
-				// then the default time zone has to be added to the result if the time zone part of
-				// the parsed value indicates that it has not been changed; this can happen only
-				// if showTimezone format option is 'Show' or not set; in case of 'Hide' a
-				// ParseException is thrown earlier; in case of 'Only' the time zone part is never
-				// undefined
-				if (!aCurrentValues[1] && aDateWithTimezone[1] === undefined) {
-					aDateWithTimezone[1] = sCurrentTimezone;
 				}
 
 				return aDateWithTimezone;

@@ -7620,21 +7620,33 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<Input id="Hide" value="{\
 		formatOptions : {showTimezone : \'Hide\'},\
 		mode : \'TwoWay\',\
-		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		parts : [\
+			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
+			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
+		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
 	<Input id="Only" value="{\
 		formatOptions : {showTimezone : \'Only\'},\
 		mode : \'TwoWay\',\
-		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		parts : [\
+			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
+			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
+		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
 	<Input id="Show" value="{\
 		formatOptions : {showTimezone : \'Show\'},\
 		mode : \'TwoWay\',\
-		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		parts : [\
+			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
+			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
+		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
 	<Input id="NoFormatOption" value="{\
 		mode : \'TwoWay\',\
-		parts : [{path : \'DateTime\'}, {path : \'TimezoneID\'}],\
+		parts : [\
+			{path : \'DateTime\', parameters : {useUndefinedIfUnresolved : true}},\
+			{path : \'TimezoneID\', parameters : {useUndefinedIfUnresolved : true}}\
+		],\
 		type : \'sap.ui.model.odata.type.DateTimeWithTimezone\'}" />\
 </FlexBox>',
 			that = this;

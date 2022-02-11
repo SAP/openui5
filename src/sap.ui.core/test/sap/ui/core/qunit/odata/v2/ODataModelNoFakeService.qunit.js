@@ -4643,6 +4643,33 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{
+	bUseUndefinedIfUnresolved : true,
+	vResult : undefined
+}, {
+	bUseUndefinedIfUnresolved : undefined,
+	vResult : null
+}].forEach(function (oFixture) {
+	var sTitle = "_getObject: use undefined if unresolved: " + oFixture.bUseUndefinedIfUnresolved;
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = {
+				isLegacySyntax : function () {},
+				resolve : function () {}
+			};
+
+		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("~path", undefined, undefined)
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getObject.call(oModel, "~path", undefined,
+			undefined, oFixture.bUseUndefinedIfUnresolved), oFixture.vResult);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("annotationsLoaded", function (assert) {
 		var oModel = {pAnnotationsLoaded : "~pAnnotationsLoaded"};
 
