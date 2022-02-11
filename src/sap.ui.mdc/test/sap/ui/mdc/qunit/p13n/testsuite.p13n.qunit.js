@@ -183,15 +183,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},*/
-			"BasePanel": {
-				group: "UI Panels",
-				module: "./BasePanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"AdaptFiltersPanel": {
 				group: "UI Panels",
 				module: "./panels/AdaptFiltersPanel.qunit",
@@ -201,36 +192,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
-			"ListView": {
-				group: "UI Panels",
-				module: "./panels/ListView.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
 			"GroupView": {
 				group: "UI Panels",
 				module: "./panels/GroupView.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"SelectionPanel": {
-				group: "UI Panels",
-				module: "./SelectionPanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"SortPanel": {
-				group: "UI Panels",
-				module: "./SortPanel.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"

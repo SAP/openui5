@@ -18,7 +18,7 @@ sap.ui.require([
 
     var iChangeSelectedActions = function(oP13nDialog, aActions) {
         this.waitFor({
-			controlType: "sap.ui.mdc.p13n.panels.ListView",
+			controlType: "sap.m.p13n.SelectionPanel",
 			matchers: new Ancestor(oP13nDialog, false),
 			success: function(aListViews) {
 				var oListView = aListViews[0];
@@ -60,7 +60,7 @@ sap.ui.require([
             ],
             success: function(oP13nDialog) {
                 this.waitFor({
-                    controlType: "sap.ui.mdc.p13n.panels.ListView",
+                    controlType: "sap.m.p13n.SelectionPanel",
                     matchers: new Ancestor(oP13nDialog, false),
                     success: function(aListViews) {
                         var oListView = aListViews[0];

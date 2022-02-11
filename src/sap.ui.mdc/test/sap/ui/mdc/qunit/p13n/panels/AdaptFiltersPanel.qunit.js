@@ -68,7 +68,7 @@ sap.ui.define([
 
 				//Add (mock) an 'active' field
 				if (oProperty.name == "key2") {
-					mItem.isFiltered = true;
+					mItem.active = true;
 				}
 
 				//Add (mock) a 'mandatory' field
@@ -268,7 +268,7 @@ sap.ui.define([
 
 		//Check in ListView
 		this.oAFPanel.switchView("list");
-		var aItems = this.oAFPanel.getCurrentViewContent().getItems();
+		var aItems = this.oAFPanel.getCurrentViewContent()._oListControl.getItems();
 		assert.equal(aItems.length, 5, "There are 6 items in the model, but one should be hidden for the user");
 
 	});
@@ -475,7 +475,7 @@ sap.ui.define([
 		this.oAFPanel.switchView("group");
 
 		this.oAFPanel.switchView("list");
-		assert.ok(this.oAFPanel.getCurrentViewContent().isA("sap.ui.mdc.p13n.panels.ListView"));
+		assert.ok(this.oAFPanel.getCurrentViewContent().isA("sap.m.p13n.SelectionPanel"));
 
 		this.oAFPanel.switchView("group");
 		assert.ok(this.oAFPanel.getCurrentViewContent().isA("sap.ui.mdc.p13n.panels.GroupView"));
@@ -679,7 +679,7 @@ sap.ui.define([
 			this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
 			this.oP13nData = P13nBuilder.prepareAdaptationData(aInfoData, function(mItem, oProperty) {
 				if (oProperty.name == "key2") {
-					mItem.isFiltered = true;
+					mItem.active = true;
 				}
 				mItem.visibleInDialog = true;
 				mItem.visible = aVisible.indexOf(oProperty.name) > -1;

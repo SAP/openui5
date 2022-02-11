@@ -51,7 +51,7 @@ sap.ui.define([
 
         return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
             var oAdaptationModel = this._getP13nModel(oPropertyHelper);
-            oAdaptationFilterBar.setP13nModel(oAdaptationModel);
+            oAdaptationFilterBar.setP13nData(oAdaptationModel.oData);
             oAdaptationFilterBar.setLiveMode(false);
             return oAdaptationFilterBar.createFilterFields().then(function(){
                 return oAdaptationFilterBar;
@@ -77,7 +77,6 @@ sap.ui.define([
             var aExistingFilters = mExistingFilters[oProperty.name];
             oItem.visible = oExistingProperty ? true : false;
             oItem.visibleInDialog = true;
-            oItem.selected = oItem.visible;
             oItem.position = oExistingProperty ? oExistingProperty.position : -1;
             oItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
             oItem.required = oProperty.required;

@@ -32,7 +32,7 @@ sap.ui.define([
 		this.oLayout = new AdaptFiltersPanel();
 
 		this.oLayout.setItemFactory(function(oBindingContext){
-			var sKey = this.oLayout.getModel(this.oLayout.P13N_MODEL).getProperty(oBindingContext.sPath).name;
+			var sKey = oBindingContext.getProperty(oBindingContext.sPath).name;
 			var oFilterItem = this.mFilterItems[sKey];
 			return oFilterItem;
 		}.bind(this));
@@ -60,7 +60,7 @@ sap.ui.define([
 		return aFilterItems;
 	};
 
-	GroupContainer.prototype.update = function() {
+	GroupContainer.prototype.update = function(oP13nData) {
 		this.oLayout.restoreDefaults();
 	};
 

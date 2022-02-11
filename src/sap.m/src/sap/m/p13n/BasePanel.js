@@ -173,7 +173,7 @@ sap.ui.define([
 	 * @returns {this} The BasePanel instance
 	 */
 	BasePanel.prototype.setP13nData = function(aP13nData) {
-		this._getP13nModel().setProperty("/items", merge([], aP13nData));
+		this._getP13nModel().setProperty("/items", aP13nData);
 		return this;
 	};
 
@@ -184,7 +184,7 @@ sap.ui.define([
 	 * @returns {sap.m.p13n.Item[]} An array containing the personalization state that is currently displayed by the <code>BasePanel</code>
 	 */
 	BasePanel.prototype.getP13nData = function (bOnlyActive) {
-		var aItems = merge([], this._getP13nModel().getProperty("/items"));
+		var aItems = this._getP13nModel().getProperty("/items");
 		if (bOnlyActive) {
 			aItems = aItems.filter(function(oItem){
 				return oItem[this.PRESENCE_ATTRIBUTE];

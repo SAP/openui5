@@ -71,14 +71,13 @@ sap.ui.define([
 		//update adaptationModel while dialog is open
 		this._oConditionModel.attachPropertyChange(function(oEvt){
 			var sKey = oEvt.getParameter("path").substring(12);
-			if (this.oAdaptationModel){
-				var aItems = this.oAdaptationModel.getProperty("/items");
+			if (this.oAdaptationData){
+				var aItems = this.oAdaptationData.items;
 				var oItem = aItems.find(function(o){
 					return o.name == sKey;
 				});
 				if (oItem) {
-					oItem.isFiltered = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
-					this.oAdaptationModel.setProperty("/items", aItems);
+					oItem.active = this._getConditionModel().getConditions(sKey).length > 0 ? true : false;
 				}
 			}
 		}.bind(this));
@@ -107,16 +106,16 @@ sap.ui.define([
 	 *
 	 * Please note that the provided model should be created with sap.ui.mdc.p13n.P13nBuilder
 	 *
-	 * @param {object} oP13nModel Model providing the necessary data to display and create <code>FilterColumnLayout</code> instances.
+	 * @param {object} oP13nData Necessary data to display and create <code>FilterColumnLayout</code> instances.
 	 *
 	 */
-	AdaptationFilterBar.prototype.setP13nModel = function(oP13nModel) {
-		this.oAdaptationModel = oP13nModel;
-		this._oFilterBarLayout.update();
+	AdaptationFilterBar.prototype.setP13nData = function(oP13nData) {
+		this.oAdaptationData = oP13nData;
+		this._oFilterBarLayout.update(oP13nData);
 	};
 
-	AdaptationFilterBar.prototype.getP13nModel = function(oP13nModel) {
-		return this.oAdaptationModel;
+	AdaptationFilterBar.prototype.getP13nData = function() {
+		return this.oAdaptationData;
 	};
 
 	AdaptationFilterBar.prototype._handleFilterItemSubmit = function() {
@@ -151,6 +150,9 @@ sap.ui.define([
 			this._setXConditions(mConditions, true);
 
 			if (this._bFilterFieldsCreated) {
+				if (this._oFilterBarLayout.getInner().setP13nData){
+					this._oFilterBarLayout.getInner().setP13nData(this.oAdaptationData);
+				}
 				return this;
 			}
 
@@ -163,7 +165,7 @@ sap.ui.define([
 
 			var aFieldPromises = [];
 
-			this.oAdaptationModel.getProperty("/items").forEach(function(oItem, iIndex){
+			this.oAdaptationData.items.forEach(function(oItem, iIndex){
 				var oFilterFieldPromise;
 
 				oFilterFieldPromise = this._checkExisting(oItem, oFilterDelegate);
@@ -196,13 +198,13 @@ sap.ui.define([
 			}.bind(this));
 
 			return Promise.all(aFieldPromises).then(function(){
-				this.oAdaptationModel.getProperty("/items").forEach(function(oItem){
+				this.oAdaptationData.items.forEach(function(oItem){
 					this.addAggregation("filterItems", oItem.filterfield);
 					delete oItem.filterfield;
 				}.bind(this));
 
-				if (this._oFilterBarLayout.getInner().setP13nModel){
-					this._oFilterBarLayout.getInner().setP13nModel(this.oAdaptationModel);
+				if (this._oFilterBarLayout.getInner().setP13nData){
+					this._oFilterBarLayout.getInner().setP13nData(this.oAdaptationData);
 				}
 				this._bFilterFieldsCreated = true;
 
@@ -315,7 +317,7 @@ sap.ui.define([
 			this._mOriginalsForClone[sKey].destroy();
 		}
 		this._mOriginalsForClone = null;
-		this.oAdaptationModel = null;
+		this.oAdaptationData = null;
 	};
 
 	return AdaptationFilterBar;

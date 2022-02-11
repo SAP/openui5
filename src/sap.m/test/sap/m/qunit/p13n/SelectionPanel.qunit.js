@@ -303,12 +303,14 @@ sap.ui.define([
 	QUnit.test("Check selection count after filtering and resetting the p13n data", function(assert) {
 
 		// Prepare the panel --> 3 items selected
+		this.oListView.setEnableCount(true);
+
 		this.oListView.setP13nData(this.aInfoData);
 		var aColumns = [
 			"Fields",
 			"Test"
 		];
-		this.oListView.setEnableCount(true);
+
 		this.oListView._setPanelColumns(aColumns);//update the columns
 
 		// Select an additonal item --> 4 items selected

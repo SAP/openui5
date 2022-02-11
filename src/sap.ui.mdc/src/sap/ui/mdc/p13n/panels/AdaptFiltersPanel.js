@@ -2,9 +2,9 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "sap/ui/mdc/ui/Container",
-    "sap/ui/mdc/ui/ContainerItem",
-    "./ListView",
+    "sap/m/p13n/AbstractContainer",
+    "sap/m/p13n/AbstractContainerItem",
+    "sap/m/p13n/SelectionPanel",
     "./GroupView",
     "sap/ui/model/Filter",
     "sap/m/Button",
@@ -16,9 +16,9 @@ sap.ui.define([
     "sap/m/SearchField",
     "sap/m/OverflowToolbarLayoutData",
     "sap/ui/core/Item",
-    "sap/base/util/UriParameters",
-    "sap/m/library"
-], function(Container, ContainerItem, ListView, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, SAPUriParameters, mLibrary) {
+    "sap/m/library",
+    "sap/ui/model/json/JSONModel"
+], function(AbstractContainer, AbstractContainerItem, SelectionPanel, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, mLibrary, JSONModel) {
     "use strict";
 
     // shortcut for sap.m.BarDesign
@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The AdaptFiltersPanel is meant to provide a container for different filter personalization views.
-	 * @extends sap.ui.mdc.ui.Container
+	 * @extends sap.m.p13n.AbstractContainer
 	 * @author SAP SE
 	 * @private
 	 * @experimental
@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.p13n.panels.AdaptFiltersPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var AdaptFiltersPanel = Container.extend("sap.ui.mdc.p13n.panels.AdaptFiltersPanel", {
+	var AdaptFiltersPanel = AbstractContainer.extend("sap.ui.mdc.p13n.panels.AdaptFiltersPanel", {
 		metadata: {
             library: "sap.ui.mdc",
             properties: {
@@ -68,17 +68,26 @@ sap.ui.define([
 
     AdaptFiltersPanel.prototype.applySettings = function(mSettings) {
 
-        this.addView(new ContainerItem({
+        this.addView(new AbstractContainerItem({
             key: this.LIST_KEY,
-            content: new ListView(this.getId() + "-listView")
+            content: new SelectionPanel(this.getId() + "-listView", {
+                activeColumn: this._getResourceText("p13nDialog.LIST_VIEW_ACTIVE"),
+                change: function(oEvt) {
+                    this.getP13nModel().setProperty("/items", oEvt.getSource().getP13nData());
+                }.bind(this)
+            })
         }));
 
-        this.addView(new ContainerItem({
+        this.addView(new AbstractContainerItem({
             key: this.GROUP_KEY,
-            content: new GroupView(this.getId() + "-groupView", {})
+            content: new GroupView(this.getId() + "-groupView", {
+                change: function(oEvt) {
+                    this.getP13nModel().setProperty("/itemsGrouped", oEvt.getSource().getP13nData());
+                }.bind(this)
+            })
         }));
 
-        Container.prototype.applySettings.apply(this, arguments);
+        AbstractContainer.prototype.applySettings.apply(this, arguments);
 
         this.getView(this.LIST_KEY).getContent().setEnableReorder(this.getEnableReorder());
 
@@ -140,7 +149,7 @@ sap.ui.define([
 
         var sSwitchId = sKey;
 
-        Container.prototype.switchView.call(this, sSwitchId);
+        AbstractContainer.prototype.switchView.call(this, sSwitchId);
 
         //Only allow show/hide non custom view
         this._getShowHideBtn().setVisible(!this._isCustomView());
@@ -149,7 +158,7 @@ sap.ui.define([
 
         //Factory logic should only be executed for non custom panels
         if (!this._isCustomView(sKey)){
-            this.showFactory(this.getCurrentViewContent().getShowFactory());
+            this.showFactory(this.getCurrentViewContent()._getShowFactory());
         }
 
         //execute filtering
@@ -215,7 +224,7 @@ sap.ui.define([
             }.bind(this));
         }
 
-		this.addView(new ContainerItem({
+		this.addView(new AbstractContainerItem({
             key: sKey,
             content: oContent.addStyleClass("sapUiMDCPanelPadding")
         }));
@@ -259,11 +268,19 @@ sap.ui.define([
      */
     AdaptFiltersPanel.prototype.setP13nModel = function(oModel) {
         this.setModel(oModel, this.P13N_MODEL);
-		this.getViews().forEach(function(oContainerItem){
-            var oP13nPanel = oContainerItem.getContent();
-			oP13nPanel.setP13nModel(oModel);
-		});
+        this.getView(this.LIST_KEY).getContent().setP13nData(oModel.getProperty("/items"));
+        this.getView(this.GROUP_KEY).getContent().setP13nData(oModel.getProperty("/itemsGrouped"));
         this._filterByModeAndSearch();
+    };
+
+    AdaptFiltersPanel.prototype.setP13nData = function(oP13nData) {
+        var oP13nModel = this.getP13nModel();
+        if (!oP13nModel) {
+            this.setP13nModel(new JSONModel(oP13nData));
+        } else {
+            this.getView(this.LIST_KEY).getContent().setP13nData(oP13nModel.getProperty("/items"));
+            this.getView(this.GROUP_KEY).getContent().setP13nData(oP13nModel.getProperty("/itemsGrouped"));
+        }
     };
 
     /**
@@ -293,7 +310,7 @@ sap.ui.define([
         if (!this._oShowHideBtn) {
             this._oShowHideBtn = new Button({
                 press: function(oEvt) {
-                    this.showFactory(!this.getCurrentViewContent().getShowFactory());
+                    this.showFactory(!this.getCurrentViewContent()._getShowFactory());
                     var oBtn = oEvt.oSource;
                     var sNewText = oBtn.getText() === sShowText ? sHideText : sShowText;
                     oBtn.setText(sNewText);
@@ -301,7 +318,7 @@ sap.ui.define([
             });
         }
 
-        this._oShowHideBtn.setText(!this._isCustomView() && this.getCurrentViewContent().getShowFactory() ? sHideText : sShowText);
+        this._oShowHideBtn.setText(!this._isCustomView() && this.getCurrentViewContent()._getShowFactory() ? sHideText : sShowText);
         return this._oShowHideBtn;
     };
 
@@ -379,7 +396,7 @@ sap.ui.define([
                 ],
                 selectionChange: function(oEvt) {
                     if (this.getCurrentViewKey() === this.LIST_KEY) {
-                        this.getCurrentViewContent().removeMoveButtons();
+                        this.getCurrentViewContent()._removeMoveButtons();
                     }
                     var sKey = oEvt.getParameter("item").getKey();
                     this.switchView(sKey);
@@ -408,9 +425,14 @@ sap.ui.define([
         //Update value - necessary due to view switch
         this._getSearchField().setValue(this._sSearchString);
 
-        this.getCurrentViewContent().filterWithoutDestroy(aFilters);
+        this.getCurrentViewContent().filterContent(aFilters);
 
         return aFilters;
+    };
+
+
+    AdaptFiltersPanel.prototype._getResourceText = function(sKey) {
+        return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText(sKey);
     };
 
     //TODO: Renable with refactoring
@@ -444,14 +466,14 @@ sap.ui.define([
                 vFilterMode = new Filter("visible", "EQ", true);
                 break;
             case "active":
-                vFilterMode = new Filter("isFiltered", "EQ", true);
+                vFilterMode = new Filter("active", "EQ", true);
                 break;
             case "mandatory":
                 vFilterMode = new Filter("required", "EQ", true);
                 break;
             case "visibleactive":
                 vFilterMode = new Filter([
-                    new Filter("isFiltered", "EQ", true),
+                    new Filter("active", "EQ", true),
                     new Filter("visible", "EQ", true)
                 ], true);
                 break;
@@ -465,7 +487,7 @@ sap.ui.define([
     };
 
     AdaptFiltersPanel.prototype.exit = function() {
-        Container.prototype.exit.apply(this, arguments);
+        AbstractContainer.prototype.exit.apply(this, arguments);
         this._sModeKey = null;
         this._sSearchString = null;
     };

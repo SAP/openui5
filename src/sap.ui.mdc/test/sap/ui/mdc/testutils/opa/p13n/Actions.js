@@ -495,7 +495,7 @@ sap.ui.define([
 
 	var iPersonalizeListViewItems = function(oP13nDialog, aItems) {
 		this.waitFor({
-			controlType: oP13nDialog.getContent()[0].getView("columns") && oP13nDialog.getContent()[0].getView("columns").getContent().isA("sap.ui.mdc.p13n.panels.ListView") ? "sap.ui.mdc.p13n.panels.ListView" : "sap.m.p13n.SelectionPanel",
+			controlType: oP13nDialog.getContent()[0].getView("columns") && oP13nDialog.getContent()[0].getView("columns").getContent().isA("sap.m.p13n.SelectionPanel") ? "sap.m.p13n.SelectionPanel" : "sap.m.p13n.SelectionPanel",
 			matchers: new Ancestor(oP13nDialog, false),
 			success: function(aListViews) {
 				var oListView = aListViews[0];
@@ -749,7 +749,7 @@ sap.ui.define([
 			return iPersonalize.call(this, oControl, Util.texts.chart, {
 				success: function(oP13nDialog) {
 
-					//oP13nDialog.getContent()[0].getView("item") && oP13nDialog.getContent()[0].getView("item").getContent().isA("sap.ui.mdc.p13n.panels.ListView")
+					//oP13nDialog.getContent()[0].getView("item") && oP13nDialog.getContent()[0].getView("item").getContent().isA("sap.m.p13n.SelectionPanel")
 					if (oP13nDialog.getContent()[0].getView("dimeasure").getContent().isA("sap.m.P13nDimMeasurePanel")){
 						iPersonalizeOldChartP13n.call(this, oControl, sChartType, aItems, oP13nDialog);
 					} else {
