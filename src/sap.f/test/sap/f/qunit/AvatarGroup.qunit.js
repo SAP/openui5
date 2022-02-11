@@ -245,6 +245,17 @@ function (
 		"Avatars to be shown are calculated correctly");
 	});
 
+	QUnit.test("_iAvatarsToShow after addItem", function (assert) {
+		var iExpectedCount = this.oAvatarGroup.getItems().length + 1;
+
+		// Act
+		this.oAvatarGroup.addItem(new AvatarGroupItem({ initials: "BD" }));
+
+		//Assert
+		assert.strictEqual(this.oAvatarGroup._iAvatarsToShow, iExpectedCount,
+		"Avatars to be shown are calculated correctly");
+	});
+
 	QUnit.test("_adjustAvatarsToShow", function (assert) {
 		// Arrange
 		this.oAvatarGroup._iAvatarsToShow = 10;
