@@ -6,8 +6,9 @@ sap.ui.define([
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/base/Log',
+	'../routing/HistoryUtils',
 	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, TimezoneUtil, Locale, Log) {
+], function(CalendarType, Configuration, Core, TimezoneUtil, Locale, Log, HistoryUtils) {
 	"use strict";
 
 	var browserUrl = {
@@ -34,6 +35,12 @@ sap.ui.define([
 	function getHtmlAttribute(sAttribute) {
 		return document.documentElement.getAttribute(sAttribute);
 	}
+
+	// Initialize the HistoryUtils
+	QUnit.begin(HistoryUtils.init);
+
+	// Resets the HistoryUtils
+	QUnit.done(HistoryUtils.exit);
 
 	QUnit.module("Basic");
 
@@ -971,7 +978,9 @@ sap.ui.define([
 		assert.equal(_getNumberOfFlModules(oCfg), 1);
 	});
 
-	QUnit.module("ThemeRoot Validation");
+	QUnit.module("ThemeRoot Validation", {
+		before: HistoryUtils.check
+	});
 
 	[
 		{
