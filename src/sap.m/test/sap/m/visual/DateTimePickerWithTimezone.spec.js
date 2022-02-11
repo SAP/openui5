@@ -1,7 +1,9 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe("sap.m.DateTimePickerWithTimezone", function() {
 	"use strict";
+
+	browser.testrunner.currentSuite.meta.controlName = 'sap.m.DateTimePicker';
 
 	it("timezone label truncation", function() {
 		var oDTP1 = element(by.id("DTP1")),
@@ -27,7 +29,7 @@ describe("sap.m.DateTimePickerWithTimezone", function() {
 		expect(takeScreenshot(oDTP1)).toLookAs("new_york_label_fully_visible");
 	});
 
-	it("timezone change", function() {
+	it("picker displays the correct date", function() {
 		var oDTP1Popover,
 			oValueHelpIcon = element(by.id("DTP1-icon"));
 
