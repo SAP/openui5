@@ -39,6 +39,7 @@ sap.ui.define(function () {
 			ODataMetaModel : {},
 			ODataModel : {},
 			"ODataModel.integration" : {},
+			"ODataModel.realOData" : {},
 			ODataParentBinding : {},
 			ODataPropertyBinding : {},
 			ODataUtils : {},

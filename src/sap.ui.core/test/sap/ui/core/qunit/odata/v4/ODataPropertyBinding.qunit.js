@@ -15,15 +15,13 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
 		PropertyBinding, TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding,
-		_Cache, _Helper, TestUtils) {
+		_Cache, _Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
-		sServiceUrl = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataPropertyBinding", {
 			metadata : {
 				properties : {
@@ -47,10 +45,6 @@ sap.ui.define([
 				synchronizationMode : "None"
 			});
 			this.mock(this.oModel.oRequestor).expects("request").never();
-		},
-
-		afterEach : function () {
-			return TestUtils.awaitRendering();
 		},
 
 		/**
@@ -2313,45 +2307,5 @@ sap.ui.define([
 			assert.strictEqual(vValue, "42");
 		});
 	});
-
-	//*********************************************************************************************
-	if (TestUtils.isRealOData()) {
-		//*****************************************************************************************
-		QUnit.test("PATCH an entity", function () {
-			var oModel = new ODataModel({
-					serviceUrl : sServiceUrl,
-					synchronizationMode : "None"
-				}),
-				oControl = new TestControl({
-					models : oModel,
-					objectBindings : "/BusinessPartnerList('0100000000')",
-					text : "{path : 'PhoneNumber', type : 'sap.ui.model.odata.type.String'}"
-				}),
-				oBinding = oControl.getBinding("text");
-
-			return new Promise(function (resolve, reject) {
-				// Note: cannot use "dataReceived" because oControl.getText() === undefined then...
-				oBinding.attachEventOnce("change", function () {
-					var sPhoneNumber = !oControl.getText().includes("/")
-							? "06227/34567"
-							: "0622734567";
-
-					// code under test
-					oControl.setText(sPhoneNumber);
-
-					// Wait for #setValue to finish (then the response has been processed). The
-					// assertion is only that no error/warning logs happen.
-					oBinding.getContext().getBinding()
-						.attachEventOnce("patchCompleted", function (oEvent) {
-							if (oEvent.getParameter("success")) {
-								resolve();
-							} else {
-								reject(new Error("Unexpected error"));
-							}
-						});
-				});
-			});
-		});
-	}
 });
 // TODO read in initialize and refresh? This forces checkUpdate to use getProperty.

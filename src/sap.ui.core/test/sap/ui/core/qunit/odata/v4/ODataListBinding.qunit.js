@@ -22,12 +22,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v4/lib/_Parser"
 ], function (Log, SyncPromise, Binding, ChangeReason, Filter, FilterOperator, FilterProcessor,
 		FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding, ODataModel,
 		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper,
-		_Parser, TestUtils) {
+		_Parser) {
 	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
@@ -106,10 +105,6 @@ sap.ui.define([
 
 			// in case "request" is restored, this catches accidental requests
 			this.mock(_Helper).expects("createError").never();
-		},
-
-		afterEach : function () {
-			return TestUtils.awaitRendering();
 		},
 
 		/**
