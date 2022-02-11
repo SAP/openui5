@@ -132,7 +132,8 @@ sap.ui.define([
 					multiple: false,
 					slot: "header"
 				}
-			}
+			},
+			designtime: "sap/ui/webc/fiori/designtime/Page.designtime"
 		}
 	});
 

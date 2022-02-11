@@ -84,7 +84,13 @@ sap.ui.define([
 				"sap.ui.webc.fiori.WizardStep"
 			],
 			elements: [],
-			extensions: {}
+			extensions: {
+				flChangeHandlers: {
+					"sap.ui.webc.fiori.Page": {
+						"moveControls": "default"
+					}
+				}
+			}
 		});
 
 		/**
