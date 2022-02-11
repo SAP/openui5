@@ -870,6 +870,7 @@ sap.ui.define([
 				delete oActualRequest["updateAggregatedMessages"];
 				delete oActualRequest["user"];
 				delete oActualRequest["contentID"];
+				delete oActualRequest["sideEffects"];
 				that.iRequestNo += 1;
 				if (oExpectedRequest) {
 					oExpectedResponse = oExpectedRequest.response;
@@ -1373,7 +1374,7 @@ sap.ui.define([
 			}
 			// ensure that these properties are defined (required for deepEqual)
 			if (vRequest.deepPath === undefined) {
-				vRequest.deepPath = "/" + vRequest.requestUri
+				vRequest.deepPath = "/" + vRequest.requestUri.split("?")[0]
 					+ (vRequest.created ? "('~key~')" : "");
 			}
 			vRequest.headers = vRequest.headers || {};
@@ -12769,6 +12770,479 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectValue("city", ["", "Walldorf"]);
 
 			that.oView.byId("table").getBinding("items").create({CompanyName : "Foo"});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request side effects for entities on object page properly read data for a table on
+	// the object page with creation-rows and its nested lists (Select controls). In the sample, the
+	// table has all kind of rows: transient, created and persisted and read from server. Following
+	// aspects are considered after the side effects have been executed:
+	// 1. The order of rows is kept
+	// 2. Creation-rows which are persisted keep their position and are updated with side effects
+	// 3. Created, persisted rows are not considered in the response to the side-effect read
+	//    request in order to avoid duplicates
+	// 4. Nested collections are updated
+	// JIRA: CPOUI5MODELS-656
+	QUnit.test("Request side effects: $batch, nested collections", function (assert) {
+		var oBinding, oTable,
+			oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{\
+				path : \'ToSalesOrders\',\
+				parameters : {\
+					expand : \'ToBusinessPartner\',\
+					select : \'SalesOrderID,Note,ToBusinessPartner/CompanyName\'\
+				}\
+			}" visibleRowCount="4">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Text id="note" text="{Note}"/>\
+		<Select items="{path : \'ToLineItems\', templateShareable : true}">\
+			<MenuItem text="{Note}" />\
+		</Select>\
+		<Text id="name" text="{ToBusinessPartner/CompanyName}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "BusinessPartnerSet('42')"
+			}, {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest({
+				batchNo : 2,
+				requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=104"
+					+ "&$expand=ToBusinessPartner"
+					+ "&$select=SalesOrderID%2cNote%2cToBusinessPartner%2fCompanyName"
+			}, {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1",
+					ToBusinessPartner : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						BusinessPartnerID : "42",
+						CompanyName : "SAP"
+					}
+				}]
+			})
+			.expectRequest({
+				batchNo : 3,
+				deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('1')/ToLineItems",
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					SalesOrderID : "1",
+					ItemPosition : "10",
+					Note : "Sales Order Line Item 1"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["1", "", "", ""])
+			.expectValue("note", ["Sales Order 1", "", "", ""])
+			.expectValue("name", ["SAP", "", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aSelectItems;
+
+			oTable = that.oView.byId("table");
+			aSelectItems = oTable.getRows()[0].getCells()[2].getItems();
+
+			assert.strictEqual(aSelectItems.length, 1);
+			assert.strictEqual(aSelectItems[0].getText(), "Sales Order Line Item 1");
+
+			// the relative ODLB for select control of the second row gets a context after the
+			// create and therefore requests data
+			that.expectRequest({
+					batchNo : 4,
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('1')/ToLineItems",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						SalesOrderID : "1",
+						ItemPosition : "10",
+						Note : "Sales Order Line Item 1"
+					}]
+				})
+				.expectValue("salesOrderID", ["", "1"])
+				.expectValue("note", ["Sales Order New 1", "Sales Order 1"])
+				.expectValue("name", ["", "SAP"]);
+
+			oBinding = oTable.getBinding("rows");
+			oBinding.create({Note : "Sales Order New 1"}, false, {expand : "ToBusinessPartner"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aSelectItems = oTable.getRows()[0].getCells()[2].getItems();
+
+			assert.strictEqual(aSelectItems.length, 0);
+			aSelectItems = oTable.getRows()[1].getCells()[2].getItems();
+			assert.strictEqual(aSelectItems.length, 1);
+			assert.strictEqual(aSelectItems[0].getText(), "Sales Order Line Item 1");
+
+			that.expectRequest({
+					batchNo : 5,
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {"sap-messages": "transientOnly"},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "Sales Order New 1",
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					batchNo : 5,
+					deepPath : "/$~key~",
+					requestUri : "$~key~?$expand=ToBusinessPartner&$select=ToBusinessPartner"
+				}, {
+					__metadata : {uri : "SalesOrderSet('2')"},
+					ToBusinessPartner : {
+						__metadata : {uri : "BusinessPartnerSet('42')"},
+						BusinessPartnerID : "42",
+						CompanyName : "SAP"
+					}
+				})
+				.expectValue("salesOrderID", "2", 0)
+				.expectValue("name", "SAP", 0);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// the relative ODLB for select control of the third row gets a context after the create
+			// and therefore requests data
+			that.expectRequest({
+					batchNo : 6,
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('1')/ToLineItems",
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+						},
+						SalesOrderID : "1",
+						ItemPosition : "10",
+						Note : "Sales Order Line Item 1"
+					}]
+				})
+				.expectValue("salesOrderID", ["", "1"], 1)
+				.expectValue("note", ["Sales Order New 2", "Sales Order 1"], 1)
+				.expectValue("name", ["", "SAP"], 1);
+
+			oBinding.create({Note : "Sales Order New 2"}, true, {expand : "ToBusinessPartner"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 7,
+					deepPath : "/BusinessPartnerSet('42')",
+					requestUri : "BusinessPartnerSet('42')"
+						+ "?$expand=ToSalesOrders%2CToSalesOrders%2FToBusinessPartner"
+						+ "%2CToSalesOrders%2FToLineItems"
+						+ "&$select=ToSalesOrders%2FSalesOrderID%2CToSalesOrders%2FNote%2C"
+						+ "ToSalesOrders%2FToBusinessPartner%2FCompanyName%2C"
+						+ "ToSalesOrders%2FToLineItems%2FSalesOrderID%2C"
+						+ "ToSalesOrders%2FToLineItems%2FItemPosition%2C"
+						+ "ToSalesOrders%2FToLineItems%2FNote"
+				}, {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							Note : "Sales Order 1 - SideEffect",
+							SalesOrderID : "1",
+							ToBusinessPartner : {
+								__metadata : {uri : "BusinessPartnerSet('42')"},
+								BusinessPartnerID : "42",
+								CompanyName : "SAP - SideEffect"
+							},
+							ToLineItems : {
+								results : [{
+									__metadata : {
+										uri : "SalesOrderLineItemSet(SalesOrderID='1',"
+											+ "ItemPosition='10')"
+									},
+									SalesOrderID : "1",
+									ItemPosition : "10",
+									Note : "Sales Order Line Item 1 - SideEffect"
+								}]
+							}
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							Note : "Sales Order New 1 - SideEffect",
+							SalesOrderID : "2",
+							ToBusinessPartner : {
+								__metadata : {uri : "BusinessPartnerSet('42')"},
+								BusinessPartnerID : "42",
+								CompanyName : "SAP - SideEffect"
+							},
+							ToLineItems : {
+								results : [{
+									__metadata : {
+										uri : "SalesOrderLineItemSet(SalesOrderID='2',"
+											+ "ItemPosition='10')"
+									},
+									SalesOrderID : "2",
+									ItemPosition : "10",
+									Note : "New Sales Order Line Item 1 - SideEffect"
+								}]
+							}
+						}]
+					}
+				})
+				.expectValue("note", "Sales Order New 1 - SideEffect", 0)
+				.expectValue("note", "Sales Order 1 - SideEffect", 2)
+				.expectValue("name", "SAP - SideEffect", 0)
+				.expectValue("name", "SAP - SideEffect", 2);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {
+					$expand : "ToSalesOrders,ToSalesOrders/ToBusinessPartner,"
+						+ "ToSalesOrders/ToLineItems",
+					$select : "ToSalesOrders/SalesOrderID,ToSalesOrders/Note,"
+						+ "ToSalesOrders/ToBusinessPartner/CompanyName,"
+						+ "ToSalesOrders/ToLineItems/SalesOrderID,"
+						+ "ToSalesOrders/ToLineItems/ItemPosition,ToSalesOrders/ToLineItems/Note"
+				}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var aSelectItems = oTable.getRows()[0].getCells()[2].getItems();
+
+			assert.strictEqual(aSelectItems.length, 1);
+			assert.strictEqual(aSelectItems[0].getText(),
+				"New Sales Order Line Item 1 - SideEffect");
+			aSelectItems = oTable.getRows()[1].getCells()[2].getItems();
+			assert.strictEqual(aSelectItems.length, 0);
+			aSelectItems = oTable.getRows()[2].getCells()[2].getItems();
+			assert.strictEqual(aSelectItems.length, 1);
+			assert.strictEqual(aSelectItems[0].getText(), "Sales Order Line Item 1 - SideEffect");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Changing entities after a side-effect request does not cause duplicates or missing
+	// entries. Creation of new entities is still possible after a side-effect request. Side effects
+	// are also supported in non-batch scenarios.
+	// JIRA: CPOUI5MODELS-656
+	QUnit.test("Request side effects: no duplicates/missing entries; no $batch", function (assert) {
+		var oBinding, oTable,
+			oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				useBatch : false
+			}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/BusinessPartnerSet(\'42\')}">\
+	<Text id="businessPartnerID" text="{BusinessPartnerID}"/>\
+	<t:Table id="table" rows="{ToSalesOrders}" visibleRowCount="5">\
+		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerSet('42')", {
+				__metadata : {uri : "BusinessPartnerSet('42')"},
+				BusinessPartnerID : "42"
+			})
+			.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105", {
+				results : [{
+					__metadata : {uri : "SalesOrderSet('1')"},
+					SalesOrderID : "1",
+					Note : "Sales Order 1"
+				}]
+			})
+			.expectValue("businessPartnerID", "42")
+			.expectValue("salesOrderID", ["1", "", "", "", ""])
+			.expectValue("note", ["Sales Order 1", "", "", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("salesOrderID", ["", "1"])
+				.expectValue("note", ["Sales Order New 1", "Sales Order 1"]);
+
+			oBinding = oTable.getBinding("rows");
+			oBinding.create({Note : "Sales Order New 1"}, false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectHeadRequest()
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 1"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "Sales Order New 1",
+						SalesOrderID : "2"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", "2", 0);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderID", ["", "1"], 1)
+				.expectValue("note", ["Sales Order New 2", "Sales Order 1"], 1);
+
+			oBinding.create({Note : "Sales Order New 2"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					deepPath : "/BusinessPartnerSet('42')",
+					requestUri : "BusinessPartnerSet('42')?$expand=ToSalesOrders"
+				}, {
+					__metadata : {uri : "BusinessPartnerSet('42')"},
+					BusinessPartnerID : "42",
+					ToSalesOrders : {
+						results : [{
+							__metadata : {uri : "SalesOrderSet('1')"},
+							Note : "Sales Order 1 - SideEffect",
+							SalesOrderID : "1"
+						}, {
+							__metadata : {uri : "SalesOrderSet('2')"},
+							Note : "Sales Order New 1 - SideEffect",
+							SalesOrderID : "2"
+						}]
+					}
+				})
+				.expectValue("note", "Sales Order New 1 - SideEffect", 0)
+				.expectValue("note", "Sales Order 1 - SideEffect", 2);
+
+			// code under test
+			oModel.requestSideEffects(that.oView.byId("objectPage").getBindingContext(), {
+				urlParameters : {$expand : "ToSalesOrders"}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("salesOrderID", ["", "1"], 2)
+				.expectValue("note", ["Sales Order New 3", "Sales Order 1 - SideEffect"], 2);
+
+			oBinding.create({Note : "Sales Order New 3"}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", "Foo - New 3", 2);
+
+			oTable.getRows()[2].getCells()[1].setValue("Foo - New 3");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Sales Order New 2"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('3')"},
+						Note : "Sales Order New 2",
+						SalesOrderID : "3"
+					},
+					statusCode : 201
+				})
+				.expectRequest({
+					created : true,
+					data : {
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrder"},
+						Note : "Foo - New 3"
+					},
+					deepPath : "/BusinessPartnerSet('42')/ToSalesOrders('~key~')",
+					headers : {},
+					method : "POST",
+					requestUri : "BusinessPartnerSet('42')/ToSalesOrders"
+				}, {
+					data : {
+						__metadata : {uri : "SalesOrderSet('4')"},
+						Note : "Foo - New 3",
+						SalesOrderID : "4"
+					},
+					statusCode : 201
+				})
+				.expectValue("salesOrderID", ["3", "4"], 1);
+
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=4"
+					+ "&$orderby=SalesOrderID desc",
+				{
+					results : [{
+						__metadata : {uri : "SalesOrderSet('4')"},
+						Note : "Foo - New 3",
+						SalesOrderID : "4"
+					}, {
+						__metadata : {uri : "SalesOrderSet('3')"},
+						Note : "Sales Order New 2",
+						SalesOrderID : "3"
+					}, {
+						__metadata : {uri : "SalesOrderSet('2')"},
+						Note : "Sales Order New 1 - SideEffect",
+						SalesOrderID : "2"
+					}, {
+						__metadata : {uri : "SalesOrderSet('1')"},
+						Note : "Sales Order 1 - SideEffect",
+						SalesOrderID : "1"
+					}]
+				})
+				// sales orders "1" resp. "3" are already in 4th resp. 2nd line -> no value changes
+				.expectValue("note", "Foo - New 3", 0)
+				.expectValue("note", "Sales Order New 1 - SideEffect", 2)
+				.expectValue("salesOrderID", "4", 0)
+				.expectValue("salesOrderID", "2", 2);
+
+			oBinding.sort(new Sorter("SalesOrderID", /*bDescending*/true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("note", "Bar", 2);
+
+			oTable.getRows()[2].getCells()[1].setValue("Bar");
 
 			return that.waitForChanges(assert);
 		});

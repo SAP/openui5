@@ -332,8 +332,10 @@ sap.ui.define([
 					SalesOrderID : encodeURL(sSalesOrderID)
 				}
 			});
-			// read requests for side-effects
-			this.readSalesOrder("FixQuantity");
+			oModel.requestSideEffects(this.getView().byId("objectPage").getBindingContext(), {
+				groupId : "FixQuantity",
+				urlParameters : {$expand : "ToLineItems,ToLineItems/ToProduct"}
+			});
 
 			oModel.submitChanges({groupId : "FixQuantity"});
 		},

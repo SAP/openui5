@@ -78,8 +78,9 @@ sap.ui.define([
 	},
 	sServiceUrl : "https://example.com/foo/bar"
 }].forEach(function (oFixture, i) {
-	var sTitle = "constructor: oCreatedContextsCache, codeListModelParameters and sMetadataUrl"
-		+ " stored #" + i + ", sServiceUrl: " + oFixture.sServiceUrl;
+	var sTitle = "constructor: aSideEffectCleanUpFunctions, oCreatedContextsCache,"
+		+ " codeListModelParameters and sMetadataUrl stored #" + i + ", sServiceUrl: "
+		+ oFixture.sServiceUrl;
 	QUnit.test(sTitle, function (assert) {
 		var oDataModelMock = this.mock(ODataModel),
 			oExpectedHeaders = {
@@ -142,11 +143,13 @@ sap.ui.define([
 		assert.deepEqual(oModel.oHeaders, oExpectedHeaders);
 		assert.deepEqual(oModel.mCustomHeaders, oFixture.oHeaderParameter || {});
 		assert.ok(oModel.oCreatedContextsCache instanceof _CreatedContextsCache);
+		assert.deepEqual(oModel.aSideEffectCleanUpFunctions, []);
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("read: updateAggregatedMessages passed to _createRequest", function (assert) {
+	QUnit.test("_read: updateAggregatedMessages and bSideEffects are passed to _createRequest",
+			function (assert) {
 		var bCanonicalRequest = "{boolean} bCanonicalRequest",
 			oContext = "{sap.ui.model.odata.v2.Context} oContext",
 			sDeepPath = "~deepPath",
@@ -232,8 +235,8 @@ sap.ui.define([
 				/*bUseBatch*/true)
 				.returns(sUrl);
 		oModelMock.expects("_createRequest")
-			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, null, sETag, undefined,
-				bUpdateAggregatedMessages)
+			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, /*oData*/null, sETag,
+				/*bAsync*/undefined, bUpdateAggregatedMessages, "~bSideEffects")
 			.returns(oRequest);
 		oModelMock.expects("_pushToRequestQueue")
 			.withExactArgs(oModel.mRequests, sGroupId, null, sinon.match.same(oRequest),
@@ -241,7 +244,8 @@ sap.ui.define([
 			.returns(oRequest);
 
 		// code under test
-		ODataModel.prototype.read.call(oModel, "~path/$count?foo='bar'", mParameters);
+		ODataModel.prototype._read.call(oModel, "~path/$count?foo='bar'", mParameters,
+			"~bSideEffects");
 	});
 
 	//*********************************************************************************************
@@ -545,6 +549,35 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_createRequest: truthy bSideEffects sets sideEffects property at request object",
+			function (assert) {
+		var oModel = {
+				bUseBatch : true,
+				_createRequestID : function () {}
+			};
+
+		this.mock(oModel).expects("_createRequestID").withExactArgs().returns("~uid");
+
+		assert.deepEqual(
+			// code under test
+			ODataModel.prototype._createRequest.call(oModel, "~sUrl", "~deepPath", "GET",
+				/*mHeaders*/{}, /*oData*/undefined, /*sETag*/undefined, /*bAsync*/false,
+				/*bUpdateAggregatedMessages*/false, "~bTruthySideEffects"),
+			{
+				async : false,
+				deepPath : "~deepPath",
+				headers : {},
+				method : "GET",
+				password : undefined,
+				requestID : "~uid",
+				requestUri : "~sUrl",
+				sideEffects : true,
+				updateAggregatedMessages : false,
+				user : undefined
+			});
+	});
 
 	//*********************************************************************************************
 [{
@@ -949,26 +982,21 @@ sap.ui.define([
 			oModel = {
 				_getEntity : function () {},
 				_getKey : function () {},
-				hasContext : function () {},
-				// add method under test to check correct recursion
-				_importData : ODataModel.prototype._importData,
-				resolveFromCache : function () {},
+				_importData : function () {}, // used by recursion
 				_updateChangedEntities : function () {},
-				_writePathCache : function () {}
+				_writePathCache : function () {},
+				hasContext : function () {},
+				resolveFromCache : function () {}
 			},
 			oModelMock = this.mock(oModel);
 
 		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oData)).returns("key");
 		oModelMock.expects("_getEntity").withExactArgs("key").returns(oEntry);
-		// from code under test
-		oModelMock.expects("_importData")
-			.withExactArgs(sinon.match.same(oData), sinon.match.same(mChangedEntities), "oResponse",
-				"sPath", "sDeepPath", undefined, "bFunctionImport")
-			.callThrough();
 		// recursive call for importing navigation property data
 		oModelMock.expects("_importData")
 			.withExactArgs(sinon.match.same(oData.n0), sinon.match.same(mChangedEntities),
-				"oResponse", "sPath/n0", "sDeepPath/n0", undefined, false, "/key/n0")
+				"oResponse", "sPath/n0", "sDeepPath/n0", undefined, false, "/key/n0",
+				"bSideEffects")
 			.returns("oResult");
 		oModelMock.expects("hasContext").withExactArgs("/key").returns(false);
 		oModelMock.expects("_updateChangedEntities")
@@ -981,12 +1009,110 @@ sap.ui.define([
 			/*bUpdateShortenedPaths*/true);
 
 		// code under test
-		oModel._importData(oData, mChangedEntities, "oResponse", "sPath", "sDeepPath",
-			/*sKey*/ undefined, "bFunctionImport");
+		ODataModel.prototype._importData.call(oModel, oData, mChangedEntities, "oResponse", "sPath",
+			"sDeepPath", /*sKey*/ undefined, "bFunctionImport", undefined, "bSideEffects");
 
 		assert.strictEqual(oEntry.n0.__ref, "oResult");
 
 		assert.ok(mChangedEntities["key"]);
+	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bSideEffects) {
+	var sTitle = "_importData: data with 0..n navigation property, bSideEffects=" + bSideEffects;
+
+	QUnit.test(sTitle, function (assert) {
+		var mChangedEntities = {},
+			oData = {
+				toN : {
+					results : [/*not relevant*/]
+				}
+			},
+			oEntry = {},
+			oModel = {
+				aSideEffectCleanUpFunctions : [],
+				_getEntity : function () {},
+				_getKey : function () {},
+				_importData : function () {}, // used by recursion
+				_updateChangedEntities : function () {},
+				_writePathCache : function () {},
+				hasContext : function () {},
+				resolveFromCache : function () {}
+			},
+			aNavigationPropertyData = [],
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oData)).returns("key");
+		oModelMock.expects("_getEntity").withExactArgs("key").returns(oEntry);
+		// recursive call for importing navigation property data
+		oModelMock.expects("_importData")
+			.withExactArgs(sinon.match.same(oData.toN), sinon.match.same(mChangedEntities),
+				"oResponse", "sPath/toN", "sDeepPath/toN", undefined, false, "/key/toN",
+				bSideEffects)
+			.returns(aNavigationPropertyData);
+		oModelMock.expects("hasContext").withExactArgs("/key").returns(false);
+		oModelMock.expects("_updateChangedEntities")
+			.withExactArgs({key : sinon.match.same(oEntry)});
+		oModelMock.expects("resolveFromCache").withExactArgs("sDeepPath").returns("/key");
+		oModelMock.expects("_writePathCache").withExactArgs("/key", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", "bFunctionImport");
+		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", "bFunctionImport",
+			/*bUpdateShortenedPaths*/true);
+
+		assert.strictEqual(
+			// code under test
+			ODataModel.prototype._importData.call(oModel, oData, mChangedEntities, "oResponse",
+				"sPath", "sDeepPath", /*sKey*/undefined, "bFunctionImport", undefined,
+				bSideEffects),
+			"key");
+
+		assert.strictEqual(oEntry.toN.__list, aNavigationPropertyData);
+		if (bSideEffects) {
+			assert.strictEqual(aNavigationPropertyData.sideEffects, true);
+			assert.deepEqual(oModel.aSideEffectCleanUpFunctions.length, 1);
+			assert.strictEqual(typeof oModel.aSideEffectCleanUpFunctions[0], "function");
+			oModel.aSideEffectCleanUpFunctions[0]();
+			assert.notOk(oEntry.hasOwnProperty("toN"));
+		} else {
+			assert.strictEqual(aNavigationPropertyData.hasOwnProperty("sideEffects"), false);
+			assert.deepEqual(oModel.aSideEffectCleanUpFunctions, []);
+		}
+		assert.ok(mChangedEntities["key"]);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_importData: collection; passes bSideEffects", function (assert) {
+		var oEntity0 = {},
+			oEntity1 = {},
+			oData = {
+				results : [oEntity0, oEntity1]
+			},
+			oModel = {
+				_getKey : function () {},
+				_importData : function () {} // used by recursion
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntity0)).returns("key0");
+		oModelMock.expects("_importData")
+			.withExactArgs(sinon.match.same(oEntity0), "mChangedEntities", "oResponse", "/foo",
+				"sDeepPath", "key0", /*bFunctionImport*/undefined,
+				/*sPathFromCanonicalParent*/undefined, "bSideEffects")
+			.returns("key0");
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oEntity1)).returns("key1");
+		oModelMock.expects("_importData")
+			.withExactArgs(sinon.match.same(oEntity1), "mChangedEntities", "oResponse", "/foo",
+				"sDeepPath", "key1", /*bFunctionImport*/undefined,
+				/*sPathFromCanonicalParent*/undefined, "bSideEffects")
+			.returns("key1");
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype._importData.call(oModel, oData, "mChangedEntities", "oResponse",
+				"/foo/ToNNavigationProperty", "sDeepPath", "sKey", "bFunctionImport",
+				"sPathFromCanonicalParent", "bSideEffects"),
+			["key0", "key1"]);
 	});
 
 	//*********************************************************************************************
@@ -1059,7 +1185,8 @@ sap.ui.define([
 		} else {
 			oModelMock.expects("_importData").withExactArgs(oResponse.data,
 			/*mLocalGetEntities*/ {}, oResponse, "normalizedCannonicalPath",
-			/*sDeepPath*/"functionTarget", /*sKey*/ undefined, oEntityType && "isFunction");
+			/*sDeepPath*/"functionTarget", /*sKey*/ undefined, oEntityType && "isFunction",
+			/*sPathFromCanonicalParent*/undefined, /*bSideEffects*/undefined);
 		}
 		oModelMock.expects("_getEntity").withExactArgs(sRequestKey).returns({__metadata : {}});
 		oModelMock.expects("_removeEntity").withExactArgs(sRequestKey).never();
@@ -1084,6 +1211,69 @@ sap.ui.define([
 });
 	//TODO refactor ODataModel#mPathCache to a simple map path -> canonical path instead of map
 	// path -> object with single property 'canonicalPath'
+
+	//*********************************************************************************************
+	QUnit.test("_processSuccess: passes sideEffects to _importData", function (assert) {
+		var oEntityType = {},
+			mEntityTypes = {},
+			oModel = {
+				oMetadata : {
+					_getEntityTypeByPath : function () {}
+				},
+				sServiceUrl : "/service/",
+				_createEventInfo : function () {},
+				_decreaseDeferredRequestCount : function () {},
+				_getEntity : function () {},
+				_importData : function () {},
+				_normalizePath : function () {},
+				_parseResponse : function () {},
+				_updateETag : function () {},
+				decreaseLaundering : function () {},
+				fireRequestCompleted : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oRequest = {
+				data : "requestData",
+				requestUri : "/service/path",
+				sideEffects : "~sideEffects"
+			},
+			aRequests = [],
+			oResponse = {
+				data : {},
+				statusCode : 200
+			};
+
+		oModelMock.expects("_normalizePath").withExactArgs("/path").returns("normalizedPath");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("normalizedPath")
+			.returns(oEntityType);
+		oModelMock.expects("_normalizePath")
+			.withExactArgs("/path", undefined, true)
+			.returns("normalizedCanonicalPath");
+		oModelMock.expects("decreaseLaundering")
+			.withExactArgs("normalizedCanonicalPath","requestData");
+		oModelMock.expects("_decreaseDeferredRequestCount")
+			.withExactArgs(sinon.match.same(oRequest));
+		oModelMock.expects("_importData")
+			.withExactArgs(oResponse.data, /*mLocalGetEntities*/ {}, oResponse,
+				"normalizedCanonicalPath", /*sDeepPath*/undefined, /*sKey*/undefined,
+				/*bFunctionImport*/undefined, /*sPathFromCanonicalParent*/undefined,
+				"~sideEffects");
+		oModelMock.expects("_getEntity").withExactArgs(undefined).returns(undefined);
+		oModelMock.expects("_parseResponse")
+			.withExactArgs(oResponse, oRequest, /*mLocalGetEntities*/ {},
+				/*mLocalChangeEntities*/ {});
+		oModelMock.expects("_updateETag").withExactArgs(oRequest, oResponse);
+		oModelMock.expects("_createEventInfo")
+			.withExactArgs(oRequest, oResponse, aRequests)
+			.returns("oEventInfo");
+		oModelMock.expects("fireRequestCompleted").withExactArgs("oEventInfo");
+
+		// code under test
+		ODataModel.prototype._processSuccess.call(oModel, oRequest, oResponse,
+			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
+			/*bBatch*/ false, aRequests);
+	});
 
 	//*********************************************************************************************
 [{
@@ -4569,6 +4759,62 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_submitRequest: clean up side effect expands in success case", function (assert) {
+		var fnResolve, fnHandleSuccessInternal,
+			oHandlers = {
+				fnSuccessParameter : function () {}
+			},
+			oHandlersMock = this.mock(oHandlers),
+			oModel = {
+				pReadyForRequest : Promise.resolve(),
+				_getODataHandler : function () {},
+				_request : function () {},
+				getServiceMetadata : function () {}
+			},
+			oPromise = new Promise(function (resolve, reject) {
+				fnResolve = resolve;
+			}),
+			oRequest = {requestUri : "~uri"};
+
+		this.mock(oModel).expects("_getODataHandler").withExactArgs("~uri").returns("~oHandler");
+		oHandlersMock.expects("fnSuccessParameter").never();
+
+		// code under test
+		ODataModel.prototype._submitRequest.call(oModel, oRequest, oHandlers.fnSuccessParameter);
+
+		// internal function submit is called async
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns("~metadata");
+		this.mock(oModel).expects("_request")
+			.withExactArgs(sinon.match.same(oRequest),
+				sinon.match(function (handleSuccess) {
+					fnHandleSuccessInternal = handleSuccess;
+
+					return true;
+				}), sinon.match.func, "~oHandler", undefined, "~metadata")
+			.callsFake(function () {
+				fnResolve();
+			});
+
+		return oPromise.then(function () {
+			var aSideEffectCleanUpFunctions = [sinon.spy(), sinon.spy()];
+
+			oHandlersMock.expects("fnSuccessParameter") // parameters not relevant
+				.callsFake(function () {
+					// simulate collection of side effect cleanup functions
+					oModel.aSideEffectCleanUpFunctions = aSideEffectCleanUpFunctions;
+				});
+
+			// code under test
+			fnHandleSuccessInternal();
+
+			assert.notStrictEqual(oModel.aSideEffectCleanUpFunctions, aSideEffectCleanUpFunctions);
+			assert.deepEqual(oModel.aSideEffectCleanUpFunctions, []);
+			assert.ok(aSideEffectCleanUpFunctions[0].calledOnceWithExactly());
+			assert.ok(aSideEffectCleanUpFunctions[1].calledOnceWithExactly());
+		});
+	});
+
+	//*********************************************************************************************
 ["fulfilled", "pending", "rejected"].forEach(function (sCase) {
 	[false, true].forEach(function (bMetaModelLoaded) {
 	var sTitle = "_getObject: code list path, " + sCase + "; bMetaModelLoaded=" + bMetaModelLoaded;
@@ -5534,5 +5780,124 @@ sap.ui.define([
 				},
 				selectedProperty : undefined
 			});
+	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bSuccess) {
+	QUnit.test("requestSideEffects: bSuccess=" + bSuccess, function (assert) {
+		var fnError, oResult, fnSuccess,
+			oModel = {_read : function () {}},
+			mParameters = {
+				groupId : "~groupId",
+				urlParameters : {
+					$expand : "To0,To0/To1,To2",
+					$select : "~select"
+				}
+			};
+
+		this.mock(oModel).expects("_read")
+			.withExactArgs("", {
+				context : "~oContext",
+				error : sinon.match.func.and(sinon.match(function (fnError0) {
+					fnError = fnError0;
+
+					return true;
+				})),
+				groupId : "~groupId",
+				success : sinon.match.func.and(sinon.match(function (fnSuccess0) {
+					fnSuccess = fnSuccess0;
+
+					return true;
+				})),
+				urlParameters : sinon.match.same(mParameters.urlParameters)
+			}, /*bSideEffect*/true);
+
+		// code under test
+		oResult = ODataModel.prototype.requestSideEffects.call(oModel, "~oContext", mParameters);
+
+		assert.ok(oResult instanceof Promise);
+
+		if (bSuccess) {
+			fnSuccess("~oData", "~oResponse");
+		} else {
+			fnError("~oError");
+		}
+
+		return oResult.then(function (oResult) {
+				assert.ok(bSuccess);
+				assert.strictEqual(oResult, undefined);
+			}, function (oError) {
+				assert.ok(!bSuccess);
+				assert.strictEqual(oError, "~oError");
+			});
+	});
+});
+
+	//*********************************************************************************************
+[{
+	mParameters : undefined
+}, {
+	mParameters : {}
+}, {
+	mParameters : {
+		urlParameters : {$select : "~select"}
+	},
+	mExpectsUrlParams : {$select : "~select"}
+}, {
+	mParameters : {
+		urlParameters : {$expand : ""}
+	},
+	mExpectsUrlParams : {$expand : ""}
+}].forEach(function (oFixture, i) {
+	QUnit.test("requestSideEffects: parameters checked and passed #" + i, function (assert) {
+		var oModel = {_read : function () {}};
+
+		this.mock(oModel).expects("_read")
+			.withExactArgs("", {
+				context : "~oContext",
+				error : sinon.match.func,
+				groupId : undefined,
+				success : sinon.match.func,
+				urlParameters : oFixture.mExpectsUrlParams
+			}, /*bSideEffect*/true);
+
+		// code under test
+		ODataModel.prototype.requestSideEffects.call(oModel, "~oContext", oFixture.mParameters);
+	});
+});
+
+	//*********************************************************************************************
+[
+	"batchGroupId", "changeSetId", "context", "error", "filters", "foo", "sorters", "success",
+	"updateAggregatedMessages"
+].forEach(function (sParameter) {
+	[sParameter, undefined, null, 42, function () {}].forEach(function (vParameterValue) {
+	var sTitle = "requestSideEffects: unsupported parameters: " + sParameter + "="
+			+ vParameterValue;
+
+	QUnit.test(sTitle, function (assert) {
+		var mParameters = {};
+
+		mParameters[sParameter] = vParameterValue;
+
+		assert.throws(function () {
+			// code under test
+			ODataModel.prototype.requestSideEffects.call({/*oModel*/}, "~oContext", mParameters);
+		}, new Error("Parameter '" + sParameter + "' is not supported"));
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("read delegates to _read", function (assert) {
+		var oModel = {_read : function () {}};
+
+		this.mock(oModel).expects("_read")
+			.withExactArgs("~sPath", "~mParameters")
+			.returns("~oResult");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.read.call(oModel, "~sPath", "~mParameters", "foo"),
+			"~oResult");
 	});
 });

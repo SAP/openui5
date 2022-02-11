@@ -590,15 +590,15 @@ sap.ui.define([
 				"SalesOrderSet('109')" : {
 					source : "Messages/TC9/SalesOrderSet.json"
 				},
-				"SalesOrderSet('109')?$select=ChangedAt,GrossAmount,SalesOrderID" : [{
+				"SalesOrderSet('109')?$expand=ToLineItems%2CToLineItems%2FToProduct" : {
+					source : "Messages/TC9/SalesOrderSet_expand.json"
+				},
+				"SalesOrderSet('109')?$select=ChangedAt,GrossAmount,SalesOrderID" : {
 					headers : getMessageHeader([0], oCurrentMessages.reset().add("order",
 							"ToLineItems(SalesOrderID='109',ItemPosition='010')/Quantity")
 						.add("successFix", "")),
-					ifMatch : ithCall.bind(null, 1),
 					source : "Messages/TC9/SalesOrderSet.json"
-				}, {
-					source : "Messages/TC9/SalesOrderSet.json"
-				}],
+				},
 				"SalesOrderSet('109')/ToLineItems?$skip=0&$top=4&$inlinecount=allpages" : [{
 					ifMatch : ithCall.bind(null, 1),
 					message : getLineItems("Messages/TC9/SalesOrderSet-ToLineItems.json",

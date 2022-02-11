@@ -483,9 +483,12 @@ sap.ui.define([
 		// don't send additional requests
 		// $expand loads all associated entities, no paging parameters possible, so we can safely
 		// assume all data is available
-		var oRef = this.oModel._getObject(this.sPath, this.oContext);
+		var aCreatedPersistedContextKeys,
+			aList = this.oModel._getObject(this.sPath, this.oContext),
+			bOldUseExpandedList = this.bUseExpandedList,
+			that = this;
 
-		if (!this.isResolved() || oRef === undefined || this.mCustomParams
+		if (!this.isResolved() || aList === undefined || this.mCustomParams
 				|| (this.sOperationMode === OperationMode.Server
 					&& (this.aApplicationFilters.length > 0 || this.aFilters.length > 0
 						|| this.aSorters.length > 0))) {
@@ -494,25 +497,44 @@ sap.ui.define([
 			return false;
 		} else {
 			this.bUseExpandedList = true;
-			if (Array.isArray(oRef)) {
+			if (Array.isArray(aList)) {
 				// For performance, only check first and last entry, whether reload is needed
 				if (!bSkipReloadNeeded
-						&& (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters)
-							|| this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1],
+						&& (this.oModel._isReloadNeeded("/" + aList[0], this.mParameters)
+							|| this.oModel._isReloadNeeded("/" + aList[aList.length - 1],
 								this.mParameters))) {
 					this.bUseExpandedList = false;
 					this.aExpandRefs = undefined;
 					return false;
 				}
-				this.aExpandRefs = oRef;
-				this.aAllKeys = oRef;
-				this.iLength = oRef.length;
+				this.aExpandRefs = aList;
+				if (aList.sideEffects) {
+					aCreatedPersistedContextKeys = this._getCreatedPersistedContexts()
+						.map(function (oContext) {
+							return that.oModel.getKey(oContext);
+						});
+					if (aCreatedPersistedContextKeys.length) {
+						aList = aList.filter(function (sEntityKey) {
+							return !aCreatedPersistedContextKeys.includes(sEntityKey);
+						});
+					}
+				}
+				this.aAllKeys = aList;
+				this.iLength = aList.length;
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
 				// ensure sorters/filters for an expanded list are initialized
 				this._initSortersFilters();
 				this.applyFilter();
 				this.applySort();
+				if (this.aExpandRefs.sideEffects && !bOldUseExpandedList) {
+					// don't switch expanded list mode if data is read via a side effect
+					this.aExpandRefs = undefined;
+					this.aAllKeys = null;
+					this.bUseExpandedList = false;
+
+					return this.bUseExpandedList;
+				}
 			} else { // means that expanded data has no data available e.g. for 0..n relations
 				this.aExpandRefs = undefined;
 				this.aAllKeys = null;
@@ -584,6 +606,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the created and persisted contexts of this list binding.
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context[]} The created and persisted contexts
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._getCreatedPersistedContexts = function () {
+		return this._getCreatedContexts().filter(function (oContext) {
+			return !oContext.isTransient();
+		});
+	};
+
+	/**
 	 * Gets the exclude filter for the created and persisted contexts of this list binding.
 	 *
 	 * @returns {string|undefined} The exclude filter or <code>undefined</code> if there are no
@@ -593,9 +628,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._getCreatedPersistedExcludeFilter = function () {
 		var sExcludeFilter, aExcludeFilters,
-			aCreatedPersistedContexts = this._getCreatedContexts().filter(function (oContext) {
-				return !oContext.isTransient();
-			}),
+			aCreatedPersistedContexts = this._getCreatedPersistedContexts(),
 			that = this;
 
 		if (aCreatedPersistedContexts.length > 0) {
