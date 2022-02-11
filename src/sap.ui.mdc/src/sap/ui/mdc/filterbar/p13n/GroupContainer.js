@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new filterBar/p13n/GroupContainer.
-     * Used for a complex groupable FilterBar UI, should be used in combination with <code>FilterColumnLayout</code>
+     * Used for a complex groupable FilterBar UI, should be used in combination with <code>FilterGroupLayout</code>
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @class The GroupContainer is a IFilterContainer implementation for <code>sap.m.Table</code>
 	 * @extends sap.ui.mdc.filterbar.IFilterContainer
@@ -62,6 +62,10 @@ sap.ui.define([
 
 	GroupContainer.prototype.update = function(oP13nData) {
 		this.oLayout.restoreDefaults();
+	};
+
+	GroupContainer.prototype.setP13nData = function(oAdaptationData) {
+		this.oLayout.setP13nData(oAdaptationData);
 	};
 
 	GroupContainer.prototype.exit = function() {

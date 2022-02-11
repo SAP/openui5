@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer"
-], function( GroupContainer, FilterGroupLayout, TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer) {
+	"sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/base/util/merge", "sap/base/util/UriParameters"
+], function( GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, SAPUriParameters) {
 	"use strict";
 
 	/**
@@ -47,6 +47,7 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype.init = function() {
 		FilterBarBase.prototype.init.apply(this,arguments);
+		this.addStyleClass("sapUIAdaptationFilterBar");
 		this._bPersistValues = true;
 	};
 
@@ -150,9 +151,7 @@ sap.ui.define([
 			this._setXConditions(mConditions, true);
 
 			if (this._bFilterFieldsCreated) {
-				if (this._oFilterBarLayout.getInner().setP13nData){
-					this._oFilterBarLayout.getInner().setP13nData(this.oAdaptationData);
-				}
+				this._oFilterBarLayout.setP13nData(this.oAdaptationData);
 				return this;
 			}
 
@@ -203,9 +202,7 @@ sap.ui.define([
 					delete oItem.filterfield;
 				}.bind(this));
 
-				if (this._oFilterBarLayout.getInner().setP13nData){
-					this._oFilterBarLayout.getInner().setP13nData(this.oAdaptationData);
-				}
+				this._oFilterBarLayout.setP13nData(this.oAdaptationData);
 				this._bFilterFieldsCreated = true;
 
 				return this;
@@ -294,17 +291,23 @@ sap.ui.define([
 	AdaptationFilterBar.prototype.setAdaptationControl = function(oControl, bSuppressInvalidate) {
 		this.setProperty("adaptationControl", oControl, bSuppressInvalidate);
 
-		this._checkAdvancedParent(oControl);
+		//FIXME: remove once the UI has been decided
+		var bUseQueryPanel = new SAPUriParameters(window.location.search).getAll("sap-ui-xx-filterQueryPanel")[0] === "true";
+		this._cLayoutItem = bUseQueryPanel || this._checkAdvancedParent(oControl) ? FilterGroupLayout : FilterColumnLayout; //Note: once the URL parameter is removed, FilterColumnLayout can be deleted
 
-		//TODO: use 'GroupView' for inbuilt filtering enabled Controls
-		this._cLayoutItem = this._checkAdvancedParent(oControl) ? FilterGroupLayout : FilterColumnLayout;
 		this._oFilterBarLayout = this._checkAdvancedParent(oControl) ? new GroupContainer() : new TableContainer();
+
 		this._oFilterBarLayout.getInner().setParent(this);
 		this.setAggregation("layout", this._oFilterBarLayout, true);
-		this.addStyleClass("sapUIAdaptationFilterBar");
 
 		if (this._oFilterBarLayout.getInner().attachChange) {
-			this._oFilterBarLayout.getInner().attachChange(function(){
+			this._oFilterBarLayout.getInner().attachChange(function(oEvt){
+				if (oEvt.getParameter("reason") === "Remove") {
+					var oItem = oEvt.getParameter("item");
+					var mConditions = this._bPersistValues ? merge({}, this.getAdaptationControl().getFilterConditions()) : this.getAdaptationControl()._getXConditions();
+					mConditions[oItem.name] = [];
+					this._setXConditions(mConditions, true);
+				}
 				this.fireChange();
 			}.bind(this));
 		}

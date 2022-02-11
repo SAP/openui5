@@ -94,6 +94,10 @@ sap.ui.define([
         }
     };
 
+    FilterController.prototype._getPresenceAttribute = function(bexternalAppliance){
+        return "isFiltered";
+    };
+
     FilterController.prototype.getAdaptationUI = function (oPropertyHelper, oWrapper) {
         var oAdaptationModel = this._getP13nModel(oPropertyHelper);
 
