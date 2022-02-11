@@ -172,7 +172,7 @@ sap.ui.define([
 		onRefreshSalesOrderList : function () {
 			var oBinding = this.byId("SalesOrderList").getBinding("items");
 
-			if (this.hasPendingChanges(oBinding, "refreshing")) {
+			if (this.hasPendingChanges(oBinding, "refreshing", true)) {
 				return;
 			}
 			oBinding.refresh();

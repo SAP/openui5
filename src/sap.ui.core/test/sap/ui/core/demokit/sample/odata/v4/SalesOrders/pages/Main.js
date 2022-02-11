@@ -76,8 +76,7 @@ sap.ui.define([
 					oControl.getText());
 				if (bRememberGrossAmount) {
 					Opa.getContext().GrossAmount =
-						oItem.getCells()[GROSS_AMOUNT_COLUMN_INDEX]
-							.getBinding("text").getValue();
+						oItem.getCells()[GROSS_AMOUNT_COLUMN_INDEX].getText();
 				}
 			},
 			viewName : sViewName

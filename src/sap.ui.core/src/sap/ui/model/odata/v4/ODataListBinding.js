@@ -2552,8 +2552,9 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			_bCheckUpdate, bKeepCacheOnError) {
-		var that = this;
+			bCheckUpdate, bKeepCacheOnError) {
+		var bDropTransient = !bCheckUpdate || bKeepCacheOnError, // "side effect refresh" & Co.
+			that = this;
 
 		function onRemove(sPredicate) {
 			var sPath = that.getResolvedPath();
@@ -2564,7 +2565,9 @@ sap.ui.define([
 		// calls refreshInternal on all given bindings and returns an array of promises
 		function refreshAll(aBindings) {
 			return aBindings.map(function (oBinding) {
-				if (oBinding.bIsBeingDestroyed) {
+				if (oBinding.bIsBeingDestroyed
+						|| !bDropTransient && oBinding.getContext().isKeepAlive()
+							&& oBinding.hasPendingChanges()) {
 					return;
 				}
 				// Call refreshInternal with bCheckUpdate = false because property bindings
@@ -2621,7 +2624,7 @@ sap.ui.define([
 			}
 			// Note: after reset the dependent bindings cannot be found any more
 			aDependentBindings = that.getDependentBindings();
-			that.reset(ChangeReason.Refresh, true); // this may reset that.oRefreshPromise
+			that.reset(ChangeReason.Refresh, bDropTransient); // this may reset that.oRefreshPromise
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise,
 					// Update after refresh event, otherwise $count is fetched before the request

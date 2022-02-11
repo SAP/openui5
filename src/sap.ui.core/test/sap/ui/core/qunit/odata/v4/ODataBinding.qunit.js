@@ -294,8 +294,8 @@ sap.ui.define([
 			bRefreshed = false;
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding.oModel).expects("checkGroupId");
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
+		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
 			.callsFake(function () {
 				return new SyncPromise(function (resolve) {
@@ -326,8 +326,8 @@ sap.ui.define([
 			oError = new Error();
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
-		this.mock(oBinding.oModel).expects("checkGroupId");
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
+		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
 			.rejects(oError);
 
@@ -392,7 +392,7 @@ sap.ui.define([
 			});
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(true);
 
 		assert.throws(function () {
 			oBinding.requestRefresh();
@@ -409,7 +409,7 @@ sap.ui.define([
 			oError = new Error();
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
 		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
 		assert.throws(function () {
@@ -2246,8 +2246,8 @@ sap.ui.define([
 		var oBinding = new ODataBinding(),
 			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
-		this.mock(oRootBinding).expects("isSuspended").returns(false);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("isRoot").never();
 		this.mock(oBinding).expects("getResumeChangeReason").never();
 
@@ -2259,7 +2259,7 @@ sap.ui.define([
 	QUnit.test("checkSuspended: unresolved", function () {
 		var oBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("getRootBinding").returns(undefined);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(undefined);
 		this.mock(oBinding).expects("isRoot").never();
 		this.mock(oBinding).expects("getResumeChangeReason").never();
 
@@ -2274,8 +2274,8 @@ sap.ui.define([
 			}),
 			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
-		this.mock(oRootBinding).expects("isSuspended").returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRoot").never();
 		this.mock(oBinding).expects("getResumeChangeReason").never();
 
@@ -2292,10 +2292,10 @@ sap.ui.define([
 			}),
 			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
-		this.mock(oRootBinding).expects("isSuspended").returns(true);
-		this.mock(oBinding).expects("isRoot").returns(false);
-		this.mock(oBinding).expects("getResumeChangeReason").returns(undefined);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResumeChangeReason").withExactArgs().returns(undefined);
 
 		// code under test
 		oBinding.checkSuspended(true);
@@ -2308,10 +2308,10 @@ sap.ui.define([
 			}),
 			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
-		this.mock(oRootBinding).expects("isSuspended").returns(true);
-		this.mock(oBinding).expects("isRoot").returns(false);
-		this.mock(oBinding).expects("getResumeChangeReason").returns("bar");
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResumeChangeReason").withExactArgs().returns("bar");
 
 		// code under test
 		assert.throws(function () {
@@ -2326,10 +2326,10 @@ sap.ui.define([
 			}),
 			oRootBinding = new ODataBinding();
 
-		this.mock(oBinding).expects("getRootBinding").returns(oRootBinding);
-		this.mock(oRootBinding).expects("isSuspended").returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oRootBinding).expects("isSuspended").withExactArgs().returns(true);
 		// Note: quasi-absolute would be realistic example
-		this.mock(oBinding).expects("isRoot").returns(true);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getResumeChangeReason").never();
 
 		// code under test
@@ -2861,32 +2861,32 @@ sap.ui.define([
 			},
 			oDependentBindingMock = this.mock(oDependentBinding);
 
-		oBindingMock.expects("getDependentBindings").returns([]);
+		oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
 
 		// code under test
 		assert.strictEqual(oBinding.getResumeChangeReason(), undefined);
 
 		oBinding.sResumeChangeReason = ChangeReason.Refresh;
-		oBindingMock.expects("getDependentBindings").returns([]);
+		oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
 
 		// code under test
 		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Refresh);
 
-		oBindingMock.expects("getDependentBindings").returns([oDependentBinding]);
+		oBindingMock.expects("getDependentBindings").withExactArgs().returns([oDependentBinding]);
 		oDependentBindingMock.expects("getResumeChangeReason").withExactArgs()
 			.returns(undefined);
 
 		// code under test
 		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Refresh);
 
-		oBindingMock.expects("getDependentBindings").returns([oDependentBinding]);
+		oBindingMock.expects("getDependentBindings").withExactArgs().returns([oDependentBinding]);
 		oDependentBindingMock.expects("getResumeChangeReason").withExactArgs()
 			.returns(ChangeReason.Change);
 
 		// code under test
 		assert.strictEqual(oBinding.getResumeChangeReason(), ChangeReason.Refresh);
 
-		oBindingMock.expects("getDependentBindings")
+		oBindingMock.expects("getDependentBindings").withExactArgs()
 			.returns([oDependentBinding, oDependentBinding1, oDependentBinding2]);
 		oDependentBindingMock.expects("getResumeChangeReason").withExactArgs()
 			.returns(ChangeReason.Change);

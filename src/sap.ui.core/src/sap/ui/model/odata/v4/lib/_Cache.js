@@ -2541,9 +2541,10 @@ sap.ui.define([
 	 * @public
 	 */
 	_CollectionCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
-		var aPredicates = Object.keys(this.aElements.$byPredicate).sort(),
-			mTypes,
-			that = this;
+		var that = this,
+			// Note: at this time only kept-alive and transient elements are in the cache
+			aPredicates = Object.keys(this.aElements.$byPredicate).filter(isRefreshNeeded).sort(),
+			mTypes;
 
 		/*
 		 * Calculates a query to request the kept-alive elements.
@@ -2562,7 +2563,6 @@ sap.ui.define([
 			delete mQueryOptions.$orderby;
 			delete mQueryOptions.$search;
 
-			// Note: at this time only kept-alive elements are in the cache
 			aKeyFilters = aPredicates.map(function (sPredicate) {
 				return _Helper.getKeyFilter(that.aElements.$byPredicate[sPredicate], that.sMetaPath,
 					mTypes);
@@ -2575,6 +2575,20 @@ sap.ui.define([
 
 			return that.sResourcePath
 				+ that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false, true);
+		}
+
+		/*
+		 * Tells whether a refresh is needed for the element identified by the given predicate.
+		 * Transient elements and those with pending changes need no refresh.
+		 *
+		 * @param {string} sPredicate - A key predicate
+		 * @returns {boolean} - Whether a refresh is needed
+		 */
+		function isRefreshNeeded(sPredicate) {
+			var oElement = that.aElements.$byPredicate[sPredicate];
+
+			return !_Helper.hasPrivateAnnotation(oElement, "transientPredicate")
+				&& !that.hasPendingChangesForPath(sPredicate);
 		}
 
 		if (aPredicates.length === 0) {
