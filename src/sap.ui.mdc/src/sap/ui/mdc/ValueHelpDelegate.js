@@ -52,12 +52,13 @@ sap.ui.define([
 	 * Checks if a <code>ListBinding</code> supports $Search.
 	 *
 	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent Content element
 	 * @param {sap.ui.model.ListBinding} oListBinding ListBinding
 	 * @returns {boolean} true if $search is supported
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
-	ValueHelpDelegate.isSearchSupported = function(oPayload, oListBinding) {
+	ValueHelpDelegate.isSearchSupported = function(oPayload, oContent, oListBinding) {
 		return false;
 	};
 

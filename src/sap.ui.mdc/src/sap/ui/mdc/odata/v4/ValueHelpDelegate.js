@@ -13,7 +13,7 @@ sap.ui.define([
 
 	var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
 
-	ODataV4ValueHelpDelegate.isSearchSupported = function(oPayload, oListBinding) {
+	ODataV4ValueHelpDelegate.isSearchSupported = function(oPayload, oContent, oListBinding) {
 		return !!oListBinding.changeParameters;
 	};
 
