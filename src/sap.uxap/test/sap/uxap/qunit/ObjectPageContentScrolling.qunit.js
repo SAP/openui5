@@ -593,6 +593,28 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		});
 	});
 
+
+	QUnit.test("_getClosestScrolledSectionBaseId identifies target subSection with rounding pixels tolerance", function (assert) {
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oTargetSection = this.oObjectPageContentScrollingView.byId("secondSection"),
+			oTargetSubSection = oTargetSection.getSubSections()[1],
+			iTargetSubSectionScrollPosition,
+			iPageHeight,
+			sClosestSectionId,
+			done = assert.async();
+
+		oObjectPage.scrollToSection(oTargetSubSection.getId());
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			iPageHeight = oObjectPage.getDomRef().offsetHeight;
+			// Simulating rounding down issue of the current scroll position
+			iTargetSubSectionScrollPosition = oObjectPage._computeScrollPosition(oTargetSubSection) - 1;
+			sClosestSectionId = oObjectPage._getClosestScrolledSectionBaseId(iTargetSubSectionScrollPosition, iPageHeight, true);
+			assert.equal(sClosestSectionId, oTargetSubSection.getId(), "target subSection is recognized");
+			done();
+		});
+	});
+
 	QUnit.test("ScrollEnablement private API", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout");
 
