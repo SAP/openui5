@@ -1,0 +1,14 @@
+/* ============================================== */
+/* CSS for control sap.ui.rta/Toolbar.adaptation  */
+/* Horizon High Contrast Black theme              */
+/* ============================================== */
+
+@_sap_ui_rta_Toolbar_Adaptation_BaseColor: @sapUiBlackBG; //#000000
+@_sap_ui_rta_Toolbar_Adaptation_TextColor: @sapUiWhite; //#ffffff
+@_sap_ui_rta_Toolbar_Adaptation_BoxShadowColor: fade(@sapUiWhite, 80%); //rgba(255, 255, 255, 0.8)
+
+.sapUiRtaMode {
+	.sapUiRtaToolbar.sapUiRtaToolbarAdaptation {
+		box-shadow: 0 0.625rem 2rem 0 @_sap_ui_rta_Toolbar_Adaptation_BoxShadowColor, 0 0 0.625rem -0.125rem @_sap_ui_rta_Toolbar_Adaptation_TextColor; //10px 32px 10px 2px
+	}
+}

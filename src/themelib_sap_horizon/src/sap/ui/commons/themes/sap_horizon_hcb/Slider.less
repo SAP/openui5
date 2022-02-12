@@ -1,0 +1,252 @@
+/* ====================================== */
+/* CSS for control sap.ui.commons/Slider  */
+/* Horizon High Contrast Black theme      */
+/* ====================================== */
+
+.sapUiSli{
+	border: none;
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiSliHori.sapUiSli{
+	padding: 16px 0 0 0;
+	height: 16px;
+}
+
+.sapUiSliVert.sapUiSli{
+	padding: 0 0 0 30px;
+	width: 16px;
+}
+
+.sapUiSliR,
+.sapUiSliL{
+	border-style: solid;
+	border-color:  @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliHori > .sapUiSliR,
+.sapUiSliHori .sapUiSliL{
+	height: 2px;
+}
+
+.sapUiSliVert > .sapUiSliR,
+.sapUiSliVert .sapUiSliL{
+	width: 2px;
+}
+
+.sapUiSliHori > .sapUiSliR {
+	border-width: 1px 0px 1px 0;
+	margin-right: 6px;
+	margin-left: 6px;
+}
+
+.sapUiSliVert > .sapUiSliR {
+	border-width: 0px 1px 0px 1px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+.sapUiSliHori .sapUiSliL {
+	border-width: 1px 1px 1px 1px;
+	top: -1px;
+}
+
+.sapUiSliVert .sapUiSliL {
+	border-width: 1px 1px 1px 1px;
+	left: -1px;
+}
+
+.sapUiSliHori .sapUiSliBar,
+.sapUiSliHori .sapUiSliHiLi {
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	height: 2px;
+	top: -1px;
+}
+
+.sapUiSliVert .sapUiSliBar,
+.sapUiSliVert .sapUiSliHiLi {
+	border-left: 1px solid;
+	border-right: 1px solid;
+	width: 2px;
+	left: -1px;
+}
+
+.sapUiSliHori .sapUiSliBar {
+	border-top-color: @sapUiContentForegroundBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
+	border-left-color: @sapUiContentForegroundBorderColor;
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiSliHori.sapUiSliDsbl .sapUiSliBar {
+	border-top-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-bottom-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-left-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	background-color: lighten(@sapUiContentForegroundBorderColor, 50);
+}
+
+.sapUiSliVert .sapUiSliBar {
+	border-left-color: @sapUiContentForegroundBorderColor;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiSliVert.sapUiSliDsbl .sapUiSliBar {
+	border-left-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-right-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-bottom-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	background-color: lighten(@sapUiContentForegroundBorderColor, 50);
+}
+
+.sapUiSliHori .sapUiSliHiLi{
+	left: -1px;
+}
+
+.sapUiSliVert .sapUiSliHiLi{
+	bottom: -1px;
+}
+
+.sapUiSliStd .sapUiSliHiLi,
+.sapUiSliRo .sapUiSliHiLi {
+	background-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliStd.sapUiSliHori  .sapUiSliHiLi,
+.sapUiSliHori.sapUiSliRo .sapUiSliHiLi {
+	border-top-color: @sapUiContentForegroundBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
+	border-left-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliStd.sapUiSliVert .sapUiSliHiLi,
+.sapUiSliVert.sapUiSliRo .sapUiSliHiLi {
+	border-left-color: @sapUiContentForegroundBorderColor;
+	border-right-color: @sapUiContentForegroundBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliHori.sapUiSliDsbl .sapUiSliHiLi {
+	border-top-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-bottom-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-left-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	background-color: lighten(@sapUiContentForegroundBorderColor, 50);
+}
+
+.sapUiSliVert.sapUiSliDsbl .sapUiSliHiLi {
+	border-left-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-right-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	border-bottom-color: lighten(@sapUiContentForegroundBorderColor, 50);
+	background-color: lighten(@sapUiContentForegroundBorderColor, 50);
+}
+
+.sapUiSliGrip {
+	border-style: solid;
+	border-width: 2px;
+}
+
+.sapUiSliHori .sapUiSliGrip {
+	height: 12px;
+	width: 6px;
+	top: -7px;
+}
+
+.sapUiSliVert .sapUiSliGrip {
+	height: 6px;
+	width: 12px;
+	left: -7px;
+}
+
+.sapUiSliHori.sapUiSliRo .sapUiSliGrip {
+	width: 0px;
+}
+
+.sapUiSliVert.sapUiSliRo .sapUiSliGrip {
+	height: 0px;
+}
+
+.sapUiSliStd .sapUiSliGrip,
+.sapUiSliRo .sapUiSliGrip {
+	background-color: @sapUiGroupContentBackground;
+	border-color: @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliStd .sapUiSliGrip:hover {
+	background-color: @sapUiHighlight;
+	border-color: @sapUiContentForegroundBorderColor;
+	border-width: 1px;
+	padding: 1px;
+}
+
+.sapUiSliStd .sapUiSliGrip:focus,
+.sapUiSliStd .sapUiSliGrip:active {
+	border-color: @sapUiContentForegroundBorderColor;
+	background-color: @sapUiHighlight;
+	border-width: 1px;
+	padding: 1px;
+	outline: none;
+}
+
+.sapUiSliDsbl .sapUiSliGrip {
+	border-color: @sapUiContentDisabledTextColor;
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiSliRo .sapUiSliGrip:focus {
+	outline: none;
+}
+
+.sapUiSliHori .sapUiSliTick {
+	height: 4px;
+	width: 0;
+	top: -5px;
+	border-left: 1px solid @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliHori.sapUiSliDsbl .sapUiSliTick {
+	border-left: 1px solid @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliVert .sapUiSliTick {
+	height: 0;
+	width: 4px;
+	left: -5px;
+	border-top: 1px solid @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliVert.sapUiSliDsbl .sapUiSliTick {
+	border-top: 1px solid @sapUiContentForegroundBorderColor;
+}
+
+.sapUiSliRo .sapUiSliText {
+	color: @sapUiBaseText;
+}
+
+.sapUiSliDsbl .sapUiSliText {
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapUiSliHori .sapUiSliText {
+	top: -20px;
+}
+
+.sapUiSliVert .sapUiSliText {
+	right: 10px;
+}
+
+.sapUiSliHori .sapUiSliTextLeft {
+	left: -2px;
+}
+
+.sapUiSliVert .sapUiSliTextLeft {
+	bottom: -2px;
+}
+
+.sapUiSliHori .sapUiSliTextRight {
+	right: -1px;
+}
+
+.sapUiSliVert .sapUiSliTextRight {
+	top: -1px;
+}
