@@ -6,17 +6,19 @@ sap.ui.define([
 ], function (JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason, uid, Log, isPlainObject, deepClone) {
 	"use strict";
 
-	var CUSTOMDATAKEY = "@custom", ID_DELIMITER = "--";/**
+	var CUSTOMDATAKEY = "@custom",
+		ID_DELIMITER = "--";
+
+	/**
 	 * Adapt the observation of child controls in order to be able to react when e.g. the value
 	 * of a select inside a list changed. Currently the MOM is not updated then
 	 *
-	 * @param {object} the caller, here the managed object model
-	 * @param {control} the control which shall be (un)observed
-	 * @param {object} the observed aggregation
-	 * @param {boolean} <code>true</code> for observing and <code>false</code> for unobserving
+	 * @param {object} caller the caller, here the managed object model
+	 * @param {sap.ui.base.ManagedObject} oControl the control which shall be (un)observed
+	 * @param {object} oAggregation the observed aggregation
+	 * @param {boolean} bObserve <code>true</code> for observing and <code>false</code> for unobserving
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 */
 	function _adaptDeepChildObservation(caller, oControl, oAggregation, bObserve) {
 		var aChildren = oAggregation.get(oControl) || [], oChild, bRecord;

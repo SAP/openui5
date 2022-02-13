@@ -1115,7 +1115,7 @@ function(
 								var mMetaContextsInfo = null;
 
 								try {
-									mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
+									mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue, oView._oContainingView.oController, true);
 								} catch (e) {
 									Log.error(oView + ":" + e.message);
 								}
@@ -1624,12 +1624,13 @@ function(
 	/**
 	 * Create a named map for models and binding
 	 *
-	 * @param{string} The string value of a complex binding containing one or more models
-	 * @param {object} oContext - The current context
+	 * @param {string} sBinding The string value of a complex binding containing one or more models
+	 * @param {object} oContext - The current context (controller)
+	 * @param {boolean} bAllowMultipleBindings - Whether to allow multiple bindings
 	 *
-	 * @return{object} a named map keyed by model name
+	 * @returns {object} a named map keyed by model name
 	 */
-	XMLTemplateProcessor._calculatedModelMapping = function(sBinding,oContext,bAllowMultipleBindings) {
+	XMLTemplateProcessor._calculatedModelMapping = function(sBinding, oContext, bAllowMultipleBindings) {
 		var oCtx,
 			mBinding = {},
 			oBinding = ManagedObject.bindingParser(sBinding, oContext);

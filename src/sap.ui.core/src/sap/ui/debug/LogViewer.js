@@ -11,8 +11,8 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 	 * Constructs a LogViewer in the given window, embedded into the given DOM element.
 	 * If the DOM element doesn't exist, a DIV is created.
 	 *
-	 * @param {Window} oTargetWindow the window where the log will be displayed in
-	 * @param {sRootId} sRootId id of the top level element that will contain the log entries
+	 * @param {Window} oWindow The window where the log will be displayed in
+	 * @param {sRootId} sRootId ID of the top level element that will contain the log entries
 	 *
 	 * @class HTML LogViewer that displays all entries of a Logger, as long as they match a filter and a minimal log level
 	 * @alias sap.ui.debug.LogViewer

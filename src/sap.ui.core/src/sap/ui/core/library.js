@@ -2272,49 +2272,54 @@ sap.ui.define([
 
 	};
 
-	var lazy = sap.ui.lazyRequire;
+	/**
+	 * @deprecated since 1.56 as lazy loading implies sync loading
+	 */
+	(function() {
+		var lazy = sap.ui.lazyRequire;
 
-	function each(sPackage,aClasses,sShortcutPkg) {
-		for (var i = 0; i < aClasses.length; i++) {
-			if ( sShortcutPkg ) {
-				lazy(sShortcutPkg, aClasses[i].toLowerCase(), sPackage + aClasses[i]);
-			} else {
-			  lazy(sPackage + aClasses[i], "new extend getMetadata");
+		function each(sPackage,aClasses,sShortcutPkg) {
+			for (var i = 0; i < aClasses.length; i++) {
+				if ( sShortcutPkg ) {
+					lazy(sShortcutPkg, aClasses[i].toLowerCase(), sPackage + aClasses[i]);
+				} else {
+				  lazy(sPackage + aClasses[i], "new extend getMetadata");
+				}
 			}
 		}
-	}
 
-	// lazy imports
-	lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
-	lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
-	lazy("sap.ui.core.Fragment", "registerType byId createId");
-	lazy("sap.ui.core.IconPool", "createControlByURI addIcon getIconURI getIconInfo isIconURI getIconCollectionNames getIconNames getIconForMimeType");
-	lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
+		// lazy imports
+		lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
+		lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
+		lazy("sap.ui.core.Fragment", "registerType byId createId");
+		lazy("sap.ui.core.IconPool", "createControlByURI addIcon getIconURI getIconInfo isIconURI getIconCollectionNames getIconNames getIconForMimeType");
+		lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
 
-	lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"
-		+ " gotoEntitySet gotoEntityType gotoFunctionImport isMultiple resolvePath simplePath");
-	/* eslint-disable no-undef */
-	var AnnotationHelper = sap.ui.model && sap.ui.model.odata && sap.ui.model.odata.AnnotationHelper;
-	/* eslint-enable no-undef */
-	if ( AnnotationHelper ) { // ensure that lazy stub exists before enriching it
-		AnnotationHelper.format.requiresIContext = true;
-		AnnotationHelper.getNavigationPath.requiresIContext = true;
-		AnnotationHelper.isMultiple.requiresIContext = true;
-		AnnotationHelper.simplePath.requiresIContext = true;
-	}
-	lazy("sap.ui", "xmlfragment", "sap.ui.core.Fragment"); // cannot use "each" as it assumes a module to exist for each function name
-	lazy("sap.ui", "jsfragment", "sap.ui.core.Fragment");
-	lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");
+		lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"
+			+ " gotoEntitySet gotoEntityType gotoFunctionImport isMultiple resolvePath simplePath");
+		/* eslint-disable no-undef */
+		var AnnotationHelper = sap.ui.model && sap.ui.model.odata && sap.ui.model.odata.AnnotationHelper;
+		/* eslint-enable no-undef */
+		if ( AnnotationHelper ) { // ensure that lazy stub exists before enriching it
+			AnnotationHelper.format.requiresIContext = true;
+			AnnotationHelper.getNavigationPath.requiresIContext = true;
+			AnnotationHelper.isMultiple.requiresIContext = true;
+			AnnotationHelper.simplePath.requiresIContext = true;
+		}
+		lazy("sap.ui", "xmlfragment", "sap.ui.core.Fragment"); // cannot use "each" as it assumes a module to exist for each function name
+		lazy("sap.ui", "jsfragment", "sap.ui.core.Fragment");
+		lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");
 
-	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","odata.v4.ODataModel","xml.XMLModel"]);
-	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize","Currency","Unit","DateInterval", "DateTimeInterval", "TimeInterval"]);
-	each("sap.ui.model.odata.type.", ["Boolean","Byte","Currency","Date","DateTime","DateTimeOffset","DateTimeWithTimezone","Decimal","Double","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay","Unit"]);
-	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller", "UIComponent"]);
-	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
-	each("sap.ui.core.", ["Component"], "sap.ui");
-	each("sap.ui.core.tmpl.", ["Template"], "sap.ui");
-	each("sap.ui.core.routing.", ["HashChanger", "History", "Route", "Router", "Target", "Targets", "Views"]);
-	each("sap.ui.core.service.", ["ServiceFactory", "Service"]);
+		each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","odata.v4.ODataModel","xml.XMLModel"]);
+		each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize","Currency","Unit","DateInterval", "DateTimeInterval", "TimeInterval"]);
+		each("sap.ui.model.odata.type.", ["Boolean","Byte","Currency","Date","DateTime","DateTimeOffset","DateTimeWithTimezone","Decimal","Double","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay","Unit"]);
+		each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller", "UIComponent"]);
+		each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
+		each("sap.ui.core.", ["Component"], "sap.ui");
+		each("sap.ui.core.tmpl.", ["Template"], "sap.ui");
+		each("sap.ui.core.routing.", ["HashChanger", "History", "Route", "Router", "Target", "Targets", "Views"]);
+		each("sap.ui.core.service.", ["ServiceFactory", "Service"]);
+	}());
 
 	return sap.ui.core;
 

@@ -228,8 +228,8 @@ sap.ui.define([
 	 * @returns {module:sap/base/util/UriParameters} Object providing read access to the query parameters
 	 * @public
 	 */
-	UriParameters.fromURL = function(sUrl) {
-		return new UriParameters(sUrl);
+	UriParameters.fromURL = function(sURL) {
+		return new UriParameters(sURL);
 	};
 
 	/**

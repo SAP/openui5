@@ -354,6 +354,7 @@ sap.ui.define([
 	/**
 	 * Called from sap.ui.base.ManagedObject if an event registration is changed.
 	 *
+	 * @param {sap.ui.base.ManagedObject} oManagedObject Object that reports a change
 	 * @param {string} sName the name of the event that changed
 	 * @param {string} sMutation "remove" or "insert"
 	 * @param {object} vListener the removed or inserted listener
@@ -377,6 +378,7 @@ sap.ui.define([
 	/**
 	 * Called from sap.ui.base.ManagedObject if a binding changed for a property or aggregation.
 	 *
+	 * @param {sap.ui.base.ManagedObject} oManagedObject Object that reports a change
 	 * @param {string} sName The name of the property or aggregation of which the binding is changed
 	 * @param {string} sMutation "prepared", "ready", "removed"
 	 * @param {object} oBindingInfo the binding info

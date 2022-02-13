@@ -77,10 +77,10 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	}
 
 	/**
-	 * Convert arguments array from japanese date to gregorian data
+	 * Convert arguments array from Japanese date to Gregorian data.
 	 *
-	 * @param {object} oJapanese
-	 * @return {int}
+	 * @param {int[]|any[]} aArgs Array with year (or [era, year]), month and day (optional) according to Japanese calendar
+	 * @returns {int[]} Array with year, month and day according to the Gregorian calendar
 	 */
 	function toGregorianArguments(aArgs) {
 		var oJapanese, oGregorian,

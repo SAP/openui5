@@ -283,7 +283,7 @@ sap.ui.define(
          *
          * @param {sap.ui.test.Opa5} [oOpaInstance] the Opa5 instance to operate on
          * @param {string | RegExp} [vId] the id of the target control(s)
-         * @param {string} [vControlType] the type of the target control(s)
+         * @param {string} [sControlType] the type of the target control(s)
          * @param {boolean} [bDialogElement] if true, only popover and dialogs are searched for
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vMatchers] additional matchers to filter target control(s)
          * @param {sap.ui.test.actions.Action | function | Array} [vActions] the actions to be performed on target control(s)
@@ -415,12 +415,12 @@ sap.ui.define(
         /**
          * Defines the control type of the target control(s).
          *
-         * @param {string} vControlType the type of the target control(s)
+         * @param {string} sControlType the type of the target control(s)
          * @returns {this} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.hasType = function (vControlType) {
-            return this.options({controlType: vControlType});
+        OpaBuilder.prototype.hasType = function (sControlType) {
+            return this.options({controlType: sControlType});
         };
 
         /**
@@ -488,7 +488,7 @@ sap.ui.define(
          * Adds a matcher that checks for a certain number of aggregation items.
          *
          * @param {string} sAggregationName the aggregation name
-         * @param [int] iNumber length to check against
+         * @param {int} iNumber length to check against
          * @returns {this} this OpaBuilder instance
          * @public
          */
@@ -667,8 +667,8 @@ sap.ui.define(
          * @returns {this} this OpaBuilder instance
          * @public
          */
-        OpaBuilder.prototype.doEnterText = function (sText, bClearFirst, bKeepFocus, bPressEnterKey, sIdSuffix) {
-            return this.do(OpaBuilder.Actions.enterText(sText, bClearFirst, bKeepFocus, bPressEnterKey, sIdSuffix));
+        OpaBuilder.prototype.doEnterText = function (sText, bClearTextFirst, bKeepFocus, bPressEnterKey, sIdSuffix) {
+            return this.do(OpaBuilder.Actions.enterText(sText, bClearTextFirst, bKeepFocus, bPressEnterKey, sIdSuffix));
         };
 
         /**

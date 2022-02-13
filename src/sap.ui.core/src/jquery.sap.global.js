@@ -1883,7 +1883,10 @@ sap.ui.define([
 
 		};
 
-		// propagate legacy require hook to ui5loader translate hook
+		/**
+		 * Propagate legacy require hook to ui5loader translate hook.
+		 * @deprecated since 1.54
+		 */
 		Object.defineProperty(jQuery.sap.require, "_hook", {
 			get: function() {
 				return _ui5loader.translate;
@@ -1896,7 +1899,7 @@ sap.ui.define([
 
 		/**
 		 * @private
-		 * @deprecated
+		 * @deprecated since 1.40
 		 */
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
 			Log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");

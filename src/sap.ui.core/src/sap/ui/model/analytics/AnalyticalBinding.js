@@ -585,18 +585,31 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getNodeContexts
-	 * @param {object}
-	 *            mParameters specifying the aggregation level for which contexts shall be fetched. Supported parameters are:
-	 * <ul>
-	 * <li>oContext: parent context identifying the requested group of child contexts</li>
-	 * <li>level: level number for oContext, because it might occur at multiple levels; context with group ID <code>"/"</code> has level 0</li>
-	 * <li>numberOfExpandedLevels: number of child levels that shall be fetched automatically</li>
-	 * <li>startIndex: index of first child entry to return from the parent context (zero-based)</li>
-	 * <li>length: number of entries to return; counting begins at the given start index</li>
-	 * <li>threshold: number of additional entries that shall be locally available in the binding for subsequent
-	 * accesses to child entries of the given parent context. </li>
-	 * </ul>
-	 * @return {array}
+	 * @param {sap.ui.model.Context} oContext
+	 *            Parent context identifying the requested group of child contexts
+	 * @param {object|int} mParameters
+	 *            Parameters, specifying the aggregation level for which contexts shall be fetched
+	 *            or (legacy signature variant) index of first child entry to return from the parent context (zero-based)
+	 * @param {int} mParameters.level
+	 *            Level number for oContext, because it might occur at multiple levels; context with group ID <code>"/"</code> has level 0
+	 * @param {int} [mParameters.numberOfExpandedLevels=0]
+	 *            Number of child levels that shall be fetched automatically
+	 * @param {int} [mParameters.startIndex=0]
+	 *            Index of first child entry to return from the parent context (zero-based)
+	 * @param {int} [mParameters.length=<model size limit>]
+	 *            Number of entries to return; counting begins at the given start index
+	 * @param {int} [mParameters.threshold=0]
+	 *            Number of additional entries that shall be locally available in the binding for subsequent
+	 *            accesses to child entries of the given parent context
+	 * @param {int} [iLength=<model size limit>]
+	 *            Same meaning as <code>mParameters.length</code>, legacy signature variant only
+	 * @param {int} [iThreshold=0]
+	 *            Same meaning as <code>mParameters.threshold</code>, legacy signature variant only
+	 * @param {int} [iLevel]
+	 *            Same meaning as <code>mParameters.level</code>, legacy signature variant only
+	 * @param {int} [iNumberOfExpandedLevels=0]
+	 *            Same meaning as <code>mParameters.numberOfExpandedLevels</code>, legacy signature variant only
+	 * @returns {sap.ui.model.Context[]}
 	 *            Array containing the requested contexts of class sap.ui.model.Context, limited by the number of entries contained
 	 *            in the entity set at that aggregation level.
 	 *            The array will contain less than the requested number of contexts, if some are not locally available and an OData request is
@@ -2566,9 +2579,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {object} oAnalyticalQueryRequest
 	 * @param {boolean} bAddAdditionalSelects
 	 *   Whether additional selects, computed from select binding parameter, shall be added to the
 	 *   $select query option.
+	 * @param {object} mParameters
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest,
@@ -3797,6 +3812,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {string} sGroupId
 	 * @param {int} iNumLevels anchestors starting at the root if greater than 0, or starting at the parent of sGroupId if less than 0.
 	 * @private
 	 */

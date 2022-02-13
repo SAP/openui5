@@ -771,7 +771,8 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 		/**
 		 * Tries to free space until the given new item is successfully added.
 		 * @param {sap.ui.core.cache.LRUPersistentCache} self the instance of the Cache Manager
-		 * @param {ItemData} oItem the item to free space for
+		 * @param {string|number} key the key to associate the value with
+		 * @param {any} value value to free space for
 		 * @returns {Promise} a promise that will resolve if the given item is added, or reject - if not.
 		 */
 		function cleanAndStore(self, key, value) {

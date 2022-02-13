@@ -194,10 +194,10 @@ sap.ui.define([
 
 				/***
 				 * Executes given method with given arguments and verifies the execution had happened.
-				 * @param {string} sMethod the method
-				 * @param args the arguments to call the method with
-				 * @param reject value that the Promise reject with
-				 * @returns {*}
+				 * @param {string} sMethod CacheManager method to call
+				 * @param {any[]} args Arguments to call the method with
+				 * @param {any} rejectValue value to reject the Promise with
+				 * @returns {Promise}
 				 */
 				this.executeMethodWithError = function(sMethod, args, rejectValue) {
 					var that = this;

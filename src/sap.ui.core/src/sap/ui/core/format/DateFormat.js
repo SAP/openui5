@@ -710,9 +710,9 @@ sap.ui.define([
 		/**
 		 * Parses a given timezone
 		 *
-		 * @param {string} sValue, e.g. "-0800", "-08:00", "-08"
-		 * @param {boolean} bColonSeparated whether or not the values are colon separated, e.g. "-08:00"
-		 * @returns {{tzDiff: number, length: number}} object containing the timezone difference in seconds and the length of the parsed segment
+		 * @param {string} sValue String to parse, e.g. "-0800", "-08:00", "-08"
+		 * @param {boolean} bColonSeparated Whether or not the values are colon separated, e.g. "-08:00"
+		 * @returns {{tzDiff: number, length: number}} Object containing the timezone difference in seconds and the length of the parsed segment
 		 */
 		parseTZ: function (sValue, bColonSeparated) {
 			var iLength = 0;

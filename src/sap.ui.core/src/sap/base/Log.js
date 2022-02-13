@@ -576,7 +576,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * </ul>
 	 *
 	 * @param {string} sComponent Name of the component which should be logged
-	 * @param {module:sap/base/Log.Level} [iLogLevel] The default log level
+	 * @param {module:sap/base/Log.Level} [iDefaultLogLevel] The default log level
 	 * @return {object} A logger with a specified component
 	 * @public
 	 * @static

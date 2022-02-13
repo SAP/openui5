@@ -591,7 +591,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"], function(Device, Log) {
 					},
 
 					/**
-					 * @param [] aItems
+					 * @param {array} aItems
 					 */
 					assertKeyAtIndex: function(aItems, aNonExistingIndexes, assert) {
 						aItems.forEach(function(oItem) {

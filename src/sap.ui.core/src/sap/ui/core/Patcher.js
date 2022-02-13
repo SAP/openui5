@@ -302,7 +302,7 @@ sap.ui.define([
 	 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
 	 * Case-insensitive attribute names must all be set in lowercase.
 	 *
-	 * @param {string} vAttr Name of the attribute
+	 * @param {string} sAttr Name of the attribute
 	 * @param {*} vValue Value of the attribute; any non-string value specified is converted automatically into a string
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
@@ -359,8 +359,8 @@ sap.ui.define([
 	 *
 	 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
 	 *
-	 * @param {string} sStyle Name of the style property
-	 * @param {string} sValue Value of the style property
+	 * @param {string} sName Name of the style property
+	 * @param {string} vValue Value of the style property
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.prototype.style = function(sName, vValue) {

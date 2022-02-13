@@ -338,7 +338,7 @@ sap.ui.define([
 	 * and "else" clause.
 	 * @param {function} fnCondition - formatter function for the condition
 	 * @param {function} fnThen - formatter function for the "then" clause
-	 * @param {function} fnElse- formatter function for the "else" clause
+	 * @param {function} fnElse - formatter function for the "else" clause
 	 * @param {any[]} aParts - the array of binding values
 	 * @return {any} - the value of the "then" or "else" clause, depending on the value of the
 	 *   condition

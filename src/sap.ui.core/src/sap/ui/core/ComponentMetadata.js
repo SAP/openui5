@@ -29,7 +29,7 @@ sap.ui.define([
 	 * Creates a new metadata object for a Component subclass.
 	 *
 	 * @param {string} sClassName Fully qualified name of the class that is described by this metadata object
-	 * @param {object} oStaticInfo Static info to construct the metadata from
+	 * @param {object} oClassInfo Static info to construct the metadata from
 	 *
 	 * @public
 	 * @class

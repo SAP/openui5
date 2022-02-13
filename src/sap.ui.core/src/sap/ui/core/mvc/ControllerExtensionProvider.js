@@ -50,8 +50,8 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Component"], function(Log, Component
 	 *
 	 * @param {string} sControllerName the name of the controller which should be extended
 	 * @param {string} sComponentId the ID of the controller's owner-component
-	 * @param {boolean} bAsync whether the provider should act asynchronous
 	 * @param {string} sViewId the view-id which is used to distinguish instance-specific controller extensions
+	 * @param {boolean} bAsync whether the provider should act asynchronously
 	 * @returns {object} an object containing all controller-extensions
 	 * split into two parts:
 	 * 1. extensions from the customizing configuration in the manifest (<return>.customizingControllerNames)

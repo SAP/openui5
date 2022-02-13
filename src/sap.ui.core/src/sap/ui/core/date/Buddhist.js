@@ -86,10 +86,10 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	}
 
 	/**
-	 * Convert arguments array from Buddhist date to gregorian data
+	 * Convert arguments array from Buddhist date to Gregorian data.
 	 *
-	 * @param {object} oBuddhist
-	 * @return {int}
+	 * @param {int[]} aArgs Array with year, month, day (optional) according to Buddhist calendar
+	 * @returns {int[]} Array with year, month, day according to Gregorian calendar
 	 */
 	function toGregorianArguments(aArgs) {
 		var oBuddhist, oGregorian;

@@ -311,7 +311,7 @@ sap.ui.define([ "sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model
 	 *
 	 * @param {int} i Index of the column
 	 * @param {string} sCellData Value of the cell to be parsed and validated
-	 * @param {array} aColumnInfo Provides information about the corresponding property name and its required type
+	 * @param {object} oColumnInfo Provides information about the corresponding property name and its required type
 	 * @param {int} iRowIndex Index of the row
 	 * @param {function} fnParse Parse function parsing the value of the cell
 	 * @param {function} fnValidate validate function validating the value of the cell

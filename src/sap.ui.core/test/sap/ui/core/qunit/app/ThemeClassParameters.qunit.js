@@ -19,8 +19,8 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 
 	/**
 	 * converts short notation hex color code to long notation
-	 * @param input, e.g. #abc
-	 * @returns {string}, e.g. #aabbcc
+	 * @param {string} input Color string, e.g. #abc
+	 * @returns {string} Normalized, 6-hex-digit color string, e.g. #aabbcc
 	 */
 	function unifyHexNotation(input) {
 		if (input.length === 4) {

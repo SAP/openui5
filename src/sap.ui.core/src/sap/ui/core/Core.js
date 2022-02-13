@@ -3943,6 +3943,8 @@ sap.ui.define([
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
+	 * @param {object}
+	 *            [oData] An object that will be passed to the handler along with the event object when the event is fired
 	 * @param {function}
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}

@@ -602,7 +602,7 @@ sap.ui
 
 			/**
 			 * Removes duplicate entries from the given array
-			 * @param {array} aDataSet
+			 * @param {array} array the data set
 			 * @private
 			 */
 			MockServer.prototype._arrayUnique = function(array) {
@@ -1096,6 +1096,7 @@ sap.ui
 
 			/**
 			 * Applies the Format OData system query option
+			 * @param {array} aDataSet
 			 * @param {string} sODataQueryValue
 			 * @private
 			 */
