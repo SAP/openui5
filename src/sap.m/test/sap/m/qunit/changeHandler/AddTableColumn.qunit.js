@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepExtend"
 ], function(
 	AddTableColumnChangeHandler,
 	Change,
@@ -18,7 +19,8 @@ sap.ui.define([
 	ComponentContainer,
 	JSONModel,
 	createAndAppendDiv,
-	oCore
+	oCore,
+	deepExtend
 ) {
 	'use strict';
 	createAndAppendDiv("content");
@@ -45,7 +47,7 @@ sap.ui.define([
 	].join('');
 
 	function createChangeDefinition(mDefinition) {
-		return jQuery.extend(true, {}, {
+		return deepExtend({}, {
 			"changeType": "addTableColumn",
 			"oDataInformation": {
 				"entityType": "EntityTypeNav"

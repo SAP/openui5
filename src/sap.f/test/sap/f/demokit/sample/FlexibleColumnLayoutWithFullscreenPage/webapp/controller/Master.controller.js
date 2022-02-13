@@ -1,8 +1,12 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/f/library"
+], function (JSONModel, Controller, fioriLibrary) {
 	"use strict";
+
+	// shortcut for sap.f.LayoutType
+	var LayoutType = fioriLibrary.LayoutType;
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Master", {
 		onInit: function () {
@@ -25,9 +29,9 @@ sap.ui.define([
 			}
 
 			if (bPhone) {
-				this.oRouter.navTo("detail", {layout: sap.f.LayoutType.OneColumn, category: sCategory});
+				this.oRouter.navTo("detail", {layout: LayoutType.OneColumn, category: sCategory});
 			} else {
-				this.oRouter.navTo("detailDetail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, category: sCategory, product: iProduct});
+				this.oRouter.navTo("detailDetail", {layout: LayoutType.TwoColumnsMidExpanded, category: sCategory, product: iProduct});
 			}
 		}
 	});

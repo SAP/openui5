@@ -229,7 +229,7 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(3);
 
-		jQuery("#sc2-scroll").width("1100px"); // resize the content
+		oSC2.$("scroll").width("1100px"); // resize the content
 
 		window.setTimeout(function(){ // allow some time for the ResizeHandler to notice and for iscroll to be notified and to adapt
 			oSC2.scrollTo(9999,0,0);  // again try to scroll way beyond the end of the content - but this time the content is a bit larger, iscroll should have noticed

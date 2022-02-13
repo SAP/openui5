@@ -36,9 +36,7 @@ sap.ui.define([
 	"./InputRenderer",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "selectText"
-	"sap/ui/dom/jquery/selectText"
+	"sap/ui/dom/jquery/selectText" // provides jQuery.fn.selectText
 ],
 function(
 	InputBase,
@@ -72,8 +70,7 @@ function(
 	selectionRange,
 	InputRenderer,
 	ManagedObject,
-	ManagedObjectObserver,
-	jQuery
+	ManagedObjectObserver
 ) {
 	"use strict";
 	// shortcut for sap.m.ListType
@@ -1218,7 +1215,7 @@ function(
 	 *
 	 * @protected
 	 * @param {jQuery.Event} oEvent Ontap event.
-	 * @returns {boolean} If the popover should be openened.
+	 * @returns {boolean} If the popover should be opened.
 	 */
 	Input.prototype.shouldSuggetionsPopoverOpenOnMobile = function(oEvent) {
 		return this.isMobileDevice()

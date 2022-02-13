@@ -593,7 +593,7 @@ sap.ui.define([
 
 	QUnit.test("passing a date from a model with a string notation as pattern", function (assert) {
 		// Prepare
-		var oModel = new sap.ui.model.json.JSONModel({
+		var oModel = new JSONModel({
 				date: "20190618000000"
 			}),
 			oDatePicker = new DatePicker("datePicker", {

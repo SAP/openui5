@@ -277,7 +277,7 @@ sap.ui.define([
 
 			// compatibility
 			this.fireTokenChange({
-				type: sap.m.Tokenizer.TokenChangeType.Removed,
+				type: Tokenizer.TokenChangeType.Removed,
 				token: oToken,
 				tokens: aSelectedTokens.length ? aSelectedTokens : [oToken],
 				addedTokens: [],
@@ -286,7 +286,7 @@ sap.ui.define([
 
 			// compatibility
 			this.fireTokenUpdate({
-				type: sap.m.Tokenizer.TokenChangeType.Removed,
+				type: Tokenizer.TokenChangeType.Removed,
 				addedTokens: [],
 				removedTokens: aSelectedTokens.length ? aSelectedTokens : [oToken]
 			});
@@ -1108,7 +1108,7 @@ sap.ui.define([
 
 		// compatibility
 		this.fireTokenChange({
-			type: sap.m.Tokenizer.TokenChangeType.Removed,
+			type: Tokenizer.TokenChangeType.Removed,
 			token: aSelectedTokens,
 			tokens: aSelectedTokens,
 			addedTokens: [],
@@ -1117,7 +1117,7 @@ sap.ui.define([
 
 		// compatibility
 		this.fireTokenUpdate({
-			type: sap.m.Tokenizer.TokenChangeType.Removed,
+			type: Tokenizer.TokenChangeType.Removed,
 			addedTokens: [],
 			removedTokens: aSelectedTokens
 		});

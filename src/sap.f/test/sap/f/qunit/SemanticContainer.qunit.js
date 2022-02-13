@@ -1,12 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"./SemanticUtil",
 	"sap/ui/core/Core"
 ],
 function (
-	$,
 	coreLibrary,
 	SemanticUtil,
 	oCore

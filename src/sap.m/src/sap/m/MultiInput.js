@@ -293,14 +293,14 @@ function(
 					oToken.attachEvent("_change", this.invalidate, this);
 
 					this.fireTokenChange({
-						type: sap.m.Tokenizer.TokenChangeType.Added,
+						type: Tokenizer.TokenChangeType.Added,
 						token: oToken,
 						tokens: [oToken],
 						removedTokens: []
 					});
 					break;
 				case "remove":
-					var sType = oChange.object.getTokens().length ? sap.m.Tokenizer.TokenChangeType.Removed : sap.m.Tokenizer.TokenChangeType.RemovedAll;
+					var sType = oChange.object.getTokens().length ? Tokenizer.TokenChangeType.Removed : Tokenizer.TokenChangeType.RemovedAll;
 					oToken.detachEvent("_change", this.invalidate, this);
 
 					this.fireTokenChange({
@@ -593,7 +593,7 @@ function(
 				this.setValue("");
 			}
 
-			if (this._getSuggestionsList() instanceof sap.m.Table) {
+			if (this._getSuggestionsList().isA("sap.m.Table")) {
 				// CSN# 1421140/2014: hide the table for empty/initial results to not show the table columns
 				this._getSuggestionsList().addStyleClass("sapMInputSuggestionTableHidden");
 			} else {
@@ -1323,7 +1323,7 @@ function(
 
 		// compatibility
 		this.fireTokenChange({
-			type: sap.m.Tokenizer.TokenChangeType.TokensChanged,
+			type: Tokenizer.TokenChangeType.TokensChanged,
 			addedTokens: aTokens,
 			removedTokens: []
 		});

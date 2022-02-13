@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/TextDirection",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
+	"sap/ui/core/library",
 	"sap/ui/core/ListItem",
 	"sap/ui/base/ObjectPool",
 	"sap/m/Column",
@@ -50,6 +51,7 @@ sap.ui.define([
 	TextDirection,
 	JSONModel,
 	Sorter,
+	coreLibrary,
 	ListItem,
 	ObjectPool,
 	Column,
@@ -82,6 +84,9 @@ sap.ui.define([
 
 	// shortcut for sap.m.ListType
 	var ListType = mobileLibrary.ListType;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
@@ -275,7 +280,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -655,7 +660,7 @@ sap.ui.define([
 			oInput.attachSuggest(function() {
 				var aNames = ["abcTom", "abcPhilips", "abcAnna"];
 				for (var i = 0; i < aNames.length; i++) {
-					if (jQuery.inArray(aNames[i], aItemsAdded) === -1){
+					if (!aItemsAdded.includes(aNames[i])){
 						oInput.addSuggestionItem(new Item({text: aNames[i]}));
 						aItemsAdded.push(aNames[i]);
 					}
@@ -1156,7 +1161,7 @@ sap.ui.define([
 
 		oInput6.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput6.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1230,7 +1235,7 @@ sap.ui.define([
 			showSuggestion: true,
 			suggest: function(){
 				for (i = 0; i < aNames.length; i++){
-					if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+					if (!aItemAdded.includes(aNames[i])) {
 						oInput.addSuggestionItem(new Item({text: aNames[i]}));
 						aItemAdded.push(aNames[i]);
 					}
@@ -1276,7 +1281,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++) {
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1328,7 +1333,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1423,7 +1428,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1489,7 +1494,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i], enabled: aEnabled[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1679,7 +1684,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1751,7 +1756,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1802,7 +1807,7 @@ sap.ui.define([
 
 		oInput.attachSuggest(function(){
 			for (i = 0; i < aNames.length; i++){
-				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
+				if (!aItemAdded.includes(aNames[i])){
 					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
 				}
@@ -1982,7 +1987,7 @@ sap.ui.define([
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
 			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
-				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
+				if (!aAlreadyAddedProducts.includes(oSuggestionData.tabularSuggestionItems[i])){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 					oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -2126,7 +2131,7 @@ sap.ui.define([
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
 			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
-				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
+				if (!aAlreadyAddedProducts.includes(oSuggestionData.tabularSuggestionItems[i])){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 					oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -2491,7 +2496,7 @@ sap.ui.define([
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
 			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
-				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
+				if (!aAlreadyAddedProducts.includes(oSuggestionData.tabularSuggestionItems[i])){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 					oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
@@ -2677,7 +2682,7 @@ sap.ui.define([
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
 			for (i = 0; i < oSuggestionData.tabularSuggestionItems.length; i++){
-				if (jQuery.inArray(oSuggestionData.tabularSuggestionItems[i], aAlreadyAddedProducts) === -1){
+				if (!aAlreadyAddedProducts.includes(oSuggestionData.tabularSuggestionItems[i])){
 					oSuggestionRow = oTableItemTemplate.clone();
 					oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
 					oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);

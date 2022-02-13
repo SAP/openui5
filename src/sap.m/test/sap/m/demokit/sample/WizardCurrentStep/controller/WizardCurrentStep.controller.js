@@ -2,7 +2,8 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	"sap/m/MessageToast",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/dom/jquery/Focusable" // provides jQuery.fn.firstFocusableDomRef
 ], function (Controller, JSONModel, MessageToast, Log) {
 	"use strict";
 

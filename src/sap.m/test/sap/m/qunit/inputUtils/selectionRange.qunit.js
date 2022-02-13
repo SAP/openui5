@@ -3,7 +3,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
 	"sap/m/inputUtils/selectionRange",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/dom/jquery/selectText" // provides jQuery.fn.selectText
 ], function (
 	jQuery,
 	mobileLibrary,

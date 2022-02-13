@@ -15,7 +15,7 @@ sap.ui.define([
 			this.oImageContent = new ImageContent("img-cnt", {
 				src: IMAGE_PATH + "headerImg1.png",
 				description: "image descriptions ...",
-				press: jQuery.noop
+				press: function() {}
 			});
 			this.oImageContent.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -47,7 +47,7 @@ sap.ui.define([
 			this.oImageContent = new ImageContent("img-cnt", {
 				src: IMAGE_PATH + "headerImg1.png",
 				description: "        image descriptions        ",
-				press: jQuery.noop
+				press: function() {}
 			});
 			this.oImageContent.placeAt("qunit-fixture");
 			oCore.applyChanges();

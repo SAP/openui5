@@ -3203,7 +3203,7 @@ sap.ui.define([
 		// Act - select and move the item left
 		this.oSelectList.ontap({
 			srcControl: oSixthTabInSelectList,
-			preventDefault: jQuery.noop
+			preventDefault: function() {}
 		});
 		this.oIconTabHeader.ondragrearranging(this.returnMockEvent(KeyCodes.ARROW_LEFT, oSixthTabInSelectList._getRealTab().getId()));
 

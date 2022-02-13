@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'./Button',
+	'./SegmentedButtonItem',
 	'./Select',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
@@ -18,6 +19,7 @@ sap.ui.define([
 function(
 	library,
 	Button,
+	SegmentedButtonItem,
 	Select,
 	Control,
 	EnabledPropagator,
@@ -28,6 +30,9 @@ function(
 	SegmentedButtonRenderer
 	) {
 	"use strict";
+
+	// lazy dependency to sap/m/Image
+	var Image;
 
 	/**
 	 * Constructor for a new <code>SegmentedButton</code>.
@@ -683,7 +688,7 @@ function(
 			this.removeButton(oItem.oButton);//since this fires a "_change" event, it must be placed after public items are removed
 		}
 		// Reset selected button if the removed button is the currently selected one
-		if (oItem && oItem instanceof sap.m.SegmentedButtonItem && this.getSelectedButton() === oItem.oButton.getId()) {
+		if (oItem instanceof SegmentedButtonItem && this.getSelectedButton() === oItem.oButton.getId()) {
 			this.setSelectedKey("");
 			this.setSelectedButton("");
 			this.setSelectedItem("");
@@ -824,7 +829,7 @@ function(
 	 */
 	SegmentedButton.prototype.setSelectedItem = function (vItem) {
 		var oItem = typeof vItem === "string" && vItem !== "" ? sap.ui.getCore().byId(vItem) : vItem,
-			oItemInstanceOfSegBtnItem = oItem instanceof sap.m.SegmentedButtonItem,
+			oItemInstanceOfSegBtnItem = oItem instanceof SegmentedButtonItem,
 			vButton = oItemInstanceOfSegBtnItem ? oItem.oButton : vItem;
 
 		// set the new value
@@ -992,12 +997,13 @@ function(
 	SegmentedButton.prototype._overwriteImageOnload = function (oImage) {
 		var that = this;
 
-		if (oImage.onload === sap.m.Image.prototype.onload) {
+		Image = Image || sap.ui.require("sap/m/Image");
+		if (Image && oImage.onload === Image.prototype.onload) {
 			oImage.onload = function () {
-				if (sap.m.Image.prototype.onload) {
-					sap.m.Image.prototype.onload.apply(this, arguments);
+				if (Image.prototype.onload) {
+					Image.prototype.onload.apply(this, arguments);
 				}
-				window.setTimeout(function() {
+				setTimeout(function() {
 					that._updateWidth();
 				}, 20);
 			};

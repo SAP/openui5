@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/routing/History",
 	"sap/ui/Device",
 	"sap/m/InstanceManager",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/base/util/extend"
 ], function(
 	TargetHandler,
 	NavContainer,
@@ -16,7 +17,8 @@ sap.ui.define([
 	History,
 	Device,
 	InstanceManager,
-	library
+	library,
+	extend
 ) {
 	"use strict";
 
@@ -159,8 +161,8 @@ sap.ui.define([
 		var oTargetHandler = new TargetHandler();
 
 		//Act
-		oTargetHandler.addNavigation(jQuery.extend({ view : oMasterToPage, aggregationName : "masterPages" }, oNavigationParameters));
-		oTargetHandler.addNavigation(jQuery.extend({ view : oDetailToPage, aggregationName : "detailPages" }, oNavigationParameters));
+		oTargetHandler.addNavigation(extend({ view : oMasterToPage, aggregationName : "masterPages" }, oNavigationParameters));
+		oTargetHandler.addNavigation(extend({ view : oDetailToPage, aggregationName : "detailPages" }, oNavigationParameters));
 
 		oTargetHandler.navigate({
 			direction: HistoryDirection.Forwards

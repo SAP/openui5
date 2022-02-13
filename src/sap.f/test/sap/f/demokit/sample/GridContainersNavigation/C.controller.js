@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/sample/GridContainersNavigation/RevealGrid/RevealGrid",
+	"./RevealGrid/RevealGrid",
 	"sap/ui/events/KeyCodes",
 	"sap/m/MessageToast"
 ], function (

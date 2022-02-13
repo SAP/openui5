@@ -6,8 +6,15 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 	function(library, encodeCSS) {
 	"use strict";
 
+	// shortcut for sap.m.GenericTileMode
+	var GenericTileMode = library.GenericTileMode;
+
 	// shortcut for sap.m.GenericTileScope
 	var GenericTileScope = library.GenericTileScope;
+
+	// shortcut for sap.m.FrameType
+	var FrameType = library.FrameType;
+
 
 	/**
 	 * SlideTile renderer.
@@ -72,7 +79,7 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 		for (var i = 0; i < iLength; i++) {
 			oRm.openStart("div", oControl.getId() + "-wrapper-" + i );
 			oRm.class("sapMSTWrapper");
-			if (oControl.getTiles()[i].getFrameType() == sap.m.FrameType.Stretch && oControl.getTiles()[i].getMode() == sap.m.GenericTileMode.ArticleMode) {
+			if (oControl.getTiles()[i].getFrameType() === FrameType.Stretch && oControl.getTiles()[i].getMode() === GenericTileMode.ArticleMode) {
 				oRm.class("sapMGTTileStretch");
 			}
 			oRm.openEnd();

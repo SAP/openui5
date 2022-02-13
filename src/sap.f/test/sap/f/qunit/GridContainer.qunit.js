@@ -867,8 +867,8 @@ function (
 		this.oGrid.$().width('123px');
 
 		// forcing calling all resize listeners
-		sap.ui.core.ResizeHandler.suspend(this.oGrid.getDomRef());
-		sap.ui.core.ResizeHandler.resume(this.oGrid.getDomRef());
+		ResizeHandler.suspend(this.oGrid.getDomRef());
+		ResizeHandler.resume(this.oGrid.getDomRef());
 
 		assert.ok(fnApplyLayout.called, "ApplyLayout is called");
 	});

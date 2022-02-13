@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/Selectors", // provides jQuery custom selector ":sapTabbable"
 	"sap/ui/events/jquery/EventExtension" // only used indirectly?
 ], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore) {
 	"use strict";

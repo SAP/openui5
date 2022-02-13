@@ -1032,7 +1032,7 @@ sap.ui.define([
 	TableSelectDialog.prototype._updateStarted = function (oEvent) {
 		this.fireUpdateStarted(oEvent.getParameters());
 
-		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
+		if (this.getModel() && this.getModel().isA("sap.ui.model.odata.ODataModel")) {
 			if (this._oDialog.isOpen() && this._iTableUpdateRequested) {
 				// only set busy mode when we have an OData model
 				this._setBusy(true);
@@ -1053,7 +1053,7 @@ sap.ui.define([
 
 		this._updateSelectionIndicator();
 		// only reset busy mode when we have an OData model
-		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
+		if (this.getModel() && this.getModel().isA("sap.ui.model.odata.ODataModel")) {
 			this._setBusy(false);
 			this._bInitBusy = false;
 		}

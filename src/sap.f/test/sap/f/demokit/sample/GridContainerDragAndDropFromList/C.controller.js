@@ -3,12 +3,17 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/core/dnd/DropInfo",
-	"sap/ui/core/dnd/DropPosition",
-	"sap/ui/core/dnd/DropLayout",
 	"sap/f/dnd/GridDropInfo",
-	"sap/f/sample/GridContainerDragAndDropFromList/RevealGrid/RevealGrid"
-], function (Controller, JSONModel, DragInfo, DropInfo, DropPosition, DropLayout, GridDropInfo, RevealGrid) {
+	"./RevealGrid/RevealGrid",
+	"sap/ui/core/library"
+], function (Controller, JSONModel, DragInfo, DropInfo, GridDropInfo, RevealGrid, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.dnd.DropLayout
+	var DropLayout = coreLibrary.dnd.DropLayout;
+
+	// shortcut for sap.ui.core.dnd.DropPosition
+	var DropPosition = coreLibrary.dnd.DropPosition;
 
 	return Controller.extend("sap.f.sample.GridContainerDragAndDropFromList.C", {
 

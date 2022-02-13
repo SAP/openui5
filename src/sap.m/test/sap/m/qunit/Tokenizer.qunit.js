@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
-	"sap/ui/model/json/JSONModel"
-], function(Core, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/jquery"
+], function(Core, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -479,7 +480,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.ok(jQuery(this.tokenizer.getDomRef()).hasClass("sapMTokenizerDisabled"), "Tokenizer's dom has class sapMTokenizerDisabled");
+		assert.ok(this.tokenizer.$().hasClass("sapMTokenizerDisabled"), "Tokenizer's dom has class sapMTokenizerDisabled");
 	});
 
 	QUnit.test("setHiddenTokensCount", function(assert) {

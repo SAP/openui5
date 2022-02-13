@@ -249,7 +249,7 @@ function (
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -259,7 +259,7 @@ function (
 	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -273,7 +273,7 @@ function (
 	QUnit.test("Navigation arrows - 3 columns (mid column Expanded, not-fixed 3-column layout)", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -285,7 +285,7 @@ function (
 
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -564,7 +564,7 @@ function (
 	QUnit.test("Navigation arrows - 2 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -574,7 +574,7 @@ function (
 	QUnit.test("Navigation arrows - 2 columns operations", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.TwoColumnsBeginExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -588,7 +588,7 @@ function (
 	QUnit.test("Navigation arrows - 3 columns", function (assert) {
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -600,7 +600,7 @@ function (
 
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded,
-			beginColumnPages: [new sap.m.Page()]
+			beginColumnPages: [new Page()]
 		});
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
@@ -1322,7 +1322,7 @@ function (
 		assert.strictEqual(oEventSpy.callCount, 0, "_hideShowArrows is not called");
 
 		// act
-		this.oFCL.addBeginColumnPage(new sap.m.Page());
+		this.oFCL.addBeginColumnPage(new Page());
 		this.oFCL._onNavContainerRendered({srcControl: this.oFCL.getAggregation("_beginColumnNav")});
 
 		// assert

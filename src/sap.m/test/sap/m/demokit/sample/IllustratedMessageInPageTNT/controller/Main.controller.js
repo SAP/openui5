@@ -1,5 +1,9 @@
-sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap/m/library'],
-	function (JSONModel, Controller, library) {
+sap.ui.define([
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/library",
+	"sap/ui/thirdparty/jquery"
+], function (JSONModel, Controller, library, jQuery) {
 		"use strict";
 
 		var oIllustratedMessageSize = library.IllustratedMessageSize;

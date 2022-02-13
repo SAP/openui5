@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/P13nOperationsHelper",
 	"sap/m/MessageStrip",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepExtend"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -22,7 +23,8 @@ sap.ui.define([
 	mobileLibrary,
 	P13nOperationsHelper,
 	MessageStrip,
-	oCore
+	oCore,
+	deepExtend
 ) {
 	"use strict";
 
@@ -79,7 +81,7 @@ sap.ui.define([
 		]
 	};
 	var bindFilterPanel = function(oP13nFilterPanel) {
-		var oModel = new JSONModel(jQuery.extend(true, {}, gData));
+		var oModel = new JSONModel(deepExtend({}, gData));
 		oP13nFilterPanel.setModel(oModel);
 		oP13nFilterPanel.bindItems("/items", new P13nItem({
 			columnKey: "{key}",
@@ -273,7 +275,7 @@ sap.ui.define([
 		// system under test
 		var oP13nFilterPanel = new P13nFilterPanel();
 
-		var oModel = new JSONModel(jQuery.extend(true, {}, gData));
+		var oModel = new JSONModel(deepExtend({}, gData));
 		oP13nFilterPanel.setModel(oModel, "myModel");
 		oP13nFilterPanel.bindItems("myModel>/items", new P13nItem({
 			columnKey: "{myModel>key}",

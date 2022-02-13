@@ -947,11 +947,11 @@ sap.ui.define([
 	QUnit.test("extending the switch should not throw an error", function (assert) {
 
 		// system under test
-		Switch.extend("sap.ui.test.CustomSwitch", {
+		var CustomSwitch = Switch.extend("sap.ui.test.CustomSwitch", {
 			renderer: {}
 		});
 
-		var oCustomSwitch = new sap.ui.test.CustomSwitch();
+		var oCustomSwitch = new CustomSwitch();
 
 		// arrange
 		oCustomSwitch.placeAt("content");

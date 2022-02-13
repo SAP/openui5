@@ -3,6 +3,7 @@
 sap.ui.define([
 	'sap/base/Log',
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
@@ -15,6 +16,7 @@ sap.ui.define([
 ], function(
 	Log,
 	Core,
+	coreLibrary,
 	QUnitUtils,
 	KeyCodes,
 	jQuery,
@@ -26,6 +28,9 @@ sap.ui.define([
 	waitForThemeApplied
 ) {
 	'use strict';
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = coreLibrary.OpenState;
 
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "navigationListPage"});
@@ -878,7 +883,7 @@ sap.ui.define([
 		assert.strictEqual($InnerListItem.getAttribute("role"), "treeitem", "Role of the popup li should be treeitem");
 		assert.strictEqual($InnerListItem.getAttribute("aria-roledescription"), sExpectedAriaRoleDescription, "Role description of the popup is as expected");
 
-		assert.ok(popover.oPopup.getOpenState() === sap.ui.core.OpenState.OPEN, "should change popover status to OPEN");
+		assert.ok(popover.oPopup.getOpenState() === OpenState.OPEN, "should change popover status to OPEN");
 
 		$groupItem.trigger('tap');
 

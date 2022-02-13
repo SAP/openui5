@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(createAndAppendDiv, SortSelect, JSONModel, Item, oCore) {
 	"use strict";
 
-	createAndAppendDiv("qunit-fixture-visible");
+	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");
 
 
 
@@ -18,7 +18,7 @@ sap.ui.define([
 		},
 
 		afterEach: function () {
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 

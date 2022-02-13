@@ -10,8 +10,7 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/library',
 	'./SelectionDetailsRenderer',
-	"sap/base/util/uid",
-	"sap/ui/thirdparty/jquery"
+	'sap/base/util/uid'
 ],
 function(
 	library,
@@ -21,8 +20,7 @@ function(
 	Device,
 	CoreLibrary,
 	SelectionDetailsRenderer,
-	uid,
-	jQuery
+	uid
 ) {
 	"use strict";
 

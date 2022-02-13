@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/thirdparty/jquery",
 	"./PDFViewer.static.qunit",
 	"./PDFViewer.binding.qunit",
 	"./PDFViewer.embedded.qunit",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"./PDFViewer.accessibility.qunit",
 	"./PDFViewer.noPlugin.qunit",
 	"./PDFViewer.specialUseCases.qunit"
-], function(createAndAppendDiv) {
+], function(createAndAppendDiv, jQuery) {
 	"use strict";
 
 

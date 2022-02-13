@@ -1,6 +1,5 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
@@ -24,7 +23,6 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function (
-	$,
 	DynamicPageUtil,
 	DynamicPage,
 	DynamicPageTitle,

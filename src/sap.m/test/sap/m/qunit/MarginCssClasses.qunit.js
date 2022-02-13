@@ -1,13 +1,11 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/Device",
 	"sap/ui/core/Core"
 ], function(createAndAppendDiv,
-	jQuery,
 	Component,
 	ComponentContainer,
 	Device,

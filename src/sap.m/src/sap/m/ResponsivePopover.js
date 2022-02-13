@@ -13,8 +13,7 @@ sap.ui.define([
 	'./ResponsivePopoverRenderer',
 	'./Toolbar',
 	'./ToolbarSpacer',
-	'./Button',
-	"sap/ui/thirdparty/jquery"
+	'./Button'
 ],
 	function(
 		Dialog,
@@ -26,8 +25,7 @@ sap.ui.define([
 		ResponsivePopoverRenderer,
 		Toolbar,
 		ToolbarSpacer,
-		Button,
-		jQuery
+		Button
 	) {
 	"use strict";
 

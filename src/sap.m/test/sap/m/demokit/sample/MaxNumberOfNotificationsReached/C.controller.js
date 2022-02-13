@@ -1,11 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Priority",
+	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/m/NotificationListItem",
 	"sap/m/MessageToast"
-], function (Controller, Priority, Device, NotificationListItem, MessageToast) {
+], function (Controller, coreLibrary, Device, NotificationListItem, MessageToast) {
 	"use strict";
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	return Controller.extend("sap.m.sample.MaxNumberOfNotificationsReached.C", {
 

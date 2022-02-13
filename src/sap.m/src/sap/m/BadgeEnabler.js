@@ -6,9 +6,10 @@
 sap.ui.define([
 		'sap/m/BadgeCustomData',
 		'sap/base/Log',
-		'sap/m/library'
+		'sap/m/library',
+		'sap/ui/thirdparty/jquery'
 	],
-	function(BadgeCustomData, Log, library) {
+	function(BadgeCustomData, Log, library, jQuery) {
 		"use strict";
 
 		var IBADGE_CSS_CLASS = "sapMBadge";

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Element", "sap/base/Log", "sap/base/util/isPlainObject", "sap/ui/thirdparty/jquery"],
-	function(Element, Log, isPlainObject, jQuery) {
+sap.ui.define(["sap/ui/core/Element", "sap/base/Log", "sap/base/util/isPlainObject"],
+	function(Element, Log, isPlainObject) {
 	"use strict";
 
 	/**

@@ -2012,14 +2012,14 @@ sap.ui.define([
 
 	QUnit.test("StandardListItem Avatar Rendering and size)", function(assert) {
 
-		var oAvatar1 = new sap.m.Avatar({
+		var oAvatar1 = new Avatar({
 			id: "sliavatar1",
 			displaySize: "XL",
 			imageFitType: "Cover",
 			src: IMAGE_PATH + "travel_expend.png"
 		});
 
-		var oAvatar2 = new sap.m.Avatar({
+		var oAvatar2 = new Avatar({
 			id: "sliavatar2",
 			displaySize: "L",
 			imageFitType: "Contain",

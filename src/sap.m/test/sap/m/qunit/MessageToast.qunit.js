@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/base/Log",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -20,7 +21,8 @@ sap.ui.define([
 	HTML,
 	EventExtension,
 	Log,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

@@ -4,11 +4,14 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	"sap/m/List",
 	"sap/m/StandardListItem"
-], function (Controller, Popup, JSONModel, Dialog, Button, ButtonType, List, StandardListItem) {
+], function (Controller, Popup, JSONModel, Dialog, Button, mobileLibrary, List, StandardListItem) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	return Controller.extend("sap.m.sample.DialogWithinArea.C", {
 

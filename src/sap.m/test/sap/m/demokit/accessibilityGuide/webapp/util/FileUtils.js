@@ -1,7 +1,9 @@
 sap.ui.define([
-	"sap/base/strings/formatMessage"
+	"sap/base/strings/formatMessage",
+	"sap/ui/thirdparty/jquery"
 ], function (
-	formatMessage
+	formatMessage,
+	jQuery
 ) {
 	"use strict";
 

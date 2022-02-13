@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/base/Event",
+	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selectors ":sapTabbable"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -44,7 +46,8 @@ sap.ui.define([
 	EventProvider,
 	GroupHeaderListItem,
 	KeyCodes,
-	oCore
+	oCore,
+	BaseEvent
 ) {
 	"use strict";
 
@@ -2341,7 +2344,7 @@ sap.ui.define([
 			oModel = new JSONModel({
 				values: [{key: "1", text: "Val1"}]
 			}),
-			oEventGetParamStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter");
+			oEventGetParamStub = sinon.stub(BaseEvent.prototype, "getParameter");
 			oEventGetParamStub.withArgs("reason").returns("Refresh");
 
 		oFF.addList(oFFL);

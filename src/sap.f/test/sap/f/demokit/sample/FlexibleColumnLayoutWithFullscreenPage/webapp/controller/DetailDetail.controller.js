@@ -1,8 +1,12 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/f/library"
+], function (JSONModel, Controller, fioriLibrary) {
 	"use strict";
+
+	// shortcut for sap.f.LayoutType
+	var LayoutType = fioriLibrary.LayoutType;
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.DetailDetail", {
 		onInit: function () {
@@ -31,7 +35,7 @@ sap.ui.define([
 			var supplierPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop();
 
-			this.oRouter.navTo("detailDetailDetail", {layout: sap.f.LayoutType.ThreeColumnsMidExpanded, category: this._category, product: this._product, supplier: supplier});
+			this.oRouter.navTo("detailDetailDetail", {layout: LayoutType.ThreeColumnsMidExpanded, category: this._category, product: this._product, supplier: supplier});
 		},
 		handleFullScreen: function () {
 			this.bFocusFullScreenButton = true;

@@ -32,7 +32,7 @@ sap.ui.define([
 	"sap/ui/core/ValueStateSupport"
 ],
 	function(
-		$,
+		jQuery,
 		qutils,
 		createAndAppendDiv,
 		Capitalize,
@@ -79,6 +79,8 @@ sap.ui.define([
 
 		// shortcut for sap.ui.core.TextAlign
 		var TextAlign = coreLibrary.TextAlign;
+
+		var $ = jQuery;
 
 		createAndAppendDiv("content").className = "content";
 
@@ -7827,7 +7829,7 @@ sap.ui.define([
 			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
-			var sOpenState = !jQuery.support.cssAnimations ? OpenState.OPEN : OpenState.OPENING;	// no animation on ie9
+			var sOpenState = OpenState.OPENING;
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.F4);
@@ -7863,7 +7865,7 @@ sap.ui.define([
 			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
-			var sOpenState = !jQuery.support.cssAnimations ? OpenState.OPEN : OpenState.OPENING;	// no animation on ie9
+			var sOpenState = OpenState.OPENING;
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
@@ -7899,7 +7901,7 @@ sap.ui.define([
 			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
-			var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
+			var sOpenState = OpenState.CLOSING;
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.F4);
@@ -7935,7 +7937,7 @@ sap.ui.define([
 			Core.applyChanges();
 			oSelect.focus();
 			var fnShowSpy = this.spy(oSelect, "onsapshow");
-			var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
+			var sOpenState = OpenState.CLOSING;
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN, false, true);
@@ -7973,7 +7975,7 @@ sap.ui.define([
 			Core.applyChanges();
 			oSelect.focus();
 			var fnHideSpy = this.spy(oSelect, "onsaphide");
-			var sOpenState = !jQuery.support.cssAnimations ? OpenState.OPEN : OpenState.OPENING;	// no animation on ie9
+			var sOpenState = OpenState.OPENING;
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
@@ -8009,7 +8011,7 @@ sap.ui.define([
 			Core.applyChanges();
 			oSelect.focus();
 			var fnHideSpy = this.spy(oSelect, "onsaphide");
-			var sOpenState = !jQuery.support.cssAnimations ? OpenState.CLOSED : OpenState.CLOSING;	// no animation on ie9
+			var sOpenState = OpenState.CLOSING;
 
 			// act
 			qutils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP, false, true, false);
@@ -9684,16 +9686,12 @@ sap.ui.define([
 			oSelect.focus();
 			oSelect.open();
 
-			if (jQuery.support.cssAnimations) {	// no animation on ie9
-				this.clock.tick(1000);
-			}
+			this.clock.tick(1000);
 
 			// act
 			qutils.triggerEvent("tap", item2.getDomRef());
 
-			if (jQuery.support.cssAnimations) {	// no animation on ie9
-				this.clock.tick(1000);
-			}
+			this.clock.tick(1000);
 
 			// assert
 			assert.strictEqual(oSelect.getFocusDomRef().getAttribute("aria-expanded"), "false");

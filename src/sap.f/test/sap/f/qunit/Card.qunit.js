@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/f/cards/NumericSideIndicator",
 	"sap/m/BadgeCustomData",
 	"sap/m/library",
+	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/format/DateFormat",
@@ -19,6 +20,7 @@ function (
 	CardNumericSideIndicator,
 	BadgeCustomData,
 	mLibrary,
+	Text,
 	Core,
 	jQuery,
 	DateFormat,
@@ -34,7 +36,7 @@ function (
 		var oCard = new Card("somecard", {
 			tooltip: 'Some tooltip',
 			header: new HeaderType({ title: "Title" }),
-			content: new sap.m.Text({ text: "Text" })
+			content: new Text({ text: "Text" })
 		});
 
 		// Act

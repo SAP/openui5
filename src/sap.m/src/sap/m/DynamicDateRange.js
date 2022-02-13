@@ -33,8 +33,9 @@ sap.ui.define([
 	'./NavContainer',
 	'./DynamicDateRangeRenderer',
 	'./StandardDynamicDateOption',
-	'sap/ui/dom/jquery/Focusable',
-	'./library'],
+	'./library',
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/dom/jquery/Focusable'], // provides jQuery.fn.firstFocusableDomRef
 	function(
 		InvisibleText,
 		Element,
@@ -65,8 +66,8 @@ sap.ui.define([
 		NavContainer,
 		DynamicDateRangeRenderer,
 		StandardDynamicDateOption,
-		Focusable,
-		library
+		library,
+		jQuery
 	) {
 		"use strict";
 
@@ -1074,7 +1075,7 @@ sap.ui.define([
 
 			if (oToPage === oOptionDetailsPage) {
 				this.aInputControls.forEach(function(oControl) {
-					if (jQuery(oControl.getDomRef()).firstFocusableDomRef()) {
+					if (oControl.$().firstFocusableDomRef()) {
 						oControl.addAriaLabelledBy && oControl.addAriaLabelledBy(oToPage.getAggregation("_internalHeader"));
 
 						if (!this._isCalendarBasedControl(oControl) && oControl.addAriaDescribedBy) {

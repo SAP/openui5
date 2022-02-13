@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/P13nDimMeasureItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepExtend",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -18,7 +20,9 @@ sap.ui.define([
 	P13nDimMeasureItem,
 	JSONModel,
 	EventExtension,
-	oCore
+	oCore,
+	deepExtend,
+	jQuery
 ) {
 	"use strict";
 
@@ -875,7 +879,7 @@ sap.ui.define([
 					}
 				]
 			};
-			this.oPanel.setModel(new JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+			this.oPanel.setModel(new JSONModel(deepExtend({}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
 			oCore.applyChanges();
@@ -1032,7 +1036,7 @@ sap.ui.define([
 					}
 				]
 			};
-			this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+			this.oPanel.setModel(new JSONModel(deepExtend({}, this.oDataInitial)));
 
 			this.oPanel.placeAt("content");
 			oCore.applyChanges();

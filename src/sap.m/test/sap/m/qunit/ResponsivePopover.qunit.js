@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/StandardListItem",
 	"sap/m/List",
@@ -13,9 +12,9 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/m/Page",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
-	qutils,
 	JSONModel,
 	StandardListItem,
 	List,
@@ -28,7 +27,8 @@ sap.ui.define([
 	NavContainer,
 	Page,
 	InvisibleText,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

@@ -7,7 +7,9 @@ sap.ui.require([
 	"sap/m/ColumnListItem",
 	"sap/ui/core/VariantLayoutData",
 	"sap/ui/core/Item",
+	"sap/m/Button",
 	"sap/m/Title",
+	"sap/m/ToolbarSpacer",
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/m/RadioButton",
@@ -28,7 +30,9 @@ sap.ui.require([
 		ColumnListItem,
 		VariantLayoutData,
 		Item,
+		Button,
 		Title,
+		ToolbarSpacer,
 		Label,
 		Input,
 		RadioButton,
@@ -360,21 +364,19 @@ sap.ui.require([
 		oTabularSeparatorsInput.setModel(oModel);
 		oTabularSeparatorsInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oSuggestionRowTemplate);
 
-		var oCustomCssButton = new sap.m.Button("customCssButton",{
+		var oCustomCssButton = new Button("customCssButton",{
 			text: "Toggle custom CSS for visual test",
 			press: function() {
-				var $body = jQuery("body");
-
-				$body.toggleClass("customClassForVisualTests");
+				document.body.classList.toggle("customClassForVisualTests");
 			}
 		});
 
 		var initialPage = new Page("inpPage", {
 			headerContent: [
-				new sap.m.Title({
+				new Title({
 					text: "sap.m.Input"
 				}),
-				new sap.m.ToolbarSpacer({
+				new ToolbarSpacer({
 					width: "600px"
 				}),
 				oCustomCssButton

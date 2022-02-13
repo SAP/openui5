@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
+	"sap/f/library",
 	"./DynamicPageUtil",
 	"sap/ui/core/Core",
 	"sap/m/Link",
@@ -17,6 +18,7 @@ function (
 	Device,
 	DynamicPage,
 	DynamicPageTitle,
+	fioriLibrary,
 	DynamicPageUtil,
 	Core,
 	Link,
@@ -26,6 +28,9 @@ function (
 	OverflowToolbarLayoutData
 ) {
 	"use strict";
+
+	// shortcut for sap.f.DynamicPageTitleArea
+	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
 
 	var oFactory = DynamicPageUtil.oFactory,
 		oUtil = DynamicPageUtil.oUtil;
@@ -927,7 +932,7 @@ function (
 
 	QUnit.test("test primaryArea", function (assert) {
 		var oDynamicPageTitle = this.oDynamicPageTitle,
-				sBeginArea = sap.f.DynamicPageTitleArea.Begin;
+			sBeginArea = DynamicPageTitleArea.Begin;
 
 		// Assert default: primary area is "Begin"
 		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");

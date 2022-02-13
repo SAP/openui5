@@ -24,9 +24,10 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/library",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/message/Message"
+	"sap/ui/core/message/Message",
+	"sap/ui/thirdparty/jquery"
 ], function(Core, qutils, TablePersoDialog, KeyCodes, JSONModel, Device, Filter, Sorter, InvisibleText, ListBase, Table, Column,
-	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message) {
+	 Label, Link, Toolbar, ToolbarSpacer, Button, Input, ColumnListItem, Text, Title, ScrollContainer, library, VerticalLayout, Message, jQuery) {
 	"use strict";
 
 	var oTable;

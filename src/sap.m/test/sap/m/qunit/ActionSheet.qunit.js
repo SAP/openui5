@@ -1184,6 +1184,6 @@ sap.ui.define([
 
 	QUnit.done(function () {
 		// hide the content so that the QUnit results can be seen
-		jQuery("#content").css('height', '0');
+		document.getElementById("content").style.height = "0";
 	});
 });

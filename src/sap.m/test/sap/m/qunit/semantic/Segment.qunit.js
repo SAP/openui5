@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(QUnitUtils, createAndAppendDiv, Segment, Toolbar, Button) {
 	"use strict";
 
-	createAndAppendDiv("qunit-fixture-visible");
+	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");
 
 
 
@@ -20,7 +20,7 @@ sap.ui.define([
 		},
 
 		afterEach: function () {
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 

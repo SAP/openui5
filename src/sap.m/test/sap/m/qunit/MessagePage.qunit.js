@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Button",
 	"sap/ui/core/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	createAndAppendDiv,
 	IconPool,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Link,
 	Button,
 	coreLibrary,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

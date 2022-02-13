@@ -600,9 +600,13 @@ sap.ui.define([
 	 * @public
 	 */
 	var thisLib = sap.m;
+	/* eslint-enable no-undef */
+
+
+	thisLib.upload = thisLib.upload || {};
+
 	thisLib.upload.UploaderHttpRequestMethod = UploaderHttpRequestMethod;
 
-	/* eslint-disable no-undef */
 
 
 	/**
@@ -4762,17 +4766,23 @@ sap.ui.define([
 		 ClearAll: "ClearAll"
 	};
 
-	sap.ui.lazyRequire("sap.m.DynamicDate");
+	/**
+	 * @deprecated since 1.56 as lazy loading implies sync loading
+	 */
+	(function() {
 
-	//lazy imports for MessageToast
-	sap.ui.lazyRequire("sap.m.MessageToast", "show");
+		sap.ui.lazyRequire("sap.m.DynamicDate");
 
-	// requires for routing
-	sap.ui.lazyRequire("sap.m.routing.RouteMatchedHandler");
-	sap.ui.lazyRequire("sap.m.routing.Router");
-	sap.ui.lazyRequire("sap.m.routing.Target");
-	sap.ui.lazyRequire("sap.m.routing.TargetHandler");
-	sap.ui.lazyRequire("sap.m.routing.Targets");
+		//lazy imports for MessageToast
+		sap.ui.lazyRequire("sap.m.MessageToast", "show");
+
+		// requires for routing
+		sap.ui.lazyRequire("sap.m.routing.RouteMatchedHandler");
+		sap.ui.lazyRequire("sap.m.routing.Router");
+		sap.ui.lazyRequire("sap.m.routing.Target");
+		sap.ui.lazyRequire("sap.m.routing.TargetHandler");
+		sap.ui.lazyRequire("sap.m.routing.Targets");
+	}());
 
 	//Internal: test the whole page with compact design
 	if (/sap-ui-xx-formfactor=compact/.test(location.search)) {

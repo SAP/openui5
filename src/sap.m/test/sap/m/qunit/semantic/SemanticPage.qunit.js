@@ -53,7 +53,7 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
 
-	createAndAppendDiv("qunit-fixture-visible");
+	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");
 
 
 
@@ -94,7 +94,7 @@ sap.ui.define([
 
 		afterEach: function () {
 
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 
@@ -288,7 +288,7 @@ sap.ui.define([
 		},
 
 		afterEach: function () {
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 
@@ -1211,7 +1211,7 @@ sap.ui.define([
 		},
 
 		afterEach: function () {
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 
@@ -1276,7 +1276,7 @@ sap.ui.define([
 		},
 
 		afterEach: function () {
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 
@@ -1464,7 +1464,7 @@ sap.ui.define([
 		},
 
 		afterEach: function () {
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 

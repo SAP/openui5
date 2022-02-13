@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/message/Message"
+	"sap/ui/core/message/Message",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	qutils,
 	RadioButton,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Mobile,
 	Label,
 	JSONModel,
-	Message
+	Message,
+	jQuery
 ) {
 	"use strict";
 

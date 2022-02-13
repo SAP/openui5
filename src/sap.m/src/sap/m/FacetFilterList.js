@@ -611,9 +611,11 @@ sap.ui.define([
 
 		// Checks whether given model is one of the OData Models
 		function isODataModel(oModel) {
-			return oModel instanceof sap.ui.model.odata.ODataModel ||
-				oModel instanceof sap.ui.model.odata.v2.ODataModel ||
-				oModel instanceof sap.ui.model.odata.v4.ODataModel;
+			return oModel && (
+				oModel.isA("sap.ui.model.odata.ODataModel") ||
+				oModel.isA("sap.ui.model.odata.v2.ODataModel") ||
+				oModel.isA("sap.ui.model.odata.v4.ODataModel")
+			);
 		}
 
 		if (force || (sSearchVal !== this._searchValue)) {

@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/CustomListItem",
 	"sap/ui/core/HTML",
-	"sap/m/Page"
-], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page) {
+	"sap/m/Page",
+	"sap/ui/thirdparty/jquery"
+], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");

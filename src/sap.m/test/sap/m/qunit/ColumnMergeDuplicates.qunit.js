@@ -7,8 +7,10 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
-	"sap/ui/core/Core"
-], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore) {
+	"sap/ui/core/Core",
+	"sap/base/util/extend",
+	"sap/ui/thirdparty/jquery"
+], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery) {
 	"use strict";
 
 
@@ -84,7 +86,7 @@ sap.ui.define([
 		});
 
 		// build binding confing
-		oBindConfig = jQuery.extend({
+		oBindConfig = extend({
 			path : "/teamMembers",
 			template : oItemTemplate
 		}, oBindConfig);

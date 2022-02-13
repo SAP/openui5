@@ -747,7 +747,6 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._onDropFile = function (oEvent) {
-		jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
 		var oFiles;
 		oEvent.preventDefault();
 		if (this.getUploadEnabled()) {

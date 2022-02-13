@@ -849,7 +849,7 @@ sap.ui.define([
 					})
 				],
 				items: [
-					new sap.m.ColumnListItem({
+					new ColumnListItem({
 						cells: [
 							oMarker
 						]
@@ -888,7 +888,7 @@ sap.ui.define([
 					})
 				],
 				items: [
-					new sap.m.ColumnListItem({
+					new ColumnListItem({
 						cells: [
 							oMarker
 						]

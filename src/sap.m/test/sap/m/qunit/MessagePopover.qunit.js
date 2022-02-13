@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/ui/Device",
 	"sap/ui/core/CustomData",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	MessagePopover,
@@ -30,7 +31,8 @@ sap.ui.define([
 	MessageItem,
 	Device,
 	CustomData,
-	Core
+	Core,
+	jQuery
 ) {
 	"use strict";
 

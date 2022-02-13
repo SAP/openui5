@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/P13nColumnsPanel",
 	"sap/m/P13nItem",
 	"sap/m/P13nColumnsItem",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -30,7 +31,8 @@ sap.ui.define([
 	P13nColumnsPanel,
 	P13nItem,
 	P13nColumnsItem,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

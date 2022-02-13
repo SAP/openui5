@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/includeStylesheet",
 	"require"
-], function(QUnitUtils, createAndAppendDiv, App, Page, jQuery, includeStylesheet, require) {
+], function(QUnitUtils, createAndAppendDiv, App, Page, includeStylesheet, require) {
 	"use strict";
 
 	createAndAppendDiv("content");
