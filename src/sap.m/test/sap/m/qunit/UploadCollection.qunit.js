@@ -431,6 +431,7 @@ sap.ui.define([
 		assert.ok(oSpyLIBRenderer.calledOnce, "Method addFocusableClasses of ListItemBaseRenderer is called");
 		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMLIB"), "The nodata area contains class sapMLIB");
 		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMUCNoDataPage"), "The nodata area contains class sapMUCNoDataPage");
+		assert.equal(this.oUploadCollection._oList.$("nodata").attr( "role"), "option","The nodata item is having role=option");
 	});
 
 	QUnit.test("No data rendering in upload disabled state", function(assert) {
