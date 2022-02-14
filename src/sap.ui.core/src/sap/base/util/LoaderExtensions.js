@@ -304,16 +304,7 @@ sap.ui.define([
 		oData = sap.ui.loader._.getModuleContent(sResourceName, mOptions.url);
 
 		if (oData != undefined) {
-
-			if (mOptions.async) {
-				//Use timeout to simulate async behavior for this sync case for easier usage
-				setTimeout(function() {
-					convertData(oData);
-				}, 0);
-			} else {
-				oData = convertData(oData);
-			}
-
+			oData = convertData(oData);
 		} else {
 
 			iSyncCallBehavior = sap.ui.loader._.getSyncCallBehavior();

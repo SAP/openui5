@@ -253,10 +253,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("NavContainer", function(assert) {
+		var oNavContainer;
 		// sample js views
 		sap.ui.jsview("navContainerView", {
 			createContent : function() {
-				return new NavContainer(this.createId("navContainer"));
+				oNavContainer = new NavContainer(this.createId("navContainer"));
+				return oNavContainer;
 			}
 		});
 
@@ -338,13 +340,19 @@ sap.ui.define([
 			oRouter.initialize();
 
 			return new Promise(function(resolve, reject) {
-				oRouter.attachEventOnce("routeMatched", function(oEvent) {
-					assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
-					assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
+				// Need to wait for routeMatched in order to get the content of the NavContainer created
+				oRouter.attachEventOnce("routeMatched", function (oEvent) {
+					// Need to wait for the onAfterShow because of the rendering for the NavContainer
+					oNavContainer.getPages()[0].addEventDelegate({
+						"onAfterShow":  function(oEvent) {
+							assert.equal(oNavConShowPlaceholderSpy.callCount, 1, "NavContainer.showPlaceholder should be called");
+							assert.equal(oNavConHidePlaceholderSpy.callCount, 1, "NavContainer.hidePlaceholder should be called");
 
-					oNavConShowPlaceholderSpy.resetHistory();
-					oNavConHidePlaceholderSpy.resetHistory();
-					resolve(oEvent.getParameter("targetControl"));
+							oNavConShowPlaceholderSpy.resetHistory();
+							oNavConHidePlaceholderSpy.resetHistory();
+							resolve(oNavContainer);
+						}
+					});
 				});
 			});
 		}).then(function(oNavContainer) {
@@ -383,10 +391,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("SplitContainer", function(assert) {
+		var oSplitApp;
+
 		// sample js views
 		sap.ui.jsview("splitAppView", {
 			createContent : function() {
-				return new SplitApp(this.createId("splitApp"));
+				oSplitApp = new SplitApp(this.createId("splitApp"));
+				return oSplitApp;
 			}
 		});
 
@@ -472,6 +483,8 @@ sap.ui.define([
 		var oSplitAppShowPlaceholderSpy = sinon.spy(SplitApp.prototype, "showPlaceholder");
 		var oSplitAppNeedPlaceholderSpy = sinon.spy(SplitApp.prototype, "needPlaceholder");
 		var oSplitAppHidePlaceholderSpy = sinon.spy(SplitApp.prototype, "hidePlaceholder");
+		var oSplitAppMasterHidePlaceholderSpy;
+		var oSplitAppDetailHidePlaceholderSpy;
 		var oHomeDisplayed = sinon.spy();
 
 		var oRouter;
@@ -489,6 +502,10 @@ sap.ui.define([
 				resolve(oEvent.getParameter("component"));
 			});
 		}).then(function(oComponent) {
+			// Create master and detail spy because as long as SplitApp is not renderer the hidePlaceholder is not called
+			// on SplitApp but it's called on the NavContainer of the corresponding master and detail page
+			oSplitAppMasterHidePlaceholderSpy = sinon.spy(oSplitApp.getAggregation("_navMaster"), "hidePlaceholder");
+			oSplitAppDetailHidePlaceholderSpy = sinon.spy(oSplitApp.getAggregation("_navDetail"), "hidePlaceholder");
 			oRouter = oComponent.getRouter();
 
 			oRouter.getTarget("home").attachDisplay(oHomeDisplayed);
@@ -497,8 +514,14 @@ sap.ui.define([
 			oRouter.initialize();
 
 			return new Promise(function(resolve, reject) {
-				oRouter.attachEvent("routeMatched", function(oEvent) {
-					resolve(oEvent.getParameter("targetControl"));
+				// Need to wait for routeMatched in order to get the content of the NavContainer created
+				oRouter.attachEventOnce("routeMatched", function (oEvent) {
+					// Need to wait for the onAfterShow because of the rendering for the NavContainer
+					oSplitApp.getDetailPages()[0].addEventDelegate({
+						"onAfterShow":  function(oEvent) {
+							resolve(oSplitApp);
+						}
+					});
 				});
 			});
 
@@ -513,17 +536,17 @@ sap.ui.define([
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called only on 'masterPages' aggregation");
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called only on 'detailPages' aggregation");
 
-			// hidePlaceholder
-			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 2, "SplitApp.hidePlaceholder should be called twice");
-			assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called only on 'masterPages' aggregation");
-			assert.equal(oSplitAppHidePlaceholderSpy.getCall(1).args[0].aggregation, "detailPages", "SplitApp.hidePlaceholder should be called only on 'detailPages' aggregation");
+			// hidePlaceholder is called on inner NavContainers as SplitApp is not rendered yet
+			assert.equal(oSplitAppMasterHidePlaceholderSpy.callCount, 1, "Master SplitApp.hidePlaceholder should be called once");
+			assert.equal(oSplitAppDetailHidePlaceholderSpy.callCount, 1, "Detail SplitApp.hidePlaceholder should be called once");
 
 			assert.equal(oHomeDisplayed.callCount, 1, "Home target is displayed");
 			assert.ok(oSplitAppShowPlaceholderSpy.getCall(1).calledBefore(oHomeDisplayed.getCall(0)), "showPlaceholder for the second target shouldn't wait for the display process of the first target");
 
 			oSplitAppShowPlaceholderSpy.resetHistory();
 			oSplitAppNeedPlaceholderSpy.resetHistory();
-			oSplitAppHidePlaceholderSpy.resetHistory();
+			oSplitAppMasterHidePlaceholderSpy.resetHistory();
+			oSplitAppDetailHidePlaceholderSpy.resetHistory();
 			oHomeDisplayed.resetHistory();
 
 			return new Promise(function(resolve, reject) {
@@ -545,7 +568,7 @@ sap.ui.define([
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called on 'masterPages' aggregation");
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called on 'detailPages' aggregation");
 
-			// hidePlaceholder
+			// hidePlaceholder is called on SpitApp as it is rendered now
 			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 1, "SplitApp.hidePlaceholder should be called");
 			assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called on 'masterPages' aggregation");
 
@@ -576,7 +599,7 @@ sap.ui.define([
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(0).args[0], "masterPages", "SplitApp.needPlaceholder should be called on 'masterPages' aggregation");
 			assert.equal(oSplitAppNeedPlaceholderSpy.getCall(1).args[0], "detailPages", "SplitApp.needPlaceholder should be called on 'detailPages' aggregation");
 
-			// hidePlaceholder
+			// hidePlaceholder is called on SpitApp as it is rendered now
 			assert.equal(oSplitAppHidePlaceholderSpy.callCount, 1, "SplitApp.hidePlaceholder should be called");
 			assert.equal(oSplitAppHidePlaceholderSpy.getCall(0).args[0].aggregation, "masterPages", "SplitApp.hidePlaceholder should be called on 'masterPages' aggregation");
 
@@ -598,14 +621,18 @@ sap.ui.define([
 			oSplitAppShowPlaceholderSpy.restore();
 			oSplitAppNeedPlaceholderSpy.restore();
 			oSplitAppHidePlaceholderSpy.restore();
+			oSplitAppMasterHidePlaceholderSpy.restore();
+			oSplitAppDetailHidePlaceholderSpy.restore();
 		});
 	});
 
 	QUnit.test("FlexibleColumnLayout", function(assert) {
+		var oFlexColumnLayout;
 		// sample js views
 		sap.ui.jsview("flexibleColumnLayoutView", {
 			createContent : function() {
-				return new FlexibleColumnLayout(this.createId("flexibleColumnLayout"));
+				oFlexColumnLayout = new FlexibleColumnLayout(this.createId("flexibleColumnLayout"));
+				return oFlexColumnLayout;
 			}
 		});
 
@@ -722,8 +749,14 @@ sap.ui.define([
 			oRouter.initialize();
 
 			return new Promise(function(resolve, reject) {
-				oRouter.attachEvent("routeMatched", function(oEvent) {
-					resolve(oEvent.getParameter("targetControl"));
+				// Need to wait for routeMatched in order to get the content of the NavContainer created
+				oRouter.attachEventOnce("routeMatched", function (oEvent) {
+					// Need to wait for the onAfterShow because of the rendering for the NavContainer
+					oFlexColumnLayout._getBeginColumn().getPages()[0].addEventDelegate({
+						"onAfterShow":  function(oEvent) {
+							resolve(oFlexColumnLayout);
+						}
+					});
 				});
 			});
 		}).then(function(oFlexColumnLayout) {
