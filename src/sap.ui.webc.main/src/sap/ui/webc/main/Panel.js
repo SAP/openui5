@@ -181,7 +181,8 @@ sap.ui.define([
 				toggle: {
 					parameters: {}
 				}
-			}
+			},
+			designtime: "sap/ui/webc/main/designtime/Panel.designtime"
 		}
 	});
 
