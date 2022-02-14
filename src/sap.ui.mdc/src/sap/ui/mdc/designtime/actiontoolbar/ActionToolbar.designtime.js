@@ -1,41 +1,34 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define([], function () {
+sap.ui.define([
+    "sap/ui/mdc/ActionToolbar",
+    "../Util"
+], function (ActionToolbar, Util) {
 	"use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
-	return {
-        aggregations: {
-            content: {
-                ignore: true
-            },
-            // ActionToolbarActions
+    var oDesignTime = {
+            description: "{description}",
+            name: "{name}",
+            aggregations: {},
+            properties: {},
             actions: {
-                ignore: true
-            },
-            begin: {
-                ignore: true
-            },
-            between: {
-                ignore: true
-            },
-            end: {
-                ignore: true
+                settings: {
+                    name: oResourceBundle.getText("actiontoolbar.RTA_SETTINGS_NAME"),
+                    handler: function (oControl, mPropertyBag) {
+                        return sap.ui.mdc.p13n.Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "actionsKey").then(function(aChanges){
+                            return aChanges;
+                        });
+                    },
+                    CAUTION_variantIndependent: true
+                }
             }
-		},
-        actions: {
-            settings: {
-                name: oResourceBundle.getText("actiontoolbar.RTA_SETTINGS_NAME"),
-                handler: function (oControl, mPropertyBag) {
-                    return sap.ui.mdc.p13n.Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "actionsKey").then(function(aChanges){
-                        return aChanges;
-                    });
-                },
-                CAUTION_variantIndependent: true
-            }
-        }
-	};
+	    },
+        aAllowedAggregations = [],
+        aAllProperties = [];
+
+    return Util.getDesignTime(ActionToolbar, aAllProperties, aAllowedAggregations, oDesignTime);
 
 });
