@@ -1,0 +1,148 @@
+/* ============================= */
+/* CSS for control sap.m/Slider  */
+/* Evening Horizon theme         */
+/* ============================= */
+
+/*new*/
+.sapMSliderInner .sapMSliderHandle {
+	border: 1px solid @sapContent_Selected_Background;
+	background: @sapContent_Selected_Background;
+	border-radius: @sapButton_BorderCornerRadius;
+	padding-left: 0.25rem;
+	box-shadow: @sapContent_Selected_Shadow;
+	width: 1.625rem;
+	height: 1.625rem;
+	top: -0.8125rem;
+}
+
+.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+	font-family: SAP-icons;
+	content: "\e244";
+	position: absolute;
+	top: 6px;
+	right: 3px;
+	overflow: hidden;
+	vertical-align: middle;
+	font-size:14px;
+	color:@sapContent_Selected_ForegroundColor;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.sapMSliderInner:not(.sapMSliderInnerDisabled):not(.sapMSliderPressed):hover>.sapMSliderHandle {
+	&:not(:focus) {
+		border-color: @sapContent_Selected_ForegroundColor;
+		box-shadow: @sapContent_Selected_Shadow;
+	}
+}
+
+.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+	border: none;
+	outline: none;
+	box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+	top: -0.75rem;
+}
+
+.sapMSliderInner {
+	background: @sapButton_Track_Background;
+	height: 0.25rem;
+	min-width: 4rem;
+	border-radius: 0.25rem;
+}
+
+.sapMSliderProgress {
+	background: @sapContent_Selected_ForegroundColor;
+	height: 0.25rem;
+	border-radius: 0.25rem;
+}
+
+/* disabled */
+.sapMSliderDisabled {
+	opacity: 0.4;
+}
+
+.sapMSliderInner::before {
+	content: "";
+	position: absolute;
+	background-color: @sapContent_Selected_ForegroundColor;
+	border-radius: 50%;
+	width: 6px;
+	height: 6px;
+	left: -14px;
+	top: -1px;
+}
+
+.sapMSlider::after {
+	content: "";
+	position: absolute;
+	background-color: @sapField_BorderColor;
+	border-radius: 50%;
+	width: 6px;
+	height: 6px;
+	right: 2px;
+	top: 21px;
+}
+
+.sapMSliderTooltip {
+	background: @sapField_Focus_Background;
+}
+
+.sapMSliderTickLabel .sapMSliderLabel {
+	padding-top: 0.4375rem;
+	height: 1rem;
+	width: 2rem;
+	left: -1rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSliderTickmarks {
+	top: 0.675rem;
+}
+
+.sapMSliderTick {
+	margin: 0.375rem 0 0 -0.0625rem;
+}
+
+.sapMSliderLabels {
+	height: 1rem;
+
+	.sapMSliderRangeLabel {
+		width: 2rem;
+		font-size: @sapMFontSmallSize;
+		color: @sapUiContentLabelColor;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMSlider::after {
+		top: 15px;
+	}
+
+	.sapMSliderInner .sapMSliderHandle:not(.sapMSliderHandlePressed):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled):hover>.sapMSliderHandle):not(.sapMRangeSlider.sapMSlider .sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus):after {
+		font-family: SAP-icons;
+		content: "\e244";
+		position: absolute;
+		top: 3px;
+		right: 0px;
+		overflow: hidden;
+		vertical-align: middle;
+		font-size:14px;
+		color:@sapContent_Selected_ForegroundColor;
+		padding-left: 0px;
+	}
+
+	.sapMSliderInner:not(.sapMSliderInnerDisabled) .sapMSliderHandle:focus {
+		top: -0.5625rem;
+	}
+
+	.sapMSliderHandle {
+		width: 1.25rem;
+		height: 1.25rem;
+		top: -0.625rem;
+	}
+
+	.sapMSliderTickLabel .sapMSliderLabel {
+		padding-top: 0.375rem;
+	}
+}

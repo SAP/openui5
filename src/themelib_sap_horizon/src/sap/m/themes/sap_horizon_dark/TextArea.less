@@ -1,0 +1,33 @@
+/* =============================== */
+/* CSS for control sap.m/TextArea  */
+/* Evening Horizon theme           */
+/* =============================== */
+
+/* uses sapMInputBase styles */
+@_sapMTextAreaPadding: 0.5rem 0.625rem;
+@_sapMTextAreaValueStatePadding: 0.4375rem 0.625rem;
+
+.sapMInputBase.sapMTextArea {
+	min-height: 2.25rem;
+}
+
+/* Text Area General */
+.sapMFocus.sapMTextArea .sapMInputBaseContentWrapper .sapMInputBaseInner {
+	outline-style: solid;
+	outline-width: 2px;
+}
+
+/* Text Area Warning */
+.sapMFocus.sapMTextArea .sapMInputBaseContentWrapperWarning > .sapMInputBaseInner {
+	outline-color: @sapField_WarningColor;
+}
+
+/* Text Area Error */
+.sapMFocus.sapMTextArea .sapMInputBaseContentWrapperError > .sapMInputBaseInner {
+	outline-color: @sapField_InvalidColor;
+}
+
+/* Text Area Success */
+.sapMFocus.sapMTextArea .sapMInputBaseContentWrapperSuccess > .sapMInputBaseInner {
+	outline-color: @sapField_SuccessColor;
+}

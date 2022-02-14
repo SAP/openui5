@@ -1,0 +1,73 @@
+/* =================================== */
+/* CSS for control sap.m/ColorPalette  */
+/* Evening Horizon theme               */
+/* =================================== */
+
+.sapMColorPalette .sapMColorPaletteSquare:hover > div,
+.sapMColorPalette .sapMColorPaletteSquare,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:hover > div,
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
+	border-radius: 0.25rem;
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare div,
+.sapMColorPalette .sapMColorPaletteSquare div {
+	border-radius: 0.125rem;
+}
+
+.sap-desktop .sapMColorPalette .sapMBtn:focus {
+	&:after {
+		border-color: @sapUiContentFocusColor;
+	}
+}
+
+.sap-desktop .sapContrast,
+.sap-desktop.sapContrast {
+	.sapMColorPalette .sapMBtn {
+		&:focus:after {
+			border-color: @sapUiContentFocusColor;
+
+		}
+		&:active,
+		> .sapMBtnActive,
+		&:hover > .sapMBtnActive,
+		&:active > .sapMBtnActive {
+			color: @sapUiListTextColor;
+		}
+	}
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:focus:after {
+	border: 0.125rem solid @sapUiContentContrastFocusColor;
+	border-radius: 0.0625rem;
+	top: 0.125rem;
+	left: 0.125rem;
+	bottom: 0.125rem;
+	right: 0.125rem;
+}
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare:focus:before {
+	border: 0.125rem solid @sapUiContentFocusColor;
+	border-radius: 0.125rem;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+.sapMColorPalette {
+	.sapMBtn {
+		&:focus {
+			.sap-desktop & {
+				&:after {
+					border-radius: 0.5rem;
+					border: 0.125rem solid @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+}
+
+html.sap-desktop .sapMColorPalette .sapMBtn:focus > .sapMFocusable:after {
+	display: none;
+}

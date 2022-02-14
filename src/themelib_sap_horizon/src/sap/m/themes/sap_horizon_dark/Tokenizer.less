@@ -1,0 +1,90 @@
+/* ================================ */
+/* CSS for control sap.m/Tokenizer  */
+/* Evening Horizon theme            */
+/* ================================ */
+
+@_sap_m_Tokenizer_OutlineOffset: 5px;
+
+.sapMTokenizer {
+	padding-left: @_sap_m_Tokenizer_OutlineOffset;
+	position: relative;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.sapMTokenizer .sapMToken {
+	margin-right: 0.3125rem;
+	max-width: calc(~"100% - 0.3125rem");
+	margin-top: 0.25rem;
+}
+
+html.sap-desktop .sapMTokenizer:focus {
+	outline: none;
+	box-shadow: 0px 0px 0px 2px @sapContent_FocusColor;
+	border-radius: @sapField_BorderCornerRadius;
+}
+
+/* editable tokens in read-only tokenizer */
+.sapMTokenizer.sapMTokenizerReadonly .sapMToken {
+		color: @sapUiContentLabelColor;
+}
+
+.sapUiSizeCompact {
+	.sapMTokenizer {
+		padding-left: 0.25rem;
+	}
+}
+
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+	&:hover,
+	&:focus,
+	&.sapMTokenSelected,
+	&.sapMTokenSelected:focus,
+	&.sapMTokenSelected:hover,
+	&:not(.sapMTokenSelected):not(:focus):hover {
+		background: @sapButton_TokenBackground;
+		cursor: default;
+		color: @sapUiBaseText;
+		outline: none;
+		border: 1px solid @sapButton_TokenBorderColor;
+		border-radius: @sapButton_BorderCornerRadius;
+		box-shadow: none;
+	}
+
+	.sapMTokenText,
+	.sapMTokenIcon {
+		color: @sapUiBaseText;
+	}
+
+	.sapMTokenIcon {
+		cursor: default;
+	}
+
+}
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMTokenizerIndicator {
+	cursor: default;
+}
+
+.sapMTokenizer.sapMTokenizerReadonly .sapMTokenizerIndicator,
+.sapMTokenizer .sapMTokenizerIndicator {
+	color: @sapLinkColor;
+	font-weight: bold;
+}
+
+.sapMTokenizerTokensPopup .sapMListItems {
+	& li:first-child:focus {
+		border-top-left-radius: @sapUiElementBorderCornerRadius;
+		border-top-right-radius: @sapUiElementBorderCornerRadius;
+	}
+	& li:last-child:focus {
+		border-bottom-left-radius: @sapUiElementBorderCornerRadius;
+		border-bottom-right-radius: @sapUiElementBorderCornerRadius;
+	}
+}

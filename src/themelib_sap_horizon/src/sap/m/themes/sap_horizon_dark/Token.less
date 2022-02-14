@@ -1,0 +1,74 @@
+/* ============================ */
+/* CSS for control sap.m/Token  */
+/* Evening Horizon theme        */
+/* ============================ */
+
+@_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
+@_sap_m_Token_LeftPadding: 0.3125rem;
+@_sap_m_Token_TokenSize: @sapMFontSmallSize + (2 * @_sap_m_Token_TokenPadding) - @_sap_m_Token_LeftPadding;
+@_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
+
+.sapMToken {
+	background: @sapButton_TokenBackground;
+	border: 1px solid @sapButton_TokenBorderColor;
+	border-radius: @sapButton_BorderCornerRadius;
+	font-size: @sapMFontMediumSize;
+	padding-left: 0.3125rem;
+	color: @sapUiBaseText;
+}
+
+.sapMTokenText {
+	max-width: calc(~"100% - " @_sap_m_Token_TokenSize);
+}
+
+.sapMTokenSelected:not(:focus),
+.sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	background: @sapUiButtonSelectedHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedHoverBorderColor;
+	border-radius: @sapButton_BorderCornerRadius;
+	box-shadow: @sapContent_Selected_Shadow;
+}
+
+.sapMTokenSelected .sapMTokenIcon {
+	color: @sapUiButtonSelectedTextColor;
+}
+
+html.sap-desktop .sapMToken:not(.sapMTokenSelected):not(:focus):hover {
+	background: @sapButton_TokenBackground;
+	border: 1px solid @sapButton_TokenBorderColor;
+	border-radius: @sapButton_BorderCornerRadius;
+	box-shadow: @sapContent_Interaction_Shadow;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:hover {
+	background: @sapUiButtonSelectedHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedHoverBorderColor;
+	border-radius: @sapButton_BorderCornerRadius;
+}
+
+.sapMTokenIcon {
+	font-size: @sapMFontSmallSize;
+	line-height: 1.5625rem;
+}
+
+.sapMToken.sapMTokenReadOnly,
+.sapMToken.sapMTokenReadOnly.sapMTokenSelected {
+	color: @sapUiContentLabelColor
+}
+
+html.sap-desktop .sapMToken:focus {
+	outline: none;
+	border: 1px solid @sapContent_FocusColor;
+	box-shadow: 0 0 0 1px @sapContent_FocusColor;
+	border-radius: @sapButton_BorderCornerRadius;
+}
+
+html.sap-desktop .sapMToken.sapMTokenSelected:focus {
+	outline: none;
+	color: @sapUiButtonSelectedTextColor;
+}
+
+.sapUiSizeCompact .sapMTokenIcon {
+	line-height: 1.1875rem;
+}

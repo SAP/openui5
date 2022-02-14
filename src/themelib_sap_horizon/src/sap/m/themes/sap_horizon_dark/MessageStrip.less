@@ -1,0 +1,68 @@
+/* =================================== */
+/* CSS for control sap.m/MessageStrip  */
+/* Evening Horizon theme               */
+/* =================================== */
+
+.sapMMsgStrip {
+	//@sapUiElementBorderCornerRadius was used but currently it results in 12px
+	border-radius: @sapElement_BorderCornerRadius;
+}
+
+.sapMMsgStripInformation {
+	background-color: @sapInformationBackground;
+	border-color: darken(@sapInformationBackground, 20);
+	color: @sapUiBaseText;
+
+	.sapMBtnTransparent,
+	.sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed),
+	.sapMIBar-CTX .sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+		background-color: @sapInformationBackground;
+		border-color: @sapInformationBackground;
+	}
+
+	.sapMMsgStripIcon {
+		color: @sapInformativeElementColor;
+	}
+}
+
+.sapMMsgStripError {
+	border-color: darken(@sapErrorBackground, 18);
+
+	.sapMBtnTransparent,
+	.sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed),
+	.sapMIBar-CTX .sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+		background-color: @sapErrorBackground;
+		border-color: @sapErrorBackground;
+	}
+}
+ 
+.sapMMsgStripSuccess {
+	border-color: darken(saturate(@sapSuccessBackground, 20), 20);
+
+	.sapMBtnTransparent,
+	.sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed),
+	.sapMIBar-CTX .sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+		background-color: @sapSuccessBackground;
+		border-color: @sapSuccessBackground;
+	}
+}
+
+.sapMMsgStripWarning {
+	border-color: darken(@sapWarningBackground, 20);
+
+	.sapMBtnTransparent,
+	.sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed),
+	.sapMIBar-CTX .sapMBtn:hover>.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+		background-color: @sapWarningBackground;
+		border-color: @sapWarningBackground;
+	}
+}
+ 
+.sapMMsgStripMessage>.sapMLnk {
+	padding-right: 0.25rem;
+	padding-left: 0.25rem;
+}
+
+.sapMMsgStripCloseButton {
+	top: -0.4375rem;
+}

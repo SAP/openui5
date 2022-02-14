@@ -1,0 +1,112 @@
+/* ======================================== */
+/* CSS for control sap.m/ProgressIndicator  */
+/* Evening Horizon theme                    */
+/* ======================================== */
+
+@sapMPITextLeftTextThreshold: 0.5;
+
+.sapMPITextLeft,
+.sapMPITextRight {
+	padding: 0;
+	margin-left: 0.375rem;
+	margin-right: 0.375rem;
+}
+
+.sapMPI {
+	height: 1rem;
+	min-width: 4rem;
+
+}
+
+.sapMPI:not(.sapMPIDisplayOnly) {
+	margin: 0.875rem 0;
+}
+
+.sapUiSizeCompact .sapMPI:not(.sapMPIDisplayOnly) {
+	margin: 0.5rem 0;
+}
+
+// Neutral and display only - bar
+.sapMPIBar.sapMPIBarNeutral,
+.sapMPIDisplayOnly:not(.sapMPIBarDisabled) .sapMPIBarNeutral {
+	background: @sapNeutralElementColor;
+}
+
+.sapMPIText.sapMPITextRight {
+	color: @sapField_TextColor;
+	background: @sapNeutralBackground;
+	border-color: @sapNeutralBorderColor;
+}
+
+.sapMPIBarNeutral .sapMPIText.sapMPITextLeft,
+.sapMPIBarPositive .sapMPIText.sapMPITextLeft,
+.sapMPIBarNegative .sapMPIText.sapMPITextLeft,
+.sapMPIBarCritical .sapMPIText.sapMPITextLeft,
+.sapMPIBarInformation .sapMPIText.sapMPITextLeft {
+	color:@sapContent_ContrastTextColor;
+}
+
+.sapMPIBarRemaining {
+	background: @sapNeutralBackground;
+	border-color: @sapNeutralBorderColor;
+}
+
+// Positive - Success
+.sapMPIBarPositive + .sapMPIBarRemaining {
+	background: @sapSuccessBackground;
+	border-color: @sapSuccessBorderColor;
+
+	.sapMPIText.sapMPITextRight {
+		background: @sapSuccessBackground;
+	}
+}
+
+.sapMPIBar.sapMPIBarPositive {
+	background: @sapPositiveElementColor;
+	border-color: @sapSuccessBorderColor;
+}
+
+// Negative - Error
+.sapMPIBarNegative + .sapMPIBarRemaining  {
+	background: @sapErrorBackground;
+	border-color: @sapErrorBorderColor;
+
+	.sapMPIText.sapMPITextRight {
+		background: @sapErrorBackground;
+	}
+}
+
+.sapMPIBar.sapMPIBarNegative {
+	background: @sapNegativeElementColor;
+	border-color: @sapErrorBorderColor;
+}
+
+// Critical - Warning
+.sapMPIBarCritical + .sapMPIBarRemaining  {
+	background: @sapWarningBackground;
+	border-color: @sapWarningBorderColor;
+
+	.sapMPIText.sapMPITextRight {
+		background: @sapWarningBackground;
+	}
+}
+
+.sapMPIBar.sapMPIBarCritical {
+	background: @sapCriticalElementColor;
+	border-color: @sapWarningBorderColor;
+}
+
+// Information
+.sapMPIBarInformation + .sapMPIBarRemaining  {
+	background: @sapInformationBackground;
+	border-color: @sapInformationBorderColor;
+
+	.sapMPIText.sapMPITextRight {
+		background: @sapInformationBackground;
+	}
+}
+
+.sapMPIBar.sapMPIBarInformation {
+	background: @sapInformativeElementColor;
+	border-color: @sapInformationBorderColor;
+}

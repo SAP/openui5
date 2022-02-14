@@ -1,0 +1,64 @@
+/* ================================= */
+/* CSS for control sap.m/SelectList  */
+/* Evening Horizon theme             */
+/* ================================= */
+
+@_sap_m_SelectListItem_Height: 2.5rem;
+@_sap_m_SelectListItem_CompactHeight: 2rem;
+@_sap_m_SelectListItemBelizeFocus_Height: 0.25rem; // 2 borders * 0.0625rem + 2 offsets (top and bottom) * 0.0625rem
+
+/* selected */
+.sapMSelectListItemBaseSelected {
+	background: @sapUiListSelectionBackgroundColor;
+}
+
+/* pressed */
+html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
+	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
+}
+
+.sapMSelectListItemBase.sapMSelectListItemBasePressed .sapMSelectListItemIcon {
+	color: @sapUiContentContrastIconColor;
+}
+
+
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	opacity: 0.5;
+}
+
+/* focus */
+html.sap-desktop .sapMSelectListItemBase:focus::after,
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected::after,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected::after {
+	pointer-events: none;
+	content: "";
+	border: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected,
+html.sap-desktop .sapMSelectListItemBase:focus {
+	outline: none;
+}
+
+.sapMSelectListItemBase {
+	position: relative;
+
+	&:last-child:not(:only-child)::after {
+		border-bottom-left-radius: 0.75rem;
+		border-bottom-right-radius: 0.75rem;
+	}
+}
+
+.sapMSltPicker-CTX:not(.sapMSltPickerWithSubHeader) .sapMSelectListItemBase {
+	&:first-child::after {
+		border-top-left-radius: 0.75rem;
+		border-top-right-radius: 0.75rem;
+	}
+}

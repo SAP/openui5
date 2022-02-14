@@ -1,0 +1,49 @@
+/* ====================================== */
+/* CSS for control sap.m/RatingIndicator  */
+/* Evening Horizon theme                  */
+/* ====================================== */
+
+.sapMRI {
+	.sapMRIUnsel {
+		color: @sapContent_UnratedColor;
+	}
+
+	.sapMRISel {
+		color: @sapContent_RatedColor;
+	}
+
+	.sapMRIHov {
+		color: darken(@sapContent_RatedColor, 5);
+	}
+}
+
+.sapMRI.sapMRIDisplayOnly,
+.sapMRI.sapMRIReadOnly {
+	.sapMRIIconSel {
+		color: @sapContent_RatedColor;
+	}
+	.sapMRIUnsel {
+		color: @sapContent_UnratedColor;
+	}
+}
+
+.sapMRIDisabled {
+	opacity: 0.4;
+}
+
+/* Custom focus outline */
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
+	border-radius: 0.25rem;
+	outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapContent_FocusColor;
+	outline-offset: 0.125rem;
+}
+
+.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
+	font-size: 1.5rem;
+}
+
+/* temporary workaround of an issue in the icon font */
+.sapMRI .sapUiIcon,
+.sapMRI .sapMImg {
+	top: -1px;
+}

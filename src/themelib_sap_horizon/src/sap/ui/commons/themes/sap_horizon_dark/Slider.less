@@ -1,0 +1,219 @@
+/* ====================================== */
+/* CSS for control sap.ui.commons/Slider  */
+/* Evening Horizon theme                  */
+/* ====================================== */
+
+.sapUiSli{
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+	border: none;
+}
+
+.sapUiSliHori.sapUiSli{
+	padding: 20px 0 0 0;
+	height: 16px;
+}
+
+.sapUiSliVert.sapUiSli{
+	padding: 0 0 0 30px;
+	width: 16px;
+}
+
+.sapUiSliR,
+.sapUiSliL{
+	border-style: solid;
+	border-color:  lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+}
+
+.sapUiSliHori > .sapUiSliR,
+.sapUiSliHori .sapUiSliL{
+	height: 2px;
+}
+
+.sapUiSliVert > .sapUiSliR,
+.sapUiSliVert .sapUiSliL{
+	width: 2px;
+}
+
+.sapUiSliHori > .sapUiSliR {
+	border-width: 1px 0px 1px 0;
+	margin-right: 6px;
+	margin-left: 6px;
+}
+
+.sapUiSliVert > .sapUiSliR {
+	border-width: 0px 1px 0px 1px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+.sapUiSliHori .sapUiSliL {
+	border-width: 1px 0 1px 0px;
+	top: -1px;
+}
+
+.sapUiSliVert .sapUiSliL {
+	border-width: 0px 1px 0px 1px;
+	left: -1px;
+}
+
+.sapUiSliHori .sapUiSliBar,
+.sapUiSliHori .sapUiSliHiLi {
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+	height: 2px;
+	top: -1px;
+}
+
+.sapUiSliVert .sapUiSliBar,
+.sapUiSliVert .sapUiSliHiLi {
+	border-left: 1px solid;
+	border-right: 1px solid;
+	width: 2px;
+	left: -1px;
+}
+
+.sapUiSliHori .sapUiSliBar {
+	border-top-color: lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+	border-bottom-color: lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+	border-left-color: lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+	background-color: darken(@sapUiContentForegroundColor, 10); // @sapUiMediumBorder = #cccccc
+}
+
+.sapUiSliVert .sapUiSliBar {
+	border-left-color: lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+	border-right-color: lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+	border-bottom-color: lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+	background-color: darken(@sapUiContentForegroundColor, 10); // @sapUiMediumBorder = #cccccc
+}
+
+.sapUiSliHori .sapUiSliHiLi{
+	left: -1px;
+}
+
+.sapUiSliVert .sapUiSliHiLi{
+	bottom: -1px;
+}
+
+.sapUiSliStd .sapUiSliHiLi {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiSliStd.sapUiSliHori  .sapUiSliHiLi {
+	border-top-color: @sapUiHighlight;
+	border-bottom-color: @sapUiHighlight;
+	border-left-color: @sapUiHighlight;
+}
+
+.sapUiSliStd.sapUiSliVert .sapUiSliHiLi {
+	border-left-color: @sapUiHighlight;
+	border-right-color: @sapUiHighlight;
+	border-bottom-color: @sapUiHighlight;
+}
+
+.sapUiSliHori.sapUiSliRo .sapUiSliHiLi,
+.sapUiSliHori.sapUiSliDsbl .sapUiSliHiLi {
+	border-top-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	border-bottom-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	border-left-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	background-color: darken(@sapUiContentForegroundColor, 30); // @sapUiMediumLine = #999999
+}
+
+.sapUiSliVert.sapUiSliRo .sapUiSliHiLi,
+.sapUiSliVert.sapUiSliDsbl .sapUiSliHiLi {
+	border-left-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	border-right-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	border-bottom-color: darken(@sapUiContentForegroundBorderColor, 15); // @sapUiMediumLine = #999999
+	background-color: darken(@sapUiContentForegroundColor, 30); // @sapUiMediumLine = #999999
+}
+
+
+.sapUiSliGrip {
+	border-style: solid;
+	border-width: 2px;
+}
+
+.sapUiSliHori .sapUiSliGrip {
+	height: 12px;
+	width: 6px;
+	top: -7px;
+}
+
+.sapUiSliVert .sapUiSliGrip {
+	height: 6px;
+	width: 12px;
+	left: -7px;
+}
+
+.sapUiSliHori.sapUiSliRo .sapUiSliGrip {
+	width: 0px;
+}
+
+.sapUiSliVert.sapUiSliRo .sapUiSliGrip {
+	height: 0px;
+}
+
+.sapUiSliStd .sapUiSliGrip {
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+	border-color: darken(@sapUiContentForegroundBorderColor, 31); // @sapUiExtraLightText = #707070
+}
+
+.sapUiSliStd .sapUiSliGrip:hover {
+	background-color: darken(@sapUiContentForegroundColor, 43); // @sapUiDarkBG = #777777
+	border-color: darken(@sapUiContentForegroundBorderColor, 28.1); // @sapUiDarkBG = #777777
+}
+
+.sapUiSliStd .sapUiSliGrip:focus,
+.sapUiSliStd .sapUiSliGrip:active {
+	border-color: @sapUiHighlight;
+	background-color: @sapUiHighlight;
+	outline: 1px dotted @sapUiContentFocusColor; // @sapUiDarkestBorder = #000000
+}
+
+.sapUiSliRo .sapUiSliGrip,
+.sapUiSliDsbl .sapUiSliGrip {
+	border-color: @sapUiContentDisabledTextColor;
+	background-color: lighten(@sapUiContentForegroundColor, 5); // @sapUiExtraLightBG = #f2f2f2
+}
+
+.sapUiSliRo .sapUiSliGrip:focus {
+	outline: 1px dotted @sapUiContentFocusColor; // @sapUiDarkestBorder = #000000
+}
+
+.sapUiSliHori .sapUiSliTick {
+	height: 4px;
+	width: 0;
+	top: -5px;
+	border-left: 1px solid lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+}
+
+.sapUiSliVert .sapUiSliTick {
+	height: 0;
+	width: 4px;
+	left: -5px;
+	border-top: 1px solid lighten(@sapUiContentForegroundBorderColor, 5); // @sapUiMediumBorder = #cccccc
+}
+
+.sapUiSliHori .sapUiSliText {
+	top: -20px;
+}
+
+.sapUiSliVert .sapUiSliText {
+	right: 10px;
+}
+
+.sapUiSliHori .sapUiSliTextLeft {
+	left: -2px;
+}
+
+.sapUiSliVert .sapUiSliTextLeft {
+	bottom: -2px;
+}
+
+.sapUiSliHori .sapUiSliTextRight {
+	right: -1px;
+}
+
+.sapUiSliVert .sapUiSliTextRight {
+	top: -1px;
+}

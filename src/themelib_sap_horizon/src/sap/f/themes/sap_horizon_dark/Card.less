@@ -1,0 +1,29 @@
+/* =========================== */
+/* CSS for control sap.f/Card  */
+/* Evening Horizon theme       */
+/* =========================== */
+
+@_sap_f_Card_HeaderFocusBorderBottomOffset: -1px;
+@_sap_f_Card_HeaderFocusBorderTopOffset: -1px;
+@_sap_f_Card_HeaderFocusBorderLeftOffset: -1px;
+@_sap_f_Card_HeaderFocusBorderRightOffset: -1px;
+@_sap_f_Card_HeaderFocusBorderRadius: inherit;
+@_sap_f_Card_BorderRadius: 1rem;
+@_sap_f_Card_TitleFontSize: @sapMFontHeader6Size;
+@_sap_f_Card_HoverBoxShadow: @sapContent_Shadow1;
+
+.sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:focus .sapFCard,
+.sapFCard {
+	&.sapFCardNoContent .sapFCardHeader::before,
+	&.sapFCardNoHeader::before {
+		border-radius: @_sap_f_Card_BorderRadius;
+	}
+
+	&.sapFCardBottomHeader .sapFCardHeader::before {
+		bottom: 1px;
+	}
+}
+
+.sapFCard:not(.sapFCardPreview):hover {
+	box-shadow: @_sap_f_Card_HoverBoxShadow;
+}

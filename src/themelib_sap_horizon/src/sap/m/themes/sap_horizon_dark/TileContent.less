@@ -1,0 +1,15 @@
+/* ================================== */
+/* CSS for control sap.m/TileContent  */
+/* Evening Horizon theme              */
+/* ================================== */
+
+@_sap_m_TileContent_NewsContentBackgroundColor: fade(@sapTile_Background, 96);
+@_sap_m_TileContent_NewsFooterTextColor: @_sap_m_NewsContent_SubHeaderTextColor;
+
+.sapMTileCnt.News {
+	background-color: @_sap_m_TileContent_NewsContentBackgroundColor;
+}
+
+.sapMTileCnt.News .sapMTileCntFtrTxt {
+	color: @_sap_m_TileContent_NewsFooterTextColor;
+}

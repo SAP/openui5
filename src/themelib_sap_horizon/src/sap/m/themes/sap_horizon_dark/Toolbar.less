@@ -1,0 +1,81 @@
+/* ============================== */
+/* CSS for control sap.m/Toolbar  */
+/* Evening Horizon theme          */
+/* ============================== */
+
+html.sap-desktop .sapMTBActive:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+.sapMTB {
+	height: 2.75rem;
+	padding: 0 0.5rem 0 0.25rem;
+	background: @sapUiToolbarBackground;
+}
+
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	padding: 0 0.5rem 0 0.75rem;
+}
+
+/* Info Toolbar Context */
+.sapMTB-Info-CTX.sapMTB {
+	background: darken(@sapUiBaseColor, 10);
+
+	> .sapUiIcon {
+		color: @sapUiBaseText;
+	}
+
+	> .sapUiIcon:focus {
+		color: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapContent_FocusColor;
+	}
+
+	&.sapMTBActive {
+		background: @sapUiInfobarBackground;
+		.generate-contrast-color-toolbar(@sapUiInfobarBackground);
+
+		&:active {
+			.generate-contrast-color-toolbar(@sapUiInfobarActiveBackground);
+		}
+
+		&:hover {
+			.generate-contrast-color-toolbar(@sapUiInfobarHoverBackground);
+		}
+
+		.sapMText,
+		.sapMLabel,
+		> .sapMTitle,
+		> .sapUiIcon {
+			color: inherit;
+		}
+	}
+}
+
+html.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+.generate-contrast-color-toolbar(@backgroundColor) {
+	color: contrast(@backgroundColor, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+}
+
+// Border radius for default and solid states as they result in white color
+.sapMTB:not(.sapMTB-Info-CTX) {
+	border-top-right-radius: @sapElement_BorderCornerRadius;
+	border-top-left-radius: @sapElement_BorderCornerRadius;
+}
+
+// =====================================
+// solid toolbar context
+// =====================================
+
+.sapMTB-Solid-CTX.sapMTB {
+	background-color: @sapUiToolbarBackground;
+}
+
+html.sap-desktop .sapMTBActive:focus {
+	outline: none;
+	box-shadow: inset 0px 0px 0px @sapContent_FocusWidth  @sapUiContentFocusColor;
+}

@@ -1,0 +1,38 @@
+/* =========================================== */
+/* CSS for control sap.ui.rta/FieldRepository  */
+/* Evening Horizon theme                       */
+/* =========================================== */
+
+@sap_ui_rta_FieldRepository_ListSelect: @sapUiListHoverSelectionBackground;
+@sap_ui_rta_FieldRepository_ButtonActiveColor: @sapUiButtonActiveBorderColor;
+
+.sapUiRtaMode {
+
+	.sapUIRtaFieldRepositoryDialog {
+
+		.sapMBtn {
+			&:hover:not(focus) {
+				.sapMBtnHoverable {
+					outline: none;
+				}
+			}
+
+			> .sapMBtnInner:not(.sapMBtnEmphasized) {
+				background: transparent;
+			}
+
+			&:focus {
+				&:hover > .sapMFocusable {
+					outline: 0.125rem solid @sap_ui_rta_FieldRepository_ButtonActiveColor;
+					outline-offset: -0.125rem;
+				}
+			}
+		}
+
+		.sapMLIBHoverable {
+			&.sapMLIBSelected:hover {
+				background: @sap_ui_rta_FieldRepository_ListSelect;
+			}
+		}
+	}
+}

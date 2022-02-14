@@ -1,0 +1,32 @@
+/* ============================================== */
+/* CSS for control sap.ui.commons/ValueHelpField  */
+/* Evening Horizon theme                          */
+/* ============================================== */
+
+.sapUiTfCombo {
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+}
+
+/* textField icon */
+.sapUiTfCombo > .sapUiTfValueHelpIcon {
+	height: 16px;
+	padding: 2px;
+	width: 16px;
+}
+
+/* textField icon */
+.sapUiTfCombo > .sapUiTfValueHelpRegularIcon:hover,
+.sapUiTfCombo > span.sapUiTfValueHelpIcon:hover {
+	background-color: @sapUiFieldHoverHelpBackground;
+	color: @sapUiContentContrastTextColor; // @sapUiTextInverted = #ffffff
+}
+
+.sapUiTfCombo.sapUiTfDsbl > span.sapUiTfValueHelpIcon:hover {
+	background-color: transparent;
+	color: @sapUiButtonHoverTextColor; // @sapUiDarkText = #333333
+}
+
+.sapUiTfRo.sapUiTfCombo > .sapUiTfValueHelpIcon {
+	visibility: hidden;
+}
