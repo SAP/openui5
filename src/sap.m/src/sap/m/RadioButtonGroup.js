@@ -607,6 +607,17 @@ sap.ui.define([
 					this.fireSelect({
 						selectedIndex : iIndex
 					});
+
+					// update tabindex values for all buttons that are part of the item navigation
+					this.aRBs
+						.filter(function (oRB) { return oRB.getEditable() && oRB.getEnabled(); })
+						.forEach(function (oRB) {
+							if (oRB === this.aRBs[iIndex]) {
+								oRB.setTabIndex(0);
+								return;
+							}
+							oRB.setTabIndex(-1);
+						}.bind(this));
 				}
 			};
 
