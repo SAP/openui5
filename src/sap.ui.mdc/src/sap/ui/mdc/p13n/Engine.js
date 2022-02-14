@@ -391,15 +391,14 @@ sap.ui.define([
 
 		return Promise.resolve()
 			.then(function() {
-				if (oRegistryEntry) {
-					var oModificationHandler = this.getModificationHandler(vControl);
-					return oModificationHandler.enhanceConfig(oControl, mEnhanceConfig)
-						.then(function(oConfig){
+				var oModificationHandler = this.getModificationHandler(vControl);
+				return oModificationHandler.enhanceConfig(oControl, mEnhanceConfig)
+					.then(function(oConfig){
+						if (oRegistryEntry) {
+							//to simplify debugging
 							oRegistryEntry.xConfig = oConfig;
-						});
-				} else {
-					throw new Error("The control instance needs to be registered to use xConfig!");
-				}
+						}
+					});
 			}.bind(this));
 	};
 
@@ -760,6 +759,9 @@ sap.ui.define([
 		var sHandlerMode = aPersistenceProvider ? aPersistenceProvider[0].getMode() : "Standard";
 
 		var mHandlerMode = {
+			//During preprocessing, it might be necessary to calculate the modification handler instance
+			//without an initialized control instance --> use flex as default
+			undefined: FlexModificationHandler,
 			Global: FlexModificationHandler,
 			Transient: FlexModificationHandler,
 			Standard: FlexModificationHandler,

@@ -20,7 +20,7 @@ sap.ui.define([
     var AggregationConfigFlex = {};
 
     var fConfigModified = function(oControl) {
-        if (!oControl._bWaitForModificationChanges) {
+        if (!oControl._bWaitForModificationChanges && oControl.isA) {
             oControl._bWaitForModificationChanges = true;
             Engine.getInstance().waitForChanges(oControl).then(function() {
                 if (oControl._onModifications instanceof Function) {
@@ -29,6 +29,19 @@ sap.ui.define([
                 delete oControl._bWaitForModificationChanges;
             });
         }
+	};
+
+    var fnQueueChange = function(oControl, fTask) {
+		var fCleanupPromiseQueue = function(pOriginalPromise) {
+			if (oControl._pQueue === pOriginalPromise){
+				delete oControl._pQueue;
+			}
+		};
+
+		oControl._pQueue = oControl._pQueue instanceof Promise ? oControl._pQueue.then(fTask) : fTask();
+		oControl._pQueue.then(fCleanupPromiseQueue.bind(null, oControl._pQueue));
+
+		return oControl._pQueue;
 	};
 
     /**
@@ -56,39 +69,43 @@ sap.ui.define([
             "changeHandler": {
                 applyChange: function (oChange, oControl, mPropertyBag) {
 
-                    return Engine.getInstance().readXConfig(oControl, {
-                        propertyBag: mPropertyBag
-                    })
-                    .then(function(oPriorAggregationConfig) {
-                        var sOldValue = null;
-
-                        if (oPriorAggregationConfig
-                            && oPriorAggregationConfig.aggregations
-                            && oPriorAggregationConfig.aggregations[sAffectedAggregation]
-                            && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name]
-                            && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty]
-                            ){
-                                sOldValue = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty];
-                        }
-
-                        oChange.setRevertData({
-                            name: oChange.getContent().name,
-                            value: sOldValue
-                        });
-
-                        return Engine.getInstance().enhanceXConfig(oControl, {
-                            controlMeta: {
-                                aggregation: sAffectedAggregation,
-                                property: sAffectedProperty
-                            },
-                            name: oChange.getContent().name,
-                            value: oChange.getContent().value,
+                    return fnQueueChange(oControl, function(){
+                        return Engine.getInstance().readXConfig(oControl, {
                             propertyBag: mPropertyBag
+                        })
+                        .then(function(oPriorAggregationConfig) {
+                            var sOldValue = null;
+
+                            if (oPriorAggregationConfig
+                                && oPriorAggregationConfig.aggregations
+                                && oPriorAggregationConfig.aggregations[sAffectedAggregation]
+                                && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name]
+                                && oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty]
+                                ){
+                                    sOldValue = oPriorAggregationConfig.aggregations[sAffectedAggregation][oChange.getContent().name][sAffectedProperty];
+                            }
+
+                            oChange.setRevertData({
+                                name: oChange.getContent().name,
+                                value: sOldValue
+                            });
+
+                            return Engine.getInstance().enhanceXConfig(oControl, {
+                                controlMeta: {
+                                    aggregation: sAffectedAggregation,
+                                    property: sAffectedProperty
+                                },
+                                name: oChange.getContent().name,
+                                value: oChange.getContent().value,
+                                propertyBag: mPropertyBag
+                            });
+                        })
+                        .then(function() {
+                            fConfigModified(oControl);
                         });
-                    })
-                    .then(function() {
-                        fConfigModified(oControl);
+
                     });
+
                 },
                 completeChangeContent: function (oChange, mChangeSpecificInfo, mPropertyBag) {
                     // Not used, but needs to be there
