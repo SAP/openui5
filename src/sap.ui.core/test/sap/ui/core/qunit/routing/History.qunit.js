@@ -32,7 +32,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("history.state enhancement", {
-		before: HistoryUtils.check,
 		beforeEach: function(assert) {
 			var that = this;
 			// Extended a hashchange to deliver the additional fullHash parameter HashChanger
@@ -94,6 +93,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this);
 
+			HistoryUtils.check();
 		},
 		afterEach: function() {
 			this.oExtendedHashChanger.setHash("");
@@ -263,7 +263,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Initialization");
+	QUnit.module("Initialization", {
+		before: HistoryUtils.check
+	});
 
 	QUnit.test("Keep existing history state - Initialized HashChanger", function(assert){
 		History._aStateHistory = [];
