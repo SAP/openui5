@@ -4,11 +4,9 @@
 
 sap.ui.define(
 	[
-		"jquery.sap.global",
 		'sap/ui/core/Control',
 		'./DataTableFilterDropDownRenderer'
 	], function (
-		$,
 		Control,
 		DataTableFilterDropDownRenderer
 	) {

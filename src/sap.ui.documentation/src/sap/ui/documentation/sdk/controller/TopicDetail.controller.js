@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-		"jquery.sap.global",
+		"sap/ui/thirdparty/jquery",
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
@@ -13,15 +13,14 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/Resources",
 		"sap/ui/documentation/sdk/controller/util/ResponsiveImageMap",
 		"sap/ui/documentation/sdk/controller/util/SidyBySideImageMap",
-		"sap/ui/core/HTML",
-		"sap/base/Log",
 		"sap/m/LightBox",
 		"sap/m/LightBoxItem",
 		"./util/DataTableHelper",
 		"./util/DataTable",
 		"sap/m/Button",
-		"sap/m/MessageToast"
-
+		"sap/m/MessageToast",
+		"sap/ui/dom/includeStylesheet",
+		"sap/ui/dom/includeScript"
 	],
 	function (
 		jQuery,
@@ -34,14 +33,14 @@ sap.ui.define([
 		ResourcesUtil,
 		ResponsiveImageMap,
 		SidyBySideImageMap,
-		HTML,
-		Log,
 		LightBox,
 		LightBoxItem,
 		DataTableHelper,
 		DataTable,
 		Button,
-		MessageToast
+		MessageToast,
+		includeStylesheet,
+		includeScript
 	) {
 		"use strict";
 
@@ -76,30 +75,29 @@ sap.ui.define([
 
 				if ( !window.hljs ) {
 					//solarized-light
-					jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css");
-					jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
-
+					includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css");
+					includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
 				}
 
-				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
-				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/css/buttons.jqueryui.css");
+				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
+				includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/css/buttons.jqueryui.css");
 
 				// order is important
-				jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/jquery.dataTables.js" })
+				includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/jquery.dataTables.js" })
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/dataTables.jqueryui.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/js/dataTables.jqueryui.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/dataTables.buttons.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/dataTables.buttons.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.jqueryui.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.jqueryui.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.html5.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.html5.js" });
 					})
 					.then(function () {
-						return jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.colVis.js" });
+						return includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/js/buttons.colVis.js" });
 					})
 					.then(function () {
 						dataTablesConfigURL = ResourcesUtil.getResourceOriginPath(oConfig.docuPath + 'dataTablesConfig.json');

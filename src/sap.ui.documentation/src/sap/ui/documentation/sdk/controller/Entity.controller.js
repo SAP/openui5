@@ -7,7 +7,6 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/m/Label",
@@ -15,7 +14,7 @@ sap.ui.define([
 		"sap/m/Text",
 		"sap/m/HBox",
 		"sap/m/ObjectAttribute"
-	], function (JSONModel, BaseController, ControlsInfo, EntityInfo, APIInfo, ToggleFullScreenHandler,
+	], function (JSONModel, BaseController, ControlsInfo, EntityInfo, ToggleFullScreenHandler,
 			JSDocUtil, Label, Link, Text, HBox, ObjectAttribute) {
 		"use strict";
 

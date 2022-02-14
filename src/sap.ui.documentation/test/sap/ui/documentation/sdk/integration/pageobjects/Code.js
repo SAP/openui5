@@ -37,7 +37,7 @@ sap.ui.define([
 						}),
 						success : function (aButtons) {
 							var oControllerPrototype = Opa5.getWindow().sap.ui.documentation.sdk.controller.Code.prototype,
-								oOpenFileStub = sinon.stub(oControllerPrototype, "_openGeneratedFile", jQuery.noop),
+								oOpenFileStub = sinon.stub(oControllerPrototype, "_openGeneratedFile", function() {}),
 								oAssert =  Opa5.assert,
 								fnDone = oAssert.async();
 

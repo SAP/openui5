@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/documentation/sdk/controller/BaseController"
-], function (BaseController) {
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/thirdparty/jquery"
+], function (BaseController, jQuery) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.documentation.sdk.controller.TermsOfUse", {

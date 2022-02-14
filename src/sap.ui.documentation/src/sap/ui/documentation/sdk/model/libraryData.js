@@ -2,7 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/base/Log"],function(jQuery, library, Log) {
+sap.ui.define([
+	"sap/ui/documentation/library",
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/isPlainObject"
+],function(library, Log, extend, isPlainObject) {
 	"use strict";
 
 	// function to compute the app objects for a demo object
@@ -10,7 +15,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 		// transform simple demo app link to a configuration object
 		var aLinks = [];
 		// transform link object to a bindable array of objects
-		if (jQuery.isPlainObject(oDemoAppMetadata.links)) {
+		if (isPlainObject(oDemoAppMetadata.links)) {
 			aLinks = Object.keys(oDemoAppMetadata.links).map(function (sKey) {
 				return {
 					name: sKey,
@@ -50,7 +55,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 	 * 	}
 	 *
 	 * Under path /demoApps the following properties can be found: lib, name, icon, desc, type, ref
-	 * Under path /demoApps by category the apps are structured by the entry "category" and grouped in batches
+	 * Under path /demoAppsByCategory the apps are structured by the entry "category" and grouped in batches
 	 * of 4 items so that they can be bound to the BlockLayoutRow control directly
 	 * @param {array} aLibs an array of the currently loaded UI5 libraries
 	 * @param {object} oDocIndicies an object of the currently loaded UI5 library docu metadata
@@ -150,7 +155,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 
 				// set model
 				var oModelData = oModel.getData();
-				oModel.setData(jQuery.extend(oModelData, createModelData(aLibs, oDocIndicies)));
+				oModel.setData(extend(oModelData, createModelData(aLibs, oDocIndicies)));
 			}
 
 			// load and process all lib info

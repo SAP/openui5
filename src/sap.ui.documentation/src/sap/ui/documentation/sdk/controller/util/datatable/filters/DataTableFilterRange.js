@@ -4,11 +4,9 @@
 
 sap.ui.define(
     [
-        "jquery.sap.global",
         'sap/ui/core/Control',
         './DataTableFilterRangeRenderer'
     ], function (
-        $,
         Control,
         DataTableFilterRangeRenderer
     ) {
@@ -42,8 +40,8 @@ sap.ui.define(
             oFrom = this.getAggregation("from");
             oTo = this.getAggregation("to");
 
-            [oFrom, oTo].forEach(function (oConrtol) {
-                oConrtol.attachLiveChange(function () {
+            [oFrom, oTo].forEach(function (oControl) {
+                oControl.attachLiveChange(function () {
                     oValue = {
                         from: oFrom.getValue(),
                         to: oTo.getValue()

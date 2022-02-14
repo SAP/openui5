@@ -5,10 +5,7 @@
 sap.ui.define([
 		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/Image",
 		"sap/m/Label",
@@ -21,9 +18,12 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/ui/core/library",
 		"sap/m/CustomListItem",
-		"sap/m/List"
-	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
-			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, ObjectStatus, Popover, library, coreLibrary, CustomListItem, List) {
+		"sap/m/List",
+		"sap/ui/dom/includeStylesheet",
+		"sap/ui/dom/includeScript"
+	], function (jQuery, BaseController, ToggleFullScreenHandler,
+			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, ObjectStatus, Popover,
+			library, coreLibrary, CustomListItem, List, includeStylesheet, includeScript) {
 		"use strict";
 
 		// shortcut for sap.m.FlexWrap
@@ -46,9 +46,8 @@ sap.ui.define([
 
 				if ( !window.hljs ) {
 					//solarized-light
-					jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css");
-					jQuery.sap.includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
-
+					includeStylesheet("resources/sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css");
+					includeScript({ url: "resources/sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" });
 				}
 			},
 

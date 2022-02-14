@@ -91,10 +91,9 @@ sap.ui.define([
 
 		_getRouteConfig: function(sRouteName) {
 			var oConfig = this._getSapUI5ConfigEntry(),
-				aRoutes = oConfig.routing.routes,
-				aRoute = jQuery.grep(aRoutes, function(oRoute){return oRoute.name === sRouteName; }),
-				oRoute = aRoute.length && aRoute[0];
-			return oRoute;
+				aRoutes = oConfig.routing.routes;
+
+			return aRoutes.find(function(oRoute){return oRoute.name === sRouteName; });
 		},
 
 		_getSapUI5ConfigEntry: function () {

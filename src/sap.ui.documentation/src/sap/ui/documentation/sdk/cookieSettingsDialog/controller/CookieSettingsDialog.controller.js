@@ -4,12 +4,11 @@
 
 sap.ui.define([
 		"sap/ui/core/mvc/Controller",
-		"sap/m/library",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/Fragment",
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/core/Core"
-	], function (Controller, mobileLibrary, JSONModel, Fragment, ResourceModel, Core) {
+	], function (Controller, JSONModel, Fragment, ResourceModel, Core) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.cookieSettingsDialog.controller.CookieSettingsDialog", {
