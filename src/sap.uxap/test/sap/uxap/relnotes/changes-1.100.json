@@ -1,0 +1,18 @@
+{
+  "1.100.0": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "6843eafce1489a7c97cfd23bd8ac14648a162a98",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ObjectPageState tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280011569"
+          }
+        ]
+      }
+    ]
+  }
+}
