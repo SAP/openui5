@@ -1,0 +1,91 @@
+/* ====================================== */
+/* CSS for control sap.ui.commons/Dialog  */
+/* Horizon High Contrast White theme      */
+/* ====================================== */
+
+@_sap_ui_commons_Dialog_FooterHeight: 36px;
+
+/* header */
+
+.sapUiDlg {
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiDlgHdr {
+	background-color: @sapUiGroupContentBackground;
+	margin:0;
+	padding: 6px 10px 0 10px;
+	color: @sapUiTextTitle;
+	border-width: 1px 1px 0px 1px;
+	border-color: @sapUiContentForegroundBorderColor;
+	border-style: solid;
+}
+
+.sapUiDlgHdrBtns > a {
+	color: @sapUiTextTitle;
+	background-color: @sapUiGroupContentBackground;
+	text-align: center;
+	border-width: 1px;
+	border-color: @sapUiContentForegroundBorderColor;
+	border-style: solid;
+	margin: 4px 1px 0 0;
+}
+
+.sapUiDlgCloseBtn {
+  background-image: url(img/formattedTextView/close-hcw.png);
+  background-position: center center;
+  background-repeat: no-repeat;
+  outline: none;
+}
+
+.sapUiDlgCloseBtn:hover,
+.sapUiDlgCloseBtn:focus {
+  background-image: url(img/formattedTextView/close-hcw-hover.png);
+}
+
+/* content */
+
+.sapUiDlgCont {
+	background-color: @sapUiGroupContentBackground;
+	border-width: 1px 1px 0px 1px;
+	border-color: @sapUiContentForegroundBorderColor;
+	border-style: solid;
+	top: 27px;
+}
+
+.sapUiDlgNoButtons .sapUiDlgCont {
+	padding-bottom: 8px;
+	bottom: 20px;
+}
+
+/* footer */
+
+.sapUiDlgFooter {
+	background-color: @sapUiGroupContentBackground;
+	border-width: 1px 1px 1px 1px;
+	border-color: @sapUiContentForegroundBorderColor;
+	border-style: solid;
+}
+
+.sapUiDlgNoButtons .sapUiDlgFooter {
+	background-position: left -16px;
+	height: 20px;
+}
+
+.sapUiDlgBtns {
+	background-color: @sapUiGroupContentBackground;  /* to cover the other background image with the lower line */
+	padding: 9px 25px 3px 16px;
+}
+
+.sapUiDlgNoButtons .sapUiDlgBtns,
+.sapUiDlgNoButtons .sapUiDlgWave {
+	display: none;
+}
+
+.sapUiDlgGrip{
+	color: @sapUiBaseText;
+	text-align: center;
+	padding: 3px;
+	height: 8px;
+	width: 4px;
+}

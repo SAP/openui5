@@ -1,0 +1,6 @@
+{
+  "sEntity": "Theme",
+  "sId": "sap_horizon_hcw",
+  "oExtends": "base",
+  "sVendor": "SAP"
+}
