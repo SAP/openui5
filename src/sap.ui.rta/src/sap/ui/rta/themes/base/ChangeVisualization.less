@@ -53,25 +53,19 @@
 	width: auto;
 	display: block;
 	position: absolute;
-	outline: 3px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark;
-	outline-offset: -3px;
-	box-shadow: @_sap_ui_rta_Overlay_BoxShadow;
+	box-shadow: inset 0 0 0 3px @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, @_sap_ui_rta_Overlay_BoxShadow;
+	background-color: fade(@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, 25%);
 	animation: fadeOut linear 1.5s;
 	animation-fill-mode: forwards;
 
 	@keyframes fadeOut {
-		0% {
-			outline: 3px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark;
-			outline-offset: -3px;
-		}
 		66%{
-			outline: 3px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark;
-			outline-offset: -3px;
+			box-shadow: inset 0 0 0 3px @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, @_sap_ui_rta_Overlay_BoxShadow;
+			background-color: fade(@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, 25%);
 		}
 		100% {
-			outline: 3px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorTransparent;
-			outline-offset: -3px;
 			box-shadow: none;
+			background-color: fade(@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorDark, 0%);
 		}
 	}
 }
