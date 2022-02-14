@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -28,7 +27,6 @@ sap.ui.define([
 	Control,
 	OverlayRegistry,
 	ElementUtil,
-	KeyCodes,
 	ChangesUtils,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
@@ -360,12 +358,12 @@ sap.ui.define([
 	ChangeVisualization.prototype._collectChanges = function() {
 		var oComponent = this._getComponent();
 		var mPropertyBag = {
-			oComponent: oComponent,
 			selector: oComponent,
 			invalidateCache: false,
 			// includeCtrlVariants: true,
 			currentLayer: Layer.CUSTOMER,
-			includeDirtyChanges: true
+			includeDirtyChanges: true,
+			onlyCurrentVariants: true
 		};
 		return PersistenceWriteAPI._getUIChanges(mPropertyBag);
 	};
