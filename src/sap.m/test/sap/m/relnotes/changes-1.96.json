@@ -883,5 +883,21 @@
         ]
       }
     ]
+  },
+  "1.96.5": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "2bf79e1187c325da4c2c1cbd019966c30cb37914",
+        "type": "FIX",
+        "text": " PDFViewer - Handle sourceValidation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240085710"
+          }
+        ]
+      }
+    ]
   }
 }
