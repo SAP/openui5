@@ -1162,5 +1162,95 @@
         ]
       }
     ]
+  },
+  "1.84.22": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "aab3acf0694f8d8396bd9682af7dd7dd8ef27f90",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: popover can now be reopened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180043591"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280025389"
+          }
+        ]
+      },
+      {
+        "id": "3ef42c082bc1e037bc62a383f575b1ef22781694",
+        "type": "FIX",
+        "text": " PDFViewer - Handle sourceValidation error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240085710"
+          }
+        ]
+      },
+      {
+        "id": "4dfd5a2d1c225d8f461218433faa354a20e42826",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: proper year set in grid cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000709492022"
+          }
+        ]
+      },
+      {
+        "id": "4d9830ca397e4daafed1f608c38a2fc4aad0ced7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      },
+      {
+        "id": "1ba601cac3ae7e62a2fd68ab5c0db63300c996f0",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "a0111ba9c592dfe0b59d0b6b141a12d72dbbb1db",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: initial icon alt property could be overridden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008606402021"
+          }
+        ]
+      },
+      {
+        "id": "fd8e65cab473925e31504eead861f4885279f537",
+        "type": "FIX",
+        "text": " sap.m.Input: Description when input is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170256848"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170290340"
+          }
+        ]
+      }
+    ]
   }
 }

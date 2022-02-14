@@ -545,5 +545,21 @@
         ]
       }
     ]
+  },
+  "1.84.22": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "4d9830ca397e4daafed1f608c38a2fc4aad0ced7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In nested carousels the inner carousel's active page content stays visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000276432022"
+          }
+        ]
+      }
+    ]
   }
 }

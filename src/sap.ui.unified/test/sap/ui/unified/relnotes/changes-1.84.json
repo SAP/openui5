@@ -337,5 +337,21 @@
         ]
       }
     ]
+  },
+  "1.84.22": {
+    "date": "February 2022",
+    "notes": [
+      {
+        "id": "8486644e1b22d455b145a5b5029a9455e44ef57e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: proper month names are shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009116052021"
+          }
+        ]
+      }
+    ]
   }
 }
