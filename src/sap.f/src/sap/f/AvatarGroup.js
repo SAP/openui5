@@ -289,6 +289,8 @@ sap.ui.define([
 		oItem._setAvatarColor(AvatarColor["Accent" + this._iCurrentAvatarColorNumber]);
 		oItem._setGroupType(this.getGroupType());
 
+		this.addAggregation("items", oItem);
+
 		this._iAvatarsToShow = this.getItems().length;
 
 		this._iCurrentAvatarColorNumber++;
@@ -296,7 +298,7 @@ sap.ui.define([
 			this._iCurrentAvatarColorNumber = 1;
 		}
 
-		return 	this.addAggregation("items", oItem);
+		return this;
 	};
 
 	AvatarGroup.prototype.setAvatarDisplaySize = function (sValue) {
