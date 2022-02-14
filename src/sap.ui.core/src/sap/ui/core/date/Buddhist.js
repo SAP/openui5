@@ -50,8 +50,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	/**
 	 * Find the matching Buddhist date for the given gregorian date
 	 *
-	 * @param {{year:int,month:int,day:int}} oGregorian Gregorian date
-	 * @return {{year:int,month:int,day:int}} the resulting Buddhist date
+	 * @param {{year: int, month: int, day: int}} oGregorian Gregorian date
+	 * @return {{year: int, month: int, day: int}} the resulting Buddhist date
 	 */
 	function toBuddhist(oGregorian) {
 		var iEraStartYear = UniversalDate.getEraStartDate(CalendarType.Buddhist, 0).year,
@@ -73,8 +73,8 @@ sap.ui.define(['./UniversalDate', '../CalendarType', './_Calendars'],
 	/**
 	 * Calculate gregorian year from Buddhist year and month
 	 *
-	 * @param {{year:int,month:int,day:int}} oBuddhist Buddhist date
-	 * @return {{year:int,month:int,day:int}} the resulting Gregorian date
+	 * @param {{year: int, month: int, day: int}} oBuddhist Buddhist date
+	 * @return {{year: int, month: int, day: int}} the resulting Gregorian date
 	 */
 	function toGregorian(oBuddhist) {
 		var iEraStartYear = UniversalDate.getEraStartDate(CalendarType.Buddhist, 0).year,
