@@ -253,7 +253,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 				return [];
 			}
 
-			return fetchPropertyHelper(oControl, oDelegate, CustomPropertyHelper, aResult[0], aResult[1]).then(function(PropertyHelper) {
+			return fetchPropertyHelperClass(oControl, oDelegate, CustomPropertyHelper).then(function(PropertyHelper) {
 				return aResult.concat(PropertyHelper);
 			});
 		}).then(function(aResult) {
@@ -264,25 +264,23 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 			var aProperties = aResult[0];
 			var mExtensions = aResult[1];
 			var PropertyHelper = aResult[2];
-			var bPropertyHelperIsInstance = !!PropertyHelper.isA;
 
-			oControl._oPropertyHelper = bPropertyHelperIsInstance ? PropertyHelper : new PropertyHelper(aProperties, mExtensions, oControl);
+			oControl._oPropertyHelper = new PropertyHelper(aProperties, mExtensions, oControl);
 			oControl._bPropertyHelperIsBeingInitialized = false;
 			oControl._fnResolveInitPropertyHelper(oControl._oPropertyHelper);
 		});
 	}
 
-	function fetchPropertyHelper(oControl, oDelegate, CustomPropertyHelper, aProperties, mExtensions) {
-		if (typeof oDelegate.fetchPropertyHelper === "function") {
-			return oDelegate.fetchPropertyHelper(oControl, aProperties, mExtensions).then(function(PropertyHelper) {
-				var sBaseClass = CustomPropertyHelper ? CustomPropertyHelper.getMetadata().getName() : "sap.ui.mdc.util.PropertyHelper";
+	function fetchPropertyHelperClass(oControl, oDelegate, CustomPropertyHelper) {
+		if (typeof oDelegate.getPropertyHelperClass === "function") {
+			var PropertyHelper = oDelegate.getPropertyHelperClass();
+			var sBaseClass = CustomPropertyHelper ? CustomPropertyHelper.getMetadata().getName() : "sap.ui.mdc.util.PropertyHelper";
 
-				if (!PropertyHelper || !PropertyHelper.getMetadata || !PropertyHelper.getMetadata().isA(sBaseClass)) {
-					throw new Error("The property helper must be a class or instance of type " + sBaseClass + " or a subclass of it.");
-				}
+			if (!PropertyHelper || !PropertyHelper.getMetadata || !PropertyHelper.getMetadata().isA(sBaseClass)) {
+				throw new Error("The property helper class must be " + sBaseClass + " or a subclass of it.");
+			}
 
-				return PropertyHelper;
-			});
+			return Promise.resolve(PropertyHelper);
 		}
 
 		if (CustomPropertyHelper) {
