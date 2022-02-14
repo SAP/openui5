@@ -1419,6 +1419,12 @@ sap.ui.define([
 		}
 
 		oModel.attachEvent("change", function () {
+			var oCardContent = this.getAggregation("_content");
+			if (oCardContent && !oCardContent.isA("sap.ui.integration.cards.BaseContent")) {
+				this.destroyAggregation("_content");
+				this._applyContentManifestSettings();
+			}
+
 			if (this._createContentPromise) {
 				this._createContentPromise.then(function (oContent) {
 					oContent.onDataChanged();
