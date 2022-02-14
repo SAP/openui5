@@ -1,0 +1,35 @@
+/* ======================================= */
+/* CSS for control sap.m/UploadCollection  */
+/* Horizon High Contrast White theme       */
+/* ======================================= */
+
+/*padding between buttons */
+.sapMBtn.sapMUCFirstButton {
+	padding-right: 0.5rem;
+}
+
+/*padding between buttons */
+.sapUiSizeCompact .sapMBtn.sapMUCFirstButton {
+	padding-right: 0.5rem;
+}
+
+/* Text: Description (Progress) */
+.sapMLabel.sapMUCProgress {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentLabelColor;
+}
+
+/*Drag && Drop*/
+.sapMUC .sapMUCDragDropOverlay.sapMUCDropIndicator:after {
+	background-color: transparent;
+}
+
+/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls
+/* ************************************************************************************* */
+.sapMUCItemIconInactive.sapUiIcon:focus,
+.sapMUCItemIcon.sapUiIcon:focus,
+.sapMUCItemImage:focus {
+	outline-width: 0.125rem;
+	outline-style: dotted;
+}
