@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/library",
+	"sap/ui/events/KeyCodes",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
 	"sap/ui/core/Core"
@@ -13,6 +14,7 @@ sap.ui.define([
 	jQuery,
 	Mobile,
 	coreLibrary,
+	KeyCodes,
 	RadioButtonGroup,
 	RadioButton,
 	Core
@@ -202,33 +204,36 @@ sap.ui.define([
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		// Test arrow pressing
-		qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_RIGHT);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
-		qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_DOWN);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
-		qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_LEFT);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
-		qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_UP);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
-		qutils.triggerKeyboardEvent("RBG1", "END");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.END);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
-		qutils.triggerKeyboardEvent("RBG1", "HOME");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.HOME);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
-		qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
+		qutils.triggerKeyboardEvent("RBG1", KeyCodes.ARROW_LEFT);
 		Core.applyChanges();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+
+		assert.strictEqual(oRBGroup.getDomRef().querySelectorAll(".sapMRb[tabindex='0']").length, 1, "only one button has tabindex='0'");
+		assert.strictEqual(oRBGroup.getDomRef().querySelectorAll(".sapMRb[tabindex='-1']").length, 3, "the other buttons have tabIndex='-1' set has tabindex='0'");
 
 		// cleanup
 		oRBGroup.destroyButtons();
