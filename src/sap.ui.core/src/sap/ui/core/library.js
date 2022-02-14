@@ -948,9 +948,11 @@ sap.ui.define([
 	/**
 	 * @classdesc Collision behavior: horizontal/vertical.
 	 *
-	 * Defines how the position of an element should be adjusted in case it overflows the window in some direction. For both
-	 * directions this can be "flip", "fit" or "none". If only one behavior is provided it is applied to both directions.
-	 * Examples: "flip", "fit none".
+	 * Defines how the position of an element should be adjusted in case it overflows the window in some direction.
+	 * For both directions this can be "flip", "fit", "flipfit" or "none".
+	 * If only one behavior is provided it is applied to both directions.
+	 *
+	 * Examples: "flip", "fit none", "flipfit fit"
 	 *
 	 * @final
 	 * @namespace
@@ -959,7 +961,7 @@ sap.ui.define([
 	 */
 	thisLib.Collision = DataType.createType('sap.ui.core.Collision', {
 			isValid : function(vValue) {
-				return /^((flip|fit|none)( (flip|fit|none))?)$/.test(vValue);
+				return /^((flip|fit|flipfit|none)( (flip|fit|flipfit|none))?)$/.test(vValue);
 			}
 		},
 		DataType.getType('string')

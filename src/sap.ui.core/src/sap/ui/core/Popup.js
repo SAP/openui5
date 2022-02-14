@@ -64,6 +64,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = library.OpenState;
 
+	// shortcut for sap.ui.core.Collision
+	var Collision = library.Collision;
+
 	var oStaticUIArea;
 
 	var vGlobalWithinArea;
@@ -765,7 +768,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Popup.Dock} [at=sap.ui.core.Popup.Dock.CenterCenter] the "of" element's reference point for docking to
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should dock to
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
-	 * @param {string} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the within area in some direction.
+	 * @param {sap.ui.core.Collision} [collision='flip'] defines how the position of an element should be adjusted in case it overflows the within area in some direction.
 	 * @param {string | sap.ui.core.Element | Element | Window} [within=Window] defines the area the popup should be placed in. This affects the collision detection.
 	 * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
 	 * @public
@@ -809,7 +812,7 @@ sap.ui.define([
 		assert(at === undefined || typeof at === "string", "at must be a string or empty");
 		assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
 		assert(!offset || typeof offset === "string", "offset must be empty or a string");
-		assert(!collision || typeof collision === "string", "collision must be empty or a string");
+		assert(!collision || Collision.isValid(collision), "collision must be empty or of type sap.ui.core.Collision");
 		assert(!within || within === window || typeof within === "string" || within instanceof Element || within instanceof HTMLElement, "within must be either empty, or the global window object, or a string, or a sap.ui.core.Element, or a DOM element");
 		assert(!followOf || typeof followOf === "boolean" || typeof followOf === "function" || followOf === Popup.CLOSE_ON_SCROLL, "followOf must be either empty or a boolean");
 
@@ -1598,7 +1601,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Popup.Dock | {left: sap.ui.core.CSSSize, top: sap.ui.core.CSSSize}} at specifies the point of the reference element to which the given Content should be aligned
 	 * @param {string | sap.ui.core.Element | Element | jQuery | jQuery.Event} [of=document] specifies the reference element to which the given content should be aligned as specified in the other parameters
 	 * @param {string} [offset='0 0'] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
-	 * @param {string} [collision] defines how the position of an element should be adjusted in case it overflows the within area in some direction. The valid values that refer to jQuery-UI's position parameters are "flip", "fit" and "none".
+	 * @param {sap.ui.core.Collision} [collision] defines how the position of an element should be adjusted in case it overflows the within area in some direction.
 	 * @param {string | sap.ui.core.Element | Element | Window} [within=Window] defines the area the popup should be placed in. This affects the collision detection.
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
@@ -1608,7 +1611,7 @@ sap.ui.define([
 		assert(typeof at === "string" || (typeof at === "object" && (typeof at.left === "number") && (typeof at.top === "number")), "my must be a string or an object with 'left' and 'top' properties");
 		assert(!of || typeof of === "object" || typeof of === "function", "of must be empty or an object");
 		assert(!offset || typeof offset === "string", "offset must be empty or a string");
-		assert(!collision || typeof collision === "string", "collision must be empty or a string");
+		assert(!collision || Collision.isValid(collision), "collision must be empty or of type sap.ui.core.Collision");
 		assert(!within || within === window || typeof within === "string" || within instanceof Element || within instanceof HTMLElement, "within must be either empty, or the global window object, or a string, or a sap.ui.core.Element, or a DOM element");
 
 		this._oPosition = this._createPosition(my, at, of, offset, collision, within);
