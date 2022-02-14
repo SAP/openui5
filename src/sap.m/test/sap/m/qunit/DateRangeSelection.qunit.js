@@ -1212,7 +1212,7 @@ sap.ui.define([
 
 	QUnit.test("Binded value is not accepted if it's not from the correct type", function(assert) {
 		//prepare
-		var oModel = new sap.ui.model.json.JSONModel([
+		var oModel = new JSONModel([
 			{ value: "02.02.2019-03.03.2019" }
 		]),
 			oDSR4 = new DateRangeSelection({
@@ -1237,7 +1237,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Binded value is not parsed when its value is empty string", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel([
+		var oModel = new JSONModel([
 				{ value: "02.02.2019-03.03.2019" }
 			]),
 			oDSR4 = new DateRangeSelection({

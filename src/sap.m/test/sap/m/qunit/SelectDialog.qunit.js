@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		SelectDialog,
@@ -36,7 +37,8 @@ sap.ui.define([
 		Fragment,
 		InvisibleText,
 		XMLView,
-		mobileLibrary
+		mobileLibrary,
+		jQuery
 	) {
 		"use strict";
 

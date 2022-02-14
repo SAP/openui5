@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/LightBox",
 	"sap/m/library",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/extend"
 ], function(
 	oCore,
 	coreLibrary,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Avatar,
 	LightBox,
 	library,
-	Log
+	Log,
+	extend
 ) {
 	"use strict";
 
@@ -41,7 +43,7 @@ sap.ui.define([
 		sId = sId || sControlId;
 
 		if (oProps) {
-			jQuery.extend(oAvatarProps, oProps);
+			extend(oAvatarProps, oProps);
 		}
 
 		return new Avatar(sId, oAvatarProps);

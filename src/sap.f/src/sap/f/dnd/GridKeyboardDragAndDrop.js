@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -27,7 +27,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 			 * @param {object} mConfig Custom styles of the drop indicator.
 			 * @protected
 			 */
-			setIndicatorConfig: jQuery.noop,
+			setIndicatorConfig: function() {},
 
 			/**
 			 * Returns the dragged control, if available within the same UI5 application frame.

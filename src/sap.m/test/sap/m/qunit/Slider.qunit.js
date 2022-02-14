@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/dom/includeStylesheet",
+	"sap/ui/thirdparty/jquery",
 	"require"
 ], function(
 	Core,
@@ -34,6 +35,7 @@ sap.ui.define([
 	KeyCodes,
 	InvisibleText,
 	includeStylesheet,
+	jQuery,
 	require
 ) {
 	"use strict";

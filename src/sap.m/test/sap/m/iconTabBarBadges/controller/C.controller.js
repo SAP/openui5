@@ -6,7 +6,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.m.iconTabBarBadges.controller.C", {
 		onToggleCompact: function () {
-			jQuery(document.body).toggleClass("sapUiSizeCompact");
+			document.body.classList.toggle("sapUiSizeCompact");
 		},
 		addToVisible: function() {
 			var oFilter = this.getView().byId("item3");

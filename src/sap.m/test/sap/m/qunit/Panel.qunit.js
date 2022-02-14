@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/Title",
 	"sap/m/OverflowToolbar",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Panel,
 	Text,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Device,
 	Title,
 	OverflowToolbar,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

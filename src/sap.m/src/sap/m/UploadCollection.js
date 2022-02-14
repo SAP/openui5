@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/m/UploadCollectionParameter",
 	"sap/m/UploadCollectionToolbarPlaceholder",
 	"sap/ui/core/HTML",
-	"sap/m/CustomListItem",
+    "sap/ui/core/InvisibleText",
+    "sap/m/CustomListItem",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"./UploadCollectionRenderer",
@@ -60,6 +61,7 @@ sap.ui.define([
 	UploadCollectionParameter,
 	UploadCollectionToolbarPlaceholder,
 	HTML,
+	InvisibleText,
 	CustomListItem,
 	ResizeHandler,
 	Device,
@@ -669,7 +671,7 @@ sap.ui.define([
 		this._oListEventDelegate = null;
 		this._oItemToUpdate = null;
 		this._sReziseHandlerId = null;
-		this.oInvisibleText = new sap.ui.core.InvisibleText().toStatic();
+		this.oInvisibleText = new InvisibleText().toStatic();
 	};
 
 	/* =========================================================== */

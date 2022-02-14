@@ -2,10 +2,15 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Image",
-	"sap/m/CarouselArrowsPlacement",
-	"sap/m/PlacementType"
-], function (Controller, JSONModel, Image, CarouselArrowsPlacement, PlacementType) {
+	"sap/m/library"
+], function (Controller, JSONModel, Image, mobileLibrary) {
 	"use strict";
+
+	// shortcut for sap.m.CarouselArrowsPlacement
+	var CarouselArrowsPlacement = mobileLibrary.CarouselArrowsPlacement;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
 
 	return Controller.extend("sap.m.sample.CarouselWithDisplayOptions.C", {
 

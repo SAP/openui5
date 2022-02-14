@@ -3,14 +3,19 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/IconPool",
 	"sap/m/Dialog",
-	"sap/m/DialogType",
 	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/Text"
-], function (Controller, JSONModel, IconPool, Dialog, DialogType, Button, ButtonType, List, StandardListItem, Text) {
+], function (Controller, JSONModel, IconPool, Dialog, Button, mobileLibrary, List, StandardListItem, Text) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.m.DialogType
+	var DialogType = mobileLibrary.DialogType;
 
 	return Controller.extend("sap.m.sample.Dialog.C", {
 

@@ -6,14 +6,16 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	elementDesigntimeTest,
 	elementActionTest,
 	JSONModel,
 	CustomData,
 	sinon,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

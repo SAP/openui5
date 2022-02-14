@@ -69,7 +69,7 @@ sap.ui.define([
 			});
 		}
 	});
-	var assertions = new sap.ui.test.Opa5({
+	var assertions = new Opa5({
 		iShouldCheckThatNextButtonOnHoursViewIsPressed: function () {
 			return this.waitFor({
 				controlType: "sap.m.PlanningCalendar",

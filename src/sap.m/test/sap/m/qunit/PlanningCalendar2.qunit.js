@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/m/ObjectListItem",
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
+	"sap/m/Text",
 	"sap/m/Title",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/CustomData",
@@ -61,6 +62,7 @@ sap.ui.define([
 	ObjectListItem,
 	PlanningCalendarRow,
 	PlanningCalendar,
+	Text,
 	Title,
 	LocaleData,
 	CustomData,
@@ -2062,7 +2064,7 @@ sap.ui.define([
 				endDate: new Date(2015, 0, 2, 10, 0),
 				title: "3",
 				customContent: [
-					new sap.m.Text({
+					new Text({
 						text: "Custom text"
 					})
 				]

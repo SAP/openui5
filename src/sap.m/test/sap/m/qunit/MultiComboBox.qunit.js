@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
 	"sap/ui/core/Item",
-	"sap/ui/core/TextDirection",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
@@ -36,7 +35,6 @@ sap.ui.define([
 	createAndAppendDiv,
 	MultiComboBox,
 	Item,
-	TextDirection,
 	JSONModel,
 	ComboBoxBaseRenderer,
 	Device,
@@ -68,6 +66,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;

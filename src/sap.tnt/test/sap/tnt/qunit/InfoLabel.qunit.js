@@ -5,14 +5,23 @@ sap.ui.define([
 	'sap/tnt/InfoLabel',
 	'sap/tnt/library',
 	"sap/ui/core/Core",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/ui/core/library"
 ], function(
 	log,
 	InfoLabel,
 	tntLibrary,
 	Core,
-	IconPool) {
+	IconPool,
+	coreLibrary) {
 	'use strict';
+
+	// shortcut for sap.tnt.RenderMode
+	var RenderMode = tntLibrary.RenderMode;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
 
 	QUnit.module("Properties", {
 		beforeEach: function () {
@@ -27,11 +36,11 @@ sap.ui.define([
 
 	QUnit.test("Default Values", function (assert) {
 		assert.strictEqual(this.InfoLabel.getText(), "", "text should be \" \" ");
-		assert.strictEqual(this.InfoLabel.getRenderMode(), "Loose", "renderMode should be \"Loose\"");
+		assert.strictEqual(this.InfoLabel.getRenderMode(), RenderMode.Loose, "renderMode should be \"Loose\"");
 		assert.strictEqual(this.InfoLabel.getColorScheme(), 7, "colorScheme should be 7");
 		assert.strictEqual(this.InfoLabel.getWidth(), "", "width should be null");
 		assert.strictEqual(this.InfoLabel.getDisplayOnly(), false, "displayOnly should be false");
-		assert.strictEqual(this.InfoLabel.getTextDirection(), "Inherit", "textDirection should be Inherit");
+		assert.strictEqual(this.InfoLabel.getTextDirection(), TextDirection.Inherit, "textDirection should be Inherit");
 		assert.strictEqual(this.InfoLabel.getIcon(), "", "icon should not be set");
 	});
 
@@ -49,7 +58,7 @@ sap.ui.define([
 	QUnit.test("checking Narrow renderMode", function (assert) {
 		assert.notOk(this.InfoLabel.$().hasClass("sapTntInfoLabelRenderModeNarrow"), "should not have style class \"sapTntInfoLabelRenderModeNarrow\" ");
 
-		this.InfoLabel.setRenderMode(tntLibrary.RenderMode.Narrow);
+		this.InfoLabel.setRenderMode(RenderMode.Narrow);
 		Core.applyChanges();
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelRenderModeNarrow"), "should have style class \"sapTntInfoLabelRenderModeNarrow\" ");
 
@@ -78,9 +87,9 @@ sap.ui.define([
 	QUnit.test("testing textDirection", function (assert) {
 		assert.strictEqual(this.InfoLabel.getTextDirection(), "Inherit", "InfoLabel text initially should have text direction \"Inherit\"");
 
-		this.InfoLabel.setTextDirection(sap.ui.core.TextDirection.RTL);
+		this.InfoLabel.setTextDirection(TextDirection.RTL);
 		Core.applyChanges();
-		assert.strictEqual(this.InfoLabel.getTextDirection(), "RTL", "InfoLabel should have textDirection \"RTL\"");
+		assert.strictEqual(this.InfoLabel.getTextDirection(), TextDirection.RTL, "InfoLabel should have textDirection \"RTL\"");
 		assert.strictEqual(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0]).attr("dir"), "rtl", "InfoLabel \"dir\" attribute should be \"rtl\"");
 	});
 
@@ -102,11 +111,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("changing renderMode property", function (assert) {
-		assert.strictEqual(this.InfoLabel.getRenderMode(), tntLibrary.RenderMode.Loose, "Initially renderMode is set to sap.tnt.RenderMode.Loose (\"Loose\") ");
+		assert.strictEqual(this.InfoLabel.getRenderMode(), RenderMode.Loose, "Initially renderMode is set to sap.tnt.RenderMode.Loose (\"Loose\") ");
 
-		this.InfoLabel.setRenderMode(tntLibrary.RenderMode.Narrow);
+		this.InfoLabel.setRenderMode(RenderMode.Narrow);
 		this.InfoLabel.setText("3,14");
-		assert.strictEqual(this.InfoLabel.getRenderMode(), tntLibrary.RenderMode.Narrow, "renderMode is set to sap.tnt.RenderMode.Narrow (\"Narrow\") ");
+		assert.strictEqual(this.InfoLabel.getRenderMode(), RenderMode.Narrow, "renderMode is set to sap.tnt.RenderMode.Narrow (\"Narrow\") ");
 	});
 
 	QUnit.test("changing colorScheme property", function (assert) {

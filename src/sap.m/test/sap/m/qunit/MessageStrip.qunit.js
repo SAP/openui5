@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/qunit/QUnitUtils"
-], function(KeyCodes, MessageStrip, Link, FormattedText, Core, Device, JSONModel, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/thirdparty/jquery"
+], function(KeyCodes, MessageStrip, Link, FormattedText, Core, Device, JSONModel, qutils, jQuery) {
 	"use strict";
 
 

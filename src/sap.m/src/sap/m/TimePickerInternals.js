@@ -429,7 +429,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerInternals.prototype._getTimeSeparators = function (sDisplayFormat) {
-			var aFormatParts = sap.ui.core.format.DateFormat.getInstance({ pattern: sDisplayFormat }).aFormatArray,
+			var aFormatParts = DateFormat.getInstance({ pattern: sDisplayFormat }).aFormatArray,
 				aSeparators = [],
 				bPreviousWasEntity,
 				iIndex;

@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/library",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/library"
 ], function(
 	library,
 	IconTabBarDragAndDropUtil,
@@ -19,8 +18,7 @@ sap.ui.define([
 	Control,
 	ItemNavigation,
 	Parameters,
-	coreLibrary,
-	jQuery
+	coreLibrary
 ) {
 	"use strict";
 

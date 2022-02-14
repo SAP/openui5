@@ -34,7 +34,7 @@ sap.ui.define([
 			},
 			createContent: function(oEvent) {
 				return XMLView.create({
-					definition: jQuery('#marginQUnitView').html()
+					definition: document.getElementById("marginQUnitView").textContent
 				});
 			}
 		});

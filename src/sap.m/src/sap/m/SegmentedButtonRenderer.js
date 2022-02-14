@@ -82,7 +82,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/c
 				if (oButtonIcon) {
 					oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
 
-					if (oImage instanceof sap.m.Image) {
+					if (oImage && oImage.isA("sap.m.Image")) {
 						oControl._overwriteImageOnload(oImage);
 					}
 				}

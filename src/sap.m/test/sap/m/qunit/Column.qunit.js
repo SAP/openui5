@@ -1,8 +1,9 @@
-/*global QUnit, jQuery, sinon */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Table",
 	"sap/ui/Device",
+	"sap/m/Button",
 	"sap/m/Column",
 	"sap/m/library",
 	"sap/m/Page",
@@ -11,8 +12,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/Item"
-], function(Core, Table, Device, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item) {
+	"sap/m/table/columnmenu/Item",
+	"sap/ui/thirdparty/jquery"
+], function(Core, Table, Device, Button, Column, library, Page, ColumnListItem, Text, Label, ColumnMenu, QuickAction, Item, jQuery) {
 	"use strict";
 
 
@@ -637,8 +639,8 @@ sap.ui.define([
 	QUnit.module("Column Menu Header", {
 		beforeEach: function () {
 			this.oMenu = new ColumnMenu({
-				quickActions: [new QuickAction({label: "Quick Action A", content: new sap.m.Button({text: "Execute"})})],
-				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new sap.m.Button({text: "Execute"})})]
+				quickActions: [new QuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})],
+				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new Button({text: "Execute"})})]
 			});
 			this.sut = new Column({
 				hAlign: "Center",

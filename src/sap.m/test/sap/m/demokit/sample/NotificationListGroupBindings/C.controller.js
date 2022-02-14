@@ -1,10 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Priority",
 	"sap/m/MessageToast"
-], function (Controller, JSONModel, Priority, MessageToast) {
+], function (Controller, coreLibrary, JSONModel, MessageToast) {
 	"use strict";
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	return Controller.extend("sap.m.sample.NotificationListGroupBindings.C", {
 

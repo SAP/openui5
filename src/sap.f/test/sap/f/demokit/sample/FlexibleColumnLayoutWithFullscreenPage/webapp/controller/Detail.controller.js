@@ -4,9 +4,13 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	'sap/ui/model/Sorter',
-	'sap/m/MessageBox'
-], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox) {
+	'sap/m/MessageBox',
+	'sap/f/library'
+], function (JSONModel, Controller, Filter, FilterOperator, Sorter, MessageBox, fioriLibrary) {
 	"use strict";
+
+	// shortcut for sap.f.LayoutType
+	var LayoutType = fioriLibrary.LayoutType;
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithFullscreenPage.controller.Detail", {
 		onInit: function () {
@@ -21,7 +25,7 @@ sap.ui.define([
 			var productPath = oEvent.getSource().getSelectedItem().getBindingContext("products").getPath(),
 				product = productPath.split("/").slice(-1).pop();
 
-			this.oRouter.navTo("detailDetail", {layout: sap.f.LayoutType.TwoColumnsMidExpanded, category: this._category, product: product});
+			this.oRouter.navTo("detailDetail", {layout: LayoutType.TwoColumnsMidExpanded, category: this._category, product: product});
 		},
 		onSearch: function (oEvent) {
 			var oTableSearchState = [],

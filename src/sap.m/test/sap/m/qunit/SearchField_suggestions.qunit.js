@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	qutils,
 	createAndAppendDiv,

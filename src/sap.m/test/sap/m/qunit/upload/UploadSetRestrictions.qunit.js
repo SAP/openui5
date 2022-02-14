@@ -1,6 +1,5 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/m/upload/UploadSet",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/Toolbar",
@@ -10,9 +9,9 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"test-resources/sap/m/qunit/upload/UploadSetTestUtils",
+	"./UploadSetTestUtils",
 	"sap/ui/core/Core"
-], function (jQuery, UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device,
+], function (UploadSet, UploadSetItem, Toolbar, Label, UploadSetRenderer, ListItemBaseRenderer, Dialog, Device,
 			 JSONModel, TestUtils, oCore) {
 	"use strict";
 

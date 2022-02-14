@@ -5,6 +5,7 @@ sap.ui.define([
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/m/Button',
+	'sap/m/library',
 	'sap/m/OverflowToolbarLayoutData',
 	'sap/m/ToolbarSpacer',
 	'sap/tnt/ToolHeader',
@@ -16,6 +17,7 @@ sap.ui.define([
 	App,
 	Page,
 	Button,
+	mobileLibrary,
 	OverflowToolbarLayoutData,
 	ToolbarSpacer,
 	ToolHeader,
@@ -26,6 +28,12 @@ sap.ui.define([
 
 	'use strict';
 
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
 	jQuery("#qunit-fixture").width('300px');
 
 	function getToolHeader() {
@@ -33,29 +41,49 @@ sap.ui.define([
 			content: [
 				new Button({
 					icon: 'sap-icon://menu2',
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				}),
 				new ToolbarSpacer({
 					width: '20px'
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "File",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority.Low
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: ButtonType.Transparent,
+					text: "Edit",
+					press: function () {
+
+					},
+					layoutData: new OverflowToolbarLayoutData({
+						priority: OverflowToolbarPriority.Low
+					})
+				}),
+				new Button({
+					type: ButtonType.Transparent,
 					text: "Edit",
 					press: function () {
 
@@ -65,110 +93,99 @@ sap.ui.define([
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "Edit",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority
+.Low
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "Edit",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority
+.Low
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "Edit",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority
+.Low
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "Edit",
-					press: function () {
-
-					},
-					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new Button({
-					type: sap.m.ButtonType.Transparent,
-					text: "Edit",
-					press: function () {
-
-					},
-					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
-					})
-				}),
-				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "View",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority
+.Low
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "Navigate",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority
+.Low
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "Code",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.Low
+						priority: OverflowToolbarPriority
+.Low
 					})
 				}),
 				new ToolHeaderUtilitySeparator({}),
 				new ToolbarSpacer({
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						priority: OverflowToolbarPriority
+.NeverOverflow,
 						minWidth: "20px"
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					text: "User Name",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						priority: OverflowToolbarPriority
+.NeverOverflow
 					})
 				}),
 				new Button({
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					icon: "sap-icon://log",
 					press: function () {
 
 					},
 					layoutData: new OverflowToolbarLayoutData({
-						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						priority: OverflowToolbarPriority
+.NeverOverflow
 					})
 				})
 			]

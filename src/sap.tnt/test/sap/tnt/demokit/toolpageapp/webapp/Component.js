@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"./model/models",
 	"sap/ui/core/routing/History",
+	"sap/ui/Device",
 	"sap/ui/model/resource/ResourceModel"
-], function(library, UIComponent, models, History) {
+], function(library, UIComponent, models, History, Device) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {
@@ -36,7 +37,7 @@ sap.ui.define([
 
 		getContentDensityClass: function () {
 			if (!this._sContentDensityClass) {
-				if (!sap.ui.Device.support.touch){
+				if (!Device.support.touch){
 					this._sContentDensityClass = "sapUiSizeCompact";
 				} else {
 					this._sContentDensityClass = "sapUiSizeCozy";

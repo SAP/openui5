@@ -4,9 +4,8 @@ sap.ui.define([
 	"sap/m/TimePickerSlider",
 	"sap/m/TimePickerSliders",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, jQuery, oCore) {
+], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, oCore) {
 	"use strict";
 
 	QUnit.module("API", {

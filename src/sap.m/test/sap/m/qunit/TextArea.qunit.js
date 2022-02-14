@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/InputBase",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	qutils,
 	createAndAppendDiv,

@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"./Utils"
-], function(Controller, JSONModel, Utils) {
+	"./Utils",
+	"sap/ui/thirdparty/jquery"
+], function(Controller, JSONModel, Utils, jQuery) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.TableDnD.Controller", {

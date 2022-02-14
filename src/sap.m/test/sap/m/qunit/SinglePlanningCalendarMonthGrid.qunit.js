@@ -393,12 +393,12 @@ sap.ui.define([
 					]
 				}),
 				oFakeEvent = {
-					target: jQuery("<div></div>").attr({
-						"class": "sapMSPCMonthDay"
-					}).get(0),
+					target: document.createElement("div"),
 					srcControl: oGrid
 				},
 				fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
+
+			oFakeEvent.target.className = "sapMSPCMonthDay";
 
 			//act
 			oGrid._fireSelectionEvent(oFakeEvent);

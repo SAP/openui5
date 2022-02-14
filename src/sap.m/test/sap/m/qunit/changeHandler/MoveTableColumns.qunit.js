@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepExtend"
 ], function(
 	MoveTableColumnsChangeHandler,
 	Change,
@@ -20,7 +21,8 @@ sap.ui.define([
 	JSONModel,
 	qutils,
 	createAndAppendDiv,
-	oCore
+	oCore,
+	deepExtend
 ) {
 	'use strict';
 	createAndAppendDiv("content");
@@ -49,7 +51,7 @@ sap.ui.define([
 	].join('');
 
 	function createChangeDefinition(mDefinition) {
-		return jQuery.extend(true, {}, {
+		return deepExtend({}, {
 				"changeType" : "moveTableColumns",
 				"selector": {
 					"id": "key"

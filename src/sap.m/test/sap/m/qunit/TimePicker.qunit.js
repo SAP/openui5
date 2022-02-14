@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
 ], function(
 	qutils,
 	createAndAppendDiv,

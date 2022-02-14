@@ -11,8 +11,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
 	'./CheckBoxRenderer',
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes",
+	'sap/ui/events/KeyCodes',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin'
 ],
@@ -24,7 +23,6 @@ sap.ui.define([
 		EnabledPropagator,
 		coreLibrary,
 		CheckBoxRenderer,
-		jQuery,
 		KeyCodes,
 		LabelEnablement,
 		MessageMixin

@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/strings/capitalize",
 	"sap/m/p13n/AbstractContainerItem",
@@ -22,6 +23,7 @@ sap.ui.define([
 	library,
 	Control,
 	Core,
+	coreLibrary,
 	jQuery,
 	capitalize,
 	AbstractContainerItem,
@@ -29,6 +31,9 @@ sap.ui.define([
 	MenuRenderer
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var HasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * Constructor for a new Menu.
@@ -71,7 +76,7 @@ sap.ui.define([
 	});
 
 	var DEFAULT_KEY = "$default";
-	var ARIA_POPUP_TYPE = sap.ui.core.aria.HasPopup.Dialog;
+	var ARIA_POPUP_TYPE = HasPopup.Dialog;
 
 	Menu.prototype.applySettings = function (mSettings) {
 		// Only works in JS views, but that's fine. This is only convenience for controls.

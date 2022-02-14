@@ -5,7 +5,9 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
 	"sap/f/DynamicPageAccessibleLandmarkInfo",
+	"sap/f/library",
 	"sap/f/semantic/DiscussInJamAction",
+	"sap/f/semantic/MessagesIndicator",
 	"sap/f/semantic/ShareInJamAction",
 	"sap/f/semantic/PrintAction",
 	"sap/ui/core/InvisibleText",
@@ -18,7 +20,9 @@ function (
 	ResourceModel,
 	Core,
 	DynamicPageAccessibleLandmarkInfo,
+	fioriLibrary,
 	DiscussInJamAction,
+	MessagesIndicator,
 	ShareInJamAction,
 	PrintAction,
 	InvisibleText,
@@ -28,6 +32,9 @@ function (
 	"use strict";
 
 	sinon.config.useFakeTimers = false;
+
+	// shortcut for sap.f.DynamicPageTitleArea
+	var DynamicPageTitleArea = fioriLibrary.DynamicPageTitleArea;
 
 	var oFactory = SemanticUtil.oFactory,
 		oUtil = SemanticUtil.oUtil,
@@ -178,8 +185,8 @@ function (
 	});
 
 	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", function (assert) {
-		var sBeginArea = sap.f.DynamicPageTitleArea.Begin,
-			sMiddleArea = sap.f.DynamicPageTitleArea.Middle;
+		var sBeginArea = DynamicPageTitleArea.Begin,
+			sMiddleArea = DynamicPageTitleArea.Middle;
 
 		// Assert default
 		assert.strictEqual(this.oSemanticPage.getTitlePrimaryArea(), sBeginArea,
@@ -980,7 +987,7 @@ function (
 	});
 
 	QUnit.test("MessagesIndicator aria-labelledby is correct", function (assert) {
-		var oMessagesIndicator = new sap.f.semantic.MessagesIndicator(),
+		var oMessagesIndicator = new MessagesIndicator(),
 			sAriaLabelledBy = oMessagesIndicator._getControl().getAriaLabelledBy()[0],
 			sTextId = InvisibleText.getStaticId("sap.f", "SEMANTIC_CONTROL_MESSAGES_INDICATOR");
 

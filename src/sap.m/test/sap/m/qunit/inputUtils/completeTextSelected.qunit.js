@@ -2,7 +2,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/library",
-	"sap/m/inputUtils/completeTextSelected"
+	"sap/m/inputUtils/completeTextSelected",
+	"sap/ui/dom/jquery/selectText" // provides jQuery.fn.selectText
 ], function (
 	jQuery,
 	mobileLibrary,

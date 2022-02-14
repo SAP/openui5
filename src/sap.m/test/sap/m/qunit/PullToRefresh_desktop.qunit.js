@@ -83,12 +83,6 @@ sap.ui.define([
 		oApp.placeAt("content");
 
 
-		jQuery(document).ready(function() {
-
-		});
-
-
-
 		// TEST functions
 
 		QUnit.module("Properties");

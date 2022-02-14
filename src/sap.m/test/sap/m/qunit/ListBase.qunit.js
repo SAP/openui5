@@ -2700,7 +2700,7 @@ sap.ui.define([
 			oList.setMode("SingleSelect");
 			assert.strictEqual(oList.getAccessibilityStates(), oBundle.getText("LIST_SELECTABLE") + " . ", "Punctuation added to mode None");
 
-			var oSorter = new sap.ui.model.Sorter("items", false, function(oContext){
+			var oSorter = new Sorter("items", false, function(oContext){
 				return oContext.getProperty("items"); // group by first letter of Name
 			});
 

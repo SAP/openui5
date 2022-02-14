@@ -1,10 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Priority",
+	"sap/ui/core/library",
 	"sap/m/NotificationListItem",
 	"sap/m/MessageToast"
-], function (Controller, Priority, NotificationListItem, MessageToast) {
+], function (Controller, coreLibrary, NotificationListItem, MessageToast) {
 	"use strict";
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	return Controller.extend("sap.m.sample.NotificationListGroupLazyLoading.C", {
 

@@ -598,7 +598,7 @@ sap.ui.define([
 
 		// on the next animation frame _needsUpdate will automatically become false,
 		// so make sure that it doesn't happen during our test
-		this.stub(Mobify.UI.Utils, "requestAnimationFrame").callsFake(jQuery.noop);
+		this.stub(Mobify.UI.Utils, "requestAnimationFrame");
 
 		oCarousel.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -1617,15 +1617,15 @@ sap.ui.define([
 				width: '50%'
 			});
 
-			var text1 = new sap.m.Text({
+			var text1 = new Text({
 				id: "text1",
 				text: 'text1'
 			});
-			var text2 = new sap.m.Text({
+			var text2 = new Text({
 				id: "text2",
 				text: 'text2'
 			});
-			var text3 = new sap.m.Text({
+			var text3 = new Text({
 				id: "text3",
 				text: 'text3'
 			});

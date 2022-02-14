@@ -11,8 +11,9 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/includeStylesheet',
+	'sap/ui/thirdparty/jquery',
 	'require'
-], function(qutils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, require) {
+], function(qutils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");

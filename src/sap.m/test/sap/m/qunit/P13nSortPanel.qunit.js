@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/P13nItem",
 	"sap/m/P13nSortItem",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepExtend"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -14,7 +15,8 @@ sap.ui.define([
 	JSONModel,
 	P13nItem,
 	P13nSortItem,
-	oCore
+	oCore,
+	deepExtend
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 	};
 
 	var bindSortPanel = function(oP13nSortPanel) {
-		var oModel = new JSONModel(jQuery.extend(true, {}, gData));
+		var oModel = new JSONModel(deepExtend({}, gData));
 
 		oP13nSortPanel.setModel(oModel);
 		oP13nSortPanel.bindItems("/items", new P13nItem({
@@ -193,7 +195,7 @@ sap.ui.define([
 		// system under test
 		var oP13nSortPanel = new P13nSortPanel();
 
-		var oModel = new JSONModel(jQuery.extend(true, {}, gData));
+		var oModel = new JSONModel(deepExtend({}, gData));
 		oP13nSortPanel.setModel(oModel, "myModel");
 		oP13nSortPanel.bindItems("myModel>/items", new P13nItem({
 			columnKey: "{myModel>key}",

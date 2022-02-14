@@ -27,7 +27,7 @@ sap.ui.define([
 		 * Called when the app is started.
 		 */
 		onInit: function () {
-			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
+			this._setToggleButtonTooltip(!Device.system.desktop);
 
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());

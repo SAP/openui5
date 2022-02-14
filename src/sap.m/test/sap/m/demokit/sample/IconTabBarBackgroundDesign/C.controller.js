@@ -2,10 +2,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
-	"sap/m/BackgroundDesign",
-	"sap/m/sample/IconTabBarBackgroundDesign/model/formatter"
-], function (Controller, JSONModel, Filter, BackgroundDesign, formatter) {
+	"sap/m/library",
+	"./model/formatter"
+], function (Controller, JSONModel, Filter, mobileLibrary, formatter) {
 	"use strict";
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = mobileLibrary.BackgroundDesign;
 
 	return Controller.extend("sap.m.sample.IconTabBarBackgroundDesign.C", {
 		formatter: formatter,

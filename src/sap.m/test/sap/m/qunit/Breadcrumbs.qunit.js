@@ -7,11 +7,12 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Text",
 	"sap/m/library",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ],
-function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore) {
+function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery) {
 	"use strict";
-	var core, oFactory, helpers, $ = jQuery;
+	var core, oFactory, helpers;
 
 
 
@@ -50,11 +51,6 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 	};
 
 	helpers = {
-		verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
-			oItemToStartWith.$().trigger("focus");
-			qutils.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
-			assert.ok(oExpectedItemToBeFocused.jQuery().is(':focus'), sMessage);
-		},
 		waitForUIUpdates: function (){
 			core.applyChanges();
 		},
@@ -65,10 +61,6 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 			oSapUiObject.placeAt("qunit-fixture");
 			core.applyChanges();
 			return oSapUiObject;
-		},
-		objectIsInTheDom: function (sSelector) {
-			var $object = $(sSelector);
-			return $object.length > 0;
 		},
 		controlIsInTheDom: function (oControl){
 			return !!oControl.getDomRef();
@@ -167,7 +159,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 
 		helpers.renderObject(oBreadcrumbsControl);
 
-		assert.ok(helpers.objectIsInTheDom(oSecondLink), "Initially the link is visible and it's in the dom");
+		assert.ok(helpers.controlIsInTheDom(oSecondLink), "Initially the link is visible and it's in the dom");
 		assert.strictEqual(helpers.countChildren(oBreadcrumbsControl), 5);
 
 		oSecondLink.setVisible(false);
@@ -179,7 +171,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 		oSecondLink.setVisible(true);
 		helpers.waitForUIUpdates();
 
-		assert.ok(helpers.objectIsInTheDom(oSecondLink), "The link is visible again and it's in the dom");
+		assert.ok(helpers.controlIsInTheDom(oSecondLink), "The link is visible again and it's in the dom");
 		assert.strictEqual(helpers.countChildren(oBreadcrumbsControl), 5);
 	});
 

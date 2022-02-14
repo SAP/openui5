@@ -20,7 +20,8 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'./Link',
 	'./PlanningCalendarLegend',
-	'./SinglePlanningCalendarMonthGridRenderer'
+	'./SinglePlanningCalendarMonthGridRenderer',
+	'sap/ui/thirdparty/jquery'
 	],
 	function (
 		Control,
@@ -39,7 +40,8 @@ sap.ui.define([
 		Core,
 		Link,
 		PlanningCalendarLegend,
-		SinglePlanningCalendarMonthGridRenderer
+		SinglePlanningCalendarMonthGridRenderer,
+		jQuery
 	) {
 		"use strict";
 

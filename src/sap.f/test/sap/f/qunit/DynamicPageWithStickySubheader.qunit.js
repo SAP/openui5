@@ -1,13 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage"
 ],
 	function (
 		Core,
-		$,
 		DynamicPageUtil,
 		DynamicPage
 	) {

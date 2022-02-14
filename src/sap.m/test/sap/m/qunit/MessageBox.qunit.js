@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	App,
 	Page,
@@ -36,7 +37,8 @@ sap.ui.define([
 	mobileLibrary,
 	coreLibrary,
 	Device,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

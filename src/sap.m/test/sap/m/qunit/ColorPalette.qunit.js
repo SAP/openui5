@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	Button,
 	ColorPalette,
@@ -28,7 +29,8 @@ sap.ui.define([
 	containsOrEquals,
 	EventExtension,
 	KeyCodes,
-	oCore
+	oCore,
+	jQuery
 ) {
 	"use strict";
 

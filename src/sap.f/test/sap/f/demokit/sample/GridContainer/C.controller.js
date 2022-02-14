@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/sample/GridContainer/RevealGrid/RevealGrid",
+	"./RevealGrid/RevealGrid",
 	"sap/m/MessageToast"
 ], function (Controller, JSONModel, RevealGrid, MessageToast) {
 	"use strict";

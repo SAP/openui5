@@ -70,14 +70,14 @@ sap.ui.define([
 		// Arrange
 		var oSelectListStub = {
 			_oIconTabHeader: createHeaderWithItems(1),
-			isA: jQuery.noop,
-			getSelectedItem: jQuery.noop,
-			fireSelectionChange: jQuery.noop
+			isA: function() {},
+			getSelectedItem: function() {},
+			fireSelectionChange: function() {}
 		};
 
 		var oFakeEvent = {
 			srcControl: null,
-			preventDefault: jQuery.noop
+			preventDefault: function() {}
 		};
 
 		var oTapHandlerSpy = this.spy(IconTabBarSelectList.prototype, "ontap"),

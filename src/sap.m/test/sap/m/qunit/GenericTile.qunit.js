@@ -211,7 +211,7 @@ sap.ui.define([
 						icon: "sap-icon://customer-financial-fact-sheet"
 					})
 				}),
-				press: jQuery.noop //attach empty press to enable :focus state
+				press: function() {} //attach empty press to enable :focus state
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 

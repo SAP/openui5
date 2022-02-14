@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/m/Link",
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function(QUnitUtils, createAndAppendDiv, FormattedText, Link, Log, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
+], function(QUnitUtils, createAndAppendDiv, FormattedText, Link, Log, oCore, jQuery) {
 	"use strict";
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);

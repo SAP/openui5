@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/P13nGroupItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/P13nItem",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/base/util/deepExtend"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -14,7 +15,8 @@ sap.ui.define([
 	P13nGroupItem,
 	JSONModel,
 	P13nItem,
-	oCore
+	oCore,
+	deepExtend
 ) {
 	"use strict";
 
@@ -58,7 +60,7 @@ sap.ui.define([
 	};
 
 	var bindGroupPanel = function(oP13nGroupPanel) {
-		var oModel = new JSONModel(jQuery.extend(true, {}, gData));
+		var oModel = new JSONModel(deepExtend({}, gData));
 
 		oP13nGroupPanel.setModel(oModel);
 		oP13nGroupPanel.bindItems("/items", new P13nItem({
@@ -253,7 +255,7 @@ sap.ui.define([
 		// system under test
 		var oP13nGroupPanel = new P13nGroupPanel();
 
-		var oModel = new JSONModel(jQuery.extend(true, {}, gData));
+		var oModel = new JSONModel(deepExtend({}, gData));
 
 		oP13nGroupPanel.setModel(oModel, "myModel");
 		oP13nGroupPanel.bindItems("myModel>/items", new P13nItem({

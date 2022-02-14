@@ -326,11 +326,6 @@ sap.ui.define(["sap/ui/base/DataType",
 		EndColumnFullScreen: "EndColumnFullScreen"
 	};
 
-	sap.ui.lazyRequire("sap.f.routing.Router");
-	sap.ui.lazyRequire("sap.f.routing.Target");
-	sap.ui.lazyRequire("sap.f.routing.TargetHandler");
-	sap.ui.lazyRequire("sap.f.routing.Targets");
-
 	/**
 	 * Types of shape for the {@link sap.f.Avatar} control.
 	 *
@@ -525,6 +520,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @name sap.f.dnd.IGridDroppable
 	 */
 
+	thisLib.cards = thisLib.cards || {};
+
 	 /**
 	 * Different options for the position of the header in controls that implement the {@link sap.f.ICard} interface.
 	 *
@@ -631,6 +628,17 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IllustratedMessageSize = IllustratedMessageSize;
+
+
+	/**
+	 * @deprecated since 1.56 as lazy loading implies sync loading
+	 */
+	(function() {
+		sap.ui.lazyRequire("sap.f.routing.Router");
+		sap.ui.lazyRequire("sap.f.routing.Target");
+		sap.ui.lazyRequire("sap.f.routing.TargetHandler");
+		sap.ui.lazyRequire("sap.f.routing.Targets");
+	}());
 
 	return thisLib;
 

@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/f/sample/GridListBoxContainerReal/RevealGrid/RevealGrid"
+	"./RevealGrid/RevealGrid"
 ], function (Controller, RevealGrid) {
 	"use strict";
 

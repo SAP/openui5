@@ -1,7 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/m/ScrollBar"
-], function(ScrollBar) {
+	"sap/m/ScrollBar",
+	"sap/ui/thirdparty/jquery"
+], function(ScrollBar, jQuery) {
 	"use strict";
 
 	var oCore = sap.ui.getCore(),

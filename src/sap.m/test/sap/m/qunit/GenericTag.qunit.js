@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbar",
-	"sap/ui/core/Core"
-], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText"
+], function(GenericTag, GenericTagRenderer, library, ObjectNumber, coreLibrary, KeyCodes, qutils, ToolbarSpacer, OverflowToolbar, oCore, InvisibleText) {
 	"use strict";
 
 	var GenericTagDesign = library.GenericTagDesign,
@@ -685,7 +686,7 @@ sap.ui.define([
 		"GenericTag has the correct ARIA state - status and ariaLabelledBy", function(assert){
 		//arrange
 		var $genericTag,
-			oText = new sap.ui.core.InvisibleText("generic_tag_label", {text: "My label"}).toStatic(),
+			oText = new InvisibleText("generic_tag_label", {text: "My label"}).toStatic(),
 			sErrorIconId;
 
 		//act
@@ -720,7 +721,7 @@ sap.ui.define([
 		"GenericTag has the correct ARIA state - only ariaLabelledBy association", function(assert){
 		//arrange
 		var $genericTag,
-			oText = new sap.ui.core.InvisibleText("generic_tag_label", {text: "My label"}).toStatic();
+			oText = new InvisibleText("generic_tag_label", {text: "My label"}).toStatic();
 
 		//act
 		this.oGenericTag.addAriaLabelledBy('generic_tag_label');

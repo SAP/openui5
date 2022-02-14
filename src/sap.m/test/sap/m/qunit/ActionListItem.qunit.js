@@ -1,11 +1,12 @@
-/*global QUnit, jQuery */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/List",
 	"sap/m/ActionListItem",
-	"sap/ui/core/Core"
-], function(qutils, KeyCodes, List, ActionListItem, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, KeyCodes, List, ActionListItem, oCore, jQuery) {
 	"use strict";
 
 

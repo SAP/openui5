@@ -2,10 +2,11 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/f/SearchManager",
+	"sap/m/SuggestionItem",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils"
 ],
-	function (Core, SearchManager, KeyCodes, qutils) {
+	function (Core, SearchManager, SuggestionItem, KeyCodes, qutils) {
 		"use strict";
 
 		var TESTS_DOM_CONTAINER = "qunit-fixture",
@@ -95,16 +96,16 @@ sap.ui.define([
 
 		QUnit.test("aggregation - suggestionItems", function (assert) {
 			var aSuggestionItems = [
-				new sap.m.SuggestionItem({
+				new SuggestionItem({
 					text: "Test item 1"
 				}),
-				new sap.m.SuggestionItem({
+				new SuggestionItem({
 					text: "Test item 2"
 				}),
-				new sap.m.SuggestionItem({
+				new SuggestionItem({
 					text: "Test item 3"
 				}),
-				new sap.m.SuggestionItem({
+				new SuggestionItem({
 					text: "Test item 4"
 				})
 			],

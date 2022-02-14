@@ -30,7 +30,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	createAndAppendDiv("qunit-fixture-visible");
+	var oVisibleFixture = createAndAppendDiv("qunit-fixture-visible");
 
 	// shortcut for sap.ui.core.aria.HasPopup
 	var AriaHasPopup = coreLibrary.aria.HasPopup;
@@ -66,7 +66,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oSemanticPage.destroy();
-			jQuery("#qunit-fixture-visible").html("");
+			oVisibleFixture.textContent = ""; // empty
 		}
 	});
 

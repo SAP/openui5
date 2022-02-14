@@ -1,10 +1,9 @@
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/HTML",
 	"sap/ui/core/ResizeHandler",
-	"sap/ui/dom/jquery/rect"
-], function($, Control, HTML, ResizeHandler) {
+	"sap/ui/dom/jquery/rect" // provides jQuery.fn.rect
+], function(Control, HTML, ResizeHandler) {
 	"use strict";
 
 	return Control.extend("sap.ui.demo.toolpageapp.control.D3Chart", {
@@ -62,19 +61,20 @@ sap.ui.define([
 			}
 		},
 
-		/**
-		 * Renders the root div and the HTML aggregation
-		 * @param {sap.ui.core.RenderManger} oRM the render manager
-		 * @param {sap.ui.core.Control} oControl the control to be rendered
-		 */
-		renderer: function (oRM, oControl) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.addClass("customD3Chart");
-			oRM.writeClasses();
-			oRM.write(">");
-			oRM.renderControl(oControl.getAggregation("_html"));
-			oRM.write("</div>");
+		renderer: {
+			apiVersion: 2,
+			/**
+			 * Renders the root div and the HTML aggregation
+			 * @param {sap.ui.core.RenderManger} oRM the render manager
+			 * @param {sap.ui.demo.toolpageapp.control.D3Chart} oControl the control to be rendered
+			 */
+			render: function (oRM, oControl) {
+				oRM.openStart("div", oControl);
+				oRM.class("customD3Chart");
+				oRM.openEnd();
+				oRM.renderControl(oControl.getAggregation("_html"));
+				oRM.close("div");
+			}
 		}
 	});
 });

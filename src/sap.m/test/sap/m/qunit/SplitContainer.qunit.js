@@ -290,13 +290,13 @@ sap.ui.define([
 					phone: false,
 					tablet: false
 				},
-				oOldSystem = sap.ui.Device.system,
-				oOldOrientation = sap.ui.Device.orientation;
+				oOldSystem = Device.system,
+				oOldOrientation = Device.orientation;
 
 		// manually stub the system object on sap.ui.Device
-		sap.ui.Device.system = oSystem;
+		Device.system = oSystem;
 		// manually stub the orientation object on sap.ui.Device
-		sap.ui.Device.orientation = oPortrait;
+		Device.orientation = oPortrait;
 
 
 		var oSplitContainer = new SplitContainer({
@@ -316,12 +316,12 @@ sap.ui.define([
 					assert.ok(oSplitContainer._oShowMasterBtn.$().hasClass("sapMSplitContainerMasterBtnHidden"), "Master button should be hidden how");
 					oSplitContainer.destroy();
 					// restore the stubs
-					sap.ui.Device.orientation = oOldOrientation;
-					sap.ui.Device.system = oOldSystem;
+					Device.orientation = oOldOrientation;
+					Device.system = oOldSystem;
 					done();
 				} else if (toId === "page2") {
-					// manually sub the orientation object on sap.ui.Device
-					sap.ui.Device.orientation = oLandscape;
+					// manually stub the orientation object on sap.ui.Device
+					Device.orientation = oLandscape;
 					oSplitContainer._handleResize();
 					oSplitContainer.backDetail();
 				}
@@ -407,10 +407,10 @@ sap.ui.define([
 					phone: true,
 					tablet: false
 				},
-				oOldSystem = sap.ui.Device.system;
+				oOldSystem = Device.system;
 
 		// stub the system object on sap.ui.Device
-		sap.ui.Device.system = oSystem;
+		Device.system = oSystem;
 
 
 		var oSplitContainer = new SplitContainer({
@@ -434,7 +434,7 @@ sap.ui.define([
 		assert.notEqual(oSplitContainer._handleNavigationEvent.callCount, 0, "Events work on the phone also.");
 
 		oSplitContainer.destroy();
-		sap.ui.Device.system = oOldSystem;
+		Device.system = oOldSystem;
 	});
 
 	QUnit.test("Should show and hide a masterButton with a toolbar", function(assert) {
@@ -578,7 +578,7 @@ sap.ui.define([
 		bMasterButtonVisible = null;
 
 		// Act - Change Orientation to landscape
-		this.stub(sap.ui.Device, "orientation").value(oLandscape);
+		this.stub(Device, "orientation").value(oLandscape);
 		oSC._fnResize();
 		Core.applyChanges();
 
@@ -818,8 +818,8 @@ sap.ui.define([
 		assert.notOk(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
 
 		oSplitContainer.attachAfterMasterOpen(function() {
-			var oOldOrientation = sap.ui.Device.orientation;
-			sap.ui.Device.orientation = oPortrait;
+			var oOldOrientation = Device.orientation;
+			Device.orientation = oPortrait;
 			oSplitContainer._handleResize();
 
 			oSplitContainer.setMode(SplitAppMode.ShowHideMode);
@@ -829,7 +829,7 @@ sap.ui.define([
 			assert.ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
 
 			oSplitContainer.destroy();
-			sap.ui.Device.orientation = oOldOrientation;
+			Device.orientation = oOldOrientation;
 			done();
 		});
 	});
