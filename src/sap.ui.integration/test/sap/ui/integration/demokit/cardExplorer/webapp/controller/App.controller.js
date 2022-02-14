@@ -39,7 +39,7 @@ sap.ui.define([
 		onInit: function () {
 			var oComponent = this.getOwnerComponent();
 
-			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
+			this._setToggleButtonTooltip(!Device.system.desktop);
 
 			this.getRouter().attachRouteMatched(this.onRouteChange.bind(this));
 			this.getRouter().attachBypassed(function () {

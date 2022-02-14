@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/Log",
+	"sap/base/util/deepExtend",
 	"sap/ui/integration/util/Utils"
 ], function (
 	BaseObject,
 	Log,
+	deepExtend,
 	Utils
 ) {
 	"use strict";
@@ -71,7 +73,7 @@ sap.ui.define([
 			return Promise.resolve(oConfig);
 		}
 
-		oClonedConfig = jQuery.extend(true, {}, oConfig);
+		oClonedConfig = deepExtend({}, oConfig);
 
 		return this.processString(sUrl)
 			.then(function (sProcessedUrl) {

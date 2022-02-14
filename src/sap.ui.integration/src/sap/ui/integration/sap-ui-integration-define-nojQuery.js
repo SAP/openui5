@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-// define jQuery for for bundling sap-ui-integration-nojQuery.js
+// define jQuery for bundling sap-ui-integration-nojQuery.js
 (function() {
 	"use strict";
+	/*global jQuery */
 	sap["ui"].define("sap/ui/thirdparty/jquery", function() {
 		return jQuery;
 	});

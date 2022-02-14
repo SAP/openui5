@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/m/MessageStrip",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/library",
+	"sap/base/util/deepExtend",
 	"sap/base/util/LoaderExtensions",
 	"sap/m/HBox",
 	"sap/ui/model/json/JSONModel",
@@ -40,6 +41,7 @@ sap.ui.define([
 		MessageStrip,
 		DataProviderFactory,
 		mLibrary,
+		deepExtend,
 		LoaderExtensions,
 		HBox,
 		JSONModel,
@@ -1104,7 +1106,7 @@ sap.ui.define([
 		QUnit.test("setManifest - correct and incorrect", function (assert) {
 
 			var done = assert.async(),
-				oManifest_WrongType = jQuery.extend(true, {}, oManifest_ListCard);
+				oManifest_WrongType = deepExtend({}, oManifest_ListCard);
 
 			oManifest_WrongType["sap.card"].type = "Wrong";
 

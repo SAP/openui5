@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/util/binding/ObjectBinding",
 	"sap/ui/integration/designtime/baseEditor/util/hasTag",
 	"sap/ui/integration/designtime/baseEditor/util/cleanupDesigntimeMetadata",
+	"sap/ui/base/EventProvider",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
@@ -41,6 +42,7 @@ sap.ui.define([
 	ObjectBinding,
 	hasTag,
 	cleanupDesigntimeMetadata,
+	EventProvider,
 	Control,
 	ResourceModel,
 	ObjectPath,
@@ -951,7 +953,7 @@ sap.ui.define([
 
 		// Workaround to support first-level of async dependencies of BaseEditor ¯\_(ツ)_/¯
 		aLayoutDependecies.forEach(function (oEditor) {
-			if (!sap.ui.base.EventProvider.hasListener(oEditor, "ready", this._checkReady, this)) {
+			if (!EventProvider.hasListener(oEditor, "ready", this._checkReady, this)) {
 				oEditor.attachReady(this._checkReady, this);
 			}
 		}, this);
