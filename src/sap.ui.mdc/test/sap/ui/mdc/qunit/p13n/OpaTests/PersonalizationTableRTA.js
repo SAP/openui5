@@ -298,7 +298,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogShouldBeClosed();
 
 		//tear down app
-		Given.enableAndDeleteLrepLocalStorage();
+		When.onPageWithRTA.enableAndDeleteLrepLocalStorageAfterRta();
 		Then.iTeardownMyAppFrame();
 	});
 
