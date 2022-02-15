@@ -328,14 +328,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a new value for the given property <code>sPropertyName</code> in the model.
-	 * If the model value changed all interested parties are informed.
+	 * Sets <code>oValue</code> as new value for the property defined by the given
+	 * <code>sPath</code> and <code>oContext</code>. Once the new model value has been set, all
+	 * interested parties are informed.
 	 *
-	 * @param {string}  sPath path of the property to set
-	 * @param {any}     oValue value to set the property to
-	 * @param {object} [oContext] the context which will be used to set the property
-	 * @param {boolean} [bAsyncUpdate] whether to update other bindings dependent on this property asynchronously
-	 * @return {boolean} true if the value was set correctly and false if errors occurred like the entry was not found.
+	 * @param {string} sPath
+	 *   The path of the property to set
+	 * @param {any} oValue
+	 *   The new value to be set for this property
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context used to set the property
+	 * @param {boolean} [bAsyncUpdate]
+	 *   Whether to update other bindings dependent on this property asynchronously
+	 * @return {boolean}
+	 *   <code>true</code> if the value was set correctly, and <code>false</code> if errors
+	 *   occurred, for example if the entry was not found.
 	 * @public
 	 */
 	JSONModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
