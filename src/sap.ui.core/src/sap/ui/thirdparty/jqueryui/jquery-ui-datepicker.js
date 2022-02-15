@@ -193,7 +193,12 @@ $.extend(Datepicker.prototype, {
 			inst.append.remove();
 		}
 		if (appendText) {
-			inst.append = $("<span class='" + this._appendClass + "'>" + appendText + "</span>");
+			// ##### BEGIN: MODIFIED BY SAP
+			// inst.append = $("<span class='" + this._appendClass + "'>" + appendText + "</span>");
+			inst.append = $( "<span></span>" )
+				.addClass( this._appendClass )
+				.text( appendText );
+			// ##### END: MODIFIED BY SAP
 			input[isRTL ? "before" : "after"](inst.append);
 		}
 
@@ -210,12 +215,43 @@ $.extend(Datepicker.prototype, {
 		if (showOn === "button" || showOn === "both") { // pop-up date picker when button clicked
 			buttonText = this._get(inst, "buttonText");
 			buttonImage = this._get(inst, "buttonImage");
-			inst.trigger = $(this._get(inst, "buttonImageOnly") ?
+
+			// ##### BEGIN: MODIFIED BY SAP
+			/*
+			inst.trigger = $( this._get(inst, "buttonImageOnly" ) ?
 				$("<img/>").addClass(this._triggerClass).
 					attr({ src: buttonImage, alt: buttonText, title: buttonText }) :
 				$("<button type='button'></button>").addClass(this._triggerClass).
 					html(!buttonImage ? buttonText : $("<img/>").attr(
 					{ src:buttonImage, alt:buttonText, title:buttonText })));
+			*/
+
+			if ( this._get( inst, "buttonImageOnly" ) ) {
+				inst.trigger = $( "<img>" )
+				.addClass( this._triggerClass )
+				.attr( {
+					src: buttonImage,
+					alt: buttonText,
+					title: buttonText
+				} );
+			} else {
+				inst.trigger = $( "<button type='button'></button>" )
+				.addClass( this._triggerClass );
+				if ( buttonImage ) {
+					inst.trigger.html(
+						$( "<img>" )
+						.attr( {
+							src: buttonImage,
+							alt: buttonText,
+							title: buttonText
+						} )
+					);
+				} else {
+					inst.trigger.text( buttonText );
+				}
+			}
+			// ##### END: MODIFIED BY SAP
+
 			input[isRTL ? "before" : "after"](inst.trigger);
 			inst.trigger.click(function() {
 				if ($.datepicker._datepickerShowing && $.datepicker._lastInput === input[0]) {
@@ -1024,7 +1060,10 @@ $.extend(Datepicker.prototype, {
 			altFormat = this._get(inst, "altFormat") || this._get(inst, "dateFormat");
 			date = this._getDate(inst);
 			dateStr = this.formatDate(altFormat, date, this._getFormatConfig(inst));
-			$(altField).each(function() { $(this).val(dateStr); });
+			// ##### BEGIN: MODIFIED BY SAP
+			// $(altField).each(function() { $(this).val(dateStr); });
+			$( document ).find( altField ).val( dateStr );
+			// ##### END: MODIFIED BY SAP
 		}
 	},
 
@@ -1628,32 +1667,133 @@ $.extend(Datepicker.prototype, {
 			this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
 			this._getFormatConfig(inst)));
 
+		// ##### BEGIN: MODIFIED BY SAP
+		/*
 		prev = (this._canAdjustMonth(inst, -1, drawYear, drawMonth) ?
 			"<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='click'" +
 			" title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w") + "'>" + prevText + "</span></a>" :
 			(hideIfNoPrevNext ? "" : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='"+ prevText +"'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w") + "'>" + prevText + "</span></a>"));
+		*/
+
+		if ( this._canAdjustMonth( inst, -1, drawYear, drawMonth ) ) {
+			prev = $( "<a></a>" )
+			.attr( {
+				"class": "ui-datepicker-prev ui-corner-all",
+				"data-handler": "prev",
+				"data-event": "click",
+				title: prevText
+			} )
+			.append(
+				$( "<span></span>" )
+				.addClass( "ui-icon ui-icon-circle-triangle-" +
+					( isRTL ? "e" : "w" ) )
+				.text( prevText )
+			)[ 0 ].outerHTML;
+		} else if ( hideIfNoPrevNext ) {
+			prev = "";
+		} else {
+			prev = $( "<a></a>" )
+			.attr( {
+				"class": "ui-datepicker-prev ui-corner-all ui-state-disabled",
+				title: prevText
+			} )
+			.append(
+				$( "<span></span>" )
+				.addClass( "ui-icon ui-icon-circle-triangle-" +
+					( isRTL ? "e" : "w" ) )
+				.text( prevText )
+			)[ 0 ].outerHTML;
+		}
+		// ##### END: MODIFIED BY SAP
 
 		nextText = this._get(inst, "nextText");
 		nextText = (!navigationAsDateFormat ? nextText : this.formatDate(nextText,
 			this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
 			this._getFormatConfig(inst)));
 
+		// ##### BEGIN: MODIFIED BY SAP
+		/*
 		next = (this._canAdjustMonth(inst, +1, drawYear, drawMonth) ?
 			"<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='click'" +
 			" title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e") + "'>" + nextText + "</span></a>" :
 			(hideIfNoPrevNext ? "" : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='"+ nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e") + "'>" + nextText + "</span></a>"));
+		*/
+
+		if ( this._canAdjustMonth( inst, +1, drawYear, drawMonth ) ) {
+			next = $( "<a></a>" )
+			.attr( {
+				"class": "ui-datepicker-next ui-corner-all",
+				"data-handler": "next",
+				"data-event": "click",
+				title: nextText
+			} )
+			.append(
+				$( "<span></span>" )
+				.addClass( "ui-icon ui-icon-circle-triangle-" +
+					( isRTL ? "w" : "e" ) )
+				.text( nextText )
+			)[ 0 ].outerHTML;
+		} else if ( hideIfNoPrevNext ) {
+			next = "";
+		} else {
+			next = $( "<a></a>" )
+			.attr( {
+				"class": "ui-datepicker-next ui-corner-all ui-state-disabled",
+				title: nextText
+			} )
+			.append(
+				$( "<span></span>" )
+				.attr( "class", "ui-icon ui-icon-circle-triangle-" +
+					( isRTL ? "w" : "e" ) )
+				.text( nextText )
+			)[ 0 ].outerHTML;
+		}
+		// ##### END: MODIFIED BY SAP
 
 		currentText = this._get(inst, "currentText");
 		gotoDate = (this._get(inst, "gotoCurrent") && inst.currentDay ? currentDate : today);
 		currentText = (!navigationAsDateFormat ? currentText :
 			this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
 
+		// ##### BEGIN: MODIFIED BY SAP
+		/*
 		controls = (!inst.inline ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='hide' data-event='click'>" +
 			this._get(inst, "closeText") + "</button>" : "");
 
 		buttonPanel = (showButtonPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + (isRTL ? controls : "") +
 			(this._isInRange(inst, gotoDate) ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all' data-handler='today' data-event='click'" +
 			">" + currentText + "</button>" : "") + (isRTL ? "" : controls) + "</div>" : "";
+		*/
+
+		controls = "";
+		if ( !inst.inline ) {
+			controls = $( "<button></button>" )
+			.attr( {
+				type: "button",
+				"class": "ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all",
+				"data-handler": "hide",
+				"data-event": "click"
+			} )
+			.text( this._get( inst, "closeText" ) )[ 0 ].outerHTML;
+		}
+
+		buttonPanel = "";
+		if ( showButtonPanel ) {
+			buttonPanel = $( "<div class='ui-datepicker-buttonpane ui-widget-content'></div>" )
+			.append( isRTL ? controls : "" )
+			.append( this._isInRange( inst, gotoDate ) ?
+				$( "<button></button>" )
+				.attr( {
+					type: "button",
+					"class": "ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all",
+					"data-handler": "today",
+					"data-event": "click"
+				} )
+				.text( currentText ) :
+				"" )
+			.append( isRTL ? "" : controls )[ 0 ].outerHTML;
+		}
+		// ##### END: MODIFIED BY SAP
 
 		firstDay = parseInt(this._get(inst, "firstDay"),10);
 		firstDay = (isNaN(firstDay) ? 0 : firstDay);
