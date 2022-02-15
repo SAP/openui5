@@ -703,6 +703,7 @@ sap.ui.define([
 		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
 		 * @public
 		 * @since 1.99.0
+		 * @experimental As of version 1.99.0, time zones are currently not supported by all controls.
 		 */
 		getTimezone : function () {
 			return this.timezone;
@@ -805,6 +806,7 @@ sap.ui.define([
 		 * @public
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @since 1.99.0
+		 * @experimental As of version 1.99.0, time zones are currently not supported by all controls.
 		 */
 		setTimezone : function (sTimezone) {
 			check(sTimezone == null || typeof sTimezone === 'string',
