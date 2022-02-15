@@ -431,6 +431,8 @@ sap.ui.define([
 		assert.strictEqual(aControls.length, 4, "created controls");
 		assert.ok(aControls[0].isA("sap.m.Label"), "created the correct control");
 		assert.ok(aControls[1].isA("sap.m.StepInput"), "created the correct control");
+		assert.strictEqual(aControls[1].getMin(), 1, "The step input has correct min value");
+		assert.strictEqual(aControls[1].getMax(), 6000, "The step input has correct max value");
 		assert.ok(aControls[2].isA("sap.m.Label"), "created the correct control");
 		assert.ok(aControls[3].isA("sap.m.RadioButtonGroup"), "created the correct control");
 

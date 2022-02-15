@@ -456,7 +456,7 @@ sap.ui.define([
 			var iMin = this.getKey() === "TODAYFROMTO" ? -MAX_VALUE_HELP_INTEGER : MIN_VALUE_HELP_INTEGER;
 			var bUseDefaultValue = !oValue || this.getKey() !== oValue.operator;
 
-			if (this.getKey() === "TODAYFROMTO" && bUseDefaultValue) {
+			if (bUseDefaultValue) {
 				oControl.setValue(1);
 			}
 
