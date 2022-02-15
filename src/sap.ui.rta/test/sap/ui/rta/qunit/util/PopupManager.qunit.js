@@ -82,7 +82,7 @@ sap.ui.define([
 
 	function findOverlay(oElement, oDesignTime) {
 		var aOverlays = oDesignTime.getElementOverlays();
-		var bResult = aOverlays.some(function (oOverlay) {
+		var bResult = aOverlays.some(function(oOverlay) {
 			return oOverlay.getElement() === oElement;
 		});
 		return bResult;
@@ -106,13 +106,13 @@ sap.ui.define([
 		}
 		if (bSettingsInstance) {
 			var oSettings = {
-				isVersioningEnabled: function () {
+				isVersioningEnabled: function() {
 					return false;
 				},
-				isProductiveSystem: function () {
+				isProductiveSystem: function() {
 					return true;
 				},
-				isCustomerSystem: function () {
+				isCustomerSystem: function() {
 					return false;
 				},
 				isAppVariantSaveAsEnabled: function() {
@@ -133,7 +133,7 @@ sap.ui.define([
 		this.fnRemoveDialogInstanceSpy = sandbox.spy(this.oRta._oDesignTime, "removeRootElement");
 	}
 
-	function createDialogOpenButton () {
+	function createDialogOpenButton() {
 		return new Button("testbutton", {
 			text: "Main Button",
 			press: function() {
@@ -152,7 +152,7 @@ sap.ui.define([
 		afterEach: function() {
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when RTA is initialized", function(assert) {
 			assert.expect(3);
 			this.oRta = new RuntimeAuthoring({
@@ -176,7 +176,7 @@ sap.ui.define([
 			this.oRta.destroy();
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when PopupManager is initialized without setting RTA instance", function(assert) {
 			assert.ok(this.oRta.getPopupManager(), "PopupManager instance exists");
 			assert.strictEqual(this.oRta.getPopupManager().getRta(), undefined, "then RTA instance is not set for PopupManager before RTA is started");
@@ -208,7 +208,7 @@ sap.ui.define([
 				rootElements: [oComp.getAggregation("rootControl")]
 			});
 			var oDesignTimePromise = new Promise(function(fnResolve) {
-				this.oRta._oDesignTime.attachEventOnce("synced", function () {
+				this.oRta._oDesignTime.attachEventOnce("synced", function() {
 					fnResolve();
 				});
 			}.bind(this));
@@ -270,7 +270,7 @@ sap.ui.define([
 			delete this.oOriginalInstanceManager;
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when _overrideInstanceFunctions is called with no open dialog", function(assert) {
 			setRta(this.oRta);
 			this.oDialog.open();
@@ -339,7 +339,7 @@ sap.ui.define([
 
 			oPopupManager.oRtaRootAppComponent = oComp;
 
-			oComp.runAsOwner(function () {
+			oComp.runAsOwner(function() {
 				oDialogNotAllowed = new Dialog({
 					id: "adaptNotAllowedDialog",
 					showHeader: false,
@@ -349,7 +349,7 @@ sap.ui.define([
 			});
 			oDialogNotAllowed.attachAfterOpen(function() {
 				assert.ok(this.oRta.getPopupManager()._isPopupAdaptable(oDialogNotAllowed), "then true returned when isPopupAdaptationAllowed function doesn't exist for dialog");
-				oDialogNotAllowed.isPopupAdaptationAllowed = function () {
+				oDialogNotAllowed.isPopupAdaptationAllowed = function() {
 					return false;
 				};
 				assert.notOk(this.oRta.getPopupManager()._isPopupAdaptable(oDialogNotAllowed), "then false returned when isPopupAdaptationAllowed function exists for dialog");
@@ -373,7 +373,7 @@ sap.ui.define([
 				contentHeight: "800px",
 				contentWidth: "1000px"
 			});
-			oComp.runAsOwner(function () {
+			oComp.runAsOwner(function() {
 				oInnerDialog = new Dialog({
 					id: "dialogWithValidComponent",
 					showHeader: false,
@@ -384,7 +384,7 @@ sap.ui.define([
 			});
 			oInnerDialog.attachAfterOpen(function() {
 				assert.ok(this.oRta.getPopupManager()._isPopupAdaptable(oInnerDialog), "then true returned when isPopupAdaptationAllowed function doesn't exist for dialog");
-				oDialogNotAllowed.isPopupAdaptationAllowed = function () {
+				oDialogNotAllowed.isPopupAdaptationAllowed = function() {
 					return false;
 				};
 				assert.notOk(this.oRta.getPopupManager()._isPopupAdaptable(oInnerDialog), "then false returned when isPopupAdaptationAllowed function exists for dialog");
@@ -467,7 +467,7 @@ sap.ui.define([
 				this.oRta.getPopupManager()._removePopupPatch(this.oPopover);
 				assert.strictEqual(this.fnAddPopupListeners.callCount, 2, "then popup event listeners attached back, called twice, once while open() and once while re-attaching");
 
-				var fnCheckOnAfterRendering = function () {
+				var fnCheckOnAfterRendering = function() {
 					vPopupElement.removeEventListener("blur", fnCheckOnAfterRendering);
 					assert.strictEqual(typeof oPopup.onAfterRendering, "function", "then onAfterRendering is set back");
 					done();
@@ -501,7 +501,7 @@ sap.ui.define([
 						assert.strictEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aPopovers"].length, 1, "then one relevant popover returned");
 						assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aPopovers"][0], this.oPopover, "then only popover with same app component returned");
 						//Dialog Close
-						this.oDialog.attachAfterClose(function () {
+						this.oDialog.attachAfterClose(function() {
 							assert.deepEqual(this.oRta.getPopupManager().getCategorizedOpenPopups()["aDialogs"], [], "then no relevant dialogs available");
 							done();
 						}.bind(this));
@@ -586,7 +586,7 @@ sap.ui.define([
 			setRta(this.oRta);
 			var oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
 			this.oRta.getPopupManager()._onModeChange(oEvent);
-			this.oDialog.attachAfterOpen(function () {
+			this.oDialog.attachAfterOpen(function() {
 				assert.strictEqual(this.fnApplyPopupAttributes.callCount, 2, "then applyPopupAttributes method was called twice");
 				assert.strictEqual(this.fnAddPopupListeners.callCount, 1, "then fnAddPopupListeners method was called once");
 				done();
@@ -606,14 +606,23 @@ sap.ui.define([
 				// change mode to 'adaptation'
 				var oModeChangeEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
 				this.oRta.getPopupManager()._onModeChange(oModeChangeEvent);
-				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
+				assert.ok(oPopup.getModal(), "then the Popover is modal after switch to adaptation mode");
 				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 2, "then 'bringToFront' was called twice; on popover open and on mode change ");
+				assert.notOk(this.oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is false");
 
 				// change mode to 'navigation'
 				oModeChangeEvent = new Event("testevent", this.oRta, { mode: "navigation" });
 				this.oRta.getPopupManager()._onModeChange(oModeChangeEvent);
-				assert.equal(oPopup.getModal(), false, "then the Popover is not modal after switch back to navigation mode");
+				assert.notOk(oPopup.getModal(), "then the Popover is not modal after switch back to navigation mode");
 				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 2, "then 'bringToFront' was not called again");
+
+				// change mode to 'visualization'
+				oModeChangeEvent = new Event("testevent", this.oRta, { mode: "visualization" });
+				this.oRta.getPopupManager()._onModeChange(oModeChangeEvent);
+				assert.ok(oPopup.getModal(), "then the Popover is modal after switch to visualization mode");
+				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 3, "then 'bringToFront' is called again");
+				assert.notOk(this.oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is false");
+
 				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
 				done();
 			}.bind(this));
@@ -633,18 +642,21 @@ sap.ui.define([
 				// change mode to 'adaptation'
 				var oEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
 				this.oRta.getPopupManager()._onModeChange(oEvent);
-				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
-
-				// change mode to 'visualization'
-				oEvent = new Event("testevent", this.oRta, { mode: "visualization" });
-				this.oRta.getPopupManager()._onModeChange(oEvent);
-				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to visualization mode");
+				assert.ok(oPopup.getModal(), "then the Popover is modal after switch to adaptation mode");
+				assert.notOk(this.oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is false");
 
 				// change mode to 'navigation'
 				oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
 				this.oRta.getPopupManager()._onModeChange(oEvent);
-				assert.equal(oPopup.getModal(), true, "then the Popover is stil modal after switch back to navigation mode");
-				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
+				assert.ok(oPopup.getModal(), "then the Popover is still modal after switch back to navigation mode");
+				assert.ok(this.oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is true");
+
+				// change mode to 'visualization'
+				oEvent = new Event("testevent", this.oRta, { mode: "visualization" });
+				this.oRta.getPopupManager()._onModeChange(oEvent);
+				assert.ok(oPopup.getModal(), "then the Popover is modal after switch to visualization mode");
+				assert.notOk(this.oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is false");
+
 				done();
 			}.bind(this));
 			this.oPopover.openBy(oComponentContainer);
@@ -677,7 +689,7 @@ sap.ui.define([
 			}
 			this.oNonRtaDialog.destroy();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when Dialog with the same app component is opened and then closed / destroyed", function(assert) {
 			//to open the dialog
 			this.oButton.firePress();
@@ -741,7 +753,7 @@ sap.ui.define([
 				this.oButton.destroy();
 			}
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when dialog with same app component is already open", function(assert) {
 			var oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl")
@@ -751,6 +763,7 @@ sap.ui.define([
 					return oRootElement.getId();
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
 				assert.ok(findOverlay(this.oDialog, oRta._oDesignTime), "then overlay exists for root dialog element");
+				assert.notOk(oRta._oDesignTime.getElementOverlays()[0].getVisible(), "then the visibility from the main root control overlay is false");
 				oRta.getDependent('toolbar').destroy();
 				oRta.destroy();
 			}.bind(this);
@@ -759,7 +772,7 @@ sap.ui.define([
 		});
 		QUnit.test("when a non-adaptable dialog is already open and RTA is started and stopped", function(assert) {
 			var fnDone = assert.async();
-			this.oDialog.isPopupAdaptationAllowed = function () {
+			this.oDialog.isPopupAdaptationAllowed = function() {
 				return false;
 			};
 			this.oDialog.oPopup.setModal(false);
@@ -781,7 +794,7 @@ sap.ui.define([
 		});
 		QUnit.test("when a non-adaptable dialog is already open, RTA is started and RTA's mode is switched to navigation", function(assert) {
 			var fnDone = assert.async();
-			this.oDialog.isPopupAdaptationAllowed = function () {
+			this.oDialog.isPopupAdaptationAllowed = function() {
 				return false;
 			};
 			this.oDialog.oPopup.setModal(false);
@@ -806,7 +819,7 @@ sap.ui.define([
 
 	//_isComponentInsidePopup
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			stubBefore(true/*bPersistenceAPI*/);
 
@@ -847,7 +860,7 @@ sap.ui.define([
 			delete this.oOriginalInstanceManager;
 			sandbox.restore();
 		}
-	}, function () {
+	}, function() {
 		QUnit.test("when _isComponentInsidePopup is called with an app component container inside dialog", function(assert) {
 			setRta(this.oRta);
 			var bIsAppInsidePopup = this.oRta.getPopupManager()._isComponentInsidePopup(this.oDialog);
@@ -859,7 +872,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach: function (assert) {
+		beforeEach: function(assert) {
 			stubBefore(true/*bPersistenceAPI*/);
 
 			//mock RTA instance
@@ -877,14 +890,14 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function () {
+		afterEach: function() {
 			if (this.oRta) {
 				this.oRta.destroy();
 			}
 			this.oCompContInside.destroy();
 			this.oNonRtaDialog.destroy();
 		}
-	}, function () {
+	}, function() {
 		//_getComponentForControl
 		QUnit.test("when _getComponentForControl is called with a dialog inside an embedded component", function(assert) {
 			var sBaseCompId = this.oRta.getPopupManager()._getComponentForControl(this.oNonRtaDialog).getId();
@@ -892,7 +905,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.done(function () {
+	QUnit.done(function() {
 		PersistenceWriteAPI.save.restore();
 		jQuery("body").removeClass("sapUiRtaMode");
 		jQuery("#qunit-fixture").hide();
