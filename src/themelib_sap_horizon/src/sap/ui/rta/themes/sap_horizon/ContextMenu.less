@@ -16,7 +16,7 @@
 		&.sapMMenu {
 			border: 0.188rem dashed @_sap_ui_rta_ContextMenu_Border_DarkColor; //2px
 			box-shadow: @_sap_ui_rta_ContextMenu_BoxShadow;
-			border-radius: @sapUiElementBorderCornerRadius;
+			border-radius: @sapUiGroupBorderCornerRadius;
 		}
 		&.sapUiSubmenu,
 		&:not(.sapUiDtContextMiniMenu) {
@@ -28,4 +28,12 @@
 			}
 		}
 	}
+}
+
+.sapUiRtaMode .sapUiDtContextMiniMenu:not(.sapUiSubmenu) .sapUiMnuItm.sapUiMnuItmHov .sapUiIcon {
+	background-color: @sapUiListHoverBackground;
+	border: 1px dotted;
+}
+.sapUiSizeCozy.sapUiRtaMode .sapUiMnu.sapUiDtContextMiniMenu:not(.sapUiSubmenu) {
+	min-width: 68px;
 }
