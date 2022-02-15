@@ -2320,16 +2320,24 @@ sap.ui.define([
 	 *   The path of the context to be kept alive
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for the context's entity
+	 * @param {string} [sGroupId]
+	 *   The group ID used for read requests for the context's entity or its properties. If not
+	 *   given, the binding's {@link #getGroupId group ID} is used. Supported since 1.100.0
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The kept-alive context
-	 * @throws {Error}
-	 *   If {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the group ID is invalid,
+	 *     <li> the binding is unresolved,
+	 *     <li> the given context path does not match this binding,
+	 *     <li> or {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
+	 *   </ul>
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.Model#getKeepAliveContext
 	 * @since 1.99.0
 	 */
-	ODataListBinding.prototype.getKeepAliveContext = function (sPath, bRequestMessages) {
+	ODataListBinding.prototype.getKeepAliveContext = function (sPath, bRequestMessages, sGroupId) {
 		var oContext = this.mPreviousContextsByPath[sPath]
 				|| this.aContexts.find(function (oCandidate) {
 					return oCandidate && oCandidate.getPath() === sPath;
@@ -2337,6 +2345,7 @@ sap.ui.define([
 			iPredicateIndex = this.oModel.getPredicateIndex(sPath),
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
+		this.oModel.checkGroupId(sGroupId);
 		if (!oContext) {
 			if (!sResolvedPath) {
 				throw new Error("Binding is unresolved: " + this);
@@ -2348,7 +2357,11 @@ sap.ui.define([
 			this.mPreviousContextsByPath[sPath] = oContext;
 			this.oCachePromise.then(function (oCache) {
 				// call ASAP so that dependent property bindings find the entity in the cache
-				oCache.createEmptyElement(sPath.slice(iPredicateIndex));
+				var oElement = oCache.createEmptyElement(sPath.slice(iPredicateIndex));
+
+				if (sGroupId) {
+					_Helper.setPrivateAnnotation(oElement, "groupId", sGroupId);
+				}
 			});
 			// *request*Object so that requestProperty definitely runs after setKeepAlive and adds
 			// to mLateProperties

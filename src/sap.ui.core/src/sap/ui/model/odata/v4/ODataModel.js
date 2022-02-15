@@ -1504,11 +1504,19 @@ sap.ui.define([
 	 *   A list context path to an entity
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for the context's entity
+	 * @param {object} [mParameters]
+	 *   Parameters for the context; supported since 1.100.0. Only the following parameter is
+	 *   allowed:
+	 * @param {string} [mParameters.$$groupId]
+	 *   The group ID used for read requests for the context's entity or its properties. If not
+	 *   given, the binding's {@link #sap.ui.model.odata.v4.ODataListBinding#getGroupId group ID} is
+	 *   used
 	 * @returns {sap.ui.model.odata.v4.Context|undefined}
 	 *   The context, or <code>undefined</code> if no matching binding can be found
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the model does not use the <code>autoExpandSelect</code> parameter,
+	 *     <li> an invalid parameter was supplied,
 	 *     <li> the path is not a list context path to an entity,
 	 *     <li> multiple list bindings with <code>$$getKeepAliveContext</code> match, or
 	 *     <li> {@link sap.ui.model.odata.v4.Context#setKeepAlive} fails
@@ -1517,7 +1525,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.99.0
 	 */
-	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages) {
+	ODataModel.prototype.getKeepAliveContext = function (sPath, bRequestMessages, mParameters) {
 		var aListBindings,
 			sListPath,
 			that = this;
@@ -1528,6 +1536,13 @@ sap.ui.define([
 		if (sPath[0] !== "/") {
 			throw new Error("Not a list context path to an entity: " + sPath);
 		}
+		mParameters = mParameters || {};
+		// Only excess parameters are rejected here; the correctness is checked by ODLB
+		Object.keys(mParameters).forEach(function (sParameter) {
+			if (sParameter !== "$$groupId") {
+				throw new Error("Invalid parameter: " + sParameter);
+			}
+		});
 		sListPath = sPath.slice(0, this.getPredicateIndex(sPath));
 		aListBindings = this.aAllBindings.filter(function (oBinding) {
 			return oBinding.mParameters && oBinding.mParameters.$$getKeepAliveContext
@@ -1538,7 +1553,8 @@ sap.ui.define([
 			throw new Error("Multiple bindings with $$getKeepAliveContext for: " + sPath);
 		}
 		if (aListBindings.length) {
-			return aListBindings[0].getKeepAliveContext(sPath, bRequestMessages);
+			return aListBindings[0].getKeepAliveContext(sPath, bRequestMessages,
+				mParameters.$$groupId);
 		}
 	};
 

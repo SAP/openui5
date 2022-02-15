@@ -1274,9 +1274,10 @@ sap.ui.define([
 			 * expected.
 			 *
 			 * @param {object[]} aRequests The array of requests in a $batch
+			 * @param {string} sGroupId The group ID of the $batch
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
-			function checkBatch(aRequests) {
+			function checkBatch(aRequests, sGroupId) {
 				/*
 				 * Processes a request or a change set within a batch/change set.
 				 * @param {number} iChangeSetNo Number of the change set in the current batch
@@ -1293,7 +1294,7 @@ sap.ui.define([
 					}
 					oRequest.$ContentID = i + "." + (iChangeSetNo - 1);
 					return checkRequest(oRequest.method, oRequest.url, oRequest.headers,
-						oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1,
+						oRequest.body, undefined, sGroupId, that.iBatchNo, iChangeSetNo || i + 1,
 						oRequest.$ContentID
 					).catch(function (oError) {
 						if (oError.$insideBatch) {
@@ -1361,6 +1362,8 @@ sap.ui.define([
 			 *   checkBatch)
 			 * @param {string} [sOriginalResourcePath] The path by which the resource has originally
 			 *   been requested
+			 * @param {string} [sGroupId] The group ID this request, only available when sent with
+			 *   a batch
 			 * @param {number} [iBatchNo] Number of the batch which the request belongs to
 			 * @param {number} [iChangeSetNo] Number of the change set in the current batch which
 			 *   the request belongs to
@@ -1375,7 +1378,7 @@ sap.ui.define([
 			 *   the error.
 			 */
 			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath,
-					iBatchNo, iChangeSetNo, sContentID) {
+					sGroupId, iBatchNo, iChangeSetNo, sContentID) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -1416,6 +1419,9 @@ sap.ui.define([
 					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.response;
 					delete oExpectedRequest.responseHeaders;
+					if ("groupId" in oExpectedRequest) {
+						oActualRequest.groupId = sGroupId;
+					}
 					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = iBatchNo;
 					}
@@ -36262,9 +36268,13 @@ sap.ui.define([
 				})
 				.expectChange("defaultChannel", ["01", "02"])
 				.expectChange("listName", ["The Who", "The Rolling Stones"])
-				.expectRequest("Artists(ArtistID='3',IsActiveEntity=false)"
-					+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
-					+ "lastUsedChannel", {
+				.expectRequest({
+					groupId : "$auto.heroes",
+					method : "GET",
+					url : "Artists(ArtistID='3',IsActiveEntity=false)"
+						+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
+						+ "lastUsedChannel"
+				}, {
 					"@odata.etag" : "etag3",
 					ArtistID : "3",
 					HasDraftEntity : false,
@@ -36278,8 +36288,8 @@ sap.ui.define([
 
 			oTable = that.oView.byId("list");
 			oTable.getBinding("items").resume();
-			oContext
-				= oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)", true);
+			oContext = oModel.getKeepAliveContext("/Artists(ArtistID='3',IsActiveEntity=false)",
+				true, {$$groupId : "$auto.heroes"});
 			that.oView.byId("objectPage").setBindingContext(oContext);
 
 			return Promise.all([

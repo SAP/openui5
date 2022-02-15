@@ -2480,7 +2480,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getKeepAliveContext: one binding found", function (assert) {
+[false, true].forEach(function (bUseGroupId) {
+	QUnit.test("getKeepAliveContext: one binding found, group=" + bUseGroupId, function (assert) {
 		// do not use real bindings because they become active asynchronously (esp. ODLB)
 		var oMatch = {
 				getPath : function () { return "Items"; },
@@ -2510,14 +2511,17 @@ sap.ui.define([
 		oModelMock.expects("resolve").withExactArgs("Items", "~oYetAnotherContext~")
 			.returns("/SalesOrders('2')/Items");
 		this.mock(oMatch).expects("getKeepAliveContext")
-			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~")
+			.withExactArgs("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
+				bUseGroupId ? "group" : undefined)
 			.returns("~oContext~");
 
 		assert.strictEqual(
 			// code under test
-			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~"),
+			oModel.getKeepAliveContext("/SalesOrders('1')/Items('2')", "~bRequestMessages~",
+				bUseGroupId ? {$$groupId : "group"} : undefined),
 			"~oContext~");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: two bindings found", function (assert) {
@@ -2565,6 +2569,21 @@ sap.ui.define([
 			oModel.getKeepAliveContext("TEAMS('1')");
 		}, new Error("Not a list context path to an entity: TEAMS('1')"));
 	});
+
+	//*********************************************************************************************
+["foo", "$$updateGroupId", "$$patchWithoutSideEffects"].forEach(function (sParameter) {
+	QUnit.test("getKeepAliveContext: invalid parameter " + sParameter, function (assert) {
+		var oModel = this.createModel("", {autoExpandSelect : true}),
+			mParameters = {};
+
+		mParameters[sParameter] = "anything";
+
+		assert.throws(function () {
+			// code under test
+			oModel.getKeepAliveContext("/TEAMS('1')", false, mParameters);
+		}, new Error("Invalid parameter: " + sParameter));
+	});
+});
 });
 //TODO constructor: test that the service root URL is absolute?
 //TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

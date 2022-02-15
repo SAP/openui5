@@ -8365,8 +8365,11 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
+	[undefined, "group"].forEach(function (sGroupId) {
+		var sTitle = "getKeepAliveContext: create context, async=" + bAsync + ", group=" + sGroupId;
+
 	// The test always fails in requestProperty to check that the reporter is attached correctly
-	QUnit.test("getKeepAliveContext: create context, async=" + bAsync, function (assert) {
+	QUnit.test(sTitle, function (assert) {
 		var done = assert.async(),
 			oParentContext = this.oModel.createBindingContext("/"),
 			oBinding = this.bindList("EMPLOYEES", oParentContext),
@@ -8386,6 +8389,7 @@ sap.ui.define([
 			};
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(this.oModel).expects("resolve")
 			.withExactArgs("EMPLOYEES", sinon.match.same(oParentContext)).returns("/EMPLOYEES");
 		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
@@ -8400,7 +8404,10 @@ sap.ui.define([
 		this.mock(oCache).expects("createEmptyElement").withExactArgs("('4')")
 			.callsFake(function () {
 				bHasEmptyElement = true;
+				return "~oElement~";
 			});
+		this.mock(_Helper).expects("setPrivateAnnotation").exactly(sGroupId ? 1 : 0)
+			.withExactArgs("~oElement~", "groupId", sGroupId);
 		this.mock(oContext).expects("requestProperty").withExactArgs(["a", "c/d", "e", "g/h"])
 			.callsFake(function () {
 				assert.ok(oSetKeepAliveExpectation.called);
@@ -8414,10 +8421,11 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~"),
+			oBinding.getKeepAliveContext(sPath, "~bRequestMessages~", sGroupId),
 			oContext);
 		assert.strictEqual(oBinding.mPreviousContextsByPath[sPath], oContext);
 		assert.ok(oSetKeepAliveExpectation.called);
+	});
 	});
 });
 
