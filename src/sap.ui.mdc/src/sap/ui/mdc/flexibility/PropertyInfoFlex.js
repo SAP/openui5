@@ -2,8 +2,12 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/base/util/merge'
-], function(merge) {
+	"sap/base/util/merge",
+	"sap/ui/fl/changeHandler/Base"
+], function (
+	merge,
+	Base
+) {
 	"use strict";
 
 	/*
@@ -58,6 +62,11 @@ sap.ui.define([
 
 					// Set revert data on the change
 					oChange.setRevertData({ name: oChangeContent.name});
+				} else {
+					return Base.markAsNotApplicable(
+						"Property " + oChangeContent.name + " already exists on control " + oModifier.getId(oControl),
+						/*bAsync*/true
+					);
 				}
 			});
 		});
