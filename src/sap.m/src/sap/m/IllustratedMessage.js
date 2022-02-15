@@ -614,6 +614,24 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {object} Accessibility information for <code>sap.m.IllustratedMessage</code> control
+	 * @since 1.101
+	 * @protected
+	 */
+	IllustratedMessage.prototype.getAccessibilityInfo = function () {
+		var sTitle = this._getTitle().getText(),
+			sDescription = this._getDescription().getText(),
+			aAdditionalContent = this.getAdditionalContent();
+		return {
+			type: this._getResourceBundle().getText("ACC_CTR_ILLUSTRATED_MESSAGE"),
+			description: sTitle + ". " + sDescription,
+			focusable: !!aAdditionalContent.length,
+			children: aAdditionalContent
+		};
+	};
+
 
 	return IllustratedMessage;
 

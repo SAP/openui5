@@ -508,6 +508,26 @@ function (
 		this.oIllustratedMessage.getAccessibilityReferences().description, "Description reference is correct");
 	});
 
+	QUnit.test("getAccessibilityInfo", function (assert) {
+		// Message Accessibility with no properties set
+		var oAccInfo = this.oIllustratedMessage.getAccessibilityInfo();
+		var sDescription = this.oIllustratedMessage._getTitle().getText() + ". " + this.oIllustratedMessage._getDescription().getText();
+		assert.strictEqual(oAccInfo.description, sDescription, "Accessibility description is correct");
+		assert.notOk(oAccInfo.focusable, "Message is not focusable");
+		assert.equal(oAccInfo.children.length, 0, "Message has no children");
+
+		// Message Accessibility with custom properties set
+		this.oIllustratedMessage.setTitle("Example Title");
+		this.oIllustratedMessage.setDescription("Example Description");
+		var oButton = new Button({text: "Example Button"});
+		this.oIllustratedMessage.addAdditionalContent(oButton);
+
+		oAccInfo = this.oIllustratedMessage.getAccessibilityInfo();
+		assert.strictEqual(oAccInfo.description, "Example Title. Example Description", "Accessibility description is correct");
+		assert.ok(oAccInfo.focusable, "Message is focusable");
+		assert.strictEqual(oAccInfo.children.length, 1, "Message has button as child");
+	});
+
 	/* --------------------------- IllustratedMessage Default Text Fallback -------------------------------------- */
 	QUnit.module("IllustratedMessage - Default Text Fallback logic ", {
 		beforeEach: function () {

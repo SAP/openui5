@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer"],
-	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/m/table/Util"],
+	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer, Util) {
 	"use strict";
 
 
@@ -353,9 +353,14 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.openEnd();
 
 		if (!oControl.shouldRenderItems()) {
-			rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));
+			var vNoData = oControl.getNoData();
+			if (vNoData && typeof vNoData !== "string" && vNoData.isA("sap.m.IllustratedMessage")) {
+				rm.renderControl(oControl.getAggregation("_noColumnsMessage"));
+			} else {
+				rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));
+			}
 		} else {
-			rm.text(oControl.getNoDataText(true));
+			this.renderNoDataArea(rm, oControl);
 		}
 
 		rm.close("td");

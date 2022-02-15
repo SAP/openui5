@@ -35,12 +35,12 @@ sap.ui.define([
 	"sap/m/ScrollContainer",
 	"sap/m/Title",
 	"sap/m/plugins/DataStateIndicator",
-	"sap/ui/layout/VerticalLayout"
-
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/IllustratedMessage"
 ], function(Core, createAndAppendDiv, jQuery,
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator,
-			VerticalLayout) {
+			VerticalLayout, IllustratedMessage) {
 		"use strict";
 		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -3393,6 +3393,104 @@ sap.ui.define([
 			} catch (e) {
 				assert.ok(false, "ListBase does not support DataStateIndicator plugin");
 			}
+		});
+
+		QUnit.module("No data aggregation", {
+			beforeEach: function() {
+				oList = new List({});
+				oPage.addContent(oList);
+				Core.applyChanges();
+			},
+			afterEach: function() {
+				oPage.removeAllContent();
+				oList.destroy();
+			}
+		});
+
+		QUnit.test("No Data Illustrated Message", function(assert) {
+			var oMessage = new IllustratedMessage("nodataIllustratedMessage", {
+				illustrationType: library.IllustratedMessageType.NoSearchResults,
+				title: "Custom Title",
+				description: "This is a custom description."
+			});
+			oList.setNoData(oMessage);
+			Core.applyChanges();
+
+			var $noDataText = oList.$("nodata-text");
+			var $noData = oList.$("nodata");
+
+			assert.ok(oList.getNoData().isA("sap.m.IllustratedMessage"));
+			assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
+
+			$noData.focus();
+			var sLabelledBy = $noData.attr("aria-labelledby");
+			assert.equal(Core.byId(sLabelledBy).getText(), "Illustrated Message Custom Title. This is a custom description.", "Accessbility text is set correctly");
+
+			oList.setNoDataText("Test");
+			assert.strictEqual($noDataText.children().get(0), Core.byId("nodataIllustratedMessage").getDomRef(), "List contains figure's DOM element");
+
+			oMessage.destroy();
+		});
+
+		QUnit.test("No Data String", function(assert) {
+			var sNoData = "No data Example";
+			oList.setNoData(sNoData);
+			Core.applyChanges();
+
+			var $noDataText = oList.$("nodata-text");
+			var $noData = oList.$("nodata");
+
+			assert.strictEqual(typeof oList.getNoData(), "string", "No data aggregation is of type string");
+			assert.strictEqual($noDataText.text(), sNoData, "List contains correct no data string");
+
+			$noData.focus();
+			var sLabelledBy = $noData.attr("aria-labelledby");
+			assert.equal(Core.byId(sLabelledBy).getText(), sNoData, "Accessbility text is set correctly");
+
+			oList.setNoDataText("Test");
+			assert.strictEqual($noDataText.text(), sNoData, "List contains correct button");
+		});
+
+		QUnit.test("No Data Control", function(assert) {
+			var oControl = new Button({text: "Button 1"});
+			oList.setNoData(oControl);
+			Core.applyChanges();
+
+			var $noDataText = oList.$("nodata-text");
+			var $noData = oList.$("nodata");
+
+			assert.ok(oList.getNoData().isA("sap.m.Button"), "No data aggregation is a sap.m.Button");
+			assert.equal(oList.getNoData().getText(), "Button 1", "Correct button text");
+			assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "List contains correct button");
+
+			$noData.focus();
+			var sLabelledBy = $noData.attr("aria-labelledby");
+			assert.equal(Core.byId(sLabelledBy).getText(), "Button Button 1", "Accessbility text is set correctly");
+
+			oList.setNoDataText("Test");
+			assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "List contains correct button");
+
+			oControl = new Text({text: "Text 1"});
+			oList.setNoData(oControl);
+			Core.applyChanges();
+
+			assert.ok(oList.getNoData().isA("sap.m.Text"), "No data aggregation is a sap.m.Text");
+			assert.equal(oList.getNoData().getText(), "Text 1", "Text control's text is set correctly");
+			assert.strictEqual($noDataText.children().get(0), oControl.getDomRef(), "List contains correct text control");
+
+			$noData.focus();
+			var sLabelledBy = $noData.attr("aria-labelledby");
+			assert.equal(Core.byId(sLabelledBy).getText(), "Text 1", "Accessbility text is set correctly");
+
+			oList.setNoData();
+			Core.applyChanges();
+
+			assert.notOk(oList.getNoData(), "No data aggregation is empty");
+			assert.strictEqual($noDataText.text(), "Test", "List contains correct text");
+
+			$noData.focus();
+			var sLabelledBy = $noData.attr("aria-labelledby");
+			assert.equal(Core.byId(sLabelledBy).getText(), "Test", "Accessbility text is set correctly");
 		});
 	}
 );

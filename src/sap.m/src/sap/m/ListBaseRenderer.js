@@ -334,11 +334,27 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, rm);
 		rm.openEnd();
 
-		rm.openStart("div", oControl.getId("nodata-text")).class("sapMListNoDataText").openEnd();
-		rm.text(oControl.getNoDataText(true));
-		rm.close("div");
+		rm.openStart("div", oControl.getId("nodata-text")).class("sapMListNoDataText");
 
+		var vNoData = oControl.getNoData();
+		if (vNoData && typeof vNoData !== "string") {
+			rm.class("sapMListNoDataContent");
+		}
+		rm.openEnd();
+
+		this.renderNoDataArea(rm, oControl);
+
+		rm.close("div");
 		rm.close("li");
+	};
+
+	ListBaseRenderer.renderNoDataArea = function (rm, oControl) {
+		var vNoData = oControl.getNoData() || oControl.getNoDataText();
+		if (typeof vNoData === "string") {
+			rm.text(vNoData);
+		} else {
+			rm.renderControl(vNoData);
+		}
 	};
 
 	ListBaseRenderer.renderDummyArea = function(rm, oControl, sAreaId, iTabIndex) {
