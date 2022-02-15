@@ -240,7 +240,7 @@ sap.ui.define([
 		assert.equal(this.oConfig.getRTL(), false, "RTL still should be false for 'en'");
 		assert.equal(this.eventsReceived, 0, "no localizationChange event should have been fired");
 		this.oConfig.setLanguage("he");
-		assert.equal(this.oConfig.getRTL(), false, "language 'he' must not change the explicitily configured RTL flag");
+		assert.equal(this.oConfig.getRTL(), false, "language 'he' must not change the explicitly configured RTL flag");
 	});
 
 	QUnit.test("setRTL(true) - change", function(assert) {

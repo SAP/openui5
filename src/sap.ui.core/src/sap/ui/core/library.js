@@ -829,13 +829,6 @@ sap.ui.define([
 	// this assignment here is only kept as a reminder
 	// thisLib.CalendarType = CalendarType;
 
-	// Note: the imported module sap/ui/core/format/DateFormatTimezoneDisplay already defines the global sap.ui.core.format.DateFormatTimezoneDisplay,
-	// this assignment here is only kept as a reminder
-	// thisLib.format = thisLib.format || {};
-
-	// thisLib.format.DateFormatTimezoneDisplay;
-
-
 	/**
 	 * @classdesc A string type that represents CSS color values.
 	 *
@@ -1697,7 +1690,7 @@ sap.ui.define([
 	 * Marker interface for subclasses of <code>sap.ui.core.UIComponent</code>.
 	 *
 	 * Implementing this interface allows a {@link sap.ui.core.UIComponent} to be created fully asynchronously.
-	 * This interface will implicitily set the component's rootView and router configuration to async.
+	 * This interface will implicitly set the component's rootView and router configuration to async.
 	 * Nested views will also be handled asynchronously.
 	 * Additionally the error handling during the processing of views is stricter and will fail if a view definition contains
 	 * errors, e.g. broken binding strings.
