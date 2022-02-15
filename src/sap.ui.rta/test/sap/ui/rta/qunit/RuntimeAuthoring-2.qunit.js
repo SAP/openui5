@@ -1158,7 +1158,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("_determineReload with FLP", {
+	QUnit.module("_determineReload with FLP without versioning", {
 		beforeEach: function() {
 			this.fnFLPToExternalStub = sandbox.spy();
 			this.fnTriggerRealoadStub = sandbox.stub();
@@ -1168,12 +1168,10 @@ sap.ui.define([
 				rootControl: oComp,
 				showToolbars: false
 			});
-			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function() {
-					return true;
-				}
-			});
 			this.fnEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
+			this.oVersioningLoadDraftStub = sandbox.stub(VersionsAPI, "loadDraftForApplication");
+			this.oVersioningLoadAppStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
+			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -1182,14 +1180,14 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("with FLP: when there are higher layer (e.g personalization) changes during startup", function(assert) {
 			whenHigherLayerChangesExist();
-			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(Promise.resolve(false));
 			whenUserConfirmsMessage.call(this, "MSG_PERSONALIZATION_OR_PUBLIC_VIEWS_EXISTS", assert);
 
 			return this.oRta._determineReload().then(function() {
 				assert.equal(this.fnEnableRestartStub.calledOnce, true, "then enableRestart is called only once");
 				assert.equal(this.fnEnableRestartStub.calledWith(Layer.CUSTOMER), true, "then enableRestart is called with the correct parameter");
 				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub), true, "then the reload inside FLP is triggered");
+				assert.strictEqual(this.oVersioningLoadDraftStub.callCount, 0, "the VersionsAPI was not called");
+				assert.strictEqual(this.oVersioningLoadAppStub.callCount, 0, "the VersionsAPI was not called");
 			}.bind(this));
 		});
 
@@ -1202,6 +1200,8 @@ sap.ui.define([
 				assert.equal(this.fnEnableRestartStub.calledOnce, true, "then enableRestart is called only once");
 				assert.equal(this.fnEnableRestartStub.calledWith(Layer.VENDOR), true, "then enableRestart is called with the correct parameter");
 				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub), true, "then the reload inside FLP is triggered");
+				assert.strictEqual(this.oVersioningLoadDraftStub.callCount, 0, "the VersionsAPI was not called");
+				assert.strictEqual(this.oVersioningLoadAppStub.callCount, 0, "the VersionsAPI was not called");
 			}.bind(this));
 		});
 
@@ -1211,6 +1211,8 @@ sap.ui.define([
 			return this.oRta._determineReload().then(function() {
 				assert.equal(this.fnEnableRestartStub.callCount, 0, "then RTA restart will not be enabled");
 				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub), false, "then the reload inside FLP is not triggered");
+				assert.strictEqual(this.oVersioningLoadDraftStub.callCount, 0, "the VersionsAPI was not called");
+				assert.strictEqual(this.oVersioningLoadAppStub.callCount, 0, "the VersionsAPI was not called");
 			}.bind(this));
 		});
 
@@ -1225,12 +1227,10 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RESTRICTED_CONTEXT_EXIST", assert);
 
 			return this.oRta._determineReload().then(function() {
-				assert.equal(this.fnTriggerRealoadStub.callCount,
-					1,
-					"then RTA restart will not be enabled");
-				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
-					false,
-					"then the reload inside FLP is not triggered via url parameter");
+				assert.equal(this.fnTriggerRealoadStub.callCount, 1, "then RTA restart will not be enabled");
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub), false, "then the reload inside FLP is not triggered via url parameter");
+				assert.strictEqual(this.oVersioningLoadDraftStub.callCount, 0, "the VersionsAPI was not called");
+				assert.strictEqual(this.oVersioningLoadAppStub.callCount, 0, "the VersionsAPI was not called");
 			}.bind(this));
 		});
 
@@ -1245,12 +1245,10 @@ sap.ui.define([
 			whenUserConfirmsMessage.call(this, "MSG_RESTRICTED_CONTEXT_EXIST_AND_PERSONALIZATION", assert);
 
 			return this.oRta._determineReload().then(function() {
-				assert.equal(this.fnTriggerRealoadStub.callCount,
-					0,
-					"then RTA restart will not be enabled");
-				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub),
-					true,
-					"then the reload inside FLP is not triggered via url parameter");
+				assert.equal(this.fnTriggerRealoadStub.callCount, 0, "then RTA restart will not be enabled");
+				assert.equal(isReloadedWithMaxLayerParameter(this.fnFLPToExternalStub), true, "then the reload inside FLP is not triggered via url parameter");
+				assert.strictEqual(this.oVersioningLoadDraftStub.callCount, 0, "the VersionsAPI was not called");
+				assert.strictEqual(this.oVersioningLoadAppStub.callCount, 0, "the VersionsAPI was not called");
 			}.bind(this));
 		});
 	});

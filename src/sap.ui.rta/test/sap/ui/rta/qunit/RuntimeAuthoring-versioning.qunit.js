@@ -137,6 +137,9 @@ sap.ui.define([
 					return true;
 				}
 			});
+			this.oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves();
+			this.oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
+			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -144,8 +147,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and a reload is needed on start because of draft changes", function(assert) {
-			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves();
-			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 
 			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
 
@@ -156,15 +158,12 @@ sap.ui.define([
 			};
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function(bReloadResult) {
 				assert.ok(bReloadResult, "then the reload is successful");
-				assert.equal(oLoadDraftForApplication.callCount, 1, "then loadDraftForApplication is called once");
-				assert.equal(oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
-			});
+				assert.equal(this.oLoadDraftForApplication.callCount, 1, "then loadDraftForApplication is called once");
+				assert.equal(this.oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
+			}.bind(this));
 		});
 
 		QUnit.test("and a reload is needed on start because of personalization changes", function(assert) {
-			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves();
-			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
-
 			var oConfirmMessageStub = whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
 			var oReloadInfo = {
@@ -179,16 +178,13 @@ sap.ui.define([
 
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function(bReloadResult) {
 				assert.ok(bReloadResult, "then the reload is successful");
-				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
-				assert.equal(oLoadVersionForApplication.callCount, 1, "then loadVersionForApplication is not called");
+				assert.equal(this.oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is not called");
+				assert.equal(this.oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
 				assert.equal(oConfirmMessageStub.callCount, 1, "then messagebox was shown and confirmed");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("and a reload is needed on start because of personalization changes in visual editor", function(assert) {
-			var oLoadDraftForApplication = sandbox.stub(VersionsAPI, "loadDraftForApplication").resolves();
-			var oLoadVersionForApplication = sandbox.stub(VersionsAPI, "loadVersionForApplication").resolves();
-
 			var oFlexSettings = this.oRta.getFlexSettings();
 			oFlexSettings.developerMode = true;
 			this.oRta.setFlexSettings(oFlexSettings);
@@ -202,10 +198,10 @@ sap.ui.define([
 			};
 			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function(bReloadResult) {
 				assert.ok(bReloadResult, "then the reload is successful");
-				assert.equal(oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is called once");
-				assert.equal(oLoadVersionForApplication.callCount, 1, "then loadVersionForApplication is not called");
+				assert.equal(this.oLoadDraftForApplication.callCount, 0, "then loadDraftForApplication is not called");
+				assert.equal(this.oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
 				assert.equal(oConfirmMessageStub.callCount, 0, "then messagebox is not called");
-			});
+			}.bind(this));
 		});
 	});
 
