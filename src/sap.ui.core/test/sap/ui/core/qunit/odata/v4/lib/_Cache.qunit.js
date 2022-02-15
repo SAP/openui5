@@ -6090,11 +6090,10 @@ sap.ui.define([
 					/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
 				.resolves(createResult(10, 7));
 
-			assert.deepEqual(
-				// code under test
-				oCache.read(7, 3, Infinity, oReadGroupLock).getResult(),
-				createResult(7, 3, undefined, true)
-			);
+			// code under test
+			return oCache.read(7, 3, Infinity, oReadGroupLock).then(function (oResult) {
+				assert.deepEqual(oResult, createResult(7, 3, undefined, true));
+			});
 		});
 	});
 
@@ -7795,30 +7794,37 @@ sap.ui.define([
 
 		// code under test
 		return oCache.read(0, 1, 2, oReadGroupLock).then(function (oResult) {
-			var oGroupLock0 = {unlock : function () {}},
+			var oGroupLock0 = {
+					getUnlockedCopy : function () {},
+					unlock : function () {}
+				},
 				oGroupLock1 = {unlock : function () {}};
 
 			assert.strictEqual(oResult.value.length, 1);
 			assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
 			assert.strictEqual(oResult.value[0].name, "John Doe");
 
+			that.mock(oGroupLock0).expects("getUnlockedCopy").withExactArgs()
+				.returns(oUnlockedCopy);
 			that.mock(oGroupLock0).expects("unlock").withExactArgs();
+			that.mock(oCache).expects("requestElements")
+				.withExactArgs(3, 13, oUnlockedCopy, undefined);
 
 			// code under test
-			oResult = oCache.read(0, 3, 0, oGroupLock0).getResult();
+			return oCache.read(0, 3, 10, oGroupLock0).then(function (oResult) {
+				assert.strictEqual(oResult.value.length, 3);
+				assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
+				assert.strictEqual(oResult.value[0].name, "John Doe");
+				assert.strictEqual(oResult.value[1], oReadResult.value[0]);
+				assert.strictEqual(oResult.value[2], oReadResult.value[1]);
 
-			assert.strictEqual(oResult.value.length, 3);
-			assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
-			assert.strictEqual(oResult.value[0].name, "John Doe");
-			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
-			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
+				that.mock(oGroupLock1).expects("unlock").withExactArgs();
 
-			that.mock(oGroupLock1).expects("unlock").withExactArgs();
-
-			// code under test
-			assert.strictEqual(
-				oCache.fetchValue(oGroupLock1, sTransientPredicate + "/name").getResult(),
-				"John Doe");
+				// code under test
+				assert.strictEqual(
+					oCache.fetchValue(oGroupLock1, sTransientPredicate + "/name").getResult(),
+					"John Doe");
+			});
 		});
 	});
 

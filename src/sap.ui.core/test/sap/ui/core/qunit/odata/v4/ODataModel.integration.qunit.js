@@ -13713,7 +13713,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: infinite prefetch alone must not make _CollectionCache#read async
-	QUnit.test("infinite prefetch", function (assert) {
+	// TODO: We have to skip this test because of 2 BCP incidents (2280024694 && 2180279839).
+	// At current state, we are not able to handle this in a synchronous way!
+	QUnit.skip("infinite prefetch", function (assert) {
 		var oListBinding,
 			aValues = [],
 			i,
@@ -13749,13 +13751,14 @@ sap.ui.define([
 	// dataReceived event is sent after each dataRequested.
 	//
 	// BCP: 2180279839
+	// BCP: 2280024694
 	QUnit.test("BCP: 2180279839: dataReceived follows each dataRequested", function (assert) {
 		var oListBinding,
 			aValues = [],
 			i,
 			that = this;
 
-		for (i = 0; i < 10; i += 1) {
+		for (i = 0; i < 1200; i += 1) {
 			aValues[i] = {Team_Id : "TEAM_" + i};
 		}
 
@@ -13769,19 +13772,46 @@ sap.ui.define([
 					[, "dataReceived", {data : {}}]
 				]);
 
-			oListBinding.getContexts(0, 7);
+			assert.deepEqual(oListBinding.getContexts(0, 7).map(getPath), []);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS?$skip=7&$top=3", {value : aValues.slice(7, 3)})
+			that.expectRequest("TEAMS?$skip=7&$top=3", {value : aValues.slice(7, 10)})
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"],
+					[, "dataReceived", {data : {}}]
+				]);
+
+			// code under test
+			assert.deepEqual(oListBinding.getContexts(3, 2, 5).map(getPath), [
+				"/TEAMS('TEAM_3')",
+				"/TEAMS('TEAM_4')"
+			]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=1098&$top=7", {value : aValues.slice(1098, 1105)})
 				.expectEvents(assert, oListBinding, [
 					[, "dataRequested"],
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
 				]);
 
-			// code under test
-			oListBinding.getContexts(3, 2, 5);
+			assert.deepEqual(oListBinding.getContexts(1098, 7).map(getPath), []);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=1105&$top=5", {value : aValues.slice(1105, 1110)})
+				.expectEvents(assert, oListBinding, [
+					[, "dataRequested"],
+					[, "dataReceived", {data : {}}]
+				]);
+
+			// code under test (BCP: 2280024694)
+			assert.deepEqual(oListBinding.getContexts(1103, 2, 5).map(getPath), [
+				"/TEAMS('TEAM_1103')",
+				"/TEAMS('TEAM_1104')"
+			]);
 
 			return that.waitForChanges(assert);
 		});

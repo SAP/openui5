@@ -2483,6 +2483,7 @@ sap.ui.define([
 	_CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var aElementsRange,
+			iEnd,
 			oPromise = this.oPendingRequestsPromise || this.aElements.$tail,
 			that = this;
 
@@ -2510,8 +2511,9 @@ sap.ui.define([
 
 		oGroupLock.unlock();
 
-		aElementsRange = this.aElements.slice(iIndex, iIndex + iLength + iPrefetchLength);
-		if (this.aElements.$tail && iIndex + iLength > this.aElements.length) {
+		iEnd = iIndex + iLength + iPrefetchLength;
+		aElementsRange = this.aElements.slice(iIndex, iEnd);
+		if (this.aElements.$tail && iEnd > this.aElements.length) {
 			aElementsRange.push(this.aElements.$tail);
 		}
 		return SyncPromise.all(aElementsRange).then(function () {
