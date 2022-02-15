@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/widgets/Card",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/integration/Host"
 ], function (
 	Core,
 	DataProviderFactory,
@@ -15,7 +16,8 @@ sap.ui.define([
 	DataProvider,
 	RequestDataProvider,
 	Card,
-	Log
+	Log,
+	Host
 ) {
 	"use strict";
 
@@ -936,6 +938,40 @@ sap.ui.define([
 
 		this.oServer.respondWith("GET", "/test/url", function (oXhr) {
 			assert.ok(true, "Request is sent");
+			oXhr.respond(200, {}, "");
+			done();
+		});
+
+		oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("Host can modify request headers", function (assert) {
+		var done = assert.async(),
+			oDataProvider = this.oDataProviderFactory.create({
+				request: {
+					url: "/test/url"
+				}
+			}),
+			oHost = new Host(),
+			oExpectedCard = new Card();
+
+		assert.expect(3);
+
+		oDataProvider.setHost(oHost);
+		oDataProvider.setCard(oExpectedCard);
+
+		oHost.modifyRequestHeaders = function (mHeaders, mSettings, oCard) {
+			assert.strictEqual(mSettings.request["url"], "/test/url", "Settings in modifyRequestHeaders are correct.");
+			assert.strictEqual(oExpectedCard, oCard, "Expected card is sent to modifyRequestHeaders.");
+
+			mHeaders["x-test"] = "test";
+
+			return mHeaders;
+		};
+
+		this.oServer.respondWith("GET", "/test/url", function (oXhr) {
+			assert.strictEqual(oXhr.requestHeaders["x-test"], "test", "Headers are modified");
+
 			oXhr.respond(200, {}, "");
 			done();
 		});

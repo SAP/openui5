@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
-	"sap/ui/model/odata/v4/ODataUtils"
-], function (DataProvider, jQuery, Log, ODataUtils) {
+	"sap/ui/model/odata/v4/ODataUtils",
+	"sap/ui/core/Core"
+], function (DataProvider, jQuery, Log, ODataUtils, Core) {
 	"use strict";
 	/*global Response*/
 
@@ -47,6 +48,24 @@ sap.ui.define([
 			 */
 			properties: {
 				allowCustomDataType: { type: "boolean", defaultValue: false }
+			},
+
+			associations : {
+				/**
+				 * The host which is used for communication with the caching service worker.
+				 */
+				host: {
+					type : "sap.ui.integration.Host",
+					multiple: false
+				},
+
+				/**
+				 * Optionally the card which will be used as reference for the requests and for visual representation of cache timestamp and refresh.
+				 */
+				card: {
+					type : "sap.ui.integration.widgets.Card",
+					multiple: false
+				}
 			}
 
 		}
@@ -362,12 +381,19 @@ sap.ui.define([
 
 	/**
 	 * Override if modification to the headers is needed.
+	 * Allows the host to modify the headers.
 	 * @param {map} mHeaders The current headers
 	 * @param {Object} oSettings The request settings
 	 * @returns {map} The modified headers
 	 */
 	RequestDataProvider.prototype._prepareHeaders = function (mHeaders, oSettings) {
-		// do nothing, use current headers
+		var oCard = Core.byId(this.getCard()),
+			oHost = Core.byId(this.getHost());
+
+		if (oHost && oHost.modifyRequestHeaders) {
+			return oHost.modifyRequestHeaders(Object.assign({}, mHeaders), oSettings, oCard);
+		}
+
 		return mHeaders;
 	};
 

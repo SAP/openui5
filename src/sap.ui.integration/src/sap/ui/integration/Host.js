@@ -330,16 +330,30 @@ sap.ui.define([
 
 		/**
 		 * Modify request headers before sending a data request.
-		 * Override if you need to change the default cache headers behavior.
+		 * Override if you need to change the default headers behavior, including cache headers.
 		 * @param {map} mHeaders The current map of headers.
 		 * @param {map} mSettings The map of request settings defined in the card manifest.
-		 * @param {sap.ui.integration.widgets.Card} [oCard] The card for which the request is made.
+		 * @param {sap.ui.integration.widgets.Card} [oCard] Optional. The card for which the request is made.
 		 * @returns {map} Map of http headers.
 		 * @private
 		 * @ui5-restricted
 	 	 * @experimental Since 1.91. The API might change.
 		 */
 		Host.prototype.modifyRequestHeaders = function (mHeaders, mSettings, oCard) {
+			if (this.bUseExperimentalCaching) {
+				return this._prepareCacheHeaders(mHeaders, mSettings);
+			}
+
+			return mHeaders;
+		};
+
+		/**
+		 * @private
+		 * @param {map} mHeaders The current map of headers.
+		 * @param {map} mSettings The map of request settings defined in the card manifest.
+		 * @returns {map} Map of http headers.
+		 */
+		Host.prototype._prepareCacheHeaders = function (mHeaders, mSettings) {
 			var oCacheSettings = mSettings.request.cache,
 				aCacheControl = [];
 
